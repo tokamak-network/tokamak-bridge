@@ -1,10 +1,11 @@
 "use client";
 
-import { ChakraProvidersForNextJs } from "@/app/providers/chakraProvider";
-import { WagmiProviders } from "@/app/providers/wagmiProvider";
+import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
+import { WagmiProviders } from "@/providers/wagmiProvider";
 
 import { ChakraProvider } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
+import Header from "@/components/header/Index";
 
 // export const metadata = {
 //   title: "wagmi",
@@ -19,7 +20,10 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ChakraProvidersForNextJs>
-          <WagmiProviders>{children}</WagmiProviders>
+          <WagmiProviders>
+            <Header />
+            {children}
+          </WagmiProviders>
         </ChakraProvidersForNextJs>
       </body>
     </html>

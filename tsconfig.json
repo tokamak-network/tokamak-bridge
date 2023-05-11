@@ -23,7 +23,8 @@
       "@/types/*": ["types/*"],
       "@/graphql/*": ["graphql/*"],
       "@/config/*": ["config/*"],
-      "@/app/*": ["app/*"]
+      "@/app/*": ["app/*"],
+      "@/page/*": ["page/*"]
     },
     "plugins": [
       {

@@ -1,5 +1,6 @@
 "use client";
 
+import { theme } from "@/style/theme/chakraTheme";
 import { CacheProvider } from "@chakra-ui/next-js";
 import { ChakraProvider } from "@chakra-ui/react";
 
@@ -10,7 +11,9 @@ export function ChakraProvidersForNextJs({
 }) {
   return (
     <CacheProvider>
-      <ChakraProvider>{children}</ChakraProvider>
+      <ChakraProvider resetCSS theme={theme}>
+        {children}
+      </ChakraProvider>
     </CacheProvider>
   );
 }
