@@ -14,6 +14,17 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["./*"],
+      "@/utils/*": ["utils/*"],
+      "@/componenets/*": ["components/*"],
+      "@/hooks/*": ["hooks/*"],
+      "@/types/*": ["types/*"],
+      "@/graphql/*": ["graphql/*"],
+      "@/config/*": ["config/*"],
+      "@/app/*": ["app/*"]
+    },
     "plugins": [
       {
         "name": "next"
