@@ -9,6 +9,8 @@ export default function SearchToken() {
       justifyContent={"center"}
       alignItems={"center"}
       rowGap={"14px"}
+      w={"100%"}
+      cursor={"pointer"}
     >
       <Text fontSize={20} fontWeight={"semibold"}>
         Search Tokens

@@ -17,7 +17,7 @@ export enum SupportedChainId {
   TOKAMAK_OPTIMISM_GOERLI = 5050,
 }
 
-interface SupportedChainProperties {
+export interface SupportedChainProperties {
   chainId: SupportedChainId;
   chainName: string;
   rpcAddress: string;

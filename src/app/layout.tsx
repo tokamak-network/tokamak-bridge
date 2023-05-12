@@ -5,6 +5,8 @@ import { WagmiProviders } from "@/providers/wagmiProvider";
 
 import { Center, ChakraProvider } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
+import { RecoilRoot } from "recoil";
+
 import Header from "@/components/header/Index";
 
 // export const metadata = {
@@ -20,10 +22,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <ChakraProvidersForNextJs>
-          <WagmiProviders>
-            <Header />
-            <Center h={"100vh"}>{children}</Center>
-          </WagmiProviders>
+          <RecoilRoot>
+            <WagmiProviders>
+              <Header />
+              <Center h={"100vh"}>{children}</Center>
+            </WagmiProviders>
+          </RecoilRoot>
         </ChakraProvidersForNextJs>
       </body>
     </html>

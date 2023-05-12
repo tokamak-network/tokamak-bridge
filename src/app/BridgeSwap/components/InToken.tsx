@@ -8,8 +8,16 @@ export default function InToken() {
       <Text fontSize={36} fontWeight={"semibold"}>
         Swap
       </Text>
-      <Box className="card card-empty">
-        <Dropdown />
+      <Box
+        className="card card-empty"
+        pt={"15px"}
+        display={"flex"}
+        flexDir={"column"}
+        rowGap={"70px"}
+      >
+        <Flex justifyContent={"flex-end"} pr={"16px"}>
+          <Dropdown />
+        </Flex>
         <SearchToken />
       </Box>
     </Flex>
