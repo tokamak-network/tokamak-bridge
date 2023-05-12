@@ -3,7 +3,7 @@
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
 
-import { ChakraProvider } from "@chakra-ui/react";
+import { Center, ChakraProvider } from "@chakra-ui/react";
 import { CacheProvider } from "@chakra-ui/next-js";
 import Header from "@/components/header/Index";
 
@@ -22,7 +22,7 @@ export default function RootLayout({
         <ChakraProvidersForNextJs>
           <WagmiProviders>
             <Header />
-            {children}
+            <Center h={"100vh"}>{children}</Center>
           </WagmiProviders>
         </ChakraProvidersForNextJs>
       </body>

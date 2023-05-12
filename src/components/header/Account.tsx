@@ -13,9 +13,6 @@ export default function Account() {
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
-  console.log(connectors);
-  console.log(connector);
-
   return (
     <Center
       className="header-right-common"
@@ -23,6 +20,14 @@ export default function Account() {
       h={"48px"}
       columnGap={"17px"}
       fontSize={18}
+      /**
+       * About connectors
+       *
+       * @param connectors is a list of connects supported on this app.
+       * index 0 = metamask
+       * index 1 = coinbase wallet
+       * index 2 = wallet injected like wallet connet
+       */
       onClick={() =>
         isConnected ? disconnect() : connect({ connector: connectors[0] })
       }

@@ -1,0 +1,17 @@
+import Dropdown from "@/components/dropdown/Index";
+import SearchToken from "@/components/search/SearchToken";
+import { Box, Flex, Text } from "@chakra-ui/layout";
+
+export default function InToken() {
+  return (
+    <Flex flexDir={"column"} rowGap={"40px"}>
+      <Text fontSize={36} fontWeight={"semibold"}>
+        Swap
+      </Text>
+      <Box className="card card-empty">
+        <Dropdown />
+        <SearchToken />
+      </Box>
+    </Flex>
+  );
+}

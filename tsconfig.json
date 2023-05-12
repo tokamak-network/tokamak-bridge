@@ -24,7 +24,8 @@
       "@/graphql/*": ["graphql/*"],
       "@/config/*": ["config/*"],
       "@/app/*": ["app/*"],
-      "@/page/*": ["page/*"]
+      "@/page/*": ["page/*"],
+      "@/bridgeSwap/*": ["app/BridgeSwap/*"]
     },
     "plugins": [
       {

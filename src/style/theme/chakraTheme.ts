@@ -9,16 +9,25 @@ const theme = extendTheme({
   fonts: {
     body: fonts.Poppins,
   },
+
   styles: {
     global: () => ({
       "html, body": {
-        backgroundColor: "#2A2E3E",
+        backgroundColor: "#0F0F12",
         color: "#FFFFFF",
       },
       ".header-right-common": {
         backgroundColor: "#1F2128",
         borderRadius: "8px",
         cursor: "pointer",
+      },
+      ".card": {
+        width: "208px",
+        height: "270px",
+      },
+      ".card-empty": {
+        border: "1px dashed #313442",
+        borderRadius: "16px",
       },
     }),
   },
