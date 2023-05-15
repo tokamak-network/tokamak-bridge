@@ -1,7 +1,6 @@
 import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
 import TransactionDetail from "./TransactionDetail";
-import MyComponent from "@/components/card/Test";
 import {
   SelectCardButton,
   SelectCardModal,

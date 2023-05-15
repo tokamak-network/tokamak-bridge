@@ -1,12 +1,21 @@
+import { SupportedToken } from "@/types/token/supportedToken";
 import { Box, Flex, Text } from "@chakra-ui/react";
+
+type TokenCardProps = {
+  tokenName?: SupportedToken | string;
+  w?: string | number;
+  h?: string | number;
+  style?: {};
+};
 
 const TopLine = () => {
   return (
     <Box
       pos={"absolute"}
-      w={"208px"}
+      w={"400px"}
       h={"4.63px"}
-      left={"0%"}
+      top={"-17px"}
+      left={"-30px"}
       bg={"rgba(255, 255, 255, 0.5)"}
       transform={"rotate(-30deg)"}
     ></Box>
@@ -27,11 +36,12 @@ const TokenTitle = (props: { tokenName: string }) => {
   );
 };
 
-export default function TokenCard() {
+export default function TokenCard(props: TokenCardProps) {
+  const { tokenName, w, h, style } = props;
   return (
     <Flex
-      w={"208px"}
-      height={"270px"}
+      w={typeof w === "string" ? w : `${w ?? 208}px`}
+      height={typeof h === "string" ? h : `${h ?? 270}px`}
       bg={
         "linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), #9E9E9E;"
       }
@@ -42,9 +52,10 @@ export default function TokenCard() {
       pt={"24px"}
       pl={"16px"}
       overflow={"hidden"}
+      {...style}
     >
       <TopLine />
-      <TokenTitle tokenName="TOKEN" />
+      <TokenTitle tokenName={tokenName ?? "TOKEN"} />
     </Flex>
   );
 }
