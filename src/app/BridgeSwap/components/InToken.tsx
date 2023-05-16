@@ -21,7 +21,6 @@ export default function InToken() {
         </Flex>
         <SearchToken />
       </Box>
-      <TokenCard tokenName="TOK"></TokenCard>
     </Flex>
   );
 }

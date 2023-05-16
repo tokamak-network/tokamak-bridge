@@ -12,6 +12,16 @@ const theme = extendTheme({
 
   styles: {
     global: () => ({
+      // Reset all styles
+      "*": {
+        // all: "unset",
+        // animation: "none",
+        // transition: "none",
+        // transform: "none",
+        outline: "none",
+        boxshadow: "none",
+      },
+
       "html, body": {
         backgroundColor: "#0F0F12",
         color: "#FFFFFF",
@@ -30,6 +40,18 @@ const theme = extendTheme({
         borderRadius: "16px",
       },
     }),
+    // Additional overrides for specific components can be added here
+    // For example, to reset the button styles
+    Button: {
+      baseStyle: {
+        // Reset button styles
+        borderRadius: "none",
+        boxShadow: "none",
+        fontWeight: "normal",
+        _hover: { backgroundColor: "none" },
+        _active: {},
+      },
+    },
   },
 });
 

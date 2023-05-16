@@ -5,18 +5,21 @@ import {
   SelectCardButton,
   SelectCardModal,
 } from "@/components/card/SelectCard";
+import ActionButton from "./components/ActionButton";
 
 export default function BridgeSwap() {
   return (
-    <Flex flexDir={"column"} h={"100%"}>
+    <Flex flexDir={"column"} w={"496px"} h={"100%"}>
       <Flex
         flexDir={"column"}
         alignItems={"center"}
         justifyContent={"center"}
+        w={"100%"}
         h={"100%"}
       >
         <Swap />
         <TransactionDetail />
+        <ActionButton />
       </Flex>
       <Flex mt={"auto"}>
         <SelectCardButton />
