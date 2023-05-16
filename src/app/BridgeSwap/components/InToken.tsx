@@ -1,3 +1,4 @@
+import TokenCard from "@/components/card/TokenCard";
 import Dropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
 import { Box, Flex, Text } from "@chakra-ui/layout";
@@ -20,6 +21,7 @@ export default function InToken() {
         </Flex>
         <SearchToken />
       </Box>
+      <TokenCard tokenName="TOK"></TokenCard>
     </Flex>
   );
 }

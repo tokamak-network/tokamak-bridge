@@ -1,12 +1,10 @@
 import { Box, Center } from "@chakra-ui/layout";
-import ImageSymbol, {
-  SupportedImageSymbol,
-} from "@/componenets/image/ImageSymbol";
+import ImageSymbol, { TokenSymbol } from "@/components/image/TokenSymbol";
 
 export default function Network() {
   return (
     <Center className="header-right-common" w={"48px"} h={"48px"}>
-      <SupportedImageSymbol tokenType="ETH" w={24} h={24} />
+      <TokenSymbol tokenType="ETH" w={24} h={24} />
     </Center>
   );
 }

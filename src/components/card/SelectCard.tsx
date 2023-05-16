@@ -1,7 +1,8 @@
 import { InTokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import BgImage from "assets/image/BridgeSwap/selectTokenBg.svg";
+import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
+import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 
 import {
   Modal,
@@ -37,13 +38,23 @@ export function SelectCardButton() {
     <Flex
       w={"562px"}
       h={"100px"}
-      bgColor={"#17181D"}
       alignItems={"center"}
       justifyContent={"center"}
       cursor={"pointer"}
       onClick={() => setInTokenModal({ isOpen: true, modalData: null })}
+      pos={"relative"}
     >
-      <Text color={"#FFFFFF"} fontSize={24} fontWeight={"semibold"}>
+      <Image
+        src={BgImageButton}
+        alt={"BgImageButton"}
+        style={{ position: "absolute" }}
+      />
+      <Text
+        color={"#FFFFFF"}
+        fontSize={24}
+        fontWeight={"semibold"}
+        zIndex={100}
+      >
         Select Token
       </Text>
     </Flex>
@@ -252,7 +263,11 @@ export function SelectCardModal() {
   };
 
   return (
-    <Modal isOpen={inTokenModal.isOpen} onClose={onClose}>
+    <Modal
+      // isOpen={inTokenModal.isOpen}
+      isOpen={false}
+      onClose={onClose}
+    >
       <ModalOverlay />
       <ModalContent
         minW={"100%"}

@@ -8,10 +8,19 @@ import {
 
 export default function BridgeSwap() {
   return (
-    <Flex flexDir={"column"}>
-      <Swap />
-      <TransactionDetail />
-      <SelectCardButton />
+    <Flex flexDir={"column"} h={"100%"}>
+      <Flex
+        flexDir={"column"}
+        alignItems={"center"}
+        justifyContent={"center"}
+        h={"100%"}
+      >
+        <Swap />
+        <TransactionDetail />
+      </Flex>
+      <Flex mt={"auto"}>
+        <SelectCardButton />
+      </Flex>
       <SelectCardModal />
     </Flex>
   );

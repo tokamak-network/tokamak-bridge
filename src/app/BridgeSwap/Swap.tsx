@@ -3,13 +3,16 @@
 import { Flex } from "@chakra-ui/layout";
 import InToken from "./components/InToken";
 import OutToken from "./components/OutToken";
-import TokenCard from "@/components/card/TokenCard";
+import Image from "next/image";
+import ArrowImg from "assets/icons/arrow.svg";
 
 export default function Swap() {
   return (
-    <Flex>
+    <Flex columnGap={"24px"}>
       <InToken />
-      <TokenCard></TokenCard>
+      <Flex justifyContent={"center"} alignItems={"center"} pt={"115px"}>
+        <Image src={ArrowImg} alt={"arrow"} />
+      </Flex>
       <OutToken />
     </Flex>
   );
