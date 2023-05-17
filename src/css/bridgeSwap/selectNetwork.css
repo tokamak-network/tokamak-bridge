@@ -1,0 +1,49 @@
+.first-layer {
+  /* Rectangle 788 */
+  box-sizing: border-box;
+  position: absolute;
+  width: 193px;
+  height: 255px;
+  right: 0px;
+  top: 0px;
+  background: #0f0f12;
+  /* select network */
+  border: 1px solid #313442;
+  border-radius: 16px;
+}
+
+.second-layer {
+  /* Rectangle 789 */
+  box-sizing: border-box;
+  position: absolute;
+  width: 193px;
+  height: 255px;
+  right: 5px;
+  top: 5px;
+  border: 1px solid rgba(49, 52, 66, 0.6);
+  border-radius: 16px;
+}
+
+.third-layer {
+  /* Rectangle 790 */
+  box-sizing: border-box;
+  position: absolute;
+  width: 193px;
+  height: 255px;
+  right: 10px;
+  top: 10px;
+  border: 1px solid rgba(49, 52, 66, 0.4);
+  border-radius: 16px;
+}
+
+.last-layer {
+  /* Rectangle 791 */
+  box-sizing: border-box;
+  position: absolute;
+  width: 193px;
+  height: 255px;
+  left: 0px;
+  bottom: 0px;
+  border: 1px solid rgba(49, 52, 66, 0.2);
+  border-radius: 16px;
+}

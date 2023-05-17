@@ -5,15 +5,24 @@ import InToken from "./components/InToken";
 import OutToken from "./components/OutToken";
 import Image from "next/image";
 import ArrowImg from "assets/icons/arrow.svg";
+import SelectNetwork from "./components/SelectNetwork";
+import { actionMode } from "@/recoil/bridgeSwap/atom";
+import { useRecoilValue } from "recoil";
 
 export default function Swap() {
+  const mode = useRecoilValue(actionMode);
+
   return (
     <Flex columnGap={"24px"}>
       <InToken />
-      <Flex justifyContent={"center"} alignItems={"center"} pt={"115px"}>
+      <Flex
+        justifyContent={"center"}
+        alignItems={"center"}
+        pt={actionMode ? "115px" : 0}
+      >
         <Image src={ArrowImg} alt={"arrow"} />
       </Flex>
-      <OutToken />
+      {mode === null ? <SelectNetwork /> : <OutToken />}
     </Flex>
   );
 }

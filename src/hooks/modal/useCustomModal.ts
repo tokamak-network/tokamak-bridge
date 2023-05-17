@@ -5,9 +5,12 @@ export default function useCustomModal() {
   const [inTokenModal, setInTokenModal] = useRecoilState(InTokenModalStatus);
 
   const isInTokenOpen = inTokenModal?.isOpen;
+  const onOpenInToken = () => {
+    setInTokenModal({ isOpen: true, modalData: null });
+  };
   const onCloseInToken = () => {
     setInTokenModal({ isOpen: false, modalData: null });
   };
 
-  return { isInTokenOpen, onCloseInToken };
+  return { isInTokenOpen, onOpenInToken, onCloseInToken };
 }

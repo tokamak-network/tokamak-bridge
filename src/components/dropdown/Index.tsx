@@ -1,4 +1,3 @@
-import { networkStatus } from "@/recoil/global/atom";
 import {
   SupportedChainProperties,
   supportedChain,
@@ -9,9 +8,11 @@ import Image from "next/image";
 import { useRecoilState } from "recoil";
 import { Chain } from "viem/dist/types/types/eip1193";
 import { useEffect } from "react";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 
-export default function Dropdown() {
-  const [network, setNetworkStatus] = useRecoilState(networkStatus);
+export default function NetworkDropdown(props: { inNetwork: boolean }) {
+  const { inNetwork } = props;
+  const [network, setNetwork] = useRecoilState(networkStatus);
 
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value: SupportedChainProperties["chainId"] = Number(
@@ -20,7 +21,23 @@ export default function Dropdown() {
     const selectedWork = supportedChain.filter((supportedChain) => {
       return supportedChain.chainId === value;
     });
-    setNetworkStatus(selectedWork[0]);
+    if (network) {
+      if (inNetwork === true) {
+        return setNetwork({ ...network, inNetwork: selectedWork[0] });
+      }
+      return setNetwork({ ...network, outNetwork: selectedWork[0] });
+    } else {
+      if (inNetwork === true) {
+        return setNetwork({
+          outNetwork: null,
+          inNetwork: selectedWork[0],
+        });
+      }
+      return setNetwork({
+        inNetwork: null,
+        outNetwork: selectedWork[0],
+      });
+    }
   };
 
   return (

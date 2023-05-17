@@ -39,7 +39,7 @@ enum CardOverlay {
 }
 
 export function SelectCardButton() {
-  const [inTokenModal, setInTokenModal] = useRecoilState(InTokenModalStatus);
+  const { onOpenInToken } = useCustomModal();
   return (
     <Flex
       w={"562px"}
@@ -47,7 +47,7 @@ export function SelectCardButton() {
       alignItems={"center"}
       justifyContent={"center"}
       cursor={"pointer"}
-      onClick={() => setInTokenModal({ isOpen: true, modalData: null })}
+      onClick={() => onOpenInToken()}
       pos={"relative"}
     >
       <Image
@@ -252,10 +252,17 @@ const CardCarrousel = () => {
                   ? sideRightControl
                   : outControl
               }
-              onClick={() => setSelectedInToken(tokenData)}
+              onClick={() =>
+                setSelectedInToken({ ...tokenData, amountBN: null })
+              }
               key={tokenData.tokenName.toUpperCase()}
             >
-              <TokenCard w={"100%"} h={"100%"} tokenInfo={tokenData} />
+              <TokenCard
+                w={"100%"}
+                h={"100%"}
+                tokenInfo={tokenData}
+                hasInput={false}
+              />
             </motion.div>
           );
         })}

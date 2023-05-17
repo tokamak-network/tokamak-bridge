@@ -1,14 +1,18 @@
 import { SupportedToken, TokenInfo } from "@/types/token/supportedToken";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
-import Dropdown from "../dropdown/Index";
+import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import NetworkDropdown from "../dropdown/Index";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useMemo } from "react";
+import { useRecoilState } from "recoil";
+import { SelectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { ethers } from "ethers";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo;
   w?: string | number;
   h?: string | number;
   style?: {};
+  hasInput: boolean;
 };
 
 const TopLine = () => {
@@ -27,20 +31,42 @@ const TopLine = () => {
 
 const TokenTitle = (props: { tokenName: String }) => {
   return (
-    <Text
-      w={"60px"}
-      h={"13px"}
-      fontSize={18}
-      fontWeight={700}
-      color={"#222222"}
-    >
+    <Text w={"60px"} fontSize={18} fontWeight={700} color={"#222222"}>
       {props.tokenName.toUpperCase()}
     </Text>
   );
 };
 
+const TokenInput = () => {
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    SelectedInTokenStatus
+  );
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const parsedAmount = ethers.parseUnits(value, "ether");
+    if (selectedInToken) {
+      setSelectedInToken({ ...selectedInToken, amountBN: parsedAmount });
+    }
+  };
+
+  return (
+    <Input
+      w={"100%"}
+      h={"35px"}
+      border={{}}
+      _focus={{}}
+      _active={{}}
+      p={0}
+      onChange={onChange}
+      fontSize={28}
+      line-height={"35px"}
+    />
+  );
+};
+
 export default function TokenCard(props: TokenCardProps) {
-  const { tokenInfo, w, h, style } = props;
+  const { tokenInfo, w, h, hasInput, style } = props;
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenName) {
       case "ETH":
@@ -73,7 +99,7 @@ export default function TokenCard(props: TokenCardProps) {
       border={`3px solid ${tokenColorCode} `}
       borderRadius={"16px"}
       pos={"relative"}
-      pt={"24px"}
+      pt={"15px"}
       overflow={"hidden"}
       flexDir={"column"}
       px={"16px"}
@@ -81,9 +107,9 @@ export default function TokenCard(props: TokenCardProps) {
       {...style}
     >
       <TopLine />
-      <Flex justifyContent={"space-between"} w={"100%"}>
+      <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
         <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} />
-        <Dropdown />
+        <NetworkDropdown />
       </Flex>
       <Flex
         pt={"25px"}
@@ -99,22 +125,35 @@ export default function TokenCard(props: TokenCardProps) {
           <Text fontWeight={700}>0</Text>
         </Flex>
         <Flex justifyContent={"space-between"}>
-          <Text
-            // fontSize={36}
+          <Flex
             color={"#222222"}
+            fontSize={28}
             fontWeight={700}
+            w={"110px"}
+            h={"20px"}
           >
-            5000.00
-          </Text>
-          <Button
-            w={"40px"}
-            h={"22px"}
-            bgColor={"#6a00f1"}
-            fontSize={12}
-            fontWeight={700}
-          >
-            Max
-          </Button>
+            {hasInput ? (
+              <TokenInput />
+            ) : (
+              <Text w={"100%"} h={"100%"}>
+                5000.00
+              </Text>
+            )}
+          </Flex>
+          {hasInput && (
+            <Button
+              w={"40px"}
+              h={"22px"}
+              bgColor={"#6a00f1"}
+              fontSize={12}
+              fontWeight={700}
+              _hover={{}}
+              _active={{}}
+              mt={"3px"}
+            >
+              Max
+            </Button>
+          )}
         </Flex>
       </Flex>
     </Flex>

@@ -1,20 +1,23 @@
 import TokenCard from "@/components/card/TokenCard";
-import Dropdown from "@/components/dropdown/Index";
+import NetworkDropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
-import { SelectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { SelectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
 
 export default function InToken() {
   const inTokenInfo = useRecoilValue(SelectedInTokenStatus);
+  const mode = useRecoilValue(actionMode);
 
   return (
     <Flex flexDir={"column"} rowGap={"40px"}>
-      <Text fontSize={36} fontWeight={"semibold"}>
-        Swap
-      </Text>
+      {mode && (
+        <Text fontSize={36} fontWeight={"semibold"}>
+          {mode}
+        </Text>
+      )}
       {inTokenInfo?.tokenName ? (
-        <TokenCard tokenInfo={inTokenInfo} />
+        <TokenCard tokenInfo={inTokenInfo} hasInput={true} />
       ) : (
         <Box
           className="card card-empty"
@@ -24,7 +27,7 @@ export default function InToken() {
           rowGap={"70px"}
         >
           <Flex justifyContent={"flex-end"} pr={"16px"}>
-            <Dropdown />
+            <NetworkDropdown inNetwork={true} />
           </Flex>
           <SearchToken />
         </Box>
