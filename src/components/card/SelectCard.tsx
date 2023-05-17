@@ -1,4 +1,7 @@
-import { InTokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  InTokenModalStatus,
+  SelectedInTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
@@ -25,6 +28,9 @@ import {
   useAnimationControls,
 } from "framer-motion";
 import useUserToken from "@/hooks/user/useUserToken";
+import { TokenInfo } from "@/types/token/supportedToken";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useCustomModal from "@/hooks/modal/useCustomModal";
 
 enum CardOverlay {
   Middle = 100,
@@ -63,6 +69,11 @@ export function SelectCardButton() {
 
 const CardCarrousel = () => {
   const [currentCard, setCurrentCard] = useState<number | null>(null);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    SelectedInTokenStatus
+  );
+  const { onCloseInToken } = useCustomModal();
+
   const { userTokens } = useUserToken();
 
   const sideControl = useAnimation();
@@ -126,29 +137,46 @@ const CardCarrousel = () => {
       };
     }, [currentCard, index]);
 
-  console.log(currentCard);
-
-  const tempData = [
+  const tempData: TokenInfo[] = [
     {
-      tokenName: "TOKEN1",
+      tokenName: "ETH",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
     {
-      tokenName: "TOKEN2",
+      tokenName: "TON",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
     {
-      tokenName: "TOKEN3",
+      tokenName: "WTON",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
     {
-      tokenName: "TOKEN4",
+      tokenName: "TOS",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
     {
-      tokenName: "TOKEN5",
+      tokenName: "USDC",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
     {
-      tokenName: "TOKEN6",
+      tokenName: "AURA",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
     {
-      tokenName: "TOKEN7",
+      tokenName: "LYDA",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
+    },
+    {
+      tokenName: "TOKEN",
+      address: "0x00",
+      chainId: SupportedChainId.GOERLI,
     },
   ];
 
@@ -162,6 +190,7 @@ const CardCarrousel = () => {
       width: 225,
       height: 298,
       rotate: -5,
+      fontSize: 30,
     });
     secondRightControl.start({
       width: 225,
@@ -186,6 +215,7 @@ const CardCarrousel = () => {
       w={"100%"}
       // h={"332px"}
       justifyContent={"center"}
+      pt={"75px"}
     >
       <Button
         onClick={handlePrev}
@@ -201,7 +231,7 @@ const CardCarrousel = () => {
         <Image src={LeftArrow} alt={"LeftArrow"} />
       </Button>
       <Flex overflow={"hidden"} alignItems={"end"} pb={"10px"}>
-        {tempData.map((data, index) => {
+        {tempData.map((tokenData, index) => {
           return (
             <motion.div
               transition={{ duration: 0.5 }}
@@ -222,8 +252,10 @@ const CardCarrousel = () => {
                   ? sideRightControl
                   : outControl
               }
+              onClick={() => setSelectedInToken(tokenData)}
+              key={tokenData.tokenName.toUpperCase()}
             >
-              <TokenCard w={"100%"} h={"100%"} tokenName={String(index)} />
+              <TokenCard w={"100%"} h={"100%"} tokenInfo={tokenData} />
             </motion.div>
           );
         })}
@@ -241,6 +273,7 @@ const CardCarrousel = () => {
       >
         <Image src={RightArrow} alt={"RightArrow"} />
       </Button>
+      <Button onClick={() => onCloseInToken()}>close</Button>
     </Flex>
   );
 };
@@ -252,21 +285,22 @@ const SearchToken = () => {
       h={"42px"}
       borderRadius={"21.5px"}
       placeholder={"Search token name or address"}
+      border={{}}
+      bgColor={"#0F0F12"}
+      _focus={{}}
+      _active={{}}
     ></Input>
   );
 };
 
 export function SelectCardModal() {
-  const [inTokenModal, setInTokenModal] = useRecoilState(InTokenModalStatus);
-  const onClose = () => {
-    setInTokenModal({ isOpen: false, modalData: null });
-  };
+  const { isInTokenOpen, onCloseInToken } = useCustomModal();
 
   return (
     <Modal
-      // isOpen={inTokenModal.isOpen}
-      isOpen={false}
-      onClose={onClose}
+      isOpen={isInTokenOpen}
+      // isOpen={false}
+      onClose={onCloseInToken}
     >
       <ModalOverlay />
       <ModalContent
@@ -287,6 +321,7 @@ export function SelectCardModal() {
           justifyContent={"center"}
           alignItems={"end"}
           bg={"transparent"}
+          // onClick={onClose}
         >
           <Flex
             w={"1362px"}

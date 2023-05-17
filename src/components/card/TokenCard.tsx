@@ -1,11 +1,11 @@
-import { SupportedToken } from "@/types/token/supportedToken";
+import { SupportedToken, TokenInfo } from "@/types/token/supportedToken";
 import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import Dropdown from "../dropdown/Index";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useMemo } from "react";
 
 type TokenCardProps = {
-  tokenName: SupportedToken | string;
+  tokenInfo: TokenInfo;
   w?: string | number;
   h?: string | number;
   style?: {};
@@ -25,7 +25,7 @@ const TopLine = () => {
   );
 };
 
-const TokenTitle = (props: { tokenName: string }) => {
+const TokenTitle = (props: { tokenName: String }) => {
   return (
     <Text
       w={"60px"}
@@ -40,9 +40,9 @@ const TokenTitle = (props: { tokenName: string }) => {
 };
 
 export default function TokenCard(props: TokenCardProps) {
-  const { tokenName, w, h, style } = props;
+  const { tokenInfo, w, h, style } = props;
   const tokenColorCode = useMemo(() => {
-    switch (tokenName as SupportedToken) {
+    switch (tokenInfo?.tokenName) {
       case "ETH":
         return "#222222";
       case "TON":
@@ -62,7 +62,7 @@ export default function TokenCard(props: TokenCardProps) {
       default:
         return "#9e9e9e";
     }
-  }, [tokenName]);
+  }, [tokenInfo]);
 
   return (
     <Flex
@@ -77,11 +77,12 @@ export default function TokenCard(props: TokenCardProps) {
       overflow={"hidden"}
       flexDir={"column"}
       px={"16px"}
+      cursor={"pointer"}
       {...style}
     >
       <TopLine />
       <Flex justifyContent={"space-between"} w={"100%"}>
-        <TokenTitle tokenName={tokenName ?? "TOKEN"} />
+        <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} />
         <Dropdown />
       </Flex>
       <Flex
@@ -90,16 +91,30 @@ export default function TokenCard(props: TokenCardProps) {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <TokenSymbol tokenType={tokenName} />
+        <TokenSymbol tokenType={tokenInfo?.tokenName} />
       </Flex>
       <Flex flexDir={"column"} rowGap={"13px"}>
-        <Flex fontSize={11} h={"8px"}>
-          <Text>Blaance : </Text>
-          <Text>0</Text>
+        <Flex fontSize={11} h={"8px"} color={"#222222"} columnGap={"2px"}>
+          <Text fontWeight={400}>Blaance : </Text>
+          <Text fontWeight={700}>0</Text>
         </Flex>
         <Flex justifyContent={"space-between"}>
-          <Text>5000.00</Text>
-          <Button>Max</Button>
+          <Text
+            // fontSize={36}
+            color={"#222222"}
+            fontWeight={700}
+          >
+            5000.00
+          </Text>
+          <Button
+            w={"40px"}
+            h={"22px"}
+            bgColor={"#6a00f1"}
+            fontSize={12}
+            fontWeight={700}
+          >
+            Max
+          </Button>
         </Flex>
       </Flex>
     </Flex>

@@ -10,6 +10,7 @@ export default function ActionButton() {
       bgColor={"#17181D"}
       _active={{}}
       _hover={{}}
+      color={"#8E8E92"}
     >
       Connect Wallet
     </Button>

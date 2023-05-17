@@ -18,7 +18,9 @@ export default function BridgeSwap() {
         h={"100%"}
       >
         <Swap />
-        <TransactionDetail />
+        <Flex w={"100%"} mt={"32px"} mb={"12px"}>
+          <TransactionDetail />
+        </Flex>
         <ActionButton />
       </Flex>
       <Flex mt={"auto"}>

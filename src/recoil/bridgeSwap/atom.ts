@@ -1,4 +1,5 @@
 import { SupportedChainProperties } from "@/types/network/supportedNetwork";
+import { TokenInfo } from "@/types/token/supportedToken";
 import { atom } from "recoil";
 
 type SelectTokenModal = {
@@ -14,4 +15,11 @@ export const InTokenModalStatus = atom<InTokenModal>({
     isOpen: false,
     modalData: null,
   },
+});
+
+type SelectedInToken = TokenInfo | null;
+
+export const SelectedInTokenStatus = atom<SelectedInToken>({
+  key: "SelectTokenModalBottomStatus",
+  default: null,
 });

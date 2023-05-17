@@ -25,7 +25,7 @@ export default function ImageSymbol(props: {
 }
 
 export function TokenSymbol(props: {
-  tokenType: SupportedToken | string;
+  tokenType: SupportedToken | String;
   w?: number;
   h?: number;
 }) {
