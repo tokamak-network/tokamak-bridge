@@ -52,6 +52,16 @@ const theme = extendTheme({
         _active: {},
       },
     },
+    Input: {
+      baseStyle: {
+        // Reset button styles
+        borderRadius: "none",
+        boxShadow: "none",
+        fontWeight: "normal",
+        _hover: { backgroundColor: "none" },
+        _active: {},
+      },
+    },
   },
 });
 

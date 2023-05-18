@@ -1,5 +1,5 @@
 import { ImageFileType } from "@/types/style/imageFileType";
-import { SupportedToken } from "@/types/token/supportedToken";
+import { SupportedTokenName } from "@/types/token/SupportedToken";
 import { Box, Flex } from "@chakra-ui/layout";
 import Image from "next/image";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
@@ -25,7 +25,7 @@ export default function ImageSymbol(props: {
 }
 
 export function TokenSymbol(props: {
-  tokenType: SupportedToken | String;
+  tokenType: SupportedTokenName | String;
   w?: number;
   h?: number;
 }) {

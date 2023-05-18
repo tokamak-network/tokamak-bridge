@@ -7,7 +7,7 @@ export default function SelectNetwork() {
     <Flex pos={"relative"} className="go" w={"193px"} h={"100%"}>
       <Flex className="first-layer" zIndex={100}>
         <Box
-          className="card card-empty"
+          w={"100%"}
           pt={"15px"}
           display={"flex"}
           flexDir={"column"}

@@ -12,13 +12,15 @@ import { useRecoilValue } from "recoil";
 export default function Swap() {
   const mode = useRecoilValue(actionMode);
 
+  console.log(mode);
+
   return (
-    <Flex columnGap={"24px"}>
+    <Flex w={"100%"} justifyContent={"space-between"} columnGap={"24px"}>
       <InToken />
       <Flex
         justifyContent={"center"}
         alignItems={"center"}
-        pt={actionMode ? "115px" : 0}
+        pt={mode === null ? 0 : "115px"}
       >
         <Image src={ArrowImg} alt={"arrow"} />
       </Flex>

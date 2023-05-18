@@ -32,6 +32,7 @@ export default function Header() {
       alignItems={"center"}
       mt={"22px"}
       px={"40px"}
+      pos={"absolute"}
     >
       <Flex columnGap={"35px"}>
         <Box>

@@ -14,8 +14,6 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
   const { inNetwork } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
 
-  console.log(network);
-
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value: SupportedChainProperties["chainId"] = Number(
       event.target.value

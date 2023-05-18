@@ -56,8 +56,8 @@ const AccodionItem = () => {
 
   return (
     <AccordionItem
-      borderColor={"#1F2128"}
-      bgColor={"#1F2128"}
+      borderColor={"#17181D"}
+      bgColor={"#17181D"}
       h={isExpended ? "230px" : "100%"}
       px={"24px"}
       pb={isExpended ? "20px" : 0}
@@ -97,7 +97,7 @@ const AccodionItem = () => {
 
 export default function TransactionDetail() {
   return (
-    <Flex w={"100%"} minH={"48px"} bg={"#1F2128"} borderRadius={"8px"}>
+    <Flex w={"100%"} minH={"48px"} bg={"#17181D"} borderRadius={"8px"}>
       <Accordion allowToggle w={"100%"} h={"100%"} bg={"#17181D"}>
         <AccodionItem />
       </Accordion>

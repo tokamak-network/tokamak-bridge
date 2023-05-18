@@ -28,7 +28,7 @@ import {
   useAnimationControls,
 } from "framer-motion";
 import useUserToken from "@/hooks/user/useUserToken";
-import { TokenInfo } from "@/types/token/supportedToken";
+import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useCustomModal from "@/hooks/modal/useCustomModal";
 
@@ -126,7 +126,7 @@ const CardCarrousel = () => {
         minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
         left:
           atSide && !atSideRight
-            ? "85px"
+            ? "95px"
             : atSideRight
             ? "-85px"
             : atSecond && !atSecondRight
@@ -136,49 +136,6 @@ const CardCarrousel = () => {
             : "0px",
       };
     }, [currentCard, index]);
-
-  const tempData: TokenInfo[] = [
-    {
-      tokenName: "ETH",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "TON",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "WTON",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "TOS",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "USDC",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "AURA",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "LYDA",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-    {
-      tokenName: "TOKEN",
-      address: "0x00",
-      chainId: SupportedChainId.GOERLI,
-    },
-  ];
 
   useEffect(() => {
     middleControl.start({
@@ -213,9 +170,10 @@ const CardCarrousel = () => {
     <Flex
       alignItems={"end"}
       w={"100%"}
-      // h={"332px"}
       justifyContent={"center"}
       pt={"75px"}
+      pl={"165px"}
+      pr={"171px"}
     >
       <Button
         onClick={handlePrev}
@@ -226,12 +184,19 @@ const CardCarrousel = () => {
         _active={{}}
         _hover={{}}
         p={0}
+        m={0}
         borderRadius={100}
+        mb={"70px"}
       >
         <Image src={LeftArrow} alt={"LeftArrow"} />
       </Button>
-      <Flex overflow={"hidden"} alignItems={"end"} pb={"10px"}>
-        {tempData.map((tokenData, index) => {
+      <Flex
+        overflow={"hidden"}
+        alignItems={"end"}
+        pb={"10px"}
+        justifyContent={"center"}
+      >
+        {supportedTokens.map((tokenData, index) => {
           return (
             <motion.div
               transition={{ duration: 0.5 }}
@@ -261,6 +226,7 @@ const CardCarrousel = () => {
                 w={"100%"}
                 h={"100%"}
                 tokenInfo={tokenData}
+                inNetwork={true}
                 hasInput={false}
               />
             </motion.div>
@@ -277,10 +243,11 @@ const CardCarrousel = () => {
         _hover={{}}
         p={0}
         borderRadius={100}
+        mb={"70px"}
       >
         <Image src={RightArrow} alt={"RightArrow"} />
       </Button>
-      <Button onClick={() => onCloseInToken()}>close</Button>
+      {/* <Button onClick={() => onCloseInToken()}>close</Button> */}
     </Flex>
   );
 };
@@ -341,7 +308,16 @@ export function SelectCardModal() {
             backgroundImage={BgImage}
           >
             <Flex pos={"absolute"}>
-              <Image src={BgImage} alt={"CloseIcon"}></Image>
+              <Image
+                src={BgImage}
+                alt={"CloseIcon"}
+                style={{
+                  minWidth: "1362px",
+                  width: "1362px",
+                  minHeight: "486px",
+                  height: "486px",
+                }}
+              ></Image>
             </Flex>
             <CardCarrousel />
             <SearchToken />

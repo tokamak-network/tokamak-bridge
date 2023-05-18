@@ -20,7 +20,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <ChakraProvidersForNextJs>
           <RecoilRoot>
             <WagmiProviders>

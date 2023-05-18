@@ -1,6 +1,7 @@
 import { ImageFileType } from "../style/imageFileType";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
 import SYMBOL_TON from "assets/tokens/ton.svg";
+import { SupportedTokenName } from "@/types/token/supportedToken";
 
 export enum SupportedChainId {
   MAINNET = 1,
@@ -23,27 +24,31 @@ export interface SupportedChainProperties {
   chainName: string;
   rpcAddress: string;
   networkImage: ImageFileType;
+  nativeToken: SupportedTokenName;
   isTokamak?: boolean;
 }
 
 export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.MAINNET,
-    chainName: "Ethereum",
+    chainName: "Ethereum Mainnet",
     networkImage: SYMBOL_ETH,
     rpcAddress: "",
+    nativeToken: "ETH",
   },
   {
     chainId: SupportedChainId.GOERLI,
     chainName: "Goerli",
     networkImage: SYMBOL_ETH,
     rpcAddress: "",
+    nativeToken: "ETH",
   },
   {
     chainId: SupportedChainId.TOKAMAK_MAINNET,
-    chainName: "Tokamak_Mainnet",
+    chainName: "Tokamak Network",
     networkImage: SYMBOL_TON,
     rpcAddress: "",
+    nativeToken: "TON",
     isTokamak: true,
   },
   {
@@ -51,6 +56,7 @@ export const supportedChain: SupportedChainProperties[] = [
     chainName: "Tokamak_Goerli",
     networkImage: SYMBOL_TON,
     rpcAddress: "",
+    nativeToken: "TON",
     isTokamak: true,
   },
 ];

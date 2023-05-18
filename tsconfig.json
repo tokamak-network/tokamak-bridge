@@ -27,7 +27,8 @@
       "@/page/*": ["page/*"],
       "@/bridgeSwap/*": ["app/BridgeSwap/*"],
       "@/abis/*": ["constant/abis/*"],
-      "@/css/*": ["css/*"]
+      "@/css/*": ["css/*"],
+      "@/contracts/*": ["constant/contracts/*"]
     },
     "plugins": [
       {

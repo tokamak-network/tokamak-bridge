@@ -1,4 +1,4 @@
-import { SupportedToken, TokenInfo } from "@/types/token/supportedToken";
+import { SupportedTokenName, TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import NetworkDropdown from "../dropdown/Index";
 import { TokenSymbol } from "../image/TokenSymbol";
@@ -11,8 +11,9 @@ type TokenCardProps = {
   tokenInfo: TokenInfo;
   w?: string | number;
   h?: string | number;
-  style?: {};
   hasInput: boolean;
+  inNetwork: boolean;
+  style?: {};
 };
 
 const TopLine = () => {
@@ -55,7 +56,7 @@ const TokenInput = () => {
       w={"100%"}
       h={"35px"}
       border={{}}
-      _focus={{}}
+      _focus={{ borderColor: "none", boxShadow: "none !important" }}
       _active={{}}
       p={0}
       onChange={onChange}
@@ -66,7 +67,7 @@ const TokenInput = () => {
 };
 
 export default function TokenCard(props: TokenCardProps) {
-  const { tokenInfo, w, h, hasInput, style } = props;
+  const { tokenInfo, w, h, hasInput, inNetwork, style } = props;
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenName) {
       case "ETH":
@@ -100,8 +101,10 @@ export default function TokenCard(props: TokenCardProps) {
       borderRadius={"16px"}
       pos={"relative"}
       pt={"15px"}
+      pb={"32px"}
       overflow={"hidden"}
       flexDir={"column"}
+      justifyContent={"space-between"}
       px={"16px"}
       cursor={"pointer"}
       {...style}
@@ -109,11 +112,11 @@ export default function TokenCard(props: TokenCardProps) {
       <TopLine />
       <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
         <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} />
-        <NetworkDropdown />
+        {hasInput && <NetworkDropdown inNetwork={inNetwork} />}
       </Flex>
       <Flex
-        pt={"25px"}
-        pb={"37px"}
+        // pt={"25px"}
+        // pb={"37px"}
         justifyContent={"center"}
         alignItems={"center"}
       >
@@ -129,7 +132,7 @@ export default function TokenCard(props: TokenCardProps) {
             color={"#222222"}
             fontSize={28}
             fontWeight={700}
-            w={"110px"}
+            w={hasInput ? "110px" : "100%"}
             h={"20px"}
           >
             {hasInput ? (
