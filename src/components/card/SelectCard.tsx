@@ -6,6 +6,7 @@ import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
+import CloseIcon from "assets/icons/close.svg";
 
 import {
   Modal,
@@ -60,6 +61,7 @@ export function SelectCardButton() {
         fontSize={24}
         fontWeight={"semibold"}
         zIndex={100}
+        mt={"10px"}
       >
         Select Token
       </Text>
@@ -247,23 +249,34 @@ const CardCarrousel = () => {
       >
         <Image src={RightArrow} alt={"RightArrow"} />
       </Button>
-      {/* <Button onClick={() => onCloseInToken()}>close</Button> */}
     </Flex>
   );
 };
 
 const SearchToken = () => {
+  const { onCloseInToken } = useCustomModal();
+
   return (
-    <Input
-      w={"430px"}
-      h={"42px"}
-      borderRadius={"21.5px"}
-      placeholder={"Search token name or address"}
-      border={{}}
-      bgColor={"#0F0F12"}
-      _focus={{}}
-      _active={{}}
-    ></Input>
+    <Flex w={"100%"} justifyContent={"center"} pos={"relative"}>
+      <Input
+        w={"430px"}
+        h={"42px"}
+        borderRadius={"21.5px"}
+        placeholder={"Search token name or address"}
+        border={{}}
+        bgColor={"#0F0F12"}
+        _focus={{}}
+        _active={{}}
+      ></Input>
+      <Box pos={"absolute"} right={"69px"}>
+        <Image
+          src={CloseIcon}
+          alt={"close"}
+          style={{ cursor: "pointer" }}
+          onClick={() => onCloseInToken()}
+        />
+      </Box>
+    </Flex>
   );
 };
 
