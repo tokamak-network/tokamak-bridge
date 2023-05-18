@@ -1,15 +1,14 @@
 import { Center, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import WALLET_ICON from "assets/icons/wallet.svg";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import { useMemo } from "react";
+import useConnectWallet from "@/hooks/account/useConnectWallet";
 
 export default function Account() {
-  const { connector, isConnected, address } = useAccount();
-  const { connect, connectors, error, isLoading, pendingConnector } =
-    useConnect();
-  const { disconnect } = useDisconnect();
+  const { isConnected, address } = useAccount();
+  const { connetAndDisconntWallet } = useConnectWallet();
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
@@ -28,9 +27,7 @@ export default function Account() {
        * index 1 = coinbase wallet
        * index 2 = wallet injected like wallet connet
        */
-      onClick={() =>
-        isConnected ? disconnect() : connect({ connector: connectors[0] })
-      }
+      onClick={() => connetAndDisconntWallet()}
     >
       <Image src={WALLET_ICON} alt={""} />
       <Text>{buttonText}</Text>

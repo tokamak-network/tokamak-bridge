@@ -4,9 +4,12 @@ import { TokenInfo } from "@/types/token/supportedToken";
 import { BigNumberish } from "ethers";
 import { atom, selector } from "recoil";
 
-export const networkStatus = atom<InOutNetworks | null>({
+export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
-  default: null,
+  default: {
+    inNetwork: null,
+    outNetwork: null,
+  },
 });
 
 export const actionMode = selector<ActionMode>({

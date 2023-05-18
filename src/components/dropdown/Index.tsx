@@ -14,6 +14,8 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
   const { inNetwork } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
 
+  console.log(network);
+
   const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value: SupportedChainProperties["chainId"] = Number(
       event.target.value
@@ -21,23 +23,10 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
     const selectedWork = supportedChain.filter((supportedChain) => {
       return supportedChain.chainId === value;
     });
-    if (network) {
-      if (inNetwork === true) {
-        return setNetwork({ ...network, inNetwork: selectedWork[0] });
-      }
-      return setNetwork({ ...network, outNetwork: selectedWork[0] });
-    } else {
-      if (inNetwork === true) {
-        return setNetwork({
-          outNetwork: null,
-          inNetwork: selectedWork[0],
-        });
-      }
-      return setNetwork({
-        inNetwork: null,
-        outNetwork: selectedWork[0],
-      });
+    if (inNetwork === true) {
+      return setNetwork({ ...network, inNetwork: selectedWork[0] });
     }
+    return setNetwork({ ...network, outNetwork: selectedWork[0] });
   };
 
   return (
@@ -47,7 +36,7 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
       bgColor={"#1f2128"}
       _first={{ alignItems: "end" }}
       onChange={onChange}
-      defaultValue={network?.chainId}
+      // defaultValue={network?.chainId}
     >
       {supportedChain.map((chainInfo) => {
         return (
