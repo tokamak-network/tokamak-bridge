@@ -1,4 +1,5 @@
 import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { SupportedChainProperties } from "@/types/network/supportedNetwork";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { BigNumberish } from "ethers";
@@ -17,7 +18,13 @@ export const actionMode = selector<ActionMode>({
   get: ({ get }) => {
     const network = get(networkStatus);
     if (network?.inNetwork && network?.outNetwork) {
-      return network.inNetwork === network.outNetwork ? "Swap" : "Deposit";
+      if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
+        return "Withdraw";
+      }
+      if (network.inNetwork === network.outNetwork) {
+        return "Swap";
+      }
+      return "Deposit";
     }
     return null;
   },

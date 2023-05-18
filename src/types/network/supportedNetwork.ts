@@ -14,6 +14,7 @@ export enum SupportedChainId {
   //   CELO = 42220,
   //   CELO_ALFAJORES = 44787,
   //   BNB = 56,
+  TOKAMAK_MAINNET = 5051,
   TOKAMAK_OPTIMISM_GOERLI = 5050,
 }
 
@@ -22,6 +23,7 @@ export interface SupportedChainProperties {
   chainName: string;
   rpcAddress: string;
   networkImage: ImageFileType;
+  isTokamak?: boolean;
 }
 
 export const supportedChain: SupportedChainProperties[] = [
@@ -38,9 +40,17 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
   },
   {
+    chainId: SupportedChainId.TOKAMAK_MAINNET,
+    chainName: "Tokamak_Mainnet",
+    networkImage: SYMBOL_TON,
+    rpcAddress: "",
+    isTokamak: true,
+  },
+  {
     chainId: SupportedChainId.TOKAMAK_OPTIMISM_GOERLI,
     chainName: "Tokamak_Goerli",
     networkImage: SYMBOL_TON,
     rpcAddress: "",
+    isTokamak: true,
   },
 ];
