@@ -75,8 +75,10 @@ export default function OutToken() {
           style={{ cursor: "pointer" }}
         />
       </Flex>
-      {mode === "Swap" && <SearchTokenComponent />}
-      {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
+      <Flex className="card-wrapper">
+        {mode === "Swap" && <SearchTokenComponent />}
+        {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
+      </Flex>
     </Flex>
   );
 }

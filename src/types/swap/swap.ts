@@ -11,3 +11,5 @@ export enum WrapType {
   WRAP,
   UNWRAP,
 }
+
+export type Field = "INPUT" | "OUTPUT";

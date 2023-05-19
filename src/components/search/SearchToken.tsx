@@ -2,7 +2,7 @@ import { Flex, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import ICON_SEARCH from "assets/icons/search.svg";
 
-export default function SearchToken() {
+export default function SearchToken(props: { onClick?: () => any }) {
   return (
     <Flex
       flexDir={"column"}
@@ -10,7 +10,9 @@ export default function SearchToken() {
       alignItems={"center"}
       rowGap={"14px"}
       w={"100%"}
+      h={"100%"}
       cursor={"pointer"}
+      onClick={props?.onClick}
     >
       <Text fontSize={20} fontWeight={"semibold"}>
         Search Tokens

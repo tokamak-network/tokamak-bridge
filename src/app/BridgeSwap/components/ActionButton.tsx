@@ -6,7 +6,7 @@ import { useAccount } from "wagmi";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
-  const { connetAndDisconntWallet } = useConnectWallet();
+  const { connectToWallet } = useConnectWallet();
   const mode = useRecoilValue(actionMode);
 
   return (
@@ -19,10 +19,10 @@ export default function ActionButton() {
       _active={{}}
       _hover={{}}
       color={"#8E8E92"}
-      onClick={() => connetAndDisconntWallet()}
+      onClick={() => !isConnected && connectToWallet()}
     >
       {!isConnected && "Connect Wallet"}
-      {isConnected && mode !== null && mode}
+      {isConnected && mode === null ? "Select Network" : mode}
     </Button>
   );
 }

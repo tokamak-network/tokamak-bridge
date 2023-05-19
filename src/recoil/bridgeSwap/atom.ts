@@ -1,7 +1,8 @@
 import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { SupportedChainProperties } from "@/types/network/supportedNetwork";
-import { TokenInfo } from "@/types/token/supportedToken";
+import { Field } from "@/types/swap/swap";
+import { TokenInfo } from "types/token/supportedToken";
 import { BigNumberish } from "ethers";
 import { atom, selector } from "recoil";
 
@@ -31,16 +32,14 @@ export const actionMode = selector<ActionMode>({
 });
 
 type SelectTokenModal = {
-  isOpen: boolean;
+  isOpen: Field | null;
   modalData?: any;
 };
 
-type InTokenModal = SelectTokenModal;
-
-export const InTokenModalStatus = atom<InTokenModal>({
-  key: "SelectTokenModalBottomStatus",
+export const tokenModalStatus = atom<SelectTokenModal>({
+  key: "tokenModalStatus",
   default: {
-    isOpen: false,
+    isOpen: null,
     modalData: null,
   },
 });
@@ -49,7 +48,12 @@ type SelectedInToken = TokenInfo & {
   amountBN: BigInt | null;
 };
 
-export const SelectedInTokenStatus = atom<SelectedInToken | null>({
+export const selectedInTokenStatus = atom<SelectedInToken | null>({
   key: "selectedInTokenStatus",
+  default: null,
+});
+
+export const selectedOutTokenStatus = atom<SelectedInToken | null>({
+  key: "selectedOutTokenStatus",
   default: null,
 });

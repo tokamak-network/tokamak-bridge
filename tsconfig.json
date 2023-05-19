@@ -28,7 +28,8 @@
       "@/bridgeSwap/*": ["app/BridgeSwap/*"],
       "@/abis/*": ["constant/abis/*"],
       "@/css/*": ["css/*"],
-      "@/contracts/*": ["constant/contracts/*"]
+      "@/contracts/*": ["constant/contracts/*"],
+      "@/bridgeComponent/*": ["app/BridgeSwap/components/*"]
     },
     "plugins": [
       {

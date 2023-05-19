@@ -1,34 +1,37 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import "@/css/bridgeSwap/selectNetwork.css";
 import NetworkDropdown from "@/components/dropdown/Index";
+import TokenInput from "@/components/input/TokenInput";
 
 export default function SelectNetwork() {
   return (
-    <Flex pos={"relative"} className="go" w={"193px"} h={"100%"}>
-      <Flex className="first-layer" zIndex={100}>
-        <Box
-          w={"100%"}
-          pt={"15px"}
-          display={"flex"}
-          flexDir={"column"}
-          rowGap={"70px"}
-        >
-          <Flex justifyContent={"flex-end"} pr={"16px"}>
-            <NetworkDropdown inNetwork={false} />
-          </Flex>
-          <Flex
+    <Flex pos={"relative"} className="card-wrapper">
+      <NetworkDropdown inNetwork={false} />
+      <Flex w={"224px"} h={"248px"} pos={"relative"} mt={"12px"} mb={"16px"}>
+        <Flex className="first-layer" zIndex={100}>
+          <Box
             w={"100%"}
-            justifyContent={"center"}
-            fontSize={20}
-            fontWeight={500}
+            h={"100%"}
+            display={"flex"}
+            flexDir={"column"}
+            rowGap={"70px"}
           >
-            <Text>Search Network</Text>
-          </Flex>
-        </Box>
+            <Flex
+              w={"100%"}
+              h={"100%"}
+              alignItems={"center"}
+              justifyContent={"center"}
+              fontSize={20}
+              fontWeight={500}
+            >
+              <Text>Search Network</Text>
+            </Flex>
+          </Box>
+        </Flex>
+        <Box className={"second-layer"} />
+        <Box className={"third-layer"} />
       </Flex>
-      <Box className={"second-layer"} />
-      <Box className={"third-layer"} />
-      <Box className={"last-layer"} />
+      <TokenInput />
     </Flex>
   );
 }

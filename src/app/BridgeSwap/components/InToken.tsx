@@ -1,15 +1,17 @@
 import TokenCard from "@/components/card/TokenCard";
 import NetworkDropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
-import useCustomModal from "@/hooks/modal/useCustomModal";
-import { SelectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
+import CardWrapper from "@/bridgeComponent/CardWrapper";
+import TokenInput from "@/components/input/TokenInput";
 
 export default function InToken() {
-  const inTokenInfo = useRecoilValue(SelectedInTokenStatus);
+  const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const mode = useRecoilValue(actionMode);
-  const { onOpenInToken } = useCustomModal();
+  const { onOpenInToken } = useTokenModal();
 
   return (
     <Flex flexDir={"column"} rowGap={"40px"}>
@@ -18,23 +20,30 @@ export default function InToken() {
           {mode}
         </Text>
       )}
-      {inTokenInfo?.tokenName ? (
-        <TokenCard tokenInfo={inTokenInfo} hasInput={true} inNetwork={true} />
-      ) : (
-        <Box
-          className="card card-empty"
-          pt={"15px"}
-          display={"flex"}
-          flexDir={"column"}
-          rowGap={"70px"}
-          onClick={() => onOpenInToken()}
-        >
-          <Flex justifyContent={"flex-end"} pr={"16px"}>
-            <NetworkDropdown inNetwork={true} />
-          </Flex>
-          <SearchToken />
+      <Flex className="card-wrapper">
+        <NetworkDropdown inNetwork={true} />
+        <Box w={"200px"} h={"248px"} mt={"12px"} mb={"16px"}>
+          {inTokenInfo?.tokenName ? (
+            <TokenCard
+              tokenInfo={inTokenInfo}
+              hasInput={true}
+              inNetwork={true}
+            />
+          ) : (
+            <Box
+              className="card card-empty"
+              display={"flex"}
+              flexDir={"column"}
+              rowGap={"70px"}
+              w={"100%"}
+              h={"100%"}
+            >
+              <SearchToken onClick={onOpenInToken} />
+            </Box>
+          )}
         </Box>
-      )}
+        <TokenInput />
+      </Flex>
     </Flex>
   );
 }

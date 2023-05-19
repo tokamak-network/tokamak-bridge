@@ -4,7 +4,7 @@ import NetworkDropdown from "../dropdown/Index";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useMemo } from "react";
 import { useRecoilState } from "recoil";
-import { SelectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { ethers } from "ethers";
 
 type TokenCardProps = {
@@ -40,7 +40,7 @@ const TokenTitle = (props: { tokenName: String }) => {
 
 const TokenInput = () => {
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    SelectedInTokenStatus
+    selectedInTokenStatus
   );
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -112,7 +112,6 @@ export default function TokenCard(props: TokenCardProps) {
       <TopLine />
       <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
         <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} />
-        {hasInput && <NetworkDropdown inNetwork={inNetwork} />}
       </Flex>
       <Flex
         // pt={"25px"}

@@ -1,6 +1,6 @@
 import {
-  InTokenModalStatus,
-  SelectedInTokenStatus,
+  inTokenModalStatus,
+  selectedInTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
@@ -31,7 +31,9 @@ import {
 import useUserToken from "@/hooks/user/useUserToken";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import useCustomModal from "@/hooks/modal/useCustomModal";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import { Field } from "@/types/swap/swap";
+import { Overlay_Index } from "@/types/style/overlayIndex";
 
 enum CardOverlay {
   Middle = 100,
@@ -39,8 +41,9 @@ enum CardOverlay {
   Sides = 80,
 }
 
-export function SelectCardButton() {
-  const { onOpenInToken } = useCustomModal();
+export function SelectCardButton(props: { field: Field }) {
+  const { field } = props;
+  const { onOpenInToken, onOpenOutToken } = useTokenModal();
   return (
     <Flex
       w={"562px"}
@@ -48,8 +51,9 @@ export function SelectCardButton() {
       alignItems={"center"}
       justifyContent={"center"}
       cursor={"pointer"}
-      onClick={() => onOpenInToken()}
+      onClick={() => (field === "INPUT" ? onOpenInToken() : onOpenOutToken())}
       pos={"relative"}
+      // zIndex={Overlay_Index}
     >
       <Image
         src={BgImageButton}
@@ -72,9 +76,9 @@ export function SelectCardButton() {
 const CardCarrousel = () => {
   const [currentCard, setCurrentCard] = useState<number | null>(null);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    SelectedInTokenStatus
+    selectedInTokenStatus
   );
-  const { onCloseInToken } = useCustomModal();
+  const { onCloseTokenModal } = useTokenModal();
 
   const { userTokens } = useUserToken();
 
@@ -254,7 +258,7 @@ const CardCarrousel = () => {
 };
 
 const SearchToken = () => {
-  const { onCloseInToken } = useCustomModal();
+  const { onCloseTokenModal } = useTokenModal();
 
   return (
     <Flex w={"100%"} justifyContent={"center"} pos={"relative"}>
@@ -273,7 +277,7 @@ const SearchToken = () => {
           src={CloseIcon}
           alt={"close"}
           style={{ cursor: "pointer" }}
-          onClick={() => onCloseInToken()}
+          onClick={() => onCloseTokenModal()}
         />
       </Box>
     </Flex>
@@ -281,13 +285,13 @@ const SearchToken = () => {
 };
 
 export function SelectCardModal() {
-  const { isInTokenOpen, onCloseInToken } = useCustomModal();
+  const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
 
   return (
     <Modal
-      isOpen={isInTokenOpen}
+      isOpen={isInTokenOpen || isOutTokenOpen}
       // isOpen={false}
-      onClose={onCloseInToken}
+      onClose={useTokenModal}
     >
       <ModalOverlay />
       <ModalContent

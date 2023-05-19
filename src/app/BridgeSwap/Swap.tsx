@@ -12,10 +12,8 @@ import { useRecoilValue } from "recoil";
 export default function Swap() {
   const mode = useRecoilValue(actionMode);
 
-  console.log(mode);
-
   return (
-    <Flex w={"100%"} justifyContent={"space-between"} columnGap={"24px"}>
+    <Flex w={"100%"} justifyContent={"space-between"} columnGap={"14.6px"}>
       <InToken />
       <Flex
         justifyContent={"center"}
