@@ -1,6 +1,6 @@
 import {
-  inTokenModalStatus,
   selectedInTokenStatus,
+  selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
@@ -78,7 +78,10 @@ const CardCarrousel = () => {
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
-  const { onCloseTokenModal } = useTokenModal();
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
+  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
 
   const { userTokens } = useUserToken();
 
@@ -224,7 +227,9 @@ const CardCarrousel = () => {
                   : outControl
               }
               onClick={() =>
-                setSelectedInToken({ ...tokenData, amountBN: null })
+                isInTokenOpen
+                  ? setSelectedInToken({ ...tokenData, amountBN: null })
+                  : setSelectedOutToken({ ...tokenData, amountBN: null })
               }
               key={tokenData.tokenName.toUpperCase()}
             >

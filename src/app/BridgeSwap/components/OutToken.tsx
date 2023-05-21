@@ -4,11 +4,13 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import SettingIcon from "assets/icons/setting.svg";
 import { useRecoilValue } from "recoil";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
+import { actionMode, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
 import useNetwork from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
 import TokenInput from "@/components/input/TokenInput";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import TokenCard from "@/components/card/TokenCard";
 
 const SelectedNetwork = () => {
   const { inNetwork, outNetwork } = useNetwork();
@@ -36,14 +38,28 @@ const SelectedNetwork = () => {
 };
 
 const SearchTokenComponent = () => {
+  const { onOpenOutToken } = useTokenModal();
+  const outToeknInfo = useRecoilValue(selectedOutTokenStatus);
+
+  if (outToeknInfo?.tokenName) {
+    return (
+      <TokenCard
+        tokenInfo={outToeknInfo}
+        hasInput={true}
+        inNetwork={false}
+        style={{ marginTop: "12px" }}
+      />
+    );
+  }
   return (
     <Box
       className="card card-empty"
       display={"flex"}
       flexDir={"column"}
       rowGap={"70px"}
+      mt={"12px"}
     >
-      <SearchToken />
+      <SearchToken onClick={onOpenOutToken} />
     </Box>
   );
 };
@@ -68,7 +84,7 @@ export default function OutToken() {
         <NetworkDropdown inNetwork={false} />
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
-        <TokenInput style={{ marginTop: "16px" }} />
+        {mode === "Swap" && <TokenInput style={{ marginTop: "16px" }} />}
       </Flex>
     </Flex>
   );

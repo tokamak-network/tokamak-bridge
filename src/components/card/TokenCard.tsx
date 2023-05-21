@@ -126,7 +126,7 @@ export default function TokenCard(props: TokenCardProps) {
           <Text fontWeight={400}>Blaance : </Text>
           <Text fontWeight={700}>0</Text>
         </Flex>
-        <Flex justifyContent={"space-between"}>
+        {/* <Flex justifyContent={"space-between"}>
           <Flex
             color={"#222222"}
             fontSize={28}
@@ -142,7 +142,7 @@ export default function TokenCard(props: TokenCardProps) {
               </Text>
             )}
           </Flex>
-        </Flex>
+        </Flex> */}
       </Flex>
     </Flex>
   );

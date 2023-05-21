@@ -1,7 +1,52 @@
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import {
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import { ethers } from "ethers";
+import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: { style?: {} }) {
   const { style } = props;
+  const { isInTokenOpen } = useTokenModal();
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
+
+  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    //This token is inToken
+    if (isInTokenOpen && selectedInToken) {
+      const value: string = e.target.value;
+      if (value === "") {
+        return setSelectedInToken({
+          ...selectedInToken,
+          amountBN: null,
+        });
+      }
+      const parsedAmount = ethers.parseUnits(value, selectedInToken.decimals);
+      return setSelectedInToken({ ...selectedInToken, amountBN: parsedAmount });
+    }
+    //This token is outToken
+    if (!isInTokenOpen && selectedOutToken) {
+      const value: string = e.target.value;
+      if (value === "") {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: null,
+        });
+      }
+      const parsedAmount = ethers.parseUnits(value, selectedOutToken.decimals);
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount,
+      });
+    }
+  };
+
   return (
     <Flex flexDir={"column"} rowGap={"16px"} {...style}>
       <Flex justifyContent={"space-between"}>
@@ -17,6 +62,7 @@ export default function TokenInput(props: { style?: {} }) {
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}
+          onChange={onChange}
         ></Input>
         <Button
           w={"40px"}

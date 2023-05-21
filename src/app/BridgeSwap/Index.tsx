@@ -10,9 +10,9 @@ import ActionButton from "./components/ActionButton";
 export default function BridgeSwap() {
   return (
     <Flex flexDir={"column"} w={"496px"} h={"100%"}>
-      <Flex mb={"auto"}>
+      {/* <Flex mb={"auto"}>
         <SelectCardButton field="OUTPUT" />
-      </Flex>
+      </Flex> */}
       <Flex
         flexDir={"column"}
         alignItems={"center"}
@@ -26,9 +26,9 @@ export default function BridgeSwap() {
         </Flex>
         <ActionButton />
       </Flex>
-      <Flex mt={"auto"}>
+      {/* <Flex mt={"auto"}>
         <SelectCardButton field="INPUT" />
-      </Flex>
+      </Flex> */}
       <SelectCardModal />
     </Flex>
   );
