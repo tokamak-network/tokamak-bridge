@@ -8,7 +8,7 @@ import WTON from "@/abis/WTON.json";
 import TOS from "@/abis/TOS.json";
 import contracts from "@/constant/contracts";
 
-export function useCallContract(ERC20_ADDRESS?: `ox${string}`) {
+function useTokenContract() {
   const {
     MAINNET_CONTRACTS,
     GOERLI_CONTRACTS,
@@ -31,5 +31,22 @@ export function useCallContract(ERC20_ADDRESS?: `ox${string}`) {
     abi: TON.abi,
   });
 
-  return { TON_CONTRACT };
+  const Token_Contracts = { TON_CONTRACT, WTON_CONTRACT, TOS_CONTRACT };
+
+  return { Token_Contracts };
+}
+
+function useDepositContract() {
+  const {
+    MAINNET_CONTRACTS,
+    GOERLI_CONTRACTS,
+    TOKAMAK_CONTRACTS,
+    TOKAMAK_GOERLI_CONTRACTS,
+  } = contracts;
+}
+
+export function useCallContract() {
+  const { Token_Contracts } = useTokenContract();
+
+  return { Token_Contracts };
 }

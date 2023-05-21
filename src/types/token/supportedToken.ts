@@ -65,7 +65,7 @@ export const supportedTokens: SupportedTokens_T = [
       TOKAMAK_OPTIMISM_GOERLI: null,
     },
     decimals: 18,
-    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
+    isNativeCurrency: null,
   },
   {
     tokenName: "DOC",
@@ -76,7 +76,7 @@ export const supportedTokens: SupportedTokens_T = [
       TOKAMAK_OPTIMISM_GOERLI: null,
     },
     decimals: 18,
-    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
+    isNativeCurrency: null,
   },
   {
     tokenName: "AURA",
@@ -87,7 +87,7 @@ export const supportedTokens: SupportedTokens_T = [
       TOKAMAK_OPTIMISM_GOERLI: null,
     },
     decimals: 18,
-    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
+    isNativeCurrency: null,
   },
   {
     tokenName: "LYDA",
@@ -98,6 +98,6 @@ export const supportedTokens: SupportedTokens_T = [
       TOKAMAK_OPTIMISM_GOERLI: null,
     },
     decimals: 18,
-    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
+    isNativeCurrency: null,
   },
 ];

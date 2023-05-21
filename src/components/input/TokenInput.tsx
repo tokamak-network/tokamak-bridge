@@ -17,7 +17,7 @@ export default function TokenInput(props: { style?: {} }) {
     selectedOutTokenStatus
   );
 
-  const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //This token is inToken
     if (isInTokenOpen && selectedInToken) {
       const value: string = e.target.value;
