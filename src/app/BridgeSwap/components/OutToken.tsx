@@ -8,6 +8,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
 import useNetwork from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
+import TokenInput from "@/components/input/TokenInput";
 
 const SelectedNetwork = () => {
   const { inNetwork, outNetwork } = useNetwork();
@@ -15,30 +16,21 @@ const SelectedNetwork = () => {
   return (
     <Box
       className="card card-empty"
-      pt={"15px"}
       display={"flex"}
       flexDir={"column"}
       rowGap={"28px"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      mt={"15px"}
     >
-      <Flex justifyContent={"flex-end"} pr={"16px"}>
-        <NetworkDropdown inNetwork={false} />
-      </Flex>
-      <Flex
-        flexDir={"column"}
-        alignItems={"center"}
-        fontSize={20}
-        fontWeight={500}
-        rowGap={"18px"}
-      >
-        <ImageSymbol
-          ImgFile={outNetwork?.networkImage as ImageFileType}
-          w={48}
-          h={48}
-        />
-        <Text w={"156px"} maxH={"44px"} textAlign={"center"}>
-          {outNetwork?.chainName}
-        </Text>
-      </Flex>
+      <ImageSymbol
+        ImgFile={outNetwork?.networkImage as ImageFileType}
+        w={48}
+        h={48}
+      />
+      <Text w={"156px"} maxH={"44px"} textAlign={"center"}>
+        {outNetwork?.chainName}
+      </Text>
     </Box>
   );
 };
@@ -47,14 +39,10 @@ const SearchTokenComponent = () => {
   return (
     <Box
       className="card card-empty"
-      pt={"15px"}
       display={"flex"}
       flexDir={"column"}
       rowGap={"70px"}
     >
-      <Flex justifyContent={"flex-end"} pr={"16px"}>
-        <NetworkDropdown inNetwork={false} />
-      </Flex>
       <SearchToken />
     </Box>
   );
@@ -75,9 +63,12 @@ export default function OutToken() {
           style={{ cursor: "pointer" }}
         />
       </Flex>
+
       <Flex className="card-wrapper">
+        <NetworkDropdown inNetwork={false} />
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
+        <TokenInput style={{ marginTop: "16px" }} />
       </Flex>
     </Flex>
   );

@@ -41,8 +41,10 @@ const theme = extendTheme({
         borderRadius: "8px",
       },
       ".card": {
-        width: "208px",
-        height: "270px",
+        minWidth: "200px",
+        minHeight: "248px",
+        maxWidth: "200px",
+        maxHeight: "248px",
       },
       ".card-empty": {
         border: "1px dashed #313442",

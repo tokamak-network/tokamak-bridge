@@ -31,7 +31,7 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
 
   return (
     <Select
-      w={"56px"}
+      w={"200px"}
       h={"32px"}
       bgColor={"#1f2128"}
       _first={{ alignItems: "end" }}

@@ -93,8 +93,8 @@ export default function TokenCard(props: TokenCardProps) {
 
   return (
     <Flex
-      w={typeof w === "string" ? w : `${w ?? 208}px`}
-      height={typeof h === "string" ? h : `${h ?? 270}px`}
+      w={typeof w === "string" ? w : `${w ?? 200}px`}
+      height={typeof h === "string" ? h : `${h ?? 248}px`}
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
       opacity={0.85}
       border={`3px solid ${tokenColorCode} `}
@@ -142,20 +142,6 @@ export default function TokenCard(props: TokenCardProps) {
               </Text>
             )}
           </Flex>
-          {hasInput && (
-            <Button
-              w={"40px"}
-              h={"22px"}
-              bgColor={"#6a00f1"}
-              fontSize={12}
-              fontWeight={700}
-              _hover={{}}
-              _active={{}}
-              mt={"3px"}
-            >
-              Max
-            </Button>
-          )}
         </Flex>
       </Flex>
     </Flex>
