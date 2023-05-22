@@ -57,3 +57,21 @@ export const selectedOutTokenStatus = atom<SelectedInToken | null>({
   key: "selectedOutTokenStatus",
   default: null,
 });
+
+export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
+  key: "inTokenSeletor",
+  get: ({ get }) => {
+    const inTokenStatus = get(selectedInTokenStatus);
+    const inTokenHasAmount = inTokenStatus?.amountBN !== null;
+    return { inTokenHasAmount };
+  },
+});
+
+export const outTokenSelector = selector<{ outTokenHasAmount: boolean }>({
+  key: "outTokenSeletor",
+  get: ({ get }) => {
+    const outTokenStatus = get(selectedOutTokenStatus);
+    const outTokenHasAmount = outTokenStatus?.amountBN !== null;
+    return { outTokenHasAmount };
+  },
+});

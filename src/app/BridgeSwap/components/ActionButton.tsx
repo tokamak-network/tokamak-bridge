@@ -1,8 +1,10 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import {
   actionMode,
+  inTokenSelector,
   networkStatus,
+  outTokenSelector,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
@@ -25,6 +27,8 @@ export default function ActionButton() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
+  const { inTokenHasAmount } = useRecoilValue(inTokenSelector);
+  const { outTokenHasAmount } = useRecoilValue(outTokenSelector);
 
   const { write: _depositETH } = useCallDeposit("depositETH");
   const {
@@ -34,6 +38,16 @@ export default function ActionButton() {
     write: _depositERC20,
   } = useCallDeposit("depositERC20");
   const { write: _withdraw } = useCallWithdraw("withdraw");
+
+  const isDisabled = useMemo(() => {
+    if ((mode === "Deposit" || mode === "Withdraw") && inTokenHasAmount) {
+      return false;
+    }
+    if (mode === "Swap" && inTokenHasAmount && outTokenHasAmount) {
+      return false;
+    }
+    return true;
+  }, [mode, inTokenInfo, outTokenInfo]);
 
   const onClick = useCallback(() => {
     if (!isConnected) {
@@ -52,8 +66,6 @@ export default function ActionButton() {
       const parsedAmount = inTokenInfo.amountBN;
       const { inNetwork, outNetwork } = network;
 
-      console.log(inTokenInfo);
-
       switch (mode) {
         case "Deposit":
           const supportedOutToken = supportedTokens.filter(
@@ -61,14 +73,6 @@ export default function ActionButton() {
           )[0];
           const outTokenAddress =
             supportedOutToken.address[outNetwork.chainName];
-
-          console.log(
-            inTokenInfo.address[inNetwork.chainName],
-            outTokenAddress,
-            parsedAmount,
-            1_300_000,
-            "0x"
-          );
 
           if (isETH) {
             return _depositETH({
@@ -90,9 +94,13 @@ export default function ActionButton() {
           if (isETH) {
             return _withdraw({ args: [] });
           }
-          console.log([inTokenInfo.address, parsedAmount, 2000000, "0x"]);
           return _withdraw({
-            args: [inTokenInfo.address, parsedAmount, 2000000, "0x"],
+            args: [
+              inTokenInfo.address[inNetwork.chainName],
+              parsedAmount,
+              200000000,
+              "0x",
+            ],
           });
         case "Swap":
           return;
@@ -108,10 +116,11 @@ export default function ActionButton() {
       h={"48px"}
       fontSize={16}
       fontWeight={600}
-      bgColor={"#17181D"}
+      bgColor={isDisabled ? "#17181D" : "#007AFF"}
       _active={{}}
       _hover={{}}
-      color={"#8E8E92"}
+      color={isDisabled ? "#8E8E92" : "#fff"}
+      isDisabled={isDisabled}
       onClick={onClick}
     >
       {!isConnected && "Connect Wallet"}
