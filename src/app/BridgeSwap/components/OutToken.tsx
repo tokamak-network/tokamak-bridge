@@ -65,7 +65,7 @@ const SearchTokenComponent = () => {
 };
 
 export default function OutToken() {
-  const mode = useRecoilValue(actionMode);
+  const { mode } = useRecoilValue(actionMode);
 
   return (
     <Flex flexDir={"column"} rowGap={"40px"}>

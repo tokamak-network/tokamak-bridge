@@ -17,9 +17,6 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
   );
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("go");
-    console.log(e.target.value);
-
     //This token is inToken
     if (inToken && selectedInToken) {
       const value: string = e.target.value;
@@ -50,16 +47,21 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
   };
 
   return (
-    <Flex flexDir={"column"} rowGap={"16px"} {...style}>
+    <Flex
+      flexDir={"column"}
+      justifyContent={"space-between"}
+      pb={"16px"}
+      {...style}
+    >
       <Flex justifyContent={"space-between"}>
         <Input
           w={"153px"}
-          h={"25px"}
+          h={"27px"}
           m={0}
           p={0}
           border={{}}
           _active={{}}
-          _focus={{}}
+          _focus={{ boxShadow: "none !important" }}
           placeholder="0"
           color={"#ffffff"}
           fontSize={28}

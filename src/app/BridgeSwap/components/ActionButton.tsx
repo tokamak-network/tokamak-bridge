@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import {
   actionMode,
@@ -23,7 +23,7 @@ import { predeploys } from "@eth-optimism/contracts";
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
   const { connectToWallet } = useConnectWallet();
-  const mode = useRecoilValue(actionMode);
+  const { mode, isReady } = useRecoilValue(actionMode);
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
@@ -39,15 +39,7 @@ export default function ActionButton() {
   } = useCallDeposit("depositERC20");
   const { write: _withdraw } = useCallWithdraw("withdraw");
 
-  const isDisabled = useMemo(() => {
-    if ((mode === "Deposit" || mode === "Withdraw") && inTokenHasAmount) {
-      return false;
-    }
-    if (mode === "Swap" && inTokenHasAmount && outTokenHasAmount) {
-      return false;
-    }
-    return true;
-  }, [mode, inTokenInfo, outTokenInfo]);
+  const isDisabled = !isReady;
 
   const onClick = useCallback(() => {
     if (!isConnected) {
@@ -118,9 +110,10 @@ export default function ActionButton() {
       h={"48px"}
       fontSize={16}
       fontWeight={600}
-      bgColor={isDisabled ? "#17181D" : "#007AFF"}
       _active={{}}
       _hover={{}}
+      _disabled={{}}
+      bgColor={isDisabled ? "#17181D" : "#007AFF"}
       color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={isDisabled}
       onClick={onClick}

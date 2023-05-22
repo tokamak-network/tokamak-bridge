@@ -99,7 +99,7 @@ export default function TransactionDetail() {
   return (
     <Flex w={"100%"} minH={"48px"} bg={"#17181D"} borderRadius={"8px"}>
       <Accordion allowToggle w={"100%"} h={"100%"} bg={"#17181D"}>
-        <AccodionItem />
+        <AccodionItem key={"transaction detail"} />
       </Accordion>
     </Flex>
   );

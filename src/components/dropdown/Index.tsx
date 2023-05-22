@@ -22,8 +22,6 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
       return supportedChain.chainId === value;
     });
     if (inNetwork === true) {
-      console.log("true");
-      console.log(selectedWork[0]);
       return setNetwork({ ...network, inNetwork: selectedWork[0] });
     }
     return setNetwork({ ...network, outNetwork: selectedWork[0] });

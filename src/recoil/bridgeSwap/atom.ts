@@ -14,23 +14,6 @@ export const networkStatus = atom<InOutNetworks>({
   },
 });
 
-export const actionMode = selector<ActionMode>({
-  key: "actionMode",
-  get: ({ get }) => {
-    const network = get(networkStatus);
-    if (network?.inNetwork && network?.outNetwork) {
-      if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
-        return "Withdraw";
-      }
-      if (network.inNetwork === network.outNetwork) {
-        return "Swap";
-      }
-      return "Deposit";
-    }
-    return null;
-  },
-});
-
 type SelectTokenModal = {
   isOpen: Field | null;
   modalData?: any;
@@ -62,7 +45,8 @@ export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
   key: "inTokenSeletor",
   get: ({ get }) => {
     const inTokenStatus = get(selectedInTokenStatus);
-    const inTokenHasAmount = inTokenStatus?.amountBN !== null;
+    const inTokenHasAmount =
+      inTokenStatus === null ? false : inTokenStatus?.amountBN !== null;
     return { inTokenHasAmount };
   },
 });
@@ -71,7 +55,31 @@ export const outTokenSelector = selector<{ outTokenHasAmount: boolean }>({
   key: "outTokenSeletor",
   get: ({ get }) => {
     const outTokenStatus = get(selectedOutTokenStatus);
-    const outTokenHasAmount = outTokenStatus?.amountBN !== null;
+    const outTokenHasAmount =
+      outTokenStatus === null ? false : outTokenStatus?.amountBN !== null;
     return { outTokenHasAmount };
+  },
+});
+
+export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
+  key: "actionMode",
+  get: ({ get }) => {
+    const network = get(networkStatus);
+    const { inTokenHasAmount } = get(inTokenSelector);
+    const { outTokenHasAmount } = get(outTokenSelector);
+
+    if (network?.inNetwork && network?.outNetwork) {
+      const isInTokenReady = inTokenHasAmount;
+      const isOutTokenReady = inTokenHasAmount;
+
+      if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
+        return { mode: "Withdraw", isReady: isInTokenReady };
+      }
+      if (network.inNetwork === network.outNetwork) {
+        return { mode: "Swap", isReady: isInTokenReady && isOutTokenReady };
+      }
+      return { mode: "Deposit", isReady: isInTokenReady };
+    }
+    return { mode: null, isReady: false };
   },
 });
