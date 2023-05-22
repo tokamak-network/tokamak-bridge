@@ -90,18 +90,31 @@ const CardCarrousel = () => {
   const middleControl = useAnimation();
   const outControl = useAnimation();
 
+  console.log("supported tokens", supportedTokens);
+
   const handlePrev = () => {
-    setCurrentCard((prevCard) => (prevCard === null ? 1 : prevCard - 1));
+    setCurrentCard((prevCard) =>
+      prevCard === null || prevCard === 0
+        ? supportedTokens.length - 1
+        : prevCard - 1
+    );
   };
 
   const handleNext = () => {
-    setCurrentCard((prevCard) => (prevCard === null ? 3 : prevCard + 1));
+    setCurrentCard((prevCard) =>
+      prevCard === null || prevCard === supportedTokens.length - 1
+        ? 0
+        : prevCard + 1
+    );
   };
 
   const cardProps = (index: number) =>
     useMemo(() => {
+      console.log("current card", currentCard);
+
       const currentIndex = currentCard === null ? 2 : currentCard;
       const indexVal = currentIndex - index;
+      console.log("indexVal", indexVal);
       const atOut = indexVal > 2 || indexVal < -2;
       const atSide = indexVal === 2 || indexVal === -2;
       const atSideRight = indexVal === -2;
@@ -204,6 +217,7 @@ const CardCarrousel = () => {
         justifyContent={"center"}
       >
         {supportedTokens.map((tokenData, index) => {
+          console.log("index", index);
           return (
             <motion.div
               transition={{ duration: 0.5 }}
