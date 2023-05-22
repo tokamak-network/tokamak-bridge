@@ -18,7 +18,7 @@ import {
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { supportedTokens } from "@/types/token/supportedToken";
-import { ethers } from "ethers";
+import { predeploys } from "@eth-optimism/contracts";
 
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
@@ -92,7 +92,9 @@ export default function ActionButton() {
           });
         case "Withdraw":
           if (isETH) {
-            return _withdraw({ args: [] });
+            return _withdraw({
+              args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
+            });
           }
           return _withdraw({
             args: [
