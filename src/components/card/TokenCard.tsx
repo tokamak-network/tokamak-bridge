@@ -123,7 +123,7 @@ export default function TokenCard(props: TokenCardProps) {
       </Flex>
       <Flex flexDir={"column"} rowGap={"13px"}>
         <Flex fontSize={11} h={"8px"} color={"#222222"} columnGap={"2px"}>
-          <Text fontWeight={400}>Blaance : </Text>
+          <Text fontWeight={400}>Balance : </Text>
           <Text fontWeight={700}>0</Text>
         </Flex>
         {/* <Flex justifyContent={"space-between"}>
