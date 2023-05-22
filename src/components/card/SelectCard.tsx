@@ -1,37 +1,25 @@
 import {
+  networkStatus,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
 
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
 import TokenCard from "./TokenCard";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
-import {
-  motion,
-  useAnimate,
-  useAnimation,
-  useAnimationControls,
-} from "framer-motion";
+import { motion, useAnimation } from "framer-motion";
 import useUserToken from "@/hooks/user/useUserToken";
-import { TokenInfo, supportedTokens } from "types/token/supportedToken";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { supportedTokens } from "types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
-import { Overlay_Index } from "@/types/style/overlayIndex";
 
 enum CardOverlay {
   Middle = 100,
@@ -79,6 +67,8 @@ const CardCarrousel = () => {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+
+  const { inNetwork } = useRecoilValue(networkStatus);
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
 
   const { userTokens } = useUserToken();
