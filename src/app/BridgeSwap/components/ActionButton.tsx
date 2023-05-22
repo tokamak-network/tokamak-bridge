@@ -6,9 +6,8 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
-import { useRecoilValue } from "recoil";
-import { useAccount, useContractWrite } from "wagmi";
-import L1BridgeAbi from "@/abis/L1StandardBridge.json";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useAccount } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useCallBridge from "@/hooks/bridge/useCallBridge";
 
@@ -18,13 +17,6 @@ export default function ActionButton() {
   const mode = useRecoilValue(actionMode);
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
-
-  const L1config = {
-    address: "0x7377F3D0F64d7a54Cf367193eb74a052ff8578FD",
-    abi: L1BridgeAbi,
-  };
-
-  const functionName = "depositETH";
 
   const {
     data: _depositETH_data,

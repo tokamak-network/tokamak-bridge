@@ -22,7 +22,13 @@ export default function InToken() {
       )}
       <Flex className="card-wrapper">
         <NetworkDropdown inNetwork={true} />
-        <Box w={"200px"} h={"248px"} mt={"12px"} mb={"16px"}>
+        <Box
+          w={"200px"}
+          h={"248px"}
+          mt={"12px"}
+          mb={"16px"}
+          onClick={onOpenInToken}
+        >
           {inTokenInfo?.tokenName ? (
             <TokenCard
               tokenInfo={inTokenInfo}
@@ -38,7 +44,7 @@ export default function InToken() {
               w={"100%"}
               h={"100%"}
             >
-              <SearchToken onClick={onOpenInToken} />
+              <SearchToken />
             </Box>
           )}
         </Box>

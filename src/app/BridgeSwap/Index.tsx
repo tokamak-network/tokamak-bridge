@@ -6,6 +6,7 @@ import {
   SelectCardModal,
 } from "@/components/card/SelectCard";
 import ActionButton from "./components/ActionButton";
+import Modals from "./Modals";
 
 export default function BridgeSwap() {
   return (
@@ -29,7 +30,7 @@ export default function BridgeSwap() {
       {/* <Flex mt={"auto"}>
         <SelectCardButton field="INPUT" />
       </Flex> */}
-      <SelectCardModal />
+      <Modals />
     </Flex>
   );
 }
