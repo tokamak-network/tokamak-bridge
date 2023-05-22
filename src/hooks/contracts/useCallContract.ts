@@ -6,16 +6,14 @@ import { getContract, getWalletClient } from "@wagmi/core";
 import TON from "@/abis/TON.json";
 import WTON from "@/abis/WTON.json";
 import TOS from "@/abis/TOS.json";
-import contracts from "@/constant/contracts";
+import {
+  MAINNET_CONTRACTS,
+  GOERLI_CONTRACTS,
+  TOKAMAK_CONTRACTS,
+  TOKAMAK_GOERLI_CONTRACTS,
+} from "@/constant/contracts";
 
 function useTokenContract() {
-  const {
-    MAINNET_CONTRACTS,
-    GOERLI_CONTRACTS,
-    TOKAMAK_CONTRACTS,
-    TOKAMAK_GOERLI_CONTRACTS,
-  } = contracts;
-
   const TON_CONTRACT = getContract({
     address: GOERLI_CONTRACTS.TON_ADDRESS,
     abi: TON.abi,

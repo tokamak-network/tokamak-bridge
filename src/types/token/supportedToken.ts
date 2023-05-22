@@ -1,5 +1,10 @@
 import { SupportedChainId } from "../network/supportedNetwork";
-import { MAINNET_CONTRACTS, GOERLI_CONTRACTS } from "@/contracts/index";
+import {
+  MAINNET_CONTRACTS,
+  GOERLI_CONTRACTS,
+  TOKAMAK_CONTRACTS,
+  TOKAMAK_GOERLI_CONTRACTS,
+} from "@/contracts/index";
 
 type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH";
 type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
@@ -35,8 +40,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.TON_ADDRESS,
-      TOKAMAK_MAINNET: null,
-      TOKAMAK_OPTIMISM_GOERLI: null,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.TON_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: [
@@ -49,8 +54,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.WTON_ADDRESS,
-      TOKAMAK_MAINNET: null,
-      TOKAMAK_OPTIMISM_GOERLI: null,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.WTON_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.WTON_ADDRESS,
     },
     decimals: 27,
     isNativeCurrency: null,
@@ -59,10 +64,10 @@ export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "TOS",
     address: {
-      MAINNET: "0x",
-      GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      TOKAMAK_OPTIMISM_GOERLI: null,
+      MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.TOS_ADDRESS,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.TOS_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -70,10 +75,10 @@ export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "DOC",
     address: {
-      MAINNET: "0x",
-      GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      TOKAMAK_OPTIMISM_GOERLI: null,
+      MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.DOC_ADDRESS,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.DOC_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.DOC_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -81,10 +86,10 @@ export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "AURA",
     address: {
-      MAINNET: "0x",
-      GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      TOKAMAK_OPTIMISM_GOERLI: null,
+      MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.AURA_ADDRESS,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.AURA_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.AURA_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -92,12 +97,23 @@ export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "LYDA",
     address: {
-      MAINNET: "0x",
-      GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      TOKAMAK_OPTIMISM_GOERLI: null,
+      MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.LYDA_ADDRESS,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.LYDA_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.LYDA_ADDRESS,
     },
     decimals: 18,
+    isNativeCurrency: null,
+  },
+  {
+    tokenName: "USDC",
+    address: {
+      MAINNET: null,
+      GOERLI: null,
+      TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.USDC_ADDRESS,
+      TOKAMAK_OPTIMISM_GOERLI: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
+    },
+    decimals: 6,
     isNativeCurrency: null,
   },
 ];

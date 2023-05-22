@@ -4,8 +4,20 @@ import Network from "./Network";
 import Account from "./Account";
 import UserMenu from "./UserMenu";
 
+const menuList = [
+  {
+    title: "BRIDGE & SWAP",
+    link: "",
+  },
+  {
+    title: "POOLS",
+    link: "",
+  },
+];
+
 const HeaderMenu = (props: { title: string; link: string }) => {
   const { title, link } = props;
+
   return (
     <Center fontSize={16} cursor={"pointer"}>
       <Text>{title}</Text>
@@ -14,16 +26,6 @@ const HeaderMenu = (props: { title: string; link: string }) => {
 };
 
 export default function Header() {
-  const menuList = [
-    {
-      title: "BRIDGE & SWAP",
-      link: "",
-    },
-    {
-      title: "POOLS",
-      link: "",
-    },
-  ];
   return (
     <Flex
       minW={"100%"}

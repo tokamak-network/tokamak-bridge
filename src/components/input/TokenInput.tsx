@@ -7,9 +7,8 @@ import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 
-export default function TokenInput(props: { style?: {} }) {
-  const { style } = props;
-  const { isInTokenOpen } = useTokenModal();
+export default function TokenInput(props: { inToken: boolean; style?: {} }) {
+  const { inToken, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -18,8 +17,11 @@ export default function TokenInput(props: { style?: {} }) {
   );
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("go");
+    console.log(e.target.value);
+
     //This token is inToken
-    if (isInTokenOpen && selectedInToken) {
+    if (inToken && selectedInToken) {
       const value: string = e.target.value;
       if (value === "") {
         return setSelectedInToken({
@@ -31,7 +33,7 @@ export default function TokenInput(props: { style?: {} }) {
       return setSelectedInToken({ ...selectedInToken, amountBN: parsedAmount });
     }
     //This token is outToken
-    if (!isInTokenOpen && selectedOutToken) {
+    if (!inToken && selectedOutToken) {
       const value: string = e.target.value;
       if (value === "") {
         return setSelectedOutToken({

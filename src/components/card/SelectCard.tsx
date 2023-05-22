@@ -13,9 +13,7 @@ import {
   ModalOverlay,
   ModalContent,
   ModalHeader,
-  ModalFooter,
   ModalBody,
-  ModalCloseButton,
 } from "@chakra-ui/react";
 import TokenCard from "./TokenCard";
 import { useEffect, useMemo, useState } from "react";

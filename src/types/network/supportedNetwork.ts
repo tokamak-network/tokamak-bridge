@@ -21,7 +21,7 @@ export enum SupportedChainId {
 
 export interface SupportedChainProperties {
   chainId: SupportedChainId;
-  chainName: string;
+  chainName: keyof typeof SupportedChainId;
   rpcAddress: string;
   networkImage: ImageFileType;
   nativeToken: SupportedTokenName;
@@ -31,21 +31,21 @@ export interface SupportedChainProperties {
 export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.MAINNET,
-    chainName: "Ethereum Mainnet",
+    chainName: "MAINNET",
     networkImage: SYMBOL_ETH,
     rpcAddress: "",
     nativeToken: "ETH",
   },
   {
     chainId: SupportedChainId.GOERLI,
-    chainName: "Goerli",
+    chainName: "GOERLI",
     networkImage: SYMBOL_ETH,
     rpcAddress: "",
     nativeToken: "ETH",
   },
   {
     chainId: SupportedChainId.TOKAMAK_MAINNET,
-    chainName: "Tokamak Network",
+    chainName: "TOKAMAK_MAINNET",
     networkImage: SYMBOL_TON,
     rpcAddress: "",
     nativeToken: "TON",
@@ -53,7 +53,7 @@ export const supportedChain: SupportedChainProperties[] = [
   },
   {
     chainId: SupportedChainId.TOKAMAK_OPTIMISM_GOERLI,
-    chainName: "Tokamak_Goerli",
+    chainName: "TOKAMAK_OPTIMISM_GOERLI",
     networkImage: SYMBOL_TON,
     rpcAddress: "",
     nativeToken: "TON",

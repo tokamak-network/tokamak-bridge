@@ -84,7 +84,9 @@ export default function OutToken() {
         <NetworkDropdown inNetwork={false} />
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
-        {mode === "Swap" && <TokenInput style={{ marginTop: "16px" }} />}
+        {mode === "Swap" && (
+          <TokenInput inToken={false} style={{ marginTop: "16px" }} />
+        )}
       </Flex>
     </Flex>
   );
