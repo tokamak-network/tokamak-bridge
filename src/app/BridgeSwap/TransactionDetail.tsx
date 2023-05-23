@@ -1,6 +1,6 @@
 import { useInOutNetwork } from "@/hooks/network";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Tooltip } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import ArrowImg from "assets/icons/arrow.svg";
 import GasImg from "assets/icons/gasStation.svg";
@@ -9,53 +9,119 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 
-const DivisionLine = () => {
-  return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"16px"}></Box>;
+type DetailInfo = {
+  title: string;
+  content: string;
+  dollorPrice?: string;
+  gasFee?: {
+    l1Gas: string;
+    l2Gas: string;
+  };
 };
 
-const DetailRow = (props: { title: string; content: string }) => {
+const DivisionLine = () => {
+  return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
+};
+
+const DetailRow = (props: DetailInfo) => {
+  const { gasFee } = props;
   return (
-    <Flex justifyContent={"space-between"} fontSize={14} h={"10px"}>
-      <Text fontWeight={300}>{props.title}</Text>
-      <Text fontWeight={500}>{props.content}</Text>
+    <Flex flexDir={"column"}>
+      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+        <Text fontWeight={300}>{props.title}</Text>
+        <Text fontWeight={500}>
+          <Tooltip
+            label={
+              <Box
+                flex={1}
+                w={"126px"}
+                h={"28px"}
+                bgColor={"#383A49"}
+                borderRadius={"4px"}
+                alignItems={"center"}
+                justifyContent={"center"}
+                fontSize={11}
+                fontWeight={400}
+                color={"#fff"}
+                pos={"relative"}
+              >
+                <Text
+                  w={"100%"}
+                  h={"100%"}
+                  lineHeight={"28px"}
+                  textAlign={"center"}
+                  verticalAlign={"center"}
+                >
+                  0.00221110000002 ETH
+                </Text>
+                <Box
+                  pos={"absolute"}
+                  left={"50%"}
+                  w={"5px"}
+                  h={"5px"}
+                  bgColor={"#383a49"}
+                  transform={"matrix(0.71, -0.71, -0.71, -0.71, 0, 0)"}
+                ></Box>
+              </Box>
+            }
+            placement="top"
+          >
+            {props.content}
+          </Tooltip>
+        </Text>
+      </Flex>
+      {gasFee && (
+        <Flex
+          w={"448px"}
+          h={"54px"}
+          bgColor={"#15161D"}
+          flexDir={"column"}
+          fontSize={14}
+          justifyContent={"center"}
+          mt={"9px"}
+          px={"16px"}
+          borderRadius={"8px"}
+        >
+          <Flex justifyContent={"space-between"}>
+            <Text>L1 gas fee</Text>
+            <Text>{gasFee.l1Gas}</Text>
+          </Flex>
+          <Flex justifyContent={"space-between"}>
+            <Text>L2 gas fee</Text>
+            <Text>{gasFee.l2Gas}</Text>
+          </Flex>
+        </Flex>
+      )}
     </Flex>
   );
 };
 
-const propsData = [
+const propsData: DetailInfo[] = [
   {
-    title: "Expected output",
-    content: "178.29USDC",
-  },
-  {
-    title: "Price impact",
-    content: "0.02%",
-  },
-  {
-    title: "Minimum received after slippage (0.1%)",
-    content: "178.29 USDC",
+    title: "Amount to Deposit",
+    content: "~0.0022 ETH",
   },
   {
     title: "Estimated gas fees",
-    content: "178.29USD",
+    content: "~0.0022 ETH",
+    gasFee: {
+      l1Gas: "0.0022 ETH",
+      l2Gas: "0.0022 ETH",
+    },
   },
   {
-    title: "Estimated gas fees",
-    content: "178.29USD",
+    title: "Time to Deposit",
+    content: "~20 minutes",
   },
 ];
 
 const Content = (props: { isExpanded: boolean }) => {
   const { isExpanded } = props;
+
   if (isExpanded) {
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
-          <Flex fontSize={16} fontWeight={500}>
-            <Text>1 USDC</Text>
-            <Text>=</Text>
-            <Text>0.00064 ETH</Text>
-          </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"10px"}>
             {propsData.map((data) => (
@@ -93,6 +159,7 @@ const Title = (props: {
         justifyContent={"space-between"}
         cursor={"pointer"}
         onClick={() => setIsExpended(!isExpanded)}
+        fontSize={14}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           <Text>{inNetwork?.chainName}</Text>
@@ -128,12 +195,12 @@ export default function TransactionDetail() {
   return (
     <Flex
       w={"100%"}
-      h={isExpanded ? "212px" : "42px"}
+      h={isExpanded ? "212px" : "48px"}
       bg={"#17181D"}
       borderRadius={"8px"}
       px={"20px"}
       flexDir={"column"}
-      justifyContent={"center"}
+      pt={isExpanded ? "20px" : "14px"}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       <Content isExpanded={isExpanded}></Content>
