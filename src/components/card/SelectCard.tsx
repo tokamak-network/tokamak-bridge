@@ -16,7 +16,6 @@ import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
 import { motion, useAnimation } from "framer-motion";
-import useUserToken from "@/hooks/user/useUserToken";
 import { supportedTokens } from "types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
@@ -70,8 +69,6 @@ const CardCarrousel = () => {
 
   const { inNetwork } = useRecoilValue(networkStatus);
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
-
-  const { userTokens } = useUserToken();
 
   const sideControl = useAnimation();
   const sideRightControl = useAnimation();
