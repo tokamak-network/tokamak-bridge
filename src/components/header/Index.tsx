@@ -3,11 +3,12 @@ import { Box, Center, Flex, Text } from "@chakra-ui/layout";
 import Network from "./Network";
 import Account from "./Account";
 import UserMenu from "./UserMenu";
+import { usePathname } from "next/navigation";
 
 const menuList = [
   {
     title: "BRIDGE & SWAP",
-    link: "",
+    link: "/",
   },
   {
     title: "POOLS",
@@ -17,9 +18,14 @@ const menuList = [
 
 const HeaderMenu = (props: { title: string; link: string }) => {
   const { title, link } = props;
+  const pathname = usePathname();
 
   return (
-    <Center fontSize={16} cursor={"pointer"}>
+    <Center
+      fontSize={16}
+      cursor={"pointer"}
+      borderBottom={pathname === link ? "3px solid #007AFF" : ""}
+    >
       <Text>{title}</Text>
     </Center>
   );
@@ -47,7 +53,7 @@ export default function Header() {
         </Box>
         <Flex columnGap={"30px"}>
           {menuList.map((menuInfo) => (
-            <HeaderMenu {...menuInfo}></HeaderMenu>
+            <HeaderMenu key={menuInfo.title} {...menuInfo}></HeaderMenu>
           ))}
         </Flex>
       </Flex>

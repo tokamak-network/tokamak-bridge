@@ -1,6 +1,5 @@
 import { SupportedTokenName, TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import NetworkDropdown from "../dropdown/Index";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useMemo } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
