@@ -6,14 +6,14 @@ import SettingIcon from "assets/icons/setting.svg";
 import { useRecoilValue } from "recoil";
 import { actionMode, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
-import useNetwork from "@/hooks/network";
+import useNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
 import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 
 const SelectedNetwork = () => {
-  const { inNetwork, outNetwork } = useNetwork();
+  const { outNetwork } = useInOutNetwork();
 
   return (
     <Box
