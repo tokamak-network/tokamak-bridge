@@ -1,4 +1,5 @@
 import {
+  SupportedChainId,
   SupportedChainProperties,
   supportedChain,
 } from "@/types/network/supportedNetwork";
@@ -6,26 +7,49 @@ import { Flex } from "@chakra-ui/layout";
 import { Select } from "@chakra-ui/react";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
-import { Chain } from "viem/dist/types/types/eip1193";
-import { useEffect } from "react";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
+import useConnectedNetwork from "@/hooks/network";
+import { useAccount, useSwitchNetwork } from "wagmi";
+import { useEffect } from "react";
 
 export default function NetworkDropdown(props: { inNetwork: boolean }) {
   const { inNetwork } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
+  const { connectedChainId } = useConnectedNetwork();
+  const { switchNetworkAsync, isError } = useSwitchNetwork();
 
-  const onChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value: SupportedChainProperties["chainId"] = Number(
-      event.target.value
-    );
-    const selectedWork = supportedChain.filter((supportedChain) => {
-      return supportedChain.chainId === value;
-    });
-    if (inNetwork === true) {
-      return setNetwork({ ...network, inNetwork: selectedWork[0] });
+  const onChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    try {
+      const value: SupportedChainProperties["chainId"] = Number(
+        event.target.value
+      );
+      const selectedWork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === value;
+      })[0];
+
+      if (inNetwork === false) {
+        return setNetwork({ ...network, outNetwork: selectedWork });
+      }
+      if (selectedWork.chainId !== connectedChainId) {
+        return await switchNetworkAsync?.(selectedWork.chainId);
+      }
+    } finally {
+      if (isError) {
+        console.error(`Can't get to switch a network`);
+      }
     }
-    return setNetwork({ ...network, outNetwork: selectedWork[0] });
   };
+
+  useEffect(() => {
+    if (connectedChainId) {
+      const connectedNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === connectedChainId;
+      })[0];
+      return setNetwork({ ...network, inNetwork: connectedNetwork });
+    }
+  }, [connectedChainId]);
+
+  console.log(network);
 
   return (
     <Select
@@ -34,7 +58,10 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
       bgColor={"#1f2128"}
       _first={{ alignItems: "end" }}
       onChange={onChange}
-      // defaultValue={network?.chainId}
+      value={
+        inNetwork ? network.inNetwork?.chainId : network.outNetwork?.chainId
+      }
+      defaultValue={connectedChainId}
     >
       {supportedChain.map((chainInfo) => {
         return (

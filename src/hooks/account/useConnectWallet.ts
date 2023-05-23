@@ -1,3 +1,4 @@
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 export default function useConnectWallet() {
