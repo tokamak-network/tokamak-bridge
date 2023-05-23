@@ -1,4 +1,4 @@
-import { SupportedTokenName } from "@/types/token/SupportedToken";
+import { SupportedTokenName } from "types/token/supportedToken";
 import { BigNumberish } from "ethers";
 import { Contract, ethers } from "ethers";
 
