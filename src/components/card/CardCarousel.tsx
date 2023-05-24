@@ -30,7 +30,6 @@ import useUserToken from "@/hooks/user/useUserToken";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import { SupportedTokens_T } from "types/token/supportedToken";
 
 enum CardOverlay {
   Middle = 100,
@@ -45,7 +44,10 @@ export const CardCarrousel = () => {
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
-  const [carouselCards, setCarouselCards] = useState<number[]>([]);
+  const [supportedTokens2, setSupportedTokens2] = useState([
+    ...supportedTokens,
+  ]);
+
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
@@ -60,15 +62,13 @@ export const CardCarrousel = () => {
   const middleControl = useAnimation();
   const outControl = useAnimation();
 
-  let supportedTokens2: any[] = supportedTokens;
-
   const handlePrev = () => {
     const x = supportedTokens2.findIndex(
-      (card, index) => index === currentCard - 1
+      (card, index) => index === currentCard
     );
-    if (x <= 2) {
-      supportedTokens2.unshift(...supportedTokens);
-      console.log(supportedTokens2);
+    if (x < 2) {
+      setSupportedTokens2([...supportedTokens, ...supportedTokens2]);
+      //   console.log(supportedTokens2);
     }
     setCurrentCard((prevCard) =>
       prevCard === null || prevCard === 0
@@ -79,82 +79,81 @@ export const CardCarrousel = () => {
   };
 
   const handleNext = () => {
+    const y = supportedTokens2.findIndex(
+      (card, index) => index === currentCard + 2
+    );
+    if (y < 7) {
+      setSupportedTokens2([...supportedTokens2, ...supportedTokens]);
+    }
     setCurrentCard((prevCard) =>
-      prevCard === null || prevCard === supportedTokens2.length - 1
+      prevCard === null || prevCard === supportedTokens.length - 1
         ? 0
         : prevCard + 1
     );
   };
+  //   console.log("supported tokens2", supportedTokens2);
 
   // if indexOf currentCard >= supportedToken.length - 2 ?
   // supportedToken.concat(supportedToken)
   //   console.log("supported tokens", supportedTokens);
-  //   console.log("supported tokens", supportedTokens);
+  console.log("supported tokens2 out", supportedTokens2);
 
-  const cardProps = (index: number) =>
-    useMemo(() => {
-      const currentIndex = currentCard === null ? 2 : currentCard;
-      const indexVal = currentIndex - index;
-      setCarouselCards([indexVal]);
-      console.log(carouselCards);
+  const cardProps = (index: number) => {
+    const currentIndex = currentCard === null ? 2 : currentCard;
+    const indexVal = currentIndex - index;
 
-      const atMiddle = indexVal === 0;
-      const atSide = indexVal === 2 || indexVal === -2;
-      const atSideRight = indexVal === -2;
-      const atSecond = indexVal === 1 || indexVal === -1;
-      const atSecondRight = indexVal === -1;
-      const atOut = indexVal > 2 || indexVal < -2;
+    const atMiddle = indexVal === 0;
+    const atSide = indexVal === 2 || indexVal === -2;
+    const atSideRight = indexVal === -2;
+    const atSecond = indexVal === 1 || indexVal === -1;
+    const atSecondRight = indexVal === -1;
+    const atOut = indexVal > 2 || indexVal < -2;
 
-      console.log("currentCard", currentCard);
-      // console.log("currentIndex", currentIndex);
-      // console.log("index", index);
-      console.log("indexVal", indexVal);
-
-      return {
-        position: "relative",
-        display: atOut ? "none" : "",
-        transition: atSide
-          ? "ease-in 0.5"
-          : atSecond
-          ? "ease-in 0.5"
-          : atMiddle
-          ? "ease-in-out 0.5"
-          : "all 500ms cubic-bezier(0.42, 0, 0.58, 1)",
-        zIndex: atOut
-          ? -100
-          : atSide
-          ? CardOverlay.Sides
+    return {
+      position: "relative",
+      display: atOut ? "none" : "",
+      transition: atSide
+        ? "ease-in 0.5"
+        : atSecond
+        ? "ease-in 0.5"
+        : atMiddle
+        ? "ease-in-out 0.5"
+        : "all 500ms cubic-bezier(0.42, 0, 0.58, 1)",
+      zIndex: atOut
+        ? -100
+        : atSide
+        ? CardOverlay.Sides
+        : atSideRight
+        ? CardOverlay.SideRight
+        : atSecond
+        ? CardOverlay.Seconds
+        : atSecondRight
+        ? CardOverlay.SecondRight
+        : CardOverlay.Middle,
+      transform:
+        atSide && !atSideRight
+          ? "rotate(-10deg)"
           : atSideRight
-          ? CardOverlay.SideRight
-          : atSecond
-          ? CardOverlay.Seconds
+          ? "rotate(10deg)"
+          : atSecond && !atSecondRight
+          ? "rotate(-5deg)"
           : atSecondRight
-          ? CardOverlay.SecondRight
-          : CardOverlay.Middle,
-        transform:
-          atSide && !atSideRight
-            ? "rotate(-10deg)"
-            : atSideRight
-            ? "rotate(10deg)"
-            : atSecond && !atSecondRight
-            ? "rotate(-5deg)"
-            : atSecondRight
-            ? "rotate(5deg)"
-            : null,
-        minWidth: atSide ? "186px" : atSecond ? "225px" : "256px",
-        minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
-        left:
-          atSide && !atSideRight
-            ? "95px"
-            : atSideRight
-            ? "-85px"
-            : atSecond && !atSecondRight
-            ? "43px"
-            : atSecondRight
-            ? "-43px"
-            : "0px",
-      };
-    }, [currentCard, index, supportedTokens2]);
+          ? "rotate(5deg)"
+          : null,
+      minWidth: atSide ? "186px" : atSecond ? "225px" : "256px",
+      minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
+      left:
+        atSide && !atSideRight
+          ? "95px"
+          : atSideRight
+          ? "-85px"
+          : atSecond && !atSecondRight
+          ? "43px"
+          : atSecondRight
+          ? "-43px"
+          : "0px",
+    };
+  };
 
   useEffect(() => {
     middleControl.start({
@@ -215,11 +214,12 @@ export const CardCarrousel = () => {
         pb={"10px"}
         justifyContent={"center"}
       >
-        {supportedTokens.map((tokenData, index) => {
+        {supportedTokens2.map((tokenData, index) => {
+          cardProps(index);
           return (
             <motion.div
               // transition={{ ease: "easeInOut", duration: 0.5 }}
-              //@ts-ignore
+              //   @ts-ignore
               style={cardProps(index)}
               animate={
                 currentCard === null
@@ -241,7 +241,7 @@ export const CardCarrousel = () => {
                   ? setSelectedInToken({ ...tokenData, amountBN: null })
                   : setSelectedOutToken({ ...tokenData, amountBN: null })
               }
-              key={tokenData.tokenName.toUpperCase()}
+              key={index}
             >
               <TokenCard
                 w={"100%"}
