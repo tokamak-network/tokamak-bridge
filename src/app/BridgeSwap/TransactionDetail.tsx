@@ -85,10 +85,10 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
   if (gasFee) {
     return (
       <Flex flexDir={"column"}>
-        <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+        <Flex justifyContent={"space-between"} fontSize={14}>
           <Text fontWeight={300}>{title}</Text>
           <Text fontWeight={500}>
-            <Flex flexDir={"column"}>
+            <Flex flexDir={"column"} rowGap={"13px"}>
               <Flex
                 w={"96px"}
                 h={"24px"}
@@ -126,7 +126,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
                   ETH
                 </Text>
               </Flex>
-              <Flex>
+              <Flex justifyContent={"flex-end"}>
                 <Text fontSize={14} fontWeight={500}>
                   {content}
                 </Text>
@@ -134,28 +134,26 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
             </Flex>
           </Text>
         </Flex>
-        {gasFee && (
-          <Flex
-            w={"448px"}
-            h={"54px"}
-            bgColor={"#15161D"}
-            flexDir={"column"}
-            fontSize={14}
-            justifyContent={"center"}
-            mt={"9px"}
-            px={"16px"}
-            borderRadius={"8px"}
-          >
-            <Flex justifyContent={"space-between"}>
-              <Text>L1 gas fee</Text>
-              <Text>{gasFee.l1Gas.ton}</Text>
-            </Flex>
-            <Flex justifyContent={"space-between"}>
-              <Text>L2 gas fee</Text>
-              <Text>{gasFee.l2Gas.ton}</Text>
-            </Flex>
+        <Flex
+          w={"448px"}
+          h={"54px"}
+          bgColor={"#15161D"}
+          flexDir={"column"}
+          fontSize={14}
+          justifyContent={"center"}
+          mt={"9px"}
+          px={"16px"}
+          borderRadius={"8px"}
+        >
+          <Flex justifyContent={"space-between"}>
+            <Text>L1 gas fee</Text>
+            <Text>{gasFee.l1Gas.ton}</Text>
           </Flex>
-        )}
+          <Flex justifyContent={"space-between"}>
+            <Text>L2 gas fee</Text>
+            <Text>{gasFee.l2Gas.ton}</Text>
+          </Flex>
+        </Flex>
       </Flex>
     );
   }
@@ -249,12 +247,15 @@ const Content = (props: { isExpanded: boolean }) => {
             {detailRow}
           </Flex>
           {mode === "Withdraw" && (
-            <Flex mt={"30px"} columnGap={"12px"} alignItems={"center"}>
-              <Checkbox w={"16px"} h={"16px"} mb={"15px"}></Checkbox>
-              <Text lineHeight={"20px"} fontSize={14} fontWeight={500}>
-                I understand it will take approximately 7 days until my funds
-                are claimable on Ethereum Mainnet.{" "}
-              </Text>
+            <Flex flexDir={"column"}>
+              <DivisionLine />
+              <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
+                <Checkbox w={"16px"} h={"16px"} mb={"15px"}></Checkbox>
+                <Text lineHeight={"20px"} fontSize={14} fontWeight={500}>
+                  I understand it will take approximately 7 days until my funds
+                  are claimable on Ethereum Mainnet.{" "}
+                </Text>
+              </Flex>
             </Flex>
           )}
         </Box>
@@ -324,12 +325,14 @@ export default function TransactionDetail() {
   return (
     <Flex
       w={"100%"}
-      h={isExpanded ? "310px" : "48px"}
-      bg={"#17181D"}
+      // h={isExpanded ? "310px" : "48px"}
+      minH={"48px"}
+      bg={"#1f2128"}
       borderRadius={"8px"}
       px={"20px"}
       flexDir={"column"}
       pt={isExpanded ? "20px" : "14px"}
+      pb={isExpanded ? "20px" : ""}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       <Content isExpanded={isExpanded}></Content>
