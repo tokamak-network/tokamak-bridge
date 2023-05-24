@@ -37,6 +37,8 @@ enum CardOverlay {
   Middle = 100,
   Seconds = 90,
   Sides = 80,
+  SideRight = 70,
+  SecondRight = 60,
 }
 
 export function SelectCardButton(props: { field: Field }) {
@@ -72,7 +74,7 @@ export function SelectCardButton(props: { field: Field }) {
 }
 
 const CardCarrousel = () => {
-  const [currentCard, setCurrentCard] = useState<number | null>(null);
+  const [currentCard, setCurrentCard] = useState<number>(2);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -90,8 +92,6 @@ const CardCarrousel = () => {
   const middleControl = useAnimation();
   const outControl = useAnimation();
 
-  console.log("supported tokens", supportedTokens);
-
   const handlePrev = () => {
     setCurrentCard((prevCard) =>
       prevCard === null || prevCard === 0
@@ -108,39 +108,50 @@ const CardCarrousel = () => {
     );
   };
 
+  console.log("supported tokens", supportedTokens);
+
   const cardProps = (index: number) =>
     useMemo(() => {
-      console.log("current card", currentCard);
-
       const currentIndex = currentCard === null ? 2 : currentCard;
       const indexVal = currentIndex - index;
-      console.log("indexVal", indexVal);
-      const atOut = indexVal > 2 || indexVal < -2;
+
+      const atMiddle = indexVal === 0;
       const atSide = indexVal === 2 || indexVal === -2;
       const atSideRight = indexVal === -2;
       const atSecond = indexVal === 1 || indexVal === -1;
       const atSecondRight = indexVal === -1;
-      const atMiddle = indexVal === 0;
+      const atOut = indexVal > 2 || indexVal < -2;
 
       return {
         position: "relative",
         display: atOut ? "none" : "",
+        transition: atSide
+          ? "ease-in 0.5"
+          : atSecond
+          ? "ease-in 0.5"
+          : atMiddle
+          ? "ease-in-out 0.5"
+          : "all 500ms cubic-bezier(0.42, 0, 0.58, 1)",
         zIndex: atOut
           ? -100
           : atSide
           ? CardOverlay.Sides
+          : atSideRight
+          ? CardOverlay.SideRight
           : atSecond
           ? CardOverlay.Seconds
+          : atSecondRight
+          ? CardOverlay.SecondRight
           : CardOverlay.Middle,
         transform:
           atSide && !atSideRight
-            ? `rotate(-10deg)`
+            ? "rotate(-10deg)"
             : atSideRight
-            ? `rotate(10deg)`
+            ? "rotate(10deg)"
             : atSecond && !atSecondRight
-            ? `rotate(-5deg)`
+            ? "rotate(-5deg)"
             : atSecondRight
-            ? `rotate(5deg)`
+            ? "rotate(5deg)"
             : null,
         minWidth: atSide ? "186px" : atSecond ? "225px" : "256px",
         minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
@@ -217,10 +228,9 @@ const CardCarrousel = () => {
         justifyContent={"center"}
       >
         {supportedTokens.map((tokenData, index) => {
-          console.log("index", index);
           return (
             <motion.div
-              transition={{ duration: 0.5 }}
+              // transition={{ ease: "easeInOut", duration: 0.5 }}
               //@ts-ignore
               style={cardProps(index)}
               animate={
