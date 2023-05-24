@@ -1,19 +1,20 @@
 import { useInOutNetwork } from "@/hooks/network";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { Box, Flex, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Checkbox, Flex, Text, Tooltip } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import ArrowImg from "assets/icons/arrow.svg";
 import GasImg from "assets/icons/gasStation.svg";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
-import CustomTooltip from "@/components/tooltip/customTooltip";
+import CustomTooltip from "components/tooltip/CustomTooltip";
 
-type DetailInfo = {
+type DepositDetailProp = {
   title: string;
   content: string;
   tooltip?: boolean;
+  tooltipLabel?: string;
   dollorPrice?: string;
   gasFee?: {
     l1Gas: string;
@@ -21,18 +22,34 @@ type DetailInfo = {
   };
 };
 
+type WithdrawDetailProp = {
+  title: string;
+  content: string;
+  tooltip?: boolean;
+  tooltipLabel?: string;
+  dollorPrice?: string;
+  gasFee?: {
+    l1Gas: { eth: string; ton: string };
+    l2Gas: { eth: string; ton: string };
+  };
+};
+
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
 };
 
-const DetailRow = (props: DetailInfo) => {
-  const { gasFee, tooltip, title, content } = props;
+const DepositDetailRow = (props: DepositDetailProp) => {
+  const { gasFee, tooltip, tooltipLabel, title, content } = props;
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
         <Text fontWeight={500}>
-          {tooltip ? <CustomTooltip content={content} /> : content}
+          {tooltip ? (
+            <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
+          ) : (
+            content
+          )}
         </Text>
       </Flex>
       {gasFee && (
@@ -61,27 +78,167 @@ const DetailRow = (props: DetailInfo) => {
   );
 };
 
-const propsData: DetailInfo[] = [
-  {
-    title: "Amount to Deposit",
-    content: "~0.0022 ETH",
-  },
-  {
-    title: "Estimated gas fees",
-    content: "~0.0022 ETH",
-    gasFee: {
-      l1Gas: "0.0022 ETH",
-      l2Gas: "0.0022 ETH",
-    },
-  },
-  {
-    title: "Time to Deposit",
-    content: "~20 minutes",
-  },
-];
+const WithdrawDetailRow = (props: WithdrawDetailProp) => {
+  const { gasFee, tooltip, tooltipLabel, title, content } = props;
+  const [isTON, setIsTON] = useState(true);
+
+  if (gasFee) {
+    return (
+      <Flex flexDir={"column"}>
+        <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+          <Text fontWeight={300}>{title}</Text>
+          <Text fontWeight={500}>
+            <Flex flexDir={"column"}>
+              <Flex
+                w={"96px"}
+                h={"24px"}
+                borderRadius={"8px"}
+                border={"1px solid #007AFF"}
+                textAlign={"center"}
+                verticalAlign={"center"}
+                lineHeight={"22px"}
+                fontSize={11}
+                fontWeight={600}
+              >
+                <CustomTooltip
+                  content={
+                    <Text
+                      w={"50%"}
+                      bgColor={isTON ? "#007AFF" : ""}
+                      borderRadius={"8px"}
+                      cursor={"pointer"}
+                      onClick={() => setIsTON(true)}
+                    >
+                      TON
+                    </Text>
+                  }
+                  tooltipLabel="The fee is 2% cheaper than ETH"
+                  style={{ width: "185px", bgColor: "#007AFF" }}
+                ></CustomTooltip>
+
+                <Text
+                  w={"50%"}
+                  bgColor={!isTON ? "#007AFF" : ""}
+                  borderRadius={"8px"}
+                  cursor={"pointer"}
+                  onClick={() => setIsTON(false)}
+                >
+                  ETH
+                </Text>
+              </Flex>
+              <Flex>
+                <Text fontSize={14} fontWeight={500}>
+                  {content}
+                </Text>
+              </Flex>
+            </Flex>
+          </Text>
+        </Flex>
+        {gasFee && (
+          <Flex
+            w={"448px"}
+            h={"54px"}
+            bgColor={"#15161D"}
+            flexDir={"column"}
+            fontSize={14}
+            justifyContent={"center"}
+            mt={"9px"}
+            px={"16px"}
+            borderRadius={"8px"}
+          >
+            <Flex justifyContent={"space-between"}>
+              <Text>L1 gas fee</Text>
+              <Text>{gasFee.l1Gas.ton}</Text>
+            </Flex>
+            <Flex justifyContent={"space-between"}>
+              <Text>L2 gas fee</Text>
+              <Text>{gasFee.l2Gas.ton}</Text>
+            </Flex>
+          </Flex>
+        )}
+      </Flex>
+    );
+  }
+  return (
+    <Flex flexDir={"column"}>
+      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+        <Text fontWeight={300}>{title}</Text>
+        <Text fontWeight={500}>
+          {tooltip ? (
+            <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
+          ) : (
+            content
+          )}
+        </Text>
+      </Flex>
+    </Flex>
+  );
+};
 
 const Content = (props: { isExpanded: boolean }) => {
   const { isExpanded } = props;
+  const { mode } = useRecoilValue(actionMode);
+
+  const depositPropsData: DepositDetailProp[] = [
+    {
+      title: "Amount to Deposit",
+      content: "~0.0022 ETH",
+      tooltip: true,
+      tooltipLabel: "0.00221110000002 ETH",
+    },
+    {
+      title: "Estimated gas fees",
+      content: "~0.0022 ETH",
+      gasFee: {
+        l1Gas: "0.0022 ETH",
+        l2Gas: "0.0022 ETH",
+      },
+      tooltip: true,
+      tooltipLabel: "0.00221110000002 ETH",
+    },
+    {
+      title: "Time to Deposit",
+      content: "~20 minutes",
+    },
+  ];
+
+  const withdrawPropsData: WithdrawDetailProp[] = [
+    {
+      title: "Amount to Withdraw",
+      content: "~0.0022 ETH",
+      tooltip: true,
+      tooltipLabel: "0.00221110000002 ETH",
+    },
+    {
+      title: "Estimated gas fees",
+      content: "~0.0022 ETH",
+      gasFee: {
+        l1Gas: { eth: "0.0022 ETH", ton: "0.0022 TON" },
+        l2Gas: { eth: "0.0022 ETH", ton: "0.0022 TON" },
+      },
+    },
+    {
+      title: "Time to Withdraw",
+      content: "approximately 7 days",
+    },
+  ];
+
+  const detailRow = useMemo(() => {
+    switch (mode) {
+      case "Deposit":
+        return depositPropsData.map((data) => (
+          <DepositDetailRow {...data}></DepositDetailRow>
+        ));
+      case "Withdraw":
+        return withdrawPropsData.map((data) => (
+          <WithdrawDetailRow {...data}></WithdrawDetailRow>
+        ));
+      case "Swap":
+        return null;
+      default:
+        return <>{`component not founded :(`}</>;
+    }
+  }, [mode]);
 
   if (isExpanded) {
     return (
@@ -89,10 +246,17 @@ const Content = (props: { isExpanded: boolean }) => {
         <Box flex={1} flexDir={"column"}>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"10px"}>
-            {propsData.map((data) => (
-              <DetailRow {...data}></DetailRow>
-            ))}
+            {detailRow}
           </Flex>
+          {mode === "Withdraw" && (
+            <Flex mt={"30px"} columnGap={"12px"} alignItems={"center"}>
+              <Checkbox w={"16px"} h={"16px"} mb={"15px"}></Checkbox>
+              <Text lineHeight={"20px"} fontSize={14} fontWeight={500}>
+                I understand it will take approximately 7 days until my funds
+                are claimable on Ethereum Mainnet.{" "}
+              </Text>
+            </Flex>
+          )}
         </Box>
       </Flex>
     );
@@ -160,7 +324,7 @@ export default function TransactionDetail() {
   return (
     <Flex
       w={"100%"}
-      h={isExpanded ? "212px" : "48px"}
+      h={isExpanded ? "310px" : "48px"}
       bg={"#17181D"}
       borderRadius={"8px"}
       px={"20px"}

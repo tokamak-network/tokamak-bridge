@@ -1,8 +1,17 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
+import { ReactNode } from "react";
 
-export default function CustomTooltip(props: { content: string }) {
+export default function CustomTooltip(props: {
+  content: string | ReactNode;
+  tooltipLabel?: string;
+  style?: {
+    width?: string;
+    bgColor?: string;
+  };
+}) {
   return (
     <Tooltip
+      p={0}
       label={
         <Box
           flex={1}
@@ -16,6 +25,7 @@ export default function CustomTooltip(props: { content: string }) {
           fontWeight={400}
           color={"#fff"}
           pos={"relative"}
+          {...props.style}
         >
           <Text
             w={"100%"}
@@ -24,14 +34,15 @@ export default function CustomTooltip(props: { content: string }) {
             textAlign={"center"}
             verticalAlign={"center"}
           >
-            0.00221110000002 ETH
+            {props.tooltipLabel}
           </Text>
           <Box
             pos={"absolute"}
             left={"50%"}
             w={"5px"}
             h={"5px"}
-            bgColor={"#383a49"}
+            top={"25px"}
+            bgColor={props?.style?.bgColor ?? "#383a49"}
             transform={"matrix(0.71, -0.71, -0.71, -0.71, 0, 0)"}
           ></Box>
         </Box>
