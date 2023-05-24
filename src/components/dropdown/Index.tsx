@@ -49,8 +49,6 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
     }
   }, [connectedChainId]);
 
-  console.log(network);
-
   return (
     <Select
       w={"200px"}
@@ -68,11 +66,12 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
           <option
             style={{ backgroundColor: "#1f2128" }}
             value={chainInfo.chainId}
+            key={chainInfo.chainId}
           >
-            <span>
+            <>
               {chainInfo.chainName}
               <Image src={chainInfo.networkImage} alt={chainInfo.chainName} />
-            </span>
+            </>
             {/* <Flex>
               <Image src={chainInfo.networkImage} alt={chainInfo.chainName} />
             </Flex> */}
