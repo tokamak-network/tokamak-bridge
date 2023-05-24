@@ -8,6 +8,15 @@ import { CacheProvider } from "@chakra-ui/next-js";
 import { RecoilRoot } from "recoil";
 
 import Header from "@/components/header/Index";
+import HistoryDrawer from "@/components/history/Drawer";
+
+const GlobalComponents = () => {
+  return (
+    <>
+      <HistoryDrawer />
+    </>
+  );
+};
 
 // export const metadata = {
 //   title: "wagmi",
@@ -26,6 +35,7 @@ export default function RootLayout({
             <WagmiProviders>
               <Header />
               <Center h={"100vh"}>{children}</Center>
+              <GlobalComponents />
             </WagmiProviders>
           </RecoilRoot>
         </ChakraProvidersForNextJs>
