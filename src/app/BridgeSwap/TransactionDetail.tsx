@@ -8,10 +8,12 @@ import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
+import CustomTooltip from "@/components/tooltip/customTooltip";
 
 type DetailInfo = {
   title: string;
   content: string;
+  tooltip?: boolean;
   dollorPrice?: string;
   gasFee?: {
     l1Gas: string;
@@ -24,50 +26,13 @@ const DivisionLine = () => {
 };
 
 const DetailRow = (props: DetailInfo) => {
-  const { gasFee } = props;
+  const { gasFee, tooltip, title, content } = props;
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
-        <Text fontWeight={300}>{props.title}</Text>
+        <Text fontWeight={300}>{title}</Text>
         <Text fontWeight={500}>
-          <Tooltip
-            label={
-              <Box
-                flex={1}
-                w={"126px"}
-                h={"28px"}
-                bgColor={"#383A49"}
-                borderRadius={"4px"}
-                alignItems={"center"}
-                justifyContent={"center"}
-                fontSize={11}
-                fontWeight={400}
-                color={"#fff"}
-                pos={"relative"}
-              >
-                <Text
-                  w={"100%"}
-                  h={"100%"}
-                  lineHeight={"28px"}
-                  textAlign={"center"}
-                  verticalAlign={"center"}
-                >
-                  0.00221110000002 ETH
-                </Text>
-                <Box
-                  pos={"absolute"}
-                  left={"50%"}
-                  w={"5px"}
-                  h={"5px"}
-                  bgColor={"#383a49"}
-                  transform={"matrix(0.71, -0.71, -0.71, -0.71, 0, 0)"}
-                ></Box>
-              </Box>
-            }
-            placement="top"
-          >
-            {props.content}
-          </Tooltip>
+          {tooltip ? <CustomTooltip content={content} /> : content}
         </Text>
       </Flex>
       {gasFee && (
