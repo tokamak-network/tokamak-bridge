@@ -20,6 +20,14 @@ import { TokenSymbol } from "../image/TokenSymbol";
 import commafy from "@/utils/trim/commafy";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import ArrowIcon from "assets/icons/arrow.svg";
+import {
+  SupportedChainProperties,
+  supportedChain,
+} from "@/types/network/supportedNetwork";
+import { format, fromUnixTime } from "date-fns";
+import DrawerCloseIcon from "assets/icons/drawerClose.svg";
+import { useRecoilState } from "recoil";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 
 const AccountComponent = () => {
   const { address } = useAccount();
@@ -27,7 +35,8 @@ const AccountComponent = () => {
     <Flex
       justifyContent={"space-between"}
       w={"632px"}
-      h={"64px"}
+      minH={"64px"}
+      maxH={"64px"}
       bg={
         "linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), #007AFF;"
       }
@@ -37,7 +46,7 @@ const AccountComponent = () => {
     >
       <Flex alignItems={"center"} columnGap={"8px"}>
         <Image src={MetamaskIcon} alt={"MetamaskIcon"} />
-        <Text fontSize={16} fontWeight={500} color={"#1f2128"}>
+        <Text fontSize={15} fontWeight={500} color={"#1f2128"}>
           {address}
         </Text>
         <Image src={CopyIcon} alt={"CopyIcon"} style={{ cursor: "pointer" }} />
@@ -56,15 +65,19 @@ const AccountComponent = () => {
 
 type SelectedHistoryNetworks = "All" | "Ethereum" | "Tokamak Network";
 export type TransactionDetailsProp = {
-  status: "Completed" | "Failed" | "Pending";
+  status: "Completed" | "Failed";
+  isPending?: boolean;
   timeStamp: number;
-  type: "swap" | "wrap" | "unwrap" | "deposit" | "withdraw";
+  pendingLeftTimeStamp?: number;
+  type: "Swap" | "Wrap" | "Unwrap" | "Deposit" | "Withdraw";
   token: {
     tokenInfo: TokenInfo;
     amount: bigint;
     otherTokenInfo?: TokenInfo;
     otherAmount?: bigint;
   };
+  inNetwork: SupportedChainProperties;
+  outNetwork?: SupportedChainProperties;
 };
 
 const DetailWrapper = ({
@@ -82,7 +95,7 @@ const DetailWrapper = ({
 };
 
 const Status = (props: TransactionDetailsProp) => {
-  const { status } = props;
+  const { status, isPending } = props;
 
   const statusColor = useMemo(() => {
     switch (status) {
@@ -91,31 +104,74 @@ const Status = (props: TransactionDetailsProp) => {
       case "Completed":
         return "#03D187";
       default:
-        return "#8497DB";
+        return "";
     }
   }, [status]);
 
   return (
-    <DetailWrapper
-      style={{ minWidth: "107px", maxWidth: "107px", columnGap: "6px" }}
-    >
-      <Box
-        w={"6px"}
-        h={"6px"}
-        bgColor={statusColor}
-        borderRadius={"16px"}
-      ></Box>
-      <Text fontSize={11} fontWeight={600}>
-        {status}
-      </Text>
+    <DetailWrapper style={{ minWidth: "107px", maxWidth: "107px" }}>
+      <Flex
+        flexDir={"column"}
+        justifyContent={"center"}
+        rowGap={"16px"}
+        fontSize={11}
+        fontWeight={600}
+      >
+        <Flex alignItems={"center"} columnGap={"6px"}>
+          <Box
+            w={"6px"}
+            h={"6px"}
+            bgColor={statusColor}
+            borderRadius={"16px"}
+          ></Box>
+          <Text>{status}</Text>
+        </Flex>
+        {isPending && (
+          <Flex alignItems={"center"} columnGap={"6px"}>
+            <Box
+              w={"6px"}
+              h={"6px"}
+              bgColor={"#8497DB"}
+              borderRadius={"16px"}
+            ></Box>
+            <Text>{"Pending"}</Text>
+          </Flex>
+        )}
+      </Flex>
     </DetailWrapper>
   );
 };
 
 const Time = (props: TransactionDetailsProp) => {
+  const { timeStamp, isPending, pendingLeftTimeStamp } = props;
+  const convertTimeStamp = (param: number) => {
+    const formmatedDate = format(fromUnixTime(param), "yyyy.MM.dd/hh:mm b (z)");
+    return {
+      highlited: formmatedDate.split("/")[0],
+      noHighlighted: formmatedDate.split("/")[1],
+    };
+  };
+  const { highlited, noHighlighted } = convertTimeStamp(timeStamp);
   return (
-    <DetailWrapper style={{ minWidth: "200px", maxWidth: "200px" }}>
-      <Text>{props.timeStamp}</Text>
+    <DetailWrapper
+      style={{
+        minWidth: "200px",
+        maxWidth: "200px",
+        rowGap: "16px",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "flex-start",
+      }}
+    >
+      <Flex alignItems={"center"} columnGap={"6px"}>
+        <Text>{highlited}</Text>
+        <Text color={"#A0A3AD"}>{noHighlighted}</Text>
+      </Flex>
+      {isPending && (
+        <Flex alignItems={"center"} columnGap={"6px"}>
+          <Text color={"#8497DB"}>{"3 Days 2 Hours Left"}</Text>
+        </Flex>
+      )}
     </DetailWrapper>
   );
 };
@@ -131,6 +187,7 @@ const Type = (props: TransactionDetailsProp) => {
         return "#fff";
     }
   }, [status]);
+
   return (
     <DetailWrapper style={{ minWidth: "103px", maxWidth: "103px" }}>
       <Text color={statusColor}>{type} </Text>
@@ -139,7 +196,7 @@ const Type = (props: TransactionDetailsProp) => {
 };
 
 const TokenSymbolImage = (props: TransactionDetailsProp) => {
-  const { token } = props;
+  const { token, inNetwork, outNetwork } = props;
   const parsedAmount = convertNumber(token.amount, token.tokenInfo.decimals);
   const parsedOtherAmount =
     token.otherTokenInfo && token.otherAmount
@@ -158,7 +215,21 @@ const TokenSymbolImage = (props: TransactionDetailsProp) => {
   return (
     <DetailWrapper style={{ columnGap: "9.7px" }}>
       <Flex flexDir={"column"} rowGap={"12px"} w={"92px"} alignItems={"center"}>
-        <TokenSymbol w={40} h={40} tokenType={token.tokenInfo["tokenName"]} />
+        <Flex position={"relative"}>
+          <TokenSymbol w={40} h={40} tokenType={token.tokenInfo["tokenName"]} />
+          <Box
+            w={"16px"}
+            h={"16px"}
+            pos={"absolute"}
+            bgColor={inNetwork.nativeToken === "TON" ? "#fff" : "#383736"}
+            borderRadius={"2px"}
+            border={"2px solid #1F2128"}
+            bottom={"-2px"}
+            right={"-2px"}
+          >
+            <TokenSymbol tokenType={inNetwork.nativeToken} />
+          </Box>
+        </Flex>
         <Text>
           {tokenAmount} {token.tokenInfo.tokenName}
         </Text>
@@ -170,16 +241,34 @@ const TokenSymbolImage = (props: TransactionDetailsProp) => {
           style={{ width: "16px", height: "16px" }}
         />
       )}
-      {token.otherTokenInfo && (
+      {token.otherTokenInfo && outNetwork && (
         <Flex
           flexDir={"column"}
           rowGap={"12px"}
           w={"92px"}
           alignItems={"center"}
         >
-          <TokenSymbol w={40} h={40} tokenType={token.tokenInfo["tokenName"]} />
+          <Flex position={"relative"}>
+            <TokenSymbol
+              w={40}
+              h={40}
+              tokenType={token.otherTokenInfo.tokenName}
+            />
+            <Box
+              w={"16px"}
+              h={"16px"}
+              pos={"absolute"}
+              bgColor={inNetwork.nativeToken === "TON" ? "#fff" : "#383736"}
+              borderRadius={"2px"}
+              border={"2px solid #1F2128"}
+              bottom={"-2px"}
+              right={"-2px"}
+            >
+              <TokenSymbol tokenType={outNetwork.nativeToken} />
+            </Box>
+          </Flex>
           <Text>
-            {otherTokenAmount} {token.otherTokenInfo?.tokenName}
+            {otherTokenAmount} {token.otherTokenInfo.tokenName}
           </Text>
         </Flex>
       )}
@@ -191,25 +280,28 @@ const TrasactionDetails = () => {
   const dummyData: TransactionDetailsProp[] = [
     {
       status: "Failed",
-      type: "deposit",
+      type: "Deposit",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
       },
-      timeStamp: Date.now() / 1000,
+      timeStamp: 1684977021,
+      inNetwork: supportedChain[0],
     },
     {
       status: "Completed",
-      type: "deposit",
+      isPending: true,
+      type: "Withdraw",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
       status: "Completed",
-      type: "swap",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -217,10 +309,11 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
-      status: "Pending",
-      type: "swap",
+      status: "Completed",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -228,10 +321,11 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
-      status: "Pending",
-      type: "swap",
+      status: "Completed",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -239,10 +333,11 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
-      status: "Pending",
-      type: "swap",
+      status: "Completed",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -250,10 +345,11 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
-      status: "Pending",
-      type: "swap",
+      status: "Completed",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -261,10 +357,11 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
-      status: "Pending",
-      type: "swap",
+      status: "Completed",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -272,10 +369,11 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
     {
-      status: "Pending",
-      type: "swap",
+      status: "Completed",
+      type: "Swap",
       token: {
         tokenInfo: supportedTokens[0],
         amount: BigInt("1123456780000000000"),
@@ -283,47 +381,34 @@ const TrasactionDetails = () => {
         otherAmount: BigInt("1123456780000000000"),
       },
       timeStamp: Date.now() / 1000,
-    },
-    {
-      status: "Pending",
-      type: "swap",
-      token: {
-        tokenInfo: supportedTokens[0],
-        amount: BigInt("1123456780000000000"),
-        otherTokenInfo: supportedTokens[1],
-        otherAmount: BigInt("1123456780000000000"),
-      },
-      timeStamp: Date.now() / 1000,
-    },
-    {
-      status: "Pending",
-      type: "swap",
-      token: {
-        tokenInfo: supportedTokens[0],
-        amount: BigInt("1123456780000000000"),
-        otherTokenInfo: supportedTokens[1],
-        otherAmount: BigInt("1123456780000000000"),
-      },
-      timeStamp: Date.now() / 1000,
-    },
-    {
-      status: "Failed",
-      type: "swap",
-      token: {
-        tokenInfo: supportedTokens[0],
-        amount: BigInt("1123456780000000000"),
-        otherTokenInfo: supportedTokens[1],
-        otherAmount: BigInt("1123456780000000000"),
-      },
-      timeStamp: Date.now() / 1000,
+      inNetwork: supportedChain[0],
     },
   ];
   return (
-    <Flex overflowY={"scroll"}>
+    <Flex
+      overflowY={"auto"}
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "::-webkit-scrollbar-track": {
+          background: "transparent",
+          borderRadius: "4px",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#343741",
+          borderRadius: "3px",
+        },
+      }}
+    >
       <Flex fontSize={12} fontWeight={400} flexDir={"column"}>
         {dummyData.map((data) => {
           return (
-            <Flex h={"92px"} borderBottom={"1px solid #2E313A"}>
+            <Flex
+              minH={"92px"}
+              maxH={"92px"}
+              borderBottom={"1px solid #2E313A"}
+            >
               <Status {...data} />
               <Time {...data} />
               <Type {...data} />
@@ -387,7 +472,7 @@ const HistoryTable = () => {
           Tokamak Network
         </Text>
       </Flex>
-      <Flex h={"42px"} bgColor={"#0F0F12"} borderRadius={"8px"}>
+      <Flex h={"42px"} bgColor={"#0F0F12"} borderRadius={"8px"} mr={"24px"}>
         <Input
           _active={{}}
           _hover={{}}
@@ -420,17 +505,34 @@ const HistoryTable = () => {
 };
 
 export default function HistoryDrawer() {
+  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   return (
-    <Drawer isOpen={true} placement="right" onClose={() => {}}>
+    <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
       <DrawerOverlay zIndex={1001} className="modalOverlayDrawer" bg={"none"} />
       <DrawerContent
         pt={"24px"}
-        px={"24px"}
+        pl={"24px"}
         minW={"680px"}
         maxW={"680px"}
         bgColor={"#1F2128"}
         rowGap={"24px"}
+        pos={"relative"}
       >
+        <Flex
+          pos={"absolute"}
+          w={"40px"}
+          h={"40px"}
+          border={"1px solid #313442"}
+          borderRadius={"8px"}
+          bgColor={"transparent"}
+          left={"-57px"}
+          justifyContent={"center"}
+          cursor={"pointer"}
+          onClick={() => setIsOpen(false)}
+        >
+          <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
+        </Flex>
+
         <AccountComponent />
         <HistoryTable />
       </DrawerContent>

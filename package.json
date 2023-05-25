@@ -17,6 +17,7 @@
     "@eth-optimism/contracts": "^0.5.32",
     "@fontsource/poppins": "^4.5.10",
     "@wagmi/cli": "^1.0.0",
+    "date-fns": "^2.30.0",
     "ethers": "^6.3.0",
     "framer-motion": "^10.12.10",
     "fs": "^0.0.1-security",

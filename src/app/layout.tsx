@@ -10,6 +10,8 @@ import { RecoilRoot } from "recoil";
 import Header from "@/components/header/Index";
 import HistoryDrawer from "@/components/history/Drawer";
 
+import "css/scrollbar.css";
+
 const GlobalComponents = () => {
   return (
     <>
