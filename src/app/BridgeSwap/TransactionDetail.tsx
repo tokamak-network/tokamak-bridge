@@ -9,6 +9,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import CustomTooltip from "components/tooltip/CustomTooltip";
+import useTransactionDetail from "@/hooks/bridge/useTransactionDetails";
 
 type DepositDetailProp = {
   title: string;
@@ -321,6 +322,8 @@ const Title = (props: {
 
 export default function TransactionDetail() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
+
+  // const {} = useTransactionDetail();
 
   return (
     <Flex

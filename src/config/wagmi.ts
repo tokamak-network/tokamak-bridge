@@ -5,11 +5,14 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { publicProvider } from "wagmi/providers/public";
+import { tokamak_goerli } from "./tokamakProvider";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, goerli],
+  [mainnet, goerli, tokamak_goerli],
   [publicProvider()]
 );
+
+console.log(chains);
 
 export const config = createConfig({
   autoConnect: true,
