@@ -10,7 +10,7 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useAccount } from "wagmi";
+import { useAccount, usePublicClient } from "wagmi";
 import {
   SupportedChainId,
   supportedChain,
@@ -20,6 +20,8 @@ import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { supportedTokens } from "@/types/token/supportedToken";
 import { predeploys } from "@eth-optimism/contracts";
 
+import { ethers } from "ethers";
+
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
   const { connectToWallet } = useConnectWallet();
@@ -27,21 +29,14 @@ export default function ActionButton() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
-  const { inTokenHasAmount } = useRecoilValue(inTokenSelector);
-  const { outTokenHasAmount } = useRecoilValue(outTokenSelector);
 
   const { write: _depositETH } = useCallDeposit("depositETH");
-  const {
-    data,
-    isLoading,
-    isSuccess,
-    write: _depositERC20,
-  } = useCallDeposit("depositERC20");
+  const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
   const { write: _withdraw } = useCallWithdraw("withdraw");
 
   const isDisabled = !isReady;
 
-  const onClick = useCallback(() => {
+  const onClick = useCallback(async () => {
     if (!isConnected) {
       return connectToWallet();
     }
@@ -88,6 +83,22 @@ export default function ActionButton() {
               args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
             });
           }
+
+          // console.log(
+          //   await client.estimateContractGas({
+          //     address: TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
+          //     abi: L2BridgeAbi,
+          //     functionName: "withdraw",
+          //     args: [
+          //       inTokenInfo.address[inNetwork.chainName],
+          //       parsedAmount,
+          //       200000000,
+          //       "0x",
+          //     ],
+          //     account: "0x8c595DA827F4182bC0E3917BccA8e654DF8223E1",
+          //   })
+          // );
+
           return _withdraw({
             args: [
               inTokenInfo.address[inNetwork.chainName],
