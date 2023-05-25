@@ -76,42 +76,52 @@ export const CardCarrousel = () => {
   //   bufferArray.push(item);
   // }
 
-  // const visibleCards ;
+  const initCarouselCards: TokenInfo[] = supportedTokens2.slice(0, 5);
+  const [carouselCards, setCarouselCards] =
+    useState<TokenInfo[]>(initCarouselCards);
 
   const handlePrev = () => {
-    const x = supportedTokens2.findIndex(
-      (card, index) => index === currentCard
-    );
-    if (x < 2) {
-      setSupportedTokens2([...supportedTokens, ...supportedTokens2]);
-      //   console.log(supportedTokens2);
-    }
+    setCarouselCards((prevCards) => {
+      const newCarouselCards = [...prevCards];
+      const firstElement =
+        supportedTokens2[
+          (supportedTokens2.length - 1 + newCarouselCards.length - 1) %
+            supportedTokens2.length
+        ];
+      const lastElement = newCarouselCards.pop();
+      newCarouselCards.unshift(firstElement);
+      newCarouselCards.splice(newCarouselCards.length - 1, 0, lastElement!);
+      return newCarouselCards;
+    });
     setCurrentCard((prevCard) =>
       prevCard === null || prevCard === 0
-        ? supportedTokens2.length - 1
+        ? carouselCards.length - 1
         : prevCard - 1
     );
-    console.log("x", x);
   };
 
   const handleNext = () => {
-    const y = supportedTokens2.findIndex(
-      (card, index) => index === currentCard + 2
-    );
-    if (y < 7) {
-      setSupportedTokens2([...supportedTokens2, ...supportedTokens]);
-    }
+    setCarouselCards((prevCards) => {
+      const newCarouselCards = [...prevCards];
+      const firstElement = newCarouselCards.shift();
+      const lastElement =
+        supportedTokens2[
+          (supportedTokens2.length - 1 + newCarouselCards.length + 1) %
+            supportedTokens2.length
+        ];
+      newCarouselCards.push(lastElement!);
+      newCarouselCards.splice(1, 0, firstElement!);
+      return newCarouselCards;
+    });
     setCurrentCard((prevCard) =>
-      prevCard === null || prevCard === supportedTokens.length - 1
+      prevCard === null || prevCard === carouselCards.length - 1
         ? 0
         : prevCard + 1
     );
   };
-  console.log("supported tokens2 out", supportedTokens2);
 
   const cardProps = (index: number) => {
-    const currentIndex = currentCard === null ? 2 : currentCard;
-    console.log("current index", currentIndex);
+    const currentIndex = currentCard === null ? 0 : currentCard;
     const indexVal = currentIndex - index;
 
     const atMiddle = indexVal === 0;
@@ -227,7 +237,7 @@ export const CardCarrousel = () => {
         pb={"10px"}
         justifyContent={"center"}
       >
-        {supportedTokens2.map((tokenData, index) => {
+        {carouselCards.map((tokenData, index) => {
           cardProps(index);
           return (
             <motion.div
