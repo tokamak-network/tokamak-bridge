@@ -30,6 +30,7 @@ import useUserToken from "@/hooks/user/useUserToken";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import useCircularBuffer from "../../hooks/cards/useCircularBuffer";
 
 enum CardOverlay {
   Middle = 100,
@@ -62,6 +63,21 @@ export const CardCarrousel = () => {
   const middleControl = useAnimation();
   const outControl = useAnimation();
 
+  // const circularBuffer = useCircularBuffer<TokenInfo>(5);
+  // useEffect(() => {
+  //   for (let i = 0; i < 5; i++) {
+  //     circularBuffer.write(supportedTokens[i]);
+  //   }
+  //   console.log("circular buffer", circularBuffer);
+  // }, [supportedTokens]);
+
+  // const bufferArray: TokenInfo[] = [];
+  // for (const item of circularBuffer) {
+  //   bufferArray.push(item);
+  // }
+
+  // const visibleCards ;
+
   const handlePrev = () => {
     const x = supportedTokens2.findIndex(
       (card, index) => index === currentCard
@@ -91,15 +107,11 @@ export const CardCarrousel = () => {
         : prevCard + 1
     );
   };
-  //   console.log("supported tokens2", supportedTokens2);
-
-  // if indexOf currentCard >= supportedToken.length - 2 ?
-  // supportedToken.concat(supportedToken)
-  //   console.log("supported tokens", supportedTokens);
   console.log("supported tokens2 out", supportedTokens2);
 
   const cardProps = (index: number) => {
     const currentIndex = currentCard === null ? 2 : currentCard;
+    console.log("current index", currentIndex);
     const indexVal = currentIndex - index;
 
     const atMiddle = indexVal === 0;
@@ -112,6 +124,7 @@ export const CardCarrousel = () => {
     return {
       position: "relative",
       display: atOut ? "none" : "",
+      // transform: `translateX(-${currentIndex * (100 / 5)}%)`,
       transition: atSide
         ? "ease-in 0.5"
         : atSecond
