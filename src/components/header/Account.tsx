@@ -5,10 +5,13 @@ import { useAccount, useConnect } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import { useMemo } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
   const { connetAndDisconntWallet } = useConnectWallet();
+  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
@@ -27,7 +30,9 @@ export default function Account() {
        * index 1 = coinbase wallet
        * index 2 = wallet injected like wallet connet
        */
-      onClick={() => connetAndDisconntWallet()}
+      onClick={() =>
+        isConnected ? setIsOpen(true) : connetAndDisconntWallet()
+      }
     >
       <Image src={WALLET_ICON} alt={""} />
       <Text>{buttonText}</Text>

@@ -1,0 +1,35 @@
+function commafy(num: number | string | undefined, decilamPoint?: number) {
+  const defaultDecilamPoint = decilamPoint ?? 4;
+  if (num === undefined || num === null) {
+    return "-";
+  }
+  //@ts-ignore
+  if (isNaN(num)) {
+    return "-";
+  }
+  if (num === 0 || num === "0") {
+    if (defaultDecilamPoint === 0) {
+      return "0";
+    }
+    if (defaultDecilamPoint) {
+      return `0.${"0".repeat(defaultDecilamPoint)}`;
+    }
+    return "0.00";
+  }
+  let str = num.toString().split(".");
+  if (str[0].length >= 4) {
+    str[0] = str[0].replace(/(\d)(?=(\d{3})+$)/g, "$1,");
+  }
+  if (str[1] && str[1].length >= 2) {
+    str[1] = str[1].slice(0, defaultDecilamPoint);
+  }
+  if (str[1] === undefined) {
+    str[1] = `${"0".repeat(defaultDecilamPoint)}`;
+  }
+  if (str[1] === "") {
+    return str[0];
+  }
+  return str.join(".").replaceAll(" ", "");
+}
+
+export default commafy;

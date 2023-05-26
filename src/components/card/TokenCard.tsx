@@ -1,11 +1,11 @@
 import { SupportedTokenName, TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import NetworkDropdown from "../dropdown/Index";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useMemo } from "react";
-import { useRecoilState } from "recoil";
-import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { networkStatus, selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { ethers } from "ethers";
+import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo;
@@ -45,9 +45,12 @@ const TokenInput = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const parsedAmount = ethers.parseUnits(value, "ether");
+    const parsedAmount = ethers.utils.parseUnits(value, "ether");
     if (selectedInToken) {
-      setSelectedInToken({ ...selectedInToken, amountBN: parsedAmount });
+      setSelectedInToken({
+        ...selectedInToken,
+        amountBN: parsedAmount.toBigInt(),
+      });
     }
   };
 
@@ -68,6 +71,7 @@ const TokenInput = () => {
 
 export default function TokenCard(props: TokenCardProps) {
   const { tokenInfo, w, h, hasInput, inNetwork, style } = props;
+  const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenName) {
       case "ETH":
@@ -90,6 +94,10 @@ export default function TokenCard(props: TokenCardProps) {
         return "#9e9e9e";
     }
   }, [tokenInfo]);
+
+  const tokenAddress =
+    inNetworkInfo && tokenInfo.address[inNetworkInfo?.chainName];
+  const tokenData = useTokenBalance(tokenAddress ?? "0x");
 
   return (
     <Flex
@@ -122,9 +130,9 @@ export default function TokenCard(props: TokenCardProps) {
         <TokenSymbol tokenType={tokenInfo?.tokenName} />
       </Flex>
       <Flex flexDir={"column"} rowGap={"13px"}>
-        <Flex fontSize={11} h={"8px"} color={"#222222"} columnGap={"2px"}>
-          <Text fontWeight={400}>Balance : </Text>
-          <Text fontWeight={700}>0</Text>
+        <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
+          <Text fontWeight={400}>Balance: </Text>
+          <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
         </Flex>
         {/* <Flex justifyContent={"space-between"}>
           <Flex

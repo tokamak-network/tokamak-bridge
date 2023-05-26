@@ -2,8 +2,9 @@ import { useEffect } from "react";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
-import { useContractWrite } from "wagmi";
+import { useContractWrite, usePublicClient } from "wagmi";
 import { GOERLI_CONTRACTS } from "@/constant/contracts";
+import { getContract } from "viem";
 
 export default function useCallDeposit(functionName: string) {
   const [tModalStatus, setTModalStatus] = useRecoilState(
@@ -16,6 +17,13 @@ export default function useCallDeposit(functionName: string) {
     functionName,
   });
 
+  const provider = usePublicClient();
+  const contract = getContract({
+    address: GOERLI_CONTRACTS.L1Bridge,
+    abi: L1BridgeAbi,
+    publicClient: provider,
+  });
+
   useEffect(() => {
     if (isLoading) {
       return setTModalStatus("confirming");
@@ -26,5 +34,5 @@ export default function useCallDeposit(functionName: string) {
     return setTModalStatus(null);
   }, [isLoading, isSuccess]);
 
-  return { data, isLoading, isSuccess, write };
+  return { data, isLoading, isSuccess, write, contract };
 }

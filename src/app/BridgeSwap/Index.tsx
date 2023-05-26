@@ -7,8 +7,11 @@ import {
 } from "@/components/card/SelectCard";
 import ActionButton from "./components/ActionButton";
 import Modals from "./Modals";
+import { useRecoilValue } from "recoil";
+import { actionMode } from "@/recoil/bridgeSwap/atom";
 
 export default function BridgeSwap() {
+  const { mode } = useRecoilValue(actionMode);
   return (
     <Flex flexDir={"column"} w={"496px"} h={"100%"}>
       {/* <Flex mb={"auto"}>
@@ -22,10 +25,14 @@ export default function BridgeSwap() {
         h={"100%"}
       >
         <Swap />
-        <Flex w={"100%"} mt={"32px"} mb={"12px"}>
-          <TransactionDetail />
+        <Flex flexDir={"column"} w={"100%"} mt={"32px"} rowGap={"12px"}>
+          {mode !== null && (
+            <Flex w={"100%"}>
+              <TransactionDetail />
+            </Flex>
+          )}
+          <ActionButton />
         </Flex>
-        <ActionButton />
       </Flex>
       {/* <Flex mt={"auto"}>
         <SelectCardButton field="INPUT" />

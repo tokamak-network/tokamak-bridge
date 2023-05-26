@@ -7,7 +7,7 @@ import { ERC20 } from "../components/ERC20";
 import { NetworkSwitcher } from "../components/NetworkSwitcher";
 import BridgeSwap from "./BridgeSwap/Index";
 
-export function Page() {
+export default function Page() {
   return (
     <>
       <BridgeSwap />
@@ -26,5 +26,3 @@ export function Page() {
     // </>
   );
 }
-
-export default Page;

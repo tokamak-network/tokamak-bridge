@@ -10,7 +10,7 @@ import TokenInput from "@/components/input/TokenInput";
 
 export default function InToken() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
-  const mode = useRecoilValue(actionMode);
+  const { mode } = useRecoilValue(actionMode);
   const { onOpenInToken } = useTokenModal();
 
   return (

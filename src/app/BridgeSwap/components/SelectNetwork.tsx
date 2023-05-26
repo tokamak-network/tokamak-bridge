@@ -1,7 +1,6 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import "@/css/bridgeSwap/selectNetwork.css";
 import NetworkDropdown from "@/components/dropdown/Index";
-import TokenInput from "@/components/input/TokenInput";
 
 export default function SelectNetwork() {
   return (
@@ -31,7 +30,6 @@ export default function SelectNetwork() {
         <Box className={"second-layer"} />
         <Box className={"third-layer"} />
       </Flex>
-      <TokenInput />
     </Flex>
   );
 }

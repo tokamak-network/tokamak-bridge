@@ -10,7 +10,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
 
 export default function Swap() {
-  const mode = useRecoilValue(actionMode);
+  const { mode } = useRecoilValue(actionMode);
 
   return (
     <Flex w={"100%"} justifyContent={"space-between"} columnGap={"14.6px"}>

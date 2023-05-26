@@ -34,15 +34,6 @@ function useTokenContract() {
   return { Token_Contracts };
 }
 
-function useDepositContract() {
-  const {
-    MAINNET_CONTRACTS,
-    GOERLI_CONTRACTS,
-    TOKAMAK_CONTRACTS,
-    TOKAMAK_GOERLI_CONTRACTS,
-  } = contracts;
-}
-
 export function useCallContract() {
   const { Token_Contracts } = useTokenContract();
 
