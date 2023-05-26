@@ -1,9 +1,10 @@
 import {
+  networkStatus,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
@@ -26,7 +27,6 @@ import {
   useAnimation,
   useAnimationControls,
 } from "framer-motion";
-import useUserToken from "@/hooks/user/useUserToken";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
@@ -54,8 +54,6 @@ export const CardCarrousel = () => {
   );
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
 
-  const { userTokens } = useUserToken();
-
   const sideControl = useAnimation();
   const sideRightControl = useAnimation();
   const secondControl = useAnimation();
@@ -63,18 +61,7 @@ export const CardCarrousel = () => {
   const middleControl = useAnimation();
   const outControl = useAnimation();
 
-  // const circularBuffer = useCircularBuffer<TokenInfo>(5);
-  // useEffect(() => {
-  //   for (let i = 0; i < 5; i++) {
-  //     circularBuffer.write(supportedTokens[i]);
-  //   }
-  //   console.log("circular buffer", circularBuffer);
-  // }, [supportedTokens]);
-
-  // const bufferArray: TokenInfo[] = [];
-  // for (const item of circularBuffer) {
-  //   bufferArray.push(item);
-  // }
+  const { inNetwork } = useRecoilValue(networkStatus);
 
   const initCarouselCards: TokenInfo[] = supportedTokens2.slice(0, 5);
   const [carouselCards, setCarouselCards] =
