@@ -26,14 +26,8 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           amountBN: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedInToken.decimals
-      );
-      return setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-      });
+      const parsedAmount = ethers.parseUnits(value, selectedInToken.decimals);
+      return setSelectedInToken({ ...selectedInToken, amountBN: parsedAmount });
     }
     //This token is outToken
     if (!inToken && selectedOutToken) {
@@ -44,13 +38,10 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           amountBN: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
+      const parsedAmount = ethers.parseUnits(value, selectedOutToken.decimals);
       return setSelectedOutToken({
         ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
+        amountBN: parsedAmount,
       });
     }
   };

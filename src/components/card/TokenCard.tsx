@@ -45,12 +45,9 @@ const TokenInput = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const parsedAmount = ethers.utils.parseUnits(value, "ether");
+    const parsedAmount = ethers.parseUnits(value, "ether");
     if (selectedInToken) {
-      setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-      });
+      setSelectedInToken({ ...selectedInToken, amountBN: parsedAmount });
     }
   };
 
