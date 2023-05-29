@@ -9,12 +9,81 @@ import { useRecoilState } from "recoil";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount, useSwitchNetwork } from "wagmi";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import Select from "react-select";
+import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
+import { Overlay_Index } from "@/types/style/overlayIndex";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
   label: SupportedChainProperties["chainName"];
+};
+
+const customStyles = {
+  control: (styles: any) => ({
+    ...styles,
+    width: "200px",
+    maxHeight: "32px !important",
+    minHeight: "32px !important",
+    backgroundColor: "#1F2128",
+    cursor: "pointer",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+  }),
+  menu: (styles: any) => ({
+    margin: "0px",
+    marginTop: "4px",
+    background: "#1F2128",
+    minWidth: "216px !important",
+    maxWidth: "216px !important",
+    borderRadius: "6px",
+    position: "absolute",
+    border: "1px solid #313442",
+    padding: "8px",
+    zIndex: Overlay_Index.AlwaysTop,
+  }),
+};
+
+const optionsList = supportedChain.map((chainInfo) => {
+  return {
+    ...chainInfo,
+    value: chainInfo.chainId,
+    label: chainInfo.chainName,
+  };
+});
+
+const ValueContainer = (props: {
+  selectedOption: SelectOption | null;
+  setIsOpen: React.Dispatch<SetStateAction<boolean>>;
+}) => {
+  const { selectedOption, setIsOpen } = props;
+  if (selectedOption) {
+    return (
+      <Flex
+        w={"200px"}
+        h={"32px"}
+        color={"#fff"}
+        px={"8px"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={14}
+        onClick={() => setIsOpen(true)}
+      >
+        <Flex columnGap={"6px"}>
+          <Box w={"20px"} h={"20px"}>
+            <Image
+              src={selectedOption.networkImage}
+              alt={selectedOption.chainName}
+            />
+          </Box>
+          <Text>{selectedOption.label}</Text>
+        </Flex>
+        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+      </Flex>
+    );
+  }
+  return null;
 };
 
 export default function NetworkDropdown(props: { inNetwork: boolean }) {
@@ -48,92 +117,106 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
       const connectedNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === connectedChainId;
       })[0];
+
       setSelectedOption({
         ...connectedNetwork,
         value: connectedNetwork.chainId,
         label: connectedNetwork.chainName,
       });
+
       return setNetwork({ ...network, inNetwork: connectedNetwork });
     }
   }, [connectedChainId]);
-
-  const CustomOption = (props: { data: SupportedChainProperties }) => {
-    const { data } = props;
-    return (
-      <Flex
-        w={"100%"}
-        bgColor={"#1F2128"}
-        cursor={"pointer"}
-        _hover={{ bgColor: "#313442" }}
-        onClick={() => onChange(data)}
-      >
-        <Text>{data.chainName}</Text>
-      </Flex>
-    );
-  };
-
-  const customStyles = {
-    control: (styles: any) => ({
-      ...styles,
-      width: "200px",
-      maxHeight: "32px !important",
-      minHeight: "32px !important",
-      backgroundColor: "#1F2128",
-      cursor: "pointer",
-      color: "#fff",
-    }),
-  };
 
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
     null
   );
 
-  const optionsList = supportedChain.map((chainInfo) => {
-    return {
-      ...chainInfo,
-      value: chainInfo.chainId,
-      label: chainInfo.chainName,
-    };
-  });
-
-  console.log(network, selectedOption);
-
-  const ValueContainer = () => {
-    if (selectedOption) {
-      return (
-        <Flex
-          w={"200px"}
-          h={"32px"}
-          color={"#fff"}
-          px={"8px"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          fontSize={14}
-        >
-          <Flex columnGap={"6px"}>
-            <Box w={"20px"} h={"20px"}>
-              <Image
-                src={selectedOption.networkImage}
-                alt={selectedOption.chainName}
-              />
-            </Box>
-            <Text>{selectedOption.label}</Text>
-          </Flex>
-        </Flex>
-      );
+  const selectedOutOption = useMemo(() => {
+    if (network && network?.outNetwork) {
+      const { outNetwork } = network;
+      return {
+        ...outNetwork,
+        value: outNetwork.chainId,
+        label: outNetwork.chainName,
+      };
     }
     return null;
+  }, [network]);
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const selectRef = useRef(null);
+
+  const CustomOption = (props: { data: SelectOption }) => {
+    const { data } = props;
+    return (
+      <Flex
+        w={"100%"}
+        h={"32px"}
+        color={"#fff"}
+        px={"8px"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        fontSize={14}
+        cursor={"pointer"}
+        bgColor={"#1F2128"}
+        _hover={{ bgColor: "#313442" }}
+        onClick={() => onChange(data)}
+      >
+        <Flex columnGap={"6px"}>
+          <Box w={"20px"} h={"20px"}>
+            <Image src={data.networkImage} alt={data.chainName} />
+          </Box>
+          <Text>{data.label}</Text>
+        </Flex>
+        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+      </Flex>
+    );
   };
+
+  // useEffect(() => {
+  //   const handleClickOutside = () => {
+  //     if (isOpen === true) {
+  //       console.log(isOpen);
+
+  //       setIsOpen(false);
+  //     }
+  //   };
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [isOpen]);
 
   return (
     <Select
+      ref={selectRef}
       options={optionsList}
+      menuIsOpen={isOpen}
+      onMenuOpen={() => console.log(1)}
+      onMenuClose={() => console.log(2)}
+      // onMenuClose={() => console.log("tt")}
       components={{
         Option: CustomOption,
-        ValueContainer: () => <ValueContainer />,
+        ValueContainer: () => (
+          <ValueContainer
+            selectedOption={inNetwork ? selectedOption : selectedOutOption}
+            setIsOpen={setIsOpen}
+          />
+        ),
+        MenuList: (e) => (
+          <Flex flexDir={"column"} rowGap={"8px"}>
+            {e.children}
+          </Flex>
+        ),
+        IndicatorsContainer: () => null,
       }}
+      //@ts-ignore
       styles={customStyles}
-      value={selectedOption}
+      value={inNetwork ? selectedOption : selectedOutOption}
     ></Select>
   );
 
