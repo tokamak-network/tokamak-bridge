@@ -15,7 +15,7 @@ export default function useTokenBalance(address: `0x${string}` | null) {
       data: {
         balanceBN: data,
         parsedBalance: commafy(
-          ethers.formatUnits(
+          ethers.utils.formatUnits(
             //@ts-ignore
             typeof data.value === "bigint" ? data.value : "0",
             data.decimals as number

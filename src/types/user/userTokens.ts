@@ -26,14 +26,14 @@ class TokenBalance {
 
   private async fetchBalanceWei(): Promise<string> {
     const balanceBN = await this.erc20Contract.balanceOf(this.account);
-    const balanceWei = ethers.formatUnits(balanceBN, this.decimals);
+    const balanceWei = ethers.utils.formatUnits(balanceBN, this.decimals);
 
     return balanceWei;
   }
 
   private async fetchBalanceCommified(): Promise<string> {
     const balanceBN = await this.erc20Contract.balanceOf(this.account);
-    const balanceCommified = ethers.formatEther(balanceBN);
+    const balanceCommified = ethers.utils.formatEther(balanceBN);
     return balanceCommified;
   }
 
