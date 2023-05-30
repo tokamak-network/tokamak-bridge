@@ -1,5 +1,5 @@
 function commafy(num: number | string | undefined, decilamPoint?: number) {
-  const defaultDecilamPoint = decilamPoint ?? 4;
+  const defaultDecilamPoint = decilamPoint ?? 2;
   if (num === undefined || num === null) {
     return "-";
   }
