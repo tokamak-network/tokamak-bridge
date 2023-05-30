@@ -75,7 +75,7 @@ export default function ActionButton() {
               inTokenInfo.address[inNetwork.chainName],
               outTokenAddress,
               parsedAmount,
-              1_300_000,
+              200000,
               "0x",
             ],
           });

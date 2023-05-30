@@ -8,7 +8,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
-import { CardCarrousel } from "./CardCarousel";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
 import TokenCard from "./TokenCard";
@@ -20,6 +19,7 @@ import { motion, useAnimation } from "framer-motion";
 import { supportedTokens } from "types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
+import { CardCarrousel } from "./CardCarousel";
 
 enum CardOverlay {
   Middle = 100,
