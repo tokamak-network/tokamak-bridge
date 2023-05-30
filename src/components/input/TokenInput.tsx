@@ -1,5 +1,4 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
-import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutNetwork } from "@/hooks/network";
 import {
   selectedInTokenStatus,
@@ -113,7 +112,9 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}
-          value={String(selectedInToken?.parsedAmount)}
+          value={
+            selectedInToken ? String(selectedInToken?.parsedAmount) : undefined
+          }
           onChange={onChange}
         ></Input>
         <Button

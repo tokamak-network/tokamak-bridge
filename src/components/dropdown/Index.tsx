@@ -103,7 +103,9 @@ const ValueContainer = (props: {
         </Box>
         <Text>Select Network</Text>
       </Flex>
-      <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+      <Box w={"10px"} h={"10px"}>
+        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+      </Box>
     </Flex>
   );
 };
@@ -184,10 +186,11 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
             h={"12px"}
             alignItems={"center"}
             justifyContent={"space-around"}
+            color={"#757893"}
           >
-            <Box w={"49px"} h={"1px"} bgColor={"#CBD0FF"} />
+            <Box w={"49px"} h={"1px"} bgColor={"#757893"} />
             <Text fontSize={12}>Layer 2</Text>
-            <Box w={"49px"} h={"1px"} bgColor={"#CBD0FF"} />
+            <Box w={"49px"} h={"1px"} bgColor={"#757893"} />
           </Flex>
           <Flex
             w={"200px"}
@@ -208,7 +211,9 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
               </Box>
               <Text>{data.label}</Text>
             </Flex>
-            <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+            <Box w={"10px"} h={"10px"}>
+              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+            </Box>
           </Flex>
         </Flex>
       );
@@ -234,7 +239,9 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
           </Box>
           <Text>{data.label}</Text>
         </Flex>
-        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        <Box w={"10px"} h={"10px"}>
+          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        </Box>
       </Flex>
     );
   };
