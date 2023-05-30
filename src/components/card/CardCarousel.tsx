@@ -227,6 +227,7 @@ export const CardCarrousel = () => {
           cardProps(index);
           return (
             <motion.div
+              transition={{ duration: 0.5 }}
               //   @ts-ignore
               style={cardProps(index)}
               animate={
@@ -246,8 +247,16 @@ export const CardCarrousel = () => {
               }
               onClick={() =>
                 isInTokenOpen
-                  ? setSelectedInToken({ ...tokenData, amountBN: null })
-                  : setSelectedOutToken({ ...tokenData, amountBN: null })
+                  ? setSelectedInToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+                  : setSelectedOutToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
               }
               key={index}
             >
