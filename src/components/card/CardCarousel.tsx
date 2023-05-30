@@ -121,7 +121,6 @@ export const CardCarrousel = () => {
     return {
       position: "relative",
       display: atOut ? "none" : "",
-      // transform: `translateX(-${currentIndex * (100 / 5)}%)`,
       transition: atSide
         ? "ease-in 0.5"
         : atSecond
@@ -228,7 +227,6 @@ export const CardCarrousel = () => {
           cardProps(index);
           return (
             <motion.div
-              // transition={{ ease: "easeInOut", duration: 0.5 }}
               //   @ts-ignore
               style={cardProps(index)}
               animate={
