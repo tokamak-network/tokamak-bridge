@@ -213,8 +213,16 @@ const CardCarrousel = () => {
               }
               onClick={() =>
                 isInTokenOpen
-                  ? setSelectedInToken({ ...tokenData, amountBN: null })
-                  : setSelectedOutToken({ ...tokenData, amountBN: null })
+                  ? setSelectedInToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+                  : setSelectedOutToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
               }
               key={tokenData.tokenName.toUpperCase()}
             >

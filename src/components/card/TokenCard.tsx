@@ -38,36 +38,36 @@ const TokenTitle = (props: { tokenName: String }) => {
   );
 };
 
-const TokenInput = () => {
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
+// const TokenInput = () => {
+//   const [selectedInToken, setSelectedInToken] = useRecoilState(
+//     selectedInTokenStatus
+//   );
 
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    const parsedAmount = ethers.utils.parseUnits(value, "ether");
-    if (selectedInToken) {
-      setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-      });
-    }
-  };
+//   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+//     const value = e.target.value;
+//     const parsedAmount = ethers.utils.parseUnits(value, "ether");
+//     if (selectedInToken) {
+//       setSelectedInToken({
+//         ...selectedInToken,
+//         amountBN: parsedAmount.toBigInt(),
+//       });
+//     }
+//   };
 
-  return (
-    <Input
-      w={"100%"}
-      h={"35px"}
-      border={{}}
-      _focus={{ borderColor: "none", boxShadow: "none !important" }}
-      _active={{}}
-      p={0}
-      onChange={onChange}
-      fontSize={28}
-      line-height={"35px"}
-    />
-  );
-};
+//   return (
+//     <Input
+//       w={"100%"}
+//       h={"35px"}
+//       border={{}}
+//       _focus={{ borderColor: "none", boxShadow: "none !important" }}
+//       _active={{}}
+//       p={0}
+//       onChange={onChange}
+//       fontSize={28}
+//       line-height={"35px"}
+//     />
+//   );
+// };
 
 export default function TokenCard(props: TokenCardProps) {
   const { tokenInfo, w, h, hasInput, inNetwork, style } = props;

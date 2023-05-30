@@ -29,7 +29,7 @@ export const tokenModalStatus = atom<SelectTokenModal>({
 
 type SelectedInToken = TokenInfo & {
   amountBN: BigInt | null;
-  parsedAmount: number;
+  parsedAmount: string | null;
 };
 
 export const selectedInTokenStatus = atom<SelectedInToken | null>({

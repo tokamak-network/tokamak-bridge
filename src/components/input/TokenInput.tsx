@@ -93,8 +93,6 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
     }
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);
 
-  console.log(selectedInToken);
-
   return (
     <Flex
       flexDir={"column"}
