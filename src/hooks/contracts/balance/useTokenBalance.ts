@@ -21,6 +21,14 @@ export default function useTokenBalance(address: `0x${string}` | null) {
             data.decimals as number
           )
         ),
+        parsedBalanceWithoutCommafied: commafy(
+          ethers.utils.formatUnits(
+            //@ts-ignore
+            typeof data.value === "bigint" ? data.value : "0",
+            data.decimals as number
+          ),
+          data.decimals as number
+        ),
       },
       error,
       isLoading,

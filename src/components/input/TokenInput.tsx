@@ -1,10 +1,13 @@
+import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import { useInOutNetwork } from "@/hooks/network";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
+import { useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: { inToken: boolean; style?: {} }) {
@@ -15,6 +18,19 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+  const { inNetwork, outNetwork } = useInOutNetwork();
+
+  const tokenAddress = useMemo(() => {
+    if (inToken && selectedInToken && inNetwork) {
+      return selectedInToken.address[inNetwork.chainName];
+    }
+    if (inToken === false && selectedOutToken && outNetwork) {
+      return selectedOutToken.address[outNetwork.chainName];
+    }
+    return null;
+  }, [inNetwork, outNetwork, selectedInToken, selectedOutToken, inToken]);
+
+  const tokenData = useTokenBalance(tokenAddress);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //This token is inToken
@@ -33,6 +49,7 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
       return setSelectedInToken({
         ...selectedInToken,
         amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
       });
     }
     //This token is outToken
@@ -51,9 +68,32 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
       });
     }
   };
+
+  const onMax = useCallback(() => {
+    if (tokenData) {
+      if (inToken && selectedInToken) {
+        return setSelectedInToken({
+          ...selectedInToken,
+          amountBN: tokenData.data.balanceBN.value,
+          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+        });
+      }
+      if (inToken === false && selectedOutToken) {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: tokenData.data.balanceBN.value,
+          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+        });
+      }
+      return console.error("a input field not founded");
+    }
+  }, [tokenData, inToken, selectedInToken, selectedOutToken]);
+
+  console.log(selectedInToken);
 
   return (
     <Flex
@@ -75,6 +115,7 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}
+          value={String(selectedInToken?.parsedAmount)}
           onChange={onChange}
         ></Input>
         <Button
@@ -86,6 +127,7 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           _hover={{}}
           _active={{}}
           mt={"3px"}
+          onClick={() => onMax()}
         >
           Max
         </Button>
