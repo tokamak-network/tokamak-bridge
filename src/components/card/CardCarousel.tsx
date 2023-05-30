@@ -70,6 +70,7 @@ export const CardCarrousel = () => {
   const handlePrev = () => {
     setCarouselCards((prevCards) => {
       const newCarouselCards = [...prevCards];
+      console.log("prev cards", [...prevCards]);
       const firstElement =
         supportedTokens2[
           (supportedTokens2.length - 1 + newCarouselCards.length - 1) %
@@ -91,20 +92,21 @@ export const CardCarrousel = () => {
     setCarouselCards((prevCards) => {
       const newCarouselCards = [...prevCards];
       const firstElement = newCarouselCards.shift();
-      const lastElement =
-        supportedTokens2[
-          (supportedTokens2.length - 1 + newCarouselCards.length + 1) %
-            supportedTokens2.length
-        ];
+      const lastElementIndex =
+        (supportedTokens2.length - 5 + newCarouselCards.length) %
+        supportedTokens2.length;
+      const lastElement = supportedTokens2[lastElementIndex];
       newCarouselCards.push(lastElement!);
-      newCarouselCards.splice(1, 0, firstElement!);
+      newCarouselCards.splice(0, 0, firstElement!);
       return newCarouselCards;
     });
-    setCurrentCard((prevCard) =>
-      prevCard === null || prevCard === carouselCards.length - 1
-        ? 0
-        : prevCard + 1
-    );
+    setCurrentCard((prevCard) => {
+      if (prevCard === null || prevCard === carouselCards.length - 1) {
+        return 0;
+      } else {
+        return prevCard + 1;
+      }
+    });
   };
 
   const cardProps = (index: number) => {
