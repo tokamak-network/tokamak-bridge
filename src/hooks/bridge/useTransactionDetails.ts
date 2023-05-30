@@ -26,9 +26,9 @@ export default function useTransactionDetail() {
 
   const { l1GasCost, l2GasCost } = useTotalGas(_withdraw_contract);
 
-  console.log("go");
-  console.log(mode);
-  console.log(l1GasCost, l2GasCost);
+  // console.log("go");
+  // console.log(mode);
+  // console.log(l1GasCost, l2GasCost);
 
   return { l1GasCost, l2GasCost };
 }

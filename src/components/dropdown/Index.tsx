@@ -12,6 +12,7 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import Select from "react-select";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
+import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 
 type SelectOption = SupportedChainProperties & {
@@ -55,9 +56,11 @@ const optionsList = supportedChain.map((chainInfo) => {
 
 const ValueContainer = (props: {
   selectedOption: SelectOption | null;
+  isOpen: boolean;
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { selectedOption, setIsOpen } = props;
+  const { selectedOption, isOpen, setIsOpen } = props;
+
   if (selectedOption) {
     return (
       <Flex
@@ -68,7 +71,7 @@ const ValueContainer = (props: {
         justifyContent={"space-between"}
         alignItems={"center"}
         fontSize={14}
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
       >
         <Flex columnGap={"6px"}>
           <Box w={"20px"} h={"20px"}>
@@ -83,7 +86,26 @@ const ValueContainer = (props: {
       </Flex>
     );
   }
-  return null;
+  return (
+    <Flex
+      w={"200px"}
+      h={"32px"}
+      color={"#fff"}
+      px={"8px"}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      fontSize={14}
+      onClick={() => setIsOpen(true)}
+    >
+      <Flex columnGap={"6px"}>
+        <Box w={"20px"} h={"20px"}>
+          <Image src={NetworkCircle} alt={"NetworkCircle"} />
+        </Box>
+        <Text>Select Network</Text>
+      </Flex>
+      <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+    </Flex>
+  );
 };
 
 export default function NetworkDropdown(props: { inNetwork: boolean }) {
@@ -91,6 +113,8 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
   const [network, setNetwork] = useRecoilState(networkStatus);
   const { connectedChainId } = useConnectedNetwork();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onChange = async (data: SupportedChainProperties) => {
     try {
@@ -106,6 +130,8 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
         return await switchNetworkAsync?.(selectedWork.chainId);
       }
     } finally {
+      setIsOpen(false);
+
       if (isError) {
         console.error(`Can't get to switch a network`);
       }
@@ -145,15 +171,52 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
     return null;
   }, [network]);
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const selectRef = useRef(null);
 
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
+
+    if (data.chainName === "TOKAMAK_MAINNET") {
+      return (
+        <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
+          <Flex
+            w={"200px"}
+            h={"12px"}
+            alignItems={"center"}
+            justifyContent={"space-around"}
+          >
+            <Box w={"49px"} h={"1px"} bgColor={"#CBD0FF"} />
+            <Text fontSize={12}>Layer 2</Text>
+            <Box w={"49px"} h={"1px"} bgColor={"#CBD0FF"} />
+          </Flex>
+          <Flex
+            w={"200px"}
+            h={"32px"}
+            color={"#fff"}
+            px={"8px"}
+            justifyContent={"space-between"}
+            alignItems={"center"}
+            fontSize={14}
+            cursor={"pointer"}
+            bgColor={"#1F2128"}
+            _hover={{ bgColor: "#313442" }}
+            onClick={() => onChange(data)}
+          >
+            <Flex columnGap={"6px"}>
+              <Box w={"20px"} h={"20px"}>
+                <Image src={data.networkImage} alt={data.chainName} />
+              </Box>
+              <Text>{data.label}</Text>
+            </Flex>
+            <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+          </Flex>
+        </Flex>
+      );
+    }
+
     return (
       <Flex
-        w={"100%"}
+        w={"200px"}
         h={"32px"}
         color={"#fff"}
         px={"8px"}
@@ -197,14 +260,15 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
       ref={selectRef}
       options={optionsList}
       menuIsOpen={isOpen}
-      onMenuOpen={() => console.log(1)}
-      onMenuClose={() => console.log(2)}
-      // onMenuClose={() => console.log("tt")}
+      // onMenuOpen={() => {}}
+      // onMenuClose={() => {}}
+      // onMenuClose={() => {}}
       components={{
         Option: CustomOption,
         ValueContainer: () => (
           <ValueContainer
             selectedOption={inNetwork ? selectedOption : selectedOutOption}
+            isOpen={isOpen}
             setIsOpen={setIsOpen}
           />
         ),
