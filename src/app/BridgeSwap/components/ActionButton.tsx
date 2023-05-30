@@ -21,6 +21,7 @@ import { supportedTokens } from "@/types/token/supportedToken";
 import { predeploys } from "@eth-optimism/contracts";
 
 import { ethers } from "ethers";
+import { useTotalGas } from "@/hooks/contracts/useL2Provider";
 
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
@@ -32,7 +33,8 @@ export default function ActionButton() {
 
   const { write: _depositETH } = useCallDeposit("depositETH");
   const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
-  const { write: _withdraw } = useCallWithdraw("withdraw");
+  const { write: _withdraw, contract: _withdraw_contract } =
+    useCallWithdraw("withdraw");
 
   const isDisabled = !isReady;
 
@@ -78,26 +80,19 @@ export default function ActionButton() {
             ],
           });
         case "Withdraw":
+          // const result = await _withdraw_contract.estimateGas.withdraw(
+          //   inTokenInfo.address[inNetwork.chainName],
+          //   parsedAmount,
+          //   200000000,
+          //   "0x"
+          // );
+          // console.log(result);
+
           if (isETH) {
             return _withdraw({
               args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
             });
           }
-
-          // console.log(
-          //   await client.estimateContractGas({
-          //     address: TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
-          //     abi: L2BridgeAbi,
-          //     functionName: "withdraw",
-          //     args: [
-          //       inTokenInfo.address[inNetwork.chainName],
-          //       parsedAmount,
-          //       200000000,
-          //       "0x",
-          //     ],
-          //     account: "0x8c595DA827F4182bC0E3917BccA8e654DF8223E1",
-          //   })
-          // );
 
           return _withdraw({
             args: [

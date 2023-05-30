@@ -128,6 +128,7 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
     }
   }, [connectedChainId]);
 
+  //for react-select from this line
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
     null
   );

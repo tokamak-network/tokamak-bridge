@@ -25,7 +25,7 @@ export default function BridgeSwap() {
         h={"100%"}
       >
         <Swap />
-        <Flex flexDir={"column"} w={"100%"} mt={"32px"} rowGap={"12px"}>
+        <Flex flexDir={"column"} w={"100%"} mt={"24px"} rowGap={"10px"}>
           {mode !== null && (
             <Flex w={"100%"}>
               <TransactionDetail />

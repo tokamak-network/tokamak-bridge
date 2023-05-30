@@ -68,7 +68,7 @@ export default function OutToken() {
   const { mode } = useRecoilValue(actionMode);
 
   return (
-    <Flex flexDir={"column"} rowGap={"40px"}>
+    <Flex flexDir={"column"} rowGap={"28px"}>
       <Flex justifyContent={"space-between"}>
         <Text fontSize={36} fontWeight={"semibold"}>
           {mode === "Swap" ? "For" : "To"}

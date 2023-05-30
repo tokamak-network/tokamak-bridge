@@ -1,17 +1,34 @@
 import { useMemo } from "react";
-import { usePublicClient } from "wagmi";
+import useCallDeposit from "./actions/useCallDeposit";
+import useCallWithdraw from "./actions/useCallWithdraw";
+import { useRecoilValue } from "recoil";
+import { actionMode } from "@/recoil/bridgeSwap/atom";
+import { useTotalGas } from "../contracts/useL2Provider";
 
-export default function useTransactionDetail(params: any) {
-  const { chain, estimateGas } = usePublicClient();
+export default function useTransactionDetail() {
+  const { write: _depositETH, contract: _depositETH_contract } =
+    useCallDeposit("depositETH");
+  const { write: _depositERC20, contract: _depositERC20_contract } =
+    useCallDeposit("depositERC20");
+  const { write: _withdraw, contract: _withdraw_contract } =
+    useCallWithdraw("withdraw");
+  const { mode } = useRecoilValue(actionMode);
 
-  async function test() {
-    const result = await estimateGas(params);
-    console.log(result);
-  }
+  // const { l1GasCost, l2GasCost } = useTotalGas(
+  //   mode === "Deposit"
+  //     ? _depositETH_contract
+  //     : mode === "Withdraw"
+  //     ? _withdraw_contract
+  //     : null
+  // );
 
-  test();
+  // const { l1GasCost, l2GasCost } = useTotalGas(_withdraw_contract);
 
-  const gasFee = useMemo(() => {}, []);
+  const { l1GasCost, l2GasCost } = useTotalGas(_withdraw_contract);
 
-  return {};
+  console.log("go");
+  console.log(mode);
+  console.log(l1GasCost, l2GasCost);
+
+  return { l1GasCost, l2GasCost };
 }

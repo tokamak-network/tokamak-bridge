@@ -14,7 +14,7 @@ export default function InToken() {
   const { onOpenInToken } = useTokenModal();
 
   return (
-    <Flex flexDir={"column"} rowGap={"40px"}>
+    <Flex flexDir={"column"} rowGap={"28px"}>
       {mode && (
         <Text fontSize={36} fontWeight={"semibold"}>
           {mode}

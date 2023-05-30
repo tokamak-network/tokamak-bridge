@@ -273,6 +273,7 @@ const Title = (props: {
   const { isExpanded, setIsExpended } = props;
   const { mode } = useRecoilValue(actionMode);
   const { inNetwork, outNetwork } = useInOutNetwork();
+  const { l1GasCost, l2GasCost } = useTransactionDetail();
   const arrowControl = useAnimation();
 
   useEffect(() => {
