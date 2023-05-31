@@ -1,11 +1,16 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import "@/css/bridgeSwap/selectNetwork.css";
 import NetworkDropdown from "@/components/dropdown/Index";
+import { useMemo } from "react";
 
 export default function SelectNetwork() {
+  const NetworkSwitcher = useMemo(() => {
+    return <NetworkDropdown inNetwork={false} />;
+  }, []);
+
   return (
     <Flex pos={"relative"} className="card-wrapper">
-      <NetworkDropdown inNetwork={false} />
+      {NetworkSwitcher}
       <Flex w={"224px"} h={"248px"} pos={"relative"} mt={"12px"} mb={"16px"}>
         <Flex className="first-layer" zIndex={100}>
           <Box
