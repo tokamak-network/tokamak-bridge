@@ -101,8 +101,6 @@ export default function TokenCard(props: TokenCardProps) {
 
   return (
     <Flex
-      transition="margin .2s ease-in-out"
-      _hover={{ mt: "-2" }}
       w={typeof w === "string" ? w : `${w ?? 200}px`}
       height={typeof h === "string" ? h : `${h ?? 248}px`}
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
