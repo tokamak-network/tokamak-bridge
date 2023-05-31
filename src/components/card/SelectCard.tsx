@@ -8,7 +8,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
-import { CardCarrousel } from "./CardCarousel";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
 import TokenCard from "./TokenCard";
@@ -58,6 +57,203 @@ export function SelectCardButton(props: { field: Field }) {
     </Flex>
   );
 }
+
+const CardCarrousel = () => {
+  const [currentCard, setCurrentCard] = useState<number | null>(null);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
+
+  const { inNetwork } = useRecoilValue(networkStatus);
+  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
+
+  const sideControl = useAnimation();
+  const sideRightControl = useAnimation();
+  const secondControl = useAnimation();
+  const secondRightControl = useAnimation();
+  const middleControl = useAnimation();
+  const outControl = useAnimation();
+
+  const handlePrev = () => {
+    setCurrentCard((prevCard) => (prevCard === null ? 1 : prevCard - 1));
+  };
+
+  const handleNext = () => {
+    setCurrentCard((prevCard) => (prevCard === null ? 3 : prevCard + 1));
+  };
+
+  const cardProps = (index: number) =>
+    useMemo(() => {
+      const currentIndex = currentCard === null ? 2 : currentCard;
+      const indexVal = currentIndex - index;
+      const atOut = indexVal > 2 || indexVal < -2;
+      const atSide = indexVal === 2 || indexVal === -2;
+      const atSideRight = indexVal === -2;
+      const atSecond = indexVal === 1 || indexVal === -1;
+      const atSecondRight = indexVal === -1;
+      const atMiddle = indexVal === 0;
+
+      return {
+        position: "relative",
+        display: atOut ? "none" : "",
+        zIndex: atOut
+          ? -100
+          : atSide
+          ? CardOverlay.Sides
+          : atSecond
+          ? CardOverlay.Seconds
+          : CardOverlay.Middle,
+        transform:
+          atSide && !atSideRight
+            ? `rotate(-10deg)`
+            : atSideRight
+            ? `rotate(10deg)`
+            : atSecond && !atSecondRight
+            ? `rotate(-5deg)`
+            : atSecondRight
+            ? `rotate(5deg)`
+            : null,
+        minWidth: atSide ? "186px" : atSecond ? "225px" : "256px",
+        minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
+        left:
+          atSide && !atSideRight
+            ? "95px"
+            : atSideRight
+            ? "-85px"
+            : atSecond && !atSecondRight
+            ? "43px"
+            : atSecondRight
+            ? "-43px"
+            : "0px",
+      };
+    }, [currentCard, index]);
+
+  useEffect(() => {
+    middleControl.start({
+      width: 256,
+      height: 332,
+      rotate: 0,
+    });
+    secondControl.start({
+      width: 225,
+      height: 298,
+      rotate: -5,
+      fontSize: 30,
+    });
+    secondRightControl.start({
+      width: 225,
+      height: 298,
+      rotate: 5,
+    });
+    sideControl.start({
+      width: 186,
+      height: 242,
+      rotate: -10,
+    });
+    sideRightControl.start({
+      width: 186,
+      height: 242,
+      rotate: 10,
+    });
+  }, [currentCard]);
+
+  return (
+    <Flex
+      alignItems={"end"}
+      w={"100%"}
+      justifyContent={"center"}
+      pt={"75px"}
+      pl={"165px"}
+      pr={"171px"}
+    >
+      <Button
+        onClick={handlePrev}
+        border={"2px solid #17181D"}
+        bgColor={"#0f0f12"}
+        w={"32px"}
+        h={"32px"}
+        _active={{}}
+        _hover={{}}
+        p={0}
+        m={0}
+        borderRadius={100}
+        mb={"70px"}
+      >
+        <Image src={LeftArrow} alt={"LeftArrow"} />
+      </Button>
+      <Flex
+        overflow={"hidden"}
+        alignItems={"end"}
+        pb={"10px"}
+        justifyContent={"center"}
+      >
+        {supportedTokens.map((tokenData, index) => {
+          return (
+            <motion.div
+              transition={{ duration: 0.5 }}
+              //@ts-ignore
+              style={cardProps(index)}
+              animate={
+                currentCard === null
+                  ? undefined
+                  : currentCard - index === 0
+                  ? middleControl
+                  : currentCard - index === 1
+                  ? secondControl
+                  : currentCard - index === -1
+                  ? secondRightControl
+                  : currentCard - index === 2
+                  ? sideControl
+                  : currentCard - index === -2
+                  ? sideRightControl
+                  : outControl
+              }
+              onClick={() =>
+                isInTokenOpen
+                  ? setSelectedInToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+                  : setSelectedOutToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+              }
+              key={tokenData.tokenName.toUpperCase()}
+            >
+              <TokenCard
+                w={"100%"}
+                h={"100%"}
+                tokenInfo={tokenData}
+                inNetwork={true}
+                hasInput={false}
+              />
+            </motion.div>
+          );
+        })}
+      </Flex>
+      <Button
+        onClick={handleNext}
+        border={"2px solid #17181D"}
+        bgColor={"#0f0f12"}
+        w={"32px"}
+        h={"32px"}
+        _active={{}}
+        _hover={{}}
+        p={0}
+        borderRadius={100}
+        mb={"70px"}
+      >
+        <Image src={RightArrow} alt={"RightArrow"} />
+      </Button>
+    </Flex>
+  );
+};
 
 const SearchToken = () => {
   const { onCloseTokenModal } = useTokenModal();
