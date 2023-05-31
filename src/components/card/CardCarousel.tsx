@@ -30,7 +30,6 @@ import {
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import useCircularBuffer from "../../hooks/cards/useCircularBuffer";
 
 enum CardOverlay {
   Middle = 100,
@@ -123,13 +122,8 @@ export const CardCarrousel = () => {
     return {
       position: "relative",
       display: atOut ? "none" : "",
-      transition: atSide
-        ? "ease-in 0.5"
-        : atSecond
-        ? "ease-in 0.5"
-        : atMiddle
-        ? "ease-in-out 0.5"
-        : "all 500ms cubic-bezier(0.42, 0, 0.58, 1)",
+      transition: "margin .2s ease-in-out",
+      _hover: { mt: "-2" },
       zIndex: atOut
         ? -100
         : atSide
@@ -268,6 +262,10 @@ export const CardCarrousel = () => {
                 tokenInfo={tokenData}
                 inNetwork={true}
                 hasInput={false}
+                style={{
+                  transition: "margin .2s ease-in-out",
+                  _hover: { marginTop: "-2" },
+                }}
               />
             </motion.div>
           );
