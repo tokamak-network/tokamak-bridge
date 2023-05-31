@@ -1,5 +1,6 @@
 require("dotenv").config();
-import { quote } from "../../utils/uniswap/quote/quote";
+import { createTrade } from "@/utils/uniswap/tests/trading";
+import { quote } from "../../utils/uniswap/tests/quote";
 
 describe("**start Uniswap Pool test**", () => {
   const OLD_ENV = process.env;
@@ -12,9 +13,13 @@ describe("**start Uniswap Pool test**", () => {
     process.env = OLD_ENV; // Restore old environment
   });
 
-  test("Uniswap - quote test", async () => {
-    console.log(process.env.NEXT_PUBLIC_GOERLI_RPC);
-    const result = await quote();
-    console.log(result);
+  //   test("Uniswap - quote test", async () => {
+  //     const _quoteR = await quote();
+  //     console.log(_quoteR);
+  //   });
+
+  test("Uniswap - swap test", async () => {
+    const _createTradeR = await createTrade();
+    console.log(_createTradeR);
   });
 });

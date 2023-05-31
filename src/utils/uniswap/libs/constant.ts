@@ -1,9 +1,5 @@
-// This file stores web3 related constants such as addresses, token definitions, ETH currency references and ABI's
-
 import { GOERLI_CONTRACTS } from "@/constant/contracts/index";
 import { SupportedChainId, Token } from "@uniswap/sdk-core";
-
-// Addresses
 
 export const POOL_FACTORY_CONTRACT_ADDRESS =
   "0x1F98431c8aD98523631AE4a59f267346ea31F984";

@@ -4,11 +4,11 @@ import { computePoolAddress } from "@uniswap/v3-sdk";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { toReadableAmount, fromReadableAmount } from "../libs/converstion";
-import { L1UniswapContracts } from "../../../constant/contracts/uniswap";
+import { L1_UniswapContracts } from "../../../constant/contracts/uniswap";
 import { getL1Provider } from "@/config/l1Provider";
 
 const { POOL_FACTORY_CONTRACT_ADDRESS, QUOTER_CONTRACT_ADDRESS } =
-  L1UniswapContracts;
+  L1_UniswapContracts;
 
 export async function quote(): Promise<string> {
   const quoterContract = new ethers.Contract(
