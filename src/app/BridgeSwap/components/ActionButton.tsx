@@ -98,7 +98,7 @@ export default function ActionButton() {
             args: [
               inTokenInfo.address[inNetwork.chainName],
               parsedAmount,
-              200000000,
+              0,
               "0x",
             ],
           });

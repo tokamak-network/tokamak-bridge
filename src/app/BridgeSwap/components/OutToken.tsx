@@ -11,6 +11,7 @@ import { ImageFileType } from "@/types/style/imageFileType";
 import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
+import { useMemo } from "react";
 
 const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -67,6 +68,10 @@ const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode } = useRecoilValue(actionMode);
 
+  const NetworkSwitcher = useMemo(() => {
+    return <NetworkDropdown inNetwork={false} />;
+  }, []);
+
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
       <Flex justifyContent={"space-between"}>
@@ -81,7 +86,7 @@ export default function OutToken() {
       </Flex>
 
       <Flex className="card-wrapper">
-        <NetworkDropdown inNetwork={false} />
+        {NetworkSwitcher}
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
         {mode === "Swap" && (

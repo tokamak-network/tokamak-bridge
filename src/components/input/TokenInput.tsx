@@ -39,6 +39,7 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: null,
+          parsedAmount: null,
         });
       }
       const parsedAmount = ethers.utils.parseUnits(
@@ -58,6 +59,7 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: null,
+          parsedAmount: null,
         });
       }
       const parsedAmount = ethers.utils.parseUnits(
@@ -113,7 +115,9 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           fontSize={28}
           fontWeight={700}
           value={
-            selectedInToken ? String(selectedInToken?.parsedAmount) : undefined
+            selectedInToken !== null && selectedInToken?.parsedAmount !== null
+              ? String(selectedInToken?.parsedAmount)
+              : undefined
           }
           onChange={onChange}
         ></Input>

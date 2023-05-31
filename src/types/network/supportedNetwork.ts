@@ -1,6 +1,8 @@
 import { ImageFileType } from "../style/imageFileType";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
 import SYMBOL_TON from "assets/tokens/ton.svg";
+import SYMBOL_DARIUS from "assets/icons/network/darius.svg";
+
 import { SupportedTokenName } from "@/types/token/supportedToken";
 
 export enum SupportedChainId {
@@ -54,7 +56,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.DARIUS,
     chainName: "DARIUS",
-    networkImage: SYMBOL_TON,
+    networkImage: SYMBOL_DARIUS,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,

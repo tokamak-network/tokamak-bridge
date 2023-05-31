@@ -7,11 +7,16 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
 import CardWrapper from "@/bridgeComponent/CardWrapper";
 import TokenInput from "@/components/input/TokenInput";
+import { useMemo } from "react";
 
 export default function InToken() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const { mode } = useRecoilValue(actionMode);
   const { onOpenInToken } = useTokenModal();
+
+  const NetworkSwitcher = useMemo(() => {
+    return <NetworkDropdown inNetwork={true} />;
+  }, []);
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
@@ -21,7 +26,7 @@ export default function InToken() {
         </Text>
       )}
       <Flex className="card-wrapper">
-        <NetworkDropdown inNetwork={true} />
+        {NetworkSwitcher}
         <Box
           w={"200px"}
           h={"248px"}
