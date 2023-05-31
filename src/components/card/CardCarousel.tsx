@@ -122,8 +122,6 @@ export const CardCarrousel = () => {
     return {
       position: "relative",
       display: atOut ? "none" : "",
-      transition: "margin .2s ease-in-out",
-      _hover: { mt: "-2" },
       zIndex: atOut
         ? -100
         : atSide
@@ -214,12 +212,33 @@ export const CardCarrousel = () => {
         <Image src={LeftArrow} alt={"LeftArrow"} />
       </Button>
       <Flex
-        overflow={"hidden"}
+        overflow={"visible"}
         alignItems={"end"}
         pb={"10px"}
         justifyContent={"center"}
       >
         {carouselCards.map((tokenData, index) => {
+          const tokenBorderColorCode = () => {
+            switch (tokenData.tokenName) {
+              case "ETH":
+                return "#383736";
+              case "TON":
+              case "WTON":
+              case "TOS":
+                return "#007AFF";
+              case "DOC":
+                return "#9e9e9e";
+              case "AURA":
+                return "#CB1000";
+              case "LYDA":
+                return "#4361EE";
+              case "USDC":
+                return "#2775CA";
+              default:
+                return "#9e9e9e";
+            }
+          };
+
           cardProps(index);
           return (
             <motion.div
@@ -262,8 +281,14 @@ export const CardCarrousel = () => {
                 inNetwork={true}
                 hasInput={false}
                 style={{
-                  transition: "margin .2s ease-in-out",
-                  _hover: { marginTop: "-2" },
+                  transition: "margin .4s ease-in-out",
+                  _hover: {
+                    border: `4px solid ${tokenBorderColorCode}`,
+                    boxShadow: `0 0 5px 5px ${tokenBorderColorCode()}`,
+                    animation: "glow 0.5s ease-in-out infinite",
+                    marginTop: "-78",
+                    borderRadius: "16px",
+                  },
                 }}
               />
             </motion.div>
