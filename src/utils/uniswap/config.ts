@@ -31,7 +31,7 @@ export interface ExampleConfig {
 // Example Configuration
 
 export const CurrentConfig: ExampleConfig = {
-  env: Environment.LOCAL,
+  env: Environment.WALLET_EXTENSION,
   rpc: {
     local: "http://localhost:8545",
     mainnet: "",

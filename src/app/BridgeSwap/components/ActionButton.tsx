@@ -22,6 +22,7 @@ import { predeploys } from "@eth-optimism/contracts";
 
 import { ethers } from "ethers";
 import { useTotalGas } from "@/hooks/contracts/useL2Provider";
+import { useAmountOut } from "@/hooks/swap/swapTokens";
 
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
@@ -35,6 +36,7 @@ export default function ActionButton() {
   const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
   const { write: _withdraw, contract: _withdraw_contract } =
     useCallWithdraw("withdraw");
+  const { callTokenSwap } = useAmountOut();
 
   const isDisabled = !isReady;
 
@@ -103,7 +105,7 @@ export default function ActionButton() {
             ],
           });
         case "Swap":
-          return;
+          return callTokenSwap();
         default:
           return console.error("action mode is not founded");
       }

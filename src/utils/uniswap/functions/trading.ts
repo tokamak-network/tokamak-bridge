@@ -179,7 +179,8 @@ export async function getTokenTransferApproval(
   token: Token
 ): Promise<TransactionState> {
   const provider = getL1Provider();
-  const address = getWalletAddress();
+  const address = "0x8c595DA827F4182bC0E3917BccA8e654DF8223E1";
+  // getWalletAddress();
   if (!provider || !address) {
     console.log("No Provider Found");
     return TransactionState.Failed;

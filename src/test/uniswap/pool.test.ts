@@ -1,6 +1,6 @@
 require("dotenv").config();
-import { createTrade, executeTrade } from "@/utils/uniswap/tests/trading";
-import { quote } from "../../utils/uniswap/tests/quote";
+import { createTrade, executeTrade } from "@/utils/uniswap/functions/trading";
+import { quote } from "../../utils/uniswap/functions/quote";
 
 describe("**start Uniswap Pool test**", () => {
   const OLD_ENV = process.env;

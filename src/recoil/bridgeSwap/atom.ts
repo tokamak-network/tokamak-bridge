@@ -27,17 +27,17 @@ export const tokenModalStatus = atom<SelectTokenModal>({
   },
 });
 
-type SelectedInToken = TokenInfo & {
+export type SelectedToken = TokenInfo & {
   amountBN: BigInt | null;
   parsedAmount: string | null;
 };
 
-export const selectedInTokenStatus = atom<SelectedInToken | null>({
+export const selectedInTokenStatus = atom<SelectedToken | null>({
   key: "selectedInTokenStatus",
   default: null,
 });
 
-export const selectedOutTokenStatus = atom<SelectedInToken | null>({
+export const selectedOutTokenStatus = atom<SelectedToken | null>({
   key: "selectedOutTokenStatus",
   default: null,
 });

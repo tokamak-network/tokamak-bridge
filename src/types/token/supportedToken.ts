@@ -16,8 +16,10 @@ export type SupportedTokenName =
   | SupportedStableTokens;
 
 export type TokenInfo = {
-  tokenName: SupportedTokenName | String;
-  address: { [K in keyof typeof SupportedChainId]: `0x${string}` | null };
+  tokenName: SupportedTokenName | String | string;
+  address: {
+    [K in keyof typeof SupportedChainId]: `0x${string}` | string | null;
+  };
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
 };
