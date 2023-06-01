@@ -6,27 +6,47 @@ import CreateNew from "./components/CreateNew";
 import "css/scrollbar.css";
 import PoolCard from "./components/PoolCard";
 
-const poolData: any[] = [];
-// const poolData = [
-//   {
-//     Token1: "ETH",
-//     Token2: "USDC",
-//     slippage: "0.30%",
-//     range: "In Range",
-//     Token1Price: "0.0084 ($1.25)",
-//     Token2Price: "3090.234 ($1.25)",
-//     gasFee: "$3.18",
-//   },
-//   {
-//     Token1: "ETH",
-//     Token2: "USDC",
-//     slippage: "0.30%",
-//     range: "In Range",
-//     Token1Price: "0.0084 ($1.25)",
-//     Token2Price: "3090.234 ($1.25)",
-//     gasFee: "$3.18",
-//   },
-// ];
+// Token symbol urls
+
+// const poolData: any[] = [];
+const poolData = [
+  {
+    token1: "ETH",
+    token2: "USDC",
+    slippage: "0.30%",
+    range: "In Range",
+    token1Price: "0.0084 ($1.25)",
+    token2Price: "3090.234 ($1.25)",
+    gasFee: "$3.18",
+  },
+  {
+    token1: "ETH",
+    token2: "USDC",
+    slippage: "0.30%",
+    range: "In Range",
+    token1Price: "0.0084 ($1.25)",
+    token2Price: "3090.234 ($1.25)",
+    gasFee: "$3.18",
+  },
+  {
+    token1: "ETH",
+    token2: "USDC",
+    slippage: "0.30%",
+    range: "In Range",
+    token1Price: "0.0084 ($1.25)",
+    token2Price: "3090.234 ($1.25)",
+    gasFee: "$3.18",
+  },
+  {
+    token1: "ETH",
+    token2: "USDC",
+    slippage: "0.30%",
+    range: "In Range",
+    token1Price: "0.0084 ($1.25)",
+    token2Price: "3090.234 ($1.25)",
+    gasFee: "$3.18",
+  },
+];
 
 export default function Pools() {
   return (
@@ -62,7 +82,18 @@ export default function Pools() {
           {poolData.length === 0 &&
             Array.from({ length: 7 }, (_, index) => <PoolCard key={index} />)}
           {poolData.length > 0 &&
-            poolData.map((card, index) => <PoolCard key={index} />)}
+            poolData.map((card, index) => (
+              <PoolCard
+                token1={card.token1}
+                token2={card.token2}
+                gasFee={card.gasFee}
+                range={card.range}
+                token1Price={card.token1Price}
+                token2Price={card.token2Price}
+                slippage={card.slippage}
+                key={index}
+              />
+            ))}
         </Wrap>
       </Flex>
     </Flex>
