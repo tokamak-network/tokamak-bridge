@@ -2,6 +2,7 @@ import { BaseProvider } from "@ethersproject/providers";
 import { BigNumber, ethers, providers } from "ethers";
 
 import { CurrentConfig, Environment } from "../config";
+import { getL1Provider } from "@/config/l1Provider";
 
 // Single copies of provider and wallet
 const mainnetProvider = new ethers.providers.JsonRpcProvider(
@@ -35,9 +36,10 @@ export function getProvider(): providers.Provider | null {
 }
 
 export function getWalletAddress(): string | null {
-  return CurrentConfig.env === Environment.WALLET_EXTENSION
-    ? walletExtensionAddress
-    : wallet.address;
+  // return CurrentConfig.env === Environment.WALLET_EXTENSION
+  //   ? walletExtensionAddress
+  //   : wallet.address;
+  return process.env.NEXT_PUBLIC_WALLET_ADDRESS as string;
 }
 
 export async function sendTransaction(
@@ -118,7 +120,7 @@ async function sendTransactionViaWallet(
   const txRes = await wallet.sendTransaction(transaction);
 
   let receipt = null;
-  const provider = getProvider();
+  const provider = getL1Provider();
   if (!provider) {
     return TransactionState.Failed;
   }

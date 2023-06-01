@@ -28,6 +28,7 @@ import {
 } from "../libs/provider";
 import { fromReadableAmount } from "../libs/converstion";
 import { getL1Provider } from "@/config/l1Provider";
+import { quote } from "./quote";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -65,10 +66,16 @@ export async function createTrade(): Promise<TokenTrade> {
   console.log("**swapRoute**");
   console.log(swapRoute);
 
-  const amountOut = await getOutputQuote(swapRoute);
+  // const amountOut = await getOutputQuote(swapRoute);
+  const amountOut = await quote();
 
   console.log("**amountOut**");
   console.log(amountOut);
+
+  // const precision = 18; // Specify the desired precision (number of decimal places)
+  // const integerNumber = Math.floor(Number(amountOut) * Math.pow(10, precision));
+
+  // console.log(integerNumber);
 
   const uncheckedTrade = Trade.createUncheckedTrade({
     route: swapRoute,
@@ -81,7 +88,6 @@ export async function createTrade(): Promise<TokenTrade> {
     ),
     outputAmount: CurrencyAmount.fromRawAmount(
       CurrentConfig.tokens.out,
-      //@ts-ignore
       JSBI.BigInt(amountOut)
     ),
     tradeType: TradeType.EXACT_INPUT,
@@ -111,7 +117,7 @@ export async function executeTrade(
   const options: SwapOptions = {
     slippageTolerance: new Percent(50, 10_000), // 50 bips, or 0.50%
     deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
-    recipient: walletAddress,
+    recipient: walletAddress as string,
   };
 
   const methodParameters = SwapRouter.swapCallParameters([trade], options);
@@ -125,6 +131,7 @@ export async function executeTrade(
     maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
   };
 
+  //@ts-ignore
   const res = await sendTransaction(tx);
 
   return res;

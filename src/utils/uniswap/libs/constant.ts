@@ -23,3 +23,11 @@ export const TOS = new Token(
   "TOS",
   "TONStarter Token"
 );
+
+export const AURA = new Token(
+  SupportedChainId.GOERLI,
+  GOERLI_CONTRACTS.AURA_ADDRESS,
+  18,
+  "AURA",
+  "AURA"
+);

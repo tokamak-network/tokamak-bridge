@@ -1,7 +1,5 @@
 import { BigNumber, ethers } from "ethers";
 
-const READABLE_FORM_LEN = 4;
-
 export function fromReadableAmount(
   amount: number,
   decimals: number
@@ -10,6 +8,8 @@ export function fromReadableAmount(
 }
 
 export function toReadableAmount(rawAmount: number, decimals: number): string {
+  const READABLE_FORM_LEN = decimals;
+
   return ethers.utils
     .formatUnits(rawAmount, decimals)
     .slice(0, READABLE_FORM_LEN);

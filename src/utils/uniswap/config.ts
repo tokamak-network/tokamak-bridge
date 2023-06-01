@@ -1,6 +1,6 @@
 import { Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import { WTON, TOS } from "./libs/constant";
+import { WTON, TOS, AURA } from "./libs/constant";
 
 // Sets if the example should run locally or on chain
 export enum Environment {
@@ -42,8 +42,8 @@ export const CurrentConfig: ExampleConfig = {
   },
   tokens: {
     in: TOS,
-    amountIn: 1000000000000000000,
-    out: WTON,
+    amountIn: 10,
+    out: AURA,
     poolFee: FeeAmount.MEDIUM,
   },
 };

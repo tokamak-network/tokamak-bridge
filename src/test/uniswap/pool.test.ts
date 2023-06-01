@@ -1,5 +1,5 @@
 require("dotenv").config();
-import { createTrade } from "@/utils/uniswap/tests/trading";
+import { createTrade, executeTrade } from "@/utils/uniswap/tests/trading";
 import { quote } from "../../utils/uniswap/tests/quote";
 
 describe("**start Uniswap Pool test**", () => {
@@ -13,13 +13,16 @@ describe("**start Uniswap Pool test**", () => {
     process.env = OLD_ENV; // Restore old environment
   });
 
-  //   test("Uniswap - quote test", async () => {
-  //     const _quoteR = await quote();
-  //     console.log(_quoteR);
-  //   });
+  // test("Uniswap - quote test", async () => {
+  //   const _quoteR = await quote();
+  //   console.log("**quote test result**");
+  //   console.log(_quoteR);
+  // });
 
   test("Uniswap - swap test", async () => {
     const _createTradeR = await createTrade();
-    console.log(_createTradeR);
+    console.log(_createTradeR.inputAmount, _createTradeR.outputAmount);
+    // const _excuteTrade = await executeTrade(_createTradeR);
+    // console.log(_excuteTrade);
   });
 });
