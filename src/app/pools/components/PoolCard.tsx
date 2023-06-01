@@ -2,6 +2,7 @@
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import Image from "next/image";
+import EthGroup from "../../../assets/tokens/ethGroup.svg";
 
 type poolProps = {
   token1?: string;
@@ -41,6 +42,52 @@ export default function PoolTile(props: poolProps) {
           {props.token1} / {props.token2}
         </Text>
         <Text fontSize={"12px"}>{props.slippage}</Text>
+      </Flex>
+      <Flex
+        position="relative"
+        alignItems="center"
+        textAlign="center"
+        left="20px"
+      >
+        {props.token1Symbol && (
+          <Image
+            src={props.token1Symbol}
+            alt="iconGroup"
+            style={{ position: "absolute", zIndex: 2, left: 0, top: "19px" }}
+          />
+        )}
+        {props.token2Symbol && (
+          <Image
+            src={props.token2Symbol}
+            alt="iconGroup"
+            style={{
+              position: "absolute",
+              zIndex: 1,
+              left: "52px",
+              top: "19px",
+            }}
+          />
+        )}
+      </Flex>
+      <Flex
+        direction="column"
+        fontSize={"12px"}
+        marginTop={"95px"}
+        line-height={"20px"}
+      >
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontWeight="bold">{props.token1}</Text>
+          {/* TODO: Convert to $ */}
+          <Text marginLeft="2">{props.token1Price} ($1.25)</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontWeight="bold">{props.token2}</Text>
+          <Text marginLeft="2">{props.token2Price} ($1.25)</Text>
+        </Flex>
+        <Flex justifyContent="space-between" alignItems="center">
+          <Text fontWeight="bold">FEE</Text>
+          <Text marginLeft="2">${props.gasFee}</Text>
+        </Flex>
       </Flex>
     </Flex>
   );
