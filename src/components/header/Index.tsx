@@ -4,6 +4,7 @@ import Network from "./Network";
 import Account from "./Account";
 import UserMenu from "./UserMenu";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const menuList = [
   {
@@ -12,7 +13,7 @@ const menuList = [
   },
   {
     title: "POOLS",
-    link: "",
+    link: "/pools",
   },
 ];
 
@@ -26,7 +27,9 @@ const HeaderMenu = (props: { title: string; link: string }) => {
       cursor={"pointer"}
       borderBottom={pathname === link ? "3px solid #007AFF" : ""}
     >
-      <Text>{title}</Text>
+      <Link href={link}>
+        <Text>{title}</Text>
+      </Link>
     </Center>
   );
 };
