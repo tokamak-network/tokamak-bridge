@@ -18,6 +18,7 @@ import UsdcL2 from "../../assets/tokens/UsdcL2.svg";
 // const poolData: any[] = [];
 const poolData = [
   {
+    poolId: 1,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -29,6 +30,7 @@ const poolData = [
     token2Symbol: UsdcL1,
   },
   {
+    poolId: 2,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -40,6 +42,7 @@ const poolData = [
     token2Symbol: TokL1,
   },
   {
+    poolId: 3,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -51,6 +54,7 @@ const poolData = [
     token2Symbol: TonL1,
   },
   {
+    poolId: 4,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -62,6 +66,7 @@ const poolData = [
     token2Symbol: UsdcL2,
   },
   {
+    poolId: 5,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -73,6 +78,7 @@ const poolData = [
     token2Symbol: TokL1,
   },
   {
+    poolId: 6,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -84,6 +90,7 @@ const poolData = [
     token2Symbol: TonL1,
   },
   {
+    poolId: 7,
     token1: "ETH",
     token2: "USDC",
     slippage: "0.30%",
@@ -130,7 +137,7 @@ export default function Pools() {
           {poolData.length === 0 &&
             Array.from({ length: 7 }, (_, index) => <PoolCard key={index} />)}
           {poolData.length > 0 &&
-            poolData.map((card, index) => (
+            poolData.map((card) => (
               <PoolCard
                 token1={card.token1}
                 token2={card.token2}
@@ -141,7 +148,7 @@ export default function Pools() {
                 slippage={card.slippage}
                 token1Symbol={card.token1Symbol}
                 token2Symbol={card.token2Symbol}
-                key={index}
+                key={card.poolId}
               />
             ))}
         </Wrap>
