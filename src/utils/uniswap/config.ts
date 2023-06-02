@@ -1,6 +1,6 @@
 import { Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import { WTON, TOS, AURA } from "./libs/constant";
+import { WTON, TOS, AURA, TON } from "./libs/constant";
 
 // Sets if the example should run locally or on chain
 export enum Environment {
@@ -41,9 +41,9 @@ export const CurrentConfig: ExampleConfig = {
     privateKey: process.env.NEXT_PUBLIC_WALLET_PK as string,
   },
   tokens: {
-    in: TOS,
-    amountIn: 10,
-    out: AURA,
+    in: TON,
+    amountIn: 1,
+    out: TOS,
     poolFee: FeeAmount.MEDIUM,
   },
 };

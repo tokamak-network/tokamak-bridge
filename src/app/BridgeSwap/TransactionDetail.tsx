@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import CustomTooltip from "components/tooltip/CustomTooltip";
 import useTransactionDetail from "@/hooks/bridge/useTransactionDetails";
+import Swap from "./Swap";
 
 type DepositDetailProp = {
   title: string;
@@ -33,6 +34,16 @@ type WithdrawDetailProp = {
     l1Gas: { eth: string; ton: string };
     l2Gas: { eth: string; ton: string };
   };
+};
+
+type SwapDetailProp = {
+  title:
+    | "Expected output"
+    | "Minimum received after slippage"
+    | "Estimated gas fees";
+  content: string;
+  gasFee?: string;
+  slippage?: string;
 };
 
 const DivisionLine = () => {
@@ -174,6 +185,32 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
   );
 };
 
+const SwapDetailRow = (props: SwapDetailProp) => {
+  const { title, content, gasFee, slippage } = props;
+  return (
+    <Flex flexDir={"column"}>
+      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+        <Flex columnGap={"4px"}>
+          <Text fontWeight={300}>{title}</Text>
+          {slippage && (
+            <Text fontWeight={300} color={"#A0A3AD"}>
+              {`(${slippage})`}
+            </Text>
+          )}
+        </Flex>
+        <Flex>
+          <Text fontWeight={500}>{content}</Text>
+          {gasFee && (
+            <Text ml={"27px"} fontWeight={500} color={"#A0A3AD"}>
+              {gasFee}
+            </Text>
+          )}
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+
 const Content = (props: { isExpanded: boolean }) => {
   const { isExpanded } = props;
   const { mode } = useRecoilValue(actionMode);
@@ -222,6 +259,16 @@ const Content = (props: { isExpanded: boolean }) => {
     },
   ];
 
+  const swapPropsData: SwapDetailProp[] = [
+    { title: "Expected output", content: "178.29 USDC" },
+    {
+      title: "Minimum received after slippage",
+      content: "178.29 USDC",
+      slippage: "0.1%",
+    },
+    { title: "Estimated gas fees", content: "0.0001 ETH", gasFee: "$3.18" },
+  ];
+
   const detailRow = useMemo(() => {
     switch (mode) {
       case "Deposit":
@@ -233,7 +280,7 @@ const Content = (props: { isExpanded: boolean }) => {
           <WithdrawDetailRow {...data}></WithdrawDetailRow>
         ));
       case "Swap":
-        return null;
+        return swapPropsData.map((data) => <SwapDetailRow {...data} />);
       default:
         return <>{`component not founded :(`}</>;
     }
@@ -315,6 +362,31 @@ const Title = (props: {
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
           </motion.div>
         </Flex>
+      </Flex>
+    );
+  }
+
+  if (mode === "Swap") {
+    return (
+      <Flex
+        w={"100%"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        cursor={"pointer"}
+        onClick={() => setIsExpended(!isExpanded)}
+        fontSize={14}
+      >
+        <Flex>
+          <Text>1 USDC</Text>
+          <Text mx={"9px"}>=</Text>
+          <Text>0.0006 ETH</Text>
+          <Text color={"#A0A3AD"} ml={"4px"}>
+            ($1.000)
+          </Text>
+        </Flex>
+        <motion.div animate={arrowControl}>
+          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        </motion.div>
       </Flex>
     );
   }

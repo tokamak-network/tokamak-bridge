@@ -4,19 +4,29 @@ import { computePoolAddress } from "@uniswap/v3-sdk";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { toReadableAmount, fromReadableAmount } from "../libs/converstion";
-import { L1_UniswapContracts } from "../../../constant/contracts/uniswap";
+import {
+  L1_UniswapContracts,
+  L2_UniswapContracts,
+} from "../../../constant/contracts/uniswap";
 import { getL1Provider } from "@/config/l1Provider";
+import { getL2Provider } from "@/config/l2Provider";
 
 const { POOL_FACTORY_CONTRACT_ADDRESS, QUOTER_CONTRACT_ADDRESS } =
-  L1_UniswapContracts;
+  L2_UniswapContracts;
+
+// const provider = getL1Provider()
+const provider = getL2Provider();
 
 export async function quote(): Promise<string> {
   const quoterContract = new ethers.Contract(
     QUOTER_CONTRACT_ADDRESS,
     Quoter.abi,
-    getL1Provider()
+    provider
   );
+
   const poolConstants = await getPoolConstants();
+
+  console.log("poolConstants : ", poolConstants);
 
   const quotedAmountOut = await quoterContract.callStatic.quoteExactInputSingle(
     poolConstants.token0,
@@ -29,6 +39,8 @@ export async function quote(): Promise<string> {
     0
   );
 
+  console.log("quotedAmountOut : ", quotedAmountOut);
+
   return toReadableAmount(quotedAmountOut, CurrentConfig.tokens.out.decimals);
 }
 
@@ -39,21 +51,30 @@ async function getPoolConstants(): Promise<{
 }> {
   const currentPoolAddress = computePoolAddress({
     factoryAddress: POOL_FACTORY_CONTRACT_ADDRESS,
-    tokenA: CurrentConfig.tokens.in,
-    tokenB: CurrentConfig.tokens.out,
+    tokenA: CurrentConfig.tokens.out,
+    tokenB: CurrentConfig.tokens.in,
     fee: CurrentConfig.tokens.poolFee,
+    initCodeHashManualOverride:
+      "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54",
   });
+
+  console.log("currentPoolAddress : ", currentPoolAddress);
 
   const poolContract = new ethers.Contract(
     currentPoolAddress,
     IUniswapV3PoolABI.abi,
-    getL1Provider()
+    provider
   );
+
   const [token0, token1, fee] = await Promise.all([
     poolContract.token0(),
     poolContract.token1(),
     poolContract.fee(),
   ]);
+
+  console.log("token0, token1, fee : ");
+  console.log(CurrentConfig.tokens);
+  console.log(token0, token1, fee);
 
   return {
     token0,
