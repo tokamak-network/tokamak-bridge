@@ -2,26 +2,14 @@
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import Image from "next/image";
-import EthGroup from "../../../assets/tokens/ethGroup.svg";
+import { PoolCardDetail } from "@/types/pool";
 
-type poolProps = {
-  token1?: string;
-  token2?: string;
-  slippage?: string;
-  range?: string;
-  token1Price?: string;
-  token2Price?: string;
-  gasFee?: string;
-  token1Symbol?: string;
-  token2Symbol?: string;
-};
-
-export default function PoolTile(props: poolProps) {
+export default function PoolTile(props: PoolCardDetail) {
   return (
     <Flex
       flexDir="column"
       border="3px solid #383736"
-      bgColor={!props.gasFee ? "#15161D" : ""}
+      bgColor={!props.id ? "#15161D" : ""}
       w="200px"
       h="248px"
       marginRight={"16px"}
@@ -32,14 +20,27 @@ export default function PoolTile(props: poolProps) {
       borderRadius={"16px"}
     >
       <Flex alignItems="center" justifyContent="flex-end">
-        <Box w="6px" h="6px" borderRadius="50%" bg="#00EE98" mr="6px" />
-        <Text fontSize="11px" fontWeight="600" color="#00EE98">
-          {props.range}
-        </Text>
+        {props.range === false ? (
+          <>
+            <Box w="6px" h="6px" borderRadius="50%" bg="#DD3A44" mr="6px" />
+            <Text fontSize="11px" fontWeight="600" color="#DD3A44">
+              Out of Range
+            </Text>
+          </>
+        ) : (
+          <>
+            <Box w="6px" h="6px" borderRadius="50%" bg="#00EE98" mr="6px" />
+            <Text fontSize="11px" fontWeight="600" color="#00EE98">
+              In Range
+            </Text>
+          </>
+        )}
       </Flex>
+
       <Flex alignItems="left" justifyContent="flex-start" flexDir={"column"}>
         <Text fontWeight="semibold" fontSize="18px">
-          {props.token1} / {props.token2}
+          {/* {props.in.symbol} / {props.out.symbol} */}
+          {props.in} / {props.out}
         </Text>
         <Text fontSize={"12px"}>{props.slippage}</Text>
       </Flex>
@@ -49,16 +50,16 @@ export default function PoolTile(props: poolProps) {
         textAlign="center"
         left="20px"
       >
-        {props.token1Symbol && (
+        {props.in && (
           <Image
-            src={props.token1Symbol}
+            src={props.symbol.inTokenSymbol}
             alt="iconGroup"
             style={{ position: "absolute", zIndex: 2, left: 0, top: "19px" }}
           />
         )}
-        {props.token2Symbol && (
+        {props.out && (
           <Image
-            src={props.token2Symbol}
+            src={props.symbol.outTokenSymbol}
             alt="iconGroup"
             style={{
               position: "absolute",
@@ -76,17 +77,17 @@ export default function PoolTile(props: poolProps) {
         line-height={"20px"}
       >
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontWeight="bold">{props.token1}</Text>
+          <Text fontWeight="bold">{props.in}</Text>
           {/* TODO: Convert to $ */}
-          <Text marginLeft="2">{props.token1Price} ($1.25)</Text>
+          <Text marginLeft="2">{props.trade.inputAmount} ($1.25)</Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontWeight="bold">{props.token2}</Text>
-          <Text marginLeft="2">{props.token2Price} ($1.25)</Text>
+          <Text fontWeight="bold">{props.out}</Text>
+          <Text marginLeft="2">{props.trade.outTokenAmount} ($1.25)</Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
           <Text fontWeight="bold">FEE</Text>
-          <Text marginLeft="2">${props.gasFee}</Text>
+          <Text marginLeft="2">${props.trade.gasFee}</Text>
         </Flex>
       </Flex>
     </Flex>

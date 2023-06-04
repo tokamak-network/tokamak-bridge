@@ -2,7 +2,7 @@
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import Image from "next/image";
-import foreignSVG from "../../../assets/icons/foreign.svg";
+import foreignSVG from "@/assets/icons/foreign.svg";
 
 export default function LPGuide() {
   return (

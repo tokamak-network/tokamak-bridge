@@ -5,101 +5,132 @@ import LPGuide from "./components/LPGuide";
 import CreateNew from "./components/CreateNew";
 import "css/scrollbar.css";
 import PoolCard from "./components/PoolCard";
+import { PoolCardDetail } from "@/types/pool";
+import EmptyCard from "./components/EmptyCard";
+import { Token } from "@uniswap/sdk-core";
 
 // Token symbol urls
-import EthL1 from "../../assets/tokens/ethGroup.svg";
-import UsdcL1 from "../../assets/tokens/usdcEth.svg";
-import TokL1 from "../../assets/tokens/tokEth.svg";
-import TonL1 from "../../assets/tokens/tonEth.svg";
-import TonL2 from "../../assets/tokens/tonL2.svg";
-import UsdcL2 from "../../assets/tokens/UsdcL2.svg";
+import EthL1 from "@/assets/tokens/ethGroup.svg";
+import UsdcL1 from "@/assets/tokens/usdcEth.svg";
+import TokL1 from "@/assets/tokens/tokEth.svg";
+import TonL1 from "@/assets/tokens/tonEth.svg";
+import TonL2 from "@/assets/tokens/tonL2.svg";
+import UsdcL2 from "@/assets/tokens/UsdcL2.svg";
 
 // * MOCK DATA
 // const poolData: any[] = [];
-const poolData = [
+const poolData: PoolCardDetail[] = [
   {
-    poolId: 1,
-    token1: "ETH",
-    token2: "USDC",
+    id: 1,
+    in: "ETH",
+    out: "USDC",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: EthL1,
-    token2Symbol: UsdcL1,
+    range: false,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: EthL1,
+      outTokenSymbol: UsdcL1,
+    },
   },
   {
-    poolId: 2,
-    token1: "ETH",
-    token2: "USDC",
+    id: 2,
+    in: "ETH",
+    out: "TOK",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: EthL1,
-    token2Symbol: TokL1,
+    range: true,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: EthL1,
+      outTokenSymbol: TokL1,
+    },
   },
   {
-    poolId: 3,
-    token1: "ETH",
-    token2: "USDC",
+    id: 3,
+    in: "ETH",
+    out: "TON",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: EthL1,
-    token2Symbol: TonL1,
+    range: true,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: EthL1,
+      outTokenSymbol: TonL1,
+    },
   },
   {
-    poolId: 4,
-    token1: "ETH",
-    token2: "USDC",
+    id: 4,
+    in: "TON",
+    out: "USDC",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: TonL2,
-    token2Symbol: UsdcL2,
+    range: true,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: TonL2,
+      outTokenSymbol: UsdcL2,
+    },
   },
   {
-    poolId: 5,
-    token1: "ETH",
-    token2: "USDC",
+    id: 5,
+    in: "ETH",
+    out: "TON",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: EthL1,
-    token2Symbol: TokL1,
+    range: true,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: EthL1,
+      outTokenSymbol: TonL1,
+    },
   },
   {
-    poolId: 6,
-    token1: "ETH",
-    token2: "USDC",
+    id: 6,
+    in: "ETH",
+    out: "TON",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: EthL1,
-    token2Symbol: TonL1,
+    range: true,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: EthL1,
+      outTokenSymbol: TonL1,
+    },
   },
   {
-    poolId: 7,
-    token1: "ETH",
-    token2: "USDC",
+    id: 7,
+    in: "ETH",
+    out: "TON",
     slippage: "0.30%",
-    range: "In Range",
-    token1Price: "0.0084",
-    token2Price: "3090.234",
-    gasFee: "3.18",
-    token1Symbol: TonL2,
-    token2Symbol: UsdcL2,
+    range: true,
+    trade: {
+      inputAmount: 0.0084,
+      outTokenAmount: 3090.234,
+      gasFee: 3.18,
+    },
+    symbol: {
+      inTokenSymbol: EthL1,
+      outTokenSymbol: TonL1,
+    },
   },
 ];
 
@@ -135,20 +166,24 @@ export default function Pools() {
           <LPGuide />
           <CreateNew />
           {poolData.length === 0 &&
-            Array.from({ length: 7 }, (_, index) => <PoolCard key={index} />)}
+            Array.from({ length: 7 }, (_, index) => <EmptyCard key={index} />)}
           {poolData.length > 0 &&
             poolData.map((card) => (
               <PoolCard
-                token1={card.token1}
-                token2={card.token2}
-                gasFee={card.gasFee}
+                in={card.in}
+                out={card.out}
                 range={card.range}
-                token1Price={card.token1Price}
-                token2Price={card.token2Price}
                 slippage={card.slippage}
-                token1Symbol={card.token1Symbol}
-                token2Symbol={card.token2Symbol}
-                key={card.poolId}
+                trade={{
+                  inputAmount: card.trade.inputAmount,
+                  outTokenAmount: card.trade.outTokenAmount,
+                  gasFee: card.trade.gasFee,
+                }}
+                symbol={{
+                  inTokenSymbol: card.symbol.inTokenSymbol,
+                  outTokenSymbol: card.symbol.outTokenSymbol,
+                }}
+                key={card.id}
               />
             ))}
         </Wrap>
