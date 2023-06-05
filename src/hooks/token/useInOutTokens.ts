@@ -3,25 +3,30 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
-import { Token } from "@uniswap/sdk-core";
+import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export function useInOutTokens() {
   const inTokenRecoilValue = useRecoilValue(selectedInTokenStatus);
   const outTokenRecoilValue = useRecoilValue(selectedOutTokenStatus);
   const { connectedChainId } = useConnectedNetwork();
 
+  const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
+    SupportedChainId.MAINNET || SupportedChainId.GOERLI
+  );
+
   const inToken =
     inTokenRecoilValue && connectedChainId
       ? {
           ...inTokenRecoilValue,
-          token: new Token(
-            connectedChainId,
-            inTokenRecoilValue.address["DARIUS"] as string,
-            inTokenRecoilValue.decimals,
-            inTokenRecoilValue.tokenName as string,
-            inTokenRecoilValue.tokenName as string
-          ),
+          // token: new Token(
+          //   connectedChainId,
+          //   inTokenRecoilValue.address["DARIUS"] as string,
+          //   inTokenRecoilValue.decimals,
+          //   inTokenRecoilValue.tokenName as string,
+          //   inTokenRecoilValue.tokenName as string
+          // ),
         }
       : null;
 

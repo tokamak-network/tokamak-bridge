@@ -1,7 +1,7 @@
 import { useInOutNetwork } from "@/hooks/network";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
+import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { Box, Checkbox, Flex, Text, Tooltip } from "@chakra-ui/react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import ArrowImg from "assets/icons/arrow.svg";
 import GasImg from "assets/icons/gasStation.svg";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
@@ -9,42 +9,14 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import CustomTooltip from "components/tooltip/CustomTooltip";
-import useTransactionDetail from "@/hooks/bridge/useTransactionDetails";
 import Swap from "./Swap";
-
-type DepositDetailProp = {
-  title: string;
-  content: string;
-  tooltip?: boolean;
-  tooltipLabel?: string;
-  dollorPrice?: string;
-  gasFee?: {
-    l1Gas: string;
-    l2Gas: string;
-  };
-};
-
-type WithdrawDetailProp = {
-  title: string;
-  content: string;
-  tooltip?: boolean;
-  tooltipLabel?: string;
-  dollorPrice?: string;
-  gasFee?: {
-    l1Gas: { eth: string; ton: string };
-    l2Gas: { eth: string; ton: string };
-  };
-};
-
-type SwapDetailProp = {
-  title:
-    | "Expected output"
-    | "Minimum received after slippage"
-    | "Estimated gas fees";
-  content: string;
-  gasFee?: string;
-  slippage?: string;
-};
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import {
+  DepositDetailProp,
+  SwapDetailProp,
+  WithdrawDetailProp,
+  useTransactionDetail,
+} from "@/hooks/transactionDetail/useTransactionDetail";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -159,11 +131,11 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
         >
           <Flex justifyContent={"space-between"}>
             <Text>L1 gas fee</Text>
-            <Text>{gasFee.l1Gas.ton}</Text>
+            <Text>{isTON ? gasFee.l1Gas.ton : gasFee.l1Gas.eth}</Text>
           </Flex>
           <Flex justifyContent={"space-between"}>
             <Text>L2 gas fee</Text>
-            <Text>{gasFee.l2Gas.ton}</Text>
+            <Text>{isTON ? gasFee.l2Gas.ton : gasFee.l2Gas.eth}</Text>
           </Flex>
         </Flex>
       </Flex>
@@ -214,50 +186,9 @@ const SwapDetailRow = (props: SwapDetailProp) => {
 const Content = (props: { isExpanded: boolean }) => {
   const { isExpanded } = props;
   const { mode } = useRecoilValue(actionMode);
+  const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
-  const depositPropsData: DepositDetailProp[] = [
-    {
-      title: "Amount to Deposit",
-      content: "~0.0022 ETH",
-      tooltip: true,
-      tooltipLabel: "0.00221110000002 ETH",
-    },
-    {
-      title: "Estimated gas fees",
-      content: "~0.0022 ETH",
-      gasFee: {
-        l1Gas: "0.0022 ETH",
-        l2Gas: "0.0022 ETH",
-      },
-      tooltip: true,
-      tooltipLabel: "0.00221110000002 ETH",
-    },
-    {
-      title: "Time to Deposit",
-      content: "~20 minutes",
-    },
-  ];
-
-  const withdrawPropsData: WithdrawDetailProp[] = [
-    {
-      title: "Amount to Withdraw",
-      content: "~0.0022 ETH",
-      tooltip: true,
-      tooltipLabel: "0.00221110000002 ETH",
-    },
-    {
-      title: "Estimated gas fees",
-      content: "~0.0022 ETH",
-      gasFee: {
-        l1Gas: { eth: "0.0022 ETH", ton: "0.0022 TON" },
-        l2Gas: { eth: "0.0022 ETH", ton: "0.0022 TON" },
-      },
-    },
-    {
-      title: "Time to Withdraw",
-      content: "approximately 7 days",
-    },
-  ];
+  const { depositPropsData, withdrawPropsData } = useTransactionDetail();
 
   const swapPropsData: SwapDetailProp[] = [
     { title: "Expected output", content: "178.29 USDC" },
@@ -272,11 +203,11 @@ const Content = (props: { isExpanded: boolean }) => {
   const detailRow = useMemo(() => {
     switch (mode) {
       case "Deposit":
-        return depositPropsData.map((data) => (
+        return depositPropsData?.map((data) => (
           <DepositDetailRow key={data.title} {...data}></DepositDetailRow>
         ));
       case "Withdraw":
-        return withdrawPropsData.map((data) => (
+        return withdrawPropsData?.map((data) => (
           <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
         ));
       case "Swap":
@@ -286,7 +217,7 @@ const Content = (props: { isExpanded: boolean }) => {
       default:
         return <>{`component not founded :(`}</>;
     }
-  }, [mode]);
+  }, [mode, depositPropsData, withdrawPropsData]);
 
   if (isExpanded) {
     return (
@@ -300,7 +231,16 @@ const Content = (props: { isExpanded: boolean }) => {
             <Flex flexDir={"column"}>
               <DivisionLine />
               <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
-                <Checkbox w={"16px"} h={"16px"} mb={"15px"}></Checkbox>
+                <Checkbox
+                  w={"16px"}
+                  h={"16px"}
+                  mb={"15px"}
+                  isChecked={isConfirm}
+                  onChange={(e) => {
+                    const checkValue = e.target.checked;
+                    setIsConfirm(checkValue);
+                  }}
+                ></Checkbox>
                 <Text lineHeight={"20px"} fontSize={14} fontWeight={500}>
                   I understand it will take approximately 7 days until my funds
                   are claimable on Ethereum Mainnet.{" "}
@@ -322,7 +262,6 @@ const Title = (props: {
   const { isExpanded, setIsExpended } = props;
   const { mode } = useRecoilValue(actionMode);
   const { inNetwork, outNetwork } = useInOutNetwork();
-  const { l1GasCost, l2GasCost } = useTransactionDetail();
   const arrowControl = useAnimation();
 
   useEffect(() => {
@@ -397,8 +336,6 @@ const Title = (props: {
 
 export default function TransactionDetail() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
-
-  // const {} = useTransactionDetail();
 
   return (
     <Flex

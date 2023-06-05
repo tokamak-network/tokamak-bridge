@@ -31,8 +31,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: "0x",
       GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      DARIUS: null,
+      TOKAMAK_MAINNET: "0x",
+      DARIUS: "0x",
     },
     decimals: 18,
     isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],

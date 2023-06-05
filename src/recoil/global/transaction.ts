@@ -27,3 +27,26 @@ export type T_SwapTransactionDetail = {
   slippage: string;
   gasFee: string;
 };
+
+import { atom } from "recoil";
+
+type GasDataAtom = {
+  l1GasPrice: BigInt | null;
+  l2GasPrice: BigInt | null;
+  l1EstimatedGasUsage: BigInt | null;
+  l2EstimatedGasUsage: BigInt | null;
+  l1GasTotal: BigInt | null;
+  l2GasTotal: BigInt | null;
+};
+
+export const gasData = atom<GasDataAtom>({
+  key: "gasData",
+  default: {
+    l1GasPrice: null,
+    l2GasPrice: null,
+    l1EstimatedGasUsage: null,
+    l2EstimatedGasUsage: null,
+    l1GasTotal: null,
+    l2GasTotal: null,
+  },
+});

@@ -27,6 +27,13 @@ export const tokenModalStatus = atom<SelectTokenModal>({
   },
 });
 
+type ConfirmWithdraw = boolean;
+
+export const confirmWithdrawStatus = atom<ConfirmWithdraw>({
+  key: "confirmWithdrawStatus",
+  default: false,
+});
+
 export type SelectedToken = TokenInfo & {
   amountBN: BigInt | null;
   parsedAmount: string | null;
@@ -68,16 +75,20 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
     const network = get(networkStatus);
     const { inTokenHasAmount } = get(inTokenSelector);
     const { outTokenHasAmount } = get(outTokenSelector);
+    const isConfirmed = get(confirmWithdrawStatus);
 
     if (network?.inNetwork && network?.outNetwork) {
       const isInTokenReady = inTokenHasAmount;
       const isOutTokenReady = inTokenHasAmount;
 
       if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
-        return { mode: "Withdraw", isReady: isInTokenReady };
+        return { mode: "Withdraw", isReady: isInTokenReady && isConfirmed };
       }
       if (network.inNetwork === network.outNetwork) {
-        return { mode: "Swap", isReady: isInTokenReady && isOutTokenReady };
+        return {
+          mode: "Swap",
+          isReady: isInTokenReady && isOutTokenReady,
+        };
       }
       return { mode: "Deposit", isReady: isInTokenReady };
     }
