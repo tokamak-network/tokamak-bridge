@@ -159,10 +159,10 @@ async function getOutputQuote(route: Route<Currency, Currency>) {
         CurrentConfig.tokens.in.decimals
       ).toString()
     ),
-    TradeType.EXACT_INPUT,
-    {
-      useQuoterV2: true,
-    }
+    TradeType.EXACT_INPUT
+    // {
+    //   useQuoterV2: true,
+    // }
   );
 
   console.log("**calldata**");
