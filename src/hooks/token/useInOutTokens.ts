@@ -20,13 +20,13 @@ export function useInOutTokens() {
     inTokenRecoilValue && connectedChainId
       ? {
           ...inTokenRecoilValue,
-          // token: new Token(
-          //   connectedChainId,
-          //   inTokenRecoilValue.address["DARIUS"] as string,
-          //   inTokenRecoilValue.decimals,
-          //   inTokenRecoilValue.tokenName as string,
-          //   inTokenRecoilValue.tokenName as string
-          // ),
+          token: new Token(
+            connectedChainId,
+            inTokenRecoilValue.address["DARIUS"] as string,
+            inTokenRecoilValue.decimals,
+            inTokenRecoilValue.tokenName as string,
+            inTokenRecoilValue.tokenName as string
+          ),
         }
       : null;
 
