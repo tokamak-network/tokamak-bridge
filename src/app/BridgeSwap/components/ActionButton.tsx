@@ -10,7 +10,7 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useAccount, usePublicClient } from "wagmi";
+import { useAccount, useFeeData, usePublicClient } from "wagmi";
 import {
   SupportedChainId,
   supportedChain,
@@ -20,9 +20,10 @@ import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { supportedTokens } from "@/types/token/supportedToken";
 import { predeploys } from "@eth-optimism/contracts";
 
-import { ethers } from "ethers";
-import { useTotalGas } from "@/hooks/contracts/useL2Provider";
 import { useAmountOut } from "@/hooks/swap/swapTokens";
+import { GOERLI_CONTRACTS } from "@/constant/contracts";
+
+import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
@@ -32,15 +33,25 @@ export default function ActionButton() {
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
 
+  const { address } = useAccount();
+
+  const provider = usePublicClient();
+  const { data } = useFeeData();
+  console.log(data);
+
   const { write: _depositETH } = useCallDeposit("depositETH");
   const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
   const { write: _withdraw, contract: _withdraw_contract } =
     useCallWithdraw("withdraw");
+
   const { callTokenSwap } = useAmountOut();
 
   const isDisabled = !isReady;
 
   const onClick = useCallback(async () => {
+    const ___test = await provider.getGasPrice();
+    console.log(___test);
+
     if (!isConnected) {
       return connectToWallet();
     }
@@ -67,11 +78,48 @@ export default function ActionButton() {
 
           if (isETH) {
             return _depositETH({
-              args: [1_300_000, "0x"],
+              args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
             });
           }
+
+          //  * const gas = await contract.estimateGas.mint({
+          //                *   account: '0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266',
+          //                * })
+          //                */
+
+          const __test = await contract.estimateGas.depositERC20({
+            //@ts-ignore
+            account: address,
+            args: [
+              inTokenInfo.address[inNetwork.chainName],
+              outTokenAddress,
+              parsedAmount,
+              200000,
+              "0x",
+            ],
+          });
+          console.log(__test);
+
+          if (address) {
+            const _test = await provider.estimateContractGas({
+              address: GOERLI_CONTRACTS.L1Bridge,
+              abi: L1BridgeAbi,
+              functionName: "depositERC20",
+              args: [
+                inTokenInfo.address[inNetwork.chainName],
+                outTokenAddress,
+                parsedAmount,
+                200000,
+                "0x",
+              ],
+              account: address,
+            });
+
+            console.log(_test);
+          }
+
           return _depositERC20({
             args: [
               inTokenInfo.address[inNetwork.chainName],
@@ -110,7 +158,7 @@ export default function ActionButton() {
           return console.error("action mode is not founded");
       }
     }
-  }, [isConnected, connectToWallet, mode, inTokenInfo]);
+  }, [isConnected, connectToWallet, mode, inTokenInfo, address]);
 
   return (
     <Button

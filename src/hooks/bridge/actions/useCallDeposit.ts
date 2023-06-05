@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
-import { useContractWrite, usePublicClient } from "wagmi";
+import {
+  useContractWrite,
+  usePrepareContractWrite,
+  usePublicClient,
+} from "wagmi";
 import { GOERLI_CONTRACTS } from "@/constant/contracts";
 import { getContract } from "viem";
 
