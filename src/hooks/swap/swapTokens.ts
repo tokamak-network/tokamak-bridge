@@ -22,7 +22,10 @@ import {
 import { useInOutTokens } from "../token/useInOutTokens";
 import JSBI from "jsbi";
 import { useAccount, useContractWrite } from "wagmi";
-import { L1_UniswapContracts } from "@/constant/contracts/uniswap";
+import {
+  L1_UniswapContracts,
+  L2_UniswapContracts,
+} from "@/constant/contracts/uniswap";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { getTokenTransferApproval } from "@/utils/uniswap/functions/trading";
 import { TransactionState } from "@/types/states/transaction";
@@ -55,29 +58,11 @@ export function useAmountOut() {
   useEffect(() => {
     const getAmountOut = async () => {
       if (inToken && inToken?.amountBN !== null && outToken?.address) {
-        const currentPoolAddress = computePoolAddress({
-          factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-          tokenA: inToken.token,
-          tokenB: outToken.token,
-          fee: FeeAmount.MEDIUM,
-        });
-        const poolContract = new ethers.Contract(
-          currentPoolAddress,
-          IUniswapV3PoolABI.abi,
-          provider
-        );
-
-        const [token0, token1, fee] = await Promise.all([
-          poolContract.token0(),
-          poolContract.token1(),
-          poolContract.fee(),
-        ]);
-
         const quotedAmountOut =
           await quoterContract.callStatic.quoteExactInputSingle(
-            token0,
-            token1,
-            fee,
+            inToken.token.address,
+            outToken.token.address,
+            FeeAmount.MEDIUM,
             fromReadableAmount(
               Number(inToken.parsedAmount),
               inToken.decimals
@@ -106,12 +91,16 @@ export function useAmountOut() {
           tokenA: inToken.token,
           tokenB: outToken.token,
           fee: FeeAmount.MEDIUM,
+          initCodeHashManualOverride:
+            "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff",
         });
+
         const poolContract = new ethers.Contract(
           currentPoolAddress,
           IUniswapV3PoolABI.abi,
           provider
         );
+
         const [
           //   token0, token1, fee, tickSpacing,
           liquidity,
@@ -185,15 +174,21 @@ export function useAmountOut() {
           options
         );
 
+        const gasPrice = await provider.getGasPrice();
+
         const tx = {
           data: methodParameters.calldata as `0x{string}`,
-          to: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
+          to: L2_UniswapContracts.SWAP_ROUTER_ADDRESS,
           value: methodParameters.value,
           from: address,
-          maxFeePerGas: "250000000",
-          maxPriorityFeePerGas: "250000000",
-          gas: "21000",
+          // maxFeePerGas: "250000",
+          // maxPriorityFeePerGas: "250000",
+          // gasLimit: "21000",
+          // gasPrice: gasPrice.toString(),
         };
+
+        console.log("--tx--");
+        console.log(tx);
 
         const res = await sendTransaction(tx);
         return res;

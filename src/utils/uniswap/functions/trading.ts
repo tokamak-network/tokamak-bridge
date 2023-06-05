@@ -19,7 +19,10 @@ import JSBI from "jsbi";
 import { CurrentConfig } from "../config";
 import ERC20_ABI from "../../../constant/abis/erc20.json";
 
-import { L1_UniswapContracts } from "../../../constant/contracts/uniswap";
+import {
+  L1_UniswapContracts,
+  L2_UniswapContracts,
+} from "../../../constant/contracts/uniswap";
 import { getPoolInfo } from "./pool";
 import {
   getWalletAddress,
@@ -32,7 +35,8 @@ import { quote } from "./quote";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
-const { QUOTER_CONTRACT_ADDRESS, SWAP_ROUTER_ADDRESS } = L1_UniswapContracts;
+// const { QUOTER_CONTRACT_ADDRESS, SWAP_ROUTER_ADDRESS } = L1_UniswapContracts;
+const { QUOTER_CONTRACT_ADDRESS, SWAP_ROUTER_ADDRESS } = L2_UniswapContracts;
 
 const MAX_FEE_PER_GAS = 100000000000;
 const MAX_PRIORITY_FEE_PER_GAS = 100000000000;

@@ -19,7 +19,15 @@ export const WTON = new Token(
   "Wrapped TON"
 );
 
-export const TON = new Token(
+export const GOERLI_TON = new Token(
+  SupportedChainId.GOERLI,
+  GOERLI_CONTRACTS.TON_ADDRESS,
+  18,
+  "TON",
+  "Tokamak Network Token"
+);
+
+export const DARIUS_TON = new Token(
   5050,
   TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
   18,
@@ -27,7 +35,15 @@ export const TON = new Token(
   "Tokamak Network Token"
 );
 
-export const TOS = new Token(
+export const GOERLI_TOS = new Token(
+  SupportedChainId.GOERLI,
+  GOERLI_CONTRACTS.TOS_ADDRESS,
+  18,
+  "TOS",
+  "TONStarter Token"
+);
+
+export const DARIUS_TOS = new Token(
   5050,
   TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
   18,

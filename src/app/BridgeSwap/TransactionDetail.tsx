@@ -273,14 +273,16 @@ const Content = (props: { isExpanded: boolean }) => {
     switch (mode) {
       case "Deposit":
         return depositPropsData.map((data) => (
-          <DepositDetailRow {...data}></DepositDetailRow>
+          <DepositDetailRow key={data.title} {...data}></DepositDetailRow>
         ));
       case "Withdraw":
         return withdrawPropsData.map((data) => (
-          <WithdrawDetailRow {...data}></WithdrawDetailRow>
+          <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
         ));
       case "Swap":
-        return swapPropsData.map((data) => <SwapDetailRow {...data} />);
+        return swapPropsData.map((data) => (
+          <SwapDetailRow key={data.title} {...data} />
+        ));
       default:
         return <>{`component not founded :(`}</>;
     }

@@ -11,10 +11,12 @@ import {
 import { getL1Provider } from "@/config/l1Provider";
 import { getL2Provider } from "@/config/l2Provider";
 
+// const { POOL_FACTORY_CONTRACT_ADDRESS, QUOTER_CONTRACT_ADDRESS } =
+//   L1_UniswapContracts;
 const { POOL_FACTORY_CONTRACT_ADDRESS, QUOTER_CONTRACT_ADDRESS } =
   L2_UniswapContracts;
 
-// const provider = getL1Provider()
+// const provider = getL1Provider();
 const provider = getL2Provider();
 
 export async function quote(): Promise<string> {
@@ -26,7 +28,12 @@ export async function quote(): Promise<string> {
 
   const poolConstants = await getPoolConstants();
 
-  console.log("poolConstants : ", poolConstants);
+  console.log(
+    "poolConstants : ",
+    poolConstants.token0,
+    poolConstants.token1,
+    poolConstants.fee
+  );
 
   const quotedAmountOut = await quoterContract.callStatic.quoteExactInputSingle(
     poolConstants.token0,
@@ -39,7 +46,20 @@ export async function quote(): Promise<string> {
     0
   );
 
-  console.log("quotedAmountOut : ", quotedAmountOut);
+  const quotedAmountOut2 =
+    await quoterContract.callStatic.quoteExactInputSingle(
+      poolConstants.token1,
+      poolConstants.token0,
+      poolConstants.fee,
+      fromReadableAmount(
+        CurrentConfig.tokens.amountIn,
+        CurrentConfig.tokens.in.decimals
+      ).toString(),
+      0
+    );
+
+  console.log("quotedAmountOut : ", quotedAmountOut.toString());
+  console.log("quotedAmountOut2 : ", quotedAmountOut2.toString());
 
   return toReadableAmount(quotedAmountOut, CurrentConfig.tokens.out.decimals);
 }
@@ -55,7 +75,7 @@ async function getPoolConstants(): Promise<{
     tokenB: CurrentConfig.tokens.in,
     fee: CurrentConfig.tokens.poolFee,
     initCodeHashManualOverride:
-      "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54",
+      "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff",
   });
 
   console.log("currentPoolAddress : ", currentPoolAddress);
@@ -71,10 +91,6 @@ async function getPoolConstants(): Promise<{
     poolContract.token1(),
     poolContract.fee(),
   ]);
-
-  console.log("token0, token1, fee : ");
-  console.log(CurrentConfig.tokens);
-  console.log(token0, token1, fee);
 
   return {
     token0,
