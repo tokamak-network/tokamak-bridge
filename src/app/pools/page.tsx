@@ -8,6 +8,7 @@ import PoolCard from "./components/PoolCard";
 import { PoolCardDetail } from "@/types/pool";
 import EmptyCard from "./components/EmptyCard";
 import { Token } from "@uniswap/sdk-core";
+import Link from "next/link";
 
 // Token symbol urls
 import EthL1 from "@/assets/tokens/ethGroup.svg";
@@ -136,8 +137,8 @@ const poolData: PoolCardDetail[] = [
 
 export default function Pools() {
   return (
-    <Flex flexDir={"column"}>
-      <Text fontSize={"36px"} fontWeight="medium" marginBottom={"24px"}>
+    <Flex flexDir="column">
+      <Text fontSize="36px" fontWeight="medium" marginBottom="24px">
         Your Pools
       </Text>
       <Flex
@@ -169,22 +170,23 @@ export default function Pools() {
             Array.from({ length: 7 }, (_, index) => <EmptyCard key={index} />)}
           {poolData.length > 0 &&
             poolData.map((card) => (
-              <PoolCard
-                in={card.in}
-                out={card.out}
-                range={card.range}
-                slippage={card.slippage}
-                trade={{
-                  inputAmount: card.trade.inputAmount,
-                  outTokenAmount: card.trade.outTokenAmount,
-                  gasFee: card.trade.gasFee,
-                }}
-                symbol={{
-                  inTokenSymbol: card.symbol.inTokenSymbol,
-                  outTokenSymbol: card.symbol.outTokenSymbol,
-                }}
-                key={card.id}
-              />
+              <Link href="/pools/[slug]" as={`/pools/${card.id}`} key={card.id}>
+                <PoolCard
+                  in={card.in}
+                  out={card.out}
+                  range={card.range}
+                  slippage={card.slippage}
+                  trade={{
+                    inputAmount: card.trade.inputAmount,
+                    outTokenAmount: card.trade.outTokenAmount,
+                    gasFee: card.trade.gasFee,
+                  }}
+                  symbol={{
+                    inTokenSymbol: card.symbol.inTokenSymbol,
+                    outTokenSymbol: card.symbol.outTokenSymbol,
+                  }}
+                />
+              </Link>
             ))}
         </Wrap>
       </Flex>
