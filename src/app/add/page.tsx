@@ -1,6 +1,7 @@
 "use client";
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/react";
 import { useState, useMemo } from "react";
 import Image from "next/image";
 import ToggleSwitch from "../pools/components/TokenToggle";
@@ -8,26 +9,32 @@ import BackIcon from "@/assets/icons/back.svg";
 import SettingsIcon from "@/assets/icons/setting.svg";
 import Link from "next/link";
 import NetworkDropdown from "@/components/dropdown/Index";
-import TierSelector from "./components/tierSelector";
+import TierSelector from "./components/TierSelector";
 import OutToken from "../BridgeSwap/components/OutToken";
 import addIcon from "@/assets/icons/addIcon.svg";
-import InputComponent from "./components/numberInput";
-import InTokenSelector from "./components/inTokenSelector";
-import PriceInput from "./components/priceInput";
+import InputComponent from "./components/NumberInput";
+import InTokenSelector from "./components/InTokenSelector";
+import OutTokenSelector from "./components/OutTokenSelector";
+import PriceInput from "./components/PriceInput";
 import zoomInIcon from "@/assets/icons/zoomIn.svg";
 import zoomOutIcon from "@/assets/icons/zoomOut.svg";
 
 export default function CreatePoolModal() {
   const [inToken, setInToken] = useState("");
   const [outToken, setOutToken] = useState("");
-  const [price, setPrice] = useState(0);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
 
   const NetworkSwitcher = useMemo(() => {
     return <NetworkDropdown inNetwork={true} />;
   }, []);
 
-  const handlePriceChange = (value: number) => {
-    setPrice(value);
+  const handleMinPriceChange = (value: number) => {
+    setMinPrice(value);
+  };
+
+  const handleMaxPriceChange = (value: number) => {
+    setMaxPrice(value);
   };
 
   const handleClearAll = () => {
@@ -36,11 +43,11 @@ export default function CreatePoolModal() {
   };
 
   return (
-    <Flex flexDir={"column"}>
+    <Flex flexDir={"column"} w={"872px"}>
       <Flex
         flexDir="column"
         mb={"10px"}
-        w="870px"
+        w="100%"
         bgColor="#0F0F12"
         zIndex={3}
         top={128}
@@ -52,7 +59,10 @@ export default function CreatePoolModal() {
         </Text>
         <Flex justifyContent="space-between">
           <Link href="/pools">
-            <Flex marginRight="670px" cursor={"pointer"}>
+            <Flex
+              marginRight={inToken === "" ? "724px" : "670px"}
+              cursor={"pointer"}
+            >
               <Image src={BackIcon} alt="Back" />
               <Text marginLeft="6px" fontSize="14px">
                 Pools
@@ -79,19 +89,18 @@ export default function CreatePoolModal() {
       <Flex
         border="1px solid #20212B"
         h="588px"
-        p={"20px"}
         borderRadius={"16px"}
         alignItems="center"
         textAlign="center"
         cursor={"pointer"}
       >
-        <Flex flexDir="row" w="448px">
-          <Flex flexDir="column">
+        <Flex flexDir="row" w="448px" justifyContent={"center"} pt={"20px"}>
+          <Flex flexDir="column" w="408px">
             <Flex flexDir="column" mb={"20px"}>
               <Text textAlign={"left"} mb={"8px"}>
                 Select Network
               </Text>
-              <Box w="408px" h="48px">
+              <Box h="48px">
                 <NetworkDropdown inNetwork={false} />
               </Box>
             </Flex>
@@ -102,24 +111,22 @@ export default function CreatePoolModal() {
               <TierSelector />
             </Flex>
             <Flex flexDir="column" mb={"20px"}>
-              <Text textAlign={"left"} mb={"8px"}>
-                Select Pair
-              </Text>
+              <Text textAlign={"left"}>Select Pair</Text>
               <Flex flexDir={"row"}>
                 <Box mr={"9px"}>
                   <InTokenSelector />
                   <InputComponent />
                 </Box>
                 <Image src={addIcon} alt={"plusIcon"} />
-                <Box ml={"9px"}>
-                  <InTokenSelector />
+                <Box>
+                  <OutTokenSelector />
                   <InputComponent />
                 </Box>
               </Flex>
             </Flex>
           </Flex>
         </Flex>
-        <Flex flexDir="row" w="424px">
+        <Flex flexDir="row" w="424px" justifyContent={"center"}>
           <Flex flexDir="column">
             <Flex flexDir="column">
               <Flex flexDir="row" mb={"20px"}>
@@ -134,27 +141,49 @@ export default function CreatePoolModal() {
                 </Flex>
               </Flex>
               <Flex flexDir="column" alignItems={"center"}>
-                <Text mb={"16"}>Current Price: 1541.8 USDC per ETH</Text>
+                <Text mb={"16px"}>Current Price: 1541.8 USDC per ETH</Text>
                 {/* Graph*/}
                 <Box w={"384px"} h={"184px"} border="1px solid #313442"></Box>
               </Flex>
               <Flex h={"17px"}></Flex>
               <Flex justifyContent={"space-between"}>
                 <PriceInput
-                  value={price}
-                  onChange={handlePriceChange}
+                  titleText={"Min Price"}
+                  value={minPrice}
+                  onChange={handleMinPriceChange}
                   min={0}
                   max={100}
                   step={1}
                 />
                 <PriceInput
-                  value={price}
-                  onChange={handlePriceChange}
+                  titleText={"Max Price"}
+                  value={maxPrice}
+                  onChange={handleMaxPriceChange}
                   min={0}
                   max={100}
                   step={1}
                 />
               </Flex>
+              <Button
+                variant="outline"
+                borderWidth="1px"
+                borderColor="#313442"
+                borderRadius="8px"
+                _hover={{ borderColor: "#ffff", bgColor: "#0F0F12" }}
+              >
+                Full Range
+              </Button>
+              <Button
+                mt={"36px"}
+                h={"48px"}
+                bgColor={"#17181D"}
+                border={"none"}
+                borderWidth="1px"
+                borderRadius="8px"
+                _hover={{ bgColor: "#17181D" }}
+              >
+                <Text fontWeight={"bold"}>Invalid Pair</Text>
+              </Button>
             </Flex>
           </Flex>
         </Flex>

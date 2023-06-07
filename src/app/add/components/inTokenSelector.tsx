@@ -4,6 +4,7 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
+import TokenInput from "@/components/input/TokenInput";
 
 export default function InTokenSelector() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
@@ -12,8 +13,8 @@ export default function InTokenSelector() {
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
       <Box
-        w={"200px"}
-        h={"248px"}
+        w={"186px"}
+        h={"242px"}
         mt={"12px"}
         mb={"16px"}
         onClick={onOpenInToken}
@@ -22,7 +23,7 @@ export default function InTokenSelector() {
           <TokenCard tokenInfo={inTokenInfo} hasInput={true} inNetwork={true} />
         ) : (
           <Box
-            className="card card-empty"
+            className="pool-card card-empty"
             display={"flex"}
             flexDir={"column"}
             rowGap={"70px"}
@@ -33,6 +34,7 @@ export default function InTokenSelector() {
           </Box>
         )}
       </Box>
+      {/* <TokenInput inToken={true} /> */}
     </Flex>
   );
 }

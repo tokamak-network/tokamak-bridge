@@ -1,6 +1,7 @@
 import { Flex, Box, Text, Button, Input } from "@chakra-ui/react";
 
 interface NumberInputProps {
+  titleText: string;
   value: number;
   onChange: (value: number) => void;
   min?: number;
@@ -9,7 +10,7 @@ interface NumberInputProps {
 }
 
 export default function PriceInput(props: NumberInputProps) {
-  const { value, onChange, min, max, step } = props;
+  const { titleText, value, onChange, min, max, step } = props;
 
   const handleIncrement = () => {
     const incrementedValue = value + (step || 1);
@@ -25,34 +26,51 @@ export default function PriceInput(props: NumberInputProps) {
     }
   };
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = Number(e.target.value);
+    onChange(inputValue);
+  };
+
   return (
-    <Box bg="#1F2128" w="186px" h="109px" p="10px" borderRadius={"12px"}>
+    <Box
+      bg="#1F2128"
+      w="186px"
+      h="109px"
+      p="10px"
+      borderRadius={"12px"}
+      mb={"10px"}
+    >
       <Flex flexDir="column">
-        <Text>Min price</Text>
-        <Flex alignItems="center">
+        <Text fontSize={"12px"}>{titleText}</Text>
+        <Flex alignItems="center" mt={"11px"}>
           <Button
             bg="#15161D"
             onClick={handleDecrement}
             _hover={{ bgColor: "#15161D" }}
+            mr={"16px"}
           >
             -
           </Button>
           <Input
             type="number"
             value={value}
-            onChange={(e) => onChange(Number(e.target.value))}
+            onChange={handleInputChange}
             min={min}
             max={max}
             step={step}
+            variant="unstyled"
+            style={{ textAlign: "center" }}
           />
           <Button
             bg="#15161D"
             onClick={handleIncrement}
             _hover={{ bgColor: "#15161D" }}
+            ml={"16px"}
           >
             +
           </Button>
         </Flex>
+        <Text fontSize={"12px"}>USDC per ETH</Text>
       </Flex>
     </Box>
   );
