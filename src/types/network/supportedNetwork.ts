@@ -28,7 +28,6 @@ export interface SupportedChainProperties {
   networkImage: ImageFileType;
   nativeToken: SupportedTokenName;
   isTokamak?: boolean;
-  layer: "L1" | "L2";
 }
 
 export const supportedChain: SupportedChainProperties[] = [
@@ -38,7 +37,6 @@ export const supportedChain: SupportedChainProperties[] = [
     networkImage: SYMBOL_ETH,
     rpcAddress: "",
     nativeToken: "ETH",
-    layer: "L1",
   },
   {
     chainId: SupportedChainId.GOERLI,
@@ -46,7 +44,6 @@ export const supportedChain: SupportedChainProperties[] = [
     networkImage: SYMBOL_ETH,
     rpcAddress: "",
     nativeToken: "ETH",
-    layer: "L1",
   },
   {
     chainId: SupportedChainId.TOKAMAK_MAINNET,
@@ -55,7 +52,6 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,
-    layer: "L2",
   },
   {
     chainId: SupportedChainId.DARIUS,
@@ -64,6 +60,5 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,
-    layer: "L2",
   },
 ];

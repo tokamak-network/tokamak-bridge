@@ -23,9 +23,6 @@ export default function useConnectedNetwork() {
       return {
         connectedChainId: chain.id,
         isSupportedChain: Object.values(SupportedChainId).includes(chain.id),
-        layer:
-          supportedChain.filter((e) => e.chainId === chain.id)[0]?.layer ??
-          null,
       };
     }
   }, [chain]);
