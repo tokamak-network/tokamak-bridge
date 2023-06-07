@@ -20,7 +20,12 @@ export default function InTokenSelector() {
         onClick={onOpenInToken}
       >
         {inTokenInfo?.tokenName ? (
-          <TokenCard tokenInfo={inTokenInfo} hasInput={true} inNetwork={true} />
+          <TokenCard
+            tokenInfo={inTokenInfo}
+            hasInput={true}
+            inNetwork={true}
+            w={"178px"}
+          />
         ) : (
           <Box
             className="pool-card card-empty"
@@ -34,7 +39,6 @@ export default function InTokenSelector() {
           </Box>
         )}
       </Box>
-      {/* <TokenInput inToken={true} /> */}
     </Flex>
   );
 }

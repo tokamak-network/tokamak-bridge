@@ -16,8 +16,9 @@ import InputComponent from "./components/NumberInput";
 import InTokenSelector from "./components/InTokenSelector";
 import OutTokenSelector from "./components/OutTokenSelector";
 import PriceInput from "./components/PriceInput";
-import zoomInIcon from "@/assets/icons/zoomIn.svg";
-import zoomOutIcon from "@/assets/icons/zoomOut.svg";
+import TokenInput from "@/components/input/TokenInput";
+import InitializeInfo from "./components/InitializeInfo";
+import Graph from "./components/Graph";
 
 export default function CreatePoolModal() {
   const [inToken, setInToken] = useState("");
@@ -54,18 +55,15 @@ export default function CreatePoolModal() {
         alignItems="center"
         textAlign="center"
       >
-        <Text fontSize="28px" fontWeight="normal">
-          Add Liquidity
-        </Text>
         <Flex justifyContent="space-between">
           <Link href="/pools">
             <Flex
-              marginRight={inToken === "" ? "724px" : "670px"}
+              marginRight={inToken === "" ? "567px" : "455px"}
               cursor={"pointer"}
             >
               <Image src={BackIcon} alt="Back" />
-              <Text marginLeft="6px" fontSize="14px">
-                Pools
+              <Text fontSize="28px" fontWeight="normal" ml={"14px"}>
+                Add Liquidity
               </Text>
             </Flex>
           </Link>
@@ -121,35 +119,34 @@ export default function CreatePoolModal() {
                 <Box mr={"9px"}>
                   <InTokenSelector />
                   <InputComponent />
+                  {inToken && (
+                    <TokenInput
+                      inToken={true}
+                      style={{ width: "178px", marginLeft: "9px" }}
+                    />
+                  )}
                 </Box>
                 <Image src={addIcon} alt={"plusIcon"} />
                 <Box>
                   <OutTokenSelector />
                   <InputComponent />
+                  {outToken && (
+                    <TokenInput
+                      inToken={false}
+                      style={{ width: "178px", marginLeft: "20px" }}
+                    />
+                  )}
                 </Box>
               </Flex>
             </Flex>
           </Flex>
         </Flex>
+        {/* Graph & Min Max Price component */}
         <Flex flexDir="row" w="424px" justifyContent={"center"}>
           <Flex flexDir="column">
             <Flex flexDir="column">
-              <Flex flexDir="row" mb={"20px"}>
-                <Text>Set Price Range</Text>
-                <Flex ml={"194px"}>
-                  <Box mr={"8px"}>
-                    <Image src={zoomInIcon} alt={"zoomIn"} />
-                  </Box>
-                  <Box>
-                    <Image src={zoomOutIcon} alt={"zoomOut"} />
-                  </Box>
-                </Flex>
-              </Flex>
-              <Flex flexDir="column" alignItems={"center"}>
-                <Text mb={"16px"}>Current Price: 1541.8 USDC per ETH</Text>
-                {/* Graph*/}
-                <Box w={"384px"} h={"184px"} border="1px solid #313442"></Box>
-              </Flex>
+              <Graph />
+              {/* <InitializeInfo /> */}
               <Flex h={"17px"}></Flex>
               <Flex justifyContent={"space-between"}>
                 <PriceInput
@@ -178,17 +175,31 @@ export default function CreatePoolModal() {
               >
                 Full Range
               </Button>
-              <Button
-                mt={"36px"}
-                h={"48px"}
-                bgColor={"#17181D"}
-                border={"none"}
-                borderWidth="1px"
-                borderRadius="8px"
-                _hover={{ bgColor: "#17181D" }}
-              >
-                <Text fontWeight={"bold"}>Invalid Pair</Text>
-              </Button>
+              {inToken && outToken ? (
+                <Button
+                  mt={"36px"}
+                  h={"48px"}
+                  bgColor={"#007AFF"}
+                  border={"none"}
+                  borderWidth="1px"
+                  borderRadius="8px"
+                  _hover={{ bgColor: "#007AFF" }}
+                >
+                  <Text fontWeight={"bold"}>Preview</Text>
+                </Button>
+              ) : (
+                <Button
+                  mt={"36px"}
+                  h={"48px"}
+                  bgColor={"#17181D"}
+                  border={"none"}
+                  borderWidth="1px"
+                  borderRadius="8px"
+                  _hover={{ bgColor: "#17181D" }}
+                >
+                  <Text fontWeight={"bold"}>Invalid Pair</Text>
+                </Button>
+              )}
             </Flex>
           </Flex>
         </Flex>

@@ -27,6 +27,7 @@ export default function OutTokenSelector() {
           display={"flex"}
           flexDir={"column"}
           rowGap={"70px"}
+          onClick={onOpenOutToken}
         >
           <Flex
             w={"100%"}

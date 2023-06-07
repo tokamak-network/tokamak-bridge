@@ -51,9 +51,9 @@ const theme = extendTheme({
         borderRadius: "16px",
       },
       ".pool-card": {
-        minWidth: "186px",
+        minWidth: "178px",
         minHeight: "242px",
-        maxWidth: "186px",
+        maxWidth: "178px",
         maxHeight: "242px",
       }
     }),

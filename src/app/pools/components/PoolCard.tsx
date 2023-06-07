@@ -12,7 +12,6 @@ export default function PoolTile(props: PoolCardDetail) {
       bgColor={!props.id ? "#15161D" : ""}
       w="200px"
       h="248px"
-      marginRight={"16px"}
       paddingTop={"12px"}
       paddingBottom={"22px"}
       paddingLeft={"16px"}
