@@ -20,6 +20,12 @@ import { supportedTokens } from "types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
 import { CardCarrousel } from "./CardCarousel";
+import {
+  searchTokenList,
+  searchTokenSelector,
+  searchTokenStatus,
+} from "@/recoil/card/selectCard/searchToken";
+import useConnectedNetwork from "@/hooks/network";
 
 enum CardOverlay {
   Middle = 100,
@@ -61,6 +67,19 @@ export function SelectCardButton(props: { field: Field }) {
 
 const SearchToken = () => {
   const { onCloseTokenModal } = useTokenModal();
+  const [searchToken, setSearchToken] = useRecoilState(searchTokenStatus);
+
+  const { connectedChainId } = useConnectedNetwork();
+
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (value === "") {
+      return setSearchToken(null);
+    }
+    if (connectedChainId) {
+      return setSearchToken({ nameOrAdd: value, chainId: connectedChainId });
+    }
+  };
 
   return (
     <Flex w={"100%"} justifyContent={"center"} pos={"relative"}>
@@ -73,6 +92,7 @@ const SearchToken = () => {
         bgColor={"#0F0F12"}
         _focus={{}}
         _active={{}}
+        onChange={onChange}
       ></Input>
       <Box pos={"absolute"} right={"69px"}>
         <Image
