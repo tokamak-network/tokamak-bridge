@@ -101,7 +101,12 @@ export default function CreatePoolModal() {
                 Select Network
               </Text>
               <Box h="48px">
-                <NetworkDropdown inNetwork={false} />
+                <NetworkDropdown
+                  inNetwork={false}
+                  width="408px"
+                  height="48px"
+                  innerWidth="427px"
+                />
               </Box>
             </Flex>
             <Flex flexDir="column" mb={"20px"}>
