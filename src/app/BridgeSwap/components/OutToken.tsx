@@ -12,6 +12,7 @@ import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 import { useMemo } from "react";
+import { useAmountOut } from "@/hooks/swap/swapTokens";
 
 const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -67,7 +68,6 @@ const SearchTokenComponent = () => {
 
 export default function OutToken() {
   const { mode } = useRecoilValue(actionMode);
-
   const NetworkSwitcher = useMemo(() => {
     return <NetworkDropdown inNetwork={false} />;
   }, []);
@@ -90,7 +90,15 @@ export default function OutToken() {
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
         {mode === "Swap" && (
-          <TokenInput inToken={false} style={{ marginTop: "16px" }} />
+          <TokenInput
+            inToken={false}
+            style={{
+              marginTop: "16px",
+              widht: "100%",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+            }}
+          />
         )}
       </Flex>
     </Flex>

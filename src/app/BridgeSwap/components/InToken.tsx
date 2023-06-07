@@ -8,6 +8,7 @@ import { useRecoilValue } from "recoil";
 import CardWrapper from "@/bridgeComponent/CardWrapper";
 import TokenInput from "@/components/input/TokenInput";
 import { useMemo } from "react";
+import { useAmountOut } from "@/hooks/swap/swapTokens";
 
 export default function InToken() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
@@ -53,7 +54,9 @@ export default function InToken() {
             </Box>
           )}
         </Box>
-        <TokenInput inToken={true} />
+        <Flex px={"12px"}>
+          <TokenInput inToken={true} />
+        </Flex>
       </Flex>
     </Flex>
   );

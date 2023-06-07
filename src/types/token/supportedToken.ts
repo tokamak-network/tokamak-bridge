@@ -16,8 +16,10 @@ export type SupportedTokenName =
   | SupportedStableTokens;
 
 export type TokenInfo = {
-  tokenName: SupportedTokenName | String;
-  address: { [K in keyof typeof SupportedChainId]: `0x${string}` | null };
+  tokenName: SupportedTokenName | String | string;
+  address: {
+    [K in keyof typeof SupportedChainId]: `0x${string}` | string | null;
+  };
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
 };
@@ -29,8 +31,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: "0x",
       GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      DARIUS: null,
+      TOKAMAK_MAINNET: "0x",
+      DARIUS: "0x",
     },
     decimals: 18,
     isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
@@ -109,7 +111,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenName: "USDC",
     address: {
       MAINNET: null,
-      GOERLI: null,
+      GOERLI: GOERLI_CONTRACTS.USDC_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.USDC_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
     },
