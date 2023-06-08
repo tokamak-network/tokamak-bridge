@@ -10,7 +10,7 @@ export default function InitializeInfo() {
         <Text fontSize={"13px"} textAlign={"left"} color={"#007AFF"}>
           This pool must be initialized before you can add liquidity. To
           initialize, select a starting price for the pool. Then, enter your{" "}
-          liquidity price range and depositamount. Gas fees will be higher than{" "}
+          liquidity price range and deposit amount. Gas fees will be higher than{" "}
           usual due to the initialization transaction.
         </Text>
       </Box>

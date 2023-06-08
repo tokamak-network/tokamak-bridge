@@ -18,9 +18,13 @@ export default function Graph() {
         </Flex>
       </Flex>
       <Flex flexDir="column" alignItems={"center"}>
-        <Text mb={"16px"}>Current Price: 1541.8 USDC per ETH</Text>
+        <Text mb={"16px"} fontSize={12}>
+          Current Price: 1541.8 USDC per ETH
+        </Text>
         <Box w={"384px"} h={"184px"} border="1px solid #313442"></Box>
       </Flex>
+      {/* Graph legend */}
+      <Flex h={"17px"}></Flex>
     </>
   );
 }

@@ -36,18 +36,20 @@ export default function PriceInput(props: NumberInputProps) {
       bg="#1F2128"
       w="186px"
       h="109px"
-      p="10px"
+      pt="10px"
+      pb="13px"
+      px="12px"
       borderRadius={"12px"}
       mb={"10px"}
     >
       <Flex flexDir="column">
         <Text fontSize={"12px"}>{titleText}</Text>
-        <Flex alignItems="center" mt={"11px"}>
+        <Flex alignItems="center" my={"8px"}>
           <Button
             bg="#15161D"
             onClick={handleDecrement}
             _hover={{ bgColor: "#15161D" }}
-            mr={"16px"}
+            mr={"7px"}
           >
             -
           </Button>
@@ -65,7 +67,7 @@ export default function PriceInput(props: NumberInputProps) {
             bg="#15161D"
             onClick={handleIncrement}
             _hover={{ bgColor: "#15161D" }}
-            ml={"16px"}
+            ml={"7px"}
           >
             +
           </Button>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import { PoolCardDetail } from "@/types/pool";
 import BackIcon from "@/assets/icons/back.svg";
 import Link from "next/link";
+import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
 
 export default function PoolInfo(props: PoolCardDetail) {
   return (
@@ -20,39 +21,60 @@ export default function PoolInfo(props: PoolCardDetail) {
       <Flex
         flexDir="column"
         border="3px solid #383736"
-        bgColor={!props.id ? "#15161D" : ""}
         w="424px"
         h="669px"
-        paddingTop={"12px"}
-        paddingBottom={"22px"}
-        paddingLeft={"16px"}
-        paddingRight={"16px"}
+        p={"20px"}
         borderRadius={"16px"}
       >
-        <Flex alignItems="center" justifyContent="flex-end">
-          {props.range === false ? (
-            <>
-              <Box w="6px" h="6px" borderRadius="50%" bg="#DD3A44" mr="6px" />
-              <Text fontSize="11px" fontWeight="600" color="#DD3A44">
-                Out of Range
+        <Flex>
+          <Flex alignItems={"center"}>
+            <TokenSymbolPair
+              tokenType1={"ETH"}
+              tokenType2={"USDC"}
+              network="Ethereum"
+            />
+            <Text fontWeight="bold" fontSize="23px">
+              {/* {props.in.symbol} / {props.out.symbol} */}
+              ETH / USDC
+            </Text>
+            {/* <Text fontSize={"12px"}>{props.slippage}</Text> */}
+            <Flex bgColor={"#1F2128"} borderRadius={8} p={1} ml={2}>
+              <Text fontSize={"12px"} as="b">
+                {"0.30%"}
               </Text>
-            </>
-          ) : (
-            <>
-              <Box w="6px" h="6px" borderRadius="50%" bg="#00EE98" mr="6px" />
-              <Text fontSize="11px" fontWeight="600" color="#00EE98">
-                In Range
-              </Text>
-            </>
-          )}
-        </Flex>
-
-        <Flex alignItems="left" justifyContent="flex-start" flexDir={"column"}>
-          <Text fontWeight="semibold" fontSize="18px">
-            {/* {props.in.symbol} / {props.out.symbol} */}
-            ETH / USDC
-          </Text>
-          <Text fontSize={"12px"}>{props.slippage}</Text>
+            </Flex>
+          </Flex>
+          <Flex alignItems={"center"} justifyContent={"center"}>
+            {props.range === false ? (
+              <>
+                <Box
+                  w="6px"
+                  h="6px"
+                  borderRadius="50%"
+                  bg="#DD3A44"
+                  mr="6px"
+                  ml="20px"
+                />
+                <Text fontSize="14px" fontWeight="600" color="#DD3A44">
+                  Out of Range
+                </Text>
+              </>
+            ) : (
+              <>
+                <Box
+                  w="6px"
+                  h="6px"
+                  borderRadius="50%"
+                  bg="#00EE98"
+                  mr="6px"
+                  ml="61px"
+                />
+                <Text fontSize="14px" fontWeight="600" color="#00EE98">
+                  In Range
+                </Text>
+              </>
+            )}
+          </Flex>
         </Flex>
         <Flex
           position="relative"
@@ -96,7 +118,7 @@ export default function PoolInfo(props: PoolCardDetail) {
             {/* <Text marginLeft="2">{props.trade.outTokenAmount} ($1.25)</Text> */}
           </Flex>
           <Flex justifyContent="space-between" alignItems="center">
-            <Text fontWeight="bold">FEE</Text>
+            <Text fontWeight="bold"></Text>
             {/* <Text marginLeft="2">${props.trade.gasFee}</Text> */}
           </Flex>
         </Flex>

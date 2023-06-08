@@ -17,6 +17,9 @@ export default function PoolTile(props: PoolCardDetail) {
       paddingLeft={"16px"}
       paddingRight={"16px"}
       borderRadius={"16px"}
+      _hover={{
+        border: "1px solid #007AFF",
+      }}
     >
       <Flex alignItems="center" justifyContent="flex-end">
         {props.range === false ? (
@@ -85,7 +88,7 @@ export default function PoolTile(props: PoolCardDetail) {
           <Text marginLeft="2">{props.trade.outTokenAmount} ($1.25)</Text>
         </Flex>
         <Flex justifyContent="space-between" alignItems="center">
-          <Text fontWeight="bold">FEE</Text>
+          <Text fontWeight="bold">Earnings</Text>
           <Text marginLeft="2">${props.trade.gasFee}</Text>
         </Flex>
       </Flex>

@@ -20,6 +20,9 @@ export default function CreateNew() {
         alignItems="center"
         textAlign="center"
         cursor={"pointer"}
+        _hover={{
+          border: "1px solid #007AFF",
+        }}
       >
         <Text fontWeight="semibold" marginBottom={"61px"} fontSize={"16px"}>
           Add Liquidity

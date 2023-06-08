@@ -17,6 +17,9 @@ export default function LPGuide() {
       borderRadius={"16px"}
       alignItems="center"
       textAlign="center"
+      _hover={{
+        border: "1px solid #007AFF",
+      }}
     >
       <Text fontWeight="semibold" marginBottom={"61px"} fontSize={"16px"}>
         Read your LP Guide

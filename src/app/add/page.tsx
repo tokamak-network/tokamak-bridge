@@ -19,6 +19,9 @@ import PriceInput from "./components/PriceInput";
 import TokenInput from "@/components/input/TokenInput";
 import InitializeInfo from "./components/InitializeInfo";
 import Graph from "./components/Graph";
+import Modals from "./Modal";
+import InvalidRange from "./components/InvalidRange";
+import PositionInfo from "./components/PositionInfo";
 
 export default function CreatePoolModal() {
   const [inToken, setInToken] = useState("");
@@ -145,9 +148,9 @@ export default function CreatePoolModal() {
         <Flex flexDir="row" w="424px" justifyContent={"center"}>
           <Flex flexDir="column">
             <Flex flexDir="column">
-              <Graph />
+              <PositionInfo />
+              {/* <Graph /> */}
               {/* <InitializeInfo /> */}
-              <Flex h={"17px"}></Flex>
               <Flex justifyContent={"space-between"}>
                 <PriceInput
                   titleText={"Min Price"}
@@ -175,6 +178,7 @@ export default function CreatePoolModal() {
               >
                 Full Range
               </Button>
+              {/* <InvalidRange /> */}
               {inToken && outToken ? (
                 <Button
                   mt={"36px"}
@@ -204,6 +208,7 @@ export default function CreatePoolModal() {
           </Flex>
         </Flex>
       </Flex>
+      <Modals />
     </Flex>
   );
 }
