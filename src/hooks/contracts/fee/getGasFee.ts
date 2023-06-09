@@ -70,7 +70,7 @@ export function useGasFee() {
               return _withdraw_contract.estimateGas.withdraw({
                 //@ts-ignore
                 account: address,
-                args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
+                args: [predeploys.OVM_ETH, parsedAmount, 0, "0x"],
               });
             }
             return _withdraw_contract.estimateGas.withdraw({

@@ -71,7 +71,7 @@ export function useTransactionDetail() {
             l2Gas: "0 ETH",
           },
           tooltip: true,
-          tooltipLabel: "0.00221110000002 ETH",
+          tooltipLabel: `${commafy(totalGasCost, 14)} ETH`,
         },
         {
           title: "Time to Deposit",

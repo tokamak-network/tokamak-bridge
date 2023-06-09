@@ -57,6 +57,10 @@ enum CardOverlay {
   End = 60,
 }
 
+const getTrasnformParams = (angle: number, x: number, y: number) => {
+  return `rotate(${angle}deg) translate(${x}px, ${y}px)`;
+};
+
 const location = (index: number): LocationType => {
   const isVisibleAtLeft = index === 0;
   const isVisibleAtRight = index === 6;
@@ -109,15 +113,11 @@ export const CardCarrousel = () => {
     return tokenList;
   }, [tokenList, tokenSelector, searchedTokenName]);
 
-  // const carrousellTokenList = useMemo(() => {
-  //   return filterTokenList.slice(currentCard - 2, currentCard + 6);
-  // }, [filterTokenList, currentCard]);
+  const carrousellTokenList = useMemo(() => {
+    return filterTokenList.slice(0, 6);
+  }, [filterTokenList, currentCard]);
 
-  const carrousellTokenList = filterTokenList;
-
-  const [supportedTokens2, setSupportedTokens2] = useState<SupportedTokens_T>([
-    ...supportedTokens,
-  ]);
+  // const carrousellTokenList = filterTokenList;
 
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
@@ -131,18 +131,27 @@ export const CardCarrousel = () => {
   const secondRightControl = useAnimation();
   const middleControl = useAnimation();
   const outControl = useAnimation();
+  const outoutControl = useAnimation();
+
+  const [scope, animate] = useAnimate();
+
+  useEffect(() => {
+    const animation = async () => {
+      console.log(scope);
+      await animate(scope.current, { x: "100px" });
+      animate("li", { opacity: 1 });
+    };
+
+    animation();
+  }, []);
 
   const { inNetwork } = useRecoilValue(networkStatus);
 
-  const [test, setTest] = useState(false);
-
   const handlePrev = () => {
-    setTest(true);
     setCurrentCard(currentCard - 1);
   };
 
   const handleNext = () => {
-    setTest(false);
     setCurrentCard(currentCard + 1);
   };
 
@@ -165,7 +174,7 @@ export const CardCarrousel = () => {
     };
 
     switch (location(index)) {
-      // case "isVisible":
+      // case "isVisibleAtLeft" || "isVisibleAtLeft":
       //   return { display: "none" };
       case "atEnd":
         return {
@@ -294,18 +303,39 @@ export const CardCarrousel = () => {
       width: "186px",
       height: "242px",
     });
+
     setInisialized(true);
   }, []);
 
-  console.log(currentCard);
+  // useEffect(() => {
+  //   if (test !== null) {
+  //     middleControl.start({
+  //       transform: getTrasnformParams(5, 178, -332),
+  //       width: "204px",
+  //       height: "282px",
+  //       zIndex: CardOverlay.Side,
+  //       opacity: 1,
+  //     });
+  //     secondRightControl.start({
+  //       transform: getTrasnformParams(5, 178, -332),
+  //       width: "204px",
+  //       height: "282px",
+  //       zIndex: CardOverlay.Side,
+  //       opacity: 1,
+  //     });
+  //   }
+
+  //   // secondRightControl.start({
+  //   //   rotate: 5,
+  //   //   translateY: "-296px",
+  //   //   translateX: "284px",
+  //   //   width: "186px",
+  //   //   height: "242px",
+  //   //   opacity: 1,
+  //   // });
+  // }, [test]);
 
   useEffect(() => {
-    console.log(initialized);
-
-    if (initialized === false) {
-      return;
-    }
-
     if (currentCard === 0) {
       middleControl.start({
         rotate: -10,
@@ -326,45 +356,45 @@ export const CardCarrousel = () => {
         zIndex: CardOverlay.Side,
         opacity: 1,
       });
-      // secondControl.start({
-      //   translateY: "-330px",
-      //   translateX: "-150px",
-      //   opacity: 1,
-      //   zIndex: CardOverlay.Side,
-      //   width: "204px",
-      //   height: "282px",
-      //   minWidth: "204px",
-      //   maxWidth: "204px",
-      //   rotate: -5,
-      // });
-      // secondRightControl.start({
-      //   translateY: "-330px",
-      //   translateX: "150px",
-      //   opacity: 1,
-      //   zIndex: CardOverlay.Side,
-      //   width: "204px",
-      //   height: "282px",
-      // });
-      // sideControl.start({
-      //   translateY: "-320px",
-      //   translateX: "-250px",
-      //   opacity: 1,
-      //   zIndex: CardOverlay.End,
-      // });
-      // sideRightControl.start({
-      //   translateY: "-320px",
-      //   translateX: "250px",
-      //   opacity: 1,
-      //   zIndex: CardOverlay.End,
-      // });
-      // outControl.start({
-      //   rotate: -25,
-      //   translateY: "500px",
-      //   translateX: "-500px",
-      //   opacity: 1,
-      //   width: "186px",
-      //   height: "242px",
-      // });
+      secondControl.start({
+        translateY: "-330px",
+        translateX: "-150px",
+        opacity: 1,
+        zIndex: CardOverlay.Side,
+        width: "204px",
+        height: "282px",
+        minWidth: "204px",
+        maxWidth: "204px",
+        rotate: -5,
+      });
+      secondRightControl.start({
+        translateY: "-330px",
+        translateX: "150px",
+        opacity: 1,
+        zIndex: CardOverlay.Side,
+        width: "204px",
+        height: "282px",
+      });
+      sideControl.start({
+        translateY: "-320px",
+        translateX: "-250px",
+        opacity: 1,
+        zIndex: CardOverlay.End,
+      });
+      sideRightControl.start({
+        translateY: "-320px",
+        translateX: "250px",
+        opacity: 1,
+        zIndex: CardOverlay.End,
+      });
+      outControl.start({
+        rotate: -25,
+        translateY: "500px",
+        translateX: "-500px",
+        opacity: 1,
+        width: "186px",
+        height: "242px",
+      });
     }
     if (currentCard === 2) {
       middleControl.start({
@@ -429,9 +459,7 @@ export const CardCarrousel = () => {
         maxWidth: "204px",
       });
       secondControl.start({
-        rotate: 5,
-        translateY: "-350px",
-        translateX: "0px",
+        transform: getTrasnformParams(5, 0, -350),
         width: "256px",
         height: "332px",
         minWidth: "256px",
@@ -440,9 +468,7 @@ export const CardCarrousel = () => {
         opacity: 1,
       });
       middleControl.start({
-        rotate: 5,
-        translateY: "-315px",
-        translateX: "205px",
+        transform: getTrasnformParams(5, 178, -332),
         width: "204px",
         height: "282px",
         zIndex: CardOverlay.Side,
@@ -457,10 +483,12 @@ export const CardCarrousel = () => {
         opacity: 1,
       });
       sideRightControl.start({
-        rotate: 25,
-        translateY: "0px",
-        translateX: "1000px",
+        translateY: "-315px",
+        translateX: "600px",
+        width: "186px",
+        height: "242px",
         opacity: 0,
+        zIndex: -999,
       });
       outControl.start({
         rotate: -10,
@@ -471,10 +499,17 @@ export const CardCarrousel = () => {
       });
     }
     if (currentCard === 4) {
+      sideControl.start({
+        transform: getTrasnformParams(10, 0, -350),
+        width: "256px",
+        height: "332px",
+        minWidth: "256px",
+        maxWidth: "256px",
+        zIndex: CardOverlay.Center,
+        opacity: 1,
+      });
       secondControl.start({
-        rotate: 10,
-        translateY: "-300px",
-        translateX: "205px",
+        transform: getTrasnformParams(10, 178, -332),
         width: "204px",
         height: "282px",
         minWidth: "204px",
@@ -483,49 +518,79 @@ export const CardCarrousel = () => {
         opacity: 1,
       });
       middleControl.start({
-        rotate: 10,
-        translateY: "-272px",
-        translateX: "336px",
+        transform: getTrasnformParams(10, 286, -325),
         width: "186px",
         height: "242px",
         opacity: 1,
       });
       secondRightControl.start({
-        rotate: 25,
-        translateY: "0px",
-        translateX: "1000px",
-        opacity: 0,
+        translateY: "-275px",
+        translateX: "600px",
         width: "186px",
         height: "242px",
+        opacity: 0,
+        zIndex: -999,
       });
     }
     if (currentCard === 5) {
+      console.log("gogogo");
+      sideControl.start({
+        transform: getTrasnformParams(15, 167, -332),
+        width: "204px",
+        height: "282px",
+        minWidth: "204px",
+        maxWidth: "204px",
+        zIndex: CardOverlay.Side,
+        opacity: 1,
+      });
       secondControl.start({
-        rotate: 15,
-        translateY: "-245px",
-        translateX: "336px",
+        transform: getTrasnformParams(15, 286, -325),
         width: "186px",
         height: "242px",
         minWidth: "186px",
         maxWidth: "186px",
-        zIndex: CardOverlay.Center,
+        zIndex: CardOverlay.End,
+        opacity: 1,
       });
       middleControl.start({
-        rotate: 25,
-        translateY: "0px",
-        translateX: "1000px",
-        opacity: 0,
+        transform: getTrasnformParams(10, 600, -315),
         width: "186px",
         height: "242px",
+        opacity: 0,
+        zIndex: -999,
       });
     }
-    // return () => {
-    //   setInisialized(false);
-    // };
+    if (currentCard === 6) {
+      sideControl.start({
+        transform: getTrasnformParams(20, 275, -325),
+        width: "186px",
+        height: "242px",
+        minWidth: "186px",
+        maxWidth: "186px",
+        zIndex: CardOverlay.End,
+        opacity: 1,
+      });
+      secondControl.start({
+        transform: getTrasnformParams(15, 600, -315),
+        width: "186px",
+        height: "242px",
+        opacity: 0,
+        zIndex: -999,
+      });
+    }
+    if (currentCard === 7) {
+      sideControl.start({
+        transform: getTrasnformParams(20, 600, -315),
+        width: "186px",
+        height: "242px",
+        opacity: 0,
+        zIndex: -999,
+      });
+    }
+    return () => {
+      setInisialized(false);
+    };
   }, [currentCard]);
-
-  console.log("--carrousellTokenList--");
-  console.log(carrousellTokenList);
 
   return (
     <Flex
@@ -560,31 +625,108 @@ export const CardCarrousel = () => {
         h={"332px"}
         pos={"relative"}
       >
-        {carrousellTokenList.map((tokenData, index) => {
+        {/* <AnimatePresence initial={true}> */}
+        {/* <motion.div style={{ display: "flex" }} ref={scope}>
+          {carrousellTokenList.map((tokenData: any, index: number) => {
+            return (
+              <Flex w={"220px"}>
+                <TokenCard
+                  w={"100%"}
+                  h={"100%"}
+                  tokenInfo={tokenData}
+                  inNetwork={true}
+                  hasInput={false}
+                />
+              </Flex>
+            );
+          })} */}
+        {/* </motion.div> */}
+        {/* 시연용 */}
+        {carrousellTokenList.map((tokenData: any, index: number) => {
           const locate = location(index);
           return (
-            //@ts-ignore
             <Flex style={cardStyleProps(index)}>
-              <AnimatePresence initial={true} custom={test}>
+              <motion.div
+                key={`${index}_${tokenData.tokenName}`}
+                className={"motion-div"}
+                style={{ width: "100%", height: "100%" }}
+                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0 }}
+                animate={
+                  carrousellTokenList.length === 1
+                    ? middleControl
+                    : index === 0
+                    ? outControl
+                    : locate === "atEndRight"
+                    ? sideRightControl
+                    : locate === "atSideRight"
+                    ? secondRightControl
+                    : locate === "atCenter"
+                    ? middleControl
+                    : locate === "atSide"
+                    ? secondControl
+                    : sideControl
+                }
+                onClick={() =>
+                  isInTokenOpen
+                    ? setSelectedInToken({
+                        ...tokenData,
+                        amountBN: null,
+                        parsedAmount: null,
+                      })
+                    : setSelectedOutToken({
+                        ...tokenData,
+                        amountBN: null,
+                        parsedAmount: null,
+                      })
+                }
+              >
+                <TokenCard
+                  w={"100%"}
+                  h={"100%"}
+                  tokenInfo={tokenData}
+                  inNetwork={true}
+                  hasInput={false}
+                />
+              </motion.div>
+            </Flex>
+          );
+        })}
+        {/* {carrousellTokenList.map((tokenData: any, index: number) => {
+            const locate = location(index);
+            return (
+              //@ts-ignore
+              <Flex
+                style={cardStyleProps(
+                  tokenData.test ? 3 : tokenData.test2 ? 4 : 0
+                )}
+              >
                 <motion.div
+                  layout
+                  key={`${index}_${tokenData.tokenName}`}
                   className={"motion-div"}
                   style={{ width: "100%", height: "100%" }}
                   transition={{ duration: 0.5 }}
                   initial={{ opacity: 0 }}
                   animate={
-                    locate === "isVisibleAtLeft"
-                      ? outControl
-                      : locate === "atEndRight"
-                      ? sideRightControl
-                      : locate === "atSideRight"
-                      ? secondRightControl
-                      : locate === "atCenter"
+                    tokenData.test === true
                       ? middleControl
-                      : locate === "atSide"
-                      ? secondControl
-                      : sideControl
+                      : tokenData.test2
+                      ? secondRightControl
+                      : undefined
+                    // index === 0
+                    //   ? outControl
+                    //   : locate === "atEndRight"
+                    //   ? sideRightControl
+                    //   : locate === "atSideRight"
+                    //   ? secondRightControl
+                    //   : locate === "atCenter"
+                    //   ? middleControl
+                    //   : locate === "atSide"
+                    //   ? secondControl
+                    //   : sideControl
                   }
-                  exit={{ opacity: 0 }}
+                  // exit={{ translateX: "500px" }}
                   onClick={() =>
                     isInTokenOpen
                       ? setSelectedInToken({
@@ -598,7 +740,6 @@ export const CardCarrousel = () => {
                           parsedAmount: null,
                         })
                   }
-                  key={index}
                 >
                   <TokenCard
                     w={"100%"}
@@ -608,10 +749,10 @@ export const CardCarrousel = () => {
                     hasInput={false}
                   />
                 </motion.div>
-              </AnimatePresence>
-            </Flex>
-          );
-        })}
+              </Flex>
+            );
+          })} */}
+        {/* </AnimatePresence> */}
       </Flex>
       <Button
         onClick={handleNext}

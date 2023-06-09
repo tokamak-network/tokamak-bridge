@@ -26,6 +26,7 @@ import {
   searchTokenStatus,
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
+import { Overlay_Index } from "@/types/style/overlayIndex";
 
 enum CardOverlay {
   Middle = 100,
@@ -82,7 +83,12 @@ const SearchToken = () => {
   };
 
   return (
-    <Flex w={"100%"} justifyContent={"center"} pos={"relative"}>
+    <Flex
+      w={"100%"}
+      justifyContent={"center"}
+      pos={"relative"}
+      zIndex={Overlay_Index.BelowHeader}
+    >
       <Input
         w={"430px"}
         h={"42px"}
