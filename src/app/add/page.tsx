@@ -101,12 +101,12 @@ export default function CreatePoolModal() {
               <Text textAlign={"left"} mb={"8px"}>
                 Select Network
               </Text>
-              <Box h="48px">
+              <Box>
                 <NetworkDropdown
                   inNetwork={false}
                   width="408px"
                   height="48px"
-                  innerWidth="427px"
+                  innerWidth="408px"
                 />
               </Box>
             </Flex>

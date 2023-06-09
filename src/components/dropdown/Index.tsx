@@ -82,7 +82,7 @@ export default function NetworkDropdown(props: {
     if (selectedOption) {
       return (
         <Flex
-          w={width ? width : "200px"}
+          w={innerWidth ? innerWidth : "200px"}
           h={height ? height : "32px"}
           color={"#fff"}
           px={"8px"}
@@ -106,7 +106,7 @@ export default function NetworkDropdown(props: {
     }
     return (
       <Flex
-        w={width ? width : "200px"}
+        w={innerWidth ? innerWidth : "200px"}
         h={height ? height : "32px"}
         color={"#fff"}
         px={"8px"}
@@ -185,8 +185,8 @@ export default function NetworkDropdown(props: {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
           <Flex
-            w={width ? width : "200px"}
-            h={height ? height : "32px"}
+            w={innerWidth ? innerWidth : "200px"}
+            h={height ? "0px" : "32px"}
             alignItems={"center"}
             justifyContent={"space-around"}
             color={"#757893"}
@@ -196,8 +196,10 @@ export default function NetworkDropdown(props: {
             <Box w={"49px"} h={"1px"} bgColor={"#757893"} />
           </Flex>
           <Flex
-            w={width ? width : "200px"}
-            h={height ? height : "32px"}
+            // w={width ? width : "200px"}
+            // h={height ? height : "32px"}
+            w="392px"
+            h="48px"
             color={"#fff"}
             px={"8px"}
             justifyContent={"space-between"}
@@ -224,7 +226,7 @@ export default function NetworkDropdown(props: {
 
     return (
       <Flex
-        w={width ? width : "200px"}
+        w={width ? "384px" : "200px"}
         h={height ? height : "32px"}
         color={"#fff"}
         px={"8px"}
@@ -233,6 +235,7 @@ export default function NetworkDropdown(props: {
         fontSize={14}
         cursor={"pointer"}
         bgColor={"#1F2128"}
+        borderRadius="6px"
         _hover={{ bgColor: "#313442" }}
         onClick={() => onChange(data)}
       >

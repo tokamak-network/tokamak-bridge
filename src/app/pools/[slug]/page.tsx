@@ -1,13 +1,42 @@
 "use client";
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
+import { useState } from "react";
 import Image from "next/image";
 import { PoolCardDetail } from "@/types/pool";
 import BackIcon from "@/assets/icons/back.svg";
 import Link from "next/link";
 import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
+import LiquidityInfo from "../components/LiquidityInfo";
+import UnclaimedEarnings from "../components/UnclaimedEarnings";
+import PriceInput from "../../add/components/PriceInput";
 
 export default function PoolInfo(props: PoolCardDetail) {
+  const [liquidity, setLiquidity] = useState(0);
+  const [isIncreaseModalOpen, setIsIncreaseModalOpen] = useState(false);
+  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice, setMaxPrice] = useState(0);
+
+  const handleLiquidity = (value: number) => {
+    setLiquidity(value);
+  };
+
+  const openIncreaseModal = () => {
+    setIsIncreaseModalOpen(true);
+  };
+  const openRemoveModal = () => {
+    setIsRemoveModalOpen(true);
+  };
+
+  const handleMinPriceChange = (value: number) => {
+    setMinPrice(value);
+  };
+
+  const handleMaxPriceChange = (value: number) => {
+    setMaxPrice(value);
+  };
+
   return (
     <Flex w={"424px"} flexDir="column">
       <Link href="/pools">
@@ -76,51 +105,34 @@ export default function PoolInfo(props: PoolCardDetail) {
             )}
           </Flex>
         </Flex>
+        <LiquidityInfo
+          value={liquidity}
+          onClickAdd={openIncreaseModal}
+          onClickRemove={openRemoveModal}
+          onChange={handleLiquidity}
+        />
+        <UnclaimedEarnings />
         <Flex
-          position="relative"
-          alignItems="center"
-          textAlign="center"
-          left="20px"
+          justifyContent={"space-between"}
+          alignItems={"center"}
+          textAlign={"center"}
         >
-          {props.in && (
-            <Image
-              src={props.symbol.inTokenSymbol}
-              alt="iconGroup"
-              style={{ position: "absolute", zIndex: 2, left: 0, top: "19px" }}
-            />
-          )}
-          {props.out && (
-            <Image
-              src={props.symbol.outTokenSymbol}
-              alt="iconGroup"
-              style={{
-                position: "absolute",
-                zIndex: 1,
-                left: "52px",
-                top: "19px",
-              }}
-            />
-          )}
-        </Flex>
-        <Flex
-          direction="column"
-          fontSize={"12px"}
-          marginTop={"95px"}
-          line-height={"20px"}
-        >
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text fontWeight="bold">{props.in}</Text>
-            {/* TODO: Convert to $ */}
-            {/* <Text marginLeft="2">{props.trade.inputAmount} ($1.25)</Text> */}
-          </Flex>
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text fontWeight="bold">{props.out}</Text>
-            {/* <Text marginLeft="2">{props.trade.outTokenAmount} ($1.25)</Text> */}
-          </Flex>
-          <Flex justifyContent="space-between" alignItems="center">
-            <Text fontWeight="bold"></Text>
-            {/* <Text marginLeft="2">${props.trade.gasFee}</Text> */}
-          </Flex>
+          <PriceInput
+            titleText={"Min Price"}
+            value={minPrice}
+            onChange={handleMinPriceChange}
+            min={0}
+            max={100}
+            step={1}
+          />
+          <PriceInput
+            titleText={"Max Price"}
+            value={maxPrice}
+            onChange={handleMaxPriceChange}
+            min={0}
+            max={100}
+            step={1}
+          />
         </Flex>
       </Flex>
     </Flex>
