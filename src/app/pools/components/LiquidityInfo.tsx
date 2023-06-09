@@ -1,22 +1,18 @@
 import { Flex, Box, Text, Button, Divider } from "@chakra-ui/react";
 import TokenNetwork from "@/components/ui/TokenNetwork";
+import Link from "next/link";
+import AddIcon from "@/assets/icons/addIcon.svg";
+import RemoveIcon from "@/assets/icons/removeIcon.svg";
+import Image from "next/image";
 
-interface NumberInputProps {
-  titleText?: string;
-  value: number;
-  onClickAdd: () => void;
-  onClickRemove: () => void;
-  onChange: (value: any) => void;
-}
+type LiquidityInfo = {
+  // liquidity
+  // inputTokenAmount
+  // outTokenAmount
+  // slippage
+};
 
-export default function LiquidityInfo(props: NumberInputProps) {
-  const { titleText, value, onClickAdd, onClickRemove, onChange } = props;
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = Number(e.target.value);
-    onChange(inputValue);
-  };
-
+export default function LiquidityInfo() {
   return (
     <Box
       bg="#1F2128"
@@ -35,14 +31,15 @@ export default function LiquidityInfo(props: NumberInputProps) {
             <Text color="#A0A3AD" mb={"17px"}>
               Remove
             </Text>
-            <Button
-              bg="#15161D"
-              onClick={onClickAdd}
-              _hover={{ bgColor: "#15161D" }}
-              mr={"7px"}
-            >
-              -
-            </Button>
+            <Link href="/remove">
+              <Button
+                bg="#15161D"
+                _hover={{ bgColor: "#15161D", border: "1px solid #007AFF" }}
+                mr={"7px"}
+              >
+                <Image src={RemoveIcon} alt={"RemoveLiquidity"} />
+              </Button>
+            </Link>
           </Flex>
           <Flex flexDir={"column"} alignItems={"center"} mr={"35px"}>
             <Text fontSize={"16px"} mb={"17px"} as="b">
@@ -56,14 +53,15 @@ export default function LiquidityInfo(props: NumberInputProps) {
             <Text color="#A0A3AD" mb={"20px"}>
               Increase
             </Text>
-            <Button
-              bg="#15161D"
-              onClick={onClickRemove}
-              _hover={{ bgColor: "#15161D" }}
-              ml={"7px"}
-            >
-              +
-            </Button>
+            <Link href="/increase">
+              <Button
+                bg="#15161D"
+                _hover={{ bgColor: "#15161D", border: "1px solid #007AFF" }}
+                ml={"7px"}
+              >
+                <Image src={AddIcon} alt={"IncreaseLiquidity"} />
+              </Button>
+            </Link>
           </Flex>
         </Flex>
         <Divider style={{ border: "1px solid #313442" }} />
@@ -88,9 +86,9 @@ export default function LiquidityInfo(props: NumberInputProps) {
           </Flex>
           <Flex justifyContent="space-between">
             <Flex justifyContent="start" mr={"118px"}>
-              <TokenNetwork tokenType="LYDA" network="Ethereum" />
+              <TokenNetwork tokenType="USDC" network="Ethereum" />
               <Text ml="12px" color="#A0A3AD" fontSize={"13px"}>
-                LYDA
+                USDC
               </Text>
             </Flex>
             <Flex justifyContent="end">

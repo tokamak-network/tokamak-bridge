@@ -1,16 +1,17 @@
 import { Flex, Box, Text, Button, Divider } from "@chakra-ui/react";
 import TokenNetwork from "@/components/ui/TokenNetwork";
 
-interface NumberInputProps {
+interface UnclaimedEarningsProps {
   titleText?: string;
+  openModal: () => void;
   //   value: number;
   //   onClickAdd: () => void;
   //   onClickRemove: () => void;
   //   onChange: (value: any) => void;
 }
 
-export default function UnclaimedEarnings(props: NumberInputProps) {
-  const { titleText } = props;
+export default function UnclaimedEarnings(props: UnclaimedEarningsProps) {
+  const { titleText, openModal } = props;
 
   return (
     <Box
@@ -40,7 +41,11 @@ export default function UnclaimedEarnings(props: NumberInputProps) {
           </Text>
         </Flex>
         <Flex position={"relative"} style={{ left: "247px", top: "-66px" }}>
-          <Button bgColor={"#007AFF"} _hover={{ bgColor: "#007AFF" }}>
+          <Button
+            bgColor={"#007AFF"}
+            _hover={{ bgColor: "#007AFF" }}
+            onClick={openModal}
+          >
             Collect
           </Button>
         </Flex>

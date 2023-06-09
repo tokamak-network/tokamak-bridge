@@ -10,24 +10,12 @@ import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
 import LiquidityInfo from "../components/LiquidityInfo";
 import UnclaimedEarnings from "../components/UnclaimedEarnings";
 import PriceInput from "../../add/components/PriceInput";
+import ClaimEarningsModal from "@/components/modal/ClaimEarnings";
 
 export default function PoolInfo(props: PoolCardDetail) {
-  const [liquidity, setLiquidity] = useState(0);
-  const [isIncreaseModalOpen, setIsIncreaseModalOpen] = useState(false);
-  const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+  const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
-
-  const handleLiquidity = (value: number) => {
-    setLiquidity(value);
-  };
-
-  const openIncreaseModal = () => {
-    setIsIncreaseModalOpen(true);
-  };
-  const openRemoveModal = () => {
-    setIsRemoveModalOpen(true);
-  };
 
   const handleMinPriceChange = (value: number) => {
     setMinPrice(value);
@@ -35,6 +23,10 @@ export default function PoolInfo(props: PoolCardDetail) {
 
   const handleMaxPriceChange = (value: number) => {
     setMaxPrice(value);
+  };
+
+  const openClaimModal = () => {
+    setIsClaimModalOpen(true);
   };
 
   return (
@@ -105,13 +97,8 @@ export default function PoolInfo(props: PoolCardDetail) {
             )}
           </Flex>
         </Flex>
-        <LiquidityInfo
-          value={liquidity}
-          onClickAdd={openIncreaseModal}
-          onClickRemove={openRemoveModal}
-          onChange={handleLiquidity}
-        />
-        <UnclaimedEarnings />
+        <LiquidityInfo />
+        <UnclaimedEarnings openModal={openClaimModal} />
         <Flex
           justifyContent={"space-between"}
           alignItems={"center"}
@@ -135,6 +122,11 @@ export default function PoolInfo(props: PoolCardDetail) {
           />
         </Flex>
       </Flex>
+
+      <ClaimEarningsModal
+        isOpen={isClaimModalOpen}
+        onClose={() => setIsClaimModalOpen(false)}
+      />
     </Flex>
   );
 }
