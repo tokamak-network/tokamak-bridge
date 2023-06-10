@@ -41,50 +41,12 @@ import {
   searchTokenStatus,
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
-
-type LocationType =
-  | "isVisibleAtLeft"
-  | "isVisibleAtRight"
-  | "atEnd"
-  | "atSide"
-  | "atCenter"
-  | "atSideRight"
-  | "atEndRight";
-
-enum CardOverlay {
-  Center = 100,
-  Side = 80,
-  End = 60,
-}
-
-const getTrasnformParams = (angle: number, x: number, y: number) => {
-  return `rotate(${angle}deg) translate(${x}px, ${y}px)`;
-};
-
-const location = (index: number): LocationType => {
-  const isVisibleAtLeft = index === 0;
-  const isVisibleAtRight = index === 6;
-
-  const atEnd = index === 1;
-  const atSide = index === 2;
-  const atCenter = index === 3;
-  const atSideRight = index === 4;
-  const atEndRight = index === 5;
-
-  return isVisibleAtLeft
-    ? "isVisibleAtLeft"
-    : isVisibleAtRight
-    ? "isVisibleAtRight"
-    : atSideRight
-    ? "atSideRight"
-    : atEndRight
-    ? "atEndRight"
-    : atCenter
-    ? "atCenter"
-    : atSide
-    ? "atSide"
-    : "atEnd";
-};
+import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
+import {
+  getTokenCardStyle,
+  location,
+  useCarrousellAnimation,
+} from "@/hooks/tokenCard/useCarrousellAnimation";
 
 export const CardCarrousel = () => {
   const [currentCard, setCurrentCard] = useState<number>(2);
@@ -92,58 +54,23 @@ export const CardCarrousel = () => {
     selectedInTokenStatus
   );
 
-  const tokenList = useRecoilValue(searchTokenList);
-  const searchedTokenName = useRecoilValue(searchTokenStatus);
-  const tokenSelector = useRecoilValue(searchTokenSelector);
-  const { chainName } = useConnectedNetwork();
-
-  const filterTokenList = useMemo(() => {
-    if (tokenSelector && chainName) {
-      return tokenList.filter(
-        (token) => token.address[chainName] === tokenSelector.address[chainName]
-      );
-    }
-    if (searchedTokenName?.nameOrAdd) {
-      return tokenList.filter((token) => {
-        return token.tokenName
-          .toLocaleLowerCase()
-          .includes(searchedTokenName.nameOrAdd.toLocaleLowerCase());
-      });
-    }
-    return tokenList;
-  }, [tokenList, tokenSelector, searchedTokenName]);
-
-  const carrousellTokenList = useMemo(() => {
-    return filterTokenList.slice(0, 6);
-  }, [filterTokenList, currentCard]);
-
-  // const carrousellTokenList = filterTokenList;
-
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
 
-  const sideControl = useAnimation();
-  const sideRightControl = useAnimation();
-  const secondControl = useAnimation();
-  const secondRightControl = useAnimation();
-  const middleControl = useAnimation();
-  const outControl = useAnimation();
-  const outoutControl = useAnimation();
+  // const [scope, animate] = useAnimate();
 
-  const [scope, animate] = useAnimate();
+  // useEffect(() => {
+  //   const animation = async () => {
+  //     console.log(scope);
+  //     await animate(scope.current, { x: "100px" });
+  //     animate("li", { opacity: 1 });
+  //   };
 
-  useEffect(() => {
-    const animation = async () => {
-      console.log(scope);
-      await animate(scope.current, { x: "100px" });
-      animate("li", { opacity: 1 });
-    };
-
-    animation();
-  }, []);
+  //   animation();
+  // }, []);
 
   const { inNetwork } = useRecoilValue(networkStatus);
 
@@ -155,442 +82,17 @@ export const CardCarrousel = () => {
     setCurrentCard(currentCard + 1);
   };
 
-  const cardStyleProps = (index: number) => {
-    const commonStyle = {
-      position: "absolute",
-      top: "350px",
-    };
-    const basicEndStyle = {
-      ...commonStyle,
-      width: "186px",
-      height: "242px",
-      maxWidth: "186px",
-      maxHeight: "242px",
-    };
-    const basicSideStyle = {
-      ...commonStyle,
-      width: "204px",
-      height: "282px",
-    };
-
-    switch (location(index)) {
-      // case "isVisibleAtLeft" || "isVisibleAtLeft":
-      //   return { display: "none" };
-      case "atEnd":
-        return {
-          ...basicEndStyle,
-          transform: "rotate(-10deg)",
-        };
-      case "atSide":
-        return {
-          ...basicSideStyle,
-          transform: "rotate(-5deg)",
-        };
-      case "atCenter":
-        return {
-          ...commonStyle,
-          width: "256px",
-          height: "332px",
-          zIndex: CardOverlay.Center,
-        };
-      case "atSideRight":
-        return {
-          ...basicSideStyle,
-          zIndex: 90,
-          transform: "rotate(5deg)",
-        };
-      case "atEndRight":
-        return {
-          ...basicEndStyle,
-          zIndex: 80,
-          transform: "rotate(10deg)",
-        };
-      default:
-        return {};
-    }
-  };
-
-  // const cardProps = (index: number) => {
-  //   const currentIndex = currentCard === null ? 0 : currentCard;
-  //   const indexVal = currentIndex - index;
-
-  //   const atMiddle = indexVal === 0;
-  //   const atSide = indexVal === 2 || indexVal === -2;
-  //   const atSideRight = indexVal === -2;
-  //   const atSecond = indexVal === 1 || indexVal === -1;
-  //   const atSecondRight = indexVal === -1;
-  //   const atOut = indexVal > 2 || indexVal < -2;
-
-  //   return {
-  //     position: "relative",
-  //     display: atOut ? "none" : "",
-  //     transition: "margin .2s ease-in-out",
-  //     _hover: { mt: "-2" },
-  //     zIndex: atOut
-  //       ? -100
-  //       : atSide
-  //       ? CardOverlay.Sides
-  //       : atSideRight
-  //       ? CardOverlay.SideRight
-  //       : atSecond
-  //       ? CardOverlay.Seconds
-  //       : atSecondRight
-  //       ? CardOverlay.SecondRight
-  //       : CardOverlay.Middle,
-  //     transform:
-  //       atSide && !atSideRight
-  //         ? "rotate(-10deg)"
-  //         : atSideRight
-  //         ? "rotate(10deg)"
-  //         : atSecond && !atSecondRight
-  //         ? "rotate(-5deg)"
-  //         : atSecondRight
-  //         ? "rotate(5deg)"
-  //         : null,
-  //     minWidth: atSide ? "186px" : atSecond ? "225px" : "256px",
-  //     minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
-  //     left:
-  //       atSide && !atSideRight
-  //         ? "95px"
-  //         : atSideRight
-  //         ? "-85px"
-  //         : atSecond && !atSecondRight
-  //         ? "43px"
-  //         : atSecondRight
-  //         ? "-43px"
-  //         : "0px",
-  //   };
-  // };
-
-  const [initialized, setInisialized] = useState<boolean>(false);
-
-  useEffect(() => {
-    middleControl.start({
-      translateY: "-350px",
-      translateX: "1px",
-      opacity: 1,
-      zIndex: CardOverlay.Center,
-    });
-    secondControl.start({
-      translateY: "-330px",
-      translateX: "-150px",
-      opacity: 1,
-      zIndex: CardOverlay.Side,
-    });
-    secondRightControl.start({
-      translateY: "-330px",
-      translateX: "150px",
-      opacity: 1,
-      zIndex: CardOverlay.Side,
-    });
-    sideControl.start({
-      translateY: "-320px",
-      translateX: "-250px",
-      opacity: 1,
-      zIndex: CardOverlay.End,
-    });
-    sideRightControl.start({
-      translateY: "-320px",
-      translateX: "250px",
-      opacity: 1,
-      zIndex: CardOverlay.End,
-    });
-    outControl.start({
-      rotate: -25,
-      translateY: "500px",
-      translateX: "-500px",
-      opacity: 1,
-      width: "186px",
-      height: "242px",
-    });
-
-    setInisialized(true);
-  }, []);
-
-  // useEffect(() => {
-  //   if (test !== null) {
-  //     middleControl.start({
-  //       transform: getTrasnformParams(5, 178, -332),
-  //       width: "204px",
-  //       height: "282px",
-  //       zIndex: CardOverlay.Side,
-  //       opacity: 1,
-  //     });
-  //     secondRightControl.start({
-  //       transform: getTrasnformParams(5, 178, -332),
-  //       width: "204px",
-  //       height: "282px",
-  //       zIndex: CardOverlay.Side,
-  //       opacity: 1,
-  //     });
-  //   }
-
-  //   // secondRightControl.start({
-  //   //   rotate: 5,
-  //   //   translateY: "-296px",
-  //   //   translateX: "284px",
-  //   //   width: "186px",
-  //   //   height: "242px",
-  //   //   opacity: 1,
-  //   // });
-  // }, [test]);
-
-  useEffect(() => {
-    if (currentCard === 0) {
-      middleControl.start({
-        rotate: -10,
-        translateY: "-272px",
-        translateX: "-265px",
-        width: "186px",
-        height: "242px",
-        opacity: 1,
-      });
-    }
-    if (currentCard === 1) {
-      middleControl.start({
-        rotate: -5,
-        translateY: "-315px",
-        translateX: "-151px",
-        width: "204px",
-        height: "282px",
-        zIndex: CardOverlay.Side,
-        opacity: 1,
-      });
-      secondControl.start({
-        translateY: "-330px",
-        translateX: "-150px",
-        opacity: 1,
-        zIndex: CardOverlay.Side,
-        width: "204px",
-        height: "282px",
-        minWidth: "204px",
-        maxWidth: "204px",
-        rotate: -5,
-      });
-      secondRightControl.start({
-        translateY: "-330px",
-        translateX: "150px",
-        opacity: 1,
-        zIndex: CardOverlay.Side,
-        width: "204px",
-        height: "282px",
-      });
-      sideControl.start({
-        translateY: "-320px",
-        translateX: "-250px",
-        opacity: 1,
-        zIndex: CardOverlay.End,
-      });
-      sideRightControl.start({
-        translateY: "-320px",
-        translateX: "250px",
-        opacity: 1,
-        zIndex: CardOverlay.End,
-      });
-      outControl.start({
-        rotate: -25,
-        translateY: "500px",
-        translateX: "-500px",
-        opacity: 1,
-        width: "186px",
-        height: "242px",
-      });
-    }
-    if (currentCard === 2) {
-      middleControl.start({
-        rotate: 0,
-        translateY: "-350px",
-        translateX: "1px",
-        opacity: 1,
-        width: "254px",
-        height: "332px",
-        zIndex: CardOverlay.Center,
-      });
-      secondControl.start({
-        translateY: "-330px",
-        translateX: "-150px",
-        opacity: 1,
-        zIndex: CardOverlay.Side,
-        width: "204px",
-        height: "282px",
-        minWidth: "204px",
-        maxWidth: "204px",
-        rotate: -5,
-      });
-      secondRightControl.start({
-        translateY: "-330px",
-        translateX: "150px",
-        opacity: 1,
-        zIndex: CardOverlay.Side,
-        width: "204px",
-        height: "282px",
-      });
-      sideControl.start({
-        translateY: "-320px",
-        translateX: "-250px",
-        opacity: 1,
-        zIndex: CardOverlay.End,
-      });
-      sideRightControl.start({
-        translateY: "-320px",
-        translateX: "250px",
-        opacity: 1,
-        zIndex: CardOverlay.End,
-      });
-      outControl.start({
-        rotate: -25,
-        translateY: "500px",
-        translateX: "-500px",
-        opacity: 1,
-        width: "186px",
-        height: "242px",
-      });
-    }
-    if (currentCard === 3) {
-      sideControl.start({
-        rotate: 5,
-        translateY: "-341px",
-        translateX: "-133px",
-        opacity: 1,
-        zIndex: CardOverlay.Side,
-        width: "204px",
-        height: "282px",
-        minWidth: "204px",
-        maxWidth: "204px",
-      });
-      secondControl.start({
-        transform: getTrasnformParams(5, 0, -350),
-        width: "256px",
-        height: "332px",
-        minWidth: "256px",
-        maxWidth: "256px",
-        zIndex: CardOverlay.Center,
-        opacity: 1,
-      });
-      middleControl.start({
-        transform: getTrasnformParams(5, 178, -332),
-        width: "204px",
-        height: "282px",
-        zIndex: CardOverlay.Side,
-        opacity: 1,
-      });
-      secondRightControl.start({
-        rotate: 5,
-        translateY: "-296px",
-        translateX: "284px",
-        width: "186px",
-        height: "242px",
-        opacity: 1,
-      });
-      sideRightControl.start({
-        translateY: "-315px",
-        translateX: "600px",
-        width: "186px",
-        height: "242px",
-        opacity: 0,
-        zIndex: -999,
-      });
-      outControl.start({
-        rotate: -10,
-        translateY: "-12px",
-        translateX: "-235px",
-        opacity: 1,
-        zIndex: CardOverlay.End,
-      });
-    }
-    if (currentCard === 4) {
-      sideControl.start({
-        transform: getTrasnformParams(10, 0, -350),
-        width: "256px",
-        height: "332px",
-        minWidth: "256px",
-        maxWidth: "256px",
-        zIndex: CardOverlay.Center,
-        opacity: 1,
-      });
-      secondControl.start({
-        transform: getTrasnformParams(10, 178, -332),
-        width: "204px",
-        height: "282px",
-        minWidth: "204px",
-        maxWidth: "204px",
-        zIndex: CardOverlay.Center,
-        opacity: 1,
-      });
-      middleControl.start({
-        transform: getTrasnformParams(10, 286, -325),
-        width: "186px",
-        height: "242px",
-        opacity: 1,
-      });
-      secondRightControl.start({
-        translateY: "-275px",
-        translateX: "600px",
-        width: "186px",
-        height: "242px",
-        opacity: 0,
-        zIndex: -999,
-      });
-    }
-    if (currentCard === 5) {
-      console.log("gogogo");
-      sideControl.start({
-        transform: getTrasnformParams(15, 167, -332),
-        width: "204px",
-        height: "282px",
-        minWidth: "204px",
-        maxWidth: "204px",
-        zIndex: CardOverlay.Side,
-        opacity: 1,
-      });
-      secondControl.start({
-        transform: getTrasnformParams(15, 286, -325),
-        width: "186px",
-        height: "242px",
-        minWidth: "186px",
-        maxWidth: "186px",
-        zIndex: CardOverlay.End,
-        opacity: 1,
-      });
-      middleControl.start({
-        transform: getTrasnformParams(10, 600, -315),
-        width: "186px",
-        height: "242px",
-        opacity: 0,
-        zIndex: -999,
-      });
-    }
-    if (currentCard === 6) {
-      sideControl.start({
-        transform: getTrasnformParams(20, 275, -325),
-        width: "186px",
-        height: "242px",
-        minWidth: "186px",
-        maxWidth: "186px",
-        zIndex: CardOverlay.End,
-        opacity: 1,
-      });
-      secondControl.start({
-        transform: getTrasnformParams(15, 600, -315),
-        width: "186px",
-        height: "242px",
-        opacity: 0,
-        zIndex: -999,
-      });
-    }
-    if (currentCard === 7) {
-      sideControl.start({
-        transform: getTrasnformParams(20, 600, -315),
-        width: "186px",
-        height: "242px",
-        opacity: 0,
-        zIndex: -999,
-      });
-    }
-    return () => {
-      setInisialized(false);
-    };
-  }, [currentCard]);
+  const { filterTokenList } = useGetTokenList();
+  const {
+    endLeftControl,
+    endRightControl,
+    sideLeftControl,
+    sideRightControl,
+    centerControl,
+    outLeftControl,
+    outRightControl,
+    waitControl,
+  } = useCarrousellAnimation({ currentCard });
 
   return (
     <Flex
@@ -618,141 +120,70 @@ export const CardCarrousel = () => {
       </Button>
       <Flex
         // overflowX={"hidden"}
-        w={"1300px"}
+        w={"100%"}
         alignItems={"end"}
         // pb={"10px"}
         justifyContent={"center"}
         h={"332px"}
         pos={"relative"}
       >
-        {/* <AnimatePresence initial={true}> */}
-        {/* <motion.div style={{ display: "flex" }} ref={scope}>
-          {carrousellTokenList.map((tokenData: any, index: number) => {
-            return (
-              <Flex w={"220px"}>
-                <TokenCard
-                  w={"100%"}
-                  h={"100%"}
-                  tokenInfo={tokenData}
-                  inNetwork={true}
-                  hasInput={false}
-                />
-              </Flex>
-            );
-          })} */}
-        {/* </motion.div> */}
         {/* 시연용 */}
-        {carrousellTokenList.map((tokenData: any, index: number) => {
-          const locate = location(index);
+        {filterTokenList.map((tokenData: any, index: number) => {
           return (
-            <Flex style={cardStyleProps(index)}>
-              <motion.div
-                key={`${index}_${tokenData.tokenName}`}
-                className={"motion-div"}
-                style={{ width: "100%", height: "100%" }}
-                transition={{ duration: 0.5 }}
-                initial={{ opacity: 0 }}
-                animate={
-                  carrousellTokenList.length === 1
-                    ? middleControl
-                    : index === 0
-                    ? outControl
-                    : locate === "atEndRight"
-                    ? sideRightControl
-                    : locate === "atSideRight"
-                    ? secondRightControl
-                    : locate === "atCenter"
-                    ? middleControl
-                    : locate === "atSide"
-                    ? secondControl
-                    : sideControl
-                }
-                onClick={() =>
-                  isInTokenOpen
-                    ? setSelectedInToken({
-                        ...tokenData,
-                        amountBN: null,
-                        parsedAmount: null,
-                      })
-                    : setSelectedOutToken({
-                        ...tokenData,
-                        amountBN: null,
-                        parsedAmount: null,
-                      })
-                }
-              >
-                <TokenCard
-                  w={"100%"}
-                  h={"100%"}
-                  tokenInfo={tokenData}
-                  inNetwork={true}
-                  hasInput={false}
-                />
-              </motion.div>
-            </Flex>
+            <motion.div
+              key={`${index}_${tokenData.tokenName}`}
+              className={"motion-div"}
+              style={getTokenCardStyle(index, filterTokenList.length - 1)}
+              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={
+                index > 5 && index === currentCard + 2
+                  ? waitControl
+                  : filterTokenList.length === 1
+                  ? centerControl
+                  : index === 0
+                  ? endLeftControl
+                  : index === 1
+                  ? sideLeftControl
+                  : index === 2
+                  ? centerControl
+                  : index === 3
+                  ? sideRightControl
+                  : index === 4
+                  ? endRightControl
+                  : index === 5
+                  ? outRightControl
+                  : index === filterTokenList.length - 1
+                  ? outLeftControl
+                  : undefined
+                // index === filterTokenList.length - 2
+                // ? waitControl
+                // : undefined
+              }
+              onClick={() =>
+                isInTokenOpen
+                  ? setSelectedInToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+                  : setSelectedOutToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+              }
+            >
+              <TokenCard
+                w={"100%"}
+                h={"100%"}
+                tokenInfo={tokenData}
+                inNetwork={true}
+                hasInput={false}
+              />
+            </motion.div>
           );
         })}
-        {/* {carrousellTokenList.map((tokenData: any, index: number) => {
-            const locate = location(index);
-            return (
-              //@ts-ignore
-              <Flex
-                style={cardStyleProps(
-                  tokenData.test ? 3 : tokenData.test2 ? 4 : 0
-                )}
-              >
-                <motion.div
-                  layout
-                  key={`${index}_${tokenData.tokenName}`}
-                  className={"motion-div"}
-                  style={{ width: "100%", height: "100%" }}
-                  transition={{ duration: 0.5 }}
-                  initial={{ opacity: 0 }}
-                  animate={
-                    tokenData.test === true
-                      ? middleControl
-                      : tokenData.test2
-                      ? secondRightControl
-                      : undefined
-                    // index === 0
-                    //   ? outControl
-                    //   : locate === "atEndRight"
-                    //   ? sideRightControl
-                    //   : locate === "atSideRight"
-                    //   ? secondRightControl
-                    //   : locate === "atCenter"
-                    //   ? middleControl
-                    //   : locate === "atSide"
-                    //   ? secondControl
-                    //   : sideControl
-                  }
-                  // exit={{ translateX: "500px" }}
-                  onClick={() =>
-                    isInTokenOpen
-                      ? setSelectedInToken({
-                          ...tokenData,
-                          amountBN: null,
-                          parsedAmount: null,
-                        })
-                      : setSelectedOutToken({
-                          ...tokenData,
-                          amountBN: null,
-                          parsedAmount: null,
-                        })
-                  }
-                >
-                  <TokenCard
-                    w={"100%"}
-                    h={"100%"}
-                    tokenInfo={tokenData}
-                    inNetwork={true}
-                    hasInput={false}
-                  />
-                </motion.div>
-              </Flex>
-            );
-          })} */}
-        {/* </AnimatePresence> */}
       </Flex>
       <Button
         onClick={handleNext}
