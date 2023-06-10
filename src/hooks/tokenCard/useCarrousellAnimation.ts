@@ -1,6 +1,7 @@
 import { MotionStyle } from "framer-motion";
 import { useAnimation } from "framer-motion";
 import { useEffect, useState } from "react";
+import { useGetTokenList } from "./useGetTokenList";
 
 type LocationType =
   | "outLeft"
@@ -154,8 +155,11 @@ export const getTokenCardStyle = (index: number, maxIndex: number) => {
   }
 };
 
-export function useCarrousellAnimation(params: { currentCard: number }) {
-  const { currentCard } = params;
+export function useCarrousellAnimation(params: {
+  currentCard: number;
+  index: number;
+}) {
+  const { currentCard, index } = params;
 
   const endLeftControl = useAnimation();
   const endRightControl = useAnimation();
@@ -332,13 +336,8 @@ export function useCarrousellAnimation(params: { currentCard: number }) {
         transform: getTrasnformParams(-10, -460, -90),
         opacity: 1,
       });
-      waitControl.start({
-        transform: getTrasnformParams(-10, -570, -59),
-        opacity: 1,
-        zIndex: 100,
-      });
     }
-    if (currentCard === 4) {
+    if (currentCard === 2) {
       endLeftControl.start(positionStyles.center);
       sideLeftControl.start(positionStyles.sideRight);
       centerControl.start(positionStyles.endRight);
@@ -348,13 +347,8 @@ export function useCarrousellAnimation(params: { currentCard: number }) {
         ...positionStyles.sideLeft,
         transform: getTrasnformParams(-5, -345, -45),
       });
-      waitControl.start({
-        ...positionStyles.endLeft,
-        transform: getTrasnformParams(-10, -280, -59),
-        opacity: 1,
-      });
     }
-    if (currentCard === 5) {
+    if (currentCard === 1) {
       endLeftControl.start(positionStyles.sideRight);
       sideLeftControl.start(positionStyles.endRight);
       centerControl.start(positionStyles.outRight);
@@ -363,16 +357,48 @@ export function useCarrousellAnimation(params: { currentCard: number }) {
         ...positionStyles.center,
         transform: getTrasnformParams(0, -170, 0),
       });
-      waitControl.start({
-        ...positionStyles.sideLeft,
-        transform: getTrasnformParams(-5, -143, -28),
-        opacity: 1,
-      });
+      //   waitControl.start({
+      //     ...positionStyles.sideLeft,
+      //     transform: getTrasnformParams(-5, -143, -28),
+      //     opacity: 1,
+      //   });
     }
     return () => {
       setInisialized(false);
     };
   }, [currentCard]);
+
+  const { filterTokenList } = useGetTokenList();
+
+  useEffect(() => {
+    const indexBefore5th = (currentCard + 1 + 5) % filterTokenList.length;
+    const startIndex =
+      indexBefore5th === 0 ? filterTokenList.length - 1 : indexBefore5th - 1;
+
+    if (index === startIndex) {
+      waitControl.start({
+        transform: getTrasnformParams(-10, -570, -59),
+        opacity: 1,
+        zIndex: 100,
+      });
+    }
+
+    if (index === startIndex + 1) {
+      waitControl.start({
+        ...positionStyles.endLeft,
+        transform: getTrasnformParams(-10, -280, -59),
+        opacity: 1,
+      });
+    }
+
+    if (index === startIndex + 2) {
+      waitControl.start({
+        ...positionStyles.sideLeft,
+        transform: getTrasnformParams(-5, -140, -49),
+        opacity: 1,
+      });
+    }
+  }, [currentCard, index, filterTokenList]);
 
   return {
     endLeftControl,

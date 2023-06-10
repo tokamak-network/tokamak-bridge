@@ -44,12 +44,11 @@ import useConnectedNetwork from "@/hooks/network";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import {
   getTokenCardStyle,
-  location,
   useCarrousellAnimation,
 } from "@/hooks/tokenCard/useCarrousellAnimation";
 
 export const CardCarrousel = () => {
-  const [currentCard, setCurrentCard] = useState<number>(2);
+  const [currentCard, setCurrentCard] = useState<number | null>(null);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -79,20 +78,12 @@ export const CardCarrousel = () => {
   };
 
   const handleNext = () => {
-    setCurrentCard(currentCard + 1);
+    setCurrentCard(2);
   };
 
   const { filterTokenList } = useGetTokenList();
-  const {
-    endLeftControl,
-    endRightControl,
-    sideLeftControl,
-    sideRightControl,
-    centerControl,
-    outLeftControl,
-    outRightControl,
-    waitControl,
-  } = useCarrousellAnimation({ currentCard });
+
+  console.log(filterTokenList, currentCard);
 
   return (
     <Flex
@@ -129,59 +120,73 @@ export const CardCarrousel = () => {
       >
         {/* 시연용 */}
         {filterTokenList.map((tokenData: any, index: number) => {
+          const {
+            endLeftControl,
+            endRightControl,
+            sideLeftControl,
+            sideRightControl,
+            centerControl,
+            outLeftControl,
+            outRightControl,
+            waitControl,
+          } = useCarrousellAnimation({ currentCard, index });
+
+          const indexBefore5th = (currentCard + 1 + 5) % filterTokenList.length;
+          const startIndex =
+            indexBefore5th === 0
+              ? filterTokenList.length - 2
+              : indexBefore5th - 2;
+
           return (
-            <motion.div
-              key={`${index}_${tokenData.tokenName}`}
-              className={"motion-div"}
-              style={getTokenCardStyle(index, filterTokenList.length - 1)}
-              transition={{ duration: 0.5 }}
-              initial={{ opacity: 0 }}
-              animate={
-                index > 5 && index === currentCard + 2
-                  ? waitControl
-                  : filterTokenList.length === 1
-                  ? centerControl
-                  : index === 0
-                  ? endLeftControl
-                  : index === 1
-                  ? sideLeftControl
-                  : index === 2
-                  ? centerControl
-                  : index === 3
-                  ? sideRightControl
-                  : index === 4
-                  ? endRightControl
-                  : index === 5
-                  ? outRightControl
-                  : index === filterTokenList.length - 1
-                  ? outLeftControl
-                  : undefined
-                // index === filterTokenList.length - 2
-                // ? waitControl
-                // : undefined
-              }
-              onClick={() =>
-                isInTokenOpen
-                  ? setSelectedInToken({
-                      ...tokenData,
-                      amountBN: null,
-                      parsedAmount: null,
-                    })
-                  : setSelectedOutToken({
-                      ...tokenData,
-                      amountBN: null,
-                      parsedAmount: null,
-                    })
-              }
-            >
-              <TokenCard
-                w={"100%"}
-                h={"100%"}
-                tokenInfo={tokenData}
-                inNetwork={true}
-                hasInput={false}
-              />
-            </motion.div>
+            <AnimatePresence>
+              <motion.div
+                key={`${index}_${tokenData.tokenName}`}
+                className={"motion-div"}
+                style={getTokenCardStyle(index, filterTokenList.length - 1)}
+                transition={{ duration: 0.5 }}
+                initial={{ opacity: 0 }}
+                animate={
+                  filterTokenList.length === 1
+                    ? centerControl
+                    : index === 0
+                    ? endLeftControl
+                    : index === 1
+                    ? sideLeftControl
+                    : index === 2
+                    ? centerControl
+                    : index === 3
+                    ? sideRightControl
+                    : index === 4
+                    ? endRightControl
+                    : index === 5
+                    ? outRightControl
+                    : index === filterTokenList.length - 1
+                    ? outLeftControl
+                    : waitControl
+                }
+                onClick={() =>
+                  isInTokenOpen
+                    ? setSelectedInToken({
+                        ...tokenData,
+                        amountBN: null,
+                        parsedAmount: null,
+                      })
+                    : setSelectedOutToken({
+                        ...tokenData,
+                        amountBN: null,
+                        parsedAmount: null,
+                      })
+                }
+              >
+                <TokenCard
+                  w={"100%"}
+                  h={"100%"}
+                  tokenInfo={tokenData}
+                  inNetwork={true}
+                  hasInput={false}
+                />
+              </motion.div>
+            </AnimatePresence>
           );
         })}
       </Flex>

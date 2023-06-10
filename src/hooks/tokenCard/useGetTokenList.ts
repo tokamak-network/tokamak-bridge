@@ -29,5 +29,7 @@ export function useGetTokenList() {
     return tokenList;
   }, [tokenList, tokenSelector, searchedTokenName]);
 
-  return { filterTokenList };
+  return {
+    filterTokenList,
+  };
 }
