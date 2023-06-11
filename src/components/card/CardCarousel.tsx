@@ -48,7 +48,7 @@ import {
 } from "@/hooks/tokenCard/useCarrousellAnimation";
 
 export const CardCarrousel = () => {
-  const [currentCard, setCurrentCard] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -73,17 +73,21 @@ export const CardCarrousel = () => {
 
   const { inNetwork } = useRecoilValue(networkStatus);
 
+  const { filterTokenList } = useGetTokenList();
+
   const handlePrev = () => {
-    setCurrentCard(currentCard - 1);
+    setCurrentIndex(currentIndex !== null ? currentIndex + 1 : 3);
   };
 
   const handleNext = () => {
-    setCurrentCard(2);
+    setCurrentIndex(
+      currentIndex !== null
+        ? currentIndex - 1 < 0
+          ? filterTokenList.length - 1
+          : currentIndex - 1
+        : 1
+    );
   };
-
-  const { filterTokenList } = useGetTokenList();
-
-  console.log(filterTokenList, currentCard);
 
   return (
     <Flex
@@ -119,7 +123,7 @@ export const CardCarrousel = () => {
         pos={"relative"}
       >
         {/* 시연용 */}
-        {filterTokenList.map((tokenData: any, index: number) => {
+        {filterTokenList?.map((tokenData: any, index: number) => {
           const {
             endLeftControl,
             endRightControl,
@@ -129,13 +133,37 @@ export const CardCarrousel = () => {
             outLeftControl,
             outRightControl,
             waitControl,
-          } = useCarrousellAnimation({ currentCard, index });
+          } = useCarrousellAnimation({ currentIndex, index });
 
-          const indexBefore5th = (currentCard + 1 + 5) % filterTokenList.length;
-          const startIndex =
-            indexBefore5th === 0
-              ? filterTokenList.length - 2
-              : indexBefore5th - 2;
+          const startIndex = useMemo(() => {
+            if (currentIndex !== null) {
+              const indexBefore5th =
+                currentIndex - 4 < 0
+                  ? currentIndex - 4 + filterTokenList.length
+                  : currentIndex - 4;
+
+              return indexBefore5th;
+            }
+          }, [currentIndex]);
+
+          const waitCondition =
+            startIndex === filterTokenList.length - 1
+              ? startIndex - 7 === index ||
+                startIndex - 6 === index ||
+                startIndex - 5 === index ||
+                startIndex - 4 === index ||
+                startIndex - 3 === index ||
+                startIndex - 2 === index ||
+                startIndex - 1 === index ||
+                startIndex === index
+              : startIndex === index ||
+                startIndex + 1 === index ||
+                startIndex + 2 === index ||
+                startIndex + 3 === index ||
+                startIndex + 4 === index ||
+                startIndex + 5 === index ||
+                startIndex + 6 === index ||
+                startIndex + 7 === index;
 
           return (
             <AnimatePresence>
@@ -146,8 +174,8 @@ export const CardCarrousel = () => {
                 transition={{ duration: 0.5 }}
                 initial={{ opacity: 0 }}
                 animate={
-                  filterTokenList.length === 1
-                    ? centerControl
+                  waitCondition
+                    ? waitControl
                     : index === 0
                     ? endLeftControl
                     : index === 1

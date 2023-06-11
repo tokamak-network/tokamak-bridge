@@ -1,6 +1,6 @@
 import { MotionStyle } from "framer-motion";
 import { useAnimation } from "framer-motion";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGetTokenList } from "./useGetTokenList";
 
 type LocationType =
@@ -156,10 +156,10 @@ export const getTokenCardStyle = (index: number, maxIndex: number) => {
 };
 
 export function useCarrousellAnimation(params: {
-  currentCard: number;
+  currentIndex: number | null;
   index: number;
 }) {
-  const { currentCard, index } = params;
+  const { currentIndex, index } = params;
 
   const endLeftControl = useAnimation();
   const endRightControl = useAnimation();
@@ -173,6 +173,8 @@ export function useCarrousellAnimation(params: {
   const [initialized, setInisialized] = useState<boolean>(false);
 
   useEffect(() => {
+    if (initialized) return;
+
     endLeftControl.start(positionStyles.endLeft);
     sideLeftControl.start({
       transform: getTrasnformParams(-5, -150, -330),
@@ -197,24 +199,24 @@ export function useCarrousellAnimation(params: {
       zIndex: CardOverlay.End,
     });
     outLeftControl.start({
-      transform: getTrasnformParams(-10, -750, -90),
+      transform: getTrasnformParams(-10, -650, -59),
       opacity: 0,
       width: "186px",
       height: "242px",
+      position: "absolute",
     });
     waitControl.start({
-      translateY: "0",
-      translateX: "0px",
-      opacity: 1,
+      transform: getTrasnformParams(0, 0, 0),
+      opacity: 0,
+      position: "absolute",
       width: "186px",
       height: "242px",
-      zIndex: 0,
     });
     setInisialized(true);
   }, []);
 
   useEffect(() => {
-    // if (currentCard === 0) {
+    // if (currentIndex === 0) {
     //   centerControl.start({
     //     rotate: -10,
     //     translateY: "-272px",
@@ -223,8 +225,8 @@ export function useCarrousellAnimation(params: {
     //     height: "242px",
     //     opacity: 1,
     //   });
-    // }
-    // if (currentCard === 1) {
+    // }`
+    // if (currentIndex === 1) {
     //   centerControl.start({
     //     rotate: -5,
     //     translateY: "-315px",
@@ -274,7 +276,7 @@ export function useCarrousellAnimation(params: {
     //     height: "242px",
     //   });
     // }
-    // if (currentCard === 2) {
+    // if (currentIndex === 2) {
     //   centerControl.start({
     //     rotate: 0,
     //     translateY: "-350px",
@@ -324,7 +326,7 @@ export function useCarrousellAnimation(params: {
     //     height: "242px",
     //   });
     // }
-    if (currentCard === 3) {
+    if (currentIndex === 1) {
       endLeftControl.start(positionStyles.sideLeft);
       sideLeftControl.start(positionStyles.center);
       centerControl.start(positionStyles.sideRight);
@@ -333,11 +335,12 @@ export function useCarrousellAnimation(params: {
 
       outLeftControl.start({
         ...positionStyles.endLeft,
-        transform: getTrasnformParams(-10, -460, -90),
+        position: "absolute",
+        transform: getTrasnformParams(-10, -295, -62),
         opacity: 1,
       });
     }
-    if (currentCard === 2) {
+    if (currentIndex === 0) {
       endLeftControl.start(positionStyles.center);
       sideLeftControl.start(positionStyles.sideRight);
       centerControl.start(positionStyles.endRight);
@@ -345,10 +348,12 @@ export function useCarrousellAnimation(params: {
 
       outLeftControl.start({
         ...positionStyles.sideLeft,
-        transform: getTrasnformParams(-5, -345, -45),
+        position: "absolute",
+        transform: getTrasnformParams(-5, -178, -30),
       });
     }
-    if (currentCard === 1) {
+
+    if (currentIndex === 7) {
       endLeftControl.start(positionStyles.sideRight);
       sideLeftControl.start(positionStyles.endRight);
       centerControl.start(positionStyles.outRight);
@@ -357,48 +362,180 @@ export function useCarrousellAnimation(params: {
         ...positionStyles.center,
         transform: getTrasnformParams(0, -170, 0),
       });
-      //   waitControl.start({
-      //     ...positionStyles.sideLeft,
-      //     transform: getTrasnformParams(-5, -143, -28),
-      //     opacity: 1,
-      //   });
     }
-    return () => {
-      setInisialized(false);
-    };
-  }, [currentCard]);
+
+    if (currentIndex === 6) {
+      endLeftControl.start(positionStyles.endRight);
+      sideLeftControl.start(positionStyles.outRight);
+
+      outLeftControl.start({
+        ...positionStyles.sideRight,
+        transform: getTrasnformParams(5, 178, -30),
+      });
+    }
+
+    if (currentIndex === 5) {
+      endLeftControl.start(positionStyles.outRight);
+
+      outLeftControl.start({
+        ...positionStyles.endRight,
+        transform: getTrasnformParams(10, 295, -62),
+      });
+    }
+
+    // return () => {
+    //   setInisialized(false);
+    // };
+  }, [currentIndex]);
 
   const { filterTokenList } = useGetTokenList();
 
-  useEffect(() => {
-    const indexBefore5th = (currentCard + 1 + 5) % filterTokenList.length;
-    const startIndex =
-      indexBefore5th === 0 ? filterTokenList.length - 1 : indexBefore5th - 1;
+  const startIndex = useMemo(() => {
+    if (currentIndex !== null) {
+      const startIndex =
+        currentIndex - 4 < 0
+          ? currentIndex - 4 + filterTokenList.length
+          : currentIndex - 4;
+      return startIndex;
+    }
+  }, [currentIndex]);
 
+  useEffect(() => {
+    if (currentIndex === null || startIndex === null) return;
+
+    //locate at center to wait to move
     if (index === startIndex) {
       waitControl.start({
-        transform: getTrasnformParams(-10, -570, -59),
-        opacity: 1,
-        zIndex: 100,
+        ...positionStyles.endLeft,
+        transform:
+          index < 5
+            ? getTrasnformParams(0, 0, -260)
+            : getTrasnformParams(0, 0, 0),
+        bottom: 0,
+        opacity: 0,
+        position: "absolute",
       });
     }
 
-    if (index === startIndex + 1) {
+    //locate at outLeft
+    if (
+      startIndex === filterTokenList.length - 1
+        ? startIndex - 7 === index
+        : index === startIndex + 1
+    ) {
       waitControl.start({
         ...positionStyles.endLeft,
-        transform: getTrasnformParams(-10, -280, -59),
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(-10, -605, -315)
+            : getTrasnformParams(-10, -650, -59),
+        opacity: 0,
+      });
+    }
+
+    //locate at endLeft
+    if (
+      startIndex === filterTokenList.length - 1
+        ? startIndex - 6 === index
+        : index === startIndex + 2
+    ) {
+      waitControl.start({
+        ...positionStyles.endLeft,
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(-10, -235, -315)
+            : getTrasnformParams(-10, -280, -59),
         opacity: 1,
       });
     }
 
-    if (index === startIndex + 2) {
+    //locate at sideLeft
+    if (
+      startIndex === filterTokenList.length - 1
+        ? startIndex - 5 === index
+        : index === startIndex + 3
+    ) {
       waitControl.start({
         ...positionStyles.sideLeft,
-        transform: getTrasnformParams(-5, -140, -49),
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(-5, -148, -332)
+            : getTrasnformParams(-5, -175, -34),
         opacity: 1,
       });
     }
-  }, [currentCard, index, filterTokenList]);
+
+    //locate at center
+    if (
+      startIndex === filterTokenList.length - 1
+        ? startIndex - 4 === index
+        : index === startIndex + 4
+    ) {
+      waitControl.start({
+        ...positionStyles.center,
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(0, 0, -350)
+            : getTrasnformParams(0, 0, 0),
+        opacity: 1,
+      });
+    }
+
+    //locate at sideRight
+    if (
+      startIndex === filterTokenList.length - 1
+        ? startIndex - 3 === index
+        : index === startIndex + 5
+    ) {
+      waitControl.start({
+        ...positionStyles.sideRight,
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(5, 147, -329)
+            : getTrasnformParams(5, 173, -30),
+        opacity: 1,
+      });
+    }
+
+    //locate at endRight
+    if (
+      startIndex === filterTokenList.length - 1
+        ? index === startIndex - 2
+        : index === startIndex + 6
+    ) {
+      waitControl.start({
+        ...positionStyles.endRight,
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(10, 235, -315)
+            : getTrasnformParams(10, 280, -59),
+        opacity: 1,
+      });
+    }
+
+    //locate at outRight
+    if (
+      startIndex === filterTokenList.length - 1
+        ? index === startIndex - 1
+        : index === startIndex + 7
+    ) {
+      waitControl.start({
+        ...positionStyles.outRight,
+        position: "absolute",
+        transform:
+          index < 5
+            ? getTrasnformParams(10, 235, -115)
+            : getTrasnformParams(10, 650, -63),
+        opacity: 0,
+      });
+    }
+  }, [currentIndex, filterTokenList, index]);
 
   return {
     endLeftControl,
