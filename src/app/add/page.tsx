@@ -159,6 +159,8 @@ export default function CreatePoolModal() {
                   min={0}
                   max={100}
                   step={1}
+                  inToken="ETH"
+                  outToken="USDC"
                 />
                 <PriceInput
                   titleText={"Max Price"}
@@ -167,6 +169,8 @@ export default function CreatePoolModal() {
                   min={0}
                   max={100}
                   step={1}
+                  inToken="ETH"
+                  outToken="USDC"
                 />
               </Flex>
               <Button

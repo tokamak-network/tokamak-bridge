@@ -17,12 +17,11 @@ export default function LiquidityInfo() {
     <Box
       bg="#1F2128"
       w="384px"
-      h="230px"
-      py="20px"
+      h="213px"
+      py="16px"
       px="16px"
       borderRadius={"12px"}
-      mb={"16px"}
-      mt={"20px"}
+      mt={"16px"}
       alignItems="center"
     >
       <Flex flexDir="column" alignItems={"center"}>
@@ -66,7 +65,7 @@ export default function LiquidityInfo() {
         </Flex>
         <Divider style={{ border: "1px solid #313442" }} />
         <Flex flexDir={"column"} textAlign={"center"} justifyItems={"center"}>
-          <Flex py="16px" justifyContent="space-between">
+          <Flex py="12px" justifyContent="space-between">
             <Flex justifyContent="start" mr={"118px"}>
               <TokenNetwork tokenType="LYDA" network="Ethereum" />
               <Text ml="12px" color="#A0A3AD">
@@ -87,7 +86,7 @@ export default function LiquidityInfo() {
           <Flex justifyContent="space-between">
             <Flex justifyContent="start" mr={"118px"}>
               <TokenNetwork tokenType="USDC" network="Ethereum" />
-              <Text ml="12px" color="#A0A3AD" fontSize={"13px"}>
+              <Text ml="12px" color="#A0A3AD" fontSize="18px">
                 USDC
               </Text>
             </Flex>
@@ -97,7 +96,7 @@ export default function LiquidityInfo() {
               </Text>
               <Flex bgColor={"#15161D"} borderRadius={8} padding={1} ml={2}>
                 <Text fontSize={"12px"} as="b">
-                  {"30%"}
+                  30%
                 </Text>
               </Flex>
             </Flex>

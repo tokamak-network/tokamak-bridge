@@ -11,6 +11,7 @@ import LiquidityInfo from "../components/LiquidityInfo";
 import UnclaimedEarnings from "../components/UnclaimedEarnings";
 import PriceInput from "../../add/components/PriceInput";
 import ClaimEarningsModal from "@/components/modal/ClaimEarnings";
+import PriceRange from "@/components/ui/PriceRange";
 
 export default function PoolInfo(props: PoolCardDetail) {
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
@@ -104,22 +105,17 @@ export default function PoolInfo(props: PoolCardDetail) {
           alignItems={"center"}
           textAlign={"center"}
         >
-          <PriceInput
-            titleText={"Min Price"}
-            value={minPrice}
-            onChange={handleMinPriceChange}
-            min={0}
-            max={100}
-            step={1}
-          />
-          <PriceInput
-            titleText={"Max Price"}
-            value={maxPrice}
-            onChange={handleMaxPriceChange}
-            min={0}
-            max={100}
-            step={1}
-          />
+          <Flex>
+            <PriceRange
+              title="Price range"
+              inToken="ETH"
+              outToken="USDC"
+              minPrice={772.84}
+              maxPrice={772.84}
+              currentPrice={772.84}
+              inRange={true}
+            />
+          </Flex>
         </Flex>
       </Flex>
 
