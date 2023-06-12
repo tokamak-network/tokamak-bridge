@@ -145,14 +145,39 @@ export const CardCarrousel = () => {
                 startIndex - 2 === index ||
                 startIndex - 1 === index ||
                 startIndex === index
-              : (startIndex && startIndex === index) ||
-                (startIndex && startIndex + 1 === index) ||
-                (startIndex && startIndex + 2 === index) ||
-                (startIndex && startIndex + 3 === index) ||
-                (startIndex && startIndex + 4 === index) ||
-                (startIndex && startIndex + 5 === index) ||
-                (startIndex && startIndex + 6 === index) ||
-                (startIndex && startIndex + 7 === index);
+              : startIndex === filterTokenList.length - 2
+              ? startIndex - 7 === index ||
+                startIndex - 6 === index ||
+                startIndex - 5 === index ||
+                startIndex - 4 === index ||
+                startIndex - 3 === index ||
+                startIndex - 2 === index ||
+                startIndex - 1 === index ||
+                startIndex === index
+              : (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 1 === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 2 === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 3 === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 4 === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 5 === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 6 === index) ||
+                (startIndex !== null &&
+                  startIndex !== undefined &&
+                  startIndex + 7 === index);
 
           return (
             <motion.div
@@ -161,9 +186,9 @@ export const CardCarrousel = () => {
               style={getTokenCardStyle(index, filterTokenList.length - 1)}
               transition={{ duration: 0.5 }}
               initial={{ opacity: 0 }}
-              whileHover={{
-                marginTop: "-60px",
-              }}
+              // whileHover={{
+              //   marginTop: "-60px",
+              // }}
               animate={
                 waitCondition
                   ? waitControl
@@ -206,7 +231,11 @@ export const CardCarrousel = () => {
                 inNetwork={true}
                 hasInput={false}
                 style={{
-                  opacity: isHover !== null ? (isHover === index ? 1 : 0.5) : 1,
+                  transition: "margin .5s ease-in-out",
+                  //need to change mt property based on selectIndex
+                  _hover: { marginTop: "-10" },
+                  opacity:
+                    isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
                 }}
               />
             </motion.div>

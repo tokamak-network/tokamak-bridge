@@ -16,17 +16,38 @@ type TokenCardProps = {
   style?: {};
 };
 
-const TopLine = () => {
+const TopLine = (props: { mainSchemCol: string }) => {
   return (
-    <Box
-      pos={"absolute"}
-      w={"400px"}
-      h={"4.63px"}
-      top={"-17px"}
-      left={"-30px"}
-      bg={"rgba(255, 255, 255, 0.5)"}
-      transform={"rotate(-30deg)"}
-    ></Box>
+    <>
+      <Box
+        pos={"absolute"}
+        w={"400px"}
+        h={"100px"}
+        top={"-83px"}
+        left={"-100px"}
+        bg={props.mainSchemCol}
+        transform={"rotate(-30deg)"}
+        opacity={0.15}
+      ></Box>
+      <Box
+        pos={"absolute"}
+        w={"400px"}
+        h={"4.63px"}
+        top={"15px"}
+        left={"-100px"}
+        bg={"rgba(255, 255, 255, 0.5)"}
+        transform={"rotate(-30deg)"}
+      ></Box>
+      {/* <Box
+        pos={"absolute"}
+        w={"400px"}
+        h={"20px"}
+        top={"25px"}
+        left={"-100px"}
+        bg={`linear-gradient(180deg, #fff, props.mainSchemCol)`}
+        transform={"rotate(-30deg)"}
+      ></Box> */}
+    </>
   );
 };
 
@@ -37,37 +58,6 @@ const TokenTitle = (props: { tokenName: String }) => {
     </Text>
   );
 };
-
-// const TokenInput = () => {
-//   const [selectedInToken, setSelectedInToken] = useRecoilState(
-//     selectedInTokenStatus
-//   );
-
-//   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     const value = e.target.value;
-//     const parsedAmount = ethers.utils.parseUnits(value, "ether");
-//     if (selectedInToken) {
-//       setSelectedInToken({
-//         ...selectedInToken,
-//         amountBN: parsedAmount.toBigInt(),
-//       });
-//     }
-//   };
-
-//   return (
-//     <Input
-//       w={"100%"}
-//       h={"35px"}
-//       border={{}}
-//       _focus={{ borderColor: "none", boxShadow: "none !important" }}
-//       _active={{}}
-//       p={0}
-//       onChange={onChange}
-//       fontSize={28}
-//       line-height={"35px"}
-//     />
-//   );
-// };
 
 export default function TokenCard(props: TokenCardProps) {
   const { tokenInfo, w, h, hasInput, inNetwork, style } = props;
@@ -117,7 +107,7 @@ export default function TokenCard(props: TokenCardProps) {
       cursor={"pointer"}
       {...style}
     >
-      <TopLine />
+      <TopLine mainSchemCol={tokenColorCode} />
       <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
         <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} />
       </Flex>

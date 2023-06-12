@@ -406,6 +406,9 @@ export function useCarrousellAnimation(params: {
   useEffect(() => {
     if (currentIndex === null || startIndex === null) return;
 
+    console.log(startIndex, currentIndex);
+    console.log(filterTokenList);
+
     //locate at center to wait to move
     if (index === startIndex) {
       waitControl.start({
@@ -422,9 +425,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at outLeft
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? startIndex - 7 === index
-        : startIndex && index === startIndex + 1
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 1
     ) {
       waitControl.start({
         ...positionStyles.endLeft,
@@ -439,9 +444,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at endLeft
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? startIndex - 6 === index
-        : startIndex && index === startIndex + 2
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 2
     ) {
       waitControl.start({
         ...positionStyles.endLeft,
@@ -456,9 +463,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at sideLeft
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? startIndex - 5 === index
-        : startIndex && index === startIndex + 3
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 3
     ) {
       waitControl.start({
         ...positionStyles.sideLeft,
@@ -473,9 +482,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at center
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? startIndex - 4 === index
-        : startIndex && index === startIndex + 4
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 4
     ) {
       waitControl.start({
         ...positionStyles.center,
@@ -490,9 +501,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at sideRight
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? startIndex - 3 === index
-        : startIndex && index === startIndex + 5
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 5
     ) {
       waitControl.start({
         ...positionStyles.sideRight,
@@ -507,9 +520,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at endRight
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? index === startIndex - 2
-        : startIndex && index === startIndex + 6
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 6
     ) {
       waitControl.start({
         ...positionStyles.endRight,
@@ -524,9 +539,11 @@ export function useCarrousellAnimation(params: {
 
     //locate at outRight
     if (
-      startIndex === filterTokenList.length - 1
+      startIndex !== null && startIndex !== undefined && startIndex > 5
         ? index === startIndex - 1
-        : startIndex && index === startIndex + 7
+        : startIndex !== null &&
+          startIndex !== undefined &&
+          index === startIndex + 7
     ) {
       waitControl.start({
         ...positionStyles.outRight,
