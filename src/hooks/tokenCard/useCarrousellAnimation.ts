@@ -186,7 +186,7 @@ export function useCarrousellAnimation(params: {
   const outRightControl = useAnimation();
   const waitControl = useAnimation();
 
-  const { filterTokenList } = useGetTokenList();
+  const { filteredTokenList } = useGetTokenList();
 
   useEffect(() => {
     endLeftControl.start(positionStyles.endLeft);
@@ -226,8 +226,7 @@ export function useCarrousellAnimation(params: {
       width: "186px",
       height: "242px",
     });
-    console.log("go?");
-  }, [filterTokenList.length]);
+  }, [filteredTokenList.length]);
 
   useEffect(() => {
     // if (currentIndex === 0) {
@@ -407,7 +406,7 @@ export function useCarrousellAnimation(params: {
     if (currentIndex !== null) {
       const startIndex =
         currentIndex - 4 < 0
-          ? currentIndex - 4 + filterTokenList.length
+          ? currentIndex - 4 + filteredTokenList.length
           : currentIndex - 4;
       return startIndex;
     }
@@ -417,7 +416,7 @@ export function useCarrousellAnimation(params: {
     if (currentIndex === null || startIndex === null) return;
 
     console.log(startIndex, currentIndex);
-    console.log(filterTokenList);
+    console.log(filteredTokenList);
 
     //locate at center to wait to move
     if (index === startIndex) {
@@ -565,7 +564,7 @@ export function useCarrousellAnimation(params: {
         opacity: 0,
       });
     }
-  }, [currentIndex, filterTokenList, index]);
+  }, [currentIndex, filteredTokenList, index]);
 
   return {
     endLeftControl,

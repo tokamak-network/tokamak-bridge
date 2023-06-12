@@ -3,50 +3,16 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import { Button, Flex } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
-import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
-import CloseIcon from "assets/icons/close.svg";
-
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-} from "@chakra-ui/react";
-import TokenCard from "./TokenCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
-import {
-  AnimatePresence,
-  motion,
-  useAnimate,
-  useAnimation,
-  useAnimationControls,
-} from "framer-motion";
-import {
-  SupportedTokens_T,
-  TokenInfo,
-  supportedTokens,
-} from "types/token/supportedToken";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { TokenInfo } from "types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import {
-  searchTokenList,
-  searchTokenSelector,
-  searchTokenStatus,
-} from "@/recoil/card/selectCard/searchToken";
-import useConnectedNetwork from "@/hooks/network";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
-import {
-  getTokenCardStyle,
-  useCarrousellAnimation,
-} from "@/hooks/tokenCard/useCarrousellAnimation";
-import CarousellComponent from "./CarousellComponent";
+import CarousellCardComponent from "./CarousellCardComponent";
 
 export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
@@ -63,7 +29,7 @@ export const CardCarrousel = () => {
 
   const { inNetwork } = useRecoilValue(networkStatus);
 
-  const { filterTokenList } = useGetTokenList();
+  const { filteredTokenList } = useGetTokenList();
 
   const handlePrev = () => {
     setCurrentIndex(currentIndex !== null ? currentIndex + 1 : 3);
@@ -73,14 +39,14 @@ export const CardCarrousel = () => {
     setCurrentIndex(
       currentIndex !== null
         ? currentIndex - 1 < 0
-          ? filterTokenList.length - 1
+          ? filteredTokenList.length - 1
           : currentIndex - 1
         : 1
     );
   };
 
-  console.log("filterTokenList");
-  console.log(filterTokenList);
+  console.log("filteredTokenList");
+  console.log(filteredTokenList);
 
   return (
     <Flex
@@ -116,7 +82,7 @@ export const CardCarrousel = () => {
         pos={"relative"}
       >
         {/* 시연용 */}
-        {filterTokenList?.map((tokenData: TokenInfo, index: number) => {
+        {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
           // const {
           //   endLeftControl,
           //   endRightControl,
@@ -131,14 +97,14 @@ export const CardCarrousel = () => {
           const startIndex =
             currentIndex !== null
               ? currentIndex - 4 < 0
-                ? currentIndex - 4 + filterTokenList.length
+                ? currentIndex - 4 + filteredTokenList.length
                 : currentIndex - 4
               : null;
 
           const waitCondition =
-            filterTokenList.length < 6
+            filteredTokenList.length < 6
               ? false
-              : startIndex === filterTokenList.length - 1
+              : startIndex === filteredTokenList.length - 1
               ? startIndex - 7 === index ||
                 startIndex - 6 === index ||
                 startIndex - 5 === index ||
@@ -147,7 +113,7 @@ export const CardCarrousel = () => {
                 startIndex - 2 === index ||
                 startIndex - 1 === index ||
                 startIndex === index
-              : startIndex === filterTokenList.length - 2
+              : startIndex === filteredTokenList.length - 2
               ? startIndex - 7 === index ||
                 startIndex - 6 === index ||
                 startIndex - 5 === index ||
@@ -182,11 +148,11 @@ export const CardCarrousel = () => {
                   startIndex + 7 === index);
 
           return (
-            <CarousellComponent
+            <CarousellCardComponent
               tokenData={tokenData}
               currentIndex={currentIndex}
               index={index}
-              filterTokenList={filterTokenList}
+              filteredTokenList={filteredTokenList}
               waitCondition={waitCondition}
             />
           );
@@ -195,7 +161,7 @@ export const CardCarrousel = () => {
           //   <motion.div
           //     key={`${index}_${tokenData.tokenName}`}
           //     className={"motion-div"}
-          //     style={getTokenCardStyle(index, filterTokenList.length - 1)}
+          //     style={getTokenCardStyle(index, filteredTokenList.length - 1)}
           //     transition={{ duration: 0.5 }}
           //     initial={{ opacity: 0 }}
           //     // whileHover={{
@@ -216,7 +182,7 @@ export const CardCarrousel = () => {
           //         ? endRightControl
           //         : index === 5
           //         ? outRightControl
-          //         : index === filterTokenList.length - 1
+          //         : index === filteredTokenList.length - 1
           //         ? outLeftControl
           //         : waitControl
           //     }

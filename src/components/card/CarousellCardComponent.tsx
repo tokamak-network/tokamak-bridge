@@ -19,18 +19,18 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 
-export default function CarousellComponent(props: {
-  tokenData: TokenInfo;
+export default function CarousellCardComponent(props: {
+  tokenData: TokenInfo & { isNew?: boolean };
   currentIndex: number | null;
   index: number;
-  filterTokenList: SupportedTokens_T;
+  filteredTokenList: SupportedTokens_T;
   waitCondition: any;
 }) {
   const [isHover, setIsHover] = useState<number | null>(null);
 
-  const { tokenData, index, filterTokenList, currentIndex, waitCondition } =
+  const { tokenData, index, filteredTokenList, currentIndex, waitCondition } =
     props;
-  const maxIndex = filterTokenList.length - 1;
+  const maxIndex = filteredTokenList.length - 1;
 
   const {
     endLeftControl,
@@ -53,11 +53,11 @@ export default function CarousellComponent(props: {
 
   const styleCode = useMemo(() => {
     return getTokenCardStyle(index, maxIndex);
-  }, [filterTokenList]);
+  }, [filteredTokenList]);
 
   return (
     <motion.div
-      key={`${index}_${tokenData.tokenName}_${filterTokenList.length}`}
+      key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
       className={"motion-div"}
       style={styleCode}
       transition={{ duration: 0.5 }}
@@ -87,7 +87,7 @@ export default function CarousellComponent(props: {
           ? endRightControl
           : index === 5
           ? outRightControl
-          : index === filterTokenList.length - 1
+          : index === filteredTokenList.length - 1
           ? outLeftControl
           : waitControl
       }
@@ -113,6 +113,7 @@ export default function CarousellComponent(props: {
         tokenInfo={tokenData}
         inNetwork={true}
         hasInput={false}
+        isNew={tokenData.isNew}
         style={{
           transition: "margin .5s ease-in-out",
           //need to change mt property based on selectIndex

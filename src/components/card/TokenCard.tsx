@@ -13,6 +13,7 @@ type TokenCardProps = {
   h?: string | number;
   hasInput: boolean;
   inNetwork: boolean;
+  isNew?: boolean;
   style?: {};
 };
 
@@ -60,7 +61,7 @@ const TokenTitle = (props: { tokenName: String }) => {
 };
 
 export default function TokenCard(props: TokenCardProps) {
-  const { tokenInfo, w, h, hasInput, inNetwork, style } = props;
+  const { tokenInfo, w, h, hasInput, inNetwork, isNew, style } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenName) {
@@ -94,7 +95,7 @@ export default function TokenCard(props: TokenCardProps) {
       w={typeof w === "string" ? w : `${w ?? 200}px`}
       height={typeof h === "string" ? h : `${h ?? 248}px`}
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
-      opacity={0.85}
+      opacity={isNew ? 0.25 : 0.85}
       border={`3px solid ${tokenColorCode} `}
       borderRadius={"16px"}
       pos={"relative"}
@@ -114,34 +115,47 @@ export default function TokenCard(props: TokenCardProps) {
       <Flex
         // pt={"25px"}
         // pb={"37px"}
+        my={isNew ? "20px" : ""}
         justifyContent={"center"}
-        alignItems={"center"}
+        alignItems={isNew ? "baseline" : "center"}
       >
-        <TokenSymbol tokenType={tokenInfo?.tokenName} />
+        <TokenSymbol
+          w={isNew ? 40 : 120}
+          h={isNew ? 40 : 120}
+          tokenType={tokenInfo?.tokenName}
+        />
       </Flex>
-      <Flex flexDir={"column"} rowGap={"13px"}>
-        <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-          <Text fontWeight={400}>Balance: </Text>
-          <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
-        </Flex>
-        {/* <Flex justifyContent={"space-between"}>
-          <Flex
-            color={"#222222"}
-            fontSize={28}
-            fontWeight={700}
-            w={hasInput ? "110px" : "100%"}
-            h={"20px"}
+      {isNew ? (
+        <Flex flexDir={"column"} alignItems={"center"}>
+          <Text fontSize={12} color={"#fff"} w={"206px"}>
+            This token isn’t traded on leading U.S. centralized exchanges or
+            frequently swapped on Tokamak Network. Always conduct your own
+            research before trading.
+          </Text>
+          <Button
+            w={"206px"}
+            h={"40px"}
+            my={"20px"}
+            bg={"#007AFF"}
+            _hover={{}}
+            _active={{}}
+            fontSize={16}
+            fontWeight={600}
           >
-            {hasInput ? (
-              <TokenInput />
-            ) : (
-              <Text w={"100%"} h={"100%"}>
-                5000.00
-              </Text>
-            )}
+            I Agree
+          </Button>
+          <Text fontSize={16} fontWeight={400}>
+            Cancel
+          </Text>
+        </Flex>
+      ) : (
+        <Flex flexDir={"column"} rowGap={"13px"}>
+          <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
+            <Text fontWeight={400}>Balance: </Text>
+            <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
           </Flex>
-        </Flex> */}
-      </Flex>
+        </Flex>
+      )}
     </Flex>
   );
 }

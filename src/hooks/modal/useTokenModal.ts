@@ -1,8 +1,10 @@
 import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
 import { useRecoilState } from "recoil";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
+  const [searchToken, setSearchToken] = useRecoilState(searchTokenStatus);
 
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
@@ -15,6 +17,7 @@ export default function useTokenModal() {
   };
 
   const onCloseTokenModal = () => {
+    setSearchToken(null);
     setTokenModal({ isOpen: null, modalData: null });
   };
 

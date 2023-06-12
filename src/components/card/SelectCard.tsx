@@ -74,6 +74,7 @@ const SearchToken = () => {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+
     if (value === "") {
       return setSearchToken(null);
     }
