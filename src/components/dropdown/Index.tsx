@@ -211,9 +211,9 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
               </Box>
               <Text>{data.label}</Text>
             </Flex>
-            <Box w={"10px"} h={"10px"}>
+            {/* <Box w={"10px"} h={"10px"}>
               <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-            </Box>
+            </Box> */}
           </Flex>
         </Flex>
       );
@@ -239,9 +239,9 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
           </Box>
           <Text>{data.label}</Text>
         </Flex>
-        <Box w={"10px"} h={"10px"}>
+        {/* <Box w={"10px"} h={"10px"}>
           <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-        </Box>
+        </Box> */}
       </Flex>
     );
   };
