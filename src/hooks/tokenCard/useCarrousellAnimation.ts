@@ -39,7 +39,9 @@ const cardSize = {
 };
 
 const fadeAwayStyle = {
-  transform: getTrasnformParams(10, 600, -315),
+  transform: getTrasnformParams(10, 700, -305),
+  position: "absolute",
+  zIndex: -10,
   opacity: 0,
 };
 
@@ -340,6 +342,7 @@ export function useCarrousellAnimation(params: {
         opacity: 1,
       });
     }
+
     if (currentIndex === 0) {
       endLeftControl.start(positionStyles.center);
       sideLeftControl.start(positionStyles.sideRight);
@@ -421,7 +424,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? startIndex - 7 === index
-        : index === startIndex + 1
+        : startIndex && index === startIndex + 1
     ) {
       waitControl.start({
         ...positionStyles.endLeft,
@@ -438,7 +441,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? startIndex - 6 === index
-        : index === startIndex + 2
+        : startIndex && index === startIndex + 2
     ) {
       waitControl.start({
         ...positionStyles.endLeft,
@@ -455,7 +458,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? startIndex - 5 === index
-        : index === startIndex + 3
+        : startIndex && index === startIndex + 3
     ) {
       waitControl.start({
         ...positionStyles.sideLeft,
@@ -472,7 +475,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? startIndex - 4 === index
-        : index === startIndex + 4
+        : startIndex && index === startIndex + 4
     ) {
       waitControl.start({
         ...positionStyles.center,
@@ -489,7 +492,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? startIndex - 3 === index
-        : index === startIndex + 5
+        : startIndex && index === startIndex + 5
     ) {
       waitControl.start({
         ...positionStyles.sideRight,
@@ -506,7 +509,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? index === startIndex - 2
-        : index === startIndex + 6
+        : startIndex && index === startIndex + 6
     ) {
       waitControl.start({
         ...positionStyles.endRight,
@@ -523,7 +526,7 @@ export function useCarrousellAnimation(params: {
     if (
       startIndex === filterTokenList.length - 1
         ? index === startIndex - 1
-        : index === startIndex + 7
+        : startIndex && index === startIndex + 7
     ) {
       waitControl.start({
         ...positionStyles.outRight,
