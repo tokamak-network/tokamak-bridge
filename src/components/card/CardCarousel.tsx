@@ -17,7 +17,7 @@ import {
   ModalBody,
 } from "@chakra-ui/react";
 import TokenCard from "./TokenCard";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
@@ -46,6 +46,7 @@ import {
   getTokenCardStyle,
   useCarrousellAnimation,
 } from "@/hooks/tokenCard/useCarrousellAnimation";
+import CarousellComponent from "./CarousellComponent";
 
 export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
@@ -77,6 +78,9 @@ export const CardCarrousel = () => {
         : 1
     );
   };
+
+  console.log("filterTokenList");
+  console.log(filterTokenList);
 
   return (
     <Flex
@@ -112,31 +116,29 @@ export const CardCarrousel = () => {
         pos={"relative"}
       >
         {/* 시연용 */}
-        {filterTokenList?.map((tokenData: any, index: number) => {
-          const {
-            endLeftControl,
-            endRightControl,
-            sideLeftControl,
-            sideRightControl,
-            centerControl,
-            outLeftControl,
-            outRightControl,
-            waitControl,
-          } = useCarrousellAnimation({ currentIndex, index });
+        {filterTokenList?.map((tokenData: TokenInfo, index: number) => {
+          // const {
+          //   endLeftControl,
+          //   endRightControl,
+          //   sideLeftControl,
+          //   sideRightControl,
+          //   centerControl,
+          //   outLeftControl,
+          //   outRightControl,
+          //   waitControl,
+          // } = useCarrousellAnimation({ currentIndex, index });
 
-          const startIndex = useMemo(() => {
-            if (currentIndex !== null) {
-              const indexBefore5th =
-                currentIndex - 4 < 0
-                  ? currentIndex - 4 + filterTokenList.length
-                  : currentIndex - 4;
-
-              return indexBefore5th;
-            }
-          }, [currentIndex]);
+          const startIndex =
+            currentIndex !== null
+              ? currentIndex - 4 < 0
+                ? currentIndex - 4 + filterTokenList.length
+                : currentIndex - 4
+              : null;
 
           const waitCondition =
-            startIndex === filterTokenList.length - 1
+            filterTokenList.length < 6
+              ? false
+              : startIndex === filterTokenList.length - 1
               ? startIndex - 7 === index ||
                 startIndex - 6 === index ||
                 startIndex - 5 === index ||
@@ -180,66 +182,76 @@ export const CardCarrousel = () => {
                   startIndex + 7 === index);
 
           return (
-            <motion.div
-              key={`${index}_${tokenData.tokenName}`}
-              className={"motion-div"}
-              style={getTokenCardStyle(index, filterTokenList.length - 1)}
-              transition={{ duration: 0.5 }}
-              initial={{ opacity: 0 }}
-              // whileHover={{
-              //   marginTop: "-60px",
-              // }}
-              animate={
-                waitCondition
-                  ? waitControl
-                  : index === 0
-                  ? endLeftControl
-                  : index === 1
-                  ? sideLeftControl
-                  : index === 2
-                  ? centerControl
-                  : index === 3
-                  ? sideRightControl
-                  : index === 4
-                  ? endRightControl
-                  : index === 5
-                  ? outRightControl
-                  : index === filterTokenList.length - 1
-                  ? outLeftControl
-                  : waitControl
-              }
-              onMouseEnter={() => setIsHover(index)}
-              onMouseLeave={() => setIsHover(null)}
-              onClick={() =>
-                isInTokenOpen
-                  ? setSelectedInToken({
-                      ...tokenData,
-                      amountBN: null,
-                      parsedAmount: null,
-                    })
-                  : setSelectedOutToken({
-                      ...tokenData,
-                      amountBN: null,
-                      parsedAmount: null,
-                    })
-              }
-            >
-              <TokenCard
-                w={"100%"}
-                h={"100%"}
-                tokenInfo={tokenData}
-                inNetwork={true}
-                hasInput={false}
-                style={{
-                  transition: "margin .5s ease-in-out",
-                  //need to change mt property based on selectIndex
-                  _hover: { marginTop: "-10" },
-                  opacity:
-                    isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
-                }}
-              />
-            </motion.div>
+            <CarousellComponent
+              tokenData={tokenData}
+              currentIndex={currentIndex}
+              index={index}
+              filterTokenList={filterTokenList}
+              waitCondition={waitCondition}
+            />
           );
+
+          // return (
+          //   <motion.div
+          //     key={`${index}_${tokenData.tokenName}`}
+          //     className={"motion-div"}
+          //     style={getTokenCardStyle(index, filterTokenList.length - 1)}
+          //     transition={{ duration: 0.5 }}
+          //     initial={{ opacity: 0 }}
+          //     // whileHover={{
+          //     //   marginTop: "-60px",
+          //     // }}
+          //     animate={
+          //       waitCondition
+          //         ? waitControl
+          //         : index === 0
+          //         ? endLeftControl
+          //         : index === 1
+          //         ? sideLeftControl
+          //         : index === 2
+          //         ? centerControl
+          //         : index === 3
+          //         ? sideRightControl
+          //         : index === 4
+          //         ? endRightControl
+          //         : index === 5
+          //         ? outRightControl
+          //         : index === filterTokenList.length - 1
+          //         ? outLeftControl
+          //         : waitControl
+          //     }
+          //     onMouseEnter={() => setIsHover(index)}
+          //     onMouseLeave={() => setIsHover(null)}
+          //     onClick={() =>
+          //       isInTokenOpen
+          //         ? setSelectedInToken({
+          //             ...tokenData,
+          //             amountBN: null,
+          //             parsedAmount: null,
+          //           })
+          //         : setSelectedOutToken({
+          //             ...tokenData,
+          //             amountBN: null,
+          //             parsedAmount: null,
+          //           })
+          //     }
+          //   >
+          //     <TokenCard
+          //       w={"100%"}
+          //       h={"100%"}
+          //       tokenInfo={tokenData}
+          //       inNetwork={true}
+          //       hasInput={false}
+          //       style={{
+          //         transition: "margin .5s ease-in-out",
+          //         //need to change mt property based on selectIndex
+          //         _hover: { marginTop: "-10" },
+          //         opacity:
+          //           isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
+          //       }}
+          //     />
+          //   </motion.div>
+          // );
         })}
       </Flex>
       <Button

@@ -129,6 +129,7 @@ export function SelectCardModal() {
         m={0}
         p={0}
         bg={"transparent"}
+        overflow={"hidden"}
       >
         <ModalBody
           minW={"100%"}

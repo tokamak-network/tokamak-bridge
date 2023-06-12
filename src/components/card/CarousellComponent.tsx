@@ -1,0 +1,125 @@
+import {
+  getTokenCardStyle,
+  useCarrousellAnimation,
+} from "@/hooks/tokenCard/useCarrousellAnimation";
+import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
+import {
+  AnimatePresence,
+  motion,
+  useAnimate,
+  useAnimation,
+  useAnimationControls,
+} from "framer-motion";
+import TokenCard from "./TokenCard";
+import { useEffect, useMemo, useState } from "react";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import { useRecoilState } from "recoil";
+import {
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
+
+export default function CarousellComponent(props: {
+  tokenData: TokenInfo;
+  currentIndex: number | null;
+  index: number;
+  filterTokenList: SupportedTokens_T;
+  waitCondition: any;
+}) {
+  const [isHover, setIsHover] = useState<number | null>(null);
+
+  const { tokenData, index, filterTokenList, currentIndex, waitCondition } =
+    props;
+  const maxIndex = filterTokenList.length - 1;
+
+  const {
+    endLeftControl,
+    endRightControl,
+    sideLeftControl,
+    sideRightControl,
+    centerControl,
+    outLeftControl,
+    outRightControl,
+    waitControl,
+  } = useCarrousellAnimation({ currentIndex, index });
+  const { isInTokenOpen } = useTokenModal();
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
+
+  const styleCode = useMemo(() => {
+    return getTokenCardStyle(index, maxIndex);
+  }, [filterTokenList]);
+
+  return (
+    <motion.div
+      key={`${index}_${tokenData.tokenName}_${filterTokenList.length}`}
+      className={"motion-div"}
+      style={styleCode}
+      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0 }}
+      animate={
+        maxIndex < 6
+          ? index === 0
+            ? centerControl
+            : index === 1
+            ? sideLeftControl
+            : index === 2
+            ? sideRightControl
+            : index === 3
+            ? endLeftControl
+            : endRightControl
+          : waitCondition
+          ? waitControl
+          : index === 0
+          ? endLeftControl
+          : index === 1
+          ? sideLeftControl
+          : index === 2
+          ? centerControl
+          : index === 3
+          ? sideRightControl
+          : index === 4
+          ? endRightControl
+          : index === 5
+          ? outRightControl
+          : index === filterTokenList.length - 1
+          ? outLeftControl
+          : waitControl
+      }
+      onMouseEnter={() => setIsHover(index)}
+      onMouseLeave={() => setIsHover(null)}
+      onClick={() =>
+        isInTokenOpen
+          ? setSelectedInToken({
+              ...tokenData,
+              amountBN: null,
+              parsedAmount: null,
+            })
+          : setSelectedOutToken({
+              ...tokenData,
+              amountBN: null,
+              parsedAmount: null,
+            })
+      }
+    >
+      <TokenCard
+        w={"100%"}
+        h={"100%"}
+        tokenInfo={tokenData}
+        inNetwork={true}
+        hasInput={false}
+        style={{
+          transition: "margin .5s ease-in-out",
+          //need to change mt property based on selectIndex
+          _hover: { marginTop: "-10" },
+          opacity: isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
+        }}
+      />
+    </motion.div>
+  );
+}

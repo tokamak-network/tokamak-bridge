@@ -101,7 +101,21 @@ export const getLocation = (index: number, maxIndex: number): LocationType => {
     "outRight",
   ];
 
-  return maxIndex === index ? "outLeft" : locations[index] ?? "wait";
+  if (maxIndex < 6) {
+    return index === 0
+      ? locations[2]
+      : index === 1
+      ? locations[1]
+      : index === 2
+      ? locations[3]
+      : index === 3
+      ? locations[0]
+      : locations[4];
+  }
+
+  return maxIndex > 5 && maxIndex === index
+    ? "outLeft"
+    : locations[index] ?? "wait";
 };
 
 export const getTokenCardStyle = (index: number, maxIndex: number) => {
@@ -172,11 +186,9 @@ export function useCarrousellAnimation(params: {
   const outRightControl = useAnimation();
   const waitControl = useAnimation();
 
-  const [initialized, setInisialized] = useState<boolean>(false);
+  const { filterTokenList } = useGetTokenList();
 
   useEffect(() => {
-    if (initialized) return;
-
     endLeftControl.start(positionStyles.endLeft);
     sideLeftControl.start({
       transform: getTrasnformParams(-5, -150, -330),
@@ -214,8 +226,8 @@ export function useCarrousellAnimation(params: {
       width: "186px",
       height: "242px",
     });
-    setInisialized(true);
-  }, []);
+    console.log("go?");
+  }, [filterTokenList.length]);
 
   useEffect(() => {
     // if (currentIndex === 0) {
@@ -390,8 +402,6 @@ export function useCarrousellAnimation(params: {
     //   setInisialized(false);
     // };
   }, [currentIndex]);
-
-  const { filterTokenList } = useGetTokenList();
 
   const startIndex = useMemo(() => {
     if (currentIndex !== null) {
