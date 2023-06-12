@@ -13,7 +13,7 @@ type LocationType =
   | "outRight"
   | "wait";
 
-enum CardOverlay {
+export enum CardOverlay {
   Center = 100,
   Side = 80,
   End = 60,
@@ -141,11 +141,13 @@ export const getTokenCardStyle = (index: number, maxIndex: number) => {
       return {
         ...basicEndStyle,
         transform: "rotate(-10deg)",
+        zIndex: CardOverlay.End,
       };
     case "sideLeft":
       return {
         ...basicSideStyle,
         transform: "rotate(-5deg)",
+        zIndex: CardOverlay.Side,
       };
     case "center":
       return {
@@ -157,14 +159,14 @@ export const getTokenCardStyle = (index: number, maxIndex: number) => {
     case "sideRight":
       return {
         ...basicSideStyle,
-        zIndex: 90,
         transform: "rotate(5deg)",
+        zIndex: CardOverlay.Side,
       };
     case "endRight":
       return {
         ...basicEndStyle,
-        zIndex: 80,
         transform: "rotate(10deg)",
+        zIndex: CardOverlay.End,
       };
     default:
       return {};
@@ -414,9 +416,6 @@ export function useCarrousellAnimation(params: {
 
   useEffect(() => {
     if (currentIndex === null || startIndex === null) return;
-
-    console.log(startIndex, currentIndex);
-    console.log(filteredTokenList);
 
     //locate at center to wait to move
     if (index === startIndex) {

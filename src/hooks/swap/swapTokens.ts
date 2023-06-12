@@ -3,7 +3,7 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
-import { SelectedToken } from "@/recoil/bridgeSwap/atom";
+import { SelectedToken, actionMode } from "@/recoil/bridgeSwap/atom";
 import {
   computePoolAddress,
   FeeAmount,
@@ -29,6 +29,8 @@ import {
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { getTokenTransferApproval } from "@/utils/uniswap/functions/trading";
 import { TransactionState } from "@/types/states/transaction";
+import { useRecoilValue } from "recoil";
+import useConnectedNetwork from "../network";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -40,6 +42,8 @@ export function useAmountOut() {
   const { address } = useAccount();
 
   const { inToken, outToken } = useInOutTokens();
+  const { mode } = useRecoilValue(actionMode);
+  const { layer } = useConnectedNetwork();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
   const [trade, setTrade] = useState<TokenTrade | null>(null);
@@ -50,10 +54,10 @@ export function useAmountOut() {
     provider
   );
 
-  const { write } = useContractWrite({
-    address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
-    abi: IUniswapV3PoolABI.abi,
-  });
+  // const { write } = useContractWrite({
+  //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
+  //   abi: IUniswapV3PoolABI.abi,
+  // });
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -92,7 +96,9 @@ export function useAmountOut() {
           tokenB: outToken.token,
           fee: FeeAmount.MEDIUM,
           initCodeHashManualOverride:
-            "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff",
+            layer === "L2"
+              ? "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff"
+              : undefined,
         });
 
         const poolContract = new ethers.Contract(
@@ -149,7 +155,7 @@ export function useAmountOut() {
       console.log("**createTrade err**");
       console.log(e);
     });
-  }, [inToken, outToken, amountOut]);
+  }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer]);
 
   const callTokenSwap = useCallback(async () => {
     if (trade && inToken && address) {

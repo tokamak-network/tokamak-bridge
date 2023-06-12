@@ -14,8 +14,6 @@ export function useGetTokenList() {
   const tokenSelector = useRecoilValue(searchTokenSelector);
   const { chainName } = useConnectedNetwork();
 
-  console.log(searchedTokenName, tokenSelector);
-
   const filteredTokenList = useMemo(() => {
     //in case searching token with an address
     if (tokenSelector && chainName) {

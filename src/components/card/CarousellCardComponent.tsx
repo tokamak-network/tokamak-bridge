@@ -3,15 +3,9 @@ import {
   useCarrousellAnimation,
 } from "@/hooks/tokenCard/useCarrousellAnimation";
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
-import {
-  AnimatePresence,
-  motion,
-  useAnimate,
-  useAnimation,
-  useAnimationControls,
-} from "framer-motion";
+import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
-import { useEffect, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import {
@@ -19,17 +13,25 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 
-export default function CarousellCardComponent(props: {
+export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
   currentIndex: number | null;
   index: number;
   filteredTokenList: SupportedTokens_T;
   waitCondition: any;
+  isHover: T;
+  setIsHover: Dispatch<SetStateAction<T>>;
 }) {
-  const [isHover, setIsHover] = useState<number | null>(null);
+  const {
+    tokenData,
+    index,
+    filteredTokenList,
+    currentIndex,
+    waitCondition,
+    isHover,
+    setIsHover,
+  } = props;
 
-  const { tokenData, index, filteredTokenList, currentIndex, waitCondition } =
-    props;
   const maxIndex = filteredTokenList.length - 1;
 
   const {
@@ -62,6 +64,7 @@ export default function CarousellCardComponent(props: {
       style={styleCode}
       transition={{ duration: 0.5 }}
       initial={{ opacity: 0 }}
+      whileHover={{ zIndex: 200 }}
       animate={
         maxIndex < 6
           ? index === 0
@@ -118,7 +121,11 @@ export default function CarousellCardComponent(props: {
           transition: "margin .5s ease-in-out",
           //need to change mt property based on selectIndex
           _hover: { marginTop: "-10" },
-          opacity: isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
+          filter:
+            isHover === index
+              ? `drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.25))`
+              : undefined,
+          opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
         }}
       />
     </motion.div>

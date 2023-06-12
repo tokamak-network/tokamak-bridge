@@ -17,6 +17,7 @@ import CarousellCardComponent from "./CarousellCardComponent";
 export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [isHover, setIsHover] = useState<number | null>(null);
+
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -26,9 +27,7 @@ export const CardCarrousel = () => {
   );
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
-
   const { inNetwork } = useRecoilValue(networkStatus);
-
   const { filteredTokenList } = useGetTokenList();
 
   const handlePrev = () => {
@@ -44,9 +43,6 @@ export const CardCarrousel = () => {
         : 1
     );
   };
-
-  console.log("filteredTokenList");
-  console.log(filteredTokenList);
 
   return (
     <Flex
@@ -154,6 +150,8 @@ export const CardCarrousel = () => {
               index={index}
               filteredTokenList={filteredTokenList}
               waitCondition={waitCondition}
+              isHover={isHover}
+              setIsHover={setIsHover}
             />
           );
 
