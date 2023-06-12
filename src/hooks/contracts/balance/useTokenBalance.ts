@@ -1,11 +1,12 @@
 import { useAccount, useBalance, useContractRead } from "wagmi";
 import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
+import { WETH_ADDRESSES } from "@/types/token/supportedToken";
 
 export default function useTokenBalance(
   address: `0x${string}` | string | null
 ) {
-  const isETH = address === "0x";
+  const isETH = WETH_ADDRESSES.includes(address ?? "0x");
   const { address: accountAddress } = useAccount();
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,

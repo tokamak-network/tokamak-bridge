@@ -10,19 +10,19 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 export function useInOutTokens() {
   const inTokenRecoilValue = useRecoilValue(selectedInTokenStatus);
   const outTokenRecoilValue = useRecoilValue(selectedOutTokenStatus);
-  const { connectedChainId } = useConnectedNetwork();
+  const { connectedChainId, chainName } = useConnectedNetwork();
 
   const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
   );
 
   const inToken =
-    inTokenRecoilValue && connectedChainId
+    inTokenRecoilValue && connectedChainId && chainName
       ? {
           ...inTokenRecoilValue,
           token: new Token(
             connectedChainId,
-            inTokenRecoilValue.address["DARIUS"] as string,
+            inTokenRecoilValue.address[chainName] as string,
             inTokenRecoilValue.decimals,
             inTokenRecoilValue.tokenName as string,
             inTokenRecoilValue.tokenName as string
@@ -31,12 +31,12 @@ export function useInOutTokens() {
       : null;
 
   const outToken =
-    outTokenRecoilValue && connectedChainId
+    outTokenRecoilValue && connectedChainId && chainName
       ? {
           ...outTokenRecoilValue,
           token: new Token(
             connectedChainId,
-            outTokenRecoilValue.address["DARIUS"] as string,
+            outTokenRecoilValue.address[chainName] as string,
             outTokenRecoilValue.decimals,
             outTokenRecoilValue.tokenName as string,
             outTokenRecoilValue.tokenName as string
