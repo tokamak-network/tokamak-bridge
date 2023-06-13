@@ -17,6 +17,7 @@ import {
   WithdrawDetailProp,
   useTransactionDetail,
 } from "@/hooks/transactionDetail/useTransactionDetail";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -188,17 +189,8 @@ const Content = (props: { isExpanded: boolean }) => {
   const { mode } = useRecoilValue(actionMode);
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
-  const { depositPropsData, withdrawPropsData } = useTransactionDetail();
-
-  const swapPropsData: SwapDetailProp[] = [
-    { title: "Expected output", content: "178.29 USDC" },
-    {
-      title: "Minimum received after slippage",
-      content: "178.29 USDC",
-      slippage: "0.1%",
-    },
-    { title: "Estimated gas fees", content: "0.0001 ETH", gasFee: "$3.18" },
-  ];
+  const { depositPropsData, withdrawPropsData, swapPropsData } =
+    useTransactionDetail();
 
   const detailRow = useMemo(() => {
     switch (mode) {
@@ -211,13 +203,13 @@ const Content = (props: { isExpanded: boolean }) => {
           <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
         ));
       case "Swap":
-        return swapPropsData.map((data) => (
+        return swapPropsData?.map((data) => (
           <SwapDetailRow key={data.title} {...data} />
         ));
       default:
         return <>{`component not founded :(`}</>;
     }
-  }, [mode, depositPropsData, withdrawPropsData]);
+  }, [mode, depositPropsData, withdrawPropsData, swapPropsData]);
 
   if (isExpanded) {
     return (
@@ -262,6 +254,7 @@ const Title = (props: {
   const { isExpanded, setIsExpended } = props;
   const { mode } = useRecoilValue(actionMode);
   const { inNetwork, outNetwork } = useInOutNetwork();
+  const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
 
   useEffect(() => {
@@ -318,9 +311,13 @@ const Title = (props: {
         fontSize={14}
       >
         <Flex>
-          <Text>1 USDC</Text>
+          <Text>
+            {inToken?.parsedAmount} {inToken?.tokenName}
+          </Text>
           <Text mx={"9px"}>=</Text>
-          <Text>0.0006 ETH</Text>
+          <Text>
+            {outToken?.parsedAmount} {outToken?.tokenName}
+          </Text>
           <Text color={"#A0A3AD"} ml={"4px"}>
             ($1.000)
           </Text>

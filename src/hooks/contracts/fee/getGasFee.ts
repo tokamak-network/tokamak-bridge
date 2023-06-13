@@ -2,6 +2,7 @@ import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
+import { useAmountOut } from "@/hooks/swap/swapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -24,7 +25,10 @@ export function useGasFee() {
 
   //   const { provider } = useProvier();
   const provider = usePublicClient();
+  const { estimatedGas } = useAmountOut();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
+
+  console.log(inToken);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
@@ -36,7 +40,7 @@ export function useGasFee() {
 
         switch (mode) {
           case "Swap":
-            return;
+            return estimatedGas;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
@@ -119,6 +123,7 @@ export function useGasFee() {
     _depositERC20_contract,
     _withdraw_contract,
     provider,
+    estimatedGas,
   ]);
 
   return { totalGasCost };

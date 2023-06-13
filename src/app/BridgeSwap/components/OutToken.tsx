@@ -12,7 +12,6 @@ import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 import { useMemo } from "react";
-import { useAmountOut } from "@/hooks/swap/swapTokens";
 
 const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -50,6 +49,7 @@ const SearchTokenComponent = () => {
         hasInput={true}
         inNetwork={false}
         style={{ marginTop: "12px" }}
+        onClick={onOpenOutToken}
       />
     );
   }

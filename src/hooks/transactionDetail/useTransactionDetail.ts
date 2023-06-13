@@ -5,6 +5,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "../token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
 import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
+import { useAmountOut } from "../swap/swapTokens";
 
 export type DepositDetailProp = {
   title: string;
@@ -42,7 +43,7 @@ export type SwapDetailProp = {
 
 export function useTransactionDetail() {
   const { mode } = useRecoilValue(actionMode);
-  const { inToken } = useInOutTokens();
+  const { inToken, outToken } = useInOutTokens();
   const { totalGasCost } = useGasFee();
 
   const totalGasFee = `${
@@ -106,5 +107,29 @@ export function useTransactionDetail() {
     return null;
   }, [mode, inToken, totalGasFee, inputAmount]);
 
-  return { depositPropsData, withdrawPropsData };
+  const { amountOut } = useAmountOut();
+
+  const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
+    if (mode === "Swap" && inToken && totalGasFee) {
+      return [
+        {
+          title: "Expected output",
+          content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
+        },
+        {
+          title: "Minimum received after slippage",
+          content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
+          slippage: "0.1%",
+        },
+        {
+          title: "Estimated gas fees",
+          content: `${totalGasFee} ETH`,
+          gasFee: "$3.18",
+        },
+      ];
+    }
+    return null;
+  }, [mode, inToken, outToken, totalGasFee, inputAmount, amountOut]);
+
+  return { depositPropsData, withdrawPropsData, swapPropsData };
 }

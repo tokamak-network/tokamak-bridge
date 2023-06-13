@@ -165,10 +165,5 @@ export function useApprove() {
     }
   }, [mode]);
 
-  //  const receipt = await contract?.increaseAllowance(
-  //    SwapperV2Proxy,
-  //    totalSupply
-  //  );
-
   return { isApproved, callApprove };
 }

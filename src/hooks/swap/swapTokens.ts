@@ -1,6 +1,7 @@
 import { ethers } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
+import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
 import { SelectedToken, actionMode } from "@/recoil/bridgeSwap/atom";
@@ -22,12 +23,7 @@ import {
 import { useInOutTokens } from "../token/useInOutTokens";
 import JSBI from "jsbi";
 import { useAccount, useContractWrite } from "wagmi";
-import {
-  L1_UniswapContracts,
-  L2_UniswapContracts,
-} from "@/constant/contracts/uniswap";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
-import { getTokenTransferApproval } from "@/utils/uniswap/functions/trading";
 import useConnectedNetwork from "../network";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
@@ -46,6 +42,9 @@ export function useAmountOut() {
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
   const [trade, setTrade] = useState<TokenTrade | null>(null);
+  const [estimatedGas, setEstimatedGas] = useState<bigint | undefined>(
+    undefined
+  );
 
   const quoterContract = new ethers.Contract(
     UNISWAP_CONTRACT.QUOTER_CONTRACT_ADDRESS,
@@ -158,7 +157,6 @@ export function useAmountOut() {
 
   const callTokenSwap = useCallback(async () => {
     if (trade && inToken && address) {
-      //need to put approval checking
       try {
         // // Give approval to the router to spend the token
         // const tokenApproval = await getTokenTransferApproval(inToken.token);
@@ -179,7 +177,37 @@ export function useAmountOut() {
           options
         );
 
-        const gasPrice = await provider.getGasPrice();
+        const tx = {
+          data: methodParameters.calldata as `0x{string}`,
+          to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
+          value: methodParameters.value,
+          from: address,
+          // maxFeePerGas: "250000",
+          // maxPriorityFeePerGas: "250000",
+          // gasLimit: "21000",
+          // gasPrice: gasPrice.toString(),
+        };
+        const res = await sendTransaction(tx);
+        return res;
+      } catch (e) {
+        console.log("callTokenSwap");
+        console.log(e);
+      }
+    }
+  }, [trade, address, UNISWAP_CONTRACT]);
+
+  useEffect(() => {
+    const fetchEstimatedGas = async () => {
+      if (trade && inToken && address) {
+        const options: SwapOptions = {
+          slippageTolerance: new Percent(50, 10_000), // 50 bips, or 0.50%
+          deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
+          recipient: address,
+        };
+        const methodParameters = SwapRouter.swapCallParameters(
+          [trade],
+          options
+        );
 
         const tx = {
           data: methodParameters.calldata as `0x{string}`,
@@ -192,17 +220,15 @@ export function useAmountOut() {
           // gasPrice: gasPrice.toString(),
         };
 
-        console.log("--tx--");
-        console.log(tx);
-
-        const res = await sendTransaction(tx);
-        return res;
-      } catch (e) {
-        console.log("callTokenSwap");
-        console.log(e);
+        const gas = await provider.estimateGas(tx);
+        return setEstimatedGas(gas.toBigInt());
       }
-    }
+    };
+    fetchEstimatedGas().catch((e) => {
+      console.log("**fetchEstimatedGasToSwap err**");
+      console.log(e);
+    });
   }, [trade, address, UNISWAP_CONTRACT]);
 
-  return { amountOut, callTokenSwap };
+  return { amountOut, callTokenSwap, estimatedGas };
 }

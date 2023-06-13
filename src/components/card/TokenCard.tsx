@@ -14,6 +14,7 @@ type TokenCardProps = {
   hasInput: boolean;
   inNetwork: boolean;
   isNew?: boolean;
+  onClick?: () => any;
   style?: {};
 };
 
@@ -61,7 +62,7 @@ const TokenTitle = (props: { tokenName: String }) => {
 };
 
 export default function TokenCard(props: TokenCardProps) {
-  const { tokenInfo, w, h, hasInput, inNetwork, isNew, style } = props;
+  const { tokenInfo, w, h, hasInput, inNetwork, isNew, onClick, style } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenName) {
@@ -106,6 +107,7 @@ export default function TokenCard(props: TokenCardProps) {
       justifyContent={"space-between"}
       px={"16px"}
       cursor={"pointer"}
+      onClick={onClick}
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />

@@ -50,3 +50,10 @@ export const gasData = atom<GasDataAtom>({
     l2GasTotal: null,
   },
 });
+
+export const swapGasData = atom<{ estimatedGasFee: string | undefined }>({
+  key: "swapGasData",
+  default: {
+    estimatedGasFee: undefined,
+  },
+});
