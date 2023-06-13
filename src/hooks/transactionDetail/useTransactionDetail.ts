@@ -60,8 +60,6 @@ export function useTransactionDetail() {
         {
           title: "Amount to Deposit",
           content: inputAmount,
-          tooltip: true,
-          tooltipLabel: `${inToken.amountBN} ${inToken.tokenName}`,
         },
         {
           title: "Estimated gas fees",
@@ -71,7 +69,7 @@ export function useTransactionDetail() {
             l2Gas: "0 ETH",
           },
           tooltip: true,
-          tooltipLabel: `${commafy(totalGasCost, 14)} ETH`,
+          tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
         },
         {
           title: "Time to Deposit",
