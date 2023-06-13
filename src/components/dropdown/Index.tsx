@@ -256,7 +256,10 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
 
   const optionsList = supportedChain
     .filter((chainInfo) => {
-      if (isConnectedToMainNetwork) {
+      if (
+        isConnectedToMainNetwork === true ||
+        isConnectedToMainNetwork === undefined
+      ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TOKAMAK_MAINNET"],
