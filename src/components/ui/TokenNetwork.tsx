@@ -12,7 +12,7 @@ type TokenNetworkSymbolProps = {
 };
 
 export default function TokenNetworkSymbol(props: TokenNetworkSymbolProps) {
-  const { w, h, network, tokenType, groupWidth } = props;
+  const { w, h, network, tokenType, groupWidth, h2, w2 } = props;
 
   return (
     <Flex>
@@ -21,8 +21,8 @@ export default function TokenNetworkSymbol(props: TokenNetworkSymbolProps) {
           <TokenSymbol w={w ? w : 32} h={h ? h : 32} tokenType={tokenType} />
           <Flex position={"absolute"} bottom={0} right={0}>
             <NetworkSymbol
-              w={w ? w : 12}
-              h={h ? h : 12}
+              w={w2 ? w2 : 12}
+              h={h2 ? h2 : 12}
               networkType={network}
             />
           </Flex>

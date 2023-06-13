@@ -23,6 +23,8 @@ import Modals from "./Modal";
 import InvalidRange from "./components/InvalidRange";
 import PositionInfo from "./components/PositionInfo";
 
+import LiquidityChartRangeInput from "@/components/ui/LiquidityPoolChart";
+
 export default function CreatePoolModal() {
   const [inToken, setInToken] = useState("");
   const [outToken, setOutToken] = useState("");
@@ -150,6 +152,7 @@ export default function CreatePoolModal() {
             <Flex flexDir="column">
               <PositionInfo />
               {/* <Graph /> */}
+              {/* <LiquidityChartRangeInput /> */}
               {/* <InitializeInfo /> */}
               <Flex justifyContent={"space-between"}>
                 <PriceInput

@@ -2,16 +2,25 @@ import { Flex, Box, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import PositionIcon from "@/assets/icons/position.svg";
 
-export default function PositionInfo() {
+type PositionInfoProps = {
+  currentPrice: number;
+  inToken: string;
+  outToken: string;
+};
+
+export default function PositionInfo(props: PositionInfoProps) {
+  const { currentPrice, inToken, outToken } = props;
   return (
     <>
       <Flex flexDir="row" mb={"20px"}>
         <Text>Set Price Range</Text>
       </Flex>
       <Flex flexDir="column" alignItems={"center"} textAlign={"center"}>
-        <Text mb={"16px"} fontSize={12}>
-          Current Price: 1541.8 USDC per ETH
-        </Text>
+        {currentPrice && (
+          <Text mb={"16px"} fontSize={12}>
+            {`Current Price: ${currentPrice} ${inToken} ${outToken}`}
+          </Text>
+        )}
         <Flex
           w={"384px"}
           h={"140px"}
