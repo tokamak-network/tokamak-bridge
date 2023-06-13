@@ -29,6 +29,9 @@ export default function useConnectedNetwork() {
         layer:
           supportedChain.filter((e) => e.chainId === chain.id)[0]?.layer ??
           null,
+        isConnectedToMainNetwork:
+          chain.id === SupportedChainId["MAINNET"] ||
+          chain.id === SupportedChainId["TOKAMAK_MAINNET"],
       };
     }
   }, [chain]);

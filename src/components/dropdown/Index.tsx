@@ -46,14 +46,6 @@ const customStyles = {
   }),
 };
 
-const optionsList = supportedChain.map((chainInfo) => {
-  return {
-    ...chainInfo,
-    value: chainInfo.chainId,
-    label: chainInfo.chainName,
-  };
-});
-
 const ValueContainer = (props: {
   selectedOption: SelectOption | null;
   isOpen: boolean;
@@ -113,7 +105,7 @@ const ValueContainer = (props: {
 export default function NetworkDropdown(props: { inNetwork: boolean }) {
   const { inNetwork } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
-  const { connectedChainId } = useConnectedNetwork();
+  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -178,7 +170,7 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
 
-    if (data.chainName === "TOKAMAK_MAINNET") {
+    if (data.layer === "L2") {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
           <Flex
@@ -261,6 +253,26 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
   //     document.removeEventListener("mousedown", handleClickOutside);
   //   };
   // }, [isOpen]);
+
+  const optionsList = supportedChain
+    .filter((chainInfo) => {
+      if (isConnectedToMainNetwork) {
+        return [
+          SupportedChainId["MAINNET"],
+          SupportedChainId["TOKAMAK_MAINNET"],
+        ].includes(chainInfo.chainId);
+      }
+      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+        chainInfo.chainId
+      );
+    })
+    .map((chainInfo) => {
+      return {
+        ...chainInfo,
+        value: chainInfo.chainId,
+        label: chainInfo.chainName,
+      };
+    });
 
   return (
     <Select

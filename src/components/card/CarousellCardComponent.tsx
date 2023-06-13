@@ -19,8 +19,8 @@ export default function CarousellCardComponent<T>(props: {
   index: number;
   filteredTokenList: SupportedTokens_T;
   waitCondition: any;
-  isHover: T;
-  setIsHover: Dispatch<SetStateAction<T>>;
+  isHover: number | null;
+  setIsHover: Dispatch<SetStateAction<number | null>>;
 }) {
   const {
     tokenData,
