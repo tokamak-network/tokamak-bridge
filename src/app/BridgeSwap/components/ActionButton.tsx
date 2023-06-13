@@ -16,16 +16,17 @@ import { supportedTokens } from "@/types/token/supportedToken";
 import { predeploys } from "@eth-optimism/contracts";
 
 import { useAmountOut } from "@/hooks/swap/swapTokens";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
   const { connectToWallet } = useConnectWallet();
   const { mode, isReady } = useRecoilValue(actionMode);
+  const { isApproved } = useApprove();
+
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
-
-  const provider = usePublicClient();
 
   const { write: _depositETH } = useCallDeposit("depositETH");
   const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
@@ -34,7 +35,7 @@ export default function ActionButton() {
 
   const { callTokenSwap } = useAmountOut();
 
-  const isDisabled = !isReady;
+  const isDisabled = !isReady || isApproved === false;
 
   const onClick = useCallback(async () => {
     if (!isConnected) {

@@ -12,6 +12,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
@@ -52,6 +53,8 @@ export default function CarousellCardComponent<T>(props: {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+
+  const { chainName } = useConnectedNetwork();
 
   const styleCode = useMemo(() => {
     return getTokenCardStyle(index, maxIndex);
@@ -97,16 +100,19 @@ export default function CarousellCardComponent<T>(props: {
       onMouseEnter={() => setIsHover(index)}
       onMouseLeave={() => setIsHover(null)}
       onClick={() =>
-        isInTokenOpen
+        isInTokenOpen && chainName
           ? setSelectedInToken({
               ...tokenData,
               amountBN: null,
               parsedAmount: null,
+              tokenAddress: tokenData.address[chainName],
             })
-          : setSelectedOutToken({
+          : chainName &&
+            setSelectedOutToken({
               ...tokenData,
               amountBN: null,
               parsedAmount: null,
+              tokenAddress: tokenData.address[chainName],
             })
       }
     >

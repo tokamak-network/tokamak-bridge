@@ -48,10 +48,11 @@ export const supportedTokens: SupportedTokens_T = [
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
     },
     decimals: 18,
-    isNativeCurrency: [
-      SupportedChainId.TOKAMAK_MAINNET,
-      SupportedChainId.DARIUS,
-    ],
+    isNativeCurrency: null,
+    // isNativeCurrency: [
+    //   SupportedChainId.TOKAMAK_MAINNET,
+    //   SupportedChainId.DARIUS,
+    // ],
   },
   {
     tokenName: "WTON",

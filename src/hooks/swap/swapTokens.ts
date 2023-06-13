@@ -28,21 +28,20 @@ import {
 } from "@/constant/contracts/uniswap";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { getTokenTransferApproval } from "@/utils/uniswap/functions/trading";
-import { TransactionState } from "@/types/states/transaction";
-import { useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
+import { useGetMode } from "../mode/useGetMode";
+import useContract from "@/hooks/contracts/useContract";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
 export function useSwapTokens() {}
 
 export function useAmountOut() {
-  const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { provider } = useProvier();
   const { address } = useAccount();
 
   const { inToken, outToken } = useInOutTokens();
-  const { mode } = useRecoilValue(actionMode);
+  const { UNISWAP_CONTRACT } = useContract();
   const { layer } = useConnectedNetwork();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
@@ -184,7 +183,7 @@ export function useAmountOut() {
 
         const tx = {
           data: methodParameters.calldata as `0x{string}`,
-          to: L2_UniswapContracts.SWAP_ROUTER_ADDRESS,
+          to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
           value: methodParameters.value,
           from: address,
           // maxFeePerGas: "250000",
@@ -203,7 +202,7 @@ export function useAmountOut() {
         console.log(e);
       }
     }
-  }, [trade, address]);
+  }, [trade, address, UNISWAP_CONTRACT]);
 
   return { amountOut, callTokenSwap };
 }
