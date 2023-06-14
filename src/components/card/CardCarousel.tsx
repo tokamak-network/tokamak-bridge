@@ -3,46 +3,191 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useState } from "react";
+import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
+import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
+import CloseIcon from "assets/icons/close.svg";
+
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+} from "@chakra-ui/react";
+import TokenCard from "./TokenCard";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
-import { TokenInfo } from "types/token/supportedToken";
+import {
+  motion,
+  useAnimate,
+  useAnimation,
+  useAnimationControls,
+} from "framer-motion";
+import { TokenInfo, supportedTokens } from "types/token/supportedToken";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
-import CarousellCardComponent from "./CarousellCardComponent";
+
+enum CardOverlay {
+  Middle = 100,
+  Seconds = 90,
+  Sides = 80,
+  SideRight = 70,
+  SecondRight = 60,
+}
 
 export const CardCarrousel = () => {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
-  const [isHover, setIsHover] = useState<number | null>(null);
-
+  const [currentCard, setCurrentCard] = useState<number>(2);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
+  const [supportedTokens2, setSupportedTokens2] = useState([
+    ...supportedTokens,
+  ]);
 
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
+
+  const sideControl = useAnimation();
+  const sideRightControl = useAnimation();
+  const secondControl = useAnimation();
+  const secondRightControl = useAnimation();
+  const middleControl = useAnimation();
+  const outControl = useAnimation();
+
   const { inNetwork } = useRecoilValue(networkStatus);
-  const { filteredTokenList } = useGetTokenList();
+
+  const initCarouselCards: TokenInfo[] = supportedTokens2.slice(0, 5);
+  const [carouselCards, setCarouselCards] =
+    useState<TokenInfo[]>(initCarouselCards);
 
   const handlePrev = () => {
-    setCurrentIndex(currentIndex !== null ? currentIndex + 1 : 3);
+    setCarouselCards((prevCards) => {
+      const newCarouselCards = [...prevCards];
+      console.log("prev cards", [...prevCards]);
+      const firstElement =
+        supportedTokens2[
+          (supportedTokens2.length - 1 + newCarouselCards.length - 1) %
+            supportedTokens2.length
+        ];
+      const lastElement = newCarouselCards.pop();
+      newCarouselCards.unshift(firstElement);
+      newCarouselCards.splice(newCarouselCards.length - 1, 0, lastElement!);
+      return newCarouselCards;
+    });
+    setCurrentCard((prevCard) =>
+      prevCard === null || prevCard === 0
+        ? carouselCards.length - 1
+        : prevCard - 1
+    );
   };
 
   const handleNext = () => {
-    setCurrentIndex(
-      currentIndex !== null
-        ? currentIndex - 1 < 0
-          ? filteredTokenList.length - 1
-          : currentIndex - 1
-        : 1
-    );
+    setCarouselCards((prevCards) => {
+      const newCarouselCards = [...prevCards];
+      const firstElement = newCarouselCards.shift();
+      const lastElementIndex =
+        (supportedTokens2.length - 5 + newCarouselCards.length) %
+        supportedTokens2.length;
+      const lastElement = supportedTokens2[lastElementIndex];
+      newCarouselCards.push(lastElement!);
+      newCarouselCards.splice(0, 0, firstElement!);
+      return newCarouselCards;
+    });
+    setCurrentCard((prevCard) => {
+      if (prevCard === null || prevCard === carouselCards.length - 1) {
+        return 0;
+      } else {
+        return prevCard + 1;
+      }
+    });
   };
+
+  const cardProps = (index: number) => {
+    const currentIndex = currentCard === null ? 0 : currentCard;
+    const indexVal = currentIndex - index;
+
+    const atMiddle = indexVal === 0;
+    const atSide = indexVal === 2 || indexVal === -2;
+    const atSideRight = indexVal === -2;
+    const atSecond = indexVal === 1 || indexVal === -1;
+    const atSecondRight = indexVal === -1;
+    const atOut = indexVal > 2 || indexVal < -2;
+
+    return {
+      position: "relative",
+      display: atOut ? "none" : "",
+      transition: "margin .2s ease-in-out",
+      _hover: { mt: "-2" },
+      zIndex: atOut
+        ? -100
+        : atSide
+        ? CardOverlay.Sides
+        : atSideRight
+        ? CardOverlay.SideRight
+        : atSecond
+        ? CardOverlay.Seconds
+        : atSecondRight
+        ? CardOverlay.SecondRight
+        : CardOverlay.Middle,
+      transform:
+        atSide && !atSideRight
+          ? "rotate(-10deg)"
+          : atSideRight
+          ? "rotate(10deg)"
+          : atSecond && !atSecondRight
+          ? "rotate(-5deg)"
+          : atSecondRight
+          ? "rotate(5deg)"
+          : null,
+      minWidth: atSide ? "186px" : atSecond ? "225px" : "256px",
+      minHeight: atSide ? "242px" : atSecond ? "298px" : "332px",
+      left:
+        atSide && !atSideRight
+          ? "95px"
+          : atSideRight
+          ? "-85px"
+          : atSecond && !atSecondRight
+          ? "43px"
+          : atSecondRight
+          ? "-43px"
+          : "0px",
+    };
+  };
+
+  useEffect(() => {
+    middleControl.start({
+      width: 256,
+      height: 332,
+      rotate: 0,
+    });
+    secondControl.start({
+      width: 225,
+      height: 298,
+      rotate: -5,
+      fontSize: 30,
+    });
+    secondRightControl.start({
+      width: 225,
+      height: 298,
+      rotate: 5,
+    });
+    sideControl.start({
+      width: 186,
+      height: 242,
+      rotate: -10,
+    });
+    sideRightControl.start({
+      width: 186,
+      height: 242,
+      rotate: 10,
+    });
+  }, [currentCard]);
 
   return (
     <Flex
@@ -69,153 +214,61 @@ export const CardCarrousel = () => {
         <Image src={LeftArrow} alt={"LeftArrow"} />
       </Button>
       <Flex
-        // overflowX={"hidden"}
-        w={"100%"}
+        overflow={"hidden"}
         alignItems={"end"}
-        // pb={"10px"}
+        pb={"10px"}
         justifyContent={"center"}
-        h={"332px"}
-        pos={"relative"}
       >
-        {/* 시연용 */}
-        {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
-          // const {
-          //   endLeftControl,
-          //   endRightControl,
-          //   sideLeftControl,
-          //   sideRightControl,
-          //   centerControl,
-          //   outLeftControl,
-          //   outRightControl,
-          //   waitControl,
-          // } = useCarrousellAnimation({ currentIndex, index });
-
-          const startIndex =
-            currentIndex !== null
-              ? currentIndex - 4 < 0
-                ? currentIndex - 4 + filteredTokenList.length
-                : currentIndex - 4
-              : null;
-
-          const waitCondition =
-            filteredTokenList.length < 6
-              ? false
-              : startIndex === filteredTokenList.length - 1
-              ? startIndex - 7 === index ||
-                startIndex - 6 === index ||
-                startIndex - 5 === index ||
-                startIndex - 4 === index ||
-                startIndex - 3 === index ||
-                startIndex - 2 === index ||
-                startIndex - 1 === index ||
-                startIndex === index
-              : startIndex === filteredTokenList.length - 2
-              ? startIndex - 7 === index ||
-                startIndex - 6 === index ||
-                startIndex - 5 === index ||
-                startIndex - 4 === index ||
-                startIndex - 3 === index ||
-                startIndex - 2 === index ||
-                startIndex - 1 === index ||
-                startIndex === index
-              : (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 1 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 2 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 3 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 4 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 5 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 6 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 7 === index);
-
+        {carouselCards.map((tokenData, index) => {
+          cardProps(index);
           return (
-            <CarousellCardComponent
-              tokenData={tokenData}
-              currentIndex={currentIndex}
-              index={index}
-              filteredTokenList={filteredTokenList}
-              waitCondition={waitCondition}
-              isHover={isHover}
-              setIsHover={setIsHover}
-            />
+            <motion.div
+              transition={{ duration: 0.5 }}
+              //   @ts-ignore
+              style={cardProps(index)}
+              animate={
+                currentCard === null
+                  ? undefined
+                  : currentCard - index === 0
+                  ? middleControl
+                  : currentCard - index === 1
+                  ? secondControl
+                  : currentCard - index === -1
+                  ? secondRightControl
+                  : currentCard - index === 2
+                  ? sideControl
+                  : currentCard - index === -2
+                  ? sideRightControl
+                  : outControl
+              }
+              onClick={() =>
+                isInTokenOpen
+                  ? setSelectedInToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+                  : setSelectedOutToken({
+                      ...tokenData,
+                      amountBN: null,
+                      parsedAmount: null,
+                    })
+              }
+              key={index}
+            >
+              <TokenCard
+                w={"100%"}
+                h={"100%"}
+                tokenInfo={tokenData}
+                inNetwork={true}
+                hasInput={false}
+                style={{
+                  transition: "margin .2s ease-in-out",
+                  _hover: { marginTop: "-2" },
+                }}
+              />
+            </motion.div>
           );
-
-          // return (
-          //   <motion.div
-          //     key={`${index}_${tokenData.tokenName}`}
-          //     className={"motion-div"}
-          //     style={getTokenCardStyle(index, filteredTokenList.length - 1)}
-          //     transition={{ duration: 0.5 }}
-          //     initial={{ opacity: 0 }}
-          //     // whileHover={{
-          //     //   marginTop: "-60px",
-          //     // }}
-          //     animate={
-          //       waitCondition
-          //         ? waitControl
-          //         : index === 0
-          //         ? endLeftControl
-          //         : index === 1
-          //         ? sideLeftControl
-          //         : index === 2
-          //         ? centerControl
-          //         : index === 3
-          //         ? sideRightControl
-          //         : index === 4
-          //         ? endRightControl
-          //         : index === 5
-          //         ? outRightControl
-          //         : index === filteredTokenList.length - 1
-          //         ? outLeftControl
-          //         : waitControl
-          //     }
-          //     onMouseEnter={() => setIsHover(index)}
-          //     onMouseLeave={() => setIsHover(null)}
-          //     onClick={() =>
-          //       isInTokenOpen
-          //         ? setSelectedInToken({
-          //             ...tokenData,
-          //             amountBN: null,
-          //             parsedAmount: null,
-          //           })
-          //         : setSelectedOutToken({
-          //             ...tokenData,
-          //             amountBN: null,
-          //             parsedAmount: null,
-          //           })
-          //     }
-          //   >
-          //     <TokenCard
-          //       w={"100%"}
-          //       h={"100%"}
-          //       tokenInfo={tokenData}
-          //       inNetwork={true}
-          //       hasInput={false}
-          //       style={{
-          //         transition: "margin .5s ease-in-out",
-          //         //need to change mt property based on selectIndex
-          //         _hover: { marginTop: "-10" },
-          //         opacity:
-          //           isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
-          //       }}
-          //     />
-          //   </motion.div>
-          // );
         })}
       </Flex>
       <Button
