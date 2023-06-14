@@ -18,7 +18,7 @@ export enum SupportedChainId {
   //   CELO_ALFAJORES = 44787,
   //   BNB = 56,
   TOKAMAK_MAINNET = 5051,
-  TITAN = 5050,
+  DARIAN = 5050,
 }
 
 export interface SupportedChainProperties {
@@ -54,8 +54,8 @@ export const supportedChain: SupportedChainProperties[] = [
     isTokamak: true,
   },
   {
-    chainId: SupportedChainId.TITAN,
-    chainName: "TITAN",
+    chainId: SupportedChainId.DARIAN,
+    chainName: "DARIAN",
     networkImage: SYMBOL_DARIUS,
     rpcAddress: "",
     nativeToken: "TON",
