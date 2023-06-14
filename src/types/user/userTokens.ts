@@ -1,9 +1,9 @@
-import { SupportedTokenName } from "types/token/supportedToken";
+import { SupportedTokenSymbol } from "types/token/supportedToken";
 import { BigNumberish } from "ethers";
 import { Contract, ethers } from "ethers";
 
 export type UserToken = {
-  tokenName: SupportedTokenName | string;
+  tokenName: SupportedTokenSymbol | string;
   tokenBalanceBN: BigNumberish;
   tokenBlanceFormatted: string;
 };

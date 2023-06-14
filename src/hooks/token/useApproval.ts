@@ -4,10 +4,16 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers, Contract } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import TON_ABI from "@/constant/abis/TON.json";
-import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import {
+  useAccount,
+  useBlockNumber,
+  useContractRead,
+  useContractWrite,
+} from "wagmi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
+import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -34,15 +40,11 @@ export function useAllowance() {
   const { address } = useAccount();
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();
+  const { data: blockNumber } = useBlockNumber({ watch: true });
 
   useEffect(() => {
     const fetchAllowance = async () => {
-      if (
-        inToken &&
-        inToken.tokenAddress !== null &&
-        inToken.amountBN &&
-        address
-      ) {
+      if (inToken && inToken.tokenAddress !== null && address) {
         if (inToken.isNativeCurrency !== null) {
           return setApproved({
             l1birdge: true,
@@ -53,7 +55,7 @@ export function useAllowance() {
         }
 
         const tokenAddress = inToken.tokenAddress;
-        const tokenAmount = inToken.amountBN ?? 0;
+        const tokenAmount = inToken.amountBN ?? 0.01;
         const TOKEN_CONTRACT = new ethers.Contract(
           tokenAddress,
           ERC20_ABI.abi,
@@ -90,7 +92,7 @@ export function useAllowance() {
       console.log("**fetchAllowance err**");
       console.log(e);
     });
-  }, [inToken?.tokenAddress, inToken?.amountBN]);
+  }, [inToken?.tokenAddress, inToken?.amountBN, blockNumber]);
 
   const callApprove = useCallback(() => {}, [approved]);
 
@@ -105,7 +107,6 @@ export function useApprove() {
   const { mode } = useGetMode();
   const { approved } = useAllowance();
   const { inToken } = useInOutTokens();
-  const { provider } = useProvier();
 
   const isApproved = useMemo(() => {
     if (approved) {
@@ -132,8 +133,10 @@ export function useApprove() {
     abi: TON_ABI.abi,
     functionName: "totalSupply",
   });
+
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();
+  const { address } = useAccount();
 
   const callApprove = useCallback(async () => {
     try {
@@ -151,10 +154,6 @@ export function useApprove() {
             return write({
               args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
             });
-          // return TOKEN_CONTRACT.increaseAllowance(
-          //     SwapperV2Proxy,
-          //     totalSupply
-          // );;
           default:
             break;
         }

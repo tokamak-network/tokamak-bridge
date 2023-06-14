@@ -123,6 +123,24 @@ export default function CarousellCardComponent<T>(props: {
         inNetwork={true}
         hasInput={false}
         isNew={tokenData.isNew}
+        // symbolSize={
+        //   currentIndex !== null
+        //     ? {
+        //         w:
+        //           currentIndex === index
+        //             ? 118
+        //             : currentIndex - 1 === index
+        //             ? 110
+        //             : 86,
+        //         h:
+        //           currentIndex === index
+        //             ? 118
+        //             : currentIndex - 1 === index
+        //             ? 110
+        //             : 86,
+        //       }
+        //     : undefined
+        // }
         style={{
           transition: "margin .5s ease-in-out",
           //need to change mt property based on selectIndex

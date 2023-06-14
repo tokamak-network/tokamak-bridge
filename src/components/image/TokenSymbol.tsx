@@ -22,8 +22,12 @@ export default function ImageSymbol(props: {
   h?: number;
 }) {
   return (
-    <Flex w={`${props.w}px`} h={`${props.h}px`}>
-      <Image src={props.ImgFile} alt={"img"} />
+    <Flex w={`${props.w ?? 96}px`} h={`${props.h ?? 96}px`}>
+      <Image
+        src={props.ImgFile}
+        alt={"img"}
+        style={{ width: "100%", height: "100%" }}
+      />
     </Flex>
   );
 }

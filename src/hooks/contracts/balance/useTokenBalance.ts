@@ -42,7 +42,7 @@ export default function useTokenBalance(
       };
     }
     return null;
-  }, [blockNumber]);
+  }, [blockNumber, accountAddress, data]);
 
   return tokenBalance;
 }

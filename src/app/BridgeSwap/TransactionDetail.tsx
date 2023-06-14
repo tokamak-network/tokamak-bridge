@@ -1,6 +1,6 @@
 import { useInOutNetwork } from "@/hooks/network";
 import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
-import { Box, Checkbox, Flex, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Checkbox, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ArrowImg from "assets/icons/arrow.svg";
 import GasImg from "assets/icons/gasStation.svg";
@@ -18,6 +18,8 @@ import {
   useTransactionDetail,
 } from "@/hooks/transactionDetail/useTransactionDetail";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useWaitForTransaction } from "wagmi";
+import useGetTransaction from "@/hooks/user/useGetTransaction";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -256,6 +258,7 @@ const Title = (props: {
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
+  const { isLoading } = useGetTransaction();
 
   useEffect(() => {
     if (isExpanded) {
@@ -275,6 +278,7 @@ const Title = (props: {
         fontSize={14}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
+          {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />}
           <Text>{inNetwork?.chainName}</Text>
           <Box w={"10px"} h={"9px"}>
             <Image src={ArrowImg} alt={"arrow"} />
