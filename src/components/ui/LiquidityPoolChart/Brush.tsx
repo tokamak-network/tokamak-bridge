@@ -1,19 +1,16 @@
-import { Box } from "@chakra-ui/react";
-import { LinearGradient, Stop, ClipPath, Rect, G } from "@chakra-ui/react";
-import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from "./svg";
-import { BrushBehavior, brushX, D3BrushEvent, ScaleLinear, select } from "d3";
-import usePrevious from "hooks/usePrevious";
+import { Box, chakra, useBoolean } from "@chakra-ui/react";
+import usePrevious from "./hooks";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { brushHandleAccentPath, brushHandlePath, OffScreenHandle } from "./svg";
+import { brushX, BrushBehavior, D3BrushEvent, ScaleLinear, select } from "d3";
 
-const Handle = path;
+const Handle = chakra("path");
 
-const HandleAccent = path;
+const HandleAccent = chakra("path");
 
-const LabelGroup = G;
+const LabelGroup = chakra(Box);
 
-const TooltipBackground = Rect;
-
-const Tooltip = Text;
+const TooltipBackground = chakra(Box);
 
 const FLIP_HANDLE_THRESHOLD_PX = 20;
 
@@ -29,18 +26,7 @@ const compare = (
   return aNorm.every((v, i) => v === bNorm[i]);
 };
 
-export const Brush = ({
-  id,
-  xScale,
-  interactive,
-  brushLabelValue,
-  brushExtent,
-  setBrushExtent,
-  innerWidth,
-  innerHeight,
-  westHandleColor,
-  eastHandleColor,
-}: {
+type BrushProps = {
   id: string;
   xScale: ScaleLinear<number, number>;
   interactive: boolean;
@@ -51,15 +37,27 @@ export const Brush = ({
   innerHeight: number;
   westHandleColor: string;
   eastHandleColor: string;
+};
+
+const Brush: React.FC<BrushProps> = ({
+  id,
+  xScale,
+  interactive,
+  brushLabelValue,
+  brushExtent,
+  setBrushExtent,
+  innerWidth,
+  innerHeight,
+  westHandleColor,
+  eastHandleColor,
 }) => {
   const brushRef = useRef<SVGGElement | null>(null);
   const brushBehavior = useRef<BrushBehavior<SVGGElement> | null>(null);
-
   const [localBrushExtent, setLocalBrushExtent] = useState<
     [number, number] | null
   >(brushExtent);
-  const [showLabels, { on, off }] = useBoolean(false);
-  const [hovering, { on: onHover, off: offHover }] = useBoolean(false);
+  const [showLabels, setShowLabels] = useState(false);
+  const [hovering, setHovering] = useState(false);
 
   const previousBrushExtent = usePrevious(brushExtent);
 
@@ -100,200 +98,184 @@ export const Brush = ({
       ])
       .handleSize(30)
       .filter(() => interactive)
-      .on("brush end", brushed);
+      .on("brush", brushed);
 
-    brushBehavior.current(select(brushRef.current));
-
-    if (
-      previousBrushExtent &&
-      compare(brushExtent, previousBrushExtent, xScale)
-    ) {
-      select(brushRef.current)
-        .transition()
-        .call(brushBehavior.current.move as any, brushExtent.map(xScale));
-    }
-
-    select(brushRef.current)
-      .selectAll(".selection")
-      .attr("stroke", "none")
-      .attr("fill-opacity", "0.1")
-      .attr("fill", `url(#${id}-gradient-selection)`);
-  }, [
-    brushExtent,
-    brushed,
-    id,
-    innerHeight,
-    innerWidth,
-    interactive,
-    previousBrushExtent,
-    xScale,
-  ]);
+    select(brushRef.current).call(brushBehavior.current);
+  }, [brushed, xScale, innerWidth, innerHeight, interactive]);
 
   useEffect(() => {
-    if (!brushRef.current || !brushBehavior.current) return;
+    if (
+      previousBrushExtent &&
+      !compare(previousBrushExtent, brushExtent, xScale)
+    ) {
+      setLocalBrushExtent(brushExtent);
+    }
+  }, [brushExtent, previousBrushExtent, xScale]);
 
-    brushBehavior.current.move(
-      select(brushRef.current) as any,
-      brushExtent.map(xScale) as any
-    );
-  }, [brushExtent, xScale]);
+  return (
+    <g
+      className="brush"
+      ref={brushRef}
+      pointerEvents={interactive ? "auto" : "none"}
+    >
+      <linearGradient id={`brushGradient-${id}`} gradientTransform="rotate(90)">
+        <stop offset="0%" stopColor={westHandleColor} />
+        <stop offset="100%" stopColor={eastHandleColor} />
+      </linearGradient>
 
-  useTimeout(off, 1500, [localBrushExtent]);
-
-  const flipWestHandle =
-    localBrushExtent && xScale(localBrushExtent[0]) > FLIP_HANDLE_THRESHOLD_PX;
-  const flipEastHandle =
-    localBrushExtent &&
-    xScale(localBrushExtent[1]) > innerWidth - FLIP_HANDLE_THRESHOLD_PX;
-
-  const showWestArrow =
-    localBrushExtent &&
-    (xScale(localBrushExtent[0]) < 0 || xScale(localBrushExtent[1]) < 0);
-  const showEastArrow =
-    localBrushExtent &&
-    (xScale(localBrushExtent[0]) > innerWidth ||
-      xScale(localBrushExtent[1]) > innerWidth);
-
-  const westHandleInView =
-    localBrushExtent &&
-    xScale(localBrushExtent[0]) >= 0 &&
-    xScale(localBrushExtent[0]) <= innerWidth;
-  const eastHandleInView =
-    localBrushExtent &&
-    xScale(localBrushExtent[1]) >= 0 &&
-    xScale(localBrushExtent[1]) <= innerWidth;
-
-  return useMemo(
-    () => (
-      <>
-        <defs>
-          <LinearGradient
-            id={`${id}-gradient-selection`}
-            x1="0%"
-            y1="100%"
-            x2="100%"
-            y2="100%"
-          >
-            <Stop stopColor={westHandleColor} />
-            <Stop stopColor={eastHandleColor} offset="1" />
-          </LinearGradient>
-
-          <ClipPath id={`${id}-brush-clip`}>
-            <Rect x="0" y="0" width={innerWidth} height={innerHeight} />
-          </ClipPath>
-        </defs>
-
-        <G
-          ref={brushRef}
-          clipPath={`url(#${id}-brush-clip)`}
-          onMouseEnter={onHover}
-          onMouseLeave={offHover}
+      {localBrushExtent && (
+        <rect
+          x={xScale(localBrushExtent[0])}
+          y={0}
+          width={xScale(localBrushExtent[1]) - xScale(localBrushExtent[0])}
+          height={innerHeight}
+          fill={`url(#brushGradient-${id})`}
         />
+      )}
 
-        {localBrushExtent && (
-          <>
-            {westHandleInView && (
-              <G
-                transform={`translate(${Math.max(
-                  0,
-                  xScale(localBrushExtent[0])
-                )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
-              >
-                <G>
-                  <Handle
-                    color={westHandleColor}
-                    d={brushHandlePath(innerHeight)}
-                  />
-                  <HandleAccent d={brushHandleAccentPath()} />
-                </G>
+      <Handle
+        as="path"
+        d={brushHandlePath(innerHeight)}
+        fill={westHandleColor}
+        transform={`translate(${xScale(brushExtent[0]) - 8}, ${
+          innerHeight / 2
+        })`}
+      />
 
-                <LabelGroup
-                  transform={`translate(50,0), scale(${
-                    flipWestHandle ? "1" : "-1"
-                  }, 1)`}
-                  visible={showLabels || hovering}
-                >
-                  <TooltipBackground
-                    y="0"
-                    x="-30"
-                    height="30"
-                    width="60"
-                    rx="8"
-                  />
-                  <Tooltip
-                    transform="scale(-1, 1)"
-                    y="15"
-                    dominantBaseline="middle"
-                  >
-                    {brushLabelValue("w", localBrushExtent[0])}
-                  </Tooltip>
-                </LabelGroup>
-              </G>
-            )}
+      <HandleAccent
+        as="path"
+        d={brushHandlePath(innerHeight)}
+        fill={westHandleColor}
+        transform={`translate(${xScale(brushExtent[0]) - 8}, ${
+          innerHeight / 2
+        })`}
+        opacity={hovering ? 1 : 0}
+      />
 
-            {eastHandleInView && (
-              <G
-                transform={`translate(${xScale(
-                  localBrushExtent[1]
-                )}, 0), scale(${flipEastHandle ? "-1" : "1"}, 1)`}
-              >
-                <G>
-                  <Handle
-                    color={eastHandleColor}
-                    d={brushHandlePath(innerHeight)}
-                  />
-                  <HandleAccent d={brushHandleAccentPath()} />
-                </G>
+      <Handle
+        as="path"
+        d={brushHandlePath(innerHeight)}
+        fill={eastHandleColor}
+        transform={`translate(${xScale(brushExtent[1]) - 8}, ${
+          innerHeight / 2
+        })`}
+      />
 
-                <LabelGroup
-                  transform={`translate(50,0), scale(${
-                    flipEastHandle ? "-1" : "1"
-                  }, 1)`}
-                  visible={showLabels || hovering}
-                >
-                  <TooltipBackground
-                    y="0"
-                    x="-30"
-                    height="30"
-                    width="60"
-                    rx="8"
-                  />
-                  <Tooltip y="15" dominantBaseline="middle">
-                    {brushLabelValue("e", localBrushExtent[1])}
-                  </Tooltip>
-                </LabelGroup>
-              </G>
-            )}
+      <HandleAccent
+        as="path"
+        d={brushHandlePath(innerHeight)}
+        fill={eastHandleColor}
+        transform={`translate(${xScale(brushExtent[1]) - 8}, ${
+          innerHeight / 2
+        })`}
+        opacity={hovering ? 1 : 0}
+      />
 
-            {showWestArrow && <OffScreenHandle color={westHandleColor} />}
+      {showLabels && localBrushExtent && (
+        <LabelGroup
+          d="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          position="absolute"
+          left={`${xScale(localBrushExtent[0]) - 50}px`}
+          top={`${innerHeight / 2}px`}
+        >
+          <TooltipBackground
+            d="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg="gray.700"
+            color="white"
+            py={1}
+            px={2}
+            borderRadius="md"
+          >
+            {brushLabelValue("w", localBrushExtent[0])}
+          </TooltipBackground>
+        </LabelGroup>
+      )}
 
-            {showEastArrow && (
-              <G transform={`translate(${innerWidth}, 0) scale(-1, 1)`}>
-                <OffScreenHandle color={eastHandleColor} />
-              </G>
-            )}
-          </>
-        )}
-      </>
-    ),
-    [
-      brushLabelValue,
-      eastHandleColor,
-      eastHandleInView,
-      flipEastHandle,
-      flipWestHandle,
-      hovering,
-      id,
-      innerHeight,
-      innerWidth,
-      localBrushExtent,
-      showEastArrow,
-      showLabels,
-      showWestArrow,
-      westHandleColor,
-      westHandleInView,
-      xScale,
-    ]
+      {showLabels && localBrushExtent && (
+        <LabelGroup
+          d="flex"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          position="absolute"
+          left={`${xScale(localBrushExtent[1]) - 50}px`}
+          top={`${innerHeight / 2}px`}
+        >
+          <TooltipBackground
+            d="flex"
+            alignItems="center"
+            justifyContent="center"
+            bg="gray.700"
+            color="white"
+            py={1}
+            px={2}
+            borderRadius="md"
+          >
+            {brushLabelValue("e", localBrushExtent[1])}
+          </TooltipBackground>
+        </LabelGroup>
+      )}
+
+      {localBrushExtent && (
+        <rect
+          x={xScale(localBrushExtent[0])}
+          y={0}
+          width={xScale(localBrushExtent[1]) - xScale(localBrushExtent[0])}
+          height={innerHeight}
+          fill="transparent"
+          onMouseEnter={() => {
+            if (!showLabels) setShowLabels(true);
+            setHovering(true);
+          }}
+          onMouseLeave={() => setHovering(false)}
+        />
+      )}
+
+      {showLabels && (
+        <rect
+          x={xScale(brushExtent[0]) - FLIP_HANDLE_THRESHOLD_PX}
+          y={0}
+          width={FLIP_HANDLE_THRESHOLD_PX}
+          height={innerHeight}
+          fill="transparent"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+          onMouseDown={() => {
+            if (brushBehavior.current) {
+              brushBehavior.current.move(brushRef.current, [
+                brushExtent[1],
+                brushExtent[1],
+              ]);
+            }
+          }}
+        />
+      )}
+
+      {showLabels && (
+        <rect
+          x={xScale(brushExtent[1])}
+          y={0}
+          width={FLIP_HANDLE_THRESHOLD_PX}
+          height={innerHeight}
+          fill="transparent"
+          onMouseEnter={() => setHovering(true)}
+          onMouseLeave={() => setHovering(false)}
+          onMouseDown={() => {
+            if (brushBehavior.current) {
+              brushBehavior.current.move(brushRef.current, [
+                brushExtent[0],
+                brushExtent[0],
+              ]);
+            }
+          }}
+        />
+      )}
+    </g>
   );
 };
 

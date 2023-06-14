@@ -1,3 +1,6 @@
+import { FeeAmount } from '@uniswap/v3-sdk';
+
+import { Currency, Price, Token } from "@uniswap/sdk-core";
 import { Bound } from './actions'
 
 export interface ChartEntry {

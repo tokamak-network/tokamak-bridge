@@ -21,6 +21,15 @@ interface ZoomProps {
   zoomLevels: { min: number; max: number };
 }
 
+export const ZoomOverlay = () => (
+  <Box
+    as="rect"
+    fill="transparent"
+    cursor="grab"
+    _active={{ cursor: "grabbing" }}
+  />
+);
+
 const Zoom: React.FC<ZoomProps> = ({
   svg,
   xScale,

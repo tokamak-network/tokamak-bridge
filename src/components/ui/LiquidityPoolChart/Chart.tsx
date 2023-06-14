@@ -5,10 +5,13 @@ import { Bound } from "./actions";
 
 import { Area } from "./Area";
 import { AxisBottom } from "./AxisBottom";
-import { Brush } from "./Brush";
-import { Line } from "./Line";
+import Brush from "./Brush";
+import Line from "./Line";
 import { ChartEntry, LiquidityChartRangeInputProps } from "./types";
 import Zoom, { ZoomOverlay } from "./Zoom";
+
+import { Currency, Price, Token } from "@uniswap/sdk-core";
+import { FeeAmount } from "@uniswap/v3-sdk";
 
 const xAccessor = (d: ChartEntry) => d.price0;
 const yAccessor = (d: ChartEntry) => d.activeLiquidity;
@@ -159,9 +162,9 @@ export function Chart({
               <AxisBottom xScale={xScale} innerHeight={innerHeight} />
             </g>
 
-            <ZoomOverlay width={innerWidth} height={height} ref={zoomRef} />
+            {/* <ZoomOverlay width={innerWidth} height={height} ref={zoomRef} /> */}
 
-            <Brush
+            {/* <Brush
               id={id}
               xScale={xScale}
               interactive={interactive}
@@ -172,7 +175,7 @@ export function Chart({
               setBrushExtent={onBrushDomainChange}
               westHandleColor={styles.brush.handle.west}
               eastHandleColor={styles.brush.handle.east}
-            />
+            /> */}
           </g>
         </Box>
       </Box>
