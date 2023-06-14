@@ -96,9 +96,6 @@ export function useAllowance() {
 
   const callApprove = useCallback(() => {}, [approved]);
 
-  console.log("-approved");
-  console.log(approved);
-
   return { approved };
 }
 
@@ -110,7 +107,6 @@ export function useApprove() {
   const { mode } = useGetMode();
   const { approved } = useAllowance();
   const { inToken } = useInOutTokens();
-  const { provider } = useProvier();
 
   const isApproved = useMemo(() => {
     if (approved) {
@@ -127,13 +123,11 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  console.log(isApproved);
-
-  // const { write } = useContractWrite({
-  //   address: inToken?.tokenAddress as `0x${string}`,
-  //   abi: TON_ABI.abi,
-  //   functionName: "increaseAllowance",
-  // });
+  const { write } = useContractWrite({
+    address: inToken?.tokenAddress as `0x${string}`,
+    abi: TON_ABI.abi,
+    functionName: "increaseAllowance",
+  });
   const { data: totalSupply } = useContractRead({
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
@@ -143,45 +137,23 @@ export function useApprove() {
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();
   const { address } = useAccount();
-  const { config, error, isError } = usePrepareErc20Approve({
-    address:
-      mode === "Deposit"
-        ? L1BRIDGE_CONTRACT
-        : mode === "Withdraw"
-        ? L2BRIDGE_CONTRACT
-        : UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
-    args:
-      address && totalSupply
-        ? [address as `0x${string}`, totalSupply as bigint]
-        : undefined,
-    enabled: Boolean(address && totalSupply),
-  });
-  const { data, write } = useErc20Approve(config);
-
-  console.log("error, isError");
-  console.log(error, isError);
 
   const callApprove = useCallback(async () => {
     try {
       if (totalSupply) {
         switch (mode) {
           case "Deposit":
-            return write?.();
-          // return write({
-          //   args: [L1BRIDGE_CONTRACT, totalSupply],
-          // });
-          // case "Withdraw":
-          //   return write({
-          //     args: [L2BRIDGE_CONTRACT, totalSupply],
-          //   });
-          // case "Swap":
-          //   return write({
-          //     args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
-          //   });
-          // return TOKEN_CONTRACT.increaseAllowance(
-          //     SwapperV2Proxy,
-          //     totalSupply
-          // );;
+            return write({
+              args: [L1BRIDGE_CONTRACT, totalSupply],
+            });
+          case "Withdraw":
+            return write({
+              args: [L2BRIDGE_CONTRACT, totalSupply],
+            });
+          case "Swap":
+            return write({
+              args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
+            });
           default:
             break;
         }
