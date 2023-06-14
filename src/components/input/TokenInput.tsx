@@ -9,8 +9,12 @@ import { ethers } from "ethers";
 import { useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 
-export default function TokenInput(props: { inToken: boolean; style?: {} }) {
-  const { inToken, style } = props;
+export default function TokenInput(props: {
+  inToken: boolean;
+  style?: {};
+  inputKey: string;
+}) {
+  const { inToken, style, inputKey } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -115,7 +119,9 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           fontSize={28}
           fontWeight={700}
           value={
-            selectedInToken !== null && selectedInToken?.parsedAmount !== null
+            selectedInToken !== null &&
+            selectedInToken?.parsedAmount !== null &&
+            inputKey === "in" // Check if this input is the "in" token
               ? String(selectedInToken?.parsedAmount)
               : undefined
           }
@@ -130,13 +136,30 @@ export default function TokenInput(props: { inToken: boolean; style?: {} }) {
           _hover={{}}
           _active={{}}
           mt={"3px"}
+          visibility={
+            (inputKey === "in" && selectedInToken?.parsedAmount) ||
+            (inputKey === "out" && selectedOutToken?.parsedAmount)
+              ? "visible"
+              : "hidden"
+          }
           onClick={() => onMax()}
         >
           Max
         </Button>
       </Flex>
       <Flex w={"100%"} justifyContent={"flex-start"}>
-        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+        <Text
+          fontSize={13}
+          fontWeight={500}
+          color={"#ffffff"}
+          opacity={0.8}
+          visibility={
+            (inputKey === "in" && selectedInToken?.parsedAmount) ||
+            (inputKey === "out" && selectedOutToken?.parsedAmount)
+              ? "visible"
+              : "hidden"
+          }
+        >
           $0.00
         </Text>
       </Flex>

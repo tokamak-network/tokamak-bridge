@@ -33,7 +33,7 @@ export default function PoolInfo(props: PoolCardDetail) {
   return (
     <Flex w={"424px"} flexDir="column">
       <Link href="/pools">
-        <Flex mb={"10px"} top={128} w="100%">
+        <Flex mb={"10px"} w="100%">
           <Image src={BackIcon} alt="Back" />
           <Text fontSize="28px" fontWeight="normal" ml={"14px"}>
             Liquidity Info
@@ -44,9 +44,9 @@ export default function PoolInfo(props: PoolCardDetail) {
         flexDir="column"
         border="3px solid #383736"
         w="424px"
-        h="669px"
         p={"20px"}
         borderRadius={"16px"}
+        flexGrow={1}
       >
         <Flex>
           <Flex alignItems={"center"}>
@@ -56,10 +56,8 @@ export default function PoolInfo(props: PoolCardDetail) {
               network="Ethereum"
             />
             <Text fontWeight="bold" fontSize="23px">
-              {/* {props.in.symbol} / {props.out.symbol} */}
               ETH / USDC
             </Text>
-            {/* <Text fontSize={"12px"}>{props.slippage}</Text> */}
             <Flex bgColor={"#1F2128"} borderRadius={8} p={1} ml={2}>
               <Text fontSize={"12px"} as="b">
                 {"0.30%"}
@@ -104,6 +102,7 @@ export default function PoolInfo(props: PoolCardDetail) {
           justifyContent={"space-between"}
           alignItems={"center"}
           textAlign={"center"}
+          flexGrow={1}
         >
           <Flex>
             <PriceRange
@@ -114,6 +113,7 @@ export default function PoolInfo(props: PoolCardDetail) {
               maxPrice={772.84}
               currentPrice={772.84}
               inRange={true}
+              w="100%"
             />
           </Flex>
         </Flex>

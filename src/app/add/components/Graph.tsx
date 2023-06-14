@@ -69,21 +69,8 @@ export default function Graph() {
         <Text mb={"16px"} fontSize={12}>
           Current Price: 1541.8 USDC per ETH
         </Text>
-        <Box w={"384px"} h={"184px"} border="1px solid #313442">
-          <Line data={data} />
-        </Box>
       </Flex>
-      <Range
-        values={[min, max]}
-        min={0}
-        max={100}
-        onChange={handleRangeChange}
-        onFinalChange={handleRangeChange}
-        // @ts-ignore
-        renderThumb={() => null}
-        // @ts-ignore
-        renderTrack={() => null}
-      />
+
       <Flex h={"17px"}></Flex>
     </>
   );

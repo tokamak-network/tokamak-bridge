@@ -1,0 +1,164 @@
+"use client";
+import { Flex, Text, Box } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/react";
+import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
+import { PoolCardDetail } from "@/types/pool";
+import Link from "next/link";
+import Image from "next/image";
+import BackIcon from "@/assets/icons/back.svg";
+import SettingsIcon from "@/assets/icons/setting.svg";
+import PriceRange from "../../components/ui/PriceRange";
+import TierSelector from "../add/components/TierSelector";
+import OutTokenSelector from "../add/components/OutTokenSelector";
+import InTokenSelector from "../add/components/InTokenSelector";
+import InputComponent from "../add/components/NumberInput";
+import TokenInput from "../../components/input/TokenInput";
+import addIcon from "@/assets/icons/addIcon.svg";
+import TokenCard from "../../components/card/TokenCard";
+import { useRecoilValue } from "recoil";
+import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
+
+export default function IncreaseLiquidity(props: PoolCardDetail) {
+  const inTokenInfo = useRecoilValue(selectedInTokenStatus);
+  return (
+    <Flex
+      flexDir="column"
+      w="404px"
+      h="477px"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Flex
+        flexDir="column"
+        mb={"10px"}
+        w="100%"
+        bgColor="#0F0F12"
+        zIndex={3}
+        top={128}
+      >
+        <Flex>
+          <Link href="/pools">
+            <Flex mr="107px">
+              <Image src={BackIcon} alt="Back" />
+              <Text fontSize="28px" fontWeight="normal" ml={"14px"}>
+                Remove Liquidity
+              </Text>
+            </Flex>
+          </Link>
+          <Flex alignItems="center">
+            <Image width={18} height={18} src={SettingsIcon} alt="Settings" />
+          </Flex>
+        </Flex>
+      </Flex>
+      <Flex
+        border="1px solid #20212B"
+        h="588px"
+        borderRadius={"16px"}
+        alignItems="center"
+        textAlign="center"
+        cursor={"pointer"}
+      >
+        <Flex w="404px" justifyContent={"center"} p={"20px"} flexDir={"column"}>
+          <Flex
+            flexDir="column"
+            border="3px solid #383736"
+            w="364px"
+            h="218px"
+            paddingTop={"12px"}
+            paddingBottom={"22px"}
+            paddingLeft={"16px"}
+            paddingRight={"16px"}
+            borderRadius={"16px"}
+          >
+            <Flex mb={"12px"}>
+              <Flex alignItems={"center"}>
+                <Text fontWeight="bold" fontSize="23px">
+                  {/* {props.in.symbol} / {props.out.symbol} */}
+                  ETH / USDC
+                </Text>
+                {/* <Text fontSize={"12px"}>{props.slippage}</Text> */}
+                <Flex bgColor={"#1F2128"} borderRadius={8} p={1} ml={2}>
+                  <Text fontSize={"12px"} as="b">
+                    {"0.30%"}
+                  </Text>
+                </Flex>
+              </Flex>
+              <Flex alignItems={"center"} justifyContent={"center"}>
+                {props.range === false ? (
+                  <>
+                    <Box
+                      w="6px"
+                      h="6px"
+                      borderRadius="50%"
+                      bg="#DD3A44"
+                      mr="6px"
+                      ml="20px"
+                    />
+                    <Text fontSize="14px" fontWeight="600" color="#DD3A44">
+                      Out of Range
+                    </Text>
+                  </>
+                ) : (
+                  <>
+                    <Box
+                      w="6px"
+                      h="6px"
+                      borderRadius="50%"
+                      bg="#00EE98"
+                      mr="6px"
+                      ml="61px"
+                    />
+                    <Text fontSize="14px" fontWeight="600" color="#00EE98">
+                      In Range
+                    </Text>
+                  </>
+                )}
+              </Flex>
+            </Flex>
+
+            <Flex
+              alignItems="center"
+              textAlign="center"
+              left="20px"
+              justifyContent={"center"}
+              mb={"16px"}
+            >
+              <TokenSymbolPair
+                tokenType1={"ETH"}
+                tokenType2={"USDC"}
+                network="Ethereum"
+                w={64}
+                h={64}
+                w2={20}
+                h2={20}
+                groupWidth={64}
+              />
+            </Flex>
+            <Flex direction="column" fontSize={"16px"} line-height={"20px"}>
+              <Flex justifyContent="space-between" alignItems="center">
+                <Text fontWeight="bold">ETH</Text>
+                <Text marginLeft="2">0.001403</Text>
+              </Flex>
+              <Flex justifyContent="space-between" alignItems="center">
+                <Text fontWeight="bold">USDC</Text>
+                <Text marginLeft="2">0.001403</Text>
+              </Flex>
+            </Flex>
+          </Flex>
+          {/* TODO: change width to 364px */}
+          <Flex mt={"20px"}>
+            <PriceRange
+              title="Selected Range"
+              inToken="ETH"
+              outToken="USDC"
+              minPrice={772.84}
+              maxPrice={772.84}
+              currentPrice={772.84}
+              inRange={true}
+            />
+          </Flex>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+}

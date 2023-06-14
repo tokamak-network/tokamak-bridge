@@ -9,6 +9,7 @@ type PriceRangeProps = {
   maxPrice: number;
   currentPrice: number;
   inRange: boolean;
+  w?: string;
 };
 
 export default function PriceRange(props: PriceRangeProps) {
@@ -20,12 +21,18 @@ export default function PriceRange(props: PriceRangeProps) {
     maxPrice,
     currentPrice,
     inRange,
+    w,
   } = props;
   return (
-    <Flex w="384px" flexDir={"column"}>
+    <Flex
+      w="w ? w : 384px"
+      flexDir={"column"}
+      flex={1}
+      justifyContent={"center"}
+    >
       <Flex justifyContent={"space-between"} mb={"8px"}>
         <Flex justifyContent={"start"}>{title}</Flex>
-        <Flex justifyContent={"end"}>
+        <Flex justifyContent={"end"} pr="10px">
           {inRange === false ? (
             <Text color="#DD3A44" fontSize={"11px"}>
               Your position is not currently earning fees.
@@ -60,7 +67,7 @@ export default function PriceRange(props: PriceRangeProps) {
             border={true}
           />
         </Flex>
-        <Flex>
+        <Flex mt="10px">
           <PriceInput
             isInputChange={false}
             value={currentPrice}

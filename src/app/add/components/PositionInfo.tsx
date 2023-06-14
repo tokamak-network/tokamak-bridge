@@ -3,9 +3,9 @@ import Image from "next/image";
 import PositionIcon from "@/assets/icons/position.svg";
 
 type PositionInfoProps = {
-  currentPrice: number;
-  inToken: string;
-  outToken: string;
+  currentPrice?: number;
+  inToken?: string;
+  outToken?: string;
 };
 
 export default function PositionInfo(props: PositionInfoProps) {
@@ -23,7 +23,7 @@ export default function PositionInfo(props: PositionInfoProps) {
         )}
         <Flex
           w={"384px"}
-          h={"140px"}
+          h={currentPrice ? "140px" : "190px"}
           flexDir={"column"}
           textAlign={"center"}
           alignItems={"center"}

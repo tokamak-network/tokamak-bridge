@@ -5,6 +5,7 @@ import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
+import TokenInputWarning from "./TokenInputWarn";
 
 export default function InTokenSelector() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
@@ -12,13 +13,7 @@ export default function InTokenSelector() {
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
-      <Box
-        w={"186px"}
-        h={"242px"}
-        mt={"12px"}
-        mb={"16px"}
-        onClick={onOpenInToken}
-      >
+      <Box w={"186px"} h={"242px"} mt={"12px"} onClick={onOpenInToken}>
         {inTokenInfo?.tokenName ? (
           <TokenCard
             tokenInfo={inTokenInfo}
@@ -39,6 +34,12 @@ export default function InTokenSelector() {
           </Box>
         )}
       </Box>
+      <Flex mt="-10px">
+        <TokenInput inToken={true} inputKey="in" />
+      </Flex>
+      {/* <Flex mt="-18px">
+        <TokenInputWarning hasPool={true} invalidPriceRange={true} />
+      </Flex> */}
     </Flex>
   );
 }

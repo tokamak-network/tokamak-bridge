@@ -76,7 +76,7 @@ export default function PriceInput(props: NumberInputProps) {
     >
       <Flex flexDir="column" justifyContent={"center"} placeContent={"center"}>
         {toolTip ? (
-          <Flex>
+          <Flex justifyContent={"center"}>
             <Text fontSize={"12px"}>{titleText}</Text>
             <Tooltip label={toolTipLabel}>
               <Image src={tooltipIcon} alt={"TooltipIcon"} />
