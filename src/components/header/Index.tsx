@@ -6,6 +6,7 @@ import UserMenu from "./UserMenu";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
+import Link from "next/link";
 
 const menuList = [
   {

@@ -12,7 +12,7 @@ export default function useTokenBalance(
   const { data: blockNumber } = useBlockNumber({ watch: true });
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
-    token: isETH ? undefined : address ?? "0x",
+    token: isETH ? undefined : (address as "0x${string}") ?? "0x",
   });
 
   const tokenBalance = useMemo(() => {
