@@ -136,7 +136,6 @@ export function useApprove() {
 
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();
-  const { address } = useAccount();
 
   const callApprove = useCallback(async () => {
     try {

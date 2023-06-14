@@ -6,6 +6,7 @@ import { useRecoilValue } from "recoil";
 import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useMemo } from "react";
 
 export function useInOutTokens() {
   const inTokenRecoilValue = useRecoilValue(selectedInTokenStatus);
@@ -16,8 +17,8 @@ export function useInOutTokens() {
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
   );
 
-  const inToken =
-    inTokenRecoilValue && connectedChainId && chainName
+  const inToken = useMemo(() => {
+    return inTokenRecoilValue && connectedChainId && chainName
       ? {
           ...inTokenRecoilValue,
           token: new Token(
@@ -29,9 +30,10 @@ export function useInOutTokens() {
           ),
         }
       : null;
+  }, [inTokenRecoilValue, connectedChainId, chainName]);
 
-  const outToken =
-    outTokenRecoilValue && connectedChainId && chainName
+  const outToken = useMemo(() => {
+    return outTokenRecoilValue && connectedChainId && chainName
       ? {
           ...outTokenRecoilValue,
           token: new Token(
@@ -43,6 +45,7 @@ export function useInOutTokens() {
           ),
         }
       : null;
+  }, [outTokenRecoilValue, connectedChainId, chainName]);
 
   return { inToken, outToken };
 }

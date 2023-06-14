@@ -4,7 +4,6 @@ import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Qu
 import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
-import { SelectedToken, actionMode } from "@/recoil/bridgeSwap/atom";
 import {
   computePoolAddress,
   FeeAmount,
@@ -46,12 +45,9 @@ export function useAmountOut() {
   const [estimatedGas, setEstimatedGas] = useState<bigint | undefined>(
     undefined
   );
+  const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
 
-  const quoterContract = new ethers.Contract(
-    UNISWAP_CONTRACT.QUOTER_CONTRACT_ADDRESS,
-    Quoter.abi,
-    provider
-  );
+  const { QUOTER_CONTRACT } = useUniswapContracts();
 
   // const { write } = useContractWrite({
   //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
@@ -67,29 +63,33 @@ export function useAmountOut() {
         outToken?.address
       ) {
         const quotedAmountOut =
-          await quoterContract.callStatic.quoteExactInputSingle(
+          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
             inToken.token.address,
             outToken.token.address,
             FeeAmount.MEDIUM,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString(),
+            inToken.amountBN,
+            // fromReadableAmount(
+            //   Number(inToken.parsedAmount),
+            //   inToken.decimals
+            // ).toString(),
             0
           );
 
+        setAmountOutErr(false);
         return setAmountOut(
           toReadableAmount(quotedAmountOut, outToken.decimals)
         );
       }
+      setAmountOutErr(false);
       return setAmountOut(null);
     };
 
     getAmountOut().catch((e) => {
       console.log("**getAmountOut err**");
       console.log(e);
+      setAmountOutErr(true);
     });
-  }, [UNISWAP_CONTRACT, inToken, outToken, provider, mode]);
+  }, [inToken, outToken, QUOTER_CONTRACT]);
 
   useEffect(() => {
     const createTrade = async () => {
@@ -242,5 +242,5 @@ export function useAmountOut() {
     // });
   }, [trade, UNISWAP_CONTRACT, mode]);
 
-  return { amountOut, callTokenSwap, estimatedGas };
+  return { amountOut, callTokenSwap, estimatedGas, amountOutErr };
 }

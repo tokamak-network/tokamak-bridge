@@ -1,5 +1,6 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useInOutNetwork } from "@/hooks/network";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
@@ -38,6 +39,7 @@ export default function TokenInput(props: {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     //This token is inToken
     if (inToken && selectedInToken) {
+      console.log("go");
       const value: string = e.target.value;
       if (value === "") {
         return setSelectedInToken({
@@ -87,13 +89,13 @@ export default function TokenInput(props: {
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
       }
-      if (inToken === false && selectedOutToken) {
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: tokenData.data.balanceBN.value,
-          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-        });
-      }
+      // if (inToken === false && selectedOutToken) {
+      //   return setSelectedOutToken({
+      //     ...selectedOutToken,
+      //     amountBN: tokenData.data.balanceBN.value,
+      //     parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+      //   });
+      // }
       return console.error("a input field not founded");
     }
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);

@@ -5,7 +5,8 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "../token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
 import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
-import { useAmountOut } from "../swap/swapTokens";
+import { useAmountOut } from "../swap/useSwapTokens";
+import usePriceImpact from "../swap/usePriceImpact";
 
 export type DepositDetailProp = {
   title: string;
@@ -35,8 +36,10 @@ export type SwapDetailProp = {
   title:
     | "Expected output"
     | "Minimum received after slippage"
+    | "Price impact"
     | "Estimated gas fees";
-  content: string;
+
+  content: string | undefined;
   gasFee?: string;
   slippage?: string;
 };
@@ -106,6 +109,7 @@ export function useTransactionDetail() {
   }, [mode, inToken, totalGasFee, inputAmount]);
 
   const { amountOut } = useAmountOut();
+  const { priceImpact } = usePriceImpact();
 
   const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
     if (mode === "Swap" && inToken) {
@@ -118,6 +122,10 @@ export function useTransactionDetail() {
           title: "Minimum received after slippage",
           content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
           slippage: "0.1%",
+        },
+        {
+          title: "Price impact",
+          content: `${priceImpact}%`,
         },
         {
           title: "Estimated gas fees",
