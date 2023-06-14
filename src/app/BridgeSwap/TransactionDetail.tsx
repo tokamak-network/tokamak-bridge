@@ -316,7 +316,7 @@ const Title = (props: {
       >
         <Flex>
           <Text>
-            {inToken?.parsedAmount} {inToken?.tokenName}
+            {1} {inToken?.tokenName}
           </Text>
           <Text mx={"9px"}>=</Text>
           <Text>

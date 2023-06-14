@@ -46,6 +46,7 @@ export function useAmountOut() {
   const [estimatedGas, setEstimatedGas] = useState<bigint | undefined>(
     undefined
   );
+  const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
 
   const quoterContract = new ethers.Contract(
     UNISWAP_CONTRACT.QUOTER_CONTRACT_ADDRESS,
@@ -71,25 +72,29 @@ export function useAmountOut() {
             inToken.token.address,
             outToken.token.address,
             FeeAmount.MEDIUM,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString(),
+            inToken.amountBN,
+            // fromReadableAmount(
+            //   Number(inToken.parsedAmount),
+            //   inToken.decimals
+            // ).toString(),
             0
           );
 
+        setAmountOutErr(false);
         return setAmountOut(
           toReadableAmount(quotedAmountOut, outToken.decimals)
         );
       }
+      setAmountOutErr(false);
       return setAmountOut(null);
     };
 
     getAmountOut().catch((e) => {
       console.log("**getAmountOut err**");
       console.log(e);
+      setAmountOutErr(true);
     });
-  }, [UNISWAP_CONTRACT, inToken, outToken, provider, mode]);
+  }, [inToken]);
 
   useEffect(() => {
     const createTrade = async () => {
@@ -242,5 +247,5 @@ export function useAmountOut() {
     // });
   }, [trade, UNISWAP_CONTRACT, mode]);
 
-  return { amountOut, callTokenSwap, estimatedGas };
+  return { amountOut, callTokenSwap, estimatedGas, amountOutErr };
 }

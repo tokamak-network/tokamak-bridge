@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import {
   actionMode,
@@ -18,6 +18,7 @@ import { predeploys } from "@eth-optimism/contracts";
 import { useAmountOut } from "@/hooks/swap/swapTokens";
 import { useApprove } from "@/hooks/token/useApproval";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
@@ -25,10 +26,13 @@ export default function ActionButton() {
   const { mode, isReady } = useRecoilValue(actionMode);
   const { isApproved } = useApprove();
   const { isLoading } = useGetTransaction();
+  const { isNotSupportForSwap } = useBridgeSupport();
 
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
+
+  const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
   const { write: _depositETH } = useCallDeposit("depositETH");
   const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
@@ -37,7 +41,17 @@ export default function ActionButton() {
 
   const { callTokenSwap } = useAmountOut();
 
-  const isDisabled = !isReady || isApproved === false || isLoading;
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const disabled =
+        !isReady || isApproved === false || isLoading || isNotSupportForSwap;
+      setIsDisabled(disabled);
+    }, 200);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [!isReady || isApproved === false || isLoading || isNotSupportForSwap]);
 
   const onClick = useCallback(async () => {
     if (!isConnected) {

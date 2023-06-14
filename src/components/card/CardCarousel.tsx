@@ -154,68 +154,6 @@ export const CardCarrousel = () => {
               setIsHover={setIsHover}
             />
           );
-
-          // return (
-          //   <motion.div
-          //     key={`${index}_${tokenData.tokenName}`}
-          //     className={"motion-div"}
-          //     style={getTokenCardStyle(index, filteredTokenList.length - 1)}
-          //     transition={{ duration: 0.5 }}
-          //     initial={{ opacity: 0 }}
-          //     // whileHover={{
-          //     //   marginTop: "-60px",
-          //     // }}
-          //     animate={
-          //       waitCondition
-          //         ? waitControl
-          //         : index === 0
-          //         ? endLeftControl
-          //         : index === 1
-          //         ? sideLeftControl
-          //         : index === 2
-          //         ? centerControl
-          //         : index === 3
-          //         ? sideRightControl
-          //         : index === 4
-          //         ? endRightControl
-          //         : index === 5
-          //         ? outRightControl
-          //         : index === filteredTokenList.length - 1
-          //         ? outLeftControl
-          //         : waitControl
-          //     }
-          //     onMouseEnter={() => setIsHover(index)}
-          //     onMouseLeave={() => setIsHover(null)}
-          //     onClick={() =>
-          //       isInTokenOpen
-          //         ? setSelectedInToken({
-          //             ...tokenData,
-          //             amountBN: null,
-          //             parsedAmount: null,
-          //           })
-          //         : setSelectedOutToken({
-          //             ...tokenData,
-          //             amountBN: null,
-          //             parsedAmount: null,
-          //           })
-          //     }
-          //   >
-          //     <TokenCard
-          //       w={"100%"}
-          //       h={"100%"}
-          //       tokenInfo={tokenData}
-          //       inNetwork={true}
-          //       hasInput={false}
-          //       style={{
-          //         transition: "margin .5s ease-in-out",
-          //         //need to change mt property based on selectIndex
-          //         _hover: { marginTop: "-10" },
-          //         opacity:
-          //           isHover !== null ? (isHover === index ? 1 : 0.5) : 0.85,
-          //       }}
-          //     />
-          //   </motion.div>
-          // );
         })}
       </Flex>
       <Button

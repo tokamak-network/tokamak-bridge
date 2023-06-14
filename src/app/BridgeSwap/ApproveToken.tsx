@@ -1,5 +1,4 @@
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork from "@/hooks/network";
 import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -11,9 +10,10 @@ export default function ApproveToken() {
   const { isApproved, callApprove } = useApprove();
   const { isNotSupportForBridge } = useBridgeSupport();
 
-  if (isApproved || isNotSupportForBridge) {
+  if (isApproved || isNotSupportForBridge || !inToken) {
     return null;
   }
+
   return (
     <Flex
       w={"100%"}
