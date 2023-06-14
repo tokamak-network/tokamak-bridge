@@ -49,6 +49,7 @@ const SearchTokenComponent = () => {
         hasInput={true}
         inNetwork={false}
         style={{ marginTop: "12px" }}
+        onClick={onOpenOutToken}
       />
     );
   }

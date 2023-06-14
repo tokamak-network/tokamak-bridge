@@ -10,7 +10,7 @@ import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount, useSwitchNetwork } from "wagmi";
 import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
-import Select, { Props as SelectProps } from "react-select";
+import Select from "react-select";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
@@ -20,113 +20,95 @@ type SelectOption = SupportedChainProperties & {
   label: SupportedChainProperties["chainName"];
 };
 
-export default function NetworkDropdown(props: {
-  inNetwork: boolean;
-  width?: string;
-  height?: string;
-  innerWidth?: string;
-}) {
-  const { inNetwork, width, height, innerWidth } = props;
-  const [network, setNetwork] = useRecoilState(networkStatus);
-  const { connectedChainId } = useConnectedNetwork();
-  const { switchNetworkAsync, isError } = useSwitchNetwork();
+const customStyles = {
+  control: (styles: any) => ({
+    ...styles,
+    width: "200px",
+    maxHeight: "32px !important",
+    minHeight: "32px !important",
+    backgroundColor: "#1F2128",
+    cursor: "pointer",
+    color: "#fff",
+    border: "none",
+    borderRadius: "6px",
+  }),
+  menu: (styles: any) => ({
+    margin: "0px",
+    marginTop: "4px",
+    background: "#1F2128",
+    minWidth: "216px !important",
+    maxWidth: "216px !important",
+    borderRadius: "6px",
+    position: "absolute",
+    border: "1px solid #313442",
+    padding: "8px",
+    zIndex: Overlay_Index.AlwaysTop,
+  }),
+};
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  //for react-select from this line
-  const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
-    null
-  );
-  const selectRef = useRef(null);
+const ValueContainer = (props: {
+  selectedOption: SelectOption | null;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<SetStateAction<boolean>>;
+}) => {
+  const { selectedOption, isOpen, setIsOpen } = props;
 
-  const customStyles = {
-    control: (styles: any) => ({
-      ...styles,
-      width: width ? width : "200px",
-      maxHeight: height ? `${height} !important` : "32px !important",
-      minHeight: height ? `${height} !important` : "32px !important",
-      backgroundColor: "#1F2128",
-      cursor: "pointer",
-      color: "#fff",
-      border: "none",
-      borderRadius: "6px",
-    }),
-    menu: (styles: any) => ({
-      margin: "0px",
-      marginTop: "4px",
-      background: "#1F2128",
-      minWidth: innerWidth ? `${innerWidth} !important` : "216px !important",
-      maxWidth: innerWidth ? `${innerWidth}  !important` : "216px !important",
-      borderRadius: "6px",
-      position: "absolute",
-      border: "1px solid #313442",
-      padding: "8px",
-      zIndex: Overlay_Index.AlwaysTop,
-    }),
-  };
-
-  const optionsList = supportedChain.map((chainInfo) => {
-    return {
-      ...chainInfo,
-      value: chainInfo.chainId,
-      label: chainInfo.chainName,
-    };
-  });
-
-  const ValueContainer = (props: {
-    selectedOption: SelectOption | null;
-    isOpen: boolean;
-    setIsOpen: React.Dispatch<SetStateAction<boolean>>;
-  }) => {
-    const { selectedOption, isOpen, setIsOpen } = props;
-
-    if (selectedOption) {
-      return (
-        <Flex
-          w={innerWidth ? innerWidth : "200px"}
-          h={height ? height : "32px"}
-          color={"#fff"}
-          px={"8px"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          fontSize={14}
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          <Flex columnGap={"6px"}>
-            <Box w={"20px"} h={"20px"}>
-              <Image
-                src={selectedOption.networkImage}
-                alt={selectedOption.chainName}
-              />
-            </Box>
-            <Text>{selectedOption.label}</Text>
-          </Flex>
-          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-        </Flex>
-      );
-    }
+  if (selectedOption) {
     return (
       <Flex
-        w={innerWidth ? innerWidth : "200px"}
-        h={height ? height : "32px"}
+        w={"200px"}
+        h={"32px"}
         color={"#fff"}
         px={"8px"}
         justifyContent={"space-between"}
         alignItems={"center"}
         fontSize={14}
-        onClick={() => setIsOpen(true)}
+        onClick={() => setIsOpen(!isOpen)}
       >
         <Flex columnGap={"6px"}>
           <Box w={"20px"} h={"20px"}>
-            <Image src={NetworkCircle} alt={"NetworkCircle"} />
+            <Image
+              src={selectedOption.networkImage}
+              alt={selectedOption.chainName}
+            />
           </Box>
-          <Text>Select Network</Text>
+          <Text>{selectedOption.label}</Text>
         </Flex>
-        <Box w={"10px"} h={"10px"}>
-          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-        </Box>
+        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
       </Flex>
     );
-  };
+  }
+  return (
+    <Flex
+      w={"200px"}
+      h={"32px"}
+      color={"#fff"}
+      px={"8px"}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      fontSize={14}
+      onClick={() => setIsOpen(true)}
+    >
+      <Flex columnGap={"6px"}>
+        <Box w={"20px"} h={"20px"}>
+          <Image src={NetworkCircle} alt={"NetworkCircle"} />
+        </Box>
+        <Text>Select Network</Text>
+      </Flex>
+      <Box w={"10px"} h={"10px"}>
+        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+      </Box>
+    </Flex>
+  );
+};
+
+export default function NetworkDropdown(props: { inNetwork: boolean }) {
+  const { inNetwork } = props;
+  const [network, setNetwork] = useRecoilState(networkStatus);
+  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { switchNetworkAsync, isError } = useSwitchNetwork();
+
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onChange = async (data: SupportedChainProperties) => {
     try {
@@ -166,6 +148,11 @@ export default function NetworkDropdown(props: {
     }
   }, [connectedChainId]);
 
+  //for react-select from this line
+  const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
+    null
+  );
+
   const selectedOutOption = useMemo(() => {
     if (network && network?.outNetwork) {
       const { outNetwork } = network;
@@ -178,15 +165,17 @@ export default function NetworkDropdown(props: {
     return null;
   }, [network]);
 
+  const selectRef = useRef(null);
+
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
 
-    if (data.chainName === "TOKAMAK_MAINNET") {
+    if (data.layer === "L2") {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
           <Flex
-            w={innerWidth ? innerWidth : "200px"}
-            h={height ? "0px" : "32px"}
+            w={"200px"}
+            h={"12px"}
             alignItems={"center"}
             justifyContent={"space-around"}
             color={"#757893"}
@@ -196,10 +185,8 @@ export default function NetworkDropdown(props: {
             <Box w={"49px"} h={"1px"} bgColor={"#757893"} />
           </Flex>
           <Flex
-            // w={width ? width : "200px"}
-            // h={height ? height : "32px"}
-            w="392px"
-            h="48px"
+            w={"200px"}
+            h={"32px"}
             color={"#fff"}
             px={"8px"}
             justifyContent={"space-between"}
@@ -216,9 +203,9 @@ export default function NetworkDropdown(props: {
               </Box>
               <Text>{data.label}</Text>
             </Flex>
-            <Box w={"10px"} h={"10px"}>
-              {/* <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} /> */}
-            </Box>
+            {/* <Box w={"10px"} h={"10px"}>
+              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+            </Box> */}
           </Flex>
         </Flex>
       );
@@ -226,8 +213,8 @@ export default function NetworkDropdown(props: {
 
     return (
       <Flex
-        w={width ? "384px" : "200px"}
-        h={height ? height : "32px"}
+        w={"200px"}
+        h={"32px"}
         color={"#fff"}
         px={"8px"}
         justifyContent={"space-between"}
@@ -235,7 +222,6 @@ export default function NetworkDropdown(props: {
         fontSize={14}
         cursor={"pointer"}
         bgColor={"#1F2128"}
-        borderRadius="6px"
         _hover={{ bgColor: "#313442" }}
         onClick={() => onChange(data)}
       >
@@ -245,22 +231,60 @@ export default function NetworkDropdown(props: {
           </Box>
           <Text>{data.label}</Text>
         </Flex>
-        <Box w={"10px"} h={"10px"}>
-          {/* <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} /> */}
-        </Box>
+        {/* <Box w={"10px"} h={"10px"}>
+          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        </Box> */}
       </Flex>
     );
   };
+
+  // useEffect(() => {
+  //   const handleClickOutside = () => {
+  //     if (isOpen === true) {
+  //       console.log(isOpen);
+
+  //       setIsOpen(false);
+  //     }
+  //   };
+
+  //   document.addEventListener("mousedown", handleClickOutside);
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [isOpen]);
+
+  const optionsList = supportedChain
+    .filter((chainInfo) => {
+      if (
+        isConnectedToMainNetwork === true ||
+        isConnectedToMainNetwork === undefined
+      ) {
+        return [
+          SupportedChainId["MAINNET"],
+          SupportedChainId["TOKAMAK_MAINNET"],
+        ].includes(chainInfo.chainId);
+      }
+      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+        chainInfo.chainId
+      );
+    })
+    .map((chainInfo) => {
+      return {
+        ...chainInfo,
+        value: chainInfo.chainId,
+        label: chainInfo.chainName,
+      };
+    });
 
   return (
     <Select
       ref={selectRef}
       options={optionsList}
       menuIsOpen={isOpen}
-      onMenuOpen={() => setIsOpen(true)}
-      onMenuClose={() => {
-        setIsOpen(false);
-      }}
+      // onMenuOpen={() => {}}
+      // onMenuClose={() => {}}
+      // onMenuClose={() => {}}
       components={{
         Option: CustomOption,
         ValueContainer: () => (

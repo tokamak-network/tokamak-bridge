@@ -22,15 +22,17 @@ export type TokenInfo = {
   isNativeCurrency: SupportedChainId[] | null;
 };
 
+export const WETH_ADDRESSES = ["0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"];
+
 export type SupportedTokens_T = TokenInfo[];
 export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "ETH",
     address: {
       MAINNET: "0x",
-      GOERLI: "0x",
-      TOKAMAK_MAINNET: null,
-      TITAN: null,
+      GOERLI: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+      TOKAMAK_MAINNET: "0x",
+      DARIUS: "0x",
     },
     decimals: 18,
     isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
@@ -41,13 +43,14 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.TON_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.TON_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
     },
     decimals: 18,
-    isNativeCurrency: [
-      SupportedChainId.TOKAMAK_MAINNET,
-      SupportedChainId.TITAN,
-    ],
+    isNativeCurrency: null,
+    // isNativeCurrency: [
+    //   SupportedChainId.TOKAMAK_MAINNET,
+    //   SupportedChainId.DARIUS,
+    // ],
   },
   {
     tokenName: "WTON",
@@ -55,7 +58,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.WTON_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.WTON_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.WTON_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.WTON_ADDRESS,
     },
     decimals: 27,
     isNativeCurrency: null,
@@ -67,7 +70,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.TOS_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.TOS_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -78,7 +81,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.DOC_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.DOC_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.DOC_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.DOC_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -89,7 +92,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.AURA_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.AURA_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.AURA_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.AURA_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -100,7 +103,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.LYDA_ADDRESS,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.LYDA_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.LYDA_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.LYDA_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -111,7 +114,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: null,
       GOERLI: null,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.USDC_ADDRESS,
-      TITAN: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
     },
     decimals: 6,
     isNativeCurrency: null,

@@ -9,31 +9,15 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import CustomTooltip from "components/tooltip/CustomTooltip";
-import useTransactionDetail from "@/hooks/bridge/useTransactionDetails";
-
-type DepositDetailProp = {
-  title: string;
-  content: string;
-  tooltip?: boolean;
-  tooltipLabel?: string;
-  dollorPrice?: string;
-  gasFee?: {
-    l1Gas: string;
-    l2Gas: string;
-  };
-};
-
-type WithdrawDetailProp = {
-  title: string;
-  content: string;
-  tooltip?: boolean;
-  tooltipLabel?: string;
-  dollorPrice?: string;
-  gasFee?: {
-    l1Gas: { eth: string; ton: string };
-    l2Gas: { eth: string; ton: string };
-  };
-};
+import Swap from "./Swap";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import {
+  DepositDetailProp,
+  SwapDetailProp,
+  WithdrawDetailProp,
+  useTransactionDetail,
+} from "@/hooks/transactionDetail/useTransactionDetail";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -178,49 +162,8 @@ const Content = (props: { isExpanded: boolean }) => {
   const { isExpanded } = props;
   const { mode } = useRecoilValue(actionMode);
 
-  const depositPropsData: DepositDetailProp[] = [
-    {
-      title: "Amount to Deposit",
-      content: "~0.0022 ETH",
-      tooltip: true,
-      tooltipLabel: "0.00221110000002 ETH",
-    },
-    {
-      title: "Estimated gas fees",
-      content: "~0.0022 ETH",
-      gasFee: {
-        l1Gas: "0.0022 ETH",
-        l2Gas: "0.0022 ETH",
-      },
-      tooltip: true,
-      tooltipLabel: "0.00221110000002 ETH",
-    },
-    {
-      title: "Time to Deposit",
-      content: "~20 minutes",
-    },
-  ];
-
-  const withdrawPropsData: WithdrawDetailProp[] = [
-    {
-      title: "Amount to Withdraw",
-      content: "~0.0022 ETH",
-      tooltip: true,
-      tooltipLabel: "0.00221110000002 ETH",
-    },
-    {
-      title: "Estimated gas fees",
-      content: "~0.0022 ETH",
-      gasFee: {
-        l1Gas: { eth: "0.0022 ETH", ton: "0.0022 TON" },
-        l2Gas: { eth: "0.0022 ETH", ton: "0.0022 TON" },
-      },
-    },
-    {
-      title: "Time to Withdraw",
-      content: "approximately 7 days",
-    },
-  ];
+  const { depositPropsData, withdrawPropsData, swapPropsData } =
+    useTransactionDetail();
 
   const detailRow = useMemo(() => {
     switch (mode) {
@@ -233,11 +176,13 @@ const Content = (props: { isExpanded: boolean }) => {
           <WithdrawDetailRow {...data}></WithdrawDetailRow>
         ));
       case "Swap":
-        return null;
+        return swapPropsData?.map((data) => (
+          <SwapDetailRow key={data.title} {...data} />
+        ));
       default:
         return <>{`component not founded :(`}</>;
     }
-  }, [mode]);
+  }, [mode, depositPropsData, withdrawPropsData, swapPropsData]);
 
   if (isExpanded) {
     return (
@@ -273,7 +218,7 @@ const Title = (props: {
   const { isExpanded, setIsExpended } = props;
   const { mode } = useRecoilValue(actionMode);
   const { inNetwork, outNetwork } = useInOutNetwork();
-  const { l1GasCost, l2GasCost } = useTransactionDetail();
+  const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
 
   useEffect(() => {
@@ -315,6 +260,35 @@ const Title = (props: {
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
           </motion.div>
         </Flex>
+      </Flex>
+    );
+  }
+
+  if (mode === "Swap") {
+    return (
+      <Flex
+        w={"100%"}
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        cursor={"pointer"}
+        onClick={() => setIsExpended(!isExpanded)}
+        fontSize={14}
+      >
+        <Flex>
+          <Text>
+            {inToken?.parsedAmount} {inToken?.tokenName}
+          </Text>
+          <Text mx={"9px"}>=</Text>
+          <Text>
+            {outToken?.parsedAmount} {outToken?.tokenName}
+          </Text>
+          <Text color={"#A0A3AD"} ml={"4px"}>
+            ($1.000)
+          </Text>
+        </Flex>
+        <motion.div animate={arrowControl}>
+          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        </motion.div>
       </Flex>
     );
   }

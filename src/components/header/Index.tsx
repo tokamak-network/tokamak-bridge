@@ -4,7 +4,8 @@ import Network from "./Network";
 import Account from "./Account";
 import UserMenu from "./UserMenu";
 import { usePathname } from "next/navigation";
-import Link from "next/link";
+import Image from "next/image";
+import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 
 const menuList = [
   {
@@ -47,12 +48,7 @@ export default function Header() {
     >
       <Flex columnGap={"35px"}>
         <Box>
-          <Box
-            w={"36px"}
-            h={"36px"}
-            bgColor={"#2A72E5"}
-            borderRadius={"100%"}
-          />
+          <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
         </Box>
         <Flex columnGap={"30px"}>
           {menuList.map((menuInfo) => (

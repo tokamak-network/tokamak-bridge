@@ -15,7 +15,7 @@ export default function CustomTooltip(props: {
       label={
         <Box
           flex={1}
-          w={"126px"}
+          px={"8px"}
           h={"28px"}
           bgColor={"#383A49"}
           borderRadius={"4px"}
