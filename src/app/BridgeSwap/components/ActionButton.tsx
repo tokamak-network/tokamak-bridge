@@ -22,11 +22,15 @@ import { predeploys } from "@eth-optimism/contracts";
 
 import { ethers } from "ethers";
 import { useTotalGas } from "@/hooks/contracts/useL2Provider";
+import { useAmountOut } from "@/hooks/swap/swapTokens";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export default function ActionButton() {
   const { isConnected, status } = useAccount();
   const { connectToWallet } = useConnectWallet();
   const { mode, isReady } = useRecoilValue(actionMode);
+  const { isApproved } = useApprove();
+
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
   const network = useRecoilValue(networkStatus);
@@ -36,7 +40,9 @@ export default function ActionButton() {
   const { write: _withdraw, contract: _withdraw_contract } =
     useCallWithdraw("withdraw");
 
-  const isDisabled = !isReady;
+  const { callTokenSwap } = useAmountOut();
+
+  const isDisabled = !isReady || isApproved === false;
 
   const onClick = useCallback(async () => {
     if (!isConnected) {
