@@ -9,9 +9,13 @@ import ActionButton from "./components/ActionButton";
 import Modals from "./Modals";
 import { useRecoilValue } from "recoil";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
+import ApproveToken from "./ApproveToken";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export default function BridgeSwap() {
   const { mode } = useRecoilValue(actionMode);
+  const { isApproved } = useApprove();
+
   return (
     <Flex flexDir={"column"} w={"496px"} h={"100%"}>
       {/* <Flex mb={"auto"}>
@@ -27,8 +31,9 @@ export default function BridgeSwap() {
         <Swap />
         <Flex flexDir={"column"} w={"100%"} mt={"24px"} rowGap={"10px"}>
           {mode !== null && (
-            <Flex w={"100%"}>
+            <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
               <TransactionDetail />
+              {isApproved === false && <ApproveToken />}
             </Flex>
           )}
           <ActionButton />
