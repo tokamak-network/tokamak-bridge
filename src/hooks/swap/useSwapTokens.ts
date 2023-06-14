@@ -4,7 +4,6 @@ import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Qu
 import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
-import { SelectedToken, actionMode } from "@/recoil/bridgeSwap/atom";
 import {
   computePoolAddress,
   FeeAmount,
@@ -48,11 +47,7 @@ export function useAmountOut() {
   );
   const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
 
-  const quoterContract = new ethers.Contract(
-    UNISWAP_CONTRACT.QUOTER_CONTRACT_ADDRESS,
-    Quoter.abi,
-    provider
-  );
+  const { QUOTER_CONTRACT } = useUniswapContracts();
 
   // const { write } = useContractWrite({
   //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
@@ -68,7 +63,7 @@ export function useAmountOut() {
         outToken?.address
       ) {
         const quotedAmountOut =
-          await quoterContract.callStatic.quoteExactInputSingle(
+          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
             inToken.token.address,
             outToken.token.address,
             FeeAmount.MEDIUM,
@@ -94,7 +89,7 @@ export function useAmountOut() {
       console.log(e);
       setAmountOutErr(true);
     });
-  }, [inToken]);
+  }, [inToken, outToken, QUOTER_CONTRACT]);
 
   useEffect(() => {
     const createTrade = async () => {

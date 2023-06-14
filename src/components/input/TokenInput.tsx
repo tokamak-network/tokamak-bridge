@@ -1,6 +1,6 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useInOutNetwork } from "@/hooks/network";
-import { useAmountOut } from "@/hooks/swap/swapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,

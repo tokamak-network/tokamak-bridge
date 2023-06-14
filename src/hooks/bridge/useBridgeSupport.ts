@@ -2,7 +2,7 @@ import { supportedTokens } from "@/types/token/supportedToken";
 import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetMode } from "../mode/useGetMode";
-import { useAmountOut } from "../swap/swapTokens";
+import { useAmountOut } from "../swap/useSwapTokens";
 
 export default function useBridgeSupport() {
   const { inToken } = useInOutTokens();

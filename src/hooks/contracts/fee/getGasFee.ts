@@ -2,7 +2,7 @@ import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { useAmountOut } from "@/hooks/swap/swapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { SupportedChainId } from "@/types/network/supportedNetwork";

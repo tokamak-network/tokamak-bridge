@@ -15,7 +15,7 @@ import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { supportedTokens } from "@/types/token/supportedToken";
 import { predeploys } from "@eth-optimism/contracts";
 
-import { useAmountOut } from "@/hooks/swap/swapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useApprove } from "@/hooks/token/useApproval";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
