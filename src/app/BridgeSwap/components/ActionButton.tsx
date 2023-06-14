@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import {
   actionMode,
@@ -17,12 +17,14 @@ import { predeploys } from "@eth-optimism/contracts";
 
 import { useAmountOut } from "@/hooks/swap/swapTokens";
 import { useApprove } from "@/hooks/token/useApproval";
+import useGetTransaction from "@/hooks/user/useGetTransaction";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
   const { connectToWallet } = useConnectWallet();
   const { mode, isReady } = useRecoilValue(actionMode);
   const { isApproved } = useApprove();
+  const { isLoading } = useGetTransaction();
 
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const outTokenInfo = useRecoilValue(selectedOutTokenStatus);
@@ -35,7 +37,7 @@ export default function ActionButton() {
 
   const { callTokenSwap } = useAmountOut();
 
-  const isDisabled = !isReady || isApproved === false;
+  const isDisabled = !isReady || isApproved === false || isLoading;
 
   const onClick = useCallback(async () => {
     if (!isConnected) {

@@ -87,8 +87,6 @@ export function useTransactionDetail() {
         {
           title: "Amount to Withdraw",
           content: inputAmount,
-          tooltip: true,
-          tooltipLabel: "0.00221110000002 ETH",
         },
         {
           title: "Estimated gas fees",
@@ -110,7 +108,7 @@ export function useTransactionDetail() {
   const { amountOut } = useAmountOut();
 
   const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
-    if (mode === "Swap" && inToken && totalGasFee) {
+    if (mode === "Swap" && inToken) {
       return [
         {
           title: "Expected output",
@@ -129,7 +127,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, outToken, totalGasFee, inputAmount, amountOut]);
+  }, [mode, inToken, outToken, inputAmount, amountOut]);
 
   return { depositPropsData, withdrawPropsData, swapPropsData };
 }

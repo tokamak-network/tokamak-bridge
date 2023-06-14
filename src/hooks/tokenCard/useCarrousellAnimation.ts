@@ -41,7 +41,7 @@ const cardSize = {
 const fadeAwayStyle = {
   transform: getTrasnformParams(10, 700, -305),
   position: "absolute",
-  zIndex: -10,
+  zIndex: 1,
   opacity: 0,
 };
 

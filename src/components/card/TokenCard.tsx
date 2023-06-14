@@ -14,6 +14,10 @@ type TokenCardProps = {
   hasInput: boolean;
   inNetwork: boolean;
   isNew?: boolean;
+  symbolSize?: {
+    w: number;
+    h: number;
+  };
   onClick?: () => any;
   style?: {};
 };
@@ -62,7 +66,17 @@ const TokenTitle = (props: { tokenName: String }) => {
 };
 
 export default function TokenCard(props: TokenCardProps) {
-  const { tokenInfo, w, h, hasInput, inNetwork, isNew, onClick, style } = props;
+  const {
+    tokenInfo,
+    w,
+    h,
+    hasInput,
+    inNetwork,
+    isNew,
+    symbolSize,
+    onClick,
+    style,
+  } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenName) {
@@ -122,8 +136,8 @@ export default function TokenCard(props: TokenCardProps) {
         alignItems={isNew ? "baseline" : "center"}
       >
         <TokenSymbol
-          w={isNew ? 40 : 120}
-          h={isNew ? 40 : 120}
+          w={symbolSize?.w ?? isNew ? 40 : 92}
+          h={symbolSize?.w ?? isNew ? 40 : 92}
           tokenType={tokenInfo?.tokenName}
         />
       </Flex>

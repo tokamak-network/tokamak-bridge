@@ -16,6 +16,8 @@ export default function BridgeSwap() {
   const { mode } = useRecoilValue(actionMode);
   const { isApproved } = useApprove();
 
+  console.log(isApproved);
+
   return (
     <Flex flexDir={"column"} w={"496px"} h={"100%"}>
       {/* <Flex mb={"auto"}>

@@ -35,6 +35,7 @@ export function useSwapTokens() {}
 export function useAmountOut() {
   const { provider } = useProvier();
   const { address } = useAccount();
+  const { mode } = useGetMode();
 
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
@@ -59,7 +60,12 @@ export function useAmountOut() {
 
   useEffect(() => {
     const getAmountOut = async () => {
-      if (inToken && inToken?.amountBN !== null && outToken?.address) {
+      if (
+        mode === "Swap" &&
+        inToken &&
+        inToken?.amountBN !== null &&
+        outToken?.address
+      ) {
         const quotedAmountOut =
           await quoterContract.callStatic.quoteExactInputSingle(
             inToken.token.address,
@@ -83,11 +89,17 @@ export function useAmountOut() {
       console.log("**getAmountOut err**");
       console.log(e);
     });
-  }, [UNISWAP_CONTRACT, inToken, outToken, provider]);
+  }, [UNISWAP_CONTRACT, inToken, outToken, provider, mode]);
 
   useEffect(() => {
     const createTrade = async () => {
-      if (inToken && inToken?.amountBN !== null && outToken && amountOut) {
+      if (
+        mode === "Swap" &&
+        inToken &&
+        inToken?.amountBN !== null &&
+        outToken &&
+        amountOut
+      ) {
         const currentPoolAddress = computePoolAddress({
           factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
           tokenA: inToken.token,
@@ -153,7 +165,7 @@ export function useAmountOut() {
       console.log("**createTrade err**");
       console.log(e);
     });
-  }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer]);
+  }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
     if (trade && inToken && address) {
@@ -198,7 +210,7 @@ export function useAmountOut() {
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
-      if (trade && inToken && address) {
+      if (mode === "Swap" && trade && address) {
         const options: SwapOptions = {
           slippageTolerance: new Percent(50, 10_000), // 50 bips, or 0.50%
           deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
@@ -224,11 +236,11 @@ export function useAmountOut() {
         return setEstimatedGas(gas.toBigInt());
       }
     };
-    fetchEstimatedGas().catch((e) => {
-      console.log("**fetchEstimatedGasToSwap err**");
-      console.log(e);
-    });
-  }, [trade, address, UNISWAP_CONTRACT]);
+    // fetchEstimatedGas().catch((e) => {
+    //   console.log("**fetchEstimatedGasToSwap err**");
+    //   console.log(e);
+    // });
+  }, [trade, UNISWAP_CONTRACT, mode]);
 
   return { amountOut, callTokenSwap, estimatedGas };
 }

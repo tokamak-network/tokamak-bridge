@@ -32,7 +32,7 @@ export default function ApproveToken() {
         bgColor={"#007AFF"}
         _active={{}}
         _hover={{}}
-        onClick={callApprove}
+        onClick={() => callApprove}
       >
         Approve
       </Button>

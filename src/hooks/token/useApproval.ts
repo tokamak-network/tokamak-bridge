@@ -4,10 +4,16 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers, Contract } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import TON_ABI from "@/constant/abis/TON.json";
-import { useAccount, useContractRead, useContractWrite } from "wagmi";
+import {
+  useAccount,
+  useBlockNumber,
+  useContractRead,
+  useContractWrite,
+} from "wagmi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
+import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -34,15 +40,11 @@ export function useAllowance() {
   const { address } = useAccount();
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();
+  const { data: blockNumber } = useBlockNumber({ watch: true });
 
   useEffect(() => {
     const fetchAllowance = async () => {
-      if (
-        inToken &&
-        inToken.tokenAddress !== null &&
-        inToken.amountBN &&
-        address
-      ) {
+      if (inToken && inToken.tokenAddress !== null && address) {
         if (inToken.isNativeCurrency !== null) {
           return setApproved({
             l1birdge: true,
@@ -53,7 +55,7 @@ export function useAllowance() {
         }
 
         const tokenAddress = inToken.tokenAddress;
-        const tokenAmount = inToken.amountBN ?? 0;
+        const tokenAmount = inToken.amountBN ?? 0.01;
         const TOKEN_CONTRACT = new ethers.Contract(
           tokenAddress,
           ERC20_ABI.abi,
@@ -90,9 +92,12 @@ export function useAllowance() {
       console.log("**fetchAllowance err**");
       console.log(e);
     });
-  }, [inToken?.tokenAddress, inToken?.amountBN]);
+  }, [inToken?.tokenAddress, inToken?.amountBN, blockNumber]);
 
   const callApprove = useCallback(() => {}, [approved]);
+
+  console.log("-approved");
+  console.log(approved);
 
   return { approved };
 }
@@ -122,35 +127,57 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  const { write } = useContractWrite({
-    address: inToken?.tokenAddress as `0x${string}`,
-    abi: TON_ABI.abi,
-    functionName: "increaseAllowance",
-  });
+  console.log(isApproved);
+
+  // const { write } = useContractWrite({
+  //   address: inToken?.tokenAddress as `0x${string}`,
+  //   abi: TON_ABI.abi,
+  //   functionName: "increaseAllowance",
+  // });
   const { data: totalSupply } = useContractRead({
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
     functionName: "totalSupply",
   });
+
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();
+  const { address } = useAccount();
+  const { config, error, isError } = usePrepareErc20Approve({
+    address:
+      mode === "Deposit"
+        ? L1BRIDGE_CONTRACT
+        : mode === "Withdraw"
+        ? L2BRIDGE_CONTRACT
+        : UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
+    args:
+      address && totalSupply
+        ? [address as `0x${string}`, totalSupply as bigint]
+        : undefined,
+    enabled: Boolean(address && totalSupply),
+  });
+  const { data, write } = useErc20Approve(config);
+
+  console.log("error, isError");
+  console.log(error, isError);
 
   const callApprove = useCallback(async () => {
     try {
       if (totalSupply) {
         switch (mode) {
           case "Deposit":
-            return write({
-              args: [L1BRIDGE_CONTRACT, totalSupply],
-            });
-          case "Withdraw":
-            return write({
-              args: [L2BRIDGE_CONTRACT, totalSupply],
-            });
-          case "Swap":
-            return write({
-              args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
-            });
+            return write?.();
+          // return write({
+          //   args: [L1BRIDGE_CONTRACT, totalSupply],
+          // });
+          // case "Withdraw":
+          //   return write({
+          //     args: [L2BRIDGE_CONTRACT, totalSupply],
+          //   });
+          // case "Swap":
+          //   return write({
+          //     args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
+          //   });
           // return TOKEN_CONTRACT.increaseAllowance(
           //     SwapperV2Proxy,
           //     totalSupply

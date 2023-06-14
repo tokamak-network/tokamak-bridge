@@ -28,8 +28,6 @@ export function useGasFee() {
   const { estimatedGas } = useAmountOut();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
 
-  console.log(inToken);
-
   useEffect(() => {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
