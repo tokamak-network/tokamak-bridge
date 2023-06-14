@@ -3,7 +3,7 @@ import SYMBOL_ETH from "assets/tokens/eth.svg";
 import SYMBOL_TON from "assets/tokens/ton.svg";
 import SYMBOL_DARIUS from "assets/icons/network/darius.svg";
 
-import { SupportedTokenName } from "@/types/token/supportedToken";
+import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
 export enum SupportedChainId {
   MAINNET = 1,
@@ -26,7 +26,7 @@ export interface SupportedChainProperties {
   chainName: keyof typeof SupportedChainId;
   rpcAddress: string;
   networkImage: ImageFileType;
-  nativeToken: SupportedTokenName;
+  nativeToken: SupportedTokenSymbol;
   isTokamak?: boolean;
   layer: "L1" | "L2";
 }

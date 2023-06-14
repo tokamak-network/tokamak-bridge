@@ -35,13 +35,15 @@ export const searchTokenSelector = selector<TokenInfo | null>({
           ERC20_ABI.abi,
           getL1Provider()
         );
-        const [tokenName, decimals] = await Promise.all([
+        const [tokenName, tokenSymbol, decimals] = await Promise.all([
+          tokenContract.name(),
           tokenContract.symbol(),
           tokenContract.decimals(),
         ]);
 
         return {
           tokenName,
+          tokenSymbol,
           address: {
             MAINNET: nameOrAdd,
             GOERLI: nameOrAdd,

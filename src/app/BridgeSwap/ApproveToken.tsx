@@ -1,3 +1,4 @@
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork from "@/hooks/network";
 import { useApprove } from "@/hooks/token/useApproval";
@@ -7,8 +8,12 @@ import { Button, Flex, Text } from "@chakra-ui/react";
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
   const { chainName } = useConnectedNetwork();
-  const { callApprove } = useApprove();
+  const { isApproved, callApprove } = useApprove();
+  const { isNotSupportForBridge } = useBridgeSupport();
 
+  if (isApproved || isNotSupportForBridge) {
+    return null;
+  }
   return (
     <Flex
       w={"100%"}
@@ -22,7 +27,7 @@ export default function ApproveToken() {
       alignItems={"center"}
     >
       <Text fontSize={14}>
-        {chainName} wants to use your {inToken?.tokenName}
+        {chainName} wants to use your {inToken?.tokenSymbol}
       </Text>
       <Button
         w={"92px"}

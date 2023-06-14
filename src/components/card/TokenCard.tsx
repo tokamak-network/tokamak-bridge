@@ -1,4 +1,4 @@
-import { SupportedTokenName, TokenInfo } from "types/token/supportedToken";
+import { SupportedTokenSymbol, TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useMemo } from "react";
@@ -79,7 +79,7 @@ export default function TokenCard(props: TokenCardProps) {
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const tokenColorCode = useMemo(() => {
-    switch (tokenInfo?.tokenName) {
+    switch (tokenInfo?.tokenSymbol) {
       case "ETH":
         return "#222222";
       case "TON":
@@ -126,7 +126,7 @@ export default function TokenCard(props: TokenCardProps) {
     >
       <TopLine mainSchemCol={tokenColorCode} />
       <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
-        <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} />
+        <TokenTitle tokenName={tokenInfo?.tokenSymbol ?? "TOKEN"} />
       </Flex>
       <Flex
         // pt={"25px"}
@@ -138,7 +138,7 @@ export default function TokenCard(props: TokenCardProps) {
         <TokenSymbol
           w={symbolSize?.w ?? isNew ? 40 : 92}
           h={symbolSize?.w ?? isNew ? 40 : 92}
-          tokenType={tokenInfo?.tokenName}
+          tokenType={tokenInfo?.tokenSymbol}
         />
       </Flex>
       {isNew ? (

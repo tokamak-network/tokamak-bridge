@@ -1,4 +1,4 @@
-import { SupportedTokenName } from "@/types/token/supportedToken";
+import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
 export enum TransactionState {
   Failed = "Failed",
@@ -9,7 +9,7 @@ export enum TransactionState {
 }
 
 export type T_BridgeTransactionDetail = {
-  inputToken: SupportedTokenName;
+  inputToken: SupportedTokenSymbol;
   inputAmount: string;
   gasFee: {
     l1Gas: { eth: string; ton: string } | null;
@@ -18,9 +18,9 @@ export type T_BridgeTransactionDetail = {
 };
 
 export type T_SwapTransactionDetail = {
-  inputToken: SupportedTokenName | string;
+  inputToken: SupportedTokenSymbol | string;
   inputAmount: string;
-  outToken: SupportedTokenName | string;
+  outToken: SupportedTokenSymbol | string;
   outAmount: string;
   expectedAmount: string;
   minimumReceived: string;

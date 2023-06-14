@@ -6,17 +6,31 @@ import {
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/contracts/index";
 
+type SupportedMainTokenNames =
+  | "Tokamak Network Token"
+  | "Wrapped TON"
+  | "TONStarter"
+  | "ETH";
+type SupportedEcosystemTokenNames = "Dooropen" | "AURA" | "LYDA";
+type SupportedStableTokenNames = "USD//C";
+
+export type SupportedTokenNames =
+  | SupportedMainTokenNames
+  | SupportedEcosystemTokenNames
+  | SupportedStableTokenNames;
+
 type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH";
 type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
 type SupportedStableTokens = "USDC";
 
-export type SupportedTokenName =
+export type SupportedTokenSymbol =
   | SupportedMainTokens
   | SupportedEcosystemTokens
   | SupportedStableTokens;
 
 export type TokenInfo = {
-  tokenName: SupportedTokenName | String | string;
+  tokenName: SupportedTokenNames | String | string;
+  tokenSymbol: SupportedTokenSymbol | String | string;
   address: {
     [K in keyof typeof SupportedChainId]: `0x${string}` | string | null;
   };
@@ -30,6 +44,7 @@ export type SupportedTokens_T = TokenInfo[];
 export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "ETH",
+    tokenSymbol: "ETH",
     address: {
       MAINNET: "0x",
       GOERLI: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
@@ -40,7 +55,8 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
   },
   {
-    tokenName: "TON",
+    tokenName: "Tokamak Network Token",
+    tokenSymbol: "TON",
     address: {
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.TON_ADDRESS,
@@ -55,7 +71,8 @@ export const supportedTokens: SupportedTokens_T = [
     // ],
   },
   {
-    tokenName: "WTON",
+    tokenName: "Wrapped TON",
+    tokenSymbol: "WTON",
     address: {
       MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.WTON_ADDRESS,
@@ -67,7 +84,8 @@ export const supportedTokens: SupportedTokens_T = [
   },
 
   {
-    tokenName: "TOS",
+    tokenName: "TONStarter",
+    tokenSymbol: "TOS",
     address: {
       MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.TOS_ADDRESS,
@@ -78,7 +96,8 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "DOC",
+    tokenName: "Dooropen",
+    tokenSymbol: "DOC",
     address: {
       MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.DOC_ADDRESS,
@@ -90,6 +109,7 @@ export const supportedTokens: SupportedTokens_T = [
   },
   {
     tokenName: "AURA",
+    tokenSymbol: "AURA",
     address: {
       MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.AURA_ADDRESS,
@@ -101,6 +121,7 @@ export const supportedTokens: SupportedTokens_T = [
   },
   {
     tokenName: "LYDA",
+    tokenSymbol: "LYDA",
     address: {
       MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.LYDA_ADDRESS,
@@ -111,7 +132,8 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "USDC",
+    tokenName: "USD//C",
+    tokenSymbol: "USDC",
     address: {
       MAINNET: null,
       GOERLI: GOERLI_CONTRACTS.USDC_ADDRESS,
