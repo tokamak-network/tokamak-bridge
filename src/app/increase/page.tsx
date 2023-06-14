@@ -1,6 +1,7 @@
 "use client";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import { Button } from "@chakra-ui/react";
+import { useState } from "react";
 import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
 import { PoolCardDetail } from "@/types/pool";
 import Link from "next/link";
@@ -17,9 +18,16 @@ import addIcon from "@/assets/icons/addIcon.svg";
 import TokenCard from "../../components/card/TokenCard";
 import { useRecoilValue } from "recoil";
 import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
+import IncreaseConfirmModal from "./components/IncreaseConfirmModal";
 
 export default function IncreaseLiquidity(props: PoolCardDetail) {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <Flex
       flexDir="column"
@@ -155,6 +163,7 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
               maxPrice={772.84}
               currentPrice={772.84}
               inRange={true}
+              w={"364px"}
             />
           </Flex>
         </Flex>
@@ -171,7 +180,7 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
                       hasInput={true}
                       inNetwork={true}
                     />
-                    <TokenInput inToken={true} />
+                    <TokenInput inToken={true} inputKey="in" />
                   </>
                 ) : (
                   <Box
@@ -193,7 +202,7 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
                       hasInput={true}
                       inNetwork={true}
                     />
-                    <TokenInput inToken={false} />
+                    <TokenInput inToken={false} inputKey="out" />
                   </>
                 ) : (
                   <Box
@@ -219,10 +228,27 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
               >
                 <Text fontWeight={"bold"}>Enter an amount</Text>
               </Button>
+              <Button
+                mt={"20px"}
+                h={"48px"}
+                bgColor={"#007AFF"}
+                border={"none"}
+                borderWidth="1px"
+                borderRadius="8px"
+                _hover={{ bgColor: "#007AFF" }}
+                onClick={openModal}
+              >
+                <Text fontWeight={"bold"}>Increase</Text>
+              </Button>
             </Flex>
           </Flex>
         </Flex>
       </Flex>
+      <IncreaseConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        inRange={true}
+      />
     </Flex>
   );
 }

@@ -57,10 +57,10 @@ export default function OutTokenSelector() {
       <Box className={"mid-layer"} />
       <Box className={"bottom-layer"} />
       {/* TODO: Show warning if price range invalid / no pool data */}
-      <Flex position={"absolute"} mt={"250px"}>
+      <Flex position={"absolute"} mt={"258px"}>
         <TokenInput inToken={false} inputKey="out" />
       </Flex>
-      {/* <Flex position={"absolute"} mt={"250px"}>
+      {/* <Flex position={"absolute"} mt={"258px"}>
         <TokenInputWarning hasPool={true} invalidPriceRange={true} />
       </Flex> */}
     </Flex>

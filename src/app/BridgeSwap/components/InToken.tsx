@@ -53,7 +53,7 @@ export default function InToken() {
             </Box>
           )}
         </Box>
-        <TokenInput inToken={true} />
+        <TokenInput inToken={true} inputKey="in" />
       </Flex>
     </Flex>
   );

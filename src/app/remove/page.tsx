@@ -1,30 +1,33 @@
 "use client";
 import { Flex, Text, Box } from "@chakra-ui/layout";
-import { Button } from "@chakra-ui/react";
+import { Button, Input } from "@chakra-ui/react";
+import { useState } from "react";
 import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
 import { PoolCardDetail } from "@/types/pool";
 import Link from "next/link";
 import Image from "next/image";
 import BackIcon from "@/assets/icons/back.svg";
 import SettingsIcon from "@/assets/icons/setting.svg";
-import PriceRange from "../../components/ui/PriceRange";
-import TierSelector from "../add/components/TierSelector";
-import OutTokenSelector from "../add/components/OutTokenSelector";
-import InTokenSelector from "../add/components/InTokenSelector";
-import InputComponent from "../add/components/NumberInput";
-import TokenInput from "../../components/input/TokenInput";
-import addIcon from "@/assets/icons/addIcon.svg";
-import TokenCard from "../../components/card/TokenCard";
-import { useRecoilValue } from "recoil";
-import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
+import RemoveTxnDetail from "./components/RemoveTxnDetail";
+import PercentageSlider from "./components/Slider";
+import RemoveConfirmModal from "./components/RemoveConfirmModal";
 
-export default function IncreaseLiquidity(props: PoolCardDetail) {
-  const inTokenInfo = useRecoilValue(selectedInTokenStatus);
+export default function RemoveLiquidity(props: PoolCardDetail) {
+  const [sliderValue, setSliderValue] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleSliderValueChange = (value: number) => {
+    setSliderValue(value);
+  };
+
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
+
   return (
     <Flex
       flexDir="column"
       w="404px"
-      h="477px"
       justifyContent="center"
       alignItems="center"
     >
@@ -52,7 +55,6 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
       </Flex>
       <Flex
         border="1px solid #20212B"
-        h="588px"
         borderRadius={"16px"}
         alignItems="center"
         textAlign="center"
@@ -145,20 +147,53 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
               </Flex>
             </Flex>
           </Flex>
-          {/* TODO: change width to 364px */}
-          <Flex mt={"20px"}>
-            <PriceRange
-              title="Selected Range"
-              inToken="ETH"
-              outToken="USDC"
-              minPrice={772.84}
-              maxPrice={772.84}
-              currentPrice={772.84}
-              inRange={true}
+          <Flex w="364px" mt="16px" flexDir={"column"}>
+            <Text textAlign="left">Select Amount</Text>
+            <PercentageSlider
+              sliderValue={sliderValue}
+              onSliderValueChange={handleSliderValueChange}
             />
+            <RemoveTxnDetail />
           </Flex>
+
+          {sliderValue !== 0 ? (
+            <Button
+              mt={"12px"}
+              h={"48px"}
+              bgColor={"#007AFF"}
+              border={"none"}
+              borderWidth="1px"
+              borderRadius="8px"
+              _hover={{ bgColor: "#007AFF" }}
+              onClick={openModal}
+            >
+              <Text fontWeight={"bold"} color="#FFFF">
+                Preview
+              </Text>
+            </Button>
+          ) : (
+            <Button
+              mt={"12px"}
+              h={"48px"}
+              bgColor={"#17181D"}
+              border={"none"}
+              borderWidth="1px"
+              borderRadius="8px"
+              _hover={{ bgColor: "#17181D" }}
+            >
+              <Text fontWeight={"bold"} color="#8E8E92">
+                Enter a percent
+              </Text>
+            </Button>
+          )}
         </Flex>
       </Flex>
+
+      <RemoveConfirmModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        inRange={true}
+      />
     </Flex>
   );
 }

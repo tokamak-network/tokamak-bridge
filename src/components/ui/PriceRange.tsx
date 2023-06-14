@@ -29,6 +29,7 @@ export default function PriceRange(props: PriceRangeProps) {
       flexDir={"column"}
       flex={1}
       justifyContent={"center"}
+      textAlign={"center"}
     >
       <Flex justifyContent={"space-between"} mb={"8px"}>
         <Flex justifyContent={"start"}>{title}</Flex>

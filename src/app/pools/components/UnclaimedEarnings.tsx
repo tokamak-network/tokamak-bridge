@@ -31,13 +31,13 @@ export default function UnclaimedEarnings(props: UnclaimedEarningsProps) {
         <Text fontSize={"24px"} as="b" mt={"6px"}>
           $0.20
         </Text>
-        <Flex mb={"8px"}>
+        <Flex mb={"8px"} alignItems={"center"}>
           <Text fontSize={"12px"} color="#A0A3AD">
-            0.00005669 LYDA
-          </Text>{" "}
+            0.0005669 LYDA
+          </Text>
           +
           <Text fontSize={"12px"} color="#A0A3AD">
-            0.00005669 ETH
+            0.005669 ETH
           </Text>
         </Flex>
         <Flex position={"relative"} style={{ left: "247px", top: "-66px" }}>
