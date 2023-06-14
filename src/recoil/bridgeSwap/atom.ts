@@ -1,10 +1,10 @@
 import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { SupportedChainProperties } from "@/types/network/supportedNetwork";
 import { Field } from "@/types/swap/swap";
 import { TokenInfo } from "types/token/supportedToken";
+import { BigNumberish } from "ethers";
 import { atom, selector } from "recoil";
-import { ethers } from "ethers";
-import ERC20_ABI from "@/constant/abis/erc20.json";
-import { useProvier } from "@/hooks/provider/useProvider";
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -30,7 +30,6 @@ export const tokenModalStatus = atom<SelectTokenModal>({
 type SelectedInToken = TokenInfo & {
   amountBN: BigInt | null;
   parsedAmount: string | null;
-  tokenAddress: string | null;
 };
 
 export const selectedInTokenStatus = atom<SelectedInToken | null>({
