@@ -5,7 +5,7 @@ import { Bound } from "./actions";
 
 import { Area } from "./Area";
 import { AxisBottom } from "./AxisBottom";
-import Brush from "./Brush";
+// import Brush from "./Brush";
 import Line from "./Line";
 import { ChartEntry, LiquidityChartRangeInputProps } from "./types";
 import Zoom, { ZoomOverlay } from "./Zoom";
