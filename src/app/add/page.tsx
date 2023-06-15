@@ -17,12 +17,9 @@ import OutTokenSelector from "./components/OutTokenSelector";
 import PriceInput from "./components/priceInput";
 import TokenInput from "@/components/input/TokenInput";
 import InitializeInfo from "./components/InitializeInfo";
-import Graph from "./components/Graph";
 import Modals from "./Modal";
 import InvalidRangeWarning from "./components/WarningText";
 import PositionInfo from "./components/PositionInfo";
-import { Bound } from "@/components/ui/LiquidityPoolChart/actions";
-import { Chart } from "@/components/ui/LiquidityPoolChart/Chart";
 import InputAmount from "./components/InputAmount";
 import TierSelector from "./components/tierSelector";
 
@@ -50,58 +47,6 @@ export default function CreatePoolModal() {
     setInToken("");
     setOutToken("");
   };
-
-  const onBrushDomainChangeEnded = useCallback(
-    async (domain: [number, number], mode: string | undefined) => {
-      let leftRangeValue = Number(domain[0]);
-      const rightRangeValue = Number(domain[1]);
-
-      if (leftRangeValue <= 0) {
-        leftRangeValue = 1 / 10 ** 6;
-      }
-
-      const leftRangeInputState = atom<string>({
-        key: "leftRangeInputState",
-        default: "",
-      });
-
-      const rightRangeInputState = atom<string>({
-        key: "rightRangeInputState",
-        default: "",
-      });
-
-      const fixedIsSorted = true; // Fixed value for isSorted
-      const fixedTicksAtLimit: { [bound in Bound]?: boolean | undefined } = {
-        [Bound.LOWER]: true,
-        [Bound.UPPER]: false,
-      }; // Fixed value for ticksAtLimit
-
-      // Simulate user input for auto-formatting and other validations
-      if (
-        (!fixedTicksAtLimit[fixedIsSorted ? Bound.LOWER : Bound.UPPER] ||
-          mode === "handle" ||
-          mode === "reset") &&
-        leftRangeValue > 0
-      ) {
-        const [, setLeftRangeInput] = useRecoilState(leftRangeInputState);
-        setLeftRangeInput(leftRangeValue.toFixed(6));
-      }
-
-      if (
-        (!fixedTicksAtLimit[fixedIsSorted ? Bound.UPPER : Bound.LOWER] ||
-          mode === "reset") &&
-        rightRangeValue > 0
-      ) {
-        // todo: remove this check. Upper bound for large numbers
-        // sometimes fails to parse to tick.
-        if (rightRangeValue < 1e35) {
-          const [, setRightRangeInput] = useRecoilState(rightRangeInputState);
-          setRightRangeInput(rightRangeValue.toFixed(6));
-        }
-      }
-    },
-    [] // No dependencies required for this callback
-  );
 
   return (
     <Flex flexDir={"column"} w={"872px"}>
@@ -212,48 +157,6 @@ export default function CreatePoolModal() {
           <Flex flexDir="column">
             <Flex flexDir="column">
               {/* <PositionInfo /> */}
-              {/* <Chart
-                data={{
-                  series: [
-                    { activeLiquidity: 1000, price0: 0.5 },
-                    { activeLiquidity: 2000, price0: 0.6 },
-                    { activeLiquidity: 3000, price0: 0.7 },
-                    // Add more entries as needed
-                  ],
-                  current: 0.6,
-                }}
-                dimensions={{ width: 400, height: 200 }}
-                margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
-                styles={{
-                  area: {
-                    selection: "#ff0000",
-                  },
-                  brush: {
-                    handle: {
-                      west: "#00ff00",
-                      east: "#0000ff",
-                    },
-                  },
-                }}
-                interactive={false}
-                brushLabels={(d: "w" | "e", x: number) => {
-                  // Define your custom brush label logic here
-                  if (d === "w") {
-                    return `Direction: West, Value: ${x.toFixed(6)}`;
-                  } else if (d === "e") {
-                    return `Direction: East, Value: ${x.toFixed(6)}`;
-                  }
-                  return "";
-                }}
-                onBrushDomainChange={onBrushDomainChangeEnded}
-                zoomLevels={{
-                  initialMin: 0.5,
-                  initialMax: 0.7,
-                  min: 0.1,
-                  max: 1.5,
-                }}
-                ticksAtLimit={{ LOWER: true, UPPER: false }}
-              /> */}
               <InitializeInfo />
               <InputAmount inToken="ETH" outToken="USDC" />
               <Flex justifyContent={"space-between"}>
