@@ -2,19 +2,14 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import {
   actionMode,
-  inTokenSelector,
   networkStatus,
-  outTokenSelector,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { useAccount, usePublicClient } from "wagmi";
-import {
-  SupportedChainId,
-  supportedChain,
-} from "@/types/network/supportedNetwork";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { supportedTokens } from "@/types/token/supportedToken";
@@ -26,7 +21,7 @@ import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 
 export default function ActionButton() {
-  const { isConnected, status } = useAccount();
+  const { isConnected, status, address } = useAccount();
   const { connectToWallet } = useConnectWallet();
   const { mode, isReady } = useRecoilValue(actionMode);
   const { isApproved } = useApprove();
@@ -85,11 +80,12 @@ export default function ActionButton() {
 
           if (isETH) {
             return _depositETH({
-              args: [1_300_000, "0x"],
+              args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
             });
           }
+
           return _depositERC20({
             args: [
               inTokenInfo.address[inNetwork.chainName],
@@ -100,14 +96,6 @@ export default function ActionButton() {
             ],
           });
         case "Withdraw":
-          // const result = await _withdraw_contract.estimateGas.withdraw(
-          //   inTokenInfo.address[inNetwork.chainName],
-          //   parsedAmount,
-          //   200000000,
-          //   "0x"
-          // );
-          // console.log(result);
-
           if (isETH) {
             return _withdraw({
               args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
@@ -123,12 +111,12 @@ export default function ActionButton() {
             ],
           });
         case "Swap":
-          return;
+          return callTokenSwap();
         default:
           return console.error("action mode is not founded");
       }
     }
-  }, [isConnected, connectToWallet, mode, inTokenInfo]);
+  }, [isConnected, connectToWallet, mode, inTokenInfo, address]);
 
   return (
     <Button

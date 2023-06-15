@@ -12,10 +12,6 @@ import SYMBOL_LYDA from "assets/tokens/lyda.svg";
 import SYMBOL_USDC from "assets/tokens/usdc.svg";
 import SYMBOL_NOSYMBOL from "assets/tokens/noSymbol.svg";
 
-// Network SYMBOls
-import NW_SYMBOL_MAINNET_ETH from "assets/icons/network/mainnet.svg";
-import NW_SYMBOL_TITAN from "assets/icons/network/titan.svg";
-
 export default function ImageSymbol(props: {
   ImgFile: ImageFileType;
   w?: number;
@@ -58,25 +54,5 @@ export function TokenSymbol(props: {
 
     default:
       return <ImageSymbol ImgFile={SYMBOL_NOSYMBOL} {...props} />;
-  }
-}
-
-export function NetworkSymbol(props: {
-  networkType: string;
-  w?: number;
-  h?: number;
-}) {
-  const { networkType } = props;
-  switch (networkType) {
-    case "Ethereum Mainnet":
-      return <ImageSymbol ImgFile={NW_SYMBOL_MAINNET_ETH} {...props} />;
-    case "Goerli":
-      return <ImageSymbol ImgFile={NW_SYMBOL_MAINNET_ETH} {...props} />;
-    case "Titan":
-      return <ImageSymbol ImgFile={NW_SYMBOL_TITAN} {...props} />;
-    case "Titan_Goerli":
-      return <ImageSymbol ImgFile={NW_SYMBOL_TITAN} {...props} />;
-    default:
-      return <ImageSymbol ImgFile={NW_SYMBOL_MAINNET_ETH} {...props} />;
   }
 }

@@ -1,6 +1,13 @@
 import { Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import { WTON, TOS, AURA } from "./libs/constant";
+import {
+  WTON,
+  DARIUS_TON,
+  AURA,
+  DARIUS_TOS,
+  GOERLI_TON,
+  GOERLI_TOS,
+} from "./libs/constant";
 
 // Sets if the example should run locally or on chain
 export enum Environment {
@@ -31,7 +38,7 @@ export interface ExampleConfig {
 // Example Configuration
 
 export const CurrentConfig: ExampleConfig = {
-  env: Environment.LOCAL,
+  env: Environment.WALLET_EXTENSION,
   rpc: {
     local: "http://localhost:8545",
     mainnet: "",
@@ -41,9 +48,9 @@ export const CurrentConfig: ExampleConfig = {
     privateKey: process.env.NEXT_PUBLIC_WALLET_PK as string,
   },
   tokens: {
-    in: TOS,
-    amountIn: 10,
-    out: AURA,
+    in: DARIUS_TOS,
+    amountIn: 1,
+    out: DARIUS_TON,
     poolFee: FeeAmount.MEDIUM,
   },
 };
