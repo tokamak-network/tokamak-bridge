@@ -20,8 +20,7 @@ import {
   toReadableAmount,
 } from "@/utils/uniswap/libs/converstion";
 import { useInOutTokens } from "../token/useInOutTokens";
-import JSBI from "jsbi";
-import { useAccount, useContractWrite } from "wagmi";
+import { useAccount } from "wagmi";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import useConnectedNetwork from "../network";
 import { useGetMode } from "../mode/useGetMode";
