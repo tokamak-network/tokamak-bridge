@@ -3,6 +3,7 @@ import { BigNumber, ethers, providers } from "ethers";
 
 import { CurrentConfig, Environment } from "../config";
 import { getL1Provider } from "@/config/l1Provider";
+import { getL2Provider } from "@/config/l2Provider";
 
 // Single copies of provider and wallet
 const mainnetProvider = new ethers.providers.JsonRpcProvider(
