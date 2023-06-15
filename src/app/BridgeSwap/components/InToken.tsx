@@ -54,9 +54,7 @@ export default function InToken() {
             </Box>
           )}
         </Box>
-        <Flex px={"12px"}>
-          <TokenInput inToken={true} />
-        </Flex>
+        <TokenInput inToken={true} inputKey="in" />
       </Flex>
     </Flex>
   );

@@ -7,8 +7,7 @@ import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
 import { getContract } from "viem";
 
 import { Contract } from "@ethersproject/contracts";
-import { getL2Provider, l2Provider } from "@/config/l2Provider";
-import { ethers } from "ethers";
+import { l2Provider } from "@/config/l2Provider";
 
 export default function useCallWithdraw(functionName: string) {
   const [tModalStatus, setTModalStatus] = useRecoilState(
@@ -28,6 +27,12 @@ export default function useCallWithdraw(functionName: string) {
     publicClient: provider,
   });
 
+  const test = new Contract(
+    TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
+    L2BridgeAbi,
+    l2Provider
+  );
+
   useEffect(() => {
     if (isLoading) {
       return setTModalStatus("confirming");
@@ -38,5 +43,5 @@ export default function useCallWithdraw(functionName: string) {
     return setTModalStatus(null);
   }, [isLoading, isSuccess]);
 
-  return { data, isLoading, isSuccess, write, contract };
+  return { data, isLoading, isSuccess, write, contract: test };
 }

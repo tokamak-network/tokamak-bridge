@@ -50,6 +50,12 @@ const theme = extendTheme({
         border: "1px dashed #313442",
         borderRadius: "16px",
       },
+      ".pool-card": {
+        minWidth: "178px",
+        minHeight: "242px",
+        maxWidth: "178px",
+        maxHeight: "242px",
+      }
     }),
     // Additional overrides for specific components can be added here
     // For example, to reset the button styles
