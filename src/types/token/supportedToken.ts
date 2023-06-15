@@ -136,7 +136,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "USDC",
     address: {
       MAINNET: null,
-      GOERLI: GOERLI_CONTRACTS.USDC_ADDRESS,
+      GOERLI: null,
       TOKAMAK_MAINNET: TOKAMAK_CONTRACTS.USDC_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
     },
