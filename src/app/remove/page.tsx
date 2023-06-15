@@ -15,6 +15,8 @@ import RemoveConfirmModal from "./components/RemoveConfirmModal";
 export default function RemoveLiquidity(props: PoolCardDetail) {
   const [sliderValue, setSliderValue] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  // TODO: Get props from data
+  const inRange = true;
 
   const handleSliderValueChange = (value: number) => {
     setSliderValue(value);
@@ -86,7 +88,7 @@ export default function RemoveLiquidity(props: PoolCardDetail) {
                 </Flex>
               </Flex>
               <Flex alignItems={"center"} justifyContent={"center"}>
-                {props.range === false ? (
+                {!inRange ? (
                   <>
                     <Box
                       w="6px"

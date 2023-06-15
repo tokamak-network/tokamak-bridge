@@ -13,7 +13,10 @@ import PriceInput from "../../add/components/priceInput";
 import ClaimEarningsModal from "@/components/modal/ClaimEarnings";
 import PriceRange from "@/components/ui/PriceRange";
 
-export default function PoolInfo(props: PoolCardDetail) {
+export default function PoolInfo() {
+  // TODO: get props from data
+  const inRange = true;
+
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(0);
@@ -65,7 +68,7 @@ export default function PoolInfo(props: PoolCardDetail) {
             </Flex>
           </Flex>
           <Flex alignItems={"center"} justifyContent={"center"}>
-            {props.range === false ? (
+            {!inRange ? (
               <>
                 <Box
                   w="6px"
