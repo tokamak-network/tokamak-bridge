@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Box, Button, Flex } from "@chakra-ui/react";
 
 export default function TierSelector() {
@@ -22,7 +23,7 @@ export default function TierSelector() {
             paddingBottom="6px"
             textAlign="center"
             marginRight={index !== values.length - 1 ? "8px" : "0"}
-            onClick={handleClick}
+            onClick={() => handleClick(value)}
             variant={"outline"}
             _hover={{
               backgroundColor: "transparent",

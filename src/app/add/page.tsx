@@ -11,10 +11,7 @@ import BackIcon from "@/assets/icons/back.svg";
 import SettingsIcon from "@/assets/icons/setting.svg";
 import Link from "next/link";
 import NetworkDropdown from "@/components/dropdown/Index";
-import TierSelector from "./components/TierSelector";
-import OutToken from "../BridgeSwap/components/OutToken";
 import addIcon from "@/assets/icons/addIcon.svg";
-import InputComponent from "./components/NumberInput";
 import InTokenSelector from "./components/InTokenSelector";
 import OutTokenSelector from "./components/OutTokenSelector";
 import PriceInput from "./components/PriceInput";
@@ -27,6 +24,7 @@ import PositionInfo from "./components/PositionInfo";
 import { Bound } from "@/components/ui/LiquidityPoolChart/actions";
 import { Chart } from "@/components/ui/LiquidityPoolChart/Chart";
 import InputAmount from "./components/InputAmount";
+import TierSelector from "./components/TierSelector";
 
 export default function CreatePoolModal() {
   const [inToken, setInToken] = useState("");
@@ -168,9 +166,10 @@ export default function CreatePoolModal() {
               <Box>
                 <NetworkDropdown
                   inNetwork={false}
-                  width="408px"
-                  height="48px"
-                  innerWidth="408px"
+                  // TODO: Reverted when merging. WIP
+                  // width="408px"
+                  // height="48px"
+                  // innerWidth="408px"
                 />
               </Box>
             </Flex>

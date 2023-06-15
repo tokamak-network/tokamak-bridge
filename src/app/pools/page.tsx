@@ -16,7 +16,7 @@ import UsdcL1 from "@/assets/tokens/usdcEth.svg";
 import TokL1 from "@/assets/tokens/tokEth.svg";
 import TonL1 from "@/assets/tokens/tonEth.svg";
 import TonL2 from "@/assets/tokens/tonL2.svg";
-import UsdcL2 from "@/assets/tokens/UsdcL2.svg";
+import UsdcL2 from "@/assets/tokens/usdcL2.svg";
 
 // * MOCK DATA
 // const poolData: any[] = [];
