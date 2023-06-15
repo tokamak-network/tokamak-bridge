@@ -11,6 +11,8 @@ import Header from "@/components/header/Index";
 import HistoryDrawer from "@/components/history/Drawer";
 
 import "css/scrollbar.css";
+import { ApolloProvider } from "@apollo/client";
+import { apolloClient } from "@/apollo";
 
 const GlobalComponents = () => {
   return (
@@ -32,15 +34,17 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
-        <ChakraProvidersForNextJs>
-          <RecoilRoot>
-            <WagmiProviders>
-              <Header />
-              <Center h={"100vh"}>{children}</Center>
-              <GlobalComponents />
-            </WagmiProviders>
-          </RecoilRoot>
-        </ChakraProvidersForNextJs>
+        <ApolloProvider client={apolloClient}>
+          <ChakraProvidersForNextJs>
+            <RecoilRoot>
+              <WagmiProviders>
+                <Header />
+                <Center h={"100vh"}>{children}</Center>
+                <GlobalComponents />
+              </WagmiProviders>
+            </RecoilRoot>
+          </ChakraProvidersForNextJs>
+        </ApolloProvider>
       </body>
     </html>
   );
