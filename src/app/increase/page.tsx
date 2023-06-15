@@ -18,16 +18,14 @@ import { useRecoilValue } from "recoil";
 import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
 import IncreaseConfirmModal from "./components/IncreaseConfirmModal";
 
-type IncreaseLiquidityProps = {
-  inRange?: boolean;
-};
+// type IncreaseLiquidityProps = {
+//   inRange?: boolean;
+// };
 
-export default function IncreaseLiquidity(
-  props: IncreaseLiquidityProps
-): JSX.Element {
-  const { inRange } = props;
+export default function IncreaseLiquidity() {
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const inRange = true;
 
   const openModal = () => {
     setIsModalOpen(true);
