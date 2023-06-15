@@ -13,7 +13,7 @@ import { useRecoilState } from "recoil";
 export default function TokenInput(props: {
   inToken: boolean;
   style?: {};
-  inputKey: string;
+  inputKey?: string;
 }) {
   const { inToken, style, inputKey } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
