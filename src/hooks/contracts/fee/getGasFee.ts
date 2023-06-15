@@ -11,7 +11,7 @@ import { predeploys } from "@eth-optimism/contracts";
 import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { useAccount, usePublicClient } from "wagmi";
+import { useAccount, useFeeData, usePublicClient } from "wagmi";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -27,6 +27,7 @@ export function useGasFee() {
   const provider = usePublicClient();
   const { estimatedGas } = useAmountOut();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
+  const { data: feeData } = useFeeData();
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
@@ -91,19 +92,17 @@ export function useGasFee() {
       }
     };
     fetchEstimatedGas()
-      .then(async (estimatedGasUsage) => {
-        if (provider && estimatedGasUsage) {
-          const gasPrice = await provider.getGasPrice();
-          console.log("gasPrice : ", gasPrice);
-          console.log("estimatedGasUsage : ", estimatedGasUsage);
-
-          const totalGasCost = gasPrice * estimatedGasUsage;
-          const parsedTotalGasCost = ethers.utils.formatUnits(
-            totalGasCost.toString(),
-            18
-          );
-
-          return setTotalGasCost(parsedTotalGasCost);
+      .then((estimatedGasUsage) => {
+        if (provider && estimatedGasUsage && feeData) {
+          const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+          if (gasPrice) {
+            const totalGasCost = gasPrice * estimatedGasUsage;
+            const parsedTotalGasCost = ethers.utils.formatUnits(
+              totalGasCost.toString(),
+              "gwei"
+            );
+            return setTotalGasCost(parsedTotalGasCost);
+          }
         }
       })
       .catch((e) => {
@@ -122,6 +121,7 @@ export function useGasFee() {
     _withdraw_contract,
     provider,
     estimatedGas,
+    feeData,
   ]);
 
   return { totalGasCost };
