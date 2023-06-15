@@ -15,7 +15,7 @@ export default function useCallWithdraw(functionName: string) {
     transactionModalStatus
   );
 
-  const { data, isLoading, isSuccess, write } = useContractWrite({
+  const { data, isLoading, isSuccess, isError, write } = useContractWrite({
     address: TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
     abi: L2BridgeAbi,
     functionName,
@@ -34,6 +34,9 @@ export default function useCallWithdraw(functionName: string) {
     }
     if (isSuccess) {
       return setTModalStatus("confirmed");
+    }
+    if (isError) {
+      return setTModalStatus("error");
     }
     return setTModalStatus(null);
   }, [isLoading, isSuccess]);

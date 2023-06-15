@@ -7,6 +7,7 @@ import { ethers } from "ethers";
 import { useAmountOut } from "./useSwapTokens";
 import JSBI from "jsbi";
 import commafy from "@/utils/trim/commafy";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function usePriceImpact() {
   const [markPrice, setMarkPrice] = useState<bigint | undefined>(undefined);
@@ -15,10 +16,11 @@ export default function usePriceImpact() {
   const { inToken, outToken } = useInOutTokens();
   const { QUOTER_CONTRACT } = useUniswapContracts();
   const { amountOut } = useAmountOut();
+  const { mode } = useGetMode();
 
   useEffect(() => {
     const fetchMarkPrice = async () => {
-      if (inToken && outToken) {
+      if (mode === "Swap" && inToken && outToken !== null) {
         const quotedAmountOut =
           await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
             inToken.token.address,
@@ -36,7 +38,7 @@ export default function usePriceImpact() {
       console.log(e);
       return setMarkPrice(undefined);
     });
-  }, [inToken, outToken, QUOTER_CONTRACT]);
+  }, [inToken, outToken, QUOTER_CONTRACT, mode]);
 
   const priceImpact = useMemo(() => {
     if (markPrice && amountOut && inToken?.parsedAmount && outToken) {

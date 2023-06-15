@@ -21,6 +21,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useWaitForTransaction } from "wagmi";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -261,6 +262,7 @@ const Title = (props: {
   const arrowControl = useAnimation();
   const { isLoading } = useGetTransaction();
   const { outPrice } = usePriceImpact();
+  const { isNotSupportForSwap } = useBridgeSupport();
 
   useEffect(() => {
     if (isExpanded) {
@@ -316,7 +318,10 @@ const Title = (props: {
         onClick={() => setIsExpended(!isExpanded)}
         fontSize={14}
       >
-        <Flex>
+        <Flex
+          blur
+          // blur={isNotSupportForSwap ? "5px" : undefined}
+        >
           <Text>
             {1} {inToken?.tokenName}
           </Text>

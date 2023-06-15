@@ -25,6 +25,8 @@ import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import useConnectedNetwork from "../network";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
+import { useRecoilState } from "recoil";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -52,6 +54,8 @@ export function useAmountOut() {
   //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
   //   abi: IUniswapV3PoolABI.abi,
   // });
+
+  const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -198,11 +202,20 @@ export function useAmountOut() {
           // gasLimit: "21000",
           // gasPrice: gasPrice.toString(),
         };
-        const res = await sendTransaction(tx);
-        return res;
+        if (tx) {
+          setModalOpen("confirming");
+          const res = await sendTransaction(tx);
+          if (res === "Sent") {
+            return setModalOpen("confirmed");
+          }
+          if (res === "Rejected") {
+            return setModalOpen("error");
+          }
+        }
       } catch (e) {
         console.log("callTokenSwap");
         console.log(e);
+        setModalOpen("error");
       }
     }
   }, [trade, address, UNISWAP_CONTRACT]);

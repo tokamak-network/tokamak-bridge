@@ -43,7 +43,6 @@ export default function TokenInput(props: {
 
     //This token is inToken
     if (inToken && selectedInToken) {
-      console.log("go");
       const value: string = e.target.value;
       if (value === "") {
         return setSelectedInToken({

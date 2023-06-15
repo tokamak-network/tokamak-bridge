@@ -17,7 +17,7 @@ export default function useCallDeposit(functionName: string) {
     transactionModalStatus
   );
 
-  const { data, isLoading, isSuccess, write } = useContractWrite({
+  const { data, isLoading, isSuccess, isError, write } = useContractWrite({
     address: GOERLI_CONTRACTS.L1Bridge,
     abi: L1BridgeAbi,
     functionName,
@@ -41,6 +41,9 @@ export default function useCallDeposit(functionName: string) {
     }
     if (isSuccess) {
       return setTModalStatus("confirmed");
+    }
+    if (isError) {
+      return setTModalStatus("error");
     }
     return setTModalStatus(null);
   }, [isLoading, isSuccess]);

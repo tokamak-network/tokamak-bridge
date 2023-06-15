@@ -125,7 +125,7 @@ export function useTransactionDetail() {
         },
         {
           title: "Price impact",
-          content: `${priceImpact}%`,
+          content: `${priceImpact ?? "-"}%`,
         },
         {
           title: "Estimated gas fees",
