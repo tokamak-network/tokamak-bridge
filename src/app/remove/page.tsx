@@ -12,7 +12,7 @@ import RemoveTxnDetail from "./components/RemoveTxnDetail";
 import PercentageSlider from "./components/Slider";
 import RemoveConfirmModal from "./components/RemoveConfirmModal";
 
-export default function RemoveLiquidity(props: PoolCardDetail) {
+export default function RemoveLiquidity() {
   const [sliderValue, setSliderValue] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   // TODO: Get props from data
