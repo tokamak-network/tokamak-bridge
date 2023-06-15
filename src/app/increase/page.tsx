@@ -22,7 +22,9 @@ type IncreaseLiquidityProps = {
   inRange?: boolean;
 };
 
-export default function IncreaseLiquidity(props: IncreaseLiquidityProps) {
+export default function IncreaseLiquidity(
+  props: IncreaseLiquidityProps
+): JSX.Element {
   const { inRange } = props;
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const [isModalOpen, setIsModalOpen] = useState(false);
