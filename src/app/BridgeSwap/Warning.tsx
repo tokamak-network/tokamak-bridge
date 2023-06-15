@@ -10,7 +10,7 @@ export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
   const { inToken } = useInOutTokens();
 
-  console.log(isNotSupportForSwap);
+  console.log(isNotSupportForBridge);
 
   if (isNotSupportForBridge)
     return (

@@ -20,6 +20,7 @@ import {
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useWaitForTransaction } from "wagmi";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
+import usePriceImpact from "@/hooks/swap/usePriceImpact";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -259,6 +260,9 @@ const Title = (props: {
   const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
   const { isLoading } = useGetTransaction();
+  const { outPrice } = usePriceImpact();
+
+  console.log(outPrice);
 
   useEffect(() => {
     if (isExpanded) {
@@ -320,7 +324,7 @@ const Title = (props: {
           </Text>
           <Text mx={"9px"}>=</Text>
           <Text>
-            {outToken?.parsedAmount} {outToken?.tokenName}
+            {outPrice} {outToken?.tokenName}
           </Text>
           <Text color={"#A0A3AD"} ml={"4px"}>
             ($1.000)

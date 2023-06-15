@@ -10,7 +10,7 @@ import commafy from "@/utils/trim/commafy";
 
 export default function usePriceImpact() {
   const [markPrice, setMarkPrice] = useState<bigint | undefined>(undefined);
-  const [outPrice, setOutPrice] = useState<bigint | undefined>(undefined);
+  const [outPrice, setOutPrice] = useState<string | undefined>(undefined);
 
   const { inToken, outToken } = useInOutTokens();
   const { QUOTER_CONTRACT } = useUniswapContracts();
@@ -47,6 +47,13 @@ export default function usePriceImpact() {
       );
       const nowPrice = JSBI.divide(amountOutBI, amountInBI);
 
+      setOutPrice(
+        commafy(
+          ethers.utils.formatUnits(nowPrice.toString(), outToken.decimals),
+          2
+        )
+      );
+
       const priceImpact =
         (Number(nowPrice.toString()) / Number(markPriceBI.toString())) * 100 -
         100;
@@ -55,5 +62,8 @@ export default function usePriceImpact() {
     return undefined;
   }, [markPrice, amountOut]);
 
-  return { priceImpact };
+  return {
+    priceImpact,
+    outPrice,
+  };
 }
