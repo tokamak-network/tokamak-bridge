@@ -15,40 +15,10 @@ import { useCallback, useEffect } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import { CurrencyAmount } from "@uniswap/sdk-core";
+import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
-
-export async function constructPosition(
-  token0Amount: CurrencyAmount<Token>,
-  token1Amount: CurrencyAmount<Token>
-): Promise<Position> {
-  // get pool info
-  const poolInfo = await getPoolInfo();
-
-  // construct pool instance
-  const configuredPool = new Pool(
-    token0Amount.currency,
-    token1Amount.currency,
-    poolInfo.fee,
-    poolInfo.sqrtPriceX96.toString(),
-    poolInfo.liquidity.toString(),
-    poolInfo.tick
-  );
-
-  // create position using the maximum liquidity from input amounts
-  return Position.fromAmounts({
-    pool: configuredPool,
-    tickLower:
-      nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) -
-      poolInfo.tickSpacing * 2,
-    tickUpper:
-      nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) +
-      poolInfo.tickSpacing * 2,
-    amount0: token0Amount.quotient,
-    amount1: token1Amount.quotient,
-    useFullPrecision: true,
-  });
-}
+import { useAccount } from "wagmi";
+import { sendTransaction } from "@/utils/uniswap/libs/provider";
 
 export default function useMintPosition() {
   const { mode } = useGetMode();
@@ -56,6 +26,7 @@ export default function useMintPosition() {
   const { UNISWAP_CONTRACT } = useContract();
   const { layer } = useConnectedNetwork();
   const { provider } = useProvier();
+  const { address } = useAccount();
 
   const getPoolInfo = useCallback(async () => {
     if (mode === "Pool" && inToken && outToken) {
@@ -98,9 +69,15 @@ export default function useMintPosition() {
     }
   }, [mode, inToken, outToken]);
 
-  useEffect(() => {
-    const mintingPosition = async () => {
-      if (mode === "Pool" && inToken && outToken) {
+  const constructPosition = useCallback(
+    async (
+      token0Amount: CurrencyAmount<Token>,
+      token1Amount: CurrencyAmount<Token>
+    ): Promise<Position | undefined> => {
+      // get pool info
+      const poolInfo = await getPoolInfo();
+
+      if (poolInfo) {
         // construct pool instance
         const configuredPool = new Pool(
           token0Amount.currency,
@@ -111,17 +88,45 @@ export default function useMintPosition() {
           poolInfo.tick
         );
 
-        const positionToMint = await constructPosition(
-          CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(inToken.amountBN, inToken.decimals)
-          ),
-          CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(outToken.amountBN, outToken.decimals)
-          )
-        );
+        // create position using the maximum liquidity from input amounts
+        return Position.fromAmounts({
+          pool: configuredPool,
+          tickLower:
+            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) -
+            poolInfo.tickSpacing * 2,
+          tickUpper:
+            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) +
+            poolInfo.tickSpacing * 2,
+          amount0: token0Amount.quotient,
+          amount1: token1Amount.quotient,
+          useFullPrecision: true,
+        });
+      }
+      return undefined;
+    },
+    []
+  );
 
+  const mintPosition = useCallback(async () => {
+    if (mode === "Pool" && inToken && outToken && address) {
+      const positionToMint = await constructPosition(
+        CurrencyAmount.fromRawAmount(
+          inToken.token,
+          fromReadableAmount(
+            Number(inToken.parsedAmount),
+            inToken.decimals
+          ).toString()
+        ),
+        CurrencyAmount.fromRawAmount(
+          outToken.token,
+          fromReadableAmount(
+            Number(outToken.parsedAmount),
+            outToken.decimals
+          ).toString()
+        )
+      );
+
+      if (positionToMint) {
         const mintOptions: MintOptions = {
           recipient: address,
           deadline: Math.floor(Date.now() / 1000) + 60 * 20,
@@ -138,43 +143,15 @@ export default function useMintPosition() {
         // build transaction
         const transaction = {
           data: calldata,
-          to: NONFUNGIBLE_POSITION_MANAGER_CONTRACT_ADDRESS,
+          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
           value: value,
           from: address,
-          maxFeePerGas: MAX_FEE_PER_GAS,
-          maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
         };
 
         return sendTransaction(transaction);
       }
-    };
-    mintingPosition();
-  }, [provider, UNISWAP_CONTRACT, layer]);
+    }
+  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
+
+  return { mintPosition };
 }
-
-// export async function getPositionIds(): Promise<number[]> {
-//   const provider = getProvider();
-//   const address = getWalletAddress();
-//   if (!provider || !address) {
-//     throw new Error("No provider available");
-//   }
-
-//   const positionContract = new ethers.Contract(
-//     NONFUNGIBLE_POSITION_MANAGER_CONTRACT_ADDRESS,
-//     NONFUNGIBLE_POSITION_MANAGER_ABI,
-//     provider
-//   );
-
-//   // Get number of positions
-//   const balance: number = await positionContract.balanceOf(address);
-
-//   // Get all positions
-//   const tokenIds = [];
-//   for (let i = 0; i < balance; i++) {
-//     const tokenOfOwnerByIndex: number =
-//       await positionContract.tokenOfOwnerByIndex(address, i);
-//     tokenIds.push(tokenOfOwnerByIndex);
-//   }
-
-//   return tokenIds;
-// }
