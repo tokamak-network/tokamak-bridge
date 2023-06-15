@@ -19,7 +19,10 @@ import JSBI from "jsbi";
 import { CurrentConfig } from "../config";
 import ERC20_ABI from "../../../constant/abis/erc20.json";
 
-import { L1_UniswapContracts } from "../../../constant/contracts/uniswap";
+import {
+  L1_UniswapContracts,
+  L2_UniswapContracts,
+} from "../../../constant/contracts/uniswap";
 import { getPoolInfo } from "./pool";
 import {
   getWalletAddress,
@@ -32,7 +35,8 @@ import { quote } from "./quote";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
-const { QUOTER_CONTRACT_ADDRESS, SWAP_ROUTER_ADDRESS } = L1_UniswapContracts;
+// const { QUOTER_CONTRACT_ADDRESS, SWAP_ROUTER_ADDRESS } = L1_UniswapContracts;
+const { QUOTER_CONTRACT_ADDRESS, SWAP_ROUTER_ADDRESS } = L2_UniswapContracts;
 
 const MAX_FEE_PER_GAS = 100000000000;
 const MAX_PRIORITY_FEE_PER_GAS = 100000000000;
@@ -155,10 +159,10 @@ async function getOutputQuote(route: Route<Currency, Currency>) {
         CurrentConfig.tokens.in.decimals
       ).toString()
     ),
-    TradeType.EXACT_INPUT,
-    {
-      useQuoterV2: true,
-    }
+    TradeType.EXACT_INPUT
+    // {
+    //   useQuoterV2: true,
+    // }
   );
 
   console.log("**calldata**");
@@ -179,7 +183,8 @@ export async function getTokenTransferApproval(
   token: Token
 ): Promise<TransactionState> {
   const provider = getL1Provider();
-  const address = getWalletAddress();
+  const address = "0x8c595DA827F4182bC0E3917BccA8e654DF8223E1";
+  // getWalletAddress();
   if (!provider || !address) {
     console.log("No Provider Found");
     return TransactionState.Failed;

@@ -7,15 +7,16 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { useCallback, useMemo } from "react";
+import { CSSProperties, useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: {
   inToken: boolean;
+  defaultValue?: string | number | null;
+  isDisabled?: boolean;
   style?: {};
-  inputKey?: string;
 }) {
-  const { inToken, style, inputKey } = props;
+  const { inToken, defaultValue, isDisabled, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -23,6 +24,7 @@ export default function TokenInput(props: {
     selectedOutTokenStatus
   );
   const { inNetwork, outNetwork } = useInOutNetwork();
+  const { amountOut } = useAmountOut();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -37,6 +39,8 @@ export default function TokenInput(props: {
   const tokenData = useTokenBalance(tokenAddress);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (isDisabled) return;
+
     //This token is inToken
     if (inToken && selectedInToken) {
       console.log("go");
@@ -59,25 +63,25 @@ export default function TokenInput(props: {
       });
     }
     //This token is outToken
-    if (!inToken && selectedOutToken) {
-      const value: string = e.target.value;
-      if (value === "") {
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: value,
-      });
-    }
+    // if (!inToken && selectedOutToken && amountOut) {
+    //   const value: string = amountOut;
+    //   if (value === "" || value === null) {
+    //     return setSelectedOutToken({
+    //       ...selectedOutToken,
+    //       amountBN: null,
+    //       parsedAmount: null,
+    //     });
+    //   }
+    //   const parsedAmount = ethers.utils.parseUnits(
+    //     value,
+    //     selectedOutToken.decimals
+    //   );
+    //   return setSelectedOutToken({
+    //     ...selectedOutToken,
+    //     amountBN: parsedAmount.toBigInt(),
+    //     parsedAmount: value,
+    //   });
+    // }
   };
 
   const onMax = useCallback(() => {
@@ -100,16 +104,25 @@ export default function TokenInput(props: {
     }
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);
 
+  const valueProp = useMemo(() => {
+    return inToken === false
+      ? amountOut ?? undefined
+      : selectedInToken && selectedInToken?.parsedAmount !== null
+      ? String(selectedInToken?.parsedAmount)
+      : undefined;
+  }, [inToken, amountOut, selectedInToken]);
+
   return (
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
       pb={"16px"}
+      w={"100%"}
       {...style}
     >
       <Flex justifyContent={"space-between"}>
         <Input
-          w={"153px"}
+          w={"100%"}
           h={"27px"}
           m={0}
           p={0}
@@ -120,48 +133,28 @@ export default function TokenInput(props: {
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}
-          value={
-            selectedInToken !== null &&
-            selectedInToken?.parsedAmount !== null &&
-            inputKey === "in" // Check if this input is the "in" token
-              ? String(selectedInToken?.parsedAmount)
-              : undefined
-          }
+          isDisabled={isDisabled}
+          value={valueProp}
           onChange={onChange}
         ></Input>
-        <Button
-          w={"40px"}
-          h={"22px"}
-          bgColor={"#6a00f1"}
-          fontSize={12}
-          fontWeight={700}
-          _hover={{}}
-          _active={{}}
-          mt={"3px"}
-          visibility={
-            (inputKey === "in" && selectedInToken?.parsedAmount) ||
-            (inputKey === "out" && selectedOutToken?.parsedAmount)
-              ? "visible"
-              : "hidden"
-          }
-          onClick={() => onMax()}
-        >
-          Max
-        </Button>
+        {inToken && (
+          <Button
+            w={"40px"}
+            h={"22px"}
+            bgColor={"#6a00f1"}
+            fontSize={12}
+            fontWeight={700}
+            _hover={{}}
+            _active={{}}
+            mt={"3px"}
+            onClick={() => onMax()}
+          >
+            Max
+          </Button>
+        )}
       </Flex>
       <Flex w={"100%"} justifyContent={"flex-start"}>
-        <Text
-          fontSize={13}
-          fontWeight={500}
-          color={"#ffffff"}
-          opacity={0.8}
-          visibility={
-            (inputKey === "in" && selectedInToken?.parsedAmount) ||
-            (inputKey === "out" && selectedOutToken?.parsedAmount)
-              ? "visible"
-              : "hidden"
-          }
-        >
+        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
           $0.00
         </Text>
       </Flex>
