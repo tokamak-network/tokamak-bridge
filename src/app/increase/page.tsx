@@ -18,7 +18,12 @@ import { useRecoilValue } from "recoil";
 import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
 import IncreaseConfirmModal from "./components/IncreaseConfirmModal";
 
-export default function IncreaseLiquidity(props: PoolCardDetail) {
+type IncreaseLiquidityProps = {
+  inRange?: boolean;
+};
+
+export default function IncreaseLiquidity(props: IncreaseLiquidityProps) {
+  const { inRange } = props;
   const inTokenInfo = useRecoilValue(selectedInTokenStatus);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -90,7 +95,7 @@ export default function IncreaseLiquidity(props: PoolCardDetail) {
                 </Flex>
               </Flex>
               <Flex alignItems={"center"} justifyContent={"center"}>
-                {props.range === false ? (
+                {inRange ? (
                   <>
                     <Box
                       w="6px"
