@@ -1,5 +1,5 @@
 import { Flex, Text } from "@chakra-ui/layout";
-import PriceInput from "@/app/add/components/PriceInput";
+import PriceInput from "@/app/add/components/priceInput";
 
 type PriceRangeProps = {
   title: string;

@@ -12,9 +12,9 @@ import SettingsIcon from "@/assets/icons/setting.svg";
 import Link from "next/link";
 import NetworkDropdown from "@/components/dropdown/Index";
 import addIcon from "@/assets/icons/addIcon.svg";
-import InTokenSelector from "./components/InTokenSelector";
+import InTokenSelector from "./components/inTokenSelector";
 import OutTokenSelector from "./components/OutTokenSelector";
-import PriceInput from "./components/PriceInput";
+import PriceInput from "./components/priceInput";
 import TokenInput from "@/components/input/TokenInput";
 import InitializeInfo from "./components/InitializeInfo";
 import Graph from "./components/Graph";
@@ -24,7 +24,7 @@ import PositionInfo from "./components/PositionInfo";
 import { Bound } from "@/components/ui/LiquidityPoolChart/actions";
 import { Chart } from "@/components/ui/LiquidityPoolChart/Chart";
 import InputAmount from "./components/InputAmount";
-import TierSelector from "./components/TierSelector";
+import TierSelector from "./components/tierSelector";
 
 export default function CreatePoolModal() {
   const [inToken, setInToken] = useState("");

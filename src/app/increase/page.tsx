@@ -10,7 +10,7 @@ import BackIcon from "@/assets/icons/back.svg";
 import SettingsIcon from "@/assets/icons/setting.svg";
 import PriceRange from "@/components/ui/PriceRange";
 import OutTokenSelector from "@/app/add/components/OutTokenSelector";
-import InTokenSelector from "@/app/add/components/InTokenSelector";
+import InTokenSelector from "@/app/add/components/inTokenSelector";
 import TokenInput from "@/components/input/TokenInput";
 import addIcon from "@/assets/icons/addIcon.svg";
 import TokenCard from "@/components/card/TokenCard";

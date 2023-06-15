@@ -9,7 +9,7 @@ import Link from "next/link";
 import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
 import LiquidityInfo from "../components/LiquidityInfo";
 import UnclaimedEarnings from "../components/UnclaimedEarnings";
-import PriceInput from "../../add/components/PriceInput";
+import PriceInput from "../../add/components/priceInput";
 import ClaimEarningsModal from "@/components/modal/ClaimEarnings";
 import PriceRange from "@/components/ui/PriceRange";
 
