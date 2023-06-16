@@ -9,7 +9,7 @@ import Title from "./components/Title";
 import TokenInput from "@/components/input/TokenInput";
 
 export default function SelectPair() {
-  const { inTokenInfo, outTokenInfo } = useInOutTokens();
+  const { inToken, inTokenInfo, outTokenInfo } = useInOutTokens();
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
 
   return (
@@ -54,7 +54,7 @@ export default function SelectPair() {
             flexDir={"column"}
             w={"186px"}
             h={"242px"}
-            onClick={() => onOpenInToken()}
+            onClick={() => onOpenOutToken()}
           >
             {outTokenInfo ? (
               <TokenCard
@@ -63,10 +63,9 @@ export default function SelectPair() {
                 tokenInfo={outTokenInfo}
                 hasInput={true}
                 inNetwork={true}
-                onClick={() => onOpenOutToken()}
               />
             ) : (
-              <SearchToken />
+              <SearchToken onClick={() => onOpenOutToken()} />
             )}
           </Box>
           <Box w={"186px"}>

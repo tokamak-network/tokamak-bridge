@@ -1,4 +1,5 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutNetwork } from "@/hooks/network";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import {
@@ -26,6 +27,7 @@ export default function TokenInput(props: {
   );
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { amountOut } = useAmountOut();
+  const { mode } = useGetMode();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -41,10 +43,10 @@ export default function TokenInput(props: {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
+    const value: string = e.target.value;
 
     //This token is inToken
     if (inToken && selectedInToken) {
-      const value: string = e.target.value;
       if (value === "") {
         return setSelectedInToken({
           ...selectedInToken,
@@ -63,6 +65,24 @@ export default function TokenInput(props: {
       });
     }
     //This token is outToken
+    if (mode !== "Swap" && !inToken && selectedOutToken) {
+      if (value === "" || value === null) {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+      const parsedAmount = ethers.utils.parseUnits(
+        value,
+        selectedOutToken.decimals
+      );
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
+      });
+    }
     // if (!inToken && selectedOutToken && amountOut) {
     //   const value: string = amountOut;
     //   if (value === "" || value === null) {

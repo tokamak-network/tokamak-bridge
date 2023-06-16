@@ -1,3 +1,4 @@
+import useMintPosition from "@/hooks/pool/useMintPosition";
 import { Button } from "@chakra-ui/react";
 import { useMemo } from "react";
 
@@ -5,6 +6,8 @@ export default function ActionButton() {
   const buttonName = useMemo(() => {
     return "Invalid pair";
   }, []);
+
+  const { mintPosition } = useMintPosition();
 
   return (
     <Button
@@ -16,6 +19,7 @@ export default function ActionButton() {
       _hover={{}}
       _active={{}}
       mt={"auto"}
+      onClick={mintPosition}
     >
       {buttonName}
     </Button>
