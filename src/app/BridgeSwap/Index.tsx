@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
-import Modals from "./Modals";
+import Modals from "../Modals";
 import { Details } from "./Details";
 
 export default function BridgeSwap() {

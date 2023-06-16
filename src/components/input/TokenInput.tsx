@@ -14,9 +14,10 @@ export default function TokenInput(props: {
   inToken: boolean;
   defaultValue?: string | number | null;
   isDisabled?: boolean;
+  hasMaxButton?: boolean;
   style?: {};
 }) {
-  const { inToken, defaultValue, isDisabled, style } = props;
+  const { inToken, defaultValue, hasMaxButton, isDisabled, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -136,7 +137,7 @@ export default function TokenInput(props: {
           value={valueProp}
           onChange={onChange}
         ></Input>
-        {inToken && (
+        {(inToken || hasMaxButton) && (
           <Button
             w={"40px"}
             h={"22px"}

@@ -32,8 +32,6 @@ const theme = extendTheme({
         cursor: "pointer",
       },
       ".card-wrapper": {
-        width: "224px",
-        height: "385px",
         flexDir: "column",
         border: "1px solid #1f2128",
         alignItems: "center",

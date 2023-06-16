@@ -47,5 +47,10 @@ export function useInOutTokens() {
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName]);
 
-  return { inToken, outToken };
+  return {
+    inToken,
+    outToken,
+    inTokenInfo: inTokenRecoilValue,
+    outTokenInfo: outTokenRecoilValue,
+  };
 }

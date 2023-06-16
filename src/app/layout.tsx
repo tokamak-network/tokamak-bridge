@@ -13,6 +13,7 @@ import HistoryDrawer from "@/components/history/Drawer";
 import "css/scrollbar.css";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@/apollo";
+import Modals from "./Modals";
 
 const GlobalComponents = () => {
   return (
@@ -41,6 +42,7 @@ export default function RootLayout({
                 <Header />
                 <Center h={"100vh"}>{children}</Center>
                 <GlobalComponents />
+                <Modals />
               </WagmiProviders>
             </RecoilRoot>
           </ChakraProvidersForNextJs>

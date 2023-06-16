@@ -1,3 +1,5 @@
+"use client";
+
 import {
   SupportedChainId,
   SupportedChainProperties,
@@ -20,30 +22,32 @@ type SelectOption = SupportedChainProperties & {
   label: SupportedChainProperties["chainName"];
 };
 
-const customStyles = {
-  control: (styles: any) => ({
-    ...styles,
-    width: "200px",
-    maxHeight: "32px !important",
-    minHeight: "32px !important",
-    backgroundColor: "#1F2128",
-    cursor: "pointer",
-    color: "#fff",
-    border: "none",
-    borderRadius: "6px",
-  }),
-  menu: (styles: any) => ({
-    margin: "0px",
-    marginTop: "4px",
-    background: "#1F2128",
-    minWidth: "216px !important",
-    maxWidth: "216px !important",
-    borderRadius: "6px",
-    position: "absolute",
-    border: "1px solid #313442",
-    padding: "8px",
-    zIndex: Overlay_Index.AlwaysTop,
-  }),
+const customStyles = (maxHeight: string) => {
+  return {
+    control: (styles: any) => ({
+      ...styles,
+      width: "100%",
+      maxHeight: `${maxHeight} !important`,
+      minHeight: `${maxHeight} !important`,
+      backgroundColor: "#1F2128",
+      cursor: "pointer",
+      color: "#fff",
+      border: "none",
+      borderRadius: "6px",
+    }),
+    menu: (styles: any) => ({
+      margin: "0px",
+      marginTop: "4px",
+      background: "#1F2128",
+      minWidth: "216px !important",
+      maxWidth: "216px !important",
+      borderRadius: "6px",
+      position: "absolute",
+      border: "1px solid #313442",
+      padding: "8px",
+      zIndex: Overlay_Index.AlwaysTop,
+    }),
+  };
 };
 
 const ValueContainer = (props: {
@@ -56,8 +60,8 @@ const ValueContainer = (props: {
   if (selectedOption) {
     return (
       <Flex
-        w={"200px"}
-        h={"32px"}
+        w={"100%"}
+        h={"100%"}
         color={"#fff"}
         px={"8px"}
         justifyContent={"space-between"}
@@ -80,8 +84,8 @@ const ValueContainer = (props: {
   }
   return (
     <Flex
-      w={"200px"}
-      h={"32px"}
+      w={"100%"}
+      h={"100%"}
       color={"#fff"}
       px={"8px"}
       justifyContent={"space-between"}
@@ -102,8 +106,11 @@ const ValueContainer = (props: {
   );
 };
 
-export default function NetworkDropdown(props: { inNetwork: boolean }) {
-  const { inNetwork } = props;
+export default function NetworkDropdown(props: {
+  inNetwork: boolean;
+  height: string;
+}) {
+  const { inNetwork, height } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
@@ -174,7 +181,7 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
           <Flex
-            w={"200px"}
+            w={"100%"}
             h={"12px"}
             alignItems={"center"}
             justifyContent={"space-around"}
@@ -185,8 +192,8 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
             <Box w={"49px"} h={"1px"} bgColor={"#757893"} />
           </Flex>
           <Flex
-            w={"200px"}
-            h={"32px"}
+            w={"100%"}
+            h={"100%"}
             color={"#fff"}
             px={"8px"}
             justifyContent={"space-between"}
@@ -213,8 +220,8 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
 
     return (
       <Flex
-        w={"200px"}
-        h={"32px"}
+        w={"100%"}
+        h={"100%"}
         color={"#fff"}
         px={"8px"}
         justifyContent={"space-between"}
@@ -302,46 +309,8 @@ export default function NetworkDropdown(props: { inNetwork: boolean }) {
         IndicatorsContainer: () => null,
       }}
       //@ts-ignore
-      styles={customStyles}
+      styles={customStyles(height)}
       value={inNetwork ? selectedOption : selectedOutOption}
     ></Select>
   );
-
-  // return (
-  //   <Select
-  //     w={"200px"}
-  //     h={"32px"}
-  //     bgColor={"#1f2128"}
-  //     _first={{ alignItems: "end" }}
-  //     onChange={onChange}
-  //     value={
-  //       inNetwork ? network.inNetwork?.chainId : network.outNetwork?.chainId
-  //     }
-  //     defaultValue={connectedChainId}
-  //   >
-  //     {supportedChain.map((chainInfo) => {
-  //       return (
-  //         <option
-  //           style={{ backgroundColor: "#1f2128" }}
-  //           value={chainInfo.chainId}
-  //           key={chainInfo.chainId}
-  //         >
-  //           {/* <Flex>
-  //             {chainInfo.chainName}
-  //             <Image src={chainInfo.networkImage} alt={chainInfo.chainName} />
-  //           </Flex> */}
-  //           <Box display="flex" alignItems="center">
-  //             <Image
-  //               src={chainInfo.networkImage}
-  //               alt={chainInfo.chainName}
-  //               // boxSize="20px"
-  //               // marginRight="4px"
-  //             />
-  //             <Text>{chainInfo.chainName}</Text>
-  //           </Box>
-  //         </option>
-  //       );
-  //     })}
-  //   </Select>
-  // );
 }

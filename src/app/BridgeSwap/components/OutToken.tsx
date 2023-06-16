@@ -38,7 +38,7 @@ const SelectedNetwork = () => {
   );
 };
 
-const SearchTokenComponent = () => {
+export const SearchTokenComponent = () => {
   const { onOpenOutToken } = useTokenModal();
   const outToeknInfo = useRecoilValue(selectedOutTokenStatus);
 
@@ -69,7 +69,7 @@ const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode } = useRecoilValue(actionMode);
   const NetworkSwitcher = useMemo(() => {
-    return <NetworkDropdown inNetwork={false} />;
+    return <NetworkDropdown inNetwork={false} height="32px" />;
   }, []);
 
   return (
@@ -85,8 +85,10 @@ export default function OutToken() {
         />
       </Flex>
 
-      <Flex className="card-wrapper">
-        {NetworkSwitcher}
+      <Flex className="card-wrapper" w={"224px"} h={"385px"}>
+        <Flex className="test" minW={"200px"} w={"200px"} h={"32px"}>
+          {NetworkSwitcher}
+        </Flex>
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
         {mode === "Swap" && (

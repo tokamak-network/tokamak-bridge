@@ -16,7 +16,11 @@ export default function InToken() {
   const { onOpenInToken } = useTokenModal();
 
   const NetworkSwitcher = useMemo(() => {
-    return <NetworkDropdown inNetwork={true} />;
+    return (
+      <Box w={"200px"} h={"32px"}>
+        <NetworkDropdown inNetwork={true} height="32px" />
+      </Box>
+    );
   }, []);
 
   return (
