@@ -4,7 +4,9 @@ import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
 
 export default function PoolList() {
-  const { positionIds } = useGetPositionIds();
+  const { positionInfo } = useGetPositionIds();
+
+  console.log(positionInfo);
 
   return (
     <Wrap spacing="16px">

@@ -21,6 +21,7 @@ import { useAccount } from "wagmi";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { useRecoilValue } from "recoil";
 import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
+import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 
 export default function useMintPosition() {
   const { mode } = useGetMode();
@@ -39,9 +40,7 @@ export default function useMintPosition() {
         tokenB: outToken.token,
         fee: feeAmount,
         initCodeHashManualOverride:
-          layer === "L2"
-            ? "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff"
-            : undefined,
+          layer === "L2" ? L2_initCodeHashManualOverride : undefined,
       });
 
       const POOL_CONTRACT = new ethers.Contract(
