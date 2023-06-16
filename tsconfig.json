@@ -29,7 +29,8 @@
       "@/abis/*": ["constant/abis/*"],
       "@/css/*": ["css/*"],
       "@/contracts/*": ["constant/contracts/*"],
-      "@/bridgeComponent/*": ["app/BridgeSwap/components/*"]
+      "@/bridgeComponent/*": ["app/BridgeSwap/components/*"],
+      "@/pools/*": ["app/pools/*"]
     },
     "plugins": [
       {

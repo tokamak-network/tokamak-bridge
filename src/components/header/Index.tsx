@@ -29,7 +29,11 @@ const HeaderMenu = (props: { title: string; link: string }) => {
     <Center
       fontSize={16}
       cursor={"pointer"}
-      borderBottom={pathname === link ? "3px solid #007AFF" : ""}
+      borderBottom={
+        pathname.split("/")[1] === link.replaceAll("/", "")
+          ? "3px solid #007AFF"
+          : ""
+      }
       onClick={() => router.push(link)}
     >
       <Text>{title}</Text>
