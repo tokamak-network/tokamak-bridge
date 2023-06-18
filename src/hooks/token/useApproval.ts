@@ -108,8 +108,6 @@ export function useApprove() {
   const { approved } = useAllowance();
   const { inToken } = useInOutTokens();
 
-  console.log(approved);
-
   const isApproved = useMemo(() => {
     if (approved) {
       switch (mode) {

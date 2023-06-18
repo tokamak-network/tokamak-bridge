@@ -110,6 +110,8 @@ export default function useMintPosition() {
   );
 
   const mintPosition = useCallback(async () => {
+    console.log("--mintPosition--");
+    console.log(inToken, outToken, address);
     if (inToken && outToken && address) {
       const positionToMint = await constructPosition(
         CurrencyAmount.fromRawAmount(

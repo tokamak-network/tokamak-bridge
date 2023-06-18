@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { useProvier } from "../provider/useProvider";
 import useContract from "../contracts/useContract";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useBlockNum from "../network/useBlockNumber";
 import { computePoolAddress } from "@uniswap/v3-sdk";
@@ -12,6 +12,7 @@ import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/I
 import { Token } from "@uniswap/sdk-core";
 import ERC20_ABI from "@/abis/erc20.json";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
+import { usePathname } from "next/navigation";
 
 export default function useGetPositionIds(): {
   positionInfo: PoolCardDetail[] | undefined;
@@ -128,4 +129,21 @@ export default function useGetPositionIds(): {
   }, [blockNumber]);
 
   return { positionInfo };
+}
+
+export function usePositionInfo() {
+  const { positionInfo } = useGetPositionIds();
+  const pathName = usePathname();
+
+  const info = useMemo(() => {
+    const positionId = pathName.split("/")[pathName.split("/").length - 1];
+    if (positionId && positionInfo) {
+      const result = positionInfo.filter(
+        (poisitonData) => poisitonData.id === Number(positionId)
+      );
+      return result[0] ?? undefined;
+    }
+  }, [pathName, positionInfo]);
+
+  return { info };
 }
