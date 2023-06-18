@@ -221,6 +221,13 @@ export function useCarrousellAnimation(params: {
       height: "242px",
       position: "absolute",
     });
+    outRightControl.start({
+      transform: getTrasnformParams(10, 650, -59),
+      opacity: 0,
+      width: "186px",
+      height: "242px",
+      position: "absolute",
+    });
     waitControl.start({
       transform: getTrasnformParams(0, 0, 0),
       opacity: 0,
@@ -341,6 +348,44 @@ export function useCarrousellAnimation(params: {
     //     height: "242px",
     //   });
     // }
+
+    if (currentIndex === 3) {
+      endLeftControl.start(positionStyles.sideLeft);
+      sideLeftControl.start(positionStyles.center);
+      centerControl.start(positionStyles.sideLeft);
+      sideRightControl.start(positionStyles.endRight);
+      endRightControl.start(positionStyles.outRight);
+
+      outLeftControl.start({
+        ...positionStyles.endLeft,
+        position: "absolute",
+        transform: getTrasnformParams(-10, -295, -62),
+        opacity: 1,
+      });
+    }
+
+    if (currentIndex === 2) {
+      endLeftControl.start(positionStyles.endLeft);
+      sideLeftControl.start(positionStyles.sideLeft);
+      centerControl.start(positionStyles.center);
+      sideRightControl.start(positionStyles.sideRight);
+      endRightControl.start(positionStyles.endRight);
+      outLeftControl.start({
+        transform: getTrasnformParams(-10, -650, -59),
+        opacity: 0,
+        width: "186px",
+        height: "242px",
+        position: "absolute",
+      });
+      outRightControl.start({
+        transform: getTrasnformParams(10, 650, -59),
+        opacity: 0,
+        width: "186px",
+        height: "242px",
+        position: "absolute",
+      });
+    }
+
     if (currentIndex === 1) {
       endLeftControl.start(positionStyles.sideLeft);
       sideLeftControl.start(positionStyles.center);
