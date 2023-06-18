@@ -5,7 +5,11 @@ import { useMemo } from "react";
 
 export default function SelectNetwork() {
   const NetworkSwitcher = useMemo(() => {
-    return <NetworkDropdown inNetwork={false} />;
+    return (
+      <Box w={"200px"} h={"32px"}>
+        <NetworkDropdown inNetwork={false} height="32px" />
+      </Box>
+    );
   }, []);
 
   return (
