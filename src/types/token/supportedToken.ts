@@ -52,7 +52,11 @@ export const supportedTokens: SupportedTokens_T = [
       DARIUS: "0x",
     },
     decimals: 18,
-    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.GOERLI],
+    isNativeCurrency: [
+      SupportedChainId.MAINNET,
+      SupportedChainId.GOERLI,
+      SupportedChainId.TOKAMAK_MAINNET,
+    ],
   },
   {
     tokenName: "Tokamak Network Token",

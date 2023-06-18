@@ -11,8 +11,11 @@ import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { Token } from "@uniswap/sdk-core";
 import ERC20_ABI from "@/abis/erc20.json";
+import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 
-export default function useGetPositionIds() {
+export default function useGetPositionIds(): {
+  positionInfo: PoolCardDetail[] | undefined;
+} {
   const { provider } = useProvier();
   const { UNISWAP_CONTRACT } = useContract();
 
@@ -20,9 +23,9 @@ export default function useGetPositionIds() {
   const { blockNumber } = useBlockNum();
   const { layer, connectedChainId } = useConnectedNetwork();
 
-  const [positionInfo, setPositionInfo] = useState<any[] | undefined>(
-    undefined
-  );
+  const [positionInfo, setPositionInfo] = useState<
+    PoolCardDetail[] | undefined
+  >(undefined);
 
   const callPositionIds = useCallback(async () => {
     if (address && connectedChainId) {
@@ -36,7 +39,7 @@ export default function useGetPositionIds() {
       const balance: number = await positionContract.balanceOf(address);
 
       // Get all positions
-      const positions: any[] = [];
+      const positions: PoolCardDetail[] = [];
       for (let i = 0; i < balance; i++) {
         const tokenOfOwnerByIndex: number =
           await positionContract.tokenOfOwnerByIndex(address, i);
@@ -56,7 +59,18 @@ export default function useGetPositionIds() {
           provider
         );
 
-        const [token0Decimals, token1Decimals] = await Promise.all([
+        const [
+          token0Symbol,
+          token1Symbol,
+          token0Name,
+          token1Name,
+          token0Decimals,
+          token1Decimals,
+        ] = await Promise.all([
+          token0Contract.symbol(),
+          token1Contract.symbol(),
+          token0Contract.name(),
+          token1Contract.name(),
           token0Contract.decimals(),
           token1Contract.decimals(),
         ]);
@@ -81,9 +95,22 @@ export default function useGetPositionIds() {
         const inRange = tickLower <= tick < tickUpper;
 
         positions.push({
+          id: Number(tokenOfOwnerByIndex.toString()),
           fee,
-          token0,
-          token1,
+          token0: new Token(
+            connectedChainId,
+            token0,
+            token0Decimals,
+            token0Symbol,
+            token0Name
+          ),
+          token1: new Token(
+            connectedChainId,
+            token1,
+            token1Decimals,
+            token1Symbol,
+            token1Name
+          ),
           inRange,
         });
       }
