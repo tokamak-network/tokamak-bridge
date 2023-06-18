@@ -7,6 +7,9 @@ import {
   NonfungiblePositionManager,
   Pool,
   Position,
+  AddLiquidityOptions,
+  CollectOptions,
+  RemoveLiquidityOptions,
 } from "@uniswap/v3-sdk";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -23,7 +26,7 @@ import { useRecoilValue } from "recoil";
 import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 
-export default function useMintPosition() {
+export default function usePoolContract() {
   const { mode } = useGetMode();
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
@@ -157,5 +160,113 @@ export default function useMintPosition() {
     }
   }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
 
-  return { mintPosition };
+  const addLiquidity = useCallback(
+    async (positionId: number) => {
+      console.log("--addLiquidity--");
+      console.log(inToken, outToken, address);
+      if (inToken && outToken && address) {
+        const positionToIncreaseBy = await constructPosition(
+          CurrencyAmount.fromRawAmount(
+            inToken.token,
+            fromReadableAmount(
+              Number(inToken.parsedAmount),
+              inToken.decimals
+            ).toString()
+          ),
+          CurrencyAmount.fromRawAmount(
+            outToken.token,
+            fromReadableAmount(
+              Number(outToken.parsedAmount),
+              outToken.decimals
+            ).toString()
+          )
+        );
+        const addLiquidityOptions: AddLiquidityOptions = {
+          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          slippageTolerance: new Percent(50, 10_000),
+          tokenId: positionId,
+        };
+        if (positionToIncreaseBy) {
+          const { calldata, value } =
+            NonfungiblePositionManager.addCallParameters(
+              positionToIncreaseBy,
+              addLiquidityOptions
+            );
+
+          // build transaction
+          const transaction = {
+            data: calldata,
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            value: value,
+            from: address,
+          };
+          return sendTransaction(transaction);
+        }
+      }
+    },
+    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
+  );
+
+  const removeLiquidity = useCallback(
+    async (positionId: number, removeLiquidityPercentage: number) => {
+      console.log("--removeLiquidity--");
+      console.log(inToken, outToken, address);
+      if (inToken && outToken && address) {
+        const currentPosition = await constructPosition(
+          CurrencyAmount.fromRawAmount(
+            inToken.token,
+            fromReadableAmount(
+              Number(inToken.parsedAmount),
+              inToken.decimals
+            ).toString()
+          ),
+          CurrencyAmount.fromRawAmount(
+            outToken.token,
+            fromReadableAmount(
+              Number(outToken.parsedAmount),
+              outToken.decimals
+            ).toString()
+          )
+        );
+        const collectOptions: Omit<CollectOptions, "tokenId"> = {
+          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(inToken.token, 0),
+          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+            outToken.token,
+            0
+          ),
+          recipient: address,
+        };
+
+        const removeLiquidityOptions: RemoveLiquidityOptions = {
+          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          slippageTolerance: new Percent(50, 10_000),
+          tokenId: positionId,
+          // percentage of liquidity to remove
+          liquidityPercentage: new Percent(removeLiquidityPercentage),
+          collectOptions,
+        };
+        if (currentPosition) {
+          // get calldata for minting a position
+          const { calldata, value } =
+            NonfungiblePositionManager.removeCallParameters(
+              currentPosition,
+              removeLiquidityOptions
+            );
+
+          // build transaction
+          const transaction = {
+            data: calldata,
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            value: value,
+            from: address,
+          };
+
+          return sendTransaction(transaction);
+        }
+      }
+    },
+    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
+  );
+
+  return { mintPosition, addLiquidity, removeLiquidity };
 }
