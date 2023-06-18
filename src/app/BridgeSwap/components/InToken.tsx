@@ -2,16 +2,15 @@ import TokenCard from "@/components/card/TokenCard";
 import NetworkDropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import { selectedInTokenStatus, actionMode } from "@/recoil/bridgeSwap/atom";
+import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
-import CardWrapper from "@/bridgeComponent/CardWrapper";
 import TokenInput from "@/components/input/TokenInput";
 import { useMemo } from "react";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function InToken() {
-  const inTokenInfo = useRecoilValue(selectedInTokenStatus);
+  const { inToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const { onOpenInToken } = useTokenModal();
 
@@ -39,12 +38,8 @@ export default function InToken() {
           mb={"16px"}
           onClick={onOpenInToken}
         >
-          {inTokenInfo?.tokenName ? (
-            <TokenCard
-              tokenInfo={inTokenInfo}
-              hasInput={true}
-              inNetwork={true}
-            />
+          {inToken?.tokenName ? (
+            <TokenCard tokenInfo={inToken} hasInput={true} inNetwork={true} />
           ) : (
             <Box
               className="card card-empty"

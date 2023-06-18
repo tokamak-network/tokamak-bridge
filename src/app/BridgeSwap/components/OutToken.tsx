@@ -4,7 +4,7 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import SettingIcon from "assets/icons/setting.svg";
 import { useRecoilValue } from "recoil";
-import { actionMode, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { actionMode } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
 import { useInOutNetwork } from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
@@ -12,6 +12,7 @@ import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 import { useMemo } from "react";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -39,13 +40,14 @@ const SelectedNetwork = () => {
 };
 
 export const SearchTokenComponent = () => {
-  const { onOpenOutToken } = useTokenModal();
-  const outToeknInfo = useRecoilValue(selectedOutTokenStatus);
+  const { outToken } = useInOutTokens();
 
-  if (outToeknInfo?.tokenName) {
+  const { onOpenOutToken } = useTokenModal();
+
+  if (outToken?.tokenName) {
     return (
       <TokenCard
-        tokenInfo={outToeknInfo}
+        tokenInfo={outToken}
         hasInput={true}
         inNetwork={false}
         style={{ marginTop: "12px" }}
