@@ -55,7 +55,7 @@ export function useTransactionDetail() {
       : "< 0.0001"
   } ETH`;
   const inputAmount = `${commafy(inToken?.parsedAmount, 4)} ${
-    inToken?.tokenName
+    inToken?.tokenSymbol
   }`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
