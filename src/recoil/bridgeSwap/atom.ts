@@ -53,7 +53,7 @@ export const selectedOutTokenStatus = atom<SelectedToken | null>({
 export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
   key: "inTokenSeletor",
   get: ({ get }) => {
-    const inTokenStatus = get(selectedInTokenStatus);
+    const inTokenStatus = get(selectedInTokenStatus);    
     const inTokenHasAmount =
       inTokenStatus === null ? false : inTokenStatus?.amountBN !== null;
     return { inTokenHasAmount };
@@ -77,11 +77,9 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
     const { inTokenHasAmount } = get(inTokenSelector);
     const { outTokenHasAmount } = get(outTokenSelector);
     const isConfirmed = get(confirmWithdrawStatus);
-
     if (network?.inNetwork && network?.outNetwork) {
       const isInTokenReady = inTokenHasAmount;
       const isOutTokenReady = inTokenHasAmount;
-
       if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
         return { mode: "Withdraw", isReady: isInTokenReady && isConfirmed };
       }

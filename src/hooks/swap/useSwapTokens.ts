@@ -65,23 +65,30 @@ export function useAmountOut() {
         inToken?.amountBN !== null &&
         outToken?.address
       ) {
-        const quotedAmountOut =
-          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-            inToken.token.address,
-            outToken.token.address,
-            FeeAmount.MEDIUM,
-            inToken.amountBN,
-            // fromReadableAmount(
-            //   Number(inToken.parsedAmount),
-            //   inToken.decimals
-            // ).toString(),
-            0
-          );
+        if (
+          (inToken.tokenSymbol === "TON" && outToken.tokenSymbol === "WTON") ||
+          (inToken.tokenSymbol === "WTON" && outToken.tokenSymbol === "TON")
+        ) {
+          return setAmountOut(inToken.parsedAmount);
+        } else {
+          const quotedAmountOut =
+            await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
+              inToken.token.address,
+              outToken.token.address,
+              FeeAmount.MEDIUM,
+              inToken.amountBN,
+              // fromReadableAmount(
+              //   Number(inToken.parsedAmount),
+              //   inToken.decimals
+              // ).toString(),
+              0
+            );
 
-        setAmountOutErr(false);
-        return setAmountOut(
-          toReadableAmount(quotedAmountOut, outToken.decimals)
-        );
+          setAmountOutErr(false);
+          return setAmountOut(
+            toReadableAmount(quotedAmountOut, outToken.decimals)
+          );
+        }
       }
       setAmountOutErr(false);
       return setAmountOut(null);
@@ -95,7 +102,8 @@ export function useAmountOut() {
   }, [inToken, outToken, QUOTER_CONTRACT]);
 
   useEffect(() => {
-    const createTrade = async () => {
+    
+    const createTrade = async () => {      
       if (
         mode === "Swap" &&
         inToken &&
@@ -103,6 +111,7 @@ export function useAmountOut() {
         outToken &&
         amountOut
       ) {
+        
         const currentPoolAddress = computePoolAddress({
           factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
           tokenA: inToken.token,
@@ -171,6 +180,7 @@ export function useAmountOut() {
   }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
+    
     if (trade && inToken && address) {
       try {
         // // Give approval to the router to spend the token
@@ -217,6 +227,25 @@ export function useAmountOut() {
         console.log(e);
         setModalOpen("error");
       }
+    }
+
+    else if (!trade && inToken && address && inToken.parsedAmount) {
+    try{
+      let amountIn
+    if (inToken.tokenSymbol ==='TON') {
+     
+      amountIn = ethers.utils.parseEther(inToken.parsedAmount)
+      console.log('TON',amountIn); 
+    }
+    else{
+      amountIn = ethers.utils.parseUnits(inToken.parsedAmount, '27');
+      console.log('wton',amountIn);
+      
+    }
+     
+    }
+    catch(e){}
+      
     }
   }, [trade, address, UNISWAP_CONTRACT]);
 

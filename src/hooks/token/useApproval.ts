@@ -139,7 +139,7 @@ export function useApprove() {
 
   const callApprove = useCallback(async () => {
     try {
-      if (totalSupply) {
+      if (totalSupply) {        
         switch (mode) {
           case "Deposit":
             return write({
