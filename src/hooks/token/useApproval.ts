@@ -83,8 +83,8 @@ export function useAllowance() {
         return setApproved({
           l1birdge: result[0],
           // l2birdge: result[1],
-          swapRouter: result[2],
-          pool: result[3],
+          swapRouter: result[1],
+          pool: result[2],
         });
       }
     };

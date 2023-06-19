@@ -8,11 +8,14 @@ import { useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
 import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useConfirmModal from "@/hooks/modal/useConfirmModal";
 
 export default function InToken() {
   const { inToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const { onOpenInToken } = useTokenModal();
+
+  const { isOpen } = useConfirmModal();
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -24,11 +27,18 @@ export default function InToken() {
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
-      {mode && (
-        <Text fontSize={36} fontWeight={"semibold"}>
-          {mode}
-        </Text>
-      )}
+      <Flex pos={"relative"} h={"54px"}>
+        {mode && (
+          <Text
+            w={"300px"}
+            fontSize={36}
+            fontWeight={"semibold"}
+            pos={"absolute"}
+          >
+            {mode} {isOpen && "Confirm"}
+          </Text>
+        )}
+      </Flex>
       <Flex className="card-wrapper">
         {NetworkSwitcher}
         <Box
@@ -54,7 +64,11 @@ export default function InToken() {
           )}
         </Box>
         <Flex px={"12px"}>
-          <TokenInput inToken={true} />
+          <TokenInput
+            inToken={true}
+            isDisabled={isOpen}
+            hasMaxButton={!isOpen}
+          />
         </Flex>
       </Flex>
     </Flex>

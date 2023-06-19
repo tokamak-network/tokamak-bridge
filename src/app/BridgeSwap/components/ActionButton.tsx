@@ -19,6 +19,7 @@ import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useApprove } from "@/hooks/token/useApproval";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import useConfirmModal from "@/hooks/modal/useConfirmModal";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
@@ -118,6 +119,8 @@ export default function ActionButton() {
     }
   }, [isConnected, connectToWallet, mode, inTokenInfo, address]);
 
+  const { isOpen, onOpenConfirmModal } = useConfirmModal();
+
   return (
     <Button
       w={"100%"}
@@ -130,10 +133,14 @@ export default function ActionButton() {
       bgColor={isDisabled ? "#17181D" : "#007AFF"}
       color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={isDisabled}
-      onClick={onClick}
+      onClick={isOpen ? onClick : onOpenConfirmModal}
     >
       {!isConnected && "Connect Wallet"}
-      {isConnected && mode === null ? "Select Network" : mode}
+      {isOpen
+        ? `Confirm ${mode}`
+        : isConnected && mode === null
+        ? "Select Network"
+        : mode}
     </Button>
   );
 }

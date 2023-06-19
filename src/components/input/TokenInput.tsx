@@ -154,10 +154,11 @@ export default function TokenInput(props: {
           fontSize={28}
           fontWeight={700}
           isDisabled={isDisabled}
+          _disabled={{ color: "#fff" }}
           value={valueProp}
           onChange={onChange}
         ></Input>
-        {(inToken || hasMaxButton) && (
+        {hasMaxButton && (
           <Button
             w={"40px"}
             h={"22px"}

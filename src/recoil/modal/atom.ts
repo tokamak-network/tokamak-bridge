@@ -7,6 +7,11 @@ export const transactionModalStatus = atom<
   default: null,
 });
 
+export const confirmModalStatus = atom<boolean>({
+  key: "confirmModalStatus",
+  default: false,
+});
+
 export const accountDrawerStatus = atom<boolean>({
   key: "accountDrawerStatus",
   default: false,
@@ -15,6 +20,6 @@ export const accountDrawerStatus = atom<boolean>({
 export const poolModalStatus = atom<
   "colectFee" | "increaseLiquidity" | "removeLiquidity" | null
 >({
-  key: "transactionModalStatus",
+  key: "poolModalStatus",
   default: null,
 });
