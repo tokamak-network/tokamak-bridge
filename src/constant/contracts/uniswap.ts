@@ -26,3 +26,6 @@ export const L2_UniswapContracts: L2_UniswapContracts = {
   SWAP_ROUTER_ADDRESS: "0x917eEAEd0018bCb287bA6B961aB6c2d9DAa4a362",
   NONFUNGIBLE_POSITION_MANAGER: "0x0653692451011e5d9921E30193603321929fE4ef",
 };
+
+export const L2_initCodeHashManualOverride =
+  "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff";

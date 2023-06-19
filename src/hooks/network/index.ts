@@ -31,7 +31,7 @@ export default function useConnectedNetwork() {
           null,
         isConnectedToMainNetwork:
           chain.id === SupportedChainId["MAINNET"] ||
-          chain.id === SupportedChainId["TOKAMAK_MAINNET"],
+          chain.id === SupportedChainId["TITAN"],
       };
     }
   }, [chain]);

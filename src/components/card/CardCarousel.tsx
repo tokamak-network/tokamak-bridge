@@ -31,7 +31,13 @@ export const CardCarrousel = () => {
   const { filteredTokenList } = useGetTokenList();
 
   const handlePrev = () => {
-    setCurrentIndex(currentIndex !== null ? currentIndex + 1 : 3);
+    setCurrentIndex(
+      currentIndex !== null
+        ? currentIndex + 1 === filteredTokenList.length
+          ? 0
+          : currentIndex + 1
+        : 3
+    );
   };
 
   const handleNext = () => {

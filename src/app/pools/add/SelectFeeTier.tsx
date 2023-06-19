@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import TierSelector from "./components/TierSelect";
 import Title from "./components/Title";
 

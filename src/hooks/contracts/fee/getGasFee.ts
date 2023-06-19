@@ -95,11 +95,21 @@ export function useGasFee() {
       .then((estimatedGasUsage) => {
         if (provider && estimatedGasUsage && feeData) {
           const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
-          if (gasPrice) {
-            const totalGasCost = gasPrice * estimatedGasUsage;
+          console.log(
+            "gasPrice : ",
+            gasPrice,
+            "estimatedGasUsage : ",
+            estimatedGasUsage,
+            "maxFeePerGas : ",
+            maxFeePerGas,
+            "maxPriorityFeePerGas : ",
+            maxPriorityFeePerGas
+          );
+          if (maxFeePerGas) {
+            const totalGasCost = maxFeePerGas * estimatedGasUsage;
             const parsedTotalGasCost = ethers.utils.formatUnits(
               totalGasCost.toString(),
-              "gwei"
+              "ether"
             );
             return setTotalGasCost(parsedTotalGasCost);
           }

@@ -2,20 +2,25 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 export function useInOutTokens() {
-  const inTokenRecoilValue = useRecoilValue(selectedInTokenStatus);
-  const outTokenRecoilValue = useRecoilValue(selectedOutTokenStatus);
+  const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
+    selectedOutTokenStatus
+  );
   const { connectedChainId, chainName } = useConnectedNetwork();
 
   const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
   );
+  const [chainId, setChainId] = useState<number | undefined>(undefined);
 
   const inToken = useMemo(() => {
     return inTokenRecoilValue && connectedChainId && chainName
@@ -26,7 +31,7 @@ export function useInOutTokens() {
             inTokenRecoilValue.address[chainName] as string,
             inTokenRecoilValue.decimals,
             inTokenRecoilValue.tokenName as string,
-            inTokenRecoilValue.tokenName as string
+            inTokenRecoilValue.tokenSymbol as string
           ),
         }
       : null;
@@ -41,11 +46,22 @@ export function useInOutTokens() {
             outTokenRecoilValue.address[chainName] as string,
             outTokenRecoilValue.decimals,
             outTokenRecoilValue.tokenName as string,
-            outTokenRecoilValue.tokenName as string
+            outTokenRecoilValue.tokenSymbol as string
           ),
         }
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName]);
+
+  useEffect(() => {
+    if (connectedChainId) {
+      if (connectedChainId !== chainId) {
+        setInTokenRecoilValue(null);
+        setOutTokenRecoilValue(null);
+        return setChainId(connectedChainId);
+      }
+    }
+    return setChainId(undefined);
+  }, [connectedChainId]);
 
   return {
     inToken,

@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { Box, Button, Flex } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
+import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
+import { FeeAmount } from "@uniswap/v3-sdk";
+
+const values: FeeAmount[] = [
+  FeeAmount.LOWEST,
+  FeeAmount.LOW,
+  FeeAmount.MEDIUM,
+  FeeAmount.HIGH,
+];
 
 export default function TierSelector() {
-  const values = ["0.01%", "0.05%", "0.3%", "1%"];
+  const [poolFee, setPoolFee] = useRecoilState(poolFeeStatus);
 
-  const handleClick = (value: any) => {
-    // Handle the click event for the button with the given value
-    console.log("Button clicked:", value);
+  const handleClick = (value: FeeAmount) => {
+    setPoolFee(value);
   };
 
   return (
@@ -17,7 +26,9 @@ export default function TierSelector() {
             key={index}
             width="90px"
             height="40px"
-            border="1px solid #313442"
+            border={
+              poolFee === value ? "1px solid #007AFF" : "1px solid #313442"
+            }
             borderRadius="8px"
             paddingTop="7px"
             paddingBottom="6px"
@@ -30,7 +41,13 @@ export default function TierSelector() {
               borderColor: "#007AFF",
             }}
           >
-            {value}
+            {value === FeeAmount.LOWEST
+              ? "0.01%"
+              : value === FeeAmount.LOW
+              ? "0.03%"
+              : value === FeeAmount.MEDIUM
+              ? "0.3%"
+              : "1%"}
           </Button>
         ))}
       </Flex>

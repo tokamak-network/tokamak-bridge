@@ -47,7 +47,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
           address: {
             MAINNET: nameOrAdd,
             GOERLI: nameOrAdd,
-            TOKAMAK_MAINNET: nameOrAdd,
+            TITAN: nameOrAdd,
             DARIUS: nameOrAdd,
           },
           decimals,

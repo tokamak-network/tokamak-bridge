@@ -4,14 +4,15 @@ import { Box, Flex, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import SettingIcon from "assets/icons/setting.svg";
 import { useRecoilValue } from "recoil";
-import { actionMode, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { actionMode } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
-import useNetwork, { useInOutNetwork } from "@/hooks/network";
+import { useInOutNetwork } from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
 import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 import { useMemo } from "react";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -39,13 +40,14 @@ const SelectedNetwork = () => {
 };
 
 export const SearchTokenComponent = () => {
-  const { onOpenOutToken } = useTokenModal();
-  const outToeknInfo = useRecoilValue(selectedOutTokenStatus);
+  const { outToken } = useInOutTokens();
 
-  if (outToeknInfo?.tokenName) {
+  const { onOpenOutToken } = useTokenModal();
+
+  if (outToken?.tokenName) {
     return (
       <TokenCard
-        tokenInfo={outToeknInfo}
+        tokenInfo={outToken}
         hasInput={true}
         inNetwork={false}
         style={{ marginTop: "12px" }}
@@ -69,7 +71,11 @@ export const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode } = useRecoilValue(actionMode);
   const NetworkSwitcher = useMemo(() => {
-    return <NetworkDropdown inNetwork={false} height="32px" />;
+    return (
+      <Box minW={"200px"} h={"32px"}>
+        <NetworkDropdown inNetwork={false} height="32px" />
+      </Box>
+    );
   }, []);
 
   return (
@@ -86,9 +92,7 @@ export default function OutToken() {
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"385px"}>
-        <Flex className="test" minW={"200px"} w={"200px"} h={"32px"}>
-          {NetworkSwitcher}
-        </Flex>
+        {NetworkSwitcher}
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
         {mode === "Swap" && (

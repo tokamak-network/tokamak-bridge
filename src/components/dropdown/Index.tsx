@@ -269,7 +269,7 @@ export default function NetworkDropdown(props: {
       ) {
         return [
           SupportedChainId["MAINNET"],
-          SupportedChainId["TOKAMAK_MAINNET"],
+          SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
       return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(

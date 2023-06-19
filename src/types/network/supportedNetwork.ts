@@ -1,7 +1,7 @@
 import { ImageFileType } from "../style/imageFileType";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
 import SYMBOL_TON from "assets/tokens/ton.svg";
-import SYMBOL_DARIUS from "assets/icons/network/darius.svg";
+import SYMBOL_TITAN from "assets/icons/network/darius.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
@@ -17,7 +17,7 @@ export enum SupportedChainId {
   //   CELO = 42220,
   //   CELO_ALFAJORES = 44787,
   //   BNB = 56,
-  TOKAMAK_MAINNET = 55004,
+  TITAN = 55004,
   DARIUS = 5050,
 }
 
@@ -49,9 +49,9 @@ export const supportedChain: SupportedChainProperties[] = [
     layer: "L1",
   },
   {
-    chainId: SupportedChainId.TOKAMAK_MAINNET,
-    chainName: "TOKAMAK_MAINNET",
-    networkImage: SYMBOL_TON,
+    chainId: SupportedChainId.TITAN,
+    chainName: "TITAN",
+    networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,
@@ -60,7 +60,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.DARIUS,
     chainName: "DARIUS",
-    networkImage: SYMBOL_DARIUS,
+    networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,

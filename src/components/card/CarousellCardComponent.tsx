@@ -97,7 +97,9 @@ export default function CarousellCardComponent<T>(props: {
           ? outLeftControl
           : waitControl
       }
-      onMouseEnter={() => setIsHover(index)}
+      onMouseEnter={() =>
+        outLeftControl || outRightControl ? null : setIsHover(index)
+      }
       onMouseLeave={() => setIsHover(null)}
       onClick={() =>
         isInTokenOpen && chainName
