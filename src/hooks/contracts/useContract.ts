@@ -18,9 +18,13 @@ export default function useContract() {
     ? TOKAMAK_CONTRACTS.L2Bridge
     : TOKAMAK_GOERLI_CONTRACTS.L2Bridge;
 
+  const SWAPPER_V2_CONTRACT = isConnectedToMainNetwork
+    ? MAINNET_CONTRACTS.StakingV2Proxy
+    : GOERLI_CONTRACTS.SwapperV2Proxy;
   return {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
+    SWAPPER_V2_CONTRACT
   };
 }

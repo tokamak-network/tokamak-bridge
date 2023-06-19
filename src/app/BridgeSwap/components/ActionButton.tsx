@@ -40,9 +40,6 @@ export default function ActionButton() {
     useCallWithdraw("withdraw");
 
   const { callTokenSwap } = useAmountOut();
-
-
-  console.log('isNotSupportForSwap',isNotSupportForSwap);
   
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -132,7 +129,7 @@ export default function ActionButton() {
       _disabled={{}}
       bgColor={isDisabled ? "#17181D" : "#007AFF"}
       color={isDisabled ? "#8E8E92" : "#fff"}
-      // isDisabled={isDisabled}
+      isDisabled={isDisabled}
       onClick={onClick}
     >
       {!isConnected && "Connect Wallet"}
