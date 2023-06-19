@@ -114,6 +114,7 @@ export default function NetworkDropdown(props: {
   const [network, setNetwork] = useRecoilState(networkStatus);
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
+  const { isConnected } = useAccount();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -128,7 +129,9 @@ export default function NetworkDropdown(props: {
         return setNetwork({ ...network, outNetwork: selectedWork });
       }
       if (selectedWork.chainId !== connectedChainId) {
-        return await switchNetworkAsync?.(selectedWork.chainId);
+        return isConnected
+          ? await switchNetworkAsync?.(selectedWork.chainId)
+          : setNetwork({ ...network, inNetwork: selectedWork });
       }
     } finally {
       setIsOpen(false);
@@ -139,6 +142,7 @@ export default function NetworkDropdown(props: {
     }
   };
 
+  //connected to the wallet
   useEffect(() => {
     if (connectedChainId) {
       const connectedNetwork = supportedChain.filter((supportedChain) => {
@@ -154,6 +158,23 @@ export default function NetworkDropdown(props: {
       return setNetwork({ ...network, inNetwork: connectedNetwork });
     }
   }, [connectedChainId]);
+
+  //not connected to the wallet
+  useEffect(() => {
+    if (isConnected === false) {
+      if (inNetwork && network?.inNetwork?.chainId) {
+        const connectedNetwork = supportedChain.filter((supportedChain) => {
+          return supportedChain.chainId === network?.inNetwork?.chainId;
+        })[0];
+
+        setSelectedOption({
+          ...connectedNetwork,
+          value: connectedNetwork.chainId,
+          label: connectedNetwork.chainName,
+        });
+      }
+    }
+  }, [isConnected, network]);
 
   //for react-select from this line
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
