@@ -82,6 +82,8 @@ export default function usePoolContract() {
       // get pool info
       const poolInfo = await getPoolInfo();
 
+      console.log("poolInfo : ", poolInfo);
+
       if (poolInfo) {
         // construct pool instance
         const configuredPool = new Pool(
@@ -132,6 +134,8 @@ export default function usePoolContract() {
           ).toString()
         )
       );
+
+      console.log("positionToMint : ", positionToMint);
 
       if (positionToMint) {
         const mintOptions: MintOptions = {

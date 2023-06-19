@@ -31,7 +31,7 @@ export function useInOutTokens() {
             inTokenRecoilValue.address[chainName] as string,
             inTokenRecoilValue.decimals,
             inTokenRecoilValue.tokenName as string,
-            inTokenRecoilValue.tokenName as string
+            inTokenRecoilValue.tokenSymbol as string
           ),
         }
       : null;
@@ -46,7 +46,7 @@ export function useInOutTokens() {
             outTokenRecoilValue.address[chainName] as string,
             outTokenRecoilValue.decimals,
             outTokenRecoilValue.tokenName as string,
-            outTokenRecoilValue.tokenName as string
+            outTokenRecoilValue.tokenSymbol as string
           ),
         }
       : null;
