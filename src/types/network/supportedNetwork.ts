@@ -1,7 +1,7 @@
 import { ImageFileType } from "../style/imageFileType";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
 import SYMBOL_TON from "assets/tokens/ton.svg";
-import SYMBOL_DARIUS from "assets/icons/network/darius.svg";
+import SYMBOL_TITAN from "assets/icons/network/darius.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
@@ -51,7 +51,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.TITAN,
     chainName: "TITAN",
-    networkImage: SYMBOL_TON,
+    networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,
@@ -60,7 +60,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.DARIUS,
     chainName: "DARIUS",
-    networkImage: SYMBOL_DARIUS,
+    networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,

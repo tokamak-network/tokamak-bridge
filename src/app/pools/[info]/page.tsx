@@ -1,19 +1,12 @@
 "use client";
 
 import { Flex } from "@chakra-ui/layout";
-// import { PoolCardDetail } from "@/types/pool";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import Liquidity from "./components/Liquidity";
 import UnclaimedEarnings from "./components/UnclaimedEarnings";
 import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
-// import TokenSymbolPair from "@/components/ui/TokenSymbolPair";
-// import LiquidityInfo from "../components/LiquidityInfo";
-// import UnclaimedEarnings from "../components/UnclaimedEarnings";
-// import PriceInput from "../../add/components/priceInput";
-// import ClaimEarningsModal from "@/components/modal/ClaimEarnings";
-// import PriceRange from "@/components/ui/PriceRange";
 
 export default function Page() {
   const { info } = usePositionInfo();
