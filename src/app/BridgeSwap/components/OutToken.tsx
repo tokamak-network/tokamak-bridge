@@ -15,6 +15,7 @@ import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
+import Setting from "@/components/Setting";
 
 export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -49,10 +50,11 @@ export const SearchTokenComponent = () => {
   if (outToken?.tokenName) {
     return (
       <TokenCard
+        h={"248px"}
         tokenInfo={outToken}
         hasInput={true}
         inNetwork={false}
-        style={{ marginTop: "12px" }}
+        style={{ marginTop: "12px", minHeight: "248px" }}
         onClick={onOpenOutToken}
       />
     );
@@ -88,25 +90,17 @@ export default function OutToken() {
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {isOpen ? "" : mode === "Swap" ? "For" : "To"}
         </Text>
-        {isOpen ? (
-          <CloseButton onClick={onCloseConfirmModal} />
-        ) : (
-          <Image
-            src={SettingIcon}
-            alt={"SettingIcon"}
-            style={{ cursor: "pointer" }}
-          />
-        )}
+        {isOpen ? <CloseButton onClick={onCloseConfirmModal} /> : <Setting />}
       </Flex>
 
-      <Flex className="card-wrapper" w={"224px"} h={"385px"}>
+      <Flex className="card-wrapper" w={"224px"} h={"386px"}>
         {NetworkSwitcher}
         {mode === "Swap" && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
         {mode === "Swap" && (
           <TokenInput
             inToken={false}
-            isDisabled={isOpen}
+            isDisabled={false}
             style={{
               marginTop: "16px",
               widht: "100%",

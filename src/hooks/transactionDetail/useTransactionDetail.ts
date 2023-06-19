@@ -116,11 +116,11 @@ export function useTransactionDetail() {
       return [
         {
           title: "Expected output",
-          content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
+          content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
         },
         {
           title: "Minimum received after slippage",
-          content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
+          content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
           slippage: "0.1%",
         },
         {

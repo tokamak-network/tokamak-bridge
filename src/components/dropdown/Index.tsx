@@ -198,7 +198,22 @@ export default function NetworkDropdown(props: {
     return null;
   }, [network]);
 
-  const selectRef = useRef(null);
+  const wrapperRef = useRef(null);
+
+  //close when click at outside
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      //@ts-ignore
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
@@ -311,33 +326,34 @@ export default function NetworkDropdown(props: {
     });
 
   return (
-    <Select
-      ref={selectRef}
-      options={optionsList}
-      menuIsOpen={isOpen}
-      // onMenuOpen={() => {}}
-      // onMenuClose={() => {}}
-      // onMenuClose={() => {}}
-      components={{
-        Option: CustomOption,
-        ValueContainer: () => (
-          <ValueContainer
-            selectedOption={inNetwork ? selectedOption : selectedOutOption}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          />
-        ),
-        MenuList: (e) => (
-          <Flex flexDir={"column"} rowGap={"8px"}>
-            {e.children}
-          </Flex>
-        ),
-        IndicatorsContainer: () => null,
-      }}
-      isDisabled={confirmIsOpen}
-      //@ts-ignore
-      styles={customStyles(height)}
-      value={inNetwork ? selectedOption : selectedOutOption}
-    ></Select>
+    <Box ref={wrapperRef}>
+      <Select
+        options={optionsList}
+        menuIsOpen={isOpen}
+        // onMenuOpen={() => {}}
+        // onMenuClose={() => {}}
+        // onMenuClose={() => {}}
+        components={{
+          Option: CustomOption,
+          ValueContainer: () => (
+            <ValueContainer
+              selectedOption={inNetwork ? selectedOption : selectedOutOption}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
+          ),
+          MenuList: (e) => (
+            <Flex flexDir={"column"} rowGap={"8px"}>
+              {e.children}
+            </Flex>
+          ),
+          IndicatorsContainer: () => null,
+        }}
+        isDisabled={confirmIsOpen}
+        //@ts-ignore
+        styles={customStyles(height)}
+        value={inNetwork ? selectedOption : selectedOutOption}
+      ></Select>
+    </Box>
   );
 }
