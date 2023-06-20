@@ -152,7 +152,7 @@ export function useAmountOut() {
           inputAmount: CurrencyAmount.fromRawAmount(
             inToken.token,
             fromReadableAmount(
-              Number(inToken.parsedAmount),
+              Number(inToken.parsedAmount?.replaceAll(",", "")),
               inToken.decimals
             ).toString()
           ),
@@ -182,7 +182,7 @@ export function useAmountOut() {
   }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
-    if (trade && inToken && address && inToken.parsedAmount) {
+    if (trade && inToken && address && inToken.amountBN) {
       try {
         // // Give approval to the router to spend the token
         // const tokenApproval = await getTokenTransferApproval(inToken.token);
@@ -202,7 +202,11 @@ export function useAmountOut() {
           [trade],
           options
         );
-        const wei = ethers.utils.parseUnits(inToken.parsedAmount, "18");
+
+        const wei = ethers.utils.formatUnits(
+          inToken.amountBN.toString(),
+          "wei"
+        );
         const weiAmount = ethers.BigNumber.from(wei);
         const hexAmount = ethers.utils.hexlify(weiAmount);
 

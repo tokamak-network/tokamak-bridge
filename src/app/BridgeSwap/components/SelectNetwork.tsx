@@ -13,7 +13,12 @@ export default function SelectNetwork() {
   }, []);
 
   return (
-    <Flex pos={"relative"} className="card-wrapper">
+    <Flex
+      pos={"relative"}
+      className="card-wrapper"
+      maxH={"388px !important"}
+      mt={"80px"}
+    >
       {NetworkSwitcher}
       <Flex w={"224px"} h={"248px"} pos={"relative"} mt={"12px"} mb={"16px"}>
         <Flex className="first-layer" zIndex={100}>
