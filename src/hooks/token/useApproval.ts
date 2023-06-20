@@ -29,7 +29,7 @@ export function useAllowance() {
   const [approved, setApproved] = useState<
     | {
         l1birdge: boolean;
-        l2birdge: boolean;
+        // l2birdge: boolean;
         swapRouter: boolean;
         pool: boolean;
       }
@@ -49,7 +49,7 @@ export function useAllowance() {
         if (inToken.isNativeCurrency !== null) {
           return setApproved({
             l1birdge: true,
-            l2birdge: true,
+            // l2birdge: true,
             swapRouter: true,
             pool: true,
           });
@@ -64,7 +64,7 @@ export function useAllowance() {
         );
         const allowances = await Promise.all([
           getAllowance(TOKEN_CONTRACT, address, L1BRIDGE_CONTRACT),
-          getAllowance(TOKEN_CONTRACT, address, L2BRIDGE_CONTRACT),
+          // getAllowance(TOKEN_CONTRACT, address, L2BRIDGE_CONTRACT),
           getAllowance(
             TOKEN_CONTRACT,
             address,
@@ -83,9 +83,9 @@ export function useAllowance() {
 
         return setApproved({
           l1birdge: result[0],
-          l2birdge: result[1],
-          swapRouter: result[2],
-          pool: result[3],
+          // l2birdge: result[1],
+          swapRouter: result[1],
+          pool: result[2],
         });
       }
     };
@@ -95,7 +95,7 @@ export function useAllowance() {
     });
   }, [inToken?.tokenAddress, inToken?.amountBN, blockNumber]);
 
-  const callApprove = useCallback(() => {}, [approved]);
+  // const callApprove = useCallback(() => {}, [approved]);
 
   return { approved };
 }
@@ -115,7 +115,7 @@ export function useApprove() {
         case "Deposit":
           return approved?.l1birdge;
         case "Withdraw":
-          return approved?.l2birdge;
+          return true;
         case "Swap":
           return approved?.swapRouter;
         default:

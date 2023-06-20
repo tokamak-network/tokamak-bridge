@@ -1,16 +1,9 @@
-import {
-  networkStatus,
-  selectedInTokenStatus,
-  selectedOutTokenStatus,
-} from "@/recoil/bridgeSwap/atom";
 import { Button, Flex } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
 import { TokenInfo } from "types/token/supportedToken";
-import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import CarousellCardComponent from "./CarousellCardComponent";
 
@@ -18,16 +11,6 @@ export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [isHover, setIsHover] = useState<number | null>(null);
 
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
-
-  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
-  );
-
-  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
-  const { inNetwork } = useRecoilValue(networkStatus);
   const { filteredTokenList } = useGetTokenList();
 
   const handlePrev = () => {

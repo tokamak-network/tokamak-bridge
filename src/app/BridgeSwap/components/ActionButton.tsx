@@ -19,6 +19,8 @@ import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useApprove } from "@/hooks/token/useApproval";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import useConfirmModal from "@/hooks/modal/useConfirmModal";
+import useWrap from "@/hooks/swap/useTonWrap";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
@@ -40,7 +42,8 @@ export default function ActionButton() {
     useCallWithdraw("withdraw");
 
   const { callTokenSwap } = useAmountOut();
-  
+  const { wrapTON, unwrapWTON } = useWrap();
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const disabled =
@@ -112,11 +115,17 @@ export default function ActionButton() {
           });
         case "Swap":
           return callTokenSwap();
+        case "Wrap":
+          return wrapTON();
+        case "Unwrap":
+          return unwrapWTON();
         default:
           return console.error("action mode is not founded");
       }
     }
   }, [isConnected, connectToWallet, mode, inTokenInfo, address]);
+
+  const { isOpen, onOpenConfirmModal } = useConfirmModal();
 
   return (
     <Button
@@ -130,10 +139,14 @@ export default function ActionButton() {
       bgColor={isDisabled ? "#17181D" : "#007AFF"}
       color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={isDisabled}
-      onClick={onClick}
+      onClick={isOpen ? onClick : onOpenConfirmModal}
     >
       {!isConnected && "Connect Wallet"}
-      {isConnected && mode === null ? "Select Network" : mode}
+      {isOpen
+        ? `Confirm ${mode}`
+        : isConnected && mode === null
+        ? "Select Network"
+        : mode}
     </Button>
   );
 }

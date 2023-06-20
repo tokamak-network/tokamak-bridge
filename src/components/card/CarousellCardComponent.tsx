@@ -5,7 +5,7 @@ import {
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
 import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import {
@@ -45,10 +45,8 @@ export default function CarousellCardComponent<T>(props: {
     outRightControl,
     waitControl,
   } = useCarrousellAnimation({ currentIndex, index });
-  const { isInTokenOpen } = useTokenModal();
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
+  const { isInTokenOpen, onCloseTokenModal } = useTokenModal();
+  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
 
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
@@ -101,22 +99,6 @@ export default function CarousellCardComponent<T>(props: {
         outLeftControl || outRightControl ? null : setIsHover(index)
       }
       onMouseLeave={() => setIsHover(null)}
-      onClick={() =>
-        isInTokenOpen && chainName
-          ? setSelectedInToken({
-              ...tokenData,
-              amountBN: null,
-              parsedAmount: null,
-              tokenAddress: tokenData.address[chainName],
-            })
-          : chainName &&
-            setSelectedOutToken({
-              ...tokenData,
-              amountBN: null,
-              parsedAmount: null,
-              tokenAddress: tokenData.address[chainName],
-            })
-      }
     >
       <TokenCard
         w={"100%"}
@@ -144,14 +126,35 @@ export default function CarousellCardComponent<T>(props: {
         //     : undefined
         // }
         style={{
-          transition: "margin .5s ease-in-out",
+          transition: maxIndex === 0 ? "none" : "margin .5s ease-in-out",
           //need to change mt property based on selectIndex
-          _hover: { marginTop: "-10" },
+          _hover: maxIndex === 0 ? "none" : { marginTop: "-10" },
           filter:
             isHover === index
               ? `drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.25))`
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
+        }}
+        onClick={() => {
+          try {
+            isInTokenOpen && chainName
+              ? setSelectedInToken({
+                  ...tokenData,
+                  amountBN: null,
+                  parsedAmount: null,
+                  tokenAddress: tokenData.address[chainName],
+                })
+              : chainName &&
+                setSelectedOutToken({
+                  ...tokenData,
+                  amountBN: null,
+                  parsedAmount: null,
+                  tokenAddress: tokenData.address[chainName],
+                });
+          } catch (e) {
+          } finally {
+            onCloseTokenModal();
+          }
         }}
       />
     </motion.div>

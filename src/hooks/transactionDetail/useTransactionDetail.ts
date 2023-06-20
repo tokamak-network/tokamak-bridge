@@ -55,7 +55,7 @@ export function useTransactionDetail() {
       : "< 0.0001"
   } ETH`;
   const inputAmount = `${commafy(inToken?.parsedAmount, 4)} ${
-    inToken?.tokenName
+    inToken?.tokenSymbol
   }`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
@@ -116,11 +116,11 @@ export function useTransactionDetail() {
       return [
         {
           title: "Expected output",
-          content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
+          content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
         },
         {
           title: "Minimum received after slippage",
-          content: `${commafy(amountOut, 4)} ${outToken?.tokenName}`,
+          content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
           slippage: "0.1%",
         },
         {
@@ -135,7 +135,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, outToken, inputAmount, amountOut]);
+  }, [mode, inToken, outToken, inputAmount, amountOut, priceImpact]);
 
   return { depositPropsData, withdrawPropsData, swapPropsData };
 }

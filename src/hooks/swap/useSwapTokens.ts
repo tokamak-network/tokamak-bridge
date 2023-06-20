@@ -15,7 +15,6 @@ import {
 } from "@uniswap/v3-sdk";
 import { CurrencyAmount, TradeType, Token, Percent } from "@uniswap/sdk-core";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import SwapperV2ABI from "@/abis/SwapperV2.json";
 import {
   fromReadableAmount,
   toReadableAmount,
@@ -29,18 +28,11 @@ import { useRecoilState } from "recoil";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { TokenInfo, supportedTokens } from "@/types/token/supportedToken";
 import { transactionData } from "@/recoil/global/transaction";
-
-import {
-  useAccount,
-  useBlockNumber,
-  useContractRead,
-  useContractWrite,
-  useWaitForTransaction,
-  useNetwork,
-} from "wagmi";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { supportedChain } from "@/types/network/supportedNetwork";
+import SwapperV2ABI from "@/abis/SwapperV2.json";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+
+import { useAccount, useContractWrite, useWaitForTransaction,useNetwork} from "wagmi";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -52,7 +44,7 @@ export function useAmountOut() {
   const { mode } = useGetMode();
 
   const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT } = useContract();
+  const { UNISWAP_CONTRACT,SWAPPER_V2_CONTRACT } = useContract();
   const { layer } = useConnectedNetwork();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
@@ -64,6 +56,8 @@ export function useAmountOut() {
   const { chain } = useNetwork();
 
   const { QUOTER_CONTRACT } = useUniswapContracts();
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+
   const { data: tonWtonData, write: tonWton } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
     abi: SwapperV2ABI.abi,
@@ -98,7 +92,6 @@ export function useAmountOut() {
   //   abi: IUniswapV3PoolABI.abi,
   // });
 
-  const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
 
   const chainInfo = useMemo(() => {
     if (chain?.id) {
@@ -210,7 +203,7 @@ export function useAmountOut() {
           inputAmount: CurrencyAmount.fromRawAmount(
             inToken.token,
             fromReadableAmount(
-              Number(inToken.parsedAmount),
+              Number(inToken.parsedAmount?.replaceAll(",", "")),
               inToken.decimals
             ).toString()
           ),
@@ -240,7 +233,7 @@ export function useAmountOut() {
   }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
-    if (trade && inToken && address && inToken.parsedAmount) {
+    if (trade && inToken && address && inToken.parsedAmount && inToken.amountBN) {
       try {
         // // Give approval to the router to spend the token
         // const tokenApproval = await getTokenTransferApproval(inToken.token);
@@ -260,18 +253,22 @@ export function useAmountOut() {
           [trade],
           options
         );
-        const wei = ethers.utils.parseUnits(inToken.parsedAmount, "18");
+
+        const wei = ethers.utils.formatUnits(
+          inToken.amountBN.toString(),
+          "wei"
+        );
         const weiAmount = ethers.BigNumber.from(wei);
         const hexAmount = ethers.utils.hexlify(weiAmount);
+
+        const isETH = inToken.isNativeCurrency?.includes(
+          SupportedChainId.MAINNET || SupportedChainId.GOERLI
+        );
 
         const tx = {
           data: methodParameters.calldata as `0x{string}`,
           to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
-          value:
-            inToken.tokenAddress ===
-            supportedTokens[0].address[chainInfo || "MAINNET"]
-              ? hexAmount
-              : methodParameters.value,
+          value: isETH ? hexAmount : methodParameters.value,
           from: address,
           // maxFeePerGas: "250000",
           // maxPriorityFeePerGas: "250000",

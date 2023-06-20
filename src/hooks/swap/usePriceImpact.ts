@@ -2,7 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
+import {
+  fromReadableAmount,
+  toReadableAmount,
+} from "@/utils/uniswap/libs/converstion";
 import { ethers } from "ethers";
 import { useAmountOut } from "./useSwapTokens";
 import JSBI from "jsbi";
@@ -10,7 +13,7 @@ import commafy from "@/utils/trim/commafy";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function usePriceImpact() {
-  const [markPrice, setMarkPrice] = useState<bigint | undefined>(undefined);
+  const [markPrice, setMarkPrice] = useState<number | undefined>(undefined);
   const [outPrice, setOutPrice] = useState<string | undefined>(undefined);
 
   const { inToken, outToken } = useInOutTokens();
@@ -29,7 +32,11 @@ export default function usePriceImpact() {
             ethers.utils.parseUnits("1", inToken.decimals),
             0
           );
-        return setMarkPrice(quotedAmountOut.toBigInt());
+        const readableAmount = ethers.utils.formatUnits(
+          quotedAmountOut,
+          outToken.decimals
+        );
+        return setMarkPrice(Number(readableAmount.toString().slice(0, 6)));
       }
       return setMarkPrice(undefined);
     };
@@ -41,25 +48,30 @@ export default function usePriceImpact() {
   }, [inToken, outToken, QUOTER_CONTRACT, mode]);
 
   const priceImpact = useMemo(() => {
-    if (markPrice && amountOut && inToken?.parsedAmount && outToken) {
-      const markPriceBI = JSBI.BigInt(markPrice.toString());
-      const amountInBI = JSBI.BigInt(inToken?.parsedAmount);
-      const amountOutBI = JSBI.BigInt(
-        ethers.utils.parseUnits(amountOut.toString(), outToken?.decimals)
-      );
-      const nowPrice = JSBI.divide(amountOutBI, amountInBI);
+    if (markPrice && amountOut && inToken && inToken.parsedAmount && outToken) {
+      try {
+        const amountInBI = JSBI.BigInt(
+          ethers.utils.parseUnits(
+            inToken.parsedAmount.replaceAll(",", ""),
+            inToken.decimals
+          )
+        );
+        const amountOutBI = JSBI.BigInt(
+          ethers.utils.parseUnits(amountOut.toString(), outToken.decimals)
+        );
+        const nowPrice =
+          Number(amountOutBI.toString()) / Number(amountInBI.toString());
+        // const remainder = JSBI.remainder(amountOutBI, amountInBI);
+        setOutPrice(commafy(nowPrice, 2));
 
-      setOutPrice(
-        commafy(
-          ethers.utils.formatUnits(nowPrice.toString(), outToken.decimals),
-          2
-        )
-      );
+        const priceImpact =
+          (Number(nowPrice.toString().slice(0, 4)) / markPrice) * 100 - 100;
 
-      const priceImpact =
-        (Number(nowPrice.toString()) / Number(markPriceBI.toString())) * 100 -
-        100;
-      return commafy(priceImpact, 0);
+        return commafy(priceImpact, 2);
+      } catch (e) {
+        console.log("**priceImpact err**");
+        console.log(e);
+      }
     }
     return undefined;
   }, [markPrice, amountOut]);

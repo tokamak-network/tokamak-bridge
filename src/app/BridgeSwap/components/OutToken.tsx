@@ -1,10 +1,6 @@
 import NetworkDropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import Image from "next/image";
-import SettingIcon from "assets/icons/setting.svg";
-import { useRecoilValue } from "recoil";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
 import { useInOutNetwork } from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
@@ -13,8 +9,12 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useConfirmModal from "@/hooks/modal/useConfirmModal";
+import CloseButton from "@/components/button/CloseButton";
+import Setting from "@/components/Setting";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
-const SelectedNetwork = () => {
+export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
 
   return (
@@ -47,10 +47,11 @@ export const SearchTokenComponent = () => {
   if (outToken?.tokenName) {
     return (
       <TokenCard
+        h={"248px"}
         tokenInfo={outToken}
         hasInput={true}
         inNetwork={false}
-        style={{ marginTop: "12px" }}
+        style={{ marginTop: "12px", minHeight: "248px" }}
         onClick={onOpenOutToken}
       />
     );
@@ -69,7 +70,9 @@ export const SearchTokenComponent = () => {
 };
 
 export default function OutToken() {
-  const { mode } = useRecoilValue(actionMode);
+  const { mode, swapSection } = useGetMode();
+  const { isOpen, onCloseConfirmModal } = useConfirmModal();
+
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box minW={"200px"} h={"32px"}>
@@ -81,23 +84,20 @@ export default function OutToken() {
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
       <Flex justifyContent={"space-between"}>
-        <Text fontSize={36} fontWeight={"semibold"}>
-          {mode === "Swap" ? "For" : "To"}
+        <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
+          {isOpen ? "" : mode === "Swap" ? "For" : "To"}
         </Text>
-        <Image
-          src={SettingIcon}
-          alt={"SettingIcon"}
-          style={{ cursor: "pointer" }}
-        />
+        {isOpen ? <CloseButton onClick={onCloseConfirmModal} /> : <Setting />}
       </Flex>
 
-      <Flex className="card-wrapper" w={"224px"} h={"385px"}>
+      <Flex className="card-wrapper" w={"224px"} h={"386px"}>
         {NetworkSwitcher}
-        {mode === "Swap" && <SearchTokenComponent />}
+        {swapSection && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
-        {mode === "Swap" && (
+        {swapSection && (
           <TokenInput
             inToken={false}
+            isDisabled={false}
             style={{
               marginTop: "16px",
               widht: "100%",

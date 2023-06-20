@@ -36,6 +36,7 @@ export default function usePoolContract() {
   const feeAmount = useRecoilValue(poolFeeStatus);
 
   const getPoolInfo = useCallback(async () => {
+    console.log(inToken && outToken && feeAmount);
     if (inToken && outToken && feeAmount) {
       const currentPoolAddress = computePoolAddress({
         factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,

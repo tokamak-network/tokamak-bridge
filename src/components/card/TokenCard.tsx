@@ -1,11 +1,12 @@
 import { SupportedTokenSymbol, TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
-import { useMemo } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus, selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { ethers } from "ethers";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo;
@@ -78,6 +79,7 @@ export default function TokenCard(props: TokenCardProps) {
     style,
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
+  const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenSymbol) {
       case "ETH":
@@ -105,6 +107,13 @@ export default function TokenCard(props: TokenCardProps) {
     inNetworkInfo && tokenInfo.address[inNetworkInfo?.chainName];
   const tokenData = useTokenBalance(tokenAddress ?? "0x");
 
+  const { addNewToken } = useAddTokenToStorage();
+  const notAdded = isNew && agreeToAdd === false;
+  const addNewCard = useCallback(() => {
+    addNewToken(tokenInfo);
+    return setAgreeToAdd(true);
+  }, [agreeToAdd]);
+
   return (
     <Flex
       w={typeof w === "string" ? w : `${w ?? 200}px`}
@@ -121,7 +130,7 @@ export default function TokenCard(props: TokenCardProps) {
       justifyContent={"space-between"}
       px={"16px"}
       cursor={"pointer"}
-      onClick={onClick}
+      onClick={notAdded ? addNewCard : onClick}
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />
@@ -131,19 +140,19 @@ export default function TokenCard(props: TokenCardProps) {
       <Flex
         // pt={"25px"}
         // pb={"37px"}
-        my={isNew ? "20px" : ""}
+        my={notAdded ? "20px" : ""}
         justifyContent={"center"}
-        alignItems={isNew ? "baseline" : "center"}
+        alignItems={notAdded ? "baseline" : "center"}
       >
         <TokenSymbol
-          w={symbolSize?.w ?? isNew ? 40 : 92}
-          h={symbolSize?.w ?? isNew ? 40 : 92}
+          w={symbolSize?.w ?? notAdded ? 40 : 92}
+          h={symbolSize?.w ?? notAdded ? 40 : 92}
           tokenType={tokenInfo?.tokenSymbol}
         />
       </Flex>
-      {isNew ? (
+      {notAdded ? (
         <Flex flexDir={"column"} alignItems={"center"}>
-          <Text fontSize={12} color={"#fff"} w={"206px"}>
+          <Text fontSize={12} color={"#222222"} w={"206px"}>
             This token isn’t traded on leading U.S. centralized exchanges or
             frequently swapped on Tokamak Network. Always conduct your own
             research before trading.
@@ -157,10 +166,11 @@ export default function TokenCard(props: TokenCardProps) {
             _active={{}}
             fontSize={16}
             fontWeight={600}
+            onClick={() => addNewCard}
           >
             I Agree
           </Button>
-          <Text fontSize={16} fontWeight={400}>
+          <Text fontSize={16} fontWeight={400} color={"#222222"}>
             Cancel
           </Text>
         </Flex>

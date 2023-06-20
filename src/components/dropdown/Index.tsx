@@ -16,6 +16,7 @@ import Select from "react-select";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
+import useConfirm from "@/hooks/modal/useConfirmModal";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
@@ -56,6 +57,7 @@ const ValueContainer = (props: {
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const { selectedOption, isOpen, setIsOpen } = props;
+  const { isOpen: confirmIsOpen } = useConfirm();
 
   if (selectedOption) {
     return (
@@ -78,7 +80,9 @@ const ValueContainer = (props: {
           </Box>
           <Text>{selectedOption.label}</Text>
         </Flex>
-        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        {confirmIsOpen === false && (
+          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        )}
       </Flex>
     );
   }
@@ -114,6 +118,8 @@ export default function NetworkDropdown(props: {
   const [network, setNetwork] = useRecoilState(networkStatus);
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
+  const { isConnected } = useAccount();
+  const { isOpen: confirmIsOpen } = useConfirm();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -128,7 +134,9 @@ export default function NetworkDropdown(props: {
         return setNetwork({ ...network, outNetwork: selectedWork });
       }
       if (selectedWork.chainId !== connectedChainId) {
-        return await switchNetworkAsync?.(selectedWork.chainId);
+        return isConnected
+          ? await switchNetworkAsync?.(selectedWork.chainId)
+          : setNetwork({ ...network, inNetwork: selectedWork });
       }
     } finally {
       setIsOpen(false);
@@ -139,6 +147,7 @@ export default function NetworkDropdown(props: {
     }
   };
 
+  //connected to the wallet
   useEffect(() => {
     if (connectedChainId) {
       const connectedNetwork = supportedChain.filter((supportedChain) => {
@@ -154,6 +163,23 @@ export default function NetworkDropdown(props: {
       return setNetwork({ ...network, inNetwork: connectedNetwork });
     }
   }, [connectedChainId]);
+
+  //not connected to the wallet
+  useEffect(() => {
+    if (isConnected === false) {
+      if (inNetwork && network?.inNetwork?.chainId) {
+        const connectedNetwork = supportedChain.filter((supportedChain) => {
+          return supportedChain.chainId === network?.inNetwork?.chainId;
+        })[0];
+
+        setSelectedOption({
+          ...connectedNetwork,
+          value: connectedNetwork.chainId,
+          label: connectedNetwork.chainName,
+        });
+      }
+    }
+  }, [isConnected, network]);
 
   //for react-select from this line
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
@@ -172,7 +198,22 @@ export default function NetworkDropdown(props: {
     return null;
   }, [network]);
 
-  const selectRef = useRef(null);
+  const wrapperRef = useRef(null);
+
+  //close when click at outside
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      //@ts-ignore
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
@@ -285,32 +326,34 @@ export default function NetworkDropdown(props: {
     });
 
   return (
-    <Select
-      ref={selectRef}
-      options={optionsList}
-      menuIsOpen={isOpen}
-      // onMenuOpen={() => {}}
-      // onMenuClose={() => {}}
-      // onMenuClose={() => {}}
-      components={{
-        Option: CustomOption,
-        ValueContainer: () => (
-          <ValueContainer
-            selectedOption={inNetwork ? selectedOption : selectedOutOption}
-            isOpen={isOpen}
-            setIsOpen={setIsOpen}
-          />
-        ),
-        MenuList: (e) => (
-          <Flex flexDir={"column"} rowGap={"8px"}>
-            {e.children}
-          </Flex>
-        ),
-        IndicatorsContainer: () => null,
-      }}
-      //@ts-ignore
-      styles={customStyles(height)}
-      value={inNetwork ? selectedOption : selectedOutOption}
-    ></Select>
+    <Box ref={wrapperRef}>
+      <Select
+        options={optionsList}
+        menuIsOpen={isOpen}
+        // onMenuOpen={() => {}}
+        // onMenuClose={() => {}}
+        // onMenuClose={() => {}}
+        components={{
+          Option: CustomOption,
+          ValueContainer: () => (
+            <ValueContainer
+              selectedOption={inNetwork ? selectedOption : selectedOutOption}
+              isOpen={isOpen}
+              setIsOpen={setIsOpen}
+            />
+          ),
+          MenuList: (e) => (
+            <Flex flexDir={"column"} rowGap={"8px"}>
+              {e.children}
+            </Flex>
+          ),
+          IndicatorsContainer: () => null,
+        }}
+        isDisabled={confirmIsOpen}
+        //@ts-ignore
+        styles={customStyles(height)}
+        value={inNetwork ? selectedOption : selectedOutOption}
+      ></Select>
+    </Box>
   );
 }

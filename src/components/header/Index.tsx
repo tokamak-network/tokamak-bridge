@@ -65,7 +65,7 @@ export default function Header() {
       <Flex columnGap={"6px"}>
         <Network />
         <Account />
-        <UserMenu />
+        {/* <UserMenu /> */}
       </Flex>
     </Flex>
   );
