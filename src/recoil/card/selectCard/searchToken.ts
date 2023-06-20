@@ -65,10 +65,10 @@ export const searchTokenList = selector<SupportedTokens_T>({
     const searchedToken = get(searchTokenSelector);
 
     if (searchedToken) {
-      //   const { matchedKey } = getKeyByValue(
-      //     SupportedChainId,
-      //     searchedToken.chainId
-      //   );
+      // const { matchedKey } = getKeyByValue(
+      //   SupportedChainId,
+      //   searchedToken.chainId
+      // );
 
       return [...supportedTokens, searchedToken];
     }
