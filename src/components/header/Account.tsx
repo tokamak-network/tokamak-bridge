@@ -1,4 +1,5 @@
 import { Center, Text } from "@chakra-ui/layout";
+import { Spinner } from "@chakra-ui/react";
 import Image from "next/image";
 import WALLET_ICON from "assets/icons/wallet.svg";
 import { useAccount, useConnect } from "wagmi";
@@ -7,14 +8,15 @@ import { useMemo } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
+import useGetTransaction from "@/hooks/user/useGetTransaction";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
-
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
-
+  const { isLoading } = useGetTransaction();
+  
   return (
     <Center
       className="header-right-common"
@@ -34,8 +36,19 @@ export default function Account() {
         isConnected ? setIsOpen(true) : connetAndDisconntWallet()
       }
     >
-      <Image src={WALLET_ICON} alt={""} />
-      <Text>{buttonText}</Text>
+
+    
+      {isLoading ? (
+        <>
+          <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+          <Text>Pending</Text>
+        </>
+      ) : (
+        <>
+          <Image src={WALLET_ICON} alt={""} />
+          <Text>{buttonText}</Text>
+        </>
+      )}
     </Center>
   );
 }

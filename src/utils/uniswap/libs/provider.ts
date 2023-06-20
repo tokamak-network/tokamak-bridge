@@ -45,7 +45,14 @@ export function getWalletAddress(): string | null {
 
 export async function sendTransaction(
   transaction: ethers.providers.TransactionRequest
-): Promise<TransactionState> {
+): Promise<{
+  provider:
+    | ethers.providers.Web3Provider
+    | ethers.providers.JsonRpcProvider
+    | null;
+  receiptHash: any;
+  transactionState: TransactionState;
+}> {
   if (CurrentConfig.env === Environment.WALLET_EXTENSION) {
     return sendTransactionViaExtension(transaction);
   } else {
@@ -95,26 +102,47 @@ function createBrowserExtensionProvider(): ethers.providers.Web3Provider | null 
 // Transacting with a wallet extension via a Web3 Provider
 async function sendTransactionViaExtension(
   transaction: ethers.providers.TransactionRequest
-): Promise<TransactionState> {
+): Promise<{
+  provider: ethers.providers.Web3Provider | null;
+  receiptHash: any;
+  transactionState: TransactionState;
+}> {
   try {
-    const receipt = await browserExtensionProvider?.send(
+    const receiptHash = await browserExtensionProvider?.send(
       "eth_sendTransaction",
       [transaction]
     );
-    if (receipt) {
-      return TransactionState.Sent;
+
+    if (receiptHash) {
+      return {
+        provider: browserExtensionProvider,
+        receiptHash: receiptHash,
+        transactionState: TransactionState.Sent,
+      };
     } else {
-      return TransactionState.Failed;
+      return {
+        provider: browserExtensionProvider,
+        receiptHash: receiptHash,
+        transactionState: TransactionState.Failed,
+      };
     }
   } catch (e) {
     console.log(e);
-    return TransactionState.Rejected;
+    return {
+      provider: browserExtensionProvider,
+      receiptHash: undefined,
+      transactionState: TransactionState.Rejected,
+    };
   }
 }
 
 async function sendTransactionViaWallet(
   transaction: ethers.providers.TransactionRequest
-): Promise<TransactionState> {
+): Promise<{
+  provider: ethers.providers.JsonRpcProvider | null;
+  receiptHash: any;
+  transactionState: TransactionState;
+}> {
   if (transaction.value) {
     transaction.value = BigNumber.from(transaction.value);
   }
@@ -123,7 +151,11 @@ async function sendTransactionViaWallet(
   let receipt = null;
   const provider = getL1Provider();
   if (!provider) {
-    return TransactionState.Failed;
+    return {
+      provider: null,
+      receiptHash: undefined,
+      transactionState: TransactionState.Failed,
+    };
   }
 
   while (receipt === null) {
@@ -141,8 +173,16 @@ async function sendTransactionViaWallet(
 
   // Transaction was successful if status === 1
   if (receipt) {
-    return TransactionState.Sent;
+    return {
+      provider: provider,
+      receiptHash: receipt.transactionHash,
+      transactionState: TransactionState.Sent,
+    };
   } else {
-    return TransactionState.Failed;
+    return {
+      provider: provider,
+      receiptHash: undefined,
+      transactionState: TransactionState.Failed,
+    };
   }
 }

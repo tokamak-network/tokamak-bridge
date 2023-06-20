@@ -28,6 +28,7 @@ import useContract from "@/hooks/contracts/useContract";
 import { useRecoilState } from "recoil";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { TokenInfo, supportedTokens } from "@/types/token/supportedToken";
+import { transactionData } from "@/recoil/global/transaction";
 
 import {
   useAccount,
@@ -63,27 +64,35 @@ export function useAmountOut() {
   const { chain } = useNetwork();
 
   const { QUOTER_CONTRACT } = useUniswapContracts();
-  const { data, write: tonWton } = useContractWrite({
+  const { data: tonWtonData, write: tonWton } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
     abi: SwapperV2ABI.abi,
     functionName: "tonToWton",
   });
 
-  const { isLoading: tonWtonLoading, isSuccess: tonWtonSuccess } =
-    useWaitForTransaction({
-      hash: data?.hash,
-    });
+  const [t, setTransactionData] = useRecoilState(transactionData);
 
-  const { write: wtonTon } = useContractWrite({
+  const {
+    isLoading: _tonWtonLoading,
+    isSuccess: tonWtonSuccess,
+    data: tonWtonResultData,
+  } = useWaitForTransaction({
+    hash: tonWtonData?.hash,
+  });
+
+  const { data: wtonTonData, write: wtonTon } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
     abi: SwapperV2ABI.abi,
     functionName: "wtonToTon",
   });
 
-  const { isLoading: wtonTonLoading, isSuccess: wtonTonSuccess } =
-    useWaitForTransaction({
-      hash: data?.hash,
-    });
+  const {
+    isLoading: _wtonTonLoading,
+    isSuccess: wtonTonSuccess,
+    data: wtonTonResultData,
+  } = useWaitForTransaction({
+    hash: wtonTonData?.hash,
+  });
   // const { write } = useContractWrite({
   //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
   //   abi: IUniswapV3PoolABI.abi,
@@ -94,9 +103,13 @@ export function useAmountOut() {
   const chainInfo = useMemo(() => {
     if (chain?.id) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
-      return  chainName;
+      return chainName;
     }
   }, [chain]);
+
+  useEffect(() => {
+    setTransactionData({ isLoading: _tonWtonLoading });
+  }, [_tonWtonLoading]);
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -227,7 +240,6 @@ export function useAmountOut() {
   }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
-    console.log("supportedTokens", supportedTokens);
     if (trade && inToken && address && inToken.parsedAmount) {
       try {
         // // Give approval to the router to spend the token
@@ -269,11 +281,23 @@ export function useAmountOut() {
         if (tx) {
           setModalOpen("confirming");
           const res = await sendTransaction(tx);
-          if (res === "Sent") {
-            return setModalOpen("confirmed");
+
+          if (res.transactionState === "Sent") {
+            setTransactionData({ isLoading: true });
+            setModalOpen("confirmed");
           }
-          if (res === "Rejected") {
+          if (res.transactionState === "Rejected") {
             return setModalOpen("error");
+          }
+
+          const receipt = await res.provider?.waitForTransaction(
+            res.receiptHash
+          );
+
+          if (receipt) {
+            return setTransactionData({ isLoading: false });
+          } else {
+            return setTransactionData({ isLoading: false });
           }
         }
       } catch (e) {
@@ -284,11 +308,11 @@ export function useAmountOut() {
     } else if (
       trade === null &&
       ((inToken?.tokenAddress ===
-        supportedTokens[1].address[chainInfo || "MAINNET" ] &&
+        supportedTokens[1].address[chainInfo || "MAINNET"] &&
         outToken?.tokenAddress ===
           supportedTokens[2].address[chainInfo || "MAINNET"]) ||
         (inToken?.tokenAddress ===
-          supportedTokens[2].address[chainInfo || "MAINNET" ] &&
+          supportedTokens[2].address[chainInfo || "MAINNET"] &&
           outToken?.tokenAddress ===
             supportedTokens[1].address[chainInfo || "MAINNET"])) &&
       inToken &&
@@ -310,7 +334,7 @@ export function useAmountOut() {
           });
         }
 
-        if (tonWtonLoading || wtonTonLoading) {
+        if (_tonWtonLoading || _wtonTonLoading) {
           setModalOpen("confirming");
         }
       } catch (e) {
@@ -318,7 +342,7 @@ export function useAmountOut() {
         console.log(e);
       }
     }
-  }, [trade, address, UNISWAP_CONTRACT]);
+  }, [trade, address, UNISWAP_CONTRACT, inToken, outToken]);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {

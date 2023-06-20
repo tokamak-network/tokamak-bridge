@@ -33,7 +33,7 @@ export default function useCallDeposit(functionName: string) {
     address: GOERLI_CONTRACTS.L1Bridge,
     abi: L1BridgeAbi,
     publicClient: provider,
-  });
+  });  
 
   useEffect(() => {
     if (isLoading) {
