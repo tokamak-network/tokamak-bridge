@@ -38,8 +38,6 @@ export type TokenInfo = {
   isNativeCurrency: SupportedChainId[] | null;
 };
 
-export const WETH_ADDRESSES = ["0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"];
-
 export type SupportedTokens_T = TokenInfo[];
 export const supportedTokens: SupportedTokens_T = [
   {

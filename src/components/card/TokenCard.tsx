@@ -125,7 +125,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const tokenAddress =
     inNetworkInfo && tokenInfo.address[inNetworkInfo?.chainName];
-  const tokenData = useTokenBalance(tokenAddress ?? "0x");
+  const tokenData = useTokenBalance(tokenInfo);
 
   const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;

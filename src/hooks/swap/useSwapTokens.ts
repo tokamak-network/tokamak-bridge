@@ -61,31 +61,25 @@ export function useAmountOut() {
         inToken?.amountBN !== null &&
         outToken?.address
       ) {
-        if (
-          (inToken.tokenSymbol === "TON" && outToken.tokenSymbol === "WTON") ||
-          (inToken.tokenSymbol === "WTON" && outToken.tokenSymbol === "TON")
-        ) {
-          return setAmountOut(inToken.parsedAmount);
-        } else {
-          const quotedAmountOut =
-            await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-              inToken.token.address,
-              outToken.token.address,
-              FeeAmount.MEDIUM,
-              inToken.amountBN,
-              // fromReadableAmount(
-              //   Number(inToken.parsedAmount),
-              //   inToken.decimals
-              // ).toString(),
-              0
-            );
-
-          setAmountOutErr(false);
-          return setAmountOut(
-            toReadableAmount(quotedAmountOut, outToken.decimals)
+        const quotedAmountOut =
+          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
+            inToken.token.address,
+            outToken.token.address,
+            FeeAmount.MEDIUM,
+            inToken.amountBN,
+            // fromReadableAmount(
+            //   Number(inToken.parsedAmount),
+            //   inToken.decimals
+            // ).toString(),
+            0
           );
-        }
+
+        setAmountOutErr(false);
+        return setAmountOut(
+          toReadableAmount(quotedAmountOut, outToken.decimals)
+        );
       }
+
       setAmountOutErr(false);
       return setAmountOut(null);
     };

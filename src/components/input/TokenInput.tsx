@@ -29,7 +29,11 @@ export default function TokenInput(props: {
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
-  const { inToken: inTokenFromHook } = useInOutTokens();
+  const {
+    inToken: inTokenFromHook,
+    inTokenInfo,
+    outTokenInfo,
+  } = useInOutTokens();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -41,7 +45,7 @@ export default function TokenInput(props: {
     return null;
   }, [inNetwork, outNetwork, selectedInToken, selectedOutToken, inToken]);
 
-  const tokenData = useTokenBalance(tokenAddress);
+  const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;

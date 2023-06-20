@@ -1,18 +1,26 @@
 import { useAccount, useBalance, useBlockNumber } from "wagmi";
 import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
-import { WETH_ADDRESSES } from "@/types/token/supportedToken";
+import { TokenInfo } from "@/types/token/supportedToken";
 import { useMemo } from "react";
+import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
-export default function useTokenBalance(
-  address: `0x${string}` | string | null
-) {
-  const isETH = WETH_ADDRESSES.includes(address ?? "0x");
+export default function useTokenBalance(tokenInfo: TokenInfo | null) {
+  const { chainName, layer } = useConnectedNetwork();
+
+  const isETH =
+    layer === "L1" &&
+    tokenInfo?.isNativeCurrency?.includes(
+      SupportedChainId.MAINNET || SupportedChainId.GOERLI
+    );
+  const tokenAddress = chainName && tokenInfo?.address[chainName];
+
   const { address: accountAddress } = useAccount();
   const { data: blockNumber } = useBlockNumber({ watch: true });
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
-    token: isETH ? undefined : (address as "0x${string}") ?? null,
+    token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
   });
 
   const tokenBalance = useMemo(() => {
