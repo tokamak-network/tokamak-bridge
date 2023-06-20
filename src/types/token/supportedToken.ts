@@ -71,7 +71,7 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "Tokamak Network Token",
+    tokenName: "Tokamak Network",
     tokenSymbol: "TON",
     address: {
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
