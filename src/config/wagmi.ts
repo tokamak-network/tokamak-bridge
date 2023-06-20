@@ -1,14 +1,14 @@
 import { configureChains, createConfig } from "wagmi";
-import { goerli, mainnet, optimism } from "wagmi/chains";
+import { goerli, mainnet } from "wagmi/chains";
 import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
 import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { publicProvider } from "wagmi/providers/public";
-import { tokamak_goerli } from "./tokamakProvider";
+import { Titan, tokamak_goerli } from "./tokamakProvider";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, goerli, tokamak_goerli, optimism],
+  [mainnet, goerli, Titan, tokamak_goerli],
   [publicProvider()]
 );
 
