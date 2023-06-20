@@ -99,27 +99,6 @@ export default function CarousellCardComponent<T>(props: {
         outLeftControl || outRightControl ? null : setIsHover(index)
       }
       onMouseLeave={() => setIsHover(null)}
-      onClick={() => {
-        try {
-          isInTokenOpen && chainName
-            ? setSelectedInToken({
-                ...tokenData,
-                amountBN: null,
-                parsedAmount: null,
-                tokenAddress: tokenData.address[chainName],
-              })
-            : chainName &&
-              setSelectedOutToken({
-                ...tokenData,
-                amountBN: null,
-                parsedAmount: null,
-                tokenAddress: tokenData.address[chainName],
-              });
-        } catch (e) {
-        } finally {
-          onCloseTokenModal();
-        }
-      }}
     >
       <TokenCard
         w={"100%"}
@@ -147,14 +126,35 @@ export default function CarousellCardComponent<T>(props: {
         //     : undefined
         // }
         style={{
-          transition: "margin .5s ease-in-out",
+          transition: maxIndex === 0 ? "none" : "margin .5s ease-in-out",
           //need to change mt property based on selectIndex
-          _hover: { marginTop: "-10" },
+          _hover: maxIndex === 0 ? "none" : { marginTop: "-10" },
           filter:
             isHover === index
               ? `drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.25))`
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
+        }}
+        onClick={() => {
+          try {
+            isInTokenOpen && chainName
+              ? setSelectedInToken({
+                  ...tokenData,
+                  amountBN: null,
+                  parsedAmount: null,
+                  tokenAddress: tokenData.address[chainName],
+                })
+              : chainName &&
+                setSelectedOutToken({
+                  ...tokenData,
+                  amountBN: null,
+                  parsedAmount: null,
+                  tokenAddress: tokenData.address[chainName],
+                });
+          } catch (e) {
+          } finally {
+            onCloseTokenModal();
+          }
         }}
       />
     </motion.div>

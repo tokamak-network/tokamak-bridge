@@ -135,7 +135,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, outToken, inputAmount, amountOut]);
+  }, [mode, inToken, outToken, inputAmount, amountOut, priceImpact]);
 
   return { depositPropsData, withdrawPropsData, swapPropsData };
 }

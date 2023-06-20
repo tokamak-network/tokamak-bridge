@@ -95,13 +95,13 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
         if (isWrap[0]) {
           return {
             mode: "Wrap",
-            isReady: isInTokenReady && isOutTokenReady,
+            isReady: isInTokenReady,
           };
         }
         if (isWrap[1]) {
           return {
             mode: "Unwrap",
-            isReady: isInTokenReady && isOutTokenReady,
+            isReady: isInTokenReady,
           };
         }
       }
