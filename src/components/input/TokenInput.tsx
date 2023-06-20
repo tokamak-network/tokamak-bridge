@@ -2,6 +2,7 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutNetwork } from "@/hooks/network";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
@@ -28,6 +29,7 @@ export default function TokenInput(props: {
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
+  const { inToken: inTokenFromHook } = useInOutTokens();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -64,6 +66,7 @@ export default function TokenInput(props: {
         parsedAmount: value,
       });
     }
+
     //This token is outToken
     if (mode !== "Swap" && !inToken && selectedOutToken) {
       if (value === "" || value === null) {
@@ -83,6 +86,7 @@ export default function TokenInput(props: {
         parsedAmount: value,
       });
     }
+
     // if (!inToken && selectedOutToken && amountOut) {
     //   const value: string = amountOut;
     //   if (value === "" || value === null) {
@@ -125,12 +129,15 @@ export default function TokenInput(props: {
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);
 
   const valueProp = useMemo(() => {
+    if ((mode === "Wrap" || mode === "Unwrap") && inTokenFromHook) {
+      return inTokenFromHook.parsedAmount;
+    }
     return inToken === false
       ? amountOut ?? undefined
       : selectedInToken && selectedInToken?.parsedAmount !== null
       ? String(selectedInToken?.parsedAmount)
       : undefined;
-  }, [inToken, amountOut, selectedInToken]);
+  }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook]);
 
   return (
     <Flex
