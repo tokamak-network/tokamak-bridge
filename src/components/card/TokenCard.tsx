@@ -101,7 +101,9 @@ export default function TokenCard(props: TokenCardProps) {
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenSymbol) {
       case "ETH":
-        return "#222222";
+        return "#627EEA";
+      case "WETH":
+        return "#393939";
       case "TON":
         return "#007AFF";
       case "WTON":

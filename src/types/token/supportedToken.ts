@@ -46,10 +46,10 @@ export const supportedTokens: SupportedTokens_T = [
     tokenName: "ETH",
     tokenSymbol: "ETH",
     address: {
-      MAINNET: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      GOERLI: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
-      TITAN: "0x",
-      DARIUS: "0x4200000000000000000000000000000000000006",
+      MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.OVM_ETH,
     },
     decimals: 18,
     isNativeCurrency: [
@@ -62,8 +62,8 @@ export const supportedTokens: SupportedTokens_T = [
     tokenName: "WETH",
     tokenSymbol: "WETH",
     address: {
-      MAINNET: "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2",
-      GOERLI: "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+      MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
       TITAN: null,
       DARIUS: null,
     },
@@ -92,8 +92,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.WTON_ADDRESS,
-      TITAN: "0x",
-      DARIUS: "0x",
+      TITAN: null,
+      DARIUS: null,
     },
     decimals: 27,
     isNativeCurrency: null,

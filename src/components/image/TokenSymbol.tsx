@@ -3,6 +3,7 @@ import { TokenInfo } from "types/token/supportedToken";
 import { Box, Flex } from "@chakra-ui/layout";
 import Image from "next/image";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
+import SYMBOL_WETH from "assets/tokens/weth.svg";
 import SYMBOL_TON from "assets/tokens/ton.svg";
 import SYMBOL_TOS from "assets/tokens/tos.svg";
 import SYMBOL_WTON from "assets/tokens/wton.svg";
@@ -37,6 +38,8 @@ export function TokenSymbol(props: {
   switch (tokenType) {
     case "ETH":
       return <ImageSymbol ImgFile={SYMBOL_ETH} {...props} />;
+    case "WETH":
+      return <ImageSymbol ImgFile={SYMBOL_WETH} {...props} />;
     case "TON":
       return <ImageSymbol ImgFile={SYMBOL_TON} {...props} />;
     case "WTON":
