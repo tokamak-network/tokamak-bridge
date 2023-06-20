@@ -9,6 +9,7 @@ import {
   useBlockNumber,
   useContractRead,
   useContractWrite,
+  useWaitForTransaction,
 } from "wagmi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
@@ -123,11 +124,15 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  const { write } = useContractWrite({
+  const { data,write } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
     functionName: "increaseAllowance",
   });
+
+  const {isLoading:_transactionLoading} = useWaitForTransaction({
+    hash: data?.hash,
+  })
   const { data: totalSupply } = useContractRead({
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
