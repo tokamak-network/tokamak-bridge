@@ -234,6 +234,7 @@ export function useCarrousellAnimation(params: {
       position: "absolute",
       width: "186px",
       height: "242px",
+      zIndex: -100,
     });
   }, [filteredTokenList.length]);
 
