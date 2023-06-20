@@ -1,6 +1,6 @@
 import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
 import { Field } from "@/types/swap/swap";
-import { TokenInfo } from "types/token/supportedToken";
+import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { atom, selector } from "recoil";
 import { ethers } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
@@ -53,7 +53,7 @@ export const selectedOutTokenStatus = atom<SelectedToken | null>({
 export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
   key: "inTokenSeletor",
   get: ({ get }) => {
-    const inTokenStatus = get(selectedInTokenStatus);    
+    const inTokenStatus = get(selectedInTokenStatus);
     const inTokenHasAmount =
       inTokenStatus === null ? false : inTokenStatus?.amountBN !== null;
     return { inTokenHasAmount };
@@ -76,11 +76,39 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
     const network = get(networkStatus);
     const { inTokenHasAmount } = get(inTokenSelector);
     const { outTokenHasAmount } = get(outTokenSelector);
-    const isConfirmed = get(confirmWithdrawStatus);
+
+    const inTokenStatus = get(selectedInTokenStatus);
+    const outTokenStatus = get(selectedOutTokenStatus);
+
     if (network?.inNetwork && network?.outNetwork) {
       const isInTokenReady = inTokenHasAmount;
       const isOutTokenReady = inTokenHasAmount;
+
+      const isWrap = [
+        inTokenStatus?.address === supportedTokens[1].address &&
+          outTokenStatus?.address === supportedTokens[2].address,
+        inTokenStatus?.address === supportedTokens[2].address &&
+          outTokenStatus?.address === supportedTokens[1].address,
+      ];
+
+      if (isWrap.includes(true)) {
+        if (isWrap[0]) {
+          return {
+            mode: "Wrap",
+            isReady: isInTokenReady && isOutTokenReady,
+          };
+        }
+        if (isWrap[1]) {
+          return {
+            mode: "Unwrap",
+            isReady: isInTokenReady && isOutTokenReady,
+          };
+        }
+      }
+
       if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
+        const isConfirmed = get(confirmWithdrawStatus);
+
         return { mode: "Withdraw", isReady: isInTokenReady && isConfirmed };
       }
       if (network.inNetwork === network.outNetwork) {

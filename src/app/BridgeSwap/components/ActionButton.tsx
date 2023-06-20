@@ -20,6 +20,7 @@ import { useApprove } from "@/hooks/token/useApproval";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
+import useWrap from "@/hooks/swap/useTonWrap";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
@@ -41,7 +42,8 @@ export default function ActionButton() {
     useCallWithdraw("withdraw");
 
   const { callTokenSwap } = useAmountOut();
-  
+  const { wrapTON, unwrapWTON } = useWrap();
+
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const disabled =
@@ -113,6 +115,10 @@ export default function ActionButton() {
           });
         case "Swap":
           return callTokenSwap();
+        case "Wrap":
+          return wrapTON();
+        case "Unwrap":
+          return unwrapWTON();
         default:
           return console.error("action mode is not founded");
       }

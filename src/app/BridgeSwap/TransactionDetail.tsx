@@ -22,6 +22,7 @@ import { useWaitForTransaction } from "wagmi";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -210,6 +211,14 @@ const Content = (props: { isExpanded: boolean }) => {
         return swapPropsData?.map((data) => (
           <SwapDetailRow key={data.title} {...data} />
         ));
+      case "Wrap":
+        return swapPropsData?.map((data) => (
+          <SwapDetailRow key={data.title} {...data} />
+        ));
+      case "Unwrap":
+        return swapPropsData?.map((data) => (
+          <SwapDetailRow key={data.title} {...data} />
+        ));
       default:
         return <>{`component not founded :(`}</>;
     }
@@ -256,7 +265,7 @@ const Title = (props: {
   setIsExpended: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { isExpanded, setIsExpended } = props;
-  const { mode } = useRecoilValue(actionMode);
+  const { mode, swapSection } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
@@ -308,7 +317,7 @@ const Title = (props: {
     );
   }
 
-  if (mode === "Swap") {
+  if (swapSection) {
     return (
       <Flex
         w={"100%"}
@@ -318,10 +327,7 @@ const Title = (props: {
         onClick={() => setIsExpended(!isExpanded)}
         fontSize={14}
       >
-        <Flex
-          blur
-          // blur={isNotSupportForSwap ? "5px" : undefined}
-        >
+        <Flex>
           <Text>
             {1} {inToken?.tokenName}
           </Text>
@@ -344,6 +350,11 @@ const Title = (props: {
 
 export default function TransactionDetail() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
+  const { isReady } = useGetMode();
+
+  // if (!isReady) {
+  //   return null;
+  // }
 
   return (
     <Flex

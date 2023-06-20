@@ -15,7 +15,6 @@ import {
 } from "@uniswap/v3-sdk";
 import { CurrencyAmount, TradeType, Token, Percent } from "@uniswap/sdk-core";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import SwapperV2ABI from "@/abis/SwapperV2.json";
 import {
   fromReadableAmount,
   toReadableAmount,
@@ -27,19 +26,9 @@ import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import { useRecoilState } from "recoil";
 import { transactionModalStatus } from "@/recoil/modal/atom";
-import { TokenInfo, supportedTokens } from "@/types/token/supportedToken";
 
-import {
-  useAccount,
-  useBlockNumber,
-  useContractRead,
-  useContractWrite,
-  useWaitForTransaction,
-  useNetwork,
-} from "wagmi";
+import { useAccount } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { supportedChain } from "@/types/network/supportedNetwork";
-import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -51,7 +40,7 @@ export function useAmountOut() {
   const { mode } = useGetMode();
 
   const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT } = useContract();
+  const { UNISWAP_CONTRACT } = useContract();
   const { layer } = useConnectedNetwork();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
@@ -60,43 +49,9 @@ export function useAmountOut() {
     undefined
   );
   const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
-  const { chain } = useNetwork();
 
   const { QUOTER_CONTRACT } = useUniswapContracts();
-  const { data, write: tonWton } = useContractWrite({
-    address: SWAPPER_V2_CONTRACT as `0x${string}`,
-    abi: SwapperV2ABI.abi,
-    functionName: "tonToWton",
-  });
-
-  const { isLoading: tonWtonLoading, isSuccess: tonWtonSuccess } =
-    useWaitForTransaction({
-      hash: data?.hash,
-    });
-
-  const { write: wtonTon } = useContractWrite({
-    address: SWAPPER_V2_CONTRACT as `0x${string}`,
-    abi: SwapperV2ABI.abi,
-    functionName: "wtonToTon",
-  });
-
-  const { isLoading: wtonTonLoading, isSuccess: wtonTonSuccess } =
-    useWaitForTransaction({
-      hash: data?.hash,
-    });
-  // const { write } = useContractWrite({
-  //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
-  //   abi: IUniswapV3PoolABI.abi,
-  // });
-
-  const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
-
-  const chainInfo = useMemo(() => {
-    if (chain?.id) {
-      const chainName = getKeyByValue(SupportedChainId, chain.id);
-      return  chainName;
-    }
-  }, [chain]);
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -227,7 +182,6 @@ export function useAmountOut() {
   }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
-    console.log("supportedTokens", supportedTokens);
     if (trade && inToken && address && inToken.parsedAmount) {
       try {
         // // Give approval to the router to spend the token
@@ -252,14 +206,14 @@ export function useAmountOut() {
         const weiAmount = ethers.BigNumber.from(wei);
         const hexAmount = ethers.utils.hexlify(weiAmount);
 
+        const isETH = inToken.isNativeCurrency?.includes(
+          SupportedChainId.MAINNET || SupportedChainId.GOERLI
+        );
+
         const tx = {
           data: methodParameters.calldata as `0x{string}`,
           to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
-          value:
-            inToken.tokenAddress ===
-            supportedTokens[0].address[chainInfo || "MAINNET"]
-              ? hexAmount
-              : methodParameters.value,
+          value: isETH ? hexAmount : methodParameters.value,
           from: address,
           // maxFeePerGas: "250000",
           // maxPriorityFeePerGas: "250000",
@@ -280,42 +234,6 @@ export function useAmountOut() {
         console.log("callTokenSwap");
         console.log(e);
         setModalOpen("error");
-      }
-    } else if (
-      trade === null &&
-      ((inToken?.tokenAddress ===
-        supportedTokens[1].address[chainInfo || "MAINNET" ] &&
-        outToken?.tokenAddress ===
-          supportedTokens[2].address[chainInfo || "MAINNET"]) ||
-        (inToken?.tokenAddress ===
-          supportedTokens[2].address[chainInfo || "MAINNET" ] &&
-          outToken?.tokenAddress ===
-            supportedTokens[1].address[chainInfo || "MAINNET"])) &&
-      inToken &&
-      address &&
-      inToken.parsedAmount
-    ) {
-      try {
-        let amountIn;
-        if (inToken.tokenSymbol === "TON") {
-          amountIn = ethers.utils.parseEther(inToken.parsedAmount);
-          tonWton({
-            args: [amountIn],
-          });
-        } else {
-          amountIn = ethers.utils.parseUnits(inToken.parsedAmount, "27");
-
-          wtonTon({
-            args: [amountIn],
-          });
-        }
-
-        if (tonWtonLoading || wtonTonLoading) {
-          setModalOpen("confirming");
-        }
-      } catch (e) {
-        console.log("**swap err*");
-        console.log(e);
       }
     }
   }, [trade, address, UNISWAP_CONTRACT]);

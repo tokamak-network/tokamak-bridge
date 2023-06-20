@@ -1,10 +1,6 @@
 import NetworkDropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import Image from "next/image";
-import SettingIcon from "assets/icons/setting.svg";
-import { useRecoilValue } from "recoil";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
 import ImageSymbol from "@/components/image/TokenSymbol";
 import { useInOutNetwork } from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
@@ -16,6 +12,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
 import Setting from "@/components/Setting";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -73,7 +70,7 @@ export const SearchTokenComponent = () => {
 };
 
 export default function OutToken() {
-  const { mode } = useRecoilValue(actionMode);
+  const { mode, swapSection } = useGetMode();
   const { isOpen, onCloseConfirmModal } = useConfirmModal();
 
   const NetworkSwitcher = useMemo(() => {
@@ -95,9 +92,9 @@ export default function OutToken() {
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>
         {NetworkSwitcher}
-        {mode === "Swap" && <SearchTokenComponent />}
+        {swapSection && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
-        {mode === "Swap" && (
+        {swapSection && (
           <TokenInput
             inToken={false}
             isDisabled={false}
