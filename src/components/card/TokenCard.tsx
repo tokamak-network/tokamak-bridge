@@ -6,6 +6,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus, selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { ethers } from "ethers";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo;
@@ -106,13 +107,10 @@ export default function TokenCard(props: TokenCardProps) {
     inNetworkInfo && tokenInfo.address[inNetworkInfo?.chainName];
   const tokenData = useTokenBalance(tokenAddress ?? "0x");
 
+  const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;
   const addNewCard = useCallback(() => {
-    console.log(agreeToAdd);
-    console.log("go");
-    // if (agreeToAdd) {
-    //   return onClick;
-    // }
+    addNewToken(tokenInfo);
     return setAgreeToAdd(true);
   }, [agreeToAdd]);
 
