@@ -5,7 +5,7 @@ import {
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
 import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import {
@@ -45,10 +45,8 @@ export default function CarousellCardComponent<T>(props: {
     outRightControl,
     waitControl,
   } = useCarrousellAnimation({ currentIndex, index });
-  const { isInTokenOpen } = useTokenModal();
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
+  const { isInTokenOpen, onCloseTokenModal } = useTokenModal();
+  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
 
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
@@ -101,22 +99,27 @@ export default function CarousellCardComponent<T>(props: {
         outLeftControl || outRightControl ? null : setIsHover(index)
       }
       onMouseLeave={() => setIsHover(null)}
-      onClick={() =>
-        isInTokenOpen && chainName
-          ? setSelectedInToken({
-              ...tokenData,
-              amountBN: null,
-              parsedAmount: null,
-              tokenAddress: tokenData.address[chainName],
-            })
-          : chainName &&
-            setSelectedOutToken({
-              ...tokenData,
-              amountBN: null,
-              parsedAmount: null,
-              tokenAddress: tokenData.address[chainName],
-            })
-      }
+      onClick={() => {
+        try {
+          isInTokenOpen && chainName
+            ? setSelectedInToken({
+                ...tokenData,
+                amountBN: null,
+                parsedAmount: null,
+                tokenAddress: tokenData.address[chainName],
+              })
+            : chainName &&
+              setSelectedOutToken({
+                ...tokenData,
+                amountBN: null,
+                parsedAmount: null,
+                tokenAddress: tokenData.address[chainName],
+              });
+        } catch (e) {
+        } finally {
+          onCloseTokenModal();
+        }
+      }}
     >
       <TokenCard
         w={"100%"}
