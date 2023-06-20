@@ -27,7 +27,7 @@ export default function ApproveToken() {
       alignItems={"center"}
     >
       <Text fontSize={14}>
-        {chainName} wants to use your {inToken?.tokenSymbol}
+        Tokamak Bridge wants to use your {inToken?.tokenSymbol}
       </Text>
       <Button
         w={"92px"}
