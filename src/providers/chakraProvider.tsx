@@ -10,7 +10,7 @@ export function ChakraProvidersForNextJs({
   children: React.ReactNode;
 }) {
   return (
-    <CacheProvider>
+    <CacheProvider> 
       <ChakraProvider resetCSS theme={theme}>
         {children}
       </ChakraProvider>

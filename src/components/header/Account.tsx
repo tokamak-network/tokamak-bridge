@@ -15,7 +15,10 @@ export default function Account() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
-  const { isLoading } = useGetTransaction();
+  const { isLoading, isSuccess,txReceipt } = useGetTransaction();
+    
+
+  console.log('txReceipt',txReceipt);
   
   return (
     <Center
@@ -37,7 +40,6 @@ export default function Account() {
       }
     >
 
-    
       {isLoading ? (
         <>
           <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />

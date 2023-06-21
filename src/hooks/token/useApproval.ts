@@ -15,7 +15,9 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
-
+import { transactionData } from "@/recoil/global/transaction";
+import { useRecoilState } from "recoil";
+import { TransactionType } from "@/types/transactions/transactionTypes";
 const getAllowance = async (
   ERC20_contract: Contract,
   account: string,
@@ -108,6 +110,8 @@ export function useApprove() {
   const { mode } = useGetMode();
   const { approved } = useAllowance();
   const { inToken } = useInOutTokens();
+  const [t, setTransactionData] = useRecoilState(transactionData);
+  const { address } = useAccount();
 
   const isApproved = useMemo(() => {
     if (approved) {
@@ -130,7 +134,7 @@ export function useApprove() {
     functionName: "increaseAllowance",
   });
 
-  const {isLoading:_transactionLoading} = useWaitForTransaction({
+  const {isLoading:_transactionLoading, isSuccess: _transactionSuccess,data: _transactionData} = useWaitForTransaction({
     hash: data?.hash,
   })
   const { data: totalSupply } = useContractRead({
@@ -138,6 +142,17 @@ export function useApprove() {
     abi: TON_ABI.abi,
     functionName: "totalSupply",
   });
+  
+
+  useEffect(() => {
+    setTransactionData({ isLoading: _transactionLoading, isSuccess: _transactionSuccess? 1: undefined, txReceipt:_transactionData, info:{
+      type: TransactionType.APPROVAL,
+      tokenAddress: inToken?.tokenAddress as `0x${string}`, 
+      spender: address as `0x${string}` ,
+      amount: totalSupply as string
+    }} );
+
+  },[_transactionLoading])
 
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
     useContract();

@@ -6,7 +6,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { Button } from "@chakra-ui/react";
+import { Button, useToast, Box } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import { useAccount, usePublicClient } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -21,6 +21,7 @@ import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import useWrap from "@/hooks/swap/useTonWrap";
+import TxToast from "@/components/toast/TxToast";
 
 export default function ActionButton() {
   const { isConnected, status, address } = useAccount();
@@ -36,8 +37,8 @@ export default function ActionButton() {
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 
-  const { write: _depositETH } = useCallDeposit("depositETH");
-  const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
+  const { write: _depositETH } = useCallDeposit("depositETH" );
+  const { write: _depositERC20, contract } = useCallDeposit("depositERC20" );
   const { write: _withdraw, contract: _withdraw_contract } =
     useCallWithdraw("withdraw");
 
@@ -126,6 +127,10 @@ export default function ActionButton() {
   }, [isConnected, connectToWallet, mode, inTokenInfo, address]);
 
   const { isOpen, onOpenConfirmModal } = useConfirmModal();
+  const toast = useToast();
+  const handleClose = () => {
+    toast.close("xx");
+  };
 
   return (
     <Button
@@ -140,6 +145,26 @@ export default function ActionButton() {
       color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={isDisabled}
       onClick={isOpen ? onClick : onOpenConfirmModal}
+      // onClick={() =>
+      //   toast({
+      //     position: "top-right",
+      //     variant: "solid",
+      //     isClosable: false,
+      //     id: "xx",
+      //     duration: 2000,
+
+      //     render: () => (
+      //       <TxToast
+      //         onClose={handleClose}
+      //         funcName="Add"
+      //         functSub="Swap"
+      //         token0={supportedTokens[0]}
+      //         token1={supportedTokens[1]}
+      //         type="add"
+      //       />
+      //     ),
+      //   })
+      // }
     >
       {!isConnected && "Connect Wallet"}
       {isOpen

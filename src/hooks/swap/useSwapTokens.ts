@@ -31,8 +31,14 @@ import { transactionData } from "@/recoil/global/transaction";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 
-import { useAccount, useContractWrite, useWaitForTransaction,useNetwork} from "wagmi";
+import {
+  useAccount,
+  useContractWrite,
+  useWaitForTransaction,
+  useNetwork,
+} from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { TransactionType } from "@/types/transactions/transactionTypes";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -44,7 +50,7 @@ export function useAmountOut() {
   const { mode } = useGetMode();
 
   const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT,SWAPPER_V2_CONTRACT } = useContract();
+  const { UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT } = useContract();
   const { layer } = useConnectedNetwork();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
@@ -58,40 +64,15 @@ export function useAmountOut() {
   const { QUOTER_CONTRACT } = useUniswapContracts();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
-  const { data: tonWtonData, write: tonWton } = useContractWrite({
-    address: SWAPPER_V2_CONTRACT as `0x${string}`,
-    abi: SwapperV2ABI.abi,
-    functionName: "tonToWton",
-  });
-
+  const [tModalStatus, setTModalStatus] = useRecoilState(
+    transactionModalStatus
+  );
   const [t, setTransactionData] = useRecoilState(transactionData);
 
-  const {
-    isLoading: _tonWtonLoading,
-    isSuccess: tonWtonSuccess,
-    data: tonWtonResultData,
-  } = useWaitForTransaction({
-    hash: tonWtonData?.hash,
-  });
-
-  const { data: wtonTonData, write: wtonTon } = useContractWrite({
-    address: SWAPPER_V2_CONTRACT as `0x${string}`,
-    abi: SwapperV2ABI.abi,
-    functionName: "wtonToTon",
-  });
-
-  const {
-    isLoading: _wtonTonLoading,
-    isSuccess: wtonTonSuccess,
-    data: wtonTonResultData,
-  } = useWaitForTransaction({
-    hash: wtonTonData?.hash,
-  });
   // const { write } = useContractWrite({
   //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
   //   abi: IUniswapV3PoolABI.abi,
   // });
-
 
   const chainInfo = useMemo(() => {
     if (chain?.id) {
@@ -99,10 +80,6 @@ export function useAmountOut() {
       return chainName;
     }
   }, [chain]);
-
-  useEffect(() => {
-    setTransactionData({ isLoading: _tonWtonLoading });
-  }, [_tonWtonLoading]);
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -233,7 +210,13 @@ export function useAmountOut() {
   }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
-    if (trade && inToken && address && inToken.parsedAmount && inToken.amountBN) {
+    if (
+      trade &&
+      inToken &&
+      address &&
+      inToken.parsedAmount &&
+      inToken.amountBN
+    ) {
       try {
         // // Give approval to the router to spend the token
         // const tokenApproval = await getTokenTransferApproval(inToken.token);
@@ -276,15 +259,20 @@ export function useAmountOut() {
           // gasPrice: gasPrice.toString(),
         };
         if (tx) {
-          setModalOpen("confirming");
+          setTModalStatus("confirming");
           const res = await sendTransaction(tx);
 
           if (res.transactionState === "Sent") {
-            setTransactionData({ isLoading: true });
-            setModalOpen("confirmed");
+            setTransactionData({
+              isLoading: true,
+              isSuccess: undefined,
+              txReceipt: undefined,
+              info: undefined,
+            });
+            setTModalStatus("confirmed");
           }
           if (res.transactionState === "Rejected") {
-            return setModalOpen("error");
+            setTModalStatus("error");
           }
 
           const receipt = await res.provider?.waitForTransaction(
@@ -292,51 +280,36 @@ export function useAmountOut() {
           );
 
           if (receipt) {
-            return setTransactionData({ isLoading: false });
+            return setTransactionData({
+              isLoading: false,
+              isSuccess: receipt.status,
+              txReceipt: receipt,
+              info: {
+                type: TransactionType.SWAP,
+                tradeType: TradeType.EXACT_INPUT,
+                inputCurrencyAmountRaw: trade.inputAmount.quotient.toString(),
+                expectedOutputCurrencyAmountRaw:
+                  trade.outputAmount.quotient.toString(),
+                minimumOutputCurrencyAmountRaw: trade
+                  .minimumAmountOut(new Percent(50, 10_000))
+                  .quotient.toString(),
+                inputCurrencyId: inToken.tokenAddress as string,
+                outputCurrencyId: outToken?.tokenAddress as string,
+              },
+            });
           } else {
-            return setTransactionData({ isLoading: false });
+            return setTransactionData({
+              isLoading: false,
+              isSuccess: undefined,
+              txReceipt: undefined,
+              info: undefined,
+            });
           }
         }
       } catch (e) {
         console.log("callTokenSwap");
         console.log(e);
         setModalOpen("error");
-      }
-    } else if (
-      trade === null &&
-      ((inToken?.tokenAddress ===
-        supportedTokens[1].address[chainInfo || "MAINNET"] &&
-        outToken?.tokenAddress ===
-          supportedTokens[2].address[chainInfo || "MAINNET"]) ||
-        (inToken?.tokenAddress ===
-          supportedTokens[2].address[chainInfo || "MAINNET"] &&
-          outToken?.tokenAddress ===
-            supportedTokens[1].address[chainInfo || "MAINNET"])) &&
-      inToken &&
-      address &&
-      inToken.parsedAmount
-    ) {
-      try {
-        let amountIn;
-        if (inToken.tokenSymbol === "TON") {
-          amountIn = ethers.utils.parseEther(inToken.parsedAmount);
-          tonWton({
-            args: [amountIn],
-          });
-        } else {
-          amountIn = ethers.utils.parseUnits(inToken.parsedAmount, "27");
-
-          wtonTon({
-            args: [amountIn],
-          });
-        }
-
-        if (_tonWtonLoading || _wtonTonLoading) {
-          setModalOpen("confirming");
-        }
-      } catch (e) {
-        console.log("**swap err*");
-        console.log(e);
       }
     }
   }, [trade, address, UNISWAP_CONTRACT, inToken, outToken]);

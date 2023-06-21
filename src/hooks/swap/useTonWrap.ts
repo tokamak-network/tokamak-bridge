@@ -5,13 +5,19 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useRecoilState } from "recoil";
 import { transactionModalStatus } from "@/recoil/modal/atom";
+import { transactionData } from "@/recoil/global/transaction";
+import { TransactionType } from "@/types/transactions/transactionTypes";
+import { transactionType } from "viem";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
-  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const [tModalStatus, setTModalStatus] = useRecoilState(
+    transactionModalStatus
+  );
+  const [t, setTransactionData] = useRecoilState(transactionData);
 
-  const { inToken } = useInOutTokens();
-  const { data, write: tonWton } = useContractWrite({
+  const { inToken,outToken } = useInOutTokens();
+  const {isLoading: _tonWtonLoading,isSuccess:_tonWtonSuccess,isError: _tonWrapError, data:_tonWtonData, write: tonWton } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
     abi: SwapperV2ABI.abi,
     functionName: "tonToWton",
@@ -20,11 +26,12 @@ export default function useWrap() {
     isLoading: tonWtonLoading,
     isSuccess: tonWtonSuccess,
     isError: tonWrapError,
+    data: tonWtonData
   } = useWaitForTransaction({
-    hash: data?.hash,
+    hash: _tonWtonData?.hash,
   });
 
-  const { write: wtonTon } = useContractWrite({
+  const {isLoading: _wtonTonLoading,isSuccess:_wtonTonSuccess,isError: _WtonUnwrapError, data:_wtonWTonData, write: wtonTon } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
     abi: SwapperV2ABI.abi,
     functionName: "wtonToTon",
@@ -34,8 +41,9 @@ export default function useWrap() {
     isLoading: wtonTonLoading,
     isSuccess: wtonTonSuccess,
     isError: WtonUnwrapError,
+    data: wtonWTonData
   } = useWaitForTransaction({
-    hash: data?.hash,
+    hash: _wtonWTonData?.hash,
   });
 
   const wrapTON = useCallback(() => {
@@ -64,24 +72,44 @@ export default function useWrap() {
     }
   }, [inToken]);
 
-  useEffect(() => {
-    if (tonWtonLoading || wtonTonLoading) {
-      return setModalOpen("confirming");
+  useEffect(() => {    
+    if (_tonWtonLoading || _wtonTonLoading) {
+      return setTModalStatus("confirming");
     }
-    if (tonWtonSuccess || wtonTonSuccess) {
-      return setModalOpen("confirmed");
+    if (_tonWtonSuccess || _wtonTonSuccess) {
+      return setTModalStatus("confirmed");
     }
-    if (tonWrapError || WtonUnwrapError) {
-      return setModalOpen("error");
+    if (_tonWrapError || _WtonUnwrapError) {
+      return setTModalStatus("error");
     }
   }, [
-    tonWtonLoading,
-    wtonTonLoading,
-    tonWtonSuccess,
-    wtonTonSuccess,
-    tonWrapError,
-    WtonUnwrapError,
+    _tonWtonLoading,
+    _wtonTonLoading,
+    _tonWtonSuccess,
+    _wtonTonSuccess,
+    _tonWrapError,
+   _WtonUnwrapError,
   ]);
+
+  useEffect(() => {
+    setTransactionData({ isLoading: tonWtonLoading, isSuccess: tonWtonSuccess? 1: undefined, txReceipt:tonWtonData,  info: {
+      type: TransactionType.WRAP,
+      unwrapped: false,
+      currencyAmountRaw:  inToken?.parsedAmount as string,
+      inputCurrencyId: inToken?.tokenAddress as `0x${string}`,
+      outputCurrencyId: outToken?.tokenAddress as `0x${string}`,
+    } });
+  }, [tonWtonLoading,tonWtonSuccess,tonWtonData]);
+  useEffect(() => {
+    setTransactionData({ isLoading: wtonTonLoading, isSuccess: wtonTonSuccess? 1: undefined, txReceipt: wtonWTonData, info: {
+      type: TransactionType.UNWRAP,
+      unwrapped: true,
+      currencyAmountRaw:  inToken?.parsedAmount as string,
+      inputCurrencyId: inToken?.tokenAddress as `0x${string}`,
+      outputCurrencyId: outToken?.tokenAddress as `0x${string}`,
+    }  });
+  }, [wtonTonLoading,wtonTonSuccess,wtonWTonData]);
+
 
   return { wrapTON, unwrapWTON };
 }

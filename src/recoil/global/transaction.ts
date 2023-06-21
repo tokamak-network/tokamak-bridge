@@ -1,5 +1,5 @@
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
-
+import { TransactionInfo } from "@/types/transactions/transactionTypes";
 export enum TransactionState {
   Failed = "Failed",
   New = "New",
@@ -60,11 +60,20 @@ export const swapGasData = atom<{ estimatedGasFee: string | undefined }>({
 
 type TransactionData = {
   isLoading: boolean;
+  isSuccess: number| undefined;
+  txReceipt: any | undefined; 
+  info: TransactionInfo | undefined
 };
+
+
 
 export const transactionData = atom<TransactionData>({
   key: "transactionData",
   default: {
     isLoading: false,
+    isSuccess: undefined,
+    txReceipt: undefined, 
+    info: undefined
+
   },
 });

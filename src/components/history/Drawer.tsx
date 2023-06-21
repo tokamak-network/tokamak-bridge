@@ -506,6 +506,8 @@ const HistoryTable = () => {
 
 export default function HistoryDrawer() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
+  console.log('hiii');
+  
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
       <DrawerOverlay zIndex={1001} className="modalOverlayDrawer" bg={"none"} />
