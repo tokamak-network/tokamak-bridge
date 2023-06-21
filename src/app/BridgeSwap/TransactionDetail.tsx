@@ -350,11 +350,11 @@ const Title = (props: {
 
 export default function TransactionDetail() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
-  // const { isReady } = useGetMode();
+  const { isReady } = useGetMode();
 
-  // if (isReady) {
-  //   return null;
-  // }
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <Flex
