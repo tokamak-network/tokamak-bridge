@@ -11,6 +11,7 @@ import { useAmountOut } from "./useSwapTokens";
 import JSBI from "jsbi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import useIsLoading from "../ui/useIsLoading";
 
 export default function usePriceImpact() {
   const [markPrice, setMarkPrice] = useState<number | undefined>(undefined);
@@ -20,6 +21,7 @@ export default function usePriceImpact() {
   const { QUOTER_CONTRACT } = useUniswapContracts();
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
+  const [, setIsLoading] = useIsLoading();
 
   useEffect(() => {
     const fetchMarkPrice = async () => {
@@ -50,6 +52,7 @@ export default function usePriceImpact() {
   const priceImpact = useMemo(() => {
     if (markPrice && amountOut && inToken && inToken.parsedAmount && outToken) {
       try {
+        setIsLoading(true);
         const amountInBI = JSBI.BigInt(
           ethers.utils.parseUnits(
             inToken.parsedAmount.replaceAll(",", ""),
@@ -66,11 +69,12 @@ export default function usePriceImpact() {
 
         const priceImpact =
           (Number(nowPrice.toString().slice(0, 4)) / markPrice) * 100 - 100;
-
         return commafy(priceImpact, 2);
       } catch (e) {
         console.log("**priceImpact err**");
         console.log(e);
+      } finally {
+        setIsLoading(false);
       }
     }
     return undefined;

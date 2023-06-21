@@ -18,6 +18,8 @@ import {
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import useIsLoading from "@/hooks/ui/useIsLoading";
+import GradientSpinner from "@/components/ui/gradientSpinner";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -160,6 +162,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
 
 const SwapDetailRow = (props: SwapDetailProp) => {
   const { title, content, gasFee, slippage } = props;
+  const [isLoading] = useIsLoading();
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
@@ -172,7 +175,11 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
         </Flex>
         <Flex>
-          <Text fontWeight={500}>{content}</Text>
+          {isLoading ? (
+            <GradientSpinner />
+          ) : (
+            <Text fontWeight={500}>{content}</Text>
+          )}
           {gasFee && (
             <Text ml={"27px"} fontWeight={500} color={"#A0A3AD"}>
               {gasFee}
@@ -265,6 +272,7 @@ const Title = (props: {
   const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
   const { outPrice } = usePriceImpact();
+  const [isLoading] = useIsLoading();
 
   useEffect(() => {
     if (isExpanded) {
@@ -320,18 +328,22 @@ const Title = (props: {
         onClick={() => setIsExpended(!isExpanded)}
         fontSize={14}
       >
-        <Flex>
-          <Text>
-            {1} {inToken?.tokenName}
-          </Text>
-          <Text mx={"9px"}>=</Text>
-          <Text>
-            {outPrice} {outToken?.tokenName}
-          </Text>
-          <Text color={"#A0A3AD"} ml={"4px"}>
-            ($1.000)
-          </Text>
-        </Flex>
+        {isLoading ? (
+          <GradientSpinner />
+        ) : (
+          <Flex>
+            <Text>
+              {1} {inToken?.tokenName}
+            </Text>
+            <Text mx={"9px"}>=</Text>
+            <Text>
+              {outPrice} {outToken?.tokenName}
+            </Text>
+            <Text color={"#A0A3AD"} ml={"4px"}>
+              ($1.000)
+            </Text>
+          </Flex>
+        )}
         <motion.div animate={arrowControl}>
           <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
         </motion.div>

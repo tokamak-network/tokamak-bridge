@@ -141,6 +141,7 @@ export const CardCarrousel = () => {
               waitCondition={waitCondition}
               isHover={isHover}
               setIsHover={setIsHover}
+              key={tokenData.tokenName as string}
             />
           );
         })}

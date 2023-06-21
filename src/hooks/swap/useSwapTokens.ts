@@ -29,6 +29,7 @@ import { transactionModalStatus } from "@/recoil/modal/atom";
 
 import { useAccount } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useIsLoading from "@/hooks/ui/useIsLoading";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -52,6 +53,7 @@ export function useAmountOut() {
 
   const { QUOTER_CONTRACT } = useUniswapContracts();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const [, setIsLoading] = useIsLoading();
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -61,6 +63,7 @@ export function useAmountOut() {
         inToken?.amountBN !== null &&
         outToken?.address
       ) {
+        setIsLoading(true);
         const quotedAmountOut =
           await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
             inToken.token.address,
@@ -75,9 +78,8 @@ export function useAmountOut() {
           );
 
         setAmountOutErr(false);
-        return setAmountOut(
-          toReadableAmount(quotedAmountOut, outToken.decimals)
-        );
+        setAmountOut(toReadableAmount(quotedAmountOut, outToken.decimals));
+        return setIsLoading(false);
       }
 
       setAmountOutErr(false);
@@ -89,7 +91,7 @@ export function useAmountOut() {
       console.log(e);
       setAmountOutErr(true);
     });
-  }, [inToken, outToken, QUOTER_CONTRACT]);
+  }, [mode, inToken, outToken]);
 
   useEffect(() => {
     const createTrade = async () => {
@@ -173,7 +175,7 @@ export function useAmountOut() {
       console.log("**createTrade err**");
       console.log(e);
     });
-  }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
+  }, [inToken, outToken, amountOut, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
     if (trade && inToken && address && inToken.amountBN) {
@@ -234,7 +236,7 @@ export function useAmountOut() {
         setModalOpen("error");
       }
     }
-  }, [trade, address, UNISWAP_CONTRACT]);
+  }, [trade, address]);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
@@ -268,7 +270,7 @@ export function useAmountOut() {
     //   console.log("**fetchEstimatedGasToSwap err**");
     //   console.log(e);
     // });
-  }, [trade, UNISWAP_CONTRACT, mode]);
+  }, [trade, mode]);
 
   return { amountOut, callTokenSwap, estimatedGas, amountOutErr };
 }
