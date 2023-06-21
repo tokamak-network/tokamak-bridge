@@ -83,7 +83,7 @@ export default function OutToken() {
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
-      <Flex justifyContent={"space-between"}>
+      <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {isOpen ? "" : mode === "Swap" ? "For" : "To"}
         </Text>
