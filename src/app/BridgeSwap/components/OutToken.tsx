@@ -72,6 +72,7 @@ export const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode, swapSection } = useGetMode();
   const { isOpen, onCloseConfirmModal } = useConfirmModal();
+  const { outToken } = useInOutTokens();
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -94,7 +95,7 @@ export default function OutToken() {
         {NetworkSwitcher}
         {swapSection && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
-        {swapSection && (
+        {outToken !== null && (
           <TokenInput
             inToken={false}
             isDisabled={false}
