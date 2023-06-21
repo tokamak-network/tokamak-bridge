@@ -133,7 +133,10 @@ export default function TokenInput(props: {
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);
 
   const valueProp = useMemo(() => {
-    if ((mode === "Wrap" || mode === "Unwrap") && inTokenFromHook) {
+    if (
+      (mode === "Wrap" || mode === "Unwrap") &&
+      inTokenFromHook?.parsedAmount
+    ) {
       return inTokenFromHook.parsedAmount;
     }
     return inToken === false
