@@ -56,18 +56,18 @@ export const supportedTokens: SupportedTokens_T = [
       SupportedChainId.TITAN,
     ],
   },
-  {
-    tokenName: "WETH",
-    tokenSymbol: "WETH",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
-      TITAN: null,
-      DARIUS: null,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-  },
+  // {
+  //   tokenName: "WETH",
+  //   tokenSymbol: "WETH",
+  //   address: {
+  //     MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
+  //     GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
+  //     TITAN: null,
+  //     DARIUS: null,
+  //   },
+  //   decimals: 18,
+  //   isNativeCurrency: null,
+  // },
   {
     tokenName: "Tokamak Network",
     tokenSymbol: "TON",
@@ -146,7 +146,7 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "USD//C",
+    tokenName: "USDC",
     tokenSymbol: "USDC",
     address: {
       MAINNET: null,

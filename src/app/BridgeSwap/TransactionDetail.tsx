@@ -9,8 +9,6 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import CustomTooltip from "components/tooltip/CustomTooltip";
-import Swap from "./Swap";
-import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import {
   DepositDetailProp,
   SwapDetailProp,
@@ -18,10 +16,7 @@ import {
   useTransactionDetail,
 } from "@/hooks/transactionDetail/useTransactionDetail";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useWaitForTransaction } from "wagmi";
-import useGetTransaction from "@/hooks/user/useGetTransaction";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
-import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
 const DivisionLine = () => {
@@ -269,9 +264,7 @@ const Title = (props: {
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
-  const { isLoading } = useGetTransaction();
   const { outPrice } = usePriceImpact();
-  const { isNotSupportForSwap } = useBridgeSupport();
 
   useEffect(() => {
     if (isExpanded) {
@@ -291,7 +284,7 @@ const Title = (props: {
         fontSize={14}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
-          {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />}
+          {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
           <Text>{inNetwork?.chainName}</Text>
           <Box w={"10px"} h={"9px"}>
             <Image src={ArrowImg} alt={"arrow"} />
