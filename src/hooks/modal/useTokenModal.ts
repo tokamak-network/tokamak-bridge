@@ -4,7 +4,7 @@ import {
   tokenModalStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
@@ -28,9 +28,13 @@ export default function useTokenModal() {
     setTokenModal({ isOpen: null, modalData: null });
   };
 
-  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
 
-  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
   const { chainName } = useConnectedNetwork();
 
   const setSelectedToken = useCallback(
@@ -39,22 +43,39 @@ export default function useTokenModal() {
         isNew?: boolean | undefined;
       }
     ) => {
-      isInTokenOpen && chainName
-        ? setSelectedInToken({
-            ...tokenData,
-            amountBN: null,
-            parsedAmount: null,
-            tokenAddress: tokenData.address[chainName],
-          })
-        : chainName &&
-          setSelectedOutToken({
-            ...tokenData,
-            amountBN: null,
-            parsedAmount: null,
-            tokenAddress: tokenData.address[chainName],
-          });
+      if (chainName) {
+        const isDuplicated = isInTokenOpen
+          ? selectedOutToken?.address[chainName] ===
+            tokenData.address[chainName]
+          : selectedInToken?.address[chainName] ===
+            tokenData.address[chainName];
+
+        //remove if same token is selected at other side
+        if (isDuplicated) {
+          if (isInTokenOpen) {
+            setSelectedOutToken(null);
+          } else {
+            setSelectedInToken(null);
+          }
+        }
+
+        isInTokenOpen && chainName
+          ? setSelectedInToken({
+              ...tokenData,
+              amountBN: null,
+              parsedAmount: null,
+              tokenAddress: tokenData.address[chainName],
+            })
+          : chainName &&
+            setSelectedOutToken({
+              ...tokenData,
+              amountBN: null,
+              parsedAmount: null,
+              tokenAddress: tokenData.address[chainName],
+            });
+      }
     },
-    [chainName]
+    [chainName, selectedInToken, selectedOutToken]
   );
 
   return {
