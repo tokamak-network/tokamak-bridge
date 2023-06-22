@@ -89,8 +89,21 @@ export const CardCarrousel = () => {
           const waitCondition =
             filteredTokenList.length < 6
               ? false
+              : startIndex === filteredTokenList.length
+              ? startIndex - 9 === index ||
+                startIndex - 8 === index ||
+                startIndex - 7 === index ||
+                startIndex - 6 === index ||
+                startIndex - 5 === index ||
+                startIndex - 4 === index ||
+                startIndex - 3 === index ||
+                startIndex - 2 === index ||
+                startIndex - 1 === index ||
+                startIndex === index
               : startIndex === filteredTokenList.length - 1
-              ? startIndex - 7 === index ||
+              ? startIndex - 9 === index ||
+                startIndex - 8 === index ||
+                startIndex - 7 === index ||
                 startIndex - 6 === index ||
                 startIndex - 5 === index ||
                 startIndex - 4 === index ||
@@ -131,6 +144,28 @@ export const CardCarrousel = () => {
                 (startIndex !== null &&
                   startIndex !== undefined &&
                   startIndex + 7 === index);
+          //   ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 1 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 2 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 3 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 4 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 5 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 6 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 7 === index);
 
           return (
             <CarousellCardComponent
@@ -141,6 +176,7 @@ export const CardCarrousel = () => {
               waitCondition={waitCondition}
               isHover={isHover}
               setIsHover={setIsHover}
+              key={tokenData.tokenName as string}
             />
           );
         })}

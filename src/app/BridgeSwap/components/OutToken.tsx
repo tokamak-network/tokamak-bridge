@@ -72,6 +72,7 @@ export const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode, swapSection } = useGetMode();
   const { isOpen, onCloseConfirmModal } = useConfirmModal();
+  const { outToken } = useInOutTokens();
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -83,7 +84,7 @@ export default function OutToken() {
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
-      <Flex justifyContent={"space-between"}>
+      <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {isOpen ? "" : mode === "Swap" ? "For" : "To"}
         </Text>
@@ -94,7 +95,7 @@ export default function OutToken() {
         {NetworkSwitcher}
         {swapSection && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
-        {swapSection && (
+        {outToken !== null && (
           <TokenInput
             inToken={false}
             isDisabled={false}

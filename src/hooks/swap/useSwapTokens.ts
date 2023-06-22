@@ -44,6 +44,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import useIsLoading from "@/hooks/ui/useIsLoading";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -68,6 +69,7 @@ export function useAmountOut() {
 
   const { QUOTER_CONTRACT } = useUniswapContracts();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const [, setIsLoading] = useIsLoading();
 
   const [tModalStatus, setTModalStatus] = useRecoilState(
     transactionModalStatus
@@ -95,31 +97,25 @@ export function useAmountOut() {
         inToken?.amountBN !== null &&
         outToken?.address
       ) {
-        if (
-          (inToken.tokenSymbol === "TON" && outToken.tokenSymbol === "WTON") ||
-          (inToken.tokenSymbol === "WTON" && outToken.tokenSymbol === "TON")
-        ) {
-          return setAmountOut(inToken.parsedAmount);
-        } else {
-          const quotedAmountOut =
-            await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-              inToken.token.address,
-              outToken.token.address,
-              FeeAmount.MEDIUM,
-              inToken.amountBN,
-              // fromReadableAmount(
-              //   Number(inToken.parsedAmount),
-              //   inToken.decimals
-              // ).toString(),
-              0
-            );
-
-          setAmountOutErr(false);
-          return setAmountOut(
-            toReadableAmount(quotedAmountOut, outToken.decimals)
+        setIsLoading(true);
+        const quotedAmountOut =
+          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
+            inToken.token.address,
+            outToken.token.address,
+            FeeAmount.MEDIUM,
+            inToken.amountBN,
+            // fromReadableAmount(
+            //   Number(inToken.parsedAmount),
+            //   inToken.decimals
+            // ).toString(),
+            0
           );
-        }
+
+        setAmountOutErr(false);
+        setAmountOut(toReadableAmount(quotedAmountOut, outToken.decimals));
+        return setIsLoading(false);
       }
+
       setAmountOutErr(false);
       return setAmountOut(null);
     };
@@ -129,7 +125,7 @@ export function useAmountOut() {
       console.log(e);
       setAmountOutErr(true);
     });
-  }, [inToken, outToken, QUOTER_CONTRACT]);
+  }, [mode, inToken, outToken]);
 
   useEffect(() => {
     const createTrade = async () => {
@@ -213,7 +209,7 @@ export function useAmountOut() {
       console.log("**createTrade err**");
       console.log(e);
     });
-  }, [inToken, outToken, amountOut, UNISWAP_CONTRACT, layer, mode]);
+  }, [inToken, outToken, amountOut, layer, mode]);
 
   const callTokenSwap = useCallback(async () => {
     if (
@@ -354,7 +350,7 @@ export function useAmountOut() {
     //   console.log("**fetchEstimatedGasToSwap err**");
     //   console.log(e);
     // });
-  }, [trade, UNISWAP_CONTRACT, mode]);
+  }, [trade, mode]);
 
   return { amountOut, callTokenSwap, estimatedGas, amountOutErr };
 }

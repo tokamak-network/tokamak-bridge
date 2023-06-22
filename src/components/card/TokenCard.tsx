@@ -45,6 +45,15 @@ const TopLine = (props: { mainSchemCol: string }) => {
         bg={"rgba(255, 255, 255, 0.5)"}
         transform={"rotate(-30deg)"}
       ></Box>
+      <Box
+        pos={"absolute"}
+        w={"400px"}
+        h={"47px"}
+        top={"28px"}
+        left={"-100px"}
+        bg={`linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)`}
+        transform={"rotate(-30deg)"}
+      ></Box>
       {/* <Box
         pos={"absolute"}
         w={"400px"}
@@ -58,10 +67,19 @@ const TopLine = (props: { mainSchemCol: string }) => {
   );
 };
 
-const TokenTitle = (props: { tokenName: String }) => {
+const TokenTitle = (props: { tokenName: String; isName: boolean }) => {
   return (
-    <Text w={"60px"} fontSize={18} fontWeight={700} color={"#222222"}>
-      {props.tokenName.toUpperCase()}
+    <Text
+      w={props.isName ? "100px" : "60px"}
+      fontSize={props.isName ? 18 : 14}
+      fontWeight={props.isName ? 700 : 400}
+      color={"#222222"}
+      textAlign={props.isName ? "left" : "right"}
+      lineHeight={props?.isName ? "20px" : ""}
+      zIndex={100}
+    >
+      {/* {props.tokenName.toUpperCase()} */}
+      {props.tokenName}
     </Text>
   );
 };
@@ -83,7 +101,9 @@ export default function TokenCard(props: TokenCardProps) {
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenSymbol) {
       case "ETH":
-        return "#222222";
+        return "#627EEA";
+      case "WETH":
+        return "#393939";
       case "TON":
         return "#007AFF";
       case "WTON":
@@ -105,7 +125,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const tokenAddress =
     inNetworkInfo && tokenInfo.address[inNetworkInfo?.chainName];
-  const tokenData = useTokenBalance(tokenAddress ?? "0x");
+  const tokenData = useTokenBalance(tokenInfo);
 
   const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;
@@ -134,8 +154,12 @@ export default function TokenCard(props: TokenCardProps) {
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />
-      <Flex justifyContent={"space-between"} alignItems={"center"} w={"100%"}>
-        <TokenTitle tokenName={tokenInfo?.tokenSymbol ?? "TOKEN"} />
+      <Flex justifyContent={"space-between"} w={"100%"}>
+        <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} isName={true} />
+        <TokenTitle
+          tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
+          isName={false}
+        />
       </Flex>
       <Flex
         // pt={"25px"}

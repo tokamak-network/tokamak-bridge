@@ -7,12 +7,6 @@ import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import { useRecoilState } from "recoil";
-import {
-  selectedInTokenStatus,
-  selectedOutTokenStatus,
-} from "@/recoil/bridgeSwap/atom";
-import useConnectedNetwork from "@/hooks/network";
 
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
@@ -45,15 +39,7 @@ export default function CarousellCardComponent<T>(props: {
     outRightControl,
     waitControl,
   } = useCarrousellAnimation({ currentIndex, index });
-  const { isInTokenOpen, onCloseTokenModal } = useTokenModal();
-  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
-
-  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
-  );
-
-  const { chainName } = useConnectedNetwork();
-
+  const { onCloseTokenModal, setSelectedToken } = useTokenModal();
   const styleCode = useMemo(() => {
     return getTokenCardStyle(index, maxIndex);
   }, [filteredTokenList]);
@@ -61,7 +47,7 @@ export default function CarousellCardComponent<T>(props: {
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
-      className={"motion-div"}
+      className={`motion-div ${tokenData.tokenName}_${index}`}
       style={styleCode}
       transition={{ duration: 0.5 }}
       initial={{ opacity: 0 }}
@@ -137,20 +123,7 @@ export default function CarousellCardComponent<T>(props: {
         }}
         onClick={() => {
           try {
-            isInTokenOpen && chainName
-              ? setSelectedInToken({
-                  ...tokenData,
-                  amountBN: null,
-                  parsedAmount: null,
-                  tokenAddress: tokenData.address[chainName],
-                })
-              : chainName &&
-                setSelectedOutToken({
-                  ...tokenData,
-                  amountBN: null,
-                  parsedAmount: null,
-                  tokenAddress: tokenData.address[chainName],
-                });
+            setSelectedToken(tokenData);
           } catch (e) {
           } finally {
             onCloseTokenModal();

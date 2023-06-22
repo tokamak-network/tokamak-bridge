@@ -9,8 +9,6 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { motion, useAnimation } from "framer-motion";
 import CustomTooltip from "components/tooltip/CustomTooltip";
-import Swap from "./Swap";
-import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import {
   DepositDetailProp,
   SwapDetailProp,
@@ -18,11 +16,10 @@ import {
   useTransactionDetail,
 } from "@/hooks/transactionDetail/useTransactionDetail";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useWaitForTransaction } from "wagmi";
-import useGetTransaction from "@/hooks/user/useGetTransaction";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
-import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import useIsLoading from "@/hooks/ui/useIsLoading";
+import GradientSpinner from "@/components/ui/gradientSpinner";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -165,6 +162,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
 
 const SwapDetailRow = (props: SwapDetailProp) => {
   const { title, content, gasFee, slippage } = props;
+  const [isLoading] = useIsLoading();
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
@@ -177,7 +175,11 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
         </Flex>
         <Flex>
-          <Text fontWeight={500}>{content}</Text>
+          {isLoading ? (
+            <GradientSpinner />
+          ) : (
+            <Text fontWeight={500}>{content}</Text>
+          )}
           {gasFee && (
             <Text ml={"27px"} fontWeight={500} color={"#A0A3AD"}>
               {gasFee}
@@ -269,9 +271,8 @@ const Title = (props: {
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const arrowControl = useAnimation();
-  const { isLoading } = useGetTransaction();
   const { outPrice } = usePriceImpact();
-  const { isNotSupportForSwap } = useBridgeSupport();
+  const [isLoading] = useIsLoading();
 
   useEffect(() => {
     if (isExpanded) {
@@ -291,7 +292,7 @@ const Title = (props: {
         fontSize={14}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
-          {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />}
+          {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
           <Text>{inNetwork?.chainName}</Text>
           <Box w={"10px"} h={"9px"}>
             <Image src={ArrowImg} alt={"arrow"} />
@@ -327,18 +328,22 @@ const Title = (props: {
         onClick={() => setIsExpended(!isExpanded)}
         fontSize={14}
       >
-        <Flex>
-          <Text>
-            {1} {inToken?.tokenName}
-          </Text>
-          <Text mx={"9px"}>=</Text>
-          <Text>
-            {outPrice} {outToken?.tokenName}
-          </Text>
-          <Text color={"#A0A3AD"} ml={"4px"}>
-            ($1.000)
-          </Text>
-        </Flex>
+        {isLoading ? (
+          <GradientSpinner />
+        ) : (
+          <Flex>
+            <Text>
+              {1} {inToken?.tokenName}
+            </Text>
+            <Text mx={"9px"}>=</Text>
+            <Text>
+              {outPrice} {outToken?.tokenName}
+            </Text>
+            <Text color={"#A0A3AD"} ml={"4px"}>
+              ($1.000)
+            </Text>
+          </Flex>
+        )}
         <motion.div animate={arrowControl}>
           <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
         </motion.div>
@@ -350,11 +355,11 @@ const Title = (props: {
 
 export default function TransactionDetail() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
-  // const { isReady } = useGetMode();
+  const { isReady } = useGetMode();
 
-  // if (isReady) {
-  //   return null;
-  // }
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <Flex

@@ -39,7 +39,7 @@ export default function InToken() {
           </Text>
         )}
       </Flex>
-      <Flex className="card-wrapper">
+      <Flex className="card-wrapper" minW={"224px"} minH={"386px"}>
         {NetworkSwitcher}
         <Box
           w={"200px"}
@@ -64,11 +64,13 @@ export default function InToken() {
           )}
         </Box>
         <Flex px={"12px"}>
-          <TokenInput
-            inToken={true}
-            isDisabled={isOpen}
-            hasMaxButton={!isOpen}
-          />
+          {inToken !== null && (
+            <TokenInput
+              inToken={true}
+              isDisabled={isOpen}
+              hasMaxButton={!isOpen}
+            />
+          )}
         </Flex>
       </Flex>
     </Flex>

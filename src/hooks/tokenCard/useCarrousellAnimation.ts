@@ -38,6 +38,13 @@ const cardSize = {
   },
 };
 
+const fadeAwayToLeftStyle = {
+  transform: getTrasnformParams(-10, -700, -305),
+  position: "absolute",
+  zIndex: 1,
+  opacity: 0,
+};
+
 const fadeAwayStyle = {
   transform: getTrasnformParams(10, 700, -305),
   position: "absolute",
@@ -81,7 +88,7 @@ const endRightStyle = {
 };
 
 const positionStyles: { [K in LocationType]: {} } = {
-  outLeft: fadeAwayStyle,
+  outLeft: fadeAwayToLeftStyle,
   endLeft: endLeftStyle,
   sideLeft: sideleftStyle,
   center: centerStyle,
@@ -351,6 +358,18 @@ export function useCarrousellAnimation(params: {
     // }
 
     if (currentIndex === 3) {
+      // endLeftControl.start(positionStyles.outLeft);
+      // sideLeftControl.start(positionStyles.endLeft);
+      // centerControl.start(positionStyles.sideLeft);
+      // sideRightControl.start(positionStyles.center);
+      // endRightControl.start(positionStyles.sideRight);
+
+      // outRightControl.start({
+      //   ...positionStyles.endLeft,
+      //   position: "absolute",
+      //   transform: getTrasnformParams(10, 295, -62),
+      //   opacity: 1,
+      // });
       endLeftControl.start(positionStyles.sideLeft);
       sideLeftControl.start(positionStyles.center);
       centerControl.start(positionStyles.sideLeft);
@@ -415,7 +434,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 7) {
+    if (currentIndex === 9) {
       endLeftControl.start(positionStyles.sideRight);
       sideLeftControl.start(positionStyles.endRight);
       centerControl.start(positionStyles.outRight);
@@ -426,7 +445,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 6) {
+    if (currentIndex === 8) {
       endLeftControl.start(positionStyles.endRight);
       sideLeftControl.start(positionStyles.outRight);
 
@@ -436,7 +455,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 5) {
+    if (currentIndex === 7) {
       endLeftControl.start(positionStyles.outRight);
 
       outLeftControl.start({
@@ -444,6 +463,20 @@ export function useCarrousellAnimation(params: {
         transform: getTrasnformParams(10, 295, -62),
       });
     }
+
+    if (currentIndex === 6) {
+      outLeftControl.start({
+        ...positionStyles.outRight,
+        transform: getTrasnformParams(10, 400, -62),
+      });
+    }
+
+    // if (currentIndex === 5) {
+    //   outLeftControl.start({
+    //     ...positionStyles.outRight,
+    //     transform: getTrasnformParams(10, 400, -62),
+    //   });
+    // }
 
     // return () => {
     //   setInisialized(false);
@@ -463,6 +496,8 @@ export function useCarrousellAnimation(params: {
   useEffect(() => {
     if (currentIndex === null || startIndex === null) return;
 
+    const benchIndex = filteredTokenList.length - 3;
+
     //locate at center to wait to move
     if (index === startIndex) {
       waitControl.start({
@@ -479,8 +514,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at outLeft
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? startIndex - 7 === index
+      startIndex !== undefined && startIndex > benchIndex
+        ? startIndex - 9 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 1
@@ -498,8 +533,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at endLeft
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? startIndex - 6 === index
+      startIndex !== null && startIndex !== undefined && startIndex > benchIndex
+        ? startIndex - 8 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 2
@@ -517,8 +552,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at sideLeft
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? startIndex - 5 === index
+      startIndex !== null && startIndex !== undefined && startIndex > benchIndex
+        ? startIndex - 7 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 3
@@ -536,8 +571,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at center
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? startIndex - 4 === index
+      startIndex !== null && startIndex !== undefined && startIndex > benchIndex
+        ? startIndex - 6 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 4
@@ -555,8 +590,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at sideRight
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? startIndex - 3 === index
+      startIndex !== null && startIndex !== undefined && startIndex > benchIndex
+        ? startIndex - 5 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 5
@@ -574,8 +609,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at endRight
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? index === startIndex - 2
+      startIndex !== null && startIndex !== undefined && startIndex > 7
+        ? startIndex - 4 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 6
@@ -593,8 +628,8 @@ export function useCarrousellAnimation(params: {
 
     //locate at outRight
     if (
-      startIndex !== null && startIndex !== undefined && startIndex > 5
-        ? index === startIndex - 1
+      startIndex !== null && startIndex !== undefined && startIndex > benchIndex
+        ? startIndex - 3 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 7

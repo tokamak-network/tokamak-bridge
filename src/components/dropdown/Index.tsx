@@ -154,13 +154,14 @@ export default function NetworkDropdown(props: {
         return supportedChain.chainId === connectedChainId;
       })[0];
 
-      setSelectedOption({
-        ...connectedNetwork,
-        value: connectedNetwork.chainId,
-        label: connectedNetwork.chainName,
-      });
-
-      return setNetwork({ ...network, inNetwork: connectedNetwork });
+      if (connectedNetwork) {
+        setSelectedOption({
+          ...connectedNetwork,
+          value: connectedNetwork.chainId,
+          label: connectedNetwork.chainName,
+        });
+        return setNetwork({ ...network, inNetwork: connectedNetwork });
+      }
     }
   }, [connectedChainId]);
 

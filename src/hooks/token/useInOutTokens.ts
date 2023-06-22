@@ -7,6 +7,7 @@ import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useEffect, useMemo, useState } from "react";
+import { useProvier } from "../provider/useProvider";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -16,16 +17,17 @@ export function useInOutTokens() {
     selectedOutTokenStatus
   );
   const { connectedChainId, chainName } = useConnectedNetwork();
+  const { provider } = useProvier();
 
   const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
   );
-  const [chainId, setChainId] = useState<number | undefined>(undefined);
 
   const inToken = useMemo(() => {
     return inTokenRecoilValue && connectedChainId && chainName
       ? {
           ...inTokenRecoilValue,
+          tokenAddress: inTokenRecoilValue.address[chainName],
           token: new Token(
             connectedChainId,
             inTokenRecoilValue.address[chainName] as string,
@@ -41,6 +43,7 @@ export function useInOutTokens() {
     return outTokenRecoilValue && connectedChainId && chainName
       ? {
           ...outTokenRecoilValue,
+          tokenAddress: outTokenRecoilValue.address[chainName],
           token: new Token(
             connectedChainId,
             outTokenRecoilValue.address[chainName] as string,
@@ -52,16 +55,42 @@ export function useInOutTokens() {
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName]);
 
+  //initialize selectedTokens when a network is changed
+  // useEffect(() => {
+  //   if (connectedChainId) {
+  //     if (connectedChainId !== chainId) {
+  //       setInTokenRecoilValue(null);
+  //       setOutTokenRecoilValue(null);
+  //       return setChainId(connectedChainId);
+  //     }
+  //   }
+  //   return setChainId(undefined);
+  // }, [connectedChainId]);
+
   useEffect(() => {
-    if (connectedChainId) {
-      if (connectedChainId !== chainId) {
-        setInTokenRecoilValue(null);
-        setOutTokenRecoilValue(null);
-        return setChainId(connectedChainId);
+    const thisTokenExist = async () => {
+      if (connectedChainId && provider && inToken?.tokenAddress) {
+        const code = await provider.getCode(inToken?.tokenAddress);
+
+        //"0x" means this token address doesn't exsit on this chain
+        if (code.length <= 2) {
+          setInTokenRecoilValue(null);
+        }
       }
-    }
-    return setChainId(undefined);
-  }, [connectedChainId]);
+      if (connectedChainId && provider && outToken?.tokenAddress) {
+        const code = await provider.getCode(outToken?.tokenAddress);
+
+        //"0x" means this token address doesn't exsit on this chain
+        if (code.length <= 2) {
+          setOutTokenRecoilValue(null);
+        }
+      }
+    };
+    thisTokenExist().catch((e) => {
+      console.log("**thisTokenExist err**");
+      console.log(e);
+    });
+  }, [connectedChainId, provider, inToken?.tokenAddress]);
 
   return {
     inToken,
