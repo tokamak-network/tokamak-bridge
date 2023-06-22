@@ -3,11 +3,12 @@ import SwapperV2ABI from "@/abis/SwapperV2.json";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { transactionData } from "@/recoil/global/transaction";
 import { TransactionType } from "@/types/transactions/transactionTypes";
 import { transactionType } from "viem";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
@@ -15,6 +16,7 @@ export default function useWrap() {
     transactionModalStatus
   );
   const [t, setTransactionData] = useRecoilState(transactionData);
+  const network = useRecoilValue(networkStatus);
 
   const { inToken,outToken } = useInOutTokens();
   const {isLoading: _tonWtonLoading,isSuccess:_tonWtonSuccess,isError: _tonWrapError, data:_tonWtonData, write: tonWton } = useContractWrite({
@@ -96,8 +98,10 @@ export default function useWrap() {
       type: TransactionType.WRAP,
       unwrapped: false,
       currencyAmountRaw:  inToken?.parsedAmount as string,
-      inputCurrencyId: inToken?.tokenAddress as `0x${string}`,
-      outputCurrencyId: outToken?.tokenAddress as `0x${string}`,
+      inputCurrency: inToken?.token,
+      outputCurrency: outToken?.token,
+      inNetwork: network.inNetwork,
+      outNetwork: network.outNetwork,
     } });
   }, [tonWtonLoading,tonWtonSuccess,tonWtonData]);
   useEffect(() => {
@@ -105,8 +109,10 @@ export default function useWrap() {
       type: TransactionType.UNWRAP,
       unwrapped: true,
       currencyAmountRaw:  inToken?.parsedAmount as string,
-      inputCurrencyId: inToken?.tokenAddress as `0x${string}`,
-      outputCurrencyId: outToken?.tokenAddress as `0x${string}`,
+      inputCurrency: inToken?.token,
+      outputCurrency: outToken?.token,
+      inNetwork: network.inNetwork,
+      outNetwork: network.outNetwork,
     }  });
   }, [wtonTonLoading,wtonTonSuccess,wtonWTonData]);
 

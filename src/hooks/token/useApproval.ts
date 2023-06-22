@@ -18,6 +18,11 @@ import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
 import { transactionData } from "@/recoil/global/transaction";
 import { useRecoilState } from "recoil";
 import { TransactionType } from "@/types/transactions/transactionTypes";
+import {
+  networkStatus,
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 const getAllowance = async (
   ERC20_contract: Contract,
   account: string,
@@ -112,6 +117,7 @@ export function useApprove() {
   const { inToken } = useInOutTokens();
   const [t, setTransactionData] = useRecoilState(transactionData);
   const { address } = useAccount();
+  const network = useRecoilValue(networkStatus);
 
   const isApproved = useMemo(() => {
     if (approved) {
@@ -147,9 +153,11 @@ export function useApprove() {
   useEffect(() => {
     setTransactionData({ isLoading: _transactionLoading, isSuccess: _transactionSuccess? 1: undefined, txReceipt:_transactionData, info:{
       type: TransactionType.APPROVAL,
-      tokenAddress: inToken?.tokenAddress as `0x${string}`, 
+      token: inToken?.token, 
       spender: address as `0x${string}` ,
-      amount: totalSupply as string
+      amount: totalSupply as string,
+      inNetwork: network.inNetwork,
+      outNetwork: network.outNetwork,
     }} );
 
   },[_transactionLoading])

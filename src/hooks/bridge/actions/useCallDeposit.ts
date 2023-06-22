@@ -68,7 +68,7 @@ export default function useCallDeposit(functionName: string) {
       txReceipt: _transactionData,
       info: {
         type: TransactionType.DEPOSIT,
-        token0Address: inTokenInfo?.tokenAddress as `0x${string}`,
+        token0: inTokenInfo,
         inNetwork: network.inNetwork,
         outNetwork: network.outNetwork,
         currencyAmountRaw: inTokenInfo?.parsedAmount as string

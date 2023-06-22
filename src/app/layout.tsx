@@ -14,12 +14,11 @@ import "css/scrollbar.css";
 import { ApolloProvider } from "@apollo/client";
 import { apolloClient } from "@/apollo";
 import Modals from "./Modals";
-import TxToast from "@/components/toast/TxToast";
 const GlobalComponents = () => {
   return (
     <>
       <HistoryDrawer />
-      <TxToast/>
+    
     </>
   );
 };
@@ -43,6 +42,7 @@ export default function RootLayout({
                 <Header />
                 <Center h={"100vh"}>{children}</Center>
                 <GlobalComponents />
+               
                 <Modals />
               </WagmiProviders>
             </RecoilRoot>

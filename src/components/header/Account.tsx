@@ -15,10 +15,10 @@ export default function Account() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
-  const { isLoading, isSuccess,txReceipt } = useGetTransaction();
+  const { isLoading, isSuccess,txReceipt, info } = useGetTransaction();
     
 
-  console.log('txReceipt',txReceipt);
+  console.log('txReceipt',info,txReceipt);
   
   return (
     <Center

@@ -17,6 +17,8 @@ export default function ImageSymbol(props: {
   w?: number;
   h?: number;
 }) {
+
+  
   return (
     <Flex w={`${props.w ?? 96}px`} h={`${props.h ?? 96}px`}>
       <Image
@@ -34,8 +36,10 @@ export function TokenSymbol(props: {
   h?: number;
 }) {
   
-  
+
+
   const { tokenType } = props;
+  console.log('tokenType',tokenType);
   
   switch (tokenType) {
     case "ETH":
@@ -45,8 +49,12 @@ export function TokenSymbol(props: {
     case "WTON":
       return <ImageSymbol ImgFile={SYMBOL_WTON} {...props} />;
     case "TOS":
+      console.log('fff');
+      
       return <ImageSymbol ImgFile={SYMBOL_TOS} {...props} />;
     case "DOC":
+      console.log('ggg');
+      
       return <ImageSymbol ImgFile={SYMBOL_DOC} {...props} />;
     case "AURA":
       return <ImageSymbol ImgFile={SYMBOL_AURA} {...props} />;
@@ -56,6 +64,8 @@ export function TokenSymbol(props: {
       return <ImageSymbol ImgFile={SYMBOL_USDC} {...props} />;
 
     default:
+      console.log('ddd');
+      
       return <ImageSymbol ImgFile={SYMBOL_NOSYMBOL} {...props} />;
   }
 }

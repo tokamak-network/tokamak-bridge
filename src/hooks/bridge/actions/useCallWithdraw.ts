@@ -50,7 +50,7 @@ export default function useCallWithdraw(functionName: string) {
       txReceipt: _transactionData,
       info: {
         type: TransactionType.WITHDRAW,
-        token0Address: inTokenInfo?.tokenAddress as `0x${string}`,
+        token0: inTokenInfo,
         inNetwork: network.inNetwork,
         outNetwork: network.outNetwork,
         currencyAmountRaw: inTokenInfo?.parsedAmount as string

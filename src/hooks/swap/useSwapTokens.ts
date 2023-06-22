@@ -30,7 +30,7 @@ import { TokenInfo, supportedTokens } from "@/types/token/supportedToken";
 import { transactionData } from "@/recoil/global/transaction";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
-
+import { useRecoilValue } from "recoil";
 import {
   useAccount,
   useContractWrite,
@@ -39,6 +39,11 @@ import {
 } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { TransactionType } from "@/types/transactions/transactionTypes";
+import {
+  networkStatus,
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -68,6 +73,7 @@ export function useAmountOut() {
     transactionModalStatus
   );
   const [t, setTransactionData] = useRecoilState(transactionData);
+  const network = useRecoilValue(networkStatus);
 
   // const { write } = useContractWrite({
   //   address: L1_UniswapContracts.SWAP_ROUTER_ADDRESS,
@@ -293,8 +299,10 @@ export function useAmountOut() {
                 minimumOutputCurrencyAmountRaw: trade
                   .minimumAmountOut(new Percent(50, 10_000))
                   .quotient.toString(),
-                inputCurrencyId: inToken.tokenAddress as string,
-                outputCurrencyId: outToken?.tokenAddress as string,
+                inputCurrency: inToken?.token,
+                outputCurrency: outToken?.token,
+                inNetwork: network.inNetwork,
+                outNetwork: network.outNetwork,
               },
             });
           } else {
