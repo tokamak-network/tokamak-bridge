@@ -85,10 +85,10 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
       const isOutTokenReady = inTokenHasAmount;
 
       const isWrap = [
-        inTokenStatus?.address === supportedTokens[1].address &&
-          outTokenStatus?.address === supportedTokens[2].address,
         inTokenStatus?.address === supportedTokens[2].address &&
-          outTokenStatus?.address === supportedTokens[1].address,
+          outTokenStatus?.address === supportedTokens[3].address,
+        inTokenStatus?.address === supportedTokens[3].address &&
+          outTokenStatus?.address === supportedTokens[2].address,
       ];
 
       if (isWrap.includes(true)) {
@@ -109,7 +109,10 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
       if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
         const isConfirmed = get(confirmWithdrawStatus);
 
-        return { mode: "Withdraw", isReady: isInTokenReady && isConfirmed };
+        return {
+          mode: "Withdraw",
+          isReady: isInTokenReady,
+        };
       }
       if (network.inNetwork === network.outNetwork) {
         return {

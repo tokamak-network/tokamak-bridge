@@ -63,6 +63,9 @@ export function useAmountOut() {
         inToken?.amountBN !== null &&
         outToken?.address
       ) {
+        console.log("inToken");
+        console.log(inToken);
+
         setIsLoading(true);
         const quotedAmountOut =
           await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(

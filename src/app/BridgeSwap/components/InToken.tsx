@@ -8,14 +8,11 @@ import { useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
 import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import useConfirmModal from "@/hooks/modal/useConfirmModal";
 
 export default function InToken() {
   const { inToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const { onOpenInToken } = useTokenModal();
-
-  const { isOpen } = useConfirmModal();
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -35,7 +32,7 @@ export default function InToken() {
             fontWeight={"semibold"}
             pos={"absolute"}
           >
-            {mode} {isOpen && "Confirm"}
+            {mode}
           </Text>
         )}
       </Flex>
@@ -65,11 +62,7 @@ export default function InToken() {
         </Box>
         <Flex px={"12px"}>
           {inToken !== null && (
-            <TokenInput
-              inToken={true}
-              isDisabled={isOpen}
-              hasMaxButton={!isOpen}
-            />
+            <TokenInput inToken={true} hasMaxButton={true} />
           )}
         </Flex>
       </Flex>

@@ -9,8 +9,6 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
 import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import useConfirmModal from "@/hooks/modal/useConfirmModal";
-import CloseButton from "@/components/button/CloseButton";
 import Setting from "@/components/Setting";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
@@ -71,7 +69,6 @@ export const SearchTokenComponent = () => {
 
 export default function OutToken() {
   const { mode, swapSection } = useGetMode();
-  const { isOpen, onCloseConfirmModal } = useConfirmModal();
   const { outToken } = useInOutTokens();
 
   const NetworkSwitcher = useMemo(() => {
@@ -86,9 +83,9 @@ export default function OutToken() {
     <Flex flexDir={"column"} rowGap={"28px"}>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
-          {isOpen ? "" : mode === "Swap" ? "For" : "To"}
+          {mode === "Swap" ? "For" : "To"}
         </Text>
-        {isOpen ? <CloseButton onClick={onCloseConfirmModal} /> : <Setting />}
+        <Setting />
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>

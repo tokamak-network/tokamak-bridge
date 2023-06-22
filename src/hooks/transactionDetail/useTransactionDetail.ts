@@ -7,6 +7,7 @@ import commafy from "@/utils/trim/commafy";
 import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
 import { useAmountOut } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
+import useConfirm from "../modal/useConfirmModal";
 
 export type DepositDetailProp = {
   title: string;
@@ -35,6 +36,7 @@ export type WithdrawDetailProp = {
 export type SwapDetailProp = {
   title:
     | "Expected output"
+    | "Minimum received"
     | "Minimum received after slippage"
     | "Price impact"
     | "Estimated gas fees";
@@ -110,6 +112,7 @@ export function useTransactionDetail() {
 
   const { amountOut } = useAmountOut();
   const { priceImpact } = usePriceImpact();
+  const { isOpen } = useConfirm();
 
   const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
     if (mode === "Swap" && inToken) {
@@ -119,7 +122,9 @@ export function useTransactionDetail() {
           content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
         },
         {
-          title: "Minimum received after slippage",
+          title: isOpen
+            ? "Minimum received"
+            : "Minimum received after slippage",
           content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
           slippage: "0.1%",
         },
@@ -129,7 +134,7 @@ export function useTransactionDetail() {
         },
         {
           title: "Estimated gas fees",
-          content: `${totalGasFee} ETH`,
+          content: isOpen ? "" : `${totalGasFee} `,
           gasFee: "$3.18",
         },
       ];

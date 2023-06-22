@@ -4,7 +4,11 @@ import { Box, Flex } from "@chakra-ui/layout";
 import Image from "next/image";
 import SYMBOL_ETHEREUM from "assets/icons/network/Ethereum_regt.svg";
 import SYMBOL_TITAN from "assets/icons/network/Titan_rect.svg";
+
+import SYMBOL_TITAN_CIRCLE from "assets/icons/network/circle/Titan_circle.svg";
+
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { CSSProperties } from "react";
 
 export default function ImageSymbol(props: {
   ImgFile: ImageFileType;
@@ -28,9 +32,10 @@ export function NetworkSymbol(props: {
   network: SupportedChainId;
   w?: number;
   h?: number;
-  style?: {};
+  style?: CSSProperties;
+  isCircle?: boolean;
 }) {
-  const { network } = props;
+  const { network, isCircle } = props;
   switch (network) {
     case 1:
       return <ImageSymbol ImgFile={SYMBOL_ETHEREUM} {...props} />;
@@ -39,7 +44,12 @@ export function NetworkSymbol(props: {
     case 55004:
       return <ImageSymbol ImgFile={SYMBOL_TITAN} {...props} />;
     case 5050:
-      return <ImageSymbol ImgFile={SYMBOL_TITAN} {...props} />;
+      return (
+        <ImageSymbol
+          ImgFile={isCircle ? SYMBOL_TITAN_CIRCLE : SYMBOL_TITAN}
+          {...props}
+        />
+      );
     default:
       return <ImageSymbol ImgFile={SYMBOL_ETHEREUM} {...props} />;
   }

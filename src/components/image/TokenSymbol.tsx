@@ -30,7 +30,7 @@ export default function ImageSymbol(props: {
 }
 
 export function TokenSymbol(props: {
-  tokenType: TokenInfo["tokenName"];
+  tokenType: TokenInfo["tokenSymbol"];
   w?: number;
   h?: number;
 }) {

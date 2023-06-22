@@ -16,7 +16,6 @@ import Select from "react-select";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
-import useConfirm from "@/hooks/modal/useConfirmModal";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
@@ -57,7 +56,6 @@ const ValueContainer = (props: {
   setIsOpen: React.Dispatch<SetStateAction<boolean>>;
 }) => {
   const { selectedOption, isOpen, setIsOpen } = props;
-  const { isOpen: confirmIsOpen } = useConfirm();
 
   if (selectedOption) {
     return (
@@ -80,9 +78,7 @@ const ValueContainer = (props: {
           </Box>
           <Text>{selectedOption.label}</Text>
         </Flex>
-        {confirmIsOpen === false && (
-          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-        )}
+        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
       </Flex>
     );
   }
@@ -119,7 +115,6 @@ export default function NetworkDropdown(props: {
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const { isConnected } = useAccount();
-  const { isOpen: confirmIsOpen } = useConfirm();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -350,7 +345,6 @@ export default function NetworkDropdown(props: {
           ),
           IndicatorsContainer: () => null,
         }}
-        isDisabled={confirmIsOpen}
         //@ts-ignore
         styles={customStyles(height)}
         value={inNetwork ? selectedOption : selectedOutOption}

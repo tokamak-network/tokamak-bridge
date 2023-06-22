@@ -20,6 +20,7 @@ import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import GradientSpinner from "@/components/ui/gradientSpinner";
+import useConfirm from "@/hooks/modal/useConfirmModal";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -41,7 +42,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
       </Flex>
       {gasFee && (
         <Flex
-          w={"448px"}
+          w={"100%"}
           h={"54px"}
           bgColor={"#15161D"}
           flexDir={"column"}
@@ -122,7 +123,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
           </Text>
         </Flex>
         <Flex
-          w={"448px"}
+          w={"100%"}
           h={"54px"}
           bgColor={"#15161D"}
           flexDir={"column"}
@@ -198,6 +199,7 @@ const Content = (props: { isExpanded: boolean }) => {
 
   const { depositPropsData, withdrawPropsData, swapPropsData } =
     useTransactionDetail();
+  const { isOpen } = useConfirm();
 
   const detailRow = useMemo(() => {
     switch (mode) {
@@ -234,14 +236,15 @@ const Content = (props: { isExpanded: boolean }) => {
           <Flex flexDir={"column"} rowGap={"10px"}>
             {detailRow}
           </Flex>
-          {mode === "Withdraw" && (
+          {mode === "Withdraw" && isOpen && (
             <Flex flexDir={"column"}>
               <DivisionLine />
               <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
                 <Checkbox
                   w={"16px"}
                   h={"16px"}
-                  mb={"15px"}
+                  mt={"5px"}
+                  mb={"auto"}
                   isChecked={isConfirm}
                   onChange={(e) => {
                     const checkValue = e.target.checked;
@@ -273,6 +276,7 @@ const Title = (props: {
   const arrowControl = useAnimation();
   const { outPrice } = usePriceImpact();
   const [isLoading] = useIsLoading();
+  const { isOpen } = useConfirm();
 
   useEffect(() => {
     if (isExpanded) {
@@ -287,8 +291,8 @@ const Title = (props: {
       <Flex
         w={"100%"}
         justifyContent={"space-between"}
-        cursor={"pointer"}
-        onClick={() => setIsExpended(!isExpanded)}
+        cursor={isOpen ? "" : "pointer"}
+        onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={14}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
@@ -299,21 +303,23 @@ const Title = (props: {
           </Box>
           <Text>{outNetwork?.chainName}</Text>
         </Flex>
-        <Flex alignItems={"center"}>
-          <Image src={GasImg} alt={"gasStation"} />
-          <Text
-            fontSize={14}
-            fontWeight={400}
-            color={"#A0A3AD"}
-            ml={"6px"}
-            mr={"13px"}
-          >
-            $3.18
-          </Text>
-          <motion.div animate={arrowControl}>
-            <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-          </motion.div>
-        </Flex>
+        {isOpen === false && (
+          <Flex alignItems={"center"}>
+            <Image src={GasImg} alt={"gasStation"} />
+            <Text
+              fontSize={14}
+              fontWeight={400}
+              color={"#A0A3AD"}
+              ml={"6px"}
+              mr={"13px"}
+            >
+              $3.18
+            </Text>
+            <motion.div animate={arrowControl}>
+              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+            </motion.div>
+          </Flex>
+        )}
       </Flex>
     );
   }
@@ -324,8 +330,8 @@ const Title = (props: {
         w={"100%"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        cursor={"pointer"}
-        onClick={() => setIsExpended(!isExpanded)}
+        cursor={isOpen ? "" : "pointer"}
+        onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={14}
       >
         {isLoading ? (
@@ -333,20 +339,24 @@ const Title = (props: {
         ) : (
           <Flex>
             <Text>
-              {1} {inToken?.tokenName}
+              {1} {inToken?.tokenSymbol}
             </Text>
             <Text mx={"9px"}>=</Text>
             <Text>
-              {outPrice} {outToken?.tokenName}
+              {outPrice} {outToken?.tokenSymbol}
             </Text>
-            <Text color={"#A0A3AD"} ml={"4px"}>
-              ($1.000)
-            </Text>
+            {isOpen === false && (
+              <Text color={"#A0A3AD"} ml={"4px"}>
+                ($1.000)
+              </Text>
+            )}
           </Flex>
         )}
-        <motion.div animate={arrowControl}>
-          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-        </motion.div>
+        {isOpen === false && (
+          <motion.div animate={arrowControl}>
+            <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+          </motion.div>
+        )}
       </Flex>
     );
   }
@@ -354,7 +364,8 @@ const Title = (props: {
 };
 
 export default function TransactionDetail() {
-  const [isExpanded, setIsExpended] = useState<boolean>(false);
+  const { isOpen } = useConfirm();
+  const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
   const { isReady } = useGetMode();
 
   if (!isReady) {
@@ -368,10 +379,10 @@ export default function TransactionDetail() {
       minH={"48px"}
       bg={"#1f2128"}
       borderRadius={"8px"}
-      px={"20px"}
+      px={isOpen ? 0 : "20px"}
       flexDir={"column"}
-      pt={isExpanded ? "20px" : "14px"}
-      pb={isExpanded ? "20px" : ""}
+      pt={isOpen ? 0 : isExpanded ? "20px" : "14px"}
+      pb={isOpen ? 0 : isExpanded ? "20px" : ""}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       <Content isExpanded={isExpanded}></Content>

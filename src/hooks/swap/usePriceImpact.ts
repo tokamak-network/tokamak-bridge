@@ -70,7 +70,7 @@ export default function usePriceImpact() {
         setOutPrice(commafy(nowPrice, 4));
 
         const priceImpact =
-          (Number(nowPrice.toString().slice(0, 4)) / markPrice) * 100 - 100;
+          (Number(nowPrice.toString().slice(0, 10)) / markPrice) * 100 - 100;
         return commafy(priceImpact, 2);
       } catch (e) {
         console.log("**priceImpact err**");
