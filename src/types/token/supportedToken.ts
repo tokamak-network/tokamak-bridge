@@ -39,6 +39,7 @@ export type TokenInfo = {
 };
 
 export type SupportedTokens_T = TokenInfo[];
+
 export const supportedTokens: SupportedTokens_T = [
   {
     tokenName: "ETH",
@@ -56,18 +57,18 @@ export const supportedTokens: SupportedTokens_T = [
       SupportedChainId.TITAN,
     ],
   },
-  // {
-  //   tokenName: "WETH",
-  //   tokenSymbol: "WETH",
-  //   address: {
-  //     MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
-  //     GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
-  //     TITAN: null,
-  //     DARIUS: null,
-  //   },
-  //   decimals: 18,
-  //   isNativeCurrency: null,
-  // },
+  {
+    tokenName: "WETH",
+    tokenSymbol: "WETH",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
+      TITAN: null,
+      DARIUS: null,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
+  },
   {
     tokenName: "Tokamak Network",
     tokenSymbol: "TON",
@@ -115,8 +116,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.DOC_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.DOC_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.DOC_ADDRESS,
+      TITAN: null,
+      DARIUS: null,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -127,8 +128,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.AURA_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.AURA_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.AURA_ADDRESS,
+      TITAN: null,
+      DARIUS: null,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -139,8 +140,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.LYDA_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.LYDA_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.LYDA_ADDRESS,
+      TITAN: null,
+      DARIUS: null,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -149,10 +150,22 @@ export const supportedTokens: SupportedTokens_T = [
     tokenName: "USDC",
     tokenSymbol: "USDC",
     address: {
-      MAINNET: null,
+      MAINNET: MAINNET_CONTRACTS.USDC_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.USDC_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.USDC_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
+    },
+    decimals: 6,
+    isNativeCurrency: null,
+  },
+  {
+    tokenName: "USDT",
+    tokenSymbol: "USDT",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.USDT_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.USDT_ADDRESS,
+      TITAN: null,
+      DARIUS: null,
     },
     decimals: 6,
     isNativeCurrency: null,

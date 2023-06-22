@@ -34,11 +34,13 @@ export default function usePriceImpact() {
             ethers.utils.parseUnits("1", inToken.decimals),
             0
           );
+
         const readableAmount = ethers.utils.formatUnits(
           quotedAmountOut,
           outToken.decimals
         );
-        return setMarkPrice(Number(readableAmount.toString().slice(0, 6)));
+
+        return setMarkPrice(Number(readableAmount.toString().slice(0, 10)));
       }
       return setMarkPrice(undefined);
     };
@@ -50,22 +52,22 @@ export default function usePriceImpact() {
   }, [inToken, outToken, QUOTER_CONTRACT, mode]);
 
   const priceImpact = useMemo(() => {
-    if (markPrice && amountOut && inToken && inToken.parsedAmount && outToken) {
+    if (markPrice && amountOut && inToken && inToken.parsedAmount !== null) {
       try {
         setIsLoading(true);
-        const amountInBI = JSBI.BigInt(
-          ethers.utils.parseUnits(
-            inToken.parsedAmount.replaceAll(",", ""),
-            inToken.decimals
-          )
-        );
-        const amountOutBI = JSBI.BigInt(
-          ethers.utils.parseUnits(amountOut.toString(), outToken.decimals)
-        );
+        // const amountInBI = JSBI.BigInt(
+        //   ethers.utils.parseUnits(inToken.parsedAmount.replaceAll(",", ""), 18)
+        // );
+
+        // const amountOutBI = JSBI.BigInt(
+        //   ethers.utils.parseUnits(amountOut.toString(), 18)
+        // );
         const nowPrice =
-          Number(amountOutBI.toString()) / Number(amountInBI.toString());
-        // const remainder = JSBI.remainder(amountOutBI, amountInBI);
-        setOutPrice(commafy(nowPrice, 2));
+          Number(amountOut.toString()) /
+          Number(inToken.parsedAmount.toString());
+        // // const remainder = JSBI.remainder(amountOutBI, amountInBI);
+
+        setOutPrice(commafy(nowPrice, 4));
 
         const priceImpact =
           (Number(nowPrice.toString().slice(0, 4)) / markPrice) * 100 - 100;
@@ -78,7 +80,7 @@ export default function usePriceImpact() {
       }
     }
     return undefined;
-  }, [markPrice, amountOut]);
+  }, [markPrice, amountOut, inToken]);
 
   return { priceImpact, outPrice };
 }

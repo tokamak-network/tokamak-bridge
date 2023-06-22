@@ -47,7 +47,7 @@ export default function CarousellCardComponent<T>(props: {
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
-      className={"motion-div"}
+      className={`motion-div ${tokenData.tokenName}_${index}`}
       style={styleCode}
       transition={{ duration: 0.5 }}
       initial={{ opacity: 0 }}
