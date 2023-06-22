@@ -22,7 +22,7 @@ import { SupportedChainProperties } from "@/types/network/supportedNetwork";
 import { ActionMode } from "@/types/bridgeSwap";
 import { ethers } from "ethers";
 import { trimAmount } from "@/utils/trim";
-
+import warning from 'assets/icons/warningRed.svg'
 function CustomToastComponent(props: {
   tx: TransactionDataType;
   mode: ActionMode;
@@ -75,9 +75,15 @@ function CustomToastComponent(props: {
           h="44px"
           w="92px"
         >
+          <Flex>
           <Text fontSize={"14px"} color={error? '#DD3A44': "#FFFFFF"}>
             {funcName}
           </Text>
+        {error &&  <Flex h='15px' w='17px' ml='6px'>
+            <Image src={warning} alt="error"/>
+          </Flex>}
+          </Flex>
+         
           {functSub && (
             <Text fontSize={"10px"} color={error? '#DD3A44':"#A0A3AD"}>
               ({functSub})
@@ -174,9 +180,15 @@ function CustomToastComponent(props: {
           h="44px"
           w="92px"
         >
+          <Flex>
           <Text fontSize={"14px"} color={error? '#DD3A44':"#FFFFFF"}>
             {funcName}
           </Text>
+         {error && <Flex h='15px' w='17px' ml='6px'>
+            <Image src={warning} alt="error"/>
+          </Flex>}
+          </Flex>
+         
           <Text fontSize={"10px"} color={error? '#DD3A44':"#A0A3AD"}>
             ({functSub})
           </Text>
