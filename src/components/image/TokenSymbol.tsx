@@ -40,7 +40,6 @@ export function TokenSymbol(props: {
 
 
   const { tokenType } = props;
-  console.log('tokenType',tokenType);
   
   switch (tokenType) {
     case "ETH":
@@ -51,13 +50,9 @@ export function TokenSymbol(props: {
       return <ImageSymbol ImgFile={SYMBOL_TON} {...props} />;
     case "WTON":
       return <ImageSymbol ImgFile={SYMBOL_WTON} {...props} />;
-    case "TOS":
-      console.log('fff');
-      
+    case "TOS":      
       return <ImageSymbol ImgFile={SYMBOL_TOS} {...props} />;
-    case "DOC":
-      console.log('ggg');
-      
+    case "DOC":      
       return <ImageSymbol ImgFile={SYMBOL_DOC} {...props} />;
     case "AURA":
       return <ImageSymbol ImgFile={SYMBOL_AURA} {...props} />;
@@ -66,9 +61,7 @@ export function TokenSymbol(props: {
     case "USDC":
       return <ImageSymbol ImgFile={SYMBOL_USDC} {...props} />;
 
-    default:
-      console.log('ddd');
-      
+    default:      
       return <ImageSymbol ImgFile={SYMBOL_NOSYMBOL} {...props} />;
   }
 }

@@ -32,8 +32,6 @@ function CustomToastComponent(props: {
 
   const { tx, setData, mode } = props;
   function close() {
-    console.log("close");
-
     setIsOpen(false);
     setData();
   }
@@ -169,7 +167,6 @@ function CustomToastComponent(props: {
     error: boolean
   }) {
     const { funcName, functSub, token0, token1, type, amount, network, error } = props;
-    console.log("amount", amount);
 
     return (
       <Flex position={"relative"} top={"-8px"}>

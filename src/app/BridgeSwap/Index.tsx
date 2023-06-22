@@ -2,7 +2,6 @@ import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
 import Modals from "../Modals";
 import { Details } from "./Details";
-import TxToast from "@/components/toast/TxToast";
 import { createContext } from "react";
 
 export default function BridgeSwap() {
@@ -17,7 +16,7 @@ export default function BridgeSwap() {
       >
         <Swap />
         <Details />
-        <TxToast/>
+       
       </Flex>
       <Modals />
     </Flex>
