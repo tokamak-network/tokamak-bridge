@@ -295,8 +295,6 @@ const Content = (props: { isExpanded: boolean }) => {
     withdrawNewPropsData,
   ]);
 
-  console.log(detailRow);
-
   if (isExpanded) {
     return (
       <Flex>
