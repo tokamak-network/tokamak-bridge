@@ -7,6 +7,7 @@ import { useApprove } from "@/hooks/token/useApproval";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
+import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -16,6 +17,9 @@ export default function ActionButton() {
   const { isNotSupportForSwap } = useBridgeSupport();
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+
+  const needToOpenModal =
+    mode === "Deposit" || mode === "Withdraw" || mode === "Swap";
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -30,6 +34,7 @@ export default function ActionButton() {
   }, [!isReady || isApproved === false || isLoading || isNotSupportForSwap]);
 
   const { onOpenConfirmModal } = useConfirmModal();
+  const { onClick } = useCallBridgeSwapAction();
 
   return (
     <Button
@@ -43,7 +48,7 @@ export default function ActionButton() {
       bgColor={isDisabled ? "#17181D" : "#007AFF"}
       color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={isDisabled}
-      onClick={onOpenConfirmModal}
+      onClick={needToOpenModal ? onOpenConfirmModal : onClick}
     >
       {!isConnected && "Connect Wallet"}
       {isConnected && mode === null ? "Select Network" : mode}

@@ -14,6 +14,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
+import useConnectedNetwork from "../network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -28,9 +30,9 @@ export function useAllowance() {
   const [approved, setApproved] = useState<
     | {
         l1birdge: boolean;
-        // l2birdge: boolean;
         swapRouter: boolean;
         pool: boolean;
+        swapper: boolean;
       }
     | undefined
   >(undefined);
@@ -38,18 +40,28 @@ export function useAllowance() {
   const { inToken } = useInOutTokens();
   const { provider } = useProvier();
   const { address } = useAccount();
-  const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
-    useContract();
+  const { connectedChainId } = useConnectedNetwork();
+  const {
+    L1BRIDGE_CONTRACT,
+    L2BRIDGE_CONTRACT,
+    UNISWAP_CONTRACT,
+    SWAPPER_V2_CONTRACT,
+  } = useContract();
   const { data: blockNumber } = useBlockNumber({ watch: true });
 
   useEffect(() => {
     const fetchAllowance = async () => {
       if (inToken && inToken.tokenAddress !== null && address) {
-        if (inToken.isNativeCurrency !== null) {
+        if (
+          inToken.isNativeCurrency?.includes(
+            SupportedChainId.MAINNET || SupportedChainId.GOERLI
+          )
+        ) {
           return setApproved({
             l1birdge: true,
             swapRouter: true,
             pool: true,
+            swapper: true,
           });
         }
 
@@ -72,6 +84,7 @@ export function useAllowance() {
             address,
             UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS
           ),
+          getAllowance(TOKEN_CONTRACT, address, SWAPPER_V2_CONTRACT),
         ]);
 
         const result = allowances.map((e) => {
@@ -82,6 +95,7 @@ export function useAllowance() {
           l1birdge: result[0],
           swapRouter: result[1],
           pool: result[2],
+          swapper: result[3],
         });
       }
     };
@@ -89,9 +103,17 @@ export function useAllowance() {
       console.log("**fetchAllowance err**");
       console.log(e);
     });
-  }, [inToken?.tokenAddress, inToken?.amountBN, blockNumber, UNISWAP_CONTRACT]);
+  }, [
+    inToken?.tokenAddress,
+    inToken?.amountBN,
+    blockNumber,
+    UNISWAP_CONTRACT,
+    connectedChainId,
+  ]);
 
   // const callApprove = useCallback(() => {}, [approved]);
+
+  console.log("approved : ", approved);
 
   return { approved };
 }
@@ -114,6 +136,9 @@ export function useApprove() {
           return true;
         case "Swap":
           return approved?.swapRouter;
+        case "Wrap":
+        case "Unwrap":
+          return approved?.swapper;
         default:
           return;
       }
