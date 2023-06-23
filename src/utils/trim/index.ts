@@ -12,3 +12,10 @@ export function trimAddress(args: {
   const lastCharAt = address.substring(address.length - (lastChar ?? 4));
   return `${firstChatAt}${dots ?? "..."}${lastCharAt}`;
 }
+
+export function trimAmount(amount: string) {
+  if (amount?.length < 9) {
+    return amount;
+  }
+  return `${amount?.slice(0, 8)}...`;
+}

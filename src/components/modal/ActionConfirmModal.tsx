@@ -21,9 +21,12 @@ import TransactionDetail from "@/app/BridgeSwap/TransactionDetail";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { trimAmount } from "@/utils/trim";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
+  const { amountOut } = useAmountOut();
   return (
     <>
       <TokenSymbol
@@ -39,7 +42,7 @@ const OutTokenContainer = () => {
         mt={"14px"}
         mb={"3px"}
       >
-        <Text>{outToken?.parsedAmount}</Text>
+        <Text>{trimAmount(amountOut as string)}</Text>
         <Text fontWeight={400}>{outToken?.tokenSymbol}</Text>
       </Flex>
       <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
