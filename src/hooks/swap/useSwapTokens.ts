@@ -41,7 +41,7 @@ export function useAmountOut() {
   const { mode } = useGetMode();
 
   const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT } = useContract();
+  const { UNISWAP_CONTRACT, QUOTER_CONTRACT } = useUniswapContracts();
   const { layer } = useConnectedNetwork();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
@@ -51,7 +51,6 @@ export function useAmountOut() {
   );
   const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
 
-  const { QUOTER_CONTRACT } = useUniswapContracts();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setIsLoading] = useIsLoading();
 

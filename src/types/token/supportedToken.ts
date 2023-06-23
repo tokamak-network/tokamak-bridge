@@ -164,8 +164,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.USDT_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.USDT_ADDRESS,
-      TITAN: null,
-      DARIUS: null,
+      TITAN: TOKAMAK_CONTRACTS.USDT_ADDRES,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDT_ADDRES,
     },
     decimals: 6,
     isNativeCurrency: null,

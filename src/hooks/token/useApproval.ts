@@ -48,7 +48,6 @@ export function useAllowance() {
         if (inToken.isNativeCurrency !== null) {
           return setApproved({
             l1birdge: true,
-            // l2birdge: true,
             swapRouter: true,
             pool: true,
           });
@@ -63,7 +62,6 @@ export function useAllowance() {
         );
         const allowances = await Promise.all([
           getAllowance(TOKEN_CONTRACT, address, L1BRIDGE_CONTRACT),
-          // getAllowance(TOKEN_CONTRACT, address, L2BRIDGE_CONTRACT),
           getAllowance(
             TOKEN_CONTRACT,
             address,
@@ -82,7 +80,6 @@ export function useAllowance() {
 
         return setApproved({
           l1birdge: result[0],
-          // l2birdge: result[1],
           swapRouter: result[1],
           pool: result[2],
         });
@@ -92,7 +89,7 @@ export function useAllowance() {
       console.log("**fetchAllowance err**");
       console.log(e);
     });
-  }, [inToken?.tokenAddress, inToken?.amountBN, blockNumber]);
+  }, [inToken?.tokenAddress, inToken?.amountBN, blockNumber, UNISWAP_CONTRACT]);
 
   // const callApprove = useCallback(() => {}, [approved]);
 
@@ -139,7 +136,8 @@ export function useApprove() {
 
   const callApprove = useCallback(async () => {
     try {
-      if (totalSupply) {        
+      console.log(totalSupply);
+      if (totalSupply) {
         switch (mode) {
           case "Deposit":
             return write({
@@ -161,7 +159,7 @@ export function useApprove() {
       console.log("**callApprove err*");
       console.log(e);
     }
-  }, [mode]);
+  }, [mode, totalSupply]);
 
   return { isApproved, callApprove };
 }

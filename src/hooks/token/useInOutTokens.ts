@@ -25,17 +25,20 @@ export function useInOutTokens() {
 
   const inToken = useMemo(() => {
     return inTokenRecoilValue && connectedChainId && chainName
-      ? {
-          ...inTokenRecoilValue,
-          tokenAddress: inTokenRecoilValue.address[chainName],
-          token: new Token(
-            connectedChainId,
-            inTokenRecoilValue.address[chainName] as string,
-            inTokenRecoilValue.decimals,
-            inTokenRecoilValue.tokenName as string,
-            inTokenRecoilValue.tokenSymbol as string
-          ),
-        }
+      ? inTokenRecoilValue.address[chainName] === null ||
+        inTokenRecoilValue.address[chainName] === undefined
+        ? null
+        : {
+            ...inTokenRecoilValue,
+            tokenAddress: inTokenRecoilValue.address[chainName],
+            token: new Token(
+              connectedChainId,
+              inTokenRecoilValue.address[chainName] as string,
+              inTokenRecoilValue.decimals,
+              inTokenRecoilValue.tokenName as string,
+              inTokenRecoilValue.tokenSymbol as string
+            ),
+          }
       : null;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
 
