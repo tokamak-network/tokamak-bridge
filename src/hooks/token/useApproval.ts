@@ -113,8 +113,6 @@ export function useAllowance() {
 
   // const callApprove = useCallback(() => {}, [approved]);
 
-  console.log("approved : ", approved);
-
   return { approved };
 }
 

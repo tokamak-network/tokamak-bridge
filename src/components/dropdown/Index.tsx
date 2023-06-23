@@ -69,7 +69,7 @@ const ValueContainer = (props: {
         fontSize={14}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Flex columnGap={"6px"}>
+        <Flex columnGap={"6px"} className="test">
           <Box w={"20px"} h={"20px"}>
             <Image
               src={selectedOption.networkImage}
@@ -78,7 +78,9 @@ const ValueContainer = (props: {
           </Box>
           <Text>{selectedOption.label}</Text>
         </Flex>
-        <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        <Box w={"10px"} h={"10px"}>
+          <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+        </Box>
       </Flex>
     );
   }
@@ -281,22 +283,6 @@ export default function NetworkDropdown(props: {
       </Flex>
     );
   };
-
-  // useEffect(() => {
-  //   const handleClickOutside = () => {
-  //     if (isOpen === true) {
-  //       console.log(isOpen);
-
-  //       setIsOpen(false);
-  //     }
-  //   };
-
-  //   document.addEventListener("mousedown", handleClickOutside);
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [isOpen]);
 
   const optionsList = supportedChain
     .filter((chainInfo) => {
