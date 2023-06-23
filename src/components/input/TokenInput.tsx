@@ -9,7 +9,7 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { CSSProperties, useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: {
@@ -140,10 +140,10 @@ export default function TokenInput(props: {
       return inTokenFromHook.parsedAmount;
     }
     return inToken === false
-      ? amountOut ?? undefined
+      ? amountOut ?? ""
       : selectedInToken && selectedInToken?.parsedAmount !== null
       ? String(selectedInToken?.parsedAmount)
-      : undefined;
+      : "";
   }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook]);
 
   return (

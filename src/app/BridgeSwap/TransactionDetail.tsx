@@ -366,9 +366,9 @@ const Title = (props: {
 export default function TransactionDetail() {
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
-  const { isReady } = useGetMode();
+  const { mode, isReady } = useGetMode();
 
-  if (!isReady) {
+  if (!isReady || mode === "Wrap" || mode === "Unwrap") {
     return null;
   }
 

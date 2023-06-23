@@ -8,6 +8,7 @@ import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
+import { useGetMode } from "../mode/useGetMode";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -18,6 +19,7 @@ export function useInOutTokens() {
   );
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
+  const { mode } = useGetMode();
 
   const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
@@ -43,6 +45,9 @@ export function useInOutTokens() {
   }, [inTokenRecoilValue, connectedChainId, chainName]);
 
   const outToken = useMemo(() => {
+    if (mode === "Deposit" || mode === "Withdraw") {
+      return null;
+    }
     return outTokenRecoilValue && connectedChainId && chainName
       ? {
           ...outTokenRecoilValue,
@@ -56,7 +61,7 @@ export function useInOutTokens() {
           ),
         }
       : null;
-  }, [outTokenRecoilValue, connectedChainId, chainName]);
+  }, [outTokenRecoilValue, connectedChainId, chainName, mode]);
 
   //initialize selectedTokens when a network is changed
   // useEffect(() => {

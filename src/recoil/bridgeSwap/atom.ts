@@ -91,7 +91,7 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
           outTokenStatus?.address === supportedTokens[2].address,
       ];
 
-      if (isWrap.includes(true)) {
+      if (isWrap.includes(true) && network.inNetwork === network.outNetwork) {
         if (isWrap[0]) {
           return {
             mode: "Wrap",
