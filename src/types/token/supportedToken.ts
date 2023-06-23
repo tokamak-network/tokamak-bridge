@@ -36,6 +36,7 @@ export type TokenInfo = {
   };
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
+  availableForBirdge?: boolean;
 };
 
 export type SupportedTokens_T = TokenInfo[];
@@ -56,6 +57,7 @@ export const supportedTokens: SupportedTokens_T = [
       SupportedChainId.GOERLI,
       SupportedChainId.TITAN,
     ],
+    availableForBirdge: true,
   },
   {
     tokenName: "WETH",
@@ -80,6 +82,7 @@ export const supportedTokens: SupportedTokens_T = [
     },
     decimals: 18,
     isNativeCurrency: null,
+    availableForBirdge: true,
     // isNativeCurrency: [
     //   SupportedChainId.TITAN,
     //   SupportedChainId.DARIUS,
@@ -109,6 +112,7 @@ export const supportedTokens: SupportedTokens_T = [
     },
     decimals: 18,
     isNativeCurrency: null,
+    availableForBirdge: true,
   },
   {
     tokenName: "Dooropen",
@@ -147,7 +151,7 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "USDC",
+    tokenName: "USD Coin",
     tokenSymbol: "USDC",
     address: {
       MAINNET: MAINNET_CONTRACTS.USDC_ADDRESS,
@@ -157,6 +161,7 @@ export const supportedTokens: SupportedTokens_T = [
     },
     decimals: 6,
     isNativeCurrency: null,
+    availableForBirdge: true,
   },
   {
     tokenName: "Tether USD",
@@ -169,5 +174,6 @@ export const supportedTokens: SupportedTokens_T = [
     },
     decimals: 6,
     isNativeCurrency: null,
+    availableForBirdge: true,
   },
 ];

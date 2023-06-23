@@ -11,15 +11,10 @@ export default function useBridgeSupport() {
   const { amountOutErr } = useAmountOut();
 
   const isOnBridge = mode === "Deposit" || mode === "Withdraw";
-  const isSupported =
-    chainName &&
-    inToken &&
-    supportedTokens.filter((e) => {
-      return e.address[chainName] === inToken?.tokenAddress;
-    });
+  const isSupported = inToken?.availableForBirdge ?? false;
 
   return {
-    isNotSupportForBridge: isOnBridge ? isSupported?.length === 0 : false,
+    isNotSupportForBridge: isOnBridge ? !isSupported : false,
     isNotSupportForSwap: amountOutErr,
   };
 }

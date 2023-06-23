@@ -10,6 +10,8 @@ export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
   const { inToken } = useInOutTokens();
 
+  console.log(isNotSupportForBridge);
+
   if (isNotSupportForBridge)
     return (
       <Flex color={"#F9C03E"} fontSize={12} columnGap={"10px"}>
