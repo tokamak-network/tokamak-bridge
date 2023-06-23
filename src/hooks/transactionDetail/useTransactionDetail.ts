@@ -8,8 +8,21 @@ import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
 import { useAmountOut } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
+import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
 
 export type DepositDetailProp = {
+  title: string;
+  content: string;
+  tooltip?: boolean;
+  tooltipLabel?: string;
+  dollorPrice?: string;
+  gasFee?: {
+    l1Gas: string;
+    l2Gas: string;
+  };
+};
+
+export type WithdrawDetailNewProp = {
   title: string;
   content: string;
   tooltip?: boolean;
@@ -86,6 +99,33 @@ export function useTransactionDetail() {
     return null;
   }, [mode, inToken, totalGasFee, inputAmount]);
 
+  const withdrawNewPropsData: WithdrawDetailNewProp[] | null = useMemo(() => {
+    //need to put totalGasCost condition later
+    if (mode === "Withdraw" && inToken) {
+      return [
+        {
+          title: "Amount to Withdraw",
+          content: inputAmount,
+        },
+        {
+          title: "Estimated gas fees",
+          content: totalGasFee,
+          gasFee: {
+            l1Gas: "- ETH",
+            l2Gas: `${totalGasFee} ETH`,
+          },
+          tooltip: true,
+          tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
+        },
+        {
+          title: "Time to Withdraw",
+          content: "approximately 7 days",
+        },
+      ];
+    }
+    return null;
+  }, [mode, inToken, totalGasFee, inputAmount]);
+
   const withdrawPropsData: WithdrawDetailProp[] | null = useMemo(() => {
     if (mode === "Withdraw" && inToken && totalGasFee) {
       return [
@@ -113,6 +153,7 @@ export function useTransactionDetail() {
   const { amountOut } = useAmountOut();
   const { priceImpact } = usePriceImpact();
   const { isOpen } = useConfirm();
+  const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
 
   const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
     if (mode === "Swap" && inToken) {
@@ -126,7 +167,7 @@ export function useTransactionDetail() {
             ? "Minimum received"
             : "Minimum received after slippage",
           content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
-          slippage: "0.1%",
+          slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {
           title: "Price impact",
@@ -140,7 +181,20 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, outToken, inputAmount, amountOut, priceImpact]);
+  }, [
+    mode,
+    inToken,
+    outToken,
+    inputAmount,
+    amountOut,
+    priceImpact,
+    uniswapTxSettingValueForUI,
+  ]);
 
-  return { depositPropsData, withdrawPropsData, swapPropsData };
+  return {
+    depositPropsData,
+    withdrawPropsData,
+    swapPropsData,
+    withdrawNewPropsData,
+  };
 }

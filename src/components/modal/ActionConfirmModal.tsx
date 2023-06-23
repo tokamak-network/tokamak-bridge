@@ -66,6 +66,7 @@ const OutNetworkContrainer = () => {
         flexDir={"column"}
         rowGap={"14px"}
         pt={"10px"}
+        borderRadius={"12px"}
       >
         <NetworkSymbol
           network={outNetwork.chainId}

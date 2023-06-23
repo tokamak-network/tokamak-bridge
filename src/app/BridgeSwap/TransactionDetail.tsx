@@ -12,6 +12,7 @@ import CustomTooltip from "components/tooltip/CustomTooltip";
 import {
   DepositDetailProp,
   SwapDetailProp,
+  WithdrawDetailNewProp,
   WithdrawDetailProp,
   useTransactionDetail,
 } from "@/hooks/transactionDetail/useTransactionDetail";
@@ -21,12 +22,53 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import GradientSpinner from "@/components/ui/gradientSpinner";
 import useConfirm from "@/hooks/modal/useConfirmModal";
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
 };
 
 const DepositDetailRow = (props: DepositDetailProp) => {
+  const { gasFee, tooltip, tooltipLabel, title, content } = props;
+  return (
+    <Flex flexDir={"column"}>
+      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+        <Text fontWeight={300}>{title}</Text>
+        <Text fontWeight={500}>
+          {tooltip ? (
+            <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
+          ) : (
+            content
+          )}
+        </Text>
+      </Flex>
+      {gasFee && (
+        <Flex
+          w={"100%"}
+          h={"54px"}
+          bgColor={"#15161D"}
+          flexDir={"column"}
+          fontSize={14}
+          justifyContent={"center"}
+          mt={"9px"}
+          px={"16px"}
+          borderRadius={"8px"}
+        >
+          <Flex justifyContent={"space-between"}>
+            <Text>L1 gas fee</Text>
+            <Text>{gasFee.l1Gas}</Text>
+          </Flex>
+          <Flex justifyContent={"space-between"}>
+            <Text>L2 gas fee</Text>
+            <Text>{gasFee.l2Gas}</Text>
+          </Flex>
+        </Flex>
+      )}
+    </Flex>
+  );
+};
+
+const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
   return (
     <Flex flexDir={"column"}>
@@ -164,6 +206,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
 const SwapDetailRow = (props: SwapDetailProp) => {
   const { title, content, gasFee, slippage } = props;
   const [isLoading] = useIsLoading();
+  const { isOpen } = useConfirm();
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
@@ -182,7 +225,11 @@ const SwapDetailRow = (props: SwapDetailProp) => {
             <Text fontWeight={500}>{content}</Text>
           )}
           {gasFee && (
-            <Text ml={"27px"} fontWeight={500} color={"#A0A3AD"}>
+            <Text
+              ml={"27px"}
+              fontWeight={500}
+              color={isOpen ? "#fff" : "#A0A3AD"}
+            >
               {gasFee}
             </Text>
           )}
@@ -197,8 +244,12 @@ const Content = (props: { isExpanded: boolean }) => {
   const { mode } = useRecoilValue(actionMode);
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
-  const { depositPropsData, withdrawPropsData, swapPropsData } =
-    useTransactionDetail();
+  const {
+    depositPropsData,
+    withdrawPropsData,
+    swapPropsData,
+    withdrawNewPropsData,
+  } = useTransactionDetail();
   const { isOpen } = useConfirm();
 
   const detailRow = useMemo(() => {
@@ -207,10 +258,20 @@ const Content = (props: { isExpanded: boolean }) => {
         return depositPropsData?.map((data) => (
           <DepositDetailRow key={data.title} {...data}></DepositDetailRow>
         ));
+
+      // case "Withdraw":
+      //   return withdrawPropsData?.map((data) => (
+      //     <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
+      //   ));
+
       case "Withdraw":
-        return withdrawPropsData?.map((data) => (
-          <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
+        return withdrawNewPropsData?.map((data) => (
+          <WithdrawDetailRowNew
+            key={data.title}
+            {...data}
+          ></WithdrawDetailRowNew>
         ));
+
       case "Swap":
         return swapPropsData?.map((data) => (
           <SwapDetailRow key={data.title} {...data} />
@@ -226,7 +287,15 @@ const Content = (props: { isExpanded: boolean }) => {
       default:
         return <>{`component not founded :(`}</>;
     }
-  }, [mode, depositPropsData, withdrawPropsData, swapPropsData]);
+  }, [
+    mode,
+    depositPropsData,
+    withdrawPropsData,
+    swapPropsData,
+    withdrawNewPropsData,
+  ]);
+
+  console.log(detailRow);
 
   if (isExpanded) {
     return (
@@ -366,9 +435,17 @@ const Title = (props: {
 export default function TransactionDetail() {
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
+  const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
+
   const { mode, isReady } = useGetMode();
 
-  if (!isReady || mode === "Wrap" || mode === "Unwrap") {
+  if (
+    !isReady ||
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    isNotSupportForSwap ||
+    isNotSupportForBridge
+  ) {
     return null;
   }
 
