@@ -11,6 +11,7 @@ import SYMBOL_DOC from "assets/tokens/doc.svg";
 import SYMBOL_AURA from "assets/tokens/aura.svg";
 import SYMBOL_LYDA from "assets/tokens/lyda.svg";
 import SYMBOL_USDC from "assets/tokens/usdc.svg";
+import SYMBOL_USDT from "assets/tokens/usdt.svg";
 import SYMBOL_NOSYMBOL from "assets/tokens/noSymbol.svg";
 
 export default function ImageSymbol(props: {
@@ -54,7 +55,8 @@ export function TokenSymbol(props: {
       return <ImageSymbol ImgFile={SYMBOL_LYDA} {...props} />;
     case "USDC":
       return <ImageSymbol ImgFile={SYMBOL_USDC} {...props} />;
-
+    case "USDT":
+      return <ImageSymbol ImgFile={SYMBOL_USDT} {...props} />;
     default:
       return <ImageSymbol ImgFile={SYMBOL_NOSYMBOL} {...props} />;
   }

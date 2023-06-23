@@ -159,7 +159,7 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "USDT",
+    tokenName: "Tether USD",
     tokenSymbol: "USDT",
     address: {
       MAINNET: MAINNET_CONTRACTS.USDT_ADDRESS,

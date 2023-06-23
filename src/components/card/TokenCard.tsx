@@ -118,6 +118,8 @@ export default function TokenCard(props: TokenCardProps) {
         return "#4361EE";
       case "USDC":
         return "#2775CA";
+      case "USDT":
+        return "#50AF95";
       default:
         return "#9e9e9e";
     }
