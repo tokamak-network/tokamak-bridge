@@ -1,6 +1,5 @@
 import { ImageFileType } from "../style/imageFileType";
-import SYMBOL_ETH from "assets/tokens/eth.svg";
-import SYMBOL_TON from "assets/tokens/ton.svg";
+import NETWORK_ETHEREUM from "assets/icons/network/circle/Ethereum_circle.svg";
 import SYMBOL_TITAN from "assets/icons/network/darius.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
@@ -35,7 +34,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.MAINNET,
     chainName: "MAINNET",
-    networkImage: SYMBOL_ETH,
+    networkImage: NETWORK_ETHEREUM,
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L1",
@@ -43,7 +42,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.GOERLI,
     chainName: "GOERLI",
-    networkImage: SYMBOL_ETH,
+    networkImage: NETWORK_ETHEREUM,
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L1",

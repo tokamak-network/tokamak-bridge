@@ -107,8 +107,6 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
       }
 
       if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
-        const isConfirmed = get(confirmWithdrawStatus);
-
         return {
           mode: "Withdraw",
           isReady: isInTokenReady,

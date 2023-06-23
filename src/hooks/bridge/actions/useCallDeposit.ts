@@ -23,10 +23,16 @@ export default function useCallDeposit(functionName: string) {
     functionName,
   });
 
-  const { isLoading: _transactionLoading } = useWaitForTransaction({
+  const {
+    isLoading: _transactionLoading,
+    data: _d,
+    isSuccess: _t,
+    status,
+  } = useWaitForTransaction({
     hash: data?.hash,
   });
-  const [t, setTransactionData] = useRecoilState(transactionData);
+
+  const [, setTransactionData] = useRecoilState(transactionData);
 
   const provider = usePublicClient();
   const contract = getContract({
