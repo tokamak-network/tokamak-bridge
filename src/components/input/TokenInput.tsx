@@ -1,6 +1,7 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutNetwork } from "@/hooks/network";
+import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
@@ -34,6 +35,7 @@ export default function TokenInput(props: {
     inTokenInfo,
     outTokenInfo,
   } = useInOutTokens();
+  const { priceImpact } = usePriceImpact();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -188,10 +190,15 @@ export default function TokenInput(props: {
           </Button>
         )}
       </Flex>
-      <Flex w={"100%"} justifyContent={"flex-start"}>
+      <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
         <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
           $0.00
         </Text>
+        {inToken === false && (
+          <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
+            ({priceImpact ?? "-"}%)
+          </Text>
+        )}
       </Flex>
     </Flex>
   );
