@@ -1,4 +1,5 @@
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
+import { TxInterface } from "@/types/tx/txType";
 
 export enum TransactionState {
   Failed = "Failed",
@@ -67,4 +68,9 @@ export const transactionData = atom<TransactionData>({
   default: {
     isLoading: false,
   },
+});
+
+export const txData = atom<TxInterface | undefined>({
+  key: "txData",
+  default: undefined,
 });

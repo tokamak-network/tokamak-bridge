@@ -9,6 +9,7 @@ import { getContract } from "viem";
 import { Contract } from "@ethersproject/contracts";
 import { getL2Provider, l2Provider } from "@/config/l2Provider";
 import { ethers } from "ethers";
+import { useTx } from "@/hooks/tx/useTx";
 
 export default function useCallWithdraw(functionName: string) {
   const [tModalStatus, setTModalStatus] = useRecoilState(
@@ -20,6 +21,8 @@ export default function useCallWithdraw(functionName: string) {
     abi: L2BridgeAbi,
     functionName,
   });
+
+  const dd = useTx({ hash: data?.hash, txType: "Withdraw" });
 
   const provider = usePublicClient();
   const contract = getContract({
