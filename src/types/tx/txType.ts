@@ -1,6 +1,3 @@
-import { TransactionState } from "@/recoil/global/transaction";
-import { SupportedChainId } from "../network/supportedNetwork";
-
 type UniswapTxSort =
   | "Add Liquidity"
   | "Remove Liquidity"
@@ -19,7 +16,8 @@ export type TokenTxData = {
 export interface TxInterface {
   txHash: `0x${string}` | undefined;
   txSort: TxSort;
-  transactionState: "success" | "fail";
-  tokenData: TokenTxData[];
+  transactionState: "success" | "fail" | undefined;
+  tokenData: TokenTxData[] | undefined;
   network: number;
+  isToasted: boolean;
 }

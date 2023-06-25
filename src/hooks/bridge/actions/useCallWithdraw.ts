@@ -22,7 +22,7 @@ export default function useCallWithdraw(functionName: string) {
     functionName,
   });
 
-  const dd = useTx({ hash: data?.hash, txType: "Withdraw" });
+  const dd = useTx({ hash: data?.hash, txSort: "Withdraw" });
 
   const provider = usePublicClient();
   const contract = getContract({
