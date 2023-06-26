@@ -1,4 +1,4 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
@@ -42,11 +42,13 @@ export const CardCarrousel = () => {
       pl={"165px"}
       pr={"171px"}
     >
-      <Button
+      <Flex
         onClick={handlePrev}
         border={"2px solid #17181D"}
         bgColor={"#0f0f12"}
         w={"32px"}
+        minW={"32px"}
+        maxW={"32px"}
         h={"32px"}
         _active={{}}
         _hover={{}}
@@ -54,9 +56,13 @@ export const CardCarrousel = () => {
         m={0}
         borderRadius={100}
         mb={"70px"}
+        zIndex={10}
+        justifyContent={"center"}
+        alignItems={"center"}
+        cursor={"pointer"}
       >
         <Image src={LeftArrow} alt={"LeftArrow"} />
-      </Button>
+      </Flex>
       <Flex
         // overflowX={"hidden"}
         w={"100%"}
@@ -181,20 +187,26 @@ export const CardCarrousel = () => {
           );
         })}
       </Flex>
-      <Button
+      <Flex
         onClick={handleNext}
         border={"2px solid #17181D"}
         bgColor={"#0f0f12"}
         w={"32px"}
+        minW={"32px"}
+        maxW={"32px"}
         h={"32px"}
         _active={{}}
         _hover={{}}
         p={0}
         borderRadius={100}
         mb={"70px"}
+        zIndex={10}
+        justifyContent={"center"}
+        alignItems={"center"}
+        cursor={"pointer"}
       >
         <Image src={RightArrow} alt={"RightArrow"} />
-      </Button>
+      </Flex>
     </Flex>
   );
 };

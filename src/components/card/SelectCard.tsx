@@ -95,6 +95,7 @@ const SearchToken = () => {
         h={"42px"}
         borderRadius={"21.5px"}
         placeholder={"Search token name or address"}
+        _placeholder={{ color: "#fff", fontWeight: 500 }}
         border={{}}
         bgColor={"#0F0F12"}
         _focus={{}}
