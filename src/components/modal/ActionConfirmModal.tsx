@@ -147,7 +147,7 @@ export default function ActionConfirmModal() {
 
   return (
     <Modal isOpen={isOpen} onClose={onCloseConfirmModal}>
-      <ModalOverlay />
+      <ModalOverlay opacity={0.1} />
       <ModalContent
         h={"100%"}
         bg={"transparent"}

@@ -313,12 +313,21 @@ const Content = (props: { isExpanded: boolean }) => {
                   mt={"5px"}
                   mb={"auto"}
                   isChecked={isConfirm}
+                  borderLeft={0}
+                  borderWidth={"1px"}
+                  borderColor={isConfirm ? "#fff" : "#A0A3AD"}
+                  colorScheme={"#fff"}
                   onChange={(e) => {
                     const checkValue = e.target.checked;
                     setIsConfirm(checkValue);
                   }}
                 ></Checkbox>
-                <Text lineHeight={"20px"} fontSize={14} fontWeight={500}>
+                <Text
+                  lineHeight={"20px"}
+                  fontSize={14}
+                  fontWeight={500}
+                  color={isConfirm ? "#fff" : "#A0A3AD"}
+                >
                   I understand it will take approximately 7 days until my funds
                   are claimable on Ethereum Mainnet.{" "}
                 </Text>
