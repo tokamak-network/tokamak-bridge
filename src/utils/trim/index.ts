@@ -13,12 +13,16 @@ export function trimAddress(args: {
   return `${firstChatAt}${dots ?? "..."}${lastCharAt}`;
 }
 
-export function trimAmount(amount: string | null | undefined) {
+export function trimAmount(
+  amount: string | null | undefined,
+  decimalPlaces?: number
+) {
   if (amount === null || amount === undefined) {
     return "-";
   }
-  if (amount?.length < 9) {
+  const decimals = decimalPlaces ?? 9;
+  if (amount?.length < decimals) {
     return amount;
   }
-  return `${amount?.slice(0, 8)}...`;
+  return `${amount?.slice(0, decimals - 1)}...`;
 }

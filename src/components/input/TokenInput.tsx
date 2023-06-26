@@ -8,9 +8,10 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: {
@@ -36,6 +37,7 @@ export default function TokenInput(props: {
     outTokenInfo,
   } = useInOutTokens();
   const { priceImpact } = usePriceImpact();
+  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -134,6 +136,14 @@ export default function TokenInput(props: {
     }
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);
 
+  const handleFocus = () => {
+    setIsFocused(true);
+  };
+
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
   const valueProp = useMemo(() => {
     if (
       (mode === "Wrap" || mode === "Unwrap") &&
@@ -144,9 +154,11 @@ export default function TokenInput(props: {
     return inToken === false
       ? amountOut ?? ""
       : selectedInToken && selectedInToken?.parsedAmount !== null
-      ? String(selectedInToken?.parsedAmount)
+      ? isFocused
+        ? String(selectedInToken?.parsedAmount)
+        : trimAmount(selectedInToken?.parsedAmount, 11)
       : "";
-  }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook]);
+  }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook, isFocused]);
 
   return (
     <Flex
@@ -173,6 +185,8 @@ export default function TokenInput(props: {
           _disabled={{ color: "#fff" }}
           value={valueProp}
           onChange={onChange}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
         ></Input>
         {hasMaxButton && (
           <Button

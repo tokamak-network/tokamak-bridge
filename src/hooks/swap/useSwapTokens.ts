@@ -88,7 +88,7 @@ export function useAmountOut() {
     getAmountOut().catch((e) => {
       console.log("**getAmountOut err**");
       console.log(e);
-      setAmountOutErr(true);
+      // setAmountOutErr(true);
     });
   }, [mode, inToken, outToken]);
 

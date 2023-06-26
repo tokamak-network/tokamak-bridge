@@ -116,7 +116,7 @@ export default function NetworkDropdown(props: {
   const { inNetwork, height } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
-  const { switchNetworkAsync, isError } = useSwitchNetwork();
+  const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
   const { isConnected } = useAccount();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -133,7 +133,7 @@ export default function NetworkDropdown(props: {
       }
       if (selectedWork.chainId !== connectedChainId) {
         return isConnected
-          ? await switchNetworkAsync?.(selectedWork.chainId)
+          ? switchNetwork?.(selectedWork.chainId)
           : setNetwork({ ...network, inNetwork: selectedWork });
       }
     } finally {
