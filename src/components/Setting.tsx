@@ -15,6 +15,9 @@ import {
   uniswapTxSettingSelector,
 } from "@/recoil/uniswap/setting";
 import { Percent } from "@uniswap/sdk-core";
+import CustomTooltip from "./tooltip/CustomTooltip";
+import QUESTION_ICON from "assets/icons/question.svg";
+import { RedWarningText, WarningText } from "./ui/WarningText";
 
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
@@ -64,6 +67,10 @@ export default function Setting() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  console.log(
+    Number(txSetting.slippage) > 10 && Number(txSetting.slippage) < 50
+  );
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -122,6 +129,19 @@ export default function Setting() {
               </InputRightElement>
             </InputGroup>
           </Flex>
+          {Number(txSetting.slippage) >= 10 &&
+            Number(txSetting.slippage) < 50 && (
+              <WarningText
+                label="Slippage above 10% may result in an unfavorable swap"
+                style={{ fontWeight: 400 }}
+              />
+            )}
+          {Number(txSetting.slippage) >= 50 && (
+            <RedWarningText
+              label="Slippage above 50% may result in an unfavorable swap"
+              style={{ fontWeight: 400 }}
+            />
+          )}
           <Flex
             p={"16px"}
             bgColor={"#0F0F12"}
@@ -129,7 +149,13 @@ export default function Setting() {
             rowGap={"8px"}
             flexDir={"column"}
           >
-            <Text>Transaction deadline</Text>
+            <Flex columnGap={"4px"}>
+              <Text>Transaction deadline</Text>
+              <CustomTooltip
+                content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
+                tooltipLabel="testtesttest"
+              />
+            </Flex>
             <InputGroup>
               <Input
                 w={"100%"}
