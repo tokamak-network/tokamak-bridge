@@ -82,7 +82,7 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
 
     if (network?.inNetwork && network?.outNetwork) {
       const isInTokenReady = inTokenHasAmount;
-      const isOutTokenReady = inTokenHasAmount;
+      const isOutTokenReady = outTokenHasAmount;
 
       const isWrap = [
         inTokenStatus?.address === supportedTokens[2].address &&

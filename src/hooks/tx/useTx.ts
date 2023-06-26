@@ -195,7 +195,7 @@ export function useTx(params: {
           break;
       }
     }
-    if (isError) {
+    if (isError && data && connectedChainId && hash) {
     }
   }, [isSuccess, isError, txSort, data, connectedChainId, hash, tokenAddress]);
 }

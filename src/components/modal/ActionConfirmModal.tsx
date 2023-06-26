@@ -42,7 +42,7 @@ const OutTokenContainer = () => {
         mt={"14px"}
         mb={"3px"}
       >
-        <Text>{trimAmount(amountOut as string)}</Text>
+        <Text>{trimAmount(amountOut)}</Text>
         <Text fontWeight={400}>{outToken?.tokenSymbol}</Text>
       </Flex>
       <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
@@ -111,7 +111,7 @@ const TokenContainer = () => {
           mt={"14px"}
           mb={"3px"}
         >
-          <Text>{inToken?.parsedAmount}</Text>
+          <Text>{trimAmount(inToken?.parsedAmount)}</Text>
           <Text fontWeight={400}>{inToken?.tokenSymbol}</Text>
         </Flex>
         <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>

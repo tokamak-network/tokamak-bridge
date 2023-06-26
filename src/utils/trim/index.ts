@@ -13,7 +13,10 @@ export function trimAddress(args: {
   return `${firstChatAt}${dots ?? "..."}${lastCharAt}`;
 }
 
-export function trimAmount(amount: string) {
+export function trimAmount(amount: string | null | undefined) {
+  if (amount === null || amount === undefined) {
+    return "-";
+  }
   if (amount?.length < 9) {
     return amount;
   }
