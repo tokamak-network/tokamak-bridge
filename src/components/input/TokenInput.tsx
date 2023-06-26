@@ -179,6 +179,7 @@ export default function TokenInput(props: {
           _active={{}}
           _focus={{ boxShadow: "none !important" }}
           placeholder="0"
+          _placeholder={{ color: "#C6C6D1 " }}
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}
