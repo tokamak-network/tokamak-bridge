@@ -152,7 +152,7 @@ export default function TokenInput(props: {
       return inTokenFromHook.parsedAmount;
     }
     return inToken === false
-      ? amountOut ?? ""
+      ? trimAmount(amountOut, 11) ?? ""
       : selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
@@ -166,9 +166,10 @@ export default function TokenInput(props: {
       justifyContent={"space-between"}
       pb={"16px"}
       w={"100%"}
+      rowGap={"6px"}
       {...style}
     >
-      <Flex justifyContent={"space-between"}>
+      <Flex>
         <Input
           w={"100%"}
           h={"27px"}

@@ -18,7 +18,7 @@ export default function Swap() {
       <Flex
         justifyContent={"center"}
         alignItems={"center"}
-        pt={mode === null ? 0 : "115px"}
+        pt={mode === null ? "65px" : "80px"}
       >
         <Image src={ArrowImg} alt={"arrow"} />
       </Flex>
