@@ -27,12 +27,12 @@ export const Titan = {
 
 export const tokamak_goerli = {
   id: 5050,
-  name: "Darius",
-  network: "Darius",
+  name: "Titan Goerli",
+  network: "Titan Goerli",
   nativeCurrency: {
     decimals: 18,
-    name: "Darius_ETH",
-    symbol: "Darius_ETH",
+    name: "ETH",
+    symbol: "ETH",
   },
   rpcUrls: {
     public: { http: ["https://goerli.optimism.tokamak.network"] },

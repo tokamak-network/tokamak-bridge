@@ -16,6 +16,7 @@ import Select from "react-select";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
@@ -76,7 +77,7 @@ const ValueContainer = (props: {
               alt={selectedOption.chainName}
             />
           </Box>
-          <Text>{selectedOption.label}</Text>
+          <Text>{convertNetworkName(selectedOption.label)}</Text>
         </Flex>
         <Box w={"10px"} h={"10px"}>
           <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -247,7 +248,7 @@ export default function NetworkDropdown(props: {
               <Box w={"20px"} h={"20px"}>
                 <Image src={data.networkImage} alt={data.chainName} />
               </Box>
-              <Text>{data.label}</Text>
+              <Text>{convertNetworkName(data.label)}</Text>
             </Flex>
             {/* <Box w={"10px"} h={"10px"}>
               <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -275,7 +276,7 @@ export default function NetworkDropdown(props: {
           <Box w={"20px"} h={"20px"}>
             <Image src={data.networkImage} alt={data.chainName} />
           </Box>
-          <Text>{data.label}</Text>
+          <Text>{convertNetworkName(data.label)}</Text>
         </Flex>
         {/* <Box w={"10px"} h={"10px"}>
           <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
