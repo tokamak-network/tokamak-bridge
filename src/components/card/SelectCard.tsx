@@ -11,7 +11,7 @@ import CloseIcon from "assets/icons/close.svg";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
 import TokenCard from "./TokenCard";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
@@ -116,11 +116,25 @@ const SearchToken = () => {
 export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
 
+  //close when click at outside
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (event.target.id === "out-area") {
+        return onCloseTokenModal();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
       // isOpen={false}
-      onClose={useTokenModal}
+      onClose={onCloseTokenModal}
     >
       <ModalOverlay />
       <ModalContent
@@ -136,13 +150,15 @@ export function SelectCardModal() {
           minW={"100%"}
           maxW={"100%"}
           h={"100px"}
-          m={0}
+          mt={"auto"}
           p={0}
           display={"flex"}
           justifyContent={"center"}
           alignItems={"end"}
           bg={"transparent"}
           // onClick={onClose}
+          id="out-area"
+          zIndex={1}
         >
           <Flex
             w={"1362px"}
@@ -153,6 +169,7 @@ export function SelectCardModal() {
             flexDir={"column"}
             alignItems={"center"}
             backgroundImage={BgImage}
+            zIndex={100}
           >
             <Flex pos={"absolute"}>
               <Image
