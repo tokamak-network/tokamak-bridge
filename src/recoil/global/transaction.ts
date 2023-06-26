@@ -70,7 +70,9 @@ export const transactionData = atom<TransactionData>({
   },
 });
 
-export const txDataStatus = atom<TxInterface[] | undefined>({
-  key: "txDataStatus",
-  default: undefined,
-});
+export const txDataStatus = atom<{ [txHash: string]: TxInterface } | undefined>(
+  {
+    key: "txDataStatus",
+    default: undefined,
+  }
+);

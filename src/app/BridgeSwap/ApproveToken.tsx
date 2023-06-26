@@ -2,13 +2,21 @@ import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useConnectedNetwork from "@/hooks/network";
 import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { useTransaction } from "@/hooks/tx/useTx";
+import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
+import { useMemo } from "react";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
-  const { chainName } = useConnectedNetwork();
   const { isApproved, callApprove } = useApprove();
   const { isNotSupportForBridge } = useBridgeSupport();
+  const { pendingTransactionToApprove } = useTransaction();
+
+  const approveBtnDisabled = useMemo(() => {
+    return (
+      pendingTransactionToApprove && pendingTransactionToApprove.length > 0
+    );
+  }, [pendingTransactionToApprove]);
 
   if (isApproved || isNotSupportForBridge || !inToken) {
     return null;
@@ -25,10 +33,16 @@ export default function ApproveToken() {
       py={"19px"}
       justifyContent={"space-between"}
       alignItems={"center"}
+      color={approveBtnDisabled ? "#8E8E92" : ""}
     >
-      <Text fontSize={14}>
-        Tokamak Bridge wants to use your {inToken?.tokenSymbol}
-      </Text>
+      <Flex columnGap={"12px"}>
+        {approveBtnDisabled && (
+          <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+        )}
+        <Text fontSize={14}>
+          Tokamak Bridge wants to use your {inToken?.tokenSymbol}
+        </Text>
+      </Flex>
       <Button
         w={"92px"}
         h={"28px"}
@@ -38,6 +52,8 @@ export default function ApproveToken() {
         _active={{}}
         _hover={{}}
         onClick={callApprove}
+        isDisabled={approveBtnDisabled}
+        _disabled={{ bg: "#15161D", color: "#8E8E92" }}
       >
         Approve
       </Button>

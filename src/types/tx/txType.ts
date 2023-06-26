@@ -14,7 +14,7 @@ export type TokenTxData = {
 };
 
 export interface TxInterface {
-  txHash: `0x${string}` | undefined;
+  transactionHash: `0x${string}` | undefined;
   txSort: TxSort;
   transactionState: "success" | "fail" | undefined;
   tokenData: TokenTxData[] | undefined;

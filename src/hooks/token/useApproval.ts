@@ -16,6 +16,7 @@ import useContract from "@/hooks/contracts/useContract";
 import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useTx } from "../tx/useTx";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -143,7 +144,7 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  const { write } = useContractWrite({
+  const { write, data } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
     functionName: "increaseAllowance",
@@ -152,6 +153,12 @@ export function useApprove() {
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
     functionName: "totalSupply",
+  });
+
+  const tx = useTx({
+    hash: data?.hash,
+    txSort: "Approve",
+    tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
 
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =

@@ -1,6 +1,6 @@
 import { TxSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
@@ -8,6 +8,7 @@ import ERC20Abi from "@/abis/erc20.json";
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
+import { TokenInfo } from "@/types/token/supportedToken";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -18,11 +19,38 @@ const getInterface = () => {
   return { l1BridgeI, l2BridgeI, routerI, erc20I };
 };
 
+export function useTransaction() {
+  const [txData] = useRecoilState(txDataStatus);
+
+  const pendingTransactionToApprove = useMemo(() => {
+    if (txData)
+      return Object.entries(txData).filter(([key, value]) => {
+        return (
+          value.txSort === "Approve" && value.transactionHash === undefined
+        );
+      });
+  }, [txData]);
+
+  const pendingTransaction = useMemo(() => {
+    if (txData)
+      return Object.entries(txData).filter(([key, value]) => {
+        return value.transactionHash === undefined;
+      });
+  }, [txData]);
+
+  return {
+    allTransaction: txData,
+    pendingTransaction,
+    pendingTransactionToApprove,
+  };
+}
+
 export function useTx(params: {
   hash: `0x${string}` | undefined;
   txSort: TxSort;
+  tokenAddress?: `0x${string}`;
 }) {
-  const { hash, txSort } = params;
+  const { hash, txSort, tokenAddress } = params;
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
   });
@@ -30,21 +58,26 @@ export function useTx(params: {
   const { connectedChainId } = useConnectedNetwork();
 
   useEffect(() => {
-    if (isLoading && connectedChainId) {
-      return setTxData([
-        ...(txData || []),
-        {
-          txHash: undefined,
+    if (isLoading && connectedChainId && hash) {
+      return setTxData({
+        ...txData,
+        [hash]: {
+          transactionHash: undefined,
           txSort,
           transactionState: undefined,
           tokenData: undefined,
           network: connectedChainId,
           isToasted: false,
         },
-      ]);
+      });
     }
-    if (isSuccess && data && connectedChainId) {
-      const { logs } = data;
+  }, [isLoading, hash]);
+
+  // console.log(txData);
+
+  useEffect(() => {
+    if (isSuccess && data && connectedChainId && hash) {
+      const { logs, transactionHash } = data;
 
       const { l1BridgeI, l2BridgeI, routerI, erc20I } = getInterface();
       switch (txSort) {
@@ -62,11 +95,12 @@ export function useTx(params: {
           const result = l1BridgeI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           const { _l1Token, _l2Token, _amount } = args;
-          return setTxData([
-            ...(txData || []),
-            {
-              txHash: data.transactionHash,
-              txSort: "Deposit",
+
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
               transactionState: "success",
               tokenData: [
                 {
@@ -81,18 +115,19 @@ export function useTx(params: {
               network: connectedChainId,
               isToasted: false,
             },
-          ]);
+          });
         }
 
         case "Withdraw": {
           const result = l2BridgeI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           const { _l1Token, _l2Token, _amount } = args;
-          return setTxData([
-            ...(txData || []),
-            {
-              txHash: data.transactionHash,
-              txSort: "Withdraw",
+
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
               transactionState: "success",
               tokenData: [
                 {
@@ -107,7 +142,28 @@ export function useTx(params: {
               network: connectedChainId,
               isToasted: false,
             },
-          ]);
+          });
+          // return setTxData({
+          //   ...(txData || []),
+          //   {
+          //     txHash: hash,
+          //     transactionHash: data.transactionHash,
+          //     txSort: "Withdraw",
+          //     transactionState: "success",
+          //     tokenData: [
+          //       {
+          //         tokenAddress: _l2Token,
+          //         amount: _amount,
+          //       },
+          //       {
+          //         tokenAddress: _l1Token,
+          //         amount: _amount,
+          //       },
+          //     ],
+          //     network: connectedChainId,
+          //     isToasted: false,
+          //   },
+          // ]);
         }
 
         //wrap
@@ -117,12 +173,29 @@ export function useTx(params: {
           return;
         //etc
         case "Approve":
-          return;
+          const result = erc20I.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: args.value.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
         default:
           break;
       }
     }
     if (isError) {
     }
-  }, [isLoading, isSuccess, isError, txSort, data, connectedChainId, txData]);
+  }, [isSuccess, isError, txSort, data, connectedChainId, hash, tokenAddress]);
 }
