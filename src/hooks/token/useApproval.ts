@@ -147,7 +147,7 @@ export function useApprove() {
   const { write, data } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
     abi: TON_ABI.abi,
-    functionName: "increaseAllowance",
+    functionName: "approve",
   });
   const { data: totalSupply } = useContractRead({
     address: inToken?.tokenAddress as `0x${string}`,
@@ -161,8 +161,12 @@ export function useApprove() {
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
 
-  const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, UNISWAP_CONTRACT } =
-    useContract();
+  const {
+    L1BRIDGE_CONTRACT,
+    L2BRIDGE_CONTRACT,
+    UNISWAP_CONTRACT,
+    SWAPPER_V2_CONTRACT,
+  } = useContract();
 
   const callApprove = useCallback(async () => {
     try {
@@ -179,6 +183,11 @@ export function useApprove() {
           case "Swap":
             return write({
               args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
+            });
+          case "Wrap":
+          case "Unwrap":
+            return write({
+              args: [SWAPPER_V2_CONTRACT, totalSupply],
             });
           default:
             break;

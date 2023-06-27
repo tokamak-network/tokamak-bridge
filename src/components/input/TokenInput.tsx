@@ -232,7 +232,7 @@ export default function TokenInput(props: {
         <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
           $0.00
         </Text>
-        {inToken === false && (
+        {inToken === false && mode === "Swap" && (
           <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
             ({priceImpact ?? "-"}%)
           </Text>
