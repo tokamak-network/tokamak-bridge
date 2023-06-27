@@ -36,7 +36,11 @@ export default function RootLayout({
   const queryClient = getQueryClient();
   return (
     <html lang="en">
-      <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
+      <body
+        style={{ maxHeight: "100vh", margin: 0, padding: 0 }}
+        //prevent extensions from causing a mismatch
+        // suppressHydrationWarning={true}
+      >
         <QueryClientProvider client={queryClient}>
           <ApolloProvider client={apolloClient}>
             <ChakraProvidersForNextJs>

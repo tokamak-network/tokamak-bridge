@@ -30,7 +30,13 @@ export const SelectedNetwork = () => {
         w={48}
         h={48}
       />
-      <Text w={"156px"} maxH={"44px"} textAlign={"center"}>
+      <Text
+        w={"156px"}
+        maxH={"44px"}
+        fontSize={18}
+        fontWeight={500}
+        textAlign={"center"}
+      >
         {outNetwork?.chainName}
       </Text>
     </Box>

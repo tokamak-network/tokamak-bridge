@@ -2,6 +2,7 @@ import { ethers } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
+import UniversialRouter from "@/abis/UniversialRouter.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import {
@@ -27,9 +28,10 @@ import useContract from "@/hooks/contracts/useContract";
 import { useRecoilState } from "recoil";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 
-import { useAccount } from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useIsLoading from "@/hooks/ui/useIsLoading";
+import { useSmartRouter } from "../uniswap/useSmartRouter";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -176,66 +178,88 @@ export function useAmountOut() {
     });
   }, [inToken, outToken, amountOut, layer, mode]);
 
-  const callTokenSwap = useCallback(async () => {
-    if (trade && inToken && address && inToken.amountBN) {
-      try {
-        // // Give approval to the router to spend the token
-        // const tokenApproval = await getTokenTransferApproval(inToken.token);
-        // console.log(tokenApproval);
+  // const callTokenSwap = useCallback(async () => {
+  //   if (trade && inToken && address && inToken.amountBN) {
+  //     try {
+  //       // // Give approval to the router to spend the token
+  //       // const tokenApproval = await getTokenTransferApproval(inToken.token);
+  //       // console.log(tokenApproval);
 
-        // // Fail if transfer approvals do not go through
-        // if (tokenApproval !== TransactionState.Sent) {
-        //   return TransactionState.Failed;
-        // }
+  //       // // Fail if transfer approvals do not go through
+  //       // if (tokenApproval !== TransactionState.Sent) {
+  //       //   return TransactionState.Failed;
+  //       // }
 
-        const options: SwapOptions = {
-          slippageTolerance: new Percent(50, 10_000), // 50 bips, or 0.50%
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
-          recipient: address,
-        };
-        const methodParameters = SwapRouter.swapCallParameters(
-          [trade],
-          options
-        );
+  //       const options: SwapOptions = {
+  //         slippageTolerance: new Percent(50, 10_000), // 50 bips, or 0.50%
+  //         deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
+  //         recipient: address,
+  //       };
+  //       const methodParameters = SwapRouter.swapCallParameters(
+  //         [trade],
+  //         options
+  //       );
 
-        const wei = ethers.utils.formatUnits(
-          inToken.amountBN.toString(),
-          "wei"
-        );
-        const weiAmount = ethers.BigNumber.from(wei);
-        const hexAmount = ethers.utils.hexlify(weiAmount);
+  //       const wei = ethers.utils.formatUnits(
+  //         inToken.amountBN.toString(),
+  //         "wei"
+  //       );
+  //       const weiAmount = ethers.BigNumber.from(wei);
+  //       const hexAmount = ethers.utils.hexlify(weiAmount);
 
-        const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET || SupportedChainId.GOERLI
-        );
+  //       const isETH = inToken.isNativeCurrency?.includes(
+  //         SupportedChainId.MAINNET || SupportedChainId.GOERLI
+  //       );
 
-        const tx = {
-          data: methodParameters.calldata as `0x{string}`,
-          to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
-          value: isETH ? hexAmount : methodParameters.value,
-          from: address,
-          // maxFeePerGas: "250000",
-          // maxPriorityFeePerGas: "250000",
-          // gasLimit: "21000",
-          // gasPrice: gasPrice.toString(),
-        };
-        if (tx) {
-          setModalOpen("confirming");
-          const res = await sendTransaction(tx);
-          if (res === "Sent") {
-            return setModalOpen("confirmed");
-          }
-          if (res === "Rejected") {
-            return setModalOpen("error");
-          }
-        }
-      } catch (e) {
-        console.log("callTokenSwap");
-        console.log(e);
-        setModalOpen("error");
-      }
+  //       const tx = {
+  //         data: methodParameters.calldata as `0x{string}`,
+  //         to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
+  //         value: isETH ? hexAmount : methodParameters.value,
+  //         from: address,
+  //         // maxFeePerGas: "250000",
+  //         // maxPriorityFeePerGas: "250000",
+  //         // gasLimit: "21000",
+  //         // gasPrice: gasPrice.toString(),
+  //       };
+  //       if (tx) {
+  //         setModalOpen("confirming");
+  //         const res = await sendTransaction(tx);
+  //         if (res === "Sent") {
+  //           return setModalOpen("confirmed");
+  //         }
+  //         if (res === "Rejected") {
+  //           return setModalOpen("error");
+  //         }
+  //       }
+  //     } catch (e) {
+  //       console.log("callTokenSwap");
+  //       console.log(e);
+  //       setModalOpen("error");
+  //     }
+  //   }
+  // }, [trade, address]);
+
+  const { data, write: excute } = useContractWrite({
+    address: UNISWAP_CONTRACT.UNIVERSIAL_ROUTER,
+    abi: UniversialRouter,
+    functionName: "execute",
+  });
+  const { routingPath } = useSmartRouter();
+
+  const callTokenSwap = useCallback(() => {
+    console.log("go");
+    console.log(routingPath);
+    if (routingPath.methodParameters) {
+      console.log(routingPath.methodParameters);
+
+      excute({
+        args: [
+          routingPath.methodParameters.value,
+          routingPath.methodParameters.calldata,
+        ],
+      });
     }
-  }, [trade, address]);
+  }, [routingPath]);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
