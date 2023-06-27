@@ -68,10 +68,6 @@ export default function Setting() {
     };
   }, []);
 
-  console.log(
-    Number(txSetting.slippage) > 10 && Number(txSetting.slippage) < 50
-  );
-
   return (
     <Flex flexDir={"column"} pos={"relative"}>
       <Image

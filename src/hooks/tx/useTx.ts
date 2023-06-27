@@ -1,6 +1,6 @@
 import { TxSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
@@ -141,29 +141,7 @@ export function useTx(params: {
               isToasted: false,
             },
           });
-          // return setTxData({
-          //   ...(txData || []),
-          //   {
-          //     txHash: hash,
-          //     transactionHash: data.transactionHash,
-          //     txSort: "Withdraw",
-          //     transactionState: "success",
-          //     tokenData: [
-          //       {
-          //         tokenAddress: _l2Token,
-          //         amount: _amount,
-          //       },
-          //       {
-          //         tokenAddress: _l1Token,
-          //         amount: _amount,
-          //       },
-          //     ],
-          //     network: connectedChainId,
-          //     isToasted: false,
-          //   },
-          // ]);
         }
-
         //wrap
         case "Wrap":
           return;
@@ -197,5 +175,5 @@ export function useTx(params: {
     }
   }, [isSuccess, isError, txSort, data, connectedChainId, hash, tokenAddress]);
 
-  return { txData };
+  return {};
 }
