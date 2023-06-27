@@ -95,25 +95,25 @@ export default function TokenInput(props: {
       });
     }
 
-    // if (!inToken && selectedOutToken && amountOut) {
-    //   const value: string = amountOut;
-    //   if (value === "" || value === null) {
-    //     return setSelectedOutToken({
-    //       ...selectedOutToken,
-    //       amountBN: null,
-    //       parsedAmount: null,
-    //     });
-    //   }
-    //   const parsedAmount = ethers.utils.parseUnits(
-    //     value,
-    //     selectedOutToken.decimals
-    //   );
-    //   return setSelectedOutToken({
-    //     ...selectedOutToken,
-    //     amountBN: parsedAmount.toBigInt(),
-    //     parsedAmount: value,
-    //   });
-    // }
+    if (!inToken && selectedOutToken && amountOut) {
+      const value: string = amountOut;
+      if (value === "" || value === null) {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+      const parsedAmount = ethers.utils.parseUnits(
+        value,
+        selectedOutToken.decimals
+      );
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
+      });
+    }
   };
 
   const onMax = useCallback(() => {
@@ -160,6 +160,28 @@ export default function TokenInput(props: {
       : "";
   }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook, isFocused]);
 
+  useEffect(() => {
+    if (!inToken && selectedOutToken && amountOut) {
+      const value: string = amountOut;
+      if (value === "" || value === null) {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+      const parsedAmount = ethers.utils.parseUnits(
+        value,
+        selectedOutToken.decimals
+      );
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
+      });
+    }
+  }, [amountOut]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -179,7 +201,7 @@ export default function TokenInput(props: {
           _active={{}}
           _focus={{ boxShadow: "none !important" }}
           placeholder="0"
-          _placeholder={{ color: "#C6C6D1 " }}
+          _placeholder={{ color: "#C6C6D1" }}
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}

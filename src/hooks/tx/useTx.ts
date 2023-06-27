@@ -73,8 +73,6 @@ export function useTx(params: {
     }
   }, [isLoading, hash]);
 
-  // console.log(txData);
-
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
@@ -198,4 +196,6 @@ export function useTx(params: {
     if (isError && data && connectedChainId && hash) {
     }
   }, [isSuccess, isError, txSort, data, connectedChainId, hash, tokenAddress]);
+
+  return { txData };
 }

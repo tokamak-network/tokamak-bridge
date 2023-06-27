@@ -18,7 +18,7 @@ export function trimAmount(
   decimalPlaces?: number
 ) {
   if (amount === null || amount === undefined) {
-    return "-";
+    return "";
   }
   const decimals = decimalPlaces ?? 9;
   if (amount?.length < decimals) {

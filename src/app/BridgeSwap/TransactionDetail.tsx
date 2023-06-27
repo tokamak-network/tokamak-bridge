@@ -34,13 +34,16 @@ const DepositDetailRow = (props: DepositDetailProp) => {
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
-        <Text fontWeight={500}>
-          {tooltip ? (
-            <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
-          ) : (
-            content
-          )}
-        </Text>
+        <Flex columnGap={"29px"}>
+          <Text fontWeight={500}>
+            {tooltip ? (
+              <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
+            ) : (
+              content
+            )}
+          </Text>
+          {gasFee && <Text color={"#A0A3AD"}>$3.18</Text>}
+        </Flex>
       </Flex>
       {gasFee && (
         <Flex
@@ -56,11 +59,17 @@ const DepositDetailRow = (props: DepositDetailProp) => {
         >
           <Flex justifyContent={"space-between"}>
             <Text>L1 gas fee</Text>
-            <Text>{gasFee.l1Gas}</Text>
+            <Flex columnGap={"13px"}>
+              <Text>{gasFee.l1Gas}</Text>
+              <Text color={"#A0A3AD"}>$3.18</Text>
+            </Flex>
           </Flex>
           <Flex justifyContent={"space-between"}>
             <Text>L2 gas fee</Text>
-            <Text>{gasFee.l2Gas}</Text>
+            <Flex columnGap={"13px"}>
+              <Text>{gasFee.l2Gas}</Text>
+              <Text color={"#A0A3AD"}>$3.18</Text>
+            </Flex>
           </Flex>
         </Flex>
       )}
@@ -381,16 +390,18 @@ const Title = (props: {
         </Flex>
         {isOpen === false && (
           <Flex alignItems={"center"}>
-            <Image src={GasImg} alt={"gasStation"} />
-            <Text
-              fontSize={14}
-              fontWeight={400}
-              color={"#A0A3AD"}
-              ml={"6px"}
-              mr={"13px"}
-            >
-              $3.18
-            </Text>
+            {isOpen === isExpanded && <Image src={GasImg} alt={"gasStation"} />}
+            {isOpen === isExpanded && (
+              <Text
+                fontSize={14}
+                fontWeight={400}
+                color={"#A0A3AD"}
+                ml={"6px"}
+                mr={"13px"}
+              >
+                $3.18
+              </Text>
+            )}
             <motion.div animate={arrowControl}>
               <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
             </motion.div>
@@ -429,9 +440,23 @@ const Title = (props: {
           </Flex>
         )}
         {isOpen === false && (
-          <motion.div animate={arrowControl}>
-            <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-          </motion.div>
+          <Flex>
+            {isExpanded === false && <Image src={GasImg} alt={"gasStation"} />}
+            {isOpen === isExpanded && (
+              <Text
+                fontSize={14}
+                fontWeight={400}
+                color={"#A0A3AD"}
+                ml={"6px"}
+                mr={"13px"}
+              >
+                $3.18
+              </Text>
+            )}
+            <motion.div animate={arrowControl}>
+              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+            </motion.div>
+          </Flex>
         )}
       </Flex>
     );

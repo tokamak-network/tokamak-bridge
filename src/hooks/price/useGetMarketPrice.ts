@@ -11,6 +11,7 @@ export function useGetMarketPrice(params: {
     variables: {
       tokenId: tokenName,
     },
+    pollInterval: 10000,
   });
 
   const tokenMarketPrice = useMemo(() => {

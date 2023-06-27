@@ -22,6 +22,8 @@ export default function Confirmation() {
   const isConfirmed = modalOpen === "confirmed";
   const isError = modalOpen === "error";
 
+  // const {} = useGetT
+
   return (
     <Modal isOpen={modalOpen !== null} onClose={() => setModalOpen(null)}>
       <ModalOverlay />
