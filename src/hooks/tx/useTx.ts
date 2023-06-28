@@ -69,15 +69,25 @@ export function useTransaction() {
 
   const pendingTransaction = useMemo(() => {
     if (txData)
-      return Object.entries(txData).filter(([key, value]) => {
+      return Object.entries(txData).filter(([, value]) => {
         return value.transactionHash === undefined;
       });
   }, [txData]);
+
+  const confirmedTransaction = useMemo(() => {
+    if (txData)
+      return Object.entries(txData).filter(([, value]) => {
+        return value.transactionHash !== undefined ? value : undefined;
+      });
+  }, [txData]);
+
+  // console.log(txData);
 
   return {
     allTransaction: txData,
     pendingTransaction,
     pendingTransactionToApprove,
+    confirmedTransaction,
   };
 }
 
@@ -95,6 +105,7 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
+      console.log("go", hash);
       return setTxData({
         ...txData,
         [hash]: {

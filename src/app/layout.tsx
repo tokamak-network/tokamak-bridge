@@ -2,7 +2,7 @@
 
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
-import { Center } from "@chakra-ui/react";
+import { Center, ToastProvider } from "@chakra-ui/react";
 import { RecoilRoot } from "recoil";
 import Header from "@/components/header/Index";
 import HistoryDrawer from "@/components/history/Drawer";

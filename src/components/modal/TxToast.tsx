@@ -4,11 +4,12 @@ import { useRecoilState } from "recoil";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { transactionData } from "@/recoil/global/transaction";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
+import { useTransaction } from "@/hooks/tx/useTx";
+import "@/css/toast.css";
+import { TxInterface } from "@/types/tx/txType";
 
-type TransactionToastProp = {
-  //   isTop: boolean;
-};
+type TransactionToastProp = TxInterface;
 
 function TransactionToast(props: TransactionToastProp) {
   const {} = props;
@@ -20,7 +21,7 @@ function TransactionToast(props: TransactionToastProp) {
       border={"1px solid #313442"}
       bgColor={"#1F2128"}
     >
-      test
+      {props.transactionHash}
     </Flex>
   );
 }
@@ -30,24 +31,34 @@ function TxToast() {
   const { isLoading } = useGetTransaction();
   const [tx, setTransactionData] = useRecoilState(transactionData);
   const { mode } = useGetMode();
+  const [isToasted, setIsToasted] = useState<string[]>([]);
 
-  const testData = {
-    hash: "test1",
-  };
+  const { confirmedTransaction } = useTransaction();
 
-  // const dd = useMemo(() => {
-  //   toast({
-  //     position: "top-right",
-  //     variant: "solid",
-  //     isClosable: false,
-  //     id: testData.hash,
-  //     duration: 1000 * 60 * 60,
-  //     render: () => <TransactionToast />,
-  //   });
-  // }, [testData]);
+  console;
+  console.log(confirmedTransaction);
 
-  return null;
-  // return <>{dd}</>;
+  const makeToast = useMemo(() => {
+    confirmedTransaction?.map((transaction) => {
+      const txHash = transaction[0];
+      if (
+        toast.isActive(txHash) === false &&
+        isToasted.includes(txHash) === false
+      ) {
+        toast({
+          position: "top-right",
+          variant: "solid",
+          isClosable: false,
+          id: txHash,
+          duration: 5000,
+          render: () => <TransactionToast {...transaction[1]} />,
+        });
+        setIsToasted([...isToasted, txHash]);
+      }
+    });
+  }, [confirmedTransaction]);
+
+  return <>{makeToast}</>;
 }
 
 export default TxToast;

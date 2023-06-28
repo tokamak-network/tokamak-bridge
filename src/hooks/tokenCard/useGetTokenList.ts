@@ -17,9 +17,10 @@ export function useGetTokenList() {
   const { storedTokenList } = useAddTokenToStorage();
 
   const tokenListForSelectedNetwork = useMemo(() => {
-    if (chainName) {
+    const chainN = chainName ?? "MAINNET";
+    if (chainN) {
       return tokenList.filter((token) => {
-        return token.address[chainName] !== null;
+        return token.address[chainN] !== null;
       });
     }
   }, [chainName, tokenList]);

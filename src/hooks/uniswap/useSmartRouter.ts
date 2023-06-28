@@ -10,13 +10,13 @@ const l1GOERLI =
   "https://il8cekrooh.execute-api.ap-northeast-2.amazonaws.com/prod/quote?tokenInAddress=0x67f3be272b1913602b191b3a68f7c238a2d81bb9&tokenInChainId=5&tokenOutAddress=0xe86fCf5213C785AcF9a8BFfEeDEfA9a2199f7Da6&tokenOutChainId=5&amount=1000000000000000000000000&type=exactIn&slippageTolerance=20&deadline=1200&recipient=0x8c595DA827F4182bC0E3917BccA8e654DF8223E1";
 
 const l1MAINNET =
-  "https://il8cekrooh.execute-api.ap-northeast-2.amazonaws.com/prod/quote?tokenInAddress=0xc4A11aaf6ea915Ed7Ac194161d2fC9384F15bff2&tokenInChainId=1&tokenOutAddress=0x409c4D8cd5d2924b9bc5509230d16a61289c8153&tokenOutChainId=1&amount=10000000000000000000000000000000&type=exactIn";
+  "https://il8cekrooh.execute-api.ap-northeast-2.amazonaws.com/prod/quote?tokenInAddress=0xc4A11aaf6ea915Ed7Ac194161d2fC9384F15bff2&tokenInChainId=1&tokenOutAddress=0x409c4D8cd5d2924b9bc5509230d16a61289c8153&tokenOutChainId=1&amount=10000000000000000000000000000000&type=exactIn&slippageTolerance=20&deadline=1200&recipient=0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad";
 
 const getPath = async (queryParmam: string | undefined) => {
   if (queryParmam === undefined) {
     return undefined;
   }
-  const res = await fetch(L2param, {
+  const res = await fetch(l1MAINNET, {
     method: "GET",
   });
 
