@@ -11,8 +11,7 @@ import SwapRouterAbi from "@uniswap/v3-periphery/artifacts/contracts/interfaces/
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
-import { TokenInfo } from "@/types/token/supportedToken";
-import { Log } from "viem";
+import { useTONAddress } from "../token/useTonConctrac";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -81,8 +80,6 @@ export function useTransaction() {
       });
   }, [txData]);
 
-  // console.log(txData);
-
   return {
     allTransaction: txData,
     pendingTransaction,
@@ -102,10 +99,10 @@ export function useTx(params: {
   });
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
+  const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
-      console.log("go", hash);
       return setTxData({
         ...txData,
         [hash]: {
@@ -208,6 +205,10 @@ export function useTx(params: {
                   tokenAddress: tokenAddress ?? "0x",
                   amount: args.amount.toBigInt(),
                 },
+                {
+                  tokenAddress: WTON_ADDRESS ?? "0x",
+                  amount: args.amount.toBigInt(),
+                },
               ],
               network: connectedChainId,
               isToasted: false,
@@ -226,6 +227,10 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: tokenAddress ?? "0x",
+                  amount: args.amount.toBigInt(),
+                },
+                {
+                  tokenAddress: TON_ADDRESS,
                   amount: args.amount.toBigInt(),
                 },
               ],
@@ -260,7 +265,7 @@ export function useTx(params: {
     }
     if (isError && data && connectedChainId && hash) {
     }
-  }, [isSuccess, isError, txSort, data, connectedChainId, hash, tokenAddress]);
+  }, [isSuccess, isError, txSort, data, connectedChainId, tokenAddress, hash]);
 
   return {};
 }

@@ -29,7 +29,7 @@ export type T_SwapTransactionDetail = {
   gasFee: string;
 };
 
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
 
 type GasDataAtom = {
   l1GasPrice: BigInt | null;
@@ -76,3 +76,10 @@ export const txDataStatus = atom<{ [txHash: string]: TxInterface } | undefined>(
     default: undefined,
   }
 );
+
+export const txDataSelector = selector({
+  key: "txDataSelector",
+  get: async ({ get }) => {
+    const txData = get(txDataStatus);
+  },
+});

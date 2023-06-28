@@ -4,12 +4,14 @@ import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useTx } from "../tx/useTx";
+import { useRecoilState } from "recoil";
+import { txDataStatus } from "@/recoil/global/transaction";
 // import { useRecoilState } from "recoil";
 // import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
-  // const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const { inToken } = useInOutTokens();
   const { data, write: tonWton } = useContractWrite({

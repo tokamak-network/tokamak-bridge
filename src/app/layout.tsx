@@ -41,20 +41,20 @@ export default function RootLayout({
         //prevent extensions from causing a mismatch
         // suppressHydrationWarning={true}
       >
-        <QueryClientProvider client={queryClient}>
-          <ApolloProvider client={apolloClient}>
-            <ChakraProvidersForNextJs>
-              <RecoilRoot>
+        <RecoilRoot>
+          <QueryClientProvider client={queryClient}>
+            <ApolloProvider client={apolloClient}>
+              <ChakraProvidersForNextJs>
                 <WagmiProviders>
                   <Header />
                   <Center h={"100vh"}>{children}</Center>
                   <GlobalComponents />
                   <Modals />
                 </WagmiProviders>
-              </RecoilRoot>
-            </ChakraProvidersForNextJs>
-          </ApolloProvider>
-        </QueryClientProvider>
+              </ChakraProvidersForNextJs>
+            </ApolloProvider>
+          </QueryClientProvider>
+        </RecoilRoot>
       </body>
     </html>
   );
