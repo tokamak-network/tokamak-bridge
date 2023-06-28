@@ -11,6 +11,7 @@ import {
 import { GOERLI_CONTRACTS } from "@/constant/contracts";
 import { getContract } from "viem";
 import { transactionData } from "@/recoil/global/transaction";
+import { useTx } from "@/hooks/tx/useTx";
 
 export default function useCallDeposit(functionName: string) {
   const [tModalStatus, setTModalStatus] = useRecoilState(
@@ -41,22 +42,24 @@ export default function useCallDeposit(functionName: string) {
     publicClient: provider,
   });
 
-  useEffect(() => {
-    if (isLoading) {
-      return setTModalStatus("confirming");
-    }
-    if (isSuccess) {
-      return setTModalStatus("confirmed");
-    }
-    if (isError) {
-      return setTModalStatus("error");
-    }
-    return setTModalStatus(null);
-  }, [isLoading, isSuccess]);
+  const {} = useTx({ hash: data?.hash, txSort: "Deposit" });
 
-  useEffect(() => {
-    setTransactionData({ isLoading: _transactionLoading });
-  }, [_transactionLoading]);
+  // useEffect(() => {
+  //   if (isLoading) {
+  //     return setTModalStatus("confirming");
+  //   }
+  //   if (isSuccess) {
+  //     return setTModalStatus("confirmed");
+  //   }
+  //   if (isError) {
+  //     return setTModalStatus("error");
+  //   }
+  //   return setTModalStatus(null);
+  // }, [isLoading, isSuccess]);
 
-  return { data, isLoading, isSuccess, write, contract };
+  // useEffect(() => {
+  //   setTransactionData({ isLoading: _transactionLoading });
+  // }, [_transactionLoading]);
+
+  return { write, contract };
 }

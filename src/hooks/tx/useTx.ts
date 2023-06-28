@@ -154,7 +154,7 @@ export function useTx(params: {
                   amount: _amount,
                 },
                 {
-                  tokenAddress: _l2Token,
+                  tokenAddress: _l1Token,
                   amount: _amount,
                 },
               ],
@@ -181,7 +181,7 @@ export function useTx(params: {
                   amount: _amount,
                 },
                 {
-                  tokenAddress: _l1Token,
+                  tokenAddress: _l2Token,
                   amount: _amount,
                 },
               ],

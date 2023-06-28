@@ -1,5 +1,4 @@
 import { Box, Flex, Text, useToast } from "@chakra-ui/react";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useMemo, useState } from "react";
 import { useTransaction } from "@/hooks/tx/useTx";
 import "@/css/toast.css";
@@ -18,10 +17,14 @@ import Image from "next/image";
 type TransactionToastProp = TxInterface;
 
 function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
-  const { tokenData, network, isToken0, txSort } = props;
+  const { tokenData, isToken0, network, txSort } = props;
 
-  if (tokenData === undefined) {
-    return null;
+  if (
+    tokenData === undefined ||
+    (isToken0 === false &&
+      (tokenData[1] === null || tokenData[1] === undefined))
+  ) {
+    return <Box w={"136px"}></Box>;
   }
 
   const tokenIndex = isToken0 ? 0 : 1;
@@ -43,14 +46,24 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   if (symbol && decimals)
     return (
       <Flex
-        w={"90px"}
+        w={"92px"}
+        minW={"92px"}
         rowGap={"8px"}
         flexDir={"column"}
         py={"18px"}
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <TokenSymbolWithNetwork tokenSymbol={symbol} chainId={network} />
+        <TokenSymbolWithNetwork
+          tokenSymbol={symbol}
+          chainId={
+            txSort === "Deposit" && isToken0 === false
+              ? 5050
+              : txSort === "Withdraw" && isToken0 === false
+              ? 1
+              : network
+          }
+        />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
           {trimAmount(parsedAmount)} {symbol}
         </Text>
@@ -84,6 +97,9 @@ function TransactionToast(props: TransactionToastProp) {
 
   const toast = useToast();
 
+  console.log("--props");
+  console.log(props);
+
   return (
     <WagmiProviders>
       <Flex
@@ -96,11 +112,11 @@ function TransactionToast(props: TransactionToastProp) {
         pl={"20px"}
         pr={"25px"}
         // columnGap={"25px"}
-        justifyContent={"space-between"}
         pos={"relative"}
+        justifyContent={"space-between"}
       >
         <Text>{txSort}</Text>
-        <Flex>
+        <Flex w={"208px"}>
           <TxTokenInfo isToken0={true} {...props} />
           <ToastIcon {...props} />
           <TxTokenInfo isToken0={false} {...props} />
@@ -119,10 +135,11 @@ function TransactionToast(props: TransactionToastProp) {
 
 function TxToast() {
   const toast = useToast();
-  const { mode } = useGetMode();
   const [isToasted, setIsToasted] = useState<string[]>([]);
 
   const { confirmedTransaction } = useTransaction();
+
+  console.log(confirmedTransaction);
 
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {
@@ -137,7 +154,7 @@ function TxToast() {
           variant: "solid",
           isClosable: false,
           id: txHash,
-          duration: 5000,
+          duration: 50000000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);

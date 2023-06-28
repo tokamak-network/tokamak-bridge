@@ -17,6 +17,8 @@ export default function Account() {
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
+  console.log(pendingTransaction);
+
   return (
     <Center
       className="header-right-common"
