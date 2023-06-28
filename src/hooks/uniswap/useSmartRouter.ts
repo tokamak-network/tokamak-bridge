@@ -16,7 +16,7 @@ const l1MAINNET =
 
 const getPath = async (queryParmam: string | undefined | null) => {
   if (queryParmam === undefined || queryParmam === null) {
-    return undefined;
+    return null;
   }
   const res = await fetch(queryParmam, {
     method: "GET",
@@ -43,7 +43,7 @@ export function useSmartRouter() {
       const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn&slippageTolerance=20&deadline=1200&recipient=0x8c595DA827F4182bC0E3917BccA8e654DF8223E1`;
       return param;
     }
-    return "empty";
+    return undefined;
   }, [connectedChainId, inToken, inToken?.amountBN, outToken]);
 
   const [, setIsLoading] = useIsLoading();

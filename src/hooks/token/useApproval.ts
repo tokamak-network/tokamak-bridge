@@ -52,7 +52,7 @@ export function useAllowance() {
 
   useEffect(() => {
     const fetchAllowance = async () => {
-      if (inToken && inToken.tokenAddress !== null && address) {
+      if (inToken && inToken.tokenAddress !== null && address && provider) {
         if (
           inToken.isNativeCurrency?.includes(
             SupportedChainId.MAINNET || SupportedChainId.GOERLI
@@ -110,6 +110,7 @@ export function useAllowance() {
     blockNumber,
     UNISWAP_CONTRACT,
     connectedChainId,
+    provider,
   ]);
 
   // const callApprove = useCallback(() => {}, [approved]);

@@ -240,15 +240,31 @@ export function useAmountOut() {
   //   }
   // }, [trade, address]);
 
-  const callTokenSwap = useCallback(() => {
+  const callTokenSwap = useCallback(async () => {
     console.log(routingPath);
-    if (routingPath.methodParameters) {
-      multiCall({
-        args: [
-          routingPath.methodParameters.value,
-          routingPath.methodParameters.calldata,
-        ],
-      });
+    if (routingPath.methodParameters && inToken?.amountBN) {
+      const wei = ethers.utils.formatUnits(inToken.amountBN.toString(), "wei");
+      const weiAmount = ethers.BigNumber.from(wei);
+      const hexAmount = ethers.utils.hexlify(weiAmount);
+      const isETH = inToken.isNativeCurrency?.includes(
+        SupportedChainId.MAINNET || SupportedChainId.GOERLI
+      );
+      const tx = {
+        data: routingPath.methodParameters.calldata,
+        to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+        value: isETH ? hexAmount : routingPath.methodParameters.value,
+        from: address,
+        // maxFeePerGas: "250000",
+        // maxPriorityFeePerGas: "250000",
+        // gasLimit: "21000",
+        // gasPrice: gasPrice.toString(),
+      };
+      // multiCall({
+      //   args: [
+      //     routingPath.methodParameters.value,
+      //     routingPath.methodParameters.calldata,
+      //   ],
+      // });
     }
   }, [routingPath]);
 

@@ -49,17 +49,20 @@ export function useInOutTokens() {
       return null;
     }
     return outTokenRecoilValue && connectedChainId && chainName
-      ? {
-          ...outTokenRecoilValue,
-          tokenAddress: outTokenRecoilValue.address[chainName],
-          token: new Token(
-            connectedChainId,
-            outTokenRecoilValue.address[chainName] as string,
-            outTokenRecoilValue.decimals,
-            outTokenRecoilValue.tokenName as string,
-            outTokenRecoilValue.tokenSymbol as string
-          ),
-        }
+      ? outTokenRecoilValue.address[chainName] === null ||
+        outTokenRecoilValue.address[chainName] === undefined
+        ? null
+        : {
+            ...outTokenRecoilValue,
+            tokenAddress: outTokenRecoilValue.address[chainName],
+            token: new Token(
+              connectedChainId,
+              outTokenRecoilValue.address[chainName] as string,
+              outTokenRecoilValue.decimals,
+              outTokenRecoilValue.tokenName as string,
+              outTokenRecoilValue.tokenSymbol as string
+            ),
+          }
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName, mode]);
 
