@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 
@@ -16,7 +16,7 @@ const getPath = async (queryParmam: string | undefined) => {
   if (queryParmam === undefined) {
     return undefined;
   }
-  const res = await fetch(l1MAINNET, {
+  const res = await fetch(queryParmam, {
     method: "GET",
   });
 
@@ -31,19 +31,25 @@ export function useSmartRouter() {
   const { connectedChainId } = useConnectedNetwork();
   const { inToken, outToken } = useInOutTokens();
 
+  const inTokenAddress = useMemo(() => {
+    if (inToken?.tokenAddress) {
+      return inToken.tokenAddress;
+    }
+  }, [inToken?.tokenAddress]);
+
   const queryParam = useMemo(() => {
-    if (connectedChainId && inToken && outToken) {
-      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/prod/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn`;
+    if (connectedChainId && inToken && inToken.amountBN !== null && outToken) {
+      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn`;
       return param;
     }
+    return undefined;
   }, [connectedChainId, inToken, outToken]);
 
   const { isLoading, error, data } = useQuery({
     queryKey: ["routingPath"],
-    queryFn: () => getPath("go"),
-
-    // queryFn: () => getPath(queryParam),
+    queryFn: () => getPath(queryParam),
     refetchInterval: 5000,
+    refetchOnMount: false,
   });
 
   return { routingPath: data };

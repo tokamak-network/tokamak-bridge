@@ -2,7 +2,7 @@ import { ethers } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
-import UniversialRouter from "@/abis/UniversialRouter.json";
+import SwapRouterAbi from "@/abis/SwapRouter.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import {
@@ -56,30 +56,33 @@ export function useAmountOut() {
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setIsLoading] = useIsLoading();
 
+  const { data, write: multiCall } = useContractWrite({
+    address: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+    abi: SwapRouterAbi,
+    functionName: "multicall",
+  });
+  const { routingPath } = useSmartRouter();
+
   useEffect(() => {
     const getAmountOut = async () => {
-      if (
-        mode === "Swap" &&
-        inToken &&
-        inToken?.amountBN !== null &&
-        outToken?.address
-      ) {
+      if (mode === "Swap" && routingPath) {
         setIsLoading(true);
-        const quotedAmountOut =
-          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-            inToken.token.address,
-            outToken.token.address,
-            FeeAmount.MEDIUM,
-            inToken.amountBN,
-            // fromReadableAmount(
-            //   Number(inToken.parsedAmount),
-            //   inToken.decimals
-            // ).toString(),
-            0
-          );
+        // const quotedAmountOut =
+        //   await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
+        //     inToken.token.address,
+        //     outToken.token.address,
+        //     FeeAmount.MEDIUM,
+        //     inToken.amountBN,
+        //     // fromReadableAmount(
+        //     //   Number(inToken.parsedAmount),
+        //     //   inToken.decimals
+        //     // ).toString(),
+        //     0
+        //   );
 
+        const { quoteDecimals } = routingPath;
         setAmountOutErr(false);
-        setAmountOut(toReadableAmount(quotedAmountOut, outToken.decimals));
+        setAmountOut(quoteDecimals);
         return setIsLoading(false);
       }
 
@@ -92,91 +95,91 @@ export function useAmountOut() {
       console.log(e);
       // setAmountOutErr(true);
     });
-  }, [mode, inToken, outToken]);
+  }, [mode, routingPath]);
 
-  useEffect(() => {
-    const createTrade = async () => {
-      if (
-        mode === "Swap" &&
-        inToken &&
-        inToken?.amountBN !== null &&
-        outToken &&
-        amountOut
-      ) {
-        const currentPoolAddress = computePoolAddress({
-          factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-          tokenA: inToken.token,
-          tokenB: outToken.token,
-          fee: FeeAmount.MEDIUM,
-          initCodeHashManualOverride:
-            layer === "L2"
-              ? "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff"
-              : undefined,
-        });
+  // useEffect(() => {
+  //   const createTrade = async () => {
+  //     if (
+  //       mode === "Swap" &&
+  //       inToken &&
+  //       inToken?.amountBN !== null &&
+  //       outToken &&
+  //       amountOut
+  //     ) {
+  //       const currentPoolAddress = computePoolAddress({
+  //         factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
+  //         tokenA: inToken.token,
+  //         tokenB: outToken.token,
+  //         fee: FeeAmount.MEDIUM,
+  //         initCodeHashManualOverride:
+  //           layer === "L2"
+  //             ? "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff"
+  //             : undefined,
+  //       });
 
-        const poolContract = new ethers.Contract(
-          currentPoolAddress,
-          IUniswapV3PoolABI.abi,
-          provider
-        );
+  //       const poolContract = new ethers.Contract(
+  //         currentPoolAddress,
+  //         IUniswapV3PoolABI.abi,
+  //         provider
+  //       );
 
-        const [
-          //   token0, token1, fee, tickSpacing,
-          liquidity,
-          slot0,
-        ] = await Promise.all([
-          // poolContract.token0(),
-          // poolContract.token1(),
-          // poolContract.fee(),
-          // poolContract.tickSpacing(),
-          poolContract.liquidity(),
-          poolContract.slot0(),
-        ]);
+  //       const [
+  //         //   token0, token1, fee, tickSpacing,
+  //         liquidity,
+  //         slot0,
+  //       ] = await Promise.all([
+  //         // poolContract.token0(),
+  //         // poolContract.token1(),
+  //         // poolContract.fee(),
+  //         // poolContract.tickSpacing(),
+  //         poolContract.liquidity(),
+  //         poolContract.slot0(),
+  //       ]);
 
-        const pool = new Pool(
-          inToken.token,
-          outToken.token,
-          FeeAmount.MEDIUM,
-          slot0[0],
-          liquidity,
-          slot0[1]
-        );
+  //       const pool = new Pool(
+  //         inToken.token,
+  //         outToken.token,
+  //         FeeAmount.MEDIUM,
+  //         slot0[0],
+  //         liquidity,
+  //         slot0[1]
+  //       );
 
-        const swapRoute = new Route([pool], inToken.token, outToken.token);
+  //       const swapRoute = new Route([pool], inToken.token, outToken.token);
 
-        const uncheckedTrade = Trade.createUncheckedTrade({
-          route: swapRoute,
-          inputAmount: CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(
-              Number(inToken.parsedAmount?.replaceAll(",", "")),
-              inToken.decimals
-            ).toString()
-          ),
-          outputAmount: CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(Number(amountOut), outToken.decimals).toString()
-          ),
-          tradeType: TradeType.EXACT_INPUT,
-        });
+  //       const uncheckedTrade = Trade.createUncheckedTrade({
+  //         route: swapRoute,
+  //         inputAmount: CurrencyAmount.fromRawAmount(
+  //           inToken.token,
+  //           fromReadableAmount(
+  //             Number(inToken.parsedAmount?.replaceAll(",", "")),
+  //             inToken.decimals
+  //           ).toString()
+  //         ),
+  //         outputAmount: CurrencyAmount.fromRawAmount(
+  //           outToken.token,
+  //           fromReadableAmount(Number(amountOut), outToken.decimals).toString()
+  //         ),
+  //         tradeType: TradeType.EXACT_INPUT,
+  //       });
 
-        // const uncheckedTrade = await Trade.exactIn(swapRoute,CurrencyAmount.fromRawAmount(
-        //   inToken.token,
-        //   fromReadableAmount(
-        //     Number(inToken.parsedAmount),
-        //     inToken.decimals
-        //   ).toString()
-        // ))
+  //       // const uncheckedTrade = await Trade.exactIn(swapRoute,CurrencyAmount.fromRawAmount(
+  //       //   inToken.token,
+  //       //   fromReadableAmount(
+  //       //     Number(inToken.parsedAmount),
+  //       //     inToken.decimals
+  //       //   ).toString()
+  //       // ))
 
-        return setTrade(uncheckedTrade);
-      }
-      return setTrade(null);
-    };
-    createTrade().catch((e) => {
-      console.log("**createTrade err**");
-      console.log(e);
-    });
-  }, [inToken, outToken, amountOut, layer, mode]);
+  //       return setTrade(uncheckedTrade);
+  //     }
+  //     return setTrade(null);
+  //   };
+  //   createTrade().catch((e) => {
+  //     console.log("**createTrade err**");
+  //     console.log(e);
+  //   });
+  // }, [inToken, outToken, amountOut, layer, mode]);
 
   // const callTokenSwap = useCallback(async () => {
   //   if (trade && inToken && address && inToken.amountBN) {
@@ -239,20 +242,9 @@ export function useAmountOut() {
   //   }
   // }, [trade, address]);
 
-  const { data, write: excute } = useContractWrite({
-    address: UNISWAP_CONTRACT.UNIVERSIAL_ROUTER,
-    abi: UniversialRouter,
-    functionName: "execute",
-  });
-  const { routingPath } = useSmartRouter();
-
   const callTokenSwap = useCallback(() => {
-    console.log("go");
-    console.log(routingPath);
     if (routingPath.methodParameters) {
-      console.log(routingPath.methodParameters);
-
-      excute({
+      multiCall({
         args: [
           routingPath.methodParameters.value,
           routingPath.methodParameters.calldata,

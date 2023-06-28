@@ -1,7 +1,7 @@
 import { TxSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { useWaitForTransaction } from "wagmi";
+import { usePublicClient, useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
@@ -12,6 +12,8 @@ import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
+import { getTransaction } from "viem/dist/types/actions/public/getTransaction";
+import { fetchTransaction } from "@wagmi/core";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -55,7 +57,8 @@ const getInterface = () => {
 // };
 
 export function useTransaction() {
-  const [txData] = useRecoilState(txDataStatus);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
+  const { connectedChainId } = useConnectedNetwork();
 
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
@@ -80,6 +83,10 @@ export function useTransaction() {
       });
   }, [txData]);
 
+  useEffect(() => {
+    setTxData(undefined);
+  }, [connectedChainId]);
+
   return {
     allTransaction: txData,
     pendingTransaction,
@@ -94,6 +101,7 @@ export function useTx(params: {
   tokenAddress?: `0x${string}`;
 }) {
   const { hash, txSort, tokenAddress } = params;
+
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
   });
@@ -115,7 +123,7 @@ export function useTx(params: {
         },
       });
     }
-  }, [isLoading, hash]);
+  }, [isLoading, hash, connectedChainId]);
 
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
@@ -264,8 +272,9 @@ export function useTx(params: {
       }
     }
     if (isError && data && connectedChainId && hash) {
+      console.log(isError, hash);
     }
-  }, [isSuccess, isError, txSort, data, connectedChainId, tokenAddress, hash]);
+  }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
 
   return {};
 }

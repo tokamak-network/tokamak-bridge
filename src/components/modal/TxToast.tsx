@@ -1,5 +1,5 @@
 import { Box, Flex, Text, useToast } from "@chakra-ui/react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTransaction } from "@/hooks/tx/useTx";
 import "@/css/toast.css";
 import { TxInterface } from "@/types/tx/txType";
@@ -13,6 +13,8 @@ import PLUS_ICON from "assets/icons/toast/toastPlus.svg";
 import CLOSE_ICON from "assets/icons/toast/close.svg";
 
 import Image from "next/image";
+import { useRecoilState } from "recoil";
+import { txDataStatus } from "@/recoil/global/transaction";
 
 type TransactionToastProp = TxInterface;
 
@@ -97,9 +99,6 @@ function TransactionToast(props: TransactionToastProp) {
 
   const toast = useToast();
 
-  console.log("--props");
-  console.log(props);
-
   return (
     <WagmiProviders>
       <Flex
@@ -136,10 +135,9 @@ function TransactionToast(props: TransactionToastProp) {
 function TxToast() {
   const toast = useToast();
   const [isToasted, setIsToasted] = useState<string[]>([]);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const { confirmedTransaction } = useTransaction();
-
-  console.log(confirmedTransaction);
 
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {
@@ -161,6 +159,14 @@ function TxToast() {
       }
     });
   }, [confirmedTransaction]);
+
+  useEffect(() => {
+    if (txData) {
+      const d = isToasted.filter((hashKey) => {
+        return txData[hashKey].transactionHash !== undefined;
+      });
+    }
+  }, [isToasted]);
 
   return <>{makeToast}</>;
 }
