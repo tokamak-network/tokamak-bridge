@@ -53,7 +53,6 @@ export function useAmountOut() {
   );
   const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
 
-  const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setIsLoading] = useIsLoading();
 
   const { data, write: multiCall } = useContractWrite({
@@ -62,11 +61,11 @@ export function useAmountOut() {
     functionName: "multicall",
   });
   const { routingPath } = useSmartRouter();
+  // console.log(routingPath);
 
   useEffect(() => {
     const getAmountOut = async () => {
       if (mode === "Swap" && routingPath) {
-        setIsLoading(true);
         // const quotedAmountOut =
         //   await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
         //     inToken.token.address,
@@ -82,8 +81,7 @@ export function useAmountOut() {
 
         const { quoteDecimals } = routingPath;
         setAmountOutErr(false);
-        setAmountOut(quoteDecimals);
-        return setIsLoading(false);
+        return setAmountOut(quoteDecimals);
       }
 
       setAmountOutErr(false);
