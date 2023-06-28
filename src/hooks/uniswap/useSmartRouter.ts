@@ -40,7 +40,7 @@ export function useSmartRouter() {
 
   const queryParam = useMemo(() => {
     if (connectedChainId && inToken && inToken.amountBN !== null && outToken) {
-      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn`;
+      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn&slippageTolerance=20&deadline=1200&recipient=0x8c595DA827F4182bC0E3917BccA8e654DF8223E1`;
       return param;
     }
     return "empty";
@@ -48,10 +48,12 @@ export function useSmartRouter() {
 
   const [, setIsLoading] = useIsLoading();
 
-  const { isLoading, error, data, isError, isLoadingError } = useQuery(
-    ["getPath", queryParam],
-    () => getPath(queryParam)
-  );
+  const { isLoading, error, data, isError, isLoadingError } = useQuery({
+    queryKey: [queryParam],
+    queryFn: () => getPath(queryParam),
+    refetchInterval: 5000,
+    // refetchOnMount: false,
+  });
 
   useEffect(() => {
     setIsLoading(isLoading);

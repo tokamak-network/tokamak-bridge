@@ -241,6 +241,7 @@ export function useAmountOut() {
   // }, [trade, address]);
 
   const callTokenSwap = useCallback(() => {
+    console.log(routingPath);
     if (routingPath.methodParameters) {
       multiCall({
         args: [
