@@ -45,8 +45,8 @@ export default function usePriceImpact() {
       return setMarkPrice(undefined);
     };
     fetchMarkPrice().catch((e) => {
-      console.log("**fetchMarkPrice err**");
-      console.log(e);
+      // console.log("**fetchMarkPrice err**");
+      // console.log(e);
       return setMarkPrice(undefined);
     });
   }, [inToken, outToken, QUOTER_CONTRACT, mode]);

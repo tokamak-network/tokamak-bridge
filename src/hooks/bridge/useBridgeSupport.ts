@@ -3,12 +3,12 @@ import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetMode } from "../mode/useGetMode";
 import { useAmountOut } from "../swap/useSwapTokens";
+import { useSmartRouter } from "../uniswap/useSmartRouter";
 
 export default function useBridgeSupport() {
   const { inToken } = useInOutTokens();
-  const { chainName } = useConnectedNetwork();
   const { mode } = useGetMode();
-  const { amountOutErr } = useAmountOut();
+  const { routeNotFounded } = useSmartRouter();
 
   const isOnBridge = mode === "Deposit" || mode === "Withdraw";
   const isSupported =
@@ -16,6 +16,6 @@ export default function useBridgeSupport() {
 
   return {
     isNotSupportForBridge: isOnBridge ? !isSupported : false,
-    isNotSupportForSwap: amountOutErr,
+    isNotSupportForSwap: routeNotFounded,
   };
 }
