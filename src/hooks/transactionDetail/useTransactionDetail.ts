@@ -78,8 +78,6 @@ export function useTransactionDetail() {
   }`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
-    console.log(mode === "Deposit", inToken, totalGasCost);
-
     if (mode === "Deposit" && inToken && totalGasCost) {
       return [
         {
@@ -186,7 +184,7 @@ export function useTransactionDetail() {
         {
           title: "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
-          gasFee: "$3.18",
+          gasFee: `$${gasCostUS}`,
         },
       ];
     }
@@ -199,6 +197,7 @@ export function useTransactionDetail() {
     amountOut,
     priceImpact,
     uniswapTxSettingValueForUI,
+    totalGasFee,
   ]);
 
   return {

@@ -5,6 +5,7 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
@@ -27,9 +28,17 @@ export function useGasFee() {
 
   //   const { provider } = useProvier();
   const provider = usePublicClient();
-  const { estimatedGas } = useAmountOut();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
+  const { routingPath } = useSmartRouter();
+  const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
+
+  const swapGasUseEstimate = useMemo(() => {
+    if (routingPath && tokenMarketPrice) {
+      const { gasUseEstimate } = routingPath;
+      return gasUseEstimate;
+    }
+  }, [routingPath]);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
@@ -41,7 +50,7 @@ export function useGasFee() {
 
         switch (mode) {
           case "Swap":
-            return estimatedGas;
+            return swapGasUseEstimate;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
@@ -108,7 +117,7 @@ export function useGasFee() {
             maxPriorityFeePerGas
           );
           if (gasPrice) {
-            const totalGasCost = gasPrice * estimatedGasUsage;
+            const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
             const parsedTotalGasCost = ethers.utils.formatUnits(
               totalGasCost.toString(),
               "ether"
@@ -133,11 +142,9 @@ export function useGasFee() {
     _depositERC20_contract,
     _withdraw_contract,
     provider,
-    estimatedGas,
     feeData,
+    swapGasUseEstimate,
   ]);
-
-  const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
 
   const gasCostUS = useMemo(() => {
     if (totalGasCost && tokenMarketPrice) {

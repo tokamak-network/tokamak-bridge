@@ -460,7 +460,7 @@ const Title = (props: {
                 ml={"6px"}
                 mr={"13px"}
               >
-                $3.18
+                ${gasCostUS}
               </Text>
             )}
             <motion.div animate={arrowControl}>
