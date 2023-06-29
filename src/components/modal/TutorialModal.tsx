@@ -121,6 +121,8 @@ export default function TutorialModal() {
           >
             {currentStep !== 0 ? (
               <Text
+              color={'#FFF'}
+              opacity={0.5}
                 cursor={"pointer"}
                 onClick={() => setCurrentStep(currentStep - 1)}
               >
