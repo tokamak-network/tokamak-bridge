@@ -20,7 +20,7 @@ export const SelectedNetwork = () => {
       className="card card-empty"
       display={"flex"}
       flexDir={"column"}
-      rowGap={"28px"}
+      rowGap={"16px"}
       justifyContent={"center"}
       alignItems={"center"}
       mt={"15px"}

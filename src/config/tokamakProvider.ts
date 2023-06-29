@@ -1,6 +1,6 @@
 import { Chain } from "wagmi";
 
-export const Titan = {
+export const titan = {
   id: 55004,
   name: "Titan",
   network: "Titan",
@@ -25,7 +25,7 @@ export const Titan = {
   },
 } as const satisfies Chain;
 
-export const tokamak_goerli = {
+export const titan_goerli = {
   id: 5050,
   name: "Titan Goerli",
   network: "Titan Goerli",
