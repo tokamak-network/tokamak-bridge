@@ -464,7 +464,7 @@ const Title = (props: {
   return null;
 };
 
-export default function TransactionDetail(props: { isOnConfirm: boolean }) {
+export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
   const { isOnConfirm } = props;
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
