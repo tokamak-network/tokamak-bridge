@@ -174,7 +174,7 @@ export default function ActionConfirmModal() {
           </Flex>
           <TokenContainer />
           <Box mt={"16px"}>
-            <TransactionDetail />
+            <TransactionDetail isOnConfirm={true} />
           </Box>
           <Button
             w={"100%"}

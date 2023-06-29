@@ -248,8 +248,8 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   );
 };
 
-const Content = (props: { isExpanded: boolean }) => {
-  const { isExpanded } = props;
+const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
+  const { isExpanded, isOnConfirm } = props;
   const { mode } = useRecoilValue(actionMode);
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
@@ -312,7 +312,7 @@ const Content = (props: { isExpanded: boolean }) => {
           <Flex flexDir={"column"} rowGap={"10px"}>
             {detailRow}
           </Flex>
-          {mode === "Withdraw" && isOpen && (
+          {mode === "Withdraw" && isOnConfirm && isOpen && (
             <Flex flexDir={"column"}>
               <DivisionLine />
               <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
@@ -464,7 +464,8 @@ const Title = (props: {
   return null;
 };
 
-export default function TransactionDetail() {
+export default function TransactionDetail(props: { isOnConfirm: boolean }) {
+  const { isOnConfirm } = props;
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
@@ -494,7 +495,7 @@ export default function TransactionDetail() {
       pb={isOpen ? 0 : isExpanded ? "20px" : ""}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      <Content isExpanded={isExpanded}></Content>
+      <Content isExpanded={isExpanded} isOnConfirm={isOnConfirm}></Content>
     </Flex>
   );
 }
