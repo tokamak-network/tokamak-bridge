@@ -12,16 +12,25 @@ import JSBI from "jsbi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useIsLoading from "../ui/useIsLoading";
+import { useSmartRouter } from "../uniswap/useSmartRouter";
 
 export default function usePriceImpact() {
   const [markPrice, setMarkPrice] = useState<number | undefined>(undefined);
-  const [outPrice, setOutPrice] = useState<string | undefined>(undefined);
 
   const { inToken, outToken } = useInOutTokens();
   const { QUOTER_CONTRACT } = useUniswapContracts();
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
   const [, setIsLoading] = useIsLoading();
+
+  const { routingPath } = useSmartRouter();
+
+  const outPrice = useMemo(() => {
+    if (routingPath) {
+      const { amountDecimals, quoteDecimals } = routingPath;
+      return Number(quoteDecimals) / Number(amountDecimals);
+    }
+  }, [routingPath]);
 
   // useEffect(() => {
   //   const fetchMarkPrice = async () => {

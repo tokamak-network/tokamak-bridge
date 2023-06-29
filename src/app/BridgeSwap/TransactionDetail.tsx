@@ -23,6 +23,7 @@ import useIsLoading from "@/hooks/ui/useIsLoading";
 import GradientSpinner from "@/components/ui/gradientSpinner";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -34,7 +35,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
-        <Flex columnGap={"29px"}>
+        <Flex columnGap={"35px"}>
           <Text fontWeight={500}>
             {tooltip ? (
               <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
@@ -42,7 +43,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>$3.18</Text>}
+          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
       {gasFee && (
@@ -57,18 +58,26 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           px={"16px"}
           borderRadius={"8px"}
         >
-          <Flex justifyContent={"space-between"}>
+          <Flex justifyContent={"space-between"} textAlign={"end"}>
             <Text>L1 gas fee</Text>
             <Flex columnGap={"13px"}>
-              <Text>{gasFee.l1Gas}</Text>
-              <Text color={"#A0A3AD"}>$3.18</Text>
+              <Text w={"90px"} textAlign={"end"}>
+                {gasFee.l1Gas}
+              </Text>
+              <Text color={"#A0A3AD"} w={"40px"} textAlign={"end"}>
+                ${gasFee.l1GasUS}
+              </Text>
             </Flex>
           </Flex>
           <Flex justifyContent={"space-between"}>
             <Text>L2 gas fee</Text>
             <Flex columnGap={"13px"}>
-              <Text>{gasFee.l2Gas}</Text>
-              <Text color={"#A0A3AD"}>$3.18</Text>
+              <Text w={"90px "} textAlign={"end"}>
+                {gasFee.l2Gas}
+              </Text>
+              <Text color={"#A0A3AD"} w={"40px"} textAlign={"end"}>
+                ${gasFee.l2GasUS}
+              </Text>
             </Flex>
           </Flex>
         </Flex>
@@ -362,6 +371,7 @@ const Title = (props: {
   const { outPrice } = usePriceImpact();
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
+  const { gasCostUS } = useGasFee();
 
   useEffect(() => {
     if (isExpanded) {
@@ -399,7 +409,7 @@ const Title = (props: {
                 ml={"6px"}
                 mr={"13px"}
               >
-                $3.18
+                ${gasCostUS}
               </Text>
             )}
             <motion.div animate={arrowControl}>

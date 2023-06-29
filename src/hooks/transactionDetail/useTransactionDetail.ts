@@ -19,6 +19,8 @@ export type DepositDetailProp = {
   gasFee?: {
     l1Gas: string;
     l2Gas: string;
+    l1GasUS: string;
+    l2GasUS: string;
   };
 };
 
@@ -31,6 +33,8 @@ export type WithdrawDetailNewProp = {
   gasFee?: {
     l1Gas: string;
     l2Gas: string;
+    l1GasUS: string;
+    l2GasUS: string;
   };
 };
 
@@ -62,7 +66,7 @@ export type SwapDetailProp = {
 export function useTransactionDetail() {
   const { mode } = useRecoilValue(actionMode);
   const { inToken, outToken } = useInOutTokens();
-  const { totalGasCost } = useGasFee();
+  const { totalGasCost, gasCostUS } = useGasFee();
 
   const totalGasFee = `${
     isBiggerThanMinimumNum(Number(totalGasCost))
@@ -74,6 +78,8 @@ export function useTransactionDetail() {
   }`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
+    console.log(mode === "Deposit", inToken, totalGasCost);
+
     if (mode === "Deposit" && inToken && totalGasCost) {
       return [
         {
@@ -86,6 +92,8 @@ export function useTransactionDetail() {
           gasFee: {
             l1Gas: totalGasFee,
             l2Gas: "0 ETH",
+            l1GasUS: gasCostUS,
+            l2GasUS: "0",
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
@@ -97,7 +105,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount]);
+  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost]);
 
   const withdrawNewPropsData: WithdrawDetailNewProp[] | null = useMemo(() => {
     //need to put totalGasCost condition later
@@ -113,6 +121,8 @@ export function useTransactionDetail() {
           gasFee: {
             l1Gas: "- ETH",
             l2Gas: `${totalGasFee} ETH`,
+            l1GasUS: "",
+            l2GasUS: "",
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
@@ -124,7 +134,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount]);
+  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost]);
 
   const withdrawPropsData: WithdrawDetailProp[] | null = useMemo(() => {
     if (mode === "Withdraw" && inToken && totalGasFee) {

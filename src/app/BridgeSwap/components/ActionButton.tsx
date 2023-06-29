@@ -4,17 +4,17 @@ import { Button } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import { useAccount } from "wagmi";
 import { useApprove } from "@/hooks/token/useApproval";
-import useGetTransaction from "@/hooks/user/useGetTransaction";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
+import useIsLoading from "@/hooks/ui/useIsLoading";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
   const { mode, isReady } = useRecoilValue(actionMode);
   const { isApproved } = useApprove();
-  const { isLoading } = useGetTransaction();
   const { isNotSupportForSwap } = useBridgeSupport();
+  const [isLoading] = useIsLoading();
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
 

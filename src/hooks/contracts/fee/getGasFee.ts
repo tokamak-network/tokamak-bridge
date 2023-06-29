@@ -1,12 +1,14 @@
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
+import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
 import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
@@ -105,12 +107,13 @@ export function useGasFee() {
             "maxPriorityFeePerGas : ",
             maxPriorityFeePerGas
           );
-          if (maxFeePerGas) {
-            const totalGasCost = maxFeePerGas * estimatedGasUsage;
+          if (gasPrice) {
+            const totalGasCost = gasPrice * estimatedGasUsage;
             const parsedTotalGasCost = ethers.utils.formatUnits(
               totalGasCost.toString(),
               "ether"
             );
+
             return setTotalGasCost(parsedTotalGasCost);
           }
         }
@@ -134,5 +137,14 @@ export function useGasFee() {
     feeData,
   ]);
 
-  return { totalGasCost };
+  const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
+
+  const gasCostUS = useMemo(() => {
+    if (totalGasCost && tokenMarketPrice) {
+      return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
+    }
+    return "-";
+  }, [totalGasCost, tokenMarketPrice]);
+
+  return { totalGasCost, gasCostUS };
 }
