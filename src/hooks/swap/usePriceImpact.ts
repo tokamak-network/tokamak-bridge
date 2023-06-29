@@ -23,64 +23,64 @@ export default function usePriceImpact() {
   const { mode } = useGetMode();
   const [, setIsLoading] = useIsLoading();
 
-  useEffect(() => {
-    const fetchMarkPrice = async () => {
-      if (mode === "Swap" && inToken && outToken !== null) {
-        const quotedAmountOut =
-          await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-            inToken.token.address,
-            outToken.token.address,
-            FeeAmount.MEDIUM,
-            ethers.utils.parseUnits("1", inToken.decimals),
-            0
-          );
+  // useEffect(() => {
+  //   const fetchMarkPrice = async () => {
+  //     if (mode === "Swap" && inToken && outToken !== null) {
+  //       const quotedAmountOut =
+  //         await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
+  //           inToken.token.address,
+  //           outToken.token.address,
+  //           FeeAmount.MEDIUM,
+  //           ethers.utils.parseUnits("1", inToken.decimals),
+  //           0
+  //         );
 
-        const readableAmount = ethers.utils.formatUnits(
-          quotedAmountOut,
-          outToken.decimals
-        );
+  //       const readableAmount = ethers.utils.formatUnits(
+  //         quotedAmountOut,
+  //         outToken.decimals
+  //       );
 
-        return setMarkPrice(Number(readableAmount.toString().slice(0, 10)));
-      }
-      return setMarkPrice(undefined);
-    };
-    fetchMarkPrice().catch((e) => {
-      // console.log("**fetchMarkPrice err**");
-      // console.log(e);
-      return setMarkPrice(undefined);
-    });
-  }, [inToken, outToken, QUOTER_CONTRACT, mode]);
+  //       return setMarkPrice(Number(readableAmount.toString().slice(0, 10)));
+  //     }
+  //     return setMarkPrice(undefined);
+  //   };
+  //   fetchMarkPrice().catch((e) => {
+  //     // console.log("**fetchMarkPrice err**");
+  //     // console.log(e);
+  //     return setMarkPrice(undefined);
+  //   });
+  // }, [inToken, outToken, QUOTER_CONTRACT, mode]);
 
-  const priceImpact = useMemo(() => {
-    if (markPrice && amountOut && inToken && inToken.parsedAmount !== null) {
-      try {
-        setIsLoading(true);
-        // const amountInBI = JSBI.BigInt(
-        //   ethers.utils.parseUnits(inToken.parsedAmount.replaceAll(",", ""), 18)
-        // );
+  // const priceImpact = useMemo(() => {
+  //   if (markPrice && amountOut && inToken && inToken.parsedAmount !== null) {
+  //     try {
+  //       setIsLoading(true);
+  //       // const amountInBI = JSBI.BigInt(
+  //       //   ethers.utils.parseUnits(inToken.parsedAmount.replaceAll(",", ""), 18)
+  //       // );
 
-        // const amountOutBI = JSBI.BigInt(
-        //   ethers.utils.parseUnits(amountOut.toString(), 18)
-        // );
-        const nowPrice =
-          Number(amountOut.toString()) /
-          Number(inToken.parsedAmount.toString());
-        // // const remainder = JSBI.remainder(amountOutBI, amountInBI);
+  //       // const amountOutBI = JSBI.BigInt(
+  //       //   ethers.utils.parseUnits(amountOut.toString(), 18)
+  //       // );
+  //       const nowPrice =
+  //         Number(amountOut.toString()) /
+  //         Number(inToken.parsedAmount.toString());
+  //       // // const remainder = JSBI.remainder(amountOutBI, amountInBI);
 
-        setOutPrice(commafy(nowPrice, 4));
+  //       setOutPrice(commafy(nowPrice, 4));
 
-        const priceImpact =
-          (Number(nowPrice.toString().slice(0, 10)) / markPrice) * 100 - 100;
-        return commafy(priceImpact, 2);
-      } catch (e) {
-        console.log("**priceImpact err**");
-        console.log(e);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    return undefined;
-  }, [markPrice, amountOut, inToken]);
+  //       const priceImpact =
+  //         (Number(nowPrice.toString().slice(0, 10)) / markPrice) * 100 - 100;
+  //       return commafy(priceImpact, 2);
+  //     } catch (e) {
+  //       console.log("**priceImpact err**");
+  //       console.log(e);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
+  //   return undefined;
+  // }, [markPrice, amountOut, inToken]);
 
-  return { priceImpact, outPrice };
+  return { priceImpact: undefined, outPrice };
 }
