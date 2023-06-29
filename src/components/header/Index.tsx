@@ -28,7 +28,7 @@ import kakao from "assets/icons/header/kakao.svg";
 import twitter from "assets/icons/header/Twitter.svg";
 import medium from "assets/icons/header/medium.svg";
 import userguide from "assets/icons/header/userGuide.svg";
-
+import arrow from 'assets/icons/header/smallArrow.svg'
 const menuList = [
   {
     title: "BRIDGE & SWAP",
@@ -132,8 +132,21 @@ export default function Header() {
               onClick={() => {
                 setMenuState(!menuState);
               }}
+              display={'flex'}
+              flexDir={'row'}
             >
+              <Flex>
               <Text>MORE</Text>
+              <Flex
+              marginLeft={'4px'}
+                height={"24px"}
+                // width={"24px"}
+                transform={menuState === true ? "" : "rotate(180deg)"}
+              >
+                <Image src={arrow} alt="icon_arrow" />
+              </Flex>
+              </Flex>
+             
             </MenuButton>
             <MenuList
               bg="#0F0F12"
