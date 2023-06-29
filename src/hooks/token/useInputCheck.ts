@@ -6,9 +6,16 @@ export default function useInputBalanceCheck() {
   const { inToken } = useInOutTokens();
   const tokenData = useTokenBalance(inToken);
   const isBalanceOver = useMemo(() => {
-    if (tokenData?.data.parsedBalanceWithoutCommafied) {
-      return Number(tokenData?.data.parsedBalanceWithoutCommafied);
+    if (
+      inToken?.parsedAmount &&
+      tokenData?.data.parsedBalanceWithoutCommafied
+    ) {
+      return (
+        Number(inToken?.parsedAmount) >
+        Number(tokenData?.data.parsedBalanceWithoutCommafied)
+      );
     }
+    return false;
   }, [inToken?.amountBN, tokenData?.data.balanceBN]);
 
   return { isBalanceOver };
