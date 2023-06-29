@@ -53,7 +53,17 @@ export function useSmartRouter() {
       txSettingValue.slippage !== "" &&
       txSettingValue.deadline !== undefined
     ) {
-      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn&slippageTolerance=${txSettingValue.slippage}&deadline=${txSettingValue.deadline}&recipient=${address}`;
+      const param = `${
+        process.env.NEXT_PUBLIC_ROUTING_API
+      }/quote?tokenInAddress=${
+        inToken.tokenAddress
+      }&tokenInChainId=${connectedChainId}&tokenOutAddress=${
+        outToken.tokenAddress
+      }&tokenOutChainId=${connectedChainId}&amount=${
+        inToken.amountBN
+      }&type=exactIn&slippageTolerance=${txSettingValue.slippage}&deadline=${
+        txSettingValue.deadline * 60
+      }&recipient=${address}`;
       return param;
     }
     return undefined;
