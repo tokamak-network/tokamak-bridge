@@ -4,6 +4,9 @@ import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useIsLoading from "../ui/useIsLoading";
 import { truncate } from "fs/promises";
+import { useAccount } from "wagmi";
+import { useRecoilValue } from "recoil";
+import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 
 const L2param =
   "https://il8cekrooh.execute-api.ap-northeast-2.amazonaws.com/prod/quote?tokenInAddress=0x6AF3cb766D6cd37449bfD321D961A61B0515c1BC&tokenInChainId=5050&tokenOutAddress=0xFa956eB0c4b3E692aD5a6B2f08170aDE55999ACa&tokenOutChainId=5050&amount=10000000000000000000&type=exactIn&slippageTolerance=20&deadline=1200&recipient=0x8c595DA827F4182bC0E3917BccA8e654DF8223E1";
@@ -37,14 +40,31 @@ export function useSmartRouter() {
   const { connectedChainId } = useConnectedNetwork();
   const { inToken, outToken } = useInOutTokens();
   const [routeNotFounded, setRouteNotFounded] = useState<boolean>(false);
+  const { address } = useAccount();
+  const txSettingValue = useRecoilValue(uniswapTxSetting);
 
   const queryParam = useMemo(() => {
-    if (connectedChainId && inToken && inToken.amountBN !== null && outToken) {
-      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn&slippageTolerance=20&deadline=1200&recipient=0x8c595DA827F4182bC0E3917BccA8e654DF8223E1`;
+    if (
+      connectedChainId &&
+      inToken &&
+      inToken.amountBN !== null &&
+      outToken &&
+      address &&
+      txSettingValue.slippage !== "" &&
+      txSettingValue.deadline !== undefined
+    ) {
+      const param = `${process.env.NEXT_PUBLIC_ROUTING_API}/quote?tokenInAddress=${inToken.tokenAddress}&tokenInChainId=${connectedChainId}&tokenOutAddress=${outToken.tokenAddress}&tokenOutChainId=${connectedChainId}&amount=${inToken.amountBN}&type=exactIn&slippageTolerance=${txSettingValue.slippage}&deadline=${txSettingValue.deadline}&recipient=${address}`;
       return param;
     }
     return undefined;
-  }, [connectedChainId, inToken, inToken?.amountBN, outToken]);
+  }, [
+    connectedChainId,
+    inToken,
+    inToken?.amountBN,
+    outToken,
+    address,
+    txSettingValue,
+  ]);
 
   const [, setIsLoading] = useIsLoading();
 

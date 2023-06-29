@@ -24,7 +24,7 @@ export default function Warning() {
     return (
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-        <Text>Insufficient ({inToken?.tokenSymbol}) liquidity</Text>
+        <Text>Swap route not founded on this networky</Text>
       </Flex>
     );
   }
