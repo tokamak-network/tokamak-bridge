@@ -3,9 +3,14 @@ import { useContractWrite, usePublicClient } from "wagmi";
 import { GOERLI_CONTRACTS } from "@/constant/contracts";
 import { getContract } from "viem";
 import { useTx } from "@/hooks/tx/useTx";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export default function useCallDeposit(functionName: string) {
-  const { data, write, isLoading } = useContractWrite({
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+
+  const { data, write, isError } = useContractWrite({
     address: GOERLI_CONTRACTS.L1Bridge,
     abi: L1BridgeAbi,
     functionName,
@@ -20,5 +25,5 @@ export default function useCallDeposit(functionName: string) {
 
   const {} = useTx({ hash: data?.hash, txSort: "Deposit" });
 
-  return { write, contract, hash: data?.hash };
+  return { write, contract, hash: data?.hash, isError };
 }
