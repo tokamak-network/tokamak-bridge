@@ -81,7 +81,7 @@ const CustomMenuItem = (props: { link: string; title: string; icon: any }) => {
       <Flex mr="9px">
         <Image src={icon} alt="icon" />
       </Flex>
-      <Text fontSize={title === "User Guide" ? "14px" : "12px"}>{title}</Text>
+      <Text fontSize={title === "User Guide" || title === 'Get Help' ? "14px" : "12px"}>{title}</Text>
     </MenuItem>
   );
 };
@@ -90,13 +90,13 @@ export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const menuLinks = [
-    { title: "Medium", link: "", icon: medium },
-    { title: "Twitter", link: "", icon: twitter },
-    { title: "Kakaotalk", link: "", icon: kakao },
-    { title: "Discord", link: "", icon: discord },
-    { title: "Telegram", link: "", icon: telegram },
-    { title: "LinkedIn", link: "", icon: linkedIn },
-    { title: "Github", link: "", icon: github },
+    { title: "Medium", link: "https://medium.com/onther-tech", icon: medium },
+    { title: "Twitter", link: "https://twitter.com/tokamak_network", icon: twitter },
+    { title: "Kakaotalk", link: "https://open.kakao.com/o/g2zlglHd", icon: kakao },
+    { title: "Discord", link: "https://discord.com/invite/J4chV2zuAK", icon: discord },
+    { title: "Telegram", link: "https://t.me/tokamak_network", icon: telegram },
+    { title: "LinkedIn", link: "https://www.linkedin.com/company/tokamaknetwork/", icon: linkedIn },
+    { title: "Github", link: "https://github.com/tokamak-network", icon: github },
   ];
   return (
     <Flex
@@ -141,7 +141,7 @@ export default function Header() {
               marginLeft={'4px'}
                 height={"24px"}
                 // width={"24px"}
-                transform={menuState === true ? "" : "rotate(180deg)"}
+                transform={menuState === true ? "rotate(180deg)" : ""}
               >
                 <Image src={arrow} alt="icon_arrow" />
               </Flex>
@@ -161,6 +161,7 @@ export default function Header() {
               }}
             >
               <CustomMenuItem link="" title="User Guide" icon={userguide} />
+              <CustomMenuItem link="" title="Get Help" icon={userguide} />
               <Flex w="100%" alignItems={'center'} mb={'16px'}>
                 <Flex w='24px' h='1px' bg={'#757893'} mr='10px'></Flex>
                 <Text color={"#757893"} fontSize={"12px"}>

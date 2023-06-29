@@ -46,7 +46,7 @@ export default function Account() {
       ) : (
         <>
           <Image src={WALLET_ICON} alt={""} />
-          <Text>{buttonText}</Text>
+          <Text fontWeight={'bold'}>{buttonText}</Text>
         </>
       )}
     </Center>

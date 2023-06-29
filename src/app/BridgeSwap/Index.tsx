@@ -16,7 +16,7 @@ export default function BridgeSwap() {
         <Swap />
         <Details />
       </Flex>
-      <Modals />
+      {/* <Modals /> */}
     </Flex>
   );
 }
