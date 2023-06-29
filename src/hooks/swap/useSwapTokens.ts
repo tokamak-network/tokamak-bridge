@@ -24,14 +24,12 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import useConnectedNetwork from "../network";
 import { useGetMode } from "../mode/useGetMode";
-import useContract from "@/hooks/contracts/useContract";
-import { useRecoilState } from "recoil";
-import { transactionModalStatus } from "@/recoil/modal/atom";
 
-import { useAccount, useContractWrite } from "wagmi";
+import { useAccount, useContractWrite, useSendTransaction } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
+import { useTx } from "../tx/useTx";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -48,9 +46,6 @@ export function useAmountOut() {
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
   const [trade, setTrade] = useState<TokenTrade | null>(null);
-  const [estimatedGas, setEstimatedGas] = useState<bigint | undefined>(
-    undefined
-  );
   const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
 
   const [, setIsLoading] = useIsLoading();
@@ -240,9 +235,12 @@ export function useAmountOut() {
   //   }
   // }, [trade, address]);
 
-  const callTokenSwap = useCallback(async () => {
-    console.log(routingPath);
-    if (routingPath.methodParameters && inToken?.amountBN) {
+  const [txData, setTxData] = useState<any>(undefined);
+
+  useEffect(() => {
+    if (routingPath?.methodParameters && inToken?.amountBN) {
+      // console.log(routingPath);
+
       const wei = ethers.utils.formatUnits(inToken.amountBN.toString(), "wei");
       const weiAmount = ethers.BigNumber.from(wei);
       const hexAmount = ethers.utils.hexlify(weiAmount);
@@ -259,49 +257,20 @@ export function useAmountOut() {
         // gasLimit: "21000",
         // gasPrice: gasPrice.toString(),
       };
-      const res = await sendTransaction(tx);
-      // multiCall({
-      //   args: [
-      //     routingPath.methodParameters.value,
-      //     routingPath.methodParameters.calldata,
-      //   ],
-      // });
+      return setTxData(tx);
+      // const res = await sendTransaction(tx);
+      // console.log(res);
     }
-  }, [routingPath]);
+  }, [routingPath?.methodParameters, inToken?.amountBN]);
 
-  useEffect(() => {
-    const fetchEstimatedGas = async () => {
-      if (mode === "Swap" && trade && address) {
-        const options: SwapOptions = {
-          slippageTolerance: new Percent(50, 10_000), // 50 bips, or 0.50%
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20, // 20 minutes from the current Unix time
-          recipient: address,
-        };
-        const methodParameters = SwapRouter.swapCallParameters(
-          [trade],
-          options
-        );
+  const { data: _swapData, sendTransaction } = useSendTransaction(txData);
 
-        const tx = {
-          data: methodParameters.calldata as `0x{string}`,
-          to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
-          value: methodParameters.value,
-          from: address,
-          // maxFeePerGas: "250000",
-          // maxPriorityFeePerGas: "250000",
-          // gasLimit: "21000",
-          // gasPrice: gasPrice.toString(),
-        };
+  const {} = useTx({
+    hash: _swapData?.hash,
+    txSort: "Swap",
+    tokenAddress: inToken?.tokenAddress as `0x${string}`,
+    tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
+  });
 
-        const gas = await provider.estimateGas(tx);
-        return setEstimatedGas(gas.toBigInt());
-      }
-    };
-    // fetchEstimatedGas().catch((e) => {
-    //   console.log("**fetchEstimatedGasToSwap err**");
-    //   console.log(e);
-    // });
-  }, [trade, mode]);
-
-  return { amountOut, callTokenSwap, estimatedGas, amountOutErr };
+  return { amountOut, callTokenSwap: sendTransaction, amountOutErr };
 }

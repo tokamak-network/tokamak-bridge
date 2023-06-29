@@ -8,6 +8,7 @@ import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import useIsLoading from "@/hooks/ui/useIsLoading";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -17,6 +18,7 @@ export default function ActionButton() {
   const [isLoading] = useIsLoading();
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  const { isBalanceOver } = useInputBalanceCheck();
 
   const needToOpenModal =
     mode === "Deposit" || mode === "Withdraw" || mode === "Swap";
@@ -24,14 +26,21 @@ export default function ActionButton() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const disabled =
-        !isReady || isApproved === false || isLoading || isNotSupportForSwap;
+        !isReady ||
+        isApproved === false ||
+        isLoading ||
+        isNotSupportForSwap ||
+        isBalanceOver;
       setIsDisabled(disabled);
     }, 200);
 
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [!isReady || isApproved === false || isLoading || isNotSupportForSwap]);
+  }, [
+    !isReady || isApproved === false || isLoading || isNotSupportForSwap,
+    isBalanceOver,
+  ]);
 
   const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();

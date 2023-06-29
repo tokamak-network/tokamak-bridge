@@ -42,7 +42,10 @@ export default function useCallBridgeSwapAction() {
       );
       const parsedAmount = inToken.amountBN;
 
-      setModalOpen("confirming");
+      if (mode === "Wrap" || mode === "Unwrap") {
+      } else {
+        setModalOpen("confirming");
+      }
 
       switch (mode) {
         case "Deposit":

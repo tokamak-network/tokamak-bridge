@@ -44,6 +44,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
       ? 27
       : decimals) ?? 18
   );
+  const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
   if (symbol && decimals)
     return (
@@ -67,7 +68,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
-          {trimAmount(parsedAmount)} {symbol}
+          {trimAmount(convertParsedAmount)} {symbol}
         </Text>
       </Flex>
     );

@@ -6,7 +6,7 @@ import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
-import SwapRouterAbi from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
+import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
@@ -17,7 +17,7 @@ import { transactionModalStatus } from "@/recoil/modal/atom";
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
-  const swapRouterI = new ethers.utils.Interface(SwapRouterAbi.abi);
+  const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
 
@@ -59,6 +59,8 @@ export function useTransaction() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
 
+  getInterface();
+
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([key, value]) => {
@@ -98,8 +100,9 @@ export function useTx(params: {
   hash: `0x${string}` | undefined;
   txSort: TxSort;
   tokenAddress?: `0x${string}`;
+  tokenOutAddress?: `0x${string}`;
 }) {
-  const { hash, txSort, tokenAddress } = params;
+  const { hash, txSort, tokenAddress, tokenOutAddress } = params;
 
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
@@ -109,12 +112,7 @@ export function useTx(params: {
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
-  const {
-    data: _d,
-    isError: _i,
-    isLoading: _lo,
-    status,
-  } = useTrasactionW({ hash });
+  const { data: _d, isError: _i, isLoading: _lo } = useTrasactionW({ hash });
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
@@ -147,8 +145,30 @@ export function useTx(params: {
         case "Swap": {
           const result = swapRouterI.parseLog(logs[logs.length - 1]);
           const { args } = result;
-          return;
+          const { amount0, amount1 } = args;
+
+          setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: amount0.toBigInt(),
+                },
+                {
+                  tokenAddress: tokenOutAddress ?? "0x",
+                  amount: amount1.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
         }
+
         case "Collect Fee":
           return;
         //bridge
