@@ -13,10 +13,15 @@ import {
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
-import { useErc20Approve, usePrepareErc20Approve } from "@/generated";
+import {
+  useErc20Allowance,
+  useErc20Approve,
+  usePrepareErc20Approve,
+} from "@/generated";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useTx } from "../tx/useTx";
+import useBlockNum from "../network/useBlockNumber";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -78,7 +83,7 @@ export function useAllowance() {
           getAllowance(
             TOKEN_CONTRACT,
             address,
-            UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS
+            UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2
           ),
           getAllowance(
             TOKEN_CONTRACT,
@@ -126,6 +131,7 @@ export function useApprove() {
   const { mode } = useGetMode();
   const { approved } = useAllowance();
   const { inToken } = useInOutTokens();
+  const { blockNumber } = useBlockNum();
 
   const isApproved = useMemo(() => {
     if (approved) {
@@ -143,7 +149,7 @@ export function useApprove() {
           return;
       }
     }
-  }, [mode, approved]);
+  }, [mode, approved, blockNumber]);
 
   const { write, data } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
@@ -183,7 +189,7 @@ export function useApprove() {
             });
           case "Swap":
             return write({
-              args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS, totalSupply],
+              args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2, totalSupply],
             });
           case "Wrap":
           case "Unwrap":

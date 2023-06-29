@@ -212,16 +212,16 @@ export function useAmountOut() {
   //         SupportedChainId.MAINNET || SupportedChainId.GOERLI
   //       );
 
-  //       const tx = {
-  //         data: methodParameters.calldata as `0x{string}`,
-  //         to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
-  //         value: isETH ? hexAmount : methodParameters.value,
-  //         from: address,
-  //         // maxFeePerGas: "250000",
-  //         // maxPriorityFeePerGas: "250000",
-  //         // gasLimit: "21000",
-  //         // gasPrice: gasPrice.toString(),
-  //       };
+  // const tx = {
+  //   data: methodParameters.calldata as `0x{string}`,
+  //   to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS,
+  //   value: isETH ? hexAmount : methodParameters.value,
+  //   from: address,
+  //   // maxFeePerGas: "250000",
+  //   // maxPriorityFeePerGas: "250000",
+  //   // gasLimit: "21000",
+  //   // gasPrice: gasPrice.toString(),
+  // };
   //       if (tx) {
   //         setModalOpen("confirming");
   //         const res = await sendTransaction(tx);
@@ -259,6 +259,7 @@ export function useAmountOut() {
         // gasLimit: "21000",
         // gasPrice: gasPrice.toString(),
       };
+      const res = await sendTransaction(tx);
       // multiCall({
       //   args: [
       //     routingPath.methodParameters.value,

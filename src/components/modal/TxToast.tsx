@@ -160,13 +160,13 @@ function TxToast() {
     });
   }, [confirmedTransaction]);
 
-  useEffect(() => {
-    if (txData) {
-      const d = isToasted.filter((hashKey) => {
-        return txData[hashKey].transactionHash !== undefined;
-      });
-    }
-  }, [isToasted]);
+  // useEffect(() => {
+  //   if (txData) {
+  //     const d = isToasted.filter((hashKey) => {
+  //       return txData[hashKey].transactionHash !== undefined;
+  //     });
+  //   }
+  // }, [isToasted]);
 
   return <>{makeToast}</>;
 }

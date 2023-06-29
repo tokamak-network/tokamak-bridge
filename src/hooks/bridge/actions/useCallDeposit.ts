@@ -5,7 +5,7 @@ import { getContract } from "viem";
 import { useTx } from "@/hooks/tx/useTx";
 
 export default function useCallDeposit(functionName: string) {
-  const { data, write } = useContractWrite({
+  const { data, write, isLoading } = useContractWrite({
     address: GOERLI_CONTRACTS.L1Bridge,
     abi: L1BridgeAbi,
     functionName,
@@ -20,5 +20,5 @@ export default function useCallDeposit(functionName: string) {
 
   const {} = useTx({ hash: data?.hash, txSort: "Deposit" });
 
-  return { write, contract };
+  return { write, contract, hash: data?.hash };
 }

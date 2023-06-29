@@ -6,6 +6,7 @@ import {
   Flex,
   Text,
   Box,
+  Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -15,6 +16,8 @@ import ErrorImage from "assets/image/modal/error.svg";
 
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
+import useConnectedNetwork from "@/hooks/network";
+import { useTransaction } from "@/hooks/tx/useTx";
 
 export default function Confirmation() {
   const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -22,7 +25,8 @@ export default function Confirmation() {
   const isConfirmed = modalOpen === "confirmed";
   const isError = modalOpen === "error";
 
-  // const {} = useGetT
+  const { blockExplorer } = useConnectedNetwork();
+  const { confirmedTransaction } = useTransaction();
 
   return (
     <Modal isOpen={modalOpen !== null} onClose={() => setModalOpen(null)}>
@@ -49,7 +53,7 @@ export default function Confirmation() {
             {isConfirming
               ? "Confirming Deposit"
               : isConfirmed
-              ? "Transaction Initiated!"
+              ? "Transaction Confirmed!"
               : isError
               ? "Transaction Failed"
               : null}
@@ -74,6 +78,7 @@ export default function Confirmation() {
               <Image src={ErrorImage} alt={"ErrorImage"} />
             ) : null}
           </Flex>
+
           <Text
             w={"203px"}
             mt={"46px"}
@@ -82,13 +87,24 @@ export default function Confirmation() {
             fontSize={14}
             fontWeight={500}
           >
-            {isConfirming
-              ? "Please confirm transaction in your wallet"
-              : isConfirmed
-              ? "See your transaction history"
-              : isError
-              ? "Error occurred, please try again."
-              : null}
+            {isConfirming ? (
+              "Please confirm transaction in your wallet"
+            ) : isConfirmed ? (
+              <Link
+                href={`${blockExplorer}/tx/${
+                  confirmedTransaction &&
+                  confirmedTransaction.length > 0 &&
+                  confirmedTransaction[confirmedTransaction.length - 1][0]
+                }`}
+                isExternal={true}
+                textDecoration={"underline"}
+                w={"100%"}
+              >
+                See your transaction history
+              </Link>
+            ) : isError ? (
+              "Error occurred, please try again."
+            ) : null}
           </Text>
         </Flex>
       </ModalContent>

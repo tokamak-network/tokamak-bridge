@@ -1,19 +1,18 @@
 import { TxSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { usePublicClient, useWaitForTransaction } from "wagmi";
+import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import SwapRouterAbi from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
-
+import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
-import { getTransaction } from "viem/dist/types/actions/public/getTransaction";
-import { fetchTransaction } from "@wagmi/core";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -108,6 +107,14 @@ export function useTx(params: {
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+
+  const {
+    data: _d,
+    isError: _i,
+    isLoading: _lo,
+    status,
+  } = useTrasactionW({ hash });
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
@@ -128,9 +135,9 @@ export function useTx(params: {
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
-
       const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
         getInterface();
+      setModalOpen("confirmed");
       switch (txSort) {
         //Uniswap
         case "Add Liquidity":
@@ -273,6 +280,7 @@ export function useTx(params: {
     }
     if (isError && data && connectedChainId && hash) {
       console.log(isError, hash);
+      setModalOpen("error");
     }
   }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
 

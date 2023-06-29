@@ -11,6 +11,8 @@ import useCallWithdraw from "../bridge/actions/useCallWithdraw";
 import { useAmountOut } from "../swap/useSwapTokens";
 import useWrap from "../swap/useTonWrap";
 import { predeploys } from "@eth-optimism/contracts";
+import { transactionModalStatus } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -20,12 +22,13 @@ export default function useCallBridgeSwapAction() {
   const { inNetwork, outNetwork } = useInOutNetwork();
 
   const { write: _depositETH } = useCallDeposit("depositETH");
-  const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
-  const { write: _withdraw, contract: _withdraw_contract } =
-    useCallWithdraw("withdraw");
+  const { write: _depositERC20 } = useCallDeposit("depositERC20");
+  const { write: _withdraw } = useCallWithdraw("withdraw");
 
   const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON } = useWrap();
+
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
   const onClick = useCallback(async () => {
     if (!isConnected) {
@@ -37,6 +40,8 @@ export default function useCallBridgeSwapAction() {
       );
 
       const parsedAmount = inToken.amountBN;
+
+      setModalOpen("confirming");
 
       switch (mode) {
         case "Deposit":
