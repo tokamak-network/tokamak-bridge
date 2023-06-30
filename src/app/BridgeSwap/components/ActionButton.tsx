@@ -34,7 +34,7 @@ export default function ActionButton() {
       const disabled =
         !isReady ||
         isApproved === false ||
-        isLoading ||
+        (mode === "Swap" && isLoading) ||
         isNotSupportForSwap ||
         isBalanceOver ||
         isPending ||

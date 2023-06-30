@@ -86,7 +86,7 @@ export function useSmartRouter() {
   const { isLoading, error, data, isError, isLoadingError } = useQuery({
     queryKey: [queryParam],
     queryFn: () => getPath(queryParam),
-    refetchInterval: 20000,
+    refetchInterval: 99999999,
     // refetchOnMount: false,
   });
 
