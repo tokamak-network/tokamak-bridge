@@ -20,6 +20,7 @@ import useConnectedNetwork from "@/hooks/network";
 import { useTransaction } from "@/hooks/tx/useTx";
 import { useState } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function Confirmation() {
   // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -32,6 +33,7 @@ export default function Confirmation() {
 
   const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
     useTxConfirmModal();
+  const { mode } = useGetMode();
 
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
@@ -56,7 +58,7 @@ export default function Confirmation() {
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
-              ? "Confirming Deposit"
+              ? `Confirming ${mode}`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError

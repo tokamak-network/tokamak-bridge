@@ -25,6 +25,7 @@ import useConfirm from "@/hooks/modal/useConfirmModal";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useApprove } from "@/hooks/token/useApproval";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -393,11 +394,11 @@ const Title = (props: {
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
-          <Text>{inNetwork?.chainName}</Text>
+          <Text>{convertNetworkName(inNetwork?.chainName)}</Text>
           <Box w={"10px"} h={"9px"}>
             <Image src={ArrowImg} alt={"arrow"} />
           </Box>
-          <Text>{outNetwork?.chainName}</Text>
+          <Text>{convertNetworkName(outNetwork?.chainName)}</Text>
         </Flex>
         {isOpen === false && (
           <Flex alignItems={"center"}>
