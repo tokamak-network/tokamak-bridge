@@ -6,7 +6,7 @@ import { getContract } from "viem";
 import { useTx } from "@/hooks/tx/useTx";
 
 export default function useCallWithdraw(functionName: string) {
-  const { data, write } = useContractWrite({
+  const { data, write, isError } = useContractWrite({
     address: TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
     abi: L2BridgeAbi,
     functionName,
@@ -21,5 +21,5 @@ export default function useCallWithdraw(functionName: string) {
     publicClient: provider,
   });
 
-  return { write, contract };
+  return { write, contract, isError };
 }

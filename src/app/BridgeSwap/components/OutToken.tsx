@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import Setting from "@/components/Setting";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -20,7 +21,7 @@ export const SelectedNetwork = () => {
       className="card card-empty"
       display={"flex"}
       flexDir={"column"}
-      rowGap={"28px"}
+      rowGap={"16px"}
       justifyContent={"center"}
       alignItems={"center"}
       mt={"15px"}
@@ -37,7 +38,7 @@ export const SelectedNetwork = () => {
         fontWeight={500}
         textAlign={"center"}
       >
-        {outNetwork?.chainName}
+        {convertNetworkName(outNetwork?.chainName)}
       </Text>
     </Box>
   );
@@ -91,7 +92,7 @@ export default function OutToken() {
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {mode === "Swap" ? "For" : "To"}
         </Text>
-        <Setting />
+        {mode === "Swap" && <Setting />}
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>

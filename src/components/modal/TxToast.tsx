@@ -44,6 +44,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
       ? 27
       : decimals) ?? 18
   );
+  const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
   if (symbol && decimals)
     return (
@@ -67,7 +68,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
-          {trimAmount(parsedAmount)} {symbol}
+          {trimAmount(convertParsedAmount)} {symbol}
         </Text>
       </Flex>
     );
@@ -150,9 +151,9 @@ function TxToast() {
         toast({
           position: "top-right",
           variant: "solid",
-          isClosable: false,
+          isClosable: true,
           id: txHash,
-          duration: 50000000,
+          duration: 5000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);
@@ -160,13 +161,13 @@ function TxToast() {
     });
   }, [confirmedTransaction]);
 
-  useEffect(() => {
-    if (txData) {
-      const d = isToasted.filter((hashKey) => {
-        return txData[hashKey].transactionHash !== undefined;
-      });
-    }
-  }, [isToasted]);
+  // useEffect(() => {
+  //   if (txData) {
+  //     const d = isToasted.filter((hashKey) => {
+  //       return txData[hashKey].transactionHash !== undefined;
+  //     });
+  //   }
+  // }, [isToasted]);
 
   return <>{makeToast}</>;
 }

@@ -23,6 +23,9 @@ import useIsLoading from "@/hooks/ui/useIsLoading";
 import GradientSpinner from "@/components/ui/gradientSpinner";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { useApprove } from "@/hooks/token/useApproval";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -34,7 +37,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
-        <Flex columnGap={"29px"}>
+        <Flex columnGap={"35px"}>
           <Text fontWeight={500}>
             {tooltip ? (
               <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
@@ -42,7 +45,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>$3.18</Text>}
+          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
       {gasFee && (
@@ -57,18 +60,26 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           px={"16px"}
           borderRadius={"8px"}
         >
-          <Flex justifyContent={"space-between"}>
+          <Flex justifyContent={"space-between"} textAlign={"end"}>
             <Text>L1 gas fee</Text>
             <Flex columnGap={"13px"}>
-              <Text>{gasFee.l1Gas}</Text>
-              <Text color={"#A0A3AD"}>$3.18</Text>
+              <Text w={"90px"} textAlign={"end"}>
+                {gasFee.l1Gas}
+              </Text>
+              <Text color={"#A0A3AD"} w={"40px"} textAlign={"end"}>
+                ${gasFee.l1GasUS}
+              </Text>
             </Flex>
           </Flex>
           <Flex justifyContent={"space-between"}>
             <Text>L2 gas fee</Text>
             <Flex columnGap={"13px"}>
-              <Text>{gasFee.l2Gas}</Text>
-              <Text color={"#A0A3AD"}>$3.18</Text>
+              <Text w={"90px "} textAlign={"end"}>
+                {gasFee.l2Gas}
+              </Text>
+              <Text color={"#A0A3AD"} w={"40px"} textAlign={"end"}>
+                ${gasFee.l2GasUS}
+              </Text>
             </Flex>
           </Flex>
         </Flex>
@@ -248,8 +259,8 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   );
 };
 
-const Content = (props: { isExpanded: boolean }) => {
-  const { isExpanded } = props;
+const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
+  const { isExpanded, isOnConfirm } = props;
   const { mode } = useRecoilValue(actionMode);
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
@@ -312,7 +323,7 @@ const Content = (props: { isExpanded: boolean }) => {
           <Flex flexDir={"column"} rowGap={"10px"}>
             {detailRow}
           </Flex>
-          {mode === "Withdraw" && isOpen && (
+          {mode === "Withdraw" && isOnConfirm && isOpen && (
             <Flex flexDir={"column"}>
               <DivisionLine />
               <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
@@ -362,6 +373,7 @@ const Title = (props: {
   const { outPrice } = usePriceImpact();
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
+  const { gasCostUS } = useGasFee();
 
   useEffect(() => {
     if (isExpanded) {
@@ -382,11 +394,11 @@ const Title = (props: {
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
-          <Text>{inNetwork?.chainName}</Text>
+          <Text>{convertNetworkName(inNetwork?.chainName)}</Text>
           <Box w={"10px"} h={"9px"}>
             <Image src={ArrowImg} alt={"arrow"} />
           </Box>
-          <Text>{outNetwork?.chainName}</Text>
+          <Text>{convertNetworkName(outNetwork?.chainName)}</Text>
         </Flex>
         {isOpen === false && (
           <Flex alignItems={"center"}>
@@ -399,7 +411,7 @@ const Title = (props: {
                 ml={"6px"}
                 mr={"13px"}
               >
-                $3.18
+                ${gasCostUS}
               </Text>
             )}
             <motion.div animate={arrowControl}>
@@ -422,7 +434,9 @@ const Title = (props: {
         fontSize={14}
       >
         {isLoading ? (
-          <GradientSpinner />
+          <Box w={"100%"} h={"20px"} mb={"5px"}>
+            <GradientSpinner />
+          </Box>
         ) : (
           <Flex>
             <Text>
@@ -432,42 +446,48 @@ const Title = (props: {
             <Text>
               {outPrice} {outToken?.tokenSymbol}
             </Text>
-            {isOpen === false && (
+            {/* {isOpen === false && (
               <Text color={"#A0A3AD"} ml={"4px"}>
                 ($1.000)
               </Text>
-            )}
+            )} */}
           </Flex>
         )}
-        {isOpen === false && (
-          <Flex>
-            {isExpanded === false && <Image src={GasImg} alt={"gasStation"} />}
-            {isOpen === isExpanded && (
-              <Text
-                fontSize={14}
-                fontWeight={400}
-                color={"#A0A3AD"}
-                ml={"6px"}
-                mr={"13px"}
-              >
-                $3.18
-              </Text>
+        {isLoading
+          ? null
+          : isOpen === false && (
+              <Flex>
+                {isExpanded === false && (
+                  <Image src={GasImg} alt={"gasStation"} />
+                )}
+                {isOpen === isExpanded && (
+                  <Text
+                    fontSize={14}
+                    fontWeight={400}
+                    color={"#A0A3AD"}
+                    ml={"6px"}
+                    mr={"13px"}
+                  >
+                    ${gasCostUS}
+                  </Text>
+                )}
+                <motion.div animate={arrowControl}>
+                  <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+                </motion.div>
+              </Flex>
             )}
-            <motion.div animate={arrowControl}>
-              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-            </motion.div>
-          </Flex>
-        )}
       </Flex>
     );
   }
   return null;
 };
 
-export default function TransactionDetail() {
+export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
+  const { isOnConfirm } = props;
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
+  const { isApproved } = useApprove();
 
   const { mode, isReady } = useGetMode();
 
@@ -476,7 +496,8 @@ export default function TransactionDetail() {
     mode === "Wrap" ||
     mode === "Unwrap" ||
     isNotSupportForSwap ||
-    isNotSupportForBridge
+    isNotSupportForBridge ||
+    isApproved === false
   ) {
     return null;
   }
@@ -494,7 +515,7 @@ export default function TransactionDetail() {
       pb={isOpen ? 0 : isExpanded ? "20px" : ""}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      <Content isExpanded={isExpanded}></Content>
+      <Content isExpanded={isExpanded} isOnConfirm={isOnConfirm}></Content>
     </Flex>
   );
 }
