@@ -16,7 +16,11 @@ import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import CloseButton from "../button/CloseButton";
 import { useState } from "react";
-
+import step0 from "assets/image/step0.svg";
+import step1 from "assets/image/step1.svg";
+import step2 from "assets/image/step2.svg";
+import step3 from "assets/image/step3.svg";
+import step4 from "assets/image/step4.svg";
 export default function TutorialModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -63,9 +67,29 @@ export default function TutorialModal() {
       ],
     },
   ];
+
+  const bgs = [
+    { bg: step0, px: "195px", size: "502px 463px" },
+    { bg: step1, px: "195px", size: "502px 463px" },
+    { bg: step2, px: "144px", size: "520px 514px" },
+    { bg: step3, px: "142px", size: "520px 516px" },
+    { bg: step4, px: "142px", size: "520px 516px" },
+    { bg: step0, px: "195px", size: "502px 463px" },
+  ];
+
   return (
-    <Modal onClose={onClose} isOpen={modalOpen} isCentered>
-      <ModalOverlay css={{ backgroundColor: "rgba(0, 0, 0, 0)" }} />
+    <Modal onClose={onClose} isOpen={modalOpen}>
+      <ModalOverlay
+        bg={"rgba(0, 0, 0, 0.6)"}
+        backgroundImage={currentStep !== 5?  bgs[currentStep].bg.src:''}
+        backgroundRepeat={"no-repeat"}
+        backgroundSize={bgs[currentStep].size}
+        css={{
+          backgroundPositionY: bgs[currentStep].px,
+          backgroundPositionX: "center",
+        }}
+       
+      />
       <ModalContent
         justifyContent={"center"}
         alignItems={"center"}
@@ -74,7 +98,8 @@ export default function TutorialModal() {
         w="404px"
         paddingBottom={"40px"}
         bg={"#1F2128"}
-        mt={"258px !important"}
+        mt={"288px !important"}
+      
       >
         <Flex flexDir={"column"} alignItems={"center"}>
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
@@ -103,10 +128,15 @@ export default function TutorialModal() {
                   {text}
                 </Text>
               ) : (
-                <Text   mb={"40px"} textAlign={'left'}>
+                <Text mb={"40px"} textAlign={"left"}>
                   To get a more in-depth guide on how to use Tokamak Bridge, you
-                  can find a link to our <span style={{color: '#007AFF', textDecoration:'underline'}}>user guide</span> under the “More” tab in the
-                  menu.
+                  can find a link to our{" "}
+                  <span
+                    style={{ color: "#007AFF", textDecoration: "underline" }}
+                  >
+                    user guide
+                  </span>{" "}
+                  under the “More” tab in the menu.
                 </Text>
               );
             })}
@@ -121,8 +151,8 @@ export default function TutorialModal() {
           >
             {currentStep !== 0 ? (
               <Text
-              color={'#FFF'}
-              opacity={0.5}
+                color={"#FFF"}
+                opacity={0.5}
                 cursor={"pointer"}
                 onClick={() => setCurrentStep(currentStep - 1)}
               >
