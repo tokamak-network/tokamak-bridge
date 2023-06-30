@@ -151,7 +151,6 @@ export function useGasFee() {
     if (totalGasCost && tokenMarketPrice) {
       return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
     }
-    return "-";
   }, [totalGasCost, tokenMarketPrice]);
 
   return { totalGasCost, gasCostUS };
