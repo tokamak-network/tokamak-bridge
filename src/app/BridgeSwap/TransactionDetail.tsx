@@ -67,7 +67,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               <Text w={"90px"} textAlign={"end"}>
                 {gasFee.l1Gas}
               </Text>
-              <Text color={"#A0A3AD"} w={"40px"} textAlign={"end"}>
+              <Text color={"#A0A3AD"} w={"45px"} textAlign={"end"}>
                 ${gasFee.l1GasUS}
               </Text>
             </Flex>
@@ -78,7 +78,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               <Text w={"90px "} textAlign={"end"}>
                 {gasFee.l2Gas}
               </Text>
-              <Text color={"#A0A3AD"} w={"40px"} textAlign={"end"}>
+              <Text color={"#A0A3AD"} w={"45px"} textAlign={"end"}>
                 ${gasFee.l2GasUS}
               </Text>
             </Flex>
