@@ -153,12 +153,12 @@ export function useApprove() {
 
   const { write, data } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
-    abi: TON_ABI.abi,
+    abi: ERC20_ABI.abi,
     functionName: "approve",
   });
   const { data: totalSupply } = useContractRead({
     address: inToken?.tokenAddress as `0x${string}`,
-    abi: TON_ABI.abi,
+    abi: ERC20_ABI.abi,
     functionName: "totalSupply",
   });
 

@@ -11,8 +11,8 @@ import useIsLoading from "@/hooks/ui/useIsLoading";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
-import { milliseconds } from "date-fns";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -25,6 +25,7 @@ export default function ActionButton() {
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const { isPending } = useTransaction();
   const { outToken } = useInOutTokens();
+  const { isTONatPair } = useIsTon();
 
   const needToOpenModal =
     mode === "Deposit" || mode === "Withdraw" || mode === "Swap";
@@ -39,7 +40,8 @@ export default function ActionButton() {
         isBalanceOver ||
         isPending ||
         (mode === "Swap" && outToken === null) ||
-        isInputZero;
+        isInputZero ||
+        isTONatPair;
       setIsDisabled(disabled);
     }, 200);
 
