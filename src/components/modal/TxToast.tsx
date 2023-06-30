@@ -168,34 +168,26 @@ function TxToast() {
 
   const { confirmedTransaction } = useTransaction();
 
-  const makeToast = useMemo(() => {
-    confirmedTransaction?.map((transaction) => {
-      const txHash = transaction[0];
+  // const makeToast = useMemo(() => {
+  //   confirmedTransaction?.map((transaction) => {
+  //     const txHash = transaction[0];
 
-      if (
-        toast.isActive(txHash) === false &&
-        isToasted.includes(txHash) === false
-      ) {
-        toast({
-          position: "top-right",
-          variant: "solid",
-          isClosable: true,
-          id: txHash,
-          duration: 5000,
-          render: () => <TransactionToast {...transaction[1]} />,
-        });
-        setIsToasted([...isToasted, txHash]);
-      }
-    });
-  }, [confirmedTransaction]);
-
-  // useEffect(() => {
-  //   if (txData) {
-  //     const d = isToasted.filter((hashKey) => {
-  //       return txData[hashKey].transactionHash !== undefined;
-  //     });
-  //   }
-  // }, [isToasted]);
+  //     if (
+  //       toast.isActive(txHash) === false &&
+  //       isToasted.includes(txHash) === false
+  //     ) {
+  //       toast({
+  //         position: "top-right",
+  //         variant: "solid",
+  //         isClosable: true,
+  //         id: txHash,
+  //         duration: 5000,
+  //         render: () => <TransactionToast {...transaction[1]} />,
+  //       });
+  //       setIsToasted([...isToasted, txHash]);
+  //     }
+  //   });
+  // }, [confirmedTransaction]);
 
   return null;
   // return <>{makeToast}</>;
