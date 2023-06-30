@@ -19,7 +19,7 @@ import Entry from "./Entry";
 export const GlobalComponents = () => {
   return (
     <>
-      <HistoryDrawer />
+      {/* <HistoryDrawer /> */}
       <TxToast />
     </>
   );

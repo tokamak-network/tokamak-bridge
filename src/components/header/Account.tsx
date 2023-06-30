@@ -33,7 +33,7 @@ export default function Account() {
        * index 2 = wallet injected like wallet connet
        */
       onClick={() =>
-        isConnected ? setIsOpen(true) : connetAndDisconntWallet()
+        isConnected ? setIsOpen(!isOpen) : connetAndDisconntWallet()
       }
     >
       {isPending ? (
@@ -46,9 +46,10 @@ export default function Account() {
       ) : (
         <>
           <Image src={WALLET_ICON} alt={""} />
-          <Text>{buttonText}</Text>
+          <Text fontWeight={'bold'}>{buttonText}</Text>
         </>
       )}
+     
     </Center>
   );
 }
