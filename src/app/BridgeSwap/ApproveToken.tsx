@@ -1,4 +1,5 @@
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork from "@/hooks/network";
 import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -13,6 +14,7 @@ export default function ApproveToken() {
   const { isNotSupportForBridge } = useBridgeSupport();
   const { pendingTransactionToApprove } = useTransaction();
   const { isTONatPair } = useIsTon();
+  const { mode } = useGetMode();
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -20,7 +22,12 @@ export default function ApproveToken() {
     );
   }, [pendingTransactionToApprove]);
 
-  if (isApproved || isNotSupportForBridge || !inToken || isTONatPair) {
+  if (
+    isApproved ||
+    isNotSupportForBridge ||
+    !inToken ||
+    (mode == "Swap" && isTONatPair)
+  ) {
     return null;
   }
 
