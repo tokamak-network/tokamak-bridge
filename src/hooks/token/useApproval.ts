@@ -3,7 +3,8 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers, Contract } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
-import TON_ABI from "@/constant/abis/TON.json";
+import USDT_ABI from "@/constant/abis/USDT.json";
+
 import {
   useAccount,
   useBlockNumber,
@@ -22,6 +23,12 @@ import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useTx } from "../tx/useTx";
 import useBlockNum from "../network/useBlockNumber";
+import {
+  GOERLI_CONTRACTS,
+  MAINNET_CONTRACTS,
+  TOKAMAK_CONTRACTS,
+  TOKAMAK_GOERLI_CONTRACTS,
+} from "@/constant/contracts";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -151,9 +158,16 @@ export function useApprove() {
     }
   }, [mode, approved, blockNumber]);
 
+  const isUSDT =
+    inToken?.tokenAddress === MAINNET_CONTRACTS.USDT_ADDRESS ||
+    inToken?.tokenAddress === GOERLI_CONTRACTS.USDT_ADDRESS ||
+    inToken?.tokenAddress === TOKAMAK_CONTRACTS.USDT_ADDRES ||
+    inToken?.tokenAddress === TOKAMAK_GOERLI_CONTRACTS.USDT_ADDRES;
+
   const { write, data } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
-    abi: ERC20_ABI.abi,
+    //@ts-ignore
+    abi: isUSDT ? USDT_ABI : ERC20_ABI.abi,
     functionName: "approve",
   });
   const { data: totalSupply } = useContractRead({
