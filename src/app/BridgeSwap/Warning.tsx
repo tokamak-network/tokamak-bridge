@@ -24,7 +24,7 @@ export default function Warning() {
     return (
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-        <Text>Swap route not founded on this networky</Text>
+        <Text>Swap route not founded on this network</Text>
       </Flex>
     );
   }

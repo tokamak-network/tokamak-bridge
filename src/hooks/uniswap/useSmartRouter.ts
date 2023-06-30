@@ -3,7 +3,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useIsLoading from "../ui/useIsLoading";
-import { truncate } from "fs/promises";
 import { useAccount } from "wagmi";
 import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";

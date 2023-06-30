@@ -14,6 +14,7 @@ import { txDataStatus } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
+import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -132,6 +133,9 @@ export function useTx(params: {
     hash,
   });
   const [txData, setTxData] = useRecoilState(txDataStatus);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
   const { connectedChainId } = useConnectedNetwork();
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -140,6 +144,14 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
+      if (selectedInToken) {
+        setSelectedInToken({
+          ...selectedInToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+
       return setTxData({
         ...txData,
         [hash]: {
@@ -168,12 +180,13 @@ export function useTx(params: {
           return;
         case "Swap": {
           const result = swapRouterI.parseLog(logs[logs.length - 1]);
-          const trasferResult = erc20I.parseLog(logs[1]);
+          const trasferedOutResult = erc20I.parseLog(logs[1]);
+          // const transferedInResult = erc20I.parseLog(logs[4]);
+
           const { args } = result;
           const { amount0, amount1 } = args;
-          const transferedValue = trasferResult.args.value;
-
-          console.log(amount0.toBigInt(), amount1.toBigInt());
+          const transferedValue = trasferedOutResult.args.value;
+          // const transferedInValue = transferedInResult.args.value;
 
           setTxData({
             ...txData,
