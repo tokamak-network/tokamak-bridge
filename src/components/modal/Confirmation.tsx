@@ -1,4 +1,4 @@
-import { transactionModalStatus, txConforimModal } from "@/recoil/modal/atom";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 import {
   Modal,
   ModalOverlay,
