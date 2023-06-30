@@ -9,6 +9,7 @@ import { useAmountOut } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
 import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
+import useConnectedNetwork from "../network";
 
 export type DepositDetailProp = {
   title: string;
@@ -56,7 +57,8 @@ export type SwapDetailProp = {
     | "Minimum received"
     | "Minimum received after slippage"
     | "Price impact"
-    | "Estimated gas fees";
+    | "Estimated gas fees"
+    | "Estimated L2 execution fee (sans L1 fee)";
 
   content: string | undefined;
   gasFee?: string;
@@ -167,6 +169,7 @@ export function useTransactionDetail() {
   const { priceImpact } = usePriceImpact();
   const { isOpen } = useConfirm();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
+  const { layer } = useConnectedNetwork();
 
   const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
     if (mode === "Swap" && inToken) {
@@ -182,12 +185,11 @@ export function useTransactionDetail() {
           content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
-        // {
-        //   title: "Price impact",
-        //   content: `${priceImpact ?? "-"}%`,
-        // },
         {
-          title: "Estimated gas fees",
+          title:
+            layer === "L2"
+              ? "Estimated L2 execution fee (sans L1 fee)"
+              : "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
           gasFee: `$${gasCostUS}`,
         },
@@ -203,6 +205,7 @@ export function useTransactionDetail() {
     priceImpact,
     uniswapTxSettingValueForUI,
     totalGasFee,
+    layer,
   ]);
 
   return {
