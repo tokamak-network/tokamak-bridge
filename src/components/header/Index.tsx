@@ -28,7 +28,18 @@ import kakao from "assets/icons/header/kakao.svg";
 import twitter from "assets/icons/header/Twitter.svg";
 import medium from "assets/icons/header/medium.svg";
 import userguide from "assets/icons/header/userGuide.svg";
-import arrow from 'assets/icons/header/smallArrow.svg'
+import arrow from "assets/icons/header/smallArrow.svg";
+import lightbulb from "assets/icons/header/Lightbulb.svg";
+import userGuideHover from "assets/icons/header/userGuideHover.svg";
+import lightbulbHover from "assets/icons/header/LightbulbHover.svg";
+import mediumHover from "assets/icons/header/mediumHover.svg";
+import twitterHover from "assets/icons/header/TwitterHover.svg";
+import kakaoHover from "assets/icons/header/kakaoHover.svg";
+import discordHover from "assets/icons/header/discordHover.svg";
+import telegramHover from "assets/icons/header/telegramHover.svg";
+import linkedInHover from "assets/icons/header/linkedinHover.svg";
+import githubHover from "assets/icons/header/githubHover.svg";
+
 const menuList = [
   {
     title: "BRIDGE & SWAP",
@@ -61,11 +72,18 @@ const HeaderMenu = (props: { title: string; link: string }) => {
   );
 };
 
-const CustomMenuItem = (props: { link: string; title: string; icon: any }) => {
-  const { link, title, icon } = props;
-
+const CustomMenuItem = (props: {
+  link: string;
+  title: string;
+  icon: any;
+  hoverIcon: any;
+}) => {
+  const { link, title, icon,hoverIcon } = props;
+  const [hover, setHover] = useState(false);
   return (
     <MenuItem
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
       target="_blank"
       as={"a"}
       href={link}
@@ -75,13 +93,18 @@ const CustomMenuItem = (props: { link: string; title: string; icon: any }) => {
       // border={'1px solid red'}
       bg="#0F0F12"
       _focus={{ background: "0F0F12" }}
-      _hover={{ bg: "none" }}
-    
+      _hover={{ bg: "none",color: "#2a72e5"  }}
     >
       <Flex mr="9px">
-        <Image src={icon} alt="icon" />
+        <Image src={hover ? hoverIcon : icon} alt="icon" />
       </Flex>
-      <Text fontSize={title === "User Guide" || title === 'Get Help' ? "14px" : "12px"}>{title}</Text>
+      <Text
+        fontSize={
+          title === "User Guide" || title === "Get Help" ? "14px" : "12px"
+        }
+      >
+        {title}
+      </Text>
     </MenuItem>
   );
 };
@@ -90,13 +113,38 @@ export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const menuLinks = [
-    { title: "Medium", link: "https://medium.com/onther-tech", icon: medium },
-    { title: "Twitter", link: "https://twitter.com/tokamak_network", icon: twitter },
-    { title: "Kakaotalk", link: "https://open.kakao.com/o/g2zlglHd", icon: kakao },
-    { title: "Discord", link: "https://discord.com/invite/J4chV2zuAK", icon: discord },
-    { title: "Telegram", link: "https://t.me/tokamak_network", icon: telegram },
-    { title: "LinkedIn", link: "https://www.linkedin.com/company/tokamaknetwork/", icon: linkedIn },
-    { title: "Github", link: "https://github.com/tokamak-network", icon: github },
+    { title: "Medium", link: "https://medium.com/onther-tech", icon: medium, hoverIcon: mediumHover },
+    {
+      title: "Twitter",
+      link: "https://twitter.com/tokamak_network",
+      icon: twitter,
+      hoverIcon:twitterHover
+    },
+    {
+      title: "Kakaotalk",
+      link: "https://open.kakao.com/o/g2zlglHd",
+      icon: kakao,
+      hoverIcon:kakaoHover
+    },
+    {
+      title: "Discord",
+      link: "https://discord.com/invite/J4chV2zuAK",
+      icon: discord,
+      hoverIcon:discordHover
+    },
+    { title: "Telegram", link: "https://t.me/tokamak_network", icon: telegram, hoverIcon:telegramHover },
+    {
+      title: "LinkedIn",
+      link: "https://www.linkedin.com/company/tokamaknetwork/",
+      icon: linkedIn,
+      hoverIcon:linkedInHover
+    },
+    {
+      title: "Github",
+      link: "https://github.com/tokamak-network",
+      icon: github,
+      hoverIcon:githubHover
+    },
   ];
   return (
     <Flex
@@ -132,21 +180,20 @@ export default function Header() {
               onClick={() => {
                 setMenuState(!menuState);
               }}
-              display={'flex'}
-              flexDir={'row'}
+              display={"flex"}
+              flexDir={"row"}
             >
               <Flex>
-              <Text>MORE</Text>
-              <Flex
-              marginLeft={'4px'}
-                height={"24px"}
-                // width={"24px"}
-                transform={menuState === true ? "rotate(180deg)" : ""}
-              >
-                <Image src={arrow} alt="icon_arrow" />
+                <Text>MORE</Text>
+                <Flex
+                  marginLeft={"4px"}
+                  height={"24px"}
+                  // width={"24px"}
+                  transform={menuState === true ? "rotate(180deg)" : ""}
+                >
+                  <Image src={arrow} alt="icon_arrow" />
+                </Flex>
               </Flex>
-              </Flex>
-             
             </MenuButton>
             <MenuList
               bg="#0F0F12"
@@ -160,14 +207,24 @@ export default function Header() {
                 paddingRight: "16px",
               }}
             >
-              <CustomMenuItem link="" title="User Guide" icon={userguide} />
-              <CustomMenuItem link="" title="Get Help" icon={userguide} />
-              <Flex w="100%" alignItems={'center'} mb={'16px'}>
-                <Flex w='24px' h='1px' bg={'#757893'} mr='10px'></Flex>
+              <CustomMenuItem
+                link="https://tokamaknetwork.gitbook.io/home/02-service-guide/Tokamak-Bridge"
+                title="User Guide"
+                icon={userguide}
+                hoverIcon={userGuideHover}
+              />
+              <CustomMenuItem
+                link="https://orcp3tde4sw.typeform.com/to/fKIZXyb3"
+                title="Get Help"
+                icon={lightbulb}
+                hoverIcon={lightbulbHover}
+              />
+              <Flex w="100%" alignItems={"center"} mb={"16px"}>
+                <Flex w="24px" h="1px" bg={"#757893"} mr="10px"></Flex>
                 <Text color={"#757893"} fontSize={"12px"}>
                   COMMUNITY
                 </Text>
-                <Flex w='24px' h='1px' bg={'#757893'} ml='10px'></Flex>
+                <Flex w="24px" h="1px" bg={"#757893"} ml="10px"></Flex>
               </Flex>
               {menuLinks.map((link: any) => {
                 return (
@@ -175,6 +232,7 @@ export default function Header() {
                     link={link.link}
                     title={link.title}
                     icon={link.icon}
+                    hoverIcon={link.hoverIcon}
                   />
                 );
               })}
