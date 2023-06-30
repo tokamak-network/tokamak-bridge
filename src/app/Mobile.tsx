@@ -1,6 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
+import TITLE_IMAGE from "assets/image/mobile/Title.svg";
 
 export default function MobileView() {
   return (
@@ -15,15 +16,11 @@ export default function MobileView() {
         alt={"logo"}
         style={{ width: "53px", height: "51px" }}
       />
-      <Text
-        mt={"12px"}
-        mb={"24px"}
-        fontSize={14}
-        fontWeight={400}
-        lineHeight={"24px"}
-      >
-        Tokamak Bridge
-      </Text>
+      <Image
+        src={TITLE_IMAGE}
+        alt={"TITLE_IMAGE"}
+        style={{ marginTop: "12px", marginBottom: "24px" }}
+      />
       <Text
         color={"#A0A3AD"}
         fontSize={14}

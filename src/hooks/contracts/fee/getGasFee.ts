@@ -1,3 +1,4 @@
+import { getL2Provider } from "@/config/l2Provider";
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";

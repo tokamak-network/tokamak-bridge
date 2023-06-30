@@ -14,6 +14,40 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import useIsLoading from "../ui/useIsLoading";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 
+const sqrtToPrice = (
+  sqrt: number,
+  decimals0: number,
+  decimals1: number,
+  token0IsInput?: boolean
+) => {
+  const numerator = sqrt ** 2;
+  const denominator = 2 ** 192;
+  let ratio = numerator / denominator;
+  const shiftDecimals = Math.pow(10, decimals0 - decimals1);
+  ratio = ratio * shiftDecimals;
+  if (token0IsInput === false) {
+    ratio = 1 / ratio;
+  }
+  return ratio;
+};
+
+const getSqrt = async (
+  QUOTER_CONTRACT: any,
+  inTokenAddress: string,
+  outTokenAddress: string,
+  inTokenAmountBN: any
+) => {
+  const quote = await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
+    inTokenAddress,
+    outTokenAddress,
+    FeeAmount.MEDIUM,
+    inTokenAmountBN,
+    0
+  );
+
+  return quote.toString();
+};
+
 export default function usePriceImpact() {
   const [markPrice, setMarkPrice] = useState<number | undefined>(undefined);
 
@@ -32,33 +66,42 @@ export default function usePriceImpact() {
     }
   }, [routingPath]);
 
-  // useEffect(() => {
-  //   const fetchMarkPrice = async () => {
-  //     if (mode === "Swap" && inToken && outToken !== null) {
-  //       const quotedAmountOut =
-  //         await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-  //           inToken.token.address,
-  //           outToken.token.address,
-  //           FeeAmount.MEDIUM,
-  //           ethers.utils.parseUnits("1", inToken.decimals),
-  //           0
+  // const priceImpact = useMemo(() => {
+  //   if (routingPath) {
+  //     const { route } = routingPath;
+  //     const test = route.map((path: any) => {
+  //       path.map((pathData: any) => {
+  //         const { sqrtRatioX96, tokenIn, tokenOut } = pathData;
+  //         const test = sqrtToPrice(
+  //           Number(sqrtRatioX96),
+  //           Number(tokenIn.decimals),
+  //           Number(tokenOut.decimals)
   //         );
+  //         console.log(test, sqrtRatioX96);
+  //         return { test, sqrtRatioX96 };
+  //       });
+  //     });
 
-  //       const readableAmount = ethers.utils.formatUnits(
-  //         quotedAmountOut,
-  //         outToken.decimals
-  //       );
+  //     return test;
+  //   }
+  // }, [routingPath]);
 
-  //       return setMarkPrice(Number(readableAmount.toString().slice(0, 10)));
-  //     }
-  //     return setMarkPrice(undefined);
-  //   };
-  //   fetchMarkPrice().catch((e) => {
-  //     // console.log("**fetchMarkPrice err**");
-  //     // console.log(e);
-  //     return setMarkPrice(undefined);
-  //   });
-  // }, [inToken, outToken, QUOTER_CONTRACT, mode]);
+  // useEffect(() => {
+  //   async function test() {
+  //     const result = await getSqrt(
+  //       QUOTER_CONTRACT,
+  //       "0x67F3bE272b1913602B191B3A68F7C238A2D81Bb9",
+  //       "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6",
+  //       "11000000000000000000"
+  //     );
+  //     console.log("--test");
+
+  //     console.log(result);
+  //   }
+  //   test();
+  // }, [QUOTER_CONTRACT]);
+
+  // console.log(priceImpact);
 
   // const priceImpact = useMemo(() => {
   //   if (markPrice && amountOut && inToken && inToken.parsedAmount !== null) {

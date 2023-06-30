@@ -151,9 +151,9 @@ function TxToast() {
         toast({
           position: "top-right",
           variant: "solid",
-          isClosable: false,
+          isClosable: true,
           id: txHash,
-          duration: 50000000,
+          duration: 5000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);

@@ -24,6 +24,7 @@ import GradientSpinner from "@/components/ui/gradientSpinner";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { useApprove } from "@/hooks/token/useApproval";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -442,11 +443,11 @@ const Title = (props: {
             <Text>
               {outPrice} {outToken?.tokenSymbol}
             </Text>
-            {isOpen === false && (
+            {/* {isOpen === false && (
               <Text color={"#A0A3AD"} ml={"4px"}>
                 ($1.000)
               </Text>
-            )}
+            )} */}
           </Flex>
         )}
         {isOpen === false && (
@@ -479,6 +480,7 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
+  const { isApproved } = useApprove();
 
   const { mode, isReady } = useGetMode();
 
@@ -487,7 +489,8 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
     mode === "Wrap" ||
     mode === "Unwrap" ||
     isNotSupportForSwap ||
-    isNotSupportForBridge
+    isNotSupportForBridge ||
+    isApproved === false
   ) {
     return null;
   }
