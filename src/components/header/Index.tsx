@@ -248,7 +248,7 @@ export default function Header() {
                 hoverIcon={userGuideHover}
               />
               <CustomMenuItem
-                link="https://orcp3tde4sw.typeform.com/to/fKIZXyb3"
+                link="https://forms.gle/GLY1PZq4BH4RqZY79"
                 title="Get Help"
                 icon={lightbulb}
                 hoverIcon={lightbulbHover}
