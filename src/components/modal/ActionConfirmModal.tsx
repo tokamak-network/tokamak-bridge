@@ -45,9 +45,9 @@ const OutTokenContainer = () => {
         <Text>{trimAmount(amountOut)}</Text>
         <Text fontWeight={400}>{outToken?.tokenSymbol}</Text>
       </Flex>
-      <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+      {/* <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
         $0.22
-      </Text>
+      </Text> */}
     </>
   );
 };
