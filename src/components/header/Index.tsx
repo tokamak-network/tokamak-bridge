@@ -19,7 +19,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
@@ -115,7 +115,8 @@ const CustomMenuItem = (props: {
 
 export default function Header() {
   const [menuState, setMenuState] = useState(false);
-  const [hoverOn, setHoverOn] = useState(false);
+  const wrapperRef = useRef(null);
+
   const menuLinks = [
     {
       title: "Medium",
@@ -171,6 +172,9 @@ export default function Header() {
 
     !menuState && setMenuState(!menuState);
   };
+
+
+
   return (
     <Flex
       minW={"100%"}
@@ -181,7 +185,7 @@ export default function Header() {
       px={"40px"}
       pos={"absolute"}
     >
-      <Flex columnGap={"35px"} height={'48px'} alignItems={'center'}>
+      <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
         <Box>
           <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
         </Box>
@@ -244,7 +248,7 @@ export default function Header() {
                 hoverIcon={userGuideHover}
               />
               <CustomMenuItem
-                link="https://orcp3tde4sw.typeform.com/to/fKIZXyb3"
+                link="https://forms.gle/GLY1PZq4BH4RqZY79"
                 title="Get Help"
                 icon={lightbulb}
                 hoverIcon={lightbulbHover}
