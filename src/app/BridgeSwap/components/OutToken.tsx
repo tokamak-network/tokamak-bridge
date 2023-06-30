@@ -91,7 +91,7 @@ export default function OutToken() {
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {mode === "Swap" ? "For" : "To"}
         </Text>
-        <Setting />
+        {mode === "Swap" && <Setting />}
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>
