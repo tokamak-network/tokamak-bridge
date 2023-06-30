@@ -37,6 +37,12 @@ export default function Setting() {
       ) {
         return;
       }
+      if (Number(value) > 20) {
+        return setTxSetting({
+          ...txSetting,
+          [id]: "20",
+        });
+      }
       return setTxSetting({
         ...txSetting,
         [id]: value,
@@ -46,6 +52,9 @@ export default function Setting() {
     if (id === "deadline") {
       if (value.length > 4 || isNaN(Number(value))) {
         return;
+      }
+      if (Number(value) > 180) {
+        return setTxSetting({ ...txSetting, [id]: 180 });
       }
       return setTxSetting({ ...txSetting, [id]: Number(value) });
     }

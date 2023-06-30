@@ -40,6 +40,7 @@ import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
 import AccountModal from "../modal/AccountModal";
+
 const menuList = [
   {
     title: "BRIDGE & SWAP",
@@ -171,6 +172,9 @@ export default function Header() {
 
     !menuState && setMenuState(!menuState);
   };
+
+  const router = useRouter();
+
   return (
     <Flex
       minW={"100%"}
@@ -181,8 +185,8 @@ export default function Header() {
       px={"40px"}
       pos={"absolute"}
     >
-      <Flex columnGap={"35px"} height={'48px'} alignItems={'center'}>
-        <Box>
+      <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
+        <Box onClick={() => router.push("/")} cursor={"pointer"}>
           <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
         </Box>
         <Flex columnGap={"30px"}>
