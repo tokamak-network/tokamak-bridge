@@ -61,8 +61,6 @@ export function useTransaction() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
 
-  getInterface();
-
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([key, value]) => {
@@ -218,6 +216,29 @@ export function useTx(params: {
           const result = l1BridgeI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           const { _l1Token, _l2Token, _amount } = args;
+
+          if (_l1Token === undefined) {
+            return setTxData({
+              ...txData,
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: "ETH",
+                    amount: _amount,
+                  },
+                  {
+                    tokenAddress: "ETH",
+                    amount: _amount,
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            });
+          }
 
           return setTxData({
             ...txData,

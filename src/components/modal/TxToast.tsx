@@ -46,6 +46,34 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
+  if (tokenData[tokenIndex].tokenAddress === "ETH") {
+    return (
+      <Flex
+        w={"92px"}
+        minW={"92px"}
+        rowGap={"8px"}
+        flexDir={"column"}
+        py={"18px"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <TokenSymbolWithNetwork
+          tokenSymbol={"ETH"}
+          chainId={
+            txSort === "Deposit" && isToken0 === false
+              ? 5050
+              : txSort === "Withdraw" && isToken0 === false
+              ? 1
+              : network
+          }
+        />
+        <Text fontSize={11} fontWeight={400} textAlign={"center"}>
+          {trimAmount(convertParsedAmount)} {"ETH"}
+        </Text>
+      </Flex>
+    );
+  }
+
   if (symbol && decimals)
     return (
       <Flex
