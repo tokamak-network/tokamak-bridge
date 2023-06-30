@@ -41,7 +41,7 @@ export default function ActionButton() {
         isPending ||
         (mode === "Swap" && outToken === null) ||
         isInputZero ||
-        isTONatPair;
+        (mode === "Swap" && isTONatPair);
       setIsDisabled(disabled);
     }, 200);
 
