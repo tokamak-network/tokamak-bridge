@@ -7,6 +7,7 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
+
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
@@ -77,6 +78,10 @@ export function useTransaction() {
       });
   }, [txData]);
 
+  const isPending = useMemo(() => {
+    return pendingTransaction && pendingTransaction.length > 0;
+  }, [pendingTransaction]);
+
   const confirmedTransaction = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([, value]) => {
@@ -91,6 +96,7 @@ export function useTransaction() {
   return {
     allTransaction: txData,
     pendingTransaction,
+    isPending,
     pendingTransactionToApprove,
     confirmedTransaction,
   };
@@ -144,8 +150,10 @@ export function useTx(params: {
           return;
         case "Swap": {
           const result = swapRouterI.parseLog(logs[logs.length - 1]);
+          const trasferResult = erc20I.parseLog(logs[1]);
           const { args } = result;
           const { amount0, amount1 } = args;
+          const transferedValue = trasferResult.args.value;
 
           setTxData({
             ...txData,
@@ -156,7 +164,7 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: tokenAddress ?? "0x",
-                  amount: amount0.toBigInt(),
+                  amount: transferedValue.toBigInt(),
                 },
                 {
                   tokenAddress: tokenOutAddress ?? "0x",

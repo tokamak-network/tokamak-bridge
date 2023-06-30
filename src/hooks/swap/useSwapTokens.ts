@@ -21,7 +21,6 @@ import {
   toReadableAmount,
 } from "@/utils/uniswap/libs/converstion";
 import { useInOutTokens } from "../token/useInOutTokens";
-import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import useConnectedNetwork from "../network";
 import { useGetMode } from "../mode/useGetMode";
 
@@ -46,15 +45,6 @@ export function useAmountOut() {
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
   const [trade, setTrade] = useState<TokenTrade | null>(null);
-  const [amountOutErr, setAmountOutErr] = useState<boolean>(false);
-
-  const [, setIsLoading] = useIsLoading();
-
-  const { data, write: multiCall } = useContractWrite({
-    address: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-    abi: SwapRouterAbi,
-    functionName: "multicall",
-  });
   const { routingPath } = useSmartRouter();
   // console.log(routingPath);
 
@@ -75,18 +65,15 @@ export function useAmountOut() {
         //   );
 
         const { quoteDecimals } = routingPath;
-        setAmountOutErr(false);
         return setAmountOut(quoteDecimals);
       }
 
-      setAmountOutErr(false);
       return setAmountOut(null);
     };
 
     getAmountOut().catch((e) => {
       console.log("**getAmountOut err**");
       console.log(e);
-      // setAmountOutErr(true);
     });
   }, [mode, routingPath]);
 
@@ -272,5 +259,5 @@ export function useAmountOut() {
     tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
   });
 
-  return { amountOut, callTokenSwap: sendTransaction, amountOutErr };
+  return { amountOut, callTokenSwap: sendTransaction };
 }
