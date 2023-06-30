@@ -21,6 +21,8 @@ import step1 from "assets/image/step1.svg";
 import step2 from "assets/image/step2.svg";
 import step3 from "assets/image/step3.svg";
 import step4 from "assets/image/step4.svg";
+import step5 from "assets/image/step5.svg";
+
 export default function TutorialModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
@@ -69,16 +71,16 @@ export default function TutorialModal() {
   ];
 
   const bgs = [
-    { bg: step0, px: "195px", size: "502px 463px" },
-    { bg: step1, px: "195px", size: "502px 463px" },
-    { bg: step2, px: "144px", size: "520px 514px" },
-    { bg: step3, px: "142px", size: "520px 516px" },
-    { bg: step4, px: "142px", size: "520px 516px" },
-    { bg: step0, px: "195px", size: "502px 463px" },
+    { bg: step0, px:'55%', size: "502px 463px" },
+    { bg: step1, px: "55%", size: "502px 463px" },
+    { bg: step2, px: "50%", size: "520px 514px" },
+    { bg: step3, px: "50%", size: "520px 516px" },
+    { bg: step4, px: "50%", size: "520px 516px" },
+    { bg: step0, px: "55%", size: "502px 463px" },
   ];
 
   return (
-    <Modal onClose={onClose} isOpen={modalOpen}>
+    <Modal onClose={onClose} isOpen={modalOpen} isCentered>
       <ModalOverlay
         bg={"rgba(0, 0, 0, 0.6)"}
         backgroundImage={currentStep !== 5?  bgs[currentStep].bg.src:''}
@@ -98,7 +100,8 @@ export default function TutorialModal() {
         w="404px"
         paddingBottom={"40px"}
         bg={"#1F2128"}
-        mt={"288px !important"}
+        mt={"140px !important"}
+        position={'fixed'}
       
       >
         <Flex flexDir={"column"} alignItems={"center"}>
