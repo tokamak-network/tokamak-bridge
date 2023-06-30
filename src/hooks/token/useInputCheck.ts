@@ -19,15 +19,17 @@ export default function useInputBalanceCheck() {
     return false;
   }, [inToken?.amountBN, tokenData?.data.balanceBN]);
 
-  const isInputZero = useMemo(() => {
-    if (
-      inToken?.parsedAmount &&
-      tokenData?.data.parsedBalanceWithoutCommafied
-    ) {
-      return Number(inToken?.parsedAmount) === 0;
-    }
-    return false;
-  }, [inToken?.amountBN, tokenData?.data.balanceBN]);
+  // const isInputZero = useMemo(() => {
+  //   if (
+  //     inToken?.parsedAmount &&
+  //     tokenData?.data.parsedBalanceWithoutCommafied
+  //   ) {
+  //     return Number(inToken?.parsedAmount) === 0;
+  //   }
+  //   return false;
+  // }, [inToken?.amountBN, tokenData?.data.balanceBN]);
+
+  const isInputZero = false;
 
   return { isBalanceOver, isInputZero };
 }
