@@ -114,9 +114,9 @@ const TokenContainer = () => {
           <Text>{trimAmount(inToken?.parsedAmount)}</Text>
           <Text fontWeight={400}>{inToken?.tokenSymbol}</Text>
         </Flex>
-        <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+        {/* <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
           $0.22
-        </Text>
+        </Text> */}
       </Flex>
       <Box pos={"absolute"} left={"45.5%"} top={"40%"}>
         <Image src={ARROW_ICON} alt={"ARROW_ICON"} />

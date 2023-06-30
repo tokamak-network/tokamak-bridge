@@ -11,6 +11,7 @@ import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import Setting from "@/components/Setting";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -37,7 +38,7 @@ export const SelectedNetwork = () => {
         fontWeight={500}
         textAlign={"center"}
       >
-        {outNetwork?.chainName}
+        {convertNetworkName(outNetwork?.chainName)}
       </Text>
     </Box>
   );
