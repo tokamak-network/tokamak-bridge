@@ -78,8 +78,26 @@ export function useTransaction() {
       });
   }, [txData]);
 
+  const { data: txCheckData, isError: txCheckError } = useTrasactionW({
+    hash:
+      pendingTransaction !== undefined &&
+      pendingTransaction !== null &&
+      pendingTransaction.length === 1
+        ? (pendingTransaction[0][0] as `0x${string}`)
+        : "0x",
+  });
+
+  useEffect(() => {
+    if (pendingTransaction?.length === 1) {
+      if (txCheckError) return setTxData(undefined);
+    }
+  }, [txCheckData, txCheckError, pendingTransaction]);
+
   const isPending = useMemo(() => {
-    return pendingTransaction && pendingTransaction.length > 0;
+    if (pendingTransaction && pendingTransaction.length > 0) {
+      return true;
+    }
+    return false;
   }, [pendingTransaction]);
 
   const confirmedTransaction = useMemo(() => {
@@ -154,6 +172,8 @@ export function useTx(params: {
           const { args } = result;
           const { amount0, amount1 } = args;
           const transferedValue = trasferResult.args.value;
+
+          console.log(amount0.toBigInt(), amount1.toBigInt());
 
           setTxData({
             ...txData,
