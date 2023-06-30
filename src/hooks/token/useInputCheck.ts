@@ -5,6 +5,7 @@ import useTokenBalance from "../contracts/balance/useTokenBalance";
 export default function useInputBalanceCheck() {
   const { inToken } = useInOutTokens();
   const tokenData = useTokenBalance(inToken);
+
   const isBalanceOver = useMemo(() => {
     if (
       inToken?.parsedAmount &&
@@ -18,5 +19,15 @@ export default function useInputBalanceCheck() {
     return false;
   }, [inToken?.amountBN, tokenData?.data.balanceBN]);
 
-  return { isBalanceOver };
+  const isInputZero = useMemo(() => {
+    if (
+      inToken?.parsedAmount &&
+      tokenData?.data.parsedBalanceWithoutCommafied
+    ) {
+      return Number(inToken?.parsedAmount) === 0;
+    }
+    return false;
+  }, [inToken?.amountBN, tokenData?.data.balanceBN]);
+
+  return { isBalanceOver, isInputZero };
 }

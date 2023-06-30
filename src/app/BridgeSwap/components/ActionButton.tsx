@@ -22,7 +22,7 @@ export default function ActionButton() {
   const [isLoading] = useIsLoading();
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
-  const { isBalanceOver } = useInputBalanceCheck();
+  const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const { isPending } = useTransaction();
   const { outToken } = useInOutTokens();
 
@@ -38,7 +38,8 @@ export default function ActionButton() {
         isNotSupportForSwap ||
         isBalanceOver ||
         isPending ||
-        (mode === "Swap" && outToken === null);
+        (mode === "Swap" && outToken === null) ||
+        isInputZero;
       setIsDisabled(disabled);
     }, 200);
 

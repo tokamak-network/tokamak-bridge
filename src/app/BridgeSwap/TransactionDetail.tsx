@@ -26,6 +26,7 @@ import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useApprove } from "@/hooks/token/useApproval";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -491,6 +492,7 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
 
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
+  const { isInputZero } = useInputBalanceCheck();
 
   if (
     !isReady ||
@@ -499,7 +501,8 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
     isNotSupportForSwap ||
     isNotSupportForBridge ||
     isApproved === false ||
-    (mode === "Swap" && outToken === null)
+    (mode === "Swap" && outToken === null) ||
+    isInputZero
   ) {
     return null;
   }
