@@ -19,8 +19,6 @@ export type DepositDetailProp = {
   gasFee?: {
     l1Gas: string;
     l2Gas: string;
-    l1GasUS: string;
-    l2GasUS: string;
   };
 };
 
@@ -33,8 +31,6 @@ export type WithdrawDetailNewProp = {
   gasFee?: {
     l1Gas: string;
     l2Gas: string;
-    l1GasUS: string;
-    l2GasUS: string;
   };
 };
 
@@ -66,7 +62,7 @@ export type SwapDetailProp = {
 export function useTransactionDetail() {
   const { mode } = useRecoilValue(actionMode);
   const { inToken, outToken } = useInOutTokens();
-  const { totalGasCost, gasCostUS } = useGasFee();
+  const { totalGasCost } = useGasFee();
 
   const totalGasFee = `${
     isBiggerThanMinimumNum(Number(totalGasCost))
@@ -90,8 +86,6 @@ export function useTransactionDetail() {
           gasFee: {
             l1Gas: totalGasFee,
             l2Gas: "0 ETH",
-            l1GasUS: gasCostUS,
-            l2GasUS: "0",
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
@@ -103,9 +97,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost]);
-
-  const totalGasFeeToWithdraw = Number(totalGasCost) + 0.00024511191632554;
+  }, [mode, inToken, totalGasFee, inputAmount]);
 
   const withdrawNewPropsData: WithdrawDetailNewProp[] | null = useMemo(() => {
     //need to put totalGasCost condition later
@@ -117,14 +109,10 @@ export function useTransactionDetail() {
         },
         {
           title: "Estimated gas fees",
-          content: `${commafy(totalGasFeeToWithdraw, 4)} ETH`,
+          content: totalGasFee,
           gasFee: {
-            //fixed l1 gasFee for a while
-            //0.00024511191632554 ETH
-            l1Gas: "0.0002 ETH",
-            l2Gas: `${totalGasFee}`,
-            l1GasUS: "",
-            l2GasUS: `${gasCostUS}`,
+            l1Gas: "- ETH",
+            l2Gas: `${totalGasFee} ETH`,
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
@@ -136,7 +124,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost]);
+  }, [mode, inToken, totalGasFee, inputAmount]);
 
   const withdrawPropsData: WithdrawDetailProp[] | null = useMemo(() => {
     if (mode === "Withdraw" && inToken && totalGasFee) {
@@ -149,8 +137,7 @@ export function useTransactionDetail() {
           title: "Estimated gas fees",
           content: totalGasFee,
           gasFee: {
-            //fixed l1 gasFee for a while
-            l1Gas: { eth: "0.00024511191632554 ETH", ton: "0.0022 TON" },
+            l1Gas: { eth: "0 ETH", ton: "0.0022 TON" },
             l2Gas: { eth: totalGasFee, ton: "0.0022 TON" },
           },
         },
@@ -189,7 +176,7 @@ export function useTransactionDetail() {
         {
           title: "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
-          gasFee: `$${gasCostUS}`,
+          gasFee: "$3.18",
         },
       ];
     }
@@ -202,7 +189,6 @@ export function useTransactionDetail() {
     amountOut,
     priceImpact,
     uniswapTxSettingValueForUI,
-    totalGasFee,
   ]);
 
   return {

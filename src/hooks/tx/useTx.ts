@@ -1,25 +1,24 @@
 import { TxSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { useWaitForTransaction } from "wagmi";
+import { usePublicClient, useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
-import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
+import SwapRouterAbi from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 
-import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
-import { transactionModalStatus } from "@/recoil/modal/atom";
-import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { getTransaction } from "viem/dist/types/actions/public/getTransaction";
+import { fetchTransaction } from "@wagmi/core";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
-  const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
+  const swapRouterI = new ethers.utils.Interface(SwapRouterAbi.abi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
 
@@ -61,8 +60,6 @@ export function useTransaction() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
 
-  getInterface();
-
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([key, value]) => {
@@ -77,30 +74,7 @@ export function useTransaction() {
       return Object.entries(txData).filter(([, value]) => {
         return value.transactionHash === undefined;
       });
-    return undefined;
   }, [txData]);
-
-  const { data: txCheckData, isError: txCheckError } = useTrasactionW({
-    hash:
-      pendingTransaction !== undefined &&
-      pendingTransaction !== null &&
-      pendingTransaction.length === 1
-        ? (pendingTransaction[0][0] as `0x${string}`)
-        : "0x",
-  });
-
-  useEffect(() => {
-    if (pendingTransaction?.length === 1) {
-      if (txCheckError) return setTxData(undefined);
-    }
-  }, [txCheckData, txCheckError, pendingTransaction]);
-
-  const isPending = useMemo(() => {
-    if (pendingTransaction && pendingTransaction.length > 0) {
-      return true;
-    }
-    return false;
-  }, [pendingTransaction, txData]);
 
   const confirmedTransaction = useMemo(() => {
     if (txData)
@@ -116,7 +90,6 @@ export function useTransaction() {
   return {
     allTransaction: txData,
     pendingTransaction,
-    isPending,
     pendingTransactionToApprove,
     confirmedTransaction,
   };
@@ -126,33 +99,18 @@ export function useTx(params: {
   hash: `0x${string}` | undefined;
   txSort: TxSort;
   tokenAddress?: `0x${string}`;
-  tokenOutAddress?: `0x${string}`;
 }) {
-  const { hash, txSort, tokenAddress, tokenOutAddress } = params;
+  const { hash, txSort, tokenAddress } = params;
 
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
   });
   const [txData, setTxData] = useRecoilState(txDataStatus);
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
   const { connectedChainId } = useConnectedNetwork();
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
-  const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
-  const { data: _d, isError: _i, isLoading: _lo } = useTrasactionW({ hash });
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
-      if (selectedInToken) {
-        setSelectedInToken({
-          ...selectedInToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-
       return setTxData({
         ...txData,
         [hash]: {
@@ -170,9 +128,9 @@ export function useTx(params: {
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
+
       const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
         getInterface();
-      setModalOpen("confirmed");
       switch (txSort) {
         //Uniswap
         case "Add Liquidity":
@@ -181,36 +139,9 @@ export function useTx(params: {
           return;
         case "Swap": {
           const result = swapRouterI.parseLog(logs[logs.length - 1]);
-          const trasferedOutResult = erc20I.parseLog(logs[1]);
-          // const transferedInResult = erc20I.parseLog(logs[4]);
-
           const { args } = result;
-          const { amount0, amount1 } = args;
-          const transferedValue = trasferedOutResult.args.value;
-          // const transferedInValue = transferedInResult.args.value;
-
-          setTxData({
-            ...txData,
-            [hash]: {
-              transactionHash,
-              txSort,
-              transactionState: "success",
-              tokenData: [
-                {
-                  tokenAddress: tokenAddress ?? "0x",
-                  amount: transferedValue.toBigInt(),
-                },
-                {
-                  tokenAddress: tokenOutAddress ?? "0x",
-                  amount: amount1.toBigInt(),
-                },
-              ],
-              network: connectedChainId,
-              isToasted: false,
-            },
-          });
+          return;
         }
-
         case "Collect Fee":
           return;
         //bridge
@@ -342,7 +273,6 @@ export function useTx(params: {
     }
     if (isError && data && connectedChainId && hash) {
       console.log(isError, hash);
-      setModalOpen("error");
     }
   }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
 

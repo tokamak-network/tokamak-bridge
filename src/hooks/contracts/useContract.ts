@@ -25,6 +25,6 @@ export default function useContract() {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
-    SWAPPER_V2_CONTRACT,
+    SWAPPER_V2_CONTRACT
   };
 }
