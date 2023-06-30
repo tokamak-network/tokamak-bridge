@@ -6,6 +6,11 @@ import useIsLoading from "../ui/useIsLoading";
 import { useAccount } from "wagmi";
 import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
+import {
+  TOKAMAK_CONTRACTS,
+  TOKAMAK_GOERLI_CONTRACTS,
+} from "@/constant/contracts";
+import { isETH } from "@/utils/token/isETH";
 
 const getPath = async (queryParmam: string | undefined | null) => {
   if (queryParmam === undefined || queryParmam === null) {
@@ -32,6 +37,7 @@ export function useSmartRouter() {
   const [routeNotFounded, setRouteNotFounded] = useState<boolean>(false);
   const { address } = useAccount();
   const txSettingValue = useRecoilValue(uniswapTxSetting);
+  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
 
   const queryParam = useMemo(() => {
     if (
@@ -43,10 +49,17 @@ export function useSmartRouter() {
       txSettingValue.slippage !== "" &&
       txSettingValue.deadline !== undefined
     ) {
+      const isEther = isETH(inToken);
+      const inTokenWETHAddress =
+        layer === "L2"
+          ? isConnectedToMainNetwork
+            ? TOKAMAK_CONTRACTS.WETH_ADDRESS
+            : TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS
+          : inToken.tokenAddress;
       const param = `${
         process.env.NEXT_PUBLIC_ROUTING_API
       }/quote?tokenInAddress=${
-        inToken.tokenAddress
+        isEther ? inTokenWETHAddress : inToken.tokenAddress
       }&tokenInChainId=${connectedChainId}&tokenOutAddress=${
         outToken.tokenAddress
       }&tokenOutChainId=${connectedChainId}&amount=${
@@ -64,6 +77,8 @@ export function useSmartRouter() {
     outToken,
     address,
     txSettingValue,
+    layer,
+    isConnectedToMainNetwork,
   ]);
 
   const [, setIsLoading] = useIsLoading();

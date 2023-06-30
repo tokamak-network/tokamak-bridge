@@ -90,7 +90,7 @@ export function useTransactionDetail() {
           gasFee: {
             l1Gas: totalGasFee,
             l2Gas: "0 ETH",
-            l1GasUS: gasCostUS,
+            l1GasUS: gasCostUS ?? "",
             l2GasUS: "0",
           },
           tooltip: true,
@@ -182,10 +182,10 @@ export function useTransactionDetail() {
           content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
-        {
-          title: "Price impact",
-          content: `${priceImpact ?? "-"}%`,
-        },
+        // {
+        //   title: "Price impact",
+        //   content: `${priceImpact ?? "-"}%`,
+        // },
         {
           title: "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
