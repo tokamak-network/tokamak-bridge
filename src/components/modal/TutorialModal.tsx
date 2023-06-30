@@ -68,8 +68,6 @@ export default function TutorialModal() {
 
   const [storedValue, setValue] = useLocalStorage("tutorial", false);
 
-  console.log(storedValue);
-
   const closeModal = useCallback(() => {
     setValue(true);
     setModalOpen(false);

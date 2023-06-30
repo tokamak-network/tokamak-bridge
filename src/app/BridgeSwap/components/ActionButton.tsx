@@ -10,6 +10,8 @@ import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions"
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useTransaction } from "@/hooks/tx/useTx";
+import useConnectWallet from "@/hooks/account/useConnectWallet";
+import { milliseconds } from "date-fns";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -47,6 +49,7 @@ export default function ActionButton() {
 
   const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();
+  const { connetAndDisconntWallet } = useConnectWallet();
 
   return (
     <Button
@@ -57,10 +60,16 @@ export default function ActionButton() {
       _active={{}}
       _hover={{}}
       _disabled={{}}
-      bgColor={isDisabled ? "#17181D" : "#007AFF"}
-      color={isDisabled ? "#8E8E92" : "#fff"}
-      isDisabled={isDisabled}
-      onClick={needToOpenModal ? onOpenConfirmModal : onClick}
+      bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
+      color={!isConnected ? "#fff" : isDisabled ? "#8E8E92" : "#fff"}
+      isDisabled={!isConnected ? false : isDisabled}
+      onClick={
+        isConnected === false
+          ? () => connetAndDisconntWallet()
+          : needToOpenModal
+          ? onOpenConfirmModal
+          : onClick
+      }
     >
       {!isConnected && "Connect Wallet"}
       {!isConnected
