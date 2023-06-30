@@ -434,7 +434,9 @@ const Title = (props: {
         fontSize={14}
       >
         {isLoading ? (
-          <GradientSpinner />
+          <Box w={"100%"} h={"20px"} mb={"5px"}>
+            <GradientSpinner />
+          </Box>
         ) : (
           <Flex>
             <Text>
@@ -451,25 +453,29 @@ const Title = (props: {
             )} */}
           </Flex>
         )}
-        {isOpen === false && (
-          <Flex>
-            {isExpanded === false && <Image src={GasImg} alt={"gasStation"} />}
-            {isOpen === isExpanded && (
-              <Text
-                fontSize={14}
-                fontWeight={400}
-                color={"#A0A3AD"}
-                ml={"6px"}
-                mr={"13px"}
-              >
-                ${gasCostUS}
-              </Text>
+        {isLoading
+          ? null
+          : isOpen === false && (
+              <Flex>
+                {isExpanded === false && (
+                  <Image src={GasImg} alt={"gasStation"} />
+                )}
+                {isOpen === isExpanded && (
+                  <Text
+                    fontSize={14}
+                    fontWeight={400}
+                    color={"#A0A3AD"}
+                    ml={"6px"}
+                    mr={"13px"}
+                  >
+                    ${gasCostUS}
+                  </Text>
+                )}
+                <motion.div animate={arrowControl}>
+                  <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+                </motion.div>
+              </Flex>
             )}
-            <motion.div animate={arrowControl}>
-              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-            </motion.div>
-          </Flex>
-        )}
       </Flex>
     );
   }
