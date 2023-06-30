@@ -64,7 +64,7 @@ export default function TutorialModal() {
     },
   ];
   return (
-    <Modal onClose={onClose} isOpen={modalOpen}>
+    <Modal onClose={onClose} isOpen={modalOpen} isCentered>
       <ModalOverlay css={{ backgroundColor: "rgba(0, 0, 0, 0)" }} />
       <ModalContent
         justifyContent={"center"}

@@ -39,7 +39,7 @@ import discordHover from "assets/icons/header/discordHover.svg";
 import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
-
+import AccountModal from "../modal/AccountModal";
 const menuList = [
   {
     title: "BRIDGE & SWAP",
@@ -51,8 +51,12 @@ const menuList = [
   },
 ];
 
-const HeaderMenu = (props: { title: string; link: string }) => {
-  const { title, link } = props;
+const HeaderMenu = (props: {
+  title: string;
+  link: string;
+  menuState: boolean;
+}) => {
+  const { title, link, menuState } = props;
   const pathname = usePathname();
   const router = useRouter();
 
@@ -61,7 +65,7 @@ const HeaderMenu = (props: { title: string; link: string }) => {
       fontSize={16}
       cursor={"pointer"}
       borderBottom={
-        pathname.split("/")[1] === link.replaceAll("/", "")
+        !menuState && pathname.split("/")[1] === link.replaceAll("/", "")
           ? "3px solid #007AFF"
           : ""
       }
@@ -78,7 +82,7 @@ const CustomMenuItem = (props: {
   icon: any;
   hoverIcon: any;
 }) => {
-  const { link, title, icon,hoverIcon } = props;
+  const { link, title, icon, hoverIcon } = props;
   const [hover, setHover] = useState(false);
   return (
     <MenuItem
@@ -93,7 +97,7 @@ const CustomMenuItem = (props: {
       // border={'1px solid red'}
       bg="#0F0F12"
       _focus={{ background: "0F0F12" }}
-      _hover={{ bg: "none",color: "#2a72e5"  }}
+      _hover={{ bg: "none", color: "#2a72e5" }}
     >
       <Flex mr="9px">
         <Image src={hover ? hoverIcon : icon} alt="icon" />
@@ -113,73 +117,98 @@ export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const menuLinks = [
-    { title: "Medium", link: "https://medium.com/onther-tech", icon: medium, hoverIcon: mediumHover },
+    {
+      title: "Medium",
+      link: "https://medium.com/onther-tech",
+      icon: medium,
+      hoverIcon: mediumHover,
+    },
     {
       title: "Twitter",
       link: "https://twitter.com/tokamak_network",
       icon: twitter,
-      hoverIcon:twitterHover
+      hoverIcon: twitterHover,
     },
     {
       title: "Kakaotalk",
       link: "https://open.kakao.com/o/g2zlglHd",
       icon: kakao,
-      hoverIcon:kakaoHover
+      hoverIcon: kakaoHover,
     },
     {
       title: "Discord",
       link: "https://discord.com/invite/J4chV2zuAK",
       icon: discord,
-      hoverIcon:discordHover
+      hoverIcon: discordHover,
     },
-    { title: "Telegram", link: "https://t.me/tokamak_network", icon: telegram, hoverIcon:telegramHover },
+    {
+      title: "Telegram",
+      link: "https://t.me/tokamak_network",
+      icon: telegram,
+      hoverIcon: telegramHover,
+    },
     {
       title: "LinkedIn",
       link: "https://www.linkedin.com/company/tokamaknetwork/",
       icon: linkedIn,
-      hoverIcon:linkedInHover
+      hoverIcon: linkedInHover,
     },
     {
       title: "Github",
       link: "https://github.com/tokamak-network",
       icon: github,
-      hoverIcon:githubHover
+      hoverIcon: githubHover,
     },
   ];
+
+  const handleMenuButtonhover = (event: any) => {
+    event.preventDefault();
+    setMenuState(true);
+  };
+
+  const handleMenuButtonClick = (event: any) => {
+    event.preventDefault();
+
+    !menuState && setMenuState(!menuState);
+  };
   return (
     <Flex
       minW={"100%"}
       zIndex={Overlay_Index.Header}
       justifyContent={"space-between"}
-      alignItems={"center"}
+      alignItems={"flex-start"}
       mt={"22px"}
       px={"40px"}
       pos={"absolute"}
     >
-      <Flex columnGap={"35px"}>
+      <Flex columnGap={"35px"} height={'48px'} alignItems={'center'}>
         <Box>
           <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
         </Box>
         <Flex columnGap={"30px"}>
           {menuList.map((menuInfo) => (
-            <HeaderMenu key={menuInfo.title} {...menuInfo}></HeaderMenu>
+            <HeaderMenu
+              key={menuInfo.title}
+              {...menuInfo}
+              menuState={menuState}
+            ></HeaderMenu>
           ))}
 
           <Menu
             onClose={() => {
               setMenuState(false);
             }}
+            isOpen={menuState}
           >
             <MenuButton
               as={Center}
               fontSize={16}
               cursor={"pointer"}
-              // onMouseEnter={()=> setHoverOn(true)}
+              onMouseEnter={handleMenuButtonhover}
               // onMouseLeave={()=> setHoverOn(false)}
+              onMouseDown={handleMenuButtonClick}
               borderBottom={menuState ? "3px solid #007AFF" : ""}
-              onClick={() => {
-                setMenuState(!menuState);
-              }}
+              onClick={handleMenuButtonClick}
               display={"flex"}
               flexDir={"row"}
             >
@@ -196,6 +225,7 @@ export default function Header() {
               </Flex>
             </MenuButton>
             <MenuList
+              onMouseLeave={() => setMenuState(false)}
               bg="#0F0F12"
               mt={"17px"}
               border={"1px solid #313442"}
@@ -242,7 +272,11 @@ export default function Header() {
       </Flex>
       <Flex columnGap={"6px"}>
         <Network />
-        <Account />
+        <Flex flexDir={"column"} alignItems={"flex-end"}>
+          <Account />
+          <AccountModal />
+        </Flex>
+
         {/* <UserMenu /> */}
       </Flex>
     </Flex>

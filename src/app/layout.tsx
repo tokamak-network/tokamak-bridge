@@ -18,7 +18,7 @@ import { getQueryClient } from "@/client/queryClient";
 const GlobalComponents = () => {
   return (
     <>
-      <HistoryDrawer />
+      {/* <HistoryDrawer /> */}
       <TxToast />
     </>
   );
