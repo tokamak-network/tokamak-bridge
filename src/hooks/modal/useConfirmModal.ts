@@ -3,11 +3,12 @@ import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import useTxModal from "./useTxModal";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
+import useTxConfirmModal from "./useTxConfirmModal";
 
 export default function useConfirm() {
   const [isOpen, setConfirmModal] = useRecoilState(confirmModalStatus);
   const [, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
-  const { txModalStatus } = useTxModal();
+  const { isOpen: isTxOpen } = useTxConfirmModal();
 
   const onOpenConfirmModal = () => {
     setConfirmModal(true);
@@ -16,13 +17,13 @@ export default function useConfirm() {
   const onCloseConfirmModal = useCallback(() => {
     setConfirmModal(false);
     setIsConfirm(false);
-  }, [setConfirmModal]);
+  }, []);
 
   useEffect(() => {
-    if (txModalStatus !== null) {
+    if (isTxOpen) {
       setConfirmModal(false);
     }
-  }, [txModalStatus]);
+  }, [isTxOpen]);
 
   return {
     isOpen,

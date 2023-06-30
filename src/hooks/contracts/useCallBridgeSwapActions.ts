@@ -13,6 +13,7 @@ import useWrap from "../swap/useTonWrap";
 import { predeploys } from "@eth-optimism/contracts";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
+import useTxConfirmModal from "../modal/useTxConfirmModal";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -30,7 +31,9 @@ export default function useCallBridgeSwapAction() {
   const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON } = useWrap();
 
-  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  // const [, setModalOpen] = useRecoilState(transactionModalStatus);
+
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   const onClick = useCallback(async () => {
     if (!isConnected) {
@@ -44,6 +47,7 @@ export default function useCallBridgeSwapAction() {
 
       if (mode === "Wrap" || mode === "Unwrap") {
       } else {
+        setIsOpen(true);
         setModalOpen("confirming");
       }
 

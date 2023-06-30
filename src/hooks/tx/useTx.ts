@@ -77,6 +77,7 @@ export function useTransaction() {
       return Object.entries(txData).filter(([, value]) => {
         return value.transactionHash === undefined;
       });
+    return undefined;
   }, [txData]);
 
   const { data: txCheckData, isError: txCheckError } = useTrasactionW({
@@ -99,7 +100,7 @@ export function useTransaction() {
       return true;
     }
     return false;
-  }, [pendingTransaction]);
+  }, [pendingTransaction, txData]);
 
   const confirmedTransaction = useMemo(() => {
     if (txData)

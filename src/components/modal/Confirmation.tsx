@@ -1,4 +1,4 @@
-import { transactionModalStatus } from "@/recoil/modal/atom";
+import { transactionModalStatus, txConforimModal } from "@/recoil/modal/atom";
 import {
   Modal,
   ModalOverlay,
@@ -18,18 +18,23 @@ import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";
 import { useTransaction } from "@/hooks/tx/useTx";
+import { useState } from "react";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 export default function Confirmation() {
-  const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
-  const isConfirming = modalOpen === "confirming";
-  const isConfirmed = modalOpen === "confirmed";
-  const isError = modalOpen === "error";
+  // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
+  // const isConfirming = modalOpen === "confirming";
+  // const isConfirmed = modalOpen === "confirmed";
+  // const isError = modalOpen === "error";
 
   const { blockExplorer } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
 
+  const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
+    useTxConfirmModal();
+
   return (
-    <Modal isOpen={modalOpen !== null} onClose={() => setModalOpen(null)}>
+    <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}
@@ -47,7 +52,7 @@ export default function Confirmation() {
           alignItems={"center"}
         >
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={() => setModalOpen(null)} />
+            <CloseButton onClick={closeModal} />
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
