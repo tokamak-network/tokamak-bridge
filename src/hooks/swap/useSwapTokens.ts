@@ -250,7 +250,12 @@ export function useAmountOut() {
     }
   }, [routingPath?.methodParameters, inToken?.amountBN]);
 
-  const { data: _swapData, sendTransaction } = useSendTransaction(txData);
+  const {
+    data: _swapData,
+    sendTransaction,
+    isError,
+    isSuccess,
+  } = useSendTransaction(txData);
 
   const {} = useTx({
     hash: _swapData?.hash,
@@ -259,5 +264,5 @@ export function useAmountOut() {
     tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
   });
 
-  return { amountOut, callTokenSwap: sendTransaction };
+  return { amountOut, callTokenSwap: sendTransaction, isError };
 }

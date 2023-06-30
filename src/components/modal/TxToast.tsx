@@ -197,7 +197,8 @@ function TxToast() {
   //   }
   // }, [isToasted]);
 
-  return <>{makeToast}</>;
+  return null;
+  // return <>{makeToast}</>;
 }
 
 export default TxToast;

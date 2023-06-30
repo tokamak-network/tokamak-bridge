@@ -78,7 +78,11 @@ export function useTransaction() {
     return undefined;
   }, [txData]);
 
-  const { data: txCheckData, isError: txCheckError } = useTrasactionW({
+  const {
+    data: txCheckData,
+    isError: txCheckError,
+    error,
+  } = useTrasactionW({
     hash:
       pendingTransaction !== undefined &&
       pendingTransaction !== null &&
@@ -89,9 +93,9 @@ export function useTransaction() {
 
   useEffect(() => {
     if (pendingTransaction?.length === 1) {
-      if (txCheckError) return setTxData(undefined);
+      if (txCheckError && error) return setTxData(undefined);
     }
-  }, [txCheckData, txCheckError, pendingTransaction]);
+  }, [txCheckData, txCheckError, error, pendingTransaction]);
 
   const isPending = useMemo(() => {
     if (pendingTransaction && pendingTransaction.length > 0) {
