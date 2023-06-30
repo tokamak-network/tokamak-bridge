@@ -15,56 +15,70 @@ import { useDisclosure } from "@chakra-ui/react";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import CloseButton from "../button/CloseButton";
-import { useState } from "react";
+import { useCallback, useMemo, useState } from "react";
+import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
+
+const steps = [
+  {
+    stepTitle: "Welcome to Tokamak Bridge",
+    stepDescription: [
+      "Allow us to give you a few tips on how to set up a Swap, Deposit or Withdraw. ",
+    ],
+  },
+  {
+    stepTitle: "Selecting Networks",
+    stepDescription: [
+      "Tokamak Bridge gives you the flexibility on what type of exchange you would like to perform. This is all dependent on how the networks are set up.",
+      "Easy Tip: All transactions are performed from left > right.",
+    ],
+  },
+  {
+    stepTitle: "Set up Swap",
+    stepDescription: [
+      "In order to perform a Swap, both networks need to be on the same network.",
+      "For example: ETH Mainnet > ETH Mainnet",
+    ],
+  },
+  {
+    stepTitle: "Set up Deposit",
+    stepDescription: [
+      "In order to perform a Deposit, the left network needs to be layer 1, the right network needs to be layer 2. ",
+      "For example: ETH Mainnet > Titan",
+    ],
+  },
+  {
+    stepTitle: "Set up Withdraw",
+    stepDescription: [
+      "In order to perform a Withdraw, the left network needs to be layer 2, the right network needs to be layer 1. ",
+      "For example: Titan > ETH Mainnet",
+    ],
+  },
+  {
+    stepTitle: "More Help",
+    stepDescription: [
+      "To get a more in-depth guide on how to use Tokamak Bridge, you can find a link to our user guide under the “More” tab in the menu.",
+    ],
+  },
+];
 
 export default function TutorialModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState(true);
-  const steps = [
-    {
-      stepTitle: "Welcome to Tokamak Bridge",
-      stepDescription: [
-        "Allow us to give you a few tips on how to set up a Swap, Deposit or Withdraw. ",
-      ],
-    },
-    {
-      stepTitle: "Selecting Networks",
-      stepDescription: [
-        "Tokamak Bridge gives you the flexibility on what type of exchange you would like to perform. This is all dependent on how the networks are set up.",
-        "Easy Tip: All transactions are performed from left > right.",
-      ],
-    },
-    {
-      stepTitle: "Set up Swap",
-      stepDescription: [
-        "In order to perform a Swap, both networks need to be on the same network.",
-        "For example: ETH Mainnet > ETH Mainnet",
-      ],
-    },
-    {
-      stepTitle: "Set up Deposit",
-      stepDescription: [
-        "In order to perform a Deposit, the left network needs to be layer 1, the right network needs to be layer 2. ",
-        "For example: ETH Mainnet > Titan",
-      ],
-    },
-    {
-      stepTitle: "Set up Withdraw",
-      stepDescription: [
-        "In order to perform a Withdraw, the left network needs to be layer 2, the right network needs to be layer 1. ",
-        "For example: Titan > ETH Mainnet",
-      ],
-    },
-    {
-      stepTitle: "More Help",
-      stepDescription: [
-        "To get a more in-depth guide on how to use Tokamak Bridge, you can find a link to our user guide under the “More” tab in the menu.",
-      ],
-    },
-  ];
+
+  const [storedValue, setValue] = useLocalStorage("tutorial", false);
+
+  console.log(storedValue);
+
+  const closeModal = useCallback(() => {
+    setValue(true);
+    setModalOpen(false);
+  }, []);
+
+  const isOpen = storedValue === false;
+
   return (
-    <Modal onClose={onClose} isOpen={modalOpen} isCentered>
+    <Modal onClose={closeModal} isOpen={isOpen} isCentered>
       <ModalOverlay css={{ backgroundColor: "rgba(0, 0, 0, 0)" }} />
       <ModalContent
         justifyContent={"center"}
@@ -78,7 +92,7 @@ export default function TutorialModal() {
       >
         <Flex flexDir={"column"} alignItems={"center"}>
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={() => setModalOpen(false)} />
+            <CloseButton onClick={closeModal} />
           </Flex>
           {currentStep === 0 && (
             <Box mb={"40.7px"}>
@@ -103,10 +117,15 @@ export default function TutorialModal() {
                   {text}
                 </Text>
               ) : (
-                <Text   mb={"40px"} textAlign={'left'}>
+                <Text mb={"40px"} textAlign={"left"}>
                   To get a more in-depth guide on how to use Tokamak Bridge, you
-                  can find a link to our <span style={{color: '#007AFF', textDecoration:'underline'}}>user guide</span> under the “More” tab in the
-                  menu.
+                  can find a link to our{" "}
+                  <span
+                    style={{ color: "#007AFF", textDecoration: "underline" }}
+                  >
+                    user guide
+                  </span>{" "}
+                  under the “More” tab in the menu.
                 </Text>
               );
             })}
@@ -121,8 +140,8 @@ export default function TutorialModal() {
           >
             {currentStep !== 0 ? (
               <Text
-              color={'#FFF'}
-              opacity={0.5}
+                color={"#FFF"}
+                opacity={0.5}
                 cursor={"pointer"}
                 onClick={() => setCurrentStep(currentStep - 1)}
               >
@@ -158,7 +177,7 @@ export default function TutorialModal() {
                 Next
               </Text>
             ) : (
-              <Text cursor={"pointer"} onClick={() => setModalOpen(false)}>
+              <Text cursor={"pointer"} onClick={closeModal}>
                 All Done!
               </Text>
             )}
