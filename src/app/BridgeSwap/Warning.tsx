@@ -6,11 +6,13 @@ import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
   const { inToken } = useInOutTokens();
   const { isBalanceOver } = useInputBalanceCheck();
+  const { mode } = useGetMode();
 
   if (isNotSupportForBridge)
     return (
@@ -20,7 +22,7 @@ export default function Warning() {
       </Flex>
     );
 
-  if (isNotSupportForSwap) {
+  if (mode === "Swap" && isNotSupportForSwap) {
     return (
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
