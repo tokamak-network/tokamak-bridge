@@ -46,7 +46,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
-  if (tokenData[tokenIndex].tokenAddress === "ETH") {
+  if (symbol === "WETH" || tokenData[tokenIndex].tokenAddress === "ETH") {
     return (
       <Flex
         w={"92px"}

@@ -227,6 +227,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const { title, content, gasFee, slippage } = props;
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
+
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
@@ -291,7 +292,6 @@ const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
             {...data}
           ></WithdrawDetailRowNew>
         ));
-
       case "Swap":
         return swapPropsData?.map((data) => (
           <SwapDetailRow key={data.title} {...data} />
@@ -490,6 +490,7 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
   const { isApproved } = useApprove();
 
   const { mode, isReady } = useGetMode();
+  const { outToken } = useInOutTokens();
 
   if (
     !isReady ||
@@ -497,7 +498,8 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
     mode === "Unwrap" ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
-    isApproved === false
+    isApproved === false ||
+    (mode === "Swap" && outToken === null)
   ) {
     return null;
   }

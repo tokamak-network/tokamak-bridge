@@ -178,35 +178,42 @@ export function useTx(params: {
         case "Remove Liquidity":
           return;
         case "Swap": {
-          const result = swapRouterI.parseLog(logs[logs.length - 1]);
-          const trasferedOutResult = erc20I.parseLog(logs[1]);
-          // const transferedInResult = erc20I.parseLog(logs[4]);
+          try {
+            const result = swapRouterI.parseLog(logs[logs.length - 1]);
+            let trasferedOutResult;
+            try {
+              trasferedOutResult = erc20I.parseLog(logs[1]);
+            } catch (e) {
+              trasferedOutResult = erc20I.parseLog(logs[2]);
+            }
+            // const transferedInResult = erc20I.parseLog(logs[4]);
 
-          const { args } = result;
-          const { amount0, amount1 } = args;
-          const transferedValue = trasferedOutResult.args.value;
-          // const transferedInValue = transferedInResult.args.value;
+            const { args } = result;
+            const { amount0, amount1 } = args;
+            const transferedValue = trasferedOutResult.args.value;
+            // const transferedInValue = transferedInResult.args.value;
 
-          setTxData({
-            ...txData,
-            [hash]: {
-              transactionHash,
-              txSort,
-              transactionState: "success",
-              tokenData: [
-                {
-                  tokenAddress: tokenAddress ?? "0x",
-                  amount: transferedValue.toBigInt(),
-                },
-                {
-                  tokenAddress: tokenOutAddress ?? "0x",
-                  amount: amount1.toBigInt(),
-                },
-              ],
-              network: connectedChainId,
-              isToasted: false,
-            },
-          });
+            setTxData({
+              ...txData,
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: transferedValue.toBigInt(),
+                  },
+                  {
+                    tokenAddress: tokenOutAddress ?? "0x",
+                    amount: amount1.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            });
+          } catch (e) {}
         }
 
         case "Collect Fee":
