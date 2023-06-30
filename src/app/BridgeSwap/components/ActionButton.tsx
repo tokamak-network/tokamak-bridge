@@ -60,7 +60,11 @@ export default function ActionButton() {
       onClick={needToOpenModal ? onOpenConfirmModal : onClick}
     >
       {!isConnected && "Connect Wallet"}
-      {isConnected && mode === null ? "Select Network" : mode}
+      {!isConnected
+        ? null
+        : isConnected && mode === null
+        ? "Select Network"
+        : mode}
     </Button>
   );
 }
