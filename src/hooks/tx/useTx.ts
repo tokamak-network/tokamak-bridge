@@ -91,11 +91,11 @@ export function useTransaction() {
         : "0x",
   });
 
-  useEffect(() => {
-    if (pendingTransaction?.length === 1) {
-      if (txCheckError && error) return setTxData(undefined);
-    }
-  }, [txCheckData, txCheckError, error, pendingTransaction]);
+  // useEffect(() => {
+  //   if (pendingTransaction?.length === 1) {
+  //     if (txCheckError && error) return setTxData(undefined);
+  //   }
+  // }, [txCheckData, txCheckError, error, pendingTransaction]);
 
   const isPending = useMemo(() => {
     if (pendingTransaction && pendingTransaction.length > 0) {
