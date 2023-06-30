@@ -76,7 +76,7 @@ export default function TutorialModal() {
   const isOpen = storedValue === false;
 
   return (
-    <Modal onClose={closeModal} isOpen={isOpen} isCentered>
+    <Modal onClose={closeModal} isOpen={false} isCentered>
       <ModalOverlay css={{ backgroundColor: "rgba(0, 0, 0, 0)" }} />
       <ModalContent
         justifyContent={"center"}
