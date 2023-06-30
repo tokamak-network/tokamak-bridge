@@ -156,10 +156,10 @@ export default function Setting() {
           >
             <Flex columnGap={"4px"}>
               <Text>Transaction deadline</Text>
-              <CustomTooltip
+              {/* <CustomTooltip
                 content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
                 tooltipLabel="testtesttest"
-              />
+              /> */}
             </Flex>
             <InputGroup>
               <Input
