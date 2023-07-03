@@ -86,12 +86,12 @@ export default function TutorialModal() {
   }
 
   const bgs = [
-    { bg: step0, px: '40px', size: "496px 466px" },
-    { bg: step1, px: "40px", size: "503px 463px" },
-    { bg: step2, px: "15px", size: "496px 519px" },
-    { bg: step3, px: "15px", size: "496px 519px" },
-    { bg: step4, px: "15px", size: "496px 519px" },
-    { bg: step0, px: "15px", size: "496px 463px" },
+    { bg: step0, px: '40px', size: "496px 466px" , mt: '140px !important'},
+    { bg: step1, px: "40px", size: "503px 463px",mt: '190px !important' },
+    { bg: step2, px: "15px", size: "496px 519px" ,mt: '140px !important'},
+    { bg: step3, px: "15px", size: "496px 519px" ,mt: '140px !important'},
+    { bg: step4, px: "15px", size: "496px 519px" ,mt: '140px !important'},
+    { bg: step0, px: "15px", size: "496px 463px",mt: '100px !important' },
   ];
 
 
@@ -119,7 +119,7 @@ export default function TutorialModal() {
         w="404px"
         paddingBottom={"40px"}
         bg={"#1F2128"}
-        mt={"140px !important"}
+        mt={bgs[currentStep].mt}
         position={"fixed"}
       >
         <Flex flexDir={"column"} alignItems={"center"}>
