@@ -30,7 +30,6 @@ export default function AccountModal() {
       status: "success",
       duration: 2000,
       isClosable: true,
-      variant: "solid",
     });
   };
 

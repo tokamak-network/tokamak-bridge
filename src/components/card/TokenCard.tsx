@@ -1,10 +1,9 @@
-import { SupportedTokenSymbol, TokenInfo } from "types/token/supportedToken";
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
+import { TokenInfo } from "types/token/supportedToken";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useCallback, useMemo, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { networkStatus, selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
-import { ethers } from "ethers";
+import { useRecoilValue } from "recoil";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 
@@ -125,8 +124,6 @@ export default function TokenCard(props: TokenCardProps) {
     }
   }, [tokenInfo]);
 
-  const tokenAddress =
-    inNetworkInfo && tokenInfo.address[inNetworkInfo?.chainName];
   const tokenData = useTokenBalance(tokenInfo);
 
   const { addNewToken } = useAddTokenToStorage();

@@ -12,8 +12,8 @@ import { useTransaction } from "@/hooks/tx/useTx";
 export default function Account() {
   const { isConnected, address } = useAccount();
   const { connetAndDisconntWallet } = useConnectWallet();
-  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
-  const { pendingTransaction } = useTransaction();
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
+  const { isPending } = useTransaction();
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
@@ -38,11 +38,11 @@ export default function Account() {
         isConnected ? setIsOpen(true) : connetAndDisconntWallet()
       }
     >
-      {pendingTransaction && pendingTransaction.length > 0 ? (
+      {isPending ? (
         <Flex columnGap={"8px"}>
           <Spinner color={"#007AFF"} />
           <Text fontSize={18} fontWeight={500}>
-            {pendingTransaction.length} Pending
+            {/* {pendingTransaction.length} */}1 Pending
           </Text>
         </Flex>
       ) : (

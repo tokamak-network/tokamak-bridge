@@ -5,6 +5,7 @@ import { atom, selector } from "recoil";
 import { ethers } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import { useProvier } from "@/hooks/provider/useProvider";
+import { loadingStatus } from "./isLoading";
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -115,7 +116,7 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
       if (network.inNetwork === network.outNetwork) {
         return {
           mode: "Swap",
-          isReady: isInTokenReady && isOutTokenReady,
+          isReady: isInTokenReady,
         };
       }
       return { mode: "Deposit", isReady: isInTokenReady };
