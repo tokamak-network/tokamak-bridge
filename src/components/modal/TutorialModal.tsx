@@ -62,7 +62,6 @@ const steps = [
 ];
 
 export default function TutorialModal() {
-  const { onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState(true);
 
