@@ -6,7 +6,6 @@ import {
   Flex,
   Text,
   Box,
-  Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -16,27 +15,17 @@ import ErrorImage from "assets/image/modal/error.svg";
 
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
-import useConnectedNetwork from "@/hooks/network";
-import { useTransaction } from "@/hooks/tx/useTx";
-import { useState } from "react";
-import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function Confirmation() {
-  // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
-  // const isConfirming = modalOpen === "confirming";
-  // const isConfirmed = modalOpen === "confirmed";
-  // const isError = modalOpen === "error";
+  const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
+  const isConfirming = modalOpen === "confirming";
+  const isConfirmed = modalOpen === "confirmed";
+  const isError = modalOpen === "error";
 
-  const { blockExplorer } = useConnectedNetwork();
-  const { confirmedTransaction } = useTransaction();
-
-  const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
-    useTxConfirmModal();
-  const { mode } = useGetMode();
+  // const {} = useGetT
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal}>
+    <Modal isOpen={modalOpen !== null} onClose={() => setModalOpen(null)}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}
@@ -54,13 +43,13 @@ export default function Confirmation() {
           alignItems={"center"}
         >
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeModal} />
+            <CloseButton onClick={() => setModalOpen(null)} />
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
-              ? `Confirming ${mode}`
+              ? "Confirming Deposit"
               : isConfirmed
-              ? "Transaction Confirmed!"
+              ? "Transaction Initiated!"
               : isError
               ? "Transaction Failed"
               : null}
@@ -85,7 +74,6 @@ export default function Confirmation() {
               <Image src={ErrorImage} alt={"ErrorImage"} />
             ) : null}
           </Flex>
-
           <Text
             w={"203px"}
             mt={"46px"}
@@ -94,24 +82,13 @@ export default function Confirmation() {
             fontSize={14}
             fontWeight={500}
           >
-            {isConfirming ? (
-              "Please confirm transaction in your wallet"
-            ) : isConfirmed ? (
-              <Link
-                href={`${blockExplorer}/tx/${
-                  confirmedTransaction &&
-                  confirmedTransaction.length > 0 &&
-                  confirmedTransaction[confirmedTransaction.length - 1][0]
-                }`}
-                isExternal={true}
-                textDecoration={"underline"}
-                w={"100%"}
-              >
-                See your transaction history
-              </Link>
-            ) : isError ? (
-              "Error occurred, please try again."
-            ) : null}
+            {isConfirming
+              ? "Please confirm transaction in your wallet"
+              : isConfirmed
+              ? "See your transaction history"
+              : isError
+              ? "Error occurred, please try again."
+              : null}
           </Text>
         </Flex>
       </ModalContent>

@@ -15,8 +15,8 @@ export function useGetMarketPrice(params: {
   });
 
   const tokenMarketPrice = useMemo(() => {
-    if (data?.getTokenPrice.price) {
-      return data.getTokenPrice.price;
+    if (data.price) {
+      return data.price;
     }
     return undefined;
   }, [data]);
