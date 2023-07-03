@@ -23,7 +23,7 @@ import step3 from "assets/image/step3.svg";
 import step4 from "assets/image/step4.svg";
 import step5 from "assets/image/step5.svg";
 export default function TutorialModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState(true);
   const [dHeight, setDHeight] = useState(0);
