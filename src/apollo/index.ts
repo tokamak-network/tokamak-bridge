@@ -19,6 +19,8 @@ export const apolloClient = new ApolloClient({
       endpoints: {
         tosv2: process.env.NEXT_PUBLIC_GRAPHQL_API_PRODUCTION as string,
         titanSubGraph: process.env.NEXT_PUBLIC_SUBGRAPH_TITAN as string,
+        titanGoerliSubGraph: process.env
+          .NEXT_PUBLIC_SUBGRAPH_TITAN_GOERLI as string,
       },
       //@ts-ignore
       createHttpLink: () => createHttpLink(),
