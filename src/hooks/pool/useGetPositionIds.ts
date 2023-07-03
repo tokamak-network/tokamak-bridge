@@ -3,7 +3,7 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import { useProvier } from "../provider/useProvider";
 import useContract from "../contracts/useContract";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useAccount, useQuery } from "wagmi";
+import { useAccount } from "wagmi";
 import useBlockNum from "../network/useBlockNumber";
 import { computePoolAddress } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
@@ -15,6 +15,7 @@ import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { usePathname } from "next/navigation";
 import { getApolloClientApiKey } from "@/utils/network/getApolloClientApiKey";
 import { GET_POSITIONS } from "@/graphql/pools/queries";
+import { useQuery } from "@apollo/client";
 
 //logic through subGraph
 export default function useGetPositionIds(): {
@@ -26,8 +27,7 @@ export default function useGetPositionIds(): {
     PoolCardDetail[] | undefined
   >(undefined);
 
-  //@ts-ignore
-  const { data } = useQuery(GET_POSITIONS, {
+  const { data, error } = useQuery(GET_POSITIONS, {
     variables: {
       account: "0xB68AA9E398c054da7EBAaA446292f611CA0CD52B",
     },
@@ -37,6 +37,9 @@ export default function useGetPositionIds(): {
       apiName: "titanGoerliSubGraph",
     },
   });
+
+  console.log("gogo");
+  console.log(error);
 
   console.log(getApolloClientApiKey(connectedChainId));
 

@@ -1,6 +1,6 @@
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
-export function getApolloClientApiKey(chainId: number) {
+export function getApolloClientApiKey(chainId: number | undefined) {
   switch (chainId) {
     case SupportedChainId.MAINNET:
       return "";
