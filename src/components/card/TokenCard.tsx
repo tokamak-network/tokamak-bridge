@@ -168,8 +168,8 @@ export default function TokenCard(props: TokenCardProps) {
         alignItems={notAdded ? "baseline" : "center"}
       >
         <TokenSymbol
-          w={symbolSize?.w ?? notAdded ? 40 : 92}
-          h={symbolSize?.w ?? notAdded ? 40 : 92}
+          w={symbolSize?.w ?? (notAdded ? 40 : 92)}
+          h={symbolSize?.w ?? (notAdded ? 40 : 92)}
           tokenType={tokenInfo?.tokenSymbol}
         />
       </Flex>

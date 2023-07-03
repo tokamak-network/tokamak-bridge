@@ -20,11 +20,16 @@ export default function ImageSymbol(props: {
   h?: number;
 }) {
   return (
-    <Flex w={`${props.w ?? 96}px`} h={`${props.h ?? 96}px`}>
+    <Flex
+      w={`${props.w ?? 96}px`}
+      maxW={`${props.w ?? 96}px`}
+      h={`${props.h ?? 96}px `}
+      maxH={`${props.h ?? 96}px `}
+    >
       <Image
         src={props.ImgFile}
         alt={"img"}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: `100%`, height: `100%` }}
       />
     </Flex>
   );
@@ -36,6 +41,7 @@ export function TokenSymbol(props: {
   h?: number;
 }) {
   const { tokenType } = props;
+
   switch (tokenType) {
     case "ETH":
       return <ImageSymbol ImgFile={SYMBOL_ETH} {...props} />;

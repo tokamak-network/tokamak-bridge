@@ -54,7 +54,15 @@ export function useGetTokenList() {
     storedTokenList,
   ]);
 
+  let trimedTokenList;
+
+  if (filteredTokenList && filteredTokenList.length < 8) {
+    trimedTokenList = [...filteredTokenList, ...filteredTokenList];
+  } else {
+    trimedTokenList = filteredTokenList;
+  }
+
   return {
-    filteredTokenList: filteredTokenList as SupportedTokens_T,
+    filteredTokenList: trimedTokenList as SupportedTokens_T,
   };
 }

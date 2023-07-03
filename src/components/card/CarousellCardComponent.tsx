@@ -8,6 +8,33 @@ import TokenCard from "./TokenCard";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 
+const isSecondSideIndex = (
+  index: number,
+  currentIndex: number | null,
+  length: number
+) => {
+  const markIndex = currentIndex === null ? 2 : currentIndex;
+  if (markIndex - 1 < 0) {
+    return index === length;
+  }
+  if (markIndex + 1 > length) {
+    return index === 0;
+  }
+  return markIndex - 1 === index || markIndex + 1 === index;
+};
+
+const getSymbolSize = (
+  index: number,
+  currentIndex: number | null,
+  maxIndex: number
+) => {
+  const markIndex = currentIndex === null ? 2 : currentIndex;
+
+  if (markIndex === index) return 118;
+  if (isSecondSideIndex(index, currentIndex, maxIndex)) return 110;
+  return 86;
+};
+
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
   currentIndex: number | null;
@@ -93,24 +120,10 @@ export default function CarousellCardComponent<T>(props: {
         inNetwork={true}
         hasInput={false}
         isNew={tokenData.isNew}
-        // symbolSize={
-        //   currentIndex !== null
-        //     ? {
-        //         w:
-        //           currentIndex === index
-        //             ? 118
-        //             : currentIndex - 1 === index
-        //             ? 110
-        //             : 86,
-        //         h:
-        //           currentIndex === index
-        //             ? 118
-        //             : currentIndex - 1 === index
-        //             ? 110
-        //             : 86,
-        //       }
-        //     : undefined
-        // }
+        symbolSize={{
+          w: getSymbolSize(index, currentIndex, maxIndex),
+          h: getSymbolSize(index, currentIndex, maxIndex),
+        }}
         style={{
           transition: maxIndex === 0 ? "none" : "margin .5s ease-in-out",
           //need to change mt property based on selectIndex
