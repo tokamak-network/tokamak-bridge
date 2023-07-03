@@ -24,8 +24,6 @@ export default function Account() {
       h={"48px"}
       columnGap={"17px"}
       fontSize={18}
-      bg={isConnected ? "" : "#007AFF"}
-      fontWeight={500}
       /**
        * About connectors
        *
@@ -35,7 +33,7 @@ export default function Account() {
        * index 2 = wallet injected like wallet connet
        */
       onClick={() =>
-        isConnected ? setIsOpen(true) : connetAndDisconntWallet()
+        isConnected ? setIsOpen(!isOpen) : connetAndDisconntWallet()
       }
     >
       {pendingTransaction && pendingTransaction.length > 0 ? (
@@ -48,9 +46,10 @@ export default function Account() {
       ) : (
         <>
           <Image src={WALLET_ICON} alt={""} />
-          <Text>{buttonText}</Text>
+          <Text fontWeight={'bold'}>{buttonText}</Text>
         </>
       )}
+     
     </Center>
   );
 }

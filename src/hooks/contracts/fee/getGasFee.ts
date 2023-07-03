@@ -1,16 +1,12 @@
-import { getL2Provider } from "@/config/l2Provider";
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
-import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
 import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
@@ -29,17 +25,9 @@ export function useGasFee() {
 
   //   const { provider } = useProvier();
   const provider = usePublicClient();
+  const { estimatedGas } = useAmountOut();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
-  const { routingPath } = useSmartRouter();
-  const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
-
-  const swapGasUseEstimate = useMemo(() => {
-    if (routingPath && tokenMarketPrice) {
-      const { gasUseEstimate } = routingPath;
-      return gasUseEstimate;
-    }
-  }, [routingPath]);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
@@ -51,7 +39,7 @@ export function useGasFee() {
 
         switch (mode) {
           case "Swap":
-            return swapGasUseEstimate;
+            return estimatedGas;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
@@ -117,13 +105,12 @@ export function useGasFee() {
             "maxPriorityFeePerGas : ",
             maxPriorityFeePerGas
           );
-          if (gasPrice) {
-            const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
+          if (maxFeePerGas) {
+            const totalGasCost = maxFeePerGas * estimatedGasUsage;
             const parsedTotalGasCost = ethers.utils.formatUnits(
               totalGasCost.toString(),
               "ether"
             );
-
             return setTotalGasCost(parsedTotalGasCost);
           }
         }
@@ -143,15 +130,9 @@ export function useGasFee() {
     _depositERC20_contract,
     _withdraw_contract,
     provider,
+    estimatedGas,
     feeData,
-    swapGasUseEstimate,
   ]);
 
-  const gasCostUS = useMemo(() => {
-    if (totalGasCost && tokenMarketPrice) {
-      return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
-    }
-  }, [totalGasCost, tokenMarketPrice]);
-
-  return { totalGasCost, gasCostUS };
+  return { totalGasCost };
 }

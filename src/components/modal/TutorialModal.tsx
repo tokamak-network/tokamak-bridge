@@ -15,68 +15,102 @@ import { useDisclosure } from "@chakra-ui/react";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import CloseButton from "../button/CloseButton";
-import { useCallback, useMemo, useState } from "react";
-import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
-
-const steps = [
-  {
-    stepTitle: "Welcome to Tokamak Bridge",
-    stepDescription: [
-      "Allow us to give you a few tips on how to set up a Swap, Deposit or Withdraw. ",
-    ],
-  },
-  {
-    stepTitle: "Selecting Networks",
-    stepDescription: [
-      "Tokamak Bridge gives you the flexibility on what type of exchange you would like to perform. This is all dependent on how the networks are set up.",
-      "Easy Tip: All transactions are performed from left > right.",
-    ],
-  },
-  {
-    stepTitle: "Set up Swap",
-    stepDescription: [
-      "In order to perform a Swap, both networks need to be on the same network.",
-      "For example: ETH Mainnet > ETH Mainnet",
-    ],
-  },
-  {
-    stepTitle: "Set up Deposit",
-    stepDescription: [
-      "In order to perform a Deposit, the left network needs to be layer 1, the right network needs to be layer 2. ",
-      "For example: ETH Mainnet > Titan",
-    ],
-  },
-  {
-    stepTitle: "Set up Withdraw",
-    stepDescription: [
-      "In order to perform a Withdraw, the left network needs to be layer 2, the right network needs to be layer 1. ",
-      "For example: Titan > ETH Mainnet",
-    ],
-  },
-  {
-    stepTitle: "More Help",
-    stepDescription: [
-      "To get a more in-depth guide on how to use Tokamak Bridge, you can find a link to our user guide under the “More” tab in the menu.",
-    ],
-  },
-];
-
+import { useState, useEffect } from "react";
+import step0 from "assets/image/step0.svg";
+import step1 from "assets/image/step1.svg";
+import step2 from "assets/image/step2.svg";
+import step3 from "assets/image/step3.svg";
+import step4 from "assets/image/step4.svg";
+import step5 from "assets/image/step5.svg";
 export default function TutorialModal() {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState(true);
+  const [dHeight, setDHeight] = useState(0);
+  const [isClient, setIsClient] = useState(false);
 
-  const [storedValue, setValue] = useLocalStorage("tutorial", false);
+  const steps = [
+    {
+      stepTitle: "Welcome to Tokamak Bridge",
+      stepDescription: [
+        "Allow us to give you a few tips on how to set up a Swap, Deposit or Withdraw. ",
+      ],
+    },
+    {
+      stepTitle: "Selecting Networks",
+      stepDescription: [
+        "Tokamak Bridge gives you the flexibility on what type of exchange you would like to perform. This is all dependent on how the networks are set up.",
+        "Easy Tip: All transactions are performed from left > right.",
+      ],
+    },
+    {
+      stepTitle: "Set up Swap",
+      stepDescription: [
+        "In order to perform a Swap, both networks need to be on the same network.",
+        "For example: ETH Mainnet > ETH Mainnet",
+      ],
+    },
+    {
+      stepTitle: "Set up Deposit",
+      stepDescription: [
+        "In order to perform a Deposit, the left network needs to be layer 1, the right network needs to be layer 2. ",
+        "For example: ETH Mainnet > Titan",
+      ],
+    },
+    {
+      stepTitle: "Set up Withdraw",
+      stepDescription: [
+        "In order to perform a Withdraw, the left network needs to be layer 2, the right network needs to be layer 1. ",
+        "For example: Titan > ETH Mainnet",
+      ],
+    },
+    {
+      stepTitle: "More Help",
+      stepDescription: [
+        "To get a more in-depth guide on how to use Tokamak Bridge, you can find a link to our user guide under the “More” tab in the menu.",
+      ],
+    },
+  ];
 
-  const closeModal = useCallback(() => {
-    setValue(true);
-    setModalOpen(false);
+  useEffect(() => {
+    const deviceHeight = window.innerHeight;    
+    setDHeight(deviceHeight);
   }, []);
 
-  const isOpen = storedValue === false;
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
+  if (!isClient) {
+    return null; // Render nothing on the server-side
+  }
+
+  const bgs = [
+    { bg: step0, px: '40px', size: "496px 466px" , mt: '140px !important'},
+    { bg: step1, px: "40px", size: "503px 463px",mt: '190px !important' },
+    { bg: step2, px: "15px", size: "496px 519px" ,mt: '140px !important'},
+    { bg: step3, px: "15px", size: "496px 519px" ,mt: '140px !important'},
+    { bg: step4, px: "15px", size: "496px 519px" ,mt: '140px !important'},
+    { bg: step0, px: "15px", size: "496px 463px",mt: '100px !important' },
+  ];
+
+
+  console.log(bgs);
+  
   return (
-    <Modal onClose={closeModal} isOpen={false} isCentered>
-      <ModalOverlay css={{ backgroundColor: "rgba(0, 0, 0, 0)" }} />
+    <Modal onClose={onClose} isOpen={modalOpen} isCentered>
+      <ModalOverlay
+        bg={"rgba(0, 0, 0, 0)"}
+        mt={bgs[currentStep].px}
+        ml={'-1px'}
+        backgroundImage={currentStep !== 5 ? bgs[currentStep].bg.src : ""}
+        backgroundRepeat={"no-repeat"}
+        backgroundSize={bgs[currentStep].size}
+        css={{
+          backgroundPositionY: ['center'],
+          backgroundPositionX: "center",
+        }}
+      />
       <ModalContent
         justifyContent={"center"}
         alignItems={"center"}
@@ -85,11 +119,12 @@ export default function TutorialModal() {
         w="404px"
         paddingBottom={"40px"}
         bg={"#1F2128"}
-        mt={"258px !important"}
+        mt={bgs[currentStep].mt}
+        position={"fixed"}
       >
         <Flex flexDir={"column"} alignItems={"center"}>
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeModal} />
+            <CloseButton onClick={() => setModalOpen(false)} />
           </Flex>
           {currentStep === 0 && (
             <Box mb={"40.7px"}>
@@ -174,7 +209,7 @@ export default function TutorialModal() {
                 Next
               </Text>
             ) : (
-              <Text cursor={"pointer"} onClick={closeModal}>
+              <Text cursor={"pointer"} onClick={() => setModalOpen(false)}>
                 All Done!
               </Text>
             )}

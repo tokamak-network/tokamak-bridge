@@ -1,9 +1,7 @@
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork from "@/hooks/network";
 import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import useIsTon from "@/hooks/token/useIsTon";
 import { useTransaction } from "@/hooks/tx/useTx";
 import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
@@ -13,8 +11,6 @@ export default function ApproveToken() {
   const { isApproved, callApprove } = useApprove();
   const { isNotSupportForBridge } = useBridgeSupport();
   const { pendingTransactionToApprove } = useTransaction();
-  const { isTONatPair } = useIsTon();
-  const { mode } = useGetMode();
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -22,12 +18,7 @@ export default function ApproveToken() {
     );
   }, [pendingTransactionToApprove]);
 
-  if (
-    isApproved ||
-    isNotSupportForBridge ||
-    !inToken ||
-    (mode == "Swap" && isTONatPair)
-  ) {
+  if (isApproved || isNotSupportForBridge || !inToken) {
     return null;
   }
 

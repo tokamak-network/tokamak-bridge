@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import { useAccount } from "wagmi";
 import useConnectWallet from "../account/useConnectWallet";
 import { useInOutTokens } from "../token/useInOutTokens";
@@ -11,9 +11,6 @@ import useCallWithdraw from "../bridge/actions/useCallWithdraw";
 import { useAmountOut } from "../swap/useSwapTokens";
 import useWrap from "../swap/useTonWrap";
 import { predeploys } from "@eth-optimism/contracts";
-import { transactionModalStatus } from "@/recoil/modal/atom";
-import { useRecoilState } from "recoil";
-import useTxConfirmModal from "../modal/useTxConfirmModal";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -22,18 +19,13 @@ export default function useCallBridgeSwapAction() {
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
 
-  const { write: _depositETH, isError } = useCallDeposit("depositETH");
-  const { write: _depositERC20, isError: _depositERC20Error } =
-    useCallDeposit("depositERC20");
-  const { write: _withdraw, isError: _withdrawError } =
+  const { write: _depositETH } = useCallDeposit("depositETH");
+  const { write: _depositERC20, contract } = useCallDeposit("depositERC20");
+  const { write: _withdraw, contract: _withdraw_contract } =
     useCallWithdraw("withdraw");
 
-  const { callTokenSwap, isError: _swapError } = useAmountOut();
+  const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON } = useWrap();
-
-  // const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
-  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   const onClick = useCallback(async () => {
     if (!isConnected) {
@@ -43,13 +35,8 @@ export default function useCallBridgeSwapAction() {
       const isETH = inToken.isNativeCurrency?.includes(
         SupportedChainId.MAINNET || SupportedChainId.GOERLI
       );
-      const parsedAmount = inToken.amountBN;
 
-      if (mode === "Wrap" || mode === "Unwrap") {
-      } else {
-        setIsOpen(true);
-        setModalOpen("confirming");
-      }
+      const parsedAmount = inToken.amountBN;
 
       switch (mode) {
         case "Deposit":
@@ -97,12 +84,6 @@ export default function useCallBridgeSwapAction() {
       }
     }
   }, [isConnected, connectToWallet, mode, inToken, address]);
-
-  useEffect(() => {
-    if (isError || _depositERC20Error || _withdrawError || _swapError) {
-      setModalOpen("error");
-    }
-  }, [isError, _depositERC20Error, _withdrawError, _swapError]);
 
   return { onClick };
 }

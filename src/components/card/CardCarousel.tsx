@@ -150,6 +150,28 @@ export const CardCarrousel = () => {
                 (startIndex !== null &&
                   startIndex !== undefined &&
                   startIndex + 7 === index);
+          //   ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 1 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 2 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 3 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 4 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 5 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 6 === index) ||
+          // (startIndex !== null &&
+          //   startIndex !== undefined &&
+          //   startIndex + 7 === index);
 
           return (
             <CarousellCardComponent
