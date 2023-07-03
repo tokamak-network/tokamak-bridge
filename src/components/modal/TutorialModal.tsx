@@ -15,18 +15,20 @@ import { useDisclosure } from "@chakra-ui/react";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import CloseButton from "../button/CloseButton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import step0 from "assets/image/step0.svg";
 import step1 from "assets/image/step1.svg";
 import step2 from "assets/image/step2.svg";
 import step3 from "assets/image/step3.svg";
 import step4 from "assets/image/step4.svg";
 import step5 from "assets/image/step5.svg";
-
 export default function TutorialModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [modalOpen, setModalOpen] = useState(true);
+  const [dHeight, setDHeight] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
   const steps = [
     {
       stepTitle: "Welcome to Tokamak Bridge",
@@ -70,27 +72,44 @@ export default function TutorialModal() {
     },
   ];
 
+  useEffect(() => {
+    const deviceHeight = window.innerHeight;    
+    setDHeight(deviceHeight);
+  }, []);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!isClient) {
+    return null; // Render nothing on the server-side
+  }
+
   const bgs = [
-    { bg: step0, px:'55%', size: "502px 463px" },
-    { bg: step1, px: "55%", size: "502px 463px" },
-    { bg: step2, px: "50%", size: "520px 514px" },
-    { bg: step3, px: "50%", size: "520px 516px" },
-    { bg: step4, px: "50%", size: "520px 516px" },
-    { bg: step0, px: "55%", size: "502px 463px" },
+    { bg: step0, px: '40px', size: "496px 466px" },
+    { bg: step1, px: "40px", size: "503px 463px" },
+    { bg: step2, px: "15px", size: "496px 519px" },
+    { bg: step3, px: "15px", size: "496px 519px" },
+    { bg: step4, px: "15px", size: "496px 519px" },
+    { bg: step0, px: "15px", size: "496px 463px" },
   ];
 
+
+  console.log(bgs);
+  
   return (
     <Modal onClose={onClose} isOpen={modalOpen} isCentered>
       <ModalOverlay
-        bg={"rgba(0, 0, 0, 0.6)"}
-        backgroundImage={currentStep !== 5?  bgs[currentStep].bg.src:''}
+        bg={"rgba(0, 0, 0, 0)"}
+        mt={bgs[currentStep].px}
+        ml={'-1px'}
+        backgroundImage={currentStep !== 5 ? bgs[currentStep].bg.src : ""}
         backgroundRepeat={"no-repeat"}
         backgroundSize={bgs[currentStep].size}
         css={{
-          backgroundPositionY: bgs[currentStep].px,
+          backgroundPositionY: ['center'],
           backgroundPositionX: "center",
         }}
-       
       />
       <ModalContent
         justifyContent={"center"}
@@ -101,8 +120,7 @@ export default function TutorialModal() {
         paddingBottom={"40px"}
         bg={"#1F2128"}
         mt={"140px !important"}
-        position={'fixed'}
-      
+        position={"fixed"}
       >
         <Flex flexDir={"column"} alignItems={"center"}>
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
