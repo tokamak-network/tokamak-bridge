@@ -229,14 +229,14 @@ export default function TokenInput(props: {
         )}
       </Flex>
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+        {/* <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
           $0.00
-        </Text>
-        {inToken === false && mode === "Swap" && (
+        </Text> */}
+        {/* {inToken === false && mode === "Swap" && (
           <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
             ({priceImpact ?? "-"}%)
           </Text>
-        )}
+        )} */}
       </Flex>
     </Flex>
   );

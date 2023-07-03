@@ -44,6 +44,35 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
       ? 27
       : decimals) ?? 18
   );
+  const convertParsedAmount = parsedAmount.replaceAll("-", "");
+
+  if (symbol === "WETH" || tokenData[tokenIndex].tokenAddress === "ETH") {
+    return (
+      <Flex
+        w={"92px"}
+        minW={"92px"}
+        rowGap={"8px"}
+        flexDir={"column"}
+        py={"18px"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        <TokenSymbolWithNetwork
+          tokenSymbol={"ETH"}
+          chainId={
+            txSort === "Deposit" && isToken0 === false
+              ? 5050
+              : txSort === "Withdraw" && isToken0 === false
+              ? 1
+              : network
+          }
+        />
+        <Text fontSize={11} fontWeight={400} textAlign={"center"}>
+          {trimAmount(convertParsedAmount)} {"ETH"}
+        </Text>
+      </Flex>
+    );
+  }
 
   if (symbol && decimals)
     return (
@@ -67,7 +96,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
-          {trimAmount(parsedAmount)} {symbol}
+          {trimAmount(convertParsedAmount)} {symbol}
         </Text>
       </Flex>
     );
@@ -139,36 +168,29 @@ function TxToast() {
 
   const { confirmedTransaction } = useTransaction();
 
-  const makeToast = useMemo(() => {
-    confirmedTransaction?.map((transaction) => {
-      const txHash = transaction[0];
+  // const makeToast = useMemo(() => {
+  //   confirmedTransaction?.map((transaction) => {
+  //     const txHash = transaction[0];
 
-      if (
-        toast.isActive(txHash) === false &&
-        isToasted.includes(txHash) === false
-      ) {
-        toast({
-          position: "top-right",
-          variant: "solid",
-          isClosable: false,
-          id: txHash,
-          duration: 50000000,
-          render: () => <TransactionToast {...transaction[1]} />,
-        });
-        setIsToasted([...isToasted, txHash]);
-      }
-    });
-  }, [confirmedTransaction]);
+  //     if (
+  //       toast.isActive(txHash) === false &&
+  //       isToasted.includes(txHash) === false
+  //     ) {
+  //       toast({
+  //         position: "top-right",
+  //         variant: "solid",
+  //         isClosable: true,
+  //         id: txHash,
+  //         duration: 5000,
+  //         render: () => <TransactionToast {...transaction[1]} />,
+  //       });
+  //       setIsToasted([...isToasted, txHash]);
+  //     }
+  //   });
+  // }, [confirmedTransaction]);
 
-  useEffect(() => {
-    if (txData) {
-      const d = isToasted.filter((hashKey) => {
-        return txData[hashKey].transactionHash !== undefined;
-      });
-    }
-  }, [isToasted]);
-
-  return <>{makeToast}</>;
+  return null;
+  // return <>{makeToast}</>;
 }
 
 export default TxToast;

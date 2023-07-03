@@ -9,6 +9,7 @@ import { useAmountOut } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
 import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
+import useConnectedNetwork from "../network";
 
 export type DepositDetailProp = {
   title: string;
@@ -19,6 +20,8 @@ export type DepositDetailProp = {
   gasFee?: {
     l1Gas: string;
     l2Gas: string;
+    l1GasUS: string;
+    l2GasUS: string;
   };
 };
 
@@ -31,6 +34,8 @@ export type WithdrawDetailNewProp = {
   gasFee?: {
     l1Gas: string;
     l2Gas: string;
+    l1GasUS: string;
+    l2GasUS: string;
   };
 };
 
@@ -52,7 +57,8 @@ export type SwapDetailProp = {
     | "Minimum received"
     | "Minimum received after slippage"
     | "Price impact"
-    | "Estimated gas fees";
+    | "Estimated gas fees"
+    | "Estimated L2 execution fee (sans L1 fee)";
 
   content: string | undefined;
   gasFee?: string;
@@ -62,7 +68,7 @@ export type SwapDetailProp = {
 export function useTransactionDetail() {
   const { mode } = useRecoilValue(actionMode);
   const { inToken, outToken } = useInOutTokens();
-  const { totalGasCost } = useGasFee();
+  const { totalGasCost, gasCostUS } = useGasFee();
 
   const totalGasFee = `${
     isBiggerThanMinimumNum(Number(totalGasCost))
@@ -86,6 +92,8 @@ export function useTransactionDetail() {
           gasFee: {
             l1Gas: totalGasFee,
             l2Gas: "0 ETH",
+            l1GasUS: gasCostUS ?? "",
+            l2GasUS: "0",
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
@@ -97,7 +105,9 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount]);
+  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost]);
+
+  const totalGasFeeToWithdraw = Number(totalGasCost) + 0.00024511191632554;
 
   const withdrawNewPropsData: WithdrawDetailNewProp[] | null = useMemo(() => {
     //need to put totalGasCost condition later
@@ -109,10 +119,14 @@ export function useTransactionDetail() {
         },
         {
           title: "Estimated gas fees",
-          content: totalGasFee,
+          content: `${commafy(totalGasFeeToWithdraw, 4)} ETH`,
           gasFee: {
-            l1Gas: "- ETH",
-            l2Gas: `${totalGasFee} ETH`,
+            //fixed l1 gasFee for a while
+            //0.00024511191632554 ETH
+            l1Gas: "0.0002 ETH",
+            l2Gas: `${totalGasFee}`,
+            l1GasUS: "",
+            l2GasUS: `${gasCostUS}`,
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
@@ -124,7 +138,7 @@ export function useTransactionDetail() {
       ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount]);
+  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost]);
 
   const withdrawPropsData: WithdrawDetailProp[] | null = useMemo(() => {
     if (mode === "Withdraw" && inToken && totalGasFee) {
@@ -137,7 +151,8 @@ export function useTransactionDetail() {
           title: "Estimated gas fees",
           content: totalGasFee,
           gasFee: {
-            l1Gas: { eth: "0 ETH", ton: "0.0022 TON" },
+            //fixed l1 gasFee for a while
+            l1Gas: { eth: "0.00024511191632554 ETH", ton: "0.0022 TON" },
             l2Gas: { eth: totalGasFee, ton: "0.0022 TON" },
           },
         },
@@ -154,6 +169,7 @@ export function useTransactionDetail() {
   const { priceImpact } = usePriceImpact();
   const { isOpen } = useConfirm();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
+  const { layer } = useConnectedNetwork();
 
   const swapPropsData: SwapDetailProp[] | null = useMemo(() => {
     if (mode === "Swap" && inToken) {
@@ -170,13 +186,12 @@ export function useTransactionDetail() {
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {
-          title: "Price impact",
-          content: `${priceImpact ?? "-"}%`,
-        },
-        {
-          title: "Estimated gas fees",
+          title:
+            layer === "L2"
+              ? "Estimated L2 execution fee (sans L1 fee)"
+              : "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
-          gasFee: "$3.18",
+          gasFee: `$${gasCostUS}`,
         },
       ];
     }
@@ -189,6 +204,8 @@ export function useTransactionDetail() {
     amountOut,
     priceImpact,
     uniswapTxSettingValueForUI,
+    totalGasFee,
+    layer,
   ]);
 
   return {

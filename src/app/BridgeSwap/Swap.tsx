@@ -8,12 +8,20 @@ import ArrowImg from "assets/icons/arrow.svg";
 import SelectNetwork from "./components/SelectNetwork";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
+import { useAccount } from "wagmi";
 
 export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
+  const { isConnected } = useAccount();
 
   return (
-    <Flex w={"100%"} justifyContent={"space-between"} columnGap={"14.6px"}>
+    <Flex
+      w={"100%"}
+      justifyContent={"space-between"}
+      columnGap={"14.6px"}
+      opacity={isConnected ? 1 : 0.2}
+      pointerEvents={isConnected ? "all" : "none"}
+    >
       <InToken />
       <Flex
         justifyContent={"center"}

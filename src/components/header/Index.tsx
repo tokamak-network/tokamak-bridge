@@ -19,7 +19,7 @@ import { usePathname } from "next/navigation";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
@@ -40,6 +40,7 @@ import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
 import AccountModal from "../modal/AccountModal";
+
 const menuList = [
   {
     title: "BRIDGE & SWAP",
@@ -115,8 +116,7 @@ const CustomMenuItem = (props: {
 
 export default function Header() {
   const [menuState, setMenuState] = useState(false);
-  const wrapperRef = useRef(null);
-
+  const [hoverOn, setHoverOn] = useState(false);
   const menuLinks = [
     {
       title: "Medium",
@@ -173,7 +173,7 @@ export default function Header() {
     !menuState && setMenuState(!menuState);
   };
 
-
+  const router = useRouter();
 
   return (
     <Flex
@@ -186,7 +186,7 @@ export default function Header() {
       pos={"absolute"}
     >
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
-        <Box>
+        <Box onClick={() => router.push("/")} cursor={"pointer"}>
           <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
         </Box>
         <Flex columnGap={"30px"}>
@@ -242,7 +242,7 @@ export default function Header() {
               }}
             >
               <CustomMenuItem
-                link="https://tokamaknetwork.gitbook.io/home/02-service-guide/Tokamak-Bridge"
+                link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
                 title="User Guide"
                 icon={userguide}
                 hoverIcon={userGuideHover}

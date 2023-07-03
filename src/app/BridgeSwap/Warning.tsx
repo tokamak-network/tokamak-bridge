@@ -5,10 +5,21 @@ import WARNING_ICON from "assets/icons/warning.svg";
 import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { WarningText } from "@/components/ui/WarningText";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
   const { inToken } = useInOutTokens();
+  const { isBalanceOver } = useInputBalanceCheck();
+  const { mode } = useGetMode();
+  const { isTONatPair } = useIsTon();
+
+  if (mode === "Swap" && isTONatPair) {
+    return <WarningText label={"TON is not supported to swap on L1"} />;
+  }
 
   if (isNotSupportForBridge)
     return (
@@ -18,11 +29,20 @@ export default function Warning() {
       </Flex>
     );
 
-  if (isNotSupportForSwap) {
+  if (mode === "Swap" && isNotSupportForSwap) {
     return (
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-        <Text>Insufficient ({inToken?.tokenSymbol}) liquidity</Text>
+        <Text>Swap route not founded on this network</Text>
+      </Flex>
+    );
+  }
+
+  if (isBalanceOver) {
+    return (
+      <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+        <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+        <Text>Insufficient ({inToken?.tokenSymbol}) balance </Text>
       </Flex>
     );
   }
