@@ -32,9 +32,6 @@ export default function ActionButton() {
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (isConnected === false) {
-        return setIsDisabled(false);
-      }
       const disabled =
         !isReady ||
         isApproved === false ||
@@ -54,7 +51,6 @@ export default function ActionButton() {
   }, [
     !isReady || isApproved === false || isLoading || isNotSupportForSwap,
     isBalanceOver || isPending,
-    isConnected,
   ]);
 
   const { onOpenConfirmModal } = useConfirmModal();
