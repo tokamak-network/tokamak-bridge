@@ -14,8 +14,9 @@ import ERC20_ABI from "@/abis/erc20.json";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { usePathname } from "next/navigation";
 import { getApolloClientApiKey } from "@/utils/network/getApolloClientApiKey";
-import { GET_POSITIONS } from "@/graphql/pools/queries";
+import { GET_POSITIONS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
+import { execute } from '../../../.graphclient'
 
 //logic through subGraph
 export default function useGetPositionIds(): {
@@ -37,6 +38,14 @@ export default function useGetPositionIds(): {
       apiName: "titanGoerliSubGraph",
     },
   });
+
+  useEffect(() => {
+    async function fetch () {
+      const result = await execute(GET_POSITIONS, {})
+      console.log(result)
+    }
+    fetch()
+  }, [])
 
   console.log("gogo");
   console.log(error);
