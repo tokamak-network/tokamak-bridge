@@ -75,9 +75,11 @@ export function useTransactionDetail() {
       ? commafy(totalGasCost, 4)
       : "< 0.0001"
   } ETH`;
-  const inputAmount = `${commafy(inToken?.parsedAmount, 4)} ${
-    inToken?.tokenSymbol
-  }`;
+
+  const inputAmount = `${commafy(
+    inToken?.parsedAmount?.replaceAll(",", ""),
+    4
+  )} ${inToken?.tokenSymbol}`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
     if (mode === "Deposit" && inToken && totalGasCost) {
