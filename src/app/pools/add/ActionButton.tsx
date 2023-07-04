@@ -1,4 +1,4 @@
-import usePoolContract from "@/hooks/pool/usePoolContract";
+import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { Button } from "@chakra-ui/react";
 import { useMemo } from "react";
 
@@ -7,7 +7,7 @@ export default function ActionButton() {
     return "Invalid pair";
   }, []);
 
-  const { mintPosition } = usePoolContract();
+  const { mintPosition } = usePoolMint();
 
   return (
     <Button

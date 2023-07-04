@@ -31,7 +31,6 @@ const httpLink = new HttpLink({
 const authMiddleware = (chainId: number | undefined) =>
   new ApolloLink((operation, forward) => {
     // add the authorization to the headers
-
     operation.setContext(() => ({
       uri:
         chainId && CHAIN_SUBGRAPH_URL[chainId]

@@ -16,7 +16,6 @@ import { usePathname } from "next/navigation";
 import { getApolloClientApiKey } from "@/utils/network/getApolloClientApiKey";
 import { GET_POSITIONS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
-import { execute } from "../../../.graphclient";
 
 //logic through subGraph
 export default function useGetPositionIds(): {
@@ -30,12 +29,12 @@ export default function useGetPositionIds(): {
 
   const { data, error } = useQuery(GET_POSITIONS, {
     variables: {
-      account: "0xB68AA9E398c054da7EBAaA446292f611CA0CD52B",
+      account: address,
     },
     pollInterval: 10000,
   });
 
-  return { positionInfo: undefined };
+  return { positionInfo: data?.length > 0 ? data : undefined };
 }
 
 //logic through contract calls
