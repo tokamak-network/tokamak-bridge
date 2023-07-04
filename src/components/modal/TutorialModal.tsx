@@ -38,21 +38,21 @@ const steps = [
     stepTitle: "Set up Swap",
     stepDescription: [
       "In order to perform a Swap, both networks need to be on the same network.",
-      "For example: ETH Mainnet > ETH Mainnet",
+      "For example: Ethereum > Ethereum",
     ],
   },
   {
     stepTitle: "Set up Deposit",
     stepDescription: [
       "In order to perform a Deposit, the left network needs to be layer 1, the right network needs to be layer 2. ",
-      "For example: ETH Mainnet > Titan",
+      "For example: Ethereum > Titan",
     ],
   },
   {
     stepTitle: "Set up Withdraw",
     stepDescription: [
       "In order to perform a Withdraw, the left network needs to be layer 2, the right network needs to be layer 1. ",
-      "For example: Titan > ETH Mainnet",
+      "For example: Titan > Ethereum",
     ],
   },
   {
