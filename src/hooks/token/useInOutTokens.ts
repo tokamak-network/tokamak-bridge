@@ -26,20 +26,13 @@ export function useInOutTokens() {
   );
 
   const inToken = useMemo(() => {
-    return inTokenRecoilValue && connectedChainId && chainName
+    return inTokenRecoilValue && chainName
       ? inTokenRecoilValue.address[chainName] === null ||
         inTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...inTokenRecoilValue,
             tokenAddress: inTokenRecoilValue.address[chainName],
-            token: new Token(
-              connectedChainId,
-              inTokenRecoilValue.address[chainName] as string,
-              inTokenRecoilValue.decimals,
-              inTokenRecoilValue.tokenName as string,
-              inTokenRecoilValue.tokenSymbol as string
-            ),
           }
       : null;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
@@ -48,20 +41,13 @@ export function useInOutTokens() {
     if (mode === "Deposit" || mode === "Withdraw") {
       return null;
     }
-    return outTokenRecoilValue && connectedChainId && chainName
+    return outTokenRecoilValue && chainName
       ? outTokenRecoilValue.address[chainName] === null ||
         outTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...outTokenRecoilValue,
             tokenAddress: outTokenRecoilValue.address[chainName],
-            token: new Token(
-              connectedChainId,
-              outTokenRecoilValue.address[chainName] as string,
-              outTokenRecoilValue.decimals,
-              outTokenRecoilValue.tokenName as string,
-              outTokenRecoilValue.tokenSymbol as string
-            ),
           }
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName, mode]);

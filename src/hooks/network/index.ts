@@ -35,6 +35,7 @@ export default function useConnectedNetwork() {
         blockExplorer: chain.blockExplorers?.default.url,
       };
     }
+    return { chainName: "MAINNET" as keyof typeof SupportedChainId };
   }, [chain]);
 
   return { ...chainInfo };
