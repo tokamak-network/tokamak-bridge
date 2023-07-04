@@ -5,6 +5,7 @@ import {
   Flex,
   Box,
   Text,
+  Link,
 } from "@chakra-ui/react";
 import { useDisclosure } from "@chakra-ui/react";
 import Image from "next/image";
@@ -138,11 +139,13 @@ export default function TutorialModal() {
                 <Text mb={"40px"} textAlign={"left"}>
                   To get a more in-depth guide on how to use Tokamak Bridge, you
                   can find a link to our{" "}
-                  <span
+                  <Link
                     style={{ color: "#007AFF", textDecoration: "underline" }}
+                    href="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+                    isExternal
                   >
                     user guide
-                  </span>{" "}
+                  </Link>{" "}
                   under the “More” tab in the menu.
                 </Text>
               );
