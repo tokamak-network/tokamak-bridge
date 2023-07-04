@@ -16,7 +16,7 @@ import { usePathname } from "next/navigation";
 import { getApolloClientApiKey } from "@/utils/network/getApolloClientApiKey";
 import { GET_POSITIONS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
-import { execute } from '../../../.graphclient'
+import { execute } from "../../../.graphclient";
 
 //logic through subGraph
 export default function useGetPositionIds(): {
@@ -40,17 +40,16 @@ export default function useGetPositionIds(): {
   });
 
   useEffect(() => {
-    async function fetch () {
-      const result = await execute(GET_POSITIONS, {})
-      console.log(result)
+    async function fetch() {
+      const result = await execute(GET_POSITIONS, {});
+      console.log("go");
+      console.log(result);
     }
-    fetch()
-  }, [])
+    fetch();
+  }, []);
 
   console.log("gogo");
   console.log(error);
-
-  console.log(getApolloClientApiKey(connectedChainId));
 
   console.log(data);
 
