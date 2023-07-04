@@ -21,31 +21,32 @@ const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [SupportedChainId.MAINNET]:
     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
   [SupportedChainId.TITAN]:
-    "https://thegraph.titan.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak/graphql",
+    "https://thegraph.titan.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak",
 };
 
 const httpLink = new HttpLink({
-  uri: CHAIN_SUBGRAPH_URL[1],
+  uri: CHAIN_SUBGRAPH_URL[SupportedChainId.MAINNET],
 });
 
-const authMiddleware = new ApolloLink((operation, forward) => {
-  // add the authorization to the headers
-  const chainId = 55004;
+const authMiddleware = (chainId: number | undefined) =>
+  new ApolloLink((operation, forward) => {
+    // add the authorization to the headers
 
-  operation.setContext(() => ({
-    uri:
-      chainId && CHAIN_SUBGRAPH_URL[chainId]
-        ? CHAIN_SUBGRAPH_URL[chainId]
-        : CHAIN_SUBGRAPH_URL[SupportedChainId.MAINNET],
-  }));
+    operation.setContext(() => ({
+      uri:
+        chainId && CHAIN_SUBGRAPH_URL[chainId]
+          ? CHAIN_SUBGRAPH_URL[chainId]
+          : CHAIN_SUBGRAPH_URL[SupportedChainId.MAINNET],
+    }));
 
-  return forward(operation);
-});
+    return forward(operation);
+  });
 
-export const apolloClient = new ApolloClient({
-  link: concat(authMiddleware, httpLink),
-  cache: new InMemoryCache(),
-});
+export const getApolloClient = (chainId: number | undefined) =>
+  new ApolloClient({
+    link: concat(authMiddleware(chainId), httpLink),
+    cache: new InMemoryCache(),
+  });
 
 // export const apolloClient = new ApolloClient({
 //   link: ApolloLink.from([

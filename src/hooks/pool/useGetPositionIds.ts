@@ -33,25 +33,7 @@ export default function useGetPositionIds(): {
       account: "0xB68AA9E398c054da7EBAaA446292f611CA0CD52B",
     },
     pollInterval: 10000,
-    context: {
-      // apiName: getApolloClientApiKey(connectedChainId),
-      apiName: "titanGoerliSubGraph",
-    },
   });
-
-  useEffect(() => {
-    async function fetch() {
-      const result = await execute(GET_POSITIONS, {});
-      console.log("go");
-      console.log(result);
-    }
-    fetch();
-  }, []);
-
-  console.log("gogo");
-  console.log(error);
-
-  console.log(data);
 
   return { positionInfo: undefined };
 }
