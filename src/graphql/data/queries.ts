@@ -23,11 +23,10 @@ export const GET_POSITIONS = gql`
 }
 `;
 
-export const GET_POOL = gql`
+export const GET_POOLS = gql`
   query pools($token0: String!, $token1: String!) {
-   asToken0: positions(where: {token0: $token0 token1: $token1}){
+   asToken0: pools(where: {token0: $token0 token1: $token1}){
     id
-    pool {
       id
       feeTier
       tick
@@ -40,12 +39,9 @@ export const GET_POOL = gql`
         id
         symbol
       }
-    }
-    owner
   }  
-  asToken1: positions(where: {token0: $token1 token1: $token0}){
+  asToken1: pools(where: {token0: $token1 token1: $token0}){
     id
-    pool {
       id
       feeTier
       tick
@@ -57,9 +53,7 @@ export const GET_POOL = gql`
       token1 {
         id
         symbol
-      }
     }
-    owner
   }  
 }
 `;

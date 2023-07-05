@@ -22,6 +22,8 @@ const CHAIN_SUBGRAPH_URL: Record<number, string> = {
     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
   [SupportedChainId.TITAN]:
     "https://thegraph.titan.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak",
+  [SupportedChainId.DARIUS]:
+    "https://goerli.thegraph.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak-goerli",
 };
 
 const httpLink = new HttpLink({
