@@ -8,10 +8,12 @@ import SelectPair from "./SelectPair";
 import TopLine from "./TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
-import { usePool } from "@/hooks/pool/usePool";
+import { usePoolData } from "@/hooks/pool/usePoolData";
 
 export default function CreatePoolModal() {
-  const { poolData } = usePool();
+  const { poolData } = usePoolData();
+  console.log("**poolData");
+
   console.log(poolData);
 
   return (

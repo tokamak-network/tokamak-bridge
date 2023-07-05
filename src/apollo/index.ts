@@ -9,7 +9,6 @@ import {
 } from "@apollo/client";
 import { MultiAPILink } from "@habx/apollo-multi-endpoint-link";
 import { createHttpLink } from "apollo-link-http";
-import * as GraphClient from "../../.graphclient";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // export const apolloClient = new ApolloClient({

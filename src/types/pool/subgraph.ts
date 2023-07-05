@@ -1,18 +1,24 @@
-export type poolData = [
+export type PoolData = [
   {
-    pool: {
-      feeTier: string;
+    id: string;
+    feeTier: string;
+    tick: string;
+    liquidity: string;
+    token0Price: string;
+    token1Price: string;
+    token0: {
       id: string;
-      liquidity: string;
-      tick: string;
-      token0: {
-        id: string;
-        symbole: string;
-      };
-      token1: {
-        id: string;
-        symbole: string;
-      };
+      symbol: string;
+      decimals: string;
+    };
+    token1: {
+      id: string;
+      symbol: string;
+      decimals: string;
     };
   }
 ];
+
+export type PoolData_Subgraph =
+  | { asToken0: PoolData | []; asToken1: PoolData | [] }
+  | undefined;

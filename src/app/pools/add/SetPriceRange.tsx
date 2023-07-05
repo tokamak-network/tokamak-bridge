@@ -3,16 +3,23 @@ import Title from "./components/Title";
 import PriceInput from "./components/RangeInput";
 import RangeInput from "./components/RangeInput";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { usePoolPrice, usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import commafy from "@/utils/trim/commafy";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
+  const { tokenPrice } = usePoolPrice();
+  const { currentPrice } = usePriceTickConversion();
+
+  console.log("**currentPrice");
+  console.log(currentPrice?.toSignificant(5));
 
   return (
     <Flex flexDir={"column"} rowGap={"15px"}>
       <Title title="Set Price Range" />
       <Text textAlign={"center"}>
-        Current Price : {1541.8} {inToken?.tokenSymbol} per
-        {outToken?.tokenSymbol}
+        Current Price : {commafy(tokenPrice?.token0Price, 4)}{" "}
+        {inToken?.tokenSymbol} per {outToken?.tokenSymbol}
       </Text>
       <Flex columnGap={"12px"}>
         <RangeInput isMinPrice={true} />
