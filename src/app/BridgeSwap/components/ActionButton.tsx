@@ -49,8 +49,16 @@ export default function ActionButton() {
       clearTimeout(timeoutId);
     };
   }, [
-    !isReady || isApproved === false || isLoading || isNotSupportForSwap,
-    isBalanceOver || isPending,
+    isReady,
+    isApproved,
+    isLoading,
+    isNotSupportForSwap,
+    isBalanceOver,
+    isPending,
+    isTONatPair,
+    isInputZero,
+    mode,
+    outToken,
   ]);
 
   const { onOpenConfirmModal } = useConfirmModal();
