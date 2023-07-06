@@ -4,11 +4,12 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Token, Ether } from "@uniswap/sdk-core";
-import useConnectedNetwork from "../network";
+import useConnectedNetwork, { useInOutNetwork } from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
+import { useAccount } from "wagmi";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -20,26 +21,20 @@ export function useInOutTokens() {
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
   const { mode } = useGetMode();
+  const { isConnected } = useAccount();
 
   const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
   );
 
   const inToken = useMemo(() => {
-    return inTokenRecoilValue && connectedChainId && chainName
+    return inTokenRecoilValue && chainName
       ? inTokenRecoilValue.address[chainName] === null ||
         inTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...inTokenRecoilValue,
             tokenAddress: inTokenRecoilValue.address[chainName],
-            token: new Token(
-              connectedChainId,
-              inTokenRecoilValue.address[chainName] as string,
-              inTokenRecoilValue.decimals,
-              inTokenRecoilValue.tokenName as string,
-              inTokenRecoilValue.tokenSymbol as string
-            ),
           }
       : null;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
@@ -48,20 +43,13 @@ export function useInOutTokens() {
     if (mode === "Deposit" || mode === "Withdraw") {
       return null;
     }
-    return outTokenRecoilValue && connectedChainId && chainName
+    return outTokenRecoilValue && chainName
       ? outTokenRecoilValue.address[chainName] === null ||
         outTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...outTokenRecoilValue,
             tokenAddress: outTokenRecoilValue.address[chainName],
-            token: new Token(
-              connectedChainId,
-              outTokenRecoilValue.address[chainName] as string,
-              outTokenRecoilValue.decimals,
-              outTokenRecoilValue.tokenName as string,
-              outTokenRecoilValue.tokenSymbol as string
-            ),
           }
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName, mode]);
@@ -80,6 +68,9 @@ export function useInOutTokens() {
 
   useEffect(() => {
     const thisTokenExist = async () => {
+      if (isConnected === false) {
+        return;
+      }
       if (connectedChainId && provider && inToken?.tokenAddress) {
         const code = await provider.getCode(inToken?.tokenAddress);
 
@@ -101,7 +92,7 @@ export function useInOutTokens() {
       console.log("**thisTokenExist err**");
       console.log(e);
     });
-  }, [connectedChainId, provider, inToken?.tokenAddress]);
+  }, [connectedChainId, provider, inToken?.tokenAddress, isConnected]);
 
   return {
     inToken,

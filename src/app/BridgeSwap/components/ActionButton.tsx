@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
@@ -66,8 +66,8 @@ export default function ActionButton() {
       _active={{}}
       _hover={{}}
       _disabled={{}}
-      bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
-      color={!isConnected ? "#fff" : isDisabled ? "#8E8E92" : "#fff"}
+      bgColor={isDisabled ? "#17181D" : "#007AFF"}
+      color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={!isConnected ? false : isDisabled}
       onClick={
         isConnected === false

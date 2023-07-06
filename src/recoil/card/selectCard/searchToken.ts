@@ -9,6 +9,8 @@ import {
 } from "@/types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
+import { getProvider } from "@/config/getProvider";
 
 type SearchToken = {
   nameOrAdd: string;
@@ -24,35 +26,41 @@ export const searchTokenSelector = selector<TokenInfo | null>({
   key: "searchTokenSelector",
   get: async ({ get }) => {
     const searchToken = get(searchTokenStatus);
+    const { inNetwork } = get(networkStatus);
 
     if (searchToken) {
       const { nameOrAdd, chainId } = searchToken;
       const isEthHex = nameOrAdd?.startsWith("0x");
 
-      if (isEthHex) {
-        const tokenContract = new ethers.Contract(
-          nameOrAdd,
-          ERC20_ABI.abi,
-          getL1Provider()
-        );
-        const [tokenName, tokenSymbol, decimals] = await Promise.all([
-          tokenContract.name(),
-          tokenContract.symbol(),
-          tokenContract.decimals(),
-        ]);
+      try {
+        if (isEthHex) {
+          const tokenContract = new ethers.Contract(
+            nameOrAdd,
+            ERC20_ABI.abi,
+            getProvider(inNetwork)
+          );
+          const [tokenName, tokenSymbol, decimals] = await Promise.all([
+            tokenContract.name(),
+            tokenContract.symbol(),
+            tokenContract.decimals(),
+          ]);
 
-        return {
-          tokenName,
-          tokenSymbol,
-          address: {
-            MAINNET: nameOrAdd,
-            GOERLI: nameOrAdd,
-            TITAN: nameOrAdd,
-            DARIUS: nameOrAdd,
-          },
-          decimals,
-          isNativeCurrency: null,
-        };
+          return {
+            tokenName,
+            tokenSymbol,
+            address: {
+              MAINNET: nameOrAdd,
+              GOERLI: nameOrAdd,
+              TITAN: nameOrAdd,
+              DARIUS: nameOrAdd,
+            },
+            decimals,
+            isNativeCurrency: null,
+          };
+        }
+      } catch (e) {
+        console.log("**searchTokenSelector err**");
+        console.log(e);
       }
     }
     return null;

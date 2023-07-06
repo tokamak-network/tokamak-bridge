@@ -19,9 +19,13 @@ export default function useConnectedNetwork() {
   // const network = useRecoilValue(networkStatus);
   const { chain } = useNetwork();
 
+  const { inNetwork, outNetwork } = useInOutNetwork();
+
   const chainInfo = useMemo(() => {
+    //connected wallet
     if (chain?.id) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
+
       return {
         connectedChainId: chain.id,
         isSupportedChain: Object.values(SupportedChainId).includes(chain.id),
@@ -35,7 +39,28 @@ export default function useConnectedNetwork() {
         blockExplorer: chain.blockExplorers?.default.url,
       };
     }
-  }, [chain]);
+    //not connected wallet but select a network
+    if (inNetwork) {
+      return {
+        connectedChainId: inNetwork.chainId,
+        isSupportedChain: Object.values(SupportedChainId).includes(
+          inNetwork.chainId
+        ),
+        chainName: inNetwork.chainName,
+        layer:
+          supportedChain.filter((e) => e.chainId === inNetwork.chainId)[0]
+            ?.layer ?? null,
+        isConnectedToMainNetwork:
+          inNetwork.chainId === SupportedChainId["MAINNET"] ||
+          inNetwork.chainId === SupportedChainId["TITAN"],
+        blockExplorer: "",
+      };
+    }
+    return { chainName: "MAINNET" as keyof typeof SupportedChainId };
+  }, [chain, inNetwork]);
 
-  return { ...chainInfo };
+  // console.log("inNetwork");
+  // console.log(inNetwork);
+
+  return chainInfo;
 }

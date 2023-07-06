@@ -27,6 +27,7 @@ import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useApprove } from "@/hooks/token/useApproval";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { useAccount } from "wagmi";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -493,6 +494,7 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
   const { isInputZero } = useInputBalanceCheck();
+  const { isConnected } = useAccount();
 
   if (
     !isReady ||
@@ -502,7 +504,8 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
     isNotSupportForBridge ||
     isApproved === false ||
     (mode === "Swap" && outToken === null) ||
-    isInputZero
+    isInputZero ||
+    !isConnected
   ) {
     return null;
   }

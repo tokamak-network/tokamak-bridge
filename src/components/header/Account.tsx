@@ -24,7 +24,6 @@ export default function Account() {
       h={"48px"}
       columnGap={"17px"}
       fontSize={18}
-      bg={isConnected ? "" : "#007AFF"}
       fontWeight={500}
       /**
        * About connectors

@@ -1,30 +1,16 @@
-import {
-  networkStatus,
-  selectedInTokenStatus,
-  selectedOutTokenStatus,
-} from "@/recoil/bridgeSwap/atom";
-import { Box, Button, Flex, Input, Text } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { Box, Flex, Input, Text } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
-import TokenCard from "./TokenCard";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
-import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
-import RightArrow from "assets/icons/tokenCardRightArrow.svg";
-import { motion, useAnimation } from "framer-motion";
-import { supportedTokens } from "types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
 import { CardCarrousel } from "./CardCarousel";
-import {
-  searchTokenList,
-  searchTokenSelector,
-  searchTokenStatus,
-} from "@/recoil/card/selectCard/searchToken";
+import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 

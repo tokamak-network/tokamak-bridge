@@ -7,6 +7,7 @@ import useIsTon from "@/hooks/token/useIsTon";
 import { useTransaction } from "@/hooks/tx/useTx";
 import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
+import { useAccount } from "wagmi";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
@@ -15,6 +16,7 @@ export default function ApproveToken() {
   const { pendingTransactionToApprove } = useTransaction();
   const { isTONatPair } = useIsTon();
   const { mode } = useGetMode();
+  const { isConnected } = useAccount();
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -26,7 +28,8 @@ export default function ApproveToken() {
     isApproved ||
     isNotSupportForBridge ||
     !inToken ||
-    (mode == "Swap" && isTONatPair)
+    (mode == "Swap" && isTONatPair) ||
+    !isConnected
   ) {
     return null;
   }

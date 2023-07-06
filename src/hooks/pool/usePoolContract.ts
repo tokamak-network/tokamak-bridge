@@ -1,318 +1,318 @@
-import { ethers } from "ethers";
-import {
-  FeeAmount,
-  computePoolAddress,
-  MintOptions,
-  nearestUsableTick,
-  NonfungiblePositionManager,
-  Pool,
-  Position,
-  AddLiquidityOptions,
-  CollectOptions,
-  RemoveLiquidityOptions,
-} from "@uniswap/v3-sdk";
-import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import useContract from "@/hooks/contracts/useContract";
-import { useCallback, useEffect } from "react";
-import useConnectedNetwork from "@/hooks/network";
-import { useProvier } from "@/hooks/provider/useProvider";
-import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
-import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
-import { useAccount } from "wagmi";
-import { sendTransaction } from "@/utils/uniswap/libs/provider";
-import { useRecoilValue } from "recoil";
-import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
-import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
+// import { ethers } from "ethers";
+// import {
+//   FeeAmount,
+//   computePoolAddress,
+//   MintOptions,
+//   nearestUsableTick,
+//   NonfungiblePositionManager,
+//   Pool,
+//   Position,
+//   AddLiquidityOptions,
+//   CollectOptions,
+//   RemoveLiquidityOptions,
+// } from "@uniswap/v3-sdk";
+// import { useGetMode } from "@/hooks/mode/useGetMode";
+// import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+// import useContract from "@/hooks/contracts/useContract";
+// import { useCallback, useEffect } from "react";
+// import useConnectedNetwork from "@/hooks/network";
+// import { useProvier } from "@/hooks/provider/useProvider";
+// import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
+// import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
+// import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
+// import { useAccount } from "wagmi";
+// import { sendTransaction } from "@/utils/uniswap/libs/provider";
+// import { useRecoilValue } from "recoil";
+// import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
+// import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 
-export default function usePoolContract() {
-  const { mode } = useGetMode();
-  const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT } = useContract();
-  const { layer } = useConnectedNetwork();
-  const { provider } = useProvier();
-  const { address } = useAccount();
-  const feeAmount = useRecoilValue(poolFeeStatus);
+// export default function usePoolContract() {
+//   const { mode } = useGetMode();
+//   const { inToken, outToken } = useInOutTokens();
+//   const { UNISWAP_CONTRACT } = useContract();
+//   const { layer } = useConnectedNetwork();
+//   const { provider } = useProvier();
+//   const { address } = useAccount();
+//   const feeAmount = useRecoilValue(poolFeeStatus);
 
-  const getPoolInfo = useCallback(async () => {
-    console.log(inToken && outToken && feeAmount);
-    if (inToken && outToken && feeAmount) {
-      const currentPoolAddress = computePoolAddress({
-        factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-        tokenA: inToken.token,
-        tokenB: outToken.token,
-        fee: feeAmount,
-        initCodeHashManualOverride:
-          layer === "L2" ? L2_initCodeHashManualOverride : undefined,
-      });
+//   const getPoolInfo = useCallback(async () => {
+//     console.log(inToken && outToken && feeAmount);
+//     if (inToken && outToken && feeAmount) {
+//       const currentPoolAddress = computePoolAddress({
+//         factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
+//         tokenA: inToken.token,
+//         tokenB: outToken.token,
+//         fee: feeAmount,
+//         initCodeHashManualOverride:
+//           layer === "L2" ? L2_initCodeHashManualOverride : undefined,
+//       });
 
-      const POOL_CONTRACT = new ethers.Contract(
-        currentPoolAddress,
-        IUniswapV3PoolABI.abi,
-        provider
-      );
+//       const POOL_CONTRACT = new ethers.Contract(
+//         currentPoolAddress,
+//         IUniswapV3PoolABI.abi,
+//         provider
+//       );
 
-      const [token0, token1, fee, tickSpacing, liquidity, slot0] =
-        await Promise.all([
-          POOL_CONTRACT.token0(),
-          POOL_CONTRACT.token1(),
-          POOL_CONTRACT.fee(),
-          POOL_CONTRACT.tickSpacing(),
-          POOL_CONTRACT.liquidity(),
-          POOL_CONTRACT.slot0(),
-        ]);
+//       const [token0, token1, fee, tickSpacing, liquidity, slot0] =
+//         await Promise.all([
+//           POOL_CONTRACT.token0(),
+//           POOL_CONTRACT.token1(),
+//           POOL_CONTRACT.fee(),
+//           POOL_CONTRACT.tickSpacing(),
+//           POOL_CONTRACT.liquidity(),
+//           POOL_CONTRACT.slot0(),
+//         ]);
 
-      return {
-        token0,
-        token1,
-        fee,
-        tickSpacing,
-        liquidity,
-        sqrtPriceX96: slot0[0],
-        tick: slot0[1],
-      };
-    }
-  }, [mode, inToken, outToken, feeAmount]);
+//       return {
+//         token0,
+//         token1,
+//         fee,
+//         tickSpacing,
+//         liquidity,
+//         sqrtPriceX96: slot0[0],
+//         tick: slot0[1],
+//       };
+//     }
+//   }, [mode, inToken, outToken, feeAmount]);
 
-  const constructPosition = useCallback(
-    async (
-      token0Amount: CurrencyAmount<Token>,
-      token1Amount: CurrencyAmount<Token>
-    ): Promise<Position | undefined> => {
-      // get pool info
-      const poolInfo = await getPoolInfo();
+//   const constructPosition = useCallback(
+//     async (
+//       token0Amount: CurrencyAmount<Token>,
+//       token1Amount: CurrencyAmount<Token>
+//     ): Promise<Position | undefined> => {
+//       // get pool info
+//       const poolInfo = await getPoolInfo();
 
-      console.log("poolInfo : ", poolInfo);
+//       console.log("poolInfo : ", poolInfo);
 
-      if (poolInfo) {
-        // construct pool instance
-        const configuredPool = new Pool(
-          token0Amount.currency,
-          token1Amount.currency,
-          poolInfo.fee,
-          poolInfo.sqrtPriceX96.toString(),
-          poolInfo.liquidity.toString(),
-          poolInfo.tick
-        );
+//       if (poolInfo) {
+//         // construct pool instance
+//         const configuredPool = new Pool(
+//           token0Amount.currency,
+//           token1Amount.currency,
+//           poolInfo.fee,
+//           poolInfo.sqrtPriceX96.toString(),
+//           poolInfo.liquidity.toString(),
+//           poolInfo.tick
+//         );
 
-        // create position using the maximum liquidity from input amounts
-        return Position.fromAmounts({
-          pool: configuredPool,
-          tickLower:
-            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) -
-            poolInfo.tickSpacing * 2,
-          tickUpper:
-            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) +
-            poolInfo.tickSpacing * 2,
-          amount0: token0Amount.quotient,
-          amount1: token1Amount.quotient,
-          useFullPrecision: true,
-        });
-      }
-      return undefined;
-    },
-    []
-  );
+//         // create position using the maximum liquidity from input amounts
+//         return Position.fromAmounts({
+//           pool: configuredPool,
+//           tickLower:
+//             nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) -
+//             poolInfo.tickSpacing * 2,
+//           tickUpper:
+//             nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) +
+//             poolInfo.tickSpacing * 2,
+//           amount0: token0Amount.quotient,
+//           amount1: token1Amount.quotient,
+//           useFullPrecision: true,
+//         });
+//       }
+//       return undefined;
+//     },
+//     []
+//   );
 
-  const mintPosition = useCallback(async () => {
-    console.log("--mintPosition--");
-    console.log(inToken, outToken, address);
-    if (inToken && outToken && address) {
-      const positionToMint = await constructPosition(
-        CurrencyAmount.fromRawAmount(
-          inToken.token,
-          fromReadableAmount(
-            Number(inToken.parsedAmount),
-            inToken.decimals
-          ).toString()
-        ),
-        CurrencyAmount.fromRawAmount(
-          outToken.token,
-          fromReadableAmount(
-            Number(outToken.parsedAmount),
-            outToken.decimals
-          ).toString()
-        )
-      );
+//   const mintPosition = useCallback(async () => {
+//     console.log("--mintPosition--");
+//     console.log(inToken, outToken, address);
+//     if (inToken && outToken && address) {
+//       const positionToMint = await constructPosition(
+//         CurrencyAmount.fromRawAmount(
+//           inToken.token,
+//           fromReadableAmount(
+//             Number(inToken.parsedAmount),
+//             inToken.decimals
+//           ).toString()
+//         ),
+//         CurrencyAmount.fromRawAmount(
+//           outToken.token,
+//           fromReadableAmount(
+//             Number(outToken.parsedAmount),
+//             outToken.decimals
+//           ).toString()
+//         )
+//       );
 
-      console.log("positionToMint : ", positionToMint);
+//       console.log("positionToMint : ", positionToMint);
 
-      if (positionToMint) {
-        const mintOptions: MintOptions = {
-          recipient: address,
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
-        };
+//       if (positionToMint) {
+//         const mintOptions: MintOptions = {
+//           recipient: address,
+//           deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+//           slippageTolerance: new Percent(50, 10_000),
+//         };
 
-        // get calldata for minting a position
-        const { calldata, value } =
-          NonfungiblePositionManager.addCallParameters(
-            positionToMint,
-            mintOptions
-          );
+//         // get calldata for minting a position
+//         const { calldata, value } =
+//           NonfungiblePositionManager.addCallParameters(
+//             positionToMint,
+//             mintOptions
+//           );
 
-        // build transaction
-        const transaction = {
-          data: calldata,
-          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          value: value,
-          from: address,
-        };
+//         // build transaction
+//         const transaction = {
+//           data: calldata,
+//           to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+//           value: value,
+//           from: address,
+//         };
 
-        return sendTransaction(transaction);
-      }
-    }
-  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
+//         return sendTransaction(transaction);
+//       }
+//     }
+//   }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
 
-  const addLiquidity = useCallback(
-    async (positionId: number) => {
-      console.log("--addLiquidity--");
-      console.log(inToken, outToken, address);
-      if (inToken && outToken && address) {
-        const positionToIncreaseBy = await constructPosition(
-          CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString()
-          ),
-          CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(
-              Number(outToken.parsedAmount),
-              outToken.decimals
-            ).toString()
-          )
-        );
-        const addLiquidityOptions: AddLiquidityOptions = {
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
-          tokenId: positionId,
-        };
-        if (positionToIncreaseBy) {
-          const { calldata, value } =
-            NonfungiblePositionManager.addCallParameters(
-              positionToIncreaseBy,
-              addLiquidityOptions
-            );
+//   const addLiquidity = useCallback(
+//     async (positionId: number) => {
+//       console.log("--addLiquidity--");
+//       console.log(inToken, outToken, address);
+//       if (inToken && outToken && address) {
+//         const positionToIncreaseBy = await constructPosition(
+//           CurrencyAmount.fromRawAmount(
+//             inToken.token,
+//             fromReadableAmount(
+//               Number(inToken.parsedAmount),
+//               inToken.decimals
+//             ).toString()
+//           ),
+//           CurrencyAmount.fromRawAmount(
+//             outToken.token,
+//             fromReadableAmount(
+//               Number(outToken.parsedAmount),
+//               outToken.decimals
+//             ).toString()
+//           )
+//         );
+//         const addLiquidityOptions: AddLiquidityOptions = {
+//           deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+//           slippageTolerance: new Percent(50, 10_000),
+//           tokenId: positionId,
+//         };
+//         if (positionToIncreaseBy) {
+//           const { calldata, value } =
+//             NonfungiblePositionManager.addCallParameters(
+//               positionToIncreaseBy,
+//               addLiquidityOptions
+//             );
 
-          // build transaction
-          const transaction = {
-            data: calldata,
-            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-            value: value,
-            from: address,
-          };
-          return sendTransaction(transaction);
-        }
-      }
-    },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
-  );
+//           // build transaction
+//           const transaction = {
+//             data: calldata,
+//             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+//             value: value,
+//             from: address,
+//           };
+//           return sendTransaction(transaction);
+//         }
+//       }
+//     },
+//     [provider, inToken, outToken, address, UNISWAP_CONTRACT]
+//   );
 
-  const removeLiquidity = useCallback(
-    async (positionId: number, removeLiquidityPercentage: number) => {
-      console.log("--removeLiquidity--");
-      console.log(inToken, outToken, address);
-      if (inToken && outToken && address) {
-        const currentPosition = await constructPosition(
-          CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString()
-          ),
-          CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(
-              Number(outToken.parsedAmount),
-              outToken.decimals
-            ).toString()
-          )
-        );
-        const collectOptions: Omit<CollectOptions, "tokenId"> = {
-          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(inToken.token, 0),
-          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-            outToken.token,
-            0
-          ),
-          recipient: address,
-        };
+//   const removeLiquidity = useCallback(
+//     async (positionId: number, removeLiquidityPercentage: number) => {
+//       console.log("--removeLiquidity--");
+//       console.log(inToken, outToken, address);
+//       if (inToken && outToken && address) {
+//         const currentPosition = await constructPosition(
+//           CurrencyAmount.fromRawAmount(
+//             inToken.token,
+//             fromReadableAmount(
+//               Number(inToken.parsedAmount),
+//               inToken.decimals
+//             ).toString()
+//           ),
+//           CurrencyAmount.fromRawAmount(
+//             outToken.token,
+//             fromReadableAmount(
+//               Number(outToken.parsedAmount),
+//               outToken.decimals
+//             ).toString()
+//           )
+//         );
+//         const collectOptions: Omit<CollectOptions, "tokenId"> = {
+//           expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(inToken.token, 0),
+//           expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+//             outToken.token,
+//             0
+//           ),
+//           recipient: address,
+//         };
 
-        const removeLiquidityOptions: RemoveLiquidityOptions = {
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
-          tokenId: positionId,
-          // percentage of liquidity to remove
-          liquidityPercentage: new Percent(removeLiquidityPercentage),
-          collectOptions,
-        };
-        if (currentPosition) {
-          // get calldata for minting a position
-          const { calldata, value } =
-            NonfungiblePositionManager.removeCallParameters(
-              currentPosition,
-              removeLiquidityOptions
-            );
+//         const removeLiquidityOptions: RemoveLiquidityOptions = {
+//           deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+//           slippageTolerance: new Percent(50, 10_000),
+//           tokenId: positionId,
+//           // percentage of liquidity to remove
+//           liquidityPercentage: new Percent(removeLiquidityPercentage),
+//           collectOptions,
+//         };
+//         if (currentPosition) {
+//           // get calldata for minting a position
+//           const { calldata, value } =
+//             NonfungiblePositionManager.removeCallParameters(
+//               currentPosition,
+//               removeLiquidityOptions
+//             );
 
-          // build transaction
-          const transaction = {
-            data: calldata,
-            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-            value: value,
-            from: address,
-          };
+//           // build transaction
+//           const transaction = {
+//             data: calldata,
+//             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+//             value: value,
+//             from: address,
+//           };
 
-          return sendTransaction(transaction);
-        }
-      }
-    },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
-  );
+//           return sendTransaction(transaction);
+//         }
+//       }
+//     },
+//     [provider, inToken, outToken, address, UNISWAP_CONTRACT]
+//   );
 
-  const collectFees = useCallback(
-    async (positionId: number) => {
-      console.log("--collectFees--");
-      console.log(inToken, outToken, address);
-      if (inToken && outToken && address) {
-        const collectOptions: CollectOptions = {
-          tokenId: positionId,
-          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString()
-          ),
-          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(
-              Number(outToken.parsedAmount),
-              outToken.decimals
-            ).toString()
-          ),
-          recipient: address,
-        };
-        // get calldata for minting a position
-        const { calldata, value } =
-          NonfungiblePositionManager.collectCallParameters(collectOptions);
+//   const collectFees = useCallback(
+//     async (positionId: number) => {
+//       console.log("--collectFees--");
+//       console.log(inToken, outToken, address);
+//       if (inToken && outToken && address) {
+//         const collectOptions: CollectOptions = {
+//           tokenId: positionId,
+//           expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+//             inToken.token,
+//             fromReadableAmount(
+//               Number(inToken.parsedAmount),
+//               inToken.decimals
+//             ).toString()
+//           ),
+//           expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+//             outToken.token,
+//             fromReadableAmount(
+//               Number(outToken.parsedAmount),
+//               outToken.decimals
+//             ).toString()
+//           ),
+//           recipient: address,
+//         };
+//         // get calldata for minting a position
+//         const { calldata, value } =
+//           NonfungiblePositionManager.collectCallParameters(collectOptions);
 
-        // build transaction
-        const transaction = {
-          data: calldata,
-          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          value: value,
-          from: address,
-        };
+//         // build transaction
+//         const transaction = {
+//           data: calldata,
+//           to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+//           value: value,
+//           from: address,
+//         };
 
-        return sendTransaction(transaction);
-      }
-    },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
-  );
+//         return sendTransaction(transaction);
+//       }
+//     },
+//     [provider, inToken, outToken, address, UNISWAP_CONTRACT]
+//   );
 
-  return { mintPosition, addLiquidity, removeLiquidity, collectFees };
-}
+//   return { mintPosition, addLiquidity, removeLiquidity, collectFees };
+// }
