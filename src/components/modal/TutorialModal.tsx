@@ -136,7 +136,7 @@ export default function TutorialModal() {
                   {text}
                 </Text>
               ) : (
-                <Text mb={"40px"} textAlign={"left"}>
+                <Text mb={"16px"} textAlign={"left"}>
                   To get a more in-depth guide on how to use Tokamak Bridge, you
                   can find a link to our{" "}
                   <Link
@@ -146,7 +146,15 @@ export default function TutorialModal() {
                   >
                     user guide
                   </Link>{" "}
-                  under the “More” tab in the menu.
+                  under the “More” tab in the menu. You can also request help
+                  from our team by filling out this google{" "}
+                  <Link
+                    style={{ color: "#007AFF", textDecoration: "underline" }}
+                    href="https://docs.google.com/forms/u/1/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/viewform?usp=send_form"
+                    isExternal
+                  >
+                    form
+                  </Link>
                 </Text>
               );
             })}
