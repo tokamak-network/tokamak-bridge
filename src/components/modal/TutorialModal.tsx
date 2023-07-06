@@ -69,7 +69,7 @@ const bgs = [
   { bg: step2, px: "15px", size: "496px 519px", mt: "140px !important" },
   { bg: step3, px: "15px", size: "496px 519px", mt: "140px !important" },
   { bg: step4, px: "15px", size: "496px 519px", mt: "140px !important" },
-  { bg: step0, px: "15px", size: "496px 463px", mt: "100px !important" },
+  { bg: step0, px: "15px", size: "496px 463px", mt: "127px !important" },
 ];
 
 export default function TutorialModal() {
