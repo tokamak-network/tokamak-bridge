@@ -19,6 +19,8 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [SupportedChainId.MAINNET]:
     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
+  [SupportedChainId.GOERLI]:
+    "https://api.thegraph.com/subgraphs/name/cd4761/uniswap-v3-goerli",
   [SupportedChainId.TITAN]:
     "https://thegraph.titan.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak",
   [SupportedChainId.DARIUS]:

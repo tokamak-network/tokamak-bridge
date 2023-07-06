@@ -9,6 +9,11 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
+import { getWETHAddress, isETH } from "@/utils/token/isETH";
+import {
+  TOKAMAK_CONTRACTS,
+  TOKAMAK_GOERLI_CONTRACTS,
+} from "@/constant/contracts";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -17,13 +22,10 @@ export function useInOutTokens() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { connectedChainId, chainName } = useConnectedNetwork();
+  const { connectedChainId, chainName, layer, isConnectedToMainNetwork } =
+    useConnectedNetwork();
   const { provider } = useProvier();
   const { mode } = useGetMode();
-
-  const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET || SupportedChainId.GOERLI
-  );
 
   const inToken = useMemo(() => {
     return inTokenRecoilValue && connectedChainId && chainName
@@ -32,10 +34,14 @@ export function useInOutTokens() {
         ? null
         : {
             ...inTokenRecoilValue,
-            tokenAddress: inTokenRecoilValue.address[chainName],
+            tokenAddress: isETH(inTokenRecoilValue)
+              ? getWETHAddress(chainName)
+              : (inTokenRecoilValue.address[chainName] as string),
             token: new Token(
               connectedChainId,
-              inTokenRecoilValue.address[chainName] as string,
+              isETH(inTokenRecoilValue)
+                ? getWETHAddress(chainName)
+                : (inTokenRecoilValue.address[chainName] as string),
               inTokenRecoilValue.decimals,
               inTokenRecoilValue.tokenName as string,
               inTokenRecoilValue.tokenSymbol as string
@@ -48,16 +54,21 @@ export function useInOutTokens() {
     if (mode === "Deposit" || mode === "Withdraw") {
       return null;
     }
+
     return outTokenRecoilValue && connectedChainId && chainName
       ? outTokenRecoilValue.address[chainName] === null ||
         outTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...outTokenRecoilValue,
-            tokenAddress: outTokenRecoilValue.address[chainName],
+            tokenAddress: isETH(outTokenRecoilValue)
+              ? getWETHAddress(chainName)
+              : (outTokenRecoilValue.address[chainName] as string),
             token: new Token(
               connectedChainId,
-              outTokenRecoilValue.address[chainName] as string,
+              isETH(outTokenRecoilValue)
+                ? getWETHAddress(chainName)
+                : (outTokenRecoilValue.address[chainName] as string),
               outTokenRecoilValue.decimals,
               outTokenRecoilValue.tokenName as string,
               outTokenRecoilValue.tokenSymbol as string

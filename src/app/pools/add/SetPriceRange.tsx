@@ -12,7 +12,7 @@ export default function SetPriceRange() {
   const { currentPrice } = usePriceTickConversion();
 
   console.log("**currentPrice");
-  console.log(currentPrice?.toSignificant(5));
+  console.log(currentPrice);
 
   return (
     <Flex flexDir={"column"} rowGap={"15px"}>

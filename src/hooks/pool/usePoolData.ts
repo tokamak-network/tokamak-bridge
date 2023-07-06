@@ -4,7 +4,7 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import { PoolData_Subgraph } from "@/types/pool/subgraph";
 import { useMemo } from "react";
 import { useGetFeeTier } from "./useGetFeeTier";
-import { tickToPrice } from "@uniswap/v3-sdk";
+import { TICK_SPACINGS, tickToPrice } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
 import { Token } from "@uniswap/sdk-core";
 import { useNetwork } from "wagmi";
@@ -23,6 +23,8 @@ export function usePoolData(): {
 } {
   const { inToken, outToken } = useInOutTokens();
   const { feeTier } = useGetFeeTier();
+  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
+
   const { data } = useQuery(GET_POOLS, {
     variables: {
       token0: inToken?.tokenAddress?.toLocaleLowerCase(),
@@ -94,17 +96,24 @@ export function usePoolToken() {
   return { tickToPriceParams };
 }
 
-export function usePriceTickConversion() {
+export function usePriceTickConversion(tick?: number) {
   const { tickToPriceParams } = usePoolToken();
 
   if (tickToPriceParams === undefined) {
     return { currentPrice: undefined };
   }
+
   const currentPrice = tickToPrice(
-    tickToPriceParams?.baseToken,
-    tickToPriceParams?.quoteToken,
-    tickToPriceParams?.tick
+    tickToPriceParams.baseToken,
+    tickToPriceParams.quoteToken,
+    tick ?? tickToPriceParams?.tick
   );
 
-  return { currentPrice };
+  console.log("TICK_SPACINGS");
+
+  console.log(TICK_SPACINGS);
+
+  return { currentPrice: currentPrice.toSignificant(6) };
 }
+
+export function useTickPriceConvertion() {}
