@@ -23,6 +23,7 @@ import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -75,7 +76,7 @@ const OutNetworkContrainer = () => {
           isCircle={true}
         />
         <Text fontSize={16} fontWeight={400}>
-          {outNetwork.chainName}
+          {convertNetworkName(outNetwork.chainName)}
         </Text>
       </Flex>
     );

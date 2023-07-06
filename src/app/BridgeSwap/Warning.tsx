@@ -18,7 +18,13 @@ export default function Warning() {
   const { isTONatPair } = useIsTon();
 
   if (mode === "Swap" && isTONatPair) {
-    return <WarningText label={"TON is not supported to swap on L1"} />;
+    return (
+      <WarningText
+        label={
+          "TON is not supported to swap on L1. Please wrap to WTON and swap."
+        }
+      />
+    );
   }
 
   if (isNotSupportForBridge)
