@@ -1,5 +1,5 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
@@ -9,9 +9,13 @@ export default function CustomTooltip(props: {
     bgColor?: string;
   };
 }) {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <Tooltip
       p={0}
+      defaultIsOpen={false}
+      isOpen={isOpen}
       label={
         <Box
           flex={1}
@@ -49,7 +53,12 @@ export default function CustomTooltip(props: {
       }
       placement="top"
     >
-      {props.content}
+      <Box
+        onMouseEnter={() => setIsOpen(true)}
+        onMouseLeave={() => setIsOpen(false)}
+      >
+        {props.content}
+      </Box>
     </Tooltip>
   );
 }
