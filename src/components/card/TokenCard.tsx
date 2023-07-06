@@ -133,6 +133,9 @@ export default function TokenCard(props: TokenCardProps) {
     return setAgreeToAdd(true);
   }, [agreeToAdd]);
 
+console.log(h,w);
+
+
   return (
     <Flex
       w={typeof w === "string" ? w : `${w ?? 200}px`}

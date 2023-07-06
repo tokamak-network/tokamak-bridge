@@ -4,7 +4,7 @@ import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 import { usePool } from "@/hooks/pool/usePool";
-
+import IncreaseLiquidity from "./IncreaseLiquidity";
 export default function PoolList() {
   const { positionInfo } = useGetPositionIds();
   const { poolData } = usePool();
@@ -15,6 +15,7 @@ export default function PoolList() {
     <Wrap spacing="16px">
       <LPGuide />
       <AddLiquidity />
+      <IncreaseLiquidity/>
       {positionInfo?.map((position) => {
         return <PoolCard {...position} />;
       })}

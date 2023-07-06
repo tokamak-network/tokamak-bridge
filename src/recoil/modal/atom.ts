@@ -28,3 +28,9 @@ export const poolModalStatus = atom<
   key: "poolModalStatus",
   default: null,
 });
+
+
+export const previewModalStatus = atom<boolean>({
+  key: "previewModalStatus",
+  default: false,
+})

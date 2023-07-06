@@ -1,25 +1,25 @@
 import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { Button } from "@chakra-ui/react";
 import { useMemo } from "react";
-
+import usePreview from "@/hooks/modal/usePreviewModal";
 export default function ActionButton() {
   const buttonName = useMemo(() => {
-    return "Invalid pair";
+    return "Preview";
   }, []);
 
   const { mintPosition } = usePoolMint();
-
+const {setPreviewModal}  = usePreview()
   return (
     <Button
       w={"100%"}
       h={"48px"}
-      color={"#8E8E92"}
-      bgColor={"#17181D"}
+      color={"#fff"}
+      bgColor={"#007AFF"}
       borderRadius={"8px"}
       _hover={{}}
       _active={{}}
       mt={"auto"}
-      onClick={mintPosition}
+      onClick={()=>setPreviewModal(true)}
     >
       {buttonName}
     </Button>
