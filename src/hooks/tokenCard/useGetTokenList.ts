@@ -56,7 +56,11 @@ export function useGetTokenList() {
 
   let trimedTokenList;
 
-  if (filteredTokenList && filteredTokenList.length < 8) {
+  if (
+    filteredTokenList &&
+    filteredTokenList.length < 8 &&
+    filteredTokenList.length > 5
+  ) {
     trimedTokenList = [...filteredTokenList, ...filteredTokenList];
   } else {
     trimedTokenList = filteredTokenList;
