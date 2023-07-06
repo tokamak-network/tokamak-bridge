@@ -4,11 +4,12 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { Token, Ether } from "@uniswap/sdk-core";
-import useConnectedNetwork from "../network";
+import useConnectedNetwork, { useInOutNetwork } from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
+import { useAccount } from "wagmi";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -20,6 +21,7 @@ export function useInOutTokens() {
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
   const { mode } = useGetMode();
+  const { isConnected } = useAccount();
 
   const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET || SupportedChainId.GOERLI
@@ -66,6 +68,9 @@ export function useInOutTokens() {
 
   useEffect(() => {
     const thisTokenExist = async () => {
+      if (isConnected === false) {
+        return;
+      }
       if (connectedChainId && provider && inToken?.tokenAddress) {
         const code = await provider.getCode(inToken?.tokenAddress);
 
@@ -87,7 +92,7 @@ export function useInOutTokens() {
       console.log("**thisTokenExist err**");
       console.log(e);
     });
-  }, [connectedChainId, provider, inToken?.tokenAddress]);
+  }, [connectedChainId, provider, inToken?.tokenAddress, isConnected]);
 
   return {
     inToken,
