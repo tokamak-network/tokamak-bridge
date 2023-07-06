@@ -9,6 +9,7 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { WarningText } from "@/components/ui/WarningText";
 import useIsTon from "@/hooks/token/useIsTon";
+import { MAINNET_CONTRACTS } from "@/constant/contracts";
 
 export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
@@ -27,13 +28,21 @@ export default function Warning() {
     );
   }
 
-  if (isNotSupportForBridge)
+  if (isNotSupportForBridge) {
+    if (inToken?.tokenAddress === MAINNET_CONTRACTS.WETH_ADDRESS)
+      return <WarningText label="Please unwrap to ETH and deposit." />;
+    if (inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS)
+      return (
+        <WarningText label="WTON is not supported on L2. Please unwrap to TON and deposit" />
+      );
+
     return (
       <Flex color={"#F9C03E"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_ICON} alt={"WARNING_ICON"} />
-        <Text>{inToken?.tokenSymbol} is not supported on L2</Text>
+        <Text>{inToken?.tokenSymbol} is not supported on L2. </Text>
       </Flex>
     );
+  }
 
   if (mode === "Swap" && isNotSupportForSwap) {
     return (
