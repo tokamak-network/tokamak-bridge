@@ -22,7 +22,7 @@ export default function IncreaseLiquidityModal() {
       >
         <Flex flexDirection={"column"} rowGap={"16px"}>
           <Range />
-          <SelectedRange/>
+          <SelectedRange show={true}/>
         </Flex>
         <Flex flexDirection={"column"}>
        <AddMoreLiquidity/>

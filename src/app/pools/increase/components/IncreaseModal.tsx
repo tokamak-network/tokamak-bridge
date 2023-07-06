@@ -13,26 +13,36 @@ import SelectedRange from "./SelectedRange";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import Title from "../../add/components/Title";
 import ActionButton from "../../add/ActionButton";
+import CloseButton from "@/components/button/CloseButton";
 export default function IncreaseModal() {
   const { isOpen, onClosePreviewModal } = usePreview();
 
   return (
     <Modal isOpen={isOpen} onClose={onClosePreviewModal} isCentered>
-      <ModalOverlay opacity={0.1} />
+      <ModalOverlay opacity={0.1} bg="blackAlpha.700"  />
       <ModalContent
         // h={"100%"}
-        w='404px'
+        w="404px"
         bg={"#1F2128"}
-        p='20px'
+        p="20px"
         justifyContent={"center"}
         alignItems={"center"}
         m={0}
-        rowGap={'16px'}
+        rowGap={"16px"}
       >
-        <Title title="Increase Liquidity" style={{fontSize:'20px', fontWeight:500}}/>
-        <Range style={{background: '#0F0F12'}} />
-        <SelectedRange />
-        <ActionButton/>
+        <Flex alignItems={'flex-start'} w='100%'>
+        <Title
+          title="Increase Liquidity"
+          style={{ fontSize: "20px", fontWeight: 500 }}
+        />
+        <Box pos={"absolute"} right={'15px'} top={"15px"}>
+              <CloseButton onClick={onClosePreviewModal} />
+            </Box>
+        </Flex>
+      
+        <Range style={{ background: "#0F0F12" }} />
+        <SelectedRange  show={false}/>
+        <ActionButton />
       </ModalContent>
     </Modal>
   );

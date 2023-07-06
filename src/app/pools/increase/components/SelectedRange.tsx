@@ -5,8 +5,11 @@ import RangeCard from "./RangeCard";
 import Image from "next/image";
 import exchange from "assets/icons/exchange.svg";
 import { useState } from "react";
-export default function SelectedRange() {
+
+
+export default function SelectedRange(props:{show:boolean}) {
   const { liquidityInfo } = useGetIncreaseLiquidity();
+  const {show} = props;
   return (
     <Flex
       w={"100%"}
@@ -16,7 +19,7 @@ export default function SelectedRange() {
     >
       <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Title title={"Selected range"} style={{ marginBottom: 0 }} />
-        <Flex minW={"250px"} justifyContent={"end"}>
+        {show &&  <Flex minW={"250px"} justifyContent={"end"}>
           <Text
             color={liquidityInfo.inRange ? "#00EE98" : "#DD3A44"}
             fontSize={"11px"}
@@ -24,7 +27,8 @@ export default function SelectedRange() {
             Your position is {liquidityInfo.inRange === false && "not"}{" "}
             currently earning fees.
           </Text>
-        </Flex>
+        </Flex>}
+       
       </Flex>
       <Flex flexDir="column" alignItems={"center"} mt="8px">
         <Flex justifyContent={"space-between"} alignItems={"center"} w="100%">
@@ -44,7 +48,7 @@ export default function SelectedRange() {
             justifyContent={"center"}
             alignItems={"center"}
             ml={"-10px"}
-            bg="#0F0F12"
+            bg={!show? '#1F2128':"#0F0F12"}
             zIndex={10}
             mr={"-10px"}
           >
