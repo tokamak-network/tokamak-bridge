@@ -71,7 +71,7 @@ const TokenTitle = (props: { tokenName: String; isName: boolean; fontSize?:numbe
   return (
     <Text
       w={props.isName ? "130px" : "60px"}
-      fontSize={props.isName ? props.fontSize?  props.fontSize: 18 : 14}
+      fontSize={props.isName ? props.fontSize??  18 : 14}
       fontWeight={props.isName ? 700 : 400}
       color={"#222222"}
       textAlign={props.isName ? "left" : "right"}
