@@ -134,7 +134,7 @@ export default function TokenInput(props: {
       // }
       return console.error("a input field not founded");
     }
-  }, [tokenData, inToken, selectedInToken, selectedOutToken]);
+  }, [tokenData, inToken, selectedInToken]);
 
   const handleFocus = () => {
     setIsFocused(true);

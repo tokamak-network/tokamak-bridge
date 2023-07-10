@@ -4,6 +4,7 @@ import REMOVE_ICON from "assets/icons/removeIcon.svg";
 import ADD_ICON from "assets/icons/addIcon.svg";
 
 import Image from "next/image";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 
 type RangeInputProps = {
   isMinPrice: boolean;
@@ -12,6 +13,8 @@ type RangeInputProps = {
 export default function RangeInput(props: RangeInputProps) {
   const { isMinPrice } = props;
   const { inToken, outToken } = useInOutTokens();
+  const { minPrice, maxPrice } = usePriceTickConversion();
+
   return (
     <Flex flexDir={"column"}>
       <Flex
@@ -42,7 +45,7 @@ export default function RangeInput(props: RangeInputProps) {
             <Image src={REMOVE_ICON} alt={"REMOVE_ICON"} />
           </Flex>
           <Text fontSize={20} fontWeight={500}>
-            772.84
+            {isMinPrice ? minPrice : maxPrice}
           </Text>
           <Flex
             w={"32px"}

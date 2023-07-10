@@ -2,12 +2,19 @@ import { GET_POOLS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { PoolData_Subgraph } from "@/types/pool/subgraph";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useGetFeeTier } from "./useGetFeeTier";
-import { TICK_SPACINGS, tickToPrice } from "@uniswap/v3-sdk";
+import { tickToPrice } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
 import { Token } from "@uniswap/sdk-core";
 import { useNetwork } from "wagmi";
+import { useRecoilState } from "recoil";
+import {
+  baseToken,
+  currentTick,
+  quoteToken,
+} from "@/recoil/pool/setPoolPosition";
+import { usePool } from "./usePool";
 
 const existPool = (poolData: PoolData_Subgraph) => {
   if (poolData === undefined) return false;
@@ -55,6 +62,9 @@ export function useConstructPosition() {
 export function usePoolPrice() {
   const { poolPosition } = useConstructPosition();
   const { inToken, outToken } = useInOutTokens();
+  const { feeTier } = useGetFeeTier();
+
+  const test = usePool();
 
   const tokenPrice = useMemo(() => {
     if (poolPosition) {
@@ -76,6 +86,10 @@ export function usePoolToken() {
   const { connectedChainId } = useConnectedNetwork();
   const { chain } = useNetwork();
 
+  const [, setBaseToken] = useRecoilState(baseToken);
+  const [, setQuoteToken] = useRecoilState(quoteToken);
+  const [, setCurrentTick] = useRecoilState(currentTick);
+
   const tickToPriceParams = useMemo(() => {
     if (poolPosition) {
       const baseToken = new Token(
@@ -93,6 +107,15 @@ export function usePoolToken() {
     }
   }, [poolPosition, connectedChainId]);
 
+  //set values on Recoil
+  useEffect(() => {
+    if (tickToPriceParams) {
+      setBaseToken(tickToPriceParams.baseToken);
+      setQuoteToken(tickToPriceParams.quoteToken);
+      setCurrentTick(tickToPriceParams.tick);
+    }
+  }, [tickToPriceParams]);
+
   return { tickToPriceParams };
 }
 
@@ -109,11 +132,25 @@ export function usePriceTickConversion(tick?: number) {
     tick ?? tickToPriceParams?.tick
   );
 
-  console.log("TICK_SPACINGS");
+  const maxPrice = tickToPrice(
+    tickToPriceParams.baseToken,
+    tickToPriceParams.quoteToken,
+    tick ?? tickToPriceParams?.tick + 6932 > 887271
+      ? 887271
+      : tickToPriceParams?.tick + 6932
+  );
 
-  console.log(TICK_SPACINGS);
+  const minPrice = tickToPrice(
+    tickToPriceParams.baseToken,
+    tickToPriceParams.quoteToken,
+    tick ?? tickToPriceParams?.tick - 6932
+  );
 
-  return { currentPrice: currentPrice.toSignificant(6) };
+  return {
+    currentPrice: currentPrice.toSignificant(6),
+    maxPrice: maxPrice.toSignificant(6),
+    minPrice: minPrice.toSignificant(6),
+  };
 }
 
 export function useTickPriceConvertion() {}
