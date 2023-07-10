@@ -20,6 +20,7 @@ type TokenCardProps = {
   };
   onClick?: () => any;
   style?: {};
+  fontSize?: number;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -66,11 +67,11 @@ const TopLine = (props: { mainSchemCol: string }) => {
   );
 };
 
-const TokenTitle = (props: { tokenName: String; isName: boolean }) => {
+const TokenTitle = (props: { tokenName: String; isName: boolean; fontSize?:number }) => {
   return (
     <Text
-      w={props.isName ? "100px" : "60px"}
-      fontSize={props.isName ? 18 : 14}
+      w={props.isName ? "130px" : "60px"}
+      fontSize={props.isName ? props.fontSize??  18 : 14}
       fontWeight={props.isName ? 700 : 400}
       color={"#222222"}
       textAlign={props.isName ? "left" : "right"}
@@ -94,6 +95,7 @@ export default function TokenCard(props: TokenCardProps) {
     symbolSize,
     onClick,
     style,
+    fontSize
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
@@ -154,7 +156,7 @@ export default function TokenCard(props: TokenCardProps) {
     >
       <TopLine mainSchemCol={tokenColorCode} />
       <Flex justifyContent={"space-between"} w={"100%"}>
-        <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} isName={true} />
+        <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} isName={true}  fontSize={fontSize}/>
         <TokenTitle
           tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
           isName={false}

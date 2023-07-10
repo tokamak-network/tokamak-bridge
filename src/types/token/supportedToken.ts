@@ -129,7 +129,7 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
   },
   {
-    tokenName: "AURA",
+    tokenName: "Dragons of Midgard",
     tokenSymbol: "AURA",
     address: {
       MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
@@ -179,3 +179,4 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
 ];
+
