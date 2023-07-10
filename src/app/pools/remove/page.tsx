@@ -8,12 +8,10 @@ import SelectPercentage from "./components/SelectPercentage";
 import ActionButton from "../add/ActionButton";
 import IncreaseModal from "../components/IncreaseModal";
 import TxDetails from "./components/TxDetails";
-import { useRecoilState } from "recoil";
-import { removeAmount } from "@/recoil/pool/setPoolPosition";
+
 import RemoveModal from "../components/RemoveModal";
 export default function IncreaseLiquidityModal() {
   const { liquidityInfo } = useGetIncreaseLiquidity();
-  const [amountPercentage, setAmountPercentage] = useRecoilState(removeAmount);
 
   return (
     <Flex flexDir={"column"}  rowGap={"8px"}>
@@ -25,10 +23,10 @@ export default function IncreaseLiquidityModal() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"}>
-          <Range />
+          <Range page="Remove" />
        
           <SelectPercentage/>
-          {amountPercentage !== 0 && <TxDetails/> }
+           <TxDetails/> 
           <ActionButton actionName={'Preview'} page={'Remove'} />
         </Flex>
        

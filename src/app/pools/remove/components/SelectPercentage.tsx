@@ -52,7 +52,7 @@ export default function SelectPercentage() {
           ))}
         </Flex>
       </Flex>
-      <Slider aria-label="slider-ex-4" value={amountPercentage}  onChange={(v) => setAmountPercentage(v)}>
+      <Slider aria-label="slider-ex-4" value={amountPercentage} focusThumbOnChange={false}  onChange={(v) => setAmountPercentage(v)} >
         <SliderTrack bg="#007AFF">
           <SliderFilledTrack bg="#007AFF" />
         </SliderTrack>

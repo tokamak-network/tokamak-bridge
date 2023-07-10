@@ -4,8 +4,14 @@ import { TokenSymbol } from "@/components/image/TokenSymbol";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { TokenInfo } from "@/types/token/supportedToken";
 
-export default function RangeToken(props: { token: TokenInfo; amount: string; style?: {} }) {
-  const { token,amount,style } = props;
+export default function RangeToken(props: {
+  token: TokenInfo;
+  amount: string;
+  style?: {};
+  page: string;
+  alterAmount: string
+}) {
+  const { token, amount, style, page, alterAmount} = props;
   return (
     <Flex width={"100%"} justifyContent={"space-between"} {...props.style}>
       <Flex>
@@ -21,8 +27,11 @@ export default function RangeToken(props: { token: TokenInfo; amount: string; st
         />
         <Text ml="8px">{token.tokenSymbol}</Text>
       </Flex>
-
-      <Text>{amount}</Text>
+      <Flex>
+        <Text>{amount}</Text>
+        <Text ml={'6px'}>{page === "Remove" ? "-" : "+"}</Text>
+        <Text>{alterAmount}</Text>
+      </Flex>
     </Flex>
   );
 }

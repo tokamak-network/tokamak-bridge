@@ -40,7 +40,7 @@ export default function IncreaseModal() {
             </Box>
         </Flex>
       
-        <Range style={{ background: "#0F0F12" }} />
+        <Range style={{ background: "#0F0F12" }} page="Increase" />
         <SelectedRange  show={false}/>
         <ActionButton actionName="Increase" page={'Increase'}/>
       </ModalContent>

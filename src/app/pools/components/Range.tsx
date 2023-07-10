@@ -6,11 +6,12 @@ import TokenSymbolPair from "../increase/components/TokenSymbolPair";
 import RangeToken from "../increase/components/RangeToken";
 import { useState } from "react";
 
-export default function Range(props: {style?: {}}) {
-
+export default function Range(props: {style?: {}, page:string}) {
+const {style, page} = props;
   const { liquidityInfo } = useGetIncreaseLiquidity();
   const [estimatedGas, setEstimatedGas] = useState<number | undefined>(5);
-
+  const amount0 = '33.56'
+  const amount1 = '44.87'
   return (
     <Flex
       w="364px"
@@ -47,11 +48,15 @@ export default function Range(props: {style?: {}}) {
         token={liquidityInfo.token0}
         amount={liquidityInfo.token0Amount}
         style={{ marginBottom: "9px", marginTop: "14px" }}
+        page={page}
+        alterAmount={amount0}
       />
 
       <RangeToken
         token={liquidityInfo.token1}
         amount={liquidityInfo.token1Amount}
+        page={page}
+        alterAmount={amount1}
       />
       {estimatedGas !== undefined && (
         <Flex flexDir={"column"} mt="10px">

@@ -5,32 +5,28 @@ import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import GasImg from "assets/icons/gasStation.svg";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
+import { useRecoilState } from "recoil";
+import { removeAmount } from "@/recoil/pool/setPoolPosition";
 
 export default function TxDetails() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
+  const [amountPercentage, setAmountPercentage] = useRecoilState(removeAmount);
 
   const Title = (props: {
     isExpanded: boolean;
     setIsExpended: React.Dispatch<React.SetStateAction<boolean>>;
   }) => {
     const { isExpanded, setIsExpended } = props;
-    // const { mode, swapSection } = useGetMode();
-    // const { inNetwork, outNetwork } = useInOutNetwork();
-    // const { inToken, outToken } = useInOutTokens();
+    
     const arrowControl = useAnimation();
-    // const { outPrice } = usePriceImpact();
-    // const [isLoading] = useIsLoading();
-    // const { isOpen } = useConfirm();
-    // const { gasCostUS } = useGasFee();
 
-    useEffect(() => {        
+    useEffect(() => {
       if (isExpanded) {
         arrowControl.start({ rotate: 180 });
       } else {
         arrowControl.start({ rotate: 360 });
       }
     }, [isExpanded]);
-
     return (
       <Flex
         w={"100%"}
@@ -38,6 +34,7 @@ export default function TxDetails() {
         cursor={isExpanded ? "" : "pointer"}
         onClick={() => setIsExpended(!isExpanded)}
         fontSize={14}
+        zIndex={10000}
       >
         <Flex w={"100%"} alignItems={"center"} justifyContent={"space-between"}>
           {isExpanded ? (
@@ -90,7 +87,9 @@ export default function TxDetails() {
   };
 
   const DivisionLine = () => {
-    return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} mt={"14px"} mb='16px'></Box>;
+    return (
+      <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} mt={"14px"} mb="16px"></Box>
+    );
   };
 
   const ContentTitle = (props: { title: string; amount: string }) => {
@@ -103,7 +102,6 @@ export default function TxDetails() {
         color="#fff"
         fontSize={"14px"}
         h={"14px"}
-     
       >
         <Text>{title}</Text>
         <Text>{amount}</Text>
@@ -120,7 +118,6 @@ export default function TxDetails() {
         color="#fff"
         fontSize={"14px"}
         h={"14px"}
-      
       >
         <Text color="#A0A3AD" fontWeight={300}>
           {title}
@@ -158,21 +155,23 @@ export default function TxDetails() {
     }
     return null;
   };
-
-  return (
-    <Flex
-      w={"100%"}
-      // h={isExpanded ? "310px" : "48px"}
-      minH={"48px"}
-      bg={"#1f2128"}
-      borderRadius={"8px"}
-      flexDir={"column"}
-      px={"20px"}
-      pt={isExpanded ? "20px" : "16px"}
-      pb={isExpanded ? "20px" : ""}
-    >
-      <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      <Content isExpanded={isExpanded} setIsExpended={setIsExpended}></Content>
-    </Flex>
-  );
+if (amountPercentage ) {
+    return (
+        <Flex
+          w={"100%"}
+          // h={isExpanded ? "310px" : "48px"}
+          minH={"48px"}
+          bg={"#1f2128"}
+          borderRadius={"8px"}
+          flexDir={"column"}
+          px={"20px"}
+          pt={isExpanded ? "20px" : "16px"}
+          pb={isExpanded ? "20px" : ""}
+        >
+          <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
+          <Content isExpanded={isExpanded} setIsExpended={setIsExpended}></Content>
+        </Flex>
+      );
+}
+  return null
 }

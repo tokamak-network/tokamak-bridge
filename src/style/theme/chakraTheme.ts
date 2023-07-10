@@ -15,6 +15,7 @@ const theme = extendTheme({
       baseStyle: {
         thumb: {
           bg: "#007AFF",
+          transition: "none", 
           _active: {
             outline: "none",
             border: "none",

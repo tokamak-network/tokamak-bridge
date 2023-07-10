@@ -21,7 +21,7 @@ export default function IncreaseLiquidityModal() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"}>
-          <Range />
+          <Range page="Increase"/>
           <SelectedRange show={true}/>
         </Flex>
         <Flex flexDirection={"column"}>

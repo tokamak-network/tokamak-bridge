@@ -41,7 +41,7 @@ import {
               </Box>
           </Flex>
         
-          <Range style={{ background: "#0F0F12" }} />
+          <Range style={{ background: "#0F0F12" }} page={'Increase'}/>
 
         <Text  fontSize={'12px'} color={'#A0A3AD'} width={'100%'} textAlign={'left'}>You will also collect fees earned from this position</Text>
           <ActionButton actionName="Remove" page={'Remove'}/>
