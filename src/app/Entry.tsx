@@ -13,13 +13,13 @@ export default function Entry({ children }: { children: React.ReactNode }) {
   const { connectedChainId } = useConnectedNetwork();
   const apolloClient = getApolloClient(connectedChainId);
 
-  if (isMobile) {
-    return (
-      <Center h={"100vh"}>
-        <MobileView />
-      </Center>
-    );
-  }
+  // if (isMobile) {
+  //   return (
+  //     <Center h={"100vh"}>
+  //       <MobileView />
+  //     </Center>
+  //   );
+  // }
 
   return (
     <ApolloProvider client={apolloClient}>

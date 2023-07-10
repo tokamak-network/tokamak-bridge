@@ -9,7 +9,6 @@ import {
 } from "@apollo/client";
 import { MultiAPILink } from "@habx/apollo-multi-endpoint-link";
 import { createHttpLink } from "apollo-link-http";
-import * as GraphClient from "../../.graphclient";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // export const apolloClient = new ApolloClient({
@@ -20,8 +19,12 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [SupportedChainId.MAINNET]:
     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
+  [SupportedChainId.GOERLI]:
+    "https://api.thegraph.com/subgraphs/name/cd4761/uniswap-v3-goerli",
   [SupportedChainId.TITAN]:
     "https://thegraph.titan.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak",
+  [SupportedChainId.DARIUS]:
+    "https://goerli.thegraph.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak-goerli",
 };
 
 const httpLink = new HttpLink({

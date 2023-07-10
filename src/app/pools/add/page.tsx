@@ -8,8 +8,14 @@ import SelectPair from "./SelectPair";
 import TopLine from "../components/TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
+import { usePoolData } from "@/hooks/pool/usePoolData";
 
 export default function CreatePoolModal() {
+  const { poolData } = usePoolData();
+  console.log("**poolData");
+
+  console.log(poolData);
+
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
       <TopLine title={'Add Liquidity'} clear={true}/>

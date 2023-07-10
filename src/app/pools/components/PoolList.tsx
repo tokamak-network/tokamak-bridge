@@ -8,9 +8,6 @@ import IncreaseLiquidity from "./IncreaseLiquidity";
 import RemoveLiquidity from "./RemoveLiquidity";
 export default function PoolList() {
   const { positionInfo } = useGetPositionIds();
-  const { poolData } = usePool();
-
-  console.log(poolData);
 
   return (
     <Wrap spacing="16px">
