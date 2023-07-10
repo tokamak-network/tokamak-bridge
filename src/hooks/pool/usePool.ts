@@ -19,6 +19,7 @@ import { useProvier } from "../provider/useProvider";
 import { FACTORY_ADDRESS } from "@uniswap/v3-sdk";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetFeeTier } from "./useGetFeeTier";
+import { PoolState } from "@/types/pool/pool";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
@@ -127,13 +128,6 @@ class PoolCache {
   }
 }
 
-export enum PoolState {
-  LOADING,
-  NOT_EXISTS,
-  EXISTS,
-  INVALID,
-}
-
 export function usePools(
   poolKeys: [
     Currency | undefined,
@@ -183,9 +177,6 @@ export function usePools(
       const liquidity = pooldata?.liquidity;
       const slot0 = pooldata?.slot0;
 
-      console.log("slot0_data");
-      console.log(slot0);
-
       if (poolTokens === undefined) return [PoolState.INVALID, null];
       if (!slot0 || !liquidity) return [PoolState.NOT_EXISTS, null];
       if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0))
@@ -200,7 +191,6 @@ export function usePools(
           liquidity,
           slot0.tick
         );
-        console.log("passed3");
         return [PoolState.EXISTS, pool];
       } catch (error) {
         console.error("Error when constructing the pool", error);
@@ -210,9 +200,7 @@ export function usePools(
   }, [pooldata?.liquidity, poolKeys, pooldata?.slot0, poolTokens]);
 }
 
-export function usePool() {
-  // :
-  // [PoolState, Pool | null]
+export function usePool(): [PoolState, Pool | null] {
   const { inToken, outToken } = useInOutTokens();
   const { feeTier } = useGetFeeTier();
 
@@ -225,5 +213,6 @@ export function usePool() {
     [inToken, outToken, feeTier]
   );
 
+  //@ts-ignore
   return usePools(poolKeys)[0];
 }

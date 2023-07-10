@@ -15,6 +15,7 @@ import {
   quoteToken,
 } from "@/recoil/pool/setPoolPosition";
 import { usePool } from "./usePool";
+import { useV3IntoInfo } from "./useV3MintInfo";
 
 const existPool = (poolData: PoolData_Subgraph) => {
   if (poolData === undefined) return false;
@@ -65,6 +66,7 @@ export function usePoolPrice() {
   const { feeTier } = useGetFeeTier();
 
   const test = usePool();
+  const test2 = useV3IntoInfo();
 
   const tokenPrice = useMemo(() => {
     if (poolPosition) {
