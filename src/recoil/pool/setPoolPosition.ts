@@ -5,3 +5,9 @@ export const poolFeeStatus = atom<FeeAmount | undefined>({
   key: "poolFee",
   default: undefined,
 });
+
+
+export const removeAmount = atom<number> ({
+  key: 'feeAmount',
+  default: 0
+})

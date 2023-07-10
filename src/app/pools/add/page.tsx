@@ -27,7 +27,7 @@ export default function CreatePoolModal() {
         <Flex flexDirection={"column"}>
           <SetPriceRange />
           {/* <InitializeInfo /> */}
-          <ActionButton />
+          <ActionButton actionName="Preview" page='Add'/>
         </Flex>
       </Flex>
       {/* <Modals /> */}

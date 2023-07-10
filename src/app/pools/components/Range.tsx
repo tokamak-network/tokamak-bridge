@@ -1,9 +1,9 @@
 import { Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import useGetIncreaseLiquidity from "@/hooks/pool/useIncreaseLiquidity";
-import { RangeText } from "../../components/ui";
-import TokenSymbolPair from "./TokenSymbolPair";
-import RangeToken from "./RangeToken";
+import { RangeText } from "./ui";
+import TokenSymbolPair from "../increase/components/TokenSymbolPair";
+import RangeToken from "../increase/components/RangeToken";
 import { useState } from "react";
 
 export default function Range(props: {style?: {}}) {

@@ -1,22 +1,25 @@
 import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { previewModalStatus } from "@/recoil/modal/atom";
+import { previewModalStatus,poolModalStatus } from "@/recoil/modal/atom";
 
 export default function usePreview() {
-  const [isOpen, setPreviewModal] = useRecoilState(previewModalStatus);
-
+  const [isOpen, setPreviewModalStatus] = useRecoilState(previewModalStatus);
+  const [poolModal, setPoolModal] = useRecoilState(poolModalStatus)
+  
   const onOpenPreviewModal = () => {
-    setPreviewModal(true);
+    setPreviewModalStatus(true);
   };
 
   const onClosePreviewModal = useCallback(() => {
-    setPreviewModal(false);
+    setPreviewModalStatus(false);
+    setPoolModal(null)
   }, []);
 
   return {
     isOpen,
-    onOpenPreviewModal,
+    setPoolModal,
     onClosePreviewModal,
-    setPreviewModal
+    poolModal,
+    setPreviewModalStatus
   };
 }

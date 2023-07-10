@@ -9,17 +9,17 @@ import {
 } from "@chakra-ui/react";
 
 import Range from "./Range";
-import SelectedRange from "./SelectedRange";
+import SelectedRange from "../increase/components/SelectedRange";
 import usePreview from "@/hooks/modal/usePreviewModal";
-import Title from "../../add/components/Title";
-import ActionButton from "../../add/ActionButton";
+import Title from "../add/components/Title";
+import ActionButton from "../add/ActionButton";
 import CloseButton from "@/components/button/CloseButton";
-export default function IncreaseModal() {
-  const { isOpen, onClosePreviewModal } = usePreview();
 
+export default function IncreaseModal() {
+  const { isOpen, onClosePreviewModal,poolModal } = usePreview();  
   return (
-    <Modal isOpen={isOpen} onClose={onClosePreviewModal} isCentered>
-      <ModalOverlay opacity={0.1} bg="blackAlpha.700"  />
+    <Modal isOpen={isOpen && poolModal === 'increaseLiquidity'} onClose={onClosePreviewModal} isCentered>
+      <ModalOverlay opacity={0.1} bg="blackAlpha.900"  />
       <ModalContent
         // h={"100%"}
         w="404px"
@@ -42,7 +42,7 @@ export default function IncreaseModal() {
       
         <Range style={{ background: "#0F0F12" }} />
         <SelectedRange  show={false}/>
-        <ActionButton />
+        <ActionButton actionName="Increase" page={'Increase'}/>
       </ModalContent>
     </Modal>
   );
