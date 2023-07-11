@@ -29,6 +29,17 @@ import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isETH } from "@/utils/token/isETH";
+import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
+import { Contract } from "ethers";
+
+export function getSigner(library: any, account: string) {
+  return library.getSigner(account).connectUnchecked();
+}
+
+// account is optional
+export function getProviderOrSigner(library: any, account?: string) {
+  return account ? getSigner(library, account) : library;
+}
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -87,23 +98,45 @@ export function usePoolMint() {
             mintOptions
           );
 
+        //for ETH value
         const inIsEth = isETH(inToken);
         const outIsETH = isETH(outToken);
-
         const inWeiAmount = ethers.BigNumber.from(token0.quotient.toString());
         const outWeiAmount = ethers.BigNumber.from(token1.quotient.toString());
-
         const inHexAmount = ethers.utils.hexlify(inWeiAmount);
         const outHexAmount = ethers.utils.hexlify(outWeiAmount);
 
+        //refundETH
+        //it will return if All ETH won't be used to be deposit for some reasons like a price change
+        const NonfungiblePositionManagerContract = new Contract(
+          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          NONFUNGIBLE_POSITION_MANAGER_ABI,
+          getProviderOrSigner(provider, address)
+        );
+        const refundETHData =
+          NonfungiblePositionManagerContract.interface.encodeFunctionData(
+            "refundETH"
+          );
+
+        const tx = await NonfungiblePositionManagerContract.multicall(
+          [calldata, refundETHData],
+          {
+            gasLimit: 3000000,
+            value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+            from: address,
+          }
+        );
+
+        // sendTransaction(tx);
+
         // build transaction
-        const transaction = {
-          data: calldata,
-          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-          from: address,
-        };
-        return sendTransaction(transaction);
+        // const transaction = {
+        //   data: calldata,
+        //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+        //   value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+        //   from: address,
+        // };
+        // return sendTransaction(transaction);
       }
     }
   }, [provider, inToken, outToken, address, UNISWAP_CONTRACT, pool, ticks]);
