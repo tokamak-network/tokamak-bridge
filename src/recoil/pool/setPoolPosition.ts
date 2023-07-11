@@ -23,7 +23,7 @@ export const currentTick = atom<number | undefined>({
   default: undefined,
 });
 
-export const minPrice = atom<number | undefined>({
+export const minPrice = atom<string | undefined>({
   key: "minPrice",
   default: undefined,
 });
@@ -33,7 +33,7 @@ export const minTick = atom<number | undefined>({
   default: undefined,
 });
 
-export const maxPrice = atom<number | undefined>({
+export const maxPrice = atom<string | undefined>({
   key: "maxPrice",
   default: undefined,
 });

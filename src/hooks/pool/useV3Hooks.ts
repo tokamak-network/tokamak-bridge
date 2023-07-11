@@ -1,15 +1,26 @@
 import { Currency, Rounding } from "@uniswap/sdk-core";
 import { FeeAmount, Pool, TICK_SPACINGS, tickToPrice } from "@uniswap/v3-sdk";
 import { useCallback, useMemo } from "react";
+import { useV3MintInfo } from "./useV3MintInfo";
+import { Bound } from "@/types/pool/pool";
+import { usePool } from "./usePool";
+import { useGetFeeTier } from "./useGetFeeTier";
 
-export function useRangeHopCallbacks(
-  baseCurrency: Currency | undefined,
-  quoteCurrency: Currency | undefined,
-  feeAmount: FeeAmount | undefined,
-  tickLower: number | undefined,
-  tickUpper: number | undefined,
-  pool?: Pool | undefined | null
-) {
+export function useRangeHopCallbacks() {
+// baseCurrency: Currency | undefined,
+// quoteCurrency: Currency | undefined,
+// feeAmount: FeeAmount | undefined,
+// tickLower: number | undefined,
+// tickUpper: number | undefined,
+// pool?: Pool | undefined | null
+  const { feeTier: feeAmount } = useGetFeeTier();
+  const [, pool] = usePool();
+  const { ticks } = useV3MintInfo();
+  // get value and prices at ticks
+  const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks;
+  const baseCurrency = pool?.token0;
+  const quoteCurrency = pool?.token1;
+
   const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency]);
   const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency]);
 

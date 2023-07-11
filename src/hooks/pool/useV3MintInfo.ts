@@ -20,7 +20,7 @@ import { useGetPoolInput } from "./useGetPoolInput";
 import { getTickToPrice } from "@/utils/pool/getTickToPrice";
 import { Field } from "@/types/swap/swap";
 
-export function useV3IntoInfo() {
+export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
   const [poolState, pool] = usePool();
   const noLiquidity = poolState === PoolState.NOT_EXISTS;
@@ -31,9 +31,6 @@ export function useV3IntoInfo() {
   const invertPrice = Boolean(
     inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
   );
-
-  console.log(invertPrice);
-  console.log(poolState, pool);
 
   // formatted with tokens
   const [tokenA, tokenB, baseToken] = useMemo(
@@ -238,6 +235,28 @@ export function useV3IntoInfo() {
 
   const invalidPool = poolState === PoolState.INVALID;
 
+  //   console.log("**result");
+  //   console.log(
+  //     "pool :",
+  //     pool,
+  //     "poolState : ",
+  //     poolState,
+  //     "ticks : ",
+  //     ticks,
+  //     "price : ",
+  //     price,
+  //     "pricesAtTicks : ",
+  //     pricesAtTicks,
+  //     "pricesAtLimit : ",
+  //     pricesAtLimit,
+  //     noLiquidity,
+  //     invalidPool,
+  //     invalidRange,
+  //     outOfRange,
+  //     invertPrice,
+  //     ticksAtLimit
+  //   );
+
   return {
     pool,
     poolState,
@@ -251,5 +270,8 @@ export function useV3IntoInfo() {
     outOfRange,
     invertPrice,
     ticksAtLimit,
+    deposit0Disabled,
+    deposit1Disabled,
+    tickSpaceLimits,
   };
 }
