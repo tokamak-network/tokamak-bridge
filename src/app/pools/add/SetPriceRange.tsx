@@ -1,6 +1,5 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 import Title from "./components/Title";
-import PriceInput from "./components/RangeInput";
 import RangeInput from "./components/RangeInput";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 // import { usePoolPrice } from "@/hooks/pool/usePoolData";

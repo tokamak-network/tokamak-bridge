@@ -2,9 +2,7 @@ import {
   maxPrice as maxPriceStatus,
   minPrice as minPriceStatus,
 } from "@/recoil/pool/setPoolPosition";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { usePriceTickConversion } from "./usePoolData";
-import { useEffect } from "react";
+import { useRecoilValue } from "recoil";
 
 export function useGetPoolInput() {
   const minPriceInput = useRecoilValue(minPriceStatus);

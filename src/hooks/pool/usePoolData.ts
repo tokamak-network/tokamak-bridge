@@ -21,6 +21,7 @@ import {
   maxPrice as maxPriceStatus,
   minPrice as minPriceStatus,
 } from "@/recoil/pool/setPoolPosition";
+import { useRangeHopCallbacks } from "./useV3Hooks";
 
 // const existPool = (poolData: PoolData_Subgraph) => {
 //   if (poolData === undefined) return false;
@@ -128,14 +129,20 @@ export function usePriceTickConversion() {
   //using subgraph data
   // const { tickToPriceParams } = usePoolToken();
   //using contract call
-  const [poolState, pool] = usePool();
+  const [, pool] = usePool();
   const { pricesAtLimit, ticksAtLimit, tickSpaceLimits } = useV3MintInfo();
+
   const [, setMinPrice] = useRecoilState(minPriceStatus);
   const [, setMaxPrice] = useRecoilState(maxPriceStatus);
+  const { inToken } = useInOutTokens();
 
   const baseToken = pool?.token0;
   const quoteToken = pool?.token1;
   const currentTick = pool?.tickCurrent;
+
+  const invertPrice = Boolean(
+    inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
+  );
 
   const currentPrice = useMemo(() => {
     if (baseToken && quoteToken && currentTick)
@@ -159,7 +166,7 @@ export function usePriceTickConversion() {
       return tickToPrice(
         baseToken,
         quoteToken,
-        Boolean(ticksAtLimit[Bound.LOWER]) &&
+        Boolean(ticksAtLimit[Bound.UPPER]) &&
           tickSpaceLimits?.UPPER !== undefined
           ? tickSpaceLimits.UPPER
           : currentTick + 6932
@@ -167,15 +174,28 @@ export function usePriceTickConversion() {
   }, [baseToken, quoteToken, currentTick]);
 
   useEffect(() => {
-    if (minPrice) setMinPrice(minPrice.toSignificant(10));
-  }, [minPrice]);
+    console.log("go??");
+    if (minPrice && maxPrice)
+      setMinPrice(
+        invertPrice
+          ? maxPrice.invert().toSignificant(10)
+          : minPrice.toSignificant(10)
+      );
+  }, [minPrice, maxPrice, invertPrice]);
 
   useEffect(() => {
-    if (maxPrice) setMaxPrice(maxPrice.toSignificant(10));
-  }, [maxPrice]);
+    if (minPrice && maxPrice)
+      setMaxPrice(
+        invertPrice
+          ? minPrice?.invert().toSignificant(10)
+          : maxPrice.toSignificant(10)
+      );
+  }, [minPrice, maxPrice, invertPrice]);
 
   return {
-    currentPrice: currentPrice?.toSignificant(10),
+    currentPrice: invertPrice
+      ? currentPrice?.invert().toSignificant(10)
+      : currentPrice?.toSignificant(10),
   };
 }
 

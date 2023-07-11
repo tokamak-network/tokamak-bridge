@@ -1,18 +1,20 @@
 import { Currency, Rounding } from "@uniswap/sdk-core";
 import { FeeAmount, Pool, TICK_SPACINGS, tickToPrice } from "@uniswap/v3-sdk";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useV3MintInfo } from "./useV3MintInfo";
 import { Bound } from "@/types/pool/pool";
 import { usePool } from "./usePool";
 import { useGetFeeTier } from "./useGetFeeTier";
+import { useRecoilState } from "recoil";
+import { maxPrice, minPrice } from "@/recoil/pool/setPoolPosition";
 
 export function useRangeHopCallbacks() {
-// baseCurrency: Currency | undefined,
-// quoteCurrency: Currency | undefined,
-// feeAmount: FeeAmount | undefined,
-// tickLower: number | undefined,
-// tickUpper: number | undefined,
-// pool?: Pool | undefined | null
+  // baseCurrency: Currency | undefined,
+  // quoteCurrency: Currency | undefined,
+  // feeAmount: FeeAmount | undefined,
+  // tickLower: number | undefined,
+  // tickUpper: number | undefined,
+  // pool?: Pool | undefined | null
   const { feeTier: feeAmount } = useGetFeeTier();
   const [, pool] = usePool();
   const { ticks } = useV3MintInfo();
@@ -31,6 +33,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         tickLower - TICK_SPACINGS[feeAmount]
       );
+
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
     }
     // use pool current tick as starting tick if we have pool but no tick input
@@ -58,6 +61,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         tickLower + TICK_SPACINGS[feeAmount]
       );
+
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
     }
     // use pool current tick as starting tick if we have pool but no tick input
@@ -135,11 +139,40 @@ export function useRangeHopCallbacks() {
   //need to bind with Recoil
   const getSetFullRange = useCallback(() => {}, []);
 
+  const [, setMinPrice] = useRecoilState(minPrice);
+  const [, setMaxPrice] = useRecoilState(maxPrice);
+
+  const onDecreaseLower = useCallback(() => {
+    const result = getDecrementLower();
+    if (result) return setMinPrice(result);
+  }, [getDecrementLower]);
+
+  const onIncreaseLower = useCallback(() => {
+    const result = getIncrementLower();
+    if (result) return setMinPrice(result);
+  }, [getIncrementLower]);
+
+  const onDecreaseUpper = useCallback(() => {
+    const result = getDecrementUpper();
+    if (result) return setMaxPrice(result);
+  }, [getDecrementUpper]);
+
+  const onIncreaseUpper = useCallback(() => {
+    const result = getIncrementUpper();
+    if (result) return setMaxPrice(result);
+  }, [getIncrementUpper]);
+
+  const getInputTickToPrice = useCallback(() => {}, []);
+
   return {
     getDecrementLower,
     getIncrementLower,
     getDecrementUpper,
     getIncrementUpper,
     getSetFullRange,
+    onDecreaseLower,
+    onIncreaseLower,
+    onDecreaseUpper,
+    onIncreaseUpper,
   };
 }
