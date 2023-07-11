@@ -174,7 +174,6 @@ export function usePriceTickConversion() {
   }, [baseToken, quoteToken, currentTick]);
 
   useEffect(() => {
-    console.log("go??");
     if (minPrice && maxPrice)
       setMinPrice(
         invertPrice

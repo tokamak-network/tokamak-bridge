@@ -17,7 +17,7 @@ export function useRangeHopCallbacks() {
   // pool?: Pool | undefined | null
   const { feeTier: feeAmount } = useGetFeeTier();
   const [, pool] = usePool();
-  const { ticks } = useV3MintInfo();
+  const { ticks, pricesAtLimit } = useV3MintInfo();
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks;
   const baseCurrency = pool?.token0;
@@ -137,7 +137,14 @@ export function useRangeHopCallbacks() {
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
 
   //need to bind with Recoil
-  const getSetFullRange = useCallback(() => {}, []);
+  const getSetFullRange = useCallback(() => {
+    if (pricesAtLimit) {
+      const lowerLimitPrice = pricesAtLimit.LOWER?.toSignificant(5);
+      const upperLimitPrice = pricesAtLimit.UPPER?.toSignificant(5);
+      setMinPrice(lowerLimitPrice);
+      setMaxPrice(upperLimitPrice);
+    }
+  }, [pricesAtLimit]);
 
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);

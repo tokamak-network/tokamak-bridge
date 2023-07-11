@@ -257,10 +257,6 @@ export function useV3MintInfo() {
   //     ticksAtLimit
   //   );
 
-  console.log("pricesAtTicks");
-  console.log(pricesAtTicks[Bound.LOWER]?.toSignificant(5));
-  console.log(pricesAtTicks[Bound.UPPER]?.toSignificant(5));
-
   return {
     pool,
     poolState,

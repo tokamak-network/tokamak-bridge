@@ -88,6 +88,7 @@ export default function TokenInput(props: {
         value,
         selectedOutToken.decimals
       );
+
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -151,14 +152,26 @@ export default function TokenInput(props: {
     ) {
       return inTokenFromHook.parsedAmount;
     }
-    return inToken === false
+    return mode === "Swap" && inToken === false
       ? trimAmount(amountOut, 11) ?? ""
-      : selectedInToken && selectedInToken?.parsedAmount !== null
+      : inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 11)
+      : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 11)
       : "";
-  }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook, isFocused]);
+  }, [
+    inToken,
+    amountOut,
+    selectedInToken,
+    selectedOutToken,
+    mode,
+    inTokenFromHook,
+    isFocused,
+  ]);
 
   useEffect(() => {
     if (!inToken && selectedOutToken && amountOut) {
