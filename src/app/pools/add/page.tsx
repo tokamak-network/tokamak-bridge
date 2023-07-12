@@ -8,11 +8,8 @@ import SelectPair from "./SelectPair";
 import TopLine from "./TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
-import { usePool } from "@/hooks/pool/usePool";
 
 export default function CreatePoolModal() {
-  const [, pool] = usePool();
-
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
       <TopLine />
@@ -27,9 +24,9 @@ export default function CreatePoolModal() {
           <SelectFeeTier />
           <SelectPair />
         </Flex>
-        <Flex flexDirection={"column"}>
+        <Flex flexDirection={"column"} rowGap={"20px"}>
+          <InitializeInfo />
           <SetPriceRange />
-          {/* <InitializeInfo /> */}
           <ActionButton />
         </Flex>
       </Flex>

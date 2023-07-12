@@ -38,20 +38,22 @@ export function usePoolData(poolAddress: string | undefined) {
           poolContract.liquidity(),
           poolContract.slot0(),
         ]);
+
         const result = {
           liquidity,
           slot0,
         };
         return setPoolData(result);
       }
-      return undefined;
+      return setPoolData(undefined);
     };
 
     fetchPoolData().catch((e) => {
       console.log("**fetchPoolData err**");
-      console.log(e);
+      setPoolData(undefined);
+      // console.log(e);
     });
-  }, [poolAddress]);
+  }, [poolAddress, provider]);
 
   return poolData;
 }
@@ -173,6 +175,7 @@ export function usePools(
       const tokens = poolTokens[index];
 
       if (!tokens) return [PoolState.INVALID, null];
+
       const [token0, token1, fee] = tokens;
       const liquidity = pooldata?.liquidity;
       const slot0 = pooldata?.slot0;

@@ -6,19 +6,25 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
+import { usePool } from "@/hooks/pool/usePool";
+import { PoolState } from "@/types/pool/pool";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
   const price = usePriceTickConversion();
   const { getSetFullRange } = useRangeHopCallbacks();
+  const [poolStatus, pool] = usePool();
 
+  // ∞
   return (
     <Flex flexDir={"column"} rowGap={"15px"}>
       <Title title="Set Price Range" />
-      <Text textAlign={"center"}>
-        Current Price : {commafy(price?.currentPrice, 4)}{" "}
-        {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
-      </Text>
+      {poolStatus !== PoolState.NOT_EXISTS && (
+        <Text textAlign={"center"}>
+          Current Price : {commafy(price?.currentPrice, 4)}{" "}
+          {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
+        </Text>
+      )}
       <Flex columnGap={"12px"}>
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />

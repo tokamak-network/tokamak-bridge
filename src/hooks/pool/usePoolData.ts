@@ -150,7 +150,7 @@ export function usePriceTickConversion() {
   }, [baseToken, quoteToken, currentTick]);
 
   const minPrice = useMemo(() => {
-    if (baseToken && quoteToken && currentTick)
+    if (baseToken && quoteToken && currentTick && ticksAtLimit)
       return tickToPrice(
         baseToken,
         quoteToken,
@@ -159,10 +159,10 @@ export function usePriceTickConversion() {
           ? tickSpaceLimits.LOWER
           : currentTick - 6932
       );
-  }, [baseToken, quoteToken, currentTick]);
+  }, [baseToken, quoteToken, currentTick, ticksAtLimit]);
 
   const maxPrice = useMemo(() => {
-    if (baseToken && quoteToken && currentTick)
+    if (baseToken && quoteToken && currentTick && ticksAtLimit)
       return tickToPrice(
         baseToken,
         quoteToken,
@@ -171,7 +171,7 @@ export function usePriceTickConversion() {
           ? tickSpaceLimits.UPPER
           : currentTick + 6932
       );
-  }, [baseToken, quoteToken, currentTick]);
+  }, [baseToken, quoteToken, currentTick, ticksAtLimit]);
 
   useEffect(() => {
     if (minPrice && maxPrice)

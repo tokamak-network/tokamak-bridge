@@ -2,7 +2,13 @@ import { Switch, FormControl, FormLabel } from "@chakra-ui/react";
 import { useState } from "react";
 import "@/css/pools/toggle.css"; // Import the custom CSS file
 
-export default function ToggleSwitch() {
+type ToggleButtonProps = {
+  inToken: string;
+  outToken: string;
+};
+
+export default function ToggleSwitch(props: ToggleButtonProps) {
+  const { inToken, outToken } = props;
   const [isChecked, setIsChecked] = useState(false);
 
   const handleToggle = () => {
@@ -19,7 +25,7 @@ export default function ToggleSwitch() {
         className={isChecked ? "switch-on" : ""}
       />
       <FormLabel htmlFor="toggle-switch" mb="0" className="switch-label">
-        {/* {isChecked ? `${inToken}` : `${outToken}`} */}
+        {isChecked ? `${inToken}` : `${outToken}`}
       </FormLabel>
     </FormControl>
   );

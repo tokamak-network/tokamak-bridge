@@ -102,7 +102,7 @@ export default function RangeInput(props: RangeInputProps) {
           </Flex>
         </Flex>
         <Text fontSize={12} fontWeight={500} color={"#A0A3AD"}>
-          {inToken?.tokenSymbol} per {outToken?.tokenSymbol}
+          {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
         </Text>
       </Flex>
     </Flex>
