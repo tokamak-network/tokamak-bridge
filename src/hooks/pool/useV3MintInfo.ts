@@ -19,6 +19,8 @@ import { tryParseTick } from "@/utils/pool/tryParseTick";
 import { useGetPoolInput } from "./useGetPoolInput";
 import { getTickToPrice } from "@/utils/pool/getTickToPrice";
 import { Field } from "@/types/swap/swap";
+import { useRecoilValue } from "recoil";
+import { initialPrice } from "@/recoil/pool/setPoolPosition";
 
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
@@ -26,6 +28,7 @@ export function useV3MintInfo() {
   const noLiquidity = poolState === PoolState.NOT_EXISTS;
   const { inToken, outToken } = useInOutTokens();
   const { minPriceInput, maxPriceInput } = useGetPoolInput();
+  const startPriceTypedValue = useRecoilValue(initialPrice);
 
   //note to parse inputs in reverse
   const invertPrice = Boolean(
@@ -55,41 +58,34 @@ export function useV3MintInfo() {
   //   always returns the price with 0 as base token
   const price: Price<Token, Token> | undefined = useMemo(() => {
     // if no liquidity use typed value
-    if (noLiquidity) {
-      //     const parsedQuoteAmount = tryParseCurrencyAmount(
-      //       //initiali price
-      //     startPriceTypedValue,
-      //     invertPrice ? token0 : token1
-      //   );
-      //   if (parsedQuoteAmount && token0 && token1) {
-      //     const baseAmount = tryParseCurrencyAmount(
-      //       "1",
-      //       invertPrice ? token1 : token0
-      //     );
-      //     const price =
-      //       baseAmount && parsedQuoteAmount
-      //         ? new Price(
-      //             baseAmount.currency,
-      //             parsedQuoteAmount.currency,
-      //             baseAmount.quotient,
-      //             parsedQuoteAmount.quotient
-      //           )
-      //         : undefined;
-      //     return (invertPrice ? price?.invert() : price) ?? undefined;
-      //   }
-      //   return undefined;
+    if (noLiquidity && startPriceTypedValue) {
+      const parsedQuoteAmount = tryParseCurrencyAmount(
+        //initiali price
+        startPriceTypedValue,
+        invertPrice ? token0 : token1
+      );
+      if (parsedQuoteAmount && token0 && token1) {
+        const baseAmount = tryParseCurrencyAmount(
+          "1",
+          invertPrice ? token1 : token0
+        );
+        const price =
+          baseAmount && parsedQuoteAmount
+            ? new Price(
+                baseAmount.currency,
+                parsedQuoteAmount.currency,
+                baseAmount.quotient,
+                parsedQuoteAmount.quotient
+              )
+            : undefined;
+        return (invertPrice ? price?.invert() : price) ?? undefined;
+      }
+      return undefined;
     } else {
       // get the amount of quote currency
       return pool && token0 ? pool.priceOf(token0) : undefined;
     }
-  }, [
-    noLiquidity,
-    invertPrice,
-    token1,
-    token0,
-    pool,
-    //   startPriceTypedValue
-  ]);
+  }, [noLiquidity, invertPrice, token1, token0, pool, startPriceTypedValue]);
 
   // check for invalid price input (converts to invalid ratio)
   const invalidPrice = useMemo(() => {
@@ -111,6 +107,7 @@ export function useV3MintInfo() {
     if (tokenA && tokenB && feeAmount && price && !invalidPrice) {
       const currentTick = priceToClosestTick(price);
       const currentSqrt = TickMath.getSqrtRatioAtTick(currentTick);
+
       return new Pool(
         tokenA,
         tokenB,
@@ -234,6 +231,7 @@ export function useV3MintInfo() {
   );
 
   const invalidPool = poolState === PoolState.INVALID;
+  const notExistPool = poolState === PoolState.NOT_EXISTS;
 
   //   console.log("**result");
   //   console.log(
@@ -266,6 +264,7 @@ export function useV3MintInfo() {
     pricesAtLimit,
     noLiquidity,
     invalidPool,
+    notExistPool,
     invalidRange,
     outOfRange,
     invertPrice,
@@ -273,5 +272,13 @@ export function useV3MintInfo() {
     deposit0Disabled,
     deposit1Disabled,
     tickSpaceLimits,
+    poolForPosition,
   };
+}
+
+export function useGetPool() {
+  const { noLiquidity, poolForPosition } = useV3MintInfo();
+  const [, pool] = usePool();
+
+  return { pool: noLiquidity ? poolForPosition : poolForPosition };
 }

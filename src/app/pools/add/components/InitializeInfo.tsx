@@ -3,9 +3,12 @@ import { PoolState } from "@/types/pool/pool";
 import { Flex, Box, Text } from "@chakra-ui/layout";
 import Title from "./Title";
 import { Input } from "@chakra-ui/react";
+import { useRecoilState } from "recoil";
+import { initialPrice } from "@/recoil/pool/setPoolPosition";
 
 export default function InitializeInfo() {
   const [poolStatus] = usePool();
+  const [inputIntialPrice, setInitialPrice] = useRecoilState(initialPrice);
 
   if (poolStatus === PoolState.NOT_EXISTS)
     return (
@@ -31,9 +34,15 @@ export default function InitializeInfo() {
           h={"48px"}
           borderRadius={"8px"}
           border={"1px solid #313442"}
+          _hover={{}}
           _focus={{
             boxShadow: "none !important",
+            border: "1px solid #313442 !important",
           }}
+          onChange={(e) => {
+            setInitialPrice(e.target.value);
+          }}
+          value={inputIntialPrice}
           boxShadow={"none !important"}
           fontSize={18}
           fontWeight={500}

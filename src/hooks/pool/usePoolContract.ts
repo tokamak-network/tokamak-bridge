@@ -32,6 +32,7 @@ import { isETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
+import { PoolState } from "@/types/pool/pool";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -40,8 +41,9 @@ export function usePoolMint() {
   const { address } = useAccount();
   const feeAmount = useRecoilValue(poolFeeStatus);
 
-  const [, pool] = usePool();
-  const { ticks } = useV3MintInfo();
+  const [poolStatus, poolData] = usePool();
+  const { ticks, poolForPosition } = useV3MintInfo();
+  const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
 
   const mintPosition = useCallback(async () => {
     if (pool && inToken && outToken && address && ticks.LOWER && ticks.UPPER) {
@@ -56,11 +58,17 @@ export function usePoolMint() {
 
       const token0 = CurrencyAmount.fromRawAmount(
         pool.token0,
-        fromReadableAmount(Number(0.001), pool.token0.decimals).toString()
+        fromReadableAmount(
+          Number(inToken.parsedAmount),
+          pool.token0.decimals
+        ).toString()
       );
       const token1 = CurrencyAmount.fromRawAmount(
         pool.token1,
-        fromReadableAmount(Number(20.3098), pool.token1.decimals).toString()
+        fromReadableAmount(
+          Number(outToken.parsedAmount),
+          pool.token1.decimals
+        ).toString()
       );
 
       const positionToMint = Position.fromAmounts({

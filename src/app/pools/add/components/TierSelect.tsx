@@ -44,7 +44,7 @@ export default function TierSelector() {
             {value === FeeAmount.LOWEST
               ? "0.01%"
               : value === FeeAmount.LOW
-              ? "0.03%"
+              ? "0.05%"
               : value === FeeAmount.MEDIUM
               ? "0.3%"
               : "1%"}

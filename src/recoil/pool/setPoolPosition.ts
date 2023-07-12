@@ -43,6 +43,11 @@ export const maxTick = atom<number | undefined>({
   default: undefined,
 });
 
+export const initialPrice = atom<string>({
+  key: "intialPrice",
+  default: "0",
+});
+
 export const currentTickSpacing = selector<number | undefined>({
   key: "currentPriceSelector",
   get: ({ get }) => {

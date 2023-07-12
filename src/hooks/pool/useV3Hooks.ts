@@ -2,7 +2,7 @@ import { Currency, Rounding } from "@uniswap/sdk-core";
 import { FeeAmount, Pool, TICK_SPACINGS, tickToPrice } from "@uniswap/v3-sdk";
 import { useCallback, useEffect, useMemo } from "react";
 import { useV3MintInfo } from "./useV3MintInfo";
-import { Bound } from "@/types/pool/pool";
+import { Bound, PoolState } from "@/types/pool/pool";
 import { usePool } from "./usePool";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { useRecoilState } from "recoil";
@@ -16,10 +16,13 @@ export function useRangeHopCallbacks() {
   // tickUpper: number | undefined,
   // pool?: Pool | undefined | null
   const { feeTier: feeAmount } = useGetFeeTier();
-  const [, pool] = usePool();
-  const { ticks, pricesAtLimit } = useV3MintInfo();
+  const [poolStatus, poolData] = usePool();
+  const { ticks, pricesAtLimit, poolForPosition } = useV3MintInfo();
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks;
+
+  const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
+
   const baseCurrency = pool?.token0;
   const quoteCurrency = pool?.token1;
 
@@ -36,6 +39,7 @@ export function useRangeHopCallbacks() {
 
       return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
     }
+
     // use pool current tick as starting tick if we have pool but no tick input
     if (
       !(typeof tickLower === "number") &&
@@ -151,6 +155,9 @@ export function useRangeHopCallbacks() {
 
   const onDecreaseLower = useCallback(() => {
     const result = getDecrementLower();
+    console.log("result");
+    console.log(result);
+
     if (result) return setMinPrice(result);
   }, [getDecrementLower]);
 
