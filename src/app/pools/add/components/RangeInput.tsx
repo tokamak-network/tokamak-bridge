@@ -49,7 +49,7 @@ export default function RangeInput(props: RangeInputProps) {
         <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
           {isMinPrice ? "Min price" : "Max price"}
         </Text>
-        <Flex mt={"11px"} mb={"7px"} columnGap={"16px"}>
+        <Flex mt={"11px"} mb={"7px"} columnGap={"16px"} alignItems={"center"}>
           <Flex
             w={"32px"}
             h={"32px"}
@@ -64,6 +64,16 @@ export default function RangeInput(props: RangeInputProps) {
             <Image src={REMOVE_ICON} alt={"REMOVE_ICON"} />
           </Flex>
           <Input
+            w={"65px"}
+            h={"24px"}
+            border={"none"}
+            borderColor={"transparent !important"}
+            p={0}
+            _focus={{
+              boxShadow: "none !important",
+              borderColor: "transparent !important",
+            }}
+            boxShadow={"none !important"}
             fontSize={20}
             fontWeight={500}
             onChange={(e) => {

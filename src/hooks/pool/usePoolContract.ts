@@ -31,15 +31,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
-
-export function getSigner(library: any, account: string) {
-  return library.getSigner(account).connectUnchecked();
-}
-
-// account is optional
-export function getProviderOrSigner(library: any, account?: string) {
-  return account ? getSigner(library, account) : library;
-}
+import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -52,8 +44,6 @@ export function usePoolMint() {
   const { ticks } = useV3MintInfo();
 
   const mintPosition = useCallback(async () => {
-    console.log("--mintPosition--");
-    console.log(inToken, outToken, address);
     if (pool && inToken && outToken && address && ticks.LOWER && ticks.UPPER) {
       const configuredPool = new Pool(
         pool.token0,
@@ -81,8 +71,6 @@ export function usePoolMint() {
         amount1: token1.quotient,
         useFullPrecision: true,
       });
-
-      console.log("positionToMint : ", positionToMint);
 
       if (positionToMint) {
         const mintOptions: MintOptions = {
@@ -113,6 +101,7 @@ export function usePoolMint() {
           NONFUNGIBLE_POSITION_MANAGER_ABI,
           getProviderOrSigner(provider, address)
         );
+
         const refundETHData =
           NonfungiblePositionManagerContract.interface.encodeFunctionData(
             "refundETH"

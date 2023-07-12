@@ -1,4 +1,6 @@
 import {
+  inTokenSelector,
+  outTokenSelector,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
@@ -22,6 +24,7 @@ export function useInOutTokens() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
+
   const { connectedChainId, chainName, layer, isConnectedToMainNetwork } =
     useConnectedNetwork();
   const { provider } = useProvier();
@@ -114,10 +117,20 @@ export function useInOutTokens() {
     });
   }, [connectedChainId, provider, inToken?.tokenAddress]);
 
+  const { inTokenHasAmount } = useRecoilValue(inTokenSelector);
+  const { outTokenHasAmount } = useRecoilValue(outTokenSelector);
+
+  const tokensPairHasAmount = useMemo(() => {
+    return inTokenHasAmount && outTokenHasAmount;
+  }, [inTokenHasAmount, outTokenHasAmount]);
+
   return {
     inToken,
     outToken,
     inTokenInfo: inTokenRecoilValue,
     outTokenInfo: outTokenRecoilValue,
+    inTokenHasAmount,
+    outTokenHasAmount,
+    tokensPairHasAmount,
   };
 }
