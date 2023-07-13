@@ -24,7 +24,7 @@ import checkProgress from "assets/icons/check_progress.svg";
 import checkTodo from "assets/icons/check_todo.svg";
 import CalendarIcon from "assets/icons/Google_Calendar_icon.svg";
 import "./CalendarButton.css";
-import { AddToCalendarButton } from "add-to-calendar-button-react";
+import { atcb_action } from "add-to-calendar-button";
 
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -243,19 +243,17 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const calStyle = `
-   .atcb-initialized {
+  const config:Object = {
+    name: " Test the Add to Calendar Button",
+    description: "Check out the maybe easiest way to include Add to Calendar Buttons to your web projects:[br]→ [url]https://add-to-calendar-button.com/",
+    startDate: "2023-07-16",
+    startTime: "10:15",
+    endTime: "23:30",
+    options: ["Google"] ,
+    timeZone: "currentBrowser"
+  };
+  
 
-    .atcb-button-wrapper{
-        height:16px;
-        width:16px;
-        padding:0px
-.atcb-button { 
-
-    background-color: transparent;
-    }
-   }
-  `;
   const CalendarComponent = () => {
     return (
       <Flex
@@ -280,24 +278,9 @@ export default function ConfirmWithdraw() {
           <Text fontSize={"12px"} mr="8px">
             Add to Google Calendar
           </Text>
-          {/* <Flex id="my-default-button">
+          <Flex onClick={() =>  atcb_action(config)} height={'16px'} w='16px' p='0px' cursor={'pointer'}>
             <Image src={CalendarIcon} alt="calendar" />
-          </Flex> */}
-          <style>{calStyle}</style>
-          <AddToCalendarButton
-            name="[Reminder] Test the Add to Calendar Button"
-            startDate="2023-07-13"
-            startTime="10:15"
-            endTime="23:30"
-            timeZone="currentBrowser"
-            description="Check out the maybe easiest way to include Add to Calendar Buttons to your web projects:[br]→ [url]https://add-to-calendar-button.com/"
-            options="'Google'"
-            buttonsList
-            hideTextLabelButton
-            buttonStyle="default"
-            customCss="https://github.com/tokamak-network/Unified-interface/blob/origin/feat/txHistory/src/components/modal/CalendarButton.css"
-            lightMode="bodyScheme"
-          ></AddToCalendarButton>
+          </Flex>
         </Flex>
       </Flex>
     );
