@@ -33,7 +33,7 @@
     --btn-shadow: rgba(0 0 0 / 20%) 2px 5px 18px -1px, rgba(0 0 0 / 15%) 2px 2px 10px -3px;
     --btn-shadow-hover: rgba(0 0 0 / 35%) 2px 5px 18px -1px, rgba(0 0 0 / 30%) 2px 2px 10px -3px;
     --btn-shadow-active: rgba(0 0 0 / 50%) 2px 5px 18px -1px, rgba(0 0 0 / 45%) 2px 2px 10px -3px;
-    --list-background: #f5f5f5;
+    --list-background: red;
     --list-background-hover: #fff;
     --list-text: #333;
     --list-text-hover: #000;
@@ -42,9 +42,9 @@
     --list-shadow: rgba(0 0 0 / 20%) 2px 5px 18px -1px, rgba(0 0 0 / 40%) 2px 2px 10px -3px;
     --list-shadow-modal: rgba(0 0 0 / 60%) 3px 6px 40px -5px, rgba(0 0 0 / 60%) 3px 3px 15px -4px;
     --modal-text: #000;
-    --modal-background: #f5f5f5;
+    --modal-background: red;
     --modal-btn-bar: #c6c8cd;
-    --modal-btn-background: #f5f5f5;
+    --modal-btn-background: red;
     --modal-btn-secondary-background: #e2e1e6;
     --modal-btn-background-hover: #fff;
     --modal-btn-text: #2e2e2e;
