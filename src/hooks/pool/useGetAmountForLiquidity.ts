@@ -60,7 +60,6 @@ export function useGetAmountForLiquidity() {
   const currentTick = pool?.tickCurrent;
 
   const token0Address = pool?.token0.address;
-  const token1Address = pool?.token1.address;
 
   const invertAmount: boolean = useMemo(() => {
     if (inToken?.tokenAddress === token0Address) {

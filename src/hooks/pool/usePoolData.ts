@@ -173,10 +173,6 @@ export function usePriceTickConversion() {
       );
   }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
 
-  console.log("minPrice");
-  console.log(minPrice?.toSignificant(10));
-  console.log(maxPrice?.invert().toSignificant(10));
-
   const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
@@ -191,12 +187,14 @@ export function usePriceTickConversion() {
   }, [minPrice, maxPrice, invertPrice, initialized]);
 
   useEffect(() => {
-    if (minPrice && maxPrice)
+    if (minPrice && maxPrice && initialized === false) {
       setMaxPrice(
         invertPrice
           ? minPrice?.invert().toSignificant(10)
           : maxPrice.toSignificant(10)
       );
+      return setInitialized(true);
+    }
   }, [minPrice, maxPrice, invertPrice]);
 
   return {

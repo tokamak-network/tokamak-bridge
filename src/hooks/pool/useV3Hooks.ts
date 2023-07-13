@@ -6,7 +6,12 @@ import { Bound, PoolState } from "@/types/pool/pool";
 import { usePool } from "./usePool";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { useRecoilState } from "recoil";
-import { maxPrice, minPrice } from "@/recoil/pool/setPoolPosition";
+import {
+  atMaxTick,
+  atMinTick,
+  maxPrice,
+  minPrice,
+} from "@/recoil/pool/setPoolPosition";
 
 export function useRangeHopCallbacks() {
   // baseCurrency: Currency | undefined,
@@ -140,6 +145,9 @@ export function useRangeHopCallbacks() {
     return "";
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
 
+  const [isAtMinTick, setAtMinTick] = useRecoilState(atMinTick);
+  const [isAtMaxTick, setAtMaxTick] = useRecoilState(atMaxTick);
+
   //need to bind with Recoil
   const getSetFullRange = useCallback(() => {
     if (pricesAtLimit) {
@@ -147,6 +155,8 @@ export function useRangeHopCallbacks() {
       const upperLimitPrice = pricesAtLimit.UPPER?.toSignificant(5);
       setMinPrice(lowerLimitPrice);
       setMaxPrice(upperLimitPrice);
+      setAtMinTick(true);
+      setAtMaxTick(true);
     }
   }, [pricesAtLimit]);
 
@@ -155,9 +165,6 @@ export function useRangeHopCallbacks() {
 
   const onDecreaseLower = useCallback(() => {
     const result = getDecrementLower();
-    console.log("result");
-    console.log(result);
-
     if (result) return setMinPrice(result);
   }, [getDecrementLower]);
 

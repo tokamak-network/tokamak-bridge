@@ -28,19 +28,19 @@ export const minPrice = atom<string | undefined>({
   default: undefined,
 });
 
-export const minTick = atom<number | undefined>({
-  key: "minTick",
-  default: undefined,
-});
-
 export const maxPrice = atom<string | undefined>({
   key: "maxPrice",
   default: undefined,
 });
 
-export const maxTick = atom<number | undefined>({
+export const atMinTick = atom<boolean>({
+  key: "minTick",
+  default: false,
+});
+
+export const atMaxTick = atom<boolean>({
   key: "maxTick",
-  default: undefined,
+  default: false,
 });
 
 export const initialPrice = atom<string>({

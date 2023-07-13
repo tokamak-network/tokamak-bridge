@@ -2,12 +2,18 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import REMOVE_ICON from "assets/icons/removeIcon.svg";
 import ADD_ICON from "assets/icons/addIcon.svg";
+import { useEffect, useMemo } from "react";
 
 import Image from "next/image";
 import commafy from "@/utils/trim/commafy";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { useRecoilState } from "recoil";
-import { maxPrice, minPrice } from "@/recoil/pool/setPoolPosition";
+import {
+  atMaxTick,
+  atMinTick,
+  maxPrice,
+  minPrice,
+} from "@/recoil/pool/setPoolPosition";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useCallback } from "react";
 
@@ -20,10 +26,13 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks } = useV3MintInfo();
+  const { pricesAtTicks, ticksAtLimit } = useV3MintInfo();
 
   const [minPriceInput, setMinPrice] = useRecoilState(minPrice);
   const [maxPriceInput, setMaxPrice] = useRecoilState(maxPrice);
+
+  const [isAtMinTick, setAtMinTick] = useRecoilState(atMinTick);
+  const [isAtMaxTick, setAtMaxTick] = useRecoilState(atMaxTick);
 
   const blurHandler = useCallback(() => {
     if (pricesAtTicks) {
@@ -32,6 +41,36 @@ export default function RangeInput(props: RangeInputProps) {
         : setMaxPrice(pricesAtTicks?.UPPER?.toSignificant(5));
     }
   }, [pricesAtTicks, isMinPrice]);
+
+  const onChangeHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      console.log("gogogo**");
+      const value = e.target.value.replaceAll(",", "");
+      const inputValue = value ?? "0";
+
+      return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
+    },
+    [isMinPrice]
+  );
+
+  const inputValue = useMemo(() => {
+    if (ticksAtLimit.LOWER && isMinPrice) return "0";
+    if (ticksAtLimit.UPPER && !isMinPrice) return "∞";
+    return isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5);
+  }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput]);
+
+  useEffect(() => {
+    if (Number(minPriceInput?.replaceAll(",", "")) > 0) {
+      setAtMinTick(false);
+    } else {
+      setAtMinTick(true);
+    }
+    if (maxPriceInput !== "∞") {
+      return setAtMaxTick(false);
+    } else {
+      return setAtMaxTick(true);
+    }
+  }, [minPriceInput, maxPriceInput]);
 
   return (
     <Flex flexDir={"column"}>
@@ -59,7 +98,13 @@ export default function RangeInput(props: RangeInputProps) {
             justifyContent={"center"}
             alignItems={"center"}
             cursor={"pointer"}
-            onClick={isMinPrice ? onDecreaseLower : onDecreaseUpper}
+            onClick={
+              ticksAtLimit.LOWER
+                ? () => {}
+                : isMinPrice
+                ? onDecreaseLower
+                : onDecreaseUpper
+            }
           >
             <Image src={REMOVE_ICON} alt={"REMOVE_ICON"} />
           </Flex>
@@ -76,16 +121,10 @@ export default function RangeInput(props: RangeInputProps) {
             boxShadow={"none !important"}
             fontSize={20}
             fontWeight={500}
-            onChange={(e) => {
-              const value = e.target.value.replaceAll(",", "");
-
-              const inputValue = value ?? "0";
-              isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
-            }}
+            onChange={onChangeHandler}
+            textAlign={"center"}
             onBlur={blurHandler}
-            value={
-              isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5)
-            }
+            value={inputValue}
           >
             {/* {isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5)} */}
           </Input>

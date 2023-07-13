@@ -7,7 +7,7 @@ import {
   nearestUsableTick,
   priceToClosestTick,
 } from "@uniswap/v3-sdk";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { usePool } from "./usePool";
 import { Bound, PoolState } from "@/types/pool/pool";
@@ -19,8 +19,12 @@ import { tryParseTick } from "@/utils/pool/tryParseTick";
 import { useGetPoolInput } from "./useGetPoolInput";
 import { getTickToPrice } from "@/utils/pool/getTickToPrice";
 import { Field } from "@/types/swap/swap";
-import { useRecoilValue } from "recoil";
-import { initialPrice } from "@/recoil/pool/setPoolPosition";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  atMaxTick,
+  atMinTick,
+  initialPrice,
+} from "@/recoil/pool/setPoolPosition";
 
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
@@ -29,6 +33,8 @@ export function useV3MintInfo() {
   const { inToken, outToken } = useInOutTokens();
   const { minPriceInput, maxPriceInput } = useGetPoolInput();
   const startPriceTypedValue = useRecoilValue(initialPrice);
+  const [isAtMinTick] = useRecoilState(atMinTick);
+  const [isAtMaxTick] = useRecoilState(atMaxTick);
 
   //note to parse inputs in reverse
   const invertPrice = Boolean(
@@ -141,25 +147,31 @@ export function useV3MintInfo() {
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
+    // console.log("gogo");
+
+    // console.log("lower");
+    // console.log((invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick));
+
+    // console.log("upper");
+
+    // console.log((!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick));
+
     return {
       [Bound.LOWER]:
         // typeof existingPosition?.tickLower === "number"
         //   ? existingPosition.tickLower
-        //   : (invertPrice && typeof rightRangeTypedValue === "boolean") ||
-        //     (!invertPrice && typeof leftRangeTypedValue === "boolean")
-        //   ? tickSpaceLimits[Bound.LOWER]
-        //             :
-        invertPrice
+        (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)
+          ? tickSpaceLimits[Bound.LOWER]
+          : invertPrice
           ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
           : tryParseTick(token0, token1, feeAmount, minPriceInput?.toString()),
       [Bound.UPPER]:
         // typeof existingPosition?.tickUpper === "number"
         //   ? existingPosition.tickUpper
-        //   : (!invertPrice && typeof rightRangeTypedValue === "boolean") ||
-        //     (invertPrice && typeof leftRangeTypedValue === "boolean")
-        //   ? tickSpaceLimits[Bound.UPPER]
-        //           :
-        invertPrice
+        //   :
+        (!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick)
+          ? tickSpaceLimits[Bound.UPPER]
+          : invertPrice
           ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
           : tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString()),
     };
@@ -176,9 +188,6 @@ export function useV3MintInfo() {
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {};
 
-  console.log("tickLower");
-  console.log(tickLower);
-
   // specifies whether the lower and upper ticks is at the exteme bounds
   const ticksAtLimit = useMemo(
     () => ({
@@ -187,6 +196,9 @@ export function useV3MintInfo() {
     }),
     [tickSpaceLimits, tickLower, tickUpper, feeAmount]
   );
+
+  // console.log("tickLower");
+  // console.log(tickLower, tickUpper);
 
   // mark invalid range
   const invalidRange = Boolean(
@@ -236,27 +248,13 @@ export function useV3MintInfo() {
   const invalidPool = poolState === PoolState.INVALID;
   const notExistPool = poolState === PoolState.NOT_EXISTS;
 
-  //   console.log("**result");
-  //   console.log(
-  //     "pool :",
-  //     pool,
-  //     "poolState : ",
-  //     poolState,
-  //     "ticks : ",
-  //     ticks,
-  //     "price : ",
-  //     price,
-  //     "pricesAtTicks : ",
-  //     pricesAtTicks,
-  //     "pricesAtLimit : ",
-  //     pricesAtLimit,
-  //     noLiquidity,
-  //     invalidPool,
-  //     invalidRange,
-  //     outOfRange,
-  //     invertPrice,
-  //     ticksAtLimit
-  //   );
+  const token0Address = pool?.token0.address;
+  const invertTokenPair: boolean = useMemo(() => {
+    if (inToken?.tokenAddress === token0Address) {
+      return false;
+    }
+    return true;
+  }, [inToken, token0Address]);
 
   return {
     pool,
@@ -271,6 +269,7 @@ export function useV3MintInfo() {
     invalidRange,
     outOfRange,
     invertPrice,
+    invertTokenPair,
     ticksAtLimit,
     deposit0Disabled,
     deposit1Disabled,

@@ -55,7 +55,8 @@ export function usePoolMint() {
       address &&
       ticks.LOWER &&
       ticks.UPPER &&
-      invertAmount
+      invertAmount &&
+      feeAmount
     ) {
       const configuredPool = new Pool(
         pool.token0,
@@ -123,15 +124,33 @@ export function usePoolMint() {
           getProviderOrSigner(provider, address)
         );
 
+        console.log("configuredPool");
+        console.log(configuredPool);
+
+        const initializePool =
+          NonfungiblePositionManagerContract.interface.encodeFunctionData(
+            "createAndInitializePoolIfNecessary",
+            [
+              token0.currency.address,
+              token1.currency.address,
+              feeAmount,
+              configuredPool.sqrtRatioX96.toString(),
+            ]
+          );
+
         const refundETHData =
           NonfungiblePositionManagerContract.interface.encodeFunctionData(
             "refundETH"
           );
 
         const tx = await NonfungiblePositionManagerContract.multicall(
-          [calldata],
+          [
+            initializePool,
+            calldata,
+            // refundETHData
+          ],
           {
-            gasLimit: 3000000,
+            // gasLimit: 3000000,
             value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
             from: address,
           }
@@ -158,6 +177,7 @@ export function usePoolMint() {
     pool,
     ticks,
     invertAmount,
+    feeAmount,
   ]);
 
   return { mintPosition };

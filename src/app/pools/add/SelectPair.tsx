@@ -8,6 +8,7 @@ import TOKEN_PAIR_PLUS_ICON from "assets/icons/tokenPairPlus.svg";
 import Title from "./components/Title";
 import TokenInput from "@/components/input/TokenInput";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { InputContainer } from "./components/InputContainer";
 
 export default function SelectPair() {
   const { inToken, inTokenInfo, outTokenInfo } = useInOutTokens();
@@ -38,9 +39,7 @@ export default function SelectPair() {
               <SearchToken />
             )}
           </Box>
-          <Box w={"186px"}>
-            <TokenInput inToken={true} />
-          </Box>
+          <InputContainer inToken={true} />
         </Flex>
 
         <Image
@@ -69,9 +68,7 @@ export default function SelectPair() {
               <SearchToken onClick={() => onOpenOutToken()} />
             )}
           </Box>
-          <Box w={"186px"}>
-            <TokenInput inToken={false} hasMaxButton={true} />
-          </Box>
+          <InputContainer inToken={false} />
         </Flex>
       </Flex>
     </Flex>
