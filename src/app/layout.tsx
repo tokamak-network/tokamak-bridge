@@ -16,11 +16,12 @@ import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
-
+import AccountHistory from "@/components/history/AccountHistory";
 export const GlobalComponents = () => {
   return (
     <>
       {/* <HistoryDrawer /> */}
+      {/* <AccountHistory/> */}
       <TxToast />
     </>
   );
@@ -65,10 +66,12 @@ export default function RootLayout({
             <ApolloProvider client={apolloClient}>
               <ChakraProvidersForNextJs>
                 <WagmiProviders>
+                {/* <GlobalComponents /> */}
                   <Entry children={children} />
+                  <AccountHistory />
                   {/* <Header />
                   <Center h={"100vh"}>{children}</Center>
-                  <GlobalComponents />
+                
                   <Modals /> */}
                 </WagmiProviders>
               </ChakraProvidersForNextJs>

@@ -28,3 +28,8 @@ export const poolModalStatus = atom<
   key: "poolModalStatus",
   default: null,
 });
+
+export const confirmWithdraw = atom <boolean>({
+  key: "confirmWithdraw",
+  default: false,
+})

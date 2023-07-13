@@ -12,12 +12,12 @@ import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import CloseButton from "../button/CloseButton";
 import { useState, useEffect, useCallback } from "react";
-import step0 from "assets/image/step0.svg";
-import step1 from "assets/image/step1.svg";
-import step2 from "assets/image/step2.svg";
-import step3 from "assets/image/step3.svg";
-import step4 from "assets/image/step4.svg";
-import step5 from "assets/image/step5.svg";
+import step0 from "assets/image/tutorial/step0.svg";
+import step1 from "assets/image/tutorial/step1.svg";
+import step2 from "assets/image/tutorial/step2.svg";
+import step3 from "assets/image/tutorial/step3.svg";
+import step4 from "assets/image/tutorial/step4.svg";
+import step5 from "assets/image/tutorial/step5.svg";
 import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
 
 const steps = [
