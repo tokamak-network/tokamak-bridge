@@ -147,9 +147,10 @@ export default function TokenInput(props: {
 
   const handleBlur = () => {
     setIsFocused(false);
+    //for pool's price and amount on liquidity
     if (mode === "Pool" && inToken && selectedOutToken && amountForToken1) {
       const formattedAmount = ethers.utils.formatUnits(
-        amountForToken1.toString(),
+        amountForToken1.toString().replaceAll("-", ""),
         selectedOutToken.decimals
       );
 
@@ -166,7 +167,7 @@ export default function TokenInput(props: {
     }
     if (mode === "Pool" && !inToken && selectedInToken && amountForToken0) {
       const formattedAmount = ethers.utils.formatUnits(
-        amountForToken0.toString(),
+        amountForToken0.toString().replaceAll("-", ""),
         selectedInToken.decimals
       );
 

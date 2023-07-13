@@ -7,7 +7,6 @@ import Image from "next/image";
 import TOKEN_PAIR_PLUS_ICON from "assets/icons/tokenPairPlus.svg";
 import Title from "./components/Title";
 import TokenInput from "@/components/input/TokenInput";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import { InputContainer } from "./components/InputContainer";
 
 export default function SelectPair() {

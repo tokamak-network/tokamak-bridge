@@ -43,7 +43,7 @@ export function usePoolMint() {
   const feeAmount = useRecoilValue(poolFeeStatus);
 
   const [poolStatus, poolData] = usePool();
-  const { ticks, poolForPosition } = useV3MintInfo();
+  const { ticks, poolForPosition, noLiquidity } = useV3MintInfo();
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
   const { invertAmount } = useGetAmountForLiquidity();
 
@@ -55,7 +55,6 @@ export function usePoolMint() {
       address &&
       ticks.LOWER &&
       ticks.UPPER &&
-      invertAmount &&
       feeAmount
     ) {
       const configuredPool = new Pool(
@@ -143,12 +142,17 @@ export function usePoolMint() {
             "refundETH"
           );
 
+        const multicallParam =
+          noLiquidity && (inIsEth || outIsETH)
+            ? [initializePool, calldata, refundETHData]
+            : noLiquidity
+            ? [initializePool, calldata]
+            : inIsEth || outIsETH
+            ? [calldata, refundETHData]
+            : [calldata];
+
         const tx = await NonfungiblePositionManagerContract.multicall(
-          [
-            initializePool,
-            calldata,
-            // refundETHData
-          ],
+          multicallParam,
           {
             // gasLimit: 3000000,
             value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
@@ -178,6 +182,7 @@ export function usePoolMint() {
     ticks,
     invertAmount,
     feeAmount,
+    noLiquidity,
   ]);
 
   return { mintPosition };
