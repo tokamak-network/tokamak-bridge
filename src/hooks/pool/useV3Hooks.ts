@@ -150,6 +150,7 @@ export function useRangeHopCallbacks() {
 
   //need to bind with Recoil
   const getSetFullRange = useCallback(() => {
+    console.log("come?", pricesAtLimit);
     if (pricesAtLimit) {
       const lowerLimitPrice = pricesAtLimit.LOWER?.toSignificant(5);
       const upperLimitPrice = pricesAtLimit.UPPER?.toSignificant(5);

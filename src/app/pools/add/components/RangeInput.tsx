@@ -60,11 +60,12 @@ export default function RangeInput(props: RangeInputProps) {
   }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput]);
 
   useEffect(() => {
-    if (Number(minPriceInput?.replaceAll(",", "")) > 0) {
+    if (Number(minPriceInput?.replaceAll(",", "")) !== 0) {
       setAtMinTick(false);
     } else {
       setAtMinTick(true);
     }
+
     if (maxPriceInput !== "∞") {
       return setAtMaxTick(false);
     } else {
