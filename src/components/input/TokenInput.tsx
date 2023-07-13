@@ -1,6 +1,7 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutNetwork } from "@/hooks/network";
+import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -11,6 +12,7 @@ import {
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
+import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -38,6 +40,8 @@ export default function TokenInput(props: {
   } = useInOutTokens();
   const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -143,6 +147,40 @@ export default function TokenInput(props: {
 
   const handleBlur = () => {
     setIsFocused(false);
+    if (mode === "Pool" && inToken && selectedOutToken && amountForToken1) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken1.toString(),
+        selectedOutToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedOutToken.decimals
+      );
+
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
+    if (mode === "Pool" && !inToken && selectedInToken && amountForToken0) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken0.toString(),
+        selectedInToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedInToken.decimals
+      );
+
+      return setSelectedInToken({
+        ...selectedInToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
   };
 
   const valueProp = useMemo(() => {

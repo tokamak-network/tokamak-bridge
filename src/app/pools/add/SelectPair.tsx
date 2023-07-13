@@ -13,10 +13,6 @@ export default function SelectPair() {
   const { inToken, inTokenInfo, outTokenInfo } = useInOutTokens();
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
 
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity({
-    inTokenInput: true,
-  });
-
   return (
     <Flex flexDir={"column"}>
       <Title title="Select Pair" />

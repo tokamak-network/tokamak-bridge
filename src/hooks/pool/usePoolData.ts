@@ -2,7 +2,7 @@ import { GET_POOLS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { PoolData_Subgraph } from "@/types/pool/subgraph";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { tickToPrice } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
@@ -159,7 +159,7 @@ export function usePriceTickConversion() {
           ? tickSpaceLimits.LOWER
           : currentTick - 6932
       );
-  }, [baseToken, quoteToken, currentTick, ticksAtLimit]);
+  }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
 
   const maxPrice = useMemo(() => {
     if (baseToken && quoteToken && currentTick && ticksAtLimit)
@@ -171,16 +171,24 @@ export function usePriceTickConversion() {
           ? tickSpaceLimits.UPPER
           : currentTick + 6932
       );
-  }, [baseToken, quoteToken, currentTick, ticksAtLimit]);
+  }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
+
+  console.log("minPrice");
+  console.log(minPrice?.toSignificant(10));
+  console.log(maxPrice?.invert().toSignificant(10));
+
+  const [initialized, setInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    if (minPrice && maxPrice)
+    if (minPrice && maxPrice && initialized === false) {
       setMinPrice(
         invertPrice
           ? maxPrice.invert().toSignificant(10)
           : minPrice.toSignificant(10)
       );
-  }, [minPrice, maxPrice, invertPrice]);
+      return setInitialized(true);
+    }
+  }, [minPrice, maxPrice, invertPrice, initialized]);
 
   useEffect(() => {
     if (minPrice && maxPrice)

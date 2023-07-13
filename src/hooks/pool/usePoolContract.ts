@@ -33,6 +33,7 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { PoolState } from "@/types/pool/pool";
+import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -44,9 +45,18 @@ export function usePoolMint() {
   const [poolStatus, poolData] = usePool();
   const { ticks, poolForPosition } = useV3MintInfo();
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
+  const { invertAmount } = useGetAmountForLiquidity();
 
   const mintPosition = useCallback(async () => {
-    if (pool && inToken && outToken && address && ticks.LOWER && ticks.UPPER) {
+    if (
+      pool &&
+      inToken &&
+      outToken &&
+      address &&
+      ticks.LOWER &&
+      ticks.UPPER &&
+      invertAmount
+    ) {
       const configuredPool = new Pool(
         pool.token0,
         pool.token1,
@@ -59,14 +69,14 @@ export function usePoolMint() {
       const token0 = CurrencyAmount.fromRawAmount(
         pool.token0,
         fromReadableAmount(
-          Number(inToken.parsedAmount),
+          Number(invertAmount ? outToken.parsedAmount : inToken.parsedAmount),
           pool.token0.decimals
         ).toString()
       );
       const token1 = CurrencyAmount.fromRawAmount(
         pool.token1,
         fromReadableAmount(
-          Number(outToken.parsedAmount),
+          Number(invertAmount ? inToken.parsedAmount : outToken.parsedAmount),
           pool.token1.decimals
         ).toString()
       );
@@ -79,6 +89,9 @@ export function usePoolMint() {
         amount1: token1.quotient,
         useFullPrecision: true,
       });
+
+      console.log("positionToMint");
+      console.log(positionToMint);
 
       if (positionToMint) {
         const mintOptions: MintOptions = {
@@ -116,7 +129,7 @@ export function usePoolMint() {
           );
 
         const tx = await NonfungiblePositionManagerContract.multicall(
-          [calldata, refundETHData],
+          [calldata],
           {
             gasLimit: 3000000,
             value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
@@ -136,7 +149,16 @@ export function usePoolMint() {
         // return sendTransaction(transaction);
       }
     }
-  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT, pool, ticks]);
+  }, [
+    provider,
+    inToken,
+    outToken,
+    address,
+    UNISWAP_CONTRACT,
+    pool,
+    ticks,
+    invertAmount,
+  ]);
 
   return { mintPosition };
 }
@@ -197,8 +219,6 @@ export function usePoolContract() {
       // get pool info
       const poolInfo = await getPoolInfo();
 
-      console.log("poolInfo : ", poolInfo);
-
       if (poolInfo) {
         // construct pool instance
         const configuredPool = new Pool(
@@ -231,8 +251,6 @@ export function usePoolContract() {
 
   const addLiquidity = useCallback(
     async (positionId: number) => {
-      console.log("--addLiquidity--");
-      console.log(inToken, outToken, address);
       if (inToken && outToken && address) {
         const positionToIncreaseBy = await constructPosition(
           CurrencyAmount.fromRawAmount(

@@ -176,6 +176,9 @@ export function useV3MintInfo() {
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {};
 
+  console.log("tickLower");
+  console.log(tickLower);
+
   // specifies whether the lower and upper ticks is at the exteme bounds
   const ticksAtLimit = useMemo(
     () => ({

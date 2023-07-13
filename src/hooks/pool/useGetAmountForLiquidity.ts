@@ -5,6 +5,8 @@ import { useGetPool, useV3MintInfo } from "./useV3MintInfo";
 import { useMemo } from "react";
 import JSBI from "jsbi";
 
+const FixedPoint96Q96 = ethers.BigNumber.from("0x1000000000000000000000000");
+
 function getLiquidityForAmount1(
   sqrtRatioAX96: JSBI,
   sqrtRatioBX96: JSBI,
@@ -16,7 +18,6 @@ function getLiquidityForAmount1(
     sqrtRatioAX96 = sqrtRatioBX96;
     sqrtRatioBX96 = temp;
   }
-  let FixedPoint96Q96 = ethers.BigNumber.from("0x1000000000000000000000000");
 
   const param1 = JSBI.multiply(
     JSBI.BigInt(amount1.toString()),
@@ -37,7 +38,6 @@ function getLiquidityForAmount0(
     sqrtRatioAX96 = sqrtRatioBX96;
     sqrtRatioBX96 = temp;
   }
-  let FixedPoint96Q96 = ethers.BigNumber.from("0x1000000000000000000000000");
 
   const param1 = JSBI.multiply(sqrtRatioAX96, sqrtRatioBX96);
   const intermediate = JSBI.divide(
@@ -49,22 +49,28 @@ function getLiquidityForAmount0(
   return JSBI.divide(param2, param3);
 }
 
-export function useGetAmountForLiquidity(params: { inTokenInput: boolean }) {
-  const { inTokenInput } = params;
+export function useGetAmountForLiquidity() {
   const { pool } = useGetPool();
   const { inToken, outToken } = useInOutTokens();
 
-  const amount0Desired = inToken?.amountBN;
-  const amount1Desired = outToken?.amountBN;
-
-  const { ticks } = useV3MintInfo();
+  const { ticks, invertPrice } = useV3MintInfo();
 
   const lowerTick = ticks.LOWER;
   const upperTick = ticks.UPPER;
   const currentTick = pool?.tickCurrent;
 
-  console.log("pool");
-  console.log(pool);
+  const token0Address = pool?.token0.address;
+  const token1Address = pool?.token1.address;
+
+  const invertAmount: boolean = useMemo(() => {
+    if (inToken?.tokenAddress === token0Address) {
+      return false;
+    }
+    return true;
+  }, [inToken, token0Address]);
+
+  const amount0Desired = invertAmount ? outToken?.amountBN : inToken?.amountBN;
+  const amount1Desired = invertAmount ? inToken?.amountBN : outToken?.amountBN;
 
   const amountForToken0 = useMemo(() => {
     if (lowerTick && upperTick && currentTick && amount1Desired) {
@@ -87,10 +93,10 @@ export function useGetAmountForLiquidity(params: { inTokenInput: boolean }) {
 
       return result;
     }
-  }, [amount0Desired, amount1Desired, lowerTick, upperTick, currentTick]);
+  }, [amount1Desired, lowerTick, upperTick, currentTick]);
 
   const amountForToken1 = useMemo(() => {
-    if (lowerTick && upperTick && currentTick && amount1Desired) {
+    if (lowerTick && upperTick && currentTick && amount0Desired) {
       const lowerPriceX96 = TickMath.getSqrtRatioAtTick(lowerTick);
       const currentsqrtPriceX96 = TickMath.getSqrtRatioAtTick(currentTick);
       const uppersqrtPriceX96 = TickMath.getSqrtRatioAtTick(upperTick);
@@ -110,7 +116,11 @@ export function useGetAmountForLiquidity(params: { inTokenInput: boolean }) {
 
       return result;
     }
-  }, [amount0Desired, amount1Desired, lowerTick, upperTick, currentTick]);
+  }, [amount0Desired, lowerTick, upperTick, currentTick]);
 
-  return { amountForToken0, amountForToken1 };
+  return {
+    amountForToken0: invertAmount ? amountForToken1 : amountForToken0,
+    amountForToken1: invertAmount ? amountForToken0 : amountForToken1,
+    invertAmount,
+  };
 }

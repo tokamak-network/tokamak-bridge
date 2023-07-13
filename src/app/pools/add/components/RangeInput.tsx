@@ -78,7 +78,9 @@ export default function RangeInput(props: RangeInputProps) {
             fontWeight={500}
             onChange={(e) => {
               const value = e.target.value.replaceAll(",", "");
-              isMinPrice ? setMinPrice(value) : setMaxPrice(value);
+
+              const inputValue = value ?? "0";
+              isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
             }}
             onBlur={blurHandler}
             value={
