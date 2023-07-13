@@ -24,8 +24,8 @@
     --base-font-size-m: 16px;
     --base-font-size-s: 16px;
     --font: arial, helvetica, sans-serif;
-    --keyboard-focus: #1e90ff;
-    --btn-background: #f5f5f5;
+    --keyboard-focus: #424548;
+    --btn-background: red;
     --btn-background-hover: #fff;
     --btn-border: #d2d2d2;
     --btn-text: #333;

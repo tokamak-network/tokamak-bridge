@@ -295,7 +295,7 @@ export default function ConfirmWithdraw() {
             buttonsList
             hideTextLabelButton
             buttonStyle="default"
-            customCss="src/components/modal/CalendarButton.css"
+            customCss="https://github.com/tokamak-network/Unified-interface/blob/origin/feat/txHistory/src/components/modal/CalendarButton.css"
             lightMode="bodyScheme"
           ></AddToCalendarButton>
         </Flex>
