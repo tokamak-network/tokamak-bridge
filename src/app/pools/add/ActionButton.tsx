@@ -7,6 +7,7 @@ import useContract from "@/hooks/contracts/useContract";
 import { useApproveToken } from "@/hooks/pool/useApproveToken";
 import { usePool } from "@/hooks/pool/usePool";
 import { usePoolMint } from "@/hooks/pool/usePoolContract";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useTx } from "@/hooks/tx/useTx";
 import { PoolState } from "@/types/pool/pool";
@@ -40,6 +41,11 @@ const ApproveButton = (props: { isInToken: boolean }) => {
   const { isLoading } = useWaitForTransaction({
     hash: data?.hash,
   });
+
+  const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
+
+  if ((isInToken && deposit0Disabled) || (!isInToken && deposit1Disabled))
+    return null;
 
   return (
     <Flex w={"100%"}>

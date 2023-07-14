@@ -44,7 +44,6 @@ export default function RangeInput(props: RangeInputProps) {
 
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
-      console.log("gogogo**");
       const value = e.target.value.replaceAll(",", "");
       const inputValue = value ?? "0";
 

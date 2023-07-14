@@ -6,8 +6,10 @@ import { useMemo } from "react";
 import LOCK_ICON from "assets/icons/pool/lock.svg";
 
 const OutRangeWarning = () => {
+  const { invalidRange } = useV3MintInfo();
+
   return (
-    <Flex flexDir={"column"} rowGap={"8px"} opacity={0.2}>
+    <Flex flexDir={"column"} rowGap={"8px"} opacity={invalidRange ? 0.2 : 1}>
       <Image src={LOCK_ICON} alt={"LOCK_ICON"} />
       <Text fontSize={12}>
         The market price is outside your specified price range. Single-asset
@@ -33,6 +35,8 @@ export function InputContainer(props: { inToken: boolean }) {
     <Box w={"186px"} minH={"45px"}>
       {!isDisabled && <TokenInput inToken={inToken} hasMaxButton={true} />}
       {invalidRange && <OutRangeWarning />}
+      {!invalidRange && inToken && deposit0Disabled && <OutRangeWarning />}
+      {!invalidRange && !inToken && deposit1Disabled && <OutRangeWarning />}
     </Box>
   );
 }
