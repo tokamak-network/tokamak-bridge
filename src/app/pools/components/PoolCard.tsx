@@ -7,17 +7,25 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
+import commafy from "@/utils/trim/commafy";
 
 export type PoolCardDetail = {
   id: number;
   token0: Token;
   token1: Token;
+  token0Amount: string;
+  token0CollectedFee: string;
+  token0MarketPrice: string;
+  token1Amount: string;
+  token1CollectedFee: string;
+  token1MarketPrice: string;
   fee: FeeAmount;
   inRange: boolean;
 };
 
 export default function PoolCard(props: PoolCardDetail) {
-  const { id, token0, token1, fee, inRange } = props;
+  const { id, token0, token1, fee, inRange, token0Amount, token1Amount } =
+    props;
 
   const feePercent = useMemo(() => {
     switch (fee) {
@@ -65,11 +73,11 @@ export default function PoolCard(props: PoolCardDetail) {
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
           <Flex justifyContent="space-between">
             <Text>{token0.symbol}</Text>
-            <Text>{0.0084} ($1.25)</Text>
+            <Text>{commafy(token0Amount, 4)} ($1.25)</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{token1.symbol}</Text>
-            <Text>{0.0084} ($1.25)</Text>
+            <Text>{commafy(token1Amount, 4)} ($1.25)</Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>Earnings</Text>

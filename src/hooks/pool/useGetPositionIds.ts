@@ -53,24 +53,29 @@ export default function useGetPositionIds(): {
   >(undefined);
 
   const callPositionIds = useCallback(async () => {
-    if (address && connectedChainId) {
-      const positionContract = new ethers.Contract(
+    if (address && connectedChainId && provider) {
+      const NonfungiblePositionManagerContract = new ethers.Contract(
         UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
         NONFUNGIBLE_POSITION_MANAGER_ABI,
         provider
       );
       // Get number of positions
-      const balance: number = await positionContract.balanceOf(address);
+      const balance: number =
+        await NonfungiblePositionManagerContract.balanceOf(address);
 
       // Get all positions
       const positions: PoolCardDetail[] = [];
       for (let i = 0; i < balance; i++) {
         const tokenOfOwnerByIndex: number =
-          await positionContract.tokenOfOwnerByIndex(address, i);
-        const positionInfo = await positionContract.positions(
+          await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
+            address,
+            i
+          );
+        const positionInfo = await NonfungiblePositionManagerContract.positions(
           tokenOfOwnerByIndex
         );
-        const { token0, token1, fee, tickLower, tickUpper } = positionInfo;
+        const { token0, token1, fee, tickLower, tickUpper, liquidity } =
+          positionInfo;
 
         const token0Contract = new ethers.Contract(
           token0,
@@ -118,8 +123,45 @@ export default function useGetPositionIds(): {
         const { tick } = slot;
         const inRange = tickLower <= tick < tickUpper;
 
+        const positionId = Number(tokenOfOwnerByIndex.toString());
+
+        const earningFee =
+          await NonfungiblePositionManagerContract.callStatic.collect({
+            tokenId: positionId,
+            recipient: address,
+            amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
+            amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
+          });
+        const token0CollectedFee = ethers.utils.formatUnits(
+          earningFee.amount0.toString(),
+          token0Decimals
+        );
+        const token1CollectedFee = ethers.utils.formatUnits(
+          earningFee.amount1.toString(),
+          token1Decimals
+        );
+
+        const remainedTokens =
+          await NonfungiblePositionManagerContract.callStatic.decreaseLiquidity(
+            {
+              tokenId: positionId,
+              liquidity,
+              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+              amount0Min: 0,
+              amount1Min: 0,
+            }
+          );
+        const token0Amount = ethers.utils.formatUnits(
+          remainedTokens.amount0.toString(),
+          token0Decimals
+        );
+        const token1Amount = ethers.utils.formatUnits(
+          remainedTokens.amount1.toString(),
+          token1Decimals
+        );
+
         positions.push({
-          id: Number(tokenOfOwnerByIndex.toString()),
+          id: positionId,
           fee,
           token0: new Token(
             connectedChainId,
@@ -135,21 +177,32 @@ export default function useGetPositionIds(): {
             token1Symbol,
             token1Name
           ),
+          token0Amount,
+          token1Amount,
+          token0CollectedFee,
+          token1CollectedFee,
+          token0MarketPrice: "1.25",
+          token1MarketPrice: "1.25",
           inRange,
         });
       }
       return positions;
     }
     return undefined;
-  }, [UNISWAP_CONTRACT, address]);
+  }, [UNISWAP_CONTRACT, address, provider]);
 
   useEffect(() => {
     const fetchPositionIds = async () => {
       const result = await callPositionIds();
       return setPositionInfo(result);
     };
-    fetchPositionIds();
+    fetchPositionIds().catch((e) => {
+      console.log("**fetchPositionIds err**");
+      // console.log(e);
+    });
   }, [blockNumber]);
+
+  console.log(positionInfo);
 
   return { positionInfo };
 }
@@ -157,9 +210,6 @@ export default function useGetPositionIds(): {
 export function usePositionInfo() {
   const { positionInfo } = useGetPositionIds();
   const pathName = usePathname();
-
-  console.log("positionInfo");
-  console.log(positionInfo);
 
   const info = useMemo(() => {
     const positionId = pathName.split("/")[pathName.split("/").length - 1];

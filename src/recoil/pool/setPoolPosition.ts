@@ -49,7 +49,7 @@ export const initialPrice = atom<string>({
 });
 
 export const currentTickSpacing = selector<number | undefined>({
-  key: "currentPriceSelector",
+  key: "currentPrice",
   get: ({ get }) => {
     const feeTier = get(poolFeeStatus);
     const tickSpacing = getTickSpacing(feeTier);

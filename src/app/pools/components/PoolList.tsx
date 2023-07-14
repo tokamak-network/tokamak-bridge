@@ -3,6 +3,7 @@ import { Wrap } from "@chakra-ui/react";
 import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
+import { useMemo } from "react";
 
 export default function PoolList() {
   const { positionInfo } = useGetPositionIds();
