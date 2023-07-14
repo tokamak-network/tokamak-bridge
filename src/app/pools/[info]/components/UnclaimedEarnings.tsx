@@ -1,7 +1,11 @@
+import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
+import commafy from "@/utils/trim/commafy";
 import { Flex, Box, Text, Button } from "@chakra-ui/react";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 
 export default function UnclaimedEarnings() {
+  const { info } = usePositionInfo();
+
   return (
     <Flex
       bgColor="#1F2128"
@@ -19,13 +23,15 @@ export default function UnclaimedEarnings() {
         <Text fontSize={"24px"} as="b" mt={"6px"}>
           $0.20
         </Text>
-        <Flex mb={"8px"} alignItems={"center"}>
-          <Text fontSize={"12px"} color="#A0A3AD">
-            0.0005669 LYDA
+        <Flex mb={"8px"} alignItems={"center"} color="#A0A3AD">
+          <Text fontSize={"12px"}>
+            {commafy(info?.token0CollectedFee, 8)} {info?.token0.symbol}
           </Text>
-          +
-          <Text fontSize={"12px"} color="#A0A3AD">
-            0.005669 ETH
+          <Text w={"10px"} mx={"2px"}>
+            +
+          </Text>
+          <Text fontSize={"12px"}>
+            {commafy(info?.token1CollectedFee, 8)} {info?.token1.symbol}
           </Text>
         </Flex>
       </Flex>

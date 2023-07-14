@@ -6,11 +6,13 @@ import RemoveIcon from "@/assets/icons/removeIcon.svg";
 import Image from "next/image";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Token } from "@uniswap/sdk-core";
+import commafy from "@/utils/trim/commafy";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 
 const TokenLiquidityData = (props: {
   token: Token;
   liquidityAmount: number | string;
-  liquidityPercent: number;
+  liquidityPercent: number | undefined;
 }) => {
   const { token, liquidityAmount, liquidityPercent } = props;
   return (
@@ -32,6 +34,7 @@ const TokenLiquidityData = (props: {
           py={"4px"}
           fontSize={"14px"}
           fontWeight={600}
+          w={"48px"}
         >
           {liquidityPercent} {"%"}
         </Text>
@@ -39,13 +42,14 @@ const TokenLiquidityData = (props: {
     </Flex>
   );
 };
-
 export default function Liquidity() {
   const { info } = usePositionInfo();
 
   if (info === undefined) {
     return null;
   }
+
+  const { inverted, ratio } = usePoolInfo();
 
   return (
     <Box
@@ -118,13 +122,15 @@ export default function Liquidity() {
         >
           <TokenLiquidityData
             token={info.token0}
-            liquidityAmount={0.001403}
-            liquidityPercent={30}
+            liquidityAmount={commafy(info.token0Amount, 6)}
+            liquidityPercent={
+              inverted ? ratio : ratio ? 100 - ratio : undefined
+            }
           />
           <TokenLiquidityData
             token={info.token1}
-            liquidityAmount={0.001403}
-            liquidityPercent={30}
+            liquidityAmount={commafy(info.token1Amount, 6)}
+            liquidityPercent={inverted && ratio ? 100 - ratio : ratio}
           />
         </Flex>
       </Flex>

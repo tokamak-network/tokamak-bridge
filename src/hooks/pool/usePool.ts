@@ -203,7 +203,11 @@ export function usePools(
   }, [pooldata?.liquidity, poolKeys, pooldata?.slot0, poolTokens]);
 }
 
-export function usePool(): [PoolState, Pool | null] {
+export function usePool(
+  token0?: Token,
+  token1?: Token,
+  fee?: FeeAmount
+): [PoolState, Pool | null] {
   const { inToken, outToken } = useInOutTokens();
   const { feeTier } = useGetFeeTier();
 
@@ -212,7 +216,9 @@ export function usePool(): [PoolState, Pool | null] {
     Currency | undefined,
     FeeAmount | undefined
   ][] = useMemo(
-    () => [[inToken?.token, outToken?.token, feeTier]],
+    () => [
+      [token0 ?? inToken?.token, token1 ?? outToken?.token, fee ?? feeTier],
+    ],
     [inToken, outToken, feeTier]
   );
 

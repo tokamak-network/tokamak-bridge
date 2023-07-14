@@ -21,6 +21,10 @@ export type PoolCardDetail = {
   token1MarketPrice: string;
   fee: FeeAmount;
   inRange: boolean;
+  liquidity: string;
+  tickLower: number;
+  tickCurrent: number;
+  tickUpper: number;
 };
 
 export default function PoolCard(props: PoolCardDetail) {

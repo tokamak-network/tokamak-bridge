@@ -2,7 +2,7 @@ import {
   GOERLI_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts/index";
-import { SupportedChainId, Token } from "@uniswap/sdk-core";
+import { Token } from "@uniswap/sdk-core";
 
 export const POOL_FACTORY_CONTRACT_ADDRESS =
   "0x1F98431c8aD98523631AE4a59f267346ea31F984";
@@ -12,7 +12,7 @@ export const QUOTER_CONTRACT_ADDRESS =
 // Currencies and Tokens
 
 export const WTON = new Token(
-  SupportedChainId.GOERLI,
+  5,
   GOERLI_CONTRACTS.WTON_ADDRESS,
   27,
   "WTON",
@@ -20,7 +20,7 @@ export const WTON = new Token(
 );
 
 export const GOERLI_TON = new Token(
-  SupportedChainId.GOERLI,
+  5,
   GOERLI_CONTRACTS.TON_ADDRESS,
   18,
   "TON",
@@ -36,7 +36,7 @@ export const DARIUS_TON = new Token(
 );
 
 export const GOERLI_TOS = new Token(
-  SupportedChainId.GOERLI,
+  5,
   GOERLI_CONTRACTS.TOS_ADDRESS,
   18,
   "TOS",
@@ -52,7 +52,7 @@ export const DARIUS_TOS = new Token(
 );
 
 export const AURA = new Token(
-  SupportedChainId.GOERLI,
+  5,
   GOERLI_CONTRACTS.AURA_ADDRESS,
   18,
   "AURA",

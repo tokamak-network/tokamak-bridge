@@ -1,0 +1,162 @@
+import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
+import { Price, Token } from "@uniswap/sdk-core";
+import { usePool } from "@/hooks/pool/usePool";
+import { useMemo, useState } from "react";
+import { Position, tickToPrice } from "@uniswap/v3-sdk";
+import { getRatio } from "@/utils/uniswap/pool/getRatio";
+import {
+  DAI,
+  USDC_MAINNET,
+  USDT,
+  WBTC,
+  WRAPPED_NATIVE_CURRENCY,
+} from "constant/uniswap/tokens";
+
+function getPriceOrderingFromPositionForUI(position?: Position): {
+  priceLower?: Price<Token, Token>;
+  priceUpper?: Price<Token, Token>;
+  quote?: Token;
+  base?: Token;
+} {
+  if (!position) {
+    return {};
+  }
+
+  const token0 = position.amount0.currency;
+  const token1 = position.amount1.currency;
+
+  // if token0 is a dollar-stable asset, set it as the quote token
+  const stables = [DAI, USDC_MAINNET, USDT];
+  if (stables.some((stable) => stable.equals(token0))) {
+    return {
+      priceLower: position.token0PriceUpper.invert(),
+      priceUpper: position.token0PriceLower.invert(),
+      quote: token0,
+      base: token1,
+    };
+  }
+
+  // if token1 is an ETH-/BTC-stable asset, set it as the base token
+  const bases = [...Object.values(WRAPPED_NATIVE_CURRENCY), WBTC];
+  if (bases.some((base) => base && base.equals(token1))) {
+    return {
+      priceLower: position.token0PriceUpper.invert(),
+      priceUpper: position.token0PriceLower.invert(),
+      quote: token0,
+      base: token1,
+    };
+  }
+
+  // if both prices are below 1, invert
+  if (position.token0PriceUpper.lessThan(1)) {
+    return {
+      priceLower: position.token0PriceUpper.invert(),
+      priceUpper: position.token0PriceLower.invert(),
+      quote: token0,
+      base: token1,
+    };
+  }
+
+  // otherwise, just return the default
+  return {
+    priceLower: position.token0PriceLower,
+    priceUpper: position.token0PriceUpper,
+    quote: token1,
+    base: token0,
+  };
+}
+
+const useInverter = ({
+  priceLower,
+  priceUpper,
+  quote,
+  base,
+  invert,
+}: {
+  priceLower?: Price<Token, Token>;
+  priceUpper?: Price<Token, Token>;
+  quote?: Token;
+  base?: Token;
+  invert?: boolean;
+}): {
+  priceLower?: Price<Token, Token>;
+  priceUpper?: Price<Token, Token>;
+  quote?: Token;
+  base?: Token;
+} => {
+  return {
+    priceUpper: invert ? priceLower?.invert() : priceUpper,
+    priceLower: invert ? priceUpper?.invert() : priceLower,
+    quote: invert ? base : quote,
+    base: invert ? quote : base,
+  };
+};
+
+export function usePoolInfo() {
+  const { info } = usePositionInfo();
+
+  if (info === undefined) {
+    return {
+      priceLower: undefined,
+      priceUpper: undefined,
+      inverted: undefined,
+      ratio: undefined,
+    };
+  }
+
+  const { token0, token1, fee, liquidity, tickLower, tickUpper, tickCurrent } =
+    info;
+  // construct Position from details returned
+  const [, pool] = usePool(token0, token1, fee);
+
+  const position = useMemo(() => {
+    if (pool) {
+      return new Position({
+        pool,
+        liquidity: liquidity.toString(),
+        tickLower,
+        tickUpper,
+      });
+    }
+    return undefined;
+  }, [liquidity, pool, tickLower, tickUpper]);
+
+  const pricesFromPosition = getPriceOrderingFromPositionForUI(position);
+  const [manuallyInverted, setManuallyInverted] = useState(false);
+
+  // handle manual inversion
+  const { priceLower, priceUpper, base } = useInverter({
+    priceLower: pricesFromPosition.priceLower,
+    priceUpper: pricesFromPosition.priceUpper,
+    quote: pricesFromPosition.quote,
+    base: pricesFromPosition.base,
+    invert: manuallyInverted,
+  });
+
+  const inverted = token1 ? base?.equals(token1) : undefined;
+
+  const ratio = useMemo(() => {
+    return priceLower && pool && priceUpper
+      ? getRatio(
+          inverted ? priceUpper.invert() : priceLower,
+          pool.token0Price,
+          inverted ? priceLower.invert() : priceUpper
+        )
+      : 0;
+  }, [inverted, pool, priceLower, priceUpper]);
+
+  const currentPrice = useMemo(() => {
+    if (token0 && token1 && tickCurrent)
+      return tickToPrice(token0, token1, tickCurrent);
+  }, [token0, token1, tickCurrent]);
+
+  return {
+    priceLower,
+    priceUpper,
+    currentPrice: inverted
+      ? currentPrice?.invert().toSignificant(4)
+      : currentPrice?.toSignificant(4),
+    inverted,
+    ratio,
+  };
+}

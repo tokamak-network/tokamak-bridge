@@ -18,6 +18,9 @@ import { GET_POSITIONS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_positions } from "@/recoil/pool/positions";
+import { getTickToPrice } from "@/utils/pool/getTickToPrice";
+import { useV3MintInfo } from "./useV3MintInfo";
+import { Bound } from "@/types/pool/pool";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -182,6 +185,10 @@ export function useGetPositions() {
           token0MarketPrice: "1.25",
           token1MarketPrice: "1.25",
           inRange,
+          liquidity: liquidity.toString(),
+          tickLower,
+          tickCurrent: tick,
+          tickUpper,
         });
       }
       return positions;
@@ -206,7 +213,6 @@ export function useGetPositions() {
 export function usePositionInfo() {
   const { positions } = useGetPositions();
   const pathName = usePathname();
-
   const info = useMemo(() => {
     const positionId = pathName.split("/")[pathName.split("/").length - 1];
     if (positionId && positions) {
@@ -217,5 +223,14 @@ export function usePositionInfo() {
     }
   }, [pathName, positions]);
 
-  return { info };
+  const tokenPairForInfo = useMemo(() => {
+    if (info) {
+      return {
+        token0Symbol: info.token0.symbol,
+        token1Symbol: info.token1.symbol,
+      };
+    }
+  }, [info]);
+
+  return { info, tokenPairForInfo };
 }
