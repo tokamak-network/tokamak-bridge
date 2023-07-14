@@ -1,24 +1,12 @@
-import {
-  Switch,
-  FormControl,
-  FormLabel,
-  Flex,
-  Box,
-  Text,
-} from "@chakra-ui/react";
+import { Flex, Box, Text } from "@chakra-ui/react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { usePool } from "@/hooks/pool/usePool";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 
 export default function ToggleSwitch() {
-  const { inToken, outToken, invertTokenPair } = useInOutTokens();
+  const { invertTokenPair } = useInOutTokens();
   const [, pool] = usePool();
   const { invertPrice } = useV3MintInfo();
-
-  // const [] = useState<boolean>()
-
-  console.log("invertPrice");
-  console.log(invertPrice);
 
   return (
     <Flex

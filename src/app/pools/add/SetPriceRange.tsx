@@ -38,7 +38,7 @@ export default function SetPriceRange() {
         bg={"transparent"}
         fontSize={14}
         fontWeight={500}
-        _hover={{}}
+        _hover={{ borderColor: "#fff" }}
         _active={{}}
         onClick={getSetFullRange}
       >

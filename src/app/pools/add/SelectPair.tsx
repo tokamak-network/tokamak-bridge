@@ -6,7 +6,6 @@ import { Box, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import TOKEN_PAIR_PLUS_ICON from "assets/icons/tokenPairPlus.svg";
 import Title from "./components/Title";
-import TokenInput from "@/components/input/TokenInput";
 import { InputContainer } from "./components/InputContainer";
 
 export default function SelectPair() {

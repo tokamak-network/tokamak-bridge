@@ -8,6 +8,7 @@ import SelectPair from "./SelectPair";
 import TopLine from "./TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
+import { WarningPool } from "./WarningPool";
 
 export default function CreatePoolModal() {
   return (
@@ -27,6 +28,7 @@ export default function CreatePoolModal() {
         <Flex flexDirection={"column"} rowGap={"20px"}>
           <InitializeInfo />
           <SetPriceRange />
+          <WarningPool />
           <ActionButton />
         </Flex>
       </Flex>
