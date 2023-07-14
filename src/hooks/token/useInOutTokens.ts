@@ -8,7 +8,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
@@ -124,6 +124,13 @@ export function useInOutTokens() {
     return inTokenHasAmount && outTokenHasAmount;
   }, [inTokenHasAmount, outTokenHasAmount]);
 
+  const invertTokenPair = useCallback(() => {
+    if (inTokenRecoilValue && outTokenRecoilValue) {
+      setInTokenRecoilValue(outTokenRecoilValue);
+      return setOutTokenRecoilValue(inTokenRecoilValue);
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
   return {
     inToken,
     outToken,
@@ -132,5 +139,6 @@ export function useInOutTokens() {
     inTokenHasAmount,
     outTokenHasAmount,
     tokensPairHasAmount,
+    invertTokenPair,
   };
 }

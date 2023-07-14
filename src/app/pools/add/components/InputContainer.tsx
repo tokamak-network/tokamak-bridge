@@ -19,7 +19,7 @@ export function InputContainer(props: { inToken: boolean }) {
 
   return (
     <Box w={"186px"}>
-      <TokenInput inToken={inToken} />
+      <TokenInput inToken={inToken} hasMaxButton={true} />
     </Box>
   );
 }

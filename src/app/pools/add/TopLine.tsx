@@ -1,9 +1,10 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import BACK_ICON from "assets/icons/back.svg";
 import SETTING_ICON from "assets/icons/setting.svg";
 import ToggleSwitch from "./components/TokenToggle";
+import Setting from "@/components/Setting";
 
 export default function TopLine() {
   return (
@@ -18,7 +19,7 @@ export default function TopLine() {
       </Flex>
       <Flex alignItems="center" columnGap={"16px"}>
         <Text
-          w={"70px"}
+          w={"50px"}
           fontSize={12}
           color="#007AFF"
           onClick={() => {}}
@@ -26,8 +27,10 @@ export default function TopLine() {
         >
           Clear all
         </Text>
-        {/* <ToggleSwitch in /> */}
-        <Image width={18} height={18} src={SETTING_ICON} alt="SETTING_ICON" />
+        <ToggleSwitch />
+        <Box w={"20px"} h={"20px"}>
+          <Setting />
+        </Box>
       </Flex>
     </Flex>
   );

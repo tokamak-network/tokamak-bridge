@@ -149,10 +149,6 @@ export function useV3MintInfo() {
   const ticks = useMemo(() => {
     // console.log("gogo");
 
-    console.log("lower");
-    console.log((invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick));
-    console.log(invertPrice, isAtMaxTick, isAtMinTick);
-
     // console.log("upper");
 
     // console.log((!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick));
