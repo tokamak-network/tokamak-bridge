@@ -16,6 +16,8 @@ import { usePathname } from "next/navigation";
 import { getApolloClientApiKey } from "@/utils/network/getApolloClientApiKey";
 import { GET_POSITIONS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { ATOM_positions } from "@/recoil/pool/positions";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -38,9 +40,7 @@ import { useQuery } from "@apollo/client";
 // }
 
 //logic through contract calls
-export default function useGetPositionIds(): {
-  positionInfo: PoolCardDetail[] | undefined;
-} {
+export function useGetPositions() {
   const { provider } = useProvier();
   const { UNISWAP_CONTRACT } = useContract();
 
@@ -48,9 +48,7 @@ export default function useGetPositionIds(): {
   const { blockNumber } = useBlockNum();
   const { layer, connectedChainId } = useConnectedNetwork();
 
-  const [positionInfo, setPositionInfo] = useState<
-    PoolCardDetail[] | undefined
-  >(undefined);
+  const [positions, setPositions] = useRecoilState(ATOM_positions);
 
   const callPositionIds = useCallback(async () => {
     if (address && connectedChainId && provider) {
@@ -194,7 +192,7 @@ export default function useGetPositionIds(): {
   useEffect(() => {
     const fetchPositionIds = async () => {
       const result = await callPositionIds();
-      return setPositionInfo(result);
+      return setPositions(result);
     };
     fetchPositionIds().catch((e) => {
       console.log("**fetchPositionIds err**");
@@ -202,24 +200,22 @@ export default function useGetPositionIds(): {
     });
   }, [blockNumber]);
 
-  console.log(positionInfo);
-
-  return { positionInfo };
+  return { positions };
 }
 
 export function usePositionInfo() {
-  const { positionInfo } = useGetPositionIds();
+  const { positions } = useGetPositions();
   const pathName = usePathname();
 
   const info = useMemo(() => {
     const positionId = pathName.split("/")[pathName.split("/").length - 1];
-    if (positionId && positionInfo) {
-      const result = positionInfo.filter(
+    if (positionId && positions) {
+      const result = positions.filter(
         (poisitonData) => poisitonData.id === Number(positionId)
       );
       return result[0] ?? undefined;
     }
-  }, [pathName, positionInfo]);
+  }, [pathName, positions]);
 
   return { info };
 }
