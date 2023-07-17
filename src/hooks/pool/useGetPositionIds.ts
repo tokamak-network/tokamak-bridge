@@ -122,7 +122,7 @@ export function useGetPositions() {
 
         const slot = await POOL_CONTRACT.slot0();
         const { tick } = slot;
-        const inRange = tickLower <= tick < tickUpper;
+        const inRange = tickLower <= tick && tick < tickUpper;
 
         const positionId = Number(tokenOfOwnerByIndex.toString());
 

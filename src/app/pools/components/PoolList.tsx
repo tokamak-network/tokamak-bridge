@@ -7,6 +7,8 @@ import PoolCard from "./PoolCard";
 export default function PoolList() {
   const { positions } = useGetPositions();
 
+  console.log(positions);
+
   return (
     <Wrap spacing="16px">
       <LPGuide />

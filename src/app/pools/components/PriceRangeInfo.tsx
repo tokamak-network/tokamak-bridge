@@ -85,8 +85,6 @@ const CurrentPriceInfo = () => {
   );
 };
 
-const SwitchButton = () => {};
-
 export function PriceRangeInfo() {
   //   const { isMinPrice } = props;
   return (
