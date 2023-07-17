@@ -34,6 +34,7 @@ import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { PoolState } from "@/types/pool/pool";
 import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
+import { usePositionInfo } from "./useGetPositionIds";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -380,46 +381,48 @@ export function usePoolContract() {
     [provider, inToken, outToken, address, UNISWAP_CONTRACT]
   );
 
-  const collectFees = useCallback(
-    async (positionId: number) => {
-      console.log("--collectFees--");
-      console.log(inToken, outToken, address);
-      if (inToken && outToken && address) {
-        const collectOptions: CollectOptions = {
-          tokenId: positionId,
-          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString()
-          ),
-          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(
-              Number(outToken.parsedAmount),
-              outToken.decimals
-            ).toString()
-          ),
-          recipient: address,
-        };
-        // get calldata for minting a position
-        const { calldata, value } =
-          NonfungiblePositionManager.collectCallParameters(collectOptions);
+  const { info } = usePositionInfo();
 
-        // build transaction
-        const transaction = {
-          data: calldata,
-          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          value: value,
-          from: address,
-        };
+  const collectFees = useCallback(async () => {
+    console.log("--collectFees--");
+    console.log(info, address);
+    if (info && address) {
+      const token0 = info.token0;
+      const token1 = info.token1;
 
-        return sendTransaction(transaction);
-      }
-    },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
-  );
+      const collectOptions: CollectOptions = {
+        tokenId: info.id,
+        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+          token0,
+          fromReadableAmount(
+            Number(info.token0CollectedFee),
+            token0.decimals
+          ).toString()
+        ),
+        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+          token1,
+          fromReadableAmount(
+            Number(info.token1CollectedFee),
+            token1.decimals
+          ).toString()
+        ),
+        recipient: address,
+      };
+      // get calldata for minting a position
+      const { calldata, value } =
+        NonfungiblePositionManager.collectCallParameters(collectOptions);
+
+      // build transaction
+      const transaction = {
+        data: calldata,
+        to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+        value: value,
+        from: address,
+      };
+
+      return sendTransaction(transaction);
+    }
+  }, [provider, address, UNISWAP_CONTRACT, info]);
 
   return { addLiquidity, removeLiquidity, collectFees };
 }

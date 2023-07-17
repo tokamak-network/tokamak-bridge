@@ -1,11 +1,13 @@
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
-import { Flex, Box, Text, Button } from "@chakra-ui/react";
+import { Flex, Box, Text, Button, useDisclosure } from "@chakra-ui/react";
+import ClaimEarningsModal from "./ClaimEarningsModal";
+import { usePoolModals } from "@/hooks/modal/usePoolModals";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 
 export default function UnclaimedEarnings() {
   const { info } = usePositionInfo();
-
+  const { onOpenClaimEarning } = usePoolModals();
   return (
     <Flex
       bgColor="#1F2128"
@@ -40,7 +42,7 @@ export default function UnclaimedEarnings() {
           bgColor={"#007AFF"}
           _hover={{ bgColor: "#007AFF" }}
           _active={{}}
-          // onClick={openModal}
+          onClick={onOpenClaimEarning}
         >
           Collect
         </Button>
