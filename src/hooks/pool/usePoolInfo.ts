@@ -2,7 +2,13 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Price, Token } from "@uniswap/sdk-core";
 import { usePool } from "@/hooks/pool/usePool";
 import { useMemo, useState } from "react";
-import { Position, tickToPrice } from "@uniswap/v3-sdk";
+import {
+  Position,
+  TICK_SPACINGS,
+  TickMath,
+  nearestUsableTick,
+  tickToPrice,
+} from "@uniswap/v3-sdk";
 import { getRatio } from "@/utils/uniswap/pool/getRatio";
 import {
   DAI,
@@ -11,6 +17,7 @@ import {
   WBTC,
   WRAPPED_NATIVE_CURRENCY,
 } from "constant/uniswap/tokens";
+import { Bound } from "@/types/pool/pool";
 
 function getPriceOrderingFromPositionForUI(position?: Position): {
   priceLower?: Price<Token, Token>;
@@ -150,6 +157,27 @@ export function usePoolInfo() {
       return tickToPrice(token0, token1, tickCurrent);
   }, [token0, token1, tickCurrent]);
 
+  // lower and upper limits in the tick space for `feeAmoun<Trans>
+  const tickSpaceLimits = useMemo(
+    () => ({
+      [Bound.LOWER]: fee
+        ? nearestUsableTick(TickMath.MIN_TICK, TICK_SPACINGS[fee])
+        : undefined,
+      [Bound.UPPER]: fee
+        ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[fee])
+        : undefined,
+    }),
+    [fee]
+  );
+
+  const ticksAtLimit = useMemo(
+    () => ({
+      [Bound.LOWER]: fee && tickLower === tickSpaceLimits.LOWER,
+      [Bound.UPPER]: fee && tickUpper === tickSpaceLimits.UPPER,
+    }),
+    [tickSpaceLimits, tickLower, tickUpper, fee]
+  );
+
   return {
     priceLower,
     priceUpper,
@@ -158,5 +186,7 @@ export function usePoolInfo() {
       : currentPrice?.toSignificant(4),
     inverted,
     ratio,
+    tickSpaceLimits,
+    ticksAtLimit,
   };
 }

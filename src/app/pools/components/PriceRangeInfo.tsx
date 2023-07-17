@@ -7,7 +7,7 @@ import Image from "next/image";
 const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
   const { tokenPairForInfo } = usePositionInfo();
-  const { priceLower, priceUpper, inverted } = usePoolInfo();
+  const { priceLower, priceUpper, inverted, ticksAtLimit } = usePoolInfo();
 
   return (
     <Flex
@@ -30,7 +30,14 @@ const PriceInfo = (props: { isMinPrice: boolean }) => {
         lineHeight={"24px"}
         verticalAlign={"center"}
       >
-        {isMinPrice
+        {isMinPrice &&
+        ((!inverted && ticksAtLimit?.LOWER) || (inverted && ticksAtLimit.UPPER))
+          ? 0
+          : !isMinPrice &&
+            ((!inverted && ticksAtLimit?.UPPER) ||
+              (inverted && ticksAtLimit.LOWER))
+          ? "∞"
+          : isMinPrice
           ? priceLower?.toSignificant(5)
           : priceUpper?.toSignificant(5)}
       </Text>
@@ -50,6 +57,7 @@ const PriceInfo = (props: { isMinPrice: boolean }) => {
 const CurrentPriceInfo = () => {
   const { tokenPairForInfo } = usePositionInfo();
   const { currentPrice, inverted } = usePoolInfo();
+
   return (
     <Flex
       w={"186px"}
