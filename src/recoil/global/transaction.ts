@@ -60,13 +60,13 @@ export const swapGasData = atom<{ estimatedGasFee: string | undefined }>({
 });
 
 type TransactionData = {
-  isLoading: boolean;
+  data: any[];
 };
 
 export const transactionData = atom<TransactionData>({
   key: "transactionData",
   default: {
-    isLoading: false,
+    data: [],
   },
 });
 

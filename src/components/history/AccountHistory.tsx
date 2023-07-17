@@ -35,7 +35,7 @@ import ActivityContainer from "./ActivityContainer";
 import BalanceContainer from "./BalanceContainer";
 import NetworkSelector from "./NetworkSelector";
 import ICON_SEARCH from "assets/icons/searchGray.svg";
-
+import useGetTransaction from "@/hooks/user/useGetTransaction";
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
@@ -50,6 +50,7 @@ export default function AccountHistory() {
   const toast = useToast();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [tab, setTab] = useState("Activity");
+
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
     chainId: 0,
     chainName: undefined,
@@ -66,6 +67,9 @@ export default function AccountHistory() {
     });
   };
 
+  const tData = useGetTransaction();
+  console.log('tData',tData);
+  
   const TopLine = () => {
     return (
       <>
