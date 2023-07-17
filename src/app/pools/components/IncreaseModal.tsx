@@ -12,7 +12,7 @@ import Range from "./Range";
 import SelectedRange from "../increase/components/SelectedRange";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import Title from "../add/components/Title";
-import ActionButton from "../add/ActionButton";
+import ActionButton from "../increase/components/ActionButton";
 import CloseButton from "@/components/button/CloseButton";
 
 export default function IncreaseModal() {
@@ -42,7 +42,7 @@ export default function IncreaseModal() {
       
         <Range style={{ background: "#0F0F12" }} page="Increase" />
         <SelectedRange  show={false}/>
-        <ActionButton actionName="Increase" page={'Increase'}/>
+        <ActionButton step='increase' />
       </ModalContent>
     </Modal>
   );

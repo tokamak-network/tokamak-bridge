@@ -102,28 +102,26 @@ export default function ActionButton() {
   }, [poolState, tokensPairHasAmount]);
 
   const { mintPosition } = usePoolMint();
-  const {
-    isOpen,
+  // const {
+  //   isOpen,
 
-    onClosePreviewModal,
-    setPreviewModalStatus,
-  } = usePreview();
+  //   onClosePreviewModal,
+  //   setPreviewModalStatus,
+  // } = usePreview();
 
-  const handleAction = () => {
-    setPreviewModalStatus(true);
-    switch (page) {
-      case "Add":
-        return setPoolModal("collectFee");
-      case "Remove":
-        return setPoolModal("removeLiquidity");
-      case "Increase":
-        return setPoolModal("increaseLiquidity");
-      default:
-        return setPoolModal("increaseLiquidity");
-    }
-
-    
-  };
+  // const handleAction = () => {
+  //   setPreviewModalStatus(true);
+  //   switch (page) {
+  //     case "Add":
+  //       return setPoolModal("collectFee");
+  //     case "Remove":
+  //       return setPoolModal("removeLiquidity");
+  //     case "Increase":
+  //       return setPoolModal("increaseLiquidity");
+  //     default:
+  //       return setPoolModal("increaseLiquidity");
+  //   }
+  // };
   return (
     <Flex flexDir={"column"} rowGap={"12px"} mt={"auto"}>
       <ApproveButtonsContrainer />

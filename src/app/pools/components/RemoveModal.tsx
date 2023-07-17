@@ -12,7 +12,7 @@ import {
   import SelectedRange from "../increase/components/SelectedRange";
   import usePreview from "@/hooks/modal/usePreviewModal";
   import Title from "../add/components/Title";
-  import ActionButton from "../add/ActionButton";
+  import ActionButton from "../remove/components/ActionButton";
   import CloseButton from "@/components/button/CloseButton";
   export default function RemoveModal() {
     const { isOpen, onClosePreviewModal,poolModal } = usePreview();
@@ -44,7 +44,7 @@ import {
           <Range style={{ background: "#0F0F12" }} page={'Increase'}/>
 
         <Text  fontSize={'12px'} color={'#A0A3AD'} width={'100%'} textAlign={'left'}>You will also collect fees earned from this position</Text>
-          <ActionButton actionName="Remove" page={'Remove'}/>
+          <ActionButton step="remove"/>
         </ModalContent>
       </Modal>
     );

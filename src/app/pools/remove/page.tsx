@@ -1,11 +1,11 @@
 "use client";
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
-import TopLine from "../components/TopLine";
+import TopLine from "../common/TopLine";
 import Range from "../components/Range";
 import useGetIncreaseLiquidity from "@/hooks/pool/useIncreaseLiquidity";
 import SelectPercentage from "./components/SelectPercentage";
-import ActionButton from "../add/ActionButton";
+import ActionButton from "./components/ActionButton";
 import IncreaseModal from "../components/IncreaseModal";
 import TxDetails from "./components/TxDetails";
 
@@ -15,7 +15,7 @@ export default function IncreaseLiquidityModal() {
 
   return (
     <Flex flexDir={"column"}  rowGap={"8px"}>
-      <TopLine title="Remove Liquidity" clear={false} />
+      <TopLine title="Remove Liquidity" clear={false} switcher={false}/>
       <Flex
         border="1px solid #20212B"
         borderRadius={"16px"}
@@ -27,7 +27,7 @@ export default function IncreaseLiquidityModal() {
        
           <SelectPercentage/>
            <TxDetails/> 
-          <ActionButton actionName={'Preview'} page={'Remove'} />
+          <ActionButton step="preview" />
         </Flex>
        
       </Flex>
