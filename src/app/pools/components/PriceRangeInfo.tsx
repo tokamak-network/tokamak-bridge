@@ -1,3 +1,4 @@
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
@@ -5,6 +6,7 @@ import { Box, Container, Flex, Text } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
+import QUESTION_ICON from "assets/icons/question.svg";
 
 const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -21,9 +23,25 @@ const PriceInfo = (props: { isMinPrice: boolean }) => {
       flexDir={"column"}
       rowGap={"8px"}
     >
-      <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
-        {isMinPrice ? "Min price" : "Max price"}
-      </Text>
+      <Flex justifyContent={"center"} alignItems={"center"} columnGap={"2px"}>
+        <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
+          {isMinPrice ? "Min price" : "Max price"}
+        </Text>
+        <Box w={"14px"} h={"14px"}>
+          <CustomTooltip
+            content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"}></Image>}
+            tooltipLabel={`Your position will be 100% ${
+              isMinPrice
+                ? inverted
+                  ? tokenPairForInfo?.token1Symbol
+                  : tokenPairForInfo?.token0Symbol
+                : inverted
+                ? tokenPairForInfo?.token0Symbol
+                : tokenPairForInfo?.token1Symbol
+            } at this price.`}
+          />
+        </Box>
+      </Flex>
       <Text
         color={"#ffffff"}
         fontSize={20}
