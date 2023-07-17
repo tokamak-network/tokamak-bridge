@@ -9,6 +9,8 @@ type TokenSymbolWithNetworkProp = {
   symbolH?: number;
   networkSymbolW?: number;
   networkSymbolH?: number;
+  bottom? :number, 
+  right?:number
 };
 
 export default function TokenSymbolWithNetwork(
@@ -21,6 +23,7 @@ export default function TokenSymbolWithNetwork(
     symbolH,
     networkSymbolW,
     networkSymbolH,
+    bottom, right
   } = props;
   return (
     <Flex position={"relative"}>
@@ -36,8 +39,8 @@ export default function TokenSymbolWithNetwork(
         // bgColor={inNetwork.nativeToken === "TON" ? "#fff" : "#383736"}
         // borderRadius={"2px"}
         // border={"2px solid #1F2128"}
-        bottom={"-2px"}
-        right={"-2px"}
+        bottom={bottom ??"-2px"}
+        right={right?? "-2px"}
       >
         <NetworkSymbol
           w={networkSymbolW ?? 14}
