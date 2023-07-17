@@ -1,0 +1,44 @@
+import { Box, Flex, Text } from "@chakra-ui/react";
+import Image from "next/image";
+import PLUS_ICON from "assets/icons/plus.svg";
+import NextLink from "next/link";
+
+export default function RemoveLiquidity( ) {
+  return (
+    <NextLink href="/pools/remove" passHref>
+      <Flex
+        flexDir="column"
+        border="1px solid #20212B"
+        w="200px"
+        h="248px"
+        paddingTop={"32px"}
+        paddingBottom={"24px"}
+        borderRadius={"16px"}
+        alignItems="center"
+        textAlign="center"
+        cursor={"pointer"}
+        _hover={{
+          border: "1px solid #007AFF",
+        }}
+      >
+        <Text fontWeight={600} marginBottom={"61px"} fontSize={"16px"}>
+          Remove Liquidity
+        </Text>
+        <Image src={PLUS_ICON} alt={"AddLiquidityIcon"} />
+        <Box
+          width="100%"
+          fontStyle="normal"
+          fontWeight={400}
+          fontSize="12px"
+          lineHeight="18px"
+          color="#A0A3AD"
+          marginTop={"40px"} // ! sizes does not match for 54px
+        >
+          Earn fees when users swap
+          <br />
+          with your provided tokens
+        </Box>
+      </Flex>
+    </NextLink>
+  );
+}

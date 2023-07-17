@@ -5,7 +5,7 @@ import InitializeInfo from "./components/InitializeInfo";
 import SelectNetwork from "./SelectNetwork";
 import SelectFeeTier from "./SelectFeeTier";
 import SelectPair from "./SelectPair";
-import TopLine from "./TopLine";
+import TopLine from "../common/TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
 import { WarningPool } from "./WarningPool";
@@ -13,7 +13,7 @@ import { WarningPool } from "./WarningPool";
 export default function CreatePoolModal() {
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
-      <TopLine />
+      <TopLine title={'Add Liquidity'} clear={true} switcher={true}/>
       <Flex
         border="1px solid #20212B"
         borderRadius={"16px"}

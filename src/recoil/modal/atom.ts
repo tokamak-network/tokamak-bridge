@@ -23,8 +23,14 @@ export const accountDrawerStatus = atom<boolean>({
 });
 
 export const poolModalStatus = atom<
-  "colectFee" | "increaseLiquidity" | "removeLiquidity" | null
+  "collectFee" | "increaseLiquidity" | "removeLiquidity" | null
 >({
   key: "poolModalStatus",
   default: null,
 });
+
+
+export const previewModalStatus = atom<boolean>({
+  key: "previewModalStatus",
+  default: false,
+})
