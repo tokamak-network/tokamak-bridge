@@ -1,8 +1,10 @@
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
 import { Box, Container, Flex, Text } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import Image from "next/image";
+import { useRecoilState } from "recoil";
 
 const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -95,11 +97,22 @@ const CurrentPriceInfo = () => {
 
 export function PriceRangeInfo() {
   //   const { isMinPrice } = props;
+
+  const [manuallyInverted, setManuallyInverted] = useRecoilState(
+    ATOM_manuallyInverted
+  );
+
   return (
     <Flex flexDir={"column"}>
       <Flex columnGap={"12px"} pos={"relative"}>
         <PriceInfo isMinPrice={true} />
-        <Box pos={"absolute"} left={"176px"} top={"32px"} cursor={"pointer"}>
+        <Box
+          pos={"absolute"}
+          left={"176px"}
+          top={"32px"}
+          cursor={"pointer"}
+          onClick={() => setManuallyInverted(!manuallyInverted)}
+        >
           <Image src={SWITCHBUTTON_IMAGE} alt={"SWITCHBUTTON_IMAGE"} />
         </Box>
         <PriceInfo isMinPrice={false} />

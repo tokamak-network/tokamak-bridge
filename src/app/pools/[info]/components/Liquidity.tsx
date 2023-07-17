@@ -121,15 +121,21 @@ export default function Liquidity() {
           rowGap={"12px"}
         >
           <TokenLiquidityData
-            token={info.token0}
-            liquidityAmount={commafy(info.token0Amount, 6)}
+            token={inverted ? info.token1 : info.token0}
+            liquidityAmount={commafy(
+              inverted ? info.token1Amount : info.token0Amount,
+              6
+            )}
             liquidityPercent={
               inverted ? ratio : ratio ? 100 - ratio : undefined
             }
           />
           <TokenLiquidityData
-            token={info.token1}
-            liquidityAmount={commafy(info.token1Amount, 6)}
+            token={inverted ? info.token0 : info.token1}
+            liquidityAmount={commafy(
+              inverted ? info.token0Amount : info.token1Amount,
+              6
+            )}
             liquidityPercent={inverted && ratio ? 100 - ratio : ratio}
           />
         </Flex>
