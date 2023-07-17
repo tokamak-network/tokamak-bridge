@@ -18,6 +18,8 @@ import {
   WRAPPED_NATIVE_CURRENCY,
 } from "constant/uniswap/tokens";
 import { Bound } from "@/types/pool/pool";
+import { useRecoilValue } from "recoil";
+import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
 
 function getPriceOrderingFromPositionForUI(position?: Position): {
   priceLower?: Price<Token, Token>;
@@ -129,7 +131,7 @@ export function usePoolInfo() {
   }, [liquidity, pool, tickLower, tickUpper]);
 
   const pricesFromPosition = getPriceOrderingFromPositionForUI(position);
-  const [manuallyInverted, setManuallyInverted] = useState(false);
+  const manuallyInverted = useRecoilValue(ATOM_manuallyInverted);
 
   // handle manual inversion
   const { priceLower, priceUpper, base } = useInverter({

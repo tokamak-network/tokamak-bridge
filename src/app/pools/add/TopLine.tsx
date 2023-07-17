@@ -2,7 +2,6 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
 import BACK_ICON from "assets/icons/back.svg";
-import SETTING_ICON from "assets/icons/setting.svg";
 import ToggleSwitch from "./components/TokenToggle";
 import Setting from "@/components/Setting";
 
