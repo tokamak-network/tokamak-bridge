@@ -1,18 +1,15 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { RangeText } from "../../components/ui";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
+import TokenSymbolPair from "../../components/TokenSymbolPair";
 
 export default function InfoTitle() {
   const { info } = usePositionInfo();
 
+  if (!info) return null;
   return (
-    <Flex justifyContent={"space-between"}>
+    <Flex justifyContent={"space-between"} w={"100%"}>
       <Flex alignItems={"center"}>
-        {/* <TokenSymbolPair
-              token0={info.token0}
-              token1={info.token1}
-              symbolSize={32}
-            /> */}
         <Text fontWeight="bold" fontSize="23px">
           {info?.token0.symbol} / {info?.token1.symbol}
         </Text>

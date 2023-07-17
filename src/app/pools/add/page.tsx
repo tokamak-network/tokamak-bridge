@@ -8,14 +8,9 @@ import SelectPair from "./SelectPair";
 import TopLine from "../components/TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
-import { usePoolData } from "@/hooks/pool/usePoolData";
+import { WarningPool } from "./WarningPool";
 
 export default function CreatePoolModal() {
-  const { poolData } = usePoolData();
-  console.log("**poolData");
-
-  console.log(poolData);
-
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
       <TopLine title={'Add Liquidity'} clear={true}/>
@@ -30,10 +25,11 @@ export default function CreatePoolModal() {
           <SelectFeeTier />
           <SelectPair />
         </Flex>
-        <Flex flexDirection={"column"}>
+        <Flex flexDirection={"column"} rowGap={"20px"}>
+          <InitializeInfo />
           <SetPriceRange />
-          {/* <InitializeInfo /> */}
-          <ActionButton actionName="Preview" page='Add'/>
+          <WarningPool />
+          <ActionButton />
         </Flex>
       </Flex>
       {/* <Modals /> */}

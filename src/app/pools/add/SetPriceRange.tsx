@@ -1,26 +1,30 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 import Title from "./components/Title";
-import PriceInput from "./components/RangeInput";
 import RangeInput from "./components/RangeInput";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { usePoolPrice, usePriceTickConversion } from "@/hooks/pool/usePoolData";
+// import { usePoolPrice } from "@/hooks/pool/usePoolData";
 import commafy from "@/utils/trim/commafy";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
+import { usePool } from "@/hooks/pool/usePool";
+import { PoolState } from "@/types/pool/pool";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
-  const { tokenPrice } = usePoolPrice();
-  const { currentPrice } = usePriceTickConversion();
+  const price = usePriceTickConversion();
+  const { getSetFullRange } = useRangeHopCallbacks();
+  const [poolStatus, pool] = usePool();
 
-  console.log("**currentPrice");
-  console.log(currentPrice);
-
+  // ∞
   return (
     <Flex flexDir={"column"} rowGap={"15px"}>
       <Title title="Set Price Range" />
-      <Text textAlign={"center"}>
-        Current Price : {commafy(tokenPrice?.token0Price, 4)}{" "}
-        {inToken?.tokenSymbol} per {outToken?.tokenSymbol}
-      </Text>
+      {poolStatus !== PoolState.NOT_EXISTS && (
+        <Text textAlign={"center"}>
+          Current Price : {commafy(price?.currentPrice, 4)}{" "}
+          {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
+        </Text>
+      )}
       <Flex columnGap={"12px"}>
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />
@@ -34,8 +38,9 @@ export default function SetPriceRange() {
         bg={"transparent"}
         fontSize={14}
         fontWeight={500}
-        _hover={{}}
+        _hover={{ borderColor: "#fff" }}
         _active={{}}
+        onClick={getSetFullRange}
       >
         Full Range
       </Button>

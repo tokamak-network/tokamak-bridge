@@ -7,14 +7,19 @@ import UnclaimedEarnings from "./components/UnclaimedEarnings";
 import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
+import ClaimEarningsModal from "./components/ClaimEarningsModal";
+import { useEffect } from "react";
+// import { useRecoilState } from "recoil";
+// import { selectedInTokenStatus, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
 
 export default function Page() {
   const { info } = usePositionInfo();
+  // const [setSelectedInToken] = useRecoilState(selectedInTokenStatus)
+  // const [setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   if (info === undefined) {
     return <>{`position id not founded with this account :(`}</>;
   }
-
   return (
     <Flex w={"424px"} flexDir="column">
       <InfoHeader />
@@ -32,11 +37,7 @@ export default function Page() {
         <UnclaimedEarnings />
         <PriceRange />
       </Flex>
-
-      {/* <ClaimEarningsModal
-        isOpen={isClaimModalOpen}
-        onClose={() => setIsClaimModalOpen(false)}
-      /> */}
+      <ClaimEarningsModal />
     </Flex>
   );
 }

@@ -1,6 +1,7 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutNetwork } from "@/hooks/network";
+import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -11,6 +12,7 @@ import {
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
+import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -38,6 +40,8 @@ export default function TokenInput(props: {
   } = useInOutTokens();
   const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
 
   const tokenAddress = useMemo(() => {
     if (inToken && selectedInToken && inNetwork) {
@@ -88,6 +92,7 @@ export default function TokenInput(props: {
         value,
         selectedOutToken.decimals
       );
+
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -134,7 +139,7 @@ export default function TokenInput(props: {
       // }
       return console.error("a input field not founded");
     }
-  }, [tokenData, inToken, selectedInToken, selectedOutToken]);
+  }, [tokenData, inToken, selectedInToken]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -142,6 +147,41 @@ export default function TokenInput(props: {
 
   const handleBlur = () => {
     setIsFocused(false);
+    //for pool's price and amount on liquidity
+    if (mode === "Pool" && inToken && selectedOutToken && amountForToken1) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken1.toString().replaceAll("-", ""),
+        selectedOutToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedOutToken.decimals
+      );
+
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
+    if (mode === "Pool" && !inToken && selectedInToken && amountForToken0) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken0.toString().replaceAll("-", ""),
+        selectedInToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedInToken.decimals
+      );
+
+      return setSelectedInToken({
+        ...selectedInToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
   };
 
   const valueProp = useMemo(() => {
@@ -151,14 +191,26 @@ export default function TokenInput(props: {
     ) {
       return inTokenFromHook.parsedAmount;
     }
-    return inToken === false
+    return mode === "Swap" && inToken === false
       ? trimAmount(amountOut, 11) ?? ""
-      : selectedInToken && selectedInToken?.parsedAmount !== null
+      : inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 11)
+      : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 11)
       : "";
-  }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook, isFocused]);
+  }, [
+    inToken,
+    amountOut,
+    selectedInToken,
+    selectedOutToken,
+    mode,
+    inTokenFromHook,
+    isFocused,
+  ]);
 
   useEffect(() => {
     if (!inToken && selectedOutToken && amountOut) {

@@ -1,4 +1,6 @@
 import {
+  inTokenSelector,
+  outTokenSelector,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
@@ -6,7 +8,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
@@ -22,6 +24,7 @@ export function useInOutTokens() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
+
   const { connectedChainId, chainName, layer, isConnectedToMainNetwork } =
     useConnectedNetwork();
   const { provider } = useProvier();
@@ -114,10 +117,28 @@ export function useInOutTokens() {
     });
   }, [connectedChainId, provider, inToken?.tokenAddress]);
 
+  const { inTokenHasAmount } = useRecoilValue(inTokenSelector);
+  const { outTokenHasAmount } = useRecoilValue(outTokenSelector);
+
+  const tokensPairHasAmount = useMemo(() => {
+    return inTokenHasAmount && outTokenHasAmount;
+  }, [inTokenHasAmount, outTokenHasAmount]);
+
+  const invertTokenPair = useCallback(() => {
+    if (inTokenRecoilValue && outTokenRecoilValue) {
+      setInTokenRecoilValue(outTokenRecoilValue);
+      return setOutTokenRecoilValue(inTokenRecoilValue);
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
   return {
     inToken,
     outToken,
     inTokenInfo: inTokenRecoilValue,
     outTokenInfo: outTokenRecoilValue,
+    inTokenHasAmount,
+    outTokenHasAmount,
+    tokensPairHasAmount,
+    invertTokenPair,
   };
 }
