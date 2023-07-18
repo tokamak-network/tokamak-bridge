@@ -7,6 +7,8 @@ import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
 import QUESTION_ICON from "assets/icons/question.svg";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useCallback } from "react";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -119,6 +121,7 @@ export function PriceRangeInfo() {
   const [manuallyInverted, setManuallyInverted] = useRecoilState(
     ATOM_manuallyInverted
   );
+  const { invertTokenPair, inToken } = useInOutTokens();
 
   return (
     <Flex flexDir={"column"}>
@@ -129,7 +132,10 @@ export function PriceRangeInfo() {
           left={"45.5%"}
           top={"32px"}
           cursor={"pointer"}
-          onClick={() => setManuallyInverted(!manuallyInverted)}
+          onClick={() => {
+            invertTokenPair();
+            setManuallyInverted(!manuallyInverted);
+          }}
         >
           <Image src={SWITCHBUTTON_IMAGE} alt={"SWITCHBUTTON_IMAGE"} />
         </Box>

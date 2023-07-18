@@ -4,7 +4,10 @@ import TokenSymbolPair from "../increase/components/TokenSymbolPair";
 import RangeToken from "../increase/components/RangeToken";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
-import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
+import {
+  useIncreaseLiquidity,
+  useRemoveLiquidity,
+} from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 
@@ -42,6 +45,9 @@ export default function Range(props: {
 
   const { token0, token1, inRange, token0Amount, token1Amount, fee } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
+  const { parsedAmountForToken0, parsedAmountForToken1 } =
+    useIncreaseLiquidity();
+
   const { inverted, ratio } = usePoolInfo();
 
   return (
@@ -78,13 +84,25 @@ export default function Range(props: {
         amount={commafy(inverted ? token1Amount : token0Amount, 6)}
         style={{ marginBottom: "9px", marginTop: "14px" }}
         page={page}
-        alterAmount={amount0Removed ? commafy(amount0Removed, 6) : ""}
+        alterAmount={
+          page === "Increase"
+            ? parsedAmountForToken0
+            : amount0Removed
+            ? commafy(amount0Removed, 6)
+            : ""
+        }
       />
       <RangeToken
         token={inverted ? token0 : token1}
         amount={commafy(inverted ? token0Amount : token1Amount, 6)}
         page={page}
-        alterAmount={amount1Removed ? commafy(amount1Removed, 6) : ""}
+        alterAmount={
+          page === "Increase"
+            ? parsedAmountForToken1
+            : amount1Removed
+            ? commafy(amount1Removed, 6)
+            : ""
+        }
       />
       <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
         <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>

@@ -12,10 +12,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
-import {
-  TOKAMAK_CONTRACTS,
-  TOKAMAK_GOERLI_CONTRACTS,
-} from "@/constant/contracts";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
