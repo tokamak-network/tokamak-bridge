@@ -12,6 +12,7 @@ export default function RangeToken(props: {
   alterAmount: string | undefined;
 }) {
   const { token, amount, style, page, alterAmount } = props;
+
   return (
     <Flex width={"100%"} justifyContent={"space-between"} {...props.style}>
       <Flex>

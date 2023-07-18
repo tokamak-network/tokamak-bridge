@@ -6,7 +6,7 @@ export function usePoolModals() {
   const [poolModal, setPoolModal] = useRecoilState(poolModalStatus);
 
   const onOpenClaimEarning = useCallback(() => {
-    setPoolModal("colectFee");
+    setPoolModal("collectFee");
   }, [setPoolModal]);
 
   const onClose = useCallback(() => {

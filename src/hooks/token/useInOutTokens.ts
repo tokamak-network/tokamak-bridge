@@ -127,6 +127,11 @@ export function useInOutTokens() {
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
+  const initializeTokenPair = useCallback(() => {
+    setInTokenRecoilValue(null);
+    return setOutTokenRecoilValue(null);
+  }, [setInTokenRecoilValue, setOutTokenRecoilValue]);
+
   return {
     inToken,
     outToken,
@@ -136,5 +141,6 @@ export function useInOutTokens() {
     outTokenHasAmount,
     tokensPairHasAmount,
     invertTokenPair,
+    initializeTokenPair,
   };
 }

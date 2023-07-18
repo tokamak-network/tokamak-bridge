@@ -3,8 +3,7 @@ import { Wrap } from "@chakra-ui/react";
 import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
-import IncreaseLiquidity from "./IncreaseLiquidity";
-import RemoveLiquidity from "./RemoveLiquidity";
+import EmptyCard from "./EmptyCard";
 export default function PoolList() {
   const { positions } = useGetPositions();
 
@@ -12,11 +11,12 @@ export default function PoolList() {
     <Wrap spacing="16px">
       <LPGuide />
       <AddLiquidity />
-      <IncreaseLiquidity />
-      <RemoveLiquidity />
-      {positions?.map((position) => {
+      {Array.from({ length: 7 }, (_, index) => (
+        <EmptyCard key={index} />
+      ))}
+      {/* {positions?.map((position) => {
         return <PoolCard {...position} />;
-      })}
+      })} */}
     </Wrap>
   );
 }

@@ -48,7 +48,13 @@ export function useIncreaseLiquidity() {
   );
 
   return {
-    parsedAmountForToken0: commafy(parsedAmountForToken0.toString(), 6),
-    parsedAmountForToken1: commafy(parsedAmountForToken1.toString(), 6),
+    parsedAmountForToken0: commafy(
+      parsedAmountForToken0.toString().replaceAll("-", ""),
+      6
+    ),
+    parsedAmountForToken1: commafy(
+      parsedAmountForToken1.toString().replaceAll("-", ""),
+      6
+    ),
   };
 }

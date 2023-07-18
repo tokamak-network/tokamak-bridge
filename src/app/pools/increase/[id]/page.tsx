@@ -7,11 +7,19 @@ import AddMoreLiquidity from "../components/AddMoreLiquidity";
 import ActionButton from "../components/ActionButton";
 import IncreaseModal from "../../components/IncreaseModal";
 import PriceRange from "../../[info]/components/PriceRange";
+import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
 
 export default function IncreaseLiquidity() {
+  const { positionId } = useGetPositionIdFromPath();
+
   return (
     <Flex flexDir={"column"} w={"852px"} rowGap={"8px"}>
-      <TopLine title="Increase Liquidity" clear={false} switcher={false} />
+      <TopLine
+        title="Increase Liquidity"
+        clear={false}
+        switcher={false}
+        backwardLink={`/pools/${positionId}`}
+      />
       <Flex
         border="1px solid #20212B"
         borderRadius={"16px"}
