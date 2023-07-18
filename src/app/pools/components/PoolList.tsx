@@ -11,12 +11,11 @@ export default function PoolList() {
     <Wrap spacing="16px">
       <LPGuide />
       <AddLiquidity />
-      {Array.from({ length: 7 }, (_, index) => (
-        <EmptyCard key={index} />
-      ))}
-      {/* {positions?.map((position) => {
+      {positions === undefined &&
+        Array.from({ length: 7 }, (_, index) => <EmptyCard key={index} />)}
+      {positions?.map((position) => {
         return <PoolCard {...position} />;
-      })} */}
+      })}
     </Wrap>
   );
 }
