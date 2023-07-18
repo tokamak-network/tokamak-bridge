@@ -1,14 +1,15 @@
 "use client";
 
 import { Flex, Text, Box } from "@chakra-ui/layout";
-import TopLine from "../common/TopLine";
-import Range from "../components/Range";
+import TopLine from "../../common/TopLine";
+import Range from "../../components/Range";
 import useGetIncreaseLiquidity from "@/hooks/pool/useIncreaseLiquidity";
-import SelectedRange from "./components/SelectedRange";
-import AddMoreLiquidity from "./components/AddMoreLiquidity";
-import ActionButton from "./components/ActionButton";
-import IncreaseModal from "../components/IncreaseModal";
-export default function IncreaseLiquidityModal() {
+import SelectedRange from "../components/SelectedRange";
+import AddMoreLiquidity from "../components/AddMoreLiquidity";
+import ActionButton from "../components/ActionButton";
+import IncreaseModal from "../../components/IncreaseModal";
+
+export default function IncreaseLiquidity() {
   const { liquidityInfo } = useGetIncreaseLiquidity();
 
   return (
@@ -21,15 +22,15 @@ export default function IncreaseLiquidityModal() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"}>
-          <Range page="Increase"/>
-          <SelectedRange show={true}/>
+          <Range page="Increase" />
+          <SelectedRange show={true} />
         </Flex>
         <Flex flexDirection={"column"}>
-       <AddMoreLiquidity/>
-       <ActionButton step="preview"/>
+          <AddMoreLiquidity />
+          <ActionButton step="preview" />
         </Flex>
       </Flex>
-      <IncreaseModal/>
+      <IncreaseModal />
       {/* <Modals /> */}
     </Flex>
   );

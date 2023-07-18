@@ -1,0 +1,30 @@
+import { useRecoilValue } from "recoil";
+import { usePositionInfo } from "./useGetPositionIds";
+import { removeAmount } from "@/recoil/pool/setPoolPosition";
+import { useMemo } from "react";
+
+export function useRemoveLiquidity() {
+  const { info } = usePositionInfo();
+
+  if (!info)
+    return {
+      amount0Removed: undefined,
+      amount1Removed: undefined,
+    };
+  const { token0Amount, token1Amount } = info;
+  const removePercent = useRecoilValue(removeAmount);
+
+  const amount0Removed = useMemo(() => {
+    if (token0Amount && removePercent) {
+      return Number(token0Amount) * (removePercent / 100);
+    }
+  }, [token0Amount, removePercent]);
+
+  const amount1Removed = useMemo(() => {
+    if (token1Amount && removePercent) {
+      return Number(token1Amount) * (removePercent / 100);
+    }
+  }, [token1Amount, removePercent]);
+
+  return { amount0Removed, amount1Removed };
+}

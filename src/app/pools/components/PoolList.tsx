@@ -8,14 +8,12 @@ import RemoveLiquidity from "./RemoveLiquidity";
 export default function PoolList() {
   const { positions } = useGetPositions();
 
-  console.log(positions);
-
   return (
     <Wrap spacing="16px">
       <LPGuide />
       <AddLiquidity />
-      <IncreaseLiquidity/>
-      <RemoveLiquidity/>
+      <IncreaseLiquidity />
+      <RemoveLiquidity />
       {positions?.map((position) => {
         return <PoolCard {...position} />;
       })}

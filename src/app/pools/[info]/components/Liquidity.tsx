@@ -64,7 +64,11 @@ export default function Liquidity() {
         <Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
             <Text color="#A0A3AD">Remove</Text>
-            <Link href="/remove">
+            <Link
+              href={{ pathname: `/pools/remove/[id]` }}
+              as={`/pools/remove/${info.id}`}
+              key={info.id}
+            >
               <Flex
                 w={"32px"}
                 h={"32px"}
@@ -95,7 +99,11 @@ export default function Liquidity() {
           </Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
             <Text color="#A0A3AD">Increase</Text>
-            <Link href="/increase">
+            <Link
+              href={`/pools/increase/[id]`}
+              as={`/pools/increase/${info.id}/`}
+              key={info.id}
+            >
               <Flex
                 w={"32px"}
                 h={"32px"}

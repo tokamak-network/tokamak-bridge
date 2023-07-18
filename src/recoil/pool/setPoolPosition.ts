@@ -18,11 +18,10 @@ export const poolFeeStatus = atom<FeeAmount | undefined>({
   default: undefined,
 });
 
-
-export const removeAmount = atom<number> ({
-  key: 'feeAmount',
-  default: 0
-})
+export const removeAmount = atom<number>({
+  key: "feeAmount",
+  default: 0,
+});
 export const currentTick = atom<number | undefined>({
   key: "currentTick",
   default: undefined,

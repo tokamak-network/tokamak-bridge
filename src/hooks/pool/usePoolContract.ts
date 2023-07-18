@@ -275,6 +275,8 @@ export function usePoolContract() {
     []
   );
 
+  const { info } = usePositionInfo();
+
   const addLiquidity = useCallback(
     async (positionId: number) => {
       if (inToken && outToken && address) {
@@ -323,30 +325,31 @@ export function usePoolContract() {
   const removeLiquidity = useCallback(
     async (positionId: number, removeLiquidityPercentage: number) => {
       console.log("--removeLiquidity--");
-      console.log(inToken, outToken, address);
-      if (inToken && outToken && address) {
+      console.log(info, address);
+
+      if (info && address) {
+        const token0 = info.token0;
+        const token1 = info.token1;
+
         const currentPosition = await constructPosition(
           CurrencyAmount.fromRawAmount(
-            inToken.token,
+            token0,
             fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
+              Number(info.token0Amount),
+              token0.decimals
             ).toString()
           ),
           CurrencyAmount.fromRawAmount(
-            outToken.token,
+            token1,
             fromReadableAmount(
-              Number(outToken.parsedAmount),
-              outToken.decimals
+              Number(info.token0Amount),
+              token1.decimals
             ).toString()
           )
         );
         const collectOptions: Omit<CollectOptions, "tokenId"> = {
-          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(inToken.token, 0),
-          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-            outToken.token,
-            0
-          ),
+          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(token0, 0),
+          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(token1, 0),
           recipient: address,
         };
 
@@ -378,10 +381,8 @@ export function usePoolContract() {
         }
       }
     },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
+    [provider, info, address, UNISWAP_CONTRACT]
   );
-
-  const { info } = usePositionInfo();
 
   const collectFees = useCallback(async () => {
     console.log("--collectFees--");
