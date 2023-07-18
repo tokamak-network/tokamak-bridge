@@ -278,50 +278,76 @@ export function usePoolContract() {
 
   const { info } = usePositionInfo();
 
-  const addLiquidity = useCallback(
-    async (positionId: number) => {
-      if (inToken && outToken && address) {
-        const positionToIncreaseBy = await constructPosition(
-          CurrencyAmount.fromRawAmount(
-            inToken.token,
-            fromReadableAmount(
-              Number(inToken.parsedAmount),
-              inToken.decimals
-            ).toString()
-          ),
-          CurrencyAmount.fromRawAmount(
-            outToken.token,
-            fromReadableAmount(
-              Number(outToken.parsedAmount),
-              outToken.decimals
-            ).toString()
-          )
-        );
-        const addLiquidityOptions: AddLiquidityOptions = {
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
-          tokenId: positionId,
-        };
-        if (positionToIncreaseBy) {
-          const { calldata, value } =
-            NonfungiblePositionManager.addCallParameters(
-              positionToIncreaseBy,
-              addLiquidityOptions
-            );
+  const addLiquidity = useCallback(async () => {
+    if (inToken && outToken && address && info) {
+      const {
+        token0,
+        token1,
+        rawPositionInfo,
+        tickCurrent,
+        tickLower,
+        tickUpper,
+        sqrtPriceX96,
+        id,
+      } = info;
+      const { fee, liquidity } = rawPositionInfo;
 
-          // build transaction
-          const transaction = {
-            data: calldata,
-            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-            value: value,
-            from: address,
-          };
-          return sendTransaction(transaction);
-        }
+      const token0Amount = CurrencyAmount.fromRawAmount(
+        token0,
+        fromReadableAmount(
+          Number(inToken.parsedAmount),
+          inToken.decimals
+        ).toString()
+      );
+      const token1Amount = CurrencyAmount.fromRawAmount(
+        token0,
+        fromReadableAmount(
+          Number(outToken.parsedAmount),
+          outToken.decimals
+        ).toString()
+      );
+
+      const configuredPool = new Pool(
+        token0,
+        token1,
+        fee,
+        sqrtPriceX96,
+        liquidity.toString(),
+        tickCurrent
+      );
+
+      const positionToIncreaseBy = Position.fromAmounts({
+        pool: configuredPool,
+        tickLower,
+        tickUpper,
+        amount0: token0Amount.quotient,
+        amount1: token1Amount.quotient,
+        useFullPrecision: true,
+      });
+
+      const addLiquidityOptions: AddLiquidityOptions = {
+        deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+        slippageTolerance: new Percent(50, 10_000),
+        tokenId: id,
+      };
+      if (positionToIncreaseBy) {
+        const { calldata, value } =
+          NonfungiblePositionManager.addCallParameters(
+            positionToIncreaseBy,
+            addLiquidityOptions
+          );
+
+        // build transaction
+        const transaction = {
+          data: calldata,
+          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          value: value,
+          from: address,
+        };
+        return sendTransaction(transaction);
       }
-    },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
-  );
+    }
+  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
 
   const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);
 

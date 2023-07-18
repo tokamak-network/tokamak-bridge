@@ -4,6 +4,7 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetPool, useV3MintInfo } from "./useV3MintInfo";
 import { useMemo } from "react";
 import JSBI from "jsbi";
+import { usePositionInfo } from "./useGetPositionIds";
 
 const FixedPoint96Q96 = ethers.BigNumber.from("0x1000000000000000000000000");
 
@@ -49,14 +50,20 @@ function getLiquidityForAmount0(
   return JSBI.divide(param2, param3);
 }
 
-export function useGetAmountForLiquidity() {
-  const { pool } = useGetPool();
-  const { inToken, outToken } = useInOutTokens();
+export function useGetAmountForLiquidity(isOnIncreaeLiquidity?: boolean) {
+  const { pool: getPool } = useGetPool();
+  const { info: positionPool } = usePositionInfo();
+  const pool = isOnIncreaeLiquidity ? positionPool : getPool;
 
+  const { inToken, outToken } = useInOutTokens();
   const { ticks, invertPrice } = useV3MintInfo();
 
-  const lowerTick = ticks.LOWER;
-  const upperTick = ticks.UPPER;
+  const lowerTick = isOnIncreaeLiquidity
+    ? positionPool?.tickLower
+    : ticks.LOWER;
+  const upperTick = isOnIncreaeLiquidity
+    ? positionPool?.tickUpper
+    : ticks.UPPER;
   const currentTick = pool?.tickCurrent;
 
   const token0Address = pool?.token0.address;

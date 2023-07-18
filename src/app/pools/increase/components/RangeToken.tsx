@@ -8,7 +8,7 @@ export default function RangeToken(props: {
   token: Token;
   amount: string;
   style?: {};
-  page: string;
+  page: "Increase" | "Remove";
   alterAmount: string | undefined;
 }) {
   const { token, amount, style, page, alterAmount } = props;

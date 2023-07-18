@@ -279,5 +279,5 @@ export function useGetPool() {
   const { noLiquidity, poolForPosition } = useV3MintInfo();
   const [, pool] = usePool();
 
-  return { pool: noLiquidity ? poolForPosition : poolForPosition };
+  return { pool: noLiquidity ? poolForPosition : pool };
 }

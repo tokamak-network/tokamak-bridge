@@ -8,7 +8,7 @@ import Image from "next/image";
 import { useRecoilState } from "recoil";
 import QUESTION_ICON from "assets/icons/question.svg";
 
-const PriceInfo = (props: { isMinPrice: boolean }) => {
+export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
   const { tokenPairForInfo } = usePositionInfo();
   const { priceLower, priceUpper, inverted, ticksAtLimit } = usePoolInfo();
@@ -74,7 +74,7 @@ const PriceInfo = (props: { isMinPrice: boolean }) => {
   );
 };
 
-const CurrentPriceInfo = () => {
+export const CurrentPriceInfo = () => {
   const { tokenPairForInfo } = usePositionInfo();
   const { currentPrice, inverted } = usePoolInfo();
 
@@ -126,7 +126,7 @@ export function PriceRangeInfo() {
         <PriceInfo isMinPrice={true} />
         <Box
           pos={"absolute"}
-          left={"176px"}
+          left={"45.5%"}
           top={"32px"}
           cursor={"pointer"}
           onClick={() => setManuallyInverted(!manuallyInverted)}

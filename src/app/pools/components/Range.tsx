@@ -6,8 +6,34 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 
-export default function Range(props: { page: string; style?: {} }) {
+const TokenPairTitle = () => {
+  const { inverted } = usePoolInfo();
+  const { info } = usePositionInfo();
+
+  if (!info) return null;
+  const { token0, token1, inRange, token0Amount, token1Amount, fee } = info;
+
+  if (inverted) {
+    return (
+      <Text fontWeight="bold" fontSize="23px">
+        {token1.symbol} / {token0.symbol}
+      </Text>
+    );
+  }
+
+  return (
+    <Text fontWeight="bold" fontSize="23px">
+      {token0.symbol} / {token1.symbol}
+    </Text>
+  );
+};
+
+export default function Range(props: {
+  page: "Increase" | "Remove";
+  style?: {};
+}) {
   const { page, style } = props;
 
   const { info } = usePositionInfo();
@@ -16,6 +42,7 @@ export default function Range(props: { page: string; style?: {} }) {
 
   const { token0, token1, inRange, token0Amount, token1Amount, fee } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
+  const { inverted, ratio } = usePoolInfo();
 
   return (
     <Flex
@@ -29,9 +56,7 @@ export default function Range(props: { page: string; style?: {} }) {
     >
       <Flex justifyContent={"space-between"} w="100%" h="36px">
         <Flex alignItems={"center"}>
-          <Text fontWeight="bold" fontSize="23px">
-            {token0.symbol} / {token1.symbol}
-          </Text>
+          <TokenPairTitle />
           <Flex bgColor={"#1F2128"} borderRadius={8} p={1} ml={2}>
             <Text fontSize={"12px"} as="b">
               {convertFeeToPercent(fee)}
@@ -49,19 +74,19 @@ export default function Range(props: { page: string; style?: {} }) {
         />
       </Flex>
       <RangeToken
-        token={token0}
-        amount={commafy(token0Amount, 6)}
+        token={inverted ? token1 : token0}
+        amount={commafy(inverted ? token1Amount : token0Amount, 6)}
         style={{ marginBottom: "9px", marginTop: "14px" }}
         page={page}
         alterAmount={amount0Removed ? commafy(amount0Removed, 6) : ""}
       />
       <RangeToken
-        token={token1}
-        amount={commafy(token1Amount, 6)}
+        token={inverted ? token0 : token1}
+        amount={commafy(inverted ? token0Amount : token1Amount, 6)}
         page={page}
         alterAmount={amount1Removed ? commafy(amount1Removed, 6) : ""}
       />
-      <Flex flexDir={"column"} mt="10px">
+      <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
         <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
         <Flex mt="8px" justifyContent={"space-between"}>
           <Text fontSize={"14px"}>Estimated gas fees</Text>
