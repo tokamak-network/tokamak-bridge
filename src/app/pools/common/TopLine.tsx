@@ -6,29 +6,36 @@ import SETTING_ICON from "assets/icons/setting.svg";
 import ToggleSwitch from "../add/components/TokenToggle";
 import Setting from "@/components/Setting";
 
-export default function TopLine(props: {title:string, clear: boolean, switcher: boolean}) {
-  const {title, clear, switcher} = props;
+export default function TopLine(props: {
+  title: string;
+  clear: boolean;
+  switcher: boolean;
+  backwardLink?: string;
+}) {
+  const { title, clear, switcher, backwardLink } = props;
   return (
     <Flex alignItems={"center"} justifyContent="space-between">
       <Flex w="100%" alignItems={"center"} columnGap={"12px"}>
-        <Link href="/pools">
+        <Link href={backwardLink ?? "/pools"}>
           <Image src={BACK_ICON} alt="BACK_ICON" />
         </Link>
         <Text fontSize={28} fontWeight={500}>
-        {title}
+          {title}
         </Text>
       </Flex>
       <Flex alignItems="center" columnGap={"16px"}>
-      {clear &&  <Text
-          w={"50px"}
-          fontSize={12}
-          color="#007AFF"
-          onClick={() => {}}
-          cursor="pointer"
-        >
-          Clear all
-        </Text>}
-      {switcher &&  <ToggleSwitch />}
+        {clear && (
+          <Text
+            w={"50px"}
+            fontSize={12}
+            color="#007AFF"
+            onClick={() => {}}
+            cursor="pointer"
+          >
+            Clear all
+          </Text>
+        )}
+        {switcher && <ToggleSwitch />}
         <Box w={"20px"} h={"20px"}>
           <Setting />
         </Box>

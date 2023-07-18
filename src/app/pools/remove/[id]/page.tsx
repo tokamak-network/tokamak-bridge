@@ -8,11 +8,20 @@ import ActionButton from "../components/ActionButton";
 import IncreaseModal from "../../components/IncreaseModal";
 import TxDetails from "../components/TxDetails";
 import RemoveModal from "../../components/RemoveModal";
+import { usePathname } from "next/navigation";
+import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
 
-export default function IncreaseLiquidityModal() {
+export default function RemoveLiquidity() {
+  const { positionId } = useGetPositionIdFromPath();
+
   return (
     <Flex flexDir={"column"} rowGap={"8px"}>
-      <TopLine title="Remove Liquidity" clear={false} switcher={false} />
+      <TopLine
+        title="Remove Liquidity"
+        clear={false}
+        switcher={false}
+        backwardLink={`/pools/${positionId}`}
+      />
       <Flex
         border="1px solid #20212B"
         borderRadius={"16px"}

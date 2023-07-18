@@ -22,9 +22,11 @@ export type PoolCardDetail = {
   fee: FeeAmount;
   inRange: boolean;
   liquidity: string;
+  sqrtPriceX96: string;
   tickLower: number;
   tickCurrent: number;
   tickUpper: number;
+  rawPositionInfo: any;
 };
 
 export default function PoolCard(props: PoolCardDetail) {

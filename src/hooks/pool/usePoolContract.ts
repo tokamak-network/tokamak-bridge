@@ -35,6 +35,7 @@ import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { PoolState } from "@/types/pool/pool";
 import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
+import { usePoolInfo } from "./usePoolInfo";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -124,9 +125,6 @@ export function usePoolMint() {
           getProviderOrSigner(provider, address)
         );
 
-        console.log("configuredPool");
-        console.log(configuredPool);
-
         const initializePool =
           NonfungiblePositionManagerContract.interface.encodeFunctionData(
             "createAndInitializePoolIfNecessary",
@@ -198,44 +196,47 @@ export function usePoolContract() {
   const { address } = useAccount();
   const feeAmount = useRecoilValue(poolFeeStatus);
 
-  const getPoolInfo = useCallback(async () => {
-    if (inToken && outToken && feeAmount) {
-      const currentPoolAddress = computePoolAddress({
-        factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-        tokenA: inToken.token,
-        tokenB: outToken.token,
-        fee: feeAmount,
-        initCodeHashManualOverride:
-          layer === "L2" ? L2_initCodeHashManualOverride : undefined,
-      });
+  const getPoolInfo = useCallback(
+    async (tokenA?: Token, tokenB?: Token) => {
+      if (inToken && outToken && feeAmount) {
+        const currentPoolAddress = computePoolAddress({
+          factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
+          tokenA: tokenA ?? inToken.token,
+          tokenB: tokenB ?? outToken.token,
+          fee: feeAmount,
+          initCodeHashManualOverride:
+            layer === "L2" ? L2_initCodeHashManualOverride : undefined,
+        });
 
-      const POOL_CONTRACT = new ethers.Contract(
-        currentPoolAddress,
-        IUniswapV3PoolABI.abi,
-        provider
-      );
+        const POOL_CONTRACT = new ethers.Contract(
+          currentPoolAddress,
+          IUniswapV3PoolABI.abi,
+          provider
+        );
 
-      const [token0, token1, fee, tickSpacing, liquidity, slot0] =
-        await Promise.all([
-          POOL_CONTRACT.token0(),
-          POOL_CONTRACT.token1(),
-          POOL_CONTRACT.fee(),
-          POOL_CONTRACT.tickSpacing(),
-          POOL_CONTRACT.liquidity(),
-          POOL_CONTRACT.slot0(),
-        ]);
+        const [token0, token1, fee, tickSpacing, liquidity, slot0] =
+          await Promise.all([
+            POOL_CONTRACT.token0(),
+            POOL_CONTRACT.token1(),
+            POOL_CONTRACT.fee(),
+            POOL_CONTRACT.tickSpacing(),
+            POOL_CONTRACT.liquidity(),
+            POOL_CONTRACT.slot0(),
+          ]);
 
-      return {
-        token0,
-        token1,
-        fee,
-        tickSpacing,
-        liquidity,
-        sqrtPriceX96: slot0[0],
-        tick: slot0[1],
-      };
-    }
-  }, [mode, inToken, outToken, feeAmount]);
+        return {
+          token0,
+          token1,
+          fee,
+          tickSpacing,
+          liquidity,
+          sqrtPriceX96: slot0[0],
+          tick: slot0[1],
+        };
+      }
+    },
+    [mode, inToken, outToken, feeAmount]
+  );
 
   const constructPosition = useCallback(
     async (
@@ -322,66 +323,106 @@ export function usePoolContract() {
     [provider, inToken, outToken, address, UNISWAP_CONTRACT]
   );
 
+  const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);
+
   const removeLiquidity = useCallback(
-    async (positionId: number, removeLiquidityPercentage: number) => {
+    async (
+      positionId: number | undefined,
+      removeLiquidityPercentage: number | undefined
+    ) => {
       console.log("--removeLiquidity--");
-      console.log(info, address);
+      console.log(info, address, positionId, removeLiquidityPercentage);
 
-      if (info && address) {
-        const token0 = info.token0;
-        const token1 = info.token1;
+      try {
+        if (
+          info &&
+          address &&
+          positionId &&
+          removeLiquidityPercentage &&
+          poolData
+        ) {
+          const {
+            token0,
+            token1,
+            rawPositionInfo,
+            tickCurrent,
+            tickLower,
+            tickUpper,
+            sqrtPriceX96,
+          } = info;
+          const { fee, liquidity } = rawPositionInfo;
 
-        const currentPosition = await constructPosition(
-          CurrencyAmount.fromRawAmount(
+          const token0Amount = CurrencyAmount.fromRawAmount(
             token0,
             fromReadableAmount(
               Number(info.token0Amount),
               token0.decimals
             ).toString()
-          ),
-          CurrencyAmount.fromRawAmount(
-            token1,
+          );
+          const token1Amount = CurrencyAmount.fromRawAmount(
+            token0,
             fromReadableAmount(
-              Number(info.token0Amount),
+              Number(info.token1Amount),
               token1.decimals
             ).toString()
-          )
-        );
-        const collectOptions: Omit<CollectOptions, "tokenId"> = {
-          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(token0, 0),
-          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(token1, 0),
-          recipient: address,
-        };
+          );
 
-        const removeLiquidityOptions: RemoveLiquidityOptions = {
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
-          tokenId: positionId,
-          // percentage of liquidity to remove
-          liquidityPercentage: new Percent(removeLiquidityPercentage),
-          collectOptions,
-        };
-        if (currentPosition) {
-          // get calldata for minting a position
-          const { calldata, value } =
-            NonfungiblePositionManager.removeCallParameters(
-              currentPosition,
-              removeLiquidityOptions
-            );
+          const configuredPool = new Pool(
+            token0,
+            token1,
+            fee,
+            sqrtPriceX96,
+            liquidity.toString(),
+            tickCurrent
+          );
 
-          // build transaction
-          const transaction = {
-            data: calldata,
-            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-            value: value,
-            from: address,
+          const currentPosition = Position.fromAmounts({
+            pool: configuredPool,
+            tickLower,
+            tickUpper,
+            amount0: token0Amount.quotient,
+            amount1: token1Amount.quotient,
+            useFullPrecision: true,
+          });
+
+          const collectOptions: Omit<CollectOptions, "tokenId"> = {
+            expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(token0, 0),
+            expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(token1, 0),
+            recipient: address,
           };
 
-          return sendTransaction(transaction);
+          const removeLiquidityOptions: RemoveLiquidityOptions = {
+            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            slippageTolerance: new Percent(50, 10_000),
+            tokenId: positionId,
+            // percentage of liquidity to remove
+            liquidityPercentage: new Percent(removeLiquidityPercentage, 100),
+            collectOptions,
+          };
+
+          if (currentPosition) {
+            const { calldata, value } =
+              NonfungiblePositionManager.removeCallParameters(
+                currentPosition,
+                removeLiquidityOptions
+              );
+
+            // build transaction
+            const transaction = {
+              data: calldata,
+              to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+              value: value,
+              from: address,
+            };
+
+            return sendTransaction(transaction);
+          }
         }
+      } catch (e) {
+        console.log(e);
       }
     },
-    [provider, info, address, UNISWAP_CONTRACT]
+    [provider, info, address, UNISWAP_CONTRACT, poolData]
   );
 
   const collectFees = useCallback(async () => {

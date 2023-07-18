@@ -121,7 +121,8 @@ export function useGetPositions() {
         );
 
         const slot = await POOL_CONTRACT.slot0();
-        const { tick } = slot;
+
+        const { tick, sqrtPriceX96 } = slot;
         const inRange = tickLower <= tick && tick < tickUpper;
 
         const positionId = Number(tokenOfOwnerByIndex.toString());
@@ -186,9 +187,11 @@ export function useGetPositions() {
           token1MarketPrice: "1.25",
           inRange,
           liquidity: liquidity.toString(),
+          sqrtPriceX96: sqrtPriceX96.toString(),
           tickLower,
           tickCurrent: tick,
           tickUpper,
+          rawPositionInfo: positionInfo,
         });
       }
       return positions;
@@ -208,6 +211,13 @@ export function useGetPositions() {
   }, [blockNumber]);
 
   return { positions };
+}
+
+export function useGetPositionIdFromPath() {
+  const pathName = usePathname();
+  const positionId = pathName.split("/")[pathName.split("/").length - 1];
+
+  return { positionId };
 }
 
 export function usePositionInfo() {

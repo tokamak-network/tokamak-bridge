@@ -190,5 +190,6 @@ export function usePoolInfo() {
     ratio,
     tickSpaceLimits,
     ticksAtLimit,
+    pool,
   };
 }

@@ -12,7 +12,7 @@ export default function ClaimEarningsModal() {
   const { info } = usePositionInfo();
   const { collectFees } = usePoolContract();
   return (
-    <Modal isOpen={isOpen === "colectFee"} onClose={onClose}>
+    <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
       <ModalOverlay bg="rgba(15, 15, 18, 1)" />
       <ModalContent
         h="100%"
