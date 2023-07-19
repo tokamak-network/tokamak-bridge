@@ -29,7 +29,7 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
         <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
           {isMinPrice ? "Min price" : "Max price"}
         </Text>
-        <Box w={"14px"} h={"14px"}>
+        <Box w={"18px"} h={"18px"}>
           <CustomTooltip
             content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"}></Image>}
             tooltipLabel={`Your position will be 100% ${
