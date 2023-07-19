@@ -8,6 +8,7 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Token } from "@uniswap/sdk-core";
 import commafy from "@/utils/trim/commafy";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -18,7 +19,14 @@ const TokenLiquidityData = (props: {
   return (
     <Flex justifyContent="space-between" h={"32px"}>
       <Flex justifyContent="start">
-        {/* <TokenNetwork tokenType="LYDA" network="Ethereum" /> */}
+        <TokenSymbolWithNetwork
+          tokenSymbol={token.symbol as string}
+          chainId={token.chainId}
+          symbolW={32}
+          symbolH={32}
+          networkSymbolH={12}
+          networkSymbolW={12}
+        />
         <Text ml="12px" color="#A0A3AD" fontSize="18px">
           {token.symbol}
         </Text>

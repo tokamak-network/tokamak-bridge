@@ -4,7 +4,7 @@ import WARNING_ICON from "assets/icons/pool/warning.svg";
 import NextLink from "next/link";
 import useConnectedNetwork from "@/hooks/network";
 
-export default function AddLiquidity() {
+export default function UnsupportedNetworkCard() {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   return (
     <NextLink href="/pools/add" passHref>

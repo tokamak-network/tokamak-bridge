@@ -47,8 +47,7 @@ export default function Range(props: {
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { parsedAmountForToken0, parsedAmountForToken1 } =
     useIncreaseLiquidity();
-
-  const { inverted, ratio } = usePoolInfo();
+  const { inverted } = usePoolInfo();
 
   return (
     <Flex

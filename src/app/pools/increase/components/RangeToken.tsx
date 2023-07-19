@@ -1,6 +1,4 @@
 import { Flex, Text } from "@chakra-ui/react";
-import commafy from "@/utils/trim/commafy";
-import { TokenSymbol } from "@/components/image/TokenSymbol";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { Token } from "@uniswap/sdk-core";
 
@@ -12,6 +10,9 @@ export default function RangeToken(props: {
   alterAmount: string | undefined;
 }) {
   const { token, amount, style, page, alterAmount } = props;
+
+  console.log("token");
+  console.log(token);
 
   return (
     <Flex width={"100%"} justifyContent={"space-between"} {...props.style}>
