@@ -1,4 +1,5 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutNetwork } from "@/hooks/network";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
@@ -8,9 +9,11 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import { isETH } from "@/utils/token/isETH";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
+import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -116,9 +119,34 @@ export default function TokenInput(props: {
     }
   };
 
+  const { totalGasCost } = useGasFee();
+
   const onMax = useCallback(() => {
     if (tokenData) {
       if (inToken && selectedInToken) {
+        if (isETH(selectedInToken)) {
+          // if (!totalGasCost) return;
+          const parsedAmount =
+            Number(
+              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
+            ) -
+            Number(totalGasCost ?? 0.001) -
+            (mode === "Withdraw" ? 0.00025 : 0);
+
+          const isMinus = parsedAmount <= 0;
+
+          const amountBN = ethers.utils.parseUnits(
+            isMinus ? "0" : parsedAmount.toString(),
+            18
+          );
+
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: amountBN.toBigInt(),
+            parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+          });
+        }
+
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -134,7 +162,14 @@ export default function TokenInput(props: {
       // }
       return console.error("a input field not founded");
     }
-  }, [tokenData, inToken, selectedInToken, selectedOutToken]);
+  }, [
+    tokenData,
+    inToken,
+    selectedInToken,
+    selectedOutToken,
+    totalGasCost,
+    mode,
+  ]);
 
   const handleFocus = () => {
     setIsFocused(true);

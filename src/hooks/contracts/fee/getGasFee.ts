@@ -16,6 +16,7 @@ import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useAccount, useFeeData, usePublicClient } from "wagmi";
+import useTokenBalance from "../balance/useTokenBalance";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -41,13 +42,23 @@ export function useGasFee() {
     }
   }, [routingPath]);
 
+  const tokenData = useTokenBalance(inToken);
+
   useEffect(() => {
     const fetchEstimatedGas = async () => {
-      if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
+      if (
+        inToken &&
+        inToken.amountBN &&
+        inNetwork &&
+        outNetwork &&
+        address &&
+        tokenData?.data.balanceBN.value
+      ) {
         const isETH = inToken.isNativeCurrency?.includes(
           SupportedChainId.MAINNET || SupportedChainId.GOERLI
         );
-        const parsedAmount = inToken.amountBN;
+        // const parsedAmount = inToken.amountBN;
+        const parsedAmount = tokenData?.data.balanceBN.value;
 
         switch (mode) {
           case "Swap":
@@ -118,7 +129,8 @@ export function useGasFee() {
             maxPriorityFeePerGas
           );
           if (gasPrice) {
-            const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
+            const totalGasCost =
+              Number(gasPrice) * (Number(estimatedGasUsage) + 42000);
             const parsedTotalGasCost = ethers.utils.formatUnits(
               totalGasCost.toString(),
               "ether"
@@ -145,6 +157,7 @@ export function useGasFee() {
     provider,
     feeData,
     swapGasUseEstimate,
+    tokenData?.data.balanceBN.value,
   ]);
 
   const gasCostUS = useMemo(() => {
