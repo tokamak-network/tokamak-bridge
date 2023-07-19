@@ -33,16 +33,21 @@ export default function SelectPercentage() {
         >
           {`${amountPercentage}%`}
         </Text>
-        <Flex justifyContent="space-between">
+        <Flex
+          justifyContent="space-between"
+          columnGap={"8px"}
+          color={"#A0A3AD !important"}
+        >
           {values.map((value, index) => (
             <Button
-              key={index}
+              key={`${index}_${value}`}
               width="48px"
               height="32px"
               border={amountPercentage === value ? "1px solid #007AFF" : "none"}
               borderRadius="8px"
               textAlign="center"
-              marginRight={index !== values.length - 1 ? "8px" : "0"}
+              fontSize={12}
+              fontWeight={400}
               bg="#1F2128"
               onClick={() => handleClick(value)}
               variant={"outline"}
