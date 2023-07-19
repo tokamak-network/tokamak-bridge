@@ -1,5 +1,6 @@
 import { Flex } from "@chakra-ui/layout";
 import { Box, keyframes } from "@chakra-ui/react";
+import { useAccount } from "wagmi";
 
 const gradientAnimation = keyframes`
   0% { background-position: 0% 200%; }
@@ -20,6 +21,8 @@ const GradientSpinner = () => {
 };
 
 export default function EmptyCard() {
+  const { isConnected } = useAccount();
+
   return (
     <Flex
       flexDir="column"
@@ -28,7 +31,7 @@ export default function EmptyCard() {
       h="248px"
       borderRadius={"16px"}
     >
-      <GradientSpinner />
+      {isConnected && <GradientSpinner />}
     </Flex>
   );
 }

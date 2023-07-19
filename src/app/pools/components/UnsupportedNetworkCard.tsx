@@ -1,14 +1,11 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import PLUS_ICON from "assets/icons/plus.svg";
+import WARNING_ICON from "assets/icons/pool/warning.svg";
 import NextLink from "next/link";
-import ConnecteWalletCard from "./ConnectWalletCard";
-import { useAccount } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function AddLiquidity() {
-  const { isConnected } = useAccount();
-
-  if (!isConnected) return <ConnecteWalletCard />;
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   return (
     <NextLink href="/pools/add" passHref>
       <Flex
@@ -27,9 +24,9 @@ export default function AddLiquidity() {
         }}
       >
         <Text fontWeight={600} marginBottom={"61px"} fontSize={"16px"}>
-          Add Liquidity
+          Connect Wallet
         </Text>
-        <Image src={PLUS_ICON} alt={"AddLiquidityIcon"} />
+        <Image src={WARNING_ICON} alt={"WARNING_ICON"} />
         <Box
           width="100%"
           fontStyle="normal"
@@ -39,9 +36,10 @@ export default function AddLiquidity() {
           color="#A0A3AD"
           marginTop={"40px"} // ! sizes does not match for 54px
         >
-          Earn fees when users swap
+          Change your network on
           <br />
-          with your provided tokens
+          {isConnectedToMainNetwork && `Metamask to Ethereum or Titan`}
+          {!isConnectedToMainNetwork && `Metamask to Goerli <br /> or Titan`}
         </Box>
       </Flex>
     </NextLink>
