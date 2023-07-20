@@ -35,7 +35,7 @@ import ActivityContainer from "./ActivityContainer";
 import BalanceContainer from "./BalanceContainer";
 import NetworkSelector from "./NetworkSelector";
 import ICON_SEARCH from "assets/icons/searchGray.svg";
-import useGetTransaction from "@/hooks/user/useGetTransaction";
+
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
@@ -67,9 +67,6 @@ export default function AccountHistory() {
     });
   };
 
-  const tData = useGetTransaction();
-  console.log('tData',tData);
-  
   const TopLine = () => {
     return (
       <>
@@ -111,7 +108,7 @@ export default function AccountHistory() {
   }) => {
     const { setTab, tab } = props;
     return (
-      <Flex columnGap={"24px"}>
+      <Flex columnGap={"24px"} mt='16px' mb='8px'>
         <Text
           cursor={"pointer"}
           color={tab === "Balance" ? "#fff" : "#5E626D"}
@@ -273,11 +270,13 @@ export default function AccountHistory() {
     <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
       <DrawerOverlay className="modalOverlayDrawer" bg={"none"} />
       <DrawerContent
-        p="12px"
+        pt="12px"
+        px='12px'
+        pb='0px'
         minW={"360px"}
         maxW={"360px"}
         bgColor={"#1F2128"}
-        rowGap={"24px"}
+        // rowGap={"24px"}
         pos={"relative"}
       >
         <Flex
@@ -295,14 +294,14 @@ export default function AccountHistory() {
           <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
         </Flex>
         <AccountContainer />
-        <TabContainer setTab={setTab} tab={tab} />
+        <TabContainer setTab={setTab} tab={tab}  />
         <Flex>
           <NetworkSelector height="40px" setNetwork={setSelectedNetwork} />
           <SearchComponent />
         </Flex>
-        <Text>
+        <Flex mt='12px'>
          {tab === 'Balance'? <BalanceContainer/>:<ActivityContainer/>}
-        </Text>
+        </Flex>
       </DrawerContent>
     </Drawer>
   );

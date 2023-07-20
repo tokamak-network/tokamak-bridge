@@ -59,15 +59,11 @@ export const swapGasData = atom<{ estimatedGasFee: string | undefined }>({
   },
 });
 
-type TransactionData = {
-  data: any[];
-};
+type TransactionData = any;
 
 export const transactionData = atom<TransactionData>({
   key: "transactionData",
-  default: {
-    data: [],
-  },
+  default: [],
 });
 
 export const txDataStatus = atom<{ [txHash: string]: TxInterface } | undefined>(

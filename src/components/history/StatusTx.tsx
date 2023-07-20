@@ -5,9 +5,10 @@ import Calendar from 'assets/icons/Google_Calendar_icon.svg'
 import { confirmWithdraw } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
+import { format, fromUnixTime } from "date-fns";
 
-export default function StatusTx(props: { completed: boolean }) {
-  const { completed } = props;
+export default function StatusTx(props: { completed: boolean, date:number, layer:string }) {
+  const { completed,date ,layer} = props;
     const [modalOpen, setModalOpen] = useRecoilState(confirmWithdraw)
     const config:Object = {
         name: " Test the Add to Calendar Button",
@@ -18,8 +19,7 @@ export default function StatusTx(props: { completed: boolean }) {
         options: ["Google"] ,
         timeZone: "currentBrowser"
       };
-  
-      
+        
   return (
     <Flex justifyContent={"space-between"} h="18px" alignItems={"center"}>
       <Flex alignItems={"center"}>
@@ -31,14 +31,14 @@ export default function StatusTx(props: { completed: boolean }) {
           mr="6px"
         ></Flex>
         <Text fontSize={"11px"} fontWeight={600} cursor={!completed ? 'pointer':'default'} onClick={()=> !completed && setModalOpen(true)}>
-          {completed ? "Completed" : "Wait 7 Days"}
+          {completed ? `${layer}: Completed` : "Wait 7 Days"}
         </Text>
       </Flex>
       {completed ? (
         <Flex fontSize={"11px"}>
-          <Text>2023.04.22</Text>
+          <Text>{format(fromUnixTime(date), 'yyyy.MM.dd')}</Text>
           <Text ml="3px" color={"#A0A3AD"}>
-            04:31 PM (UTC+9)
+          {format(fromUnixTime(date), 'hh:mm b (z)')}
           </Text>
         </Flex>
       ) : (
