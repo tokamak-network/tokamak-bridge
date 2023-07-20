@@ -2,7 +2,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import REMOVE_ICON from "assets/icons/removeIcon.svg";
 import ADD_ICON from "assets/icons/addIcon.svg";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 import commafy from "@/utils/trim/commafy";
@@ -31,19 +31,28 @@ export default function RangeInput(props: RangeInputProps) {
   const [minPriceInput, setMinPrice] = useRecoilState(minPrice);
   const [maxPriceInput, setMaxPrice] = useRecoilState(maxPrice);
 
-  const [isAtMinTick, setAtMinTick] = useRecoilState(atMinTick);
-  const [isAtMaxTick, setAtMaxTick] = useRecoilState(atMaxTick);
+  const [, setAtMinTick] = useRecoilState(atMinTick);
+  const [, setAtMaxTick] = useRecoilState(atMaxTick);
 
-  const blurHandler = useCallback(() => {
-    if (pricesAtTicks) {
-      return isMinPrice
-        ? setMinPrice(pricesAtTicks?.LOWER?.toSignificant(5))
-        : setMaxPrice(pricesAtTicks?.UPPER?.toSignificant(5));
-    }
-  }, [pricesAtTicks, isMinPrice]);
+  const [valueInThisInput, setValueInThisInput] = useState<string | undefined>(
+    undefined
+  );
+
+  const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value.replaceAll(",", "");
+      const inputValue = value ?? "0";
+      setValueInThisInput(inputValue);
+      return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
+    },
+    [isMinPrice]
+  );
+
+  const onFocusHandler = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      setIsFocused(true);
       const value = e.target.value.replaceAll(",", "");
       const inputValue = value ?? "0";
 
@@ -51,6 +60,20 @@ export default function RangeInput(props: RangeInputProps) {
     },
     [isMinPrice]
   );
+
+  const blurHandler = useCallback(() => {
+    setIsFocused(false);
+    if (pricesAtTicks) {
+      setValueInThisInput(
+        isMinPrice
+          ? pricesAtTicks?.LOWER?.toSignificant(5)
+          : pricesAtTicks?.UPPER?.toSignificant(5)
+      );
+      return isMinPrice
+        ? setMinPrice(pricesAtTicks?.LOWER?.toSignificant(5))
+        : setMaxPrice(pricesAtTicks?.UPPER?.toSignificant(5));
+    }
+  }, [pricesAtTicks, isMinPrice]);
 
   const inputValue = useMemo(() => {
     if (ticksAtLimit.LOWER && isMinPrice) return "0";
@@ -124,7 +147,9 @@ export default function RangeInput(props: RangeInputProps) {
             onChange={onChangeHandler}
             textAlign={"center"}
             onBlur={blurHandler}
-            value={inputValue}
+            onFocus={onFocusHandler}
+            value={isFocused ? valueInThisInput : inputValue}
+            // value={inputValue}
           >
             {/* {isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5)} */}
           </Input>
