@@ -26,7 +26,7 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit } = useV3MintInfo();
+  const { pricesAtTicks, ticksAtLimit, invertPrice } = useV3MintInfo();
 
   const [minPriceInput, setMinPrice] = useRecoilState(minPrice);
   const [maxPriceInput, setMaxPrice] = useRecoilState(maxPrice);
@@ -44,6 +44,7 @@ export default function RangeInput(props: RangeInputProps) {
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value.replaceAll(",", "");
       const inputValue = value ?? "0";
+
       setValueInThisInput(inputValue);
       return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
@@ -53,12 +54,8 @@ export default function RangeInput(props: RangeInputProps) {
   const onFocusHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setIsFocused(true);
-      const value = e.target.value.replaceAll(",", "");
-      const inputValue = value ?? "0";
-
-      return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
-    [isMinPrice]
+    []
   );
 
   const blurHandler = useCallback(() => {
@@ -66,14 +63,26 @@ export default function RangeInput(props: RangeInputProps) {
     if (pricesAtTicks) {
       setValueInThisInput(
         isMinPrice
-          ? pricesAtTicks?.LOWER?.toSignificant(5)
+          ? invertPrice
+            ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
+            : pricesAtTicks?.LOWER?.toSignificant(5)
+          : invertPrice
+          ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
           : pricesAtTicks?.UPPER?.toSignificant(5)
       );
       return isMinPrice
-        ? setMinPrice(pricesAtTicks?.LOWER?.toSignificant(5))
-        : setMaxPrice(pricesAtTicks?.UPPER?.toSignificant(5));
+        ? setMinPrice(
+            invertPrice
+              ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
+              : pricesAtTicks?.LOWER?.toSignificant(5)
+          )
+        : setMaxPrice(
+            invertPrice
+              ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
+              : pricesAtTicks?.UPPER?.toSignificant(5)
+          );
     }
-  }, [pricesAtTicks, isMinPrice]);
+  }, [pricesAtTicks, isMinPrice, , invertPrice]);
 
   const inputValue = useMemo(() => {
     if (ticksAtLimit.LOWER && isMinPrice) return "0";

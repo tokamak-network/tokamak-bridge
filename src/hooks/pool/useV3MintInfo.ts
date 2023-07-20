@@ -155,22 +155,18 @@ export function useV3MintInfo() {
 
     return {
       [Bound.LOWER]:
-        // typeof existingPosition?.tickLower === "number"
-        //   ? existingPosition.tickLower
         (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)
           ? tickSpaceLimits[Bound.LOWER]
-          : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
-          : tryParseTick(token0, token1, feeAmount, minPriceInput?.toString()),
+          : // invertPrice
+            // ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
+            //   :
+            tryParseTick(token0, token1, feeAmount, minPriceInput?.toString()),
       [Bound.UPPER]:
-        // typeof existingPosition?.tickUpper === "number"
-        //   ? existingPosition.tickUpper
-        //   :
         (!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick)
           ? tickSpaceLimits[Bound.UPPER]
-          : invertPrice
-          ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
-          : tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString()),
+          : // : invertPrice
+            // ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
+            tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString()),
     };
   }, [
     // existingPosition,
