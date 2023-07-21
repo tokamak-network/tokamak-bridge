@@ -130,7 +130,7 @@ export function usePriceTickConversion() {
   // const { tickToPriceParams } = usePoolToken();
   //using contract call
   const [, pool] = usePool();
-  const { pricesAtLimit, ticksAtLimit, tickSpaceLimits } = useV3MintInfo();
+  const { ticksAtLimit, tickSpaceLimits } = useV3MintInfo();
 
   const [, setMinPrice] = useRecoilState(minPriceStatus);
   const [, setMaxPrice] = useRecoilState(maxPriceStatus);
@@ -176,7 +176,7 @@ export function usePriceTickConversion() {
   const [initialized, setInitialized] = useState<boolean>(false);
 
   // useEffect(() => {
-  //   if (minPrice && maxPrice && initialized === false) {
+  //   if (minPrice && maxPrice & initialized === false) {
   //     setMinPrice(
   //       invertPrice
   //         ? maxPrice.invert().toSignificant(10)

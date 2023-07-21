@@ -11,6 +11,7 @@ import {
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 
 const TokenPairTitle = () => {
   const { inverted } = usePoolInfo();
@@ -46,6 +47,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
   const { parsedAmountForToken0, parsedAmountForToken1 } =
     useIncreaseLiquidity();
   const { inverted } = usePoolInfo();
+  const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
 
   return (
     <Flex
@@ -78,11 +80,17 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
       </Flex>
       <RangeToken
         token={inverted ? token1 : token0}
-        amount={commafy(inverted ? token1Amount : token0Amount, 6)}
+        amount={
+          page === "addLiquidity"
+            ? undefined
+            : commafy(inverted ? token1Amount : token0Amount, 6)
+        }
         style={{ marginBottom: "9px", marginTop: "14px" }}
         page={page}
         alterAmount={
-          page === "increaseLiquidity"
+          (!inverted && deposit0Disabled) || (inverted && deposit1Disabled)
+            ? "0"
+            : page === "increaseLiquidity" || page === "addLiquidity"
             ? parsedAmountForToken0
             : amount0Removed
             ? commafy(amount0Removed, 6)
@@ -91,10 +99,16 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
       />
       <RangeToken
         token={inverted ? token0 : token1}
-        amount={commafy(inverted ? token0Amount : token1Amount, 6)}
+        amount={
+          page === "addLiquidity"
+            ? undefined
+            : commafy(inverted ? token0Amount : token1Amount, 6)
+        }
         page={page}
         alterAmount={
-          page === "Increase"
+          (!inverted && deposit1Disabled) || (inverted && deposit0Disabled)
+            ? "0"
+            : page === "increaseLiquidity" || page === "addLiquidity"
             ? parsedAmountForToken1
             : amount1Removed
             ? commafy(amount1Removed, 6)

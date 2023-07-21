@@ -105,7 +105,6 @@ export default function ActionButton() {
     return "Invalid pair";
   }, [poolState, tokensPairHasAmount]);
 
-  const { mintPosition } = usePoolMint();
   const [, setPoolModal] = useRecoilState(poolModalStatus);
   const [, setPollModalProp] = useRecoilState(poolModalProp);
 

@@ -5,7 +5,7 @@ import { T_PoolModal } from "@/recoil/modal/atom";
 
 export default function RangeToken(props: {
   token: Token;
-  amount: string;
+  amount: string | undefined;
   style?: {};
   page: T_PoolModal;
   alterAmount: string | undefined;
@@ -30,7 +30,11 @@ export default function RangeToken(props: {
       <Flex>
         <Text color={"#A0A3AD"}>{amount}</Text>
         <Text ml={"6px"}>
-          {!alterAmount ? "" : page === "removeLiquidity" ? "-" : "+"}
+          {!alterAmount || page === "addLiquidity"
+            ? ""
+            : page === "removeLiquidity"
+            ? "-"
+            : "+"}
         </Text>
         <Text>{alterAmount}</Text>
       </Flex>
