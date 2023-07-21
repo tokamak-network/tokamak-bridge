@@ -28,8 +28,8 @@ export default function RemoveLiquidity() {
         p="20px"
         justifyContent={"space-between"}
       >
-        <Flex flexDirection={"column"} rowGap={"16px"}>
-          <Range page="Remove" />
+        <Flex flexDirection={"column"} rowGap={"16px"} maxW={"364px"}>
+          <Range page="removeLiquidity" />
           <SelectPercentage />
           <TxDetails />
           <ActionButton step="preview" />

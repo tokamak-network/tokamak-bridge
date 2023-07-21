@@ -339,14 +339,51 @@ export function usePoolContract() {
             addLiquidityOptions
           );
 
+        //for ETH value
+        const inIsEth = isETH(inToken);
+        const outIsETH = isETH(outToken);
+        const inWeiAmount = ethers.BigNumber.from(
+          token0Amount.quotient.toString()
+        );
+        const outWeiAmount = ethers.BigNumber.from(
+          token1Amount.quotient.toString()
+        );
+        const inHexAmount = ethers.utils.hexlify(inWeiAmount);
+        const outHexAmount = ethers.utils.hexlify(outWeiAmount);
+
+        //refundETH
+        //it will return if All ETH won't be used to be deposit for some reasons like a price change
+        const NonfungiblePositionManagerContract = new Contract(
+          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          NONFUNGIBLE_POSITION_MANAGER_ABI,
+          getProviderOrSigner(provider, address)
+        );
+
+        const refundETHData =
+          NonfungiblePositionManagerContract.interface.encodeFunctionData(
+            "refundETH"
+          );
+
+        const multicallParam =
+          inIsEth || outIsETH ? [calldata, refundETHData] : [calldata];
+
+        const tx = await NonfungiblePositionManagerContract.multicall(
+          multicallParam,
+          {
+            // gasLimit: 3000000,
+            value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+            from: address,
+          }
+        );
+
         // build transaction
-        const transaction = {
-          data: calldata,
-          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          value: value,
-          from: address,
-        };
-        return sendTransaction(transaction);
+        // const transaction = {
+        //   data: [calldata, refundETHData],
+        //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+        //   value: value,
+        //   from: address,
+        // };
+        // return sendTransaction(transaction);
       }
     }
   }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
@@ -427,6 +464,9 @@ export function usePoolContract() {
             liquidityPercentage: new Percent(removeLiquidityPercentage, 100),
             collectOptions,
           };
+
+          console.log("currentPosition");
+          console.log(currentPosition);
 
           if (currentPosition) {
             const { calldata, value } =

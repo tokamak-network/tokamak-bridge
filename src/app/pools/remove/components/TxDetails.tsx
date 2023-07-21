@@ -19,6 +19,9 @@ const Title = (props: {
 
   const arrowControl = useAnimation();
 
+  const { info } = usePositionInfo();
+  const { amount0Removed, amount1Removed } = useRemoveLiquidity();
+
   useEffect(() => {
     if (isExpanded) {
       arrowControl.start({ rotate: 180 });
@@ -36,22 +39,24 @@ const Title = (props: {
       fontSize={14}
       zIndex={10000}
     >
-      <Flex w={"100%"} alignItems={"center"} justifyContent={"space-between"}>
-        <Flex>
+      <Flex
+        w={"100%"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        cursor={"pointer"}
+      >
+        <Flex maxH={"16px"} alignItems={"center"}>
           <Text>
-            {1} {"ETH"}
+            {commafy(amount0Removed, 4)} {info?.token0.symbol}
           </Text>
-          <Text mx={"9px"}>+</Text>
+          <Text mx={"6px"}>+</Text>
           <Text>
-            {1000} {"TON"}
+            {commafy(amount1Removed, 4)} {info?.token1.symbol}
           </Text>
-          <Text ml="3px" color={"#A0A3AD"}>
-            ($1.00)
-          </Text>
+          <Text color={"#A0A3AD"}>($1.00)</Text>
         </Flex>
-        <Flex>
+        <Flex alignItems={"center"}>
           <Image src={GasImg} alt={"gasStation"} />
-
           <Text
             fontSize={14}
             fontWeight={400}
@@ -61,7 +66,6 @@ const Title = (props: {
           >
             ${"122"}
           </Text>
-
           <motion.div animate={arrowControl}>
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
           </motion.div>

@@ -42,7 +42,7 @@ const TokenLiquidityData = (props: {
           py={"4px"}
           fontSize={"14px"}
           fontWeight={600}
-          w={"48px"}
+          w={"53px"}
         >
           {liquidityPercent} {"%"}
         </Text>

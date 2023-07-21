@@ -66,7 +66,7 @@ export default function IncreaseModal() {
               poolModal === "addLiquidity" ? mintPosition() : addLiquidity()
             }
           >
-            Increase
+            {poolModal === "addLiquidity" ? "Add" : "Increase"}
           </Button>
         </Flex>
       </ModalContent>

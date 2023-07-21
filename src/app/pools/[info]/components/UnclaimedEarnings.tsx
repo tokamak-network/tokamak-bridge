@@ -3,11 +3,23 @@ import commafy from "@/utils/trim/commafy";
 import { Flex, Box, Text, Button, useDisclosure } from "@chakra-ui/react";
 import ClaimEarningsModal from "./ClaimEarningsModal";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
+import { useMemo } from "react";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 
 export default function UnclaimedEarnings() {
   const { info } = usePositionInfo();
   const { onOpenClaimEarning } = usePoolModals();
+
+  const btnIsDisabled = useMemo(() => {
+    if (info?.token0CollectedFee && info?.token1CollectedFee) {
+      return (
+        Number(info?.token0CollectedFee.replaceAll(",", "")) +
+          Number(info?.token0CollectedFee.replaceAll(",", "")) <=
+        0
+      );
+    }
+  }, [info?.token0CollectedFee, info?.token1CollectedFee]);
+
   return (
     <Flex
       bgColor="#1F2128"
@@ -43,8 +55,10 @@ export default function UnclaimedEarnings() {
           _hover={{ bgColor: "#007AFF" }}
           _active={{}}
           onClick={onOpenClaimEarning}
+          isDisabled={btnIsDisabled}
+          _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
         >
-          Collect
+          Claim
         </Button>
       </Flex>
     </Flex>

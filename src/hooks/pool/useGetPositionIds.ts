@@ -168,14 +168,14 @@ export function useGetPositions() {
             connectedChainId,
             token0,
             token0Decimals,
-            token0Symbol,
+            token0Symbol === "WETH" ? "ETH" : token0Symbol,
             token0Name
           ),
           token1: new Token(
             connectedChainId,
             token1,
             token1Decimals,
-            token1Symbol,
+            token1Symbol === "WETH" ? "ETH" : token1Symbol,
             token1Name
           ),
           token0Amount,
@@ -240,7 +240,7 @@ export function usePositionInfo() {
   const { existingPositionInfo } = useGetPositionInfo();
   const mintPositionInfo = useRecoilValue(poolModalProp);
 
-  const info = mintPositionInfo ?? existingPositionInfo;
+  const info = existingPositionInfo ?? mintPositionInfo;
 
   const tokenPairForInfo = useMemo(() => {
     if (info) {
