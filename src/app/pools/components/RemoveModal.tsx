@@ -48,7 +48,7 @@ export default function RemoveModal() {
             <CloseButton onClick={onClosePreviewModal} />
           </Box>
         </Flex>
-        <Range style={{ background: "#0F0F12" }} page={"Increase"} />
+        <Range style={{ background: "#0F0F12" }} page={"removeLiquidity"} />
         <Text
           fontSize={"12px"}
           color={"#A0A3AD"}

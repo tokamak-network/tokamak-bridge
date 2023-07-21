@@ -36,6 +36,25 @@ export function TokenInputForLiquidity(props: {
 
   const tokenData = useTokenBalance(tokenInfo);
 
+  // console.log(amountForToken0, amountForToken1);
+
+  // useEffect(() => {
+  //   if (inToken && !amountForToken1)
+  //     return setSelectedOutToken({
+  //       ...tokenInfo,
+  //       amountBN: null,
+  //       parsedAmount: null,
+  //       tokenAddress: chainName ? tokenInfo.address[chainName] : null,
+  //     });
+  //   if (!inToken && !amountForToken0)
+  //     return setSelectedInToken({
+  //       ...tokenInfo,
+  //       amountBN: null,
+  //       parsedAmount: null,
+  //       tokenAddress: chainName ? tokenInfo.address[chainName] : null,
+  //     });
+  // }, []);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = e.target.value;
     //This token is inToken

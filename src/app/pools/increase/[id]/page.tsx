@@ -8,6 +8,7 @@ import ActionButton from "../components/ActionButton";
 import IncreaseModal from "../../components/IncreaseModal";
 import PriceRange from "../../[info]/components/PriceRange";
 import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
+import { ApproveButtonsContrainer } from "../../add/ActionButton";
 
 export default function IncreaseLiquidity() {
   const { positionId } = useGetPositionIdFromPath();
@@ -27,11 +28,12 @@ export default function IncreaseLiquidity() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"} w={"364px"}>
-          <Range page="Increase" />
+          <Range page="increaseLiquidity" />
           <PriceRange />
         </Flex>
         <Flex flexDirection={"column"} justifyContent={"space-between"}>
           <AddMoreLiquidity />
+          <ApproveButtonsContrainer />
           <ActionButton step="Preview" />
         </Flex>
       </Flex>

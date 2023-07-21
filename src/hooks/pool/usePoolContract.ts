@@ -351,6 +351,10 @@ export function usePoolContract() {
         const inHexAmount = ethers.utils.hexlify(inWeiAmount);
         const outHexAmount = ethers.utils.hexlify(outWeiAmount);
 
+        console.log(token0Amount.quotient.toString());
+        console.log(token1Amount.quotient.toString());
+        console.log(inIsEth || outIsETH);
+
         //refundETH
         //it will return if All ETH won't be used to be deposit for some reasons like a price change
         const NonfungiblePositionManagerContract = new Contract(

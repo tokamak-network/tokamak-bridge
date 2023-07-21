@@ -78,7 +78,10 @@ export default function AddMoreLiquidity() {
             inNetwork={true}
           />
           <Flex w={"186px"} mt="16px">
-            <TokenInputForLiquidity inToken={true} tokenInfo={token0Info} />
+            <TokenInputForLiquidity
+              inToken={true}
+              tokenInfo={inverted ? token1Info : token0Info}
+            />
           </Flex>
           <Text color="#fff" opacity={0.8} fontSize={"13px"}>
             $0.00
@@ -103,7 +106,10 @@ export default function AddMoreLiquidity() {
             inNetwork={true}
           />
           <Flex w={"186px"} mt="16px">
-            <TokenInputForLiquidity inToken={false} tokenInfo={token1Info} />
+            <TokenInputForLiquidity
+              inToken={false}
+              tokenInfo={inverted ? token0Info : token1Info}
+            />
           </Flex>
           <Text color="#fff" opacity={0.8} fontSize={"13px"}>
             $0.00

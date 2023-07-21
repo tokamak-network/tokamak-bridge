@@ -77,7 +77,7 @@ const ApproveButton = (props: { isInToken: boolean }) => {
   );
 };
 
-const ApproveButtonsContrainer = () => {
+export const ApproveButtonsContrainer = () => {
   const { inTokenApproved, outTokenApproved } = useApproveToken();
   const { inToken, outToken } = useInOutTokens();
 
