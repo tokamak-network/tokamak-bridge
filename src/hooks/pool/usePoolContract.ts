@@ -20,7 +20,7 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
-import { useAccount } from "wagmi";
+import { useAccount, useSendTransaction } from "wagmi";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { useRecoilValue } from "recoil";
 import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
@@ -48,6 +48,8 @@ export function usePoolMint() {
   const { ticks, poolForPosition, noLiquidity } = useV3MintInfo();
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
   const { invertAmount } = useGetAmountForLiquidity();
+
+  const { sendTransaction } = useSendTransaction();
 
   const mintPosition = useCallback(async () => {
     if (

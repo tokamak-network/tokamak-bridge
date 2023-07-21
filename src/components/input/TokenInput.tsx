@@ -43,16 +43,6 @@ export default function TokenInput(props: {
 
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
 
-  const tokenAddress = useMemo(() => {
-    if (inToken && selectedInToken && inNetwork) {
-      return selectedInToken.address[inNetwork.chainName];
-    }
-    if (inToken === false && selectedOutToken && outNetwork) {
-      return selectedOutToken.address[outNetwork.chainName];
-    }
-    return null;
-  }, [inNetwork, outNetwork, selectedInToken, selectedOutToken, inToken]);
-
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {

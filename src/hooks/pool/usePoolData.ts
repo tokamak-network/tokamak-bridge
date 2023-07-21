@@ -130,7 +130,8 @@ export function usePriceTickConversion() {
   // const { tickToPriceParams } = usePoolToken();
   //using contract call
   const [, pool] = usePool();
-  const { ticksAtLimit, tickSpaceLimits } = useV3MintInfo();
+  const { ticksAtLimit, tickSpaceLimits, deposit0Disabled, deposit1Disabled } =
+    useV3MintInfo();
 
   const [, setMinPrice] = useRecoilState(minPriceStatus);
   const [, setMaxPrice] = useRecoilState(maxPriceStatus);

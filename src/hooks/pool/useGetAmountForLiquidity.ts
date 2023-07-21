@@ -56,7 +56,8 @@ export function useGetAmountForLiquidity(isOnIncreaeLiquidity?: boolean) {
   const pool = isOnIncreaeLiquidity ? positionPool : getPool;
 
   const { inToken, outToken } = useInOutTokens();
-  const { ticks, invertPrice } = useV3MintInfo();
+  const { ticks, invertPrice, deposit0Disabled, deposit1Disabled } =
+    useV3MintInfo();
 
   const lowerTick = isOnIncreaeLiquidity
     ? positionPool?.tickLower
@@ -125,8 +126,16 @@ export function useGetAmountForLiquidity(isOnIncreaeLiquidity?: boolean) {
   }, [amount0Desired, lowerTick, upperTick, currentTick]);
 
   return {
-    amountForToken0: invertAmount ? amountForToken1 : amountForToken0,
-    amountForToken1: invertAmount ? amountForToken0 : amountForToken1,
+    amountForToken0: deposit0Disabled
+      ? "0"
+      : invertAmount
+      ? amountForToken1
+      : amountForToken0,
+    amountForToken1: deposit1Disabled
+      ? "0"
+      : invertAmount
+      ? amountForToken0
+      : amountForToken1,
     invertAmount,
   };
 }

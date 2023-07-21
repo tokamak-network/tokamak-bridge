@@ -12,6 +12,7 @@ import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { useMemo } from "react";
 
 const TokenPairTitle = () => {
   const { inverted } = usePoolInfo();
@@ -47,7 +48,6 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
   const { parsedAmountForToken0, parsedAmountForToken1 } =
     useIncreaseLiquidity();
   const { inverted } = usePoolInfo();
-  const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
 
   return (
     <Flex
@@ -88,9 +88,11 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
         style={{ marginBottom: "9px", marginTop: "14px" }}
         page={page}
         alterAmount={
-          (!inverted && deposit0Disabled) || (inverted && deposit1Disabled)
-            ? "0"
-            : page === "increaseLiquidity" || page === "addLiquidity"
+          page === "addLiquidity"
+            ? inverted
+              ? commafy(token1Amount, 6)
+              : commafy(token0Amount, 6)
+            : page === "increaseLiquidity"
             ? parsedAmountForToken0
             : amount0Removed
             ? commafy(amount0Removed, 6)
@@ -106,9 +108,11 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
         }
         page={page}
         alterAmount={
-          (!inverted && deposit1Disabled) || (inverted && deposit0Disabled)
-            ? "0"
-            : page === "increaseLiquidity" || page === "addLiquidity"
+          page === "addLiquidity"
+            ? inverted
+              ? commafy(token0Amount, 6)
+              : commafy(token1Amount, 6)
+            : page === "increaseLiquidity"
             ? parsedAmountForToken1
             : amount1Removed
             ? commafy(amount1Removed, 6)

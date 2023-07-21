@@ -28,7 +28,7 @@ export default function ToggleSwitch() {
         borderRadius={!invertPrice ? "8px" : ""}
         onClick={invertTokenPair}
       >
-        <Text>{pool?.token0.name}</Text>
+        <Text>{pool?.token0.symbol}</Text>
       </Box>
       <Box
         w={"50%"}
@@ -36,7 +36,7 @@ export default function ToggleSwitch() {
         borderRadius={invertPrice ? "8px" : ""}
         onClick={invertTokenPair}
       >
-        <Text>{pool?.token1.name}</Text>
+        <Text>{pool?.token1.symbol}</Text>
       </Box>
     </Flex>
   );
