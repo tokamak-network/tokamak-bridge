@@ -147,26 +147,19 @@ export function useV3MintInfo() {
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
-    // console.log("gogo");
-
-    // console.log("upper");
-
-    // console.log((!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick));
-
     return {
       [Bound.LOWER]:
         (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)
           ? tickSpaceLimits[Bound.LOWER]
-          : // invertPrice
-            // ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
-            //   :
-            tryParseTick(token0, token1, feeAmount, minPriceInput?.toString()),
+          : invertPrice
+          ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
+          : tryParseTick(token0, token1, feeAmount, minPriceInput?.toString()),
       [Bound.UPPER]:
         (!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick)
           ? tickSpaceLimits[Bound.UPPER]
-          : // : invertPrice
-            // ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
-            tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString()),
+          : invertPrice
+          ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
+          : tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString()),
     };
   }, [
     // existingPosition,
@@ -264,8 +257,8 @@ export function useV3MintInfo() {
     invertPrice,
     invertTokenPair,
     ticksAtLimit,
-    deposit0Disabled,
-    deposit1Disabled,
+    deposit0Disabled: invertPrice ? deposit1Disabled : deposit0Disabled,
+    deposit1Disabled: invertPrice ? deposit0Disabled : deposit1Disabled,
     tickSpaceLimits,
     poolForPosition,
   };

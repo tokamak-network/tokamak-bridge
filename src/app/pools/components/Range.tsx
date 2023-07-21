@@ -10,6 +10,7 @@ import {
 } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import { T_PoolModal } from "@/recoil/modal/atom";
 
 const TokenPairTitle = () => {
   const { inverted } = usePoolInfo();
@@ -33,10 +34,7 @@ const TokenPairTitle = () => {
   );
 };
 
-export default function Range(props: {
-  page: "Increase" | "Remove";
-  style?: {};
-}) {
+export default function Range(props: { page: T_PoolModal; style?: {} }) {
   const { page, style } = props;
 
   const { info } = usePositionInfo();
@@ -84,7 +82,7 @@ export default function Range(props: {
         style={{ marginBottom: "9px", marginTop: "14px" }}
         page={page}
         alterAmount={
-          page === "Increase"
+          page === "increaseLiquidity"
             ? parsedAmountForToken0
             : amount0Removed
             ? commafy(amount0Removed, 6)

@@ -42,8 +42,8 @@ export function useInOutTokens() {
                 ? getWETHAddress(chainName)
                 : (inTokenRecoilValue.address[chainName] as string),
               inTokenRecoilValue.decimals,
-              inTokenRecoilValue.tokenName as string,
-              inTokenRecoilValue.tokenSymbol as string
+              inTokenRecoilValue.tokenSymbol as string,
+              inTokenRecoilValue.tokenName as string
             ),
           }
       : null;
@@ -69,8 +69,8 @@ export function useInOutTokens() {
                 ? getWETHAddress(chainName)
                 : (outTokenRecoilValue.address[chainName] as string),
               outTokenRecoilValue.decimals,
-              outTokenRecoilValue.tokenName as string,
-              outTokenRecoilValue.tokenSymbol as string
+              outTokenRecoilValue.tokenSymbol as string,
+              outTokenRecoilValue.tokenName as string
             ),
           }
       : null;

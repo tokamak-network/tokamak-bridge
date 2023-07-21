@@ -4,15 +4,19 @@ import {
   usePrepareErc20Approve,
 } from "@/generated";
 import useContract from "@/hooks/contracts/useContract";
+import usePreview from "@/hooks/modal/usePreviewModal";
 import { useApproveToken } from "@/hooks/pool/useApproveToken";
+import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
 import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useTx } from "@/hooks/tx/useTx";
+import { poolModalProp, poolModalStatus } from "@/recoil/modal/atom";
 import { PoolState } from "@/types/pool/pool";
 import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
+import { useRecoilState } from "recoil";
 import { Hash } from "viem";
 import { useWaitForTransaction } from "wagmi";
 
@@ -102,38 +106,31 @@ export default function ActionButton() {
   }, [poolState, tokensPairHasAmount]);
 
   const { mintPosition } = usePoolMint();
-  // const {
-  //   isOpen,
+  const [, setPoolModal] = useRecoilState(poolModalStatus);
+  const [, setPollModalProp] = useRecoilState(poolModalProp);
 
-  //   onClosePreviewModal,
-  //   setPreviewModalStatus,
-  // } = usePreview();
+  const btnDisabled = !tokensPairHasAmount;
+  const { mintPositionInfo } = useMintPositionInfo();
 
-  // const handleAction = () => {
-  //   setPreviewModalStatus(true);
-  //   switch (page) {
-  //     case "Add":
-  //       return setPoolModal("collectFee");
-  //     case "Remove":
-  //       return setPoolModal("removeLiquidity");
-  //     case "Increase":
-  //       return setPoolModal("increaseLiquidity");
-  //     default:
-  //       return setPoolModal("increaseLiquidity");
-  //   }
-  // };
+  const handleAction = () => {
+    setPollModalProp(mintPositionInfo);
+    return setPoolModal("addLiquidity");
+  };
+
   return (
     <Flex flexDir={"column"} rowGap={"12px"} mt={"auto"}>
       <ApproveButtonsContrainer />
       <Button
         w={"100%"}
         h={"48px"}
-        color={"#8E8E92"}
-        bgColor={"#17181D"}
+        color={"#fff"}
+        bgColor={"#007AFF"}
         borderRadius={"8px"}
         _hover={{}}
         _active={{}}
-        onClick={mintPosition}
+        onClick={handleAction}
+        isDisabled={btnDisabled}
+        _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
       >
         {buttonName}
       </Button>

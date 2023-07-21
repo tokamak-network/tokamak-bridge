@@ -1,3 +1,5 @@
+"use client";
+
 import { ethers } from "ethers";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { useProvier } from "../provider/useProvider";
@@ -13,14 +15,11 @@ import { Token } from "@uniswap/sdk-core";
 import ERC20_ABI from "@/abis/erc20.json";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { usePathname } from "next/navigation";
-import { getApolloClientApiKey } from "@/utils/network/getApolloClientApiKey";
-import { GET_POSITIONS } from "@/graphql/data/queries";
-import { useQuery } from "@apollo/client";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_positions } from "@/recoil/pool/positions";
-import { getTickToPrice } from "@/utils/pool/getTickToPrice";
-import { useV3MintInfo } from "./useV3MintInfo";
-import { Bound } from "@/types/pool/pool";
+import { useMintPositionInfo } from "./useMintPositionInfo";
+import { log } from "console";
+import { poolModalProp } from "@/recoil/modal/atom";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -220,18 +219,28 @@ export function useGetPositionIdFromPath() {
   return { positionId };
 }
 
-export function usePositionInfo() {
+function useGetPositionInfo() {
   const { positions } = useGetPositions();
   const pathName = usePathname();
-  const info = useMemo(() => {
+  const existingPositionInfo = useMemo(() => {
     const positionId = pathName.split("/")[pathName.split("/").length - 1];
-    if (positionId && positions) {
+
+    if (!isNaN(Number(positionId)) && positions) {
       const result = positions.filter(
         (poisitonData) => poisitonData.id === Number(positionId)
       );
       return result[0] ?? undefined;
     }
   }, [pathName, positions]);
+
+  return { existingPositionInfo };
+}
+
+export function usePositionInfo() {
+  const { existingPositionInfo } = useGetPositionInfo();
+  const mintPositionInfo = useRecoilValue(poolModalProp);
+
+  const info = mintPositionInfo ?? existingPositionInfo;
 
   const tokenPairForInfo = useMemo(() => {
     if (info) {

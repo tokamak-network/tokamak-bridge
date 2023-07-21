@@ -2,6 +2,7 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import Title from "../../add/components/Title";
 import { PriceRangeInfo } from "@/pools/components/PriceRangeInfo";
+import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 
 export default function PriceRange() {
   const { info } = usePositionInfo();
@@ -9,6 +10,7 @@ export default function PriceRange() {
   if (info === undefined) {
     return null;
   }
+
   return (
     <Flex
       w={"100%"}

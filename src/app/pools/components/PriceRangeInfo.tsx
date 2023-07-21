@@ -4,11 +4,13 @@ import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
 import { Box, Container, Flex, Text } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
+import SWITCHBUTTON_INFO_IMAGE from "assets/icons/pool/switch_info.svg";
+
 import Image from "next/image";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import QUESTION_ICON from "assets/icons/question.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useCallback } from "react";
+import usePreview from "@/hooks/modal/usePreviewModal";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -121,7 +123,8 @@ export function PriceRangeInfo() {
   const [manuallyInverted, setManuallyInverted] = useRecoilState(
     ATOM_manuallyInverted
   );
-  const { invertTokenPair, inToken } = useInOutTokens();
+  const { invertTokenPair } = useInOutTokens();
+  const { poolModal } = usePreview();
 
   return (
     <Flex flexDir={"column"}>
@@ -137,7 +140,14 @@ export function PriceRangeInfo() {
             setManuallyInverted(!manuallyInverted);
           }}
         >
-          <Image src={SWITCHBUTTON_IMAGE} alt={"SWITCHBUTTON_IMAGE"} />
+          <Image
+            src={
+              poolModal === "addLiquidity"
+                ? SWITCHBUTTON_IMAGE
+                : SWITCHBUTTON_INFO_IMAGE
+            }
+            alt={"SWITCHBUTTON_IMAGE"}
+          />
         </Box>
         <PriceInfo isMinPrice={false} />
       </Flex>

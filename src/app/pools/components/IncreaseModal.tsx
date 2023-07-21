@@ -12,14 +12,16 @@ import Title from "../add/components/Title";
 import ActionButton from "../increase/components/ActionButton";
 import CloseButton from "@/components/button/CloseButton";
 import PriceRange from "../[info]/components/PriceRange";
-import { usePoolContract } from "@/hooks/pool/usePoolContract";
+import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";
 
 export default function IncreaseModal() {
-  const { isOpen, onClosePreviewModal, poolModal } = usePreview();
+  const { onClosePreviewModal, poolModal } = usePreview();
   const { addLiquidity } = usePoolContract();
+  const { mintPosition } = usePoolMint();
+
   return (
     <Modal
-      isOpen={isOpen && poolModal === "increaseLiquidity"}
+      isOpen={poolModal === "increaseLiquidity" || poolModal === "addLiquidity"}
       onClose={onClosePreviewModal}
       isCentered
     >
@@ -36,14 +38,18 @@ export default function IncreaseModal() {
       >
         <Flex alignItems={"flex-start"} w="100%">
           <Title
-            title="Increase Liquidity"
+            title={
+              poolModal === "addLiquidity"
+                ? "Add Liquidity"
+                : "Increase Liquidity"
+            }
             style={{ fontSize: "20px", fontWeight: 500 }}
           />
           <Box pos={"absolute"} right={"15px"} top={"15px"}>
             <CloseButton onClick={onClosePreviewModal} />
           </Box>
         </Flex>
-        <Range style={{ background: "#0F0F12" }} page="Increase" />
+        <Range style={{ background: "#0F0F12" }} page={poolModal} />
         <PriceRange />
         <Flex w={"100%"}>
           <Button
@@ -56,7 +62,9 @@ export default function IncreaseModal() {
             _hover={{}}
             _active={{}}
             _disabled={{}}
-            onClick={() => addLiquidity()}
+            onClick={() =>
+              poolModal === "addLiquidity" ? mintPosition() : addLiquidity()
+            }
           >
             Increase
           </Button>

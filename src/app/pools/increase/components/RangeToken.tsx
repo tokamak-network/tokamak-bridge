@@ -1,18 +1,16 @@
 import { Flex, Text } from "@chakra-ui/react";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { Token } from "@uniswap/sdk-core";
+import { T_PoolModal } from "@/recoil/modal/atom";
 
 export default function RangeToken(props: {
   token: Token;
   amount: string;
   style?: {};
-  page: "Increase" | "Remove";
+  page: T_PoolModal;
   alterAmount: string | undefined;
 }) {
   const { token, amount, style, page, alterAmount } = props;
-
-  console.log("token");
-  console.log(token);
 
   return (
     <Flex width={"100%"} justifyContent={"space-between"} {...props.style}>
@@ -32,7 +30,7 @@ export default function RangeToken(props: {
       <Flex>
         <Text color={"#A0A3AD"}>{amount}</Text>
         <Text ml={"6px"}>
-          {!alterAmount ? "" : page === "Remove" ? "-" : "+"}
+          {!alterAmount ? "" : page === "removeLiquidity" ? "-" : "+"}
         </Text>
         <Text>{alterAmount}</Text>
       </Flex>

@@ -17,14 +17,14 @@ import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useRecoilValue } from "recoil";
 
 export default function RemoveModal() {
-  const { isOpen, onClosePreviewModal, poolModal } = usePreview();
+  const { onClosePreviewModal, poolModal } = usePreview();
   const { removeLiquidity } = usePoolContract();
   const { info } = usePositionInfo();
   const removeLiquidityPercentage = useRecoilValue(removeAmount);
 
   return (
     <Modal
-      isOpen={isOpen && poolModal === "removeLiquidity"}
+      isOpen={poolModal === "removeLiquidity"}
       onClose={onClosePreviewModal}
       isCentered
     >

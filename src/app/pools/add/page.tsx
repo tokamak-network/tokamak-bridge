@@ -9,11 +9,12 @@ import TopLine from "../common/TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
 import { WarningPool } from "./WarningPool";
+import IncreaseModal from "../components/IncreaseModal";
 
 export default function CreatePoolModal() {
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
-      <TopLine title={'Add Liquidity'} clear={true} switcher={true}/>
+      <TopLine title={"Add Liquidity"} clear={true} switcher={true} />
       <Flex
         border="1px solid #20212B"
         borderRadius={"16px"}
@@ -32,7 +33,7 @@ export default function CreatePoolModal() {
           <ActionButton />
         </Flex>
       </Flex>
-      {/* <Modals /> */}
+      <IncreaseModal />
     </Flex>
   );
 }

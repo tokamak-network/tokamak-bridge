@@ -20,6 +20,7 @@ import {
 import { Bound } from "@/types/pool/pool";
 import { useRecoilValue } from "recoil";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
+import { poolModalProp } from "@/recoil/modal/atom";
 
 function getPriceOrderingFromPositionForUI(position?: Position): {
   priceLower?: Price<Token, Token>;
@@ -143,9 +144,10 @@ export function usePoolInfo() {
   });
 
   const inverted = token1 ? base?.equals(token1) : undefined;
+  const mintPositionInfo = useRecoilValue(poolModalProp);
 
   const ratio = useMemo(() => {
-    return priceLower && pool && priceUpper
+    return priceLower && pool && priceUpper && !mintPositionInfo
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
           pool.token0Price,

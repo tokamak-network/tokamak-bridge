@@ -134,7 +134,11 @@ export default function RangeInput(props: RangeInputProps) {
               ticksAtLimit.LOWER
                 ? () => {}
                 : isMinPrice
-                ? onDecreaseLower
+                ? invertPrice
+                  ? onIncreaseUpper
+                  : onDecreaseLower
+                : invertPrice
+                ? onIncreaseLower
                 : onDecreaseUpper
             }
           >
@@ -171,7 +175,15 @@ export default function RangeInput(props: RangeInputProps) {
             justifyContent={"center"}
             alignItems={"center"}
             cursor={"pointer"}
-            onClick={isMinPrice ? onIncreaseLower : onIncreaseUpper}
+            onClick={
+              isMinPrice
+                ? invertPrice
+                  ? onDecreaseUpper
+                  : onIncreaseLower
+                : invertPrice
+                ? onDecreaseLower
+                : onIncreaseUpper
+            }
           >
             <Image src={ADD_ICON} alt={"ADD_ICON"} />
           </Flex>

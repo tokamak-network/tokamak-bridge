@@ -1,15 +1,12 @@
-import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import usePreview from "@/hooks/modal/usePreviewModal";
+import { Button, Flex, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { previewModalStatus, poolModalStatus } from "@/recoil/modal/atom";
+import { poolModalStatus } from "@/recoil/modal/atom";
 
 const ActionButton = (props: { step: string }) => {
   const { step } = props;
-  const { setPreviewModalStatus } = usePreview();
-  const [poolModal, setPoolModal] = useRecoilState(poolModalStatus);
+  const [, setPoolModal] = useRecoilState(poolModalStatus);
 
   const handleAction = () => {
-    setPreviewModalStatus(true);
     return setPoolModal("removeLiquidity");
   };
 
