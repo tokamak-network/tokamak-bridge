@@ -11,6 +11,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import QUESTION_ICON from "assets/icons/question.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -102,7 +103,7 @@ export const CurrentPriceInfo = () => {
         lineHeight={"24px"}
         verticalAlign={"center"}
       >
-        {currentPrice}
+        {smallNumberFormmater(Number(currentPrice ?? 0))}
       </Text>
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
         {inverted
