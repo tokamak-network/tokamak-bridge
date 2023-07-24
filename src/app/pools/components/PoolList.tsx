@@ -5,13 +5,13 @@ import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 import EmptyCard from "./EmptyCard";
 export default function PoolList() {
-  const { positions, isLoading } = useGetPositions();
+  const { positions } = useGetPositions();
 
   return (
     <Wrap spacing="16px">
       <LPGuide />
       <AddLiquidity />
-      {(positions === undefined || isLoading) &&
+      {positions === undefined &&
         Array.from({ length: 7 }, (_, index) => <EmptyCard key={index} />)}
       {positions?.map((position) => {
         return <PoolCard {...position} />;

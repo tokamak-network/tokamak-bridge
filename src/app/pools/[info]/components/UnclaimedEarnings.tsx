@@ -4,6 +4,7 @@ import { Flex, Box, Text, Button, useDisclosure } from "@chakra-ui/react";
 import ClaimEarningsModal from "./ClaimEarningsModal";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
 import { useMemo } from "react";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 
 export default function UnclaimedEarnings() {
@@ -39,13 +40,15 @@ export default function UnclaimedEarnings() {
         </Text>
         <Flex mb={"8px"} alignItems={"center"} color="#A0A3AD">
           <Text fontSize={"12px"}>
-            {commafy(info?.token0CollectedFee, 8)} {info?.token0.symbol}
+            {smallNumberFormmater(commafy(info?.token0CollectedFee, 8) ?? "-")}{" "}
+            {info?.token0.symbol}
           </Text>
           <Text w={"10px"} mx={"2px"}>
             +
           </Text>
           <Text fontSize={"12px"}>
-            {commafy(info?.token1CollectedFee, 8)} {info?.token1.symbol}
+            {smallNumberFormmater(commafy(info?.token1CollectedFee, 8) ?? "-")}{" "}
+            {info?.token1.symbol}
           </Text>
         </Flex>
       </Flex>

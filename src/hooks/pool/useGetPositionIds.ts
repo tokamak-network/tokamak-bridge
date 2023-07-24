@@ -52,10 +52,8 @@ export function useGetPositions() {
   const { layer, connectedChainId } = useConnectedNetwork();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const callPositionIds = useCallback(async () => {
-    setIsLoading(true);
     if (address && connectedChainId && provider) {
       const NonfungiblePositionManagerContract = new ethers.Contract(
         UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
@@ -196,10 +194,8 @@ export function useGetPositions() {
           rawPositionInfo: positionInfo,
         });
       }
-      setIsLoading(false);
       return positions;
     }
-    setIsLoading(false);
     return undefined;
   }, [UNISWAP_CONTRACT, address, provider]);
 
@@ -214,7 +210,7 @@ export function useGetPositions() {
     });
   }, [blockNumber, connectedChainId]);
 
-  return { positions, isLoading };
+  return { positions };
 }
 
 export function useGetPositionIdFromPath() {
