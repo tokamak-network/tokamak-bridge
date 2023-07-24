@@ -92,6 +92,7 @@ export const ApproveButtonsContrainer = () => {
 export default function ActionButton() {
   const [poolState] = usePool();
   const { tokensPairHasAmount } = useInOutTokens();
+  const { inTokenApproved, outTokenApproved } = useApproveToken();
 
   const buttonName = useMemo(() => {
     switch (poolState) {
@@ -100,7 +101,7 @@ export default function ActionButton() {
       case PoolState.INVALID:
         return "Invalid pair";
       case PoolState.NOT_EXISTS:
-        return "Invalid pair";
+        return tokensPairHasAmount ? "Preview" : "Invalid pair";
     }
     return "Invalid pair";
   }, [poolState, tokensPairHasAmount]);
@@ -108,7 +109,8 @@ export default function ActionButton() {
   const [, setPoolModal] = useRecoilState(poolModalStatus);
   const [, setPollModalProp] = useRecoilState(poolModalProp);
 
-  const btnDisabled = !tokensPairHasAmount;
+  const btnDisabled =
+    !tokensPairHasAmount || !inTokenApproved || !outTokenApproved;
   const { mintPositionInfo } = useMintPositionInfo();
 
   const handleAction = () => {

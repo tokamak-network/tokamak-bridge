@@ -207,7 +207,7 @@ export function useGetPositions() {
       console.log("**fetchPositionIds err**");
       // console.log(e);
     });
-  }, [blockNumber]);
+  }, [blockNumber, connectedChainId]);
 
   return { positions };
 }
