@@ -20,6 +20,7 @@ import { ATOM_positions } from "@/recoil/pool/positions";
 import { useMintPositionInfo } from "./useMintPositionInfo";
 import { log } from "console";
 import { poolModalProp } from "@/recoil/modal/atom";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -51,8 +52,10 @@ export function useGetPositions() {
   const { layer, connectedChainId } = useConnectedNetwork();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const callPositionIds = useCallback(async () => {
+    setIsLoading(true);
     if (address && connectedChainId && provider) {
       const NonfungiblePositionManagerContract = new ethers.Contract(
         UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
@@ -178,8 +181,8 @@ export function useGetPositions() {
             token1Symbol === "WETH" ? "ETH" : token1Symbol,
             token1Name
           ),
-          token0Amount,
-          token1Amount,
+          token0Amount: smallNumberFormmater(Number(token0Amount)),
+          token1Amount: smallNumberFormmater(Number(token1Amount)),
           token0CollectedFee,
           token1CollectedFee,
           token0MarketPrice: "1.25",
@@ -193,8 +196,10 @@ export function useGetPositions() {
           rawPositionInfo: positionInfo,
         });
       }
+      setIsLoading(false);
       return positions;
     }
+    setIsLoading(false);
     return undefined;
   }, [UNISWAP_CONTRACT, address, provider]);
 
@@ -209,7 +214,7 @@ export function useGetPositions() {
     });
   }, [blockNumber, connectedChainId]);
 
-  return { positions };
+  return { positions, isLoading };
 }
 
 export function useGetPositionIdFromPath() {

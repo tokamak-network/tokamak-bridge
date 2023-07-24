@@ -14,7 +14,7 @@ export default function UnclaimedEarnings() {
     if (info?.token0CollectedFee && info?.token1CollectedFee) {
       return (
         Number(info?.token0CollectedFee.replaceAll(",", "")) +
-          Number(info?.token0CollectedFee.replaceAll(",", "")) <=
+          Number(info?.token1CollectedFee.replaceAll(",", "")) <=
         0
       );
     }
