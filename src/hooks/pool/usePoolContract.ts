@@ -155,7 +155,7 @@ export function usePoolMint() {
         const tx = await NonfungiblePositionManagerContract.multicall(
           multicallParam,
           {
-            // gasLimit: 3000000,
+            gasLimit: 3000000,
             value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
             from: address,
           }
@@ -281,7 +281,7 @@ export function usePoolContract() {
   const { info } = usePositionInfo();
 
   const addLiquidity = useCallback(async () => {
-    if (inToken && outToken && address && info) {
+    if (address && info) {
       const {
         token0,
         token1,
@@ -297,15 +297,15 @@ export function usePoolContract() {
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
         fromReadableAmount(
-          Number(inToken.parsedAmount),
-          inToken.decimals
+          Number(inToken?.parsedAmount ?? 0),
+          inToken?.decimals ?? 0
         ).toString()
       );
       const token1Amount = CurrencyAmount.fromRawAmount(
         token0,
         fromReadableAmount(
-          Number(outToken.parsedAmount),
-          outToken.decimals
+          Number(outToken?.parsedAmount ?? 0),
+          outToken?.decimals ?? 0
         ).toString()
       );
 
@@ -374,7 +374,7 @@ export function usePoolContract() {
         const tx = await NonfungiblePositionManagerContract.multicall(
           multicallParam,
           {
-            // gasLimit: 3000000,
+            gasLimit: 3000000,
             value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
             from: address,
           }

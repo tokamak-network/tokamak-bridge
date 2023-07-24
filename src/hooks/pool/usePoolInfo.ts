@@ -182,6 +182,14 @@ export function usePoolInfo() {
     [tickSpaceLimits, tickLower, tickUpper, fee]
   );
 
+  // single deposit only if price is out of range
+  const deposit0Disabled = Boolean(
+    typeof tickUpper === "number" && info && tickCurrent >= tickUpper
+  );
+  const deposit1Disabled = Boolean(
+    typeof tickLower === "number" && info && tickCurrent <= tickLower
+  );
+
   return {
     priceLower,
     priceUpper,
@@ -193,5 +201,7 @@ export function usePoolInfo() {
     tickSpaceLimits,
     ticksAtLimit,
     pool,
+    deposit0Disabled: inverted ? deposit1Disabled : deposit0Disabled,
+    deposit1Disabled: inverted ? deposit0Disabled : deposit1Disabled,
   };
 }

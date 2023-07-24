@@ -11,10 +11,12 @@ import { getWETHAddress } from "@/utils/token/isETH";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { TokenInputForLiquidity } from "./TokenInputForLiquidity";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { OutRangeWarning } from "../../add/components/InputContainer";
 
 export default function AddMoreLiquidity() {
   const { info } = usePositionInfo();
-  const { inverted } = usePoolInfo();
+  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
 
   const { chainName } = useConnectedNetwork();
 
@@ -68,8 +70,13 @@ export default function AddMoreLiquidity() {
   return (
     <Flex flexDir={"column"} justifyContent={"flex-start"}>
       <Title title="Add more liquidity" />
-      <Flex alignItems={"center"} justifyContent={"center"}>
-        <Flex flexDir={"column"}>
+      <Flex
+        alignItems={"baseline"}
+        justifyContent={"center"}
+        pos={"relative"}
+        columnGap={"36px"}
+      >
+        <Flex flexDir={"column"} maxW={"186px"}>
           <TokenCard
             w={186}
             h={"242px"}
@@ -77,28 +84,29 @@ export default function AddMoreLiquidity() {
             hasInput={false}
             inNetwork={true}
           />
-          <Flex w={"186px"} mt="16px">
-            <TokenInputForLiquidity
-              inToken={true}
-              tokenInfo={inverted ? token1Info : token0Info}
-              otherTokenInfo={inverted ? token0Info : token1Info}
-            />
-          </Flex>
-          <Text color="#fff" opacity={0.8} fontSize={"13px"}>
-            $0.00
-          </Text>
+          {!deposit0Disabled && (
+            <Flex w={"186px"} mt="16px">
+              <TokenInputForLiquidity
+                inToken={true}
+                tokenInfo={inverted ? token1Info : token0Info}
+                otherTokenInfo={inverted ? token0Info : token1Info}
+              />
+            </Flex>
+          )}
+          {!deposit0Disabled && (
+            <Text color="#fff" opacity={0.8} fontSize={"13px"}>
+              $0.00
+            </Text>
+          )}
+          {deposit0Disabled && <OutRangeWarning />}
         </Flex>
 
-        <Flex
-          mx="6px"
-          h={"24px"}
-          w="24px"
-          justifyContent={"center"}
-          mt={"-61px"}
-        >
-          <Image src={add} alt="add" />
+        <Flex h={"242px"} justifyContent={"center"} pos={"absolute"}>
+          <Flex mx="6px" h={"100%"} w="24px">
+            <Image src={add} alt="add" />
+          </Flex>
         </Flex>
-        <Flex flexDir={"column"}>
+        <Flex flexDir={"column"} maxW={"186px"}>
           <TokenCard
             w={186}
             h={"242px"}
@@ -107,15 +115,21 @@ export default function AddMoreLiquidity() {
             inNetwork={true}
           />
           <Flex w={"186px"} mt="16px">
-            <TokenInputForLiquidity
-              inToken={false}
-              tokenInfo={inverted ? token0Info : token1Info}
-              otherTokenInfo={inverted ? token1Info : token0Info}
-            />
+            {deposit1Disabled ? (
+              <OutRangeWarning />
+            ) : (
+              <TokenInputForLiquidity
+                inToken={false}
+                tokenInfo={inverted ? token0Info : token1Info}
+                otherTokenInfo={inverted ? token1Info : token0Info}
+              />
+            )}
           </Flex>
-          <Text color="#fff" opacity={0.8} fontSize={"13px"}>
-            $0.00
-          </Text>
+          {!deposit1Disabled && (
+            <Text color="#fff" opacity={0.8} fontSize={"13px"}>
+              $0.00
+            </Text>
+          )}
         </Flex>
       </Flex>
     </Flex>

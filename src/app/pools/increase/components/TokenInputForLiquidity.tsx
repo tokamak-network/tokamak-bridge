@@ -2,6 +2,7 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -34,12 +35,17 @@ export function TokenInputForLiquidity(props: {
   const { chainName } = useConnectedNetwork();
 
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity(true);
+  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
 
   const tokenData = useTokenBalance(tokenInfo);
 
-  // console.log(amountForToken0, amountForToken1);
-
   useEffect(() => {
+    if (deposit0Disabled) {
+      return setSelectedInToken(null);
+    }
+    if (deposit1Disabled) {
+      return setSelectedOutToken(null);
+    }
     if (inToken && !amountForToken1)
       return setSelectedOutToken({
         ...otherTokenInfo,
@@ -54,7 +60,7 @@ export function TokenInputForLiquidity(props: {
         parsedAmount: null,
         tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
       });
-  }, []);
+  }, [deposit0Disabled, deposit1Disabled]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = e.target.value;
