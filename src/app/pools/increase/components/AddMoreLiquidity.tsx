@@ -81,6 +81,7 @@ export default function AddMoreLiquidity() {
             <TokenInputForLiquidity
               inToken={true}
               tokenInfo={inverted ? token1Info : token0Info}
+              otherTokenInfo={inverted ? token0Info : token1Info}
             />
           </Flex>
           <Text color="#fff" opacity={0.8} fontSize={"13px"}>
@@ -109,6 +110,7 @@ export default function AddMoreLiquidity() {
             <TokenInputForLiquidity
               inToken={false}
               tokenInfo={inverted ? token0Info : token1Info}
+              otherTokenInfo={inverted ? token1Info : token0Info}
             />
           </Flex>
           <Text color="#fff" opacity={0.8} fontSize={"13px"}>

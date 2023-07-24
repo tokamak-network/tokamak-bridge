@@ -20,9 +20,10 @@ import { useRecoilState } from "recoil";
 export function TokenInputForLiquidity(props: {
   inToken: boolean;
   tokenInfo: TokenInfo;
+  otherTokenInfo: TokenInfo;
   style?: {};
 }) {
-  const { inToken, tokenInfo, style } = props;
+  const { inToken, tokenInfo, otherTokenInfo, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -41,17 +42,17 @@ export function TokenInputForLiquidity(props: {
   useEffect(() => {
     if (inToken && !amountForToken1)
       return setSelectedOutToken({
-        ...tokenInfo,
+        ...otherTokenInfo,
         amountBN: null,
         parsedAmount: null,
-        tokenAddress: chainName ? tokenInfo.address[chainName] : null,
+        tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
       });
     if (!inToken && !amountForToken0)
       return setSelectedInToken({
-        ...tokenInfo,
+        ...otherTokenInfo,
         amountBN: null,
         parsedAmount: null,
-        tokenAddress: chainName ? tokenInfo.address[chainName] : null,
+        tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
       });
   }, []);
 
