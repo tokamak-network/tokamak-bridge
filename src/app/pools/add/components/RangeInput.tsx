@@ -87,7 +87,9 @@ export default function RangeInput(props: RangeInputProps) {
   const inputValue = useMemo(() => {
     if (ticksAtLimit.LOWER && isMinPrice) return "0";
     if (ticksAtLimit.UPPER && !isMinPrice) return "∞";
-    return isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5);
+    return isMinPrice
+      ? commafy(minPriceInput, 5, true, true)
+      : commafy(maxPriceInput, 5, true, true);
   }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput]);
 
   useEffect(() => {
@@ -162,6 +164,7 @@ export default function RangeInput(props: RangeInputProps) {
             onBlur={blurHandler}
             onFocus={onFocusHandler}
             value={isFocused ? valueInThisInput : inputValue}
+            placeholder="0"
             // value={inputValue}
           >
             {/* {isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5)} */}

@@ -120,13 +120,13 @@ export default function TokenInput(props: {
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
       }
-      // if (inToken === false && selectedOutToken) {
-      //   return setSelectedOutToken({
-      //     ...selectedOutToken,
-      //     amountBN: tokenData.data.balanceBN.value,
-      //     parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-      //   });
-      // }
+      if (inToken === false && selectedOutToken) {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: tokenData.data.balanceBN.value,
+          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+        });
+      }
       return console.error("a input field not founded");
     }
   }, [tokenData, inToken, selectedInToken]);
