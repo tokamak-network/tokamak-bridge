@@ -17,7 +17,7 @@ export default function RangeToken(props: {
       <Flex>
         <TokenSymbolWithNetwork
           tokenSymbol={token.symbol as string}
-          chainId={1}
+          chainId={token.chainId}
           symbolW={24}
           symbolH={24}
           networkSymbolH={13}
