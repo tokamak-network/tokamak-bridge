@@ -33,6 +33,7 @@ export default function SelectNetwork() {
             flexDir={"column"}
             rowGap={"70px"}
             onClick={()=>setIsOpen(true)}
+            cursor={'pointer'}
           >
             <Flex
               w={"100%"}
