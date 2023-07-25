@@ -112,14 +112,16 @@ const ValueContainer = (props: {
 export default function NetworkDropdown(props: {
   inNetwork: boolean;
   height: string;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-  const { inNetwork, height } = props;
+  const { inNetwork, height, isOpen, setIsOpen } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
   const { isConnected } = useAccount();
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  // const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onChange = async (data: SupportedChainProperties) => {
     try {

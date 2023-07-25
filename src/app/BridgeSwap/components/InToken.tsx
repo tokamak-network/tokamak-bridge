@@ -6,21 +6,22 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
-import { useMemo } from "react";
+import { useMemo,useState } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function InToken() {
   const { inToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const { onOpenInToken } = useTokenModal();
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={true} height="32px" />
+        <NetworkDropdown inNetwork={true} height="32px" isOpen={isOpen} setIsOpen={setIsOpen}/>
       </Box>
     );
-  }, []);
+  }, [isOpen, setIsOpen]);
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
