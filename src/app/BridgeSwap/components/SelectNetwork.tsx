@@ -5,16 +5,17 @@ import { useMemo,useState } from "react";
 
 export default function SelectNetwork() {
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [open, setOpen] = useState<boolean>(false);
 
 
   const NetworkSwitcher = useMemo(() => {
+    
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={false} height="32px" isOpen={isOpen} setIsOpen={setIsOpen} />
+        <NetworkDropdown inNetwork={false} height="32px" clicked={open}  setOpen={setOpen}/>
       </Box>
     );
-  }, [isOpen, setIsOpen]);
+  }, [open, setOpen]);
 
   return (
     <Flex
@@ -32,7 +33,7 @@ export default function SelectNetwork() {
             display={"flex"}
             flexDir={"column"}
             rowGap={"70px"}
-            onClick={()=>setIsOpen(true)}
+            onClick={()=>setOpen(!open)}
             cursor={'pointer'}
           >
             <Flex

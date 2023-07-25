@@ -7,7 +7,7 @@ import { ImageFileType } from "@/types/style/imageFileType";
 import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import TokenCard from "@/components/card/TokenCard";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import Setting from "@/components/Setting";
 import { useGetMode } from "@/hooks/mode/useGetMode";
@@ -77,15 +77,14 @@ export const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode, swapSection } = useGetMode();
   const { outToken } = useInOutTokens();
-  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box minW={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={false} height="32px" isOpen={isOpen} setIsOpen={setIsOpen}/>
+        <NetworkDropdown inNetwork={false} height="32px" />
       </Box>
     );
-  }, [isOpen, setIsOpen]);
+  }, []);
 
   return (
     <Flex flexDir={"column"} rowGap={"28px"}>
