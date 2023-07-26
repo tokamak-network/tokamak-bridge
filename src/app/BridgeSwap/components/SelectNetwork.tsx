@@ -5,17 +5,14 @@ import { useMemo,useState } from "react";
 
 export default function SelectNetwork() {
 
-  const [open, setOpen] = useState<boolean>(false);
-
-
   const NetworkSwitcher = useMemo(() => {
     
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={false} height="32px" clicked={open}  setOpen={setOpen}/>
+        <NetworkDropdown inNetwork={false} height="32px"/>
       </Box>
     );
-  }, [open, setOpen]);
+  }, []);
 
   return (
     <Flex
@@ -33,7 +30,9 @@ export default function SelectNetwork() {
             display={"flex"}
             flexDir={"column"}
             rowGap={"70px"}
-            onClick={()=>setOpen(!open)}
+            onClick={()=>{
+              //add the click function here
+            }}
             cursor={'pointer'}
           >
             <Flex
