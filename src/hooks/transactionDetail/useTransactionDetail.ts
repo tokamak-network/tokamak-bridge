@@ -102,7 +102,7 @@ export function useTransactionDetail() {
         },
         {
           title: "Time to Deposit",
-          content: "~20 minutes",
+          content: "~5 minutes",
         },
       ];
     }
