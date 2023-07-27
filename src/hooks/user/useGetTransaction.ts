@@ -18,6 +18,7 @@ import { useNetwork } from "wagmi";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getProvider } from "@/config/getProvider";
+import { fetchL1Transactions } from "@/components/history/utils/fetchL1Transactions";
 
 export default function useGetTransaction() {
   const [tData, setTData] = useRecoilState(transactionData);
@@ -85,6 +86,11 @@ export default function useGetTransaction() {
         L2BridgeAbi,
         l2ProSDK
       );
+
+
+      const userL1Transactions = await fetchL1Transactions(address)
+      
+
       const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
         "DepositFinalized"
       );
@@ -96,24 +102,17 @@ export default function useGetTransaction() {
         l2Transactions_DepositFinalized
       );
 
+
+
       const userL2Transactions = l2Transactions.filter(
         (event) => event.args?._from === address
       );
 
+
+      console.log('userL2Transactions',userL2Transactions);
+      
       const latestBlock = await l1Pro.getBlockNumber();
       const fromBlock = latestBlock - 40000;
-
-      const l1transactions =
-        layer === "L2"
-          ? await l1bridge.queryFilter({}, fromBlock, "latest")
-          : await l1bridge.queryFilter({});
-      const userL1Transactions = l1transactions.filter(
-        (event) => event.args?._from === address
-      );
-;
-
-      console.log("userL1Transactions", userL1Transactions);
-
 
       const l2Txs = await Promise.all(
         userL2Transactions
@@ -127,7 +126,6 @@ export default function useGetTransaction() {
               txion.l1BlockNumber
             );
 
-
             let txCopy = {
               ...tx,
               l2timeStamp: l2block.timestamp,
@@ -139,42 +137,59 @@ export default function useGetTransaction() {
             return txCopy;
           })
       );
+    
+      if (userL1Transactions !== undefined) {
+        const l1Txs = await Promise.all(
+          userL1Transactions.map(async (tx: any) => {
+            const l2tx = l2Txs.filter((l2tx: any) => {
+            
+              
+              return (
+                l2tx.l1Block.number === Number(tx.blockNumber)
+              );
+            });
 
-      console.log( "l2tx", l2Txs)
+            if (l2tx.length > 0) {
+              const l2BlockNum = l2tx[0].blockNumber;
+              const l2Block = await l2pro.getBlock(l2BlockNum);
+              const l2timestamp = await l2Block.timestamp;
+              const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+              const l1timeStamp = l1Block.timestamp;
+              let txCopy = {
+                ...tx,
+                l2timeStamp: l2timestamp,
+                l1timeStamp: l1timeStamp,
+                l1Block: l1Block,
+                l2txHash: l2tx[0].transactionHash,
+                l1txHash: tx.transactionHash,
+              };              
+              return txCopy;
+            }
+
+            else {
+              const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+              const l1timeStamp = l1Block.timestamp;
+
+              let txCopy = {
+                ...tx,
+               
+                l1timeStamp: l1timeStamp,
+                l1Block: l1Block,
+              
+                l1txHash: tx.transactionHash,
+              };              
+              return txCopy;
+            }
+          })
+        );
+          const txLogs = layer == "L1" ? l1Txs.sort((tx1: any, tx2: any) => tx2.l1timeStamp - tx1.l1timeStamp) : l2Txs;
+console.log('txLogs',txLogs);
+
+        setTData(txLogs);
+      }
+
 
     
-      const l1Txs = await Promise.all(
-        userL1Transactions.map(async (tx: any) => {
-          const l2tx = l2Txs.filter((l2tx: any) => {
-            return (
-              l2tx.l1Block.number === tx.blockNumber && l2tx.data === tx.data
-            );
-          });
-
-          if (l2tx.length > 0) {
-            const l2BlockNum = l2tx[0].blockNumber;
-            const l2Block = await l2pro.getBlock(l2BlockNum);
-            const l2timestamp = await l2Block.timestamp;
-            const l1Block = await l1Pro.getBlock(tx.blockNumber);
-            const l1timeStamp = l1Block.timestamp;
-            let txCopy = {
-              ...tx,
-              l2timeStamp: l2timestamp,
-              l1timeStamp: l1timeStamp,
-              l1Block: l1Block,
-              l2txHash: l2tx[0].transactionHash,
-              l1txHash: tx.transactionHash,
-            };
-            return txCopy;
-          }
-        })
-      );
-
-      console.log("l1Txs", l1Txs);
-
-      const txLogs = layer == "L1" ? l1Txs : l2Txs;
-
-      setTData(l2Txs);
     }
   }, [address, layer, provider, l2RpcProvider, connectedChainId]);
 

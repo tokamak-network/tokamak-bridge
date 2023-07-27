@@ -34,6 +34,8 @@ export default function DepositTx(props: { tx: any }) {
   const { blockExplorer } = useConnectedNetwork();
 const zero_address = '0x0000000000000000000000000000000000000000'  
 
+console.log('tx',tx);
+
   const returnProvider = (chainName: string | undefined) => {
     let l1Provider, l2Provider;
     switch (chainName) {
@@ -162,8 +164,8 @@ const zero_address = '0x0000000000000000000000000000000000000000'
         inTokenSymbol={tokenData?.token0Symbol || "ETH"}
         outTokenSymbol={tokenData?.token1Symbol || "ETH"}
       />
-      <StatusTx completed={true} date={tx.l1timeStamp} layer={'L1'}/>
-      <StatusTx completed={true} date={tx.l2timeStamp} layer={'L2'}/>
+      <StatusTx completed={true} date={tx.l1timeStamp} layer={'L1'} txHash={tx.l1txHash}/>
+      <StatusTx completed={true} date={tx.l2timeStamp} layer={'L2'} txHash={tx.l2txHash}/>
     </Flex>
   );
 }
