@@ -7,6 +7,7 @@ import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
 export default function StatusTx(props: {
   completed: boolean;
@@ -16,6 +17,8 @@ export default function StatusTx(props: {
 }) {
   const { completed, date, layer, txHash } = props;
   const { blockExplorer } = useConnectedNetwork();
+  const providers = useGetTxLayers();
+
   const [modalOpen, setModalOpen] = useRecoilState(confirmWithdraw);
   const config: Object = {
     name: " Test the Add to Calendar Button",
@@ -28,8 +31,7 @@ export default function StatusTx(props: {
     timeZone: "currentBrowser",
   };
 
-console.log('blockExplorer',blockExplorer);
-
+  console.log("blockExplorer", blockExplorer);
 
   return (
     <Flex justifyContent={"space-between"} h="18px" alignItems={"center"}>
@@ -43,8 +45,12 @@ console.log('blockExplorer',blockExplorer);
         ></Flex>
         {completed ? (
           <Link
-          target="_blank"
-          href={`${blockExplorer}/tx/${txHash}`}
+            target="_blank"
+            href={`${
+              layer === "L1"
+                ? providers.l1BlockExplorer
+                : providers.l2BlockExplorer
+            }/tx/${txHash}`}
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}

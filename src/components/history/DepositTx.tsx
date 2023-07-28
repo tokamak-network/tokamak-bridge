@@ -14,6 +14,7 @@ import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useConnectedNetwork from "@/hooks/network";
 import { getProvider } from "@/config/getProvider";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
 type TokenData = {
   token0Symbol: string;
@@ -32,79 +33,44 @@ export default function DepositTx(props: { tx: any }) {
   const { chain } = useNetwork();
   const { layer, chainName } = useConnectedNetwork();
   const { blockExplorer } = useConnectedNetwork();
-const zero_address = '0x0000000000000000000000000000000000000000'  
+  const providers = useGetTxLayers();
 
-console.log('tx',tx);
+  const zero_address = "0x0000000000000000000000000000000000000000";
 
-  const returnProvider = (chainName: string | undefined) => {
-    let l1Provider, l2Provider;
-    switch (chainName) {
-      case "DARIUS":
-        l1Provider = supportedChain.filter((e) => e.chainName === "GOERLI")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "DARIUS")[0];
-
-        return { l1Provider, l2Provider };
-
-      case "TITAN":
-        l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
-        return { l1Provider, l2Provider };
-
-      case "GOERLI":
-        l1Provider = supportedChain.filter((e) => e.chainName === "GOERLI")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "DARIUS")[0];
-        return { l1Provider, l2Provider };
-
-      case "MAINNET":
-        l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
-
-        return { l1Provider, l2Provider };
-      default:
-        l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
-        return { l1Provider, l2Provider };
-    }
-  };
   const getTokenData = useCallback(async () => {
     if (
       tx.args._l1Token !== undefined &&
       tx.args._l2Token !== undefined &&
-      chain?.id 
+      chain?.id
     ) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
 
-      const providers = returnProvider(chainName);
-
-      const l2Provider = getProvider(providers?.l2Provider);
-      let token0Symbol, token0Name, token0Decimals
-      const l2Pro = layer === 'L2'? provider: getProvider(providers.l2Provider)
+      let token0Symbol, token0Name, token0Decimals;
+      const l2Pro =
+        layer === "L2" ? provider : getProvider(providers.l2Provider);
 
       if (tx.args._l1Token === zero_address) {
-        token0Symbol='ETH'
-        token0Name='ETH'
-        token0Decimals=18
-      }
-      else {
+        token0Symbol = "ETH";
+        token0Name = "ETH";
+        token0Decimals = 18;
+      } else {
         const l1TokenContract = new ethers.Contract(
           tx.args._l1Token,
           ERC20_ABI.abi,
           getProvider(providers?.l1Provider)
         );
-         [token0Symbol, token0Name, token0Decimals] = await Promise.all([
+        [token0Symbol, token0Name, token0Decimals] = await Promise.all([
           l1TokenContract.symbol(),
           l1TokenContract.name(),
           l1TokenContract.decimals(),
         ]);
       }
-     
+
       const l2TokenContract = new ethers.Contract(
         tx.args._l2Token,
         ERC20_ABI.abi,
         l2Pro
-      );      
-
-      
+      );
 
       const [token1Symbol, token1Name, token1Decimals] = await Promise.all([
         l2TokenContract.symbol(),
@@ -152,7 +118,7 @@ console.log('tx',tx);
         </Text>
       </Flex>
       <TokenPairTx
-      action="deposit"
+        action="deposit"
         inAmount={ethers.utils.formatUnits(
           tx.args._amount.toString(),
           tokenData?.token0Decimals
@@ -164,8 +130,18 @@ console.log('tx',tx);
         inTokenSymbol={tokenData?.token0Symbol || "ETH"}
         outTokenSymbol={tokenData?.token1Symbol || "ETH"}
       />
-      <StatusTx completed={true} date={tx.l1timeStamp} layer={'L1'} txHash={tx.l1txHash}/>
-      <StatusTx completed={true} date={tx.l2timeStamp} layer={'L2'} txHash={tx.l2txHash}/>
+      <StatusTx
+        completed={true}
+        date={tx.l1timeStamp}
+        layer={"L1"}
+        txHash={tx.l1txHash}
+      />
+      <StatusTx
+        completed={true}
+        date={tx.l2timeStamp}
+        layer={"L2"}
+        txHash={tx.l2txHash}
+      />
     </Flex>
   );
 }

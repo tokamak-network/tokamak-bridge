@@ -19,7 +19,7 @@ const getEventName = (event: string) => {
 export const fetchL1Transactions = async (account: string | undefined) => {
   if (account) {
     const res = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/lakmi94/bridge-subgraph",
+      "https://api.thegraph.com/subgraphs/name/lakmi94/standardbridge",
       {
         query: `{
             erc20DepositInitiateds(
