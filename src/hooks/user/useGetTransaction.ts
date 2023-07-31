@@ -66,9 +66,6 @@ export default function useGetTransaction() {
 
       console.log("userL2Transactions", userL2Transactions);
 
-
-     
-
       if (userL1Transactions !== undefined) {
         const l2Txs = await Promise.all(
           userL2Transactions
@@ -81,16 +78,14 @@ export default function useGetTransaction() {
               const l1Block = await getProvider(providers.l1Provider)?.getBlock(
                 txion.l1BlockNumber
               );
-              const l1tx = userL1Transactions?.filter((l1tx:any) => {
-                
-                return Number(l1tx.blockNumber) ===  txion.l1BlockNumber
-              })
-              
-              if (l1tx.length > 0) {
+              const l1tx = userL1Transactions?.filter((l1tx: any) => {
+                return Number(l1tx.blockNumber) === txion.l1BlockNumber;
+              });
 
+              if (l1tx.length > 0) {                
                 const l1BlockNum = Number(l1tx[0].blockNumber);
-                const l1TxHash = l1tx[0].transactionHash
-                const l1timeStamp = Number(l1tx[0].blockTimestamp)
+                const l1TxHash = l1tx[0].transactionHash;
+                const l1timeStamp = Number(l1tx[0].blockTimestamp);
                 let txCopy = {
                   ...tx,
                   l2timeStamp: l2block.timestamp,
@@ -100,23 +95,21 @@ export default function useGetTransaction() {
                   l1txHash: l1TxHash,
                 };
                 return txCopy;
+              } else {                
+                let txCopy = {
+                  ...tx,
+                  l2timeStamp: l2block.timestamp,
+                  l1timeStamp: l2block.timestamp,
+                  l1Block: l1Block,
+                  l2txHash: tx.transactionHash,
+                  l1txHash: tx.transactionHash,
+                };
+                return txCopy;
               }
-  else {
-    let txCopy = {
-      ...tx,
-      l2timeStamp: l2block.timestamp,
-      l1timeStamp: l2block.timestamp,
-      l1Block: l1Block,
-      l2txHash: tx.transactionHash,
-      l1txHash: tx.transactionHash,
-    };
-    return txCopy;
-  }
-             
             })
         );
 
-console.log(l2Txs);
+        console.log('l2Txs',l2Txs);
 
         const l1Txs = await Promise.all(
           userL1Transactions.map(async (tx: any) => {
