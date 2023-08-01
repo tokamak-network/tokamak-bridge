@@ -13,6 +13,7 @@ import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useMemo } from "react";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 const TokenPairTitle = () => {
   const { inverted } = usePoolInfo();
@@ -121,11 +122,43 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
       />
       <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
         <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
-        <Flex mt="8px" justifyContent={"space-between"}>
-          <Text fontSize={"14px"}>Estimated gas fees</Text>
-          <Text fontSize={"16px"} fontWeight={500}>
-            $4.44
-          </Text>
+        <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
+          <Flex justifyContent={"space-between"}>
+            <Text fontSize={"14px"}>Earnings</Text>
+            <Flex alignItems={"center"}>
+              <Text>
+                {smallNumberFormmater(
+                  commafy(
+                    inverted
+                      ? info?.token1CollectedFee
+                      : info?.token0CollectedFee,
+                    8
+                  ) ?? "-"
+                )}{" "}
+                {inverted ? info?.token1.symbol : info?.token0.symbol}
+              </Text>
+              <Text w={"10px"} mx={"2px"}>
+                +
+              </Text>
+              <Text>
+                {smallNumberFormmater(
+                  commafy(
+                    inverted
+                      ? info?.token0CollectedFee
+                      : info?.token1CollectedFee,
+                    8
+                  ) ?? "-"
+                )}{" "}
+                {inverted ? info?.token0.symbol : info?.token1.symbol}
+              </Text>
+            </Flex>
+          </Flex>
+          <Flex justifyContent={"space-between"}>
+            <Text fontSize={"14px"}>Estimated gas fees</Text>
+            <Text fontSize={"16px"} fontWeight={500}>
+              $4.44
+            </Text>
+          </Flex>
         </Flex>
       </Flex>
     </Flex>
