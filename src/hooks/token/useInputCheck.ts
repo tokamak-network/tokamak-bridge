@@ -18,7 +18,7 @@ export default function useInputBalanceCheck() {
       );
     }
     return false;
-  }, [inToken?.amountBN, tokenData?.data.parsedBalanceWithoutCommafied]);
+  }, [inToken?.parsedAmount, tokenData?.data.parsedBalanceWithoutCommafied]);
 
   const isOutTokenBalanceOver = useMemo(() => {
     if (
@@ -31,7 +31,10 @@ export default function useInputBalanceCheck() {
       );
     }
     return false;
-  }, [outToken?.amountBN, outTokenData?.data.parsedBalanceWithoutCommafied]);
+  }, [
+    outToken?.parsedAmount,
+    outTokenData?.data.parsedBalanceWithoutCommafied,
+  ]);
 
   const isInputZero = useMemo(() => {
     if (
@@ -41,7 +44,7 @@ export default function useInputBalanceCheck() {
       return Number(inToken?.parsedAmount) === 0;
     }
     return false;
-  }, [inToken?.amountBN, tokenData?.data.parsedBalanceWithoutCommafied]);
+  }, [inToken?.parsedAmount, tokenData?.data.parsedBalanceWithoutCommafied]);
 
   return { isBalanceOver, isOutTokenBalanceOver, isInputZero };
 }

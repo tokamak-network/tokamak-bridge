@@ -11,6 +11,7 @@ import { usePool } from "@/hooks/pool/usePool";
 import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useTx } from "@/hooks/tx/useTx";
 import { poolModalProp, poolModalStatus } from "@/recoil/modal/atom";
 import { PoolState } from "@/types/pool/pool";
@@ -93,8 +94,14 @@ export default function ActionButton() {
   const [poolState] = usePool();
   const { tokensPairHasAmount } = useInOutTokens();
   const { inTokenApproved, outTokenApproved } = useApproveToken();
+  const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+  const { inToken, outToken } = useInOutTokens();
 
   const buttonName = useMemo(() => {
+    if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
+    if (isOutTokenBalanceOver)
+      return `Insufficient ${outToken?.tokenSymbol} balance`;
+
     switch (poolState) {
       case PoolState.EXISTS:
         return tokensPairHasAmount ? "Preview" : "Enter an amount";
@@ -104,13 +111,24 @@ export default function ActionButton() {
         return tokensPairHasAmount ? "Preview" : "Invalid pair";
     }
     return "Invalid pair";
-  }, [poolState, tokensPairHasAmount]);
+  }, [
+    poolState,
+    tokensPairHasAmount,
+    isBalanceOver,
+    isOutTokenBalanceOver,
+    inToken,
+    outToken,
+  ]);
 
   const [, setPoolModal] = useRecoilState(poolModalStatus);
   const [, setPollModalProp] = useRecoilState(poolModalProp);
 
   const btnDisabled =
-    !tokensPairHasAmount || !inTokenApproved || !outTokenApproved;
+    !tokensPairHasAmount ||
+    !inTokenApproved ||
+    !outTokenApproved ||
+    isBalanceOver ||
+    isOutTokenBalanceOver;
   const { mintPositionInfo } = useMintPositionInfo();
 
   const handleAction = () => {
