@@ -15,7 +15,6 @@ export default function SetPriceRange() {
   const { getSetFullRange } = useRangeHopCallbacks();
   const [poolStatus, pool] = usePool();
 
-  // ∞
   return (
     <Flex flexDir={"column"} rowGap={"15px"}>
       <Title title="Set Price Range" />
