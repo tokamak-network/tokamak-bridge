@@ -20,7 +20,7 @@ const GradientSpinner = () => {
   );
 };
 
-export default function EmptyCard() {
+export default function EmptyCard(props: { noSpinner?: boolean }) {
   const { isConnected } = useAccount();
 
   return (
@@ -31,7 +31,7 @@ export default function EmptyCard() {
       h="248px"
       borderRadius={"16px"}
     >
-      {isConnected && <GradientSpinner />}
+      {!props.noSpinner && isConnected && <GradientSpinner />}
     </Flex>
   );
 }

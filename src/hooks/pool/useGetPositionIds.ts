@@ -75,6 +75,7 @@ export function useGetPositions() {
         const positionInfo = await NonfungiblePositionManagerContract.positions(
           tokenOfOwnerByIndex
         );
+
         const { token0, token1, fee, tickLower, tickUpper, liquidity } =
           positionInfo;
 
@@ -121,7 +122,6 @@ export function useGetPositions() {
         );
 
         const slot = await POOL_CONTRACT.slot0();
-
         const { tick, sqrtPriceX96 } = slot;
         const inRange = tickLower <= tick && tick < tickUpper;
 
@@ -134,6 +134,7 @@ export function useGetPositions() {
             amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
             amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
           });
+
         const token0CollectedFee = ethers.utils.formatUnits(
           earningFee.amount0.toString(),
           token0Decimals
@@ -143,24 +144,33 @@ export function useGetPositions() {
           token1Decimals
         );
 
-        const remainedTokens =
-          await NonfungiblePositionManagerContract.callStatic.decreaseLiquidity(
-            {
-              tokenId: positionId,
-              liquidity,
-              deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-              amount0Min: 0,
-              amount1Min: 0,
-            }
-          );
-        const token0Amount = ethers.utils.formatUnits(
-          remainedTokens.amount0.toString(),
-          token0Decimals
-        );
-        const token1Amount = ethers.utils.formatUnits(
-          remainedTokens.amount1.toString(),
-          token1Decimals
-        );
+        const hasNoLiquidity = Number(liquidity.toString()) === 0;
+
+        const remainedTokens = hasNoLiquidity
+          ? undefined
+          : await NonfungiblePositionManagerContract.callStatic.decreaseLiquidity(
+              {
+                tokenId: positionId,
+                liquidity,
+                deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+                amount0Min: 0,
+                amount1Min: 0,
+              }
+            );
+
+        const token0Amount = hasNoLiquidity
+          ? "0"
+          : ethers.utils.formatUnits(
+              remainedTokens.amount0.toString(),
+              token0Decimals
+            );
+
+        const token1Amount = hasNoLiquidity
+          ? "0"
+          : ethers.utils.formatUnits(
+              remainedTokens.amount1.toString(),
+              token1Decimals
+            );
 
         positions.push({
           id: positionId,

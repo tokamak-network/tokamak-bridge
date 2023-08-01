@@ -11,7 +11,7 @@ import ActionButton from "./ActionButton";
 import { WarningPool } from "./WarningPool";
 import IncreaseModal from "../components/IncreaseModal";
 
-export default function CreatePoolModal() {
+export default function AddLiquidity() {
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
       <TopLine title={"Add Liquidity"} clear={true} switcher={true} />

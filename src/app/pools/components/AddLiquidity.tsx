@@ -19,6 +19,7 @@ export default function AddLiquidity() {
         paddingTop={"32px"}
         paddingBottom={"24px"}
         borderRadius={"16px"}
+        justifyContent={"center"}
         alignItems="center"
         textAlign="center"
         cursor={"pointer"}

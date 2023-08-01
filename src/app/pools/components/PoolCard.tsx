@@ -69,7 +69,7 @@ export default function PoolCard(props: PoolCardDetail) {
         <RangeText inRange={inRange} />
         <Flex alignItems="left" justifyContent="flex-start" flexDir={"column"}>
           <Text fontWeight="semibold" fontSize="18px" h={"27px"}>
-            {token0.symbol} / {token1.symbol}
+            {token1.symbol} / {token0.symbol}
           </Text>
           <Text fontSize={"12px"} h={"18px"}>
             {feePercent}

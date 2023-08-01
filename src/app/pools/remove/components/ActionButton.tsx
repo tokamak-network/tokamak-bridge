@@ -1,14 +1,16 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { poolModalStatus } from "@/recoil/modal/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { T_PoolModal, poolModalStatus } from "@/recoil/modal/atom";
+import { removeAmount } from "@/recoil/pool/setPoolPosition";
 
-const ActionButton = (props: { step: string }) => {
-  const { step } = props;
+const ActionButton = () => {
   const [, setPoolModal] = useRecoilState(poolModalStatus);
-
+  const amountPercentage = useRecoilValue(removeAmount);
   const handleAction = () => {
     return setPoolModal("removeLiquidity");
   };
+
+  const btnIsDisabled = amountPercentage === 0;
 
   return (
     <Flex w={"100%"}>
@@ -21,10 +23,11 @@ const ActionButton = (props: { step: string }) => {
         fontWeight={600}
         _hover={{}}
         _active={{}}
-        _disabled={{}}
+        _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
         onClick={handleAction}
+        isDisabled={btnIsDisabled}
       >
-        <Text>{step === "step" ? "Preview" : "Remove"}</Text>
+        <Text>{btnIsDisabled ? "Enter a percent" : "Preview"}</Text>
       </Button>
     </Flex>
   );

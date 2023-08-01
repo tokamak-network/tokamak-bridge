@@ -19,8 +19,8 @@ export default function InfoTitle() {
       <Flex columnGap={"8px"}>
         <Flex>
           <TokenSymbolWithNetwork
-            tokenSymbol={token0.symbol as string}
-            chainId={token0.chainId}
+            tokenSymbol={token1.symbol as string}
+            chainId={token1.chainId}
             symbolW={32}
             symbolH={32}
             networkSymbolH={12}
@@ -29,8 +29,8 @@ export default function InfoTitle() {
             style={{ zIndex: 10 }}
           />
           <TokenSymbolWithNetwork
-            tokenSymbol={token1.symbol as string}
-            chainId={token1.chainId}
+            tokenSymbol={token0.symbol as string}
+            chainId={token0.chainId}
             symbolW={32}
             symbolH={32}
             networkSymbolH={12}
@@ -41,7 +41,7 @@ export default function InfoTitle() {
         </Flex>
         <Flex alignItems={"center"} columnGap={"8px"}>
           <Text fontWeight="bold" fontSize="23px">
-            {token0.symbol} / {token1.symbol}
+            {token1.symbol} / {token0.symbol}
           </Text>
           <Flex bgColor={"#1F2128"} borderRadius={8} p={1}>
             <Text fontSize={"12px"} as="b">

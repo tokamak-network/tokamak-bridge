@@ -32,7 +32,7 @@ export default function RemoveLiquidity() {
           <Range page="removeLiquidity" />
           <SelectPercentage />
           <TxDetails />
-          <ActionButton step="preview" />
+          <ActionButton />
         </Flex>
       </Flex>
       <IncreaseModal />
