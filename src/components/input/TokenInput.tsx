@@ -1,6 +1,5 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
@@ -30,7 +29,6 @@ export default function TokenInput(props: {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { inNetwork, outNetwork } = useInOutNetwork();
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
   const {

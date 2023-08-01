@@ -4,8 +4,8 @@ import Link from "next/link";
 import BACK_ICON from "assets/icons/back.svg";
 import ToggleSwitch from "../add/components/TokenToggle";
 import Setting from "@/components/Setting";
-import { usePool } from "@/hooks/pool/usePool";
 import { useInitialize } from "@/hooks/pool/useInitialize";
+import { useGetPool } from "@/hooks/pool/useV3MintInfo";
 
 export default function TopLine(props: {
   title: string;
@@ -14,7 +14,7 @@ export default function TopLine(props: {
   backwardLink?: string;
 }) {
   const { title, clear, switcher, backwardLink } = props;
-  const [, pool] = usePool();
+  const { pool } = useGetPool();
   const { initialzePoolValues } = useInitialize();
 
   return (
@@ -39,7 +39,9 @@ export default function TopLine(props: {
             Clear all
           </Text>
         )}
-        {switcher && pool?.token0.name && pool?.token1.name && <ToggleSwitch />}
+        {switcher && pool?.token0.symbol && pool?.token1.symbol && (
+          <ToggleSwitch />
+        )}
         <Box w={"20px"} h={"20px"}>
           <Setting />
         </Box>
