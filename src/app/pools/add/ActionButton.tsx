@@ -12,6 +12,7 @@ import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import useIsTon from "@/hooks/token/useIsTon";
 import { useTx } from "@/hooks/tx/useTx";
 import { poolModalProp, poolModalStatus } from "@/recoil/modal/atom";
 import { PoolState } from "@/types/pool/pool";
@@ -96,6 +97,7 @@ export default function ActionButton() {
   const { inTokenApproved, outTokenApproved } = useApproveToken();
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
   const { inToken, outToken } = useInOutTokens();
+  const { isTONatPair } = useIsTon();
 
   const buttonName = useMemo(() => {
     if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
@@ -128,7 +130,9 @@ export default function ActionButton() {
     !inTokenApproved ||
     !outTokenApproved ||
     isBalanceOver ||
-    isOutTokenBalanceOver;
+    isOutTokenBalanceOver ||
+    isTONatPair;
+
   const { mintPositionInfo } = useMintPositionInfo();
 
   const handleAction = () => {
