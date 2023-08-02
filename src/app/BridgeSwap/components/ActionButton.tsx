@@ -13,6 +13,8 @@ import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
+import { bannerStatus } from "@/recoil/bridgeSwap/atom";
+import { useInOutNetwork } from "@/hooks/network";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -26,9 +28,14 @@ export default function ActionButton() {
   const { isPending } = useTransaction();
   const { outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
+  const status = useRecoilValue(bannerStatus);
+  const { inNetwork, outNetwork } = useInOutNetwork();
 
   const needToOpenModal =
     mode === "Deposit" || mode === "Withdraw" || mode === "Swap";
+
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
+  const deactivateButton = status === "Active" && isL2;
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -41,7 +48,8 @@ export default function ActionButton() {
         isPending ||
         (mode === "Swap" && outToken === null) ||
         isInputZero ||
-        (mode === "Swap" && isTONatPair);
+        (mode === "Swap" && isTONatPair) ||
+        deactivateButton;
       setIsDisabled(disabled);
     }, 200);
 
