@@ -8,6 +8,7 @@ import { useMemo } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
 import commafy from "@/utils/trim/commafy";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 export type PoolCardDetail = {
   id: number;
@@ -48,6 +49,15 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [fee]);
 
+  const { tokenPriceWithAmount: token0Price } = useGetMarketPrice({
+    tokenName: token0.name,
+    amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
+  });
+  const { tokenPriceWithAmount: token1Price } = useGetMarketPrice({
+    tokenName: token1.name,
+    amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
+  });
+
   return (
     <Link href="/pools/[info]" as={`/pools/${id}`} key={id}>
       <Flex
@@ -79,11 +89,15 @@ export default function PoolCard(props: PoolCardDetail) {
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
           <Flex justifyContent="space-between">
             <Text>{token0.symbol}</Text>
-            <Text>{commafy(token0Amount, 4)} ($1.25)</Text>
+            <Text>
+              {commafy(token0Amount, 4)} {token0Price && `($ ${token0Price})`}
+            </Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{token1.symbol}</Text>
-            <Text>{commafy(token1Amount, 4)} ($1.25)</Text>
+            <Text>
+              {commafy(token1Amount, 4)} {token1Price && `($ ${token1Price})`}
+            </Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>Earnings</Text>

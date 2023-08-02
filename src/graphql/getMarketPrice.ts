@@ -1,9 +1,9 @@
 import { gql } from "@apollo/client";
 
 const GET_MARKET_PRICE = gql`
-  query GetTokenPrice($tokenId: String!) @api(contextKey: "apiName") {
-    getTokenPrice(tokenId: $tokenId) {
-      price
+  query GetTokenMarketData($tokenName: String!) @api(contextKey: "apiName") {
+    getTokenMarketData(tokenName: $tokenName) {
+      current_price
     }
   }
 `;

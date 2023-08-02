@@ -5,13 +5,12 @@ import Modals from "./Modals";
 import MobileView from "./Mobile";
 import { ApolloProvider } from "@apollo/client";
 import useConnectedNetwork from "@/hooks/network";
-import { getApolloClient } from "@/apollo";
+import { apolloClient } from "@/apollo";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const [isMobile] = useMediaQuery("(max-width: 1200px)");
 
   const { connectedChainId } = useConnectedNetwork();
-  const apolloClient = getApolloClient(connectedChainId);
 
   // if (isMobile) {
   //   return (

@@ -1,28 +1,49 @@
 import { GET_MARKET_PRICE } from "@/graphql/getMarketPrice";
 import { SupportedTokenNames } from "@/types/token/supportedToken";
+import commafy from "@/utils/trim/commafy";
 import { useQuery } from "@apollo/client";
 import { useMemo } from "react";
 
+const trimTokenName = (tokenName: string | undefined) => {
+  if (tokenName?.includes(" "))
+    return `${tokenName.split(" ")[0]}-${tokenName.split(" ")[1]}`;
+  return tokenName;
+};
+
+const changeTokenNameForAPI = (tokenName: string | undefined) => {
+  if (tokenName === "Wrapped TON") return "tokamak-network";
+  if (tokenName === "Wrapped Ether") return "ethereum";
+  return tokenName;
+};
+
 export function useGetMarketPrice(params: {
-  tokenName: SupportedTokenNames | string;
-}): { tokenMarketPrice: string | null } {
-  const { tokenName } = params;
+  tokenName: SupportedTokenNames | string | undefined;
+  amount?: number;
+}) {
+  const tokenName = changeTokenNameForAPI(params.tokenName);
   const { data } = useQuery(GET_MARKET_PRICE, {
     variables: {
-      tokenId: tokenName,
+      tokenName: trimTokenName(tokenName),
     },
     pollInterval: 10000,
     context: {
-      apiName: "tosv2",
+      apiName: "price",
     },
   });
 
   const tokenMarketPrice = useMemo(() => {
-    if (data?.getTokenPrice.price) {
-      return data.getTokenPrice.price;
+    if (data?.getTokenMarketData.current_price) {
+      return data.getTokenMarketData.current_price;
     }
     return undefined;
   }, [data]);
 
-  return { tokenMarketPrice };
+  const tokenPriceWithAmount = useMemo(() => {
+    if (tokenMarketPrice && params.amount) {
+      return commafy(data.getTokenMarketData.current_price * params.amount, 2);
+    }
+    return undefined;
+  }, [tokenMarketPrice, params.amount]);
+
+  return { tokenMarketPrice, tokenPriceWithAmount };
 }
