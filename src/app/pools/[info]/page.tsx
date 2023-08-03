@@ -8,7 +8,6 @@ import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
-import { useEffect } from "react";
 
 export default function Page() {
   const { info } = usePositionInfo();

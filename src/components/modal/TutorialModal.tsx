@@ -111,11 +111,12 @@ export default function TutorialModal() {
                 <Text
                   textAlign={currentStep === 0 ? "center" : "left"}
                   mb={"40px"}
+                  key={text}
                 >
                   {text}
                 </Text>
               ) : (
-                <Text mb={"40px"} textAlign={"left"}>
+                <Text mb={"40px"} textAlign={"left"} key={text}>
                   To get a more in-depth guide on how to use Tokamak Bridge, you
                   can find a link to our{" "}
                   <span

@@ -13,7 +13,7 @@ const trimTokenName = (tokenName: string | undefined) => {
 const changeTokenNameForAPI = (tokenName: string | undefined) => {
   if (tokenName === "Wrapped TON") return "tokamak-network";
   if (tokenName === "Wrapped Ether") return "ethereum";
-  return tokenName;
+  return tokenName?.toLowerCase();
 };
 
 export function useGetMarketPrice(params: {
@@ -21,6 +21,7 @@ export function useGetMarketPrice(params: {
   amount?: number;
 }) {
   const tokenName = changeTokenNameForAPI(params.tokenName);
+
   const { data } = useQuery(GET_MARKET_PRICE, {
     variables: {
       tokenName: trimTokenName(tokenName),
@@ -30,6 +31,9 @@ export function useGetMarketPrice(params: {
       apiName: "price",
     },
   });
+
+  console.log("data");
+  console.log(data);
 
   const tokenMarketPrice = useMemo(() => {
     if (data?.getTokenMarketData.current_price) {
