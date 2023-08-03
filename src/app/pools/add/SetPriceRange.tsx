@@ -8,15 +8,21 @@ import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { usePool } from "@/hooks/pool/usePool";
 import { PoolState } from "@/types/pool/pool";
+import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
   const price = usePriceTickConversion();
   const { getSetFullRange } = useRangeHopCallbacks();
   const [poolStatus, pool] = usePool();
+  const { firstStepPassed, priceInitialized } = useAddLiquidityCondition();
 
   return (
-    <Flex flexDir={"column"} rowGap={"15px"}>
+    <Flex
+      flexDir={"column"}
+      rowGap={"15px"}
+      opacity={firstStepPassed && priceInitialized ? 1 : 0.3}
+    >
       <Title title="Set Price Range" />
       {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
         <Text textAlign={"center"}>

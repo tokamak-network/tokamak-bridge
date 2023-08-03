@@ -7,10 +7,12 @@ import Image from "next/image";
 import TOKEN_PAIR_PLUS_ICON from "assets/icons/tokenPairPlus.svg";
 import Title from "./components/Title";
 import { InputContainer } from "./components/InputContainer";
+import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
 
 export default function SelectPair() {
-  const { inToken, inTokenInfo, outTokenInfo } = useInOutTokens();
+  const { inTokenInfo, outTokenInfo } = useInOutTokens();
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
+  const { secondStepPassed } = useAddLiquidityCondition();
 
   return (
     <Flex flexDir={"column"}>
@@ -37,13 +39,13 @@ export default function SelectPair() {
               <SearchToken />
             )}
           </Box>
-          <InputContainer inToken={true} />
+          {secondStepPassed && <InputContainer inToken={true} />}
         </Flex>
 
         <Image
           src={TOKEN_PAIR_PLUS_ICON}
           alt={"TOKEN_PAIR_PLUS_ICON"}
-          style={{ marginBottom: "65px" }}
+          style={{ marginBottom: secondStepPassed ? "61px" : "0px" }}
         />
         <Flex flexDir={"column"} rowGap={"16px"}>
           <Box
@@ -66,7 +68,7 @@ export default function SelectPair() {
               <SearchToken onClick={() => onOpenOutToken()} />
             )}
           </Box>
-          <InputContainer inToken={false} />
+          {secondStepPassed && <InputContainer inToken={false} />}
         </Flex>
       </Flex>
     </Flex>
