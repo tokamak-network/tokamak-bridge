@@ -9,6 +9,8 @@ import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { usePricePair } from "@/hooks/price/usePricePair";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 export type PoolCardDetail = {
   id: number;
@@ -31,8 +33,17 @@ export type PoolCardDetail = {
 };
 
 export default function PoolCard(props: PoolCardDetail) {
-  const { id, token0, token1, fee, inRange, token0Amount, token1Amount } =
-    props;
+  const {
+    id,
+    token0,
+    token1,
+    fee,
+    inRange,
+    token0Amount,
+    token1Amount,
+    token0CollectedFee,
+    token1CollectedFee,
+  } = props;
 
   const feePercent = useMemo(() => {
     switch (fee) {
@@ -49,13 +60,20 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [fee]);
 
-  const { tokenPriceWithAmount: token0Price } = useGetMarketPrice({
-    tokenName: token0.name,
-    amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
+  const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
+  const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
+  const { token0Price, token1Price, hasTokenPrice } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
+    token1Name: token1.name,
+    token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
   });
-  const { tokenPriceWithAmount: token1Price } = useGetMarketPrice({
-    tokenName: token1.name,
-    amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
+
+  const { totalMarketPrice } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: token0FeeAmount,
+    token1Name: token1.name,
+    token1Amount: token1FeeAmount,
   });
 
   return (
@@ -90,18 +108,29 @@ export default function PoolCard(props: PoolCardDetail) {
           <Flex justifyContent="space-between">
             <Text>{token0.symbol}</Text>
             <Text>
-              {commafy(token0Amount, 4)} {token0Price && `($ ${token0Price})`}
+              {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
+              <span style={{ color: "#A0A3AD" }}>
+                {token0Price && `($${token0Price})`}
+              </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>{token1.symbol}</Text>
             <Text>
-              {commafy(token1Amount, 4)} {token1Price && `($ ${token1Price})`}
+              {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
+              <span style={{ color: "#A0A3AD" }}>
+                {" "}
+                {token1Price && `($${token1Price})`}
+              </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between">
             <Text>Earnings</Text>
-            <Text>${3.18}</Text>
+            {hasTokenPrice ? (
+              <Text>${commafy(totalMarketPrice, 2)}</Text>
+            ) : (
+              <Text color={"#A0A3AD"}>No market data</Text>
+            )}
           </Flex>
         </Flex>
       </Flex>

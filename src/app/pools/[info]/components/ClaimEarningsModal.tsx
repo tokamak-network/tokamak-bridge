@@ -6,11 +6,23 @@ import { usePoolModals } from "@/hooks/modal/usePoolModals";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
+import { usePricePair } from "@/hooks/price/usePricePair";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
   const { info } = usePositionInfo();
   const { collectFees } = usePoolContract();
+
+  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
+  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+
+  const { hasTokenPrice, totalMarketPrice } = usePricePair({
+    token0Name: info?.token0.name,
+    token0Amount,
+    token1Name: info?.token1.name,
+    token1Amount,
+  });
+
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
       <ModalOverlay bg="rgba(15, 15, 18, 1)" />
@@ -45,16 +57,18 @@ export default function ClaimEarningsModal() {
               bgColor="#0F0F12"
               borderRadius="16px"
             >
-              <Flex justifyContent="space-between" mb="9px">
-                <Flex justifyContent="start">
-                  <Text fontSize={14}>Total earnings</Text>
+              {hasTokenPrice && (
+                <Flex justifyContent="space-between" mb="9px">
+                  <Flex justifyContent="start">
+                    <Text fontSize={14}>Total earnings</Text>
+                  </Flex>
+                  <Flex justifyContent="end">
+                    <Text fontSize={16} fontWeight="semibold">
+                      $4.34
+                    </Text>
+                  </Flex>
                 </Flex>
-                <Flex justifyContent="end">
-                  <Text fontSize={16} fontWeight="semibold">
-                    $4.34
-                  </Text>
-                </Flex>
-              </Flex>
+              )}
               <Flex justifyContent="space-between" mb="8px">
                 <Flex justifyContent="start" alignItems="center">
                   <Text fontSize={16} color="#A0A3AD" ml="8px">
@@ -105,7 +119,7 @@ export default function ClaimEarningsModal() {
               _hover={{ bgColor: "#007AFF" }}
               onClick={collectFees}
             >
-              Collect
+              Claim
             </Button>
           </Flex>
         </Flex>

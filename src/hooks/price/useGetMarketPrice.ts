@@ -32,11 +32,8 @@ export function useGetMarketPrice(params: {
     },
   });
 
-  console.log("data");
-  console.log(data);
-
-  const tokenMarketPrice = useMemo(() => {
-    if (data?.getTokenMarketData.current_price) {
+  const tokenMarketPrice: number = useMemo(() => {
+    if (data?.getTokenMarketData.current_price !== undefined) {
       return data.getTokenMarketData.current_price;
     }
     return undefined;

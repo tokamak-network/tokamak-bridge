@@ -35,17 +35,17 @@ export const titan_goerli = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["https://goerli.optimism.tokamak.network"] },
-    default: { http: ["https://goerli.optimism.tokamak.network"] },
+    public: { http: ["http://rpc.titan-goerli.tokamak.network"] },
+    default: { http: ["http://rpc.titan-goerli.tokamak.network"] },
   },
   blockExplorers: {
     etherscan: {
       name: "BlockScout",
-      url: "https://goerli.explorer.tokamak.network/",
+      url: "https://explorer.titan-goerli.tokamak.network",
     },
     default: {
       name: "BlockScout",
-      url: "https://goerli.explorer.tokamak.network/",
+      url: "https://explorer.titan-goerli.tokamak.network",
     },
   },
 } as const satisfies Chain;

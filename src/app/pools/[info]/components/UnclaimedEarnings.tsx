@@ -14,11 +14,11 @@ export default function UnclaimedEarnings() {
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
 
-  const { hasTokenPrice, totalMarketPrice } = usePricePair({
+  const { totalMarketPrice, hasTokenPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
-    token1Amount: token0Amount,
+    token1Amount,
   });
 
   const btnIsDisabled = useMemo(() => {
