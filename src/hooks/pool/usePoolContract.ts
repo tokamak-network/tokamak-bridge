@@ -28,7 +28,7 @@ import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { isETH } from "@/utils/token/isETH";
+import { getWETHAddress, isETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
@@ -36,6 +36,7 @@ import { PoolState } from "@/types/pool/pool";
 import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
 import { usePoolInfo } from "./usePoolInfo";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -193,7 +194,7 @@ export function usePoolContract() {
   const { mode } = useGetMode();
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
-  const { layer } = useConnectedNetwork();
+  const { layer, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
   const { address } = useAccount();
   const feeAmount = useRecoilValue(poolFeeStatus);
@@ -497,10 +498,12 @@ export function usePoolContract() {
     [provider, info, address, UNISWAP_CONTRACT, poolData]
   );
 
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
+
   const collectFees = useCallback(async () => {
     console.log("--collectFees--");
     console.log(info, address);
-    if (info && address) {
+    if (info && address && provider && chainName) {
       const token0 = info.token0;
       const token1 = info.token1;
 
@@ -526,6 +529,51 @@ export function usePoolContract() {
       const { calldata, value } =
         NonfungiblePositionManager.collectCallParameters(collectOptions);
 
+      if (info.hasETH && collectAsWETH === false) {
+        console.log("collect as ETH");
+        const NonfungiblePositionManagerContract = new Contract(
+          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          NONFUNGIBLE_POSITION_MANAGER_ABI,
+          getProviderOrSigner(provider, address)
+        );
+        const collectData =
+          NonfungiblePositionManagerContract.interface.encodeFunctionData(
+            "collect",
+            [
+              {
+                tokenId: info.id,
+                recipient: "0x0000000000000000000000000000000000000000",
+                amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
+                amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
+              },
+            ]
+          );
+        const amountMinimum = 0;
+        const unwrapWETH9 =
+          NonfungiblePositionManagerContract.interface.encodeFunctionData(
+            "unwrapWETH9",
+            [amountMinimum, address]
+          );
+
+        const WETH_ADDRESS = getWETHAddress(chainName);
+        const token0IsNative =
+          WETH_ADDRESS.toLowerCase() === token0.address.toLowerCase();
+        const sweepTokenAddress = token0IsNative
+          ? token1.address
+          : token0.address;
+
+        const sweepToken =
+          NonfungiblePositionManagerContract.interface.encodeFunctionData(
+            "sweepToken",
+            [sweepTokenAddress, amountMinimum, address]
+          );
+        return await NonfungiblePositionManagerContract.multicall(
+          [collectData, unwrapWETH9, sweepToken],
+          {
+            gasLimit: 3000000,
+          }
+        );
+      }
       // build transaction
       const transaction = {
         data: calldata,
@@ -536,7 +584,15 @@ export function usePoolContract() {
 
       return sendTransaction(transaction);
     }
-  }, [provider, address, UNISWAP_CONTRACT, info]);
+  }, [
+    provider,
+    address,
+    UNISWAP_CONTRACT,
+    info,
+    collectAsWETH,
+    provider,
+    chainName,
+  ]);
 
   return { addLiquidity, removeLiquidity, collectFees };
 }

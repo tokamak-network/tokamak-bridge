@@ -1,17 +1,24 @@
-.switch_info {
+.chakra-switch {
   background: transparent;
   border: 1px solid #565b72;
   border-radius: 25px;
+  width: "56px";
 }
 
-.switch_info[data-checked] {
+.chakra-switch[data-checked] {
   border-color: #007aff;
 }
 
-.switch_info span {
-  background: #565b72;
+.chakra-switch__track {
+  background: transparent;
 }
 
-.switch_info span[data-checked] {
+.chakra-switch__thumb {
+  background: #565b72;
+  margin-left: 2px;
+}
+
+.chakra-switch__thumb[data-checked] {
   background: #007aff;
+  margin-left: 2px;
 }

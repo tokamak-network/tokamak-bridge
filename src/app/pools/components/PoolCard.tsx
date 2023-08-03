@@ -30,6 +30,7 @@ export type PoolCardDetail = {
   tickCurrent: number;
   tickUpper: number;
   rawPositionInfo: any;
+  hasETH: boolean;
 };
 
 export default function PoolCard(props: PoolCardDetail) {

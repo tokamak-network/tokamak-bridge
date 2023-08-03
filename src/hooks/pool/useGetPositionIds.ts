@@ -17,10 +17,9 @@ import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { usePathname } from "next/navigation";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_positions } from "@/recoil/pool/positions";
-import { useMintPositionInfo } from "./useMintPositionInfo";
-import { log } from "console";
 import { poolModalProp } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { getWETHAddress } from "@/utils/token/isETH";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -49,12 +48,12 @@ export function useGetPositions() {
 
   const { address } = useAccount();
   const { blockNumber } = useBlockNum();
-  const { layer, connectedChainId } = useConnectedNetwork();
+  const { layer, connectedChainId, chainName } = useConnectedNetwork();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
 
   const callPositionIds = useCallback(async () => {
-    if (address && connectedChainId && provider) {
+    if (address && connectedChainId && provider && chainName) {
       const NonfungiblePositionManagerContract = new ethers.Contract(
         UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
         NONFUNGIBLE_POSITION_MANAGER_ABI,
@@ -172,6 +171,12 @@ export function useGetPositions() {
               token1Decimals
             );
 
+        const WETH_ADDRESS = getWETHAddress(chainName);
+        const token0IsNative =
+          WETH_ADDRESS.toLowerCase() === token0.toLowerCase();
+        const token1IsNative =
+          WETH_ADDRESS.toLowerCase() === token1.toLowerCase();
+
         positions.push({
           id: positionId,
           fee,
@@ -202,12 +207,13 @@ export function useGetPositions() {
           tickCurrent: tick,
           tickUpper,
           rawPositionInfo: positionInfo,
+          hasETH: token0IsNative || token1IsNative,
         });
       }
       return positions;
     }
     return undefined;
-  }, [UNISWAP_CONTRACT, address, provider]);
+  }, [UNISWAP_CONTRACT, address, provider, chainName]);
 
   useEffect(() => {
     const fetchPositionIds = async () => {
@@ -216,7 +222,7 @@ export function useGetPositions() {
     };
     fetchPositionIds().catch((e) => {
       console.log("**fetchPositionIds err**");
-      // console.log(e);
+      console.log(e);
     });
   }, [blockNumber, connectedChainId]);
 

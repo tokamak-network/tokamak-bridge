@@ -9,8 +9,6 @@ export default function PoolList() {
   const { positions } = useGetPositions();
   const { isConnected } = useAccount();
 
-  // console.log(positions && 8 % 3 === 2일때2개, 0일때 1개);
-
   return (
     <Wrap spacing="16px">
       <LPGuide />

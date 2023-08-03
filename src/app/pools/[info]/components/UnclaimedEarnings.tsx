@@ -1,22 +1,23 @@
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
-import {
-  Flex,
-  Box,
-  Text,
-  Button,
-  useDisclosure,
-  Switch,
-} from "@chakra-ui/react";
-import ClaimEarningsModal from "./ClaimEarningsModal";
+import { Flex, Text, Button, Switch } from "@chakra-ui/react";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
 import { useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { usePricePair } from "@/hooks/price/usePricePair";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 import "css/pool/switch.css";
+import { useRecoilState } from "recoil";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 
 const CollectFeeAsWETH = () => {
+  const [collectAsWETH, setCollectAsWETH] = useRecoilState(
+    ATOM_collectWethOption
+  );
+  const { info } = usePositionInfo();
+
+  if (info?.hasETH) return null;
+
   return (
     <Flex
       w={"100%"}
@@ -26,7 +27,12 @@ const CollectFeeAsWETH = () => {
       pt={"12px"}
     >
       <Text>Collect as WETH</Text>
-      <Switch size={"lg"} className="switch_info" />
+      <Switch
+        size={"lg"}
+        className="switch_info"
+        isChecked={collectAsWETH}
+        onChange={() => setCollectAsWETH(!collectAsWETH)}
+      />
     </Flex>
   );
 };
