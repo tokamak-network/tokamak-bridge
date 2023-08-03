@@ -1,9 +1,10 @@
 import TokenInput from "@/components/input/TokenInput";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Mark, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import { useMemo } from "react";
 import LOCK_ICON from "assets/icons/pool/lock.svg";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export const OutRangeWarning = () => {
   const { invalidRange } = useV3MintInfo();
@@ -30,6 +31,8 @@ export function InputContainer(props: { inToken: boolean }) {
     }
     return deposit1Disabled;
   }, [invalidRange, deposit0Disabled, deposit1Disabled]);
+
+  const {} = useInOutTokens();
 
   return (
     <Box w={"186px"} minH={"45px"}>

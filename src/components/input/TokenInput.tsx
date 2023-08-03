@@ -1,6 +1,7 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -9,6 +10,7 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { trimAmount } from "@/utils/trim";
+import commafy from "@/utils/trim/commafy";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import JSBI from "jsbi";
@@ -200,6 +202,26 @@ export default function TokenInput(props: {
     isFocused,
   ]);
 
+  const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({
+    tokenName: selectedInToken?.tokenName as string,
+    amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const { tokenPriceWithAmount: token1PriceWiwhtAmount } = useGetMarketPrice({
+    tokenName: selectedOutToken?.tokenName as string,
+    amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const marketPrice = useMemo(() => {
+    if (inToken && token0PriceWiwhtAmount) {
+      return token0PriceWiwhtAmount;
+    }
+    if (!inToken && token1PriceWiwhtAmount) {
+      return token1PriceWiwhtAmount;
+    }
+    return "0.00";
+  }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
+
   useEffect(() => {
     if (!inToken && selectedOutToken && amountOut) {
       const value: string = amountOut;
@@ -268,16 +290,16 @@ export default function TokenInput(props: {
           </Button>
         )}
       </Flex>
-      {/* <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-       <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
-          $0.00
-        </Text> 
-        {inToken === false && mode === "Swap" && (
+      <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
+        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+          {`$${marketPrice}`}
+        </Text>
+        {/* {inToken === false && mode === "Swap" && (
           <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
             ({priceImpact ?? "-"}%)
           </Text>
-        )} 
-      </Flex> */}
+        )}  */}
+      </Flex>
     </Flex>
   );
 }

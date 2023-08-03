@@ -64,7 +64,7 @@ export default function ClaimEarningsModal() {
                   </Flex>
                   <Flex justifyContent="end">
                     <Text fontSize={16} fontWeight="semibold">
-                      $4.34
+                      {`$${totalMarketPrice}`}
                     </Text>
                   </Flex>
                 </Flex>

@@ -12,7 +12,7 @@ const trimTokenName = (tokenName: string | undefined) => {
 
 const changeTokenNameForAPI = (tokenName: string | undefined) => {
   if (tokenName === "Wrapped TON") return "tokamak-network";
-  if (tokenName === "Wrapped Ether") return "ethereum";
+  if (tokenName === "Wrapped Ether" || tokenName === "ETH") return "ethereum";
   return tokenName?.toLowerCase();
 };
 
