@@ -1,12 +1,35 @@
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
-import { Flex, Box, Text, Button, useDisclosure } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  Button,
+  useDisclosure,
+  Switch,
+} from "@chakra-ui/react";
 import ClaimEarningsModal from "./ClaimEarningsModal";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
 import { useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { usePricePair } from "@/hooks/price/usePricePair";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
+import "css/pool/switch.css";
+
+const CollectFeeAsWETH = () => {
+  return (
+    <Flex
+      w={"100%"}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      borderTop={"1px solid #313442"}
+      pt={"12px"}
+    >
+      <Text>Collect as WETH</Text>
+      <Switch size={"lg"} className="switch_info" />
+    </Flex>
+  );
+};
 
 export default function UnclaimedEarnings() {
   const { info } = usePositionInfo();
@@ -41,56 +64,60 @@ export default function UnclaimedEarnings() {
       py={"14px"}
       px="20px"
       borderRadius={"12px"}
-      justifyContent={"space-between"}
+      // alignItems={"space-between"}
       rowGap={"14px"}
+      flexDir={"column"}
     >
-      {hasTokenPrice ? (
-        <Flex alignItems={"left"} flexDir={"column"}>
-          <Text>Unclaimed earnings</Text>
-          <Text fontSize={"24px"} as="b" mt={"6px"}>
-            {`$${totalMarketPrice}`}
-          </Text>
-          <Flex alignItems={"center"} color="#A0A3AD">
-            <Text fontSize={"12px"}>
-              {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-              {info?.token0.symbol}
+      <Flex justifyContent={"space-between"}>
+        {hasTokenPrice ? (
+          <Flex alignItems={"left"} flexDir={"column"}>
+            <Text>Unclaimed earnings</Text>
+            <Text fontSize={"24px"} as="b" mt={"6px"}>
+              {`$${totalMarketPrice}`}
             </Text>
-            <Text w={"10px"} mx={"2px"}>
-              +
-            </Text>
-            <Text fontSize={"12px"}>
-              {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-              {info?.token1.symbol}
-            </Text>
+            <Flex alignItems={"center"} color="#A0A3AD">
+              <Text fontSize={"12px"}>
+                {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
+                {info?.token0.symbol}
+              </Text>
+              <Text w={"10px"} mx={"2px"}>
+                +
+              </Text>
+              <Text fontSize={"12px"}>
+                {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
+                {info?.token1.symbol}
+              </Text>
+            </Flex>
           </Flex>
-        </Flex>
-      ) : (
-        <Flex alignItems={"left"} flexDir={"column"}>
-          <Text>Unclaimed earnings</Text>
-          <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
-            <Text fontSize={"18px"}>
-              {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-              {info?.token0.symbol} +
-            </Text>
-            <Text fontSize={"18px"}>
-              {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-              {info?.token1.symbol}
-            </Text>
+        ) : (
+          <Flex alignItems={"left"} flexDir={"column"}>
+            <Text>Unclaimed earnings</Text>
+            <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
+              <Text fontSize={"18px"}>
+                {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
+                {info?.token0.symbol} +
+              </Text>
+              <Text fontSize={"18px"}>
+                {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
+                {info?.token1.symbol}
+              </Text>
+            </Flex>
           </Flex>
+        )}
+        <Flex alignItems={"flex-end"} pb={"13px"}>
+          <Button
+            bgColor={"#007AFF"}
+            _hover={{ bgColor: "#007AFF" }}
+            _active={{}}
+            onClick={onOpenClaimEarning}
+            isDisabled={btnIsDisabled}
+            _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
+          >
+            Claim
+          </Button>
         </Flex>
-      )}
-      <Flex alignItems={"flex-end"} pb={"13px"}>
-        <Button
-          bgColor={"#007AFF"}
-          _hover={{ bgColor: "#007AFF" }}
-          _active={{}}
-          onClick={onOpenClaimEarning}
-          isDisabled={btnIsDisabled}
-          _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
-        >
-          Claim
-        </Button>
       </Flex>
+      <CollectFeeAsWETH />
     </Flex>
   );
 }

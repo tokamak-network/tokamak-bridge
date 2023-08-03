@@ -1,0 +1,17 @@
+.switch_info {
+  background: transparent;
+  border: 1px solid #565b72;
+  border-radius: 25px;
+}
+
+.switch_info[data-checked] {
+  border-color: #007aff;
+}
+
+.switch_info span {
+  background: #565b72;
+}
+
+.switch_info span[data-checked] {
+  background: #007aff;
+}
