@@ -147,6 +147,48 @@ export function useV3MintInfo() {
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
+    // console.log(isAtMinTick, isAtMaxTick);
+
+    // console.log("--left--");
+    // console.log(minPriceInput?.toString(), maxPriceInput?.toString());
+    // console.log(
+    //   tryParseTick(token0, token1, feeAmount, minPriceInput?.toString())
+    // );
+    // console.log(
+    //   tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
+    // );
+
+    // console.log("--right--");
+    // console.log(
+    //   tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
+    // );
+    // console.log(
+    //   tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString())
+    // );
+
+    console.log("gogo");
+
+    // console.log(maxPriceInput?.toString());
+    // console.log(
+    //   tryParseTick(
+    //     token1,
+    //     token0,
+    //     feeAmount,
+    //     "338490000000000000000000000000000000000000000000"
+    //   )
+    // );
+    console.log("gogo~!");
+    console.log(isAtMinTick, isAtMaxTick);
+
+    // console.log(minPriceInput?.toString());
+    // console.log(
+    //   tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
+    // );
+    // console.log(maxPriceInput?.toString());
+    // console.log(
+    //   tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
+    // );
+
     return {
       [Bound.LOWER]:
         (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)
@@ -208,6 +250,13 @@ export function useV3MintInfo() {
   }, [token0, token1, ticks]);
   const { [Bound.LOWER]: lowerPrice, [Bound.UPPER]: upperPrice } =
     pricesAtTicks;
+
+  // console.log("ticks");
+  console.log(ticks);
+  // console.log("priceAtTicks");
+  // console.log(pricesAtTicks["LOWER"]?.toSignificant());
+  // console.log(pricesAtTicks["UPPER"]?.toSignificant());
+  // console.log(pricesAtLimit["LOWER"]?.toSignificant(5));
 
   // liquidity range warning
   const outOfRange = Boolean(

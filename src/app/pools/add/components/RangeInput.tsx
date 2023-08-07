@@ -26,7 +26,8 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit, invertPrice } = useV3MintInfo();
+  const { pricesAtTicks, ticksAtLimit, invertPrice, pricesAtLimit } =
+    useV3MintInfo();
 
   const [minPriceInput, setMinPrice] = useRecoilState(minPrice);
   const [maxPriceInput, setMaxPrice] = useRecoilState(maxPrice);
@@ -42,6 +43,8 @@ export default function RangeInput(props: RangeInputProps) {
 
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
+      setAtMinTick(false);
+      setAtMaxTick(false);
       const value = e.target.value.replaceAll(",", "");
       const inputValue = value ?? "0";
 
@@ -85,26 +88,31 @@ export default function RangeInput(props: RangeInputProps) {
   }, [pricesAtTicks, isMinPrice, , invertPrice]);
 
   const inputValue = useMemo(() => {
-    if (ticksAtLimit.LOWER && isMinPrice) return "0";
+    if ((invertPrice ? ticksAtLimit.UPPER : ticksAtLimit.LOWER) && isMinPrice)
+      return "0";
     if (ticksAtLimit.UPPER && !isMinPrice) return "∞";
     return isMinPrice
       ? commafy(minPriceInput, 5, true, true)
       : commafy(maxPriceInput, 5, true, true);
-  }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput]);
+  }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput, invertPrice]);
 
-  useEffect(() => {
-    if (Number(minPriceInput?.replaceAll(",", "")) !== 0) {
-      setAtMinTick(false);
-    } else {
-      setAtMinTick(true);
-    }
+  // useEffect(() => {
+  //   if (minPriceInput?.replaceAll(",", "") !== pricesAtLimit["LOWER"]) {
+  //     invertPrice ? setAtMaxTick(false) : setAtMinTick(false);
+  //   } else {
+  //     invertPrice ? setAtMaxTick(true) : setAtMinTick(true);
+  //   }
 
-    if (maxPriceInput !== "∞") {
-      return setAtMaxTick(false);
-    } else {
-      return setAtMaxTick(true);
-    }
-  }, [minPriceInput, maxPriceInput]);
+  //   if (maxPriceInput !== "∞") {
+  //     return invertPrice ? setAtMinTick(false) : setAtMaxTick(false);
+  //   } else {
+  //     return invertPrice ? setAtMinTick(true) : setAtMaxTick(true);
+  //   }
+  // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
+
+  console.log("gogo");
+
+  console.log(valueInThisInput, inputValue);
 
   return (
     <Flex flexDir={"column"}>
