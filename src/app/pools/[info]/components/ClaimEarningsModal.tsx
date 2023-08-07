@@ -7,21 +7,55 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { usePricePair } from "@/hooks/price/usePricePair";
+import { useEstimateGasCollect } from "@/hooks/pool/useEstimateGasPool";
+import { useEffect } from "react";
+import useBlockNum from "@/hooks/network/useBlockNumber";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  estimatedGasFee,
+  estimatedGasUsage,
+} from "@/recoil/global/transaction";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
   const { info } = usePositionInfo();
-  const { collectFees } = usePoolContract();
+  const { collectFees, estimateGasToCollect } = usePoolContract();
 
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
 
-  const { hasTokenPrice, totalMarketPrice } = usePricePair({
-    token0Name: info?.token0.name,
-    token0Amount,
-    token1Name: info?.token1.name,
-    token1Amount,
+  const { hasTokenPrice, totalMarketPrice, token0Price, token1Price } =
+    usePricePair({
+      token0Name: info?.token0.name,
+      token0Amount,
+      token1Name: info?.token1.name,
+      token1Amount,
+    });
+
+  const { blockNumber } = useBlockNum();
+  const [estimatedGasUsageValue, setEstimatedGasUsage] =
+    useRecoilState(estimatedGasUsage);
+
+  useEffect(() => {
+    async function fetchGasUsage() {
+      const totalGasUsage = await estimateGasToCollect();
+      console.log("go?");
+      console.log(totalGasUsage);
+
+      setEstimatedGasUsage(totalGasUsage);
+    }
+    fetchGasUsage();
+  }, [blockNumber]);
+
+  const { tokenPriceWithAmount } = useGetMarketPrice({
+    tokenName: "ethereum",
+    amount: estimatedGasUsageValue,
   });
+
+  console.log(estimatedGasUsageValue);
+
+  console.log(tokenPriceWithAmount);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
@@ -35,7 +69,7 @@ export default function ClaimEarningsModal() {
       >
         <Flex
           w="404px"
-          h="348px"
+          // h="348px"
           p="20px"
           bgColor="#1F2128"
           flexDir="column"
@@ -51,9 +85,8 @@ export default function ClaimEarningsModal() {
             {/* Table of total earnings*/}
             <Box
               w="356px"
-              h="170px"
-              py="17px"
-              px="16px"
+              // h="170px"
+              p={"16px"}
               bgColor="#0F0F12"
               borderRadius="16px"
             >
@@ -75,10 +108,16 @@ export default function ClaimEarningsModal() {
                     {info?.token0.symbol}
                   </Text>
                 </Flex>
-                <Flex justifyContent="end">
-                  <Text fontSize={16} fontWeight="semibold">
-                    {commafy(info?.token0CollectedFee, 8)}
+                <Flex
+                  justifyContent="end"
+                  fontSize={16}
+                  columnGap={"35px"}
+                  textAlign={"right"}
+                >
+                  <Text fontWeight="semibold">
+                    {commafy(info?.token0CollectedFee, 6)}
                   </Text>
+                  <Text w={"50px"} color={"#A0A3AD"}>{`$${token0Price}`}</Text>
                 </Flex>
               </Flex>
               <Flex justifyContent="space-between" mb="8px">
@@ -87,10 +126,16 @@ export default function ClaimEarningsModal() {
                     {info?.token1.symbol}
                   </Text>
                 </Flex>
-                <Flex justifyContent="end">
-                  <Text fontSize={16} fontWeight="semibold">
-                    {commafy(info?.token1CollectedFee, 8)}
+                <Flex
+                  justifyContent="end"
+                  fontSize={16}
+                  columnGap={"35px"}
+                  textAlign={"right"}
+                >
+                  <Text fontWeight="semibold">
+                    {commafy(info?.token1CollectedFee, 6)}
                   </Text>
+                  <Text w={"50px"} color={"#A0A3AD"}>{`$${token1Price}`}</Text>
                 </Flex>
               </Flex>
               <Divider style={{ border: "1px solid #313442" }} />
@@ -117,7 +162,7 @@ export default function ClaimEarningsModal() {
               mt="16px"
               bgColor="#007AFF"
               _hover={{ bgColor: "#007AFF" }}
-              onClick={collectFees}
+              onClick={() => collectFees()}
             >
               Claim
             </Button>

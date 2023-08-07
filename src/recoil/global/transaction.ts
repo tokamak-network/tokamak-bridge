@@ -1,5 +1,7 @@
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 import { TxInterface } from "@/types/tx/txType";
+import { gql } from "@apollo/client";
+import { graphQLSelector } from "recoil-relay";
 
 export enum TransactionState {
   Failed = "Failed",
@@ -52,10 +54,34 @@ export const gasData = atom<GasDataAtom>({
   },
 });
 
-export const swapGasData = atom<{ estimatedGasFee: string | undefined }>({
-  key: "swapGasData",
-  default: {
-    estimatedGasFee: undefined,
+export const estimatedGasUsage = atom<number | undefined>({
+  key: "estimatedGasUsage",
+  default: undefined,
+});
+
+export const ethPrice = graphQLSelector({
+  key: "ethPrice",
+  environment: "dev",
+  query: gql`
+    query GetTokenMarketData($tokenName: String!) @api(contextKey: "apiName") {
+    getTokenMarketData(tokenName: $tokenName) {
+      current_price
+    }
+  }`,
+  variables: ({ get }) => ({ tokenName: "ethereum", apiName: "price" }),
+  mapResponse: (data) => data.getTokenMarketData?.current_price,
+});
+
+export const estimatedGasFee = selector<number | undefined>({
+  key: "estimatedGasFee",
+  get: async ({ get }) => {
+    const searchedToken = get(estimatedGasUsage);
+    // const ethMarketPrice = get(ethPrice);
+
+    if (searchedToken) {
+      return undefined;
+    }
+    return undefined;
   },
 });
 

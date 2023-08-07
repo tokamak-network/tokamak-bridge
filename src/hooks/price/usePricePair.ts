@@ -35,5 +35,10 @@ export function usePricePair(params: {
     return token0MarketPrice !== undefined && token1MarketPrice !== undefined;
   }, [token0MarketPrice, token1MarketPrice]);
 
-  return { token0Price, token1Price, totalMarketPrice, hasTokenPrice };
+  return {
+    token0Price: token0Price ?? "0",
+    token1Price: token1Price ?? "0",
+    totalMarketPrice,
+    hasTokenPrice,
+  };
 }

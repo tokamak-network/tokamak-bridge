@@ -4,13 +4,13 @@ import commafy from "@/utils/trim/commafy";
 import { useQuery } from "@apollo/client";
 import { useMemo } from "react";
 
-const trimTokenName = (tokenName: string | undefined) => {
+export const trimTokenName = (tokenName: string | undefined) => {
   if (tokenName?.includes(" "))
     return `${tokenName.split(" ")[0]}-${tokenName.split(" ")[1]}`;
   return tokenName;
 };
 
-const changeTokenNameForAPI = (tokenName: string | undefined) => {
+export const changeTokenNameForAPI = (tokenName: string | undefined) => {
   if (tokenName === "Wrapped TON") return "tokamak-network";
   if (tokenName === "Wrapped Ether" || tokenName === "ETH") return "ethereum";
   return tokenName?.toLowerCase();

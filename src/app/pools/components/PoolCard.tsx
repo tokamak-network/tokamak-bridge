@@ -11,6 +11,7 @@ import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { priceFormmater } from "@/utils/trim/priceFormatter";
 
 export type PoolCardDetail = {
   id: number;
@@ -111,7 +112,9 @@ export default function PoolCard(props: PoolCardDetail) {
             <Text>
               {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
               <span style={{ color: "#A0A3AD" }}>
-                {token0Price && `($${token0Price})`}
+                {priceFormmater(token0Price) === "NA"
+                  ? `(${priceFormmater(token0Price)})`
+                  : `($${priceFormmater(token0Price)})`}
               </span>
             </Text>
           </Flex>

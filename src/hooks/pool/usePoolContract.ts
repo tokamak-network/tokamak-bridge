@@ -20,7 +20,7 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
-import { useAccount, useSendTransaction } from "wagmi";
+import { useAccount, useFeeData, useSendTransaction } from "wagmi";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { useRecoilValue } from "recoil";
 import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
@@ -500,99 +500,128 @@ export function usePoolContract() {
 
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
-  const collectFees = useCallback(async () => {
-    console.log("--collectFees--");
-    console.log(info, address);
-    if (info && address && provider && chainName) {
-      const token0 = info.token0;
-      const token1 = info.token1;
+  const collectFees = useCallback(
+    async (estimateGas?: boolean) => {
+      console.log("--collectFees--");
+      console.log(info, address);
+      if (info && address && provider && chainName) {
+        const token0 = info.token0;
+        const token1 = info.token1;
 
-      const collectOptions: CollectOptions = {
-        tokenId: info.id,
-        expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
-          token0,
-          fromReadableAmount(
-            Number(info.token0CollectedFee),
-            token0.decimals
-          ).toString()
-        ),
-        expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
-          token1,
-          fromReadableAmount(
-            Number(info.token1CollectedFee),
-            token1.decimals
-          ).toString()
-        ),
-        recipient: address,
-      };
-      // get calldata for minting a position
-      const { calldata, value } =
-        NonfungiblePositionManager.collectCallParameters(collectOptions);
+        const collectOptions: CollectOptions = {
+          tokenId: info.id,
+          expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
+            token0,
+            fromReadableAmount(
+              Number(info.token0CollectedFee),
+              token0.decimals
+            ).toString()
+          ),
+          expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
+            token1,
+            fromReadableAmount(
+              Number(info.token1CollectedFee),
+              token1.decimals
+            ).toString()
+          ),
+          recipient: address,
+        };
+        // get calldata for minting a position
+        const { calldata, value } =
+          NonfungiblePositionManager.collectCallParameters(collectOptions);
 
-      if (info.hasETH && collectAsWETH === false) {
-        console.log("collect as ETH");
-        const NonfungiblePositionManagerContract = new Contract(
-          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          NONFUNGIBLE_POSITION_MANAGER_ABI,
-          getProviderOrSigner(provider, address)
-        );
-        const collectData =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "collect",
-            [
-              {
-                tokenId: info.id,
-                recipient: "0x0000000000000000000000000000000000000000",
-                amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
-                amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
-              },
-            ]
+        if (info.hasETH && collectAsWETH === false) {
+          console.log("collect as ETH");
+          const NonfungiblePositionManagerContract = new Contract(
+            UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            NONFUNGIBLE_POSITION_MANAGER_ABI,
+            getProviderOrSigner(provider, address)
           );
-        const amountMinimum = 0;
-        const unwrapWETH9 =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "unwrapWETH9",
-            [amountMinimum, address]
-          );
+          const collectData =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "collect",
+              [
+                {
+                  tokenId: info.id,
+                  recipient: "0x0000000000000000000000000000000000000000",
+                  amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
+                  amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
+                },
+              ]
+            );
+          const amountMinimum = 0;
+          const unwrapWETH9 =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "unwrapWETH9",
+              [amountMinimum, address]
+            );
 
-        const WETH_ADDRESS = getWETHAddress(chainName);
-        const token0IsNative =
-          WETH_ADDRESS.toLowerCase() === token0.address.toLowerCase();
-        const sweepTokenAddress = token0IsNative
-          ? token1.address
-          : token0.address;
+          const WETH_ADDRESS = getWETHAddress(chainName);
+          const token0IsNative =
+            WETH_ADDRESS.toLowerCase() === token0.address.toLowerCase();
+          const sweepTokenAddress = token0IsNative
+            ? token1.address
+            : token0.address;
 
-        const sweepToken =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "sweepToken",
-            [sweepTokenAddress, amountMinimum, address]
-          );
-        return await NonfungiblePositionManagerContract.multicall(
-          [collectData, unwrapWETH9, sweepToken],
-          {
-            gasLimit: 3000000,
-          }
-        );
+          const sweepToken =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "sweepToken",
+              [sweepTokenAddress, amountMinimum, address]
+            );
+          return estimateGas
+            ? await NonfungiblePositionManagerContract.multicall(
+                [collectData, unwrapWETH9, sweepToken],
+                {
+                  gasLimit: 3000000,
+                }
+              ).estimateGas({ from: address })
+            : await NonfungiblePositionManagerContract.multicall(
+                [collectData, unwrapWETH9, sweepToken],
+                {
+                  gasLimit: 3000000,
+                }
+              );
+        }
+        // build transaction
+        const transaction = {
+          data: calldata,
+          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          value: value,
+          from: address,
+        };
+
+        return estimateGas
+          ? await provider.estimateGas(transaction)
+          : sendTransaction(transaction);
       }
-      // build transaction
-      const transaction = {
-        data: calldata,
-        to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-        value: value,
-        from: address,
-      };
+    },
+    [
+      provider,
+      address,
+      UNISWAP_CONTRACT,
+      info,
+      collectAsWETH,
+      provider,
+      chainName,
+    ]
+  );
 
-      return sendTransaction(transaction);
+  const { data: feeData } = useFeeData();
+
+  const estimateGasToCollect = useCallback(async () => {
+    if (provider && feeData) {
+      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const estimatedGasUsage = await collectFees(true);
+      const totalGasCost =
+        Number(gasPrice) * Number(estimatedGasUsage.toString());
+      const parsedTotalGasCost = ethers.utils.formatUnits(
+        totalGasCost.toString(),
+        "ether"
+      );
+
+      return Number(parsedTotalGasCost.replaceAll(",", ""));
     }
-  }, [
-    provider,
-    address,
-    UNISWAP_CONTRACT,
-    info,
-    collectAsWETH,
-    provider,
-    chainName,
-  ]);
+  }, [provider, feeData]);
 
-  return { addLiquidity, removeLiquidity, collectFees };
+  return { addLiquidity, removeLiquidity, collectFees, estimateGasToCollect };
 }
