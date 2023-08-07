@@ -85,6 +85,7 @@ export default function ActionButton() {
       bgColor={isDisabled ? "#17181D" : "#007AFF"}
       color={isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={!isConnected ? false : isDisabled}
+
       onClick={
         isConnected === false
           ? () => connetAndDisconntWallet()
@@ -98,7 +99,10 @@ export default function ActionButton() {
         ? null
         : isConnected && mode === null
         ? "Select Network"
-        : mode}
+        : mode}{" "}
+      <span style={{ fontSize: "10px", marginLeft:'3px', marginTop:'3px' }}>
+       {deactivateButton ? "(Service under maintenance)" : ""}
+      </span>
     </Button>
   );
 }

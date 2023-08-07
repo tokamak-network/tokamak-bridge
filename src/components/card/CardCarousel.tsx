@@ -44,12 +44,12 @@ export const CardCarrousel = () => {
     >
       <Flex
         onClick={handlePrev}
-        border={"2px solid #17181D"}
-        bgColor={"#0f0f12"}
-        w={"32px"}
-        minW={"32px"}
-        maxW={"32px"}
-        h={"32px"}
+        // border={"2px solid #17181D"}
+        // bgColor={"#0f0f12"}
+        w={"64px"}
+        minW={"64px"}
+        maxW={"64px"}
+        h={"64px"}
         _active={{}}
         _hover={{}}
         p={0}
@@ -72,6 +72,17 @@ export const CardCarrousel = () => {
         h={"332px"}
         pos={"relative"}
       >
+        <Flex
+          left={50}
+          position={"absolute"}
+          width={"80px"}
+          transform={'rotate(-10deg)'}
+          // border={"1px solid red"}
+          h={"275px"}
+          top={65}
+          zIndex={100}
+          background={`linear-gradient(270deg, rgba(31, 33, 40, 0.00) 0%, #1F2128 100%)`}
+        ></Flex>
         {/* 시연용 */}
         {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
           // const {
@@ -166,13 +177,24 @@ export const CardCarrousel = () => {
         })}
       </Flex>
       <Flex
+          right={350}
+          position={"absolute"}
+          width={"80px"}
+          transform={'rotate(10deg)'}
+            // border={"1px solid red"}
+          h={"275px"}
+          // top={65}
+          zIndex={100}
+          background={`linear-gradient(90deg, rgba(31, 33, 40, 0.00) 0%, #1F2128 100%)`}
+        ></Flex>
+      <Flex
         onClick={handleNext}
-        border={"2px solid #17181D"}
-        bgColor={"#0f0f12"}
-        w={"32px"}
-        minW={"32px"}
-        maxW={"32px"}
-        h={"32px"}
+        // border={"2px solid #17181D"}
+        // bgColor={"#0f0f12"}
+        w={"64px"}
+        minW={"64px"}
+        maxW={"64px"}
+        h={"64px"}
         _active={{}}
         _hover={{}}
         p={0}
