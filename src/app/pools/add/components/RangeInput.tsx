@@ -63,6 +63,21 @@ export default function RangeInput(props: RangeInputProps) {
 
   const blurHandler = useCallback(() => {
     setIsFocused(false);
+    // if (isMinPrice) {
+    //   if (invertPrice) {
+    //     setAtMaxTick(false)
+    //   }
+    // } else {
+    //   if(invertPrice)
+    // }
+
+    console.log("invertPrice");
+    console.log(
+      invertPrice
+        ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
+        : pricesAtTicks?.LOWER?.toSignificant(5)
+    );
+
     if (pricesAtTicks) {
       setValueInThisInput(
         isMinPrice
@@ -88,9 +103,25 @@ export default function RangeInput(props: RangeInputProps) {
   }, [pricesAtTicks, isMinPrice, , invertPrice]);
 
   const inputValue = useMemo(() => {
-    if ((invertPrice ? ticksAtLimit.UPPER : ticksAtLimit.LOWER) && isMinPrice)
+    if ((invertPrice ? ticksAtLimit.UPPER : ticksAtLimit.LOWER) && isMinPrice) {
+      if (invertPrice) {
+        setAtMaxTick(true);
+      } else {
+        setAtMinTick(true);
+      }
       return "0";
-    if (ticksAtLimit.UPPER && !isMinPrice) return "∞";
+    }
+    if (
+      (invertPrice ? ticksAtLimit.LOWER : ticksAtLimit.UPPER) &&
+      !isMinPrice
+    ) {
+      if (invertPrice) {
+        setAtMinTick(true);
+      } else {
+        setAtMaxTick(true);
+      }
+      return "∞";
+    }
     return isMinPrice
       ? commafy(minPriceInput, 5, true, true)
       : commafy(maxPriceInput, 5, true, true);
@@ -111,7 +142,6 @@ export default function RangeInput(props: RangeInputProps) {
   // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
 
   console.log("gogo");
-
   console.log(valueInThisInput, inputValue);
 
   return (
