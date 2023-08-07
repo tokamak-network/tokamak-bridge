@@ -170,6 +170,8 @@ export function useV3MintInfo() {
     token0,
     token1,
     tickSpaceLimits,
+    isAtMinTick,
+    isAtMaxTick,
   ]);
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {};
@@ -182,9 +184,6 @@ export function useV3MintInfo() {
     }),
     [tickSpaceLimits, tickLower, tickUpper, feeAmount]
   );
-
-  // console.log("tickLower");
-  // console.log(tickLower, tickUpper);
 
   // mark invalid range
   const invalidRange = Boolean(

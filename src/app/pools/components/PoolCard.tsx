@@ -90,16 +90,20 @@ export default function PoolCard(props: PoolCardDetail) {
         paddingBottom={"16px"}
         paddingLeft={"16px"}
         paddingRight={"12px"}
-        borderRadius={"12px"}
+        borderRadius={"16px"}
         _hover={{
           border: "3px solid #007AFF",
         }}
         cursor={"pointer"}
       >
-        <RangeText inRange={inRange} />
+        <Flex justifyContent={"flex-end"}>
+          <RangeText inRange={inRange} />
+        </Flex>
         <Flex alignItems="left" justifyContent="flex-start" flexDir={"column"}>
           <Text fontWeight="semibold" fontSize="18px" h={"27px"}>
-            {token1.symbol} / {token0.symbol}
+            {token1.symbol}{" "}
+            <span style={{ fontSize: 13, fontWeight: 400 }}>/</span>{" "}
+            {token0.symbol}
           </Text>
           <Text fontSize={"12px"} h={"18px"}>
             {feePercent}
