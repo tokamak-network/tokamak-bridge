@@ -5,12 +5,20 @@ import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 import EmptyCard from "./EmptyCard";
 import { useAccount } from "wagmi";
+import { css } from "@emotion/react";
+
+const customWrapStyle = css`
+& > *:nth-of-type(n + 2) {
+    margin-top: 10px; /* Adjust the spacing as per your requirement */
+  }
+`;
+
 export default function PoolList() {
   const { positions } = useGetPositions();
   const { isConnected } = useAccount();
 
   return (
-    <Wrap spacing="16px">
+    <Wrap>
       <LPGuide />
       <AddLiquidity />
       {positions === undefined &&
@@ -24,8 +32,8 @@ export default function PoolList() {
         Array.from(
           {
             length:
-              positions.length === 1
-                ? 3
+              positions.length < 7
+                ? 7 - positions.length
                 : positions.length % 3 === 0
                 ? 1
                 : positions.length % 3 === 2

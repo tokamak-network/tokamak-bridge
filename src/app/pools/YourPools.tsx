@@ -13,7 +13,7 @@ export default function YourPools() {
         w="673px"
         h={isConnected ? "600px" : "400px"}
         alignItems="flex-start"
-        padding="16px"
+        p={"20px"}
         border="1px solid #313442"
         borderRadius="13px"
         overflowY={"auto"}
