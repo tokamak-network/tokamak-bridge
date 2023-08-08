@@ -109,7 +109,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
           })
         : add(desiredDateThisWeek, {
             hours: 17,
-            minutes: 0,
+            minutes: 10,
             seconds: 0,
           });
     return {
