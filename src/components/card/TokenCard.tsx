@@ -79,7 +79,7 @@ const TokenTitle = (props: {
   const { style } = props;
   return (
     <Text
-      w={props.isName ? "100px" : "60px"}
+      w={props.isName ? "110px" : "60px"}
       fontSize={props.isName ? 18 : 14}
       fontWeight={props.isName ? 700 : 400}
       color={"#222222"}
@@ -170,12 +170,18 @@ export default function TokenCard(props: TokenCardProps) {
         <TokenTitle
           tokenName={tokenInfo?.tokenName ?? "TOKEN"}
           isName={true}
-          style={{ fontSize: type === "small" ? "16px" : "" }}
+          style={{
+            fontSize:
+              type === "small" ? "16px" : type === "medium" ? "20px" : "22px",
+          }}
         />
         <TokenTitle
           tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
           isName={false}
-          style={{ fontSize: type === "small" ? "12px" : "" }}
+          style={{
+            fontSize:
+              type === "small" ? "12px" : type === "medium" ? "16px" : "18px",
+          }}
         />
       </Flex>
       <Flex

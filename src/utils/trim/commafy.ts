@@ -6,12 +6,12 @@ function commafy(
 ) {
   const defaultDecilamPoint = decilamPoint ?? 2;
   if (num === undefined || num === null) {
-    // if (defaultValueIsUndefined) return undefined;
+    if (defaultValueIsUndefined) return undefined;
     return "-";
   }
   //@ts-ignore
   if (isNaN(num)) {
-    // if (defaultValueIsUndefined) return undefined;
+    if (defaultValueIsUndefined) return undefined;
     return "-";
   }
   if (num === 0 || num === "0") {

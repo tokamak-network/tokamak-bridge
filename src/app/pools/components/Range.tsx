@@ -4,16 +4,14 @@ import TokenSymbolPair from "../increase/components/TokenSymbolPair";
 import RangeToken from "../increase/components/RangeToken";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
-import {
-  useIncreaseLiquidity,
-  useRemoveLiquidity,
-} from "@/hooks/pool/useLiquidity";
+import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const TokenPairTitle = () => {
   const { inverted } = usePoolInfo();
@@ -46,9 +44,8 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
 
   const { token0, token1, inRange, token0Amount, token1Amount, fee } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
-  const { parsedAmountForToken0, parsedAmountForToken1 } =
-    useIncreaseLiquidity();
   const { inverted } = usePoolInfo();
+  const { inToken, outToken } = useInOutTokens();
 
   return (
     <Flex
@@ -94,7 +91,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               ? commafy(token1Amount, 6)
               : commafy(token0Amount, 6)
             : page === "increaseLiquidity"
-            ? parsedAmountForToken0
+            ? commafy(inToken?.parsedAmount, 6, false, true)
             : amount0Removed
             ? commafy(amount0Removed, 6)
             : ""
@@ -114,7 +111,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               ? commafy(token0Amount, 6)
               : commafy(token1Amount, 6)
             : page === "increaseLiquidity"
-            ? parsedAmountForToken1
+            ? commafy(outToken?.parsedAmount, 6, false, true)
             : amount1Removed
             ? commafy(amount1Removed, 6)
             : ""

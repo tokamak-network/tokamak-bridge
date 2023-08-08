@@ -35,8 +35,8 @@ export const titan_goerli = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: ["http://rpc.titan-goerli.tokamak.network"] },
-    default: { http: ["http://rpc.titan-goerli.tokamak.network"] },
+    public: { http: [process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC as string] },
+    default: { http: [process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC as string] },
   },
   blockExplorers: {
     etherscan: {

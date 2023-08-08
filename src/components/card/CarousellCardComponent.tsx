@@ -71,6 +71,13 @@ export default function CarousellCardComponent<T>(props: {
     return getTokenCardStyle(index, maxIndex);
   }, [filteredTokenList]);
 
+  const size =
+    getSymbolSize(index, currentIndex, maxIndex) === 118
+      ? "large"
+      : getSymbolSize(index, currentIndex, maxIndex) === 110
+      ? "medium"
+      : "small";
+
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
@@ -134,13 +141,7 @@ export default function CarousellCardComponent<T>(props: {
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
         }}
-        type={
-          getSymbolSize(index, currentIndex, maxIndex) === 118
-            ? "large"
-            : getSymbolSize(index, currentIndex, maxIndex) === 110
-            ? "medium"
-            : "small"
-        }
+        type={size}
         onClick={() => {
           try {
             setSelectedToken(tokenData);

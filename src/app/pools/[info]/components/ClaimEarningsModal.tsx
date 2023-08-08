@@ -53,9 +53,9 @@ export default function ClaimEarningsModal() {
     amount: estimatedGasUsageValue,
   });
 
-  console.log(estimatedGasUsageValue);
+  // console.log(estimatedGasUsageValue);
 
-  console.log(tokenPriceWithAmount);
+  // console.log(tokenPriceWithAmount);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
