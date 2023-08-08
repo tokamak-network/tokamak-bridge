@@ -27,8 +27,6 @@ const MaintenanceBanner = () => {
     outNetwork?.chainName === "GOERLI" ||
     outNetwork?.chainName === "DARIUS";
 
-  console.log("isTestnet", isTestnet);
-
   useEffect(() => {
     const intervalId = setInterval(() => {
       const today = new Date();
