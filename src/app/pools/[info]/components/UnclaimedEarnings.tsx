@@ -7,7 +7,7 @@ import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { usePricePair } from "@/hooks/price/usePricePair";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 import "css/pool/switch.css";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 
 const CollectFeeAsWETH = () => {
@@ -40,6 +40,7 @@ const CollectFeeAsWETH = () => {
 export default function UnclaimedEarnings() {
   const { info } = usePositionInfo();
   const { onOpenClaimEarning } = usePoolModals();
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
 
@@ -59,6 +60,20 @@ export default function UnclaimedEarnings() {
       );
     }
   }, [info?.token0CollectedFee, info?.token1CollectedFee]);
+
+  const token0Symbol = useMemo(() => {
+    if (collectAsWETH === true && info?.token0.symbol === "ETH") {
+      return "WETH";
+    }
+    return info?.token0.symbol;
+  }, [info?.token0.symbol, collectAsWETH]);
+
+  const token1Symbol = useMemo(() => {
+    if (collectAsWETH === true && info?.token1.symbol === "ETH") {
+      return "WETH";
+    }
+    return info?.token1.symbol;
+  }, [info?.token1.symbol, collectAsWETH]);
 
   return (
     <Flex
@@ -82,14 +97,14 @@ export default function UnclaimedEarnings() {
             <Flex alignItems={"center"} color="#A0A3AD">
               <Text fontSize={"12px"}>
                 {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-                {info?.token0.symbol}
+                {token0Symbol}
               </Text>
               <Text w={"10px"} mx={"2px"}>
                 +
               </Text>
               <Text fontSize={"12px"}>
                 {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-                {info?.token1.symbol}
+                {token1Symbol}
               </Text>
             </Flex>
           </Flex>
@@ -99,7 +114,7 @@ export default function UnclaimedEarnings() {
             <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
               <Text fontSize={"18px"}>
                 {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-                {info?.token0.symbol} +
+                {token0Symbol} +
               </Text>
               <Text fontSize={"18px"}>
                 {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}

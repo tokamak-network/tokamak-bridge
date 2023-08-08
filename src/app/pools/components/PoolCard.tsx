@@ -128,12 +128,14 @@ export default function PoolCard(props: PoolCardDetail) {
               {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
               <span style={{ color: "#A0A3AD" }}>
                 {" "}
-                {token1Price && `($${token1Price})`}
+                {priceFormmater(token1Price) === "NA"
+                  ? `(${priceFormmater(token1Price)})`
+                  : `($${priceFormmater(token1Price)})`}
               </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between">
-            <Text>Earnings</Text>
+            <Text>Fees</Text>
             {hasTokenPrice ? (
               <Text>${commafy(totalMarketPrice, 2)}</Text>
             ) : (

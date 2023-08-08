@@ -37,16 +37,16 @@ export default function ClaimEarningsModal() {
   const [estimatedGasUsageValue, setEstimatedGasUsage] =
     useRecoilState(estimatedGasUsage);
 
-  useEffect(() => {
-    async function fetchGasUsage() {
-      const totalGasUsage = await estimateGasToCollect();
-      console.log("go?");
-      console.log(totalGasUsage);
+  // useEffect(() => {
+  //   async function fetchGasUsage() {
+  //     const totalGasUsage = await estimateGasToCollect();
+  //     console.log("go?");
+  //     console.log(totalGasUsage);
 
-      setEstimatedGasUsage(totalGasUsage);
-    }
-    fetchGasUsage();
-  }, [blockNumber]);
+  //     setEstimatedGasUsage(totalGasUsage);
+  //   }
+  //   fetchGasUsage();
+  // }, [blockNumber]);
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: "ethereum",
@@ -117,7 +117,10 @@ export default function ClaimEarningsModal() {
                   <Text fontWeight="semibold">
                     {commafy(info?.token0CollectedFee, 6)}
                   </Text>
-                  <Text w={"50px"} color={"#A0A3AD"}>{`$${token0Price}`}</Text>
+                  <Text
+                    minW={"60px"}
+                    color={"#A0A3AD"}
+                  >{`$${token0Price}`}</Text>
                 </Flex>
               </Flex>
               <Flex justifyContent="space-between" mb="8px">
@@ -135,7 +138,10 @@ export default function ClaimEarningsModal() {
                   <Text fontWeight="semibold">
                     {commafy(info?.token1CollectedFee, 6)}
                   </Text>
-                  <Text w={"50px"} color={"#A0A3AD"}>{`$${token1Price}`}</Text>
+                  <Text
+                    minW={"60px"}
+                    color={"#A0A3AD"}
+                  >{`$${token1Price}`}</Text>
                 </Flex>
               </Flex>
               <Divider style={{ border: "1px solid #313442" }} />
