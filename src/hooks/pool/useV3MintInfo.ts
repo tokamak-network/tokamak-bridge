@@ -14,11 +14,10 @@ import { Bound, PoolState } from "@/types/pool/pool";
 import JSBI from "jsbi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import tryParseCurrencyAmount from "@/utils/token/tryParseCurrencyAmount";
-import { Currency, CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
+import { Price, Token } from "@uniswap/sdk-core";
 import { tryParseTick } from "@/utils/pool/tryParseTick";
 import { useGetPoolInput } from "./useGetPoolInput";
 import { getTickToPrice } from "@/utils/pool/getTickToPrice";
-import { Field } from "@/types/swap/swap";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   atMaxTick,
