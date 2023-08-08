@@ -14,7 +14,7 @@ import commafy from "@/utils/trim/commafy";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import JSBI from "jsbi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: {
@@ -111,9 +111,24 @@ export default function TokenInput(props: {
     }
   };
 
+  const inputRef = useRef(null);
+
   const onMax = useCallback(() => {
     if (tokenData) {
       if (inToken && selectedInToken) {
+        if (mode === "Pool") {
+          setSelectedInToken({
+            ...selectedInToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+          return setTimeout(() => {
+            //@ts-ignore
+            inputRef?.current?.focus();
+            //@ts-ignore
+            inputRef?.current?.blur();
+          }, 100);
+        }
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -121,6 +136,19 @@ export default function TokenInput(props: {
         });
       }
       if (inToken === false && selectedOutToken) {
+        if (mode === "Pool") {
+          setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+          return setTimeout(() => {
+            //@ts-ignore
+            inputRef?.current?.focus();
+            //@ts-ignore
+            inputRef?.current?.blur();
+          }, 100);
+        }
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -129,13 +157,13 @@ export default function TokenInput(props: {
       }
       return console.error("a input field not founded");
     }
-  }, [tokenData, inToken, selectedInToken]);
+  }, [tokenData, inToken, selectedInToken, mode]);
 
   const handleFocus = () => {
     setIsFocused(true);
   };
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool" && inToken && selectedOutToken && amountForToken1) {
@@ -172,7 +200,14 @@ export default function TokenInput(props: {
         parsedAmount: formattedAmount.toString(),
       });
     }
-  };
+  }, [
+    mode,
+    inToken,
+    selectedInToken,
+    selectedOutToken,
+    amountForToken0,
+    amountForToken1,
+  ]);
 
   const valueProp = useMemo(() => {
     if (
@@ -270,6 +305,7 @@ export default function TokenInput(props: {
           isDisabled={isDisabled}
           _disabled={{ color: "#fff" }}
           value={valueProp}
+          ref={inputRef}
           onChange={onChange}
           onFocus={handleFocus}
           onBlur={handleBlur}

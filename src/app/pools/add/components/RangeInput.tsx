@@ -141,9 +141,6 @@ export default function RangeInput(props: RangeInputProps) {
   //   }
   // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
 
-  console.log("gogo");
-  console.log(valueInThisInput, inputValue);
-
   return (
     <Flex flexDir={"column"}>
       <Flex
