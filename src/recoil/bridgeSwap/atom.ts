@@ -104,12 +104,12 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
       isTestnet === true
         ? add(desiredDateThisWeek, {
             hours: 17,
-            minutes: 0,
+            minutes: 22,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
             hours: 17,
-            minutes: 10,
+            minutes: 22,
             seconds: 0,
           });
     return {
