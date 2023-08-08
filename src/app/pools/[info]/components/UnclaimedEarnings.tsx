@@ -16,7 +16,7 @@ const CollectFeeAsWETH = () => {
   );
   const { info } = usePositionInfo();
 
-  if (info?.hasETH) return null;
+  if (!info?.hasETH) return null;
 
   return (
     <Flex
@@ -60,8 +60,6 @@ export default function UnclaimedEarnings() {
     }
   }, [info?.token0CollectedFee, info?.token1CollectedFee]);
 
-  const wethCollecting = false;
-
   return (
     <Flex
       bgColor="#1F2128"
@@ -77,7 +75,7 @@ export default function UnclaimedEarnings() {
       <Flex justifyContent={"space-between"}>
         {hasTokenPrice ? (
           <Flex alignItems={"left"} flexDir={"column"}>
-            <Text>Unclaimed earnings</Text>
+            <Text>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
               {`$${totalMarketPrice}`}
             </Text>

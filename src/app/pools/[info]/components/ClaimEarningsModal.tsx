@@ -77,7 +77,7 @@ export default function ClaimEarningsModal() {
         >
           <Flex flexDir="column">
             <Flex justifyContent="space-between" mb="16px">
-              <Box>Claim Earnings</Box>
+              <Box>Claim Fees</Box>
               <Box onClick={onClose} cursor="pointer">
                 <Image src={ModalCloseButton} alt="closeModal" />
               </Box>
@@ -93,7 +93,7 @@ export default function ClaimEarningsModal() {
               {hasTokenPrice && (
                 <Flex justifyContent="space-between" mb="9px">
                   <Flex justifyContent="start">
-                    <Text fontSize={14}>Total earnings</Text>
+                    <Text fontSize={14}>Total fees</Text>
                   </Flex>
                   <Flex justifyContent="end">
                     <Text fontSize={16} fontWeight="semibold">

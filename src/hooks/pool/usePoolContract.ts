@@ -95,9 +95,6 @@ export function usePoolMint() {
         useFullPrecision: true,
       });
 
-      console.log("positionToMint");
-      console.log(positionToMint);
-
       if (positionToMint) {
         const mintOptions: MintOptions = {
           recipient: address,
