@@ -1,11 +1,14 @@
 import { TokenInfo } from "types/token/supportedToken";
-import { Box, Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, TextProps } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useCallback, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
+import { type } from "os";
+
+type TokenCardSizeType = "small" | "medium" | "large";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo;
@@ -20,6 +23,7 @@ type TokenCardProps = {
   };
   onClick?: () => any;
   style?: {};
+  type?: TokenCardSizeType;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -66,7 +70,12 @@ const TopLine = (props: { mainSchemCol: string }) => {
   );
 };
 
-const TokenTitle = (props: { tokenName: String; isName: boolean }) => {
+const TokenTitle = (props: {
+  tokenName: String;
+  isName: boolean;
+  style?: TextProps;
+}) => {
+  const { style } = props;
   return (
     <Text
       w={props.isName ? "100px" : "60px"}
@@ -76,6 +85,7 @@ const TokenTitle = (props: { tokenName: String; isName: boolean }) => {
       textAlign={props.isName ? "left" : "right"}
       lineHeight={props?.isName ? "20px" : ""}
       zIndex={100}
+      {...props.style}
     >
       {/* {props.tokenName.toUpperCase()} */}
       {props.tokenName}
@@ -94,6 +104,7 @@ export default function TokenCard(props: TokenCardProps) {
     symbolSize,
     onClick,
     style,
+    type,
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
@@ -143,7 +154,7 @@ export default function TokenCard(props: TokenCardProps) {
       borderRadius={"16px"}
       pos={"relative"}
       pt={"15px"}
-      pb={"32px"}
+      pb={type === "small" ? "13px" : type === "medium" ? "15px" : "30px"}
       overflow={"hidden"}
       flexDir={"column"}
       justifyContent={"space-between"}
@@ -154,16 +165,22 @@ export default function TokenCard(props: TokenCardProps) {
     >
       <TopLine mainSchemCol={tokenColorCode} />
       <Flex justifyContent={"space-between"} w={"100%"}>
-        <TokenTitle tokenName={tokenInfo?.tokenName ?? "TOKEN"} isName={true} />
+        <TokenTitle
+          tokenName={tokenInfo?.tokenName ?? "TOKEN"}
+          isName={true}
+          style={{ fontSize: type === "small" ? "16px" : "" }}
+        />
         <TokenTitle
           tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
           isName={false}
+          style={{ fontSize: type === "small" ? "12px" : "" }}
         />
       </Flex>
       <Flex
         // pt={"25px"}
         // pb={"37px"}
-        my={notAdded ? "20px" : ""}
+        // my={notAdded ? "20px" : ""}
+        h={"100%"}
         justifyContent={"center"}
         alignItems={notAdded ? "baseline" : "center"}
       >
@@ -198,11 +215,26 @@ export default function TokenCard(props: TokenCardProps) {
           </Text>
         </Flex>
       ) : (
-        <Flex flexDir={"column"} rowGap={"13px"}>
-          <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-            <Text fontWeight={400}>Balance: </Text>
-            <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
-          </Flex>
+        <Flex
+          flexDir={"column"}
+          mt={"auto"}
+          color={"#222"}
+          rowGap={type === "small" ? "8px" : type === "medium" ? "9px" : "12px"}
+        >
+          <Text
+            fontWeight={400}
+            fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
+            h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
+          >
+            Balance:{" "}
+          </Text>
+          <Text
+            fontWeight={700}
+            fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
+            h={type === "small" ? "33px" : type === "medium" ? "40px" : "40px"}
+          >
+            {tokenData?.data.parsedBalance}
+          </Text>
         </Flex>
       )}
     </Flex>

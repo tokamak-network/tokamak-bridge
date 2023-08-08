@@ -21,8 +21,8 @@ export default function TokenSymbolPair(props: {
         <Box pos={"relative"} top={"-18px"} left={"43px"}>
           <NetworkSymbol
             network={token0?.chainId}
-            w={20}
-            h={20}
+            w={24}
+            h={24}
             style={{
               borderRadius: "4px",
               position: "absolute",
@@ -40,8 +40,8 @@ export default function TokenSymbolPair(props: {
         <Box pos={"relative"} top={"-18px"} left={"43px"}>
           <NetworkSymbol
             network={token1?.chainId}
-            w={20}
-            h={20}
+            w={24}
+            h={24}
             style={{
               borderRadius: "4px",
               position: "absolute",

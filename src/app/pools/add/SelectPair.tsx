@@ -34,6 +34,8 @@ export default function SelectPair() {
                 tokenInfo={inTokenInfo}
                 hasInput={true}
                 inNetwork={true}
+                type={"small"}
+                symbolSize={{ w: 86, h: 86 }}
               />
             ) : (
               <SearchToken />
@@ -63,6 +65,8 @@ export default function SelectPair() {
                 tokenInfo={outTokenInfo}
                 hasInput={true}
                 inNetwork={true}
+                type={"small"}
+                symbolSize={{ w: 86, h: 86 }}
               />
             ) : (
               <SearchToken onClick={() => onOpenOutToken()} />

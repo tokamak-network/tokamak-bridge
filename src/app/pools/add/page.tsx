@@ -13,7 +13,7 @@ import IncreaseModal from "../components/IncreaseModal";
 
 export default function AddLiquidity() {
   return (
-    <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
+    <Flex flexDir={"column"} w={"872px"} rowGap={"16px"}>
       <TopLine title={"Add Liquidity"} clear={true} switcher={true} />
       <Flex
         border="1px solid #20212B"

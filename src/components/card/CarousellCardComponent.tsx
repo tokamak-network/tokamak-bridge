@@ -134,6 +134,13 @@ export default function CarousellCardComponent<T>(props: {
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
         }}
+        type={
+          getSymbolSize(index, currentIndex, maxIndex) === 118
+            ? "large"
+            : getSymbolSize(index, currentIndex, maxIndex) === 110
+            ? "medium"
+            : "small"
+        }
         onClick={() => {
           try {
             setSelectedToken(tokenData);
