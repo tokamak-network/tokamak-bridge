@@ -99,17 +99,17 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
     const weekStart = startOfWeek(today);
-    const desiredDateThisWeek = addDays(weekStart, 1); // You can use `addDays(thisWed, dayINeed - 1)` as well
+    const desiredDateThisWeek = addDays(weekStart, 2); // You can use `addDays(thisWed, dayINeed - 1)` as well
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
-            hours: 23,
-            minutes: 25,
+            hours: 16,
+            minutes: 0,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
-            hours: 23,
-            minutes: 25,
+            hours: 16,
+            minutes: 0,
             seconds: 0,
           });
     return {

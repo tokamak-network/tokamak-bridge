@@ -1,8 +1,18 @@
 import { Flex, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import ICON_SEARCH from "assets/icons/search.svg";
+import { useRecoilValue } from "recoil";
+import { bannerStatus } from "@/recoil/bridgeSwap/atom";
+import { useInOutNetwork } from "@/hooks/network";
 
 export default function SearchToken(props: { onClick?: () => any }) {
+  const status = useRecoilValue(bannerStatus);
+  const { inNetwork, outNetwork } = useInOutNetwork();
+
+
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
+  const deactivateButton = status === "Active" && isL2;
+
   return (
     <Flex
       flexDir={"column"}
@@ -13,6 +23,7 @@ export default function SearchToken(props: { onClick?: () => any }) {
       h={"100%"}
       cursor={"pointer"}
       onClick={props?.onClick}
+      opacity={deactivateButton?0.2:1}
     >
       <Text fontSize={20} fontWeight={"semibold"}>
         Search Tokens

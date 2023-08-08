@@ -102,6 +102,7 @@ export default function ActionButton() {
         : mode}{" "}
       <span style={{ fontSize: "10px", marginLeft:'3px', marginTop:'3px' }}>
        {deactivateButton ? "(Service under maintenance)" : ""}
+       {/* {'(Service under maintenance)'} */}
       </span>
     </Button>
   );
