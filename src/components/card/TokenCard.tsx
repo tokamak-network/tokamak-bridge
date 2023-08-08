@@ -24,6 +24,7 @@ type TokenCardProps = {
   onClick?: () => any;
   style?: {};
   type?: TokenCardSizeType;
+  forBridge?: boolean;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -105,6 +106,7 @@ export default function TokenCard(props: TokenCardProps) {
     onClick,
     style,
     type,
+    forBridge,
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
@@ -214,6 +216,13 @@ export default function TokenCard(props: TokenCardProps) {
             Cancel
           </Text>
         </Flex>
+      ) : forBridge ? (
+        <Flex flexDir={"column"} rowGap={"13px"}>
+          <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
+            <Text fontWeight={400}>Balance: </Text>
+            <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
+          </Flex>
+        </Flex>
       ) : (
         <Flex
           flexDir={"column"}
@@ -226,7 +235,7 @@ export default function TokenCard(props: TokenCardProps) {
             fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
             h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
           >
-            Balance:{" "}
+            balance:{" "}
           </Text>
           <Text
             fontWeight={700}
