@@ -31,6 +31,7 @@ export function useMintPositionInfo() {
       const tickLower = ticks.LOWER;
       const tickCurrent = pool.tickCurrent;
       const tickUpper = ticks.UPPER;
+      const hasETH = pool.token0.isNative || pool.token1.isNative;
 
       return {
         id: 0,
@@ -50,6 +51,7 @@ export function useMintPositionInfo() {
         tickCurrent,
         tickUpper,
         rawPositionInfo: pool,
+        hasETH,
       };
     }
     return undefined;
