@@ -56,9 +56,10 @@ export default function InitializeInfo() {
             }}
             border={"none"}
             onChange={(e) => {
+              console.log("?");
               setInitialPrice(e.target.value);
             }}
-            value={valueProp}
+            value={valueProp ?? undefined}
             boxShadow={"none !important"}
             fontSize={18}
             fontWeight={500}
@@ -69,6 +70,7 @@ export default function InitializeInfo() {
             onBlur={() => setIsFocused(false)}
             placeholder="0"
             _placeholder={{ color: "#C6C6D1" }}
+            defaultValue={undefined}
           />
           <Text
             minW={"100px"}

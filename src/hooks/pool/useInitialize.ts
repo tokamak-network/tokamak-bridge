@@ -3,6 +3,7 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import {
   atMaxTick,
   atMinTick,
+  initialPrice,
   maxPrice,
   minPrice,
   poolFeeStatus,
@@ -16,6 +17,7 @@ export function useInitialize() {
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
+  const [, setInitialPrice] = useRecoilState(initialPrice);
 
   const initialzePoolValues = useCallback(() => {
     setAtMinTick(false);
@@ -23,8 +25,17 @@ export function useInitialize() {
     setMinPrice(undefined);
     setMaxPrice(undefined);
     initializeTokenPair();
+    setInitialPrice("0");
     return setPoolFee(undefined);
   }, [initializeTokenPair, setPoolFee]);
 
-  return { initialzePoolValues };
+  const initializePoolValuesForSelectingFee = useCallback(() => {
+    setAtMinTick(false);
+    setAtMaxTick(false);
+    setMinPrice(undefined);
+    setMaxPrice(undefined);
+    setInitialPrice("0");
+  }, [initializeTokenPair, setPoolFee]);
+
+  return { initialzePoolValues, initializePoolValuesForSelectingFee };
 }
