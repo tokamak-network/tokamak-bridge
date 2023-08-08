@@ -32,14 +32,14 @@ const MaintenanceBanner = () => {
       const today = new Date();
       const nowTime = getTime(today);
       const activeTimeStartThisWeek = add(banner, {
-        hours: 0,
-        minutes: 1,
+        hours: 1,
+        minutes: 0,
         seconds: 0,
       });
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
         hours: 0,
-        minutes: 5,
+        minutes: 30,
         seconds: 0,
       });
 
