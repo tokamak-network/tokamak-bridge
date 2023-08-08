@@ -9,7 +9,7 @@ export default function ConnecteWalletCard() {
   return (
     <Flex
       flexDir="column"
-      border="1px solid #20212B"
+      border="1px solid #007AFF"
       w="200px"
       h="248px"
       paddingTop={"32px"}
