@@ -10,10 +10,11 @@ export default function YourPools() {
         Your Pools
       </Text>
       <Flex
-        w="673px"
+        w="672px"
         h={isConnected ? "600px" : "400px"}
         alignItems="flex-start"
         p={"20px"}
+        pr={"0px"}
         border="1px solid #313442"
         borderRadius="13px"
         overflowY={"auto"}

@@ -1,24 +1,22 @@
 import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
-import { Wrap } from "@chakra-ui/react";
+import { Grid } from "@chakra-ui/react";
 import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 import EmptyCard from "./EmptyCard";
 import { useAccount } from "wagmi";
-import { css } from "@emotion/react";
-
-const customWrapStyle = css`
-& > *:nth-of-type(n + 2) {
-    margin-top: 10px; /* Adjust the spacing as per your requirement */
-  }
-`;
 
 export default function PoolList() {
   const { positions } = useGetPositions();
   const { isConnected } = useAccount();
 
   return (
-    <Wrap>
+    <Grid
+      templateColumns="repeat(3, 1fr)"
+      rowGap={"16px"}
+      columnGap={"16px"}
+      overflow={"hidden"}
+    >
       <LPGuide />
       <AddLiquidity />
       {positions === undefined &&
@@ -42,6 +40,6 @@ export default function PoolList() {
           },
           (_, index) => <EmptyCard key={index} noSpinner={true} />
         )}
-    </Wrap>
+    </Grid>
   );
 }
