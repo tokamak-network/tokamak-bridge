@@ -41,7 +41,9 @@ export default function SelectPair() {
               <SearchToken />
             )}
           </Box>
-          {secondStepPassed && <InputContainer inToken={true} />}
+          {inTokenInfo && (
+            <InputContainer inToken={true} isDisabled={!secondStepPassed} />
+          )}
         </Flex>
 
         <Image
@@ -72,7 +74,9 @@ export default function SelectPair() {
               <SearchToken onClick={() => onOpenOutToken()} />
             )}
           </Box>
-          {secondStepPassed && <InputContainer inToken={false} />}
+          {outTokenInfo && (
+            <InputContainer inToken={false} isDisabled={!secondStepPassed} />
+          )}
         </Flex>
       </Flex>
     </Flex>

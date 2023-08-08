@@ -19,7 +19,10 @@ export const OutRangeWarning = () => {
   );
 };
 
-export function InputContainer(props: { inToken: boolean }) {
+export function InputContainer(props: {
+  inToken: boolean;
+  isDisabled?: boolean;
+}) {
   const { inToken } = props;
   const { deposit0Disabled, deposit1Disabled, invalidRange } = useV3MintInfo();
 
@@ -29,11 +32,18 @@ export function InputContainer(props: { inToken: boolean }) {
       return deposit0Disabled;
     }
     return deposit1Disabled;
-  }, [invalidRange, deposit0Disabled, deposit1Disabled]);
+  }, [invalidRange, deposit0Disabled, deposit1Disabled, props.isDisabled]);
 
   return (
     <Box w={"186px"} minH={"45px"}>
-      {!isDisabled && <TokenInput inToken={inToken} hasMaxButton={true} />}
+      {!isDisabled && (
+        <TokenInput
+          inToken={inToken}
+          hasMaxButton={true}
+          isDisabled={props.isDisabled}
+          style={{ opacity: props.isDisabled ? 0.3 : 1 }}
+        />
+      )}
       {invalidRange && <OutRangeWarning />}
       {!invalidRange && inToken && deposit0Disabled && <OutRangeWarning />}
       {!invalidRange && !inToken && deposit1Disabled && <OutRangeWarning />}

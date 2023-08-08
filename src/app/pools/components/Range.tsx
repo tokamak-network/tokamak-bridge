@@ -3,7 +3,7 @@ import { RangeText } from "./ui";
 import TokenSymbolPair from "../increase/components/TokenSymbolPair";
 import RangeToken from "../increase/components/RangeToken";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
-import { commafyWithUndefined } from "@/utils/trim/commafy";
+import commafy, { commafyWithUndefined } from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";

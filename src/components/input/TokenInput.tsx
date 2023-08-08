@@ -114,6 +114,7 @@ export default function TokenInput(props: {
   const inputRef = useRef(null);
 
   const onMax = useCallback(() => {
+    if (isDisabled) return null;
     if (tokenData) {
       if (inToken && selectedInToken) {
         if (mode === "Pool") {
@@ -157,7 +158,7 @@ export default function TokenInput(props: {
       }
       return console.error("a input field not founded");
     }
-  }, [tokenData, inToken, selectedInToken, mode]);
+  }, [tokenData, inToken, selectedInToken, mode, isDisabled]);
 
   const handleFocus = () => {
     setIsFocused(true);
