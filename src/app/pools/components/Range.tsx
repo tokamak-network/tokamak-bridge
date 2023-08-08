@@ -3,7 +3,7 @@ import { RangeText } from "./ui";
 import TokenSymbolPair from "../increase/components/TokenSymbolPair";
 import RangeToken from "../increase/components/RangeToken";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
-import commafy from "@/utils/trim/commafy";
+import { commafyWithUndefined } from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
@@ -91,7 +91,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               ? commafy(token1Amount, 6)
               : commafy(token0Amount, 6)
             : page === "increaseLiquidity"
-            ? commafy(inToken?.parsedAmount, 6, false, true)
+            ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
             : amount0Removed
             ? commafy(amount0Removed, 6)
             : ""
@@ -111,7 +111,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               ? commafy(token0Amount, 6)
               : commafy(token1Amount, 6)
             : page === "increaseLiquidity"
-            ? commafy(outToken?.parsedAmount, 6, false, true)
+            ? commafyWithUndefined(outToken?.parsedAmount, 6, false, true)
             : amount1Removed
             ? commafy(amount1Removed, 6)
             : ""
