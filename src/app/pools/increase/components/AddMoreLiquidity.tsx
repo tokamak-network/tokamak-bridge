@@ -83,6 +83,7 @@ export default function AddMoreLiquidity() {
             tokenInfo={inverted ? token1Info : token0Info}
             hasInput={false}
             inNetwork={true}
+            type="small"
           />
           {!deposit0Disabled && (
             <Flex w={"186px"} mt="16px">
@@ -113,6 +114,7 @@ export default function AddMoreLiquidity() {
             tokenInfo={inverted ? token0Info : token1Info}
             hasInput={false}
             inNetwork={true}
+            type="small"
           />
           <Flex w={"186px"} mt="16px">
             {deposit1Disabled ? (
