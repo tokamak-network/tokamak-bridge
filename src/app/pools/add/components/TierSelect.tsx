@@ -40,6 +40,7 @@ export default function TierSelector() {
               backgroundColor: "transparent",
               borderColor: "#007AFF",
             }}
+            fontWeight={400}
           >
             {value === FeeAmount.LOWEST
               ? "0.01%"

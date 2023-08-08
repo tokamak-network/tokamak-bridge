@@ -22,18 +22,21 @@ export default function ToggleSwitch() {
     >
       <Box
         w={"50%"}
-        h={"100%"}
+        h={"24px !important"}
         bg={!invertPrice ? "#313442" : "transparent"}
         borderRadius={!invertPrice ? "8px" : ""}
         onClick={invertTokenPair}
+        alignItems={"center"}
       >
         <Text>{pool?.token0.symbol}</Text>
       </Box>
       <Box
         w={"50%"}
+        h={"24px !important"}
         bg={invertPrice ? "#313442" : "transparent"}
         borderRadius={invertPrice ? "8px" : ""}
         onClick={invertTokenPair}
+        alignItems={"center"}
       >
         <Text>{pool?.token1.symbol}</Text>
       </Box>

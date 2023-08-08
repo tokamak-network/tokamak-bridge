@@ -20,17 +20,17 @@ export default function SetPriceRange() {
   return (
     <Flex
       flexDir={"column"}
-      rowGap={"15px"}
+      // rowGap={"15px"}
       opacity={firstStepPassed && priceInitialized ? 1 : 0.3}
     >
       <Title title="Set Price Range" />
       {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
-        <Text textAlign={"center"}>
+        <Text textAlign={"center"} my={"16px"}>
           Current Price : {commafy(price?.currentPrice, 4)}{" "}
           {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
         </Text>
       )}
-      <Flex columnGap={"12px"}>
+      <Flex columnGap={"12px"} mb={"12px"}>
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />
       </Flex>

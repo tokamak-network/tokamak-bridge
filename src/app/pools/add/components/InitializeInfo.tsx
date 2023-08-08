@@ -16,6 +16,7 @@ export default function InitializeInfo() {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const valueProp = useMemo(() => {
+    if (Number(inputIntialPrice) === 0) return undefined;
     return isFocused ? inputIntialPrice : trimAmount(inputIntialPrice, 20);
   }, [isFocused, inputIntialPrice]);
 
@@ -29,6 +30,7 @@ export default function InitializeInfo() {
           w={"384px"}
           bgColor={"#1F2128"}
           // maxH={"89px"}
+          borderRadius={"4px"}
         >
           <Text fontSize={"13px"} textAlign={"left"} color={"#007AFF"}>
             This pool must be initialized before you can add liquidity. To
@@ -65,6 +67,8 @@ export default function InitializeInfo() {
             py={"10px"}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            placeholder="0"
+            _placeholder={{ color: "#C6C6D1" }}
           />
           <Text
             minW={"100px"}
