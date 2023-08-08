@@ -110,7 +110,7 @@ export default function UnclaimedEarnings() {
           </Flex>
         ) : (
           <Flex alignItems={"left"} flexDir={"column"}>
-            <Text>Unclaimed earnings</Text>
+            <Text>Unclaimed fee</Text>
             <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
               <Text fontSize={"18px"}>
                 {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}

@@ -121,7 +121,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
         <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
         <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
           <Flex justifyContent={"space-between"}>
-            <Text fontSize={"14px"}>Earnings</Text>
+            <Text fontSize={"14px"}>Fee</Text>
             <Flex alignItems={"center"}>
               <Text>
                 {smallNumberFormmater(
@@ -151,7 +151,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
             </Flex>
           </Flex>
           <Flex justifyContent={"space-between"}>
-            <Text fontSize={"14px"}>Estimated gas fees</Text>
+            <Text fontSize={"14px"}>Estimated gas fee</Text>
             <Text fontSize={"16px"} fontWeight={500}>
               $4.44
             </Text>
