@@ -5,14 +5,16 @@ import InitializeInfo from "./components/InitializeInfo";
 import SelectNetwork from "./SelectNetwork";
 import SelectFeeTier from "./SelectFeeTier";
 import SelectPair from "./SelectPair";
-import TopLine from "./TopLine";
+import TopLine from "../common/TopLine";
 import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
+import { WarningPool } from "./WarningPool";
+import IncreaseModal from "../components/IncreaseModal";
 
-export default function CreatePoolModal() {
+export default function AddLiquidity() {
   return (
-    <Flex flexDir={"column"} w={"872px"} rowGap={"8px"}>
-      <TopLine />
+    <Flex flexDir={"column"} w={"872px"} rowGap={"16px"}>
+      <TopLine title={"Add Liquidity"} clear={true} switcher={true} />
       <Flex
         border="1px solid #20212B"
         borderRadius={"16px"}
@@ -24,13 +26,14 @@ export default function CreatePoolModal() {
           <SelectFeeTier />
           <SelectPair />
         </Flex>
-        <Flex flexDirection={"column"}>
+        <Flex flexDirection={"column"} rowGap={"20px"}>
+          <InitializeInfo />
           <SetPriceRange />
-          {/* <InitializeInfo /> */}
+          <WarningPool />
           <ActionButton />
         </Flex>
       </Flex>
-      {/* <Modals /> */}
+      <IncreaseModal />
     </Flex>
   );
 }

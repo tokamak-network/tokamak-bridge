@@ -5,7 +5,7 @@ import Title from "./components/Title";
 export default function SelectFeeTier() {
   return (
     <Flex flexDir="column">
-      <Title title="Select Network" />
+      <Title title="Select Fee" />
       <TierSelector />
     </Flex>
   );

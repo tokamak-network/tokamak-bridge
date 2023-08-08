@@ -9,12 +9,12 @@ import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Qu
 import { useProvier } from "@/hooks/provider/useProvider";
 
 export function useUniswapContracts() {
-  const { inNetwork } = useInOutNetwork();
+  const { layer } = useConnectedNetwork();
   const { provider } = useProvier();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const UNISWAP_CONTRACT =
-    inNetwork?.layer === "L1"
+    layer === "L1"
       ? L1_UniswapContracts
       : isConnectedToMainNetwork
       ? L2_UniswapContracts

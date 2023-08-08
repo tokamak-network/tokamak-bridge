@@ -143,8 +143,6 @@ export function useTx(params: {
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
-  const { data: _d, isError: _i, isLoading: _lo } = useTrasactionW({ hash });
-
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
       if (selectedInToken) {

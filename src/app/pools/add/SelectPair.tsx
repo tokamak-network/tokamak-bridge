@@ -6,11 +6,13 @@ import { Box, Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import TOKEN_PAIR_PLUS_ICON from "assets/icons/tokenPairPlus.svg";
 import Title from "./components/Title";
-import TokenInput from "@/components/input/TokenInput";
+import { InputContainer } from "./components/InputContainer";
+import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
 
 export default function SelectPair() {
-  const { inToken, inTokenInfo, outTokenInfo } = useInOutTokens();
+  const { inTokenInfo, outTokenInfo } = useInOutTokens();
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
+  const { secondStepPassed } = useAddLiquidityCondition();
 
   return (
     <Flex flexDir={"column"}>
@@ -32,20 +34,20 @@ export default function SelectPair() {
                 tokenInfo={inTokenInfo}
                 hasInput={true}
                 inNetwork={true}
+                type={"small"}
+                symbolSize={{ w: 86, h: 86 }}
               />
             ) : (
               <SearchToken />
             )}
           </Box>
-          <Box w={"186px"}>
-            <TokenInput inToken={true} />
-          </Box>
+          {secondStepPassed && <InputContainer inToken={true} />}
         </Flex>
 
         <Image
           src={TOKEN_PAIR_PLUS_ICON}
           alt={"TOKEN_PAIR_PLUS_ICON"}
-          style={{ marginBottom: "65px" }}
+          style={{ marginBottom: secondStepPassed ? "61px" : "0px" }}
         />
         <Flex flexDir={"column"} rowGap={"16px"}>
           <Box
@@ -63,14 +65,14 @@ export default function SelectPair() {
                 tokenInfo={outTokenInfo}
                 hasInput={true}
                 inNetwork={true}
+                type={"small"}
+                symbolSize={{ w: 86, h: 86 }}
               />
             ) : (
               <SearchToken onClick={() => onOpenOutToken()} />
             )}
           </Box>
-          <Box w={"186px"}>
-            <TokenInput inToken={false} hasMaxButton={true} />
-          </Box>
+          {secondStepPassed && <InputContainer inToken={false} />}
         </Flex>
       </Flex>
     </Flex>

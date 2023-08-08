@@ -1,6 +1,7 @@
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, SystemCSSProperties } from "@chakra-ui/react";
 import { TokenSymbol } from "./TokenSymbol";
 import { NetworkSymbol } from "./NetworkSymbol";
+import { CSSProperties } from "react";
 
 type TokenSymbolWithNetworkProp = {
   tokenSymbol: string;
@@ -9,6 +10,9 @@ type TokenSymbolWithNetworkProp = {
   symbolH?: number;
   networkSymbolW?: number;
   networkSymbolH?: number;
+  bottom?: number;
+  right?: number;
+  style?: {};
 };
 
 export default function TokenSymbolWithNetwork(
@@ -21,9 +25,12 @@ export default function TokenSymbolWithNetwork(
     symbolH,
     networkSymbolW,
     networkSymbolH,
+    bottom,
+    right,
+    style,
   } = props;
   return (
-    <Flex position={"relative"}>
+    <Flex position={"relative"} {...style}>
       <TokenSymbol
         w={symbolW ?? 32}
         h={symbolH ?? 32}
@@ -36,8 +43,8 @@ export default function TokenSymbolWithNetwork(
         // bgColor={inNetwork.nativeToken === "TON" ? "#fff" : "#383736"}
         // borderRadius={"2px"}
         // border={"2px solid #1F2128"}
-        bottom={"-2px"}
-        right={"-2px"}
+        bottom={bottom ?? "-2px"}
+        right={right ?? "-2px"}
       >
         <NetworkSymbol
           w={networkSymbolW ?? 14}

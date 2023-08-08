@@ -15,7 +15,7 @@ export function RangeText(props: { inRange: boolean }) {
         fontWeight={600}
         color={props.inRange ? "#00EE98" : "#DD3A44"}
       >
-        {props.inRange ? "In Range" : "Out Range"}
+        {props.inRange ? "Earning Fees" : "Not Earning Fees"}
       </Text>
     </Flex>
   );

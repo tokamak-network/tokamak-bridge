@@ -1,6 +1,7 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useInOutNetwork } from "@/hooks/network";
+import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -9,9 +10,11 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { trimAmount } from "@/utils/trim";
+import commafy from "@/utils/trim/commafy";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import JSBI from "jsbi";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: {
@@ -28,7 +31,6 @@ export default function TokenInput(props: {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { inNetwork, outNetwork } = useInOutNetwork();
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
   const {
@@ -39,15 +41,7 @@ export default function TokenInput(props: {
   const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
-  const tokenAddress = useMemo(() => {
-    if (inToken && selectedInToken && inNetwork) {
-      return selectedInToken.address[inNetwork.chainName];
-    }
-    if (inToken === false && selectedOutToken && outNetwork) {
-      return selectedOutToken.address[outNetwork.chainName];
-    }
-    return null;
-  }, [inNetwork, outNetwork, selectedInToken, selectedOutToken, inToken]);
+  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
 
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
 
@@ -88,6 +82,7 @@ export default function TokenInput(props: {
         value,
         selectedOutToken.decimals
       );
+
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -116,33 +111,103 @@ export default function TokenInput(props: {
     }
   };
 
+  const inputRef = useRef(null);
+
   const onMax = useCallback(() => {
     if (tokenData) {
       if (inToken && selectedInToken) {
+        if (mode === "Pool") {
+          setSelectedInToken({
+            ...selectedInToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+          return setTimeout(() => {
+            //@ts-ignore
+            inputRef?.current?.focus();
+            //@ts-ignore
+            inputRef?.current?.blur();
+          }, 100);
+        }
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
       }
-      // if (inToken === false && selectedOutToken) {
-      //   return setSelectedOutToken({
-      //     ...selectedOutToken,
-      //     amountBN: tokenData.data.balanceBN.value,
-      //     parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-      //   });
-      // }
+      if (inToken === false && selectedOutToken) {
+        if (mode === "Pool") {
+          setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+          return setTimeout(() => {
+            //@ts-ignore
+            inputRef?.current?.focus();
+            //@ts-ignore
+            inputRef?.current?.blur();
+          }, 100);
+        }
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: tokenData.data.balanceBN.value,
+          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+        });
+      }
       return console.error("a input field not founded");
     }
-  }, [tokenData, inToken, selectedInToken, selectedOutToken]);
+  }, [tokenData, inToken, selectedInToken, mode]);
 
   const handleFocus = () => {
     setIsFocused(true);
   };
 
-  const handleBlur = () => {
+  const handleBlur = useCallback(() => {
     setIsFocused(false);
-  };
+    //for pool's price and amount on liquidity
+    if (mode === "Pool" && inToken && selectedOutToken && amountForToken1) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken1.toString().replaceAll("-", ""),
+        selectedOutToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedOutToken.decimals
+      );
+
+      return setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
+    if (mode === "Pool" && !inToken && selectedInToken && amountForToken0) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken0.toString().replaceAll("-", ""),
+        selectedInToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedInToken.decimals
+      );
+
+      return setSelectedInToken({
+        ...selectedInToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
+  }, [
+    mode,
+    inToken,
+    selectedInToken,
+    selectedOutToken,
+    amountForToken0,
+    amountForToken1,
+  ]);
 
   const valueProp = useMemo(() => {
     if (
@@ -151,14 +216,46 @@ export default function TokenInput(props: {
     ) {
       return inTokenFromHook.parsedAmount;
     }
-    return inToken === false
+    return mode === "Swap" && inToken === false
       ? trimAmount(amountOut, 11) ?? ""
-      : selectedInToken && selectedInToken?.parsedAmount !== null
+      : inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 11)
+      : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 11)
       : "";
-  }, [inToken, amountOut, selectedInToken, mode, inTokenFromHook, isFocused]);
+  }, [
+    inToken,
+    amountOut,
+    selectedInToken,
+    selectedOutToken,
+    mode,
+    inTokenFromHook,
+    isFocused,
+  ]);
+
+  const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({
+    tokenName: selectedInToken?.tokenName as string,
+    amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const { tokenPriceWithAmount: token1PriceWiwhtAmount } = useGetMarketPrice({
+    tokenName: selectedOutToken?.tokenName as string,
+    amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const marketPrice = useMemo(() => {
+    if (inToken && token0PriceWiwhtAmount) {
+      return token0PriceWiwhtAmount;
+    }
+    if (!inToken && token1PriceWiwhtAmount) {
+      return token1PriceWiwhtAmount;
+    }
+    return "0.00";
+  }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
 
   useEffect(() => {
     if (!inToken && selectedOutToken && amountOut) {
@@ -208,6 +305,7 @@ export default function TokenInput(props: {
           isDisabled={isDisabled}
           _disabled={{ color: "#fff" }}
           value={valueProp}
+          ref={inputRef}
           onChange={onChange}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -229,14 +327,14 @@ export default function TokenInput(props: {
         )}
       </Flex>
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        {/* <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
-          $0.00
-        </Text> */}
+        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+          {`$${marketPrice}`}
+        </Text>
         {/* {inToken === false && mode === "Swap" && (
           <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
             ({priceImpact ?? "-"}%)
           </Text>
-        )} */}
+        )}  */}
       </Flex>
     </Flex>
   );

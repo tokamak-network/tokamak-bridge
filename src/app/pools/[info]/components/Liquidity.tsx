@@ -6,17 +6,27 @@ import RemoveIcon from "@/assets/icons/removeIcon.svg";
 import Image from "next/image";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Token } from "@uniswap/sdk-core";
+import commafy from "@/utils/trim/commafy";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 
 const TokenLiquidityData = (props: {
   token: Token;
   liquidityAmount: number | string;
-  liquidityPercent: number;
+  liquidityPercent: number | undefined;
 }) => {
   const { token, liquidityAmount, liquidityPercent } = props;
   return (
     <Flex justifyContent="space-between" h={"32px"}>
       <Flex justifyContent="start">
-        {/* <TokenNetwork tokenType="LYDA" network="Ethereum" /> */}
+        <TokenSymbolWithNetwork
+          tokenSymbol={token.symbol as string}
+          chainId={token.chainId}
+          symbolW={32}
+          symbolH={32}
+          networkSymbolH={12}
+          networkSymbolW={12}
+        />
         <Text ml="12px" color="#A0A3AD" fontSize="18px">
           {token.symbol}
         </Text>
@@ -32,6 +42,7 @@ const TokenLiquidityData = (props: {
           py={"4px"}
           fontSize={"14px"}
           fontWeight={600}
+          w={"53px"}
         >
           {liquidityPercent} {"%"}
         </Text>
@@ -39,13 +50,14 @@ const TokenLiquidityData = (props: {
     </Flex>
   );
 };
-
 export default function Liquidity() {
   const { info } = usePositionInfo();
 
   if (info === undefined) {
     return null;
   }
+
+  const { inverted, ratio } = usePoolInfo();
 
   return (
     <Box
@@ -60,7 +72,11 @@ export default function Liquidity() {
         <Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
             <Text color="#A0A3AD">Remove</Text>
-            <Link href="/remove">
+            <Link
+              href={{ pathname: `/pools/remove/[id]` }}
+              as={`/pools/remove/${info.id}`}
+              key={info.id}
+            >
               <Flex
                 w={"32px"}
                 h={"32px"}
@@ -91,7 +107,11 @@ export default function Liquidity() {
           </Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
             <Text color="#A0A3AD">Increase</Text>
-            <Link href="/increase">
+            <Link
+              href={`/pools/increase/[id]`}
+              as={`/pools/increase/${info.id}/`}
+              key={info.id}
+            >
               <Flex
                 w={"32px"}
                 h={"32px"}
@@ -117,14 +137,22 @@ export default function Liquidity() {
           rowGap={"12px"}
         >
           <TokenLiquidityData
-            token={info.token0}
-            liquidityAmount={0.001403}
-            liquidityPercent={30}
+            token={inverted ? info.token0 : info.token1}
+            liquidityAmount={commafy(
+              inverted ? info.token0Amount : info.token1Amount,
+              6
+            )}
+            liquidityPercent={
+              inverted ? ratio : ratio ? 100 - ratio : undefined
+            }
           />
           <TokenLiquidityData
-            token={info.token1}
-            liquidityAmount={0.001403}
-            liquidityPercent={30}
+            token={inverted ? info.token1 : info.token0}
+            liquidityAmount={commafy(
+              inverted ? info.token1Amount : info.token0Amount,
+              6
+            )}
+            liquidityPercent={inverted && ratio ? 100 - ratio : ratio}
           />
         </Flex>
       </Flex>

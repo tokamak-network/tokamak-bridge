@@ -133,20 +133,21 @@ export default function Setting() {
                 </Text>
               </InputRightElement>
             </InputGroup>
-          </Flex>
-          {Number(txSetting.slippage) >= 10 &&
-            Number(txSetting.slippage) < 50 && (
-              <WarningText
-                label="Slippage above 10% may result in an unfavorable swap"
+            {Number(txSetting.slippage) >= 10 &&
+              Number(txSetting.slippage) < 50 && (
+                <WarningText
+                  label="Slippage above 10% may result in an unfavorable swap"
+                  style={{ fontWeight: 400 }}
+                />
+              )}
+            {Number(txSetting.slippage) >= 50 && (
+              <RedWarningText
+                label="Slippage above 50% may result in an unfavorable swap"
                 style={{ fontWeight: 400 }}
               />
             )}
-          {Number(txSetting.slippage) >= 50 && (
-            <RedWarningText
-              label="Slippage above 50% may result in an unfavorable swap"
-              style={{ fontWeight: 400 }}
-            />
-          )}
+          </Flex>
+
           <Flex
             p={"16px"}
             bgColor={"#0F0F12"}

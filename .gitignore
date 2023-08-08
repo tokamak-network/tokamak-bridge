@@ -47,3 +47,5 @@ next-env.d.ts
 
 # auto generated files
 src/generated.ts
+.graphclient
+.graphclientrc.yml

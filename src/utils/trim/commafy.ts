@@ -1,13 +1,17 @@
 function commafy(
   num: number | string | undefined | null,
-  decilamPoint?: number
+  decilamPoint?: number,
+  removeComma?: boolean,
+  defaultValueIsUndefined?: boolean
 ) {
   const defaultDecilamPoint = decilamPoint ?? 2;
   if (num === undefined || num === null) {
+    // if (defaultValueIsUndefined) return undefined;
     return "-";
   }
   //@ts-ignore
   if (isNaN(num)) {
+    // if (defaultValueIsUndefined) return undefined;
     return "-";
   }
   if (num === 0 || num === "0") {
@@ -32,7 +36,8 @@ function commafy(
   if (str[1] === "") {
     return str[0];
   }
-  return str.join(".").replaceAll(" ", "");
+  const result = str.join(".").replaceAll(" ", "");
+  return removeComma ? result.replaceAll(",", "") : result;
 }
 
 export default commafy;

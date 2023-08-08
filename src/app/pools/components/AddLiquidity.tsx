@@ -2,8 +2,13 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import PLUS_ICON from "assets/icons/plus.svg";
 import NextLink from "next/link";
+import ConnecteWalletCard from "./ConnectWalletCard";
+import { useAccount } from "wagmi";
 
 export default function AddLiquidity() {
+  const { isConnected } = useAccount();
+
+  if (!isConnected) return <ConnecteWalletCard />;
   return (
     <NextLink href="/pools/add" passHref>
       <Flex
@@ -14,6 +19,7 @@ export default function AddLiquidity() {
         paddingTop={"32px"}
         paddingBottom={"24px"}
         borderRadius={"16px"}
+        justifyContent={"center"}
         alignItems="center"
         textAlign="center"
         cursor={"pointer"}

@@ -46,7 +46,12 @@ export default function InToken() {
           onClick={onOpenInToken}
         >
           {inToken?.tokenName ? (
-            <TokenCard tokenInfo={inToken} hasInput={true} inNetwork={true} />
+            <TokenCard
+              tokenInfo={inToken}
+              hasInput={true}
+              inNetwork={true}
+              forBridge={true}
+            />
           ) : (
             <Box
               className="card card-empty"
