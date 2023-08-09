@@ -18,6 +18,7 @@ import {
   add,
   getTime,
 } from "date-fns";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -94,25 +95,29 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
       network.outNetwork?.chainId === SupportedChainId["GOERLI"] ||
       network.outNetwork?.chainId === SupportedChainId["DARIUS"];
     const today = new Date();
-    const currentISODay = getISODay(today);
-    const nowTime = getTime(today);
+    const utcNow = zonedTimeToUtc(today, "UTC"); // Convert the current time to UTC
+
+    const currentISODay = getISODay(utcNow);
+    const nowTime = getTime(utcNow);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
-    const weekStart = startOfWeek(today);
+    const weekStart = startOfWeek(utcNow);
     const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
+    const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone    
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
-            hours: 18,
-            minutes: 30,
+            hours: 15,
+            minutes: 58,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
-            hours: 19,
-            minutes: 0,
+            hours: 15,
+            minutes: 58,
             seconds: 0,
           });
+    const zonedPreviewTime = utcToZonedTime(previewTimeStartThisWeek, currentTimeZone); // Convert the calculated time to the desired time zone
     return {
-      previewTimeStartThisWeek: getTime(previewTimeStartThisWeek),
+      previewTimeStartThisWeek: getTime(zonedPreviewTime),
     };
   },
 });
