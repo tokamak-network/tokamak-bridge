@@ -53,7 +53,6 @@ const Title = (props: {
           <Text>
             {commafy(amount1Removed, 4)} {info?.token1.symbol}
           </Text>
-          <Text color={"#A0A3AD"}>($1.00)</Text>
         </Flex>
         <Flex alignItems={"center"}>
           <Image src={GasImg} alt={"gasStation"} />

@@ -9,6 +9,7 @@ import { Token } from "@uniswap/sdk-core";
 import commafy from "@/utils/trim/commafy";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
+import { usePricePair } from "@/hooks/price/usePricePair";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -58,6 +59,14 @@ export default function Liquidity() {
   }
 
   const { inverted, ratio } = usePoolInfo();
+  const { token0, token0Amount, token1, token1Amount } = info;
+
+  const { totalMarketPrice } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
+    token1Name: token1.name,
+    token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
+  });
 
   return (
     <Box
@@ -102,7 +111,7 @@ export default function Liquidity() {
               Liquidity
             </Text>
             <Text fontSize={"38px"} height={"57px"}>
-              $4.30
+              {`$${totalMarketPrice}`}
             </Text>
           </Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
