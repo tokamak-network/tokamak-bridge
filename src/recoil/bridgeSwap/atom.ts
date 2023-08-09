@@ -115,9 +115,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
             minutes: 45,
             seconds: 0,
           });
-    const zonedPreviewTime = utcToZonedTime(previewTimeStartThisWeek, currentTimeZone); // Convert the calculated time to the desired time zone
-  console.log('zonedPreviewTime',zonedPreviewTime);
-  
+    const zonedPreviewTime = utcToZonedTime(previewTimeStartThisWeek, currentTimeZone); // Convert the calculated time to the desired time zone  
     return {
       previewTimeStartThisWeek: getTime(zonedPreviewTime),
     };
