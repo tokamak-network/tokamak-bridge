@@ -3,6 +3,7 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -15,7 +16,7 @@ import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import JSBI from "jsbi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
 export function TokenInputForLiquidity(props: {
@@ -104,23 +105,34 @@ export function TokenInputForLiquidity(props: {
     }
   };
 
+  const inputRef = useRef(null);
+
   const onMax = useCallback(() => {
-    if (tokenData) {
-      if (inToken && selectedInToken) {
-        return setSelectedInToken({
-          ...selectedInToken,
-          amountBN: tokenData.data.balanceBN.value,
-          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-        });
+    try {
+      if (tokenData) {
+        if (inToken && selectedInToken) {
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+        }
+        if (inToken === false && selectedOutToken) {
+          return setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+        }
+        return console.error("a input field not founded");
       }
-      if (inToken === false && selectedOutToken) {
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: tokenData.data.balanceBN.value,
-          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-        });
-      }
-      return console.error("a input field not founded");
+    } finally {
+      setTimeout(() => {
+        //@ts-ignore
+        inputRef?.current?.focus();
+        //@ts-ignore
+        inputRef?.current?.blur();
+      }, 100);
     }
   }, [tokenData, inToken, selectedInToken, selectedOutToken]);
 
@@ -180,6 +192,26 @@ export function TokenInputForLiquidity(props: {
       : "";
   }, [inToken, selectedInToken, selectedOutToken, isFocused]);
 
+  const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({
+    tokenName: selectedInToken?.tokenName as string,
+    amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const { tokenPriceWithAmount: token1PriceWiwhtAmount } = useGetMarketPrice({
+    tokenName: selectedOutToken?.tokenName as string,
+    amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const marketPrice = useMemo(() => {
+    if (inToken && token0PriceWiwhtAmount) {
+      return token0PriceWiwhtAmount;
+    }
+    if (!inToken && token1PriceWiwhtAmount) {
+      return token1PriceWiwhtAmount;
+    }
+    return "0.00";
+  }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -204,6 +236,7 @@ export function TokenInputForLiquidity(props: {
           color={"#ffffff"}
           fontSize={28}
           fontWeight={700}
+          ref={inputRef}
           // isDisabled={isDisabled}
           _disabled={{ color: "#fff" }}
           value={valueProp}
@@ -224,6 +257,11 @@ export function TokenInputForLiquidity(props: {
         >
           Max
         </Button>
+      </Flex>
+      <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
+        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+          {`$${marketPrice}`}
+        </Text>
       </Flex>
     </Flex>
   );

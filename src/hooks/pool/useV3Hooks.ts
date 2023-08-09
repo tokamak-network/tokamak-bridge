@@ -180,9 +180,6 @@ export function useRangeHopCallbacks() {
 
   const onIncreaseUpper = useCallback(() => {
     const result = getIncrementUpper();
-    console.log("result");
-    console.log(result);
-
     if (result) return setMaxPrice(result);
   }, [getIncrementUpper]);
 

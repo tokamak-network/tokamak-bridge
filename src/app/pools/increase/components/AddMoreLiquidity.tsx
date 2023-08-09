@@ -1,9 +1,8 @@
-import { Flex, Box, Text } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import Title from "../../add/components/Title";
 import TokenCard from "@/components/card/TokenCard";
 import add from "assets/icons/addIcon.svg";
 import Image from "next/image";
-import TokenInput from "@/components/input/TokenInput";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { TokenInfo } from "@/types/token/supportedToken";
 import useConnectedNetwork from "@/hooks/network";
@@ -11,7 +10,6 @@ import { getWETHAddress } from "@/utils/token/isETH";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { TokenInputForLiquidity } from "./TokenInputForLiquidity";
-import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { OutRangeWarning } from "../../add/components/InputContainer";
 
 export default function AddMoreLiquidity() {
@@ -94,11 +92,6 @@ export default function AddMoreLiquidity() {
               />
             </Flex>
           )}
-          {!deposit0Disabled && (
-            <Text color="#fff" opacity={0.8} fontSize={"13px"}>
-              $0.00
-            </Text>
-          )}
           {deposit0Disabled && <OutRangeWarning />}
         </Flex>
 
@@ -127,11 +120,6 @@ export default function AddMoreLiquidity() {
               />
             )}
           </Flex>
-          {!deposit1Disabled && (
-            <Text color="#fff" opacity={0.8} fontSize={"13px"}>
-              $0.00
-            </Text>
-          )}
         </Flex>
       </Flex>
     </Flex>

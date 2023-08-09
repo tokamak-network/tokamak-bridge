@@ -34,21 +34,23 @@ export default function SetPriceRange() {
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />
       </Flex>
-      <Button
-        w={"100%"}
-        minH={"32px"}
-        maxH={"32px"}
-        border={"1px solid #313442"}
-        borderRadius={"8px"}
-        bg={"transparent"}
-        fontSize={14}
-        fontWeight={500}
-        _hover={{ borderColor: "#fff" }}
-        _active={{}}
-        onClick={getSetFullRange}
-      >
-        Full Range
-      </Button>
+      {poolStatus !== PoolState.NOT_EXISTS && (
+        <Button
+          w={"100%"}
+          minH={"32px"}
+          maxH={"32px"}
+          border={"1px solid #313442"}
+          borderRadius={"8px"}
+          bg={"transparent"}
+          fontSize={14}
+          fontWeight={500}
+          _hover={{ borderColor: "#fff" }}
+          _active={{}}
+          onClick={getSetFullRange}
+        >
+          Full Range
+        </Button>
+      )}
     </Flex>
   );
 }

@@ -148,8 +148,8 @@ export function useV3MintInfo() {
   const ticks = useMemo(() => {
     // console.log(isAtMinTick, isAtMaxTick);
 
-    // console.log("--left--");
-    // console.log(minPriceInput?.toString(), maxPriceInput?.toString());
+    console.log("--value--");
+    console.log(minPriceInput?.toString(), maxPriceInput?.toString());
     // console.log(
     //   tryParseTick(token0, token1, feeAmount, minPriceInput?.toString())
     // );

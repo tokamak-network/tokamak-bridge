@@ -26,7 +26,7 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit, invertPrice, pricesAtLimit } =
+  const { pricesAtTicks, ticksAtLimit, invertPrice, pricesAtLimit, ticks } =
     useV3MintInfo();
 
   const [minPriceInput, setMinPrice] = useRecoilState(minPrice);
@@ -49,7 +49,7 @@ export default function RangeInput(props: RangeInputProps) {
       const inputValue = value ?? "0";
 
       setValueInThisInput(inputValue);
-      return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
+      // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
     [isMinPrice]
   );
@@ -70,6 +70,9 @@ export default function RangeInput(props: RangeInputProps) {
     // } else {
     //   if(invertPrice)
     // }
+
+    console.log(valueInThisInput);
+    isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
 
     console.log("invertPrice");
     console.log(
@@ -100,7 +103,9 @@ export default function RangeInput(props: RangeInputProps) {
               : pricesAtTicks?.UPPER?.toSignificant(5)
           );
     }
-  }, [pricesAtTicks, isMinPrice, , invertPrice]);
+  }, [pricesAtTicks, isMinPrice, , invertPrice, valueInThisInput]);
+
+  console.log(ticks);
 
   const inputValue = useMemo(() => {
     if ((invertPrice ? ticksAtLimit.UPPER : ticksAtLimit.LOWER) && isMinPrice) {
@@ -123,7 +128,11 @@ export default function RangeInput(props: RangeInputProps) {
       return "∞";
     }
     return isMinPrice
-      ? commafy(minPriceInput, 5, true, true)
+      ? minPriceInput === undefined
+        ? undefined
+        : commafy(minPriceInput, 5, true, true)
+      : maxPriceInput === undefined
+      ? undefined
       : commafy(maxPriceInput, 5, true, true);
   }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput, invertPrice]);
 
