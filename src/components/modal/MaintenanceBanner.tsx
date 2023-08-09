@@ -4,13 +4,17 @@ import { useRecoilValue, useRecoilState } from "recoil";
 import { useState, useEffect } from "react";
 import { add, getTime, intervalToDuration, Duration } from "date-fns";
 import { useInOutNetwork } from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useConnectedNetwork from "@/hooks/network";
+
 type Banner = "Pending" | "Active" | "Hidden";
 
 const MaintenanceBanner = () => {
   const [status, setStatus] = useState<Banner>("Hidden");
   const [isBannerStatus, setIsBannerStatus] = useRecoilState(bannerStatus);
   const banner = useRecoilValue(bannerSelector).previewTimeStartThisWeek;
-  const { inNetwork, outNetwork } = useInOutNetwork();
+  const { outNetwork } = useInOutNetwork();
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const [duration, setDuration] = useState<Duration>({
     days: 0,
@@ -22,10 +26,9 @@ const MaintenanceBanner = () => {
   });
 
   const isTestnet =
-    inNetwork?.chainName === "GOERLI" ||
-    inNetwork?.chainName === "DARIUS" ||
-    outNetwork?.chainName === "GOERLI" ||
-    outNetwork?.chainName === "DARIUS";
+    !isConnectedToMainNetwork ||
+    outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+    outNetwork?.chainId === SupportedChainId["DARIUS"];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -81,7 +84,7 @@ const MaintenanceBanner = () => {
       alignItems={"center"}
       color={status === "Pending" ? "#0F0F12" : "#fff"}
       p="16px"
-      mb={'30px'}
+      mb={"30px"}
     >
       <Flex flexDir={"column"}>
         {status === "Active" ? (
@@ -109,7 +112,7 @@ const MaintenanceBanner = () => {
           <span style={{ fontWeight: "bold" }}>
             {isTestnet ? "18:30 - 19:00 GMT +9" : "19:00 - 19:30 GMT +9"}
           </span>{" "}
-          *You may still swap on {isTestnet? 'Goerli':'Ethereum'} Network{" "}
+          *You may still swap on {isTestnet ? "Goerli" : "Ethereum"} Network{" "}
         </Text>
       </Flex>
 

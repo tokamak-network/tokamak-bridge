@@ -6,6 +6,9 @@ import { ethers } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { loadingStatus } from "./isLoading";
+import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
 import {
   addWeeks,
   getISODay,
@@ -86,10 +89,10 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const dayINeed = 4; // Thursday (ISO weekday 4)
     const network = get(networkStatus);
     const isTestnet =
-      network.inNetwork?.chainName === "GOERLI" ||
-      network.inNetwork?.chainName === "DARIUS" ||
-      network.outNetwork?.chainName === "GOERLI" ||
-      network.outNetwork?.chainName === "DARIUS";
+      network.inNetwork?.chainId === SupportedChainId["GOERLI"] ||
+      network.inNetwork?.chainId === SupportedChainId["DARIUS"] ||
+      network.outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+      network.outNetwork?.chainId === SupportedChainId["DARIUS"];
     const today = new Date();
     const currentISODay = getISODay(today);
     const nowTime = getTime(today);
