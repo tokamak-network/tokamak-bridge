@@ -8,6 +8,7 @@ import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
+  SelectedToken,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
@@ -110,16 +111,16 @@ export function TokenInputForLiquidity(props: {
   const onMax = useCallback(() => {
     try {
       if (tokenData) {
-        if (inToken && selectedInToken) {
+        if (inToken && (selectedInToken || tokenInfo)) {
           return setSelectedInToken({
-            ...selectedInToken,
+            ...(selectedInToken || (tokenInfo as SelectedToken)),
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
         }
-        if (inToken === false && selectedOutToken) {
+        if (inToken === false && (selectedOutToken || tokenInfo)) {
           return setSelectedOutToken({
-            ...selectedOutToken,
+            ...(selectedOutToken || (tokenInfo as SelectedToken)),
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
@@ -134,7 +135,7 @@ export function TokenInputForLiquidity(props: {
         inputRef?.current?.blur();
       }, 100);
     }
-  }, [tokenData, inToken, selectedInToken, selectedOutToken]);
+  }, [tokenData, inToken, selectedInToken, selectedOutToken, tokenInfo]);
 
   const handleFocus = () => {
     setIsFocused(true);

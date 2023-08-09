@@ -83,16 +83,16 @@ export default function AddMoreLiquidity() {
             inNetwork={true}
             type="small"
           />
-          {!deposit0Disabled && (
-            <Flex w={"186px"} mt="16px">
+          <Flex w={"186px"} mt="16px">
+            {!deposit0Disabled && (
               <TokenInputForLiquidity
                 inToken={true}
                 tokenInfo={inverted ? token1Info : token0Info}
                 otherTokenInfo={inverted ? token0Info : token1Info}
               />
-            </Flex>
-          )}
-          {deposit0Disabled && <OutRangeWarning />}
+            )}
+            {deposit0Disabled && <OutRangeWarning />}
+          </Flex>
         </Flex>
 
         <Flex h={"242px"} justifyContent={"center"} pos={"absolute"}>
