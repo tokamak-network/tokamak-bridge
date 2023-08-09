@@ -115,7 +115,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
           });
 
     const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
-    const zoneTime = utcToZonedTime(uTCTime, 'Asia/Bangkok');
+    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
     return {
       previewTimeStartThisWeek: getTime(zoneTime),
     };
