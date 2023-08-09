@@ -37,14 +37,22 @@ export default function useInputBalanceCheck() {
   ]);
 
   const isInputZero = useMemo(() => {
-    if (
-      inToken?.parsedAmount &&
-      tokenData?.data.parsedBalanceWithoutCommafied
-    ) {
+    if (inToken?.parsedAmount) {
       return Number(inToken?.parsedAmount) === 0;
     }
+    if (inToken?.parsedAmount === undefined || inToken?.parsedAmount === null)
+      return true;
     return false;
-  }, [inToken?.parsedAmount, tokenData?.data.parsedBalanceWithoutCommafied]);
+  }, [inToken?.parsedAmount]);
 
-  return { isBalanceOver, isOutTokenBalanceOver, isInputZero };
+  const isOutInputZero = useMemo(() => {
+    if (outToken?.parsedAmount) {
+      return Number(outToken?.parsedAmount) === 0;
+    }
+    if (outToken?.parsedAmount === undefined || outToken?.parsedAmount === null)
+      return true;
+    return false;
+  }, [outToken?.parsedAmount]);
+
+  return { isBalanceOver, isOutTokenBalanceOver, isInputZero, isOutInputZero };
 }

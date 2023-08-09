@@ -1,6 +1,9 @@
 import { Button, Flex, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { poolModalStatus } from "@/recoil/modal/atom";
+import { useMemo } from "react";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 const ActionButton = (props: { step: string }) => {
   const { step } = props;
@@ -9,6 +12,27 @@ const ActionButton = (props: { step: string }) => {
   const handleAction = () => {
     return setPoolModal("increaseLiquidity");
   };
+
+  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { isBalanceOver, isInputZero, isOutInputZero, isOutTokenBalanceOver } =
+    useInputBalanceCheck();
+
+  const btnIsDisabled = useMemo(() => {
+    if (deposit0Disabled) {
+      return isOutTokenBalanceOver || isOutInputZero;
+    }
+    if (deposit1Disabled) return isBalanceOver || isInputZero;
+    return (
+      isBalanceOver || isOutTokenBalanceOver || isInputZero || isOutInputZero
+    );
+  }, [
+    deposit0Disabled,
+    deposit1Disabled,
+    isBalanceOver,
+    isOutTokenBalanceOver,
+    isOutInputZero,
+    isInputZero,
+  ]);
 
   return (
     <Flex w={"100%"}>
@@ -21,9 +45,9 @@ const ActionButton = (props: { step: string }) => {
         fontWeight={600}
         _hover={{}}
         _active={{}}
-        _disabled={{}}
+        _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
         onClick={handleAction}
-        //   isDisabled={isLoading}
+        isDisabled={btnIsDisabled}
       >
         <Text>{step}</Text>
       </Button>
