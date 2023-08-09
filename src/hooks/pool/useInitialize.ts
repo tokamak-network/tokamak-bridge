@@ -7,6 +7,7 @@ import {
   maxPrice,
   minPrice,
   poolFeeStatus,
+  removeAmount,
 } from "@/recoil/pool/setPoolPosition";
 import { useCallback } from "react";
 
@@ -18,6 +19,7 @@ export function useInitialize() {
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
   const [, setInitialPrice] = useRecoilState(initialPrice);
+  const [, setAmountPercentage] = useRecoilState(removeAmount);
 
   const initialzePoolValues = useCallback(() => {
     setAtMinTick(false);
@@ -26,6 +28,7 @@ export function useInitialize() {
     setMaxPrice(undefined);
     initializeTokenPair();
     setInitialPrice("0");
+    setAmountPercentage(0);
     return setPoolFee(undefined);
   }, [initializeTokenPair, setPoolFee]);
 

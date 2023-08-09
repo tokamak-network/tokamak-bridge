@@ -30,13 +30,13 @@ export default function RangeToken(props: {
       <Flex>
         <Text color={"#A0A3AD"}>{amount}</Text>
         <Text ml={"6px"}>
-          {!alterAmount || page === "addLiquidity"
+          {!alterAmount || page === "addLiquidity" || alterAmount === "-"
             ? ""
             : page === "removeLiquidity"
             ? "-"
             : "+"}
         </Text>
-        <Text>{alterAmount}</Text>
+        <Text>{alterAmount === "-" ? undefined : alterAmount}</Text>
       </Flex>
     </Flex>
   );

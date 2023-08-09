@@ -18,19 +18,12 @@ const TokenPairTitle = () => {
   const { info } = usePositionInfo();
 
   if (!info) return null;
-  const { token0, token1, inRange, token0Amount, token1Amount, fee } = info;
-
-  if (inverted) {
-    return (
-      <Text fontWeight="bold" fontSize="23px">
-        {token1.symbol} / {token0.symbol}
-      </Text>
-    );
-  }
+  const token0 = inverted ? info.token1 : info.token0;
+  const token1 = inverted ? info.token0 : info.token1;
 
   return (
     <Text fontWeight="bold" fontSize="23px">
-      {token0.symbol} / {token1.symbol}
+      {token1.symbol} / {token0.symbol}
     </Text>
   );
 };
@@ -42,10 +35,13 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
 
   if (!info) return null;
 
-  const { token0, token1, inRange, token0Amount, token1Amount, fee } = info;
+  const { inRange, token0Amount, token1Amount, fee } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
-  const { inverted } = usePoolInfo();
+  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
   const { inToken, outToken } = useInOutTokens();
+
+  const token0 = inverted ? info.token1 : info.token0;
+  const token1 = inverted ? info.token0 : info.token1;
 
   return (
     <Flex
@@ -77,7 +73,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
         />
       </Flex>
       <RangeToken
-        token={inverted ? token1 : token0}
+        token={token1}
         amount={
           page === "addLiquidity"
             ? undefined
@@ -92,13 +88,18 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               : commafy(token0Amount, 6)
             : page === "increaseLiquidity"
             ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
-            : amount0Removed
-            ? commafy(amount0Removed, 6)
-            : ""
+            : commafy(
+                inverted
+                  ? deposit0Disabled
+                    ? undefined
+                    : amount1Removed
+                  : amount0Removed,
+                6
+              )
         }
       />
       <RangeToken
-        token={inverted ? token0 : token1}
+        token={token0}
         amount={
           page === "addLiquidity"
             ? undefined
@@ -112,52 +113,59 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               : commafy(token1Amount, 6)
             : page === "increaseLiquidity"
             ? commafyWithUndefined(outToken?.parsedAmount, 6, false, true)
-            : amount1Removed
-            ? commafy(amount1Removed, 6)
-            : ""
+            : commafy(
+                inverted
+                  ? deposit1Disabled
+                    ? undefined
+                    : amount0Removed
+                  : amount1Removed,
+                6
+              )
         }
       />
-      <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
-        <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
-        <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
-          <Flex justifyContent={"space-between"}>
-            <Text fontSize={"14px"}>Fee</Text>
-            <Flex alignItems={"center"}>
-              <Text>
-                {smallNumberFormmater(
-                  commafy(
-                    inverted
-                      ? info?.token1CollectedFee
-                      : info?.token0CollectedFee,
-                    8
-                  ) ?? "-"
-                )}{" "}
-                {inverted ? info?.token1.symbol : info?.token0.symbol}
-              </Text>
-              <Text w={"10px"} mx={"2px"}>
-                +
-              </Text>
-              <Text>
-                {smallNumberFormmater(
-                  commafy(
-                    inverted
-                      ? info?.token0CollectedFee
-                      : info?.token1CollectedFee,
-                    8
-                  ) ?? "-"
-                )}{" "}
-                {inverted ? info?.token0.symbol : info?.token1.symbol}
+      {page !== "removeLiquidity" && (
+        <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
+          <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
+          <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
+            <Flex justifyContent={"space-between"}>
+              <Text fontSize={"14px"}>Fee</Text>
+              <Flex alignItems={"center"}>
+                <Text>
+                  {smallNumberFormmater(
+                    commafy(
+                      inverted
+                        ? info?.token1CollectedFee
+                        : info?.token0CollectedFee,
+                      8
+                    ) ?? "-"
+                  )}{" "}
+                  {inverted ? info?.token1.symbol : info?.token0.symbol}
+                </Text>
+                <Text w={"10px"} mx={"2px"}>
+                  +
+                </Text>
+                <Text>
+                  {smallNumberFormmater(
+                    commafy(
+                      inverted
+                        ? info?.token0CollectedFee
+                        : info?.token1CollectedFee,
+                      8
+                    ) ?? "-"
+                  )}{" "}
+                  {inverted ? info?.token0.symbol : info?.token1.symbol}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex justifyContent={"space-between"}>
+              <Text fontSize={"14px"}>Estimated gas fee</Text>
+              <Text fontSize={"16px"} fontWeight={500}>
+                $4.44
               </Text>
             </Flex>
           </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text fontSize={"14px"}>Estimated gas fee</Text>
-            <Text fontSize={"16px"} fontWeight={500}>
-              $4.44
-            </Text>
-          </Flex>
         </Flex>
-      </Flex>
+      )}
     </Flex>
   );
 }
