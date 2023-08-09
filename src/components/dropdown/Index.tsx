@@ -118,7 +118,6 @@ export default function NetworkDropdown(props: {
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
   const { isConnected } = useAccount();
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onChange = async (data: SupportedChainProperties) => {

@@ -6,6 +6,18 @@ import { ethers } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { loadingStatus } from "./isLoading";
+import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
+import {
+  addWeeks,
+  getISODay,
+  format,
+  startOfWeek,
+  addDays,
+  add,
+  getTime,
+} from "date-fns";
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -49,6 +61,60 @@ export const selectedInTokenStatus = atom<SelectedToken | null>({
 export const selectedOutTokenStatus = atom<SelectedToken | null>({
   key: "selectedOutTokenStatus",
   default: null,
+});
+
+type Banner = "Pending" | "Active" | "Hidden";
+
+export const bannerStatus = atom<Banner>({
+  key: "bannerStatus",
+  default: "Hidden",
+});
+// export const bannerSelector = selector<{ BannerStatus: Banner }>({
+//   key: "bannerSelector",
+//   get: ({ get }) => {
+//     const status = get(bannerStatus);
+//     const dayINeed = 4; // for Thursday
+//     const myDate = new Date(); // Replace this with your desired date
+//     const isoWeekday = getISODay(myDate);
+//     console.log(isoWeekday,status);
+//     const isThursday = "Pending";
+//     return { isThursday };
+//   },
+// });
+
+export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
+  key: "bannerSelector",
+  get: ({ get }) => {
+    const status = get(bannerStatus);
+    const dayINeed = 4; // Thursday (ISO weekday 4)
+    const network = get(networkStatus);
+    const isTestnet =
+      network.inNetwork?.chainId === SupportedChainId["GOERLI"] ||
+      network.inNetwork?.chainId === SupportedChainId["DARIUS"] ||
+      network.outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+      network.outNetwork?.chainId === SupportedChainId["DARIUS"];
+    const today = new Date();
+    const currentISODay = getISODay(today);
+    const nowTime = getTime(today);
+    // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
+    const weekStart = startOfWeek(today);
+    const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
+    const previewTimeStartThisWeek =
+      isTestnet === true
+        ? add(desiredDateThisWeek, {
+            hours: 18,
+            minutes: 30,
+            seconds: 0,
+          })
+        : add(desiredDateThisWeek, {
+            hours: 19,
+            minutes: 0,
+            seconds: 0,
+          });
+    return {
+      previewTimeStartThisWeek: getTime(previewTimeStartThisWeek),
+    };
+  },
 });
 
 export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({

@@ -5,22 +5,31 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
 import { useCallback, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
+import { bannerStatus } from "@/recoil/bridgeSwap/atom";
+import { useInOutNetwork } from "@/hooks/network";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
+  const status = useRecoilValue(bannerStatus);
+  const { inNetwork, outNetwork } = useInOutNetwork();
+  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
 
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
 
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
+
   const onOpenInToken = () => {
-    setTokenModal({ isOpen: "INPUT", modalData: null });
+    !(status === "Active" && isL2) &&
+      setTokenModal({ isOpen: "INPUT", modalData: null });
   };
   const onOpenOutToken = () => {
-    setTokenModal({ isOpen: "OUTPUT", modalData: null });
+    !(status === "Active" && isL2) &&
+      setTokenModal({ isOpen: "OUTPUT", modalData: null });
   };
 
   const onCloseTokenModal = () => {

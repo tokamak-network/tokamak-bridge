@@ -2,7 +2,7 @@ import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
 import Modals from "../Modals";
 import { Details } from "./Details";
-
+import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
 export default function BridgeSwap() {
   return (
     <Flex flexDir={"column"} w={"496px"} h={"100%"}>
@@ -13,6 +13,7 @@ export default function BridgeSwap() {
         w={"100%"}
         h={"100%"}
       >
+        <MaintenanceBanner/>
         <Swap />
         <Details />
       </Flex>
