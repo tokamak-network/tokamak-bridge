@@ -84,7 +84,7 @@ const MaintenanceBanner = () => {
       alignItems={"center"}
       color={status === "Pending" ? "#0F0F12" : "#fff"}
       p="16px"
-      mb={"30px"}
+      // mb={"30px"}
     >
       <Flex flexDir={"column"}>
         {status === "Active" ? (
