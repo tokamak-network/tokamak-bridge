@@ -35,8 +35,8 @@ const MaintenanceBanner = () => {
       const today = new Date();
       const nowTime = getTime(today);
       const activeTimeStartThisWeek = add(banner, {
-        hours: 0,
-        minutes: 1,
+        hours: 1,
+        minutes: 0,
         seconds: 0,
       });
 
@@ -84,7 +84,7 @@ const MaintenanceBanner = () => {
       alignItems={"center"}
       color={status === "Pending" ? "#0F0F12" : "#fff"}
       p="16px"
-      mb={"30px"}
+      mb={"-61px"}
     >
       <Flex flexDir={"column"}>
         {status === "Active" ? (
