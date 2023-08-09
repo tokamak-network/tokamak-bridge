@@ -106,13 +106,13 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
-            hours: 15,
-            minutes: 58,
+            hours: 16,
+            minutes: 28,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
-            hours: 15,
-            minutes: 58,
+            hours: 16,
+            minutes: 28,
             seconds: 0,
           });
     const zonedPreviewTime = utcToZonedTime(previewTimeStartThisWeek, currentTimeZone); // Convert the calculated time to the desired time zone
