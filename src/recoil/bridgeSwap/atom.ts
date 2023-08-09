@@ -8,6 +8,7 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import { loadingStatus } from "./isLoading";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 import {
   addWeeks,
@@ -99,6 +100,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
     const weekStart = startOfWeek(today);
     const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
+    const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
@@ -111,8 +113,11 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
             minutes: 0,
             seconds: 0,
           });
+
+    const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
+    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
     return {
-      previewTimeStartThisWeek: getTime(previewTimeStartThisWeek),
+      previewTimeStartThisWeek: getTime(zoneTime),
     };
   },
 });
