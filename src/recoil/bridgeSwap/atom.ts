@@ -97,25 +97,27 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const today = new Date();
     const utcNow = zonedTimeToUtc(today, "UTC"); // Convert the current time to UTC
 
-    const currentISODay = getISODay(utcNow);
-    const nowTime = getTime(utcNow);
+    const currentISODay = getISODay(today);
+    const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
-    const weekStart = startOfWeek(utcNow);
+    const weekStart = startOfWeek(today);
     const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone    
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
             hours: 16,
-            minutes: 28,
+            minutes: 45,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
             hours: 16,
-            minutes: 28,
+            minutes: 45,
             seconds: 0,
           });
     const zonedPreviewTime = utcToZonedTime(previewTimeStartThisWeek, currentTimeZone); // Convert the calculated time to the desired time zone
+  console.log('zonedPreviewTime',zonedPreviewTime);
+  
     return {
       previewTimeStartThisWeek: getTime(zonedPreviewTime),
     };
