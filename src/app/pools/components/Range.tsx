@@ -72,32 +72,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
           marginTop="12px"
         />
       </Flex>
-      <RangeToken
-        token={token1}
-        amount={
-          page === "addLiquidity"
-            ? undefined
-            : commafy(inverted ? token1Amount : token0Amount, 6)
-        }
-        style={{ marginBottom: "9px", marginTop: "14px" }}
-        page={page}
-        alterAmount={
-          page === "addLiquidity"
-            ? inverted
-              ? commafy(token1Amount, 6)
-              : commafy(token0Amount, 6)
-            : page === "increaseLiquidity"
-            ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
-            : commafy(
-                inverted
-                  ? deposit0Disabled
-                    ? undefined
-                    : amount1Removed
-                  : amount0Removed,
-                6
-              )
-        }
-      />
+
       <RangeToken
         token={token0}
         amount={
@@ -119,6 +94,32 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
                     ? undefined
                     : amount0Removed
                   : amount1Removed,
+                6
+              )
+        }
+        style={{ marginBottom: "9px", marginTop: "14px" }}
+      />
+      <RangeToken
+        token={token1}
+        amount={
+          page === "addLiquidity"
+            ? undefined
+            : commafy(inverted ? token1Amount : token0Amount, 6)
+        }
+        page={page}
+        alterAmount={
+          page === "addLiquidity"
+            ? inverted
+              ? commafy(token1Amount, 6)
+              : commafy(token0Amount, 6)
+            : page === "increaseLiquidity"
+            ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
+            : commafy(
+                inverted
+                  ? deposit0Disabled
+                    ? undefined
+                    : amount1Removed
+                  : amount0Removed,
                 6
               )
         }
