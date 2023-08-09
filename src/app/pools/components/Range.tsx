@@ -40,8 +40,8 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
   const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
   const { inToken, outToken } = useInOutTokens();
 
-  const token0 = inverted ? info.token1 : info.token0;
-  const token1 = inverted ? info.token0 : info.token1;
+  const token0 = inverted ? info.token0 : info.token1;
+  const token1 = inverted ? info.token1 : info.token0;
 
   return (
     <Flex

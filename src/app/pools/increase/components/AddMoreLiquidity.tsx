@@ -20,8 +20,8 @@ export default function AddMoreLiquidity() {
 
   if (!info || !chainName) return null;
 
-  const token0 = info.token0;
-  const token1 = info.token1;
+  const token0 = inverted ? info.token1 : info.token0;
+  const token1 = inverted ? info.token0 : info.token1;
 
   const token0Info: TokenInfo = {
     tokenName: token0.name ?? "",
@@ -73,12 +73,13 @@ export default function AddMoreLiquidity() {
         justifyContent={"center"}
         pos={"relative"}
         columnGap={"36px"}
+        flexDir={"row-reverse"}
       >
         <Flex flexDir={"column"} maxW={"186px"}>
           <TokenCard
             w={186}
             h={"242px"}
-            tokenInfo={inverted ? token1Info : token0Info}
+            tokenInfo={token0Info}
             hasInput={false}
             inNetwork={true}
             type="small"
@@ -87,8 +88,8 @@ export default function AddMoreLiquidity() {
             {!deposit0Disabled && (
               <TokenInputForLiquidity
                 inToken={true}
-                tokenInfo={inverted ? token1Info : token0Info}
-                otherTokenInfo={inverted ? token0Info : token1Info}
+                tokenInfo={token0Info}
+                otherTokenInfo={token1Info}
               />
             )}
             {deposit0Disabled && <OutRangeWarning />}
@@ -104,7 +105,7 @@ export default function AddMoreLiquidity() {
           <TokenCard
             w={186}
             h={"242px"}
-            tokenInfo={inverted ? token0Info : token1Info}
+            tokenInfo={token1Info}
             hasInput={false}
             inNetwork={true}
             type="small"
@@ -115,8 +116,8 @@ export default function AddMoreLiquidity() {
             ) : (
               <TokenInputForLiquidity
                 inToken={false}
-                tokenInfo={inverted ? token0Info : token1Info}
-                otherTokenInfo={inverted ? token1Info : token0Info}
+                tokenInfo={token1Info}
+                otherTokenInfo={token0Info}
               />
             )}
           </Flex>
