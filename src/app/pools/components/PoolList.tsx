@@ -7,7 +7,7 @@ import PoolCard from "./PoolCard";
 export default function PoolList() {
   const { positionInfo } = useGetPositionIds();
 
-  console.log(positionInfo);
+  // console.log(positionInfo);
 
   return (
     <Wrap spacing="16px">

@@ -85,15 +85,11 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const status = get(bannerStatus);
     const dayINeed = 4; // Thursday (ISO weekday 4)
     const network = get(networkStatus);
-
-    console.log("network", network);
     const isTestnet =
       network.inNetwork?.chainName === "GOERLI" ||
       network.inNetwork?.chainName === "DARIUS" ||
       network.outNetwork?.chainName === "GOERLI" ||
       network.outNetwork?.chainName === "DARIUS";
-    console.log("isTestnet", isTestnet);
-
     const today = new Date();
     const currentISODay = getISODay(today);
     const nowTime = getTime(today);
