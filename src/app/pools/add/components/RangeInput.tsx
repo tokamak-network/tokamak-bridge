@@ -12,7 +12,9 @@ import {
   atMaxTick,
   atMinTick,
   maxPrice,
+  maxPriceForAddModal,
   minPrice,
+  minPriceForAddModal,
 } from "@/recoil/pool/setPoolPosition";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useCallback } from "react";
@@ -125,6 +127,16 @@ export default function RangeInput(props: RangeInputProps) {
       ? undefined
       : commafy(maxPriceInput, 5, true, true);
   }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput, invertPrice]);
+
+  const [, setMinPriceForAddModal] = useRecoilState(minPriceForAddModal);
+  const [, setMaxPriceForAddModal] = useRecoilState(maxPriceForAddModal);
+
+  useEffect(() => {
+    if (inputValue) {
+      if (isMinPrice) return setMinPriceForAddModal(inputValue);
+      return setMaxPriceForAddModal(inputValue);
+    }
+  }, [inputValue, isMinPrice]);
 
   // useEffect(() => {
   //   if (minPriceInput?.replaceAll(",", "") !== pricesAtLimit["LOWER"]) {

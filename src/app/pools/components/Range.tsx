@@ -124,7 +124,20 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
               )
         }
       />
-      {page !== "removeLiquidity" && (
+      {page === "addLiquidity" && (
+        <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
+          <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
+          <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
+            <Flex justifyContent={"space-between"}>
+              <Text fontSize={"14px"}>Estimated gas fee</Text>
+              <Text fontSize={"16px"} fontWeight={500}>
+                $4.44
+              </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+      )}
+      {page !== "removeLiquidity" && page !== "addLiquidity" && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>

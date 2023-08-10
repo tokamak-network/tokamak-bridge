@@ -52,6 +52,16 @@ export const initialPrice = atom<string>({
   default: "0",
 });
 
+export const minPriceForAddModal = atom<string>({
+  key: "minPriceForAddModal",
+  default: "-",
+});
+
+export const maxPriceForAddModal = atom<string>({
+  key: "maxPriceForAddModal",
+  default: "-",
+});
+
 export const currentTickSpacing = selector<number | undefined>({
   key: "currentPrice",
   get: ({ get }) => {

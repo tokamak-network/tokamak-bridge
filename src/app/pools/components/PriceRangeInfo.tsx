@@ -12,11 +12,19 @@ import QUESTION_ICON from "assets/icons/question.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  maxPriceForAddModal,
+  minPriceForAddModal,
+} from "@/recoil/pool/setPoolPosition";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
   const { tokenPairForInfo } = usePositionInfo();
   const { priceLower, priceUpper, inverted, ticksAtLimit } = usePoolInfo();
+  const { poolModal } = usePreview();
+
+  const minPrice = useRecoilValue(minPriceForAddModal);
+  const maxPrice = useRecoilValue(maxPriceForAddModal);
 
   return (
     <Flex
@@ -55,8 +63,13 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
         lineHeight={"24px"}
         verticalAlign={"center"}
       >
-        {isMinPrice &&
-        ((!inverted && ticksAtLimit?.LOWER) || (inverted && ticksAtLimit.UPPER))
+        {poolModal === "addLiquidity"
+          ? isMinPrice
+            ? minPrice
+            : maxPrice
+          : isMinPrice &&
+            ((!inverted && ticksAtLimit?.LOWER) ||
+              (inverted && ticksAtLimit.UPPER))
           ? 0
           : !isMinPrice &&
             ((!inverted && ticksAtLimit?.UPPER) ||

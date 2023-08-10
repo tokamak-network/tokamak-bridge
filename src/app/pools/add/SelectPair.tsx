@@ -49,7 +49,7 @@ export default function SelectPair() {
         <Image
           src={TOKEN_PAIR_PLUS_ICON}
           alt={"TOKEN_PAIR_PLUS_ICON"}
-          style={{ marginBottom: secondStepPassed ? "61px" : "0px" }}
+          style={{ marginBottom: "61px" }}
         />
         <Flex flexDir={"column"} rowGap={"16px"}>
           <Box
