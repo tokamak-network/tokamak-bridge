@@ -146,44 +146,6 @@ export function useV3MintInfo() {
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
-    // console.log(isAtMinTick, isAtMaxTick);
-
-    // console.log(
-    //   tryParseTick(token0, token1, feeAmount, minPriceInput?.toString())
-    // );
-    // console.log(
-    //   tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
-    // );
-
-    // console.log("--right--");
-    // console.log(
-    //   tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
-    // );
-    // console.log(
-    //   tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString())
-    // );
-
-    // console.log(maxPriceInput?.toString());
-    // console.log(
-    //   tryParseTick(
-    //     token1,
-    //     token0,
-    //     feeAmount,
-    //     "338490000000000000000000000000000000000000000000"
-    //   )
-    // );
-    // console.log("gogo~!");
-    // console.log(isAtMinTick, isAtMaxTick);
-
-    // console.log(maxPriceInput?.toString());
-    // console.log(
-    //   tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
-    // );
-    // console.log(minPriceInput?.toString());
-    // console.log(
-    //   tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
-    // );
-
     return {
       [Bound.LOWER]:
         (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)

@@ -22,14 +22,15 @@ export function useRangeHopCallbacks() {
   // pool?: Pool | undefined | null
   const { feeTier: feeAmount } = useGetFeeTier();
   const [poolStatus, poolData] = usePool();
-  const { ticks, pricesAtLimit, poolForPosition } = useV3MintInfo();
+  const { ticks, pricesAtLimit, poolForPosition, invertPrice } =
+    useV3MintInfo();
   // get value and prices at ticks
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks;
 
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
 
-  const baseCurrency = pool?.token0;
-  const quoteCurrency = pool?.token1;
+  const baseCurrency = invertPrice ? pool?.token1 : pool?.token0;
+  const quoteCurrency = invertPrice ? pool?.token0 : pool?.token1;
 
   const baseToken = useMemo(() => baseCurrency?.wrapped, [baseCurrency]);
   const quoteToken = useMemo(() => quoteCurrency?.wrapped, [quoteCurrency]);
@@ -145,8 +146,8 @@ export function useRangeHopCallbacks() {
     return "";
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
 
-  const [isAtMinTick, setAtMinTick] = useRecoilState(atMinTick);
-  const [isAtMaxTick, setAtMaxTick] = useRecoilState(atMaxTick);
+  const [, setAtMinTick] = useRecoilState(atMinTick);
+  const [, setAtMaxTick] = useRecoilState(atMaxTick);
 
   //need to bind with Recoil
   const getSetFullRange = useCallback(() => {
@@ -162,26 +163,27 @@ export function useRangeHopCallbacks() {
 
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
-
   const onDecreaseLower = useCallback(() => {
     const result = getDecrementLower();
-    if (result) return setMinPrice(result);
-  }, [getDecrementLower]);
+    if (result) return invertPrice ? setMaxPrice(result) : setMinPrice(result);
+  }, [getDecrementLower, invertPrice]);
 
   const onIncreaseLower = useCallback(() => {
     const result = getIncrementLower();
-    if (result) return setMinPrice(result);
-  }, [getIncrementLower]);
+    if (result) return invertPrice ? setMaxPrice(result) : setMinPrice(result);
+  }, [getIncrementLower, invertPrice]);
 
   const onDecreaseUpper = useCallback(() => {
     const result = getDecrementUpper();
-    if (result) return setMaxPrice(result);
-  }, [getDecrementUpper]);
+    if (result) return invertPrice ? setMinPrice(result) : setMaxPrice(result);
+  }, [getDecrementUpper, invertPrice]);
 
   const onIncreaseUpper = useCallback(() => {
     const result = getIncrementUpper();
-    if (result) return setMaxPrice(result);
-  }, [getIncrementUpper]);
+    console.log("result");
+    console.log(result);
+    if (result) return invertPrice ? setMinPrice(result) : setMaxPrice(result);
+  }, [getIncrementUpper, invertPrice]);
 
   const getInputTickToPrice = useCallback(() => {}, []);
 

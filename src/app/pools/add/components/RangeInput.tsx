@@ -18,6 +18,7 @@ import {
 } from "@/recoil/pool/setPoolPosition";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useCallback } from "react";
+import { Bound } from "@/types/pool/pool";
 
 type RangeInputProps = {
   isMinPrice: boolean;
@@ -37,9 +38,9 @@ export default function RangeInput(props: RangeInputProps) {
   const [, setAtMinTick] = useRecoilState(atMinTick);
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
 
-  const [valueInThisInput, setValueInThisInput] = useState<string | undefined>(
-    undefined
-  );
+  //let user type value and only update parent value on blur
+  const [localValue, setLocalValue] = useState<string | undefined>(undefined);
+  const [useLocalValue, setUseLocalValue] = useState<boolean>(false);
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -50,8 +51,8 @@ export default function RangeInput(props: RangeInputProps) {
       const value = e.target.value.replaceAll(",", "");
       const inputValue = value ?? "0";
 
-      setValueInThisInput(inputValue);
-      return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
+      setLocalValue(inputValue);
+      // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
     [isMinPrice]
   );
@@ -59,84 +60,60 @@ export default function RangeInput(props: RangeInputProps) {
   const onFocusHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setIsFocused(true);
+      setUseLocalValue(true);
     },
     []
   );
 
-  const blurHandler = useCallback(() => {
-    setIsFocused(false);
-    // if (isMinPrice) {
-    //   if (invertPrice) {
-    //     setAtMaxTick(false)
-    //   }
-    // } else {
-    //   if(invertPrice)
-    // }
-
-    isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
-
-    if (pricesAtTicks) {
-      setValueInThisInput(
-        isMinPrice
-          ? invertPrice
-            ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
-            : pricesAtTicks?.LOWER?.toSignificant(5)
-          : invertPrice
-          ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
-          : pricesAtTicks?.UPPER?.toSignificant(5)
-      );
-      return isMinPrice
-        ? setMinPrice(
-            invertPrice
-              ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
-              : pricesAtTicks?.LOWER?.toSignificant(5)
-          )
-        : setMaxPrice(
-            invertPrice
-              ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
-              : pricesAtTicks?.UPPER?.toSignificant(5)
-          );
-    }
-  }, [pricesAtTicks, isMinPrice, , invertPrice, valueInThisInput]);
-
-  const inputValue = useMemo(() => {
-    if ((invertPrice ? ticksAtLimit.UPPER : ticksAtLimit.LOWER) && isMinPrice) {
-      if (invertPrice) {
-        setAtMaxTick(true);
-      } else {
-        setAtMinTick(true);
-      }
+  const value = useMemo(() => {
+    if (isMinPrice && ticksAtLimit[invertPrice ? Bound.UPPER : Bound.LOWER]) {
       return "0";
     }
-    if (
-      (invertPrice ? ticksAtLimit.LOWER : ticksAtLimit.UPPER) &&
-      !isMinPrice
-    ) {
-      if (invertPrice) {
-        setAtMinTick(true);
-      } else {
-        setAtMaxTick(true);
-      }
+    if (!isMinPrice && ticksAtLimit[invertPrice ? Bound.LOWER : Bound.UPPER]) {
       return "∞";
     }
-    return isMinPrice
-      ? minPriceInput === undefined
-        ? undefined
-        : commafy(minPriceInput, 5, true, true)
-      : maxPriceInput === undefined
-      ? undefined
-      : commafy(maxPriceInput, 5, true, true);
-  }, [isMinPrice, ticksAtLimit, minPriceInput, maxPriceInput, invertPrice]);
+    if (pricesAtTicks) {
+      return isMinPrice
+        ? invertPrice
+          ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
+          : pricesAtTicks?.LOWER?.toSignificant(5)
+        : invertPrice
+        ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
+        : pricesAtTicks?.UPPER?.toSignificant(5);
+    }
+  }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
+
+  // console.log(pricesAtTicks?.LOWER?.toSignificant(5));
+  // console.log(pricesAtTicks?.UPPER?.toSignificant(5));
+  // console.log(pricesAtTicks?.LOWER?.invert().toSignificant(5));
+  // console.log(pricesAtTicks?.UPPER?.invert().toSignificant(5));
+
+  const blurHandler = useCallback(
+    (e: any) => {
+      setIsFocused(false);
+      setUseLocalValue(false);
+      return isMinPrice ? setMinPrice(localValue) : setMaxPrice(localValue);
+    },
+    [localValue]
+  );
 
   const [, setMinPriceForAddModal] = useRecoilState(minPriceForAddModal);
   const [, setMaxPriceForAddModal] = useRecoilState(maxPriceForAddModal);
 
   useEffect(() => {
-    if (inputValue) {
-      if (isMinPrice) return setMinPriceForAddModal(inputValue);
-      return setMaxPriceForAddModal(inputValue);
+    if (localValue !== value && !useLocalValue) {
+      setTimeout(() => {
+        setLocalValue(value);
+      }, 0);
     }
-  }, [inputValue, isMinPrice]);
+  }, [localValue, useLocalValue, value]);
+
+  useEffect(() => {
+    if (localValue) {
+      if (isMinPrice) return setMinPriceForAddModal(localValue);
+      return setMaxPriceForAddModal(localValue);
+    }
+  }, [localValue, isMinPrice]);
 
   // useEffect(() => {
   //   if (minPriceInput?.replaceAll(",", "") !== pricesAtLimit["LOWER"]) {
@@ -152,7 +129,7 @@ export default function RangeInput(props: RangeInputProps) {
   //   }
   // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
 
-  console.log(isFocused ? valueInThisInput : inputValue);
+  // console.log(isFocused ? valueInThisInput : inputValue);
 
   return (
     <Flex flexDir={"column"}>
@@ -211,9 +188,8 @@ export default function RangeInput(props: RangeInputProps) {
             textAlign={"center"}
             onBlur={blurHandler}
             onFocus={onFocusHandler}
-            value={isFocused ? valueInThisInput : inputValue}
             placeholder="0"
-            // value={inputValue}
+            value={localValue}
           >
             {/* {isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5)} */}
           </Input>
