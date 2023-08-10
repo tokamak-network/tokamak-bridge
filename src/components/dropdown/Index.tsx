@@ -23,13 +23,13 @@ type SelectOption = SupportedChainProperties & {
   label: SupportedChainProperties["chainName"];
 };
 
-const customStyles = (maxHeight: string, width?: string) => {
+const customStyles = (maxHeight: string, maxWidth: string) => {
   return {
     control: (styles: any) => ({
       ...styles,
       width: "100%",
-      minHeight: `${maxHeight} !important`,
       maxHeight: `${maxHeight} !important`,
+      minHeight: `${maxHeight} !important`,
       backgroundColor: "#1F2128",
       cursor: "pointer",
       color: "#fff",
@@ -40,10 +40,8 @@ const customStyles = (maxHeight: string, width?: string) => {
       margin: "0px",
       marginTop: "4px",
       background: "#1F2128",
-      minWidth: `${width ?? `200px`} !important`,
-      maxWidth: `${width ?? `200px`} !important`,
-      minHeight: `${maxHeight} !important`,
-      maxHeight: `${maxHeight} !important`,
+      minWidth: `${maxWidth} !important`,
+      maxWidth: `${maxWidth} !important`,
       borderRadius: "6px",
       position: "absolute",
       border: "1px solid #313442",
@@ -70,19 +68,21 @@ const ValueContainer = (props: {
         px={"8px"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        fontSize={14}
+        fontSize={isPool ? 18 : 14}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Flex columnGap={"6px"} className="test" alignItems={"center"}>
+        <Flex columnGap={"6px"} className="test">
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
             <Image
               src={selectedOption.networkImage}
               alt={selectedOption.chainName}
+              style={{
+                width: "100%",
+                height: "100%",
+              }}
             />
           </Box>
-          <Text fontSize={isPool ? "15px" : "14px"}>
-            {convertNetworkName(selectedOption.label)}
-          </Text>
+          <Text>{convertNetworkName(selectedOption.label)}</Text>
         </Flex>
         <Box w={isPool ? "20px" : "10px"} h={isPool ? "20px" : "10px"}>
           <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -98,12 +98,19 @@ const ValueContainer = (props: {
       px={"8px"}
       justifyContent={"space-between"}
       alignItems={"center"}
-      fontSize={14}
+      fontSize={isPool ? 18 : 14}
       onClick={() => setIsOpen(true)}
     >
       <Flex columnGap={"6px"}>
-        <Box w={"20px"} h={"20px"}>
-          <Image src={NetworkCircle} alt={"NetworkCircle"} />
+        <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
+          <Image
+            src={NetworkCircle}
+            alt={"NetworkCircle"}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+          />
         </Box>
         <Text>Select Network</Text>
       </Flex>
@@ -117,7 +124,7 @@ const ValueContainer = (props: {
 export default function NetworkDropdown(props: {
   inNetwork: boolean;
   height: string;
-  width?: string;
+  width: string;
   isPool?: boolean;
 }) {
   const { inNetwork, height, width, isPool } = props;
@@ -125,7 +132,6 @@ export default function NetworkDropdown(props: {
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
   const { isConnected } = useAccount();
-
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const onChange = async (data: SupportedChainProperties) => {
@@ -229,15 +235,15 @@ export default function NetworkDropdown(props: {
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
           <Flex
             w={"100%"}
-            h={"12px"}
+            h={isPool ? "16px" : "12px"}
             alignItems={"center"}
             justifyContent={"space-around"}
             color={"#757893"}
           >
             <Box w={isPool ? "100%" : "45px"} h={"1px"} bgColor={"#757893"} />
             <Text
-              minW={isPool ? "56px" : "76px"}
-              fontSize={12}
+              minW={isPool ? "60px" : "76px"}
+              fontSize={isPool ? 16 : 12}
               mx={isPool ? "40px" : 0}
               textAlign={"center"}
             >
@@ -247,12 +253,12 @@ export default function NetworkDropdown(props: {
           </Flex>
           <Flex
             w={"100%"}
-            h={"100%"}
+            h={isPool ? "48px" : "100%"}
             color={"#fff"}
             px={"8px"}
             justifyContent={"space-between"}
             alignItems={"center"}
-            fontSize={14}
+            fontSize={isPool ? 18 : 14}
             cursor={"pointer"}
             bgColor={"#1F2128"}
             _hover={{ bgColor: "#313442" }}
@@ -260,7 +266,14 @@ export default function NetworkDropdown(props: {
           >
             <Flex columnGap={"6px"}>
               <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
-                <Image src={data.networkImage} alt={data.chainName} />
+                <Image
+                  src={data.networkImage}
+                  alt={data.chainName}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
               </Box>
               <Text>{convertNetworkName(data.label)}</Text>
             </Flex>
@@ -275,20 +288,28 @@ export default function NetworkDropdown(props: {
     return (
       <Flex
         w={"100%"}
-        h={"100%"}
+        h={isPool ? "48px" : "100%"}
         color={"#fff"}
         px={"8px"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        fontSize={14}
+        fontSize={isPool ? 18 : 14}
         cursor={"pointer"}
         bgColor={"#1F2128"}
         _hover={{ bgColor: "#313442" }}
         onClick={() => onChange(data)}
+        borderRadius={"6px"}
       >
         <Flex columnGap={"6px"}>
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
-            <Image src={data.networkImage} alt={data.chainName} />
+            <Image
+              src={data.networkImage}
+              alt={data.chainName}
+              style={{
+                width: isPool ? "28px" : "20px",
+                height: isPool ? "28px" : "20px",
+              }}
+            />
           </Box>
           <Text>{convertNetworkName(data.label)}</Text>
         </Flex>

@@ -109,7 +109,11 @@ export default function PoolCard(props: PoolCardDetail) {
             {feePercent}
           </Text>
         </Flex>
-        <TokenSymbolPair token0={token0} token1={token1} />
+        <TokenSymbolPair
+          token0={token0}
+          token1={token1}
+          style={{ marginTop: "12px" }}
+        />
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
           <Flex justifyContent="space-between">
             <Text>{token0.symbol}</Text>
