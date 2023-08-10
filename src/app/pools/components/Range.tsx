@@ -66,8 +66,8 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
       </Flex>
       <Flex justifyContent={"center"} w="100%">
         <TokenSymbolPair
-          token0={token0}
-          token1={token1}
+          token0={token1}
+          token1={token0}
           //   symbolSize={32}
           marginTop="12px"
         />
