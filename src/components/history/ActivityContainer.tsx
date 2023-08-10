@@ -8,6 +8,9 @@ export default function ActivityContainer() {
   const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
 
+
+  console.log('tData',tData);
+  
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -34,7 +37,7 @@ export default function ActivityContainer() {
   const getPaginatedData = () => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
-    return tData.slice(startIndex, endIndex);
+    return tData.depositTxs.slice(startIndex, endIndex);
   };
 
   return (
@@ -81,9 +84,7 @@ export default function ActivityContainer() {
         {getPaginatedData().length !== 0 &&
           getPaginatedData().map((tx: any) => {
             if (
-              tx.event === "ERC20DepositInitiated" ||
-              tx.event === "ETHDepositInitiated" ||
-              tx.event === "DepositFinalized"
+              tx.event === "deposit"
             ) {
               return <DepositTx tx={tx}  key={tx.transactionHash}/>;
             } else {

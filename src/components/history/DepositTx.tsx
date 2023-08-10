@@ -39,8 +39,8 @@ export default function DepositTx(props: { tx: any }) {
 
   const getTokenData = useCallback(async () => {
     if (
-      tx.args._l1Token !== undefined &&
-      tx.args._l2Token !== undefined &&
+      tx._l1Token !== undefined &&
+      tx._l2Token !== undefined &&
       chain?.id
     ) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
@@ -49,13 +49,13 @@ export default function DepositTx(props: { tx: any }) {
       const l2Pro =
         layer === "L2" ? provider : getProvider(providers.l2Provider);
 
-      if (tx.args._l1Token === zero_address) {
+      if (tx._l1Token === zero_address) {
         token0Symbol = "ETH";
         token0Name = "ETH";
         token0Decimals = 18;
       } else {
         const l1TokenContract = new ethers.Contract(
-          tx.args._l1Token,
+          tx._l1Token,
           ERC20_ABI.abi,
           getProvider(providers?.l1Provider)
         );
@@ -67,7 +67,7 @@ export default function DepositTx(props: { tx: any }) {
       }
 
       const l2TokenContract = new ethers.Contract(
-        tx.args._l2Token,
+        tx._l2Token,
         ERC20_ABI.abi,
         l2Pro
       );
@@ -120,11 +120,11 @@ export default function DepositTx(props: { tx: any }) {
       <TokenPairTx
         action="deposit"
         inAmount={ethers.utils.formatUnits(
-          tx.args._amount.toString(),
+          tx._amount.toString(),
           tokenData?.token0Decimals
         )}
         outAmount={ethers.utils.formatUnits(
-          tx.args._amount.toString(),
+          tx._amount.toString(),
           tokenData?.token1Decimals
         )}
         inTokenSymbol={tokenData?.token0Symbol || "ETH"}
