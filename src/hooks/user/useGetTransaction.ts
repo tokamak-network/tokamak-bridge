@@ -80,9 +80,7 @@ export default function useGetTransaction() {
               const matchTx = receipt.transactionReceipt.transactionHash;              
               const l1tx = userL1Transactions.formattedL1WithdrawResults.filter((tx:any) => {                
               return  tx.transactionHash === matchTx
-              })[0]
-
-              console.log('l1tx',l1tx);
+              })[0]  
               
             }
 
