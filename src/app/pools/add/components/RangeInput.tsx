@@ -49,7 +49,7 @@ export default function RangeInput(props: RangeInputProps) {
       const inputValue = value ?? "0";
 
       setValueInThisInput(inputValue);
-      // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
+      return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
     [isMinPrice]
   );
@@ -71,15 +71,7 @@ export default function RangeInput(props: RangeInputProps) {
     //   if(invertPrice)
     // }
 
-    console.log(valueInThisInput);
     isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
-
-    console.log("invertPrice");
-    console.log(
-      invertPrice
-        ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
-        : pricesAtTicks?.LOWER?.toSignificant(5)
-    );
 
     if (pricesAtTicks) {
       setValueInThisInput(
@@ -104,8 +96,6 @@ export default function RangeInput(props: RangeInputProps) {
           );
     }
   }, [pricesAtTicks, isMinPrice, , invertPrice, valueInThisInput]);
-
-  console.log(ticks);
 
   const inputValue = useMemo(() => {
     if ((invertPrice ? ticksAtLimit.UPPER : ticksAtLimit.LOWER) && isMinPrice) {
@@ -149,6 +139,8 @@ export default function RangeInput(props: RangeInputProps) {
   //     return invertPrice ? setAtMinTick(true) : setAtMaxTick(true);
   //   }
   // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
+
+  console.log(isFocused ? valueInThisInput : inputValue);
 
   return (
     <Flex flexDir={"column"}>
