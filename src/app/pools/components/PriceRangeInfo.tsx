@@ -16,6 +16,8 @@ import {
   maxPriceForAddModal,
   minPriceForAddModal,
 } from "@/recoil/pool/setPoolPosition";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import commafy from "@/utils/trim/commafy";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -96,6 +98,9 @@ export const CurrentPriceInfo = () => {
   const { tokenPairForInfo } = usePositionInfo();
   const { currentPrice, inverted } = usePoolInfo();
 
+  const { poolModal } = usePreview();
+  const price = usePriceTickConversion();
+
   return (
     <Flex
       w={"186px"}
@@ -116,8 +121,11 @@ export const CurrentPriceInfo = () => {
         lineHeight={"24px"}
         verticalAlign={"center"}
       >
-        {smallNumberFormmater(Number(currentPrice ?? 0))}
+        {poolModal === "addLiquidity"
+          ? commafy(price?.currentPrice, 4)
+          : smallNumberFormmater(Number(currentPrice ?? 0))}
       </Text>
+
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
         {inverted
           ? tokenPairForInfo?.token0Symbol
