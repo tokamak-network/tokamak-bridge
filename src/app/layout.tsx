@@ -6,7 +6,6 @@ import { Center } from "@chakra-ui/react";
 import { RecoilRoot } from "recoil";
 import Header from "@/components/header/Index";
 import HistoryDrawer from "@/components/history/Drawer";
-import Head from "next/head";
 
 import "css/scrollbar.css";
 import { ApolloProvider } from "@apollo/client";
@@ -26,27 +25,28 @@ export const GlobalComponents = () => {
   );
 };
 
-const HeadMeta = () => {
+export const HeadMeta = () => {
   return (
-    <div>
-      <Head>
-        <title>Tokamak Bridge</title>
-        <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://bridge.tokamak.network" />
-        <meta property="title" content="Tokamak Bridge" />
-        <meta property="og:title" content="Tokamak Bridge" />
-        {/* <meta
-        property="description"
-        content="Functional upgrade to TONStarter ecosystem"
+    <head>
+      <title>Tokamak Bridge</title>
+      <meta property="og:type" content="website" />
+      <meta property="og:url" content="https://bridge.tokamak.network" />
+      <meta property="title" content="Tokamak Bridge" />
+      <meta property="og:title" content="Tokamak Bridge" />
+      <meta
+        name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1,shrink-to-fit=n"
       />
       <meta
-        property="og:description"
-        content="Functional upgrade to TONStarter ecosystem"
-      /> */}
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-    </div>
+        name="description"
+        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+      ></meta>
+      <meta
+        name="og:description"
+        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+      ></meta>
+      <link rel="icon" href="/favicon.ico" />
+    </head>
   );
 };
 
@@ -58,9 +58,9 @@ export default function RootLayout({
   const queryClient = getQueryClient();
   return (
     <html lang="en">
+      <HeadMeta />
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRoot>
-          <HeadMeta />
           <QueryClientProvider client={queryClient}>
             <ApolloProvider client={apolloClient}>
               <ChakraProvidersForNextJs>
