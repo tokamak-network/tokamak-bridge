@@ -10,6 +10,7 @@ import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import commafy from "@/utils/trim/commafy";
+import { usePricePair } from "@/hooks/price/usePricePair";
 
 const Title = (props: {
   isExpanded: boolean;
@@ -124,6 +125,15 @@ const Content = (props: {
   const { info } = usePositionInfo();
   const { amount0Removed, amount1Removed, totalRemovedMarketPrice } =
     useRemoveLiquidity();
+  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
+  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+
+  const { totalMarketPrice, hasTokenPrice } = usePricePair({
+    token0Name: info?.token0.name,
+    token0Amount,
+    token1Name: info?.token1.name,
+    token1Amount,
+  });
 
   if (isExpanded && info) {
     const token0Symbol = info.token0.symbol ?? "-";
@@ -148,7 +158,7 @@ const Content = (props: {
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Fees earned" amount="$4.44" />
+            <ContentTitle title="Fees earned" amount={`$${totalMarketPrice}`} />
             <ContentSub
               title={token0Symbol}
               amount={commafy(info.token0CollectedFee, 4)}
