@@ -167,39 +167,41 @@ export default function TokenInput(props: {
   const handleBlur = useCallback(() => {
     setIsFocused(false);
     //for pool's price and amount on liquidity
-    if (mode === "Pool" && inToken && selectedOutToken && amountForToken1) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken1.toString().replaceAll("-", ""),
-        selectedOutToken.decimals
-      );
+    if (mode === "Pool") {
+      if (inToken && selectedOutToken && amountForToken1) {
+        const formattedAmount = ethers.utils.formatUnits(
+          amountForToken1.toString().replaceAll("-", ""),
+          selectedOutToken.decimals
+        );
 
-      const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
-        selectedOutToken.decimals
-      );
+        const parsedAmount = ethers.utils.parseUnits(
+          formattedAmount,
+          selectedOutToken.decimals
+        );
 
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
-      });
-    }
-    if (mode === "Pool" && !inToken && selectedInToken && amountForToken0) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken0.toString().replaceAll("-", ""),
-        selectedInToken.decimals
-      );
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: parsedAmount.toBigInt(),
+          parsedAmount: formattedAmount.toString(),
+        });
+      }
+      if (!inToken && selectedInToken && amountForToken0) {
+        const formattedAmount = ethers.utils.formatUnits(
+          amountForToken0.toString().replaceAll("-", ""),
+          selectedInToken.decimals
+        );
 
-      const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
-        selectedInToken.decimals
-      );
+        const parsedAmount = ethers.utils.parseUnits(
+          formattedAmount,
+          selectedInToken.decimals
+        );
 
-      return setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
-      });
+        return setSelectedInToken({
+          ...selectedInToken,
+          amountBN: parsedAmount.toBigInt(),
+          parsedAmount: formattedAmount.toString(),
+        });
+      }
     }
   }, [
     mode,

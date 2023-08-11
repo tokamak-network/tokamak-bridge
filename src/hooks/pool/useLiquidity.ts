@@ -7,6 +7,7 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import { usePoolInfo } from "./usePoolInfo";
 import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
+import { usePricePair } from "../price/usePricePair";
 
 export function useRemoveLiquidity() {
   const { info } = usePositionInfo();
@@ -16,7 +17,7 @@ export function useRemoveLiquidity() {
       amount0Removed: undefined,
       amount1Removed: undefined,
     };
-  const { token0Amount, token1Amount } = info;
+  const { token0Amount, token1Amount, token0, token1 } = info;
   const removePercent = useRecoilValue(removeAmount);
 
   const amount0Removed = useMemo(() => {
@@ -31,5 +32,12 @@ export function useRemoveLiquidity() {
     }
   }, [token1Amount, removePercent]);
 
-  return { amount0Removed, amount1Removed };
+  const { totalMarketPrice: totalRemovedMarketPrice } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: Number(commafy(amount0Removed, 4).replaceAll(",", "")),
+    token1Name: token1.name,
+    token1Amount: Number(commafy(amount1Removed, 4).replaceAll(",", "")),
+  });
+
+  return { amount0Removed, amount1Removed, totalRemovedMarketPrice };
 }

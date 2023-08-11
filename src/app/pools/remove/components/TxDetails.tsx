@@ -122,7 +122,8 @@ const Content = (props: {
 }) => {
   const { isExpanded, setIsExpended } = props;
   const { info } = usePositionInfo();
-  const { amount0Removed, amount1Removed } = useRemoveLiquidity();
+  const { amount0Removed, amount1Removed, totalRemovedMarketPrice } =
+    useRemoveLiquidity();
 
   if (isExpanded && info) {
     const token0Symbol = info.token0.symbol ?? "-";
@@ -132,7 +133,10 @@ const Content = (props: {
         <Box flex={1} flexDir={"column"}>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Liquidity to be removed" amount="$4.44" />
+            <ContentTitle
+              title="Liquidity to be removed"
+              amount={`$${totalRemovedMarketPrice}`}
+            />
             <ContentSub
               title={token0Symbol}
               amount={commafy(amount0Removed, 4)}
