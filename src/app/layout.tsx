@@ -39,11 +39,11 @@ export const HeadMeta = () => {
       />
       <meta
         name="description"
-        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+        content="Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
       ></meta>
       <meta
         name="og:description"
-        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+        content="Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
       ></meta>
       <link rel="icon" href="/favicon.ico" />
     </head>
