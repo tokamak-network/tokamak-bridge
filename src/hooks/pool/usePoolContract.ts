@@ -36,6 +36,7 @@ import { PoolState } from "@/types/pool/pool";
 import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
+import { useGetMarketPrice } from "../price/useGetMarketPrice";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -51,139 +52,184 @@ export function usePoolMint() {
 
   const { sendTransaction } = useSendTransaction();
 
-  const mintPosition = useCallback(async () => {
-    if (
-      pool &&
-      inToken &&
-      outToken &&
-      address &&
-      ticks.LOWER &&
-      ticks.UPPER &&
-      feeAmount
-    ) {
-      const configuredPool = new Pool(
-        pool.token0,
-        pool.token1,
-        pool.fee,
-        pool.sqrtRatioX96.toString(),
-        pool.liquidity.toString(),
-        pool.tickCurrent
-      );
-
-      const token0 = CurrencyAmount.fromRawAmount(
-        pool.token0,
-        fromReadableAmount(
-          Number(invertAmount ? outToken.parsedAmount : inToken.parsedAmount),
-          pool.token0.decimals
-        ).toString()
-      );
-      const token1 = CurrencyAmount.fromRawAmount(
-        pool.token1,
-        fromReadableAmount(
-          Number(invertAmount ? inToken.parsedAmount : outToken.parsedAmount),
-          pool.token1.decimals
-        ).toString()
-      );
-
-      const positionToMint = Position.fromAmounts({
-        pool: configuredPool,
-        tickLower: ticks.LOWER,
-        tickUpper: ticks.UPPER,
-        amount0: token0.quotient,
-        amount1: token1.quotient,
-        useFullPrecision: true,
-      });
-
-      if (positionToMint) {
-        const mintOptions: MintOptions = {
-          recipient: address,
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
-        };
-
-        // get calldata for minting a position
-        const { calldata, value } =
-          NonfungiblePositionManager.addCallParameters(
-            positionToMint,
-            mintOptions
-          );
-
-        //for ETH value
-        const inIsEth = invertAmount ? isETH(outToken) : isETH(inToken);
-        const outIsETH = invertAmount ? isETH(inToken) : isETH(outToken);
-        const inWeiAmount = ethers.BigNumber.from(token0.quotient.toString());
-        const outWeiAmount = ethers.BigNumber.from(token1.quotient.toString());
-        const inHexAmount = ethers.utils.hexlify(inWeiAmount);
-        const outHexAmount = ethers.utils.hexlify(outWeiAmount);
-
-        //refundETH
-        //it will return if All ETH won't be used to be deposit for some reasons like a price change
-        const NonfungiblePositionManagerContract = new Contract(
-          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          NONFUNGIBLE_POSITION_MANAGER_ABI,
-          getProviderOrSigner(provider, address)
+  const mintPosition = useCallback(
+    async (estimateGas?: boolean) => {
+      if (
+        pool &&
+        inToken &&
+        outToken &&
+        address &&
+        ticks.LOWER &&
+        ticks.UPPER &&
+        feeAmount
+      ) {
+        const configuredPool = new Pool(
+          pool.token0,
+          pool.token1,
+          pool.fee,
+          pool.sqrtRatioX96.toString(),
+          pool.liquidity.toString(),
+          pool.tickCurrent
         );
 
-        const initializePool =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "createAndInitializePoolIfNecessary",
-            [
-              token0.currency.address,
-              token1.currency.address,
-              feeAmount,
-              configuredPool.sqrtRatioX96.toString(),
-            ]
-          );
-
-        const refundETHData =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "refundETH"
-          );
-
-        const multicallParam =
-          noLiquidity && (inIsEth || outIsETH)
-            ? [initializePool, calldata, refundETHData]
-            : noLiquidity
-            ? [initializePool, calldata]
-            : inIsEth || outIsETH
-            ? [calldata, refundETHData]
-            : [calldata];
-
-        const tx = await NonfungiblePositionManagerContract.multicall(
-          multicallParam,
-          {
-            gasLimit: 8000000,
-            value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-            from: address,
-          }
+        const token0 = CurrencyAmount.fromRawAmount(
+          pool.token0,
+          fromReadableAmount(
+            Number(invertAmount ? outToken.parsedAmount : inToken.parsedAmount),
+            pool.token0.decimals
+          ).toString()
+        );
+        const token1 = CurrencyAmount.fromRawAmount(
+          pool.token1,
+          fromReadableAmount(
+            Number(invertAmount ? inToken.parsedAmount : outToken.parsedAmount),
+            pool.token1.decimals
+          ).toString()
         );
 
-        // sendTransaction(tx);
+        const positionToMint = Position.fromAmounts({
+          pool: configuredPool,
+          tickLower: ticks.LOWER,
+          tickUpper: ticks.UPPER,
+          amount0: token0.quotient,
+          amount1: token1.quotient,
+          useFullPrecision: true,
+        });
 
-        // build transaction
-        // const transaction = {
-        //   data: calldata,
-        //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-        //   value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-        //   from: address,
-        // };
-        // return sendTransaction(transaction);
+        if (positionToMint) {
+          const mintOptions: MintOptions = {
+            recipient: address,
+            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+            slippageTolerance: new Percent(50, 10_000),
+          };
+
+          // get calldata for minting a position
+          const { calldata, value } =
+            NonfungiblePositionManager.addCallParameters(
+              positionToMint,
+              mintOptions
+            );
+
+          //for ETH value
+          const inIsEth = invertAmount ? isETH(outToken) : isETH(inToken);
+          const outIsETH = invertAmount ? isETH(inToken) : isETH(outToken);
+          const inWeiAmount = ethers.BigNumber.from(token0.quotient.toString());
+          const outWeiAmount = ethers.BigNumber.from(
+            token1.quotient.toString()
+          );
+          const inHexAmount = ethers.utils.hexlify(inWeiAmount);
+          const outHexAmount = ethers.utils.hexlify(outWeiAmount);
+
+          //refundETH
+          //it will return if All ETH won't be used to be deposit for some reasons like a price change
+          const NonfungiblePositionManagerContract = new Contract(
+            UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            NONFUNGIBLE_POSITION_MANAGER_ABI,
+            getProviderOrSigner(provider, address)
+          );
+
+          const initializePool =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "createAndInitializePoolIfNecessary",
+              [
+                token0.currency.address,
+                token1.currency.address,
+                feeAmount,
+                configuredPool.sqrtRatioX96.toString(),
+              ]
+            );
+
+          const refundETHData =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "refundETH"
+            );
+
+          const multicallParam =
+            noLiquidity && (inIsEth || outIsETH)
+              ? [initializePool, calldata, refundETHData]
+              : noLiquidity
+              ? [initializePool, calldata]
+              : inIsEth || outIsETH
+              ? [calldata, refundETHData]
+              : [calldata];
+
+          return estimateGas
+            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
+                multicallParam,
+                {
+                  gasLimit: 8000000,
+                  value: inIsEth
+                    ? inHexAmount
+                    : outIsETH
+                    ? outHexAmount
+                    : value,
+                  from: address,
+                }
+              )
+            : await NonfungiblePositionManagerContract.multicall(
+                multicallParam,
+                {
+                  gasLimit: 8000000,
+                  value: inIsEth
+                    ? inHexAmount
+                    : outIsETH
+                    ? outHexAmount
+                    : value,
+                  from: address,
+                }
+              );
+
+          // sendTransaction(tx);
+
+          // build transaction
+          // const transaction = {
+          //   data: calldata,
+          //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          //   value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+          //   from: address,
+          // };
+          // return sendTransaction(transaction);
+        }
       }
-    }
-  }, [
-    provider,
-    inToken,
-    outToken,
-    address,
-    UNISWAP_CONTRACT,
-    pool,
-    ticks,
-    invertAmount,
-    feeAmount,
-    noLiquidity,
-  ]);
+    },
+    [
+      provider,
+      inToken,
+      outToken,
+      address,
+      UNISWAP_CONTRACT,
+      pool,
+      ticks,
+      invertAmount,
+      feeAmount,
+      noLiquidity,
+    ]
+  );
 
-  return { mintPosition };
+  const { data: feeData } = useFeeData();
+  const { tokenMarketPrice: ethPrice } = useGetMarketPrice({
+    tokenName: "ethereum",
+  });
+
+  const estimateGasToMint = useCallback(async () => {
+    if (provider && feeData && ethPrice) {
+      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const estimatedGasUsage = await mintPosition(true);
+      const totalGasCost =
+        Number(gasPrice) * Number(estimatedGasUsage.toString());
+      const parsedTotalGasCost = ethers.utils.formatUnits(
+        totalGasCost.toString(),
+        "ether"
+      );
+
+      const totalGasCostUSD =
+        Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
+
+      return totalGasCostUSD;
+    }
+  }, [provider, feeData, ethPrice]);
+
+  return { mintPosition, estimateGasToMint };
 }
 
 export function usePoolContract() {
@@ -565,12 +611,12 @@ export function usePoolContract() {
               [sweepTokenAddress, amountMinimum, address]
             );
           return estimateGas
-            ? await NonfungiblePositionManagerContract.multicall(
+            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
                 [collectData, unwrapWETH9, sweepToken],
                 {
                   gasLimit: 3000000,
                 }
-              ).estimateGas({ from: address })
+              )
             : await NonfungiblePositionManagerContract.multicall(
                 [collectData, unwrapWETH9, sweepToken],
                 {

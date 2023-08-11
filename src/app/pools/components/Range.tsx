@@ -28,8 +28,12 @@ const TokenPairTitle = () => {
   );
 };
 
-export default function Range(props: { page: T_PoolModal; style?: {} }) {
-  const { page, style } = props;
+export default function Range(props: {
+  page: T_PoolModal;
+  estimatedGas?: string;
+  style?: {};
+}) {
+  const { page, estimatedGas, style } = props;
 
   const { info } = usePositionInfo();
 
@@ -135,7 +139,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
             <Flex justifyContent={"space-between"}>
               <Text fontSize={"14px"}>Estimated gas fee</Text>
               <Text fontSize={"16px"} fontWeight={500}>
-                $4.44
+                {`$${estimatedGas}`}
               </Text>
             </Flex>
           </Flex>

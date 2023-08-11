@@ -103,6 +103,7 @@ export default function ActionButton() {
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
   const { inToken, outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
+  const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
 
   const buttonName = useMemo(() => {
     if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
@@ -132,8 +133,8 @@ export default function ActionButton() {
 
   const btnDisabled =
     !tokensPairHasAmount ||
-    !inTokenApproved ||
-    !outTokenApproved ||
+    (!deposit0Disabled && !inTokenApproved) ||
+    (!deposit1Disabled && !outTokenApproved) ||
     isBalanceOver ||
     isOutTokenBalanceOver ||
     isTONatPair;

@@ -13,16 +13,32 @@ import ActionButton from "../increase/components/ActionButton";
 import CloseButton from "@/components/button/CloseButton";
 import PriceRange from "../[info]/components/PriceRange";
 import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";
+import { useEffect, useState } from "react";
+import commafy from "@/utils/trim/commafy";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
   const { addLiquidity } = usePoolContract();
-  const { mintPosition } = usePoolMint();
+  const { mintPosition, estimateGasToMint } = usePoolMint();
+  const [gas, setGas] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const gas = await estimateGasToMint();
+      setGas(gas);
+    };
+    if (gas === undefined) {
+      fetchData();
+    }
+  }, [gas]);
 
   return (
     <Modal
       isOpen={poolModal === "increaseLiquidity" || poolModal === "addLiquidity"}
-      onClose={onClosePreviewModal}
+      onClose={() => {
+        onClosePreviewModal();
+        setGas(undefined);
+      }}
       isCentered
     >
       <ModalOverlay opacity={0.1} bg="blackAlpha.900" />
@@ -49,7 +65,11 @@ export default function IncreaseModal() {
             <CloseButton onClick={onClosePreviewModal} />
           </Box>
         </Flex>
-        <Range style={{ background: "#0F0F12" }} page={poolModal} />
+        <Range
+          style={{ background: "#0F0F12" }}
+          page={poolModal}
+          estimatedGas={commafy(gas)}
+        />
         <PriceRange />
         <Flex w={"100%"}>
           <Button
