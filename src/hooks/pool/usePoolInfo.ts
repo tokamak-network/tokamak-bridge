@@ -154,7 +154,7 @@ export function usePoolInfo() {
           inverted ? priceLower.invert() : priceUpper
         )
       : 0;
-  }, [inverted, pool, priceLower, priceUpper]);
+  }, [inverted, pool, priceLower, priceUpper, mintPositionInfo]);
 
   const currentPrice = useMemo(() => {
     if (token0 && token1 && tickCurrent)
