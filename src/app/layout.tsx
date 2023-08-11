@@ -29,7 +29,18 @@ export const HeadMeta = () => {
       <meta property="og:url" content="https://bridge.tokamak.network" />
       <meta property="title" content="Tokamak Bridge" />
       <meta property="og:title" content="Tokamak Bridge" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta
+        name="viewport"
+        content="width=device-width,user-scalable=no,initial-scale=1,shrink-to-fit=n"
+      />
+      <meta
+        name="description"
+        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+      ></meta>
+      <meta
+        name="og:description"
+        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+      ></meta>
       <link rel="icon" href="/favicon.ico" />
     </head>
   );
