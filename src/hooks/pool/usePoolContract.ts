@@ -35,7 +35,6 @@ import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { PoolState } from "@/types/pool/pool";
 import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
-import { usePoolInfo } from "./usePoolInfo";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 
 export function usePoolMint() {
@@ -110,8 +109,8 @@ export function usePoolMint() {
           );
 
         //for ETH value
-        const inIsEth = isETH(inToken);
-        const outIsETH = isETH(outToken);
+        const inIsEth = invertAmount ? isETH(outToken) : isETH(inToken);
+        const outIsETH = invertAmount ? isETH(inToken) : isETH(outToken);
         const inWeiAmount = ethers.BigNumber.from(token0.quotient.toString());
         const outWeiAmount = ethers.BigNumber.from(token1.quotient.toString());
         const inHexAmount = ethers.utils.hexlify(inWeiAmount);

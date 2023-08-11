@@ -42,6 +42,14 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
 
   const token0 = inverted ? info.token0 : info.token1;
   const token1 = inverted ? info.token1 : info.token0;
+  const token0AmountForAdding = commafy(
+    inverted ? token1Amount : token0Amount,
+    6
+  );
+  const token1AmountForAdding = commafy(
+    inverted ? token0Amount : token1Amount,
+    6
+  );
 
   return (
     <Flex
@@ -83,9 +91,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
         page={page}
         alterAmount={
           page === "addLiquidity"
-            ? inverted
-              ? commafy(token0Amount, 6)
-              : commafy(token1Amount, 6)
+            ? token0AmountForAdding
             : page === "increaseLiquidity"
             ? commafyWithUndefined(outToken?.parsedAmount, 6, false, true)
             : commafy(
@@ -109,9 +115,7 @@ export default function Range(props: { page: T_PoolModal; style?: {} }) {
         page={page}
         alterAmount={
           page === "addLiquidity"
-            ? inverted
-              ? commafy(token1Amount, 6)
-              : commafy(token0Amount, 6)
+            ? token1AmountForAdding
             : page === "increaseLiquidity"
             ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
             : commafy(
