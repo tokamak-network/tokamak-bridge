@@ -49,8 +49,13 @@ const ApproveButton = (props: { isInToken: boolean }) => {
   });
 
   const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
+  const { isTONatPair } = useIsTon();
 
-  if ((isInToken && deposit0Disabled) || (!isInToken && deposit1Disabled))
+  if (
+    (isInToken && deposit0Disabled) ||
+    (!isInToken && deposit1Disabled) ||
+    isTONatPair
+  )
     return null;
 
   return (

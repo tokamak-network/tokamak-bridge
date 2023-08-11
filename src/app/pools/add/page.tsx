@@ -26,7 +26,7 @@ export default function AddLiquidity() {
           <SelectFeeTier />
           <SelectPair />
         </Flex>
-        <Flex flexDirection={"column"} rowGap={"20px"}>
+        <Flex w={"384px"} flexDirection={"column"} rowGap={"20px"}>
           <InitializeInfo />
           <SetPriceRange />
           <WarningPool />

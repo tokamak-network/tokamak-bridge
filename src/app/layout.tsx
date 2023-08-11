@@ -3,7 +3,6 @@
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
 import { RecoilRoot } from "recoil";
-import Header from "@/components/header/Index";
 import HistoryDrawer from "@/components/history/Drawer";
 import Head from "next/head";
 
@@ -13,6 +12,8 @@ import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
+import { url } from "inspector";
+import { Metadata } from "next";
 
 export const GlobalComponents = () => {
   return (
@@ -23,7 +24,14 @@ export const GlobalComponents = () => {
   );
 };
 
-const HeadMeta = () => {
+const metadata: Metadata = {
+  title: "Tokamak Bridge",
+  description: "https://bridge.tokamak.network",
+  viewport: "width=device-width, initial-scale=1.0",
+  publisher: "Vercel",
+};
+
+export const HeadMeta = () => {
   return (
     <div>
       <Head>
@@ -47,9 +55,9 @@ export default function RootLayout({
   const queryClient = getQueryClient();
   return (
     <html lang="en">
+      <HeadMeta />
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRoot>
-          <HeadMeta />
           <QueryClientProvider client={queryClient}>
             <ChakraProvidersForNextJs>
               <WagmiProviders>

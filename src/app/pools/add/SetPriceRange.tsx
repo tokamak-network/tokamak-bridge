@@ -9,6 +9,7 @@ import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { usePool } from "@/hooks/pool/usePool";
 import { PoolState } from "@/types/pool/pool";
 import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
@@ -16,12 +17,15 @@ export default function SetPriceRange() {
   const { getSetFullRange } = useRangeHopCallbacks();
   const [poolStatus, pool] = usePool();
   const { firstStepPassed, priceInitialized } = useAddLiquidityCondition();
+  const { isTONatPair } = useIsTon();
+  const isActive = firstStepPassed && priceInitialized && !isTONatPair;
 
   return (
     <Flex
       flexDir={"column"}
       // rowGap={"15px"}
-      opacity={firstStepPassed && priceInitialized ? 1 : 0.3}
+      opacity={isActive ? 1 : 0.3}
+      style={{ pointerEvents: isActive ? "all" : "none" }}
     >
       <Title title="Set Price Range" />
       {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
