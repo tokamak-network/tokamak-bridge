@@ -7,6 +7,8 @@ import { useAccount } from "wagmi";
 import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import {
+  GOERLI_CONTRACTS,
+  MAINNET_CONTRACTS,
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts";
@@ -50,18 +52,25 @@ export function useSmartRouter() {
       txSettingValue.deadline !== undefined
     ) {
       const isEther = isETH(inToken);
-      const inTokenWETHAddress =
-        layer === "L2"
+      const isOutEther = isETH(outToken);
+
+      const WETHAddress =
+        layer === "L1"
+          ? isConnectedToMainNetwork
+            ? MAINNET_CONTRACTS.WETH_ADDRESS
+            : GOERLI_CONTRACTS.WETH_ADDRESS
+          : layer === "L2"
           ? isConnectedToMainNetwork
             ? TOKAMAK_CONTRACTS.WETH_ADDRESS
             : TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS
-          : inToken.tokenAddress;
+          : "";
+
       const param = `${
         process.env.NEXT_PUBLIC_ROUTING_API
       }/quote?tokenInAddress=${
-        isEther ? inTokenWETHAddress : inToken.tokenAddress
+        isEther ? WETHAddress : inToken.tokenAddress
       }&tokenInChainId=${connectedChainId}&tokenOutAddress=${
-        outToken.tokenAddress
+        isOutEther ? WETHAddress : outToken.tokenAddress
       }&tokenOutChainId=${connectedChainId}&amount=${
         inToken.amountBN
       }&type=exactIn&slippageTolerance=${txSettingValue.slippage}&deadline=${

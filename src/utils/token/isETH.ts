@@ -3,6 +3,9 @@ import { TokenInfo } from "@/types/token/supportedToken";
 
 export function isETH(token: TokenInfo) {
   return token?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET || SupportedChainId.GOERLI
+    SupportedChainId.MAINNET ||
+      SupportedChainId.GOERLI ||
+      SupportedChainId.TITAN ||
+      SupportedChainId.DARIUS
   );
 }
