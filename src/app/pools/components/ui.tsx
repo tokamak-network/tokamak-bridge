@@ -4,8 +4,8 @@ export function RangeText(props: { inRange: boolean; isClosed?: boolean }) {
   if (props.isClosed) {
     return (
       <Flex alignItems="center">
-        <Box w="6px" h="6px" borderRadius="50%" bg={"#DD3A44"} mr="6px" />
-        <Text fontSize={11} fontWeight={600} color={"#DD3A44"}>
+        <Box w="6px" h="6px" borderRadius="50%" bg={"#A0A3AD"} mr="6px" />
+        <Text fontSize={11} fontWeight={600} color={"#A0A3AD"}>
           {"Closed"}
         </Text>
       </Flex>
