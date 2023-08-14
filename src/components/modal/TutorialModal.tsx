@@ -132,6 +132,7 @@ export default function TutorialModal() {
                 <Text
                   textAlign={currentStep === 0 ? "center" : "left"}
                   mb={"40px"}
+                  key={text}
                 >
                   {text}
                 </Text>
@@ -187,6 +188,7 @@ export default function TutorialModal() {
               {steps.map((step: any, index: number) => {
                 return (
                   <Flex
+                  key={step}
                     h="5px"
                     w={"5px"}
                     mr={index === 5 ? "0px" : "7px"}

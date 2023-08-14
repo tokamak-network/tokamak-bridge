@@ -14,6 +14,8 @@ import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useConnectedNetwork from "@/hooks/network";
 import { getProvider } from "@/config/getProvider";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import useCallClaim from "@/hooks/user/actions/useCallClaim";
 type TokenData = {
   token0Symbol: string;
   token1Symbol: string;
@@ -22,79 +24,60 @@ type TokenData = {
   token0Decimals: number;
   token1Decimals: number;
 };
-export default function WithdrawTx(props: { tx: any }) {
-  const { tx } = props;
+export default function WithdrawTx(props: { tx: any, messenger:any }) {
+  const { tx,messenger } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();
-  const l1RpcProvider = getL1Provider();
   const { chain } = useNetwork();
   const { layer, chainName } = useConnectedNetwork();
-  const { blockExplorer } = useConnectedNetwork();
-
-  const returnProvider = (chainName: string | undefined) => {
-    let l1Provider, l2Provider;
-    switch (chainName) {
-      case "DARIUS":
-        l1Provider = supportedChain.filter((e) => e.chainName === "GOERLI")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "DARIUS")[0];
-
-        return { l1Provider, l2Provider };
-
-      case "TITAN":
-        l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
-        return { l1Provider, l2Provider };
-
-      case "GOERLI":
-        l1Provider = supportedChain.filter((e) => e.chainName === "GOERLI")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "DARIUS")[0];
-        return { l1Provider, l2Provider };
-
-      case "MAINNET":
-        l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
-
-        return { l1Provider, l2Provider };
-      default:
-        l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
-        l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
-        return { l1Provider, l2Provider };
-    }
-  };
+  const providers = useGetTxLayers();
+  const { claim } = useCallClaim();
+  const zero_address = "0x0000000000000000000000000000000000000000";
+  
   const getTokenData = useCallback(async () => {
-    if (
-      tx.args._l1Token !== undefined &&
-      tx.args._l2Token !== undefined &&
-      chain?.id
-    ) {
-      const chainName = getKeyByValue(SupportedChainId, chain.id);
+    if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
+      let token0Symbol, token0Name, token0Decimals;
+      let token1Symbol, token1Name, token1Decimals;
 
-      const providers = returnProvider(chainName);
+      const l2Pro =
+        layer === "L2" ? provider : getProvider(providers.l2Provider);
+      const l1Pro =
+        layer === "L1" ? provider : getProvider(providers.l1Provider);
 
-      const l2Provider = getProvider(providers?.l2Provider);
+      if (tx._l1Token === zero_address || tx._l1Token === undefined) {
+        token0Symbol = "ETH";
+        token0Name = "ETH";
+        token0Decimals = 18;
+      } else {
+        const l1TokenContract = new ethers.Contract(
+          tx._l1Token,
+          ERC20_ABI.abi,
+          l1Pro
+        );
+        [token0Symbol, token0Name, token0Decimals] = await Promise.all([
+          l1TokenContract.symbol(),
+          l1TokenContract.name(),
+          l1TokenContract.decimals(),
+        ]);
+      }
 
-      const l1TokenContract = new ethers.Contract(
-        tx.args._l1Token,
-        ERC20_ABI.abi,
-        getProvider(providers?.l1Provider)
-      );
-      const l2TokenContract = new ethers.Contract(
-        tx.args._l2Token,
-        ERC20_ABI.abi,
-        l2Provider
-      );      
+      if (tx._l1Token === zero_address || tx._l1Token === undefined) {
+        token0Symbol = "ETH";
+        token0Name = "ETH";
+        token0Decimals = 18;
+      } else {
+        const l2TokenContract = new ethers.Contract(
+          tx._l2Token,
+          ERC20_ABI.abi,
+          l2Pro
+        );
 
-      const [token0Symbol, token0Name, token0Decimals] = await Promise.all([
-        l1TokenContract.symbol(),
-        l1TokenContract.name(),
-        l1TokenContract.decimals(),
-      ]);
-
-      const [token1Symbol, token1Name, token1Decimals] = await Promise.all([
-        l2TokenContract.symbol(),
-        l2TokenContract.name(),
-        l2TokenContract.decimals(),
-      ]);
+        [token1Symbol, token1Name, token1Decimals] = await Promise.all([
+          l2TokenContract.symbol(),
+          l2TokenContract.name(),
+          l2TokenContract.decimals(),
+        ]);
+      }
 
       return {
         token0Symbol: token0Symbol,
@@ -126,21 +109,75 @@ export default function WithdrawTx(props: { tx: any }) {
       borderRadius={"8px"}
       border={"1px solid #313442"}
       bg={"#15161D"}
-      p='12px'
-      flexDir={'column'}
-      rowGap={'8px'}
+      p="12px"
+      flexDir={"column"}
+      rowGap={"8px"}
     >
-        <Flex justifyContent={'space-between'} w='100%'>
-            <Text fontSize={'14px'} fontWeight={600}>Withdraw</Text>
-            <Button w='57px' h='24px' bg='#323442' fontSize={'12px'} _hover={{}} _focus={{}} _active={{}}>Claim</Button>
-        </Flex>
-        <TokenPairTx inAmount="23.435" action="withdraw"
-       
-        outAmount={'23.435'}
-        inTokenSymbol={ "ETH"}
-        outTokenSymbol={ "ETH"}/>
-        <StatusTx completed={true} date={1330515905} layer={'L1'}/>
-        <StatusTx completed={false} date={1330515905} layer={'L2'}/>
+      <Flex justifyContent={"space-between"} w="100%">
+        <Text fontSize={"14px"} fontWeight={600}>
+          Withdraw
+        </Text>
+        <Button
+          w="57px"
+          h="24px"
+          bg="#323442"
+          fontSize={"12px"}
+          isDisabled={tx.currentStatus ===6 }
+          _hover={{}}
+          _focus={{}}
+          _active={{}}
+          onClick={() => {
+            return claim(tx);
+          }}
+        >
+          Claim
+        </Button>
+      </Flex>
+      <TokenPairTx
+        inAmount={ethers.utils.formatUnits(
+          tx._amount.toString(),
+          tokenData?.token0Decimals
+        )}
+        action="withdraw"
+        outAmount={ethers.utils.formatUnits(
+          tx._amount.toString(),
+          tokenData?.token1Decimals
+        )}
+        inTokenSymbol={tokenData?.token0Symbol || "ETH"}
+        outTokenSymbol={tokenData?.token1Symbol || "ETH"}
+      />
+      <StatusTx
+        completed={true}
+        date={tx.l2timeStamp}
+        txHash={tx.l2txHash}
+        layer={"L2"}
+        tx={{
+          ...tx,
+          inTokenSymbol: tokenData?.token0Symbol,
+          outTokenSymbol: tokenData?.token1Symbol,
+          inTokenAmount: ethers.utils.formatUnits(
+            tx._amount.toString(),
+            tokenData?.token0Decimals
+          )
+        }}
+      />
+
+      <StatusTx
+        completed={tx.timeReadyForRelay ? false : false}
+        date={tx.l1timeStamp}
+        timeStamp={Number(tx.timeReadyForRelay)}
+        txHash={tx.l1txHash}
+        layer={"L1"}
+        tx={{
+          ...tx,
+          inTokenSymbol: tokenData?.token0Symbol,
+          outTokenSymbol: tokenData?.token1Symbol,
+          inTokenAmount: ethers.utils.formatUnits(
+            tx._amount.toString(),
+            tokenData?.token0Decimals
+          )
+        }}
+      />
     </Flex>
   );
 }

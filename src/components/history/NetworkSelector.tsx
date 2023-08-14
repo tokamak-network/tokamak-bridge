@@ -165,6 +165,7 @@ export default function NetworkSelector(props: {
 
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
+    
     if (data.chainId === 0) {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>

@@ -7,10 +7,7 @@ import { useEffect, useState } from "react";
 export default function ActivityContainer() {
   const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
-
-
-  console.log('tData',tData);
-  
+    
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -39,6 +36,7 @@ export default function ActivityContainer() {
     const endIndex = startIndex + numData;
     return tData.depositTxs.slice(startIndex, endIndex);
   };
+  
 
   return (
     <Flex
@@ -87,8 +85,9 @@ export default function ActivityContainer() {
               tx.event === "deposit"
             ) {
               return <DepositTx tx={tx}  key={tx.transactionHash}/>;
-            } else {
-              return <WithdrawTx tx={tx} key={tx.transactionHash} />;
+            } 
+            else {
+              return <WithdrawTx tx={tx} key={tx.transactionHash} messenger={tData.crossChainMessenger}/>;
             }
           })}
       </Flex>

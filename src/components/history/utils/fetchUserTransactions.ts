@@ -21,7 +21,7 @@ const formatAddress = (address: string) => {
   return formattedAddress;
 };
 
-export const fetchL1Transactions = async (account: string | undefined) => {
+export const fetchUserTransactions = async (account: string | undefined) => {
   if (account) {
     const formattedAddress = formatAddress(account);
 

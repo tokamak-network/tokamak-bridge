@@ -25,11 +25,26 @@ import checkTodo from "assets/icons/check_todo.svg";
 import CalendarIcon from "assets/icons/Google_Calendar_icon.svg";
 import "./CalendarButton.css";
 import { atcb_action } from "add-to-calendar-button";
+import { TokenSymbol } from "../image/TokenSymbol";
+import { useState, useEffect, useMemo } from "react";
+import {
+  add,
+  getTime,
+  getUnixTime,
+  intervalToDuration,
+  Duration,
+  format,
+  subMinutes,
+} from "date-fns";
+import useCallClaim from "@/hooks/user/actions/useCallClaim";
 
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [modalOpen, setModalOpen] = useRecoilState(confirmWithdraw);
+  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw)
 
+  const tx = withdraw.modalData?.tx;
+  
+  const { claim } = useCallClaim();
   const check = (progress: string) => {
     switch (progress) {
       case "inProgress":
@@ -60,7 +75,7 @@ export default function ConfirmWithdraw() {
       >
         <Flex w="56px" h="56px">
           <TokenSymbolWithNetwork
-            tokenSymbol={"ETH"}
+            tokenSymbol={tx?.inTokenSymbol || "ETH"}
             chainId={5050}
             symbolW={56}
             symbolH={56}
@@ -69,7 +84,7 @@ export default function ConfirmWithdraw() {
           />
         </Flex>
         <Text h="24px" mt={"14px"} fontSize={"18px"} fontWeight={600}>
-          2.761213... ETH
+          {tx.inTokenAmount} {tx?.inTokenSymbol || "ETH"}
         </Text>
         <Text
           h="21px"
@@ -95,9 +110,10 @@ export default function ConfirmWithdraw() {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <Image src={ETH} alt="ETH" height={40} width={40} />
+        {/* <Image src={ETH} alt="ETH" height={40} width={40} /> */}
+        <TokenSymbol tokenType={tx?.inTokenSymbol as string} w={40} h={40} />
         <Text fontSize={"16px"} mt="12px">
-          ETHEREUM
+          {tx?.outTokenSymbol || "ETH"}
         </Text>
       </Flex>
     );
@@ -154,7 +170,42 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const Step3 = (props: { progress: string }) => {
+  const Step3 = (props: { progress: string; timeStamp: number }) => {
+    const [duration, setDuration] = useState<Duration>({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      months: 0,
+      seconds: 0,
+      years: 0,
+    });
+
+    useEffect(() => {
+      if (props.timeStamp) {
+        const intervalID = setInterval(() => {
+          const nowTime = getUnixTime(new Date());          
+          if (nowTime > props.timeStamp) {
+            setDuration({
+              days: 0,
+              hours: 0,
+              minutes: 0,
+              months: 0,
+              seconds: 0,
+              years: 0,
+            });
+          } else {
+            setDuration(
+              intervalToDuration({
+                start: getTime(props.timeStamp * 1000),
+                end: getTime(nowTime * 1000),
+              })
+            );
+          }
+        }, 1000);
+        return () => clearInterval(intervalID);
+      }
+    }, [props.timeStamp]);
+
     return (
       <Flex
         h="36px"
@@ -172,7 +223,14 @@ export default function ConfirmWithdraw() {
         <Flex>
           <Text mr="6px" fontSize={"14px"} color={check(props.progress).color}>
             {" "}
-            84 : 00 : 00 Left
+            {duration.days !== undefined && duration.days < 10 ? "0" : ""}
+            {duration.days}:
+            {duration.hours !== undefined && duration.hours < 10 ? "0" : ""}
+            {duration.hours}:
+            {duration.minutes !== undefined && duration.minutes < 10 ? "0" : ""}
+            {duration.minutes}:
+            {duration.seconds !== undefined && duration.seconds < 10 ? "0" : ""}
+            {duration.seconds} Left
           </Text>
         </Flex>
       </Flex>
@@ -221,7 +279,11 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const TimelineComponent = () => {
+  const TimelineComponent = (props: { tx: any }) => {
+
+    console.log('Number(tx.timeReadyForRelay)',Number(tx.timeReadyForRelay));
+    
+    const nowTime = getUnixTime(new Date());
     return (
       <Flex
         flexDir={"column"}
@@ -234,25 +296,59 @@ export default function ConfirmWithdraw() {
       >
         <Step1 progress="done" />
         <Dots progress="done" />
-        <Step2 progress="done" />
-        <Dots progress="done" />
-        <Step3 progress="inProgress" />
-        <Dots progress="inProgress" />
-        <Step4 progress="todo" />
+        <Step2 progress={props.tx.l1timeStamp ? "done" : "inProgress"} />
+        <Dots progress={
+            !props.tx.l1timeStamp
+              ? "todo"
+              : nowTime > Number(tx.timeReadyForRelay)
+              ? "done"
+              : "inProgress"
+          } />
+        <Step3
+          progress={
+            !props.tx.l1timeStamp
+              ? "todo"
+              : nowTime > Number(tx.timeReadyForRelay)
+              ? "done"
+              : "inProgress"
+          }
+          timeStamp={Number(tx.timeReadyForRelay)}
+        />
+        <Dots  progress={ isNaN(Number(tx.timeReadyForRelay))?'todo' :
+            nowTime < Number(tx.timeReadyForRelay) ? "inProgress" : 'done'
+          } />
+        <Step4
+          progress={isNaN(Number(tx.timeReadyForRelay))?'todo' :
+            nowTime < Number(tx.timeReadyForRelay) ? "inProgress" :'done'
+          }
+        />
       </Flex>
     );
   };
+  const getCalendarEvent = useMemo(() => {
+    if (tx && tx.timeReadyForRelay) {
+      const endDate = new Date(tx.timeReadyForRelay * 1000);
+      const formattedDate = format(endDate, "yyyy-MM-dd");
+      const sub30Minutes = subMinutes(endDate, 30);
+      const startTime = format(sub30Minutes, "HH:mm");
+      const endTime = format(endDate, "HH:mm");
+      return {
+        formattedDate: formattedDate,
+        startTime: startTime,
+        endTime: endTime,
+      };
+    }
+  }, [tx]);
 
-  const config:Object = {
-    name: " Test the Add to Calendar Button",
-    description: "Check out the maybe easiest way to include Add to Calendar Buttons to your web projects:[br]→ [url]https://add-to-calendar-button.com/",
-    startDate: "2023-07-16",
-    startTime: "10:15",
-    endTime: "23:30",
-    options: ["Google"] ,
-    timeZone: "currentBrowser"
+  const config: Object = {
+    name: "Claim Tokens on L1",
+    description: "Claim Tokens on L1",
+    startDate: getCalendarEvent?.formattedDate,
+    startTime: getCalendarEvent?.startTime,
+    endTime: getCalendarEvent?.endTime,
+    options: ["Google"],
+    timeZone: "currentBrowser",
   };
-  
 
   const CalendarComponent = () => {
     return (
@@ -260,8 +356,10 @@ export default function ConfirmWithdraw() {
         flexDir={"column"}
         justifyContent={"center"}
         alignItems={"center"}
+        cursor={"pointer"}
         w="100%"
         h="70px"
+        onClick={() => atcb_action(config)}
       >
         <Text h="19px" fontSize={"12px"} textAlign={"center"}>
           Set calendar reminder to claim withdraw on Ethereum
@@ -278,7 +376,7 @@ export default function ConfirmWithdraw() {
           <Text fontSize={"12px"} mr="8px">
             Add to Google Calendar
           </Text>
-          <Flex onClick={() =>  atcb_action(config)} height={'16px'} w='16px' p='0px' cursor={'pointer'}>
+          <Flex height={"16px"} w="16px" p="0px">
             <Image src={CalendarIcon} alt="calendar" />
           </Flex>
         </Flex>
@@ -286,7 +384,7 @@ export default function ConfirmWithdraw() {
     );
   };
   return (
-    <Modal isOpen={modalOpen} onClose={onClose} isCentered>
+    <Modal isOpen={withdraw.isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent
         w="404px"
@@ -302,7 +400,14 @@ export default function ConfirmWithdraw() {
               Confirm Withdraw
             </Text>
             <Flex w={"100%"} justifyContent={"flex-end"} mt={"-14px"}>
-              <CloseButton onClick={() => setModalOpen(false)} />
+              <CloseButton
+                onClick={() =>
+                  setWithdraw({
+                    isOpen: false,
+                    modalData: null,
+                  })
+                }
+              />
             </Flex>
           </Flex>
           <Flex alignItems={"center"}>
@@ -323,12 +428,17 @@ export default function ConfirmWithdraw() {
             </Flex>
             <EthereumContainer />
           </Flex>
-          <TimelineComponent />
+          <TimelineComponent tx={tx} />
           <CalendarComponent />
           <Button
             h="48px"
+            _active={{}}
+            _hover={{}}
             _disabled={{ color: "#8E8E92", bg: "#17181D" }}
             bg="#007AFF"
+            onClick={() => {
+              return claim(tx);
+            }}
           >
             Claim Withdraw
           </Button>

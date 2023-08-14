@@ -1,5 +1,12 @@
 import { atom } from "recoil";
+import {
+  Duration,
+} from "date-fns";
 
+type withdrawModal = {
+  isOpen: boolean;
+  modalData?: any;
+}
 export const transactionModalStatus = atom<
   "confirming" | "confirmed" | "error" | null
 >({
@@ -29,7 +36,11 @@ export const poolModalStatus = atom<
   default: null,
 });
 
-export const confirmWithdraw = atom <boolean>({
+export const confirmWithdraw = atom <withdrawModal>({
   key: "confirmWithdraw",
-  default: false,
+  default: {
+    isOpen:false,
+    modalData :null
+
+  },
 })

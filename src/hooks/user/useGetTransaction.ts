@@ -11,13 +11,13 @@ import useConnectedNetwork from "../network";
 import { l2RpcProvider } from "@/config/l2Provider";
 import { useNetwork } from "wagmi";
 import { getProvider } from "@/config/getProvider";
-import { fetchL1Transactions } from "@/components/history/utils/fetchL1Transactions";
 import useGetTxLayers from "./useGetTxLayers";
-// import titanSDK from "@tokamak-network/titan-sdk";
+import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
 import { ethers } from "ethers";
 
 export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<any[]>([]);
+  const [crossMessenger, setCrossMessenger] = useState<any>();
   const { provider } = useProvier();
   const { L1BRIDGE_CONTRACT } = useContract();
   const { address } = useAccount();
@@ -25,8 +25,9 @@ export default function useGetTransaction() {
   const { chain } = useNetwork();
   const optimismSDK = require("@eth-optimism/sdk");
   const providers = useGetTxLayers();
-  const titanSDK = require("@tokamak-network/titan-sdk");
-  const l2ProSDK = optimismSDK.asL2Provider(getProvider(providers.l2Provider));
+  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
+
+  const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
 
@@ -42,19 +43,18 @@ export default function useGetTransaction() {
         L2BridgeAbi,
         l2ProSDK
       );
-
-      const crossChainMessenger = new titanSDK.BatchCrossChainMessenger({
+      const crossChainMessenger = new titanSDK.CrossChainMessenger({
         l1ChainId: providers.l1ChainID,
         l2ChainId: providers.l2ChainID,
         l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
           process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
-        ).getSigner(),
-        l2SignerOrProvider: l2Pro.getSigner(),
+        ).getSigner(address),
+        l2SignerOrProvider: l2Pro.getSigner(address),
       });
 
-      console.log("crossChainMessenger", crossChainMessenger);
+      const userAllTransactions = await fetchUserTransactions(address);
 
-      const userL1Transactions = await fetchL1Transactions(address);
+      console.log("userAllTransactions", userAllTransactions);
 
       const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
         "DepositFinalized"
@@ -65,42 +65,113 @@ export default function useGetTransaction() {
         (event) => event.args?._from === address
       );
 
-      if (userL1Transactions !== undefined) {
+      if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
-          userL1Transactions.formattedWithdraw.map(async (tx: any) => {
+          userAllTransactions.formattedWithdraw.map(async (tx: any) => {
             const resolved = await crossChainMessenger.toCrossChainMessage(
               tx.transactionHash
             );
 
+
             const receipt = await crossChainMessenger.getMessageReceipt(
               resolved
             );
+            //
+            const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
 
-            if (receipt != null && receipt.transactionReceipt != null) {
-              const matchTx = receipt.transactionReceipt.transactionHash;              
-              const l1tx = userL1Transactions.formattedL1WithdrawResults.filter((tx:any) => {                
-              return  tx.transactionHash === matchTx
-              })[0]  
+/// if the receipt is not null, then the message is relayed
+
+            if (
+              l2TxReceipt.blockNumber !== undefined &&
+              receipt != null &&
+              receipt.transactionReceipt != null
+            ) {
+              const matchTx = receipt.transactionReceipt.transactionHash;
+              const l1tx =
+                userAllTransactions.formattedL1WithdrawResults.filter(
+                  (tx: any) => {
+                    return tx.transactionHash === matchTx;
+                  }
+                )[0];
+              const messageTxIndex = l2TxReceipt.blockNumber - 1;
+
+              const stateBatchAppendedEvent =
+                await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
+                  messageTxIndex
+                );
+
+              const bn = stateBatchAppendedEvent.blockNumber;
+
+              const block = await l1Pro.getBlock(bn);
+
+              const challengePeriod =
+                await crossChainMessenger.getChallengePeriodSeconds();
+              const timeReadyForRelay = block.timestamp + challengePeriod;
+              const currentStatus = await crossChainMessenger.getMessageStatus(
+                resolved
+              );
+
+              console.log("currentStatus", currentStatus);
+
+              let copy = {
+                ...tx,
+                ...l1tx,
+                l2TxReceipt: l2TxReceipt,
+                l2timeStamp: tx.blockTimestamp,
+                l1timeStamp: l1tx.blockTimestamp,
+                l1Block: l1tx.blockNumber,
+                l2txHash: tx.transactionHash,
+                l1txHash: l1tx.transactionHash,
+                event: "withdraw",
+                _amount: l1tx._amount,
+                _l1Token: l1tx._l1Token,
+                _l2Token: l1tx._l2Token,
+                timeReadyForRelay: timeReadyForRelay,
+                currentStatus: currentStatus,
+                // timeReadyForRelay:1692685734
+              };
+              return copy;
+            } else if (receipt === null) {
+              const messageTxReceipt = await l2Pro.getTransactionReceipt(
+                resolved.transactionHash
+              );
+              const logs = await ethers.utils.defaultAbiCoder.decode(
+                ["address", "uint256", "bytes"],
+                messageTxReceipt.logs[3].data
+              );
+              const l1Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                messageTxReceipt.logs[3].topics[1]
+              )[0];
+              const l2Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                messageTxReceipt.logs[3].topics[2]
+              )[0];
+
+              const currentStatus = await crossChainMessenger.getMessageStatus(
+                resolved
+              );
+
+              console.log('currentStatus',currentStatus);
               
+              const amnt = BigInt(logs[1]).toString();
+              let copy = {
+                ...tx,
+                event: "withdraw",
+                l2timeStamp: tx.blockTimestamp,
+                l2txHash: tx.transactionHash,
+                _l1Token: l1Token,
+                _l2Token: l2Token,
+                _amount: amnt,
+                l2TxReceipt: l2TxReceipt,
+                currentStatus:currentStatus
+              };
+              return copy;
             }
-
-
-
-            // const l2tx = await l2ProSDK.getTransactionReceipt(tx.transactionHash);
-            // console.log("l2tx", l2tx);
-            // const messageTxReceipt = await titanSDK.getChallengePeriodSeconds()
-            // console.log('messageTxReceipt',messageTxReceipt);
-            // console.log('messageTxReceipt',messageTxReceipt);
-
-            // const messageTxReceipt =
-            //   await titanSDK.l2Provider.getTransactionReceipt(
-            //     tx.transactionHash
-            //   );
-            // console.log("messageTxReceipt", messageTxReceipt);
           })
         );
 
-        const l2Txs = await Promise.all(
+        const l2DepTxs = await Promise.all(
           userL2Transactions
             .sort((tx1: any, tx2: any) => tx1.blockNumber - tx2.blockNumber)
             .map(async (tx: any) => {
@@ -109,11 +180,12 @@ export default function useGetTransaction() {
               const l1Block = await getProvider(providers.l1Provider)?.getBlock(
                 txion.l1BlockNumber
               );
-              const l1tx = userL1Transactions.formattedL1DepositResults?.filter(
-                (l1tx: any) => {
-                  return Number(l1tx.messageNonce) === txion.nonce;
-                }
-              );
+              const l1tx =
+                userAllTransactions.formattedL1DepositResults?.filter(
+                  (l1tx: any) => {
+                    return Number(l1tx.messageNonce) === txion.nonce;
+                  }
+                );
 
               if (l1tx.length > 0) {
                 const l1BlockNum = Number(l1tx[0].blockNumber);
@@ -137,9 +209,9 @@ export default function useGetTransaction() {
             })
         );
 
-        const l1Txs = await Promise.all(
-          userL1Transactions.formattedL1DepositResults.map(async (tx: any) => {
-            const l2tx = l2Txs.filter((l2tx: any) => {
+        const l1DepTxs = await Promise.all(
+          userAllTransactions.formattedL1DepositResults.map(async (tx: any) => {
+            const l2tx = l2DepTxs.filter((l2tx: any) => {
               return l2tx.nonce === Number(tx.messageNonce);
             });
             if (l2tx.length > 0) {
@@ -160,21 +232,30 @@ export default function useGetTransaction() {
             }
           })
         );
-        const txLogs =
+
+        const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
+        const allTxs =
           layer == "L1"
-            ? l1Txs.sort(
-                (tx1: any, tx2: any) => tx2.l1timeStamp - tx1.l1timeStamp
-              )
-            : l2Txs.sort(
-                (tx1: any, tx2: any) => tx2.l1timeStamp - tx1.l1timeStamp
-              );
-        setTDataDeposit(txLogs);
+            ? l2WithdrawTxs
+                .concat(txLogs)
+                .sort(
+                  (tx1: any, tx2: any) =>
+                    Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+                )
+            : l2WithdrawTxs
+                .concat(txLogs)
+                .sort(
+                  (tx1: any, tx2: any) =>
+                    Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+                );
+        setTDataDeposit(allTxs);        
+        setCrossMessenger(crossChainMessenger);
       }
     }
-  }, [address, layer, provider, l2RpcProvider, connectedChainId]);
+  }, [address, layer, connectedChainId]);
 
   useEffect(() => {
     fetchTransactions();
   }, [address, layer, connectedChainId]);
-  return { depositTxs: tDataDeposit };
+  return { depositTxs: tDataDeposit, crossChainMessenger: crossMessenger };
 }

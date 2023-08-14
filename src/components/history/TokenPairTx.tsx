@@ -18,7 +18,7 @@ export default function TokenPairTx(props: { inAmount: string, outAmount:string 
       </Flex>
 
       <Flex>
-        <Text fontSize={'12px'}>{inAmount} {inTokenSymbol} to {outAmount} {outTokenSymbol}</Text> 
+        <Text fontSize={'12px'}>{inAmount} {inTokenSymbol}</Text> 
       </Flex>
     </Flex>
   );

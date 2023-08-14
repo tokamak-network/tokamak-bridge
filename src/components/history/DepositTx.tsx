@@ -15,7 +15,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useConnectedNetwork from "@/hooks/network";
 import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
-
+import DepositStatusTx from "./DepositStatusTx";
 type TokenData = {
   token0Symbol: string;
   token1Symbol: string;
@@ -38,16 +38,16 @@ export default function DepositTx(props: { tx: any }) {
   const zero_address = "0x0000000000000000000000000000000000000000";
 
   const getTokenData = useCallback(async () => {
-    if (
-      tx._l1Token !== undefined &&
-      tx._l2Token !== undefined &&
-      chain?.id
-    ) {
+    if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
 
       let token0Symbol, token0Name, token0Decimals;
+      let token1Symbol, token1Name, token1Decimals;
+
       const l2Pro =
         layer === "L2" ? provider : getProvider(providers.l2Provider);
+      const l1Pro =
+        layer === "L1" ? provider : getProvider(providers.l1Provider);
 
       if (tx._l1Token === zero_address) {
         token0Symbol = "ETH";
@@ -57,7 +57,7 @@ export default function DepositTx(props: { tx: any }) {
         const l1TokenContract = new ethers.Contract(
           tx._l1Token,
           ERC20_ABI.abi,
-          getProvider(providers?.l1Provider)
+          l1Pro
         );
         [token0Symbol, token0Name, token0Decimals] = await Promise.all([
           l1TokenContract.symbol(),
@@ -66,17 +66,23 @@ export default function DepositTx(props: { tx: any }) {
         ]);
       }
 
-      const l2TokenContract = new ethers.Contract(
-        tx._l2Token,
-        ERC20_ABI.abi,
-        l2Pro
-      );
+      if (tx._l1Token === zero_address ) {
+        token0Symbol = "ETH";
+        token0Name = "ETH";
+        token0Decimals = 18;
+      } else {
+        const l2TokenContract = new ethers.Contract(
+          tx._l2Token,
+          ERC20_ABI.abi,
+          l2Pro
+        );
 
-      const [token1Symbol, token1Name, token1Decimals] = await Promise.all([
-        l2TokenContract.symbol(),
-        l2TokenContract.name(),
-        l2TokenContract.decimals(),
-      ]);
+        [token1Symbol, token1Name, token1Decimals] = await Promise.all([
+          l2TokenContract.symbol(),
+          l2TokenContract.name(),
+          l2TokenContract.decimals(),
+        ]);
+      }
 
       return {
         token0Symbol: token0Symbol,
@@ -130,17 +136,19 @@ export default function DepositTx(props: { tx: any }) {
         inTokenSymbol={tokenData?.token0Symbol || "ETH"}
         outTokenSymbol={tokenData?.token1Symbol || "ETH"}
       />
-      <StatusTx
+      <DepositStatusTx
         completed={true}
         date={tx.l1timeStamp}
         layer={"L1"}
         txHash={tx.l1txHash}
+        tx={tx}
       />
-      <StatusTx
-        completed={true}
+      <DepositStatusTx
+        completed={tx.l2txHash?true:false}
         date={tx.l2timeStamp}
         layer={"L2"}
         txHash={tx.l2txHash}
+        tx={tx}
       />
     </Flex>
   );
