@@ -1,6 +1,7 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
@@ -10,10 +11,8 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { trimAmount } from "@/utils/trim";
-import commafy from "@/utils/trim/commafy";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -261,6 +260,7 @@ export default function TokenInput(props: {
   }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
 
   useEffect(() => {
+    if (mode === "Pool") return;
     if (!inToken && selectedOutToken && amountOut) {
       const value: string = amountOut;
       if (value === "" || value === null) {
@@ -280,7 +280,7 @@ export default function TokenInput(props: {
         parsedAmount: value,
       });
     }
-  }, [amountOut]);
+  }, [amountOut, mode]);
 
   return (
     <Flex

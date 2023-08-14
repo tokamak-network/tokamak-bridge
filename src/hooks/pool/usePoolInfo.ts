@@ -150,10 +150,10 @@ export function usePoolInfo() {
     return priceLower && pool && priceUpper && !mintPositionInfo
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
-          pool.token0Price,
+          pool?.token0Price,
           inverted ? priceLower.invert() : priceUpper
         )
-      : 0;
+      : undefined;
   }, [inverted, pool, priceLower, priceUpper, mintPositionInfo]);
 
   const currentPrice = useMemo(() => {

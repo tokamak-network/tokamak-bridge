@@ -5,7 +5,6 @@ import ADD_ICON from "assets/icons/addIcon.svg";
 import { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
-import commafy from "@/utils/trim/commafy";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { useRecoilState } from "recoil";
 import {
@@ -19,6 +18,12 @@ import {
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useCallback } from "react";
 import { Bound } from "@/types/pool/pool";
+import {
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
+import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { ethers } from "ethers";
 
 type RangeInputProps = {
   isMinPrice: boolean;
@@ -29,11 +34,10 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit, invertPrice, pricesAtLimit, ticks } =
-    useV3MintInfo();
+  const { pricesAtTicks, ticksAtLimit, invertPrice } = useV3MintInfo();
 
-  const [minPriceInput, setMinPrice] = useRecoilState(minPrice);
-  const [maxPriceInput, setMaxPrice] = useRecoilState(maxPrice);
+  const [, setMinPrice] = useRecoilState(minPrice);
+  const [, setMaxPrice] = useRecoilState(maxPrice);
 
   const [, setAtMinTick] = useRecoilState(atMinTick);
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
@@ -44,6 +48,52 @@ export default function RangeInput(props: RangeInputProps) {
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
+  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
+
+  const handleBlur = useCallback(() => {
+    //for pool's price and amount on liquidity
+    if (selectedOutToken && amountForToken1) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken1.toString().replaceAll("-", ""),
+        selectedOutToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedOutToken.decimals
+      );
+
+      setSelectedOutToken({
+        ...selectedOutToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
+    if (selectedInToken && amountForToken0) {
+      const formattedAmount = ethers.utils.formatUnits(
+        amountForToken0.toString().replaceAll("-", ""),
+        selectedInToken.decimals
+      );
+
+      const parsedAmount = ethers.utils.parseUnits(
+        formattedAmount,
+        selectedInToken.decimals
+      );
+
+      return setSelectedInToken({
+        ...selectedInToken,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: formattedAmount.toString(),
+      });
+    }
+  }, [selectedInToken, selectedOutToken, amountForToken0, amountForToken1]);
+
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setAtMinTick(false);
@@ -53,6 +103,7 @@ export default function RangeInput(props: RangeInputProps) {
 
       setLocalValue(inputValue);
       // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
+      handleBlur();
     },
     [isMinPrice]
   );
@@ -82,11 +133,6 @@ export default function RangeInput(props: RangeInputProps) {
         : pricesAtTicks?.UPPER?.toSignificant(5);
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
-
-  // console.log(pricesAtTicks?.LOWER?.toSignificant(5));
-  // console.log(pricesAtTicks?.UPPER?.toSignificant(5));
-  // console.log(pricesAtTicks?.LOWER?.invert().toSignificant(5));
-  // console.log(pricesAtTicks?.UPPER?.invert().toSignificant(5));
 
   const blurHandler = useCallback(
     (e: any) => {

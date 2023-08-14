@@ -25,6 +25,8 @@ export default function IncreaseModal() {
   useEffect(() => {
     const fetchData = async () => {
       const gas = await estimateGasToMint();
+      console.log("gas");
+      console.log(gas);
       setGas(gas);
     };
     if (gas === undefined) {

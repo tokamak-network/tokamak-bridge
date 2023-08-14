@@ -12,7 +12,7 @@ import {
 import { useCallback } from "react";
 
 export function useInitialize() {
-  const { initializeTokenPair } = useInOutTokens();
+  const { initializeTokenPair, initializeTokenPairAmount } = useInOutTokens();
   const [, setPoolFee] = useRecoilState(poolFeeStatus);
   const [, setAtMinTick] = useRecoilState(atMinTick);
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
@@ -38,6 +38,7 @@ export function useInitialize() {
     setMinPrice(undefined);
     setMaxPrice(undefined);
     setInitialPrice("0");
+    initializeTokenPairAmount();
   }, [initializeTokenPair, setPoolFee]);
 
   return { initialzePoolValues, initializePoolValuesForSelectingFee };

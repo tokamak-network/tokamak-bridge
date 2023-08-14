@@ -7,6 +7,7 @@ import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 import { type } from "os";
+import { isETH } from "@/utils/token/isETH";
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -138,6 +139,7 @@ export default function TokenCard(props: TokenCardProps) {
   }, [tokenInfo]);
 
   const tokenData = useTokenBalance(tokenInfo);
+  const thisTokenIsETH = isETH(tokenInfo);
 
   const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;
@@ -168,7 +170,7 @@ export default function TokenCard(props: TokenCardProps) {
       <TopLine mainSchemCol={tokenColorCode} />
       <Flex justifyContent={"space-between"} w={"100%"}>
         <TokenTitle
-          tokenName={tokenInfo?.tokenName ?? "TOKEN"}
+          tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
           isName={true}
           style={{
             fontSize:

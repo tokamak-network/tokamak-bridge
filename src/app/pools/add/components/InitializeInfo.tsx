@@ -56,7 +56,6 @@ export default function InitializeInfo() {
             }}
             border={"none"}
             onChange={(e) => {
-              console.log("?");
               setInitialPrice(e.target.value);
             }}
             value={valueProp ?? undefined}

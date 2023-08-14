@@ -27,8 +27,8 @@ export const HeadMeta = () => {
       <title>Tokamak Bridge</title>
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://bridge.tokamak.network" />
-      <meta property="title" content="Tokamak Bridge" />
-      <meta property="og:title" content="Tokamak Bridge" />
+      <meta property="title" content="Tokamak Bridge - dev" />
+      <meta property="og:title" content="Tokamak Bridge - dev" />
       <meta
         name="viewport"
         content="width=device-width,user-scalable=no,initial-scale=1,shrink-to-fit=n"

@@ -47,11 +47,11 @@ export default function Range(props: {
   const token0 = inverted ? info.token0 : info.token1;
   const token1 = inverted ? info.token1 : info.token0;
   const token0AmountForAdding = commafy(
-    inverted ? token1Amount : token0Amount,
+    inverted ? token0Amount : token1Amount,
     6
   );
   const token1AmountForAdding = commafy(
-    inverted ? token0Amount : token1Amount,
+    inverted ? token1Amount : token0Amount,
     6
   );
 
@@ -132,7 +132,7 @@ export default function Range(props: {
               )
         }
       />
-      {page === "addLiquidity" && (
+      {(page === "addLiquidity" || page === "increaseLiquidity") && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
@@ -145,7 +145,7 @@ export default function Range(props: {
           </Flex>
         </Flex>
       )}
-      {page !== "removeLiquidity" && page !== "addLiquidity" && (
+      {(page === "collectFee" || page === "removeLiquidity") && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>

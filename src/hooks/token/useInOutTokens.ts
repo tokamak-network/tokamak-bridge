@@ -132,6 +132,24 @@ export function useInOutTokens() {
     return setOutTokenRecoilValue(null);
   }, [setInTokenRecoilValue, setOutTokenRecoilValue]);
 
+  const initializeTokenPairAmount = () => {
+    if (inTokenRecoilValue) {
+      setInTokenRecoilValue({
+        ...inTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+
+    if (outTokenRecoilValue) {
+      setOutTokenRecoilValue({
+        ...outTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+  };
+
   return {
     inToken,
     outToken,
@@ -142,5 +160,6 @@ export function useInOutTokens() {
     tokensPairHasAmount,
     invertTokenPair,
     initializeTokenPair,
+    initializeTokenPairAmount,
   };
 }
