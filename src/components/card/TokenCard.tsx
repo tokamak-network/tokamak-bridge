@@ -1,5 +1,5 @@
 import { TokenInfo } from "types/token/supportedToken";
-import { Box, Button, Flex, Text, TextProps } from "@chakra-ui/react";
+import { Box, Button, Flex, Text, TextProps, useTheme } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useCallback, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
@@ -140,6 +140,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const tokenData = useTokenBalance(tokenInfo);
   const thisTokenIsETH = isETH(tokenInfo);
+  const theme = useTheme();
 
   const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;
@@ -165,6 +166,7 @@ export default function TokenCard(props: TokenCardProps) {
       px={"16px"}
       cursor={"pointer"}
       onClick={notAdded ? addNewCard : onClick}
+      fontFamily={theme.fonts.Quicksand}
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />

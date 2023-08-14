@@ -1,21 +1,23 @@
 import { extendTheme } from "@chakra-ui/theme-utils";
 import "@fontsource/poppins";
-import { Slider } from "@chakra-ui/react";
+import "@fontsource/quicksand";
 
 const fonts = {
   Poppins: "Poppins",
+  Quicksand: "Quicksand",
 };
 
 const theme = extendTheme({
   fonts: {
     body: fonts.Poppins,
+    Quicksand: fonts.Quicksand,
   },
   components: {
     Slider: {
       baseStyle: {
         thumb: {
           bg: "#007AFF",
-          transition: "none", 
+          transition: "none",
           _active: {
             outline: "none",
             border: "none",
