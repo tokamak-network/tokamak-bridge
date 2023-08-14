@@ -257,7 +257,7 @@ export function useGetPositions() {
             isClosed,
             token0Value: isNaN(token0Value) ? 0 : token0Value,
             token1Value: isNaN(token1Value) ? 0 : token1Value,
-            feeValue,
+            feeValue: isNaN(feeValue) ? 0 : feeValue,
           });
         }
         return positions;
