@@ -32,6 +32,10 @@ export type PoolCardDetail = {
   tickUpper: number;
   rawPositionInfo: any;
   hasETH: boolean;
+  isClosed: boolean;
+  token0Value: number;
+  token1Value: number;
+  feeValue: number;
 };
 
 export default function PoolCard(props: PoolCardDetail) {
@@ -45,6 +49,7 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Amount,
     token0CollectedFee,
     token1CollectedFee,
+    isClosed,
   } = props;
 
   const feePercent = useMemo(() => {
@@ -97,7 +102,7 @@ export default function PoolCard(props: PoolCardDetail) {
         cursor={"pointer"}
       >
         <Flex justifyContent={"flex-end"}>
-          <RangeText inRange={inRange} />
+          <RangeText inRange={inRange} isClosed={isClosed} />
         </Flex>
         <Flex alignItems="left" justifyContent="flex-start" flexDir={"column"}>
           <Text fontWeight="semibold" fontSize="18px" h={"27px"}>
