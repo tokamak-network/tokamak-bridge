@@ -52,6 +52,10 @@ export function useMintPositionInfo() {
         tickUpper,
         rawPositionInfo: pool,
         hasETH,
+        isClosed: false,
+        token0Value: 0,
+        token1Value: 0,
+        feeValue: 0,
       };
     }
     return undefined;
