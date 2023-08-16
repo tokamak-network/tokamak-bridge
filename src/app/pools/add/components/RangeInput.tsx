@@ -49,7 +49,6 @@ export default function RangeInput(props: RangeInputProps) {
   const [useLocalValue, setUseLocalValue] = useState<boolean>(false);
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [componentFocused, setComponentFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus

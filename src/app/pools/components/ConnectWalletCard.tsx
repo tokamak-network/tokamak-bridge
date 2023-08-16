@@ -15,6 +15,7 @@ export default function ConnecteWalletCard() {
       paddingTop={"32px"}
       paddingBottom={"24px"}
       borderRadius={"16px"}
+      justifyContent={"center"}
       alignItems="center"
       textAlign="center"
       cursor={"pointer"}

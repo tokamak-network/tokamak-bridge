@@ -30,7 +30,7 @@ export default function ImageSymbol(props: {
 }
 
 export function NetworkSymbol(props: {
-  network: SupportedChainId;
+  network: SupportedChainId | undefined;
   w?: number;
   h?: number;
   style?: CSSProperties;

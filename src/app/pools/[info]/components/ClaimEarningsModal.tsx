@@ -1,4 +1,4 @@
-import { Flex, Text, Box, Divider } from "@chakra-ui/layout";
+import { Flex, Text, Box } from "@chakra-ui/layout";
 import { Modal, ModalOverlay, ModalContent, Button } from "@chakra-ui/react";
 import ModalCloseButton from "@/assets/icons/close.svg";
 import Image from "next/image";
@@ -16,6 +16,7 @@ import {
   estimatedGasUsage,
 } from "@/recoil/global/transaction";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
@@ -77,7 +78,7 @@ export default function ClaimEarningsModal() {
         >
           <Flex flexDir="column">
             <Flex justifyContent="space-between" mb="16px">
-              <Box>Claim Fees</Box>
+              <Box fontSize={20}>Claim Fees</Box>
               <Box onClick={onClose} cursor="pointer">
                 <Image src={ModalCloseButton} alt="closeModal" />
               </Box>
@@ -103,8 +104,20 @@ export default function ClaimEarningsModal() {
                 </Flex>
               )}
               <Flex justifyContent="space-between" mb="8px">
-                <Flex justifyContent="start" alignItems="center">
-                  <Text fontSize={16} color="#A0A3AD" ml="8px">
+                <Flex
+                  justifyContent="start"
+                  alignItems="center"
+                  columnGap={"8px"}
+                >
+                  <TokenSymbolWithNetwork
+                    tokenSymbol={info?.token0.symbol as string}
+                    chainId={info?.token0.chainId}
+                    symbolW={24}
+                    symbolH={24}
+                    networkSymbolH={12}
+                    networkSymbolW={12}
+                  />
+                  <Text fontSize={16} color="#A0A3AD">
                     {info?.token0.symbol}
                   </Text>
                 </Flex>
@@ -124,8 +137,20 @@ export default function ClaimEarningsModal() {
                 </Flex>
               </Flex>
               <Flex justifyContent="space-between" mb="8px">
-                <Flex justifyContent="start" alignItems="center">
-                  <Text fontSize={16} color="#A0A3AD" ml="8px">
+                <Flex
+                  justifyContent="start"
+                  alignItems="center"
+                  columnGap={"8px"}
+                >
+                  <TokenSymbolWithNetwork
+                    tokenSymbol={info?.token1.symbol as string}
+                    chainId={info?.token1.chainId}
+                    symbolW={24}
+                    symbolH={24}
+                    networkSymbolH={12}
+                    networkSymbolW={12}
+                  />
+                  <Text fontSize={16} color="#A0A3AD">
                     {info?.token1.symbol}
                   </Text>
                 </Flex>
@@ -144,7 +169,7 @@ export default function ClaimEarningsModal() {
                   >{`$${token1Price}`}</Text>
                 </Flex>
               </Flex>
-              <Divider style={{ border: "1px solid #313442" }} />
+              <Box w={"100%"} h={"1px "} bgColor={"#313442"} />
               <Flex justifyContent="space-between" pt="8px">
                 <Flex justifyContent="start" alignItems="center">
                   <Text fontSize={14} color="#A0A3AD">

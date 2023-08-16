@@ -120,7 +120,7 @@ export default function PoolCard(props: PoolCardDetail) {
           style={{ marginTop: "12px" }}
         />
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token0.symbol}</Text>
             <Text>
               {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
@@ -131,7 +131,7 @@ export default function PoolCard(props: PoolCardDetail) {
               </span>
             </Text>
           </Flex>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token1.symbol}</Text>
             <Text>
               {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
@@ -143,7 +143,7 @@ export default function PoolCard(props: PoolCardDetail) {
               </span>
             </Text>
           </Flex>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" h={"20px"}>
             <Text>Fees</Text>
             {hasTokenPrice ? (
               <Text>${commafy(totalMarketPrice, 2)}</Text>

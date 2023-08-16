@@ -5,13 +5,13 @@ import { CSSProperties } from "react";
 
 type TokenSymbolWithNetworkProp = {
   tokenSymbol: string;
-  chainId: number;
+  chainId: number | undefined;
   symbolW?: number;
   symbolH?: number;
   networkSymbolW?: number;
   networkSymbolH?: number;
-  bottom?: number;
-  right?: number;
+  bottom?: number | string;
+  right?: number | string;
   style?: {};
 };
 
@@ -36,22 +36,22 @@ export default function TokenSymbolWithNetwork(
         h={symbolH ?? 32}
         tokenType={tokenSymbol}
       />
-      <Box
-        w={"16px"}
-        h={"16px"}
+      <Flex
         pos={"absolute"}
         // bgColor={inNetwork.nativeToken === "TON" ? "#fff" : "#383736"}
         // borderRadius={"2px"}
         // border={"2px solid #1F2128"}
         bottom={bottom ?? "-2px"}
         right={right ?? "-2px"}
+        justify={"flex-end"}
+        alignItems={"end"}
       >
         <NetworkSymbol
           w={networkSymbolW ?? 14}
           h={networkSymbolH ?? 14}
           network={chainId}
         />
-      </Box>
+      </Flex>
     </Flex>
   );
 }

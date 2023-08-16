@@ -1,8 +1,8 @@
-import { Flex, Box, Text, Button, Divider } from "@chakra-ui/react";
-// import TokenNetwork from "@/components/ui/TokenNetwork";
+import { Flex, Box, Text } from "@chakra-ui/react";
 import Link from "next/link";
-import IncreaseIcon from "@/assets/icons/addIcon.svg";
-import RemoveIcon from "@/assets/icons/removeIcon.svg";
+import RemoveIcon from "@/assets/icons/pool/removeIconBlue.svg";
+import IncreaseIcon from "@/assets/icons/pool/increaseIconBlue.svg";
+
 import Image from "next/image";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Token } from "@uniswap/sdk-core";
@@ -18,15 +18,15 @@ const TokenLiquidityData = (props: {
 }) => {
   const { token, liquidityAmount, liquidityPercent } = props;
   return (
-    <Flex justifyContent="space-between" h={"32px"}>
+    <Flex justifyContent="space-between" h={"32px"} alignItems={"center"}>
       <Flex justifyContent="start">
         <TokenSymbolWithNetwork
           tokenSymbol={token.symbol as string}
           chainId={token.chainId}
           symbolW={32}
           symbolH={32}
-          networkSymbolH={12}
-          networkSymbolW={12}
+          networkSymbolH={16}
+          networkSymbolW={16}
         />
         <Text ml="12px" color="#A0A3AD" fontSize="18px">
           {token.symbol}
@@ -80,7 +80,9 @@ export default function Liquidity() {
       <Flex flexDir="column" alignItems={"center"}>
         <Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
-            <Text color="#A0A3AD">Remove</Text>
+            <Text color="#A0A3AD" fontSize={13}>
+              Remove
+            </Text>
             <Link
               href={{ pathname: `/pools/remove/[id]` }}
               as={`/pools/remove/${info.id}`}
@@ -90,8 +92,7 @@ export default function Liquidity() {
                 w={"32px"}
                 h={"32px"}
                 bg="#15161D"
-                _hover={{ bgColor: "#15161D", border: "1px solid #007AFF" }}
-                border={" 1px solid #313442"}
+                border={" 1px solid #007AFF"}
                 borderRadius={"8px"}
                 alignItems={"center"}
                 justifyContent={"center"}
@@ -115,7 +116,9 @@ export default function Liquidity() {
             </Text>
           </Flex>
           <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
-            <Text color="#A0A3AD">Increase</Text>
+            <Text color="#A0A3AD" fontSize={13}>
+              Increase
+            </Text>
             <Link
               href={`/pools/increase/[id]`}
               as={`/pools/increase/${info.id}/`}
@@ -125,8 +128,7 @@ export default function Liquidity() {
                 w={"32px"}
                 h={"32px"}
                 bg="#15161D"
-                _hover={{ bgColor: "#15161D", border: "1px solid #007AFF" }}
-                border={" 1px solid #313442"}
+                border={" 1px solid #007AFF"}
                 borderRadius={"8px"}
                 alignItems={"center"}
                 justifyContent={"center"}
@@ -136,7 +138,7 @@ export default function Liquidity() {
             </Link>
           </Flex>
         </Flex>
-        <Divider style={{ border: "1px solid #313442" }} />
+        <Box w={"100%"} h={"1px"} bgColor={"#313442"} />
         <Flex
           flexDir={"column"}
           textAlign={"center"}

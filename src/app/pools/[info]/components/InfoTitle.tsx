@@ -17,25 +17,25 @@ export default function InfoTitle() {
   return (
     <Flex justifyContent={"space-between"} w={"100%"}>
       <Flex columnGap={"8px"}>
-        <Flex>
+        <Flex alignItems={"center"}>
           <TokenSymbolWithNetwork
             tokenSymbol={token1.symbol as string}
             chainId={token1.chainId}
-            symbolW={32}
-            symbolH={32}
+            symbolW={24}
+            symbolH={24}
             networkSymbolH={12}
             networkSymbolW={12}
-            bottom={1}
+            bottom={"-2px"}
             style={{ zIndex: 10 }}
           />
           <TokenSymbolWithNetwork
             tokenSymbol={token0.symbol as string}
             chainId={token0.chainId}
-            symbolW={32}
-            symbolH={32}
+            symbolW={24}
+            symbolH={24}
             networkSymbolH={12}
             networkSymbolW={12}
-            bottom={1}
+            bottom={"-2px"}
             style={{ left: "-8px" }}
           />
         </Flex>
@@ -50,7 +50,7 @@ export default function InfoTitle() {
           </Flex>
         </Flex>
       </Flex>
-      <RangeText inRange={info?.inRange ?? false} />
+      <RangeText inRange={info?.inRange ?? false} style={{ fontSize: 14 }} />
     </Flex>
   );
 }

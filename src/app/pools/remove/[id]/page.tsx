@@ -10,6 +10,8 @@ import TxDetails from "../components/TxDetails";
 import RemoveModal from "../../components/RemoveModal";
 import { usePathname } from "next/navigation";
 import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
+import UnclaimedEarnings from "../../[info]/components/UnclaimedEarnings";
+import ClaimEarningsModal from "../../[info]/components/ClaimEarningsModal";
 
 export default function RemoveLiquidity() {
   const { positionId } = useGetPositionIdFromPath();
@@ -30,6 +32,7 @@ export default function RemoveLiquidity() {
       >
         <Flex flexDirection={"column"} rowGap={"16px"} maxW={"364px"}>
           <Range page="removeLiquidity" />
+          <UnclaimedEarnings />
           <SelectPercentage />
           <TxDetails />
           <ActionButton />
@@ -37,6 +40,7 @@ export default function RemoveLiquidity() {
       </Flex>
       <IncreaseModal />
       <RemoveModal />
+      <ClaimEarningsModal />
     </Flex>
   );
 }

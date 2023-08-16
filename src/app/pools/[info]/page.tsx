@@ -25,7 +25,7 @@ export default function Page() {
         p={"20px"}
         borderRadius={"16px"}
         flexGrow={1}
-        rowGap={"12px"}
+        rowGap={"16px"}
       >
         <InfoTitle />
         <Liquidity />

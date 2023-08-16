@@ -1,6 +1,11 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
+import { CSSProperties } from "react";
 
-export function RangeText(props: { inRange: boolean; isClosed?: boolean }) {
+export function RangeText(props: {
+  inRange: boolean;
+  isClosed?: boolean;
+  style?: CSSProperties;
+}) {
   if (props.isClosed) {
     return (
       <Flex alignItems="center">
@@ -13,7 +18,7 @@ export function RangeText(props: { inRange: boolean; isClosed?: boolean }) {
   }
 
   return (
-    <Flex alignItems="center">
+    <Flex alignItems="center" fontSize={11} style={props.style}>
       <Box
         w="6px"
         h="6px"
@@ -21,11 +26,7 @@ export function RangeText(props: { inRange: boolean; isClosed?: boolean }) {
         bg={props.inRange ? "#00EE98" : "#DD3A44"}
         mr="6px"
       />
-      <Text
-        fontSize={11}
-        fontWeight={600}
-        color={props.inRange ? "#00EE98" : "#DD3A44"}
-      >
+      <Text fontWeight={600} color={props.inRange ? "#00EE98" : "#DD3A44"}>
         {props.inRange ? "Earning Fees" : "Not Earning Fees"}
       </Text>
     </Flex>

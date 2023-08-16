@@ -26,7 +26,7 @@ const CollectFeeAsWETH = () => {
       borderTop={"1px solid #313442"}
       pt={"12px"}
     >
-      <Text>Collect as WETH</Text>
+      <Text fontSize={15}>Collect as WETH</Text>
       <Switch
         size={"lg"}
         className="switch_info"
@@ -84,13 +84,13 @@ export default function UnclaimedEarnings() {
       px="20px"
       borderRadius={"12px"}
       // alignItems={"space-between"}
-      rowGap={"14px"}
+      rowGap={"8px"}
       flexDir={"column"}
     >
       <Flex justifyContent={"space-between"}>
         {hasTokenPrice ? (
           <Flex alignItems={"left"} flexDir={"column"}>
-            <Text>Unclaimed fees</Text>
+            <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
               {`$${totalMarketPrice}`}
             </Text>
@@ -131,6 +131,9 @@ export default function UnclaimedEarnings() {
             onClick={onOpenClaimEarning}
             isDisabled={btnIsDisabled}
             _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
+            fontSize={14}
+            w={"76px"}
+            h={"35px"}
           >
             Claim
           </Button>
