@@ -35,7 +35,8 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit, invertPrice } = useV3MintInfo();
+  const { pricesAtTicks, ticksAtLimit, invertPrice, invalidRange } =
+    useV3MintInfo();
 
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
@@ -48,6 +49,7 @@ export default function RangeInput(props: RangeInputProps) {
   const [useLocalValue, setUseLocalValue] = useState<boolean>(false);
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [componentFocused, setComponentFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
@@ -59,8 +61,6 @@ export default function RangeInput(props: RangeInputProps) {
   const lastFocused = useRecoilValue(lastFocusedInput);
 
   const handleBlur = useCallback(() => {
-    console.log(lastFocused);
-
     //for pool's price and amount on liquidity
     if (lastFocused === "LeftInput" && selectedOutToken && amountForToken1) {
       const formattedAmount = ethers.utils.formatUnits(
@@ -185,8 +185,6 @@ export default function RangeInput(props: RangeInputProps) {
   //   }
   // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
 
-  // console.log(isFocused ? valueInThisInput : inputValue);
-
   return (
     <Flex flexDir={"column"}>
       <Flex
@@ -199,6 +197,11 @@ export default function RangeInput(props: RangeInputProps) {
         pb={"13px"}
         alignItems={"center"}
         flexDir={"column"}
+        borderWidth={"1px"}
+        borderColor={invalidRange ? "#DD3A44" : "#1F2128"}
+        _hover={{
+          borderColor: invalidRange ? "#DD3A44" : "#007AFF",
+        }}
       >
         <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
           {isMinPrice ? "Min price" : "Max price"}
@@ -207,7 +210,8 @@ export default function RangeInput(props: RangeInputProps) {
           <Flex
             w={"32px"}
             h={"32px"}
-            border={"1px solid #313442"}
+            borderWidth={"1px"}
+            borderColor={"#313442"}
             borderRadius={"8px"}
             bgColor={"#15161D"}
             justifyContent={"center"}
