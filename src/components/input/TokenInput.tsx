@@ -10,6 +10,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
@@ -39,6 +40,7 @@ export default function TokenInput(props: {
   } = useInOutTokens();
   const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [, setLastFocused] = useRecoilState(lastFocusedInput);
 
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
 
@@ -167,6 +169,8 @@ export default function TokenInput(props: {
     setIsFocused(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
+      setLastFocused(inToken ? "LeftInput" : "RightInput");
+
       if (inToken && selectedOutToken && amountForToken1) {
         const formattedAmount = ethers.utils.formatUnits(
           amountForToken1.toString().replaceAll("-", ""),
@@ -293,6 +297,7 @@ export default function TokenInput(props: {
     >
       <Flex>
         <Input
+          id={inToken ? "LeftInput" : "RightInput"}
           w={"100%"}
           h={"27px"}
           m={0}

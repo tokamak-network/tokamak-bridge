@@ -6,10 +6,11 @@ import { useEffect, useMemo, useState } from "react";
 
 import Image from "next/image";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   atMaxTick,
   atMinTick,
+  lastFocusedInput,
   maxPrice,
   maxPriceForAddModal,
   minPrice,
@@ -55,10 +56,13 @@ export default function RangeInput(props: RangeInputProps) {
     selectedOutTokenStatus
   );
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
+  const lastFocused = useRecoilValue(lastFocusedInput);
 
   const handleBlur = useCallback(() => {
+    console.log(lastFocused);
+
     //for pool's price and amount on liquidity
-    if (selectedOutToken && amountForToken1) {
+    if (lastFocused === "LeftInput" && selectedOutToken && amountForToken1) {
       const formattedAmount = ethers.utils.formatUnits(
         amountForToken1.toString().replaceAll("-", ""),
         selectedOutToken.decimals
@@ -69,13 +73,13 @@ export default function RangeInput(props: RangeInputProps) {
         selectedOutToken.decimals
       );
 
-      setSelectedOutToken({
+      return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
         parsedAmount: formattedAmount.toString(),
       });
     }
-    if (selectedInToken && amountForToken0) {
+    if (lastFocused === "RightInput" && selectedInToken && amountForToken0) {
       const formattedAmount = ethers.utils.formatUnits(
         amountForToken0.toString().replaceAll("-", ""),
         selectedInToken.decimals
@@ -92,7 +96,13 @@ export default function RangeInput(props: RangeInputProps) {
         parsedAmount: formattedAmount.toString(),
       });
     }
-  }, [selectedInToken, selectedOutToken, amountForToken0, amountForToken1]);
+  }, [
+    selectedInToken,
+    selectedOutToken,
+    amountForToken0,
+    amountForToken1,
+    lastFocused,
+  ]);
 
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,7 +113,6 @@ export default function RangeInput(props: RangeInputProps) {
 
       setLocalValue(inputValue);
       // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
-      handleBlur();
     },
     [isMinPrice]
   );
@@ -150,6 +159,7 @@ export default function RangeInput(props: RangeInputProps) {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
         setLocalValue(value);
+        handleBlur();
       }, 0);
     }
   }, [localValue, useLocalValue, value]);

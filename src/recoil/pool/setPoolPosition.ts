@@ -91,3 +91,8 @@ export const currentPrice = selector<string | undefined>({
     return undefined;
   },
 });
+
+export const lastFocusedInput = atom<"LeftInput" | "RightInput" | undefined>({
+  key: "lastFocusedInput",
+  default: undefined,
+});
