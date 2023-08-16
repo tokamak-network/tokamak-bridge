@@ -1,6 +1,7 @@
 import { extendTheme } from "@chakra-ui/theme-utils";
 import "@fontsource/poppins";
 import "@fontsource/quicksand";
+import "@fontsource/quicksand/700.css";
 
 const fonts = {
   Poppins: "Poppins",
