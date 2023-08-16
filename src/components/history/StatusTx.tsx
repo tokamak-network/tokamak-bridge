@@ -37,7 +37,6 @@ export default function StatusTx(props: {
   });  
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
 
-  console.log(tx);
   
   const getCalendarEvent = useMemo(()=> {
     if (timeStamp) {

@@ -34,6 +34,8 @@ export default function WithdrawTx(props: { tx: any, messenger:any }) {
   const { claim } = useCallClaim();
   const zero_address = "0x0000000000000000000000000000000000000000";
   
+  console.log('tx',tx);
+  
   const getTokenData = useCallback(async () => {
     if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
       let token0Symbol, token0Name, token0Decimals;

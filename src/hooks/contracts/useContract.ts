@@ -21,10 +21,15 @@ export default function useContract() {
   const SWAPPER_V2_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.SwapperV2Proxy
     : GOERLI_CONTRACTS.SwapperV2Proxy;
+
+  const L1MESSENGER_CONTRACT = isConnectedToMainNetwork
+    ? MAINNET_CONTRACTS.L1Messenger
+    : GOERLI_CONTRACTS.L1Messenger;
   return {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
     SWAPPER_V2_CONTRACT,
+    L1MESSENGER_CONTRACT
   };
 }

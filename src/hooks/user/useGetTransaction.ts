@@ -19,7 +19,7 @@ export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<any[]>([]);
   const [crossMessenger, setCrossMessenger] = useState<any>();
   const { provider } = useProvier();
-  const { L1BRIDGE_CONTRACT } = useContract();
+  const { L2BRIDGE_CONTRACT } = useContract();
   const { address } = useAccount();
   const { layer, connectedChainId } = useConnectedNetwork();
   const { chain } = useNetwork();
@@ -39,22 +39,20 @@ export default function useGetTransaction() {
       l2Pro !== undefined
     ) {
       const l2Bridge = new ethers.Contract(
-        TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
+        L2BRIDGE_CONTRACT,
         L2BridgeAbi,
         l2ProSDK
       );
       const crossChainMessenger = new titanSDK.CrossChainMessenger({
         l1ChainId: providers.l1ChainID,
         l2ChainId: providers.l2ChainID,
-        l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
+        l1SignerOrProvider: layer === "L1" ? l1Pro.getSigner(address): new ethers.providers.JsonRpcProvider(
           process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
         ).getSigner(address),
         l2SignerOrProvider: l2Pro.getSigner(address),
       });
-
+      setCrossMessenger(crossChainMessenger);
       const userAllTransactions = await fetchUserTransactions(address);
-
-      console.log("userAllTransactions", userAllTransactions);
 
       const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
         "DepositFinalized"
@@ -72,66 +70,23 @@ export default function useGetTransaction() {
               tx.transactionHash
             );
 
-
-            const receipt = await crossChainMessenger.getMessageReceipt(
+            const currentStatus = await crossChainMessenger.getMessageStatus(
               resolved
             );
-            //
             const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
 
-/// if the receipt is not null, then the message is relayed
 
-            if (
-              l2TxReceipt.blockNumber !== undefined &&
-              receipt != null &&
-              receipt.transactionReceipt != null
-            ) {
-              const matchTx = receipt.transactionReceipt.transactionHash;
-              const l1tx =
-                userAllTransactions.formattedL1WithdrawResults.filter(
-                  (tx: any) => {
-                    return tx.transactionHash === matchTx;
-                  }
-                )[0];
-              const messageTxIndex = l2TxReceipt.blockNumber - 1;
+            // const receipt = await crossChainMessenger.getMessageReceipt(
+            //   resolved
+            // );
 
-              const stateBatchAppendedEvent =
-                await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
-                  messageTxIndex
-                );
+            console.log('currentStatus',currentStatus);
+            
 
-              const bn = stateBatchAppendedEvent.blockNumber;
+// if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup). 
+//if status is 4, rollup is finish and tx ready for challenge period
 
-              const block = await l1Pro.getBlock(bn);
-
-              const challengePeriod =
-                await crossChainMessenger.getChallengePeriodSeconds();
-              const timeReadyForRelay = block.timestamp + challengePeriod;
-              const currentStatus = await crossChainMessenger.getMessageStatus(
-                resolved
-              );
-
-              console.log("currentStatus", currentStatus);
-
-              let copy = {
-                ...tx,
-                ...l1tx,
-                l2TxReceipt: l2TxReceipt,
-                l2timeStamp: tx.blockTimestamp,
-                l1timeStamp: l1tx.blockTimestamp,
-                l1Block: l1tx.blockNumber,
-                l2txHash: tx.transactionHash,
-                l1txHash: l1tx.transactionHash,
-                event: "withdraw",
-                _amount: l1tx._amount,
-                _l1Token: l1tx._l1Token,
-                _l2Token: l1tx._l2Token,
-                timeReadyForRelay: timeReadyForRelay,
-                currentStatus: currentStatus,
-                // timeReadyForRelay:1692685734
-              };
-              return copy;
-            } else if (receipt === null) {
+            if (( currentStatus === 2 || currentStatus === 3 ) && l2TxReceipt !== undefined ) {
               const messageTxReceipt = await l2Pro.getTransactionReceipt(
                 resolved.transactionHash
               );
@@ -147,14 +102,8 @@ export default function useGetTransaction() {
                 ["address"],
                 messageTxReceipt.logs[3].topics[2]
               )[0];
-
-              const currentStatus = await crossChainMessenger.getMessageStatus(
-                resolved
-              );
-
-              console.log('currentStatus',currentStatus);
-              
               const amnt = BigInt(logs[1]).toString();
+
               let copy = {
                 ...tx,
                 event: "withdraw",
@@ -164,12 +113,163 @@ export default function useGetTransaction() {
                 _l2Token: l2Token,
                 _amount: amnt,
                 l2TxReceipt: l2TxReceipt,
-                currentStatus:currentStatus
+                currentStatus: currentStatus,
+                resolved:resolved
               };
               return copy;
+
             }
+            
+
+            // if current status is 4, then tx is in challenge period 
+            else if (currentStatus  === 4 && l2TxReceipt.blockNumber !== undefined )   { 
+              const messageTxIndex = l2TxReceipt.blockNumber - 1;
+
+              const stateBatchAppendedEvent =
+                await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
+                  messageTxIndex
+                );
+
+                const bn = stateBatchAppendedEvent.blockNumber;
+
+                const block = await l1Pro.getBlock(bn);
+  
+                const challengePeriod =
+                  await crossChainMessenger.getChallengePeriodSeconds();
+                const timeReadyForRelay = block.timestamp + challengePeriod;
+                console.log('timeReadyForRelay',timeReadyForRelay);
+                
+                
+            }
+
+            else  { 
+
+            }
+            //
+            
+
+            /// if the receipt is not null, then the message is relayed
+
+            // if (
+
+            //   l2TxReceipt.blockNumber !== undefined &&
+            //   receipt != null &&
+            //   receipt.transactionReceipt != null
+            // ) {
+            //   const matchTx = receipt.transactionReceipt.transactionHash;
+            //   const l1tx =
+            //     userAllTransactions.formattedL1WithdrawResults.filter(
+            //       (tx: any) => {
+            //         return tx.transactionHash === matchTx;
+            //       }
+            //     )[0];
+            //   const messageTxIndex = l2TxReceipt.blockNumber - 1;
+
+            //   const stateBatchAppendedEvent =
+            //     await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
+            //       messageTxIndex
+            //     );
+
+            //   const bn = stateBatchAppendedEvent.blockNumber;
+
+            //   const block = await l1Pro.getBlock(bn);
+
+            //   const challengePeriod =
+            //     await crossChainMessenger.getChallengePeriodSeconds();
+            //   const timeReadyForRelay = block.timestamp + challengePeriod;
+            //   const currentStatus = await crossChainMessenger.getMessageStatus(
+            //     resolved
+            //   );
+
+            //   console.log("currentStatus", currentStatus);
+
+            //   let copy = {
+            //     ...tx,
+            //     ...l1tx,
+            //     l2TxReceipt: l2TxReceipt,
+            //     l2timeStamp: tx.blockTimestamp,
+            //     l1timeStamp: l1tx.blockTimestamp,
+            //     l1Block: l1tx.blockNumber,
+            //     l2txHash: tx.transactionHash,
+            //     l1txHash: l1tx.transactionHash,
+            //     event: "withdraw",
+            //     _amount: l1tx._amount,
+            //     _l1Token: l1tx._l1Token,
+            //     _l2Token: l1tx._l2Token,
+            //     timeReadyForRelay: timeReadyForRelay,
+            //     currentStatus: currentStatus,
+            //     resolved:resolved
+            //     // timeReadyForRelay:1692685734
+            //   };
+            //   return copy;
+            // } else if (receipt === null) {
+            //   const messageTxReceipt = await l2Pro.getTransactionReceipt(
+            //     resolved.transactionHash
+            //   );
+            //   const logs = await ethers.utils.defaultAbiCoder.decode(
+            //     ["address", "uint256", "bytes"],
+            //     messageTxReceipt.logs[3].data
+            //   );
+            //   const l1Token = ethers.utils.defaultAbiCoder.decode(
+            //     ["address"],
+            //     messageTxReceipt.logs[3].topics[1]
+            //   )[0];
+            //   const l2Token = ethers.utils.defaultAbiCoder.decode(
+            //     ["address"],
+            //     messageTxReceipt.logs[3].topics[2]
+            //   )[0];
+
+            //   const currentStatus = await crossChainMessenger.getMessageStatus(
+            //     resolved
+            //   );
+
+            //   console.log("currentStatus", currentStatus);
+            //   if (l2TxReceipt.blockNumber) {
+            //     const messageTxIndex = l2TxReceipt.blockNumber - 1;
+            //     console.log("messageTxIndex", messageTxIndex);
+
+            //     if (currentStatus> 2) {
+            //       const stateBatchAppendedEvent =
+            //       await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
+            //         messageTxIndex
+            //       );
+
+            //     console.log("stateBatchAppendedEvent", stateBatchAppendedEvent);
+
+            //     const bn = stateBatchAppendedEvent.blockNumber;
+
+            //     const block = await l1Pro.getBlock(bn);
+            //     console.log("block", block);
+
+            //     const challengePeriod =
+            //       await crossChainMessenger.getChallengePeriodSeconds();
+            //     console.log("challengePeriod", challengePeriod);
+
+            //     const timeReadyForRelay = block.timestamp + challengePeriod;
+            //     console.log("timeReadyForRelay", timeReadyForRelay);
+            //   }
+            //     }
+                
+
+            //   const amnt = BigInt(logs[1]).toString();
+            //   let copy = {
+            //     ...tx,
+            //     event: "withdraw",
+            //     l2timeStamp: tx.blockTimestamp,
+            //     l2txHash: tx.transactionHash,
+            //     _l1Token: l1Token,
+            //     _l2Token: l2Token,
+            //     _amount: amnt,
+            //     l2TxReceipt: l2TxReceipt,
+            //     currentStatus: currentStatus,
+            //     resolved:resolved
+            //   };
+            //   return copy;
+            // }
           })
         );
+
+        console.log("l2WithdrawTxs", l2WithdrawTxs);
 
         const l2DepTxs = await Promise.all(
           userL2Transactions
@@ -240,7 +340,7 @@ export default function useGetTransaction() {
                 .concat(txLogs)
                 .sort(
                   (tx1: any, tx2: any) =>
-                    Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+                    Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
                 )
             : l2WithdrawTxs
                 .concat(txLogs)
@@ -248,14 +348,17 @@ export default function useGetTransaction() {
                   (tx1: any, tx2: any) =>
                     Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
                 );
-        setTDataDeposit(allTxs);        
-        setCrossMessenger(crossChainMessenger);
+        setTDataDeposit(allTxs);
+        console.log("crossChainMessenger", crossChainMessenger);
+
+        
       }
     }
   }, [address, layer, connectedChainId]);
 
   useEffect(() => {
     fetchTransactions();
+    console.log("dsdsdsdsdsdqwedaㄴㅇㄴㄹㅇ", crossMessenger);
   }, [address, layer, connectedChainId]);
   return { depositTxs: tDataDeposit, crossChainMessenger: crossMessenger };
 }
