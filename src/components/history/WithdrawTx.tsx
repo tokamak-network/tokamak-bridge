@@ -31,7 +31,7 @@ export default function WithdrawTx(props: { tx: any}) {
   const { chain } = useNetwork();
   const { layer, chainName } = useConnectedNetwork();
   const providers = useGetTxLayers();
-  const { claim } = useCallClaim();
+  const { claim } = useCallClaim('relayMessage');
   const zero_address = "0x0000000000000000000000000000000000000000";
   
   // console.log('tx',tx);
@@ -124,7 +124,7 @@ export default function WithdrawTx(props: { tx: any}) {
           h="24px"
           bg="#323442"
           fontSize={"12px"}
-          isDisabled={tx.currentStatus ===6 }
+          isDisabled={tx.currentStatus !== 5 }
           _hover={{}}
           _focus={{}}
           _active={{}}

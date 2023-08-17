@@ -7,6 +7,7 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
+import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
 
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
@@ -15,15 +16,14 @@ import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
-
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
-
-  return { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI };
+  const L1CrossDomainMessengerI = new ethers.utils.Interface(L1CrossDomainMessengerAbi)
+  return { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI,L1CrossDomainMessengerI };
 };
 
 // const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
@@ -172,7 +172,7 @@ export function useTx(params: {
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
-      const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
+      const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI,L1CrossDomainMessengerI } =
         getInterface();
       setModalOpen("confirmed");
       switch (txSort) {
@@ -368,6 +368,30 @@ export function useTx(params: {
               isToasted: false,
             },
           });
+
+          case "Claim": {
+            const result = L1CrossDomainMessengerI.parseLog((logs[logs.length-1]))
+            const {args} = result;
+            console.log('args',args);
+            
+            return setTxData ({
+              ...txData,
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: args.value.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            })
+          }
+         
         default:
           break;
       }

@@ -44,7 +44,7 @@ export default function ConfirmWithdraw() {
 
   const tx = withdraw.modalData?.tx;
 
-  const { claim } = useCallClaim();
+  const { claim } = useCallClaim('relayMessage');
   const check = (progress: string) => {
     switch (progress) {
       case "inProgress":
@@ -402,6 +402,8 @@ export default function ConfirmWithdraw() {
       </Flex>
     );
   };
+
+
   return (
     <Modal isOpen={withdraw.isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
@@ -453,6 +455,7 @@ export default function ConfirmWithdraw() {
             h="48px"
             _active={{}}
             _hover={{}}
+            // isDisabled={tx.currentStatus !== 5}
             _disabled={{ color: "#8E8E92", bg: "#17181D" }}
             bg="#007AFF"
             onClick={() => {

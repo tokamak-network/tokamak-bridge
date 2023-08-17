@@ -6,8 +6,15 @@ type UniswapTxSort =
 type BridgeTxSort = "Deposit" | "Withdraw";
 type SwapperTxSort = "Wrap" | "Unwrap";
 type EtcTxSort = "Approve";
+type UserHistorySort = "Claim";
 
-export type TxSort = UniswapTxSort | BridgeTxSort | SwapperTxSort | EtcTxSort;
+export type TxSort =
+  | UniswapTxSort
+  | BridgeTxSort
+  | SwapperTxSort
+  | EtcTxSort
+  | UserHistorySort
+
 export type TokenTxData = {
   tokenAddress: string;
   amount: BigInt;
