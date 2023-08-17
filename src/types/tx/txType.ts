@@ -1,5 +1,6 @@
 type UniswapTxSort =
   | "Add Liquidity"
+  | "Increase Liquidity"
   | "Remove Liquidity"
   | "Swap"
   | "Collect Fee";

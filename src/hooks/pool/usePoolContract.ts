@@ -14,7 +14,7 @@ import {
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useContract from "@/hooks/contracts/useContract";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
@@ -37,6 +37,7 @@ import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useGetMarketPrice } from "../price/useGetMarketPrice";
+import { useTx } from "../tx/useTx";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -51,6 +52,9 @@ export function usePoolMint() {
   const { invertAmount } = useGetAmountForLiquidity();
 
   const { sendTransaction } = useSendTransaction();
+  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+
+  const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -153,7 +157,7 @@ export function usePoolMint() {
               ? [calldata, refundETHData]
               : [calldata];
 
-          return estimateGas
+          const tx = estimateGas
             ? await NonfungiblePositionManagerContract.estimateGas.multicall(
                 multicallParam,
                 {
@@ -178,8 +182,7 @@ export function usePoolMint() {
                   from: address,
                 }
               );
-
-          // sendTransaction(tx);
+          setTxHash(tx.hash);
 
           // build transaction
           // const transaction = {
@@ -215,6 +218,8 @@ export function usePoolMint() {
     if (provider && feeData && ethPrice) {
       const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
       const estimatedGasUsage = await mintPosition(true);
+      if (estimatedGasUsage === undefined) return undefined;
+
       const totalGasCost =
         Number(gasPrice) * Number(estimatedGasUsage.toString());
       const parsedTotalGasCost = ethers.utils.formatUnits(
@@ -227,7 +232,7 @@ export function usePoolMint() {
 
       return totalGasCostUSD;
     }
-  }, [provider, feeData, ethPrice]);
+  }, [provider, feeData, ethPrice, mintPosition]);
 
   return { mintPosition, estimateGasToMint };
 }

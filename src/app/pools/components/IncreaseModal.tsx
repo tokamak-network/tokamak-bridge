@@ -15,24 +15,25 @@ import PriceRange from "../[info]/components/PriceRange";
 import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";
 import { useEffect, useState } from "react";
 import commafy from "@/utils/trim/commafy";
+import useBlockNum from "@/hooks/network/useBlockNumber";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
   const { addLiquidity } = usePoolContract();
   const { mintPosition, estimateGasToMint } = usePoolMint();
   const [gas, setGas] = useState<number | undefined>(undefined);
+  const { blockNumber } = useBlockNum();
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   useEffect(() => {
     const fetchData = async () => {
-      const gas = await estimateGasToMint();
-      console.log("gas");
-      console.log(gas);
-      setGas(gas);
+      if (gas !== undefined) return;
+      const gasData = await estimateGasToMint();
+      setGas(gasData);
     };
-    if (gas === undefined) {
-      fetchData();
-    }
-  }, [gas]);
+    fetchData();
+  }, [gas, estimateGasToMint, blockNumber]);
 
   return (
     <Modal
@@ -84,9 +85,13 @@ export default function IncreaseModal() {
             _hover={{}}
             _active={{}}
             _disabled={{}}
-            onClick={() =>
-              poolModal === "addLiquidity" ? mintPosition() : addLiquidity()
-            }
+            onClick={() => {
+              setModalOpen("confirming");
+              setIsOpen(true);
+              onClosePreviewModal();
+              setGas(undefined);
+              poolModal === "addLiquidity" ? mintPosition() : addLiquidity();
+            }}
           >
             {poolModal === "addLiquidity" ? "Add" : "Increase"}
           </Button>

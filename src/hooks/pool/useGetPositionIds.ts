@@ -279,7 +279,7 @@ export function useGetPositions() {
     const fetchPositionIds = async () => {
       const result = await Promise.all([
         callPositionIds(),
-        callPositionIds(true),
+        // callPositionIds(true),
       ]);
 
       if (result[0] && result[1]) {
