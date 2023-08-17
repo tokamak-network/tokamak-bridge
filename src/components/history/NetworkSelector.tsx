@@ -32,6 +32,8 @@ type SelectOption = {
 };
 
 const customStyles = (maxHeight: string) => {
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+
   return {
     control: (styles: any) => ({
       ...styles,
@@ -48,8 +50,8 @@ const customStyles = (maxHeight: string) => {
       margin: "0px",
       marginTop: "4px",
       background: "#1F2128",
-      minWidth: "136px !important",
-      maxWidth: "136px !important",
+      minWidth: isConnectedToMainNetwork?  "136px !important": "156px !important",
+      maxWidth: isConnectedToMainNetwork?  "136px !important": "156px !important",
       borderRadius: "6px",
       position: "absolute",
       border: "1px solid #313442",

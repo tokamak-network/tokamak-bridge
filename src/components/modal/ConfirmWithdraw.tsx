@@ -40,10 +40,10 @@ import useCallClaim from "@/hooks/user/actions/useCallClaim";
 
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw)
+  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
 
   const tx = withdraw.modalData?.tx;
-  
+
   const { claim } = useCallClaim();
   const check = (progress: string) => {
     switch (progress) {
@@ -183,7 +183,7 @@ export default function ConfirmWithdraw() {
     useEffect(() => {
       if (props.timeStamp) {
         const intervalID = setInterval(() => {
-          const nowTime = getUnixTime(new Date());          
+          const nowTime = getUnixTime(new Date());
           if (nowTime > props.timeStamp) {
             setDuration({
               days: 0,
@@ -280,9 +280,8 @@ export default function ConfirmWithdraw() {
   };
 
   const TimelineComponent = (props: { tx: any }) => {
+    console.log("props.tx.", props.tx);
 
-    console.log('Number(tx.timeReadyForRelay)',Number(tx.timeReadyForRelay));
-    
     const nowTime = getUnixTime(new Date());
     return (
       <Flex
@@ -296,30 +295,50 @@ export default function ConfirmWithdraw() {
       >
         <Step1 progress="done" />
         <Dots progress="done" />
-        <Step2 progress={props.tx.l1timeStamp ? "done" : "inProgress"} />
-        <Dots progress={
-            !props.tx.l1timeStamp
-              ? "todo"
-              : nowTime > Number(tx.timeReadyForRelay)
+        <Step2
+          progress={
+            props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
               ? "done"
-              : "inProgress"
-          } />
+              : "todo"
+          }
+        />
+        <Dots
+          progress={
+            props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          }
+        />
         <Step3
           progress={
-            !props.tx.l1timeStamp
-              ? "todo"
-              : nowTime > Number(tx.timeReadyForRelay)
-              ? "done"
-              : "inProgress"
+            props.tx.currentStatus === 4
+            ? "inProgress"
+            : props.tx.currentStatus > 4
+            ? "done"
+            : "todo"
           }
           timeStamp={Number(tx.timeReadyForRelay)}
         />
-        <Dots  progress={ isNaN(Number(tx.timeReadyForRelay))?'todo' :
-            nowTime < Number(tx.timeReadyForRelay) ? "inProgress" : 'done'
-          } />
+        <Dots
+          progress={
+            props.tx.currentStatus === 4
+            ? "inProgress"
+            : props.tx.currentStatus > 4
+            ? "done"
+            : "todo"
+          }
+        />
         <Step4
-          progress={isNaN(Number(tx.timeReadyForRelay))?'todo' :
-            nowTime < Number(tx.timeReadyForRelay) ? "inProgress" :'done'
+          progress={
+            props.tx.currentStatus === 5
+            ? "inProgress"
+            : props.tx.currentStatus > 4
+            ? "done"
+            : "todo"
           }
         />
       </Flex>

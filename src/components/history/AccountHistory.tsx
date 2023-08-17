@@ -35,6 +35,7 @@ import ActivityContainer from "./ActivityContainer";
 import BalanceContainer from "./BalanceContainer";
 import NetworkSelector from "./NetworkSelector";
 import ICON_SEARCH from "assets/icons/searchGray.svg";
+import { searchTxStatus } from "@/recoil/userHistory/searchTx";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -50,7 +51,6 @@ export default function AccountHistory() {
   const toast = useToast();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [tab, setTab] = useState("Activity");
-
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
     chainId: 0,
     chainName: undefined,
@@ -108,7 +108,7 @@ export default function AccountHistory() {
   }) => {
     const { setTab, tab } = props;
     return (
-      <Flex columnGap={"24px"} mt='16px' mb='8px'>
+      <Flex columnGap={"24px"} mt="16px" mb="8px">
         <Text
           cursor={"pointer"}
           color={tab === "Balance" ? "#fff" : "#5E626D"}
@@ -235,6 +235,17 @@ export default function AccountHistory() {
   };
 
   const SearchComponent = () => {
+    const [searchTxString, setSearchTxString] = useRecoilState(searchTxStatus);
+
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      const value = e.target.value;
+
+      if (value === "") {
+        return setSearchTxString(null);
+      } else {
+        return setSearchTxString({id:value});
+      }
+    };
     return (
       <Flex
         ml="8px"
@@ -243,21 +254,22 @@ export default function AccountHistory() {
         bgColor={"#15161D"}
         borderRadius={"6px"}
       >
-        <InputGroup >
+        <InputGroup>
           <Input
-         pl='20px'
+            pl="20px"
             _active={{}}
             _hover={{}}
             _focus={{ boxShadow: "none !important" }}
             border={"none"}
             fontSize={14}
             fontWeight={500}
+            onChange={onChange}
             placeholder={
               tab === "Balance" ? "Token contract address" : "Transaction ID"
             }
             _placeholder={{ color: "#8E8E92" }}
           ></Input>
-          <InputRightElement mr={'6px'}>
+          <InputRightElement mr={"6px"}>
             <Flex height={"20px"} width={"20px"}>
               <Image src={ICON_SEARCH} alt="ICON_SEARCH" />
             </Flex>
@@ -271,8 +283,8 @@ export default function AccountHistory() {
       <DrawerOverlay className="modalOverlayDrawer" bg={"none"} />
       <DrawerContent
         pt="12px"
-        px='12px'
-        pb='0px'
+        px="12px"
+        pb="0px"
         minW={"360px"}
         maxW={"360px"}
         bgColor={"#1F2128"}
@@ -294,13 +306,13 @@ export default function AccountHistory() {
           <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
         </Flex>
         <AccountContainer />
-        <TabContainer setTab={setTab} tab={tab}  />
+        <TabContainer setTab={setTab} tab={tab} />
         <Flex>
           <NetworkSelector height="40px" setNetwork={setSelectedNetwork} />
           <SearchComponent />
         </Flex>
-        <Flex mt='12px'>
-         {tab === 'Balance'? <BalanceContainer/>:<ActivityContainer/>}
+        <Flex mt="12px">
+          {tab === "Balance" ? <BalanceContainer /> : <ActivityContainer />}
         </Flex>
       </DrawerContent>
     </Drawer>

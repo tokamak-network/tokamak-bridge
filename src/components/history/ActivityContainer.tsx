@@ -2,11 +2,15 @@ import { Flex, Text, Button } from "@chakra-ui/react";
 import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRecoilValue } from "recoil";
+import { searchTxStatus } from "@/recoil/userHistory/searchTx";
 
 export default function ActivityContainer() {
   const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
+    const searchTxString = useRecoilValue(searchTxStatus)
+    console.log('searchTxString',searchTxString);
     
   useEffect(() => {
     const updateNumData = () => {
@@ -17,7 +21,7 @@ export default function ActivityContainer() {
         setNumData(numTxs);
       }
     };
-
+  
     updateNumData();
 
     const handleResize = () => {
@@ -31,11 +35,20 @@ export default function ActivityContainer() {
     };
   }, []);
 
-  const getPaginatedData = () => {
+
+  const filteredTx = useMemo(() => {
+
+    return 'ggg'
+  },[tData.depositTxs, searchTxString])
+
+
+  console.log('usememo', filteredTx);
+  
+  const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return tData.depositTxs.slice(startIndex, endIndex);
-  };
+  }, [tData.depositTxs]) 
   
 
   return (
@@ -79,15 +92,15 @@ export default function ActivityContainer() {
         rowGap={"8px"}
         h={"calc(100vh - 356px)"}
       >
-        {getPaginatedData().length !== 0 &&
-          getPaginatedData().map((tx: any) => {
+        {getPaginatedData.length !== 0 &&
+          getPaginatedData.map((tx: any) => {
             if (
               tx.event === "deposit"
             ) {
               return <DepositTx tx={tx}  key={tx.transactionHash}/>;
             } 
             else {
-              return <WithdrawTx tx={tx} key={tx.transactionHash} messenger={tData.crossChainMessenger}/>;
+              return <WithdrawTx tx={tx} key={tx.transactionHash} />;
             }
           })}
       </Flex>

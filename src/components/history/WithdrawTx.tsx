@@ -24,8 +24,8 @@ type TokenData = {
   token0Decimals: number;
   token1Decimals: number;
 };
-export default function WithdrawTx(props: { tx: any, messenger:any }) {
-  const { tx,messenger } = props;
+export default function WithdrawTx(props: { tx: any}) {
+  const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();
   const { chain } = useNetwork();
@@ -34,7 +34,7 @@ export default function WithdrawTx(props: { tx: any, messenger:any }) {
   const { claim } = useCallClaim();
   const zero_address = "0x0000000000000000000000000000000000000000";
   
-  console.log('tx',tx);
+  // console.log('tx',tx);
   
   const getTokenData = useCallback(async () => {
     if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
