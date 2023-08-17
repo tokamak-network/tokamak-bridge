@@ -26,7 +26,7 @@ export default function useGetTransaction() {
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const { crossMessenger } = useCrosschainMessenger();
-
+  const [loadingState, setLoadingState] = useState("absent");
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
@@ -46,6 +46,15 @@ export default function useGetTransaction() {
       );
 
       const userAllTransactions = await fetchUserTransactions(address);
+
+      const alltx = [
+        ...userAllTransactions?.formattedL1DepositResults,
+        ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
+        ...userAllTransactions?.formattedWithdraw,
+      ];
+      console.log("alltx", alltx);
+
+      setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
       const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
         "DepositFinalized"
@@ -67,11 +76,6 @@ export default function useGetTransaction() {
               resolved
             );
             const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
-
-            // const receipt = await crossChainMessenger.getMessageReceipt(
-            //   resolved
-            // );
-
             console.log("currentStatus", currentStatus);
 
             // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
@@ -167,9 +171,7 @@ export default function useGetTransaction() {
               };
               return copy;
             } else {
-              const receipt = await crossMessenger.getMessageReceipt(
-                resolved
-              );
+              const receipt = await crossMessenger.getMessageReceipt(resolved);
               if (
                 l2TxReceipt.blockNumber !== undefined &&
                 receipt != null &&
@@ -234,129 +236,8 @@ export default function useGetTransaction() {
                 return copy;
               }
             }
-            //
-
-            /// if the receipt is not null, then the message is relayed
-
-            // if (
-
-            //   l2TxReceipt.blockNumber !== undefined &&
-            //   receipt != null &&
-            //   receipt.transactionReceipt != null
-            // ) {
-            //   const matchTx = receipt.transactionReceipt.transactionHash;
-            //   const l1tx =
-            //     userAllTransactions.formattedL1WithdrawResults.filter(
-            //       (tx: any) => {
-            //         return tx.transactionHash === matchTx;
-            //       }
-            //     )[0];
-            //   const messageTxIndex = l2TxReceipt.blockNumber - 1;
-
-            //   const stateBatchAppendedEvent =
-            //     await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
-            //       messageTxIndex
-            //     );
-
-            //   const bn = stateBatchAppendedEvent.blockNumber;
-
-            //   const block = await l1Pro.getBlock(bn);
-
-            //   const challengePeriod =
-            //     await crossChainMessenger.getChallengePeriodSeconds();
-            //   const timeReadyForRelay = block.timestamp + challengePeriod;
-            //   const currentStatus = await crossChainMessenger.getMessageStatus(
-            //     resolved
-            //   );
-
-            //   console.log("currentStatus", currentStatus);
-
-            //   let copy = {
-            //     ...tx,
-            //     ...l1tx,
-            //     l2TxReceipt: l2TxReceipt,
-            //     l2timeStamp: tx.blockTimestamp,
-            //     l1timeStamp: l1tx.blockTimestamp,
-            //     l1Block: l1tx.blockNumber,
-            //     l2txHash: tx.transactionHash,
-            //     l1txHash: l1tx.transactionHash,
-            //     event: "withdraw",
-            //     _amount: l1tx._amount,
-            //     _l1Token: l1tx._l1Token,
-            //     _l2Token: l1tx._l2Token,
-            //     timeReadyForRelay: timeReadyForRelay,
-            //     currentStatus: currentStatus,
-            //     resolved:resolved
-            //     // timeReadyForRelay:1692685734
-            //   };
-            //   return copy;
-            // } else if (receipt === null) {
-            //   const messageTxReceipt = await l2Pro.getTransactionReceipt(
-            //     resolved.transactionHash
-            //   );
-            //   const logs = await ethers.utils.defaultAbiCoder.decode(
-            //     ["address", "uint256", "bytes"],
-            //     messageTxReceipt.logs[3].data
-            //   );
-            //   const l1Token = ethers.utils.defaultAbiCoder.decode(
-            //     ["address"],
-            //     messageTxReceipt.logs[3].topics[1]
-            //   )[0];
-            //   const l2Token = ethers.utils.defaultAbiCoder.decode(
-            //     ["address"],
-            //     messageTxReceipt.logs[3].topics[2]
-            //   )[0];
-
-            //   const currentStatus = await crossChainMessenger.getMessageStatus(
-            //     resolved
-            //   );
-
-            //   console.log("currentStatus", currentStatus);
-            //   if (l2TxReceipt.blockNumber) {
-            //     const messageTxIndex = l2TxReceipt.blockNumber - 1;
-            //     console.log("messageTxIndex", messageTxIndex);
-
-            //     if (currentStatus> 2) {
-            //       const stateBatchAppendedEvent =
-            //       await crossChainMessenger.getStateBatchAppendedEventByTransactionIndex(
-            //         messageTxIndex
-            //       );
-
-            //     console.log("stateBatchAppendedEvent", stateBatchAppendedEvent);
-
-            //     const bn = stateBatchAppendedEvent.blockNumber;
-
-            //     const block = await l1Pro.getBlock(bn);
-            //     console.log("block", block);
-
-            //     const challengePeriod =
-            //       await crossChainMessenger.getChallengePeriodSeconds();
-            //     console.log("challengePeriod", challengePeriod);
-
-            //     const timeReadyForRelay = block.timestamp + challengePeriod;
-            //     console.log("timeReadyForRelay", timeReadyForRelay);
-            //   }
-            //     }
-
-            //   const amnt = BigInt(logs[1]).toString();
-            //   let copy = {
-            //     ...tx,
-            //     event: "withdraw",
-            //     l2timeStamp: tx.blockTimestamp,
-            //     l2txHash: tx.transactionHash,
-            //     _l1Token: l1Token,
-            //     _l2Token: l2Token,
-            //     _amount: amnt,
-            //     l2TxReceipt: l2TxReceipt,
-            //     currentStatus: currentStatus,
-            //     resolved:resolved
-            //   };
-            //   return copy;
-            // }
           })
         );
-
-        console.log("l2WithdrawTxs", l2WithdrawTxs);
 
         const l2DepTxs = await Promise.all(
           userL2Transactions
@@ -420,9 +301,6 @@ export default function useGetTransaction() {
           })
         );
 
-        console.log("l2DepTxs", l2DepTxs);
-        console.log("l1DepTxs", l1DepTxs);
-
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
         const allTxs =
           layer == "L1"
@@ -439,12 +317,19 @@ export default function useGetTransaction() {
                     Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
                 );
         setTDataDeposit(allTxs);
+        setLoadingState(
+          alltx.length === 0
+            ? "absent"
+            : allTxs.length > 0
+            ? "present"
+            : "loading"
+        );
       }
     }
-  }, [address, layer, connectedChainId,crossMessenger]);
+  }, [address, layer, connectedChainId, crossMessenger]);
 
   useEffect(() => {
     fetchTransactions();
-  }, [address, layer, connectedChainId,crossMessenger]);
-  return { depositTxs: tDataDeposit };
+  }, [address, layer, connectedChainId, crossMessenger]);
+  return { depositTxs: tDataDeposit, loadingState: loadingState };
 }

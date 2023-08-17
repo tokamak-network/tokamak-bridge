@@ -1,20 +1,20 @@
 import axios from "axios";
 
-const getEventName = (event: string) => {
-  switch (event) {
-    case "erc20DepositInitiateds":
-      return "ERC20DepositInitiated";
+// const getEventName = (event: string) => {
+//   switch (event) {
+//     case "erc20DepositInitiateds":
+//       return "ERC20DepositInitiated";
 
-    case "erc20WithdrawalFinalizeds":
-      return "ERC20WithdrawalFinalized";
+//     case "erc20WithdrawalFinalizeds":
+//       return "ERC20WithdrawalFinalized";
 
-    case "ethdepositInitiateds":
-      return "ETHDepositInitiated";
+//     case "ethdepositInitiateds":
+//       return "ETHDepositInitiated";
 
-    case "ethwithdrawalFinalizeds":
-      return "ETHWithdrawalFinalized";
-  }
-};
+//     case "ethwithdrawalFinalizeds":
+//       return "ETHWithdrawalFinalized";
+//   }
+// };
 
 const formatAddress = (address: string) => {
   const formattedAddress = address.substring(2);
