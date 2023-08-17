@@ -52,7 +52,7 @@ export default function ActivityContainer() {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return filteredTx.slice(startIndex, endIndex);
-  }, [filteredTx]);
+  }, [filteredTx,numData]);
 
   const txes = useMemo(() => {
     switch (tData.loadingState) {
@@ -79,7 +79,7 @@ export default function ActivityContainer() {
           </Flex>
         );
     }
-  }, [tData.loadingState]);
+  }, [tData.loadingState,getPaginatedData]);
   return (
     <Flex
       flexDir={"column"}
