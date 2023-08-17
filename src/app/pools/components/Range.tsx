@@ -8,12 +8,11 @@ import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
-import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
-import { useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
-const TokenPairTitle = () => {
+const TokenPairTitle = (props: { page: T_PoolModal }) => {
+  const { page } = props;
   const { inverted } = usePoolInfo();
   const { info } = usePositionInfo();
 
@@ -21,9 +20,20 @@ const TokenPairTitle = () => {
   const token0 = inverted ? info.token1 : info.token0;
   const token1 = inverted ? info.token0 : info.token1;
 
+  const isBigFont = page === "increaseLiquidity" || page === "removeLiquidity";
+
   return (
-    <Text fontWeight="bold" fontSize="23px">
-      {token1.symbol} / {token0.symbol}
+    <Text fontWeight="bold" fontSize={isBigFont ? "24px" : "23px"}>
+      {token1.symbol}{" "}
+      <span
+        style={{
+          fontSize: isBigFont ? 16 : 15,
+          verticalAlign: "middle",
+        }}
+      >
+        /
+      </span>{" "}
+      {token0.symbol}
     </Text>
   );
 };
@@ -67,21 +77,24 @@ export default function Range(props: {
     >
       <Flex justifyContent={"space-between"} w="100%" h="36px">
         <Flex alignItems={"center"}>
-          <TokenPairTitle />
+          <TokenPairTitle page={page} />
           <Flex bgColor={"#1F2128"} borderRadius={8} p={1} ml={2}>
             <Text fontSize={"12px"} as="b">
               {convertFeeToPercent(fee)}
             </Text>
           </Flex>
         </Flex>
-        <RangeText inRange={inRange} />
+        <RangeText inRange={inRange} style={{ fontSize: 14 }} />
       </Flex>
       <Flex justifyContent={"center"} w="100%">
         <TokenSymbolPair
           token0={token1}
           token1={token0}
-          //   symbolSize={32}
           marginTop="12px"
+          networkSymbolSize={24}
+          networkSymbolStyle={{
+            bottom: "20px",
+          }}
         />
       </Flex>
 
@@ -107,7 +120,7 @@ export default function Range(props: {
                 6
               )
         }
-        style={{ marginBottom: "9px", marginTop: "14px" }}
+        style={{ marginBottom: "9px", marginTop: "16px" }}
       />
       <RangeToken
         token={token1}

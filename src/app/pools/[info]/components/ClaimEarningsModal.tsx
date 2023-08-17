@@ -79,8 +79,10 @@ export default function ClaimEarningsModal() {
           <Flex flexDir="column">
             <Flex justifyContent="space-between" mb="16px">
               <Box fontSize={20}>Claim Fees</Box>
-              <Box onClick={onClose} cursor="pointer">
-                <Image src={ModalCloseButton} alt="closeModal" />
+              <Box onClick={onClose} cursor="pointer" pos={"relative"}>
+                <Box pos={"absolute"} w={"24px"} right={"-6px"} top={"-6px"}>
+                  <Image src={ModalCloseButton} alt="closeModal" />
+                </Box>
               </Box>
             </Flex>
             {/* Table of total earnings*/}

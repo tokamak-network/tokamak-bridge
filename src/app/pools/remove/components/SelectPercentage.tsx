@@ -7,8 +7,6 @@ import {
   SliderTrack,
   SliderFilledTrack,
   SliderThumb,
-  SliderMark,
-  background,
 } from "@chakra-ui/react";
 import Title from "../../add/components/Title";
 import { useRecoilState } from "recoil";
@@ -67,6 +65,13 @@ export default function SelectPercentage() {
         value={amountPercentage}
         focusThumbOnChange={false}
         onChange={(v) => setAmountPercentage(v)}
+        w={
+          amountPercentage === 0 || amountPercentage === 100
+            ? "350px !important"
+            : "100%"
+        }
+        ml={amountPercentage === 0 ? "10px" : 0}
+        mr={amountPercentage === 100 ? "10px" : 0}
       >
         <SliderTrack bg="#007AFF">
           <SliderFilledTrack bg="#007AFF" />
