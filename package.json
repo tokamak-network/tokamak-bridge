@@ -19,7 +19,6 @@
     "@eth-optimism/sdk": "^1.3.1",
     "@fontsource/poppins": "^4.5.10",
     "@tanstack/react-query": "^4.29.17",
-    "@tokamak-network/titan-sdk": "^0.0.2",
     "@tokamak-network/tokamak-layer2-sdk": "^0.0.4",
     "@uniswap/conedison": "^1.7.1",
     "@uniswap/sdk-core": "^3.2.2",
