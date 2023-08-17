@@ -19,9 +19,13 @@ const ActionButton = (props: { step: string }) => {
 
   const btnIsDisabled = useMemo(() => {
     if (deposit0Disabled) {
+      if (inverted) return isBalanceOver || isInputZero;
       return isOutTokenBalanceOver || isOutInputZero;
     }
-    if (deposit1Disabled) return isBalanceOver || isInputZero;
+    if (deposit1Disabled) {
+      if (inverted) return isOutTokenBalanceOver || isOutInputZero;
+      return isBalanceOver || isInputZero;
+    }
     return (
       isBalanceOver || isOutTokenBalanceOver || isInputZero || isOutInputZero
     );
@@ -32,6 +36,7 @@ const ActionButton = (props: { step: string }) => {
     isOutTokenBalanceOver,
     isOutInputZero,
     isInputZero,
+    inverted,
   ]);
 
   return (

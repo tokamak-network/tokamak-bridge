@@ -73,34 +73,7 @@ export default function AddMoreLiquidity() {
         justifyContent={"center"}
         pos={"relative"}
         columnGap={"36px"}
-        flexDir={"row-reverse"}
       >
-        <Flex flexDir={"column"} maxW={"186px"}>
-          <TokenCard
-            w={186}
-            h={"242px"}
-            tokenInfo={token0Info}
-            hasInput={false}
-            inNetwork={true}
-            type="small"
-          />
-          <Flex w={"186px"} mt="16px">
-            {!deposit0Disabled && (
-              <TokenInputForLiquidity
-                inToken={true}
-                tokenInfo={token0Info}
-                otherTokenInfo={token1Info}
-              />
-            )}
-            {deposit0Disabled && <OutRangeWarning />}
-          </Flex>
-        </Flex>
-
-        <Flex h={"242px"} justifyContent={"center"} pos={"absolute"}>
-          <Flex mx="6px" h={"100%"} w="24px">
-            <Image src={add} alt="add" />
-          </Flex>
-        </Flex>
         <Flex flexDir={"column"} maxW={"186px"}>
           <TokenCard
             w={186}
@@ -115,11 +88,36 @@ export default function AddMoreLiquidity() {
               <OutRangeWarning />
             ) : (
               <TokenInputForLiquidity
-                inToken={false}
+                inToken={inverted ? true : false}
                 tokenInfo={token1Info}
                 otherTokenInfo={token0Info}
               />
             )}
+          </Flex>
+        </Flex>
+        <Flex h={"242px"} justifyContent={"center"} pos={"absolute"}>
+          <Flex mx="6px" h={"100%"} w="24px">
+            <Image src={add} alt="add" />
+          </Flex>
+        </Flex>
+        <Flex flexDir={"column"} maxW={"186px"}>
+          <TokenCard
+            w={186}
+            h={"242px"}
+            tokenInfo={token0Info}
+            hasInput={false}
+            inNetwork={true}
+            type="small"
+          />
+          <Flex w={"186px"} mt="16px">
+            {!deposit0Disabled && (
+              <TokenInputForLiquidity
+                inToken={inverted ? false : true}
+                tokenInfo={token0Info}
+                otherTokenInfo={token1Info}
+              />
+            )}
+            {deposit0Disabled && <OutRangeWarning />}
           </Flex>
         </Flex>
       </Flex>

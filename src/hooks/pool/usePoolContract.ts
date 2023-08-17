@@ -38,6 +38,8 @@ import { usePositionInfo } from "./useGetPositionIds";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useGetMarketPrice } from "../price/useGetMarketPrice";
 import { useTx } from "../tx/useTx";
+import { Hash } from "viem";
+import { usePoolInfo } from "./usePoolInfo";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -52,9 +54,9 @@ export function usePoolMint() {
   const { invertAmount } = useGetAmountForLiquidity();
 
   const { sendTransaction } = useSendTransaction();
-  const [txHash, setTxHash] = useState<`0x${string}` | undefined>(undefined);
+  const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
-  const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
+  const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -245,6 +247,9 @@ export function usePoolContract() {
   const { provider } = useProvier();
   const { address } = useAccount();
   const feeAmount = useRecoilValue(poolFeeStatus);
+  const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
+
+  const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
 
   const getPoolInfo = useCallback(
     async (tokenA?: Token, tokenB?: Token) => {
@@ -327,6 +332,7 @@ export function usePoolContract() {
   );
 
   const { info } = usePositionInfo();
+  const { inverted } = usePoolInfo();
 
   const addLiquidity = useCallback(async () => {
     if (address && info) {
@@ -341,6 +347,11 @@ export function usePoolContract() {
         id,
       } = info;
       const { fee, liquidity } = rawPositionInfo;
+      console.log(inverted);
+
+      console.log(token0);
+      console.log(inToken?.parsedAmount);
+      console.log(outToken?.parsedAmount);
 
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
@@ -356,6 +367,9 @@ export function usePoolContract() {
           outToken?.decimals ?? 0
         ).toString()
       );
+
+      console.log("liquidity");
+      console.log(liquidity.toString());
 
       const configuredPool = new Pool(
         token0,
@@ -374,6 +388,10 @@ export function usePoolContract() {
         amount1: token1Amount.quotient,
         useFullPrecision: true,
       });
+
+      console.log(positionToIncreaseBy);
+      console.log(token0Amount);
+      console.log(token1Amount);
 
       const addLiquidityOptions: AddLiquidityOptions = {
         deadline: Math.floor(Date.now() / 1000) + 60 * 20,
@@ -427,6 +445,8 @@ export function usePoolContract() {
             from: address,
           }
         );
+
+        setTxHash(tx.hash);
 
         // build transaction
         // const transaction = {
