@@ -38,11 +38,13 @@ export default function ActivityContainer() {
     if (searchTxString?.id === "" || searchTxString === null) {
       return tData.depositTxs;
     } else {
-
-      const filteredTx = tData.depositTxs.filter((tx:any) => {
-       return tx.l1txHash.includes(searchTxString.id) || tx.l2txHash.includes(searchTxString.id) 
-      })
-      return  filteredTx
+      const filteredTx = tData.depositTxs.filter((tx: any) => {
+        return (
+          tx.l1txHash.includes(searchTxString.id) ||
+          tx.l2txHash.includes(searchTxString.id)
+        );
+      });
+      return filteredTx;
     }
   }, [tData.depositTxs, searchTxString]);
 
@@ -52,26 +54,32 @@ export default function ActivityContainer() {
     return filteredTx.slice(startIndex, endIndex);
   }, [filteredTx]);
 
-
   const txes = useMemo(() => {
     switch (tData.loadingState) {
-      case 'absent': 
-      return <Flex>No txs</Flex>
+      case "absent":
+        return <Flex>No txs</Flex>;
 
-      case 'present' : 
-      return getPaginatedData.length !== 0 &&
-      getPaginatedData.map((tx: any) => {
-        if (tx.event === "deposit") {
-          return <DepositTx tx={tx} key={tx.transactionHash} />;
-        } else {
-          return <WithdrawTx tx={tx} key={tx.transactionHash} />;
-        }
-      })
+      case "present":
+        return (
+          getPaginatedData.length !== 0 &&
+          getPaginatedData.map((tx: any) => {
+            if (tx.event === "deposit") {
+              return <DepositTx tx={tx} key={tx.transactionHash} />;
+            } else {
+              return <WithdrawTx tx={tx} key={tx.transactionHash} />;
+            }
+          })
+        );
 
-      case 'loading' :
-        return <Flex><LoadingTx/></Flex>
+      case "loading":
+        return (
+          <Flex flexDir={'column'} rowGap={'8px'}>
+            <LoadingTx />
+            <LoadingTx />
+          </Flex>
+        );
     }
-  },[tData.loadingState])
+  }, [tData.loadingState]);
   return (
     <Flex
       flexDir={"column"}
@@ -87,7 +95,6 @@ export default function ActivityContainer() {
         bg={"transparent"}
         overflow={"scroll"}
         overflowX={"hidden"}
- 
         rowGap={"8px"}
         h={"calc(100vh - 356px)"}
       >
@@ -99,7 +106,7 @@ export default function ActivityContainer() {
               return <WithdrawTx tx={tx} key={tx.transactionHash} />;
             }
           })} */}
-          {txes}
+        {txes}
       </Flex>
       <Flex h="100px" justifyContent={"center"} alignItems={"center"}>
         <Button
