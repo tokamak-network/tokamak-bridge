@@ -7,7 +7,7 @@ export default function SelectNetwork() {
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={false} height="32px" />
+        <NetworkDropdown inNetwork={false} width={"200px"} height="32px" />
       </Box>
     );
   }, []);

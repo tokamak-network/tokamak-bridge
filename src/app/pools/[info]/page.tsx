@@ -7,6 +7,7 @@ import UnclaimedEarnings from "./components/UnclaimedEarnings";
 import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
+import ClaimEarningsModal from "./components/ClaimEarningsModal";
 
 export default function Page() {
   const { info } = usePositionInfo();
@@ -14,7 +15,6 @@ export default function Page() {
   if (info === undefined) {
     return <>{`position id not founded with this account :(`}</>;
   }
-
   return (
     <Flex w={"424px"} flexDir="column">
       <InfoHeader />
@@ -25,18 +25,14 @@ export default function Page() {
         p={"20px"}
         borderRadius={"16px"}
         flexGrow={1}
-        rowGap={"12px"}
+        rowGap={"16px"}
       >
         <InfoTitle />
         <Liquidity />
         <UnclaimedEarnings />
         <PriceRange />
       </Flex>
-
-      {/* <ClaimEarningsModal
-        isOpen={isClaimModalOpen}
-        onClose={() => setIsClaimModalOpen(false)}
-      /> */}
+      <ClaimEarningsModal />
     </Flex>
   );
 }

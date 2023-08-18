@@ -21,6 +21,7 @@ import { useTransaction } from "@/hooks/tx/useTx";
 import { useState } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { txHashStatus } from "@/recoil/global/transaction";
 
 export default function Confirmation() {
   // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -30,6 +31,7 @@ export default function Confirmation() {
 
   const { blockExplorer } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
+  const txHash = useRecoilValue(txHashStatus);
 
   const {
     isConfirmed,
@@ -107,11 +109,7 @@ export default function Confirmation() {
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
               <Link
-                href={`${blockExplorer}/tx/${
-                  confirmedTransaction &&
-                  confirmedTransaction.length > 0 &&
-                  confirmedTransaction[confirmedTransaction.length - 1][0]
-                }`}
+                href={`${blockExplorer}/tx/${txHash}`}
                 isExternal={true}
                 textDecoration={"underline"}
                 w={"100%"}

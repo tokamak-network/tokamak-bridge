@@ -11,6 +11,7 @@ import {
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts";
 import { isETH } from "@/utils/token/isETH";
+import { useGetMode } from "../mode/useGetMode";
 
 const getPath = async (queryParmam: string | undefined | null) => {
   if (queryParmam === undefined || queryParmam === null) {
@@ -38,6 +39,7 @@ export function useSmartRouter() {
   const { address } = useAccount();
   const txSettingValue = useRecoilValue(uniswapTxSetting);
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { mode } = useGetMode();
 
   const queryParam = useMemo(() => {
     if (
@@ -47,7 +49,8 @@ export function useSmartRouter() {
       outToken &&
       address &&
       txSettingValue.slippage !== "" &&
-      txSettingValue.deadline !== undefined
+      txSettingValue.deadline !== undefined &&
+      mode === "Swap"
     ) {
       const isEther = isETH(inToken);
       const inTokenWETHAddress =
@@ -79,6 +82,7 @@ export function useSmartRouter() {
     txSettingValue,
     layer,
     isConnectedToMainNetwork,
+    mode,
   ]);
 
   const [, setIsLoading] = useIsLoading();

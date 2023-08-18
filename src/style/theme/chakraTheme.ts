@@ -1,13 +1,35 @@
 import { extendTheme } from "@chakra-ui/theme-utils";
 import "@fontsource/poppins";
+import "@fontsource/quicksand";
+import "@fontsource/quicksand/700.css";
 
 const fonts = {
   Poppins: "Poppins",
+  Quicksand: "Quicksand",
 };
 
 const theme = extendTheme({
   fonts: {
     body: fonts.Poppins,
+    Quicksand: fonts.Quicksand,
+  },
+  components: {
+    Slider: {
+      baseStyle: {
+        thumb: {
+          bg: "#007AFF",
+          transition: "none",
+          _active: {
+            outline: "none",
+            border: "none",
+          },
+          _focused: {
+            outline: "none",
+            border: "none",
+          },
+        },
+      },
+    },
   },
 
   styles: {

@@ -1,3 +1,5 @@
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
 type L1_UniswapContracts = {
   POOL_FACTORY_CONTRACT_ADDRESS: "0x1F98431c8aD98523631AE4a59f267346ea31F984";
   QUOTER_CONTRACT_ADDRESS: "0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6";
@@ -56,3 +58,11 @@ export const L2_TESTNET_UniswapContracts: L2_TESTNET_UniswapContracts = {
 
 export const L2_initCodeHashManualOverride =
   "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff";
+
+export const V3_CORE_FACTORY_ADDRESSES: { [chainId: number]: string } = {
+  [SupportedChainId.MAINNET]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.GOERLI]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.DARIUS]:
+    L2_TESTNET_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+};

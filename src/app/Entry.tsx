@@ -3,24 +3,29 @@ import { Center, useMediaQuery } from "@chakra-ui/react";
 import { GlobalComponents } from "./layout";
 import Modals from "./Modals";
 import MobileView from "./Mobile";
+import { ApolloProvider } from "@apollo/client";
+import useConnectedNetwork from "@/hooks/network";
+import { apolloClient } from "@/apollo";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const [isMobile] = useMediaQuery("(max-width: 1200px)");
 
-  if (isMobile) {
-    return (
-      <Center h={"100vh"}>
-        <MobileView />
-      </Center>
-    );
-  }
+  const { connectedChainId } = useConnectedNetwork();
+
+  // if (isMobile) {
+  //   return (
+  //     <Center h={"100vh"}>
+  //       <MobileView />
+  //     </Center>
+  //   );
+  // }
 
   return (
-    <>
+    <ApolloProvider client={apolloClient}>
       <Header />
       <Center h={"100vh"}>{children}</Center>
       <GlobalComponents />
       <Modals />
-    </>
+    </ApolloProvider>
   );
 }

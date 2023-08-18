@@ -267,6 +267,7 @@ export default function Header() {
                     title={link.title}
                     icon={link.icon}
                     hoverIcon={link.hoverIcon}
+                    key={link.title}
                   />
                 );
               })}

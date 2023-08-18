@@ -37,15 +37,17 @@ export const titan_goerli = {
   rpcUrls: {
     public: { http: ["https://rpc.titan-goerli.tokamak.network"] },
     default: { http: ["https://rpc.titan-goerli.tokamak.network"] },
+    // public: { http: [process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC as string] },
+    // default: { http: [process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC as string] },
   },
   blockExplorers: {
     etherscan: {
       name: "BlockScout",
-      url: "https://goerli.explorer.tokamak.network/",
+      url: "https://explorer.titan-goerli.tokamak.network",
     },
     default: {
       name: "BlockScout",
-      url: "https://goerli.explorer.tokamak.network/",
+      url: "https://explorer.titan-goerli.tokamak.network",
     },
   },
 } as const satisfies Chain;

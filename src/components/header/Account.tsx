@@ -6,14 +6,17 @@ import { useAccount, useConnect } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
-import { useRecoilState } from "recoil";
-import { useTransaction } from "@/hooks/tx/useTx";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useTransaction, useTx } from "@/hooks/tx/useTx";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { txPendingStatus } from "@/recoil/global/transaction";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
-  const { isPending } = useTransaction();
+  // const { isPending } = useTransaction();
+  const txPending = useRecoilValue(txPendingStatus);
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
@@ -37,7 +40,7 @@ export default function Account() {
         isConnected ? setIsOpen(true) : connetAndDisconntWallet()
       }
     >
-      {isPending ? (
+      {txPending ? (
         <Flex columnGap={"8px"}>
           <Spinner color={"#007AFF"} />
           <Text fontSize={18} fontWeight={500}>

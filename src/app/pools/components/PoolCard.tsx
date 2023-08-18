@@ -7,17 +7,51 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
+import commafy from "@/utils/trim/commafy";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { usePricePair } from "@/hooks/price/usePricePair";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { priceFormmater } from "@/utils/trim/priceFormatter";
 
 export type PoolCardDetail = {
   id: number;
   token0: Token;
   token1: Token;
+  token0Amount: string;
+  token0CollectedFee: string;
+  token0MarketPrice: string;
+  token1Amount: string;
+  token1CollectedFee: string;
+  token1MarketPrice: string;
   fee: FeeAmount;
   inRange: boolean;
+  liquidity: string;
+  sqrtPriceX96: string;
+  tickLower: number;
+  tickCurrent: number;
+  tickUpper: number;
+  rawPositionInfo: any;
+  hasETH: boolean;
+  isClosed: boolean;
+  token0Value: number;
+  token1Value: number;
+  feeValue: number;
+  chainId: number;
 };
 
 export default function PoolCard(props: PoolCardDetail) {
-  const { id, token0, token1, fee, inRange } = props;
+  const {
+    id,
+    token0,
+    token1,
+    fee,
+    inRange,
+    token0Amount,
+    token1Amount,
+    token0CollectedFee,
+    token1CollectedFee,
+    isClosed,
+  } = props;
 
   const feePercent = useMemo(() => {
     switch (fee) {
@@ -34,6 +68,22 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [fee]);
 
+  const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
+  const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
+  const { token0Price, token1Price, hasTokenPrice } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
+    token1Name: token1.name,
+    token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
+  });
+
+  const { totalMarketPrice } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: token0FeeAmount,
+    token1Name: token1.name,
+    token1Amount: token1FeeAmount,
+  });
+
   return (
     <Link href="/pools/[info]" as={`/pools/${id}`} key={id}>
       <Flex
@@ -46,34 +96,61 @@ export default function PoolCard(props: PoolCardDetail) {
         paddingBottom={"16px"}
         paddingLeft={"16px"}
         paddingRight={"12px"}
-        borderRadius={"12px"}
+        borderRadius={"16px"}
         _hover={{
           border: "3px solid #007AFF",
         }}
         cursor={"pointer"}
       >
-        <RangeText inRange={inRange} />
+        <Flex justifyContent={"flex-end"}>
+          <RangeText inRange={inRange} isClosed={isClosed} />
+        </Flex>
         <Flex alignItems="left" justifyContent="flex-start" flexDir={"column"}>
           <Text fontWeight="semibold" fontSize="18px" h={"27px"}>
-            {token0.symbol} / {token1.symbol}
+            {token1.symbol}{" "}
+            <span style={{ fontSize: 13, fontWeight: 400 }}>/</span>{" "}
+            {token0.symbol}
           </Text>
           <Text fontSize={"12px"} h={"18px"}>
             {feePercent}
           </Text>
         </Flex>
-        <TokenSymbolPair token0={token0} token1={token1} />
+        <TokenSymbolPair
+          token0={token0}
+          token1={token1}
+          style={{ marginTop: "12px" }}
+        />
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token0.symbol}</Text>
-            <Text>{0.0084} ($1.25)</Text>
+            <Text>
+              {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
+              <span style={{ color: "#A0A3AD" }}>
+                {priceFormmater(token0Price) === "NA"
+                  ? `(${priceFormmater(token0Price)})`
+                  : `($${priceFormmater(token0Price)})`}
+              </span>
+            </Text>
           </Flex>
-          <Flex justifyContent="space-between">
+          <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token1.symbol}</Text>
-            <Text>{0.0084} ($1.25)</Text>
+            <Text>
+              {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
+              <span style={{ color: "#A0A3AD" }}>
+                {" "}
+                {priceFormmater(token1Price) === "NA"
+                  ? `(${priceFormmater(token1Price)})`
+                  : `($${priceFormmater(token1Price)})`}
+              </span>
+            </Text>
           </Flex>
-          <Flex justifyContent="space-between">
-            <Text>Earnings</Text>
-            <Text>${3.18}</Text>
+          <Flex justifyContent="space-between" h={"20px"}>
+            <Text>Fees</Text>
+            {hasTokenPrice ? (
+              <Text>${commafy(totalMarketPrice, 2)}</Text>
+            ) : (
+              <Text color={"#A0A3AD"}>No market data</Text>
+            )}
           </Flex>
         </Flex>
       </Flex>

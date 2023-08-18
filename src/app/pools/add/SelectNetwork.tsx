@@ -5,7 +5,14 @@ import Title from "./components/Title";
 
 export default function SelectNetwork() {
   const NetworkSwitcher = useMemo(() => {
-    return <NetworkDropdown inNetwork={true} height="48px" />;
+    return (
+      <NetworkDropdown
+        inNetwork={true}
+        height="48px"
+        width={"408px"}
+        isPool={true}
+      />
+    );
   }, []);
 
   return (
