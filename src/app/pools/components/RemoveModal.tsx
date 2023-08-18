@@ -16,13 +16,32 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useRecoilValue } from "recoil";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { useEffect, useState } from "react";
+import useBlockNum from "@/hooks/network/useBlockNumber";
 
 export default function RemoveModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
-  const { removeLiquidity } = usePoolContract();
+  const { removeLiquidity, estimateGasToRemove } = usePoolContract();
   const { info } = usePositionInfo();
   const removeLiquidityPercentage = useRecoilValue(removeAmount);
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { blockNumber } = useBlockNum();
+  const [gas, setGas] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (gas !== undefined) return;
+      const gasData = await estimateGasToRemove(
+        info?.id,
+        removeLiquidityPercentage
+      );
+      console.log(gasData);
+      setGas(gasData);
+    };
+    fetchData();
+  }, [gas, info, blockNumber, removeLiquidityPercentage]);
+
+  console.log(gas);
 
   return (
     <Modal

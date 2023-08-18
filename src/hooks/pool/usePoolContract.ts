@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import {
-  FeeAmount,
   computePoolAddress,
   MintOptions,
   nearestUsableTick,
@@ -14,20 +13,19 @@ import {
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useContract from "@/hooks/contracts/useContract";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
-import { useAccount, useFeeData, useSendTransaction } from "wagmi";
+import { useAccount, useFeeData } from "wagmi";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
@@ -39,7 +37,7 @@ import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useGetMarketPrice } from "../price/useGetMarketPrice";
 import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
-import { usePoolInfo } from "./usePoolInfo";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -56,6 +54,7 @@ export function usePoolMint() {
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -158,41 +157,39 @@ export function usePoolMint() {
               ? [calldata, refundETHData]
               : [calldata];
 
-          const tx = estimateGas
-            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                multicallParam,
-                {
-                  gasLimit: 8000000,
-                  value: inIsEth
-                    ? inHexAmount
-                    : outIsETH
-                    ? outHexAmount
-                    : value,
-                  from: address,
-                }
-              )
-            : await NonfungiblePositionManagerContract.multicall(
-                multicallParam,
-                {
-                  gasLimit: 8000000,
-                  value: inIsEth
-                    ? inHexAmount
-                    : outIsETH
-                    ? outHexAmount
-                    : value,
-                  from: address,
-                }
-              );
-          setTxHash(tx.hash);
-
-          // build transaction
-          // const transaction = {
-          //   data: calldata,
-          //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          //   value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-          //   from: address,
-          // };
-          // return sendTransaction(transaction);
+          try {
+            const tx = estimateGas
+              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
+                  multicallParam,
+                  {
+                    gasLimit: 8000000,
+                    value: inIsEth
+                      ? inHexAmount
+                      : outIsETH
+                      ? outHexAmount
+                      : value,
+                    from: address,
+                  }
+                )
+              : await NonfungiblePositionManagerContract.multicall(
+                  multicallParam,
+                  {
+                    gasLimit: 8000000,
+                    value: inIsEth
+                      ? inHexAmount
+                      : outIsETH
+                      ? outHexAmount
+                      : value,
+                    from: address,
+                  }
+                );
+            setTxHash(tx.hash);
+            return tx;
+          } catch (e) {
+            if (!estimateGas) {
+              setModalOpen("error");
+            }
+          }
         }
       }
     },
@@ -216,9 +213,10 @@ export function usePoolMint() {
   });
 
   const estimateGasToMint = useCallback(async () => {
-    if (provider && feeData && ethPrice) {
+    if (feeData && ethPrice) {
       const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
       const estimatedGasUsage = await mintPosition(true);
+
       if (estimatedGasUsage === undefined) return undefined;
 
       const totalGasCost =
@@ -233,7 +231,7 @@ export function usePoolMint() {
 
       return totalGasCostUSD;
     }
-  }, [provider, feeData, ethPrice, mintPosition]);
+  }, [feeData, ethPrice, mintPosition]);
 
   return { mintPosition, estimateGasToMint };
 }
@@ -249,6 +247,7 @@ export function usePoolContract() {
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
   const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
   const getPoolInfo = useCallback(
     async (tokenA?: Token, tokenB?: Token) => {
@@ -331,7 +330,6 @@ export function usePoolContract() {
   );
 
   const { info } = usePositionInfo();
-  const { inverted } = usePoolInfo();
 
   const addLiquidity = useCallback(async () => {
     if (address && info) {
@@ -456,7 +454,8 @@ export function usePoolContract() {
   const removeLiquidity = useCallback(
     async (
       positionId: number | undefined,
-      removeLiquidityPercentage: number | undefined
+      removeLiquidityPercentage: number | undefined,
+      estimateGas?: boolean
     ) => {
       console.log("--removeLiquidity--");
       console.log(info, address, positionId, removeLiquidityPercentage);
@@ -543,20 +542,30 @@ export function usePoolContract() {
               getProviderOrSigner(provider, address)
             );
 
-            const tx = await NonfungiblePositionManagerContract.multicall(
-              [calldata],
-              {
-                gasLimit: 3000000,
-                value,
-                from: address,
-              }
-            );
+            const tx = estimateGas
+              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
+                  [calldata],
+                  {
+                    gasLimit: 3000000,
+                    value,
+                    from: address,
+                  }
+                )
+              : await NonfungiblePositionManagerContract.multicall([calldata], {
+                  gasLimit: 3000000,
+                  value,
+                  from: address,
+                });
 
+            if (estimateGas) return tx;
             if (tx.hash) return setTxHash(tx.hash);
           }
         }
       } catch (e) {
         console.log(e);
+        if (!estimateGas) {
+          setModalOpen("error");
+        }
       }
     },
     [provider, info, address, UNISWAP_CONTRACT, poolData]
@@ -632,31 +641,26 @@ export function usePoolContract() {
               "sweepToken",
               [sweepTokenAddress, amountMinimum, address]
             );
-          return estimateGas
-            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                [collectData, unwrapWETH9, sweepToken],
-                {
-                  gasLimit: 3000000,
-                }
-              )
-            : await NonfungiblePositionManagerContract.multicall(
-                [collectData, unwrapWETH9, sweepToken],
-                {
-                  gasLimit: 3000000,
-                }
-              );
+          try {
+            return estimateGas
+              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
+                  [collectData, unwrapWETH9, sweepToken],
+                  {
+                    gasLimit: 3000000,
+                  }
+                )
+              : await NonfungiblePositionManagerContract.multicall(
+                  [collectData, unwrapWETH9, sweepToken],
+                  {
+                    gasLimit: 3000000,
+                  }
+                );
+          } catch (e) {
+            if (!estimateGas) {
+              setModalOpen("error");
+            }
+          }
         }
-        // build transaction
-        const transaction = {
-          data: calldata,
-          to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          value: value,
-          from: address,
-        };
-
-        return estimateGas
-          ? await provider.estimateGas(transaction)
-          : sendTransaction(transaction);
       }
     },
     [
@@ -671,9 +675,12 @@ export function usePoolContract() {
   );
 
   const { data: feeData } = useFeeData();
+  const { tokenMarketPrice: ethPrice } = useGetMarketPrice({
+    tokenName: "ethereum",
+  });
 
   const estimateGasToCollect = useCallback(async () => {
-    if (provider && feeData) {
+    if (feeData && ethPrice) {
       const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
       const estimatedGasUsage = await collectFees(true);
       const totalGasCost =
@@ -683,9 +690,50 @@ export function usePoolContract() {
         "ether"
       );
 
-      return Number(parsedTotalGasCost.replaceAll(",", ""));
-    }
-  }, [provider, feeData]);
+      const totalGasCostUSD =
+        Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
-  return { addLiquidity, removeLiquidity, collectFees, estimateGasToCollect };
+      return totalGasCostUSD;
+    }
+  }, [feeData, ethPrice]);
+
+  const estimateGasToRemove = useCallback(
+    async (
+      positionId: number | undefined,
+      removeLiquidityPercentage: number | undefined
+    ) => {
+      if (feeData && ethPrice) {
+        const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+        const estimatedGasUsage = await removeLiquidity(
+          positionId,
+          removeLiquidityPercentage,
+          true
+        );
+        const totalGasCost =
+          Number(gasPrice) * Number(estimatedGasUsage.toString());
+        const parsedTotalGasCost = ethers.utils.formatUnits(
+          totalGasCost.toString(),
+          "ether"
+        );
+
+        console.log("parsedTotalGasCost");
+        console.log(parsedTotalGasCost);
+        console.log(ethPrice);
+
+        const totalGasCostUSD =
+          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
+
+        return totalGasCostUSD;
+      }
+    },
+    [feeData, ethPrice]
+  );
+
+  return {
+    addLiquidity,
+    removeLiquidity,
+    collectFees,
+    estimateGasToCollect,
+    estimateGasToRemove,
+  };
 }
