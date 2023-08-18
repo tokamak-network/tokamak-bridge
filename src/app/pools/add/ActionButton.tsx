@@ -116,7 +116,7 @@ export default function ActionButton() {
       case PoolState.INVALID:
         return "Invalid pair";
       case PoolState.NOT_EXISTS:
-        return tokensPairHasAmount ? "Preview" : "Invalid pair";
+        return tokensPairHasAmount ? "Preview" : "Enter an amount";
     }
     return "Invalid pair";
   }, [

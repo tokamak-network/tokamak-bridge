@@ -26,6 +26,9 @@ function getLiquidityForAmount1(
   );
   const param2 = JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96);
 
+  if (JSBI.equal(param1, JSBI.BigInt(0)) || JSBI.equal(param2, JSBI.BigInt(0)))
+    return param1;
+
   return JSBI.divide(param1, param2);
 }
 function getLiquidityForAmount0(
@@ -47,6 +50,8 @@ function getLiquidityForAmount0(
   );
   const param2 = JSBI.multiply(JSBI.BigInt(amount0.toString()), intermediate);
   const param3 = JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96);
+  if (JSBI.equal(param2, JSBI.BigInt(0)) || JSBI.equal(param3, JSBI.BigInt(0)))
+    return param2;
   return JSBI.divide(param2, param3);
 }
 
