@@ -183,8 +183,8 @@ export function usePoolMint() {
                     from: address,
                   }
                 );
-            setTxHash(tx.hash);
-            return tx;
+            if (estimateGas) return tx;
+            if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
             if (!estimateGas) {
               setModalOpen("error");
@@ -378,10 +378,6 @@ export function usePoolContract() {
         useFullPrecision: true,
       });
 
-      console.log(positionToIncreaseBy);
-      console.log(token0Amount);
-      console.log(token1Amount);
-
       const addLiquidityOptions: AddLiquidityOptions = {
         deadline: Math.floor(Date.now() / 1000) + 60 * 20,
         slippageTolerance: new Percent(50, 10_000),
@@ -406,10 +402,6 @@ export function usePoolContract() {
         const inHexAmount = ethers.utils.hexlify(inWeiAmount);
         const outHexAmount = ethers.utils.hexlify(outWeiAmount);
 
-        console.log(token0Amount.quotient.toString());
-        console.log(token1Amount.quotient.toString());
-        console.log(inIsEth || outIsETH);
-
         //refundETH
         //it will return if All ETH won't be used to be deposit for some reasons like a price change
         const NonfungiblePositionManagerContract = new Contract(
@@ -426,16 +418,20 @@ export function usePoolContract() {
         const multicallParam =
           inIsEth || outIsETH ? [calldata, refundETHData] : [calldata];
 
-        const tx = await NonfungiblePositionManagerContract.multicall(
-          multicallParam,
-          {
-            gasLimit: 3000000,
-            value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-            from: address,
-          }
-        );
+        try {
+          const tx = await NonfungiblePositionManagerContract.multicall(
+            multicallParam,
+            {
+              gasLimit: 3000000,
+              value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+              from: address,
+            }
+          );
 
-        if (tx.hash) return setTxHash(tx.hash);
+          if (tx.hash) return setTxHash(tx.hash);
+        } catch (e) {
+          setModalOpen("error");
+        }
 
         // build transaction
         // const transaction = {
@@ -450,6 +446,13 @@ export function usePoolContract() {
   }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
 
   const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);
+  const [txHashToRemoveLiquidity, setTxHashToRemoveLiquidity] = useState<
+    Hash | undefined
+  >(undefined);
+  const {} = useTx({
+    hash: txHashToRemoveLiquidity,
+    txSort: "Remove Liquidity",
+  });
 
   const removeLiquidity = useCallback(
     async (
@@ -558,7 +561,7 @@ export function usePoolContract() {
                 });
 
             if (estimateGas) return tx;
-            if (tx.hash) return setTxHash(tx.hash);
+            if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash);
           }
         }
       } catch (e) {
@@ -572,6 +575,13 @@ export function usePoolContract() {
   );
 
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
+  const [txHashToCollect, setTxHashToCollect] = useState<Hash | undefined>(
+    undefined
+  );
+  const {} = useTx({
+    hash: txHashToCollect,
+    txSort: "Collect Fee",
+  });
 
   const collectFees = useCallback(
     async (estimateGas?: boolean) => {
@@ -655,15 +665,16 @@ export function usePoolContract() {
                   }
                 );
             if (estimateGas) return tx;
-            if (tx.hash) return setTxHash(tx.hash);
+            if (tx.hash) return setTxHashToCollect(tx.hash);
           } catch (e) {
             if (!estimateGas) {
               setModalOpen("error");
             }
           }
         }
+
+        //collect as WETH
         try {
-          // get calldata for minting a position
           const { calldata, value } =
             NonfungiblePositionManager.collectCallParameters(collectOptions);
           const tx = estimateGas
@@ -677,7 +688,7 @@ export function usePoolContract() {
                 gasLimit: 3000000,
               });
           if (estimateGas) return tx;
-          if (tx.hash) return setTxHash(tx.hash);
+          if (tx.hash) return setTxHashToCollect(tx.hash);
         } catch (e) {
           setModalOpen("error");
         }

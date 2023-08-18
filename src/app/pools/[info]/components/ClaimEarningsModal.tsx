@@ -17,6 +17,7 @@ import {
 } from "@/recoil/global/transaction";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
@@ -42,6 +43,7 @@ export default function ClaimEarningsModal() {
     tokenName: "ethereum",
     amount: estimatedGasUsageValue,
   });
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
@@ -180,7 +182,12 @@ export default function ClaimEarningsModal() {
               mt="16px"
               bgColor="#007AFF"
               _hover={{ bgColor: "#007AFF" }}
-              onClick={() => collectFees()}
+              onClick={() => {
+                setModalOpen("confirming");
+                setIsOpen(true);
+                onClose();
+                collectFees();
+              }}
             >
               Claim
             </Button>

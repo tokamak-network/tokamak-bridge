@@ -56,6 +56,7 @@ export function useMintPositionInfo() {
         token0Value: 0,
         token1Value: 0,
         feeValue: 0,
+        chainId: pool.token0.chainId,
       };
     }
     return undefined;

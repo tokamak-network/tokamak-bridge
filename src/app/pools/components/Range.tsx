@@ -158,7 +158,8 @@ export default function Range(props: {
               )
         }
       />
-      {(page === "addLiquidity" || page === "increaseLiquidity") && (
+      {(page === "addLiquidity" ||
+        (page === "increaseLiquidity" && estimatedGas)) && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
