@@ -8,7 +8,7 @@ import SWITCHBUTTON_INFO_IMAGE from "assets/icons/pool/switch_info.svg";
 
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
-import QUESTION_ICON from "assets/icons/question.svg";
+import QUESTION_ICON from "assets/icons/questionGray.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
@@ -42,7 +42,7 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
         <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
           {isMinPrice ? "Min price" : "Max price"}
         </Text>
-        <Box w={"18px"} h={"18px"}>
+        <Box w={"18px"} h={"18px"} pt={"1px"}>
           <CustomTooltip
             content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"}></Image>}
             tooltipLabel={`Your position will be 100% ${
