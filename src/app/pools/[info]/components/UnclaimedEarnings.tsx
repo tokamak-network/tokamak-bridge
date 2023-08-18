@@ -2,13 +2,15 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { Flex, Text, Button, Switch } from "@chakra-ui/react";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { usePricePair } from "@/hooks/price/usePricePair";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 import "css/pool/switch.css";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
+import { useSwitchNetwork } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
 
 const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
@@ -75,6 +77,22 @@ export default function UnclaimedEarnings() {
     return info?.token1.symbol;
   }, [info?.token1.symbol, collectAsWETH]);
 
+  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
+
+  const onClickToRoute = useCallback(
+    async (remove?: boolean) => {
+      if (info?.chainId !== connectedChainId && otherLayerChainInfo) {
+        const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+        if (res) {
+          return onOpenClaimEarning();
+        }
+      }
+      return onOpenClaimEarning();
+    },
+    [info?.chainId, connectedChainId, otherLayerChainInfo]
+  );
+
   return (
     <Flex
       bgColor="#1F2128"
@@ -128,7 +146,7 @@ export default function UnclaimedEarnings() {
             bgColor={"#007AFF"}
             _hover={{ bgColor: "#007AFF" }}
             _active={{}}
-            onClick={onOpenClaimEarning}
+            onClick={() => onClickToRoute()}
             isDisabled={btnIsDisabled}
             _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
             fontSize={14}

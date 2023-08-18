@@ -14,7 +14,6 @@ import { useRouter } from "next/navigation";
 import useConnectedNetwork from "@/hooks/network";
 import { useCallback } from "react";
 import { useSwitchNetwork } from "wagmi";
-import { switchNetwork } from "wagmi/dist/actions";
 
 const TokenLiquidityData = (props: {
   token: Token;
