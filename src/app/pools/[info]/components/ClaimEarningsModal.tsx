@@ -38,25 +38,10 @@ export default function ClaimEarningsModal() {
   const [estimatedGasUsageValue, setEstimatedGasUsage] =
     useRecoilState(estimatedGasUsage);
 
-  // useEffect(() => {
-  //   async function fetchGasUsage() {
-  //     const totalGasUsage = await estimateGasToCollect();
-  //     console.log("go?");
-  //     console.log(totalGasUsage);
-
-  //     setEstimatedGasUsage(totalGasUsage);
-  //   }
-  //   fetchGasUsage();
-  // }, [blockNumber]);
-
   const { tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: "ethereum",
     amount: estimatedGasUsageValue,
   });
-
-  // console.log(estimatedGasUsageValue);
-
-  // console.log(tokenPriceWithAmount);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>

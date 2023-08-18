@@ -36,6 +36,7 @@ export type PoolCardDetail = {
   token0Value: number;
   token1Value: number;
   feeValue: number;
+  chainId: number;
 };
 
 export default function PoolCard(props: PoolCardDetail) {

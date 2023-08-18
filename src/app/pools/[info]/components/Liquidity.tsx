@@ -10,6 +10,11 @@ import commafy from "@/utils/trim/commafy";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
+import { useRouter } from "next/navigation";
+import useConnectedNetwork from "@/hooks/network";
+import { useCallback } from "react";
+import { useSwitchNetwork } from "wagmi";
+import { switchNetwork } from "wagmi/dist/actions";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -59,7 +64,7 @@ export default function Liquidity() {
   }
 
   const { inverted, ratio } = usePoolInfo();
-  const { token0, token0Amount, token1, token1Amount } = info;
+  const { token0, token0Amount, token1, token1Amount, chainId } = info;
 
   const { totalMarketPrice } = usePricePair({
     token0Name: token0.name,
@@ -67,6 +72,27 @@ export default function Liquidity() {
     token1Name: token1.name,
     token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
   });
+
+  const router = useRouter();
+  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
+
+  const onClickToRoute = useCallback(
+    async (remove?: boolean) => {
+      if (chainId !== connectedChainId && otherLayerChainInfo) {
+        const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+        if (res) {
+          return router.push(
+            remove ? `/pools/remove/${info.id}` : `/pools/increase/${info.id}`
+          );
+        }
+      }
+      return router.push(
+        remove ? `/pools/remove/${info.id}` : `/pools/increase/${info.id}/`
+      );
+    },
+    [chainId, connectedChainId, otherLayerChainInfo]
+  );
 
   return (
     <Box
@@ -83,11 +109,7 @@ export default function Liquidity() {
             <Text color="#A0A3AD" fontSize={13}>
               Remove
             </Text>
-            <Link
-              href={{ pathname: `/pools/remove/[id]` }}
-              as={`/pools/remove/${info.id}`}
-              key={info.id}
-            >
+            <Box onClick={() => onClickToRoute(true)} cursor={"pointer"}>
               <Flex
                 w={"32px"}
                 h={"32px"}
@@ -99,7 +121,7 @@ export default function Liquidity() {
               >
                 <Image src={RemoveIcon} alt={"RemoveIcon"} />
               </Flex>
-            </Link>
+            </Box>
           </Flex>
           <Flex
             flexDir={"column"}
@@ -119,11 +141,7 @@ export default function Liquidity() {
             <Text color="#A0A3AD" fontSize={13}>
               Increase
             </Text>
-            <Link
-              href={`/pools/increase/[id]`}
-              as={`/pools/increase/${info.id}/`}
-              key={info.id}
-            >
+            <Box onClick={() => onClickToRoute(false)} cursor={"pointer"}>
               <Flex
                 w={"32px"}
                 h={"32px"}
@@ -135,7 +153,7 @@ export default function Liquidity() {
               >
                 <Image src={IncreaseIcon} alt={"IncreaseLiquidity"} />
               </Flex>
-            </Link>
+            </Box>
           </Flex>
         </Flex>
         <Box w={"100%"} h={"1px"} bgColor={"#313442"} />

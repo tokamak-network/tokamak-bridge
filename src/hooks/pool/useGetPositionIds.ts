@@ -258,6 +258,7 @@ export function useGetPositions() {
             token0Value: isNaN(token0Value) ? 0 : token0Value,
             token1Value: isNaN(token1Value) ? 0 : token1Value,
             feeValue: isNaN(feeValue) ? 0 : feeValue,
+            chainId: otherLayer ? _otherLayerChainId : connectedChainId,
           });
         }
         return positions;
@@ -279,7 +280,7 @@ export function useGetPositions() {
     const fetchPositionIds = async () => {
       const result = await Promise.all([
         callPositionIds(),
-        // callPositionIds(true),
+        callPositionIds(true),
       ]);
 
       if (result[0] && result[1]) {

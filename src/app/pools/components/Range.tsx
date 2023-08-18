@@ -10,6 +10,7 @@ import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import usePreview from "@/hooks/modal/usePreviewModal";
 
 const TokenPairTitle = (props: { page: T_PoolModal }) => {
   const { page } = props;
@@ -52,6 +53,8 @@ export default function Range(props: {
   const { inRange, token0Amount, token1Amount, fee } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { poolModal } = usePreview();
+
   const { inToken, outToken } = useInOutTokens();
 
   const token0 = inverted ? info.token0 : info.token1;
@@ -168,7 +171,7 @@ export default function Range(props: {
           </Flex>
         </Flex>
       )}
-      {(page === "collectFee" || page === "removeLiquidity") && (
+      {(page === "collectFee" || poolModal === "removeLiquidity") && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
@@ -205,7 +208,7 @@ export default function Range(props: {
             <Flex justifyContent={"space-between"}>
               <Text fontSize={"14px"}>Estimated gas fee</Text>
               <Text fontSize={"16px"} fontWeight={500}>
-                $4.44
+                {`$${estimatedGas}`}
               </Text>
             </Flex>
           </Flex>

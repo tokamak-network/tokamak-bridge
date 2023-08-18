@@ -599,17 +599,16 @@ export function usePoolContract() {
           ),
           recipient: address,
         };
-        // get calldata for minting a position
-        const { calldata, value } =
-          NonfungiblePositionManager.collectCallParameters(collectOptions);
+
+        const NonfungiblePositionManagerContract = new Contract(
+          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          NONFUNGIBLE_POSITION_MANAGER_ABI,
+          getProviderOrSigner(provider, address)
+        );
 
         if (info.hasETH && collectAsWETH === false) {
           console.log("collect as ETH");
-          const NonfungiblePositionManagerContract = new Contract(
-            UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-            NONFUNGIBLE_POSITION_MANAGER_ABI,
-            getProviderOrSigner(provider, address)
-          );
+
           const collectData =
             NonfungiblePositionManagerContract.interface.encodeFunctionData(
               "collect",
@@ -642,7 +641,7 @@ export function usePoolContract() {
               [sweepTokenAddress, amountMinimum, address]
             );
           try {
-            return estimateGas
+            const tx = estimateGas
               ? await NonfungiblePositionManagerContract.estimateGas.multicall(
                   [collectData, unwrapWETH9, sweepToken],
                   {
@@ -655,11 +654,32 @@ export function usePoolContract() {
                     gasLimit: 3000000,
                   }
                 );
+            if (estimateGas) return tx;
+            if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
             if (!estimateGas) {
               setModalOpen("error");
             }
           }
+        }
+        try {
+          // get calldata for minting a position
+          const { calldata, value } =
+            NonfungiblePositionManager.collectCallParameters(collectOptions);
+          const tx = estimateGas
+            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
+                [calldata],
+                {
+                  gasLimit: 3000000,
+                }
+              )
+            : await NonfungiblePositionManagerContract.multicall([calldata], {
+                gasLimit: 3000000,
+              });
+          if (estimateGas) return tx;
+          if (tx.hash) return setTxHash(tx.hash);
+        } catch (e) {
+          setModalOpen("error");
         }
       }
     },

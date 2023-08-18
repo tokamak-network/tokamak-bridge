@@ -18,6 +18,7 @@ import { useRecoilValue } from "recoil";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useEffect, useState } from "react";
 import useBlockNum from "@/hooks/network/useBlockNumber";
+import commafy from "@/utils/trim/commafy";
 
 export default function RemoveModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
@@ -35,13 +36,10 @@ export default function RemoveModal() {
         info?.id,
         removeLiquidityPercentage
       );
-      console.log(gasData);
       setGas(gasData);
     };
     fetchData();
   }, [gas, info, blockNumber, removeLiquidityPercentage]);
-
-  console.log(gas);
 
   return (
     <Modal
@@ -69,7 +67,11 @@ export default function RemoveModal() {
             <CloseButton onClick={onClosePreviewModal} />
           </Box>
         </Flex>
-        <Range style={{ background: "#0F0F12" }} page={"removeLiquidity"} />
+        <Range
+          style={{ background: "#0F0F12" }}
+          page={"removeLiquidity"}
+          estimatedGas={commafy(gas)}
+        />
         <Text
           fontSize={"12px"}
           color={"#A0A3AD"}
