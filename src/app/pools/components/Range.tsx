@@ -110,7 +110,12 @@ export default function Range(props: {
           page === "addLiquidity"
             ? token0AmountForAdding
             : page === "increaseLiquidity"
-            ? commafyWithUndefined(outToken?.parsedAmount, 6, false, true)
+            ? commafyWithUndefined(
+                inverted ? inToken?.parsedAmount : outToken?.parsedAmount,
+                6,
+                false,
+                true
+              )
             : commafy(
                 inverted
                   ? deposit1Disabled
@@ -134,7 +139,12 @@ export default function Range(props: {
           page === "addLiquidity"
             ? token1AmountForAdding
             : page === "increaseLiquidity"
-            ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
+            ? commafyWithUndefined(
+                inverted ? outToken?.parsedAmount : inToken?.parsedAmount,
+                6,
+                false,
+                true
+              )
             : commafy(
                 inverted
                   ? deposit0Disabled

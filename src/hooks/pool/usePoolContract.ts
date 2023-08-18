@@ -53,7 +53,6 @@ export function usePoolMint() {
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
   const { invertAmount } = useGetAmountForLiquidity();
 
-  const { sendTransaction } = useSendTransaction();
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
@@ -347,11 +346,6 @@ export function usePoolContract() {
         id,
       } = info;
       const { fee, liquidity } = rawPositionInfo;
-      console.log(inverted);
-
-      console.log(token0);
-      console.log(inToken?.parsedAmount);
-      console.log(outToken?.parsedAmount);
 
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
@@ -367,9 +361,6 @@ export function usePoolContract() {
           outToken?.decimals ?? 0
         ).toString()
       );
-
-      console.log("liquidity");
-      console.log(liquidity.toString());
 
       const configuredPool = new Pool(
         token0,
@@ -446,7 +437,7 @@ export function usePoolContract() {
           }
         );
 
-        setTxHash(tx.hash);
+        if (tx.hash) return setTxHash(tx.hash);
 
         // build transaction
         // const transaction = {
@@ -546,16 +537,22 @@ export function usePoolContract() {
                 currentPosition,
                 removeLiquidityOptions
               );
+            const NonfungiblePositionManagerContract = new Contract(
+              UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+              NONFUNGIBLE_POSITION_MANAGER_ABI,
+              getProviderOrSigner(provider, address)
+            );
 
-            // build transaction
-            const transaction = {
-              data: calldata,
-              to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-              value: value,
-              from: address,
-            };
+            const tx = await NonfungiblePositionManagerContract.multicall(
+              [calldata],
+              {
+                gasLimit: 3000000,
+                value,
+                from: address,
+              }
+            );
 
-            return sendTransaction(transaction);
+            if (tx.hash) return setTxHash(tx.hash);
           }
         }
       } catch (e) {

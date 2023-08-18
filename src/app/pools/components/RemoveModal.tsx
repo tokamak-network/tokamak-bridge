@@ -15,12 +15,14 @@ import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useRecoilValue } from "recoil";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 export default function RemoveModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
   const { removeLiquidity } = usePoolContract();
   const { info } = usePositionInfo();
   const removeLiquidityPercentage = useRecoilValue(removeAmount);
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   return (
     <Modal
@@ -68,7 +70,12 @@ export default function RemoveModal() {
             _hover={{}}
             _active={{}}
             _disabled={{}}
-            onClick={() => removeLiquidity(info?.id, removeLiquidityPercentage)}
+            onClick={() => {
+              setModalOpen("confirming");
+              setIsOpen(true);
+              onClosePreviewModal();
+              removeLiquidity(info?.id, removeLiquidityPercentage);
+            }}
           >
             <Text>Remove</Text>
           </Button>
