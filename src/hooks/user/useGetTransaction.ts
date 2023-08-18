@@ -15,6 +15,7 @@ import useGetTxLayers from "./useGetTxLayers";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
 import { ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
+import { txDataStatus } from "@/recoil/global/transaction";
 
 export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<any[]>([]);
@@ -30,6 +31,7 @@ export default function useGetTransaction() {
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const fetchTransactions = useCallback(async () => {
     if (
@@ -45,6 +47,8 @@ export default function useGetTransaction() {
         l2ProSDK
       );
 
+      console.log('txData',txData);
+      
       const userAllTransactions = await fetchUserTransactions(address);
 
       const alltx = [
@@ -52,7 +56,6 @@ export default function useGetTransaction() {
         ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
         ...userAllTransactions?.formattedWithdraw,
       ];
-      console.log("alltx", alltx);
 
       setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
@@ -136,7 +139,9 @@ export default function useGetTransaction() {
               const challengePeriod =
                 await crossMessenger.getChallengePeriodSeconds();
               const timeReadyForRelay = block.timestamp + challengePeriod;
+
               console.log("timeReadyForRelay", timeReadyForRelay);
+
               const messageTxReceipt = await l2Pro.getTransactionReceipt(
                 resolved.transactionHash
               );

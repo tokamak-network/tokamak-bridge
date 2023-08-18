@@ -31,8 +31,15 @@ export default function Confirmation() {
   const { blockExplorer } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
 
-  const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
-    useTxConfirmModal();
+  const {
+    isConfirmed,
+    isConfirming,
+    isError,
+    isOpen,
+    setIsOpen,
+    closeModal,
+    isClaim,
+  } = useTxConfirmModal(true);
   const { mode } = useGetMode();
 
   return (
@@ -63,6 +70,8 @@ export default function Confirmation() {
               ? "Transaction Confirmed!"
               : isError
               ? "Transaction Failed"
+              : isClaim
+              ? "Confirming Claim"
               : null}
           </Text>
           <Flex pos={"relative"} w={"100%"} justifyContent={"center"}>

@@ -37,11 +37,12 @@ import {
   subMinutes,
 } from "date-fns";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
+import { claimTx } from "@/recoil/userHistory/claimTx";
 
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
-
+  const [,setClaimTx] = useRecoilState(claimTx)
   const tx = withdraw.modalData?.tx;
 
   const { claim } = useCallClaim('relayMessage');
@@ -280,7 +281,6 @@ export default function ConfirmWithdraw() {
   };
 
   const TimelineComponent = (props: { tx: any }) => {
-    console.log("props.tx.", props.tx);
 
     const nowTime = getUnixTime(new Date());
     return (
@@ -459,6 +459,7 @@ export default function ConfirmWithdraw() {
             _disabled={{ color: "#8E8E92", bg: "#17181D" }}
             bg="#007AFF"
             onClick={() => {
+              setClaimTx(tx)
               return claim(tx);
             }}
           >

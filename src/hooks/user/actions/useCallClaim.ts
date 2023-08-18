@@ -3,28 +3,22 @@ import {
   SupportedChainId,
   supportedChain,
 } from "@/types/network/supportedNetwork";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import { useSwitchNetwork } from "wagmi";
 import L1CrossDomainMessenger_ABI from "constant/abis/L1CrossDomainMessenger.json";
 import useContract from "@/hooks/contracts/useContract";
 import { getL1Provider } from "@/config/l1Provider";
 import { ethers } from "ethers";
-import {
-  getWalletAddress,
-  sendTransaction,
-  TransactionState,
-} from "utils/uniswap/libs/provider";
+import { confirmWithdraw } from "@/recoil/modal/atom";
 import useCrosschainMessenger from "../useCrosschainMessenger";
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useContractWrite, useSendTransaction } from "wagmi";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { claimTx } from "@/recoil/userHistory/claimTx";
 
 export default function useCallClaim(functionName: string) {
-
-  console.log(functionName);
-  
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
   const [network, setNetwork] = useRecoilState(networkStatus);
@@ -33,13 +27,16 @@ export default function useCallClaim(functionName: string) {
   const { address } = useAccount();
   const { crossMessenger } = useCrosschainMessenger();
   const [isConnectedToL1, setIsConnectedToL1] = useState(false);
+  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
+
   const { data, write, isError } = useContractWrite({
     address: L1MESSENGER_CONTRACT,
     abi: L1CrossDomainMessenger_ABI,
     functionName,
   });
-  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const claimTxArgs = useRecoilValue(claimTx);
   // const { data, isLoading, isSuccess, sendTransaction } = useSendTransaction()
   useEffect(() => {
     const isCnnctdToL1 =
@@ -50,6 +47,8 @@ export default function useCallClaim(functionName: string) {
 
   const changeNetwork = async () => {
     if (!isConnectedToL1) {
+      console.log("cmae here too");
+
       const selectedWork = supportedChain.filter((supportedChain) => {
         if (isConnectedToMainNetwork === true) {
           return [SupportedChainId["MAINNET"]].includes(supportedChain.chainId);
@@ -57,61 +56,74 @@ export default function useCallClaim(functionName: string) {
           return [SupportedChainId["GOERLI"]].includes(supportedChain.chainId);
         }
       })[0];
-      switchNetwork?.(selectedWork.chainId);
+      const xx = await switchNetworkAsync?.(selectedWork.chainId);
+      return xx;
+    }
+
+    else {
+      return {
+        
+        id: connectedChainId
+       
+      }
+      
     }
   };
+  console.log("data", data);
 
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
-
+  useEffect(() => {
+    if (isError) {
+      setModalOpen("error");
+    }
+  }, [isError]);
 
   const claim = useCallback(
     async (tx: any) => {
-      console.log("ggg1", connectedChainId);
+      console.log("came here ");
 
-      changeNetwork();
+      const connectedNetwork = await changeNetwork();
 
-      if (isConnectedToL1) {
+      if (
+        (connectedNetwork?.id === 5 || connectedNetwork?.id === 1) &&
+        claimTxArgs !== undefined
+      ) {
+
+        console.log('here too');
+        
         const provider = getL1Provider();
-        try {
-          const messengerContract = new ethers.Contract(
-            L1MESSENGER_CONTRACT,
-            L1CrossDomainMessenger_ABI,
-            provider
-          );
+        // try {
+        //   const messengerContract = new ethers.Contract(
+        //     L1MESSENGER_CONTRACT,
+        //     L1CrossDomainMessenger_ABI,
+        //     provider
+        //   );
 
-          const proof = await crossMessenger.getMessageProof(tx.resolved);
+        //   const proof = await crossMessenger.getMessageProof(
+        //     claimTxArgs.resolved
+        //   );
 
-          // const transaction =
-          //   await messengerContract.populateTransaction.relayMessage(
-          //     tx.resolved.target,
-          //     tx.resolved.sender,
-          //     tx.resolved.message,
-          //     tx.resolved.messageNonce,
-          //     proof
-          //   );
+        //   console.log('proof',proof);
+          
 
-          //   console.log('transaction',transaction);
-
-          // const xx = await sendTransaction({
-          //   ...transaction,
-          //   from: address,
-          // });
-
-          // console.log('xx',xx);
-          setIsOpen(true);
-          setModalOpen("confirming");
-          return write({
-            args: [
-              tx.resolved.target,
-              tx.resolved.sender,
-              tx.resolved.message,
-              tx.resolved.messageNonce,
-              proof,
-            ],
-          });
-        } catch (e) {
-          console.log(e);
-        }
+        //   setIsOpen(true);
+        //   setModalOpen("confirming");
+        //   setWithdraw({
+        //     isOpen: false,
+        //     modalData: null,
+        //   });
+        //   return write({
+        //     args: [
+        //       claimTxArgs.resolved.target,
+        //       claimTxArgs.resolved.sender,
+        //       claimTxArgs.resolved.message,
+        //       claimTxArgs.resolved.messageNonce,
+        //       proof,
+        //     ],
+        //   });
+        // } catch (e) {
+        //   console.log(e);
+        // }
       }
 
       //     const eventSendMessage = await crossChainMessenger.toCrossChainMessage(tx.l2txHash)

@@ -1,5 +1,4 @@
 import { atom, selector } from "recoil";
-import useGetTransaction from "@/hooks/user/useGetTransaction";
 
 type SearchTx = {
     id: string

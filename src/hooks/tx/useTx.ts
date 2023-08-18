@@ -77,7 +77,7 @@ export function useTransaction() {
       });
     return undefined;
   }, [txData]);
-
+  
   const {
     data: txCheckData,
     isError: txCheckError,
@@ -371,6 +371,8 @@ export function useTx(params: {
 
           case "Claim": {
             const result = L1CrossDomainMessengerI.parseLog((logs[logs.length-1]))
+          console.log('result',result);
+          
             const {args} = result;
             console.log('args',args);
             
@@ -380,12 +382,7 @@ export function useTx(params: {
                 transactionHash,
                 txSort,
                 transactionState: "success",
-                tokenData: [
-                  {
-                    tokenAddress: tokenAddress ?? "0x",
-                    amount: args.value.toBigInt(),
-                  },
-                ],
+                tokenData: undefined,
                 network: connectedChainId,
                 isToasted: false,
               },

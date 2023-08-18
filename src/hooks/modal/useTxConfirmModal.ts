@@ -6,14 +6,14 @@ import {
 import { useCallback, useState } from "react";
 import { useRecoilState } from "recoil";
 
-export default function useTxConfirmModal() {
+export default function useTxConfirmModal(claim?: boolean) {
   const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
   const [isOpen, setIsOpen] = useRecoilState(transactionModalOpenStatus);
 
   const isConfirming = modalOpen === "confirming";
   const isConfirmed = modalOpen === "confirmed";
   const isError = modalOpen === "error";
-
+  const isClaim = claim;
   const closeModal = useCallback(() => {
     setModalOpen(null);
     setIsOpen(false);
@@ -26,6 +26,7 @@ export default function useTxConfirmModal() {
     isConfirmed,
     isError,
     closeModal,
+    isClaim,
     setModalOpen,
   };
 }
