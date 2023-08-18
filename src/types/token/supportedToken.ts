@@ -65,8 +65,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
-      TITAN: null,
-      DARIUS: null,
+      TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
       // TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       // DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
     },
@@ -179,4 +179,3 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
 ];
-
