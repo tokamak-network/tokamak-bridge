@@ -40,6 +40,7 @@ export default function TokenInput(props: {
   } = useInOutTokens();
   const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const [isMax, setIsMax] = useState<boolean>(false);
   const [, setLastFocused] = useRecoilState(lastFocusedInput);
 
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
@@ -63,6 +64,7 @@ export default function TokenInput(props: {
         value,
         selectedInToken.decimals
       );
+
       return setSelectedInToken({
         ...selectedInToken,
         amountBN: parsedAmount.toBigInt(),
@@ -70,6 +72,7 @@ export default function TokenInput(props: {
       });
     }
 
+    //On Pools page
     //This token is outToken
     if (mode !== "Swap" && !inToken && selectedOutToken) {
       if (value === "" || value === null) {
@@ -223,15 +226,15 @@ export default function TokenInput(props: {
       return inTokenFromHook.parsedAmount;
     }
     return mode === "Swap" && inToken === false
-      ? trimAmount(amountOut, 11) ?? ""
+      ? trimAmount(amountOut, 9) ?? ""
       : inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
-        : trimAmount(selectedInToken?.parsedAmount, 11)
+        : trimAmount(selectedInToken?.parsedAmount, 9)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 11)
+        : trimAmount(selectedOutToken?.parsedAmount, 9)
       : "";
   }, [
     inToken,
@@ -286,6 +289,19 @@ export default function TokenInput(props: {
     }
   }, [amountOut, mode]);
 
+  useEffect(() => {
+    if (inToken && selectedInToken && tokenData) {
+      return setIsMax(
+        tokenData.data.balanceBN.value === selectedInToken.amountBN
+      );
+    }
+    if (!inToken && selectedOutToken && tokenData) {
+      return setIsMax(
+        tokenData.data.balanceBN.value === selectedOutToken.amountBN
+      );
+    }
+  }, [selectedInToken, selectedOutToken, inToken, tokenData]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -318,7 +334,7 @@ export default function TokenInput(props: {
           onFocus={handleFocus}
           onBlur={handleBlur}
         ></Input>
-        {hasMaxButton && (
+        {hasMaxButton && !isMax && (
           <Button
             w={"40px"}
             h={"22px"}
