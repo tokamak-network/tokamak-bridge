@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { ethers, Contract } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
 import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
@@ -29,6 +29,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 import { useTx } from "../tx/useTx";
+import { getEncodedPath } from "@/utils/swap/encodePath";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -225,15 +226,46 @@ export function useAmountOut() {
   const [txData, setTxData] = useState<any>(undefined);
 
   useEffect(() => {
-    if (routingPath?.methodParameters && inToken?.amountBN) {
+    if (routingPath && inToken?.amountBN && outToken) {
       // console.log(routingPath);
 
       const wei = ethers.utils.formatUnits(inToken.amountBN.toString(), "wei");
       const weiAmount = ethers.BigNumber.from(wei);
       const hexAmount = ethers.utils.hexlify(weiAmount);
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET || SupportedChainId.GOERLI
+        SupportedChainId.MAINNET ||
+          SupportedChainId.GOERLI ||
+          SupportedChainId.TITAN
       );
+      const isOutETH = outToken.isNativeCurrency?.includes(
+        SupportedChainId.MAINNET ||
+          SupportedChainId.GOERLI ||
+          SupportedChainId.TITAN
+      );
+
+      if (isOutETH) {
+        const SwapRouterContract = new Contract(
+          UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+          SwapRouterAbi,
+          provider
+        );
+        const callData = getEncodedPath({
+          route: routingPath.route,
+          swapRouterAddress: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+          SwapRouterContract,
+        });
+        const tx = {
+          data: callData,
+          to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+          value: routingPath.methodParameters.value,
+          from: address,
+          // maxFeePerGas: "250000",
+          // maxPriorityFeePerGas: "250000",
+          // gasLimit: "21000",
+          // gasPrice: gasPrice.toString(),
+        };
+        return setTxData(tx);
+      }
       const tx = {
         data: routingPath.methodParameters.calldata,
         to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
@@ -248,7 +280,7 @@ export function useAmountOut() {
       // const res = await sendTransaction(tx);
       // console.log(res);
     }
-  }, [routingPath?.methodParameters, inToken?.amountBN]);
+  }, [routingPath?.methodParameters, inToken?.amountBN, outToken, provider]);
 
   const {
     data: _swapData,

@@ -51,8 +51,9 @@ export default function ActionButton() {
         (mode === "Swap" && outToken === null) ||
         isInputZero ||
         (mode === "Swap" && isTONatPair) ||
-        deactivateButton ||
-        (mode === "Swap" && outTokenIsETH !== undefined && outTokenIsETH);
+        deactivateButton;
+      // ||
+      // (mode === "Swap" && outTokenIsETH !== undefined && outTokenIsETH);
       setIsDisabled(disabled);
     }, 200);
 

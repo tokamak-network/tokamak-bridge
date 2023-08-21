@@ -10,7 +10,7 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import { WarningText } from "@/components/ui/WarningText";
 import useIsTon from "@/hooks/token/useIsTon";
 import { MAINNET_CONTRACTS } from "@/constant/contracts";
-import { isETH } from "@/utils/token/isETH";
+// import { isETH } from "@/utils/token/isETH";
 
 export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
@@ -18,25 +18,25 @@ export default function Warning() {
   const { isBalanceOver } = useInputBalanceCheck();
   const { mode } = useGetMode();
   const { isTONatPair } = useIsTon();
-  const outTokenIsETH = isETH(outTokenInfo);
+  // const outTokenIsETH = isETH(outTokenInfo);
 
-  if (mode === "Swap" && outTokenIsETH !== undefined && outTokenIsETH) {
-    return (
-      <Flex color={"#F9C03E"} fontSize={12} columnGap={"10px"}>
-        <Image src={WARNING_ICON} alt={"WARNING_ICON"} />
-        <Text>
-          <Link
-            href="https://onther.notion.site/WETH-ETH-f9fbe0a04204404c9b4dbef23a795f68"
-            isExternal
-            textDecor={"underline"}
-          >
-            Cannot swap to ETH right now.
-          </Link>{" "}
-          Swap to WETH
-        </Text>
-      </Flex>
-    );
-  }
+  // if (mode === "Swap" && outTokenIsETH !== undefined && outTokenIsETH) {
+  //   return (
+  //     <Flex color={"#F9C03E"} fontSize={12} columnGap={"10px"}>
+  //       <Image src={WARNING_ICON} alt={"WARNING_ICON"} />
+  //       <Text>
+  //         <Link
+  //           href="https://onther.notion.site/WETH-ETH-f9fbe0a04204404c9b4dbef23a795f68"
+  //           isExternal
+  //           textDecor={"underline"}
+  //         >
+  //           Cannot swap to ETH right now.
+  //         </Link>{" "}
+  //         Swap to WETH
+  //       </Text>
+  //     </Flex>
+  //   );
+  // }
 
   if (mode === "Swap" && isTONatPair) {
     return (
