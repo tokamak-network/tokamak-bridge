@@ -30,6 +30,8 @@ import useIsLoading from "@/hooks/ui/useIsLoading";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 import { useTx } from "../tx/useTx";
 import { getEncodedPath } from "@/utils/swap/encodePath";
+import { useRecoilValue } from "recoil";
+import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -224,6 +226,7 @@ export function useAmountOut() {
   // }, [trade, address]);
 
   const [txData, setTxData] = useState<any>(undefined);
+  const txSettingValue = useRecoilValue(uniswapTxSetting);
 
   useEffect(() => {
     if (routingPath && inToken?.amountBN && outToken) {
@@ -249,10 +252,13 @@ export function useAmountOut() {
           SwapRouterAbi,
           provider
         );
+
         const callData = getEncodedPath({
           route: routingPath.route,
           swapRouterAddress: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
           SwapRouterContract,
+          slippage: Number(txSettingValue.slippage) / 100,
+          deadlineMin: txSettingValue.deadline,
         });
         const tx = {
           data: callData,
@@ -280,7 +286,13 @@ export function useAmountOut() {
       // const res = await sendTransaction(tx);
       // console.log(res);
     }
-  }, [routingPath?.methodParameters, inToken?.amountBN, outToken, provider]);
+  }, [
+    routingPath?.methodParameters,
+    inToken?.amountBN,
+    outToken,
+    provider,
+    txSettingValue,
+  ]);
 
   const {
     data: _swapData,

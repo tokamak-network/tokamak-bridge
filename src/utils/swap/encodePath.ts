@@ -1,4 +1,5 @@
 import { Contract } from "@ethersproject/contracts";
+import { ethers } from "ethers";
 
 const encodePath = (path: any, fees: any) => {
   const FEE_SIZE = 3;
@@ -20,19 +21,25 @@ export function getEncodedPath(params: {
   route: any;
   swapRouterAddress: string;
   SwapRouterContract: Contract;
+  slippage: number;
+  deadlineMin: number;
 }) {
-  const { route, swapRouterAddress, SwapRouterContract } = params;
-  let deadline = Math.floor(Date.now() / 1000) + 100000;
+  const {
+    route,
+    swapRouterAddress,
+    SwapRouterContract,
+    deadlineMin,
+    slippage,
+  } = params;
+  let deadline = Math.floor(Date.now() / 1000) + deadlineMin * 60;
   let routePath;
   let paths = [];
   let fees = [];
-  let amountIns = [];
   let swapData = [];
 
   for (let i = 0; i < route.length; i++) {
     routePath = route[i];
-    amountIns[i] = routePath[0]["amountIn"];
-    let amountIn = amountIns[i];
+    let amountIn = ethers.BigNumber.from(routePath[0]["amountIn"]);
     paths[i] = [
       routePath[0]["tokenIn"]["address"],
       routePath[0]["tokenOut"]["address"],
@@ -43,9 +50,12 @@ export function getEncodedPath(params: {
         paths[i].push(routePath[j]["tokenOut"]["address"]);
         fees[i].push(parseInt(routePath[j]["fee"]));
       }
-      let amountOutMinimum = Math.floor(
-        routePath[routePath.length - 1]["amountOut"] * 0.995
+      let amountOutMinimum = ethers.BigNumber.from(
+        Math.floor(
+          routePath[routePath.length - 1]["amountOut"] / (1 + slippage)
+        )
       );
+
       let path = encodePath(paths[i], fees[i]);
       const params = {
         recipient: swapRouterAddress,
@@ -58,7 +68,9 @@ export function getEncodedPath(params: {
         SwapRouterContract.interface.encodeFunctionData("exactInput", [params])
       );
     } else {
-      let amountOutMinimum = Math.floor(routePath[0]["amountOut"] * 0.995);
+      let amountOutMinimum = ethers.BigNumber.from(
+        Math.floor(routePath[0]["amountOut"] / (1 + slippage))
+      );
       let SwapParams = {
         tokenIn: routePath[0]["tokenIn"]["address"],
         tokenOut: routePath[0]["tokenOut"]["address"],
