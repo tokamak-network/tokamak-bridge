@@ -107,7 +107,7 @@ export function useAllowance() {
             UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS
           ),
           getAllowance(TOKEN_CONTRACT, address, SWAPPER_V2_CONTRACT),
-          getAllowance(TOKEN_CONTRACT, address, getWETHAddress(chainName)),
+          // getAllowance(TOKEN_CONTRACT, address, getWETHAddress(chainName)),
         ]);
 
         const result = allowances.map((e) => {
@@ -165,9 +165,8 @@ export function useApprove() {
         case "Unwrap":
           return approved?.swapper;
         case "ETH-Wrap":
-          return true;
         case "ETH-Unwrap":
-          return approved?.WETH;
+          return true;
         default:
           return;
       }
@@ -227,13 +226,6 @@ export function useApprove() {
             return write({
               args: [SWAPPER_V2_CONTRACT, totalSupply],
             });
-          case "ETH-Unwrap":
-            return (
-              chainName &&
-              write({
-                args: [getWETHAddress(chainName), totalSupply],
-              })
-            );
           default:
             break;
         }
