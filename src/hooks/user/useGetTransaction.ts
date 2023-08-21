@@ -27,7 +27,7 @@ export default function useGetTransaction() {
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const { crossMessenger } = useCrosschainMessenger();
-  const [loadingState, setLoadingState] = useState("absent");
+  const [loadingState, setLoadingState] = useState("loading");
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
@@ -47,7 +47,6 @@ export default function useGetTransaction() {
         l2ProSDK
       );
 
-      console.log('txData',txData);
       
       const userAllTransactions = await fetchUserTransactions(address);
 
@@ -68,6 +67,7 @@ export default function useGetTransaction() {
         (event) => event.args?._from === address
       );
 
+      
       if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
           userAllTransactions.formattedWithdraw.map(async (tx: any) => {
@@ -79,7 +79,7 @@ export default function useGetTransaction() {
               resolved
             );
             const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
-            console.log("currentStatus", currentStatus);
+            console.log("currentStatus", currentStatus,resolved);
 
             // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
             //if status is 4, rollup is finish and tx ready for challenge period
@@ -321,6 +321,8 @@ export default function useGetTransaction() {
                   (tx1: any, tx2: any) =>
                     Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
                 );
+
+                
         setTDataDeposit(allTxs);
         setLoadingState(
           alltx.length === 0

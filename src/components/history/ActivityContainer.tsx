@@ -6,7 +6,14 @@ import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
 import LoadingTx from "./LoadingTx";
-export default function ActivityContainer() {
+import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
+import Image from "next/image";
+import { supportedChain } from "@/types/network/supportedNetwork";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { P } from "pino";
+
+export default function ActivityContainer(props: { network: any }) {
+  const { network } = props;
   const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
@@ -48,16 +55,69 @@ export default function ActivityContainer() {
     }
   }, [tData.depositTxs, searchTxString]);
 
+  const getLayerFiltered = useMemo(() => {
+    const depSelected =
+      network.chainId === SupportedChainId["MAINNET"] ||
+      network.chainId === SupportedChainId["GOERLI"];
+    const withSelected =
+      network.chainId === SupportedChainId["DARIUS"] ||
+      network.chainId === SupportedChainId["TITAN"];
+    const allSelected = network.id === undefined;
+
+    if (depSelected === true) {
+      const txs = filteredTx.filter((tx: any) => tx.event === "deposit");
+      return txs;
+    } else if (withSelected === true) {
+      const txs = filteredTx.filter((tx: any) => tx.event === "withdraw");
+      return txs;
+    } else {
+      return filteredTx;
+    }
+  }, [searchTxString, network, filteredTx]);
+
+
   const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
-    return filteredTx.slice(startIndex, endIndex);
-  }, [filteredTx,numData]);
+    return getLayerFiltered.slice(startIndex, endIndex);
+  }, [filteredTx, numData,getLayerFiltered]);
 
   const txes = useMemo(() => {
     switch (tData.loadingState) {
       case "absent":
-        return <Flex>No txs</Flex>;
+        return (
+          <Flex
+            w="100%"
+            h={"100%"}
+            justifyContent={"center"}
+            alignItems={"center"}
+            flexDir={"column"}
+          >
+            <Image
+              alt="noActivityIcon"
+              src={noActivityIcon}
+              height={75}
+              width={60}
+            />
+            <Text
+              color={"#e3f3ff"}
+              fontWeight={500}
+              fontSize={"16px"}
+              mt="24px"
+            >
+              No activity yet
+            </Text>
+            <Text
+              color={"#7B7F8F"}
+              fontWeight={400}
+              fontSize={"11px"}
+              mt="7px"
+              w="191px"
+            >
+              Your onchain transactions and crypto purchases will appear here.
+            </Text>
+          </Flex>
+        );
 
       case "present":
         return (
@@ -73,13 +133,13 @@ export default function ActivityContainer() {
 
       case "loading":
         return (
-          <Flex flexDir={'column'} rowGap={'8px'}>
+          <Flex flexDir={"column"} rowGap={"8px"}>
             <LoadingTx />
             <LoadingTx />
           </Flex>
         );
     }
-  }, [tData.loadingState,getPaginatedData]);
+  }, [tData.loadingState, getPaginatedData]);
   return (
     <Flex
       flexDir={"column"}
@@ -98,29 +158,23 @@ export default function ActivityContainer() {
         rowGap={"8px"}
         h={"calc(100vh - 356px)"}
       >
-        {/* {getPaginatedData.length !== 0 &&
-          getPaginatedData.map((tx: any) => {
-            if (tx.event === "deposit") {
-              return <DepositTx tx={tx} key={tx.transactionHash} />;
-            } else {
-              return <WithdrawTx tx={tx} key={tx.transactionHash} />;
-            }
-          })} */}
         {txes}
       </Flex>
-      <Flex h="100px" justifyContent={"center"} alignItems={"center"}>
-        <Button
-          bg="transparent"
-          border={"1px solid #313442"}
-          fontSize={"12px"}
-          fontWeight={500}
-          _hover={{}}
-          _active={{}}
-          onClick={() => setNumData(numData + 2)}
-        >
-          Load more
-        </Button>
-      </Flex>
+      {getLayerFiltered.length > 2 && tData.loadingState === "present" && (
+        <Flex h="100px" justifyContent={"center"} alignItems={"center"}>
+          <Button
+            bg="transparent"
+            border={"1px solid #313442"}
+            fontSize={"12px"}
+            fontWeight={500}
+            _hover={{}}
+            _active={{}}
+            onClick={() => setNumData(numData + 2)}
+          >
+            Load more
+          </Button>
+        </Flex>
+      )}
     </Flex>
   );
 }

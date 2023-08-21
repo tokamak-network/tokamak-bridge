@@ -185,7 +185,10 @@ export default function ConfirmWithdraw() {
       if (props.timeStamp) {
         const intervalID = setInterval(() => {
           const nowTime = getUnixTime(new Date());
+          
+          
           if (nowTime > props.timeStamp) {
+            console.log('nowTime',nowTime,props.timeStamp);
             setDuration({
               days: 0,
               hours: 0,
@@ -422,11 +425,14 @@ export default function ConfirmWithdraw() {
             </Text>
             <Flex w={"100%"} justifyContent={"flex-end"} mt={"-14px"}>
               <CloseButton
-                onClick={() =>
+                onClick={() => {
+                  // setClaimTx(null)
                   setWithdraw({
                     isOpen: false,
                     modalData: null,
                   })
+                }
+                 
                 }
               />
             </Flex>
@@ -455,10 +461,12 @@ export default function ConfirmWithdraw() {
             h="48px"
             _active={{}}
             _hover={{}}
-            // isDisabled={tx.currentStatus !== 5}
+            isDisabled={tx?.currentStatus !== 5}
             _disabled={{ color: "#8E8E92", bg: "#17181D" }}
             bg="#007AFF"
             onClick={() => {
+              console.log('tx',tx);
+              
               setClaimTx(tx)
               return claim(tx);
             }}

@@ -165,7 +165,6 @@ export default function TutorialModal() {
                     bg={index === currentStep ? "#4e4f54" : "#D9D9D9"}
                     onClick={() => setCurrentStep(index)}
                     cursor={"pointer"}
-                    key={step}
                   />
                 );
               })}

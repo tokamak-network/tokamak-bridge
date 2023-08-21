@@ -24,6 +24,9 @@ type TokenData = {
   token0Decimals: number;
   token1Decimals: number;
 };
+import { claimTx } from "@/recoil/userHistory/claimTx";
+import { useRecoilState } from "recoil";
+
 export default function WithdrawTx(props: { tx: any}) {
   const { tx } = props;
   const { provider } = useProvier();
@@ -33,7 +36,7 @@ export default function WithdrawTx(props: { tx: any}) {
   const providers = useGetTxLayers();
   const { claim } = useCallClaim('relayMessage');
   const zero_address = "0x0000000000000000000000000000000000000000";
-  
+  const [,setClaimTx] = useRecoilState(claimTx)
   // console.log('tx',tx);
   
   const getTokenData = useCallback(async () => {
@@ -129,6 +132,7 @@ export default function WithdrawTx(props: { tx: any}) {
           _focus={{}}
           _active={{}}
           onClick={() => {
+            setClaimTx(tx)
             return claim(tx);
           }}
         >

@@ -14,7 +14,7 @@ import {
 import MetamaskIcon from "assets/icons/metamaskAccount.svg";
 import Image from "next/image";
 import { useAccount } from "wagmi";
-import CopyIcon from "assets/icons/copy.png";
+import CopyIcon from "assets/icons/accountHistory/copy.png";
 import {
   CSSProperties,
   useCallback,
@@ -23,7 +23,7 @@ import {
   SetStateAction,
   Dispatch,
 } from "react";
-import DrawerCloseIcon from "assets/icons/drawerClose.svg";
+import DrawerCloseIcon from "assets/icons/accountHistory/drawerClose.svg";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { trimAddress } from "@/utils/trim";
@@ -243,7 +243,7 @@ export default function AccountHistory() {
       if (value === "") {
         return setSearchTxString(null);
       } else {
-        return setSearchTxString({id:value});
+        return setSearchTxString({ id: value });
       }
     };
     return (
@@ -312,7 +312,11 @@ export default function AccountHistory() {
           <SearchComponent />
         </Flex>
         <Flex mt="12px">
-          {tab === "Balance" ? <BalanceContainer /> : <ActivityContainer />}
+          {tab === "Balance" ? (
+            <BalanceContainer network={selectedNetwork} />
+          ) : (
+            <ActivityContainer network={selectedNetwork} />
+          )}
         </Flex>
       </DrawerContent>
     </Drawer>
