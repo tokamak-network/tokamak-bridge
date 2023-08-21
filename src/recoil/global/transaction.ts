@@ -83,3 +83,13 @@ export const txDataSelector = selector({
     const txData = get(txDataStatus);
   },
 });
+
+export const txPendingStatus = atom<boolean>({
+  key: "txPendingStatus",
+  default: false,
+});
+
+export const txHashStatus = atom<string | undefined>({
+  key: "txHashStatus",
+  default: undefined,
+});
