@@ -86,12 +86,20 @@ const ApproveButton = (props: { isInToken: boolean }) => {
 
 export const ApproveButtonsContrainer = () => {
   const { inTokenApproved, outTokenApproved } = useApproveToken();
-  const { inToken, outToken } = useInOutTokens();
+  const { inToken, outToken, inTokenHasAmount, outTokenHasAmount } =
+    useInOutTokens();
+  const [poolState] = usePool();
+
+  if (poolState === PoolState.INVALID) return null;
 
   return (
     <Flex columnGap={"12px"}>
-      {inToken && !inTokenApproved && <ApproveButton isInToken={true} />}
-      {outToken && !outTokenApproved && <ApproveButton isInToken={false} />}
+      {inToken && inTokenHasAmount && !inTokenApproved && (
+        <ApproveButton isInToken={true} />
+      )}
+      {outToken && outTokenHasAmount && !outTokenApproved && (
+        <ApproveButton isInToken={false} />
+      )}
     </Flex>
   );
 };
@@ -100,7 +108,8 @@ export default function ActionButton() {
   const [poolState] = usePool();
   const { tokensPairHasAmount } = useInOutTokens();
   const { inTokenApproved, outTokenApproved } = useApproveToken();
-  const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+  const { isBalanceOver, isOutTokenBalanceOver, isInputZero, isOutInputZero } =
+    useInputBalanceCheck();
   const { inToken, outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
   const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
@@ -137,7 +146,9 @@ export default function ActionButton() {
     (!deposit1Disabled && !outTokenApproved) ||
     isBalanceOver ||
     isOutTokenBalanceOver ||
-    isTONatPair;
+    isTONatPair ||
+    (!deposit0Disabled && isInputZero) ||
+    (!deposit1Disabled && isOutInputZero);
 
   const { mintPositionInfo } = useMintPositionInfo();
 
