@@ -500,6 +500,8 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
     !isReady ||
     mode === "Wrap" ||
     mode === "Unwrap" ||
+    mode === "ETH-Wrap" ||
+    mode === "ETH-Unwrap" ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
     isApproved === false ||

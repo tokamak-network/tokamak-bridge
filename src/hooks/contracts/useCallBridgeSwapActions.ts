@@ -29,7 +29,7 @@ export default function useCallBridgeSwapAction() {
     useCallWithdraw("withdraw");
 
   const { callTokenSwap, isError: _swapError } = useAmountOut();
-  const { wrapTON, unwrapWTON } = useWrap();
+  const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
@@ -45,7 +45,12 @@ export default function useCallBridgeSwapAction() {
       );
       const parsedAmount = inToken.amountBN;
 
-      if (mode === "Wrap" || mode === "Unwrap") {
+      if (
+        mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap"
+      ) {
       } else {
         setIsOpen(true);
         setModalOpen("confirming");
@@ -92,6 +97,10 @@ export default function useCallBridgeSwapAction() {
           return wrapTON();
         case "Unwrap":
           return unwrapWTON();
+        case "ETH-Wrap":
+          return wrapETH();
+        case "ETH-Unwrap":
+          return unwrapWETH();
         default:
           return console.error("action mode is not founded");
       }

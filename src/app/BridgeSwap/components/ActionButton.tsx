@@ -15,7 +15,6 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
-import { isETH } from "@/utils/token/isETH";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -37,7 +36,6 @@ export default function ActionButton() {
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
   const deactivateButton = status === "Active" && isL2;
-  const outTokenIsETH = isETH(outTokenInfo);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -52,8 +50,6 @@ export default function ActionButton() {
         isInputZero ||
         (mode === "Swap" && isTONatPair) ||
         deactivateButton;
-      // ||
-      // (mode === "Swap" && outTokenIsETH !== undefined && outTokenIsETH);
       setIsDisabled(disabled);
     }, 200);
 
@@ -102,7 +98,7 @@ export default function ActionButton() {
         ? null
         : isConnected && mode === null
         ? "Select Network"
-        : mode}{" "}
+        : mode?.replaceAll("ETH-", "")}{" "}
       <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
         {deactivateButton ? "(Service under maintenance)" : ""}
         {/* {'(Service under maintenance)'} */}

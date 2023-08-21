@@ -10,6 +10,7 @@ import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
+import { getWETHAddress, isETH } from "@/utils/token/isETH";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);

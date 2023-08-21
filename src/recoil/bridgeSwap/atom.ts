@@ -19,6 +19,7 @@ import {
   add,
   getTime,
 } from "date-fns";
+import { isETH } from "@/utils/token/isETH";
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -163,6 +164,13 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
           outTokenStatus?.address === supportedTokens[2].address,
       ];
 
+      const isETHWrap = [
+        isETH(inTokenStatus) &&
+          outTokenStatus?.address === supportedTokens[1].address,
+        inTokenStatus?.address === supportedTokens[1].address &&
+          isETH(outTokenStatus),
+      ];
+
       if (isWrap.includes(true) && network.inNetwork === network.outNetwork) {
         if (isWrap[0]) {
           return {
@@ -173,6 +181,24 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
         if (isWrap[1]) {
           return {
             mode: "Unwrap",
+            isReady: isInTokenReady,
+          };
+        }
+      }
+
+      if (
+        isETHWrap.includes(true) &&
+        network.inNetwork === network.outNetwork
+      ) {
+        if (isETHWrap[0]) {
+          return {
+            mode: "ETH-Wrap",
+            isReady: isInTokenReady,
+          };
+        }
+        if (isETHWrap[1]) {
+          return {
+            mode: "ETH-Unwrap",
             isReady: isInTokenReady,
           };
         }

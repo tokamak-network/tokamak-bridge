@@ -2,10 +2,8 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { Token, Ether } from "@uniswap/sdk-core";
-import useConnectedNetwork, { useInOutNetwork } from "../network";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useRecoilState } from "recoil";
+import useConnectedNetwork from "../network";
 import { useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
@@ -22,10 +20,6 @@ export function useInOutTokens() {
   const { provider } = useProvier();
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
-
-  const isETH = inTokenRecoilValue?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET || SupportedChainId.GOERLI
-  );
 
   const inToken = useMemo(() => {
     return inTokenRecoilValue && chainName
