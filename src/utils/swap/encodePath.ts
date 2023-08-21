@@ -52,7 +52,7 @@ export function getEncodedPath(params: {
       }
       let amountOutMinimum = ethers.BigNumber.from(
         Math.floor(
-          Number(routePath[routePath.length - 1]["amountOut"] / (1 + slippage))
+          routePath[routePath.length - 1]["amountOut"] / (1 + slippage)
         ).toString()
       );
 
@@ -69,9 +69,7 @@ export function getEncodedPath(params: {
       );
     } else {
       let amountOutMinimum = ethers.BigNumber.from(
-        Number(
-          Math.floor(routePath[0]["amountOut"] / (1 + slippage))
-        ).toString()
+        Math.floor(routePath[0]["amountOut"] / (1 + slippage)).toString()
       );
       let SwapParams = {
         tokenIn: routePath[0]["tokenIn"]["address"],
