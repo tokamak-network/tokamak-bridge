@@ -19,7 +19,7 @@ import useConnectedNetwork from "@/hooks/network";
 
 export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
-  const { inToken, outTokenInfo } = useInOutTokens();
+  const { inToken, outToken } = useInOutTokens();
   const { isBalanceOver } = useInputBalanceCheck();
   const { mode } = useGetMode();
   const { isTONatPair } = useIsTon();
@@ -45,6 +45,16 @@ export default function Warning() {
   // }
 
   if (mode === "Swap" && isTONatPair) {
+    if (
+      outToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS ||
+      outToken?.tokenAddress === GOERLI_CONTRACTS.TON_ADDRESS
+    ) {
+      return (
+        <WarningText
+          label={"TON is not supported to swap on L1. Please swap to WTON."}
+        />
+      );
+    }
     return (
       <WarningText
         label={
