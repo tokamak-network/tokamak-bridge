@@ -134,11 +134,11 @@ export default function RangeInput(props: RangeInputProps) {
     if (pricesAtTicks) {
       return isMinPrice
         ? invertPrice
-          ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
-          : pricesAtTicks?.LOWER?.toSignificant(5)
+          ? pricesAtTicks?.UPPER?.invert().toSignificant(6)
+          : pricesAtTicks?.LOWER?.toSignificant(6)
         : invertPrice
-        ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
-        : pricesAtTicks?.UPPER?.toSignificant(5);
+        ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
+        : pricesAtTicks?.UPPER?.toSignificant(6);
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
 

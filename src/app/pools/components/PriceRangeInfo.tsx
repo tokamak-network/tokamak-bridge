@@ -78,8 +78,8 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
               (inverted && ticksAtLimit.LOWER))
           ? "∞"
           : isMinPrice
-          ? priceLower?.toSignificant(5)
-          : priceUpper?.toSignificant(5)}
+          ? priceLower?.toSignificant(6)
+          : priceUpper?.toSignificant(6)}
       </Text>
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
         {inverted

@@ -194,8 +194,8 @@ export function usePoolInfo() {
     priceLower,
     priceUpper,
     currentPrice: inverted
-      ? currentPrice?.invert().toSignificant(4)
-      : currentPrice?.toSignificant(4),
+      ? currentPrice?.invert().toSignificant(6)
+      : currentPrice?.toSignificant(6),
     inverted,
     ratio,
     tickSpaceLimits,
