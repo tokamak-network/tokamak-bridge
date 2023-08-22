@@ -18,6 +18,7 @@ import {
 } from "@/recoil/pool/setPoolPosition";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import commafy from "@/utils/trim/commafy";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -97,6 +98,7 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
 export const CurrentPriceInfo = () => {
   const { tokenPairForInfo } = usePositionInfo();
   const { currentPrice, inverted } = usePoolInfo();
+  const { invertPrice } = useV3MintInfo();
 
   const { poolModal } = usePreview();
   const price = usePriceTickConversion();
@@ -127,11 +129,11 @@ export const CurrentPriceInfo = () => {
       </Text>
 
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
-        {inverted
+        {inverted || invertPrice
           ? tokenPairForInfo?.token0Symbol
           : tokenPairForInfo?.token1Symbol}{" "}
         per{" "}
-        {inverted
+        {inverted || invertPrice
           ? tokenPairForInfo?.token1Symbol
           : tokenPairForInfo?.token0Symbol}
       </Text>

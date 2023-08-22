@@ -22,7 +22,7 @@ import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
 import { useAccount, useFeeData } from "wagmi";
 import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
+import { lastFocusedInput, poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
@@ -47,12 +47,12 @@ export function usePoolMint() {
   const feeAmount = useRecoilValue(poolFeeStatus);
 
   const [poolStatus, poolData] = usePool();
-  const { ticks, poolForPosition, noLiquidity } = useV3MintInfo();
+  const { ticks, poolForPosition, noLiquidity, dependentAmount, invertPrice } =
+    useV3MintInfo();
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
-  const { invertAmount } = useGetAmountForLiquidity();
+  const lastFocused = useRecoilValue(lastFocusedInput);
 
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
-
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
@@ -62,10 +62,13 @@ export function usePoolMint() {
         pool &&
         inToken &&
         outToken &&
+        inToken.amountBN &&
+        outToken.amountBN &&
         address &&
         ticks.LOWER &&
         ticks.UPPER &&
-        feeAmount
+        feeAmount &&
+        dependentAmount
       ) {
         const configuredPool = new Pool(
           pool.token0,
@@ -76,17 +79,39 @@ export function usePoolMint() {
           pool.tickCurrent
         );
 
+        const token0Input =
+          lastFocused === "LeftInput"
+            ? invertPrice
+              ? outToken.parsedAmount
+              : inToken.parsedAmount
+            : invertPrice
+            ? outToken.parsedAmount
+            : dependentAmount.toSignificant(
+                invertPrice ? outToken.decimals : inToken.decimals
+              );
+
+        const token1Input =
+          lastFocused === "RightInput"
+            ? invertPrice
+              ? inToken.parsedAmount
+              : outToken.parsedAmount
+            : invertPrice
+            ? inToken.parsedAmount
+            : dependentAmount.toSignificant(
+                invertPrice ? inToken.decimals : outToken.decimals
+              );
+
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
           fromReadableAmount(
-            Number(invertAmount ? outToken.parsedAmount : inToken.parsedAmount),
+            Number(token0Input),
             pool.token0.decimals
           ).toString()
         );
         const token1 = CurrencyAmount.fromRawAmount(
           pool.token1,
           fromReadableAmount(
-            Number(invertAmount ? inToken.parsedAmount : outToken.parsedAmount),
+            Number(token1Input),
             pool.token1.decimals
           ).toString()
         );
@@ -115,8 +140,8 @@ export function usePoolMint() {
             );
 
           //for ETH value
-          const inIsEth = invertAmount ? isETH(outToken) : isETH(inToken);
-          const outIsETH = invertAmount ? isETH(inToken) : isETH(outToken);
+          const inIsEth = invertPrice ? isETH(outToken) : isETH(inToken);
+          const outIsETH = invertPrice ? isETH(inToken) : isETH(outToken);
           const inWeiAmount = ethers.BigNumber.from(token0.quotient.toString());
           const outWeiAmount = ethers.BigNumber.from(
             token1.quotient.toString()
@@ -201,9 +226,11 @@ export function usePoolMint() {
       UNISWAP_CONTRACT,
       pool,
       ticks,
-      invertAmount,
+      invertPrice,
       feeAmount,
       noLiquidity,
+      lastFocused,
+      dependentAmount,
     ]
   );
 
@@ -746,10 +773,6 @@ export function usePoolContract() {
           totalGasCost.toString(),
           "ether"
         );
-
-        console.log("parsedTotalGasCost");
-        console.log(parsedTotalGasCost);
-        console.log(ethPrice);
 
         const totalGasCostUSD =
           Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;

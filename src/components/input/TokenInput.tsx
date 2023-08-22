@@ -1,6 +1,5 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
@@ -41,12 +40,10 @@ export default function TokenInput(props: {
   const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [isMax, setIsMax] = useState<boolean>(false);
-  const [, setLastFocused] = useRecoilState(lastFocusedInput);
+  const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
 
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
-  const { dependentAmount } = useV3MintInfo();
-  const _dependentAmount = dependentAmount?.toSignificant(6);
-
+  const { dependentAmount: _dependentAmount } = useV3MintInfo();
+  const dependentAmount = _dependentAmount?.toSignificant(18);
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -175,32 +172,32 @@ export default function TokenInput(props: {
     setIsFocused(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
-      if (inToken && selectedOutToken && _dependentAmount) {
+      if (inToken && selectedOutToken && dependentAmount) {
         const parsedAmount = ethers.utils.parseUnits(
-          _dependentAmount,
+          dependentAmount,
           selectedOutToken.decimals
         );
 
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: parsedAmount.toBigInt(),
-          parsedAmount: _dependentAmount,
+          parsedAmount: dependentAmount,
         });
       }
-      if (!inToken && selectedInToken && _dependentAmount) {
+      if (!inToken && selectedInToken && dependentAmount) {
         const parsedAmount = ethers.utils.parseUnits(
-          _dependentAmount,
+          dependentAmount,
           selectedInToken.decimals
         );
 
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: parsedAmount.toBigInt(),
-          parsedAmount: _dependentAmount,
+          parsedAmount: dependentAmount,
         });
       }
     }
-  }, [mode, inToken, selectedInToken, selectedOutToken, _dependentAmount]);
+  }, [mode, inToken, selectedInToken, selectedOutToken, dependentAmount]);
 
   const valueProp = useMemo(() => {
     if (
@@ -210,9 +207,20 @@ export default function TokenInput(props: {
       return inTokenFromHook.parsedAmount;
     }
 
-    return mode === "Swap" && inToken === false
-      ? trimAmount(amountOut, 9) ?? ""
-      : inToken && selectedInToken && selectedInToken?.parsedAmount !== null
+    if (mode === "Swap" && inToken === false) {
+      return trimAmount(amountOut, 9) ?? "";
+    }
+
+    if (mode === "Pool" && dependentAmount) {
+      if (lastFocused === "LeftInput" && !inToken) {
+        return trimAmount(dependentAmount, 9);
+      }
+      if (lastFocused === "RightInput" && inToken) {
+        return trimAmount(dependentAmount, 9);
+      }
+    }
+
+    return inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 9)
@@ -229,7 +237,8 @@ export default function TokenInput(props: {
     mode,
     inTokenFromHook,
     isFocused,
-    _dependentAmount,
+    dependentAmount,
+    lastFocused,
   ]);
 
   const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({

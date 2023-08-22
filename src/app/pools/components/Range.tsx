@@ -11,6 +11,7 @@ import { T_PoolModal } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 
 const TokenPairTitle = (props: { page: T_PoolModal }) => {
   const { page } = props;
@@ -54,17 +55,18 @@ export default function Range(props: {
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
   const { poolModal } = usePreview();
-
+  const { invertPrice } = useV3MintInfo();
   const { inToken, outToken } = useInOutTokens();
 
-  const token0 = inverted ? info.token0 : info.token1;
-  const token1 = inverted ? info.token1 : info.token0;
+  const invertedPair = inverted || invertPrice;
+  const token0 = invertedPair ? info.token0 : info.token1;
+  const token1 = invertedPair ? info.token1 : info.token0;
   const token0AmountForAdding = commafy(
-    inverted ? token0Amount : token1Amount,
+    invertedPair ? token0Amount : token1Amount,
     6
   );
   const token1AmountForAdding = commafy(
-    inverted ? token1Amount : token0Amount,
+    invertedPair ? token1Amount : token0Amount,
     6
   );
 

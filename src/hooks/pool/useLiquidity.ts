@@ -2,10 +2,6 @@ import { useRecoilValue } from "recoil";
 import { usePositionInfo } from "./useGetPositionIds";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useMemo } from "react";
-import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
-import { useInOutTokens } from "../token/useInOutTokens";
-import { usePoolInfo } from "./usePoolInfo";
-import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
 import { usePricePair } from "../price/usePricePair";
 

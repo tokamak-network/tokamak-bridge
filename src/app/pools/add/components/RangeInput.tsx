@@ -35,8 +35,14 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit, invertPrice, invalidRange } =
-    useV3MintInfo();
+  const {
+    pricesAtTicks,
+    ticksAtLimit,
+    invertPrice,
+    invalidRange,
+    dependentAmount: _dependentAmount,
+  } = useV3MintInfo();
+  const dependentAmount = _dependentAmount?.toSignificant(6);
 
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
@@ -59,49 +65,39 @@ export default function RangeInput(props: RangeInputProps) {
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
   const lastFocused = useRecoilValue(lastFocusedInput);
 
-  const handleBlur = useCallback(() => {
-    //for pool's price and amount on liquidity
-    if (lastFocused === "LeftInput" && selectedOutToken && amountForToken1) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken1.toString().replaceAll("-", ""),
-        selectedOutToken.decimals
-      );
+  // const handleBlur = useCallback(() => {
+  //   //for pool's price and amount on liquidity
+  //   if (lastFocused === "LeftInput" && selectedOutToken && dependentAmount) {
+  //     const parsedAmount = ethers.utils.parseUnits(
+  //       dependentAmount,
+  //       selectedOutToken.decimals
+  //     );
 
-      const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
-        selectedOutToken.decimals
-      );
+  //     return setSelectedOutToken({
+  //       ...selectedOutToken,
+  //       amountBN: parsedAmount.toBigInt(),
+  //       parsedAmount: dependentAmount,
+  //     });
+  //   }
+  //   if (lastFocused === "RightInput" && selectedInToken && dependentAmount) {
+  //     const parsedAmount = ethers.utils.parseUnits(
+  //       dependentAmount,
+  //       selectedInToken.decimals
+  //     );
 
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
-      });
-    }
-    if (lastFocused === "RightInput" && selectedInToken && amountForToken0) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken0.toString().replaceAll("-", ""),
-        selectedInToken.decimals
-      );
-
-      const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
-        selectedInToken.decimals
-      );
-
-      return setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
-      });
-    }
-  }, [
-    selectedInToken,
-    selectedOutToken,
-    amountForToken0,
-    amountForToken1,
-    lastFocused,
-  ]);
+  //     return setSelectedInToken({
+  //       ...selectedInToken,
+  //       amountBN: parsedAmount.toBigInt(),
+  //       parsedAmount: dependentAmount,
+  //     });
+  //   }
+  // }, [
+  //   selectedInToken,
+  //   selectedOutToken,
+  //   amountForToken0,
+  //   amountForToken1,
+  //   lastFocused,
+  // ]);
 
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,7 +154,7 @@ export default function RangeInput(props: RangeInputProps) {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
         setLocalValue(value);
-        handleBlur();
+        // handleBlur();
       }, 0);
     }
   }, [localValue, useLocalValue, value]);
