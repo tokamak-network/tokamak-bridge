@@ -36,24 +36,24 @@ export default function useCrosschainMessenger() {
     }
   }, [l1Pro, l2Pro, layer]);
 
-  const fetL1CrossMessenger = useCallback(() => {
-    const crossChainMessenger = new titanSDK.CrossChainMessenger({
-      l1ChainId: providers.l1ChainID,
-      l2ChainId: providers.l2ChainID,
-      l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
-      ).getSigner(address),
-      l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
-        process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
-      ).getSigner(address),
-    });
+  // const fetL1CrossMessenger = useCallback(() => {
+  //   const crossChainMessenger = new titanSDK.CrossChainMessenger({
+  //     l1ChainId: providers.l1ChainID,
+  //     l2ChainId: providers.l2ChainID,
+  //     l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
+  //       process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
+  //     ).getSigner(address),
+  //     l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
+  //       process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
+  //     ).getSigner(address),
+  //   });
 
-    setL1CrossMessenger(crossChainMessenger);
-  }, []);
+  //   setL1CrossMessenger(crossChainMessenger);
+  // }, []);
 
   useEffect(() => {
     fetchMessenger();
-    fetL1CrossMessenger();
+    // fetL1CrossMessenger();
   }, [l2Pro, l1Pro, layer]);
-  return { crossMessenger: crossMessenger, l1crossMessenger: l1crossMessenger };
+  return { crossMessenger: crossMessenger};
 }

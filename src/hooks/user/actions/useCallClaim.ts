@@ -29,10 +29,8 @@ export default function useCallClaim(functionName: string) {
   const { switchNetworkAsync, switchNetwork } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
   const { address } = useAccount();
-  const { l1crossMessenger } = useCrosschainMessenger();
   const [isConnectedToL1, setIsConnectedToL1] = useState(false);
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
-  const [cross, setCross] = useState(l1crossMessenger);
   const [resolvd, setResolvd] = useState(claimTxArgs);
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
@@ -45,12 +43,6 @@ export default function useCallClaim(functionName: string) {
   const { provider } = useProvier();
 
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
-
-  // useEffect(() => {
-  //   // console.log("resolvd", resolvd);
-  //   setResolvd(claimTxArgs);
-  //   setCross(l1crossMessenger);
-  // }, [l1crossMessenger, layer, claimTxArgs, connectedChainId]);
 
   //const { data, isLoading, isSuccess, sendTransaction } = useSendTransaction()
   useEffect(() => {
@@ -82,7 +74,7 @@ export default function useCallClaim(functionName: string) {
   //     return claisssXX();
   //   }
   // }, [cross, connectedChainId, provider]);
-  
+
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
 
   useEffect(() => {
@@ -152,18 +144,59 @@ export default function useCallClaim(functionName: string) {
   //   }
   // }, [cross, connectedChainId]);
 
-  const claim = useCallback(async (txt:any) => {
-    if (!isConnectedToL1) {
-      const selectedWork = supportedChain.filter((supportedChain) => {
-        if (isConnectedToMainNetwork === true) {
-          return [SupportedChainId["MAINNET"]].includes(supportedChain.chainId);
-        } else {
-          return [SupportedChainId["GOERLI"]].includes(supportedChain.chainId);
+  const claim = useCallback(
+    async (txt: any) => {
+      if (!isConnectedToL1) {
+        const selectedWork = supportedChain.filter((supportedChain) => {
+          if (isConnectedToMainNetwork === true) {
+            return [SupportedChainId["MAINNET"]].includes(
+              supportedChain.chainId
+            );
+          } else {
+            return [SupportedChainId["GOERLI"]].includes(
+              supportedChain.chainId
+            );
+          }
+        })[0];
+        const xx = txt;
+        const res = await switchNetworkAsync?.(selectedWork.chainId);
+        if (res) {
+          try {
+            console.log("providers", providers.l1ChainID, providers.l2ChainID);
+
+            const crossChainMessenger = new titanSDK.CrossChainMessenger({
+              l1ChainId: providers.l1ChainID,
+              l2ChainId: providers.l2ChainID,
+              l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
+                process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
+              ).getSigner(address),
+              l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
+                process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
+              ).getSigner(address),
+            });
+
+            console.log("claimTxArgs", xx);
+
+            const proof = await crossChainMessenger.getMessageProof(
+              xx.resolved
+            );
+            console.log(proof);
+            setIsOpen(true);
+            setModalOpen("confirming");
+            return write({
+              args: [
+                xx.resolved.target,
+                xx.resolved.sender,
+                xx.resolved.message,
+                xx.resolved.messageNonce,
+                proof,
+              ],
+            });
+          } catch (e) {
+            console.log(e);
+          }
         }
-      })[0];
-      const xx = txt
-      const res = await switchNetworkAsync?.(selectedWork.chainId);
-      if (res) {
+      } else {
         try {
           console.log("providers", providers.l1ChainID, providers.l2ChainID);
 
@@ -175,33 +208,31 @@ export default function useCallClaim(functionName: string) {
             ).getSigner(address),
             l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
               process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
-            ).getSigner(address), })
+            ).getSigner(address),
+          });
 
-            console.log('claimTxArgs',xx);
-            
-            const proof = await crossChainMessenger.getMessageProof(xx.resolved);
-            console.log(proof);
-            
-            return write({
-                      args: [
-                        xx.resolved.target,
-                        xx.resolved.sender,
-                        xx.resolved.message,
-                        xx.resolved.messageNonce,
-                        proof,
-                      ],
-                    });
-                  
-            
-            
+          console.log("claimTxArgs", txt);
+
+          const proof = await crossChainMessenger.getMessageProof(txt.resolved);
+          console.log(proof);
+          setIsOpen(true);
+          setModalOpen("confirming");
+          return write({
+            args: [
+              txt.resolved.target,
+              txt.resolved.sender,
+              txt.resolved.message,
+              txt.resolved.messageNonce,
+              proof,
+            ],
+          });
         } catch (e) {
           console.log(e);
         }
       }
-    } else {
-    }
-    // changeNetwork();
-  }, [isConnectedToL1, connectedChainId, cross, provider]);
+    },
+    [isConnectedToL1, connectedChainId, provider]
+  );
 
   return { claim };
 }

@@ -4,16 +4,19 @@ import {
   transactionModalStatus,
 } from "@/recoil/modal/atom";
 import { useCallback, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 
-export default function useTxConfirmModal(claim?: boolean) {
+export default function useTxConfirmModal() {
   const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
   const [isOpen, setIsOpen] = useRecoilState(transactionModalOpenStatus);
+  const isHistoryDrawerOpen = useRecoilValue(accountDrawerStatus);
 
   const isConfirming = modalOpen === "confirming";
   const isConfirmed = modalOpen === "confirmed";
   const isError = modalOpen === "error";
-  const isClaim = claim;
+  const isClaiming = isHistoryDrawerOpen === true;
+
   const closeModal = useCallback(() => {
     setModalOpen(null);
     setIsOpen(false);
@@ -26,7 +29,7 @@ export default function useTxConfirmModal(claim?: boolean) {
     isConfirmed,
     isError,
     closeModal,
-    isClaim,
+    isClaiming,
     setModalOpen,
   };
 }

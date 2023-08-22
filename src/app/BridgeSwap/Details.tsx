@@ -11,7 +11,7 @@ export function Details() {
 
   return (
     <Flex flexDir={"column"} w={"100%"} mt={"24px"} rowGap={"10px"}>
-      {mode !== null && (
+      {(mode !== null ) && (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
           <Warning />
           <TransactionDetail />

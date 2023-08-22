@@ -40,10 +40,10 @@ export default function Confirmation() {
     isOpen,
     setIsOpen,
     closeModal,
-    isClaim,
-  } = useTxConfirmModal(true);
-  const { mode } = useGetMode();
+    isClaiming
+  } = useTxConfirmModal();
 
+  const { mode } = useGetMode();
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalOverlay />
@@ -66,14 +66,12 @@ export default function Confirmation() {
             <CloseButton onClick={closeModal} />
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
-            {isConfirming
+            {isClaiming? 'Confirming Claim': isConfirming
               ? `Confirming ${mode}`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError
               ? "Transaction Failed"
-              : isClaim
-              ? "Confirming Claim"
               : null}
           </Text>
           <Flex pos={"relative"} w={"100%"} justifyContent={"center"}>
