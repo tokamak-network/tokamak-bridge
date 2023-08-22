@@ -21,6 +21,7 @@ export default function useContract() {
   const SWAPPER_V2_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.SwapperV2Proxy
     : GOERLI_CONTRACTS.SwapperV2Proxy;
+
   return {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,

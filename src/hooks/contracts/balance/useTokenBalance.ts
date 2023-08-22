@@ -21,6 +21,7 @@ export default function useTokenBalance(tokenInfo: TokenInfo | null) {
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
     token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
+    watch: true,
   });
 
   const tokenBalance = useMemo(() => {

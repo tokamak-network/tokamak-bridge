@@ -29,6 +29,7 @@ import {
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts";
+import { getWETHAddress } from "@/utils/token/isETH";
 
 const getAllowance = async (
   ERC20_contract: Contract,
@@ -46,6 +47,7 @@ export function useAllowance() {
         swapRouter: boolean;
         pool: boolean;
         swapper: boolean;
+        WETH: boolean;
       }
     | undefined
   >(undefined);
@@ -53,7 +55,7 @@ export function useAllowance() {
   const { inToken } = useInOutTokens();
   const { provider } = useProvier();
   const { address } = useAccount();
-  const { connectedChainId } = useConnectedNetwork();
+  const { connectedChainId, chainName } = useConnectedNetwork();
   const {
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
@@ -64,7 +66,13 @@ export function useAllowance() {
 
   useEffect(() => {
     const fetchAllowance = async () => {
-      if (inToken && inToken.tokenAddress !== null && address && provider) {
+      if (
+        inToken &&
+        inToken.tokenAddress !== null &&
+        address &&
+        provider &&
+        chainName
+      ) {
         if (
           inToken.isNativeCurrency?.includes(
             SupportedChainId.MAINNET || SupportedChainId.GOERLI
@@ -75,6 +83,7 @@ export function useAllowance() {
             swapRouter: true,
             pool: true,
             swapper: true,
+            WETH: true,
           });
         }
 
@@ -98,6 +107,7 @@ export function useAllowance() {
             UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS
           ),
           getAllowance(TOKEN_CONTRACT, address, SWAPPER_V2_CONTRACT),
+          // getAllowance(TOKEN_CONTRACT, address, getWETHAddress(chainName)),
         ]);
 
         const result = allowances.map((e) => {
@@ -109,6 +119,7 @@ export function useAllowance() {
           swapRouter: result[1],
           pool: result[2],
           swapper: result[3],
+          WETH: result[4],
         });
       }
     };
@@ -123,7 +134,7 @@ export function useAllowance() {
     UNISWAP_CONTRACT,
     connectedChainId,
     provider,
-    L1BRIDGE_CONTRACT,
+    chainName,
   ]);
 
   // const callApprove = useCallback(() => {}, [approved]);
@@ -153,6 +164,9 @@ export function useApprove() {
         case "Wrap":
         case "Unwrap":
           return approved?.swapper;
+        case "ETH-Wrap":
+        case "ETH-Unwrap":
+          return true;
         default:
           return;
       }
@@ -189,6 +203,7 @@ export function useApprove() {
     UNISWAP_CONTRACT,
     SWAPPER_V2_CONTRACT,
   } = useContract();
+  const { chainName } = useConnectedNetwork();
 
   const callApprove = useCallback(async () => {
     try {
@@ -219,7 +234,7 @@ export function useApprove() {
       console.log("**callApprove err*");
       console.log(e);
     }
-  }, [mode, totalSupply]);
+  }, [mode, totalSupply, chainName]);
 
   return { isApproved, callApprove };
 }

@@ -44,12 +44,12 @@ export const CardCarrousel = () => {
     >
       <Flex
         onClick={handlePrev}
-        border={"2px solid #17181D"}
-        bgColor={"#0f0f12"}
-        w={"32px"}
-        minW={"32px"}
-        maxW={"32px"}
-        h={"32px"}
+        // border={"2px solid #17181D"}
+        // bgColor={"#0f0f12"}
+        w={"64px"}
+        minW={"64px"}
+        maxW={"64px"}
+        h={"64px"}
         _active={{}}
         _hover={{}}
         p={0}
@@ -72,6 +72,7 @@ export const CardCarrousel = () => {
         h={"332px"}
         pos={"relative"}
       >
+      
         {/* 시연용 */}
         {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
           // const {
@@ -165,14 +166,15 @@ export const CardCarrousel = () => {
           );
         })}
       </Flex>
+    
       <Flex
         onClick={handleNext}
-        border={"2px solid #17181D"}
-        bgColor={"#0f0f12"}
-        w={"32px"}
-        minW={"32px"}
-        maxW={"32px"}
-        h={"32px"}
+        // border={"2px solid #17181D"}
+        // bgColor={"#0f0f12"}
+        w={"64px"}
+        minW={"64px"}
+        maxW={"64px"}
+        h={"64px"}
         _active={{}}
         _hover={{}}
         p={0}

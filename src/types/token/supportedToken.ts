@@ -46,8 +46,8 @@ export const supportedTokens: SupportedTokens_T = [
     tokenName: "ETH",
     tokenSymbol: "ETH",
     address: {
-      MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
+      MAINNET: "",
+      GOERLI: "",
       TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.OVM_ETH,
     },
@@ -56,6 +56,7 @@ export const supportedTokens: SupportedTokens_T = [
       SupportedChainId.MAINNET,
       SupportedChainId.GOERLI,
       SupportedChainId.TITAN,
+      SupportedChainId.DARIUS,
     ],
     availableForBirdge: true,
   },
@@ -65,8 +66,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
       GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
-      TITAN: null,
-      DARIUS: null,
+      TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
       // TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       // DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
     },
@@ -179,4 +180,3 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
 ];
-
