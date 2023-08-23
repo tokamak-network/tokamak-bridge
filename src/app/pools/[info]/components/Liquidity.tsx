@@ -1,8 +1,7 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
-import Link from "next/link";
+import RemoveInactiveIcon from "@/assets/icons/pool/removeInactiveIcon.svg";
 import RemoveIcon from "@/assets/icons/pool/removeIconBlue.svg";
 import IncreaseIcon from "@/assets/icons/pool/increaseIconBlue.svg";
-
 import Image from "next/image";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Token } from "@uniswap/sdk-core";
@@ -11,9 +10,7 @@ import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
-import useConnectedNetwork from "@/hooks/network";
 import { useCallback } from "react";
-import { useSwitchNetwork } from "wagmi";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -63,7 +60,7 @@ export default function Liquidity() {
   }
 
   const { inverted, ratio } = usePoolInfo();
-  const { token0, token0Amount, token1, token1Amount, chainId } = info;
+  const { token0, token0Amount, token1, token1Amount, isClosed } = info;
 
   const { totalMarketPrice } = usePricePair({
     token0Name: token0.name,
@@ -73,25 +70,12 @@ export default function Liquidity() {
   });
 
   const router = useRouter();
-  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
-  const { switchNetworkAsync } = useSwitchNetwork();
 
-  const onClickToRoute = useCallback(
-    async (remove?: boolean) => {
-      if (chainId !== connectedChainId && otherLayerChainInfo) {
-        const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
-        if (res) {
-          return router.push(
-            remove ? `/pools/remove/${info.id}` : `/pools/increase/${info.id}`
-          );
-        }
-      }
-      return router.push(
-        remove ? `/pools/remove/${info.id}` : `/pools/increase/${info.id}/`
-      );
-    },
-    [chainId, connectedChainId, otherLayerChainInfo]
-  );
+  const onClickToRoute = useCallback(async (remove?: boolean) => {
+    return router.push(
+      remove ? `/pools/remove/${info.id}` : `/pools/increase/${info.id}/`
+    );
+  }, []);
 
   return (
     <Box
@@ -108,17 +92,23 @@ export default function Liquidity() {
             <Text color="#A0A3AD" fontSize={13}>
               Remove
             </Text>
-            <Box onClick={() => onClickToRoute(true)} cursor={"pointer"}>
+            <Box
+              onClick={() => (isClosed ? null : onClickToRoute(true))}
+              cursor={isClosed ? "" : "pointer"}
+            >
               <Flex
                 w={"32px"}
                 h={"32px"}
                 bg="#15161D"
-                border={" 1px solid #007AFF"}
+                border={isClosed ? "" : " 1px solid #007AFF"}
                 borderRadius={"8px"}
                 alignItems={"center"}
                 justifyContent={"center"}
               >
-                <Image src={RemoveIcon} alt={"RemoveIcon"} />
+                <Image
+                  src={isClosed ? RemoveInactiveIcon : RemoveIcon}
+                  alt={"RemoveIcon"}
+                />
               </Flex>
             </Box>
           </Flex>

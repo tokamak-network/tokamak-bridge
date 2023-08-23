@@ -52,8 +52,8 @@ function isValidMethodArgs(x: unknown): x is MethodArgs | undefined {
 
 // formats many calls to a single function on a single contract, with the function name and inputs specified
 export function useSingleContractMultipleData(
-  chainId: number | undefined,
-  latestBlockNumber: number | undefined,
+  //   chainId: number | undefined,
+  //   latestBlockNumber: number | undefined,
   contract: Contract | null | undefined,
   methodName: string,
   callInputs: OptionalMethodInputs[],
@@ -91,5 +91,5 @@ export function useSingleContractMultipleData(
     });
   }, [contract, callDatas, gasRequired]);
 
-  return calls;
+  return { calls };
 }

@@ -1,10 +1,7 @@
-import { NetworkSymbol } from "@/components/image/NetworkSymbol";
-import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import { Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
 import commafy from "@/utils/trim/commafy";
@@ -12,6 +9,9 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { priceFormmater } from "@/utils/trim/priceFormatter";
+import { useSwitchNetwork } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
+import { useRouter } from "next/navigation";
 
 export type PoolCardDetail = {
   id: number;
@@ -84,8 +84,23 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Amount: token1FeeAmount,
   });
 
+  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
+  const { switchNetworkAsync, isLoading, error } = useSwitchNetwork();
+  const router = useRouter();
+
+  const chainId = token0.chainId;
+  const onClickToRoute = useCallback(async () => {
+    if (chainId !== connectedChainId && otherLayerChainInfo) {
+      const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+      if (res && res.id === otherLayerChainInfo.chainId) {
+        return router.push(`/pools/${id}`);
+      }
+    }
+    return router.push(`/pools/${id}`);
+  }, [chainId, connectedChainId, otherLayerChainInfo]);
+
   return (
-    <Link href="/pools/[info]" as={`/pools/${id}`} key={id}>
+    <Box onClick={() => onClickToRoute()}>
       <Flex
         flexDir="column"
         border="3px solid #383736"
@@ -154,6 +169,6 @@ export default function PoolCard(props: PoolCardDetail) {
           </Flex>
         </Flex>
       </Flex>
-    </Link>
+    </Box>
   );
 }
