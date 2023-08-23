@@ -1,22 +1,18 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import usePriceImpact from "@/hooks/swap/usePriceImpact";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   SelectedToken,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 
@@ -35,9 +31,15 @@ export function TokenInputForLiquidity(props: {
   );
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const { chainName } = useConnectedNetwork();
+  const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
 
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity(true);
+  const {
+    amountForToken0,
+    amountForToken1,
+    dependentAmount: _dependentAmount,
+  } = useGetAmountForLiquidity();
   const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const dependentAmount = _dependentAmount?.toSignificant(18);
 
   const tokenData = useTokenBalance(tokenInfo);
 
@@ -139,44 +141,34 @@ export function TokenInputForLiquidity(props: {
 
   const handleFocus = () => {
     setIsFocused(true);
+    setLastFocused(inToken ? "LeftInput" : "RightInput");
   };
 
   const handleBlur = () => {
     setIsFocused(false);
     //for pool's price and amount on liquidity
-
-    if (inToken && selectedOutToken && amountForToken1) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken1.toString().replaceAll("-", ""),
-        selectedOutToken.decimals
-      );
-
+    if (inToken && selectedOutToken && dependentAmount) {
       const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
+        dependentAmount,
         selectedOutToken.decimals
       );
 
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
+        parsedAmount: dependentAmount,
       });
     }
-    if (!inToken && selectedInToken && amountForToken0) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken0.toString().replaceAll("-", ""),
-        selectedInToken.decimals
-      );
-
+    if (!inToken && selectedInToken && dependentAmount) {
       const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
+        dependentAmount,
         selectedInToken.decimals
       );
 
       return setSelectedInToken({
         ...selectedInToken,
         amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
+        parsedAmount: dependentAmount.toString(),
       });
     }
   };

@@ -20,7 +20,7 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
-  const { addLiquidity } = usePoolContract();
+  const { increaseLiquidity } = usePoolContract();
   const { mintPosition, estimateGasToMint } = usePoolMint();
   const [gas, setGas] = useState<number | undefined>(undefined);
   const { blockNumber } = useBlockNum();
@@ -90,7 +90,9 @@ export default function IncreaseModal() {
               setIsOpen(true);
               onClosePreviewModal();
               setGas(undefined);
-              poolModal === "addLiquidity" ? mintPosition() : addLiquidity();
+              poolModal === "addLiquidity"
+                ? mintPosition()
+                : increaseLiquidity();
             }}
           >
             {poolModal === "addLiquidity" ? "Add" : "Increase"}

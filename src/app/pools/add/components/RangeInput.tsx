@@ -23,8 +23,6 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
-import { ethers } from "ethers";
 
 type RangeInputProps = {
   isMinPrice: boolean;
@@ -62,7 +60,6 @@ export default function RangeInput(props: RangeInputProps) {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
   const lastFocused = useRecoilValue(lastFocusedInput);
 
   // const handleBlur = useCallback(() => {

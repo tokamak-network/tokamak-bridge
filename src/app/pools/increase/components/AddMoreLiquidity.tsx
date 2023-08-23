@@ -88,7 +88,7 @@ export default function AddMoreLiquidity() {
               <OutRangeWarning />
             ) : (
               <TokenInputForLiquidity
-                inToken={inverted ? true : false}
+                inToken={true}
                 tokenInfo={token1Info}
                 otherTokenInfo={token0Info}
               />
@@ -112,7 +112,7 @@ export default function AddMoreLiquidity() {
           <Flex w={"186px"} mt="16px">
             {!deposit0Disabled && (
               <TokenInputForLiquidity
-                inToken={inverted ? false : true}
+                inToken={false}
                 tokenInfo={token0Info}
                 otherTokenInfo={token1Info}
               />

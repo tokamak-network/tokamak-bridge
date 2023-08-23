@@ -31,13 +31,13 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { PoolState } from "@/types/pool/pool";
-import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useGetMarketPrice } from "../price/useGetMarketPrice";
 import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
+import { usePoolInfo } from "./usePoolInfo";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -357,9 +357,10 @@ export function usePoolContract() {
   );
 
   const { info } = usePositionInfo();
+  const { inverted } = usePoolInfo();
 
-  const addLiquidity = useCallback(async () => {
-    if (address && info) {
+  const increaseLiquidity = useCallback(async () => {
+    if (address && info && (inToken || outToken)) {
       const {
         token0,
         token1,
@@ -375,15 +376,19 @@ export function usePoolContract() {
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
         fromReadableAmount(
-          Number(inToken?.parsedAmount ?? 0),
-          inToken?.decimals ?? 0
+          Number(
+            inverted ? inToken?.parsedAmount : outToken?.parsedAmount ?? 0
+          ),
+          (inverted ? inToken?.decimals : outToken?.decimals) ?? 0
         ).toString()
       );
       const token1Amount = CurrencyAmount.fromRawAmount(
         token0,
         fromReadableAmount(
-          Number(outToken?.parsedAmount ?? 0),
-          outToken?.decimals ?? 0
+          Number(
+            inverted ? outToken?.parsedAmount : inToken?.parsedAmount ?? 0
+          ),
+          (inverted ? outToken?.decimals : inToken?.decimals) ?? 0
         ).toString()
       );
 
@@ -470,7 +475,7 @@ export function usePoolContract() {
         // return sendTransaction(transaction);
       }
     }
-  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
+  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT, inverted]);
 
   const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);
   const [txHashToRemoveLiquidity, setTxHashToRemoveLiquidity] = useState<
@@ -784,7 +789,7 @@ export function usePoolContract() {
   );
 
   return {
-    addLiquidity,
+    increaseLiquidity,
     removeLiquidity,
     collectFees,
     estimateGasToCollect,

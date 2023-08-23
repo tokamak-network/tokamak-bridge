@@ -30,6 +30,7 @@ import {
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
   const [poolState, pool] = usePool();
+
   const noLiquidity = poolState === PoolState.NOT_EXISTS;
   const { inToken, outToken } = useInOutTokens();
   const { minPriceInput, maxPriceInput } = useGetPoolInput();
@@ -54,7 +55,7 @@ export function useV3MintInfo() {
 
   const [token0, token1] = useMemo(
     () =>
-      tokenA && tokenB
+      tokenA && tokenB && tokenA !== tokenB
         ? tokenA.sortsBefore(tokenB)
           ? [tokenA, tokenB]
           : [tokenB, tokenA]
@@ -256,6 +257,7 @@ export function useV3MintInfo() {
     const wrappedIndependentAmount = independentAmount?.wrapped;
     const dependentCurrency =
       lastFocused === "LeftInput" ? outToken?.token : inToken?.token;
+
     if (
       independentAmount &&
       wrappedIndependentAmount &&
