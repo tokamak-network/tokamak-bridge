@@ -33,6 +33,7 @@ const CollectFeeAsWETH = () => {
         size={"lg"}
         className="switch_info"
         isChecked={collectAsWETH}
+        w={"56px"}
         onChange={() => setCollectAsWETH(!collectAsWETH)}
       />
     </Flex>
