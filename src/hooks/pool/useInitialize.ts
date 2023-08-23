@@ -20,7 +20,6 @@ export function useInitialize() {
   const [, setMaxPrice] = useRecoilState(maxPrice);
   const [, setInitialPrice] = useRecoilState(initialPrice);
   const [, setAmountPercentage] = useRecoilState(removeAmount);
-
   const initialzePoolValues = useCallback(() => {
     setAtMinTick(false);
     setAtMaxTick(false);
@@ -29,6 +28,7 @@ export function useInitialize() {
     initializeTokenPair();
     setInitialPrice("0");
     setAmountPercentage(0);
+    initializeTokenPairAmount();
     return setPoolFee(undefined);
   }, [initializeTokenPair, setPoolFee]);
 

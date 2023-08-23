@@ -150,7 +150,7 @@ export default function RangeInput(props: RangeInputProps) {
   useEffect(() => {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
-        setLocalValue(value);
+        setLocalValue(value ?? "");
         // handleBlur();
       }, 0);
     }
