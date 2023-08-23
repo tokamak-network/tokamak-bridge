@@ -84,7 +84,7 @@ export function useGetPositions() {
 
         // Get all positions
         const positions: PoolCardDetail[] = [];
-        for (let i = 0; i < balance; i++) {
+        for (let i = 0; i < Number(balance.toString()); i++) {
           const tokenOfOwnerByIndex: number =
             await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
               address,
@@ -153,7 +153,6 @@ export function useGetPositions() {
             IUniswapV3PoolABI.abi,
             _provider
           );
-
           const slot = await POOL_CONTRACT.slot0();
           const { tick, sqrtPriceX96 } = slot;
           const inRange = tickLower <= tick && tick < tickUpper;
@@ -316,6 +315,9 @@ export function useGetPositionIdFromPath() {
 function useGetPositionInfo() {
   const { positions } = useGetPositions();
   const pathName = usePathname();
+  const { otherLayerProvider } = useProvier();
+
+  const { otherLayerChainInfo } = useConnectedNetwork();
   const existingPositionInfo = useMemo(() => {
     const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
@@ -325,7 +327,7 @@ function useGetPositionInfo() {
       );
       return result[0] ?? undefined;
     }
-  }, [pathName, positions]);
+  }, [pathName, positions, otherLayerProvider, otherLayerChainInfo]);
 
   return { existingPositionInfo };
 }

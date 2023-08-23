@@ -22,7 +22,17 @@ export function useGetMode() {
   const remove = pathname.includes("remove");
   const claim = pathname.includes("claim");
 
-  return { mode: isPool ? "Pool" : mode, swapSection, isReady, subMode: add };
+  return {
+    mode: isPool ? "Pool" : mode,
+    swapSection,
+    isReady,
+    subMode: {
+      add,
+      increase,
+      remove,
+      claim,
+    },
+  };
 }
 
 const main = (param: any) => {
