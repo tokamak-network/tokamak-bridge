@@ -6,7 +6,6 @@ import ToggleSwitch from "../add/components/TokenToggle";
 import Setting from "@/components/Setting";
 import { useInitialize } from "@/hooks/pool/useInitialize";
 import { useGetPool } from "@/hooks/pool/useV3MintInfo";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function TopLine(props: {
   title: string;
@@ -17,7 +16,6 @@ export default function TopLine(props: {
   const { title, clear, switcher, backwardLink } = props;
   const { pool } = useGetPool();
   const { initialzePoolValues } = useInitialize();
-  const { subMode } = useGetMode();
 
   return (
     <Flex alignItems={"center"} justifyContent="space-between">

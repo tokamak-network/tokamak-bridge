@@ -26,6 +26,7 @@ import {
   initialPrice,
   lastFocusedInput,
 } from "@/recoil/pool/setPoolPosition";
+import { useGetMode } from "../mode/useGetMode";
 
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
@@ -52,10 +53,11 @@ export function useV3MintInfo() {
     ],
     [inToken?.token, outToken?.token, pool?.token0]
   );
+  const { subMode } = useGetMode();
 
   const [token0, token1] = useMemo(
     () =>
-      tokenA && tokenB && tokenA !== tokenB
+      tokenA && tokenB && subMode.add
         ? tokenA.sortsBefore(tokenB)
           ? [tokenA, tokenB]
           : [tokenB, tokenA]

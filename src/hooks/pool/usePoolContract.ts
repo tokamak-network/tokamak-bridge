@@ -82,10 +82,10 @@ export function usePoolMint() {
         const token0Input =
           lastFocused === "LeftInput"
             ? invertPrice
-              ? outToken.parsedAmount
-              : inToken.parsedAmount
+              ? outToken.amountBN
+              : inToken.amountBN
             : invertPrice
-            ? outToken.parsedAmount
+            ? outToken.amountBN
             : dependentAmount.toSignificant(
                 invertPrice ? outToken.decimals : inToken.decimals
               );
@@ -93,27 +93,21 @@ export function usePoolMint() {
         const token1Input =
           lastFocused === "RightInput"
             ? invertPrice
-              ? inToken.parsedAmount
-              : outToken.parsedAmount
+              ? inToken.amountBN
+              : outToken.amountBN
             : invertPrice
-            ? inToken.parsedAmount
+            ? inToken.amountBN
             : dependentAmount.toSignificant(
                 invertPrice ? inToken.decimals : outToken.decimals
               );
 
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
-          fromReadableAmount(
-            Number(token0Input),
-            pool.token0.decimals
-          ).toString()
+          token0Input.toString()
         );
         const token1 = CurrencyAmount.fromRawAmount(
           pool.token1,
-          fromReadableAmount(
-            Number(token1Input),
-            pool.token1.decimals
-          ).toString()
+          token1Input.toString()
         );
 
         const positionToMint = Position.fromAmounts({
@@ -375,17 +369,11 @@ export function usePoolContract() {
 
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
-        fromReadableAmount(
-          Number(inToken?.parsedAmount ?? 0),
-          inToken?.decimals ?? 0
-        ).toString()
+        inToken?.amountBN?.toString() ?? "-"
       );
       const token1Amount = CurrencyAmount.fromRawAmount(
         token1,
-        fromReadableAmount(
-          Number(outToken?.parsedAmount ?? 0),
-          outToken?.decimals ?? 0
-        ).toString()
+        outToken?.amountBN?.toString() ?? "-"
       );
 
       const configuredPool = new Pool(
