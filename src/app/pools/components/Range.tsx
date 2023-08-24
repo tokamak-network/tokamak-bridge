@@ -103,7 +103,9 @@ export default function Range(props: {
         amount={
           page === "addLiquidity"
             ? undefined
-            : commafy(inverted ? token1Amount : token0Amount, 6)
+            : page === "increaseLiquidity"
+            ? commafy(inverted ? token1Amount : token0Amount, 6)
+            : commafy(inverted ? token0Amount : token1Amount, 6)
         }
         page={page}
         alterAmount={
@@ -120,8 +122,8 @@ export default function Range(props: {
                 inverted
                   ? deposit0Disabled
                     ? undefined
-                    : amount1Removed
-                  : amount0Removed,
+                    : amount0Removed
+                  : amount1Removed,
                 6
               )
         }
@@ -132,7 +134,9 @@ export default function Range(props: {
         amount={
           page === "addLiquidity"
             ? undefined
-            : commafy(inverted ? token0Amount : token1Amount, 6)
+            : page === "increaseLiquidity"
+            ? commafy(inverted ? token0Amount : token1Amount, 6)
+            : commafy(inverted ? token1Amount : token0Amount, 6)
         }
         page={page}
         alterAmount={
@@ -149,8 +153,8 @@ export default function Range(props: {
                 inverted
                   ? deposit1Disabled
                     ? undefined
-                    : amount0Removed
-                  : amount1Removed,
+                    : amount1Removed
+                  : amount0Removed,
                 6
               )
         }

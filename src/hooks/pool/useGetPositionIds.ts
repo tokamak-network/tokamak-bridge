@@ -251,7 +251,7 @@ export function useGetPositions() {
             tickLower,
             tickCurrent: tick,
             tickUpper,
-            rawPositionInfo: positionInfo,
+            rawPositionInfo: { ...positionInfo, sqrtPriceX96 },
             hasETH: token0IsNative || token1IsNative,
             isClosed,
             token0Value: isNaN(token0Value) ? 0 : token0Value,

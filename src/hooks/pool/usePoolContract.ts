@@ -25,7 +25,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { lastFocusedInput, poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
-import { useV3MintInfo } from "./useV3MintInfo";
+import { useGetPool, useV3MintInfo } from "./useV3MintInfo";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
@@ -506,41 +506,24 @@ export function usePoolContract() {
             tickCurrent,
             tickLower,
             tickUpper,
-            sqrtPriceX96,
+            // sqrtPriceX96,
           } = info;
-          const { fee, liquidity } = rawPositionInfo;
-
-          const token0Amount = CurrencyAmount.fromRawAmount(
-            token0,
-            fromReadableAmount(
-              Number(info.token0Amount),
-              token0.decimals
-            ).toString()
-          );
-          const token1Amount = CurrencyAmount.fromRawAmount(
-            token0,
-            fromReadableAmount(
-              Number(info.token1Amount),
-              token1.decimals
-            ).toString()
-          );
+          const { fee, liquidity, sqrtPriceX96 } = rawPositionInfo;
 
           const configuredPool = new Pool(
             token0,
             token1,
             fee,
             sqrtPriceX96,
-            liquidity.toString(),
+            liquidity,
             tickCurrent
           );
 
-          const currentPosition = Position.fromAmounts({
+          const currentPosition = new Position({
             pool: configuredPool,
             tickLower,
             tickUpper,
-            amount0: token0Amount.quotient,
-            amount1: token1Amount.quotient,
-            useFullPrecision: true,
+            liquidity: liquidity.toString(),
           });
 
           const collectOptions: Omit<CollectOptions, "tokenId"> = {
