@@ -376,19 +376,15 @@ export function usePoolContract() {
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
         fromReadableAmount(
-          Number(
-            inverted ? inToken?.parsedAmount : outToken?.parsedAmount ?? 0
-          ),
-          (inverted ? inToken?.decimals : outToken?.decimals) ?? 0
+          Number(inToken?.parsedAmount ?? 0),
+          inToken?.decimals ?? 0
         ).toString()
       );
       const token1Amount = CurrencyAmount.fromRawAmount(
-        token0,
+        token1,
         fromReadableAmount(
-          Number(
-            inverted ? outToken?.parsedAmount : inToken?.parsedAmount ?? 0
-          ),
-          (inverted ? outToken?.decimals : inToken?.decimals) ?? 0
+          Number(outToken?.parsedAmount ?? 0),
+          outToken?.decimals ?? 0
         ).toString()
       );
 

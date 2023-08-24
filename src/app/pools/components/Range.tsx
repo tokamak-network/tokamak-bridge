@@ -60,8 +60,6 @@ export default function Range(props: {
   const { invertPrice } = useV3MintInfo();
   const { inToken, outToken } = useInOutTokens();
 
-  console.log(info);
-
   const invertedPair = inverted || invertPrice;
   const token1 = invertedPair ? info.token0 : info.token1;
   const token0 = invertedPair ? info.token1 : info.token0;
@@ -89,10 +87,10 @@ export default function Range(props: {
         </Flex>
         <RangeText inRange={inRange} style={{ fontSize: 14 }} />
       </Flex>
-      <Flex justifyContent={"center"} w="100%">
+      <Flex justifyContent={"center"} w="100%" mb={"16px"}>
         <TokenSymbolPair
-          token0={token1}
-          token1={token0}
+          token0={token0}
+          token1={token1}
           marginTop="12px"
           networkSymbolSize={24}
           networkSymbolStyle={{
@@ -113,7 +111,7 @@ export default function Range(props: {
             ? token1AmountForAdding
             : page === "increaseLiquidity"
             ? commafyWithUndefined(
-                inverted ? outToken?.parsedAmount : inToken?.parsedAmount,
+                inverted ? inToken?.parsedAmount : outToken?.parsedAmount,
                 6,
                 false,
                 true
@@ -127,6 +125,7 @@ export default function Range(props: {
                 6
               )
         }
+        style={{ marginBottom: "9px" }}
       />
       <RangeToken
         token={token0}
@@ -141,7 +140,7 @@ export default function Range(props: {
             ? token0AmountForAdding
             : page === "increaseLiquidity"
             ? commafyWithUndefined(
-                inverted ? inToken?.parsedAmount : outToken?.parsedAmount,
+                inverted ? outToken?.parsedAmount : inToken?.parsedAmount,
                 6,
                 false,
                 true
@@ -155,7 +154,6 @@ export default function Range(props: {
                 6
               )
         }
-        style={{ marginBottom: "9px", marginTop: "16px" }}
       />
       {(page === "addLiquidity" ||
         (page === "increaseLiquidity" && estimatedGas)) && (
