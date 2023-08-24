@@ -4,7 +4,7 @@ import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import useContract from "@/hooks/contracts/useContract";
-import { useAccount,useFeeData } from "wagmi";
+import { useAccount } from "wagmi";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
 import useConnectedNetwork from "../network";
@@ -19,12 +19,12 @@ import { txDataStatus } from "@/recoil/global/transaction";
 
 export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<any[]>([]);
+  const [tDataWithdraw, setTDataWithdraw] = useState<any[]>([]);
   const { provider } = useProvier();
   const { L2BRIDGE_CONTRACT } = useContract();
   const { address } = useAccount();
   const { layer, connectedChainId } = useConnectedNetwork();
   const { chain } = useNetwork();
-  const { data: feeData } = useFeeData();
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const { crossMessenger } = useCrosschainMessenger();
@@ -33,24 +33,15 @@ export default function useGetTransaction() {
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
   const [txData, setTxData] = useRecoilState(txDataStatus);
-  
+
   const fetchTransactions = useCallback(async () => {
     if (
       chain?.id &&
       l2ProSDK !== undefined &&
       l1Pro !== undefined &&
       l2Pro !== undefined &&
-      crossMessenger !== undefined  && feeData
+      crossMessenger !== undefined
     ) {
-      const l2Bridge = new ethers.Contract(
-        L2BRIDGE_CONTRACT,
-        L2BridgeAbi,
-        l2ProSDK
-      );
-
-      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
-      console.log('gasPrice',gasPrice,Number(gasPrice));
-      
       const userAllTransactions = await fetchUserTransactions(address);
 
       const alltx = [
@@ -59,19 +50,8 @@ export default function useGetTransaction() {
         ...userAllTransactions?.formattedWithdraw,
       ];
 
-      setLoadingState(alltx.length > 0 ? "loading" : "absent");
+      // setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
-      const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
-        "DepositFinalized"
-      );
-
-      const l2Transactions = l2Transactions_DepositFinalized;
-      const userL2Transactions = l2Transactions.filter(
-        (event) => event.args?._from === address
-      );
-
-
-      
       if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
           userAllTransactions.formattedWithdraw.map(async (tx: any) => {
@@ -82,9 +62,9 @@ export default function useGetTransaction() {
             const currentStatus = await crossMessenger.getMessageStatus(
               resolved
             );
+
             const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
-            console.log('l2TxReceipt',l2TxReceipt);
-            
+
             // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
             //if status is 4, rollup is finish and tx ready for challenge period
 
@@ -143,8 +123,6 @@ export default function useGetTransaction() {
               const challengePeriod =
                 await crossMessenger.getChallengePeriodSeconds();
               const timeReadyForRelay = block.timestamp + challengePeriod;
-
-              console.log("timeReadyForRelay", timeReadyForRelay);
 
               const messageTxReceipt = await l2Pro.getTransactionReceipt(
                 resolved.transactionHash
@@ -248,6 +226,65 @@ export default function useGetTransaction() {
           })
         );
 
+        const allTxs =
+          layer == "L1"
+            ? l2WithdrawTxs.sort(
+                (tx1: any, tx2: any) =>
+                  Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+              )
+            : l2WithdrawTxs.sort(
+                (tx1: any, tx2: any) =>
+                  Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+              );
+
+        const status =
+          alltx.length === 0
+            ? "absent"
+            : allTxs.length > 0
+            ? "present"
+            : "loading";
+
+        setTDataWithdraw(allTxs);
+        setLoadingState(status);
+      }
+    }
+  }, [address, layer, connectedChainId, crossMessenger]);
+
+  const fetchDepositTransactions = useCallback(async () => {
+    if (
+      chain?.id &&
+      l2ProSDK !== undefined &&
+      l1Pro !== undefined &&
+      l2Pro !== undefined
+    ) {
+      const l2Bridge = new ethers.Contract(
+        L2BRIDGE_CONTRACT,
+        L2BridgeAbi,
+        l2ProSDK
+      );
+
+      const userAllTransactions = await fetchUserTransactions(address);
+      const alltx = [
+        ...userAllTransactions?.formattedL1DepositResults,
+        ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
+        ...userAllTransactions?.formattedWithdraw,
+      ];
+
+      setLoadingState(alltx.length > 0 ? "loading" : "absent");
+
+      const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
+        "DepositFinalized"
+      );
+
+      const l2Transactions = l2Transactions_DepositFinalized;
+      const userL2Transactions = l2Transactions.filter(
+        (event) => event.args?._from === address
+      );
+
+      if (
+        userL2Transactions !== undefined &&
+        userAllTransactions !== undefined
+      ) {
         const l2DepTxs = await Promise.all(
           userL2Transactions
             .sort((tx1: any, tx2: any) => tx1.blockNumber - tx2.blockNumber)
@@ -311,36 +348,51 @@ export default function useGetTransaction() {
         );
 
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
-        const allTxs =
-          layer == "L1"
-            ? l2WithdrawTxs
-                .concat(txLogs)
-                .sort(
-                  (tx1: any, tx2: any) =>
-                    Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-                )
-            : l2WithdrawTxs
-                .concat(txLogs)
-                .sort(
-                  (tx1: any, tx2: any) =>
-                    Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-                );
-
-                
-        setTDataDeposit(allTxs);
-        setLoadingState(
-          alltx.length === 0
-            ? "absent"
-            : allTxs.length > 0
-            ? "present"
-            : "loading"
-        );
+        setTDataDeposit(txLogs);
+        // const allTxs =
+        //   layer == "L1"
+        //     ? l2WithdrawTxs
+        //         .concat(txLogs)
+        //         .sort(
+        //           (tx1: any, tx2: any) =>
+        //             Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+        //         )
+        //     : l2WithdrawTxs
+        //         .concat(txLogs)
+        //         .sort(
+        //           (tx1: any, tx2: any) =>
+        //             Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+        //         );
       }
     }
-  }, [address, layer, connectedChainId, crossMessenger]);
+  }, [address, layer, connectedChainId]);
 
   useEffect(() => {
     fetchTransactions();
+    const xx = setInterval(() => {
+      fetchTransactions();
+    }, 12000);
+
+    fetchDepositTransactions();
+
+    return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);
-  return { depositTxs: tDataDeposit, loadingState: loadingState };
+
+  // console.log(tDataWithdraw, tDataDeposit);
+  const allTxs =
+    layer == "L1"
+      ? tDataWithdraw
+          .concat(tDataDeposit)
+          .sort(
+            (tx1: any, tx2: any) =>
+              Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+          )
+      : tDataWithdraw
+          .concat(tDataDeposit)
+          .sort(
+            (tx1: any, tx2: any) =>
+              Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+          );
+
+  return { depositTxs: allTxs, loadingState: loadingState };
 }

@@ -55,7 +55,7 @@ export default function useCallClaim(functionName: string) {
     l1ChainId: providers.l1ChainID,
     l2ChainId: providers.l2ChainID,
     l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
-      process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
+      process.env.NEXT_PUBLIC_GOERLI_RPC
     ).getSigner(address),
     l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
       process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC

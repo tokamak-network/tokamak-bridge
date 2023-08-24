@@ -8,11 +8,10 @@ import { ethers } from "ethers";
 
 export default function useCrosschainMessenger() {
   const [crossMessenger, setCrossMessenger] = useState<any>();
-  const [l1crossMessenger, setL1CrossMessenger] = useState<any>();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
   const { provider } = useProvier();
-
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const { layer, connectedChainId } = useConnectedNetwork();
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
@@ -27,7 +26,9 @@ export default function useCrosschainMessenger() {
           layer === "L1"
             ? l1Pro.getSigner(address)
             : new ethers.providers.JsonRpcProvider(
-                process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
+                isConnectedToMainNetwork
+                  ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+                  : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
               ).getSigner(address),
         l2SignerOrProvider: l2Pro.getSigner(address),
       });
@@ -55,5 +56,5 @@ export default function useCrosschainMessenger() {
     fetchMessenger();
     // fetL1CrossMessenger();
   }, [l2Pro, l1Pro, layer]);
-  return { crossMessenger: crossMessenger};
+  return { crossMessenger: crossMessenger };
 }

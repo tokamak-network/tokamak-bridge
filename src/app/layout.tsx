@@ -3,7 +3,7 @@
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
 import { RecoilRoot } from "recoil";
-import HistoryDrawer from "@/components/history/Drawer";
+// import HistoryDrawer from "@/components/history/Drawer";
 
 import "css/scrollbar.css";
 import Modals from "./Modals";
@@ -11,8 +11,8 @@ import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
-import AccountHistory from "@/components/history/AccountHistory";
-
+// import AccountHistory from "@/components/history/AccountHistory";
+import Drawers from "./Drawers";
 export const GlobalComponents = () => {
   return (
     <>
@@ -62,11 +62,12 @@ export default function RootLayout({
             <ChakraProvidersForNextJs>
               <WagmiProviders>
                 <Entry children={children} />
-                <AccountHistory />
+                {/* <AccountHistory /> */}
                 {/* <Header />
                   <Center h={"100vh"}>{children}</Center>
                   <GlobalComponents />
                   <Modals /> */}
+                  <Drawers/>
               </WagmiProviders>
             </ChakraProvidersForNextJs>
           </QueryClientProvider>

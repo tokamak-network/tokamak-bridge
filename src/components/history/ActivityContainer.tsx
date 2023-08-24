@@ -1,7 +1,7 @@
 import { Flex, Text, Button, Spinner } from "@chakra-ui/react";
 import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
-import useGetTransaction from "@/hooks/user/useGetTransaction";
+// import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
@@ -10,14 +10,14 @@ import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
 import { supportedChain } from "@/types/network/supportedNetwork";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { P } from "pino";
 
-export default function ActivityContainer(props: { network: any }) {
-  const { network } = props;
-  const tData = useGetTransaction();
+export default function ActivityContainer(props: { network: any , tData:any}) {
+  const { network, tData } = props;
+  // const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
-
+  console.log('ddd',tData);
+  
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -53,7 +53,7 @@ export default function ActivityContainer(props: { network: any }) {
       });
       return filteredTx;
     }
-  }, [tData.depositTxs, searchTxString]);
+  }, [tData, searchTxString]);
 
   const getLayerFiltered = useMemo(() => {
     const depSelected =
@@ -73,14 +73,14 @@ export default function ActivityContainer(props: { network: any }) {
     } else {
       return filteredTx;
     }
-  }, [searchTxString, network, filteredTx]);
+  }, [searchTxString,tData, network, filteredTx]);
 
 
   const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return getLayerFiltered.slice(startIndex, endIndex);
-  }, [filteredTx, numData,getLayerFiltered]);
+  }, [filteredTx,tData, numData,getLayerFiltered]);
 
   const txes = useMemo(() => {
     switch (tData.loadingState) {

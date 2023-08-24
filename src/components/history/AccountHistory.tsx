@@ -45,7 +45,7 @@ type SelectOption = {
   networkImage: any;
 };
 
-export default function AccountHistory() {
+export default function AccountHistory(props:{tData:any}) {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
   const toast = useToast();
@@ -56,6 +56,9 @@ export default function AccountHistory() {
     chainName: undefined,
     networkImage: undefined,
   });
+
+  console.log(props.tData);
+  
   const handleCopyToClipboard = () => {
     copy(address !== undefined ? address : "");
 
@@ -318,7 +321,7 @@ export default function AccountHistory() {
           ) : (
             <ActivityContainer network={selectedNetwork} />
           )} */}
-          <ActivityContainer network={selectedNetwork} />
+          <ActivityContainer network={selectedNetwork} tData={props.tData}/>
         </Flex>
       </DrawerContent>
     </Drawer>
