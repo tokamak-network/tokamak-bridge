@@ -43,7 +43,10 @@ export default function TokenInput(props: {
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
 
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
-  const dependentAmount = _dependentAmount?.toSignificant(18);
+  const dependentAmount = _dependentAmount?.toSignificant(
+    // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
+    18
+  );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -126,6 +129,7 @@ export default function TokenInput(props: {
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
+          setLastFocused("LeftInput");
           return setTimeout(() => {
             //@ts-ignore
             inputRef?.current?.focus();
@@ -146,6 +150,7 @@ export default function TokenInput(props: {
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
+          setLastFocused("RightInput");
           return setTimeout(() => {
             //@ts-ignore
             inputRef?.current?.focus();
@@ -208,26 +213,26 @@ export default function TokenInput(props: {
     }
 
     if (mode === "Swap" && inToken === false) {
-      return trimAmount(amountOut, 9) ?? "";
+      return trimAmount(amountOut, 8) ?? "";
     }
 
     if (mode === "Pool" && dependentAmount) {
       if (lastFocused === "LeftInput" && !inToken) {
-        return trimAmount(dependentAmount, 9);
+        return trimAmount(dependentAmount, 8);
       }
       if (lastFocused === "RightInput" && inToken) {
-        return trimAmount(dependentAmount, 9);
+        return trimAmount(dependentAmount, 8);
       }
     }
 
     return inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
-        : trimAmount(selectedInToken?.parsedAmount, 9)
+        : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 9)
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
       : "";
   }, [
     inToken,
