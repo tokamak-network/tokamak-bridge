@@ -109,21 +109,22 @@ export default function AccountHistory() {
     const { setTab, tab } = props;
     return (
       <Flex columnGap={"24px"} mt="16px" mb="8px">
-        <Text
+        {/* <Text
           cursor={"pointer"}
           color={tab === "Balance" ? "#fff" : "#5E626D"}
           _hover={{ color: "#A0A3AD" }}
           onClick={() => setTab("Balance")}
         >
           Balance
-        </Text>
+        </Text> */}
         <Text
-          cursor={"pointer"}
-          color={tab === "Activity" ? "#fff" : "#5E626D"}
+          // cursor={"pointer"}
+          // color={tab === "Activity" ? "#fff" : "#5E626D"}
+          color={"#fff"}
           _hover={{ color: "#A0A3AD" }}
-          onClick={() => setTab("Activity")}
+          // onClick={() => setTab("Activity")}
         >
-          Activity
+          Bridge History
         </Text>
       </Flex>
     );
@@ -144,7 +145,7 @@ export default function AccountHistory() {
         <Flex
           borderRadius={"16px"}
           border={"3px solid #007AFF"}
-          h="136px"
+          h="64px"
           w="336px"
           flexDir={"column"}
         >
@@ -214,7 +215,7 @@ export default function AccountHistory() {
               </Flex>
             </Flex>
           </Flex>
-          <Flex flexDir={"column"} pl="16px">
+          {/* <Flex flexDir={"column"} pl="16px">
             <Text color={"#5D6978"} fontSize={"14px"} zIndex={1001}>
               Balance
             </Text>
@@ -228,7 +229,7 @@ export default function AccountHistory() {
             >
               $410.55
             </Text>
-          </Flex>
+          </Flex> */}
         </Flex>
       </Flex>
     );
@@ -312,11 +313,12 @@ export default function AccountHistory() {
           <SearchComponent />
         </Flex>
         <Flex mt="12px">
-          {tab === "Balance" ? (
+          {/* {tab === "Balance" ? (
             <BalanceContainer network={selectedNetwork} />
           ) : (
             <ActivityContainer network={selectedNetwork} />
-          )}
+          )} */}
+          <ActivityContainer network={selectedNetwork} />
         </Flex>
       </DrawerContent>
     </Drawer>

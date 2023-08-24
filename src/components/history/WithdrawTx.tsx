@@ -26,18 +26,20 @@ type TokenData = {
 };
 import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
+import { confirmWithdraw } from "@/recoil/modal/atom";
 
-export default function WithdrawTx(props: { tx: any}) {
+export default function WithdrawTx(props: { tx: any }) {
   const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();
   const { chain } = useNetwork();
   const { layer, chainName } = useConnectedNetwork();
   const providers = useGetTxLayers();
-  const { claim } = useCallClaim('relayMessage');
+  const { claim } = useCallClaim("relayMessage");
   const zero_address = "0x0000000000000000000000000000000000000000";
-  const [,setClaimTx] = useRecoilState(claimTx)
+  const [, setClaimTx] = useRecoilState(claimTx);
   // console.log('tx',tx);
+  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
   
   const getTokenData = useCallback(async () => {
     if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
@@ -118,40 +120,86 @@ export default function WithdrawTx(props: { tx: any}) {
       flexDir={"column"}
       rowGap={"8px"}
     >
-      <Flex justifyContent={"space-between"} w="100%">
-        <Text fontSize={"14px"} fontWeight={600}>
-          Withdraw
-        </Text>
-        <Button
-          w="57px"
-          h="24px"
-          bg="#323442"
-          fontSize={"12px"}
-          isDisabled={tx.currentStatus !== 5 }
-          _hover={{}}
-          _focus={{}}
-          _active={{}}
-          onClick={() => {
-            setClaimTx(tx)
-            return claim(tx);
-          }}
-        >
-          Claim
-        </Button>
+      <Flex
+        flexDir={"column"}
+        rowGap={"8px"}
+        cursor={"pointer"}
+        onClick={() => {
+          setClaimTx(tx);
+          setWithdraw({
+            isOpen: true,
+            modalData: {
+              ...tx,
+              inTokenSymbol: tokenData?.token0Symbol,
+              outTokenSymbol: tokenData?.token1Symbol,
+              inTokenAmount: ethers.utils.formatUnits(
+                tx._amount.toString(),
+                tokenData?.token0Decimals
+              ),
+            },
+          });
+        }}
+      >
+        <Flex justifyContent={"space-between"} w="100%">
+          <Text fontSize={"14px"} fontWeight={600}>
+            Withdraw
+          </Text>
+          <Button
+            w={tx?.currentStatus > 5 ? "72px" : "57px"}
+            h="24px"
+            bg="#007AFF"
+            fontSize={"12px"}
+            isDisabled={tx.currentStatus > 5}
+            _hover={{}}
+            _focus={{}}
+            _active={{}}
+            _disabled={{ bg: "#1F2128" }}
+            onClick={
+              tx?.currentStatus !== 5
+                ? () => {
+                    setClaimTx(tx);
+                    setWithdraw({
+                      isOpen: true,
+                      modalData: {
+                        ...tx,
+                        inTokenSymbol: tokenData?.token0Symbol,
+                        outTokenSymbol: tokenData?.token1Symbol,
+                        inTokenAmount: ethers.utils.formatUnits(
+                          tx._amount.toString(),
+                          tokenData?.token0Decimals
+                        ),
+                      },
+                    });
+                  }
+                : () => {
+                    setClaimTx(tx);
+                    claim(tx);
+                  }
+            }
+          >
+            {!tx
+              ? "Details"
+              : tx.currentStatus === 5
+              ? "Claim"
+              : tx.currentStatus > 5
+              ? "Claimed"
+              : "Details"}
+          </Button>
+        </Flex>
+        <TokenPairTx
+          inAmount={ethers.utils.formatUnits(
+            tx._amount.toString(),
+            tokenData?.token0Decimals
+          )}
+          action="withdraw"
+          outAmount={ethers.utils.formatUnits(
+            tx._amount.toString(),
+            tokenData?.token1Decimals
+          )}
+          inTokenSymbol={tokenData?.token0Symbol || "ETH"}
+          outTokenSymbol={tokenData?.token1Symbol || "ETH"}
+        />
       </Flex>
-      <TokenPairTx
-        inAmount={ethers.utils.formatUnits(
-          tx._amount.toString(),
-          tokenData?.token0Decimals
-        )}
-        action="withdraw"
-        outAmount={ethers.utils.formatUnits(
-          tx._amount.toString(),
-          tokenData?.token1Decimals
-        )}
-        inTokenSymbol={tokenData?.token0Symbol || "ETH"}
-        outTokenSymbol={tokenData?.token1Symbol || "ETH"}
-      />
       <StatusTx
         completed={true}
         date={tx.l2timeStamp}
@@ -164,7 +212,7 @@ export default function WithdrawTx(props: { tx: any}) {
           inTokenAmount: ethers.utils.formatUnits(
             tx._amount.toString(),
             tokenData?.token0Decimals
-          )
+          ),
         }}
       />
 
@@ -181,7 +229,7 @@ export default function WithdrawTx(props: { tx: any}) {
           inTokenAmount: ethers.utils.formatUnits(
             tx._amount.toString(),
             tokenData?.token0Decimals
-          )
+          ),
         }}
       />
     </Flex>

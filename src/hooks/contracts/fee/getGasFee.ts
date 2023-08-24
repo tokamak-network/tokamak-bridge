@@ -16,6 +16,11 @@ import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useAccount, useFeeData, usePublicClient } from "wagmi";
+import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
+import L2BridgeAbi from "@/abis/L2StandardBridge.json";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import { getProvider } from "@/config/getProvider";
+import useConnectedNetwork from "@/hooks/network";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -26,13 +31,18 @@ export function useGasFee() {
   const { contract: _depositETH_contract } = useCallDeposit("depositETH");
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
   const { contract: _withdraw_contract } = useCallWithdraw("withdraw");
+  const providers = useGetTxLayers();
+  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
 
   //   const { provider } = useProvier();
   const provider = usePublicClient();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
+  const { layer, connectedChainId } = useConnectedNetwork();
+  const { provider: l2Prov } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
+  const l2Pro = layer === "L2" ? l2Prov : getProvider(providers.l2Provider);
 
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && tokenMarketPrice) {
@@ -40,6 +50,12 @@ export function useGasFee() {
       return gasUseEstimate;
     }
   }, [routingPath]);
+
+  const withdrawContract = new ethers.Contract(
+    TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
+    L2BridgeAbi,
+    l2Pro
+  );
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
@@ -82,22 +98,57 @@ export function useGasFee() {
             });
           case "Withdraw":
             if (isETH) {
-              return _withdraw_contract.estimateGas.withdraw({
-                //@ts-ignore
-                account: address,
-                args: [predeploys.OVM_ETH, parsedAmount, 0, "0x"],
-              });
-            }
-            return _withdraw_contract.estimateGas.withdraw({
-              //@ts-ignore
-              account: address,
-              args: [
-                inToken.address[inNetwork.chainName],
+              const tx = await withdrawContract.populateTransaction.withdraw(
+                predeploys.OVM_ETH,
                 parsedAmount,
                 0,
-                "0x",
-              ],
-            });
+                "0x"
+              );
+
+              tx.from = address;
+
+              const l2ProSDK = titanSDK.asL2Provider(
+                getProvider(providers.l2Provider)
+              );
+              const signer = l2ProSDK?.getSigner(address);
+
+              const estimateProvider = signer?.provider;
+
+              return estimateProvider?.estimateTotalGasCost(tx);
+
+              // const yy = await _withdraw_contract.estimateGas.withdraw({
+              //   //@ts-ignore
+              //   account: address,
+              //   args: [predeploys.OVM_ETH, parsedAmount, 0, "0x"],
+              // });
+              // console.log("yy", yy);
+            }
+            const tx = await withdrawContract.populateTransaction.withdraw(
+              inToken.address[inNetwork.chainName],
+              parsedAmount,
+              0,
+              "0x"
+            );
+            tx.from = address;
+            const l2ProSDK = titanSDK.asL2Provider(
+              getProvider(providers.l2Provider)
+            );
+            const signer = l2ProSDK?.getSigner(address);
+
+            const estimateProvider = signer?.provider;
+            return estimateProvider?.estimateTotalGasCost(tx);
+
+          // const yy = await _withdraw_contract.estimateGas.withdraw({
+          //   //@ts-ignore
+          //   account: address,
+          //   args: [
+          //     inToken.address[inNetwork.chainName],
+          //     parsedAmount,
+          //     0,
+          //     "0x",
+          //   ],
+          // });
+          // console.log("yy", yy);
           default:
             return;
         }
@@ -107,6 +158,7 @@ export function useGasFee() {
       .then((estimatedGasUsage) => {
         if (provider && estimatedGasUsage && feeData) {
           const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+          
           // console.log(
           //   "gasPrice : ",
           //   gasPrice,
@@ -118,13 +170,22 @@ export function useGasFee() {
           //   maxPriorityFeePerGas
           // );
           if (gasPrice) {
-            const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
-            const parsedTotalGasCost = ethers.utils.formatUnits(
-              totalGasCost.toString(),
-              "ether"
-            );
-
-            return setTotalGasCost(parsedTotalGasCost);
+            if (mode !== "Withdraw") {
+              const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
+              const parsedTotalGasCost = ethers.utils.formatUnits(
+                totalGasCost.toString(),
+                "ether"
+              );
+             
+              
+              return setTotalGasCost(parsedTotalGasCost);
+            } else {
+              const totalGas = ethers.utils.formatUnits(
+                estimatedGasUsage.toString(),
+                "ether"
+              );
+              return setTotalGasCost(totalGas);
+            }
           }
         }
       })
@@ -144,12 +205,17 @@ export function useGasFee() {
     _withdraw_contract,
     provider,
     feeData,
+    l2Prov,
     swapGasUseEstimate,
   ]);
 
   const gasCostUS = useMemo(() => {
     if (totalGasCost && tokenMarketPrice) {
-      return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
+      if (mode !== "Withdraw") {
+        return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
+      } else {
+        return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 5);
+      }
     }
   }, [totalGasCost, tokenMarketPrice]);
 

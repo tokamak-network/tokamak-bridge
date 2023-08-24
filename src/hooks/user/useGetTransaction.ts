@@ -4,7 +4,7 @@ import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import useContract from "@/hooks/contracts/useContract";
-import { useAccount } from "wagmi";
+import { useAccount,useFeeData } from "wagmi";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
 import useConnectedNetwork from "../network";
@@ -24,6 +24,7 @@ export default function useGetTransaction() {
   const { address } = useAccount();
   const { layer, connectedChainId } = useConnectedNetwork();
   const { chain } = useNetwork();
+  const { data: feeData } = useFeeData();
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const { crossMessenger } = useCrosschainMessenger();
@@ -32,14 +33,14 @@ export default function useGetTransaction() {
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
   const [txData, setTxData] = useRecoilState(txDataStatus);
-
+  
   const fetchTransactions = useCallback(async () => {
     if (
       chain?.id &&
       l2ProSDK !== undefined &&
       l1Pro !== undefined &&
       l2Pro !== undefined &&
-      crossMessenger !== undefined
+      crossMessenger !== undefined  && feeData
     ) {
       const l2Bridge = new ethers.Contract(
         L2BRIDGE_CONTRACT,
@@ -47,6 +48,8 @@ export default function useGetTransaction() {
         l2ProSDK
       );
 
+      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      console.log('gasPrice',gasPrice,Number(gasPrice));
       
       const userAllTransactions = await fetchUserTransactions(address);
 
@@ -67,6 +70,7 @@ export default function useGetTransaction() {
         (event) => event.args?._from === address
       );
 
+
       
       if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
@@ -79,8 +83,8 @@ export default function useGetTransaction() {
               resolved
             );
             const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
-            console.log("currentStatus", currentStatus,resolved);
-
+            console.log('l2TxReceipt',l2TxReceipt);
+            
             // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
             //if status is 4, rollup is finish and tx ready for challenge period
 

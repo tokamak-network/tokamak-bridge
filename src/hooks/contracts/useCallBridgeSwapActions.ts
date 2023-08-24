@@ -32,10 +32,11 @@ export default function useCallBridgeSwapAction() {
   const { wrapTON, unwrapWTON } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
+  
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   const onClick = useCallback(async () => {
+    
     if (!isConnected) {
       return connectToWallet();
     }

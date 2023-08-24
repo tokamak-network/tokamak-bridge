@@ -8,9 +8,10 @@ import {
   Link,
   Button,
   useDisclosure,
+  Checkbox,
 } from "@chakra-ui/react";
 import { confirmWithdraw } from "@/recoil/modal/atom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import CloseButton from "../button/CloseButton";
 import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
 import Image from "next/image";
@@ -27,6 +28,9 @@ import "./CalendarButton.css";
 import { atcb_action } from "add-to-calendar-button";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useState, useEffect, useMemo } from "react";
+import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
+import commafy from "@/utils/trim/commafy";
+
 import {
   add,
   getTime,
@@ -36,16 +40,37 @@ import {
   format,
   subMinutes,
 } from "date-fns";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import { claimTx } from "@/recoil/userHistory/claimTx";
+import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
+import { useFeeData } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
+import { ethers } from "ethers";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
-  const [,setClaimTx] = useRecoilState(claimTx)
-  const tx = withdraw.modalData?.tx;
+  const [, setClaimTx] = useRecoilState(claimTx);
+  const providers = useGetTxLayers();
+  const tx = withdraw.modalData;
+  const { outToken } = useInOutTokens();
+  const { amountOut } = useAmountOut();
+  const { onClick } = useCallBridgeSwapAction();
+  const { gasCostUS } = useGasFee();
+  const { claim } = useCallClaim("relayMessage");
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
 
-  const { claim } = useCallClaim('relayMessage');
+  const { data: feeData } = useFeeData({
+    chainId: 1,
+  });
+
   const check = (progress: string) => {
     switch (progress) {
       case "inProgress":
@@ -60,293 +85,6 @@ export default function ConfirmWithdraw() {
     }
   };
 
-  const TitanContainer = () => {
-    return (
-      <Flex
-        bg="transparent"
-        w="176px"
-        pt="30px"
-        pb={"24px"}
-        // justifyContent={"center"}
-        h="172px"
-        border={"1px solid #313442"}
-        borderRadius={"12px"}
-        flexDir={"column"}
-        alignItems={"center"}
-      >
-        <Flex w="56px" h="56px">
-          <TokenSymbolWithNetwork
-            tokenSymbol={tx?.inTokenSymbol || "ETH"}
-            chainId={5050}
-            symbolW={56}
-            symbolH={56}
-            networkSymbolH={20}
-            networkSymbolW={20}
-          />
-        </Flex>
-        <Text h="24px" mt={"14px"} fontSize={"18px"} fontWeight={600}>
-          {tx.inTokenAmount} {tx?.inTokenSymbol || "ETH"}
-        </Text>
-        <Text
-          h="21px"
-          mt={"3px"}
-          fontSize={"14px"}
-          fontWeight={600}
-          color={"#A0A3AD"}
-        >
-          $0.22
-        </Text>
-      </Flex>
-    );
-  };
-  const EthereumContainer = () => {
-    return (
-      <Flex
-        bg="#0F0F12"
-        w="176px"
-        h="172px"
-        border={"1px solid #313442"}
-        borderRadius={"12px"}
-        flexDir={"column"}
-        justifyContent={"center"}
-        alignItems={"center"}
-      >
-        {/* <Image src={ETH} alt="ETH" height={40} width={40} /> */}
-        <TokenSymbol tokenType={tx?.inTokenSymbol as string} w={40} h={40} />
-        <Text fontSize={"16px"} mt="12px">
-          {tx?.outTokenSymbol || "ETH"}
-        </Text>
-      </Flex>
-    );
-  };
-
-  const Step1 = (props: { progress: string }) => {
-    return (
-      <Flex
-        h="36px"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        // border={"1px solid red"}
-        w="100%"
-      >
-        <Flex>
-          <Image src={check(props.progress).check} alt="check" />
-          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-            Initiate withdraw
-          </Text>
-        </Flex>
-        <Flex>
-          <Text mr="6px" fontSize={"14px"} color={check(props.progress).color}>
-            {" "}
-            ~ $3.18
-          </Text>
-          <Image src={check(props.progress).gas} alt="gas station" />
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const Step2 = (props: { progress: string }) => {
-    return (
-      <Flex
-        h="36px"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        // border={"1px solid red"}
-        w="100%"
-      >
-        <Flex>
-          <Image src={check(props.progress).check} alt="check" />
-          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-            Wait ~5 min for rollup
-          </Text>
-        </Flex>
-        <Flex>
-          <Text mr="6px" fontSize={"14px"} color={check(props.progress).color}>
-            {" "}
-            ~5 min
-          </Text>
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const Step3 = (props: { progress: string; timeStamp: number }) => {
-    const [duration, setDuration] = useState<Duration>({
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      months: 0,
-      seconds: 0,
-      years: 0,
-    });
-
-    useEffect(() => {
-      if (props.timeStamp) {
-        const intervalID = setInterval(() => {
-          const nowTime = getUnixTime(new Date());
-          
-          
-          if (nowTime > props.timeStamp) {
-            console.log('nowTime',nowTime,props.timeStamp);
-            setDuration({
-              days: 0,
-              hours: 0,
-              minutes: 0,
-              months: 0,
-              seconds: 0,
-              years: 0,
-            });
-          } else {
-            setDuration(
-              intervalToDuration({
-                start: getTime(props.timeStamp * 1000),
-                end: getTime(nowTime * 1000),
-              })
-            );
-          }
-        }, 1000);
-        return () => clearInterval(intervalID);
-      }
-    }, [props.timeStamp]);
-
-    return (
-      <Flex
-        h="36px"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        // border={"1px solid red"}
-        w="100%"
-      >
-        <Flex>
-          <Image src={check(props.progress).check} alt="check" />
-          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-            Wait 7 days
-          </Text>
-        </Flex>
-        <Flex>
-          <Text mr="6px" fontSize={"14px"} color={check(props.progress).color}>
-            {" "}
-            {duration.days !== undefined && duration.days < 10 ? "0" : ""}
-            {duration.days}:
-            {duration.hours !== undefined && duration.hours < 10 ? "0" : ""}
-            {duration.hours}:
-            {duration.minutes !== undefined && duration.minutes < 10 ? "0" : ""}
-            {duration.minutes}:
-            {duration.seconds !== undefined && duration.seconds < 10 ? "0" : ""}
-            {duration.seconds} Left
-          </Text>
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const Step4 = (props: { progress: string }) => {
-    return (
-      <Flex
-        h="36px"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        // border={"1px solid red"}
-        w="100%"
-      >
-        <Flex>
-          <Image src={check(props.progress).check} alt="check" />
-          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-            Claim withdraw
-          </Text>
-        </Flex>
-        <Flex>
-          <Text mr="6px" fontSize={"14px"} color={check(props.progress).color}>
-            {" "}
-            ~ $3.18
-          </Text>
-          <Image src={check(props.progress).gas} alt="gas station" />
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const Dots = (props: { progress: string }) => {
-    return (
-      <Flex flexDir={"column"} rowGap={"6px"} pl="6px">
-        <Flex bg={check(props.progress).color} height={"2px"} w="2px">
-          {" "}
-        </Flex>
-        <Flex bg={check(props.progress).color} height={"2px"} w="2px">
-          {" "}
-        </Flex>
-        <Flex bg={check(props.progress).color} height={"2px"} w="2px">
-          {" "}
-        </Flex>
-      </Flex>
-    );
-  };
-
-  const TimelineComponent = (props: { tx: any }) => {
-
-    const nowTime = getUnixTime(new Date());
-    return (
-      <Flex
-        flexDir={"column"}
-        bg="#15161D"
-        borderRadius={"8px"}
-        w="364px"
-        h="218px"
-        px="12px"
-        py="8px"
-      >
-        <Step1 progress="done" />
-        <Dots progress="done" />
-        <Step2
-          progress={
-            props.tx.currentStatus === 2
-              ? "inProgress"
-              : props.tx.currentStatus > 2
-              ? "done"
-              : "todo"
-          }
-        />
-        <Dots
-          progress={
-            props.tx.currentStatus === 2
-              ? "inProgress"
-              : props.tx.currentStatus > 2
-              ? "done"
-              : "todo"
-          }
-        />
-        <Step3
-          progress={
-            props.tx.currentStatus === 4
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
-          }
-          timeStamp={Number(tx.timeReadyForRelay)}
-        />
-        <Dots
-          progress={
-            props.tx.currentStatus === 4
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
-          }
-        />
-        <Step4
-          progress={
-            props.tx.currentStatus === 5
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
-          }
-        />
-      </Flex>
-    );
-  };
   const getCalendarEvent = useMemo(() => {
     if (tx && tx.timeReadyForRelay) {
       const endDate = new Date(tx.timeReadyForRelay * 1000);
@@ -372,6 +110,440 @@ export default function ConfirmWithdraw() {
     timeZone: "currentBrowser",
   };
 
+  const TitanContainer = (props: { tx: any }) => {
+    const { tx } = props;
+    const { inToken } = useInOutTokens();
+
+    return (
+      <Flex
+        bg="transparent"
+        w="176px"
+        pt="30px"
+        pb={"24px"}
+        // justifyContent={"center"}
+        h="172px"
+        border={"1px solid #313442"}
+        borderRadius={"12px"}
+        flexDir={"column"}
+        alignItems={"center"}
+      >
+        <Flex w="56px" h="56px">
+          <TokenSymbolWithNetwork
+            tokenSymbol={tx ? tx.inTokenSymbol : inToken?.tokenSymbol}
+            chainId={5050}
+            symbolW={56}
+            symbolH={56}
+            networkSymbolH={20}
+            networkSymbolW={20}
+          />
+        </Flex>
+        <Text h="24px" mt={"14px"} fontSize={"18px"} fontWeight={600}>
+          {tx?.inTokenAmount || inToken?.parsedAmount}{" "}
+          {tx?.inTokenSymbol || inToken?.tokenSymbol}
+        </Text>
+        <Text
+          h="21px"
+          mt={"3px"}
+          fontSize={"14px"}
+          fontWeight={600}
+          color={"#A0A3AD"}
+        >
+          $0.22
+        </Text>
+      </Flex>
+    );
+  };
+
+  const EthereumContainer = () => {
+    const { inToken } = useInOutTokens();
+
+    return (
+      <Flex
+        bg="#0F0F12"
+        w="176px"
+        h="172px"
+        border={"1px solid #313442"}
+        borderRadius={"12px"}
+        flexDir={"column"}
+        justifyContent={"center"}
+        alignItems={"center"}
+      >
+        {/* <Image src={ETH} alt="ETH" height={40} width={40} /> */}
+        <TokenSymbol
+          tokenType={
+            tx ? (tx.inTokenSymbol as string) : (inToken?.tokenSymbol as string)
+          }
+          w={40}
+          h={40}
+        />
+        <Text fontSize={"16px"} mt="12px">
+          {tx?.outTokenSymbol || inToken?.tokenSymbol}
+        </Text>
+      </Flex>
+    );
+  };
+
+  const Step1 = (props: { progress: string }) => {
+
+    return (
+      <Flex
+        h="36px"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        // border={"1px solid red"}
+        w="100%"
+      >
+        <Flex>
+          <Image src={check(props.progress).check} alt="check" />
+          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
+            Initiate withdraw
+          </Text>
+        </Flex>
+        {tx ? (
+          <Flex>
+            <Link
+              target="_blank"
+              href={`${providers.l2BlockExplorer}/tx/${tx.l2txHash}`}
+              textDecor={"none"}
+              _hover={{ textDecor: "none" }}
+              display={"flex"}
+            >
+              <Text mr="6px" fontSize={"14px"} color={"#FFFFFF"}>
+                Transaction
+              </Text>
+              <Image src={TxLinkIcon} alt="gas station" />
+            </Link>
+          </Flex>
+        ) : (
+          <Flex>
+            <Text
+              mr="6px"
+              fontSize={"14px"}
+              color={check(props.progress).color}
+            >
+              {Number(gasCostUS) < 0.01 ? `< $0.01` : `~$ ${gasCostUS}`}
+            </Text>
+
+            <Image src={check(props.progress).gas} alt="gas station" />
+          </Flex>
+        )}
+        {/* <Flex>
+          <Text mr="6px" fontSize={"14px"} color={check(props.progress).color}>
+            {" "}
+          ${gasCostUS}
+          </Text>
+          <Image src={check(props.progress).gas} alt="gas station" />
+        </Flex> */}
+      </Flex>
+    );
+  };
+
+  const Step2 = (props: { progress: string }) => {
+    return (
+      <Flex
+        h="36px"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        // border={"1px solid red"}
+        w="100%"
+      >
+        <Flex>
+          <Image src={check(props.progress).check} alt="check" />
+          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
+            Wait ~5 min for rollup
+          </Text>
+        </Flex>
+        {props.progress !== "done" && (
+          <Flex>
+            <Text
+              mr="6px"
+              fontSize={"14px"}
+              color={check(props.progress).color}
+            >
+              {" "}
+              ~5 min
+            </Text>
+          </Flex>
+        )}
+      </Flex>
+    );
+  };
+
+  const Step3 = (props: { progress: string; timeStamp: number }) => {
+    const [duration, setDuration] = useState<Duration>({
+      days: 0,
+      hours: 0,
+      minutes: 0,
+      months: 0,
+      seconds: 0,
+      years: 0,
+    });
+
+    useEffect(() => {
+      if (props.timeStamp) {
+        const intervalID = setInterval(() => {
+          const nowTime = getUnixTime(new Date());
+
+          if (nowTime > props.timeStamp) {
+            setDuration({
+              days: 0,
+              hours: 0,
+              minutes: 0,
+              months: 0,
+              seconds: 0,
+              years: 0,
+            });
+          } else {
+            setDuration(
+              intervalToDuration({
+                start: getTime(props.timeStamp * 1000),
+                end: getTime(nowTime * 1000),
+              })
+            );
+          }
+        }, 1000);
+        return () => clearInterval(intervalID);
+      }
+    }, [props.timeStamp]);
+
+    console.log('progress',props.progress);
+    
+    return (
+      <Flex
+        h="36px"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        // border={"1px solid red"}
+        w="100%"
+      >
+        <Flex>
+          <Image src={check(props.progress).check} alt="check" />
+          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
+            Wait 7 days
+          </Text>
+        </Flex>
+        {tx && (props.progress === "inProgress") && (
+          <Flex>
+            <Text
+              mr="6px"
+              fontSize={"14px"}
+              color={check(props.progress).color}
+            >
+              {" "}
+              {duration.days !== undefined && duration.days < 10 ? "0" : ""}
+              {duration.days}:
+              {duration.hours !== undefined && duration.hours < 10 ? "0" : ""}
+              {duration.hours}:
+              {duration.minutes !== undefined && duration.minutes < 10
+                ? "0"
+                : ""}
+              {duration.minutes}:
+              {duration.seconds !== undefined && duration.seconds < 10
+                ? "0"
+                : ""}
+              {duration.seconds} Left
+            </Text>
+          </Flex>
+        )}
+      </Flex>
+    );
+  };
+
+  const Step4 = (props: { progress: string }) => {
+    const [relayGasCost, setRelayGasCost] = useState("0");
+
+    useEffect(() => {
+      if (feeData && tokenMarketPrice) {
+        const gasLimit = 1000000;
+        const { gasPrice } = feeData;
+        const gasCost = gasLimit * Number(gasPrice);
+        const parsedTotalGasCost = ethers.utils.formatUnits(
+          gasCost.toString(),
+          "ether"
+        );
+
+        const usTotal = commafy(
+          Number(tokenMarketPrice) * Number(parsedTotalGasCost),
+          2
+        );
+        setRelayGasCost(usTotal);
+
+        const getFee = setInterval(() => {
+          const gasLimit = 1000000;
+          const { gasPrice } = feeData;
+          const gasCost = gasLimit * Number(gasPrice);
+          const parsedTotalGasCost = ethers.utils.formatUnits(
+            gasCost.toString(),
+            "ether"
+          );
+
+          const usTotal = commafy(
+            Number(tokenMarketPrice) * Number(parsedTotalGasCost),
+            2
+          );
+          setRelayGasCost(usTotal);
+        }, 12000);
+
+        return () => clearInterval(getFee);
+      }
+    }, [feeData]);
+
+    return (
+      <Flex
+        h="36px"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        // border={"1px solid red"}
+        w="100%"
+      >
+        <Flex>
+          <Image src={check(props.progress).check} alt="check" />
+          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
+            Claim withdraw
+          </Text>
+        </Flex>
+        {props.progress !== "done" && (
+          <Flex>
+            <Text
+              mr="6px"
+              fontSize={"14px"}
+              color={check(props.progress).color}
+            >
+              {" "}
+              ~ ${relayGasCost}
+            </Text>
+            <Image src={check(props.progress).gas} alt="gas station" />
+          </Flex>
+        )}
+      </Flex>
+    );
+  };
+
+  const Dots = (props: { progress: string }) => {
+    return (
+      <Flex flexDir={"column"} rowGap={"6px"} pl="6px">
+        <Flex bg={check(props.progress).color} height={"2px"} w="2px">
+          {" "}
+        </Flex>
+        <Flex bg={check(props.progress).color} height={"2px"} w="2px">
+          {" "}
+        </Flex>
+        <Flex bg={check(props.progress).color} height={"2px"} w="2px">
+          {" "}
+        </Flex>
+      </Flex>
+    );
+  };
+
+  const TimelineComponent = (props: { tx: any }) => {
+    console.log(tx);
+    
+    const nowTime = getUnixTime(new Date());
+
+    return (
+      <Flex
+        flexDir={"column"}
+        bg="#15161D"
+        borderRadius={"8px"}
+        w="364px"
+        h="218px"
+        px="12px"
+        py="8px"
+      >
+        <Step1 progress={(props.tx === undefined || props.tx === null) ? "inProgress" : "done"} />
+        <Dots progress={!props.tx ? "inProgress" : "done"} />
+        <Step2
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          }
+        />
+        <Dots
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          }
+        />
+        <Step3
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 4
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          }
+          timeStamp={tx ? Number(tx.timeReadyForRelay) : 0}
+        />
+        <Dots
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 4
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          }
+        />
+        <Step4
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 5
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          }
+        />
+      </Flex>
+    );
+  };
+
+  const CheckContainer = () => {
+    const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
+
+    return (
+      <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
+        <Checkbox
+          w={"16px"}
+          h={"16px"}
+          mt={"5px"}
+          mb={"auto"}
+          isChecked={isConfirm}
+          borderLeft={0}
+          borderWidth={"1px"}
+          borderColor={isConfirm ? "#fff" : "#A0A3AD"}
+          colorScheme={"#fff"}
+          onChange={(e) => {
+            const checkValue = e.target.checked;
+            setIsConfirm(checkValue);
+          }}
+        ></Checkbox>
+        <Text
+          lineHeight={"20px"}
+          fontSize={13}
+          fontWeight={500}
+          color={isConfirm ? "#fff" : "#A0A3AD"}
+        >
+          I understand that I have to send a transaction on Ethereum to "Claim"
+          my withdraw after 7 days.{" "}
+        </Text>
+      </Flex>
+    );
+  };
   const CalendarComponent = () => {
     return (
       <Flex
@@ -406,6 +578,36 @@ export default function ConfirmWithdraw() {
     );
   };
 
+  const ActionButton = () => {
+    const isChecked = useRecoilValue(confirmWithdrawStatus);
+
+    return (
+      <Button
+        h="48px"
+        _active={{}}
+        _hover={{}}
+        isDisabled={!tx && isChecked ? false : tx?.currentStatus !== 5}
+        _disabled={{ color: "#8E8E92", bg: "#17181D" }}
+        bg="#007AFF"
+        onClick={
+          !tx
+            ? () => {
+                onClick();
+                setWithdraw({
+                  isOpen: false,
+                  modalData: null,
+                });
+              }
+            : () => {
+                setClaimTx(tx);
+                claim(tx);
+              }
+        }
+      >
+        {tx ? "Claim Withdraw" : "Initiate Withdraw"}
+      </Button>
+    );
+  };
 
   return (
     <Modal isOpen={withdraw.isOpen} onClose={onClose} isCentered>
@@ -430,15 +632,13 @@ export default function ConfirmWithdraw() {
                   setWithdraw({
                     isOpen: false,
                     modalData: null,
-                  })
-                }
-                 
-                }
+                  });
+                }}
               />
             </Flex>
           </Flex>
           <Flex alignItems={"center"}>
-            <TitanContainer />
+            <TitanContainer tx={tx} />
             <Flex
               h="32px"
               w="32px"
@@ -456,23 +656,12 @@ export default function ConfirmWithdraw() {
             <EthereumContainer />
           </Flex>
           <TimelineComponent tx={tx} />
-          <CalendarComponent />
-          <Button
-            h="48px"
-            _active={{}}
-            _hover={{}}
-            isDisabled={tx?.currentStatus !== 5}
-            _disabled={{ color: "#8E8E92", bg: "#17181D" }}
-            bg="#007AFF"
-            onClick={() => {
-              console.log('tx',tx);
-              
-              setClaimTx(tx)
-              return claim(tx);
-            }}
-          >
-            Claim Withdraw
-          </Button>
+          {!tx ? (
+            <CheckContainer />
+          ) : tx.currentStatus === 4 ? (
+            <CalendarComponent />
+          ) : null}
+          <ActionButton />
         </Flex>
       </ModalContent>
     </Modal>
