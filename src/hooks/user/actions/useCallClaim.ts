@@ -12,7 +12,7 @@ import { ethers } from "ethers";
 import { confirmWithdraw } from "@/recoil/modal/atom";
 import useCrosschainMessenger from "../useCrosschainMessenger";
 import { useCallback, useEffect, useState } from "react";
-import { useAccount, useContractWrite,useSwitchNetwork } from "wagmi";
+import { useAccount, useContractWrite, useSwitchNetwork } from "wagmi";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { claimTx } from "@/recoil/userHistory/claimTx";
@@ -50,12 +50,13 @@ export default function useCallClaim(functionName: string) {
     L1CrossDomainMessenger_ABI,
     l2Pro
   );
-
   const crossChainMessenger = new titanSDK.CrossChainMessenger({
     l1ChainId: providers.l1ChainID,
     l2ChainId: providers.l2ChainID,
     l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
-      process.env.NEXT_PUBLIC_GOERLI_RPC
+      isConnectedToMainNetwork
+        ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+        : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
     ).getSigner(address),
     l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
       process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
@@ -91,14 +92,14 @@ export default function useCallClaim(functionName: string) {
             );
           }
         })[0];
-        const tx = txt;
+
         const res = await switchNetworkAsync?.(selectedWork.chainId);
+        const tx = txt;
         if (res) {
           try {
             const proof = await crossChainMessenger.getMessageProof(
               tx.resolved
             );
-
             setIsOpen(true);
             setModalOpen("confirming");
             setWithdraw({ isOpen: false, modalData: null });
@@ -139,40 +140,40 @@ export default function useCallClaim(functionName: string) {
   );
 
   // useEffect(() => {
-    // const fetchEstimatedGas = async () => {
-    //   console.log("claimTxArgs.resolved", claimTxArgs.resolved);
+  // const fetchEstimatedGas = async () => {
+  //   console.log("claimTxArgs.resolved", claimTxArgs.resolved);
 
-    //   if (
-    //     crossChainMessenger &&
-    //     messengerContract &&
-    //     claimTxArgs.resolved &&
-    //     feeData
-    //   ) {
-    //     const proof = await crossChainMessenger.getMessageProof(
-    //       claimTxArgs.resolved
-    //     );
+  //   if (
+  //     crossChainMessenger &&
+  //     messengerContract &&
+  //     claimTxArgs.resolved &&
+  //     feeData
+  //   ) {
+  //     const proof = await crossChainMessenger.getMessageProof(
+  //       claimTxArgs.resolved
+  //     );
 
-    //     const estimate = await messengerContract.estimateGas.relayMessage(
-    //       claimTxArgs.resolved.target,
-    //       claimTxArgs.resolved.sender,
-    //       claimTxArgs.resolved.message,
-    //       claimTxArgs.resolved.messageNonce,
-    //       proof
-    //     );
+  //     const estimate = await messengerContract.estimateGas.relayMessage(
+  //       claimTxArgs.resolved.target,
+  //       claimTxArgs.resolved.sender,
+  //       claimTxArgs.resolved.message,
+  //       claimTxArgs.resolved.messageNonce,
+  //       proof
+  //     );
 
-    //     console.log("estimate", estimate);
-    //   }
-    // };
-    // if (feeData) {
-    //   const intervalID = setInterval(() => {
-    //     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+  //     console.log("estimate", estimate);
+  //   }
+  // };
+  // if (feeData) {
+  //   const intervalID = setInterval(() => {
+  //     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
 
-    //     const gasLimit = 1000000;
-    //     console.log(gasPrice, maxFeePerGas, maxPriorityFeePerGas);
-    //   }, 12000);
+  //     const gasLimit = 1000000;
+  //     console.log(gasPrice, maxFeePerGas, maxPriorityFeePerGas);
+  //   }, 12000);
 
-    //   return clearInterval(intervalID);
-    // }
+  //   return clearInterval(intervalID);
+  // }
   // }, [feeData]);
 
   return { claim };

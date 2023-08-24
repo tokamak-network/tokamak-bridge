@@ -153,6 +153,7 @@ export default function WithdrawTx(props: { tx: any }) {
             _hover={{}}
             _focus={{}}
             _active={{}}
+            zIndex={1000}
             _disabled={{ bg: "#1F2128" }}
             onClick={
               tx?.currentStatus !== 5
