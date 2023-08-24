@@ -562,9 +562,6 @@ export function usePoolContract() {
             collectOptions,
           };
 
-          console.log("currentPosition");
-          console.log(currentPosition);
-
           if (currentPosition) {
             const { calldata, value } =
               NonfungiblePositionManager.removeCallParameters(

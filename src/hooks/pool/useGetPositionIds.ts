@@ -300,7 +300,7 @@ export function useGetPositions() {
       console.log("**fetchPositionIds err**");
       console.log(e);
     });
-  }, [blockNumber, connectedChainId]);
+  }, [blockNumber, connectedChainId, address]);
 
   return { positions };
 }
