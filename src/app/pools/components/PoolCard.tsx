@@ -17,10 +17,10 @@ export type PoolCardDetail = {
   id: number;
   token0: Token;
   token1: Token;
-  token0Amount: string;
+  token0Amount: number;
   token0CollectedFee: string;
   token0MarketPrice: string;
-  token1Amount: string;
+  token1Amount: number;
   token1CollectedFee: string;
   token1MarketPrice: string;
   fee: FeeAmount;
@@ -135,8 +135,10 @@ export default function PoolCard(props: PoolCardDetail) {
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token0.symbol}</Text>
-            <Text>
-              {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
+            <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+              {token0Amount < 0.001
+                ? smallNumberFormmater(token0Amount)
+                : commafy(token0Amount, 4)}{" "}
               <span style={{ color: "#A0A3AD" }}>
                 {token0MarketPrice === undefined
                   ? "(NA)"
@@ -146,8 +148,10 @@ export default function PoolCard(props: PoolCardDetail) {
           </Flex>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token1.symbol}</Text>
-            <Text>
-              {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
+            <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+              {token1Amount < 0.001
+                ? smallNumberFormmater(token1Amount)
+                : commafy(token1Amount, 4)}{" "}
               <span style={{ color: "#A0A3AD" }}>
                 {" "}
                 {token1MarketPrice === undefined
@@ -159,7 +163,9 @@ export default function PoolCard(props: PoolCardDetail) {
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>Fees</Text>
             {token0MarketPrice && token1MarketPrice ? (
-              <Text>${commafy(totalMarketPrice, 2)}</Text>
+              <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+                ${commafy(totalMarketPrice, 2)}
+              </Text>
             ) : (
               <Text color={"#A0A3AD"}>No market data</Text>
             )}

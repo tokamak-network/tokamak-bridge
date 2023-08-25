@@ -9,7 +9,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import "@/css/spinner.css";
 import ConfirmedImage from "assets/image/modal/confirmed.svg";
 import ErrorImage from "assets/image/modal/error.svg";
@@ -18,27 +18,32 @@ import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";
 import { useTransaction } from "@/hooks/tx/useTx";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { txHashStatus } from "@/recoil/global/transaction";
+import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
+import { useRouter } from "next/navigation";
 
 export default function Confirmation() {
-  // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
-  // const isConfirming = modalOpen === "confirming";
-  // const isConfirmed = modalOpen === "confirmed";
-  // const isError = modalOpen === "error";
-
   const { blockExplorer } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
   const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
     useTxConfirmModal();
-  const { mode } = useGetMode();
+  const { mode, subMode } = useGetMode();
+  const txLog = useRecoilValue(txHashLog);
+
+  const router = useRouter();
+  const closeThisModal = useCallback(() => {
+    if (subMode.add && txLog.logs && isConfirmed) {
+      router.push(`/pools/${txLog.logs.tokenId.toString()}`);
+    }
+    closeModal();
+  }, [subMode, isConfirmed, isConfirming, isError, closeModal, txLog]);
 
   return (
-    <Modal isOpen={isOpen} onClose={closeModal}>
+    <Modal isOpen={isOpen} onClose={closeThisModal}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}
@@ -56,7 +61,7 @@ export default function Confirmation() {
           alignItems={"center"}
         >
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeModal} />
+            <CloseButton onClick={closeThisModal} />
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming

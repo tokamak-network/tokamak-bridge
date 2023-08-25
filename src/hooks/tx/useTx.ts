@@ -7,11 +7,12 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
-
+import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import {
   txDataStatus,
+  txHashLog,
   txHashStatus,
   txPendingStatus,
 } from "@/recoil/global/transaction";
@@ -27,8 +28,18 @@ const getInterface = () => {
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
+  const nonFungiblePositionManagerI = new ethers.utils.Interface(
+    NONFUNGIBLE_POSITION_MANAGER_ABI
+  );
 
-  return { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI };
+  return {
+    l1BridgeI,
+    l2BridgeI,
+    swapRouterI,
+    erc20I,
+    swapperI,
+    nonFungiblePositionManagerI,
+  };
 };
 
 // const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
@@ -149,6 +160,7 @@ export function useTx(params: {
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
+  const [, setTxLog] = useRecoilState(txHashLog);
 
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
@@ -172,6 +184,21 @@ export function useTx(params: {
   useEffect(() => {
     if (data?.transactionHash) return setTxHash(data.transactionHash);
   }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      const { logs, transactionHash } = data;
+      const { nonFungiblePositionManagerI } = getInterface();
+      const result = nonFungiblePositionManagerI.parseLog(
+        logs[logs.length - 1]
+      );
+      const { args } = result;
+      setTxLog({
+        txSort,
+        logs: args,
+      });
+    }
+  }, [isSuccess, isError, txSort, data, hash]);
 
   // useEffect(() => {
   //   if (isLoading && connectedChainId && hash) {

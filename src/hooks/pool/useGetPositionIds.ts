@@ -28,6 +28,7 @@ import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
 import { Hash } from "viem";
+import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -50,7 +51,7 @@ import { Hash } from "viem";
 // }
 
 //logic through contract calls
-export function useGetPositions() {
+export function useGetPositions(positionId?: number) {
   const { provider, otherLayerProvider } = useProvier();
   const { UNISWAP_CONTRACT } = useContract();
   const { UNISWAP_CONTRACT_OTHER_LAYER } = useUniswapContracts();
@@ -63,7 +64,7 @@ export function useGetPositions() {
   const [positions, setPositions] = useRecoilState(ATOM_positions);
 
   const callPositionIds = useCallback(
-    async (otherLayer?: boolean) => {
+    async (otherLayer?: boolean, positionTokenId?: number) => {
       if (
         address &&
         connectedChainId &&
@@ -88,9 +89,10 @@ export function useGetPositions() {
 
         // Get all positions
         const positions: PoolCardDetail[] = [];
+        const batchSize = positionTokenId ? 1 : balance;
 
         const promises: any[] = [];
-        for (let i = 0; i < balance; i++) {
+        for (let i = 0; i < batchSize; i++) {
           promises.push(async () => {
             const tokenOfOwnerByIndex: number =
               await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
@@ -99,7 +101,7 @@ export function useGetPositions() {
               );
             const positionInfo =
               await NonfungiblePositionManagerContract.positions(
-                tokenOfOwnerByIndex
+                positionTokenId ?? tokenOfOwnerByIndex
               );
 
             const { token0, token1, fee, tickLower, tickUpper, liquidity } =
@@ -165,7 +167,9 @@ export function useGetPositions() {
             const { tick, sqrtPriceX96 } = slot;
             const inRange = tickLower <= tick && tick < tickUpper;
 
-            const positionId = Number(tokenOfOwnerByIndex.toString());
+            const positionId = Number(
+              positionTokenId ?? tokenOfOwnerByIndex.toString()
+            );
 
             const earningFee =
               await NonfungiblePositionManagerContract.callStatic.collect({
@@ -251,8 +255,8 @@ export function useGetPositions() {
                 token1Symbol === "WETH" ? "ETH" : token1Symbol,
                 token1Name
               ),
-              token0Amount: smallNumberFormmater(Number(token0Amount)),
-              token1Amount: smallNumberFormmater(Number(token1Amount)),
+              token0Amount: Number(token0Amount),
+              token1Amount: Number(token1Amount),
               token0CollectedFee,
               token1CollectedFee,
               token0MarketPrice,
@@ -291,6 +295,7 @@ export function useGetPositions() {
 
   const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
   const [account, setAccount] = useState<string | undefined>(undefined);
+  const txLog = useRecoilValue(txHashLog);
 
   useEffect(() => {
     const fetchPositionIds = async () => {
@@ -298,10 +303,9 @@ export function useGetPositions() {
         setAccount(address);
         setPositionsLoading(true);
       }
-      const result = await Promise.all([
-        callPositionIds(),
-        callPositionIds(true),
-      ]);
+      const result = positionId
+        ? await Promise.all([callPositionIds(false, positionId)])
+        : await Promise.all([callPositionIds(false), callPositionIds(true)]);
       try {
         if (result[0] && result[1]) {
           const positions = [...result[0], ...result[1]];
@@ -325,7 +329,7 @@ export function useGetPositions() {
       console.log(e);
       setPositionsLoading(false);
     });
-  }, [blockNumber, connectedChainId, address]);
+  }, [blockNumber, connectedChainId, address, txLog, positionId]);
 
   return { positions };
 }
@@ -338,29 +342,29 @@ export function useGetPositionIdFromPath() {
 }
 
 function useGetPositionInfo() {
-  const { positions } = useGetPositions();
   const pathName = usePathname();
+  const positionId = pathName.split("/")[pathName.split("/").length - 1];
+  const { positions } = useGetPositions(Number(positionId));
   const { otherLayerProvider } = useProvier();
 
   const { otherLayerChainInfo } = useConnectedNetwork();
-  const existingPositionInfo = useMemo(() => {
-    const positionId = pathName.split("/")[pathName.split("/").length - 1];
+  // const existingPositionInfo = useMemo(() => {
+  //   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
-    if (!isNaN(Number(positionId)) && positions) {
-      const result = positions.filter(
-        (poisitonData) => poisitonData.id === Number(positionId)
-      );
-      return result[0] ?? undefined;
-    }
-  }, [pathName, positions, otherLayerProvider, otherLayerChainInfo]);
+  //   if (!isNaN(Number(positionId)) && positions) {
+  //     const result = positions.filter(
+  //       (poisitonData) => poisitonData.id === Number(positionId)
+  //     );
+  //     return result[0] ?? undefined;
+  //   }
+  // }, [pathName, positions, otherLayerProvider, otherLayerChainInfo]);
 
-  return { existingPositionInfo };
+  return { existingPositionInfo: positions ? positions[0] : undefined };
 }
 
 export function usePositionInfo() {
   const { existingPositionInfo } = useGetPositionInfo();
   const mintPositionInfo = useRecoilValue(poolModalProp);
-
   const info = existingPositionInfo ?? mintPositionInfo;
 
   const tokenPairForInfo = useMemo(() => {

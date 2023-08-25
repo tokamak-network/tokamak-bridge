@@ -13,7 +13,8 @@ export default function Page() {
   const { info } = usePositionInfo();
 
   if (info === undefined) {
-    return <>{`position id not founded with this account :(`}</>;
+    return null;
+    // return <>{`position id not founded with this account :(`}</>;
   }
   return (
     <Flex w={"424px"} flexDir="column">
