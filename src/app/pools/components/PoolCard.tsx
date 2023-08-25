@@ -50,6 +50,10 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Amount,
     token0CollectedFee,
     token1CollectedFee,
+    token0Value,
+    token1Value,
+    token0MarketPrice,
+    token1MarketPrice,
     isClosed,
   } = props;
 
@@ -70,13 +74,6 @@ export default function PoolCard(props: PoolCardDetail) {
 
   const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
   const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-  const { token0Price, token1Price, hasTokenPrice } = usePricePair({
-    token0Name: token0.name,
-    token0Amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
-    token1Name: token1.name,
-    token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
-  });
-
   const { totalMarketPrice } = usePricePair({
     token0Name: token0.name,
     token0Amount: token0FeeAmount,
@@ -141,9 +138,9 @@ export default function PoolCard(props: PoolCardDetail) {
             <Text>
               {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
               <span style={{ color: "#A0A3AD" }}>
-                {priceFormmater(token0Price) === "NA"
-                  ? `(${priceFormmater(token0Price)})`
-                  : `($${priceFormmater(token0Price)})`}
+                {token0MarketPrice === undefined
+                  ? "(NA)"
+                  : `($${priceFormmater(token0Value)})`}
               </span>
             </Text>
           </Flex>
@@ -153,15 +150,15 @@ export default function PoolCard(props: PoolCardDetail) {
               {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
               <span style={{ color: "#A0A3AD" }}>
                 {" "}
-                {priceFormmater(token1Price) === "NA"
-                  ? `(${priceFormmater(token1Price)})`
-                  : `($${priceFormmater(token1Price)})`}
+                {token1MarketPrice === undefined
+                  ? "(NA)"
+                  : `($${priceFormmater(token1Value)})`}
               </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>Fees</Text>
-            {hasTokenPrice ? (
+            {token0MarketPrice && token1MarketPrice ? (
               <Text>${commafy(totalMarketPrice, 2)}</Text>
             ) : (
               <Text color={"#A0A3AD"}>No market data</Text>
