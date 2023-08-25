@@ -22,8 +22,8 @@ export function useMintPositionInfo() {
     if (pool && inToken && outToken && ticks.LOWER && ticks.UPPER) {
       const token0 = pool.token0;
       const token1 = pool.token1;
-      const token0Amount = inToken.parsedAmount ?? "0";
-      const token1Amount = outToken.parsedAmount ?? "0";
+      const token0Amount = Number(inToken.parsedAmount) ?? 0;
+      const token1Amount = Number(outToken.parsedAmount) ?? 0;
       const fee = pool.fee;
       const inRange = deposit0Disabled || deposit1Disabled;
       const liquidity = pool.liquidity.toString();
