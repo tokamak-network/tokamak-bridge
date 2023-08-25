@@ -16,7 +16,10 @@ import ERC20_ABI from "@/abis/erc20.json";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { usePathname } from "next/navigation";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { ATOM_positions } from "@/recoil/pool/positions";
+import {
+  ATOM_positions,
+  ATOM_positions_loading,
+} from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { getWETHAddress } from "@/utils/token/isETH";
@@ -24,6 +27,7 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
+import { Hash } from "viem";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -285,30 +289,41 @@ export function useGetPositions() {
     ]
   );
 
+  const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
+  const [account, setAccount] = useState<string | undefined>(undefined);
+
   useEffect(() => {
     const fetchPositionIds = async () => {
+      if (address && account !== address) {
+        setAccount(address);
+        setPositionsLoading(true);
+      }
       const result = await Promise.all([
         callPositionIds(),
         callPositionIds(true),
       ]);
-
-      if (result[0] && result[1]) {
-        const positions = [...result[0], ...result[1]];
-        const sortedPositions = sortPositions(positions);
-        return setPositions(sortedPositions);
-      }
-      if (result[0]) {
-        const sortedPositions = sortPositions(result[0]);
-        return setPositions(sortedPositions);
-      }
-      if (result[1]) {
-        const sortedPositions = sortPositions(result[1]);
-        return setPositions(sortedPositions);
+      try {
+        if (result[0] && result[1]) {
+          const positions = [...result[0], ...result[1]];
+          const sortedPositions = sortPositions(positions);
+          return setPositions(sortedPositions);
+        }
+        if (result[0]) {
+          const sortedPositions = sortPositions(result[0]);
+          return setPositions(sortedPositions);
+        }
+        if (result[1]) {
+          const sortedPositions = sortPositions(result[1]);
+          return setPositions(sortedPositions);
+        }
+      } finally {
+        setPositionsLoading(false);
       }
     };
     fetchPositionIds().catch((e) => {
       console.log("**fetchPositionIds err**");
       console.log(e);
+      setPositionsLoading(false);
     });
   }, [blockNumber, connectedChainId, address]);
 

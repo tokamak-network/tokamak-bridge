@@ -5,10 +5,13 @@ import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 import EmptyCard from "./EmptyCard";
 import { useAccount } from "wagmi";
+import { useRecoilValue } from "recoil";
+import { ATOM_positions_loading } from "@/recoil/pool/positions";
 
 export default function PoolList() {
   const { positions } = useGetPositions();
   const { isConnected } = useAccount();
+  const isLoading = useRecoilValue(ATOM_positions_loading);
 
   return (
     <Grid
@@ -19,7 +22,7 @@ export default function PoolList() {
     >
       <LPGuide />
       <AddLiquidity />
-      {positions === undefined &&
+      {isLoading &&
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} />
         ))}

@@ -20,6 +20,9 @@ export default function AddMoreLiquidity() {
 
   if (!info || !chainName) return null;
 
+  console.log("inverted");
+  console.log(inverted);
+
   const token0 = inverted ? info.token1 : info.token0;
   const token1 = inverted ? info.token0 : info.token1;
 

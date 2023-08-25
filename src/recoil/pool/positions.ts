@@ -6,6 +6,11 @@ export const ATOM_positions = atom<PoolCardDetail[] | undefined>({
   default: undefined,
 });
 
+export const ATOM_positions_loading = atom<boolean>({
+  key: "positionsLoading",
+  default: false,
+});
+
 export const ATOM_manuallyInverted = atom<boolean>({
   key: "manuallyInverted",
   default: false,
