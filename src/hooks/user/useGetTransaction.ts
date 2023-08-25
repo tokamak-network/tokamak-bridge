@@ -33,6 +33,7 @@ export default function useGetTransaction() {
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
   const [txData, setTxData] = useRecoilState(txDataStatus);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const fetchTransactions = useCallback(async () => {
     if (
@@ -40,9 +41,13 @@ export default function useGetTransaction() {
       l2ProSDK !== undefined &&
       l1Pro !== undefined &&
       l2Pro !== undefined &&
-      crossMessenger !== undefined
+      crossMessenger !== undefined &&
+      isConnectedToMainNetwork !== undefined
     ) {
-      const userAllTransactions = await fetchUserTransactions(address);
+      const userAllTransactions = await fetchUserTransactions(
+        address,
+        isConnectedToMainNetwork
+      );
 
       const alltx = [
         ...userAllTransactions?.formattedL1DepositResults,
@@ -255,7 +260,8 @@ export default function useGetTransaction() {
       chain?.id &&
       l2ProSDK !== undefined &&
       l1Pro !== undefined &&
-      l2Pro !== undefined
+      l2Pro !== undefined &&
+      isConnectedToMainNetwork !== undefined
     ) {
       const l2Bridge = new ethers.Contract(
         L2BRIDGE_CONTRACT,
@@ -263,7 +269,10 @@ export default function useGetTransaction() {
         l2ProSDK
       );
 
-      const userAllTransactions = await fetchUserTransactions(address);
+      const userAllTransactions = await fetchUserTransactions(
+        address,
+        isConnectedToMainNetwork
+      );
       const alltx = [
         ...userAllTransactions?.formattedL1DepositResults,
         ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
@@ -328,6 +337,7 @@ export default function useGetTransaction() {
             const l2tx = l2DepTxs.filter((l2tx: any) => {
               return l2tx.nonce === Number(tx.messageNonce);
             });
+
             if (l2tx.length > 0) {
               const l2BlockNum = l2tx[0].blockNumber;
               const l2Block = await l2Pro.getBlock(l2BlockNum);
@@ -349,6 +359,14 @@ export default function useGetTransaction() {
 
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
         setTDataDeposit(txLogs);
+        const status =
+          txLogs.length === 0
+            ? "absent"
+            : txLogs.length > 0
+            ? "present"
+            : "loading";
+        setLoadingState(status);
+
         // const allTxs =
         //   layer == "L1"
         //     ? l2WithdrawTxs
@@ -378,7 +396,6 @@ export default function useGetTransaction() {
     return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);
 
-  // console.log(tDataWithdraw, tDataDeposit);
   const allTxs =
     layer == "L1"
       ? tDataWithdraw

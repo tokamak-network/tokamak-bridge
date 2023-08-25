@@ -1,15 +1,23 @@
 import axios from "axios";
+import useConnectedNetwork from "@/hooks/network";
 
 const formatAddress = (address: string) => {
   const formattedAddress = address.substring(2);
   return formattedAddress;
 };
 
-export const fetchUserTransactions = async (account: string | undefined) => {
+export const fetchUserTransactions = async (
+  account: string | undefined,
+  isConnectedToMainnet: boolean
+) => {
   if (account) {
     const formattedAddress = formatAddress(account);
     const resTxs = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/lakmi94/standardbridge-goerli",
+      `${
+        isConnectedToMainnet
+          ? process.env.NEXT_PUBLIC_L1BRIDGE_MAINNET
+          : process.env.NEXT_PUBLIC_L1BRIDGE_GOERLI
+      }`,
       {
         query: `
         {
@@ -85,7 +93,11 @@ export const fetchUserTransactions = async (account: string | undefined) => {
     );
 
     const withdrawTx = await axios.post(
-      "https://thegraph.titan-goerli.tokamak.network/subgraphs/name/tokamak/L2Messenger",
+      `${
+        isConnectedToMainnet
+          ? process.env.NEXT_PUBLIC_L2MESSENGER_MAINNET
+          : process.env.NEXT_PUBLIC_L2MESSENGER_GOERLI
+      }`,
       {
         query: `{sentMessages(
           where: {message_contains: "${formattedAddress}", target: "0x7377f3d0f64d7a54cf367193eb74a052ff8578fd", sender: "0x4200000000000000000000000000000000000010"}

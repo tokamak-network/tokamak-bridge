@@ -15,9 +15,7 @@ export default function ActivityContainer(props: { network: any , tData:any}) {
   const { network, tData } = props;
   // const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
-  const searchTxString = useRecoilValue(searchTxStatus);
-  console.log('ddd',tData);
-  
+  const searchTxString = useRecoilValue(searchTxStatus);  
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");

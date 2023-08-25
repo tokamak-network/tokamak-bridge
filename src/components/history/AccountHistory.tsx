@@ -56,8 +56,6 @@ export default function AccountHistory(props:{tData:any}) {
     chainName: undefined,
     networkImage: undefined,
   });
-
-  console.log(props.tData);
   
   const handleCopyToClipboard = () => {
     copy(address !== undefined ? address : "");

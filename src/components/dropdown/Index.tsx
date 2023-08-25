@@ -145,7 +145,6 @@ export default function NetworkDropdown(props: {
         return setNetwork({ ...network, outNetwork: selectedWork });
       }
       if (selectedWork.chainId !== connectedChainId) {
-        console.log('selectedWork',selectedWork);
         
         return isConnected
           ? switchNetwork?.(selectedWork.chainId)
@@ -155,7 +154,7 @@ export default function NetworkDropdown(props: {
       setIsOpen(false);
 
       if (isError) {
-        console.error(`Can't get to switch a network`);
+        console.error(`Couldn't switch network`);
       }
     }
   };
