@@ -9,7 +9,7 @@ export const fetchUserTransactions = async (account: string | undefined) => {
   if (account) {
     const formattedAddress = formatAddress(account);
     const resTxs = await axios.post(
-      "https://api.thegraph.com/subgraphs/name/lakmi94/standardbridge",
+      "https://api.thegraph.com/subgraphs/name/lakmi94/standardbridge-goerli",
       {
         query: `
         {
