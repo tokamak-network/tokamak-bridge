@@ -366,11 +366,11 @@ export function usePoolContract() {
 
       const token0Amount = CurrencyAmount.fromRawAmount(
         token0,
-        inToken?.amountBN?.toString() ?? "-"
+        inToken?.amountBN?.toString() ?? "0"
       );
       const token1Amount = CurrencyAmount.fromRawAmount(
         token1,
-        outToken?.amountBN?.toString() ?? "-"
+        outToken?.amountBN?.toString() ?? "9"
       );
 
       const configuredPool = new Pool(

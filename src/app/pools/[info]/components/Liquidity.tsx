@@ -159,7 +159,7 @@ export default function Liquidity() {
             token={info.token1}
             liquidityAmount={smallNumberFormmater(
               info.token1Amount.toString(),
-              18
+              6
             )}
             liquidityPercent={ratio ? 100 - ratio : undefined}
           />
@@ -167,7 +167,7 @@ export default function Liquidity() {
             token={info.token0}
             liquidityAmount={smallNumberFormmater(
               info.token0Amount.toString(),
-              18
+              6
             )}
             liquidityPercent={ratio}
           />
