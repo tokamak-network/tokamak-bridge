@@ -33,8 +33,7 @@ export default function IncreaseLiquidity() {
         </Flex>
         <Flex flexDirection={"column"} justifyContent={"space-between"}>
           <AddMoreLiquidity />
-          <ApproveButtonsContrainer />
-          <ActionButton step="Preview" />
+          <ActionButton />
         </Flex>
       </Flex>
       <IncreaseModal />

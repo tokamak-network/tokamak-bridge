@@ -11,6 +11,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
+import JSBI from "jsbi";
 
 const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
@@ -44,8 +45,10 @@ export default function UnclaimedEarnings() {
   const { info } = usePositionInfo();
   const { onOpenClaimEarning } = usePoolModals();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
-  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
-  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+  const token0Amount = Number(info?.token0CollectedFee);
+  const token1Amount = Number(info?.token1CollectedFee);
+  const token0marketPrice = Number(info?.token0CollectedFee);
+  const token1MarketPrice = Number(info?.token1CollectedFee);
 
   const { totalMarketPrice, hasTokenPrice } = usePricePair({
     token0Name: info?.token0.name,
@@ -115,15 +118,13 @@ export default function UnclaimedEarnings() {
             </Text>
             <Flex alignItems={"center"} color="#A0A3AD">
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-                {token0Symbol}
+                {smallNumberFormmater(token0Amount)} {token0Symbol}
               </Text>
               <Text w={"10px"} mx={"2px"}>
                 +
               </Text>
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-                {token1Symbol}
+                {smallNumberFormmater(token1Amount)} {token1Symbol}
               </Text>
             </Flex>
           </Flex>
@@ -132,12 +133,10 @@ export default function UnclaimedEarnings() {
             <Text>Unclaimed fee</Text>
             <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-                {token0Symbol} +
+                {smallNumberFormmater(token0Amount)} {token0Symbol} +
               </Text>
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-                {info?.token1.symbol}
+                {smallNumberFormmater(token1Amount)} {info?.token1.symbol}
               </Text>
             </Flex>
           </Flex>

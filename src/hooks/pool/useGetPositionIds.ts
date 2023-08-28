@@ -29,6 +29,7 @@ import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
 import { Hash } from "viem";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
+import { useGetMode } from "../mode/useGetMode";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -359,13 +360,19 @@ function useGetPositionInfo() {
   //   }
   // }, [pathName, positions, otherLayerProvider, otherLayerChainInfo]);
 
-  return { existingPositionInfo: positions ? positions[0] : undefined };
+  return {
+    existingPositionInfo: positions?.length === 1 ? positions[0] : undefined,
+  };
 }
 
 export function usePositionInfo() {
   const { existingPositionInfo } = useGetPositionInfo();
   const mintPositionInfo = useRecoilValue(poolModalProp);
-  const info = existingPositionInfo ?? mintPositionInfo;
+  const { subMode } = useGetMode();
+
+  const info = useMemo(() => {
+    return subMode.add ? mintPositionInfo : existingPositionInfo;
+  }, [subMode.add, mintPositionInfo, existingPositionInfo]);
 
   const tokenPairForInfo = useMemo(() => {
     if (info) {

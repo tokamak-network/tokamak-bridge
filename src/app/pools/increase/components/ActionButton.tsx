@@ -4,16 +4,16 @@ import { poolModalStatus } from "@/recoil/modal/atom";
 import { useMemo } from "react";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { ApproveButtonsContrainer } from "../../add/ActionButton";
 
-const ActionButton = (props: { step: string }) => {
-  const { step } = props;
+const ActionButton = () => {
   const [, setPoolModal] = useRecoilState(poolModalStatus);
 
   const handleAction = () => {
     return setPoolModal("increaseLiquidity");
   };
 
-  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { deposit0Disabled, deposit1Disabled, pool } = usePoolInfo();
   const { isBalanceOver, isInputZero, isOutInputZero, isOutTokenBalanceOver } =
     useInputBalanceCheck();
 
@@ -34,11 +34,26 @@ const ActionButton = (props: { step: string }) => {
     isOutTokenBalanceOver,
     isOutInputZero,
     isInputZero,
-    inverted,
+  ]);
+
+  const buttonName = useMemo(() => {
+    if (isBalanceOver) return `Insufficient ${pool?.token0.symbol} balance`;
+    if (isOutTokenBalanceOver)
+      return `Insufficient ${pool?.token1.symbol} balance`;
+    if (isInputZero || isOutInputZero) return "Enter an amount";
+    return "Preview";
+  }, [
+    isBalanceOver,
+    isOutTokenBalanceOver,
+    pool?.token0.symbol,
+    pool?.token1.symbol,
+    isInputZero,
+    isOutInputZero,
   ]);
 
   return (
-    <Flex w={"100%"}>
+    <Flex w={"100%"} flexDir={"column"} rowGap={"12px"}>
+      <ApproveButtonsContrainer />
       <Button
         w={"100%"}
         h={"48px"}
@@ -50,9 +65,9 @@ const ActionButton = (props: { step: string }) => {
         _active={{}}
         _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
         onClick={handleAction}
-        // isDisabled={btnIsDisabled}
+        isDisabled={btnIsDisabled}
       >
-        <Text>{step}</Text>
+        <Text>{buttonName}</Text>
       </Button>
     </Flex>
   );

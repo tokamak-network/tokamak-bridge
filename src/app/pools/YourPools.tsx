@@ -9,7 +9,7 @@ export default function YourPools() {
   const isReducedHeight = !isConnected || positions?.length === 0;
 
   return (
-    <Flex flexDir="column" alignSelf={"baseline"} mt={"180px"}>
+    <Flex flexDir="column" alignSelf={"baseline"}>
       <Text fontSize={36} fontWeight="medium" marginBottom="24px">
         Your Pools
       </Text>

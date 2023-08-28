@@ -5,6 +5,7 @@ import {
 } from "@/generated";
 import useContract from "@/hooks/contracts/useContract";
 import usePreview from "@/hooks/modal/usePreviewModal";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useApproveToken } from "@/hooks/pool/useApproveToken";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
@@ -89,8 +90,9 @@ export const ApproveButtonsContrainer = () => {
   const { inToken, outToken, inTokenHasAmount, outTokenHasAmount } =
     useInOutTokens();
   const [poolState] = usePool();
+  const { subMode } = useGetMode();
 
-  if (poolState === PoolState.INVALID) return null;
+  if (subMode.add && poolState === PoolState.INVALID) return null;
 
   return (
     <Flex columnGap={"12px"}>

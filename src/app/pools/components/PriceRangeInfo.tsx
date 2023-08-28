@@ -2,14 +2,13 @@ import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
-import { Box, Container, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import SWITCHBUTTON_INFO_IMAGE from "assets/icons/pool/switch_info.svg";
 
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
 import QUESTION_ICON from "assets/icons/questionGray.svg";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import {
@@ -147,7 +146,6 @@ export function PriceRangeInfo() {
   const [manuallyInverted, setManuallyInverted] = useRecoilState(
     ATOM_manuallyInverted
   );
-  const { invertTokenPair } = useInOutTokens();
   const { poolModal } = usePreview();
 
   return (
@@ -160,7 +158,6 @@ export function PriceRangeInfo() {
           top={"32px"}
           cursor={"pointer"}
           onClick={() => {
-            invertTokenPair();
             setManuallyInverted(!manuallyInverted);
           }}
         >

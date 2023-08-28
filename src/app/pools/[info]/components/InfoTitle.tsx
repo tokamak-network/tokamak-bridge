@@ -7,11 +7,10 @@ import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 
 export default function InfoTitle() {
   const { info } = usePositionInfo();
-  const { inverted } = usePoolInfo();
 
   if (!info) return null;
-  const token0 = inverted ? info.token1 : info.token0;
-  const token1 = inverted ? info.token0 : info.token1;
+  const token0 = info.token0;
+  const token1 = info.token1;
   const { fee } = info;
 
   return (

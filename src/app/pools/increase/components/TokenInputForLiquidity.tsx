@@ -147,7 +147,15 @@ export function TokenInputForLiquidity(props: {
   const handleBlur = () => {
     setIsFocused(false);
     //for pool's price and amount on liquidity
-    if (inToken && selectedOutToken && dependentAmount) {
+    if (inToken && selectedOutToken) {
+      if (!dependentAmount) {
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+
       const parsedAmount = ethers.utils.parseUnits(
         dependentAmount,
         selectedOutToken.decimals
@@ -159,7 +167,14 @@ export function TokenInputForLiquidity(props: {
         parsedAmount: dependentAmount,
       });
     }
-    if (!inToken && selectedInToken && dependentAmount) {
+    if (!inToken && selectedInToken) {
+      if (!dependentAmount) {
+        return setSelectedInToken({
+          ...selectedInToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
       const parsedAmount = ethers.utils.parseUnits(
         dependentAmount,
         selectedInToken.decimals
@@ -177,11 +192,11 @@ export function TokenInputForLiquidity(props: {
     return inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
-        : trimAmount(selectedInToken?.parsedAmount, 11)
+        : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 11)
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
       : "";
   }, [inToken, selectedInToken, selectedOutToken, isFocused]);
 
