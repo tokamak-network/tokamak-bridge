@@ -5,13 +5,15 @@ import { useCallback, useMemo } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
 import commafy from "@/utils/trim/commafy";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { usePricePair } from "@/hooks/price/usePricePair";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { priceFormmater } from "@/utils/trim/priceFormatter";
 import { useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import { useRouter } from "next/navigation";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import QUESTION_ICON from "assets/icons/questionGray.svg";
+import Image from "next/image";
+import { trimAmount } from "@/utils/trim";
 
 export type PoolCardDetail = {
   id: number;
@@ -35,6 +37,8 @@ export type PoolCardDetail = {
   isClosed: boolean;
   token0Value: number;
   token1Value: number;
+  token0FeeValue: number;
+  token1FeeValue: number;
   feeValue: number;
   chainId: number;
 };
@@ -55,6 +59,9 @@ export default function PoolCard(props: PoolCardDetail) {
     token0MarketPrice,
     token1MarketPrice,
     isClosed,
+    token0FeeValue,
+    token1FeeValue,
+    feeValue,
   } = props;
 
   const feePercent = useMemo(() => {
@@ -72,15 +79,6 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [fee]);
 
-  const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
-  const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-  const { totalMarketPrice } = usePricePair({
-    token0Name: token0.name,
-    token0Amount: token0FeeAmount,
-    token1Name: token1.name,
-    token1Amount: token1FeeAmount,
-  });
-
   const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
   const { switchNetworkAsync, isLoading, error } = useSwitchNetwork();
   const router = useRouter();
@@ -96,6 +94,9 @@ export default function PoolCard(props: PoolCardDetail) {
     return router.push(`/pools/${id}`);
   }, [chainId, connectedChainId, otherLayerChainInfo]);
 
+  if (props.id === 77161) {
+    console.log(props);
+  }
   return (
     <Box onClick={() => onClickToRoute()}>
       <Flex
@@ -140,8 +141,8 @@ export default function PoolCard(props: PoolCardDetail) {
                 ? smallNumberFormmater(token0Amount)
                 : commafy(token0Amount, 4)}{" "}
               <span style={{ color: "#A0A3AD" }}>
-                {token0MarketPrice === undefined
-                  ? "(NA)"
+                {token0MarketPrice === undefined || token0Value === 0
+                  ? undefined
                   : `($${priceFormmater(token0Value)})`}
               </span>
             </Text>
@@ -154,21 +155,67 @@ export default function PoolCard(props: PoolCardDetail) {
                 : commafy(token1Amount, 4)}{" "}
               <span style={{ color: "#A0A3AD" }}>
                 {" "}
-                {token1MarketPrice === undefined
-                  ? "(NA)"
+                {token1MarketPrice === undefined || token1Value === 0
+                  ? undefined
                   : `($${priceFormmater(token1Value)})`}
               </span>
             </Text>
           </Flex>
-          <Flex justifyContent="space-between" h={"20px"}>
+          <Flex justifyContent="space-between" alignItems={"center"} h={"20px"}>
             <Text>Fees</Text>
-            {token0MarketPrice && token1MarketPrice ? (
-              <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
-                ${commafy(totalMarketPrice, 2)}
-              </Text>
-            ) : (
-              <Text color={"#A0A3AD"}>No market data</Text>
-            )}
+            <Flex columnGap={"5px"}>
+              {token0MarketPrice && token1MarketPrice ? (
+                <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+                  ${commafy(feeValue, 2)}
+                </Text>
+              ) : (
+                <Text color={"#A0A3AD"}>No market data</Text>
+              )}
+              <Flex w={"10px"} h={"18px"} alignItems={"center"}>
+                <CustomTooltip
+                  content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
+                  tooltipLabel={
+                    <Flex
+                      width={"260px"}
+                      zIndex={500}
+                      h={"28px"}
+                      bg={"#383A49"}
+                      textAlign={"center"}
+                    >
+                      <Text>
+                        Fees :{" "}
+                        {`${trimAmount(token0CollectedFee.toString(), 7)} ${
+                          token0.symbol
+                        }($${commafy(
+                          token0FeeValue,
+                          2,
+                          undefined,
+                          "0.00"
+                        )})`}{" "}
+                        <span
+                          style={{
+                            width: "7px",
+                            height: "7px",
+                            color: "##A0A3AD",
+                          }}
+                        >
+                          +
+                        </span>{" "}
+                        {`${trimAmount(token1CollectedFee.toString(), 7)} ${
+                          token1.symbol
+                        }($${commafy(
+                          token1FeeValue,
+                          2,
+                          undefined,
+                          "0.00"
+                        )})`}{" "}
+                      </Text>
+                    </Flex>
+                  }
+                  style={{ width: "10px" }}
+                />
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>

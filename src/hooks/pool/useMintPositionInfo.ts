@@ -55,6 +55,8 @@ export function useMintPositionInfo() {
         isClosed: false,
         token0Value: 0,
         token1Value: 0,
+        token0FeeValue: 0,
+        token1FeeValue: 0,
         feeValue: 0,
         chainId: pool.token0.chainId,
       };

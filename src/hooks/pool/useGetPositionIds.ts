@@ -272,6 +272,8 @@ export function useGetPositions(positionId?: number) {
               isClosed,
               token0Value: isNaN(token0Value) ? 0 : token0Value,
               token1Value: isNaN(token1Value) ? 0 : token1Value,
+              token0FeeValue,
+              token1FeeValue,
               feeValue: isNaN(feeValue) ? 0 : feeValue,
               chainId: otherLayer ? _otherLayerChainId : connectedChainId,
             });

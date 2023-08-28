@@ -2,17 +2,17 @@ function commafy(
   num: number | string | undefined | null,
   decilamPoint?: number,
   removeComma?: boolean,
-  defaultValueIsUndefined?: boolean
+  defaultValue?: string
 ) {
   const defaultDecilamPoint = decilamPoint ?? 2;
   if (num === undefined || num === null) {
     // if (defaultValueIsUndefined) return undefined;
-    return "-";
+    return defaultValue ?? "-";
   }
   //@ts-ignore
   if (isNaN(num)) {
     // if (defaultValueIsUndefined) return undefined;
-    return "-";
+    return defaultValue ?? "-";
   }
   if (num === 0 || num === "0") {
     if (defaultDecilamPoint === 0) {

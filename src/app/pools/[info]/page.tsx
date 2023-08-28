@@ -12,6 +12,9 @@ import ClaimEarningsModal from "./components/ClaimEarningsModal";
 export default function Page() {
   const { info } = usePositionInfo();
 
+  console.log("info");
+  console.log(info);
+
   if (info === undefined) {
     return null;
     // return <>{`position id not founded with this account :(`}</>;
