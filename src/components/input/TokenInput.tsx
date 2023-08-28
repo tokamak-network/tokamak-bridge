@@ -177,7 +177,14 @@ export default function TokenInput(props: {
     setIsFocused(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
-      if (inToken && selectedOutToken && dependentAmount) {
+      if (inToken && selectedOutToken) {
+        if (!dependentAmount) {
+          return setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
         const parsedAmount = ethers.utils.parseUnits(
           dependentAmount,
           selectedOutToken.decimals
@@ -189,7 +196,14 @@ export default function TokenInput(props: {
           parsedAmount: dependentAmount,
         });
       }
-      if (!inToken && selectedInToken && dependentAmount) {
+      if (!inToken && selectedInToken) {
+        if (!dependentAmount) {
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
         const parsedAmount = ethers.utils.parseUnits(
           dependentAmount,
           selectedInToken.decimals

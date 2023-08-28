@@ -21,7 +21,6 @@ import {
   ATOM_positions_loading,
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { getWETHAddress } from "@/utils/token/isETH";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";

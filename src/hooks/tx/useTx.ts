@@ -186,6 +186,9 @@ export function useTx(params: {
   }, [data]);
 
   useEffect(() => {
+    if (isError) {
+      return;
+    }
     if (data) {
       const { logs, transactionHash } = data;
       const { nonFungiblePositionManagerI } = getInterface();

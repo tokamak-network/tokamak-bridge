@@ -11,6 +11,7 @@ import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -156,12 +157,18 @@ export default function Liquidity() {
         >
           <TokenLiquidityData
             token={info.token1}
-            liquidityAmount={commafy(info.token1Amount, 6)}
+            liquidityAmount={smallNumberFormmater(
+              info.token1Amount.toString(),
+              18
+            )}
             liquidityPercent={ratio ? 100 - ratio : undefined}
           />
           <TokenLiquidityData
             token={info.token0}
-            liquidityAmount={commafy(info.token0Amount, 6)}
+            liquidityAmount={smallNumberFormmater(
+              info.token0Amount.toString(),
+              18
+            )}
             liquidityPercent={ratio}
           />
         </Flex>

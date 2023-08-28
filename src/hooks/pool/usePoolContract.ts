@@ -38,6 +38,7 @@ import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { usePoolInfo } from "./usePoolInfo";
+import JSBI from "jsbi";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -86,9 +87,7 @@ export function usePoolMint() {
               : inToken.amountBN
             : invertPrice
             ? outToken.amountBN
-            : dependentAmount.toSignificant(
-                invertPrice ? outToken.decimals : inToken.decimals
-              );
+            : dependentAmount.quotient;
 
         const token1Input =
           lastFocused === "RightInput"
@@ -97,17 +96,15 @@ export function usePoolMint() {
               : outToken.amountBN
             : invertPrice
             ? inToken.amountBN
-            : dependentAmount.toSignificant(
-                invertPrice ? inToken.decimals : outToken.decimals
-              );
+            : dependentAmount.quotient;
 
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
-          token0Input.toString()
+          JSBI.BigInt(token0Input.toString())
         );
         const token1 = CurrencyAmount.fromRawAmount(
           pool.token1,
-          token1Input.toString()
+          JSBI.BigInt(token1Input.toString())
         );
 
         const positionToMint = Position.fromAmounts({
