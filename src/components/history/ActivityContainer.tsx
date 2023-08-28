@@ -10,8 +10,18 @@ import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
 import { supportedChain } from "@/types/network/supportedNetwork";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { tData,FullWithTx ,FullDepTx} from "@/types/activity/history";
 
-export default function ActivityContainer(props: { network: any , tData:any}) {
+type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+
+type SelectOption = {
+  chainId: number;
+  chainName: ChainName;
+  networkImage: any;
+};
+
+
+export default function ActivityContainer(props: { network: SelectOption , tData:tData}) {
   const { network, tData } = props;
   // const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
@@ -43,7 +53,7 @@ export default function ActivityContainer(props: { network: any , tData:any}) {
     if (searchTxString?.id === "" || searchTxString === null) {
       return tData.depositTxs;
     } else {
-      const filteredTx = tData.depositTxs.filter((tx: any) => {
+      const filteredTx = tData.depositTxs.filter((tx: FullDepTx| FullWithTx) => {
         return (
           tx.l1txHash.includes(searchTxString.id) ||
           tx.l2txHash.includes(searchTxString.id)
@@ -60,13 +70,13 @@ export default function ActivityContainer(props: { network: any , tData:any}) {
     const withSelected =
       network.chainId === SupportedChainId["DARIUS"] ||
       network.chainId === SupportedChainId["TITAN"];
-    const allSelected = network.id === undefined;
+    const allSelected = network.chainId === undefined;
 
     if (depSelected === true) {
-      const txs = filteredTx.filter((tx: any) => tx.event === "deposit");
+      const txs = filteredTx.filter((tx: FullDepTx) => tx.event === "deposit");
       return txs;
     } else if (withSelected === true) {
-      const txs = filteredTx.filter((tx: any) => tx.event === "withdraw");
+      const txs = filteredTx.filter((tx: FullWithTx) => tx.event === "withdraw");
       return txs;
     } else {
       return filteredTx;

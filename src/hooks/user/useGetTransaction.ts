@@ -16,9 +16,19 @@ import { fetchUserTransactions } from "@/components/history/utils/fetchUserTrans
 import { ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import { txDataStatus } from "@/recoil/global/transaction";
+import {
+  L1TxType,
+  SentMessages,
+  EthType,
+  Erc20Type,
+  DepositTx,
+  UserL2Transaction,
+  FullDepTx,
+  FullWithTx,
+} from "@/types/activity/history";
 
 export default function useGetTransaction() {
-  const [tDataDeposit, setTDataDeposit] = useState<any[]>([]);
+  const [tDataDeposit, setTDataDeposit] = useState<FullDepTx[]>([]);
   const [tDataWithdraw, setTDataWithdraw] = useState<any[]>([]);
   const { provider } = useProvier();
   const { L2BRIDGE_CONTRACT } = useContract();
@@ -59,14 +69,15 @@ export default function useGetTransaction() {
 
       if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
-          userAllTransactions.formattedWithdraw.map(async (tx: any) => {
+          userAllTransactions.formattedWithdraw.map(async (tx: L1TxType) => {
             const resolved = await crossMessenger.toCrossChainMessage(
               tx.transactionHash
-            );
-
+            ); //  office node ok
             const currentStatus = await crossMessenger.getMessageStatus(
               resolved
             );
+
+            //no office node
 
             const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
 
@@ -119,14 +130,14 @@ export default function useGetTransaction() {
               const stateBatchAppendedEvent =
                 await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
                   messageTxIndex
-                );
+                ); // no office node
 
               const bn = stateBatchAppendedEvent.blockNumber;
 
               const block = await l1Pro.getBlock(bn);
 
               const challengePeriod =
-                await crossMessenger.getChallengePeriodSeconds();
+                await crossMessenger.getChallengePeriodSeconds(); //office node ok
               const timeReadyForRelay = block.timestamp + challengePeriod;
 
               const messageTxReceipt = await l2Pro.getTransactionReceipt(
@@ -163,7 +174,7 @@ export default function useGetTransaction() {
               };
               return copy;
             } else {
-              const receipt = await crossMessenger.getMessageReceipt(resolved);
+              const receipt = await crossMessenger.getMessageReceipt(resolved); //  no office node
               if (
                 l2TxReceipt.blockNumber !== undefined &&
                 receipt != null &&
@@ -172,7 +183,7 @@ export default function useGetTransaction() {
                 const matchTx = receipt.transactionReceipt.transactionHash;
                 const l1tx =
                   userAllTransactions.formattedL1WithdrawResults.filter(
-                    (tx: any) => {
+                    (tx: EthType | Erc20Type) => {
                       return tx.transactionHash === matchTx;
                     }
                   )[0];
@@ -234,11 +245,11 @@ export default function useGetTransaction() {
         const allTxs =
           layer == "L1"
             ? l2WithdrawTxs.sort(
-                (tx1: any, tx2: any) =>
+                (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               )
             : l2WithdrawTxs.sort(
-                (tx1: any, tx2: any) =>
+                (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               );
 
@@ -248,7 +259,6 @@ export default function useGetTransaction() {
             : allTxs.length > 0
             ? "present"
             : "loading";
-
         setTDataWithdraw(allTxs);
         setLoadingState(status);
       }
@@ -296,8 +306,11 @@ export default function useGetTransaction() {
       ) {
         const l2DepTxs = await Promise.all(
           userL2Transactions
-            .sort((tx1: any, tx2: any) => tx1.blockNumber - tx2.blockNumber)
-            .map(async (tx: any) => {
+            .sort(
+              (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
+                tx1.blockNumber - tx2.blockNumber
+            )
+            .map(async (tx: UserL2Transaction) => {
               const txion = await tx.getTransaction();
               const l2block = await l2ProSDK.getBlock(tx.blockNumber);
               const l1Block = await getProvider(providers.l1Provider)?.getBlock(
@@ -305,7 +318,7 @@ export default function useGetTransaction() {
               );
               const l1tx =
                 userAllTransactions.formattedL1DepositResults?.filter(
-                  (l1tx: any) => {
+                  (l1tx: SentMessages) => {
                     return Number(l1tx.messageNonce) === txion.nonce;
                   }
                 );
@@ -333,31 +346,34 @@ export default function useGetTransaction() {
         );
 
         const l1DepTxs = await Promise.all(
-          userAllTransactions.formattedL1DepositResults.map(async (tx: any) => {
-            const l2tx = l2DepTxs.filter((l2tx: any) => {
-              return l2tx.nonce === Number(tx.messageNonce);
-            });
+          userAllTransactions.formattedL1DepositResults.map(
+            async (tx: DepositTx) => {
+              const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
+                return l2tx.nonce === Number(tx.messageNonce);
+              });
 
-            if (l2tx.length > 0) {
-              const l2BlockNum = l2tx[0].blockNumber;
-              const l2Block = await l2Pro.getBlock(l2BlockNum);
-              const l2timestamp = await l2Block.timestamp;
-              const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
-              const l1timeStamp = l1Block.timestamp;
-              let txCopy = {
-                ...tx,
-                l2timeStamp: l2timestamp,
-                l1timeStamp: l1timeStamp,
-                l1Block: l1Block,
-                l2txHash: l2tx[0].transactionHash,
-                l1txHash: tx.transactionHash,
-              };
-              return txCopy;
+              if (l2tx.length > 0) {
+                const l2BlockNum = l2tx[0].blockNumber;
+                const l2Block = await l2Pro.getBlock(l2BlockNum);
+                const l2timestamp = await l2Block.timestamp;
+                const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+                const l1timeStamp = l1Block.timestamp;
+                let txCopy = {
+                  ...tx,
+                  l2timeStamp: l2timestamp,
+                  l1timeStamp: l1timeStamp,
+                  l1Block: l1Block,
+                  l2txHash: l2tx[0].transactionHash,
+                  l1txHash: tx.transactionHash,
+                };
+                return txCopy;
+              }
             }
-          })
+          )
         );
 
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
+
         setTDataDeposit(txLogs);
         const status =
           txLogs.length === 0
@@ -366,21 +382,6 @@ export default function useGetTransaction() {
             ? "present"
             : "loading";
         setLoadingState(status);
-
-        // const allTxs =
-        //   layer == "L1"
-        //     ? l2WithdrawTxs
-        //         .concat(txLogs)
-        //         .sort(
-        //           (tx1: any, tx2: any) =>
-        //             Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-        //         )
-        //     : l2WithdrawTxs
-        //         .concat(txLogs)
-        //         .sort(
-        //           (tx1: any, tx2: any) =>
-        //             Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-        //         );
       }
     }
   }, [address, layer, connectedChainId]);
@@ -401,13 +402,13 @@ export default function useGetTransaction() {
       ? tDataWithdraw
           .concat(tDataDeposit)
           .sort(
-            (tx1: any, tx2: any) =>
+            (tx1: FullDepTx, tx2: FullDepTx) =>
               Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
           )
       : tDataWithdraw
           .concat(tDataDeposit)
           .sort(
-            (tx1: any, tx2: any) =>
+            (tx1: FullDepTx, tx2: FullDepTx) =>
               Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
           );
 

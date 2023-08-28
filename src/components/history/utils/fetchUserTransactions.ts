@@ -1,6 +1,9 @@
 import axios from "axios";
 import useConnectedNetwork from "@/hooks/network";
-
+import {
+  L1TxType,
+  SentMessages,
+} from "@/types/activity/history";
 const formatAddress = (address: string) => {
   const formattedAddress = address.substring(2);
   return formattedAddress;
@@ -92,7 +95,6 @@ export const fetchUserTransactions = async (
       }
     );
 
-
     const withdrawTx = await axios.post(
       `${
         isConnectedToMainnet
@@ -117,7 +119,7 @@ export const fetchUserTransactions = async (
     );
 
     const withdrawTxs = withdrawTx.data.data.sentMessages;
-    const formattedWithdraw = withdrawTxs.map((tx: any) => {
+    const formattedWithdraw = withdrawTxs.map((tx: SentMessages) => {
       let copy = {
         ...tx,
         event: "withdraw",
@@ -136,9 +138,9 @@ export const fetchUserTransactions = async (
     ];
 
     const formattedL1DepositResults = resTxs.data.data.sentMessages.map(
-      (result: any) => {
+      (result: SentMessages) => {
         const tx = allDepL1Txs.filter(
-          (tx: any) => tx.transactionHash === result.transactionHash
+          (tx: L1TxType) => tx.transactionHash === result.transactionHash
         )[0];
         let copy = {
           ...result,
@@ -150,6 +152,7 @@ export const fetchUserTransactions = async (
     );
 
     const formattedL1WithdrawResults = allWithL1Txs;
+    
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,

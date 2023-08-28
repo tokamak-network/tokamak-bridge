@@ -30,7 +30,6 @@ import { TokenSymbol } from "../image/TokenSymbol";
 import { useState, useEffect, useMemo } from "react";
 import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
 import commafy from "@/utils/trim/commafy";
-
 import {
   add,
   getTime,
@@ -52,7 +51,12 @@ import { useFeeData } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import { ethers } from "ethers";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { FullWithTx } from "@/types/activity/history";
 
+type TxType =  FullWithTx & {
+  inTokenAmount: string;
+  inTokenSymbol: string;
+}
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
@@ -110,7 +114,7 @@ export default function ConfirmWithdraw() {
     timeZone: "currentBrowser",
   };
 
-  const TitanContainer = (props: { tx: any }) => {
+  const TitanContainer = (props: { tx: TxType }) => {
     const { tx } = props;
     const { inToken } = useInOutTokens();
 
@@ -129,7 +133,7 @@ export default function ConfirmWithdraw() {
       >
         <Flex w="56px" h="56px">
           <TokenSymbolWithNetwork
-            tokenSymbol={tx ? tx.inTokenSymbol : inToken?.tokenSymbol}
+            tokenSymbol={tx ? tx.inTokenSymbol : inToken?.tokenSymbol  as string}
             chainId={5050}
             symbolW={56}
             symbolH={56}
@@ -435,9 +439,7 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const TimelineComponent = (props: { tx: any }) => {
-    console.log(tx);
-    
+  const TimelineComponent = (props: { tx: TxType }) => {    
     const nowTime = getUnixTime(new Date());
 
     return (

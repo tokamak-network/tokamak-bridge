@@ -25,9 +25,11 @@ export default function Account() {
       className="header-right-common"
       w={isConnected ? "174px" : "220px"}
       h={"48px"}
+      bg={!isConnected ? '#007AFF':''}
       columnGap={"17px"}
       fontSize={18}
       fontWeight={500}
+      
       /**
        * About connectors
        *

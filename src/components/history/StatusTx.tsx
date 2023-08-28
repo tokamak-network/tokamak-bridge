@@ -9,7 +9,7 @@ import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { claimTx } from "@/recoil/userHistory/claimTx";
-
+import { FullDepTx } from "@/types/activity/history";
 import {
   add,
   getTime,
@@ -25,7 +25,7 @@ export default function StatusTx(props: {
   layer: string;
   txHash: string;
   timeStamp?: number;
-  tx: any;
+  tx: FullDepTx;
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();

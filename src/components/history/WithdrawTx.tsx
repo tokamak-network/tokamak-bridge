@@ -16,6 +16,7 @@ import useConnectedNetwork from "@/hooks/network";
 import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
+import { FullWithTx } from "@/types/activity/history";
 type TokenData = {
   token0Symbol: string;
   token1Symbol: string;
@@ -28,7 +29,7 @@ import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
 import { confirmWithdraw } from "@/recoil/modal/atom";
 
-export default function WithdrawTx(props: { tx: any }) {
+export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();

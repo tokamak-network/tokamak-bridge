@@ -16,6 +16,8 @@ import useConnectedNetwork from "@/hooks/network";
 import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import DepositStatusTx from "./DepositStatusTx";
+import { FullWithTx } from "@/types/activity/history";
+
 type TokenData = {
   token0Symbol: string;
   token1Symbol: string;
@@ -25,7 +27,7 @@ type TokenData = {
   token1Decimals: number;
 };
 
-export default function DepositTx(props: { tx: any }) {
+export default function DepositTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();
@@ -138,14 +140,14 @@ export default function DepositTx(props: { tx: any }) {
       />
       <DepositStatusTx
         completed={true}
-        date={tx.l1timeStamp}
+        date={Number(tx.l1timeStamp)}
         layer={"L1"}
         txHash={tx.l1txHash}
         tx={tx}
       />
       <DepositStatusTx
         completed={tx.l2txHash?true:false}
-        date={tx.l2timeStamp}
+        date={Number(tx.l2timeStamp)}
         layer={"L2"}
         txHash={tx.l2txHash}
         tx={tx}

@@ -8,6 +8,8 @@ import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import { FullWithTx } from "@/types/activity/history";
+
 import {
   add,
   getTime,
@@ -23,7 +25,7 @@ export default function DepositStatusTx(props: {
   layer: string;
   txHash: string;
   timeStamp?: number;
-  tx: any;
+  tx: FullWithTx;
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
