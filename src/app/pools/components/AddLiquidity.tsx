@@ -13,8 +13,8 @@ export default function AddLiquidity() {
   const { positions } = useGetPositions();
   const { isSupportedChain } = useConnectedNetwork();
 
-  if (!isSupportedChain) return <UnspportedNetwork />;
   if (!isConnected) return <ConnecteWalletCard />;
+  if (!isSupportedChain) return <UnspportedNetwork />;
   return (
     <NextLink href="/pools/add" passHref>
       <Flex
