@@ -5,11 +5,15 @@ import NextLink from "next/link";
 import ConnecteWalletCard from "./ConnectWalletCard";
 import { useAccount } from "wagmi";
 import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
+import useConnectedNetwork from "@/hooks/network";
+import UnspportedNetwork from "./UnspportedNetwork";
 
 export default function AddLiquidity() {
   const { isConnected } = useAccount();
   const { positions } = useGetPositions();
+  const { isSupportedChain } = useConnectedNetwork();
 
+  if (!isSupportedChain) return <UnspportedNetwork />;
   if (!isConnected) return <ConnecteWalletCard />;
   return (
     <NextLink href="/pools/add" passHref>
