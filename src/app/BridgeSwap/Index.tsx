@@ -3,6 +3,7 @@ import Swap from "./Swap";
 import Modals from "../Modals";
 import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
+import RelayBanner from "@/components/modal/RelayBanner";
 export default function BridgeSwap() {
   return (
     <Flex flexDir={"column"} w={"496px"} h={"100%"}>
@@ -13,7 +14,9 @@ export default function BridgeSwap() {
         w={"100%"}
         h={"100%"}
       >
+          <RelayBanner/>
         <MaintenanceBanner/>
+      
         <Swap />
         <Details />
       </Flex>
