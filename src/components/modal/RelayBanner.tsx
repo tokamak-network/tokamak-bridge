@@ -69,9 +69,6 @@ const RelayBanner = () => {
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [banner]);
-
-
-  console.log('duration',duration.days!==undefined &&  duration.hours !== undefined && duration.days > 0);
   
   return status !== "Hidden" && isConnectedToMainNetwork ? (
     <Flex
