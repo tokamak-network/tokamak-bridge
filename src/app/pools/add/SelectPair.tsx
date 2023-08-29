@@ -8,11 +8,18 @@ import TOKEN_PAIR_PLUS_ICON from "assets/icons/tokenPairPlus.svg";
 import Title from "./components/Title";
 import { InputContainer } from "./components/InputContainer";
 import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
+import { useInitialize } from "@/hooks/pool/useInitialize";
+import { useEffect } from "react";
 
 export default function SelectPair() {
   const { inTokenInfo, outTokenInfo } = useInOutTokens();
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
   const { secondStepPassed } = useAddLiquidityCondition();
+  const { initialzePoolValues } = useInitialize();
+
+  useEffect(() => {
+    initialzePoolValues();
+  }, []);
 
   return (
     <Flex flexDir={"column"}>

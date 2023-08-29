@@ -90,7 +90,11 @@ export function usePoolMint() {
               ? outToken.amountBN
               : inToken.amountBN
             : invertPrice
-            ? outToken.amountBN
+            ? deposit1Disabled
+              ? 0
+              : outToken.amountBN
+            : deposit0Disabled
+            ? 0
             : dependentAmount?.quotient;
 
         const token1Input =
@@ -99,7 +103,11 @@ export function usePoolMint() {
               ? inToken.amountBN
               : outToken.amountBN
             : invertPrice
-            ? inToken.amountBN
+            ? deposit0Disabled
+              ? 0
+              : inToken.amountBN
+            : deposit1Disabled
+            ? 0
             : dependentAmount?.quotient;
 
         const token0 = CurrencyAmount.fromRawAmount(

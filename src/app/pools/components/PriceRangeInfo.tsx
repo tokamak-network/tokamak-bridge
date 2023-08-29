@@ -36,42 +36,28 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const manuallyInverted = useRecoilValue(ATOM_manuallyInverted);
 
   const { subMode } = useGetMode();
+  const { ticksAtLimit: _ticksAtLimit, pricesAtTicks } = useV3MintInfo();
 
   const priceToAdd = useMemo(() => {
     if (subMode.add) {
-      const { ticksAtLimit, pricesAtTicks } = useV3MintInfo();
-
       return {
         minPrice: manuallyInverted
-          ? ticksAtLimit.UPPER
+          ? _ticksAtLimit.LOWER
             ? "0"
             : pricesAtTicks.UPPER?.invert().toSignificant()
-          : ticksAtLimit.LOWER
+          : _ticksAtLimit.LOWER
           ? "0"
           : pricesAtTicks.LOWER?.toSignificant(),
         maxPrice: manuallyInverted
-          ? ticksAtLimit.LOWER
+          ? _ticksAtLimit.UPPER
             ? "∞"
             : pricesAtTicks.LOWER?.invert().toSignificant()
-          : ticksAtLimit.UPPER
+          : _ticksAtLimit.UPPER
           ? "∞"
           : pricesAtTicks.UPPER?.toSignificant(),
       };
-
-      // return {
-      //   minPrice: manuallyInverted
-      //     ? maxPrice.invert().toSignificant()
-      //     : pricesAtTicks.LOWER
-      //     ? "0"
-      //     : minPrice.toSignificant(),
-      //   maxPrice: manuallyInverted
-      //     ? minPrice.invert().toSignificant()
-      //     : ticksAtUpperLimit
-      //     ? "∞"
-      //     : maxPrice.toSignificant(),
-      // };
     }
-  }, [info, manuallyInverted, subMode]);
+  }, [info, manuallyInverted, subMode, _ticksAtLimit, pricesAtTicks]);
 
   const priceData =
     poolModal === "addLiquidity"

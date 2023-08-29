@@ -123,8 +123,8 @@ export default function ActionButton() {
     (!deposit0Disabled && !deposit1Disabled && !tokensPairHasAmount) ||
     (!deposit0Disabled && !inTokenApproved) ||
     (!deposit1Disabled && !outTokenApproved) ||
-    isBalanceOver ||
-    isOutTokenBalanceOver ||
+    (!deposit0Disabled && isBalanceOver) ||
+    (!deposit1Disabled && isOutTokenBalanceOver) ||
     isTONatPair ||
     (!deposit0Disabled && isInputZero) ||
     (!deposit1Disabled && isOutInputZero);
@@ -137,8 +137,9 @@ export default function ActionButton() {
   };
 
   const buttonName = useMemo(() => {
-    if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
-    if (isOutTokenBalanceOver)
+    if (!deposit0Disabled && isBalanceOver)
+      return `Insufficient ${inToken?.tokenSymbol} balance`;
+    if (!deposit1Disabled && isOutTokenBalanceOver)
       return `Insufficient ${outToken?.tokenSymbol} balance`;
 
     switch (poolState) {

@@ -150,6 +150,26 @@ export function useInOutTokens() {
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
+  const initializeInTokenAmount = useCallback(() => {
+    if (inTokenRecoilValue && inTokenRecoilValue !== null) {
+      return setInTokenRecoilValue({
+        ...inTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
+  const initializeOutTokenAmount = useCallback(() => {
+    if (outTokenRecoilValue && outTokenRecoilValue !== null) {
+      setOutTokenRecoilValue({
+        ...outTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
   return {
     inToken,
     outToken,
@@ -161,5 +181,7 @@ export function useInOutTokens() {
     invertTokenPair,
     initializeTokenPair,
     initializeTokenPairAmount,
+    initializeInTokenAmount,
+    initializeOutTokenAmount,
   };
 }
