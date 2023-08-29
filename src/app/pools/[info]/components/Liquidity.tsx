@@ -88,8 +88,13 @@ export default function Liquidity() {
       alignItems="center"
     >
       <Flex flexDir="column" alignItems={"center"}>
-        <Flex>
-          <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
+        <Flex w={"100%"} justifyContent={"space-between"} px={"10px"}>
+          <Flex
+            flexDir={"column"}
+            alignItems={"center"}
+            rowGap={"20px"}
+            pt={"2px"}
+          >
             <Text color="#A0A3AD" fontSize={13}>
               Remove
             </Text>
@@ -116,7 +121,6 @@ export default function Liquidity() {
           <Flex
             flexDir={"column"}
             alignItems={"center"}
-            mx={"35px"}
             rowGap={"4px"}
             mb={"4px"}
           >
@@ -124,10 +128,19 @@ export default function Liquidity() {
               Liquidity
             </Text>
             <Text fontSize={"38px"} height={"57px"}>
-              {`$${totalMarketPrice}`}
+              {`$${
+                totalMarketPrice.split(".")[0]?.length > 4
+                  ? totalMarketPrice.split(".")[0]
+                  : totalMarketPrice
+              }`}
             </Text>
           </Flex>
-          <Flex flexDir={"column"} alignItems={"center"} rowGap={"17px"}>
+          <Flex
+            flexDir={"column"}
+            alignItems={"center"}
+            rowGap={"20px"}
+            pt={"2px"}
+          >
             <Text color="#A0A3AD" fontSize={13}>
               Increase
             </Text>
