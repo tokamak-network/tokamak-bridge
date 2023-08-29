@@ -94,9 +94,6 @@ export default function PoolCard(props: PoolCardDetail) {
     return router.push(`/pools/${id}`);
   }, [chainId, connectedChainId, otherLayerChainInfo]);
 
-  if (props.id === 77161) {
-    console.log(props);
-  }
   return (
     <Box onClick={() => onClickToRoute()}>
       <Flex

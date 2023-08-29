@@ -8,17 +8,29 @@ import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
+import GradientSpinner from "@/components/ui/gradientSpinner";
 
 export default function Page() {
   const { info } = usePositionInfo();
 
-  console.log("info");
-  console.log(info);
-
   if (info === undefined) {
-    return null;
-    // return <>{`position id not founded with this account :(`}</>;
+    return (
+      <Flex w={"95%"} flexDir={"column"}>
+        <Flex h={"25px"}>
+          <GradientSpinner />
+        </Flex>
+        <Flex mt={"10px"} justifyContent={"space-between"}>
+          <Flex w={"49%"} h={"25px"}>
+            <GradientSpinner />
+          </Flex>
+          <Flex w={"49%"} h={"25px"}>
+            <GradientSpinner />
+          </Flex>
+        </Flex>
+      </Flex>
+    );
   }
+
   return (
     <Flex w={"424px"} flexDir="column">
       <InfoHeader />
