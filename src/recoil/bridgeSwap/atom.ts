@@ -128,7 +128,10 @@ export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
   get: ({ get }) => {
     const inTokenStatus = get(selectedInTokenStatus);
     const inTokenHasAmount =
-      inTokenStatus === null ? false : inTokenStatus?.amountBN !== null;
+      inTokenStatus === null
+        ? false
+        : inTokenStatus?.amountBN !== null &&
+          Number(inTokenStatus?.amountBN) > 0;
     return { inTokenHasAmount };
   },
 });
@@ -138,7 +141,10 @@ export const outTokenSelector = selector<{ outTokenHasAmount: boolean }>({
   get: ({ get }) => {
     const outTokenStatus = get(selectedOutTokenStatus);
     const outTokenHasAmount =
-      outTokenStatus === null ? false : outTokenStatus?.amountBN !== null;
+      outTokenStatus === null
+        ? false
+        : outTokenStatus?.amountBN !== null &&
+          Number(outTokenStatus?.amountBN) > 0;
     return { outTokenHasAmount };
   },
 });

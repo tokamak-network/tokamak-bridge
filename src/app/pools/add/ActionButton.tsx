@@ -116,34 +116,11 @@ export default function ActionButton() {
   const { isTONatPair } = useIsTon();
   const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
 
-  const buttonName = useMemo(() => {
-    if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
-    if (isOutTokenBalanceOver)
-      return `Insufficient ${outToken?.tokenSymbol} balance`;
-
-    switch (poolState) {
-      case PoolState.EXISTS:
-        return tokensPairHasAmount ? "Preview" : "Enter an amount";
-      case PoolState.INVALID:
-        return "Invalid pair";
-      case PoolState.NOT_EXISTS:
-        return tokensPairHasAmount ? "Preview" : "Enter an amount";
-    }
-    return "Invalid pair";
-  }, [
-    poolState,
-    tokensPairHasAmount,
-    isBalanceOver,
-    isOutTokenBalanceOver,
-    inToken,
-    outToken,
-  ]);
-
   const [, setPoolModal] = useRecoilState(poolModalStatus);
   const [, setPollModalProp] = useRecoilState(poolModalProp);
 
   const btnDisabled =
-    !tokensPairHasAmount ||
+    (!deposit0Disabled && !deposit1Disabled && !tokensPairHasAmount) ||
     (!deposit0Disabled && !inTokenApproved) ||
     (!deposit1Disabled && !outTokenApproved) ||
     isBalanceOver ||
@@ -158,6 +135,43 @@ export default function ActionButton() {
     setPollModalProp(mintPositionInfo);
     return setPoolModal("addLiquidity");
   };
+
+  const buttonName = useMemo(() => {
+    if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
+    if (isOutTokenBalanceOver)
+      return `Insufficient ${outToken?.tokenSymbol} balance`;
+
+    switch (poolState) {
+      case PoolState.EXISTS:
+        return (!deposit0Disabled &&
+          !deposit1Disabled &&
+          !tokensPairHasAmount) ||
+          (deposit0Disabled && !isOutInputZero) ||
+          (!deposit1Disabled && isOutInputZero)
+          ? "Preview"
+          : "Enter an amount";
+      case PoolState.INVALID:
+        return "Invalid pair";
+      case PoolState.NOT_EXISTS:
+        return (!deposit0Disabled &&
+          !deposit1Disabled &&
+          !tokensPairHasAmount) ||
+          (deposit0Disabled && !isOutInputZero) ||
+          (deposit1Disabled && !isInputZero)
+          ? "Preview"
+          : "Enter an amount";
+    }
+    return "Invalid pair";
+  }, [
+    poolState,
+    tokensPairHasAmount,
+    isBalanceOver,
+    isOutTokenBalanceOver,
+    inToken,
+    outToken,
+    deposit0Disabled,
+    deposit1Disabled,
+  ]);
 
   return (
     <Flex flexDir={"column"} rowGap={"12px"} mt={"auto"}>
