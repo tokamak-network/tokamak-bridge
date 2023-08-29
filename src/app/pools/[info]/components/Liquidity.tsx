@@ -174,7 +174,7 @@ export default function Liquidity() {
               info.token1Amount.toString(),
               6
             )}
-            liquidityPercent={ratio ? 100 - ratio : undefined}
+            liquidityPercent={100 - (ratio ?? 0)}
           />
           <TokenLiquidityData
             token={info.token0}

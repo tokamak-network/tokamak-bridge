@@ -27,7 +27,8 @@ export function getRatio(
     }
 
     return ratio;
-  } catch {
+  } catch (e) {
+    console.log(e);
     return undefined;
   }
 }

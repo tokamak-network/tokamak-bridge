@@ -48,11 +48,11 @@ const Title = (props: {
       >
         <Flex maxH={"16px"} alignItems={"center"}>
           <Text>
-            {commafy(amount0Removed, 4)} {info?.token0.symbol}
+            {commafy(amount0Removed, 4, undefined, "0")} {info?.token0.symbol}
           </Text>
           <Text mx={"6px"}>+</Text>
           <Text>
-            {commafy(amount1Removed, 4)} {info?.token1.symbol}
+            {commafy(amount1Removed, 4, undefined, "0")} {info?.token1.symbol}
           </Text>
         </Flex>
         <Flex alignItems={"center"}>

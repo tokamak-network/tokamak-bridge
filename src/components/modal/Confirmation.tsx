@@ -36,7 +36,11 @@ export default function Confirmation() {
 
   const router = useRouter();
   const closeThisModal = useCallback(() => {
-    if (subMode.add && txLog.logs && isConfirmed) {
+    if (
+      (subMode.add || subMode.increase || subMode.remove) &&
+      txLog.logs &&
+      isConfirmed
+    ) {
       router.push(`/pools/${txLog.logs.tokenId.toString()}`);
     }
     closeModal();

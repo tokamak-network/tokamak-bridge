@@ -189,7 +189,12 @@ export function useTx(params: {
     if (isError) {
       return;
     }
-    if (data && txSort === "Add Liquidity") {
+    if (
+      data &&
+      (txSort === "Add Liquidity" ||
+        txSort === "Increase Liquidity" ||
+        txSort === "Remove Liquidity")
+    ) {
       const { logs, transactionHash } = data;
       const { nonFungiblePositionManagerI } = getInterface();
       const result = nonFungiblePositionManagerI.parseLog(

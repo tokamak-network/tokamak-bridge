@@ -146,17 +146,12 @@ export function usePoolInfo() {
   });
 
   const inverted = token1 ? base?.equals(token1) : undefined;
-  const mintPositionInfo = useRecoilValue(poolModalProp);
 
   const ratio = useMemo(() => {
-    return priceLower && pool && priceUpper && !mintPositionInfo
-      ? getRatio(
-          inverted ? priceUpper.invert() : priceLower,
-          pool?.token0Price,
-          inverted ? priceLower.invert() : priceUpper
-        )
+    return priceLower && pool && priceUpper
+      ? getRatio(priceLower, pool?.token0Price, priceUpper)
       : undefined;
-  }, [inverted, pool, priceLower, priceUpper, mintPositionInfo]);
+  }, [pool, priceLower, priceUpper]);
 
   const currentPrice = useMemo(() => {
     if (token0 && token1 && tickCurrent)
@@ -203,7 +198,7 @@ export function usePoolInfo() {
     tickSpaceLimits,
     ticksAtLimit,
     pool,
-    deposit0Disabled: inverted ? deposit1Disabled : deposit0Disabled,
-    deposit1Disabled: inverted ? deposit0Disabled : deposit1Disabled,
+    deposit0Disabled,
+    deposit1Disabled,
   };
 }
