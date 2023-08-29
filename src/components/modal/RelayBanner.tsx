@@ -106,15 +106,22 @@ const RelayBanner = () => {
             using a new interface (read more in{" "}
             <a
               href={
-                "https://medium.com/onther-tech/announcing-the-launch-of-tokamak-bridge-8bc1719709a7"
+                "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
               }
-            
               target="_blank"
-              style={{ fontWeight: "bold" , textDecoration:'underline'}}
+              style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
             >
               English
             </a>{" "}
-            / <a style={{ fontWeight: "bold" , textDecoration:'underline'}}>한국어</a>).
+            /{" "}
+            <a
+              style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
+              target="_blank"
+              href="https://medium.com/onther-tech/titan-network-auto-relay-service-%EC%A4%91%EB%8B%A8-%EC%95%88%EB%82%B4-80d6a37c5ca0"
+            >
+              한국어
+            </a>
+            ).
           </Text>
         ) : (
           <Text fontSize={"10px"}>
@@ -123,14 +130,22 @@ const RelayBanner = () => {
             manually relayed using a new interface (read more in{" "}
             <a
               href={
-                "https://medium.com/onther-tech/announcing-the-launch-of-tokamak-bridge-8bc1719709a7"
+                "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
               }
               target="_blank"
-              style={{ fontWeight: "bold", textDecoration:'underline' }}
+              style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
             >
               English
             </a>{" "}
-            / <a style={{ fontWeight: "bold", textDecoration:'underline' }}>한국어</a>).
+            /{" "}
+            <a
+              style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
+              target="_blank"
+              href="https://medium.com/onther-tech/titan-network-auto-relay-service-%EC%A4%91%EB%8B%A8-%EC%95%88%EB%82%B4-80d6a37c5ca0"
+            >
+              한국어
+            </a>
+            ).
           </Text>
         )}
       </Flex>
