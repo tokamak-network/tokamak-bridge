@@ -147,7 +147,7 @@ export default function ActionButton() {
           !deposit1Disabled &&
           tokensPairHasAmount) ||
           (deposit0Disabled && !isOutInputZero) ||
-          (!deposit1Disabled && isOutInputZero)
+          (deposit1Disabled && !isInputZero)
           ? "Preview"
           : "Enter an amount";
       case PoolState.INVALID:

@@ -2,7 +2,7 @@ import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
-import { Box, Flex, Text } from "@chakra-ui/react";
+import { Box, Flex, Text, Tooltip } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import SWITCHBUTTON_INFO_IMAGE from "assets/icons/pool/switch_info.svg";
 
@@ -23,6 +23,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useMemo } from "react";
 import { tickToPrice } from "@uniswap/v3-sdk";
 import { trimAmount } from "@/utils/trim";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -34,21 +35,43 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const maxPrice = useRecoilValue(maxPriceForAddModal);
   const manuallyInverted = useRecoilValue(ATOM_manuallyInverted);
 
+  const { subMode } = useGetMode();
+
   const priceToAdd = useMemo(() => {
-    if (info) {
-      const minPrice = tickToPrice(info.token0, info.token1, info.tickLower);
-      const maxPrice = tickToPrice(info.token0, info.token1, info.tickUpper);
+    if (subMode.add) {
+      const { ticksAtLimit, pricesAtTicks } = useV3MintInfo();
 
       return {
         minPrice: manuallyInverted
-          ? maxPrice.invert().toSignificant()
-          : minPrice.toSignificant(),
+          ? ticksAtLimit.UPPER
+            ? "0"
+            : pricesAtTicks.UPPER?.invert().toSignificant()
+          : ticksAtLimit.LOWER
+          ? "0"
+          : pricesAtTicks.LOWER?.toSignificant(),
         maxPrice: manuallyInverted
-          ? minPrice.invert().toSignificant()
-          : maxPrice.toSignificant(),
+          ? ticksAtLimit.LOWER
+            ? "∞"
+            : pricesAtTicks.LOWER?.invert().toSignificant()
+          : ticksAtLimit.UPPER
+          ? "∞"
+          : pricesAtTicks.UPPER?.toSignificant(),
       };
+
+      // return {
+      //   minPrice: manuallyInverted
+      //     ? maxPrice.invert().toSignificant()
+      //     : pricesAtTicks.LOWER
+      //     ? "0"
+      //     : minPrice.toSignificant(),
+      //   maxPrice: manuallyInverted
+      //     ? minPrice.invert().toSignificant()
+      //     : ticksAtUpperLimit
+      //     ? "∞"
+      //     : maxPrice.toSignificant(),
+      // };
     }
-  }, [info, manuallyInverted]);
+  }, [info, manuallyInverted, subMode]);
 
   const priceData =
     poolModal === "addLiquidity"
@@ -94,18 +117,23 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
           />
         </Box>
       </Flex>
-      <Text
-        color={"#ffffff"}
-        fontSize={20}
-        fontWeight={500}
-        maxH={"24px"}
-        lineHeight={"24px"}
-        verticalAlign={"center"}
-      >
-        {priceData === "0" || priceData === "∞"
-          ? priceData
-          : smallNumberFormmater(priceData?.toString(), undefined, true)}
-      </Text>
+      <CustomTooltip
+        content={
+          <Text
+            color={"#ffffff"}
+            fontSize={20}
+            fontWeight={500}
+            maxH={"24px"}
+            lineHeight={"24px"}
+            verticalAlign={"center"}
+          >
+            {priceData === "0" || priceData === "∞"
+              ? priceData
+              : smallNumberFormmater(priceData?.toString(), undefined, true)}
+          </Text>
+        }
+        tooltipLabel={priceData?.toString()}
+      ></CustomTooltip>
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
         {inverted || manuallyInverted
           ? tokenPairForInfo?.token0Symbol
@@ -155,18 +183,23 @@ export const CurrentPriceInfo = () => {
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
         Current Price
       </Text>
-      <Text
-        color={"#ffffff"}
-        fontSize={20}
-        fontWeight={500}
-        maxH={"24px"}
-        lineHeight={"24px"}
-        verticalAlign={"center"}
-      >
-        {poolModal === "addLiquidity"
-          ? currentPriceToAdd
-          : smallNumberFormmater(Number(currentPrice ?? 0))}
-      </Text>
+      <CustomTooltip
+        content={
+          <Text
+            color={"#ffffff"}
+            fontSize={20}
+            fontWeight={500}
+            maxH={"24px"}
+            lineHeight={"24px"}
+            verticalAlign={"center"}
+          >
+            {poolModal === "addLiquidity"
+              ? currentPriceToAdd
+              : smallNumberFormmater(Number(currentPrice ?? 0))}
+          </Text>
+        }
+        tooltipLabel={currentPrice?.toString()}
+      ></CustomTooltip>
 
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
         {manuallyInverted
