@@ -202,14 +202,7 @@ export function PriceRangeInfo() {
             setManuallyInverted(!manuallyInverted);
           }}
         >
-          <Image
-            src={
-              poolModal === "addLiquidity"
-                ? SWITCHBUTTON_IMAGE
-                : SWITCHBUTTON_INFO_IMAGE
-            }
-            alt={"SWITCHBUTTON_IMAGE"}
-          />
+          <Image src={SWITCHBUTTON_IMAGE} alt={"SWITCHBUTTON_IMAGE"} />
         </Box>
         <PriceInfo isMinPrice={false} />
       </Flex>
