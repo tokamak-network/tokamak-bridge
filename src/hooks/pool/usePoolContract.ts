@@ -48,8 +48,15 @@ export function usePoolMint() {
   const feeAmount = useRecoilValue(poolFeeStatus);
 
   const [poolStatus, poolData] = usePool();
-  const { ticks, poolForPosition, noLiquidity, dependentAmount, invertPrice } =
-    useV3MintInfo();
+  const {
+    ticks,
+    poolForPosition,
+    noLiquidity,
+    dependentAmount,
+    invertPrice,
+    deposit0Disabled,
+    deposit1Disabled,
+  } = useV3MintInfo();
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
   const lastFocused = useRecoilValue(lastFocusedInput);
 
@@ -59,17 +66,27 @@ export function usePoolMint() {
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
+      console.log("gogo");
+
+      console.log(
+        pool,
+        inToken,
+        outToken,
+        !deposit0Disabled ? inToken?.amountBN : true,
+        !deposit1Disabled ? outToken?.amountBN : true,
+        address,
+        ticks.LOWER,
+        ticks.UPPER,
+        feeAmount
+      );
       if (
         pool &&
         inToken &&
         outToken &&
-        inToken.amountBN &&
-        outToken.amountBN &&
         address &&
         ticks.LOWER &&
         ticks.UPPER &&
-        feeAmount &&
-        dependentAmount
+        feeAmount
       ) {
         const configuredPool = new Pool(
           pool.token0,
@@ -80,24 +97,32 @@ export function usePoolMint() {
           pool.tickCurrent
         );
 
-        const token0Input =
-          lastFocused === "LeftInput"
-            ? invertPrice
-              ? outToken.amountBN
-              : inToken.amountBN
-            : invertPrice
+        const token0Input = deposit0Disabled
+          ? 0
+          : lastFocused === "LeftInput"
+          ? invertPrice
             ? outToken.amountBN
-            : dependentAmount.quotient;
+            : inToken.amountBN
+          : invertPrice
+          ? outToken.amountBN
+          : dependentAmount?.quotient;
 
-        const token1Input =
-          lastFocused === "RightInput"
-            ? invertPrice
-              ? inToken.amountBN
-              : outToken.amountBN
-            : invertPrice
+        const token1Input = deposit1Disabled
+          ? 0
+          : lastFocused === "RightInput"
+          ? invertPrice
             ? inToken.amountBN
-            : dependentAmount.quotient;
+            : outToken.amountBN
+          : invertPrice
+          ? inToken.amountBN
+          : dependentAmount?.quotient;
 
+        if (
+          token0Input?.toString() === undefined ||
+          token1Input?.toString() === undefined
+        ) {
+          return;
+        }
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
           JSBI.BigInt(token0Input.toString())
@@ -222,6 +247,8 @@ export function usePoolMint() {
       noLiquidity,
       lastFocused,
       dependentAmount,
+      deposit0Disabled,
+      deposit1Disabled,
     ]
   );
 

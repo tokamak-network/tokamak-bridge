@@ -176,32 +176,11 @@ export function usePriceTickConversion() {
 
   const [initialized, setInitialized] = useState<boolean>(false);
 
-  // useEffect(() => {
-  //   if (minPrice && maxPrice & initialized === false) {
-  //     setMinPrice(
-  //       invertPrice
-  //         ? maxPrice.invert().toSignificant(10)
-  //         : minPrice.toSignificant(10)
-  //     );
-  //     return setInitialized(true);
-  //   }
-  // }, [minPrice, maxPrice, invertPrice, initialized]);
-
-  // useEffect(() => {
-  //   if (minPrice && maxPrice && initialized === false) {
-  //     setMaxPrice(
-  //       invertPrice
-  //         ? minPrice?.invert().toSignificant(10)
-  //         : maxPrice.toSignificant(10)
-  //     );
-  //     return setInitialized(true);
-  //   }
-  // }, [minPrice, maxPrice, invertPrice]);
-
   return {
     currentPrice: invertPrice
       ? currentPrice?.invert().toSignificant(10)
       : currentPrice?.toSignificant(10),
+    invertPrice,
   };
 }
 

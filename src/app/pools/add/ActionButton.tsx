@@ -145,7 +145,7 @@ export default function ActionButton() {
       case PoolState.EXISTS:
         return (!deposit0Disabled &&
           !deposit1Disabled &&
-          !tokensPairHasAmount) ||
+          tokensPairHasAmount) ||
           (deposit0Disabled && !isOutInputZero) ||
           (!deposit1Disabled && isOutInputZero)
           ? "Preview"
@@ -155,7 +155,7 @@ export default function ActionButton() {
       case PoolState.NOT_EXISTS:
         return (!deposit0Disabled &&
           !deposit1Disabled &&
-          !tokensPairHasAmount) ||
+          tokensPairHasAmount) ||
           (deposit0Disabled && !isOutInputZero) ||
           (deposit1Disabled && !isInputZero)
           ? "Preview"

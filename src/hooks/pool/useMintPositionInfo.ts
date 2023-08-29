@@ -15,7 +15,6 @@ export function useMintPositionInfo() {
     deposit0Disabled,
     deposit1Disabled,
   } = useV3MintInfo();
-
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
 
   const mintPositionInfo: PoolCardDetail | undefined = useMemo(() => {

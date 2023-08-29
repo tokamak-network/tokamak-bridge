@@ -28,7 +28,6 @@ export function useInitialize() {
     initializeTokenPair();
     setInitialPrice("0");
     setAmountPercentage(0);
-    initializeTokenPairAmount();
     return setPoolFee(undefined);
   }, [initializeTokenPair, setPoolFee]);
 
