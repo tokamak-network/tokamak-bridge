@@ -16,7 +16,7 @@ import useConnectedNetwork from "@/hooks/network";
 import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
-import { FullWithTx } from "@/types/activity/history";
+import { FullWithTx, FullDepTx } from "@/types/activity/history";
 type TokenData = {
   token0Symbol: string;
   token1Symbol: string;
@@ -29,7 +29,7 @@ import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
 import { confirmWithdraw } from "@/recoil/modal/atom";
 
-export default function WithdrawTx(props: { tx: FullWithTx }) {
+export default function WithdrawTx(props: { tx: FullWithTx  }) {
   const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();
@@ -204,7 +204,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
       </Flex>
       <StatusTx
         completed={true}
-        date={tx.l2timeStamp}
+        date={Number(tx.l2timeStamp)}
         txHash={tx.l2txHash}
         layer={"L2"}
         tx={{
@@ -220,7 +220,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
 
       <StatusTx
         completed={tx.timeReadyForRelay ? false : false}
-        date={tx.l1timeStamp}
+        date={Number(tx.l1timeStamp)}
         timeStamp={Number(tx.timeReadyForRelay)}
         txHash={tx.l1txHash}
         layer={"L1"}

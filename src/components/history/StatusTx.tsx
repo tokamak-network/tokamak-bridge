@@ -9,7 +9,7 @@ import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { claimTx } from "@/recoil/userHistory/claimTx";
-import { FullDepTx } from "@/types/activity/history";
+import { FullDepTx, FullWithTx } from "@/types/activity/history";
 import {
   add,
   getTime,
@@ -19,13 +19,28 @@ import {
   subMinutes,
 } from "date-fns";
 
+// type TokenData = {
+//   token0Symbol: string;
+//   token1Symbol: string;
+//   token0Name: string;
+//   token1Name: string;
+//   token0Decimals: number;
+//   token1Decimals: number;
+// };
+
+type TxType = FullWithTx & {
+  inTokenSymbol: string | undefined;
+  outTokenSymbol: string | undefined;
+  inTokenAmount: string
+}
+
 export default function StatusTx(props: {
   completed: boolean;
   date: number;
   layer: string;
   txHash: string;
   timeStamp?: number;
-  tx: FullDepTx;
+  tx: TxType;
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();

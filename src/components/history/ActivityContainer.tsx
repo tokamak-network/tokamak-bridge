@@ -10,7 +10,11 @@ import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
 import { supportedChain } from "@/types/network/supportedNetwork";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { tData,FullWithTx ,FullDepTx} from "@/types/activity/history";
+import { tData, FullWithTx, FullDepTx } from "@/types/activity/history";
+import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
+import useConnectedNetwork from "@/hooks/network";
+import { useAccount } from "wagmi";
+import { L1TxType } from "@/types/activity/history";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -20,12 +24,18 @@ type SelectOption = {
   networkImage: any;
 };
 
-
-export default function ActivityContainer(props: { network: SelectOption , tData:tData}) {
+export default function ActivityContainer(props: {
+  network: SelectOption;
+  tData: tData;
+}) {
   const { network, tData } = props;
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { address } = useAccount();
+  const [preLoadData, setPreLoadData] = useState<L1TxType[]>([]);
   // const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
-  const searchTxString = useRecoilValue(searchTxStatus);  
+  const searchTxString = useRecoilValue(searchTxStatus);
+
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -51,15 +61,23 @@ export default function ActivityContainer(props: { network: SelectOption , tData
 
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
-      return tData.depositTxs;
+      return tData.depositTxs.length> 0? tData.depositTxs: preLoadData;
     } else {
-      const filteredTx = tData.depositTxs.filter((tx: FullDepTx| FullWithTx) => {
-        return (
-          tx.l1txHash.includes(searchTxString.id) ||
-          tx.l2txHash.includes(searchTxString.id)
+      if (tData.depositTxs.length>0) {
+        const filteredTx = tData.depositTxs.filter(
+          (tx: FullDepTx | FullWithTx) => {
+            return (
+              tx.l1txHash.includes(searchTxString.id) ||
+              tx.l2txHash.includes(searchTxString.id)
+            );
+          }
         );
-      });
-      return filteredTx;
+        return filteredTx;
+      }
+      else {
+        return preLoadData
+      }
+     
     }
   }, [tData, searchTxString]);
 
@@ -76,19 +94,56 @@ export default function ActivityContainer(props: { network: SelectOption , tData
       const txs = filteredTx.filter((tx: FullDepTx) => tx.event === "deposit");
       return txs;
     } else if (withSelected === true) {
-      const txs = filteredTx.filter((tx: FullWithTx) => tx.event === "withdraw");
+      const txs = filteredTx.filter(
+        (tx: FullWithTx) => tx.event === "withdraw"
+      );
       return txs;
     } else {
       return filteredTx;
     }
-  }, [searchTxString,tData, network, filteredTx]);
-
+  }, [searchTxString, tData, network, filteredTx]);
 
   const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return getLayerFiltered.slice(startIndex, endIndex);
-  }, [filteredTx,tData, numData,getLayerFiltered]);
+  }, [filteredTx, tData, numData, getLayerFiltered]);
+
+  useEffect(() => {
+    const getTxs = async () => {
+      if (isConnectedToMainNetwork !== undefined) {
+        const txs = await fetchUserTransactions(
+          address,
+          isConnectedToMainNetwork
+        );
+
+        const depTx = txs?.formattedL1DepositResults.map((tx: L1TxType) => {
+          return {
+            ...tx,
+            event: "deposit",
+          };
+        });
+
+        const wthTx = txs?.formattedL1WithdrawResults.map((tx: L1TxType) => {
+          return {
+            ...tx,
+            event: "withdraw",
+          };
+        });
+
+        const allTxs = depTx
+          .concat(wthTx)
+          .sort(
+            (tx1: L1TxType, tx2: L1TxType) =>
+              Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
+          );
+        setPreLoadData(allTxs);
+      }
+    };
+
+    getTxs();
+  }, [isConnectedToMainNetwork, address]);
+
 
   const txes = useMemo(() => {
     switch (tData.loadingState) {
@@ -140,14 +195,28 @@ export default function ActivityContainer(props: { network: SelectOption , tData
         );
 
       case "loading":
-        return (
-          <Flex flexDir={"column"} rowGap={"8px"}>
-            <LoadingTx />
-            <LoadingTx />
-          </Flex>
-        );
+        if (preLoadData.length > 0) {
+          return (
+            getPaginatedData.length !== 0 &&
+          getPaginatedData.map((tx: any) => {
+            if (tx.event === "deposit") {
+              return <LoadingTx />
+            } else {
+              return  <LoadingTx />
+            }
+          })
+          )
+        } else {
+          return (
+            <Flex flexDir={"column"} rowGap={"8px"}>
+              <LoadingTx />
+              <LoadingTx />
+            </Flex>
+          );
+        }
     }
-  }, [tData.loadingState, getPaginatedData]);
+  }, [tData.loadingState, getPaginatedData,preLoadData]);
+
   return (
     <Flex
       flexDir={"column"}

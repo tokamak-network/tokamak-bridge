@@ -140,6 +140,7 @@ export type FullWithTx =  Erc20Type & SentMessages &{
   l2timeStamp: string;
   l2txHash: string;
   resolved: Resolved;
+  timeReadyForRelay: number | string
 };
 
 export type tData = {
