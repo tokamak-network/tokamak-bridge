@@ -12,6 +12,7 @@ import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -57,8 +58,15 @@ export default function Range(props: {
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { poolModal } = usePreview();
   const { inToken, outToken } = useInOutTokens();
-  const token0AmountForAdding = commafy(token0Amount, 6);
-  const token1AmountForAdding = commafy(token1Amount, 6);
+  const { invertPrice } = usePriceTickConversion();
+  const token0AmountForAdding =
+    page === "addLiquidity" && invertPrice
+      ? commafy(token1Amount, 6)
+      : commafy(token0Amount, 6);
+  const token1AmountForAdding =
+    page === "addLiquidity" && invertPrice
+      ? commafy(token0Amount, 6)
+      : commafy(token1Amount, 6);
 
   return (
     <Flex

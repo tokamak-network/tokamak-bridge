@@ -66,19 +66,6 @@ export function usePoolMint() {
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
-      console.log("gogo");
-
-      console.log(
-        pool,
-        inToken,
-        outToken,
-        !deposit0Disabled ? inToken?.amountBN : true,
-        !deposit1Disabled ? outToken?.amountBN : true,
-        address,
-        ticks.LOWER,
-        ticks.UPPER,
-        feeAmount
-      );
       if (
         pool &&
         inToken &&
@@ -97,39 +84,31 @@ export function usePoolMint() {
           pool.tickCurrent
         );
 
-        const token0Input = deposit0Disabled
-          ? 0
-          : lastFocused === "LeftInput"
-          ? invertPrice
+        const token0Input =
+          lastFocused === "LeftInput"
+            ? invertPrice
+              ? outToken.amountBN
+              : inToken.amountBN
+            : invertPrice
             ? outToken.amountBN
-            : inToken.amountBN
-          : invertPrice
-          ? outToken.amountBN
-          : dependentAmount?.quotient;
+            : dependentAmount?.quotient;
 
-        const token1Input = deposit1Disabled
-          ? 0
-          : lastFocused === "RightInput"
-          ? invertPrice
+        const token1Input =
+          lastFocused === "RightInput"
+            ? invertPrice
+              ? inToken.amountBN
+              : outToken.amountBN
+            : invertPrice
             ? inToken.amountBN
-            : outToken.amountBN
-          : invertPrice
-          ? inToken.amountBN
-          : dependentAmount?.quotient;
+            : dependentAmount?.quotient;
 
-        if (
-          token0Input?.toString() === undefined ||
-          token1Input?.toString() === undefined
-        ) {
-          return;
-        }
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
-          JSBI.BigInt(token0Input.toString())
+          JSBI.BigInt(token0Input?.toString() ?? 0)
         );
         const token1 = CurrencyAmount.fromRawAmount(
           pool.token1,
-          JSBI.BigInt(token1Input.toString())
+          JSBI.BigInt(token1Input?.toString() ?? 0)
         );
 
         const positionToMint = Position.fromAmounts({
