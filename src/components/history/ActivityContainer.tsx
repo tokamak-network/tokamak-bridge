@@ -14,8 +14,8 @@ import { tData, FullWithTx, FullDepTx } from "@/types/activity/history";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
-import { L1TxType } from "@/types/activity/history";
-
+import { L1TxType,Erc20Type, EthType } from "@/types/activity/history";
+import HalfLoadingTx from "./HalfLoadingTx";
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
@@ -35,6 +35,7 @@ export default function ActivityContainer(props: {
   // const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
+  const zero_address = "0x0000000000000000000000000000000000000000";
 
   useEffect(() => {
     const updateNumData = () => {
@@ -61,9 +62,9 @@ export default function ActivityContainer(props: {
 
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
-      return tData.depositTxs.length> 0? tData.depositTxs: preLoadData;
+      return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
     } else {
-      if (tData.depositTxs.length>0) {
+      if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
             return (
@@ -73,13 +74,11 @@ export default function ActivityContainer(props: {
           }
         );
         return filteredTx;
+      } else {
+        return preLoadData;
       }
-      else {
-        return preLoadData
-      }
-     
     }
-  }, [tData, searchTxString]);
+  }, [tData, searchTxString,preLoadData]);
 
   const getLayerFiltered = useMemo(() => {
     const depSelected =
@@ -101,13 +100,13 @@ export default function ActivityContainer(props: {
     } else {
       return filteredTx;
     }
-  }, [searchTxString, tData, network, filteredTx]);
+  }, [searchTxString, tData, network, filteredTx,preLoadData]);
 
   const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return getLayerFiltered.slice(startIndex, endIndex);
-  }, [filteredTx, tData, numData, getLayerFiltered]);
+  }, [filteredTx, tData, numData, getLayerFiltered,preLoadData]);
 
   useEffect(() => {
     const getTxs = async () => {
@@ -117,14 +116,15 @@ export default function ActivityContainer(props: {
           isConnectedToMainNetwork
         );
 
-        const depTx = txs?.formattedL1DepositResults.map((tx: L1TxType) => {
+        const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
           return {
             ...tx,
             event: "deposit",
+
           };
         });
 
-        const wthTx = txs?.formattedL1WithdrawResults.map((tx: L1TxType) => {
+        const wthTx = txs?.formattedL1WithdrawResults.map((tx: any) => {
           return {
             ...tx,
             event: "withdraw",
@@ -143,7 +143,6 @@ export default function ActivityContainer(props: {
 
     getTxs();
   }, [isConnectedToMainNetwork, address]);
-
 
   const txes = useMemo(() => {
     switch (tData.loadingState) {
@@ -185,9 +184,9 @@ export default function ActivityContainer(props: {
       case "present":
         return (
           getPaginatedData.length !== 0 &&
-          getPaginatedData.map((tx: any) => {
+          getPaginatedData.map((tx: any, index:number) => {
             if (tx.event === "deposit") {
-              return <DepositTx tx={tx} key={tx.transactionHash} />;
+              return <DepositTx tx={tx} key={tx.transactionHash}  />;
             } else {
               return <WithdrawTx tx={tx} key={tx.transactionHash} />;
             }
@@ -195,17 +194,15 @@ export default function ActivityContainer(props: {
         );
 
       case "loading":
-        if (preLoadData.length > 0) {
+        if (preLoadData.length > 0) {          
           return (
             getPaginatedData.length !== 0 &&
-          getPaginatedData.map((tx: any) => {
-            if (tx.event === "deposit") {
-              return <LoadingTx />
-            } else {
-              return  <LoadingTx />
-            }
-          })
-          )
+            getPaginatedData.map((tx: any) => {
+             
+                return <HalfLoadingTx tx={tx} key={tx.transactionHash} />;
+            
+            })
+          );
         } else {
           return (
             <Flex flexDir={"column"} rowGap={"8px"}>
@@ -215,7 +212,7 @@ export default function ActivityContainer(props: {
           );
         }
     }
-  }, [tData.loadingState, getPaginatedData,preLoadData]);
+  }, [tData.loadingState, getPaginatedData, preLoadData]);
 
   return (
     <Flex
