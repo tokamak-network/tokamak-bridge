@@ -94,6 +94,15 @@ export default function PoolCard(props: PoolCardDetail) {
     return router.push(`/pools/${id}`);
   }, [chainId, connectedChainId, otherLayerChainInfo]);
 
+  const token0HasMarketPrice = Number(token0MarketPrice) > 0;
+  const token1HasMarketPrice = Number(token1MarketPrice) > 0;
+  const token0FeeValueForTooltip = token0HasMarketPrice
+    ? `($${commafy(token0FeeValue, 2, undefined, "0.00")})`
+    : "";
+  const token1FeeValueForTooltip = token1HasMarketPrice
+    ? `($${commafy(token1FeeValue, 2, undefined, "0.00")})`
+    : "";
+
   return (
     <Box onClick={() => onClickToRoute()}>
       <Flex
@@ -168,27 +177,31 @@ export default function PoolCard(props: PoolCardDetail) {
               ) : (
                 <Text color={"#A0A3AD"}>No market data</Text>
               )}
-              <Flex w={"10px"} h={"18px"} alignItems={"center"}>
+              <Flex w={"14px"} h={"18px"} alignItems={"center"}>
                 <CustomTooltip
                   content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
                   tooltipLabel={
                     <Flex
-                      width={"260px"}
+                      w={
+                        token0HasMarketPrice && token1HasMarketPrice
+                          ? "300px"
+                          : "260px"
+                      }
+                      px={"10px"}
+                      pos={"absolute"}
                       zIndex={500}
                       h={"28px"}
                       bg={"#383A49"}
                       textAlign={"center"}
+                      right={"-125px"}
+                      borderRadius={"4px"}
+                      justifyContent={"center"}
                     >
-                      <Text>
-                        Fees :{" "}
+                      <Text w={"100%"} pos={"relative"}>
+                        FEES :{" "}
                         {`${trimAmount(token0CollectedFee.toString(), 7)} ${
                           token0.symbol
-                        }($${commafy(
-                          token0FeeValue,
-                          2,
-                          undefined,
-                          "0.00"
-                        )})`}{" "}
+                        } ${token0FeeValueForTooltip}`}{" "}
                         <span
                           style={{
                             width: "7px",
@@ -200,12 +213,7 @@ export default function PoolCard(props: PoolCardDetail) {
                         </span>{" "}
                         {`${trimAmount(token1CollectedFee.toString(), 7)} ${
                           token1.symbol
-                        }($${commafy(
-                          token1FeeValue,
-                          2,
-                          undefined,
-                          "0.00"
-                        )})`}{" "}
+                        } ${token1FeeValueForTooltip}`}{" "}
                       </Text>
                     </Flex>
                   }

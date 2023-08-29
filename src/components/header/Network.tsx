@@ -21,10 +21,6 @@ export default function Network() {
     isSupportedChain,
   } = useConnectedNetwork();
 
-  console.log("isSupportedChain");
-  console.log(isSupportedChain);
-  console.log(!isSupportedChain);
-
   if (!isSupportedChain) {
     return (
       <Flex
