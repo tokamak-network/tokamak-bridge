@@ -1,0 +1,162 @@
+import { Flex, Text } from "@chakra-ui/react";
+import {
+  relayBannerSelector,
+  relayBannerStatus,
+} from "@/recoil/bridgeSwap/atom";
+import { useRecoilValue, useRecoilState } from "recoil";
+import { useState, useEffect } from "react";
+import { add, getTime, intervalToDuration, Duration } from "date-fns";
+import { useInOutNetwork } from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useConnectedNetwork from "@/hooks/network";
+
+type Banner = "Pending" | "Active" | "Hidden";
+
+const RelayBanner = () => {
+  const [status, setStatus] = useState<Banner>("Hidden");
+  const [isBannerStatus, setIsBannerStatus] = useRecoilState(relayBannerStatus);
+  const banner = useRecoilValue(relayBannerSelector).previewTimeStartThisWeek;
+  const { outNetwork } = useInOutNetwork();
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+
+  const [duration, setDuration] = useState<Duration>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    months: 0,
+    seconds: 0,
+    years: 0,
+  });
+
+  const isTestnet =
+    !isConnectedToMainNetwork ||
+    outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+    outNetwork?.chainId === SupportedChainId["DARIUS"];
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      const today = new Date();
+      const nowTime = getTime(today);
+      // const showPrevTime = getTime(1693285339000);
+      // const activeTimeStartThisWeek = 1693285339000;
+      const showPrevTime = getTime(1693386000000);
+      const activeTimeStartThisWeek = 1693386000000;
+
+      const activeTimeEndThisWeek = 1693990800000;
+      if (nowTime < getTime(banner)) {
+        setIsBannerStatus("Hidden");
+        setStatus("Hidden");
+      } else if (
+        nowTime >= getTime(banner) &&
+        nowTime < getTime(activeTimeStartThisWeek)
+      ) {
+        const duration1 = showPrevTime - nowTime;
+
+        setDuration(intervalToDuration({ start: 0, end: duration1 }));
+        setStatus("Pending");
+        setIsBannerStatus("Pending");
+      } else if (
+        nowTime >= getTime(activeTimeStartThisWeek) &&
+        nowTime < getTime(activeTimeEndThisWeek)
+      ) {
+        setStatus("Active");
+        setIsBannerStatus("Active");
+      } else {
+        setStatus("Hidden");
+        setIsBannerStatus("Hidden");
+      }
+    }, 1000); // 60 seconds in milliseconds
+
+    return () => clearInterval(intervalId); // Clean up the interval on component unmount
+  }, [banner]);
+
+  return status !== "Hidden" && isConnectedToMainNetwork ? (
+    <Flex
+      h="76px"
+      w="560px"
+      bg={status === "Pending" ? "#F9C03E" : "#DD3A44"}
+      borderRadius={"5px"}
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      color={status === "Pending" ? "#0F0F12" : "#fff"}
+      p="16px"
+      mb={"10px"}
+    >
+      <Flex flexDir={"column"} w={status === "Pending" ? "380px" : "100%"}>
+        {status === "Active" ? (
+          <>
+            {" "}
+            <Text fontSize={"14px"}>
+              Titan Network's auto relay service has been shut down.
+            </Text>
+          </>
+        ) : (
+          <>
+            {" "}
+            <Text fontSize={"14px"}>
+              Titan Network's auto relay service will be discontinued.
+            </Text>
+          </>
+        )}
+        {status === "Active" ? (
+          <Text fontSize={"10px"}>
+            {" "}
+            After the 7-day challenge period, any withdrawals initiated after
+            August 30th, 2023 at 18:00 GMT+9, will need to be manually relayed
+            using a new interface (read more in{" "}
+            <a
+              href={
+                "https://medium.com/onther-tech/announcing-the-launch-of-tokamak-bridge-8bc1719709a7"
+              }
+            
+              target="_blank"
+              style={{ fontWeight: "bold" , textDecoration:'underline'}}
+            >
+              English
+            </a>{" "}
+            / <a style={{ fontWeight: "bold" , textDecoration:'underline'}}>한국어</a>).
+          </Text>
+        ) : (
+          <Text fontSize={"10px"}>
+            {" "}
+            August 30th, 2023 at 18:00 GMT+9, any withdrawals will have to be
+            manually relayed using a new interface (read more in{" "}
+            <a
+              href={
+                "https://medium.com/onther-tech/announcing-the-launch-of-tokamak-bridge-8bc1719709a7"
+              }
+              target="_blank"
+              style={{ fontWeight: "bold", textDecoration:'underline' }}
+            >
+              English
+            </a>{" "}
+            / <a style={{ fontWeight: "bold", textDecoration:'underline' }}>한국어</a>).
+          </Text>
+        )}
+      </Flex>
+      {status === "Pending" ? (
+        <Text fontSize={"18px"}>
+          {duration.hours !== undefined &&
+          duration.days !== undefined &&
+          duration.days < 1 &&
+          duration.hours < 10
+            ? "0"
+            : ""}
+          {duration.days !== undefined && duration.hours && duration.days > 0
+            ? duration.hours + 24
+            : duration.hours}
+          :{duration.minutes !== undefined && duration.minutes < 10 ? "0" : ""}
+          {duration.minutes}:
+          {duration.seconds !== undefined && duration.seconds < 10 ? "0" : ""}
+          {duration.seconds}
+        </Text>
+      ) : (
+        <></>
+      )}
+    </Flex>
+  ) : (
+    <></>
+  );
+};
+
+export default RelayBanner;
