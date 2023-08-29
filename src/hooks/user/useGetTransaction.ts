@@ -38,7 +38,7 @@ export default function useGetTransaction() {
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const { crossMessenger } = useCrosschainMessenger();
-  const [loadingState, setLoadingState] = useState("loading");
+  const [loadingState, setLoadingState] = useState<"loading" | "present" | "absent">("loading");
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
