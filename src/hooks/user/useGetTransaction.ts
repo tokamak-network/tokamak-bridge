@@ -37,7 +37,7 @@ export default function useGetTransaction() {
   const { chain } = useNetwork();
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
-  const { crossMessenger } = useCrosschainMessenger();
+  const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
   const [loadingState, setLoadingState] = useState<"loading" | "present" | "absent">("loading");
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
@@ -46,14 +46,16 @@ export default function useGetTransaction() {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const fetchTransactions = useCallback(async () => {
+    
     if (
       chain?.id &&
       l2ProSDK !== undefined &&
       l1Pro !== undefined &&
       l2Pro !== undefined &&
-      crossMessenger !== undefined &&
+      crossMessenger !== undefined && crossMessengerTokamak !== undefined &&
       isConnectedToMainNetwork !== undefined
     ) {
+      
       const userAllTransactions = await fetchUserTransactions(
         address,
         isConnectedToMainNetwork
@@ -70,9 +72,10 @@ export default function useGetTransaction() {
       if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
           userAllTransactions.formattedWithdraw.map(async (tx: L1TxType) => {
-            const resolved = await crossMessenger.toCrossChainMessage(
+            const resolved = await crossMessengerTokamak.toCrossChainMessage(
               tx.transactionHash
             ); //  office node ok
+            
             const currentStatus = await crossMessenger.getMessageStatus(
               resolved
             );
@@ -137,7 +140,7 @@ export default function useGetTransaction() {
               const block = await l1Pro.getBlock(bn);
 
               const challengePeriod =
-                await crossMessenger.getChallengePeriodSeconds(); //office node ok
+                await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
               const timeReadyForRelay = block.timestamp + challengePeriod;
 
               const messageTxReceipt = await l2Pro.getTransactionReceipt(

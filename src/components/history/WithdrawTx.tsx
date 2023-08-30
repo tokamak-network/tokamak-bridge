@@ -29,7 +29,7 @@ import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
 import { confirmWithdraw } from "@/recoil/modal/atom";
 
-export default function WithdrawTx(props: { tx: FullWithTx  }) {
+export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();
@@ -41,7 +41,7 @@ export default function WithdrawTx(props: { tx: FullWithTx  }) {
   const [, setClaimTx] = useRecoilState(claimTx);
   // console.log('tx',tx);
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
-  
+
   const getTokenData = useCallback(async () => {
     if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
       let token0Symbol, token0Name, token0Decimals;
@@ -154,7 +154,7 @@ export default function WithdrawTx(props: { tx: FullWithTx  }) {
             _hover={{}}
             _focus={{}}
             _active={{}}
-            zIndex={1000}
+            zIndex={10000}
             _disabled={{ bg: "#1F2128" }}
             onClick={
               tx?.currentStatus !== 5
@@ -174,8 +174,22 @@ export default function WithdrawTx(props: { tx: FullWithTx  }) {
                     });
                   }
                 : () => {
+                  console.log('current ',tx?.currentStatus);
+                  
                     setClaimTx(tx);
                     claim(tx);
+                    setWithdraw({
+                      isOpen: false,
+                      modalData: {
+                        ...tx,
+                        inTokenSymbol: tokenData?.token0Symbol,
+                        outTokenSymbol: tokenData?.token1Symbol,
+                        inTokenAmount: ethers.utils.formatUnits(
+                          tx._amount.toString(),
+                          tokenData?.token0Decimals
+                        ),
+                      },
+                    });
                   }
             }
           >

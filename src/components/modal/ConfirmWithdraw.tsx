@@ -309,8 +309,6 @@ export default function ConfirmWithdraw() {
         return () => clearInterval(intervalID);
       }
     }, [props.timeStamp]);
-
-    console.log('progress',props.progress);
     
     return (
       <Flex

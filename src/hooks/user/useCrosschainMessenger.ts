@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 
 export default function useCrosschainMessenger() {
   const [crossMessenger, setCrossMessenger] = useState<any>();
+  const [crossMessengerTokamak, setCrossMessengerTokamak] = useState<any>();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
   const { provider } = useProvier();
@@ -37,24 +38,33 @@ export default function useCrosschainMessenger() {
     }
   }, [l1Pro, l2Pro, layer]);
 
-  // const fetL1CrossMessenger = useCallback(() => {
-  //   const crossChainMessenger = new titanSDK.CrossChainMessenger({
-  //     l1ChainId: providers.l1ChainID,
-  //     l2ChainId: providers.l2ChainID,
-  //     l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
-  //       process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
-  //     ).getSigner(address),
-  //     l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
-  //       process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
-  //     ).getSigner(address),
-  //   });
+  const fetchTokamakMessenger = useCallback(() => {
+    if (l1Pro !== undefined && l2Pro !== undefined) {
+      const crossChainMessenger = new titanSDK.CrossChainMessenger({
+        l1ChainId: providers.l1ChainID,
+        l2ChainId: providers.l2ChainID,
+        l1SignerOrProvider:
+          layer === "L1"
+            ? l1Pro.getSigner(address)
+            : new ethers.providers.JsonRpcProvider(
+                isConnectedToMainNetwork
+                  ? process.env.NEXT_PUBLIC_ETHEREUM_RPC
+                  : process.env.NEXT_PUBLIC_GOERLI_RPC
+              ).getSigner(address),
+        l2SignerOrProvider: l2Pro.getSigner(address),
+      });
 
-  //   setL1CrossMessenger(crossChainMessenger);
-  // }, []);
+      setCrossMessengerTokamak(crossChainMessenger);
+    }
+  }, [l1Pro, l2Pro, layer]);
 
   useEffect(() => {
     fetchMessenger();
+    fetchTokamakMessenger()
     // fetL1CrossMessenger();
   }, [l2Pro, l1Pro, layer]);
-  return { crossMessenger: crossMessenger };
+  return {
+    crossMessenger: crossMessenger,
+    crossMessengerTokamak: crossMessengerTokamak,
+  };
 }

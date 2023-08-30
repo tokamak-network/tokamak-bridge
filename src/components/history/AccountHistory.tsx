@@ -36,7 +36,6 @@ import BalanceContainer from "./BalanceContainer";
 import NetworkSelector from "./NetworkSelector";
 import ICON_SEARCH from "assets/icons/searchGray.svg";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
-import { tData } from "@/types/activity/history";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -46,7 +45,7 @@ type SelectOption = {
   networkImage: any;
 };
 
-export default function AccountHistory(props: { tData: tData }) {
+export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
   const toast = useToast();
@@ -57,6 +56,7 @@ export default function AccountHistory(props: { tData: tData }) {
     chainName: undefined,
     networkImage: undefined,
   });
+
 
   const handleCopyToClipboard = () => {
     copy(address !== undefined ? address : "");
@@ -320,9 +320,9 @@ export default function AccountHistory(props: { tData: tData }) {
           ) : (
             <ActivityContainer network={selectedNetwork} />
           )} */}
-          <ActivityContainer network={selectedNetwork} tData={props.tData} />
+          <ActivityContainer network={selectedNetwork} />
         </Flex>
-      </DrawerContent>
+      </DrawerContent>s
     </Drawer>
   );
 }
