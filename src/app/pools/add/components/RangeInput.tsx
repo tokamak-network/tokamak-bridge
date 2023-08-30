@@ -135,6 +135,9 @@ export default function RangeInput(props: RangeInputProps) {
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
 
+  console.log(pricesAtTicks?.LOWER?.toSignificant(6));
+  console.log(pricesAtTicks?.UPPER?.invert().toSignificant(6));
+
   const blurHandler = useCallback(
     (e: any) => {
       setIsFocused(false);
@@ -162,20 +165,6 @@ export default function RangeInput(props: RangeInputProps) {
       return setMaxPriceForAddModal(localValue);
     }
   }, [localValue, isMinPrice]);
-
-  // useEffect(() => {
-  //   if (minPriceInput?.replaceAll(",", "") !== pricesAtLimit["LOWER"]) {
-  //     invertPrice ? setAtMaxTick(false) : setAtMinTick(false);
-  //   } else {
-  //     invertPrice ? setAtMaxTick(true) : setAtMinTick(true);
-  //   }
-
-  //   if (maxPriceInput !== "∞") {
-  //     return invertPrice ? setAtMinTick(false) : setAtMaxTick(false);
-  //   } else {
-  //     return invertPrice ? setAtMinTick(true) : setAtMaxTick(true);
-  //   }
-  // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
 
   return (
     <Flex flexDir={"column"}>

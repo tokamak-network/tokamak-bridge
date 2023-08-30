@@ -4,6 +4,7 @@ import { NetworkSymbol } from "../image/NetworkSymbol";
 import useConnectedNetwork from "@/hooks/network";
 import Image from "next/image";
 import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
+import { useAccount } from "wagmi";
 
 function capitalizeFirstChar(inputString: string | undefined) {
   if (!inputString) return;
@@ -20,6 +21,7 @@ export default function Network() {
     chainName,
     isSupportedChain,
   } = useConnectedNetwork();
+  const { isConnected } = useAccount();
 
   if (!isSupportedChain) {
     return (
@@ -56,7 +58,7 @@ export default function Network() {
         h={24}
         isCircle={true}
       />
-      {!isConnectedToMainNetwork && (
+      {isConnected && !isConnectedToMainNetwork && (
         <Text>{capitalizeFirstChar(chainName)}</Text>
       )}
     </Flex>

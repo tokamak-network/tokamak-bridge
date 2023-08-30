@@ -62,6 +62,7 @@ export default function PoolCard(props: PoolCardDetail) {
     token0FeeValue,
     token1FeeValue,
     feeValue,
+    chainId,
   } = props;
 
   const feePercent = useMemo(() => {
@@ -83,7 +84,6 @@ export default function PoolCard(props: PoolCardDetail) {
   const { switchNetworkAsync, isLoading, error } = useSwitchNetwork();
   const router = useRouter();
 
-  const chainId = token0.chainId;
   const onClickToRoute = useCallback(async () => {
     if (chainId !== connectedChainId && otherLayerChainInfo) {
       const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
@@ -107,7 +107,10 @@ export default function PoolCard(props: PoolCardDetail) {
     <Box onClick={() => onClickToRoute()}>
       <Flex
         flexDir="column"
-        border="3px solid #383736"
+        borderWidth={"3px"}
+        borderColor={
+          chainId === 55004 || chainId === 5050 ? "#05274C" : "#383736"
+        }
         bgColor={!props.id ? "#15161D" : ""}
         w="200px"
         h="248px"
