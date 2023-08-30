@@ -104,10 +104,11 @@ export function useGetPositions(positionId?: number) {
         for (let i = 0; i < batchSize; i++) {
           promises.push(async () => {
             const tokenOfOwnerByIndex: number =
-              await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
+              positionTokenId ??
+              (await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
                 address,
                 i
-              );
+              ));
             const owner = positionTokenId
               ? await NonfungiblePositionManagerContract.ownerOf(
                   positionTokenId
@@ -325,7 +326,7 @@ export function useGetPositions(positionId?: number) {
         setAccount(address);
         setChainId(connectedChainId);
         setPositionsLoading(true);
-        setPositions(undefined);
+        // setPositions(undefined);
       }
       const result = positionId
         ? await Promise.all([callPositionIds(false, positionId)])
@@ -363,12 +364,16 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
+  console.log("positionId");
+  console.log(positionId);
+
   return { positionId };
 }
 
 function useGetPositionInfo() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
+
   const { positions } = useGetPositions(Number(positionId));
   const { otherLayerProvider } = useProvier();
 

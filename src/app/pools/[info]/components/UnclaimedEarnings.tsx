@@ -9,7 +9,7 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import "css/pool/switch.css";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
-import { useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import JSBI from "jsbi";
 
@@ -56,8 +56,10 @@ export default function UnclaimedEarnings() {
     token1Name: info?.token1.name,
     token1Amount,
   });
+  const { address } = useAccount();
 
   const btnIsDisabled = useMemo(() => {
+    if (info?.owner !== address) return true;
     if (info?.token0CollectedFee && info?.token1CollectedFee) {
       return (
         Number(info?.token0CollectedFee.replaceAll(",", "")) +
@@ -65,7 +67,7 @@ export default function UnclaimedEarnings() {
         0
       );
     }
-  }, [info?.token0CollectedFee, info?.token1CollectedFee]);
+  }, [info?.token0CollectedFee, info?.token1CollectedFee, address]);
 
   const token0Symbol = useMemo(() => {
     if (collectAsWETH === true && info?.token0.symbol === "ETH") {
