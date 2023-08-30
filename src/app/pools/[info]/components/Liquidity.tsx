@@ -12,6 +12,7 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { splitNumber } from "@/utils/trim/splitNumber";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -128,11 +129,7 @@ export default function Liquidity() {
               Liquidity
             </Text>
             <Text fontSize={"38px"} height={"57px"}>
-              {`$${
-                totalMarketPrice.split(".")[0]?.length > 4
-                  ? totalMarketPrice.split(".")[0]
-                  : totalMarketPrice
-              }`}
+              {`$${splitNumber(totalMarketPrice)}`}
             </Text>
           </Flex>
           <Flex

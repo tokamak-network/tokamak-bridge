@@ -15,7 +15,7 @@ export default function Network() {
   } = useConnectedNetwork();
   const { isConnected } = useAccount();
 
-  if (!isSupportedChain) {
+  if (isConnected && !isSupportedChain) {
     return (
       <Flex
         bgColor={"#1F2128"}

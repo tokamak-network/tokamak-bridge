@@ -41,6 +41,7 @@ export type PoolCardDetail = {
   token1FeeValue: number;
   feeValue: number;
   chainId: number;
+  owner: string;
 };
 
 export default function PoolCard(props: PoolCardDetail) {
@@ -88,10 +89,10 @@ export default function PoolCard(props: PoolCardDetail) {
     if (chainId !== connectedChainId && otherLayerChainInfo) {
       const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
       if (res && res.id === otherLayerChainInfo.chainId) {
-        return router.push(`/pools/${id}`);
+        return router.push(`/pools/${id}?chainId=${chainId}`);
       }
     }
-    return router.push(`/pools/${id}`);
+    return router.push(`/pools/${id}?chainId=${chainId}`);
   }, [chainId, connectedChainId, otherLayerChainInfo]);
 
   const token0HasMarketPrice = Number(token0MarketPrice) > 0;

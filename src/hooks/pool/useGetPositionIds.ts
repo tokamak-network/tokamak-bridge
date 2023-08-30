@@ -108,6 +108,12 @@ export function useGetPositions(positionId?: number) {
                 address,
                 i
               );
+            const owner = positionTokenId
+              ? await NonfungiblePositionManagerContract.ownerOf(
+                  positionTokenId
+                )
+              : address;
+
             const positionInfo =
               await NonfungiblePositionManagerContract.positions(
                 positionTokenId ?? tokenOfOwnerByIndex
@@ -285,6 +291,7 @@ export function useGetPositions(positionId?: number) {
               token1FeeValue,
               feeValue: isNaN(feeValue) ? 0 : feeValue,
               chainId: otherLayer ? _otherLayerChainId : connectedChainId,
+              owner,
             });
           });
         }
