@@ -10,7 +10,7 @@ import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount } from "wagmi";
@@ -94,6 +94,16 @@ export default function Liquidity() {
   }, []);
 
   const actionDisabled = owner !== address;
+
+  const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
+  const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (ratio && token0Ratio === undefined && token1Ratio === undefined) {
+      setToken0Ratio(ratio);
+      setToken1Ratio(100 - ratio);
+    }
+  }, [ratio]);
 
   return (
     <Box
@@ -199,7 +209,7 @@ export default function Liquidity() {
               info.token1Amount.toString(),
               6
             )}
-            liquidityPercent={100 - (ratio ?? 0)}
+            liquidityPercent={token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
@@ -207,7 +217,7 @@ export default function Liquidity() {
               info.token0Amount.toString(),
               6
             )}
-            liquidityPercent={ratio}
+            liquidityPercent={token0Ratio}
           />
         </Flex>
       </Flex>
