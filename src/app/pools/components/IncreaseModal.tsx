@@ -17,30 +17,33 @@ import { useEffect, useState } from "react";
 import commafy from "@/utils/trim/commafy";
 import useBlockNum from "@/hooks/network/useBlockNumber";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { useRecoilValue } from "recoil";
+import { estimatedGasFee } from "@/recoil/global/transaction";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
   const { increaseLiquidity } = usePoolContract();
   const { mintPosition, estimateGasToMint } = usePoolMint();
-  const [gas, setGas] = useState<number | undefined>(undefined);
-  const { blockNumber } = useBlockNum();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const [gasToAdd, setGasToAdd] = useState<number | undefined>(undefined);
+  const { blockNumber } = useBlockNum();
+  const gasFeeToIncrease = useRecoilValue(estimatedGasFee);
 
   useEffect(() => {
     const fetchData = async () => {
-      if (gas !== undefined) return;
       const gasData = await estimateGasToMint();
-      setGas(gasData);
+      setGasToAdd(gasData);
     };
-    fetchData();
-  }, [gas, estimateGasToMint, blockNumber]);
+    if (poolModal === "increaseLiquidity") {
+      fetchData();
+    }
+  }, [estimateGasToMint, blockNumber]);
 
   return (
     <Modal
       isOpen={poolModal === "increaseLiquidity" || poolModal === "addLiquidity"}
       onClose={() => {
         onClosePreviewModal();
-        setGas(undefined);
       }}
       isCentered
     >
@@ -71,7 +74,11 @@ export default function IncreaseModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={poolModal}
-          estimatedGas={commafy(gas)}
+          estimatedGas={
+            poolModal === "addLiquidity"
+              ? commafy(gasToAdd, 2)
+              : commafy(gasFeeToIncrease, 2)
+          }
         />
         <PriceRange />
         <Flex w={"100%"}>
@@ -89,7 +96,7 @@ export default function IncreaseModal() {
               setModalOpen("confirming");
               setIsOpen(true);
               onClosePreviewModal();
-              setGas(undefined);
+              // setGas(undefined);
               poolModal === "addLiquidity"
                 ? mintPosition()
                 : increaseLiquidity();

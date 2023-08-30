@@ -16,30 +16,16 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useRecoilValue } from "recoil";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import { useEffect, useState } from "react";
-import useBlockNum from "@/hooks/network/useBlockNumber";
 import commafy from "@/utils/trim/commafy";
+import { estimatedGasFee } from "@/recoil/global/transaction";
 
 export default function RemoveModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
-  const { removeLiquidity, estimateGasToRemove } = usePoolContract();
+  const { removeLiquidity } = usePoolContract();
   const { info } = usePositionInfo();
   const removeLiquidityPercentage = useRecoilValue(removeAmount);
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
-  const { blockNumber } = useBlockNum();
-  const [gas, setGas] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (gas !== undefined) return;
-      const gasData = await estimateGasToRemove(
-        info?.id,
-        removeLiquidityPercentage
-      );
-      setGas(gasData);
-    };
-    fetchData();
-  }, [gas, info, blockNumber, removeLiquidityPercentage]);
+  const estimatedGasUsageValue = useRecoilValue(estimatedGasFee);
 
   return (
     <Modal
@@ -70,7 +56,7 @@ export default function RemoveModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={"removeLiquidity"}
-          estimatedGas={commafy(gas)}
+          estimatedGas={commafy(estimatedGasUsageValue, 2)}
         />
         <Text
           fontSize={"12px"}

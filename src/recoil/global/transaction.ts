@@ -60,6 +60,11 @@ export const estimatedGasUsage = atom<number | undefined>({
   default: undefined,
 });
 
+export const estimatedGasFee = atom<number | undefined>({
+  key: "estimatedGasFee",
+  default: undefined,
+});
+
 export const ethPrice = graphQLSelector({
   key: "ethPrice",
   environment: "dev",
@@ -73,18 +78,18 @@ export const ethPrice = graphQLSelector({
   mapResponse: (data) => data.getTokenMarketData?.current_price,
 });
 
-export const estimatedGasFee = selector<number | undefined>({
-  key: "estimatedGasFee",
-  get: async ({ get }) => {
-    const searchedToken = get(estimatedGasUsage);
-    // const ethMarketPrice = get(ethPrice);
+// export const estimatedGasFee = selector<number | undefined>({
+//   key: "estimatedGasFee",
+//   get: async ({ get }) => {
+//     const searchedToken = get(estimatedGasUsage);
+//     // const ethMarketPrice = get(ethPrice);
 
-    if (searchedToken) {
-      return undefined;
-    }
-    return undefined;
-  },
-});
+//     if (searchedToken) {
+//       return undefined;
+//     }
+//     return undefined;
+//   },
+// });
 
 type TransactionData = {
   isLoading: boolean;

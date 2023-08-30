@@ -5,12 +5,16 @@ import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import GasImg from "assets/icons/gasStation.svg";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import commafy from "@/utils/trim/commafy";
 import { usePricePair } from "@/hooks/price/usePricePair";
+import { usePoolContract } from "@/hooks/pool/usePoolContract";
+import useBlockNum from "@/hooks/network/useBlockNumber";
+import { estimatedGasFee } from "@/recoil/global/transaction";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 const Title = (props: {
   isExpanded: boolean;
@@ -30,6 +34,24 @@ const Title = (props: {
       arrowControl.start({ rotate: 360 });
     }
   }, [isExpanded]);
+
+  const { estimateGasToRemove } = usePoolContract();
+  const [estimatedGasUsageValue, setEstimatedGasUsage] =
+    useRecoilState(estimatedGasFee);
+  const removeLiquidityPercentage = useRecoilValue(removeAmount);
+  const { blockNumber } = useBlockNum();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (removeLiquidityPercentage === 0 || info === undefined) return;
+      const gasData = await estimateGasToRemove(
+        info?.id,
+        removeLiquidityPercentage
+      );
+      setEstimatedGasUsage(gasData);
+    };
+    fetchData();
+  }, [blockNumber, removeLiquidityPercentage, info]);
 
   return (
     <Flex
@@ -64,7 +86,7 @@ const Title = (props: {
             ml={"6px"}
             mr={"13px"}
           >
-            ${"122"}
+            ${commafy(estimatedGasUsageValue?.toString(), 2)}
           </Text>
           <motion.div animate={arrowControl}>
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -158,7 +180,7 @@ const Content = (props: {
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Fees earned" amount={`$${totalMarketPrice}`} />
+            <ContentTitle title="Fees" amount={`$${totalMarketPrice}`} />
             <ContentSub
               title={token0Symbol}
               amount={commafy(info.token0CollectedFee, 4)}

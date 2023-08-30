@@ -364,113 +364,126 @@ export function usePoolContract() {
   const { info } = usePositionInfo();
   const { inverted } = usePoolInfo();
 
-  const increaseLiquidity = useCallback(async () => {
-    if (address && info && (inToken || outToken)) {
-      const {
-        token0,
-        token1,
-        rawPositionInfo,
-        tickCurrent,
-        tickLower,
-        tickUpper,
-        sqrtPriceX96,
-        id,
-      } = info;
-      const { fee, liquidity } = rawPositionInfo;
+  const increaseLiquidity = useCallback(
+    async (estimatedGas?: boolean) => {
+      if (address && info && (inToken || outToken)) {
+        const {
+          token0,
+          token1,
+          rawPositionInfo,
+          tickCurrent,
+          tickLower,
+          tickUpper,
+          sqrtPriceX96,
+          id,
+        } = info;
+        const { fee, liquidity } = rawPositionInfo;
 
-      const token0Amount = CurrencyAmount.fromRawAmount(
-        token0,
-        inToken?.amountBN?.toString() ?? "0"
-      );
-      const token1Amount = CurrencyAmount.fromRawAmount(
-        token1,
-        outToken?.amountBN?.toString() ?? "9"
-      );
-
-      const configuredPool = new Pool(
-        token0,
-        token1,
-        fee,
-        sqrtPriceX96,
-        liquidity.toString(),
-        tickCurrent
-      );
-
-      const positionToIncreaseBy = Position.fromAmounts({
-        pool: configuredPool,
-        tickLower,
-        tickUpper,
-        amount0: token0Amount.quotient,
-        amount1: token1Amount.quotient,
-        useFullPrecision: true,
-      });
-
-      const addLiquidityOptions: AddLiquidityOptions = {
-        deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-        slippageTolerance: new Percent(50, 10_000),
-        tokenId: id,
-      };
-      if (positionToIncreaseBy) {
-        const { calldata, value } =
-          NonfungiblePositionManager.addCallParameters(
-            positionToIncreaseBy,
-            addLiquidityOptions
-          );
-
-        //for ETH value
-        const inIsEth = isETH(inToken);
-        const outIsETH = isETH(outToken);
-        const inWeiAmount = ethers.BigNumber.from(
-          token0Amount.quotient.toString()
+        const token0Amount = CurrencyAmount.fromRawAmount(
+          token0,
+          inToken?.amountBN?.toString() ?? "0"
         );
-        const outWeiAmount = ethers.BigNumber.from(
-          token1Amount.quotient.toString()
-        );
-        const inHexAmount = ethers.utils.hexlify(inWeiAmount);
-        const outHexAmount = ethers.utils.hexlify(outWeiAmount);
-
-        //refundETH
-        //it will return if All ETH won't be used to be deposit for some reasons like a price change
-        const NonfungiblePositionManagerContract = new Contract(
-          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          NONFUNGIBLE_POSITION_MANAGER_ABI,
-          getProviderOrSigner(provider, address)
+        const token1Amount = CurrencyAmount.fromRawAmount(
+          token1,
+          outToken?.amountBN?.toString() ?? "9"
         );
 
-        const refundETHData =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "refundETH"
+        const configuredPool = new Pool(
+          token0,
+          token1,
+          fee,
+          sqrtPriceX96,
+          liquidity.toString(),
+          tickCurrent
+        );
+
+        const positionToIncreaseBy = Position.fromAmounts({
+          pool: configuredPool,
+          tickLower,
+          tickUpper,
+          amount0: token0Amount.quotient,
+          amount1: token1Amount.quotient,
+          useFullPrecision: true,
+        });
+
+        const addLiquidityOptions: AddLiquidityOptions = {
+          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+          slippageTolerance: new Percent(50, 10_000),
+          tokenId: id,
+        };
+        if (positionToIncreaseBy) {
+          const { calldata, value } =
+            NonfungiblePositionManager.addCallParameters(
+              positionToIncreaseBy,
+              addLiquidityOptions
+            );
+
+          //for ETH value
+          const inIsEth = isETH(inToken);
+          const outIsETH = isETH(outToken);
+          const inWeiAmount = ethers.BigNumber.from(
+            token0Amount.quotient.toString()
+          );
+          const outWeiAmount = ethers.BigNumber.from(
+            token1Amount.quotient.toString()
+          );
+          const inHexAmount = ethers.utils.hexlify(inWeiAmount);
+          const outHexAmount = ethers.utils.hexlify(outWeiAmount);
+
+          //refundETH
+          //it will return if All ETH won't be used to be deposit for some reasons like a price change
+          const NonfungiblePositionManagerContract = new Contract(
+            UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            NONFUNGIBLE_POSITION_MANAGER_ABI,
+            getProviderOrSigner(provider, address)
           );
 
-        const multicallParam =
-          inIsEth || outIsETH ? [calldata, refundETHData] : [calldata];
+          const refundETHData =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "refundETH"
+            );
 
-        try {
-          const tx = await NonfungiblePositionManagerContract.multicall(
-            multicallParam,
-            {
-              gasLimit: 3000000,
-              value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-              from: address,
-            }
-          );
+          const multicallParam =
+            inIsEth || outIsETH ? [calldata, refundETHData] : [calldata];
+          const estimatedGasUsage =
+            await NonfungiblePositionManagerContract.estimateGas.multicall(
+              multicallParam,
+              {
+                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+                from: address,
+              }
+            );
+          if (estimatedGas) {
+            return estimatedGasUsage;
+          }
+          try {
+            const tx = await NonfungiblePositionManagerContract.multicall(
+              multicallParam,
+              {
+                gasLimit: 3000000,
+                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+                from: address,
+              }
+            );
 
-          if (tx.hash) return setTxHash(tx.hash);
-        } catch (e) {
-          setModalOpen("error");
+            if (tx.hash) return setTxHash(tx.hash);
+          } catch (e) {
+            setModalOpen("error");
+          }
+
+          // build transaction
+          // const transaction = {
+          //   data: [calldata, refundETHData],
+          //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          //   value: value,
+          //   from: address,
+          // };
+          // return sendTransaction(transaction);
         }
-
-        // build transaction
-        // const transaction = {
-        //   data: [calldata, refundETHData],
-        //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-        //   value: value,
-        //   from: address,
-        // };
-        // return sendTransaction(transaction);
       }
-    }
-  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT, inverted]);
+    },
+    [provider, inToken, outToken, address, UNISWAP_CONTRACT, inverted]
+  );
 
   const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);
   const [txHashToRemoveLiquidity, setTxHashToRemoveLiquidity] = useState<
@@ -719,6 +732,26 @@ export function usePoolContract() {
     tokenName: "ethereum",
   });
 
+  const estimateGasToIncrease = useCallback(async () => {
+    if (feeData && ethPrice) {
+      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const estimatedGasUsage = await increaseLiquidity(true);
+      if (estimatedGasUsage) {
+        const totalGasCost =
+          Number(gasPrice) * Number(estimatedGasUsage.toString());
+        const parsedTotalGasCost = ethers.utils.formatUnits(
+          totalGasCost.toString(),
+          "ether"
+        );
+
+        const totalGasCostUSD =
+          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
+
+        return totalGasCostUSD;
+      }
+    }
+  }, [feeData, ethPrice]);
+
   const estimateGasToCollect = useCallback(async () => {
     if (feeData && ethPrice) {
       const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
@@ -769,6 +802,7 @@ export function usePoolContract() {
     increaseLiquidity,
     removeLiquidity,
     collectFees,
+    estimateGasToIncrease,
     estimateGasToCollect,
     estimateGasToRemove,
   };
