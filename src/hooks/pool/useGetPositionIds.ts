@@ -318,7 +318,6 @@ export function useGetPositions(positionId?: number) {
         setAccount(address);
         setChainId(connectedChainId);
         setPositionsLoading(true);
-        setPositions(undefined);
       }
       const result = positionId
         ? await Promise.all([callPositionIds(false, positionId)])

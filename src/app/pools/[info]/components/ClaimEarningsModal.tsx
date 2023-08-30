@@ -44,8 +44,8 @@ export default function ClaimEarningsModal() {
         smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
       );
     };
-    if (isOpen === "collectFee") fetchGasPrice();
-  }, [blockNumber, isOpen]);
+    fetchGasPrice();
+  }, [blockNumber]);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
