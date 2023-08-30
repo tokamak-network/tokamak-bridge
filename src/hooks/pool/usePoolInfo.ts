@@ -149,7 +149,11 @@ export function usePoolInfo() {
 
   const ratio = useMemo(() => {
     return priceLower && pool && priceUpper
-      ? getRatio(priceLower, pool?.token0Price, priceUpper)
+      ? getRatio(
+          priceLower,
+          inverted ? pool?.token1Price : pool?.token0Price,
+          priceUpper
+        )
       : undefined;
   }, [pool, priceLower, priceUpper]);
 
