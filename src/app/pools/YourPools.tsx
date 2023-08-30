@@ -39,7 +39,7 @@ export default function YourPools() {
       >
         <PoolList />
       </Flex>
-      <LoadingModal />
+      {/* <LoadingModal /> */}
     </Flex>
   );
 }
