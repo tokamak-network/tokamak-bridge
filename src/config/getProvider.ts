@@ -5,7 +5,7 @@ import {
 import { ethers } from "ethers";
 
 const EthereumProvider = new ethers.providers.JsonRpcProvider(
-  process.env.NEXT_PUBLIC_GOERLI_RPC
+  process.env.NEXT_PUBLIC_ETHEREUM_RPC
 );
 const GoerliProvider = new ethers.providers.JsonRpcProvider(
   process.env.NEXT_PUBLIC_GOERLI_RPC

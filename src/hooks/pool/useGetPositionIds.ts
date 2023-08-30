@@ -29,6 +29,7 @@ import { sortPositions } from "@/utils/pool/sortPositions";
 import { Hash } from "viem";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
+import { supportedChain } from "@/types/network/supportedNetwork";
 
 //logic through subGraph
 // export default function useGetPositionIds(): {
@@ -58,13 +59,21 @@ export function useGetPositions(positionId?: number) {
 
   const { address } = useAccount();
   const { blockNumber } = useBlockNum();
-  const { layer, connectedChainId, chainName, otherLayerChainInfo } =
-    useConnectedNetwork();
+  const {
+    layer,
+    connectedChainId,
+    chainName,
+    otherLayerChainInfo,
+    isSupportedChain,
+  } = useConnectedNetwork();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
 
   const callPositionIds = useCallback(
     async (otherLayer?: boolean, positionTokenId?: number) => {
+      if (!isSupportedChain) {
+        return setPositions(undefined);
+      }
       if (
         address &&
         connectedChainId &&
@@ -292,17 +301,22 @@ export function useGetPositions(positionId?: number) {
       chainName,
       UNISWAP_CONTRACT_OTHER_LAYER,
       otherLayerChainInfo,
+      isSupportedChain,
     ]
   );
 
   const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
   const [account, setAccount] = useState<string | undefined>(undefined);
+  const [chainId, setChainId] = useState<number | undefined>(undefined);
   const txLog = useRecoilValue(txHashLog);
-
   useEffect(() => {
     const fetchPositionIds = async () => {
-      if (address && account !== address) {
+      if (
+        (address && account !== address) ||
+        (connectedChainId && chainId !== connectedChainId)
+      ) {
         setAccount(address);
+        setChainId(connectedChainId);
         setPositionsLoading(true);
       }
       const result = positionId
@@ -322,6 +336,7 @@ export function useGetPositions(positionId?: number) {
           const sortedPositions = sortPositions(result[1]);
           return setPositions(sortedPositions);
         }
+        return setPositions(undefined);
       } finally {
         setPositionsLoading(false);
       }
@@ -331,7 +346,7 @@ export function useGetPositions(positionId?: number) {
       console.log(e);
       setPositionsLoading(false);
     });
-  }, [blockNumber, connectedChainId, address, txLog, positionId]);
+  }, [blockNumber, connectedChainId, address, chainId, txLog, positionId]);
 
   return { positions };
 }

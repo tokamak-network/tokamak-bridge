@@ -70,7 +70,6 @@ export default function useConnectedNetwork() {
         return supportedChain[3];
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
-
       if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
         return supportedChain[1];
     }
