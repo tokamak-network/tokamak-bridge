@@ -16,7 +16,7 @@ export function useProvier() {
 
   const provider = useMemo(() => {
     if (!window.ethereum) {
-      return inNetwork?.layer === "L1" ? getL1Provider() : getL2Provider();
+      return inNetwork?.layer === "L2" ? getL2Provider() : getL1Provider();
     }
     const { ethereum } = window;
     const provider = new ethers.providers.Web3Provider(ethereum);
