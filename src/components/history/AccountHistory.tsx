@@ -34,9 +34,9 @@ import useConnectWallet from "@/hooks/account/useConnectWallet";
 import ActivityContainer from "./ActivityContainer";
 import BalanceContainer from "./BalanceContainer";
 import NetworkSelector from "./NetworkSelector";
-import ICON_SEARCH from "assets/icons/searchGray.svg";
-import { searchTxStatus } from "@/recoil/userHistory/searchTx";
-
+import { tData } from "@/types/activity/history";
+import SearchComponent from "./SearchComponent";
+import AccountContainer from "./AccountContainer";
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
@@ -45,7 +45,8 @@ type SelectOption = {
   networkImage: any;
 };
 
-export default function AccountHistory() {
+export default function AccountHistory(props: { tData: tData }) {
+  const {tData} = props
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
   const toast = useToast();
@@ -56,7 +57,6 @@ export default function AccountHistory() {
     chainName: undefined,
     networkImage: undefined,
   });
-
 
   const handleCopyToClipboard = () => {
     copy(address !== undefined ? address : "");
@@ -131,156 +131,158 @@ export default function AccountHistory() {
       </Flex>
     );
   };
-  const AccountContainer = () => {
-    const { address } = useAccount();
-    return (
-      <Flex
-        opacity={0.85}
-        borderRadius={"16px"}
-        css={{
-          background:
-            "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), #007AFF;",
-        }}
-        pos={"relative"}
-        overflow={"hidden"}
-      >
-        <Flex
-          borderRadius={"16px"}
-          border={"3px solid #007AFF"}
-          h="64px"
-          w="336px"
-          flexDir={"column"}
-        >
-          <TopLine />
-          <Flex
-            p="13px 16px 16px 13px"
-            justifyContent={"space-between"}
-            zIndex={1001}
-          >
-            <Flex alignItems={"center"}>
-              <Image
-                height={32}
-                width={32}
-                src={MetamaskIcon}
-                alt={"MetamaskIcon"}
-              />
-              <Text
-                fontSize={15}
-                ml="8px"
-                mr="4px"
-                fontWeight={500}
-                color={"#222"}
-              >
-                {trimAddress({ address: address, firstChar: 6 })}
-              </Text>
-              <Flex
-                onClick={() => {
-                  handleCopyToClipboard();
-                }}
-              >
-                <Image
-                  height={14}
-                  width={14}
-                  src={CopyIcon}
-                  alt={"CopyIcon"}
-                  style={{ cursor: "pointer" }}
-                />
-              </Flex>
-            </Flex>
-            <Flex columnGap={"8px"}>
-              <Flex
-                as={Link}
-                href="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
-                target="_blank"
-                cursor={"pointer"}
-                w="32px"
-                h="32px"
-                bg="#5D6978"
-                borderRadius={"8px"}
-                justifyContent={"center"}
-              >
-                <Image src={userguide} alt="userguide" height={16} width={16} />
-              </Flex>
-              <Flex
-                onClick={() => {
-                  connetAndDisconntWallet();
-                  setIsOpen(false);
-                }}
-                cursor={"pointer"}
-                w="32px"
-                h="32px"
-                bg="#5D6978"
-                borderRadius={"8px"}
-                justifyContent={"center"}
-              >
-                <Image src={off} alt="off" height={16} width={16} />
-              </Flex>
-            </Flex>
-          </Flex>
-          {/* <Flex flexDir={"column"} pl="16px">
-            <Text color={"#5D6978"} fontSize={"14px"} zIndex={1001}>
-              Balance
-            </Text>
-            <Text
-              color={"#222"}
-              fontSize={"32px"}
-              lineHeight={"normal"}
-              zIndex={1001}
-              mt="-3px"
-              fontWeight={600}
-            >
-              $410.55
-            </Text>
-          </Flex> */}
-        </Flex>
-      </Flex>
-    );
-  };
+  // const AccountContainer = () => {
+  //   const { address } = useAccount();
+  //   return (
+  //     <Flex
+  //       opacity={0.85}
+  //       borderRadius={"16px"}
+  //       css={{
+  //         background:
+  //           "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), #007AFF;",
+  //       }}
+  //       pos={"relative"}
+  //       overflow={"hidden"}
+  //     >
+  //       <Flex
+  //         borderRadius={"16px"}
+  //         border={"3px solid #007AFF"}
+  //         h="64px"
+  //         w="336px"
+  //         flexDir={"column"}
+  //       >
+  //         <TopLine />
+  //         <Flex
+  //           p="13px 16px 16px 13px"
+  //           justifyContent={"space-between"}
+  //           zIndex={1001}
+  //         >
+  //           <Flex alignItems={"center"}>
+  //             <Image
+  //               height={32}
+  //               width={32}
+  //               src={MetamaskIcon}
+  //               alt={"MetamaskIcon"}
+  //             />
+  //             <Text
+  //               fontSize={15}
+  //               ml="8px"
+  //               mr="4px"
+  //               fontWeight={500}
+  //               color={"#222"}
+  //             >
+  //               {trimAddress({ address: address, firstChar: 6 })}
+  //             </Text>
+  //             <Flex
+  //               onClick={() => {
+  //                 handleCopyToClipboard();
+  //               }}
+  //             >
+  //               <Image
+  //                 height={14}
+  //                 width={14}
+  //                 src={CopyIcon}
+  //                 alt={"CopyIcon"}
+  //                 style={{ cursor: "pointer" }}
+  //               />
+  //             </Flex>
+  //           </Flex>
+  //           <Flex columnGap={"8px"}>
+  //             <Flex
+  //               as={Link}
+  //               href="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+  //               target="_blank"
+  //               cursor={"pointer"}
+  //               w="32px"
+  //               h="32px"
+  //               bg="#5D6978"
+  //               borderRadius={"8px"}
+  //               justifyContent={"center"}
+  //             >
+  //               <Image src={userguide} alt="userguide" height={16} width={16} />
+  //             </Flex>
+  //             <Flex
+  //               onClick={() => {
+  //                 connetAndDisconntWallet();
+  //                 setIsOpen(false);
+  //               }}
+  //               cursor={"pointer"}
+  //               w="32px"
+  //               h="32px"
+  //               bg="#5D6978"
+  //               borderRadius={"8px"}
+  //               justifyContent={"center"}
+  //             >
+  //               <Image src={off} alt="off" height={16} width={16} />
+  //             </Flex>
+  //           </Flex>
+  //         </Flex>
+  //         {/* <Flex flexDir={"column"} pl="16px">
+  //           <Text color={"#5D6978"} fontSize={"14px"} zIndex={1001}>
+  //             Balance
+  //           </Text>
+  //           <Text
+  //             color={"#222"}
+  //             fontSize={"32px"}
+  //             lineHeight={"normal"}
+  //             zIndex={1001}
+  //             mt="-3px"
+  //             fontWeight={600}
+  //           >
+  //             $410.55
+  //           </Text>
+  //         </Flex> */}
+  //       </Flex>
+  //     </Flex>
+  //   );
+  // };
 
-  const SearchComponent = () => {
-    const [searchTxString, setSearchTxString] = useRecoilState(searchTxStatus);
+  // const SearchComponent = () => {
+  //   const [searchTxString, setSearchTxString] = useRecoilState(searchTxStatus);
 
-    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      const value = e.target.value;
+  //   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //     const value = e.target.value;
 
-      if (value === "") {
-        return setSearchTxString(null);
-      } else {
-        return setSearchTxString({ id: value });
-      }
-    };
-    return (
-      <Flex
-        ml="8px"
-        w="100%"
-        h={"40px"}
-        bgColor={"#15161D"}
-        borderRadius={"6px"}
-      >
-        <InputGroup>
-          <Input
-            pl="20px"
-            _active={{}}
-            _hover={{}}
-            _focus={{ boxShadow: "none !important" }}
-            border={"none"}
-            fontSize={14}
-            fontWeight={500}
-            onChange={onChange}
-            placeholder={
-              tab === "Balance" ? "Token contract address" : "Transaction ID"
-            }
-            _placeholder={{ color: "#8E8E92" }}
-          ></Input>
-          <InputRightElement mr={"6px"}>
-            <Flex height={"20px"} width={"20px"}>
-              <Image src={ICON_SEARCH} alt="ICON_SEARCH" />
-            </Flex>
-          </InputRightElement>
-        </InputGroup>
-      </Flex>
-    );
-  };
+  //     if (value === "") {
+  //       return setSearchTxString(null);
+  //     } else {
+  //       return setSearchTxString({ id: value });
+  //     }
+  //   };
+  //   return (
+  //     <Flex
+  //       ml="8px"
+  //       w="100%"
+  //       h={"40px"}
+  //       bgColor={"#15161D"}
+  //       borderRadius={"6px"}
+  //     >
+  //       <InputGroup>
+  //         <Input
+  //           pl="20px"
+  //           _active={{}}
+  //           _hover={{}}
+  //           _focus={{ boxShadow: "none !important" }}
+  //           border={"none"}
+  //           fontSize={14}
+  //           fontWeight={500}
+  //           onChange={onChange}
+  //           placeholder={
+  //             tab === "Balance" ? "Token contract address" : "Transaction ID"
+  //           }
+  //           _placeholder={{ color: "#8E8E92" }}
+  //         ></Input>
+  //         <InputRightElement mr={"6px"}>
+  //           <Flex height={"20px"} width={"20px"}>
+  //             <Image src={ICON_SEARCH} alt="ICON_SEARCH" />
+  //           </Flex>
+  //         </InputRightElement>
+  //       </InputGroup>
+  //     </Flex>
+  //   );
+  // };
+
+  
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
       <DrawerOverlay className="modalOverlayDrawer" bg={"none"} />
@@ -312,7 +314,7 @@ export default function AccountHistory() {
         <TabContainer setTab={setTab} tab={tab} />
         <Flex>
           <NetworkSelector height="40px" setNetwork={setSelectedNetwork} />
-          <SearchComponent />
+          <SearchComponent tab={tab}/>
         </Flex>
         <Flex mt="12px">
           {/* {tab === "Balance" ? (
@@ -320,9 +322,9 @@ export default function AccountHistory() {
           ) : (
             <ActivityContainer network={selectedNetwork} />
           )} */}
-          <ActivityContainer network={selectedNetwork} />
+          <ActivityContainer network={selectedNetwork} tData={tData} />
         </Flex>
-      </DrawerContent>s
+      </DrawerContent>
     </Drawer>
   );
 }
