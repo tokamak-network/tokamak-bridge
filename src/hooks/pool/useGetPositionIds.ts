@@ -351,7 +351,7 @@ export function useGetPositions(positionId?: number) {
     fetchPositionIds().catch((e) => {
       console.log("**fetchPositionIds err**");
       console.log(e);
-      setPositionsLoading(false);
+      // setPositionsLoading(false);
     });
   }, [blockNumber, connectedChainId, address, chainId, txLog, positionId]);
 

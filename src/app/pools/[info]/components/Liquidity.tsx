@@ -105,7 +105,11 @@ export default function Liquidity() {
       alignItems="center"
     >
       <Flex flexDir="column" alignItems={"center"}>
-        <Flex w={"100%"} justifyContent={"center"} px={"10px"}>
+        <Flex
+          w={"100%"}
+          justifyContent={actionDisabled ? "center" : "space-between"}
+          px={"10px"}
+        >
           {!actionDisabled && (
             <Flex
               flexDir={"column"}
