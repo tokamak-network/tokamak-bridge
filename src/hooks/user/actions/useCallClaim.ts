@@ -19,6 +19,8 @@ import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useGetTxLayers from "../useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
+import { txDataStatus } from "@/recoil/global/transaction";
+import { TxSort } from "@/types/tx/txType";
 
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
@@ -33,6 +35,7 @@ export default function useCallClaim(functionName: string) {
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
   const { provider: l2Prov } = useProvier();
+  const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const l2Pro = layer === "L2" ? l2Prov : getProvider(providers.l2Provider);
 
@@ -68,10 +71,25 @@ export default function useCallClaim(functionName: string) {
       connectedChainId === SupportedChainId["MAINNET"] ||
       connectedChainId === SupportedChainId["GOERLI"];
     setIsConnectedToL1(isCnnctdToL1);
-  }, [connectedChainId]);
+  }, [connectedChainId, layer]);
 
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
 
+
+  useEffect(() => {
+    if (data && connectedChainId) {
+      const tx = {
+        transactionHash: data?.hash,
+        txSort: "Claim" as TxSort,
+        transactionState: undefined,
+        tokenData: undefined,
+        network: connectedChainId,
+        isToasted: false,
+      };
+      setTxData({ hash: tx });
+    }
+  }, [data]);
+  
   useEffect(() => {
     if (isError) {
       setModalOpen("error");
@@ -80,7 +98,7 @@ export default function useCallClaim(functionName: string) {
 
   const claim = useCallback(
     async (txt: any) => {
-      if (!isConnectedToL1) {
+      if (!isConnectedToL1 || layer === "L2") {
         const selectedWork = supportedChain.filter((supportedChain) => {
           if (isConnectedToMainNetwork === true) {
             return [SupportedChainId["MAINNET"]].includes(
@@ -92,8 +110,7 @@ export default function useCallClaim(functionName: string) {
             );
           }
         })[0];
-
-        const res = await switchNetworkAsync?.(selectedWork.chainId);
+        const res = switchNetworkAsync?.(selectedWork.chainId);
         const tx = txt;
         if (res) {
           try {
@@ -136,45 +153,8 @@ export default function useCallClaim(functionName: string) {
         }
       }
     },
-    [isConnectedToL1, connectedChainId, provider]
+    [isConnectedToL1, connectedChainId, provider, switchNetworkAsync]
   );
-
-  // useEffect(() => {
-  // const fetchEstimatedGas = async () => {
-  //   console.log("claimTxArgs.resolved", claimTxArgs.resolved);
-
-  //   if (
-  //     crossChainMessenger &&
-  //     messengerContract &&
-  //     claimTxArgs.resolved &&
-  //     feeData
-  //   ) {
-  //     const proof = await crossChainMessenger.getMessageProof(
-  //       claimTxArgs.resolved
-  //     );
-
-  //     const estimate = await messengerContract.estimateGas.relayMessage(
-  //       claimTxArgs.resolved.target,
-  //       claimTxArgs.resolved.sender,
-  //       claimTxArgs.resolved.message,
-  //       claimTxArgs.resolved.messageNonce,
-  //       proof
-  //     );
-
-  //     console.log("estimate", estimate);
-  //   }
-  // };
-  // if (feeData) {
-  //   const intervalID = setInterval(() => {
-  //     const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
-
-  //     const gasLimit = 1000000;
-  //     console.log(gasPrice, maxFeePerGas, maxPriorityFeePerGas);
-  //   }, 12000);
-
-  //   return clearInterval(intervalID);
-  // }
-  // }, [feeData]);
 
   return { claim };
 }

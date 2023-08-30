@@ -17,6 +17,7 @@ import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import { FullWithTx, FullDepTx } from "@/types/activity/history";
+import { txDataStatus } from "@/recoil/global/transaction";
 type TokenData = {
   token0Symbol: string;
   token1Symbol: string;
@@ -41,6 +42,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const [, setClaimTx] = useRecoilState(claimTx);
   // console.log('tx',tx);
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const getTokenData = useCallback(async () => {
     if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
@@ -150,7 +152,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             h="24px"
             bg="#007AFF"
             fontSize={"12px"}
-            isDisabled={tx.currentStatus > 5}
+            isDisabled={
+              tx.currentStatus > 5 ||
+              (txData?.hash.transactionHash !== undefined &&
+                txData?.hash.txSort === "Claim")
+            }
             _hover={{}}
             _focus={{}}
             _active={{}}
@@ -174,8 +180,6 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                     });
                   }
                 : () => {
-                  console.log('current ',tx?.currentStatus);
-                  
                     setClaimTx(tx);
                     claim(tx);
                     setWithdraw({

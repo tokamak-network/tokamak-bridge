@@ -1,21 +1,16 @@
 import { transactionData } from "@/recoil/global/transaction";
-import { useRecoilState } from "recoil";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useState } from "react";
-import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import useContract from "@/hooks/contracts/useContract";
 import { useAccount } from "wagmi";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
-import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
 import useConnectedNetwork from "../network";
-import { l2RpcProvider } from "@/config/l2Provider";
 import { useNetwork } from "wagmi";
 import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "./useGetTxLayers";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
 import { ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
-import { txDataStatus } from "@/recoil/global/transaction";
 import {
   L1TxType,
   SentMessages,
@@ -42,7 +37,6 @@ export default function useGetTransaction() {
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
-  const [txData, setTxData] = useRecoilState(txDataStatus);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const fetchTransactions = useCallback(async () => {
