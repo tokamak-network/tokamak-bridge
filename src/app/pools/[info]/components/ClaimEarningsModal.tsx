@@ -7,17 +7,11 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { usePricePair } from "@/hooks/price/usePricePair";
-import { useEstimateGasCollect } from "@/hooks/pool/useEstimateGasPool";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useBlockNum from "@/hooks/network/useBlockNumber";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  estimatedGasFee,
-  estimatedGasUsage,
-} from "@/recoil/global/transaction";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
@@ -35,15 +29,23 @@ export default function ClaimEarningsModal() {
       token1Amount,
     });
 
-  const { blockNumber } = useBlockNum();
-  const [estimatedGasUsageValue, setEstimatedGasUsage] =
-    useRecoilState(estimatedGasUsage);
+  const {} = useBlockNum();
+  const [estimatedGasUsageValue, setEstimatedGasUsage] = useState<
+    string | undefined
+  >(undefined);
 
-  const { tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: "ethereum",
-    amount: estimatedGasUsageValue,
-  });
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { blockNumber } = useBlockNum();
+
+  useEffect(() => {
+    const fetchGasPrice = async () => {
+      const estimatedGas = await estimateGasToCollect();
+      setEstimatedGasUsage(
+        smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
+      );
+    };
+    fetchGasPrice();
+  }, [blockNumber]);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
@@ -167,7 +169,7 @@ export default function ClaimEarningsModal() {
                 </Flex>
                 <Flex justifyContent="end">
                   <Text fontSize={16} fontWeight="semibold">
-                    $4.34
+                    {`$${estimatedGasUsageValue}`}
                   </Text>
                 </Flex>
               </Flex>

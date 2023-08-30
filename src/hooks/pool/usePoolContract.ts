@@ -684,17 +684,19 @@ export function usePoolContract() {
         try {
           const { calldata, value } =
             NonfungiblePositionManager.collectCallParameters(collectOptions);
-          const tx = estimateGas
-            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                [calldata],
-                {
-                  gasLimit: 3000000,
-                }
-              )
-            : await NonfungiblePositionManagerContract.multicall([calldata], {
-                gasLimit: 3000000,
-              });
-          if (estimateGas) return tx;
+          const estimatedGasAmount =
+            await NonfungiblePositionManagerContract.estimateGas.multicall([
+              calldata,
+            ]);
+          if (estimateGas) {
+            return estimatedGasAmount;
+          }
+          const tx = await NonfungiblePositionManagerContract.multicall(
+            [calldata],
+            {
+              gasLimit: 3000000,
+            }
+          );
           if (tx.hash) return setTxHashToCollect(tx.hash);
         } catch (e) {
           setModalOpen("error");
