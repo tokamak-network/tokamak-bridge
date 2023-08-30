@@ -44,7 +44,7 @@ export default function Account() {
         <Flex columnGap={"8px"}>
           <Spinner color={"#007AFF"} />
           <Text fontSize={18} fontWeight={500}>
-            {/* {pendingTransaction.length} */}1 Pending
+            {/* {pendingTransaction.length} */} Pending
           </Text>
         </Flex>
       ) : (
