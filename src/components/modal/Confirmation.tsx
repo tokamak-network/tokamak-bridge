@@ -23,6 +23,7 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
 import { useRouter } from "next/navigation";
+import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 export default function Confirmation() {
   const { blockExplorer } = useConnectedNetwork();
@@ -45,6 +46,10 @@ export default function Confirmation() {
     }
     closeModal();
   }, [subMode, isConfirmed, isConfirming, isError, closeModal, txLog]);
+
+  const subModeValue = Object.keys(subMode).filter(
+    (key) => subMode[key as keyof typeof subMode] === true
+  );
 
   return (
     <Modal isOpen={isOpen} onClose={closeThisModal}>
@@ -69,7 +74,13 @@ export default function Confirmation() {
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
-              ? `Confirming ${mode}`
+              ? `Confirming ${
+                  subModeValue.length === 1
+                    ? capitalizeFirstChar(subModeValue[0])
+                    : mode === "Pool"
+                    ? "Claim"
+                    : mode
+                }`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError

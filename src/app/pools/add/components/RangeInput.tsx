@@ -135,9 +135,6 @@ export default function RangeInput(props: RangeInputProps) {
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
 
-  console.log(pricesAtTicks?.LOWER?.toSignificant(6));
-  console.log(pricesAtTicks?.UPPER?.invert().toSignificant(6));
-
   const blurHandler = useCallback(
     (e: any) => {
       setIsFocused(false);

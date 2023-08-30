@@ -10,6 +10,7 @@ import {
   removeAmount,
 } from "@/recoil/pool/setPoolPosition";
 import { useCallback } from "react";
+import { estimatedGasFee } from "@/recoil/global/transaction";
 
 export function useInitialize() {
   const { initializeTokenPair, initializeTokenPairAmount } = useInOutTokens();
@@ -20,6 +21,7 @@ export function useInitialize() {
   const [, setMaxPrice] = useRecoilState(maxPrice);
   const [, setInitialPrice] = useRecoilState(initialPrice);
   const [, setAmountPercentage] = useRecoilState(removeAmount);
+  const [, setEstimatedGasFee] = useRecoilState(estimatedGasFee);
   const initialzePoolValues = useCallback(() => {
     setAtMinTick(false);
     setAtMaxTick(false);
@@ -28,6 +30,7 @@ export function useInitialize() {
     initializeTokenPair();
     setInitialPrice("0");
     setAmountPercentage(0);
+    setEstimatedGasFee(undefined);
     return setPoolFee(undefined);
   }, [initializeTokenPair, setPoolFee]);
 

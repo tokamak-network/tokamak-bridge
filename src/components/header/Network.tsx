@@ -1,18 +1,10 @@
-import { Box, Center, Text, Flex } from "@chakra-ui/layout";
-import ImageSymbol, { TokenSymbol } from "@/components/image/TokenSymbol";
+import { Text, Flex } from "@chakra-ui/layout";
 import { NetworkSymbol } from "../image/NetworkSymbol";
 import useConnectedNetwork from "@/hooks/network";
 import Image from "next/image";
 import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
 import { useAccount } from "wagmi";
-
-function capitalizeFirstChar(inputString: string | undefined) {
-  if (!inputString) return;
-  if (inputString === "DARIUS") return "Titan Goerli";
-  return (
-    inputString.charAt(0).toUpperCase() + inputString.slice(1).toLowerCase()
-  );
-}
+import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 export default function Network() {
   const {
