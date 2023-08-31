@@ -52,6 +52,7 @@ import useConnectedNetwork from "@/hooks/network";
 import { ethers } from "ethers";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { FullWithTx } from "@/types/activity/history";
+import { txDataStatus } from "@/recoil/global/transaction";
 
 type TxType =  FullWithTx & {
   inTokenAmount: string;
@@ -70,6 +71,7 @@ export default function ConfirmWithdraw() {
   const { claim } = useCallClaim("relayMessage");
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
+  const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const { data: feeData } = useFeeData({
     chainId: 1,
@@ -586,7 +588,8 @@ export default function ConfirmWithdraw() {
         h="48px"
         _active={{}}
         _hover={{}}
-        isDisabled={!tx && isChecked ? false : tx?.currentStatus !== 5}
+        isDisabled={(txData?.hash.transactionHash !== undefined &&
+          txData?.hash.txSort === "Claim")? true: !tx && isChecked ? false : tx?.currentStatus !== 5}
         _disabled={{ color: "#8E8E92", bg: "#17181D" }}
         bg="#007AFF"
         onClick={

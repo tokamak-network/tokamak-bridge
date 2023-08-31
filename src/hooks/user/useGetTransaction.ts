@@ -165,7 +165,7 @@ export default function useGetTransaction() {
                 _l1Token: l1Token,
                 _l2Token: l2Token,
                 _amount: amnt,
-                timeReadyForRelay: Number(timeReadyForRelay)+250,
+                timeReadyForRelay: Number(timeReadyForRelay)+150,
                 currentStatus: currentStatus,
                 resolved: resolved,
                 // timeReadyForRelay:timeReadyForRelay
