@@ -10,6 +10,10 @@ import { usePool } from "@/hooks/pool/usePool";
 import { PoolState } from "@/types/pool/pool";
 import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
 import useIsTon from "@/hooks/token/useIsTon";
+import ChartWrapper from "./components/ChartWrapper";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { useRecoilState } from "recoil";
+import { maxPrice, minPrice } from "@/recoil/pool/setPoolPosition";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
@@ -19,6 +23,17 @@ export default function SetPriceRange() {
   const { firstStepPassed, priceInitialized } = useAddLiquidityCondition();
   const { isTONatPair } = useIsTon();
   const isActive = firstStepPassed && priceInitialized && !isTONatPair;
+
+  //for chart
+  const {
+    ticksAtLimit,
+    pricesAtTicks,
+    noLiquidity,
+    price: priceInfo,
+    invertPrice,
+  } = useV3MintInfo();
+  const [, setMinPrice] = useRecoilState(minPrice);
+  const [, setMaxPrice] = useRecoilState(maxPrice);
 
   return (
     <Flex
@@ -34,6 +49,24 @@ export default function SetPriceRange() {
           {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
         </Text>
       )}
+      <ChartWrapper
+        currencyA={pool?.token0}
+        currencyB={pool?.token1}
+        feeAmount={pool?.fee}
+        ticksAtLimit={ticksAtLimit}
+        price={
+          priceInfo
+            ? parseFloat(
+                (invertPrice ? priceInfo.invert() : priceInfo).toSignificant(8)
+              )
+            : undefined
+        }
+        priceLower={pricesAtTicks["LOWER"]}
+        priceUpper={pricesAtTicks["UPPER"]}
+        onLeftRangeInput={setMinPrice}
+        onRightRangeInput={setMaxPrice}
+        interactive={noLiquidity}
+      />
       <Flex columnGap={"12px"} mb={"12px"}>
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />

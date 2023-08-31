@@ -204,8 +204,8 @@ export function usePools(
 }
 
 export function usePool(
-  token0?: Token,
-  token1?: Token,
+  token0?: Currency | Token,
+  token1?: Currency | Token,
   fee?: FeeAmount
 ): [PoolState, Pool | null] {
   const { inToken, outToken } = useInOutTokens();

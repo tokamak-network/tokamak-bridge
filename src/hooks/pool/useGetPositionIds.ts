@@ -326,7 +326,7 @@ export function useGetPositions(positionId?: number) {
         setAccount(address);
         setChainId(connectedChainId);
         setPositionsLoading(true);
-        // setPositions(undefined);
+        setPositions(undefined);
       }
       const result = positionId
         ? await Promise.all([callPositionIds(false, positionId)])
@@ -363,9 +363,6 @@ export function useGetPositions(positionId?: number) {
 export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
-
-  console.log("positionId");
-  console.log(positionId);
 
   return { positionId };
 }

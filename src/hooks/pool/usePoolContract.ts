@@ -605,8 +605,8 @@ export function usePoolContract() {
 
   const collectFees = useCallback(
     async (estimateGas?: boolean) => {
-      console.log("--collectFees--");
-      console.log(info, address);
+      // console.log("--collectFees--");
+      // console.log(info, address);
       if (info && address && provider && chainName) {
         const token0 = info.token0;
         const token1 = info.token1;

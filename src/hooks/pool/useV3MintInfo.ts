@@ -338,6 +338,9 @@ export function useV3MintInfo() {
     tickSpaceLimits,
     poolForPosition,
     dependentAmount,
+    currencyA: token0,
+    currencyB: token1,
+    fee: feeAmount,
   };
 }
 
