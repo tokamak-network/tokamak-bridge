@@ -2,6 +2,7 @@ import { Flex, Text } from "@chakra-ui/react";
 import PoolList from "./components/PoolList";
 import { useAccount } from "wagmi";
 import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
+import LoadingModal from "@/components/modal/LoadingModal";
 
 export default function YourPools() {
   const { isConnected } = useAccount();
@@ -38,6 +39,7 @@ export default function YourPools() {
       >
         <PoolList />
       </Flex>
+      {/* <LoadingModal /> */}
     </Flex>
   );
 }

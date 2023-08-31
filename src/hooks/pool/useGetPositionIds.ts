@@ -104,10 +104,17 @@ export function useGetPositions(positionId?: number) {
         for (let i = 0; i < batchSize; i++) {
           promises.push(async () => {
             const tokenOfOwnerByIndex: number =
-              await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
+              positionTokenId ??
+              (await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
                 address,
                 i
-              );
+              ));
+            const owner = positionTokenId
+              ? await NonfungiblePositionManagerContract.ownerOf(
+                  positionTokenId
+                )
+              : address;
+
             const positionInfo =
               await NonfungiblePositionManagerContract.positions(
                 positionTokenId ?? tokenOfOwnerByIndex
@@ -285,6 +292,7 @@ export function useGetPositions(positionId?: number) {
               token1FeeValue,
               feeValue: isNaN(feeValue) ? 0 : feeValue,
               chainId: otherLayer ? _otherLayerChainId : connectedChainId,
+              owner,
             });
           });
         }
@@ -318,6 +326,7 @@ export function useGetPositions(positionId?: number) {
         setAccount(address);
         setChainId(connectedChainId);
         setPositionsLoading(true);
+        // setPositions(undefined);
       }
       const result = positionId
         ? await Promise.all([callPositionIds(false, positionId)])
@@ -344,7 +353,7 @@ export function useGetPositions(positionId?: number) {
     fetchPositionIds().catch((e) => {
       console.log("**fetchPositionIds err**");
       console.log(e);
-      setPositionsLoading(false);
+      // setPositionsLoading(false);
     });
   }, [blockNumber, connectedChainId, address, chainId, txLog, positionId]);
 
@@ -355,12 +364,16 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
+  console.log("positionId");
+  console.log(positionId);
+
   return { positionId };
 }
 
 function useGetPositionInfo() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
+
   const { positions } = useGetPositions(Number(positionId));
   const { otherLayerProvider } = useProvier();
 
