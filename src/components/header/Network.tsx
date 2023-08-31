@@ -15,7 +15,7 @@ export default function Network() {
   } = useConnectedNetwork();
   const { isConnected } = useAccount();
 
-  if (!isSupportedChain) {
+  if (isConnected && !isSupportedChain) {
     return (
       <Flex
         bgColor={"#1F2128"}
@@ -43,6 +43,7 @@ export default function Network() {
       columnGap={"8px"}
       px={isConnectedToMainNetwork ? "8px" : "12px"}
       borderRadius={"8px"}
+      justifyContent={"center"}
     >
       <NetworkSymbol
         network={connectedChainId ?? 1}

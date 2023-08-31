@@ -69,8 +69,8 @@ const HandleAccent = styled.path`
   pointer-events: none;
 
   stroke-width: 1.5;
-  stroke: ${({ theme }) => theme.white};
-  opacity: ${({ theme }) => theme.opacity.hover};
+  stroke: ${({ theme }) => theme?.white};
+  opacity: ${({ theme }) => theme?.opacity?.hover};
 `;
 
 const LabelGroup = styled.g<{ visible: boolean }>`

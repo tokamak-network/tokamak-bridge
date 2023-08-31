@@ -10,19 +10,18 @@ import {
   TICK_SPACINGS,
   tickToPrice,
 } from "@uniswap/v3-sdk";
-import { ZERO_ADDRESS } from "constants/misc";
+import { ZERO_ADDRESS } from "@/constant/misc";
 import { useAllV3TicksQuery } from "@/graphql/thegraph/__generated__/types-and-hooks";
 import { TickData, Ticks } from "@/graphql/thegraph/AllV3TicksQuery";
 import { apolloClient } from "@/graphql/thegraph/apollo";
 import JSBI from "jsbi";
-import { useSingleContractMultipleData } from "lib/hooks/multicall";
 import ms from "ms";
 import { useEffect, useMemo, useState } from "react";
-import computeSurroundingTicks from "utils/computeSurroundingTicks";
-
-import { useTickLens } from "./useContract";
-import { PoolState, usePool } from "./usePools";
+import computeSurroundingTicks from "utils/pool/conputeSurroundingTicks";
+import { useTickLens } from "hooks/pool/useTickLens";
 import useConnectedNetwork from "../network";
+import { usePool } from "./usePool";
+import { PoolState } from "@/types/pool/pool";
 
 const PRICE_FIXED_DIGITS = 8;
 const CHAIN_IDS_MISSING_SUBGRAPH_DATA = [
@@ -121,37 +120,43 @@ function useTicksFromTickLens(
     [minIndex, maxIndex, poolAddress]
   );
 
+  const useSingleContractMultipleData: any = (...args: any) => {};
   const tickLens = useTickLens();
-  const callStates = useSingleContractMultipleData(
+  const callStates: any = useSingleContractMultipleData(
     tickLensArgs.length > 0 ? tickLens : undefined,
     "getPopulatedTicksInWord",
     tickLensArgs,
     REFRESH_FREQUENCY
   );
 
-  const isError = useMemo(
-    () => callStates.some(({ error }) => error),
-    [callStates]
-  );
-  const isLoading = useMemo(
-    () => callStates.some(({ loading }) => loading),
-    [callStates]
-  );
-  const IsSyncing = useMemo(
-    () => callStates.some(({ syncing }) => syncing),
-    [callStates]
-  );
-  const isValid = useMemo(
-    () => callStates.some(({ valid }) => valid),
-    [callStates]
-  );
+  const isError = undefined;
+  const isLoading = undefined;
+  const IsSyncing = undefined;
+  const isValid = undefined;
+
+  // const isError = useMemo(
+  //   () => callStates.some(({ error }) => error),
+  //   [callStates]
+  // );
+  // const isLoading = useMemo(
+  //   () => callStates.some(({ loading }) => loading),
+  //   [callStates]
+  // );
+  // const IsSyncing = useMemo(
+  //   () => callStates.some(({ syncing }) => syncing),
+  //   [callStates]
+  // );
+  // const isValid = useMemo(
+  //   () => callStates.some(({ valid }) => valid),
+  //   [callStates]
+  // );
 
   const tickData: TickData[] = useMemo(
     () =>
       callStates
-        .map(({ result }) => result?.populatedTicks)
+        ?.map(({ result }: any) => result?.populatedTicks)
         .reduce(
-          (accumulator, current) => [
+          (accumulator: any, current: any) => [
             ...accumulator,
             ...(current?.map((tickData: TickData) => {
               return {
