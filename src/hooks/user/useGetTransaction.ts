@@ -60,6 +60,7 @@ export default function useGetTransaction() {
         ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
         ...userAllTransactions?.formattedWithdraw,
       ];
+      
 
       // setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
