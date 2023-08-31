@@ -6,7 +6,7 @@ import useConnectedNetwork from "@/hooks/network";
 export default function Network() {
   const { connectedChainId } = useConnectedNetwork();
   return (
-    <Center className="header-right-common" w={"48px"} h={"48px"}>
+    <Center className="header-right-common" w={"48px"} h={"48px"} _hover={{bg:'#313442'}}>
       <NetworkSymbol
         network={connectedChainId ?? 1}
         w={24}

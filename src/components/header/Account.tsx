@@ -29,6 +29,7 @@ export default function Account() {
       columnGap={"17px"}
       fontSize={18}
       fontWeight={500}
+      _hover={{bg:isConnected?'#313442':''}}
       
       /**
        * About connectors

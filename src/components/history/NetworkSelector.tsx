@@ -116,10 +116,9 @@ const ValueContainer = (props: {
 };
 
 export default function NetworkSelector(props: {
-  height: string;
   setNetwork: Dispatch<SetStateAction<SelectOption>>;
 }) {
-  const { height,setNetwork } = props;
+  const { setNetwork } = props;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { isError } = useSwitchNetwork();
   const [selectedOption, setSelectedOption] = useState<SelectOption>({
@@ -273,7 +272,7 @@ export default function NetworkSelector(props: {
           IndicatorsContainer: () => null,
         }}
         //@ts-ignore
-        styles={customStyles(height)}
+        styles={customStyles('40px')}
         value={selectedOption}
       ></Select>
     </Box>

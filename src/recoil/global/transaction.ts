@@ -85,9 +85,9 @@ export const estimatedGasFee = selector<number | undefined>({
   },
 });
 
-type TransactionData = any;
 
-export const transactionData = atom<TransactionData>({
+
+export const transactionData = atom<any[]>({
   key: "transactionData",
   default: [],
 });

@@ -20,7 +20,7 @@ export default function useGetTxLayers() {
         l1Provider = supportedChain.filter((e) => e.chainName === "GOERLI")[0];
         l2Provider = supportedChain.filter((e) => e.chainName === "DARIUS")[0];
         l1BlockExplorer = "https://goerli.etherscan.io";
-        l2BlockExplorer = "https://goerli.explorer.tokamak.network";
+        l2BlockExplorer = "https://explorer.titan-goerli.tokamak.network/";
         l1ChainID = 5;
         l2ChainID = 5050;
         return {
@@ -36,7 +36,7 @@ export default function useGetTxLayers() {
         l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
         l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
         l1BlockExplorer = "https://etherscan.io";
-        l2BlockExplorer = "https://explorer.titan.tokamak.network";
+        l2BlockExplorer = "https://explorer.titan.tokamak.network/";
         l1ChainID = 1;
         l2ChainID = 55004;
         return {
@@ -52,7 +52,7 @@ export default function useGetTxLayers() {
         l1Provider = supportedChain.filter((e) => e.chainName === "GOERLI")[0];
         l2Provider = supportedChain.filter((e) => e.chainName === "DARIUS")[0];
         l1BlockExplorer = "https://goerli.etherscan.io";
-        l2BlockExplorer = "https://goerli.explorer.tokamak.network";
+        l2BlockExplorer = "https://explorer.titan-goerli.tokamak.network/";
         l1ChainID = 5;
         l2ChainID = 5050;
         return {
@@ -68,7 +68,7 @@ export default function useGetTxLayers() {
         l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
         l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
         l1BlockExplorer = "https://etherscan.io";
-        l2BlockExplorer = "https://explorer.titan.tokamak.network";
+        l2BlockExplorer = "https://explorer.titan.tokamak.network/";
         l1ChainID = 1;
         l2ChainID = 55004;
         return {
@@ -84,7 +84,7 @@ export default function useGetTxLayers() {
         l1Provider = supportedChain.filter((e) => e.chainName === "MAINNET")[0];
         l2Provider = supportedChain.filter((e) => e.chainName === "TITAN")[0];
         l1BlockExplorer = "https://etherscan.io";
-        l2BlockExplorer = "https://explorer.titan.tokamak.network";
+        l2BlockExplorer = "https://explorer.titan.tokamak.network/";
         l1ChainID = 1;
         l2ChainID = 55004;
         return {

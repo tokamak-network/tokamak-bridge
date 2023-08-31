@@ -68,7 +68,7 @@ export default function DepositStatusTx(props: {
             cursor={"pointer"}
             style={{ textDecoration: "none" }}
           >
-            {`${layer}: Completed`}
+            {`${layer}:`} {completed? 'Completed':'Waiting'}
           </Link>
         )}
       </Flex>

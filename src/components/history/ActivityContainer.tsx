@@ -3,7 +3,7 @@ import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
 // import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useEffect, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue,useRecoilState} from "recoil";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
 import LoadingTx from "./LoadingTx";
 import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
@@ -16,6 +16,8 @@ import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
 import { L1TxType,Erc20Type, EthType } from "@/types/activity/history";
 import HalfLoadingTx from "./HalfLoadingTx";
+import { transactionData } from "@/recoil/global/transaction";
+
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
@@ -36,7 +38,11 @@ export default function ActivityContainer(props: {
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
   const zero_address = "0x0000000000000000000000000000000000000000";
+  const [txnData, setTxnData] = useRecoilState(transactionData);
 
+
+  // console.log('dsdsdfs',txnData);
+  
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -144,6 +150,7 @@ export default function ActivityContainer(props: {
     getTxs();
   }, [isConnectedToMainNetwork, address]);
 
+
   const txes = useMemo(() => {
     switch (tData.loadingState) {
       case "absent":
@@ -212,7 +219,7 @@ export default function ActivityContainer(props: {
           );
         }
     }
-  }, [tData.loadingState, getPaginatedData, preLoadData]);
+  }, [tData.loadingState, getPaginatedData, preLoadData]);  
 
   return (
     <Flex

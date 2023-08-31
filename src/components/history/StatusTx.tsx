@@ -160,7 +160,7 @@ export default function StatusTx(props: {
           bg={
             tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
               ? "#03D187"
-              : "#8497DB"
+              :  tx.currentStatus === 5? '#007AFF':"#8497DB"
           }
           mr="6px"
         ></Flex>

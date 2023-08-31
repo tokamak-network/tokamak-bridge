@@ -86,7 +86,12 @@ export default function AccountHistory(props: { tData: tData }) {
       </Flex>
     );
   };
-
+const Network = useMemo(() => {
+  return (
+    <NetworkSelector  setNetwork={setSelectedNetwork}/>
+  )
+   
+},[])
   
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
@@ -118,7 +123,8 @@ export default function AccountHistory(props: { tData: tData }) {
         <AccountContainer />
         <TabContainer setTab={setTab} tab={tab} />
         <Flex>
-          <NetworkSelector height="40px" setNetwork={setSelectedNetwork} />
+        {Network}
+          {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
           <SearchComponent tab={tab}/>
         </Flex>
         <Flex mt="12px">
