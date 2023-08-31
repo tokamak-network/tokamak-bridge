@@ -263,7 +263,7 @@ export default function useGetTransaction() {
     }
   }, [address, layer, connectedChainId, crossMessenger]);
 
-  const fetchDepositTransactions = useCallback(async () => {
+  const fetchDepositTransactions = useCallback(async (set:boolean) => {
     if (
       chain?.id &&
       l2ProSDK !== undefined &&
@@ -287,7 +287,7 @@ export default function useGetTransaction() {
         ...userAllTransactions?.formattedWithdraw,
       ];
 
-      setLoadingState(alltx.length > 0 ? "loading" : "absent");
+      set === true &&  setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
       const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
         "DepositFinalized"
@@ -384,13 +384,16 @@ export default function useGetTransaction() {
     }
   }, [address, layer, connectedChainId]);
 
+
   useEffect(() => {
     fetchTransactions();
+    fetchDepositTransactions(true);
     const xx = setInterval(() => {
       fetchTransactions();
+      fetchDepositTransactions(false);
     }, 12000);
 
-    fetchDepositTransactions();
+   
 
     return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);
