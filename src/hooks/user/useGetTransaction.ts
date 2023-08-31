@@ -60,7 +60,7 @@ export default function useGetTransaction() {
         ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
         ...userAllTransactions?.formattedWithdraw,
       ];
-      
+
 
       // setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
@@ -165,7 +165,7 @@ export default function useGetTransaction() {
                 _l1Token: l1Token,
                 _l2Token: l2Token,
                 _amount: amnt,
-                timeReadyForRelay: timeReadyForRelay,
+                timeReadyForRelay: Number(timeReadyForRelay)+250,
                 currentStatus: currentStatus,
                 resolved: resolved,
                 // timeReadyForRelay:timeReadyForRelay
