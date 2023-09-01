@@ -35,6 +35,9 @@ export default function SetPriceRange() {
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
 
+  //need to disabled interactive
+  //when maxTick >= minTick
+
   return (
     <Flex
       flexDir={"column"}
@@ -42,13 +45,6 @@ export default function SetPriceRange() {
       opacity={isActive ? 1 : 0.3}
       style={{ pointerEvents: isActive ? "all" : "none" }}
     >
-      <Title title="Set Price Range" />
-      {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
-        <Text textAlign={"center"} my={"16px"}>
-          Current Price : {commafy(price?.currentPrice, 4)}{" "}
-          {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
-        </Text>
-      )}
       <ChartWrapper
         currencyA={pool?.token0}
         currencyB={pool?.token1}
@@ -65,9 +61,19 @@ export default function SetPriceRange() {
         priceUpper={pricesAtTicks["UPPER"]}
         onLeftRangeInput={setMinPrice}
         onRightRangeInput={setMaxPrice}
-        interactive={noLiquidity}
+        interactive={!noLiquidity}
       />
-      <Flex columnGap={"12px"} mb={"12px"}>
+      {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
+        <Text textAlign={"center"} mt={"24px"} mb={"16px"}>
+          Current Price : {commafy(price?.currentPrice, 4)}{" "}
+          {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
+        </Text>
+      )}
+      <Flex
+        columnGap={"12px"}
+        mb={"12px"}
+        mt={poolStatus === PoolState.NOT_EXISTS ? "24px" : ""}
+      >
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />
       </Flex>

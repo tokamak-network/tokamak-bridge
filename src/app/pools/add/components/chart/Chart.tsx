@@ -19,7 +19,7 @@ export function Chart({
   styles,
   dimensions: { width, height },
   margins,
-  interactive = true,
+  interactive,
   brushDomain,
   brushLabels,
   onBrushDomainChange,
@@ -161,7 +161,7 @@ export function Chart({
           <Brush
             id={id}
             xScale={xScale}
-            interactive={interactive}
+            interactive={interactive ?? false}
             brushLabelValue={brushLabels}
             brushExtent={brushDomain ?? (xScale.domain() as [number, number])}
             innerWidth={innerWidth}

@@ -4,17 +4,16 @@ import { FeeAmount } from "@uniswap/v3-sdk";
 import { AutoColumn, ColumnCenter } from "./chart/Column";
 // import Loader from "components/Icons/LoadingSpinner";
 import { format } from "d3";
-import { useColor } from "hooks/useColor";
+// import { useColor } from "hooks/useColor";
 import { saturate } from "polished";
 import { ReactNode, useCallback, useMemo } from "react";
 import { BarChart2, CloudOff, Inbox } from "react-feather";
 import { batch } from "react-redux";
 import styled, { useTheme } from "styled-components";
 
-import { ThemedText } from "../../theme";
 import { Chart } from "./chart/Chart";
-import { useDensityChartData } from "./hooks";
-import { ZoomLevels } from "./types";
+import { useDensityChartData } from "hooks/pool/useDensityChartData";
+import { ZoomLevels } from "types/pool/chart";
 import { Bound } from "@/types/pool/pool";
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
@@ -56,15 +55,16 @@ function InfoBox({ message, icon }: { message?: ReactNode; icon: ReactNode }) {
   return (
     <ColumnCenter style={{ height: "100%", justifyContent: "center" }}>
       {icon}
-      {message && (
-        <ThemedText.DeprecatedMediumHeader
-          padding={10}
-          marginTop="20px"
-          textAlign="center"
-        >
-          {message}
-        </ThemedText.DeprecatedMediumHeader>
-      )}
+      {
+        message && null
+        // <ThemedText.DeprecatedMediumHeader
+        //   padding={10}
+        //   marginTop="20px"
+        //   textAlign="center"
+        // >
+        //   {message}
+        // </ThemedText.DeprecatedMediumHeader>
+      }
     </ColumnCenter>
   );
 }
@@ -96,8 +96,8 @@ export default function LiquidityChartRangeInput({
 
   //   const tokenAColor = useColor(currencyA?.wrapped);
   //   const tokenBColor = useColor(currencyB?.wrapped);
-  const tokenAColor = null;
-  const tokenBColor = null;
+  const tokenAColor = "#fff";
+  const tokenBColor = "#fff";
 
   const isSorted =
     currencyA &&
@@ -191,8 +191,7 @@ export default function LiquidityChartRangeInput({
           message={<Trans>Your position will appear here.</Trans>}
           icon={<Inbox size={56} stroke={theme.neutral1} />}
         />
-      ) : isLoading ? null : // <InfoBox icon={<Loader size="40px" stroke={theme.neutral2} />} />
-      error ? (
+      ) : isLoading ? null : error ? ( // <InfoBox icon={<Loader size="40px" stroke={theme.neutral2} />} />
         <InfoBox
           message={<Trans>Liquidity data not available.</Trans>}
           icon={<CloudOff size={56} stroke={theme.neutral2} />}

@@ -3,9 +3,8 @@ import React, { useMemo } from "react";
 import styled from "styled-components";
 
 const StyledLine = styled.line`
-  opacity: 0.5;
   stroke-width: 2;
-  stroke: ${({ theme }) => theme.neutral1};
+  stroke: ${({ theme }) => "#8E8E92"};
   fill: none;
 `;
 

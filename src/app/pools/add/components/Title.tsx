@@ -1,6 +1,7 @@
 import { Text } from "@chakra-ui/react";
+import { CSSProperties } from "react";
 
-export default function Title(props: { title: string; style?: {} }) {
+export default function Title(props: { title: string; style?: CSSProperties }) {
   return (
     <Text
       w={"100%"}

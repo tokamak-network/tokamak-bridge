@@ -1,3 +1,4 @@
+import { Text } from "@chakra-ui/react";
 import { BrushBehavior, brushX, D3BrushEvent, ScaleLinear, select } from "d3";
 import usePrevious from "hooks/pool/usePrevious";
 import React, {
@@ -69,7 +70,7 @@ const HandleAccent = styled.path`
   pointer-events: none;
 
   stroke-width: 1.5;
-  stroke: ${({ theme }) => theme?.white};
+  stroke: ${({ theme }) => "#fff"};
   opacity: ${({ theme }) => theme?.opacity?.hover};
 `;
 
@@ -79,13 +80,14 @@ const LabelGroup = styled.g<{ visible: boolean }>`
 `;
 
 const TooltipBackground = styled.rect`
-  fill: ${({ theme }) => theme.surface3};
+  fill: ${({ theme }) => "#383A49"};
 `;
 
 const Tooltip = styled.text`
   text-anchor: middle;
-  font-size: 13px;
-  fill: ${({ theme }) => theme.neutral1};
+  font-size: 11px;
+  text-align: center;
+  fill: ${({ theme }) => "#fff"};
 `;
 
 // flips the handles draggers when close to the container edges
@@ -297,10 +299,7 @@ export const Brush = ({
                 )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
               >
                 <g>
-                  <Handle
-                    color={westHandleColor}
-                    d={brushHandlePath(innerHeight)}
-                  />
+                  <Handle color={"#007AFF"} d={brushHandlePath(innerHeight)} />
                   <HandleAccent d={brushHandleAccentPath()} />
                 </g>
 
@@ -336,13 +335,9 @@ export const Brush = ({
                 )}, 0), scale(${flipEastHandle ? "-1" : "1"}, 1)`}
               >
                 <g>
-                  <Handle
-                    color={eastHandleColor}
-                    d={brushHandlePath(innerHeight)}
-                  />
+                  <Handle color={"#007AFF"} d={brushHandlePath(innerHeight)} />
                   <HandleAccent d={brushHandleAccentPath()} />
                 </g>
-
                 <LabelGroup
                   transform={`translate(50,0), scale(${
                     flipEastHandle ? "-1" : "1"

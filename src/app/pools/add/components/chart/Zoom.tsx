@@ -10,15 +10,15 @@ import React, { useEffect, useMemo, useRef } from "react";
 import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
-import { Button } from "@chakra-ui/react";
+import { Box, Button, Flex } from "@chakra-ui/react";
+import Image from "next/image";
+import ZOOM_IN_ICON from "assets/icons/pool/zoomIn.svg";
+import Title from "../Title";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
   grid-template-columns: repeat(${({ count }) => count.toString()}, 1fr);
-  grid-gap: 6px;
-
-  position: absolute;
-  top: -32px;
+  grid-gap: 8px;
   right: 0;
 `;
 
@@ -118,24 +118,49 @@ export default function Zoom({
   }, [zoomInitial, zoomLevels]);
 
   return (
-    <Wrapper count={showResetButton ? 3 : 2}>
-      {showResetButton && (
+    <Flex justifyContent={"space-between"} alignItems={"flex-start"}>
+      <Title title="Set Price Range" />
+      <Flex justifyContent={"flex-end"} columnGap={"8px"}>
+        {showResetButton && (
+          <Button
+            w={"40px"}
+            h={"40px"}
+            bgColor={"transparent"}
+            border={"1px solid #313442"}
+            onClick={() => {
+              resetBrush();
+              zoomReset();
+            }}
+            disabled={false}
+            _hover={{}}
+            _active={{}}
+          >
+            <RefreshCcw size={16} />
+          </Button>
+        )}
         <Button
-          onClick={() => {
-            resetBrush();
-            zoomReset();
-          }}
-          disabled={false}
+          w={"40px"}
+          h={"40px"}
+          bgColor={"transparent"}
+          border={"1px solid #313442"}
+          onClick={zoomIn}
+          _hover={{}}
+          _active={{}}
         >
-          <RefreshCcw size={16} />
+          <ZoomIn width={16} height={16} />
         </Button>
-      )}
-      <Button onClick={zoomIn} disabled={false}>
-        <ZoomIn size={16} />
-      </Button>
-      <Button onClick={zoomOut} disabled={false}>
-        <ZoomOut size={16} />
-      </Button>
-    </Wrapper>
+        <Button
+          w={"40px"}
+          h={"40px"}
+          bgColor={"transparent"}
+          border={"1px solid #313442"}
+          onClick={zoomOut}
+          _hover={{}}
+          _active={{}}
+        >
+          <ZoomOut size={16} />
+        </Button>
+      </Flex>
+    </Flex>
   );
 }

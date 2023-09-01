@@ -162,11 +162,11 @@ export default function ChartWrapper({
   return (
     <Chart
       data={{ series: formattedData, current: price }}
-      dimensions={{ width: 560, height: 200 }}
+      dimensions={{ width: 384, height: 200 }}
       margins={{ top: 10, right: 2, bottom: 20, left: 0 }}
       styles={{
         area: {
-          selection: "#FC72FF",
+          selection: "rgba(43,254,203,1)",
         },
         brush: {
           handle: {
