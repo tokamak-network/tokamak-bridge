@@ -41,6 +41,7 @@ export default function AccountContainer () {
               bg={"#007AFF"}
               transform={"rotate(-30deg)"}
               opacity={0.15}
+             
             ></Box>
             <Box
               pos={"absolute"}
@@ -74,7 +75,8 @@ export default function AccountContainer () {
         });
       };
     return (
-      <Flex
+      <Flex  mt={'12px'}>
+          <Flex
         opacity={0.85}
         borderRadius={"16px"}
         css={{
@@ -83,6 +85,7 @@ export default function AccountContainer () {
         }}
         pos={"relative"}
         overflow={"hidden"}
+       
       >
         <Flex
           borderRadius={"16px"}
@@ -174,5 +177,7 @@ export default function AccountContainer () {
           </Flex> */}
         </Flex>
       </Flex>
+      </Flex>
+    
     );   
 }

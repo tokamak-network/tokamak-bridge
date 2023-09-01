@@ -19,7 +19,7 @@ export default function TokenPairTx(props: { inAmount: string, outAmount:string 
       </Flex>
 
       <Flex>
-        <Text fontSize={'12px'}>{commafy(inAmount,2)} {inTokenSymbol}</Text> 
+        <Text fontSize={'12px'} color={'fff'}>{commafy(inAmount,2)} {inTokenSymbol}</Text> 
       </Flex>
     </Flex>
   );

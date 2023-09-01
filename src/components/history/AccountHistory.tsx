@@ -46,7 +46,7 @@ type SelectOption = {
 };
 
 export default function AccountHistory(props: { tData: tData }) {
-  const {tData} = props
+  const { tData } = props;
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
   const toast = useToast();
@@ -57,7 +57,6 @@ export default function AccountHistory(props: { tData: tData }) {
     chainName: undefined,
     networkImage: undefined,
   });
-
 
   const TabContainer = (props: {
     setTab: Dispatch<SetStateAction<string>>;
@@ -78,7 +77,7 @@ export default function AccountHistory(props: { tData: tData }) {
           // cursor={"pointer"}
           // color={tab === "Activity" ? "#fff" : "#5E626D"}
           color={"#fff"}
-          _hover={{ color: "#A0A3AD" }}
+          // _hover={{ color: "#A0A3AD" }}
           // onClick={() => setTab("Activity")}
         >
           Bridge History
@@ -86,18 +85,15 @@ export default function AccountHistory(props: { tData: tData }) {
       </Flex>
     );
   };
-const Network = useMemo(() => {
-  return (
-    <NetworkSelector  setNetwork={setSelectedNetwork}/>
-  )
-   
-},[])
-  
+  const Network = useMemo(() => {
+    return <NetworkSelector setNetwork={setSelectedNetwork} />;
+  }, []);
+
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
       <DrawerOverlay className="modalOverlayDrawer" bg={"none"} />
       <DrawerContent
-        pt="12px"
+      
         px="12px"
         pb="0px"
         minW={"360px"}
@@ -106,34 +102,53 @@ const Network = useMemo(() => {
         // rowGap={"24px"}
         pos={"relative"}
       >
-        <Flex
-          pos={"absolute"}
-          w={"40px"}
-          h={"40px"}
-          border={"1px solid #313442"}
-          borderRadius={"8px"}
-          bgColor={"transparent"}
-          left={"-57px"}
-          justifyContent={"center"}
-          cursor={"pointer"}
-          onClick={() => setIsOpen(false)}
-        >
-          <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
-        </Flex>
         <AccountContainer />
         <TabContainer setTab={setTab} tab={tab} />
         <Flex>
-        {Network}
+          {Network}
           {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
-          <SearchComponent tab={tab}/>
+          <SearchComponent tab={tab} />
         </Flex>
-        <Flex mt="12px">
+        <Flex mt="12px" height={"80%"}>
           {/* {tab === "Balance" ? (
             <BalanceContainer network={selectedNetwork} />
           ) : (
             <ActivityContainer network={selectedNetwork} />
           )} */}
           <ActivityContainer network={selectedNetwork} tData={tData} />
+        </Flex>
+        <Flex
+         
+         
+          pos={"absolute"}
+          left={"-72px"}
+          height={"100%"}
+          bg="transparent"
+          justifyContent={"center"}
+          // border={"1px solid red"}
+          // w={"72px"}
+          _hover={{
+            transform: "translate(8px)",
+
+            bg: "rgba(31, 33, 40, 0.50)",
+            zIndex: -1,
+          }}
+          // transform={"translate(-7px)"}
+          transition={"background 250ms ease 0s, transform 250ms ease 0s"}
+        >
+          <Flex
+          m={'16px 20px 16px 12px'}
+            w={"40px"}
+            h={"40px"}
+            border={"1px solid #313442"}
+            borderRadius={"8px"}
+            bgColor={"transparent"}
+            justifyContent={"center"}
+            cursor={"pointer"}
+            onClick={() => setIsOpen(false)}
+          >
+            <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
+          </Flex>
         </Flex>
       </DrawerContent>
     </Drawer>

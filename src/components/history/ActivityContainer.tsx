@@ -39,9 +39,6 @@ export default function ActivityContainer(props: {
   const searchTxString = useRecoilValue(searchTxStatus);
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [txnData, setTxnData] = useRecoilState(transactionData);
-
-
-  // console.log('dsdsdfs',txnData);
   
   useEffect(() => {
     const updateNumData = () => {
@@ -67,9 +64,12 @@ export default function ActivityContainer(props: {
   }, []);
 
   const filteredTx = useMemo(() => {
+
+    
     if (searchTxString?.id === "" || searchTxString === null) {
       return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
-    } else {
+    }
+     else {
       if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
@@ -224,11 +224,11 @@ export default function ActivityContainer(props: {
   return (
     <Flex
       flexDir={"column"}
-      rowGap={"8px"}
       justifyContent={"space-between"}
-      h={"calc(100vh - 250px)"}
+      h={"calc(100vh - 165px)"}
       bg={"transparent"}
       w="100%"
+      // height={'110%'}
     >
       <Flex
         id={"tx-history"}
@@ -237,12 +237,12 @@ export default function ActivityContainer(props: {
         overflow={"scroll"}
         overflowX={"hidden"}
         rowGap={"8px"}
-        h={"calc(100vh - 356px)"}
+        h={"calc(100vh - 300px)"}
       >
         {txes}
       </Flex>
-      {getLayerFiltered.length > 2 && tData.loadingState === "present" && (
-        <Flex h="100px" justifyContent={"center"} alignItems={"center"}>
+      {getLayerFiltered.length > getPaginatedData.length && tData.loadingState === "present" && (
+        <Flex mb={'30px'} justifyContent={"center"} alignItems={'start'} >
           <Button
             bg="transparent"
             border={"1px solid #313442"}

@@ -128,19 +128,21 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         rowGap={"8px"}
         cursor={"pointer"}
         onClick={() => {
-          setClaimTx(tx);
-          setWithdraw({
-            isOpen: true,
-            modalData: {
-              ...tx,
-              inTokenSymbol: tokenData?.token0Symbol,
-              outTokenSymbol: tokenData?.token1Symbol,
-              inTokenAmount: ethers.utils.formatUnits(
-                tx._amount.toString(),
-                tokenData?.token0Decimals
-              ),
-            },
-          });
+          if (tx !== undefined && tx.currentStatus < 6) {
+            setClaimTx(tx);
+            setWithdraw({
+              isOpen: true,
+              modalData: {
+                ...tx,
+                inTokenSymbol: tokenData?.token0Symbol,
+                outTokenSymbol: tokenData?.token1Symbol,
+                inTokenAmount: ethers.utils.formatUnits(
+                  tx._amount.toString(),
+                  tokenData?.token0Decimals
+                ),
+              },
+            });
+          }
         }}
       >
         <Flex justifyContent={"space-between"} w="100%">

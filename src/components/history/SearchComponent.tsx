@@ -21,7 +21,6 @@ export default function SearchComponent (props: {tab: string}) {
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value;
-
       if (value === "") {
         return setSearchTxString(null);
       } else {

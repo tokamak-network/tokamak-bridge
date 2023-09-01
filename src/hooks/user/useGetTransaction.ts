@@ -185,6 +185,9 @@ export default function useGetTransaction() {
                       return tx.transactionHash === matchTx;
                     }
                   )[0];
+
+                  console.log('l1tx',l1tx.blockTimestamp);
+                  
                 let copy = {
                   ...tx,
                   ...l1tx,
@@ -277,6 +280,8 @@ export default function useGetTransaction() {
         l2ProSDK
       );
 
+      // console.log('came here ');
+      
       const userAllTransactions = await fetchUserTransactions(
         address,
         isConnectedToMainNetwork
@@ -293,6 +298,8 @@ export default function useGetTransaction() {
         "DepositFinalized"
       );
 
+      // console.log('l2Transactions_DepositFinalized',l2Transactions_DepositFinalized);
+      
       const l2Transactions = l2Transactions_DepositFinalized;
       const userL2Transactions = l2Transactions.filter(
         (event) => event.args?._from === address
@@ -343,6 +350,8 @@ export default function useGetTransaction() {
             })
         );
 
+        // console.log('l2DepTxs',l2DepTxs);
+        
         const l1DepTxs = await Promise.all(
           userAllTransactions.formattedL1DepositResults.map(
             async (tx: DepositTx) => {
@@ -370,7 +379,11 @@ export default function useGetTransaction() {
           )
         );
 
+        // console.log('l1DepTxs',l1DepTxs);
+        
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
+        // console.log('txLogs',txLogs);
+
 
         setTDataDeposit(txLogs);
         const status =
@@ -382,14 +395,14 @@ export default function useGetTransaction() {
         setLoadingState(status);
       }
     }
-  }, [address, layer, connectedChainId]);
+  }, [address, connectedChainId]);
 
 
   useEffect(() => {
     fetchTransactions();
     fetchDepositTransactions(true);
     const xx = setInterval(() => {
-      fetchTransactions();
+      // fetchTransactions();
       fetchDepositTransactions(false);
     }, 12000);
 
