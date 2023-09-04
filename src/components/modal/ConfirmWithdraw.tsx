@@ -38,6 +38,8 @@ import {
   Duration,
   format,
   subMinutes,
+  addHours,
+  differenceInSeconds
 } from "date-fns";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -53,11 +55,12 @@ import { ethers } from "ethers";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { FullWithTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
+import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 
-type TxType =  FullWithTx & {
+type TxType = FullWithTx & {
   inTokenAmount: string;
   inTokenSymbol: string;
-}
+};
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
@@ -69,7 +72,8 @@ export default function ConfirmWithdraw() {
   const { onClick } = useCallBridgeSwapAction();
   const { gasCostUS } = useGasFee();
   const { claim } = useCallClaim("relayMessage");
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { isConnectedToMainNetwork, connectedChainId, chainName } =
+    useConnectedNetwork();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const [txData, setTxData] = useRecoilState(txDataStatus);
 
@@ -93,22 +97,23 @@ export default function ConfirmWithdraw() {
 
   const getCalendarEvent = useMemo(() => {
     if (tx && tx.timeReadyForRelay) {
-      const endDate = new Date(tx.timeReadyForRelay * 1000);
-      const formattedDate = format(endDate, "yyyy-MM-dd");
-      const sub30Minutes = subMinutes(endDate, 30);
-      const startTime = format(sub30Minutes, "HH:mm");
-      const endTime = format(endDate, "HH:mm");
+      const startDate = new Date(tx.timeReadyForRelay * 1000);
+      const formattedDate = format(startDate, "yyyy-MM-dd");
+      const add1Hour = addHours(startDate, 1)
+      const startTime = format(startDate, "HH:mm")
+      const formattedEndTime = format(add1Hour, "HH:mm");
       return {
         formattedDate: formattedDate,
         startTime: startTime,
-        endTime: endTime,
+        endTime: formattedEndTime,
       };
     }
   }, [tx]);
 
   const config: Object = {
     name: "Claim Tokens on L1",
-    description: "Claim Tokens on L1",
+    description:
+      "How to claim: \n 1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2.Connect to your wallet \n3.Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
     startDate: getCalendarEvent?.formattedDate,
     startTime: getCalendarEvent?.startTime,
     endTime: getCalendarEvent?.endTime,
@@ -119,7 +124,23 @@ export default function ConfirmWithdraw() {
   const TitanContainer = (props: { tx: TxType }) => {
     const { tx } = props;
     const { inToken } = useInOutTokens();
+    const [usdPrice, setUsdPrice] = useState(0);
 
+    // const tokenPrice = useMemo(async () => {
+    //   const marketPrice = await fetchMarketPrice(
+
+    //   return marketPrice;
+    // }, [inToken, tx]);
+
+    useEffect(() => {
+      const getUsdPrice = async () => {
+        const marketPrice = await fetchMarketPrice(
+          tx ? tx.inTokenSymbol : (inToken?.tokenName as string)
+        );
+        setUsdPrice(marketPrice);
+      };
+      getUsdPrice();
+    }, [inToken, tx]);
     return (
       <Flex
         bg="transparent"
@@ -135,7 +156,9 @@ export default function ConfirmWithdraw() {
       >
         <Flex w="56px" h="56px">
           <TokenSymbolWithNetwork
-            tokenSymbol={tx ? tx.inTokenSymbol : inToken?.tokenSymbol  as string}
+            tokenSymbol={
+              tx ? tx.inTokenSymbol : (inToken?.tokenSymbol as string)
+            }
             chainId={5050}
             symbolW={56}
             symbolH={56}
@@ -144,7 +167,7 @@ export default function ConfirmWithdraw() {
           />
         </Flex>
         <Text h="24px" mt={"14px"} fontSize={"18px"} fontWeight={600}>
-          {tx?.inTokenAmount || inToken?.parsedAmount}{" "}
+          {commafy(tx?.inTokenAmount || inToken?.parsedAmount, 2)}{" "}
           {tx?.inTokenSymbol || inToken?.tokenSymbol}
         </Text>
         <Text
@@ -154,7 +177,10 @@ export default function ConfirmWithdraw() {
           fontWeight={600}
           color={"#A0A3AD"}
         >
-          $0.22
+          ${" "}
+          {inToken?.tokenSymbol && usdPrice !== undefined
+            ? commafy(Number(usdPrice) * Number(inToken?.parsedAmount), 2)
+            : "0.00"}
         </Text>
       </Flex>
     );
@@ -174,23 +200,22 @@ export default function ConfirmWithdraw() {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        {/* <Image src={ETH} alt="ETH" height={40} width={40} /> */}
-        <TokenSymbol
+        <Image src={ETH} alt="ETH" height={40} width={40} />
+        {/* <TokenSymbol
           tokenType={
             tx ? (tx.inTokenSymbol as string) : (inToken?.tokenSymbol as string)
           }
           w={40}
           h={40}
-        />
+        /> */}
         <Text fontSize={"16px"} mt="12px">
-          {tx?.outTokenSymbol || inToken?.tokenSymbol}
+          {isConnectedToMainNetwork ? "Ethereum" : "Goerli"}
         </Text>
       </Flex>
     );
   };
 
   const Step1 = (props: { progress: string }) => {
-
     return (
       <Flex
         h="36px"
@@ -244,7 +269,33 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const Step2 = (props: { progress: string }) => {
+  const Step2 = (props: { progress: string, timeStamp?: number }) => {
+
+    const {timeStamp} = props;
+    const [duration, setDuration] = useState('0')
+    // const startTime = new Date();
+    // const currentTime = new Date();
+
+    useEffect(() => {
+      if (timeStamp) {
+        const getDuration = setInterval(() => {
+          const startDate = new Date(timeStamp * 1000);
+          const currentTime = new Date();          
+          const elapsedTimeInSeconds = differenceInSeconds(currentTime, startDate);          
+          const formattedTime = format(new Date(elapsedTimeInSeconds * 1000), 'mm:ss');
+          setDuration(formattedTime)
+       
+        },1000)
+      return () => clearInterval(getDuration);
+
+      }
+      
+    },[])
+    // const elapsedTimeInSeconds = differenceInSeconds(currentTime, startTime);
+  
+    // // Format the elapsed time as hours, minutes, and seconds
+    // const formattedTime = format(new Date(elapsedTimeInSeconds * 1000), 'HH:mm:ss');
+
     return (
       <Flex
         h="36px"
@@ -256,7 +307,7 @@ export default function ConfirmWithdraw() {
         <Flex>
           <Image src={check(props.progress).check} alt="check" />
           <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-            Wait ~5 min for rollup
+            Wait {isConnectedToMainNetwork?'11':'2'} min for rollup
           </Text>
         </Flex>
         {props.progress !== "done" && (
@@ -267,7 +318,7 @@ export default function ConfirmWithdraw() {
               color={check(props.progress).color}
             >
               {" "}
-              ~5 min
+           {tx? duration:  isConnectedToMainNetwork?'~11 min':'~2 min'}
             </Text>
           </Flex>
         )}
@@ -311,7 +362,7 @@ export default function ConfirmWithdraw() {
         return () => clearInterval(intervalID);
       }
     }, [props.timeStamp]);
-    
+
     return (
       <Flex
         h="36px"
@@ -326,7 +377,7 @@ export default function ConfirmWithdraw() {
             Wait 7 days
           </Text>
         </Flex>
-        {tx && (props.progress === "inProgress") && (
+        {tx && props.progress === "inProgress" && (
           <Flex>
             <Text
               mr="6px"
@@ -439,9 +490,11 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const TimelineComponent = (props: { tx: TxType }) => {    
+  const TimelineComponent = (props: { tx: TxType }) => {
     const nowTime = getUnixTime(new Date());
 
+    console.log(tx);
+    
     return (
       <Flex
         flexDir={"column"}
@@ -452,7 +505,11 @@ export default function ConfirmWithdraw() {
         px="12px"
         py="8px"
       >
-        <Step1 progress={(props.tx === undefined || props.tx === null) ? "inProgress" : "done"} />
+        <Step1
+          progress={
+            props.tx === undefined || props.tx === null ? "inProgress" : "done"
+          }
+        />
         <Dots progress={!props.tx ? "inProgress" : "done"} />
         <Step2
           progress={
@@ -464,6 +521,8 @@ export default function ConfirmWithdraw() {
               ? "done"
               : "todo"
           }
+          timeStamp={tx? tx.l2timeStamp:undefined}
+        
         />
         <Dots
           progress={
@@ -588,8 +647,14 @@ export default function ConfirmWithdraw() {
         h="48px"
         _active={{}}
         _hover={{}}
-        isDisabled={(txData?.hash.transactionHash !== undefined &&
-          txData?.hash.txSort === "Claim")? true: !tx && isChecked ? false : tx?.currentStatus !== 5}
+        isDisabled={
+          txData?.hash.transactionHash !== undefined &&
+          txData?.hash.txSort === "Claim"
+            ? true
+            : !tx && isChecked
+            ? false
+            : tx?.currentStatus !== 5
+        }
         _disabled={{ color: "#8E8E92", bg: "#17181D" }}
         bg="#007AFF"
         onClick={

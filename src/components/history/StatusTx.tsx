@@ -17,6 +17,7 @@ import {
   intervalToDuration,
   Duration,
   subMinutes,
+  addHours
 } from "date-fns";
 
 // type TokenData = {
@@ -31,8 +32,8 @@ import {
 type TxType = FullWithTx & {
   inTokenSymbol: string | undefined;
   outTokenSymbol: string | undefined;
-  inTokenAmount: string
-}
+  inTokenAmount: string;
+};
 
 export default function StatusTx(props: {
   completed: boolean;
@@ -54,18 +55,21 @@ export default function StatusTx(props: {
   });
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
   const [, setClaimTx] = useRecoilState(claimTx);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const getCalendarEvent = useMemo(() => {
     if (timeStamp) {
-      const endDate = new Date(timeStamp * 1000);
-      const formattedDate = format(endDate, "yyyy-MM-dd");
-      const sub30Minutes = subMinutes(endDate, 30);
-      const startTime = format(sub30Minutes, "HH:mm");
-      const endTime = format(endDate, "HH:mm");
+
+      const startDate = new Date(timeStamp * 1000);
+      const formattedDate = format(startDate, "yyyy-MM-dd");
+      const add1Hour = addHours(startDate, 1)
+      const startTime = format(startDate, "HH:mm")
+      const formattedEndTime = format(add1Hour, "HH:mm");
+
       return {
         formattedDate: formattedDate,
         startTime: startTime,
-        endTime: endTime,
+        endTime: formattedEndTime,
       };
     }
   }, [timeStamp]);
@@ -73,7 +77,8 @@ export default function StatusTx(props: {
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
     name: "Claim Tokens on L1",
-    description: "Claim Tokens on L1",
+    description:
+      "How to claim: \n 1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2.Connect to your wallet \n3.Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
     startDate: getCalendarEvent?.formattedDate,
     startTime: getCalendarEvent?.startTime,
     endTime: getCalendarEvent?.endTime,
@@ -160,7 +165,9 @@ export default function StatusTx(props: {
           bg={
             tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
               ? "#03D187"
-              :  tx.currentStatus === 5? '#007AFF':"#8497DB"
+              : tx.currentStatus === 5
+              ? "#007AFF"
+              : "#8497DB"
           }
           mr="6px"
         ></Flex>
@@ -187,7 +194,7 @@ export default function StatusTx(props: {
             onClick={
               !completed
                 ? () => {
-                  setClaimTx(tx)
+                    setClaimTx(tx);
                     setWithdraw({ isOpen: true, modalData: tx });
                   }
                 : undefined
@@ -201,7 +208,7 @@ export default function StatusTx(props: {
             onClick={
               !completed
                 ? () => {
-                  setClaimTx(tx)
+                    setClaimTx(tx);
                     setWithdraw({ isOpen: true, modalData: tx });
                   }
                 : undefined
@@ -215,12 +222,12 @@ export default function StatusTx(props: {
             onClick={
               !completed
                 ? () => {
-                  setClaimTx(tx)
+                    setClaimTx(tx);
                     setWithdraw({ isOpen: true, modalData: tx });
                   }
                 : undefined
             }
-          >{`${layer}: Wait ~5 min for rollup`}</Text>
+          >{`${layer}: Wait ~${isConnectedToMainNetwork?'11':'2'} min for rollup`}</Text>
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (

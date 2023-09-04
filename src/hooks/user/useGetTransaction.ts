@@ -168,7 +168,7 @@ export default function useGetTransaction() {
                 timeReadyForRelay: Number(timeReadyForRelay)+150,
                 currentStatus: currentStatus,
                 resolved: resolved,
-                // timeReadyForRelay:timeReadyForRelay
+             
               };
               return copy;
             } else {
@@ -179,14 +179,13 @@ export default function useGetTransaction() {
                 receipt.transactionReceipt != null
               ) {
                 const matchTx = receipt.transactionReceipt.transactionHash;
+                
                 const l1tx =
                   userAllTransactions.formattedL1WithdrawResults.filter(
                     (tx: EthType | Erc20Type) => {
                       return tx.transactionHash === matchTx;
                     }
                   )[0];
-
-                  console.log('l1tx',l1tx.blockTimestamp);
                   
                 let copy = {
                   ...tx,
@@ -279,8 +278,6 @@ export default function useGetTransaction() {
         L2BridgeAbi,
         l2ProSDK
       );
-
-      // console.log('came here ');
       
       const userAllTransactions = await fetchUserTransactions(
         address,
@@ -297,8 +294,6 @@ export default function useGetTransaction() {
       const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
         "DepositFinalized"
       );
-
-      // console.log('l2Transactions_DepositFinalized',l2Transactions_DepositFinalized);
       
       const l2Transactions = l2Transactions_DepositFinalized;
       const userL2Transactions = l2Transactions.filter(
@@ -349,8 +344,6 @@ export default function useGetTransaction() {
               }
             })
         );
-
-        // console.log('l2DepTxs',l2DepTxs);
         
         const l1DepTxs = await Promise.all(
           userAllTransactions.formattedL1DepositResults.map(
@@ -375,14 +368,21 @@ export default function useGetTransaction() {
                 };
                 return txCopy;
               }
+
+              else {
+                const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+                const l1timeStamp = l1Block.timestamp;
+                let txCopy = {
+                  ...tx,
+                  l1timeStamp: l1timeStamp,
+                  l1txHash: tx.transactionHash,
+                }
+                return txCopy;
+              }
             }
           )
-        );
-
-        // console.log('l1DepTxs',l1DepTxs);
-        
+        );        
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
-        // console.log('txLogs',txLogs);
 
 
         setTDataDeposit(txLogs);
@@ -402,14 +402,15 @@ export default function useGetTransaction() {
     fetchTransactions();
     fetchDepositTransactions(true);
     const xx = setInterval(() => {
-      // fetchTransactions();
+      fetchTransactions();
       fetchDepositTransactions(false);
     }, 12000);
 
    
 
     return () => clearInterval(xx);
-  }, [address, layer, connectedChainId, crossMessenger]);
+  }, [address, layer, connectedChainId,crossMessenger]);
+
 
   const allTxs =
     layer == "L1"
@@ -417,7 +418,7 @@ export default function useGetTransaction() {
           .concat(tDataDeposit)
           .sort(
             (tx1: FullDepTx, tx2: FullDepTx) =>
-              Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+              Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
           )
       : tDataWithdraw
           .concat(tDataDeposit)

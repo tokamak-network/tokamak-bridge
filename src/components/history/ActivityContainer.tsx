@@ -64,12 +64,11 @@ export default function ActivityContainer(props: {
   }, []);
 
   const filteredTx = useMemo(() => {
-
-    
-    if (searchTxString?.id === "" || searchTxString === null) {
+    if (searchTxString?.id === "" || searchTxString === null) {      
       return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
     }
      else {
+      
       if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
@@ -94,7 +93,7 @@ export default function ActivityContainer(props: {
       network.chainId === SupportedChainId["DARIUS"] ||
       network.chainId === SupportedChainId["TITAN"];
     const allSelected = network.chainId === undefined;
-
+    
     if (depSelected === true) {
       const txs = filteredTx.filter((tx: FullDepTx) => tx.event === "deposit");
       return txs;
@@ -142,7 +141,7 @@ export default function ActivityContainer(props: {
           .sort(
             (tx1: L1TxType, tx2: L1TxType) =>
               Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
-          );
+          );          
         setPreLoadData(allTxs);
       }
     };
@@ -220,7 +219,7 @@ export default function ActivityContainer(props: {
         }
     }
   }, [tData.loadingState, getPaginatedData, preLoadData]);  
-
+  
   return (
     <Flex
       flexDir={"column"}
