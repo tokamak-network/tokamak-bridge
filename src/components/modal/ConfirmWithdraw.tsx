@@ -39,7 +39,7 @@ import {
   format,
   subMinutes,
   addHours,
-  differenceInSeconds
+  differenceInSeconds,
 } from "date-fns";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -99,8 +99,8 @@ export default function ConfirmWithdraw() {
     if (tx && tx.timeReadyForRelay) {
       const startDate = new Date(tx.timeReadyForRelay * 1000);
       const formattedDate = format(startDate, "yyyy-MM-dd");
-      const add1Hour = addHours(startDate, 1)
-      const startTime = format(startDate, "HH:mm")
+      const add1Hour = addHours(startDate, 1);
+      const startTime = format(startDate, "HH:mm");
       const formattedEndTime = format(add1Hour, "HH:mm");
       return {
         formattedDate: formattedDate,
@@ -269,30 +269,30 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  const Step2 = (props: { progress: string, timeStamp?: number }) => {
-
-    const {timeStamp} = props;
-    const [duration, setDuration] = useState('0')
-    // const startTime = new Date();
-    // const currentTime = new Date();
+  const Step2 = (props: { progress: string; timeStamp?: number }) => {
+    const { timeStamp } = props;
+    const [duration, setDuration] = useState("0");
 
     useEffect(() => {
       if (timeStamp) {
         const getDuration = setInterval(() => {
           const startDate = new Date(timeStamp * 1000);
-          const currentTime = new Date();          
-          const elapsedTimeInSeconds = differenceInSeconds(currentTime, startDate);          
-          const formattedTime = format(new Date(elapsedTimeInSeconds * 1000), 'mm:ss');
-          setDuration(formattedTime)
-       
-        },1000)
-      return () => clearInterval(getDuration);
-
+          const currentTime = new Date();
+          const elapsedTimeInSeconds = differenceInSeconds(
+            currentTime,
+            startDate
+          );
+          const formattedTime = format(
+            new Date(elapsedTimeInSeconds * 1000),
+            "mm:ss"
+          );
+          setDuration(formattedTime);
+        }, 1000);
+        return () => clearInterval(getDuration);
       }
-      
-    },[])
+    }, [timeStamp]);
     // const elapsedTimeInSeconds = differenceInSeconds(currentTime, startTime);
-  
+
     // // Format the elapsed time as hours, minutes, and seconds
     // const formattedTime = format(new Date(elapsedTimeInSeconds * 1000), 'HH:mm:ss');
 
@@ -307,7 +307,7 @@ export default function ConfirmWithdraw() {
         <Flex>
           <Image src={check(props.progress).check} alt="check" />
           <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-            Wait {isConnectedToMainNetwork?'11':'2'} min for rollup
+            Wait {isConnectedToMainNetwork ? "11" : "2"} min for rollup
           </Text>
         </Flex>
         {props.progress !== "done" && (
@@ -318,7 +318,7 @@ export default function ConfirmWithdraw() {
               color={check(props.progress).color}
             >
               {" "}
-           {tx? duration:  isConnectedToMainNetwork?'~11 min':'~2 min'}
+              {tx ? duration : isConnectedToMainNetwork ? "~11 min" : "~2 min"}
             </Text>
           </Flex>
         )}
@@ -491,10 +491,6 @@ export default function ConfirmWithdraw() {
   };
 
   const TimelineComponent = (props: { tx: TxType }) => {
-    const nowTime = getUnixTime(new Date());
-
-    console.log(tx);
-    
     return (
       <Flex
         flexDir={"column"}
@@ -521,8 +517,7 @@ export default function ConfirmWithdraw() {
               ? "done"
               : "todo"
           }
-          timeStamp={tx? tx.l2timeStamp:undefined}
-        
+          timeStamp={tx ? tx.l2timeStamp : undefined}
         />
         <Dots
           progress={

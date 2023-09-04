@@ -21,15 +21,25 @@ import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
-
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
-  const L1CrossDomainMessengerI = new ethers.utils.Interface(L1CrossDomainMessengerAbi)
-  return { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI,L1CrossDomainMessengerI };
+  const L1CrossDomainMessengerI = new ethers.utils.Interface(
+    L1CrossDomainMessengerAbi
+  );
+  return {
+    l1BridgeI,
+    l2BridgeI,
+    swapRouterI,
+    erc20I,
+    swapperI,
+    L1CrossDomainMessengerI,
+  };
 };
 
 // const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
@@ -83,7 +93,7 @@ export function useTransaction() {
       });
     return undefined;
   }, [txData]);
-  
+
   const {
     data: txCheckData,
     isError: txCheckError,
@@ -148,9 +158,11 @@ export function useTx(params: {
   const { connectedChainId } = useConnectedNetwork();
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const [, setIsAccountDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
+  const { mode } = useGetMode();
 
   useEffect(() => {
     if (isLoading) {
@@ -161,7 +173,12 @@ export function useTx(params: {
   }, [isLoading]);
 
   useEffect(() => {
-    if (isSuccess) return setModalOpen("confirmed");
+    if (isSuccess) {
+      if (mode === "Deposit" || mode === "Withdraw") {
+        setIsAccountDrawerOpen(true);
+      }
+      return setModalOpen("confirmed");
+    }
   }, [isSuccess]);
 
   useEffect(() => {

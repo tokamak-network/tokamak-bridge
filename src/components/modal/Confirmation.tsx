@@ -45,7 +45,7 @@ export default function Confirmation() {
 
   const { mode } = useGetMode();
   return (
-    <Modal isOpen={isOpen} onClose={closeModal}>
+    <Modal isOpen={isOpen} onClose={closeModal} >
       <ModalOverlay />
       <ModalContent
         h={"100%"}
@@ -53,6 +53,7 @@ export default function Confirmation() {
         justifyContent={"center"}
         alignItems={"center"}
         m={0}
+        position="fixed"
       >
         <Flex
           w={"254px"}

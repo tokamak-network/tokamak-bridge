@@ -91,7 +91,7 @@ export default function AccountHistory(props: { tData: tData }) {
 
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
-      <DrawerOverlay className="modalOverlayDrawer" bg={"none"} />
+      <DrawerOverlay  bg={"none"} />
       <DrawerContent
       
         px="12px"
