@@ -7,7 +7,7 @@ import useContract from "../contracts/useContract";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useBlockNum from "../network/useBlockNumber";
-import { computePoolAddress } from "@uniswap/v3-sdk";
+import { SqrtPriceMath, TickMath, computePoolAddress } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
@@ -30,26 +30,161 @@ import { Hash } from "viem";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import { supportedChain } from "@/types/network/supportedNetwork";
+import { GET_POSITIONS } from "@/graphql/data/queries";
+import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
+import { useQuery } from "@apollo/client";
+import JSBI from "jsbi";
 
 //logic through subGraph
-// export default function useGetPositionIds(): {
-//   positionInfo: PoolCardDetail[] | undefined;
-// } {
-//   const { address } = useAccount();
-//   const { connectedChainId } = useConnectedNetwork();
-//   const [positionInfo, setPositionInfo] = useState<
-//     PoolCardDetail[] | undefined
-//   >(undefined);
+export default function useGetPositionIds(): {
+  positionInfo: PoolCardDetail[] | undefined;
+} {
+  const { address } = useAccount();
+  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
+  const [positionInfo, setPositionInfo] = useState<
+    PoolCardDetail[] | undefined
+  >(undefined);
 
-//   const { data, error } = useQuery(GET_POSITIONS, {
-//     variables: {
-//       account: address,
-//     },
-//     pollInterval: 10000,
-//   });
+  const client = connectedChainId
+    ? subgraphApolloClients[connectedChainId]
+    : undefined;
+  const otherLayerClient = otherLayerChainInfo?.chainId
+    ? subgraphApolloClients[otherLayerChainInfo?.chainId]
+    : undefined;
 
-//   return { positionInfo: data?.length > 0 ? data : undefined };
-// }
+  const { data, error } = useQuery(GET_POSITIONS, {
+    variables: {
+      account: address,
+    },
+    pollInterval: 10000,
+    client,
+  });
+  const { data: otherLayerData, error: otherLayerError } = useQuery(
+    GET_POSITIONS,
+    {
+      variables: {
+        account: address,
+      },
+      pollInterval: 10000,
+      client: otherLayerClient,
+    }
+  );
+
+  const makePositionDatas = useCallback(
+    async (positionData: any[], chainId: number) => {
+      const batchSize = positionData.length;
+      const promises: any[] = [];
+      const positions: any[] = [];
+
+      for (let i = 0; i < batchSize; i++) {
+        promises.push(async () => {
+          const position = positionData[i];
+          const { id, owner, pool } = position;
+          const { token0, token1, feeTier } = pool;
+
+          //logic to calculate remained tokens amounts
+          let amount0;
+          let amount1;
+          const slot0TickSub = parseInt(position.pool.tick);
+          const tickLowerSub = parseInt(position.tickLower.tickIdx);
+          const tickUpperSub = parseInt(position.tickUpper.tickIdx);
+          const sqrtPriceSub = JSBI.BigInt(position.pool.sqrtPrice);
+          const uppersqrtPriceSub = TickMath.getSqrtRatioAtTick(tickUpperSub);
+          const lowersqrtPriceSub = TickMath.getSqrtRatioAtTick(tickLowerSub);
+          const liquiditySub = JSBI.BigInt(position.liquidity);
+          if (slot0TickSub < tickLowerSub) {
+            amount0 = SqrtPriceMath.getAmount0Delta(
+              lowersqrtPriceSub,
+              uppersqrtPriceSub,
+              liquiditySub,
+              false
+            );
+          } else if (slot0TickSub < tickUpperSub) {
+            amount0 = SqrtPriceMath.getAmount0Delta(
+              sqrtPriceSub,
+              uppersqrtPriceSub,
+              liquiditySub,
+              false
+            );
+            amount1 = SqrtPriceMath.getAmount1Delta(
+              lowersqrtPriceSub,
+              sqrtPriceSub,
+              liquiditySub,
+              false
+            );
+          } else {
+            amount1 = SqrtPriceMath.getAmount1Delta(
+              lowersqrtPriceSub,
+              uppersqrtPriceSub,
+              liquiditySub,
+              false
+            );
+          }
+          const isClosed = JSBI.equal(
+            JSBI.add(amount0 as JSBI, amount1 as JSBI),
+            JSBI.BigInt(0)
+          );
+          const token0Amount = amount0 && parseFloat(amount0.toString());
+          const token1Amount = amount1 && parseFloat(amount1.toString());
+          const token0CollectedFee = amount0 && parseFloat(amount0.toString());
+          const token1CollectedFee = amount0 && parseFloat(amount0.toString());
+
+          const token0MarketPrice = await fetchMarketPrice(token0.Name);
+          const token1MarketPrice = await fetchMarketPrice(token1.Name);
+          const token0Value = token0MarketPrice * Number(token0Amount);
+          const token1Value = token1MarketPrice * Number(token1Amount);
+          const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
+          const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
+          const token0FeeValue = token0MarketPrice * token0FeeAmount;
+          const token1FeeValue = token0MarketPrice * token1FeeAmount;
+          const feeValue = token0FeeValue + token1FeeValue;
+          const inRange =
+            tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
+
+          positions.push({
+            id,
+            fee: feeTier,
+            token0Amount: Number(token0Amount),
+            token1Amount: Number(token1Amount),
+            token0CollectedFee,
+            token1CollectedFee,
+            token0MarketPrice,
+            token1MarketPrice,
+            inRange,
+            isClosed,
+            token0Value: isNaN(token0Value) ? 0 : token0Value,
+            token1Value: isNaN(token1Value) ? 0 : token1Value,
+            token0FeeValue,
+            token1FeeValue,
+            feeValue: isNaN(feeValue) ? 0 : feeValue,
+            chainId,
+            owner,
+          });
+        });
+      }
+      await Promise.all(promises.map((func) => func()));
+      return positions;
+    },
+    []
+  );
+
+  const [test, setTest] = useState<any[] | undefined>(undefined);
+
+  useEffect(() => {
+    const fetchPositionData = async (data: any[], chainId: number) => {
+      const result = await makePositionDatas(data, chainId);
+
+      setTest(result);
+    };
+    if (data && data.positions && connectedChainId) {
+      fetchPositionData(data.positions, connectedChainId);
+    }
+  }, [data, connectedChainId]);
+
+  const positionDatas = useMemo(() => {}, [data]);
+
+  return { positionInfo: data?.length > 0 ? data : undefined };
+}
 
 //logic through contract calls
 export function useGetPositions(positionId?: number) {

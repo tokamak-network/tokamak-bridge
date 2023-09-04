@@ -1,7 +1,7 @@
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Chart } from "./chart/Chart";
 import { saturate } from "polished";
-import { useGetPool, useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useDensityChartData } from "@/hooks/pool/useDensityChartData";
 import { useCallback, useMemo } from "react";
 import { Currency, Price, Token } from "@uniswap/sdk-core";
@@ -60,28 +60,16 @@ export default function ChartWrapper({
   onRightRangeInput: (typedValue: string) => void;
   interactive: boolean;
 }) {
-  // const { pool } = useGetPool();
-  // const {
-  //   pricesAtTicks,
-  //   ticksAtLimit,
-  //   invertPrice,
-  //   invalidRange,
-  //   currencyA,
-  //   currencyB,
-  //   fee,
-  // } = useV3MintInfo();
   const { isLoading, error, formattedData } = useDensityChartData({
     currencyA,
     currencyB,
     feeAmount,
   });
+  const { invertPrice } = useV3MintInfo();
 
   const tokenAColor = "#fff";
   const tokenBColor = "#fff";
-  const isSorted =
-    currencyA &&
-    currencyB &&
-    currencyA?.wrapped.sortsBefore(currencyB?.wrapped);
+  const isSorted = !invertPrice;
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
