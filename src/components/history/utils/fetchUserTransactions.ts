@@ -1,9 +1,6 @@
 import axios from "axios";
 import useConnectedNetwork from "@/hooks/network";
-import {
-  L1TxType,
-  SentMessages,
-} from "@/types/activity/history";
+import { L1TxType, SentMessages } from "@/types/activity/history";
 const formatAddress = (address: string) => {
   const formattedAddress = address.substring(2);
   return formattedAddress;
@@ -14,7 +11,11 @@ export const fetchUserTransactions = async (
   isConnectedToMainnet: boolean
 ) => {
   if (account) {
+    // const acc = "0x24884B9A47049B7663aEdaC7c7C91afd406EA09e";
     const formattedAddress = formatAddress(account);
+    const L1Bridge = isConnectedToMainnet
+      ? "0x59aa194798Ba87D26Ba6bEF80B85ec465F4bbcfD"
+      : "0x7377F3D0F64d7a54Cf367193eb74a052ff8578FD";
     const resTxs = await axios.post(
       `${
         isConnectedToMainnet
@@ -25,7 +26,7 @@ export const fetchUserTransactions = async (
         query: `
         {
           sentMessages(
-          where: {message_contains: "${formattedAddress}", sender: "0x7377f3d0f64d7a54cf367193eb74a052ff8578fd", target: "0x4200000000000000000000000000000000000010"}
+          where: {message_contains: "${formattedAddress}", sender: "${L1Bridge}", target: "0x4200000000000000000000000000000000000010"}
         ) {
           blockNumber
           blockTimestamp
@@ -103,7 +104,7 @@ export const fetchUserTransactions = async (
       }`,
       {
         query: `{sentMessages(
-          where: {message_contains: "${formattedAddress}", target: "0x7377f3d0f64d7a54cf367193eb74a052ff8578fd", sender: "0x4200000000000000000000000000000000000010"}
+          where: {message_contains: "${formattedAddress}", target: "${L1Bridge}", sender: "0x4200000000000000000000000000000000000010"}
         ) {
           blockNumber
           blockTimestamp
@@ -152,7 +153,7 @@ export const fetchUserTransactions = async (
     );
 
     const formattedL1WithdrawResults = allWithL1Txs;
-    
+
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,
