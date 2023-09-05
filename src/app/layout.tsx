@@ -17,6 +17,9 @@ import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
 import Script from "next/script";
 
+//New build
+//Sep 5, 2023
+
 export const GlobalComponents = () => {
   return (
     <>
