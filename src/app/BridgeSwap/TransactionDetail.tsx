@@ -307,7 +307,7 @@ const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
           <SwapDetailRow key={data.title} {...data} />
         ));
       default:
-        return <>{`component not founded :(`}</>;
+        return <>{`component not found :(`}</>;
     }
   }, [
     mode,

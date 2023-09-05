@@ -96,7 +96,7 @@ export default function useCallBridgeSwapAction() {
         case "Unwrap":
           return unwrapWTON();
         default:
-          return console.error("action mode is not founded");
+          return console.error("action mode is not found");
       }
     }
   }, [isConnected, connectToWallet, mode, inToken, address]);
