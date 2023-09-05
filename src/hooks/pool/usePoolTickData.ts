@@ -13,7 +13,7 @@ import {
 import { ZERO_ADDRESS } from "@/constant/misc";
 import { useAllV3TicksQuery } from "@/graphql/thegraph/__generated__/types-and-hooks";
 import { TickData, Ticks } from "@/graphql/thegraph/AllV3TicksQuery";
-import { apolloClient } from "@/graphql/thegraph/apollo";
+import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import JSBI from "jsbi";
 import ms from "ms";
 import { useEffect, useMemo, useState } from "react";
@@ -216,7 +216,7 @@ function useTicksFromSubgraph(
     variables: { poolAddress: poolAddress?.toLowerCase(), skip },
     skip: !poolAddress,
     pollInterval: ms(`30s`),
-    client: apolloClient,
+    client: chainId ? subgraphApolloClients[chainId] : undefined,
   });
 }
 

@@ -60,12 +60,13 @@ export default function ChartWrapper({
   onRightRangeInput: (typedValue: string) => void;
   interactive: boolean;
 }) {
+  const { invertPrice } = useV3MintInfo();
+
   const { isLoading, error, formattedData } = useDensityChartData({
-    currencyA,
-    currencyB,
+    currencyA: invertPrice ? currencyB : currencyA,
+    currencyB: invertPrice ? currencyA : currencyB,
     feeAmount,
   });
-  const { invertPrice } = useV3MintInfo();
 
   const tokenAColor = "#fff";
   const tokenBColor = "#fff";

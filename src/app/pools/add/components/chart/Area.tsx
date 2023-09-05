@@ -5,8 +5,8 @@ import styled from "styled-components";
 
 const Path = styled.path<{ fill?: string }>`
   opacity: 0.5;
-  stroke: ${({ fill, theme }) => fill ?? theme.accent1};
-  fill: ${({ fill, theme }) => fill ?? theme.accent1};
+  stroke: ${({ fill, theme }) => fill ?? "rgba(43,254,203,1)"};
+  fill: ${({ fill, theme }) => fill ?? "rgba(43,254,203,1)"};
 `;
 
 export const Area = ({
