@@ -37,6 +37,8 @@ import NetworkSelector from "./NetworkSelector";
 import { tData } from "@/types/activity/history";
 import SearchComponent from "./SearchComponent";
 import AccountContainer from "./AccountContainer";
+import { Overlay_Index } from "@/types/style/overlayIndex";
+
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
@@ -90,17 +92,17 @@ export default function AccountHistory(props: { tData: tData }) {
   }, []);
 
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={() => {}}>
-      <DrawerOverlay  bg={"none"} />
+    <Drawer isOpen={isOpen} placement="right" onClose={() => {}} >
+      <DrawerOverlay bg={"none"} />
       <DrawerContent
-      
+       
         px="12px"
         pb="0px"
         minW={"360px"}
         maxW={"360px"}
         bgColor={"#1F2128"}
-        // rowGap={"24px"}
-        pos={"relative"}
+
+        // pos={"relative"}
       >
         <AccountContainer />
         <TabContainer setTab={setTab} tab={tab} />
@@ -118,8 +120,6 @@ export default function AccountHistory(props: { tData: tData }) {
           <ActivityContainer network={selectedNetwork} tData={tData} />
         </Flex>
         <Flex
-         
-         
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
@@ -133,19 +133,19 @@ export default function AccountHistory(props: { tData: tData }) {
             bg: "rgba(31, 33, 40, 0.50)",
             zIndex: -1,
           }}
+          onClick={() => setIsOpen(false)}
+          cursor={"pointer"}
           // transform={"translate(-7px)"}
           transition={"background 250ms ease 0s, transform 250ms ease 0s"}
         >
           <Flex
-          m={'16px 20px 16px 12px'}
+            m={"16px 20px 16px 12px"}
             w={"40px"}
             h={"40px"}
             border={"1px solid #313442"}
             borderRadius={"8px"}
             bgColor={"transparent"}
             justifyContent={"center"}
-            cursor={"pointer"}
-            onClick={() => setIsOpen(false)}
           >
             <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
           </Flex>

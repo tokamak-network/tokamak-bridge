@@ -2,7 +2,7 @@ import { extendTheme } from "@chakra-ui/theme-utils";
 import "@fontsource/poppins";
 import "@fontsource/quicksand";
 import "@fontsource/quicksand/700.css";
-
+import { Overlay_Index } from "@/types/style/overlayIndex";
 const fonts = {
   Poppins: "Poppins",
   Quicksand: "Quicksand",
@@ -69,6 +69,9 @@ const theme = extendTheme({
       ".card-empty": {
         border: "1px dashed #313442",
         borderRadius: "16px",
+      },
+      ".css-17pwl6t": {
+        zIndex: Overlay_Index.OverHeader
       },
     }),
     // Additional overrides for specific components can be added here
