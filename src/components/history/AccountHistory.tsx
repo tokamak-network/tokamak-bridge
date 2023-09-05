@@ -92,7 +92,7 @@ export default function AccountHistory(props: { tData: tData }) {
   }, []);
 
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={() => {}} >
+    <Drawer isOpen={isOpen} placement="right" onClose={() => {}} variant="clickThrough">
       <DrawerOverlay bg={"none"} />
       <DrawerContent
        

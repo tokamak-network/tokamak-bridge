@@ -14,6 +14,7 @@ import { predeploys } from "@eth-optimism/contracts";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -21,6 +22,7 @@ export default function useCallBridgeSwapAction() {
   const { inToken, outToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
+  const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const { write: _depositETH, isError } = useCallDeposit("depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
@@ -45,7 +47,7 @@ export default function useCallBridgeSwapAction() {
         SupportedChainId.MAINNET || SupportedChainId.GOERLI
       );
       const parsedAmount = inToken.amountBN;
-
+      setIsDrawerOpen(false)
       if (mode === "Wrap" || mode === "Unwrap") {
       } else {
         setIsOpen(true);

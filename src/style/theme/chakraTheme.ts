@@ -30,6 +30,27 @@ const theme = extendTheme({
         },
       },
     },
+    Drawer: {
+      variants: {
+        clickThrough: {
+          overlay: {
+            pointerEvents: "none",
+            background: "transparent",
+          },
+          
+          dialogContainer: {
+            pointerEvents: "none",
+            background: "transparent",
+          },
+          dialog: {
+            pointerEvents: "auto",
+          },
+          input: {
+            pointerEvents: "auto",
+          }
+        },
+      },
+    },
   },
 
   styles: {
@@ -71,7 +92,7 @@ const theme = extendTheme({
         borderRadius: "16px",
       },
       ".css-17pwl6t": {
-        zIndex: Overlay_Index.OverHeader
+        zIndex: Overlay_Index.OverHeader,
       },
     }),
     // Additional overrides for specific components can be added here

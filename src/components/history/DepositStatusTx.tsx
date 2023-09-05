@@ -56,20 +56,13 @@ export default function DepositStatusTx(props: {
             {`${layer}: Completed`}
           </Link>
         ) : (
-          <Link
-            target="_blank"
-            href={`${
-              layer === "L1"
-                ? providers.l1BlockExplorer
-                : providers.l2BlockExplorer
-            }/tx/${txHash}`}
+          <Text
             fontSize={"11px"}
             fontWeight={600}
-            cursor={"pointer"}
             style={{ textDecoration: "none" }}
           >
-            {`${layer}:`} {completed? 'Completed':'Waiting'}
-          </Link>
+            {`${layer}:`} {completed ? "Completed" : "Waiting"}
+          </Text>
         )}
       </Flex>
       {completed ? (
