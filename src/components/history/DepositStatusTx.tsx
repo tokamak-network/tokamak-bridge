@@ -2,7 +2,6 @@ import { Flex, Text, Link } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
-import { confirmWithdraw } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";

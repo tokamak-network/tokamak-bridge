@@ -398,19 +398,6 @@ export default function useGetTransaction() {
   }, [address, connectedChainId]);
 
 
-  useEffect(() => {
-    fetchTransactions();
-    fetchDepositTransactions(true);
-    const xx = setInterval(() => {
-      fetchTransactions();
-      fetchDepositTransactions(false);
-    }, 12000);
-
-   
-
-    return () => clearInterval(xx);
-  }, [address, layer, connectedChainId,crossMessenger]);
-
 
   const allTxs =
     layer == "L1"
@@ -427,5 +414,24 @@ export default function useGetTransaction() {
               Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
           );
 
+
+  useEffect(() => {
+    fetchTransactions();
+    fetchDepositTransactions(true);
+    const xx = setInterval(() => {
+      fetchTransactions();
+      fetchDepositTransactions(false);
+    }, 12000);
+
+   
+
+    return () => clearInterval(xx);
+  }, [address, layer, connectedChainId,crossMessenger]);
+
+
+  useEffect(() => {
+    console.log('depositTxs',allTxs);
+    
+  },[allTxs])
   return { depositTxs: allTxs, loadingState: loadingState };
 }

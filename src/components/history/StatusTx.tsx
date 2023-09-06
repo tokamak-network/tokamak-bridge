@@ -2,7 +2,10 @@ import { Flex, Text, Link } from "@chakra-ui/react";
 import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
-import { confirmWithdraw } from "@/recoil/modal/atom";
+import {
+  confirmWithdrawStats,
+  confirmWithdrawData,
+} from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
@@ -17,7 +20,7 @@ import {
   intervalToDuration,
   Duration,
   subMinutes,
-  addHours
+  addHours,
 } from "date-fns";
 
 // type TokenData = {
@@ -53,17 +56,19 @@ export default function StatusTx(props: {
     seconds: 0,
     years: 0,
   });
-  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
+  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [withdrawStatus, setWithdrawStatus] = useRecoilState(
+    confirmWithdrawStats
+  );
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const getCalendarEvent = useMemo(() => {
     if (timeStamp) {
-
       const startDate = new Date(timeStamp * 1000);
       const formattedDate = format(startDate, "yyyy-MM-dd");
-      const add1Hour = addHours(startDate, 1)
-      const startTime = format(startDate, "HH:mm")
+      const add1Hour = addHours(startDate, 1);
+      const startTime = format(startDate, "HH:mm");
       const formattedEndTime = format(add1Hour, "HH:mm");
 
       return {
@@ -195,7 +200,10 @@ export default function StatusTx(props: {
               !completed
                 ? () => {
                     setClaimTx(tx);
-                    setWithdraw({ isOpen: true, modalData: tx });
+                    setWithdrawStatus({
+                      isOpen: true,
+                    });
+                    setWithdrawData({ modalData: tx });
                   }
                 : undefined
             }
@@ -209,7 +217,10 @@ export default function StatusTx(props: {
               !completed
                 ? () => {
                     setClaimTx(tx);
-                    setWithdraw({ isOpen: true, modalData: tx });
+                    setWithdrawStatus({
+                      isOpen: true,
+                    });
+                    setWithdrawData({ modalData: tx });
                   }
                 : undefined
             }
@@ -223,11 +234,16 @@ export default function StatusTx(props: {
               !completed
                 ? () => {
                     setClaimTx(tx);
-                    setWithdraw({ isOpen: true, modalData: tx });
+                    setWithdrawStatus({
+                      isOpen: true,
+                    });
+                    setWithdrawData({ modalData: tx });
                   }
                 : undefined
             }
-          >{`${layer}: Wait ~${isConnectedToMainNetwork?'11':'2'} min for rollup`}</Text>
+          >{`${layer}: Wait ~${
+            isConnectedToMainNetwork ? "11" : "2"
+          } min for rollup`}</Text>
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (

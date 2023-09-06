@@ -9,7 +9,7 @@ import L1CrossDomainMessenger_ABI from "constant/abis/L1CrossDomainMessenger.jso
 import useContract from "@/hooks/contracts/useContract";
 import { getL1Provider } from "@/config/l1Provider";
 import { ethers } from "ethers";
-import { confirmWithdraw } from "@/recoil/modal/atom";
+import { confirmWithdrawData, confirmWithdrawStats} from "@/recoil/modal/atom";
 import useCrosschainMessenger from "../useCrosschainMessenger";
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useContractWrite, useSwitchNetwork } from "wagmi";
@@ -30,7 +30,8 @@ export default function useCallClaim(functionName: string) {
   const { L1MESSENGER_CONTRACT } = useContract();
   const { address } = useAccount();
   const [isConnectedToL1, setIsConnectedToL1] = useState(false);
-  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
+  const [withdrawStatus, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const [estimatedGas, setEstimatedGas] = useState(0);
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
@@ -119,7 +120,8 @@ export default function useCallClaim(functionName: string) {
             );
             setIsOpen(true);
             setModalOpen("confirming");
-            setWithdraw({ isOpen: false, modalData: null });
+            setWithdrawData({ modalData: null });
+            setWithdrawStatus({isOpen: false})
             return write({
               args: [
                 tx.resolved.target,
@@ -138,7 +140,8 @@ export default function useCallClaim(functionName: string) {
           const proof = await crossChainMessenger.getMessageProof(txt.resolved);
           setIsOpen(true);
           setModalOpen("confirming");
-          setWithdraw({ isOpen: false, modalData: null });
+          setWithdrawData({ modalData: null });
+          setWithdrawStatus({isOpen: false})
           return write({
             args: [
               txt.resolved.target,

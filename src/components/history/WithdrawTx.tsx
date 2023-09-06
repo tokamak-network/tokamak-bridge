@@ -28,7 +28,7 @@ type TokenData = {
 };
 import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
-import { confirmWithdraw } from "@/recoil/modal/atom";
+import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 
 export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
@@ -41,7 +41,10 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [, setClaimTx] = useRecoilState(claimTx);
   // console.log('tx',tx);
-  const [withdraw, setWithdraw] = useRecoilState(confirmWithdraw);
+  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
+
   const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const getTokenData = useCallback(async () => {
@@ -130,8 +133,10 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         onClick={() => {
           if (tx !== undefined && tx.currentStatus < 6) {
             setClaimTx(tx);
-            setWithdraw({
+            setWithdrawStatus({
               isOpen: true,
+            });
+            setWithdrawData({
               modalData: {
                 ...tx,
                 inTokenSymbol: tokenData?.token0Symbol,
@@ -168,8 +173,10 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
               tx?.currentStatus !== 5
                 ? () => {
                     setClaimTx(tx);
-                    setWithdraw({
+                    setWithdrawStatus({
                       isOpen: true,
+                    });
+                    setWithdrawData({
                       modalData: {
                         ...tx,
                         inTokenSymbol: tokenData?.token0Symbol,
@@ -184,8 +191,10 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                 : () => {
                     setClaimTx(tx);
                     claim(tx);
-                    setWithdraw({
+                    setWithdrawStatus({
                       isOpen: false,
+                    });
+                    setWithdrawData({
                       modalData: {
                         ...tx,
                         inTokenSymbol: tokenData?.token0Symbol,

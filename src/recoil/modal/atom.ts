@@ -1,13 +1,11 @@
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { atom } from "recoil";
-import {
-  Duration,
-} from "date-fns";
+import { Duration } from "date-fns";
 
 type withdrawModal = {
   isOpen: boolean;
   modalData?: any;
-}
+};
 export const transactionModalStatus = atom<
   "confirming" | "confirmed" | "error" | null
 >({
@@ -42,14 +40,19 @@ export const poolModalStatus = atom<T_PoolModal>({
   default: null,
 });
 
-export const confirmWithdraw = atom <withdrawModal>({
-  key: "confirmWithdraw",
+export const confirmWithdrawData = atom<any>({
+  key: "confirmWithdrawData",
   default: {
-    isOpen:false,
-    modalData :null
-
+    modalData: null,
   },
-})
+});
+export const confirmWithdrawStats = atom<withdrawModal>({
+  key: "confirmWithdrawStats",
+  default: {
+    isOpen: false,
+  },
+});
+
 export const poolModalProp = atom<PoolCardDetail | undefined>({
   key: "poolModalPropStatus",
   default: undefined,
