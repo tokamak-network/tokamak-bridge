@@ -65,6 +65,7 @@ export default function StatusTx(props: {
 
   const getCalendarEvent = useMemo(() => {
     if (timeStamp) {
+      
       const startDate = new Date(timeStamp * 1000);
       const formattedDate = format(startDate, "yyyy-MM-dd");
       const add1Hour = addHours(startDate, 1);
@@ -81,9 +82,9 @@ export default function StatusTx(props: {
 
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
-    name: "Claim Tokens on L1",
+    name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
     description:
-      "How to claim: \n 1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2.Connect to your wallet \n3.Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
+      "How to claim:\n1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2. Connect to your wallet \n3. Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
     startDate: getCalendarEvent?.formattedDate,
     startTime: getCalendarEvent?.startTime,
     endTime: getCalendarEvent?.endTime,
@@ -128,10 +129,11 @@ export default function StatusTx(props: {
    */
   //  RELAYED, ===> 6
 
-  useEffect(() => {
-    if (timeStamp) {
+  useEffect(() => {    
+    if (timeStamp!== undefined && !isNaN(timeStamp)) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
+        
         // setDuration(
         //   intervalToDuration({
         //     start: getTime(timeStamp * 1000),

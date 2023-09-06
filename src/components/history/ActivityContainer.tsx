@@ -252,7 +252,7 @@ export default function ActivityContainer(props: {
       </Flex>
       {getLayerFiltered.length > getPaginatedData.length &&
         tData.loadingState === "present" && (
-          <Flex mb={"30px"} justifyContent={"center"} alignItems={"start"}>
+          <Flex mb={"32px"} justifyContent={"center"} alignItems={"start"}>
             <Button
               bg="transparent"
               border={"1px solid #313442"}

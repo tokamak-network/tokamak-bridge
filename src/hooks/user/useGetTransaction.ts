@@ -134,11 +134,9 @@ export default function useGetTransaction() {
 
               // const block = await l1Pro.getBlock(bn);
               const l2BlockNum = await l2Pro.getBlock(l2TxReceipt.blockNumber);
-
               const calculatedTimePeriod =
-                layer === "L1" ? 11 * 60 + 7 * 24 * 60 * 60 : 2 * 60 + 10 + 150;
+                isConnectedToMainNetwork  ? 11 * 60 + 7 * 24 * 60 * 60 : 2 * 60 + 10 + 150;
               const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
-              console.log("testPeriod", testPeriod);
 
               // const challengePeriod =
               //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
@@ -400,7 +398,7 @@ export default function useGetTransaction() {
         }
       }
     },
-    [address, connectedChainId]
+    [address, connectedChainId,address, layer,crossMessenger ]
   );
 
   useEffect(() => {
@@ -409,7 +407,7 @@ export default function useGetTransaction() {
     const xx = setInterval(() => {
       fetchTransactions();
       fetchDepositTransactions(false);
-    }, 3000);
+    }, 12000);
 
     return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);

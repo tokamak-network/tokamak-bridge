@@ -114,9 +114,9 @@ export default function ConfirmWithdraw() {
   }, [tx]);
 
   const config: Object = {
-    name: "Claim Tokens on L1",
+    name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
     description:
-      "How to claim: \n 1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2.Connect to your wallet \n3.Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
+      "How to claim:\n1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2. Connect to your wallet \n3. Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
     startDate: getCalendarEvent?.formattedDate,
     startTime: getCalendarEvent?.startTime,
     endTime: getCalendarEvent?.endTime,
