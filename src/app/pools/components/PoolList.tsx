@@ -1,4 +1,7 @@
-import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
+import {
+  useGetPositionIds,
+  useGetPositions,
+} from "@/hooks/pool/useGetPositionIds";
 import { Grid } from "@chakra-ui/react";
 import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
@@ -9,9 +12,12 @@ import { useRecoilValue } from "recoil";
 import { ATOM_positions_loading } from "@/recoil/pool/positions";
 
 export default function PoolList() {
-  const { positions } = useGetPositions();
+  const { positions } = useGetPositionIds();
   const { isConnected } = useAccount();
   const isLoading = useRecoilValue(ATOM_positions_loading);
+
+  console.log("positions_");
+  console.log(positions);
 
   return (
     <Grid

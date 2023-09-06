@@ -6,7 +6,6 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy, { commafyWithUndefined } from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
-import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";

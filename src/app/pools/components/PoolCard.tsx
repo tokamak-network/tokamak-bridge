@@ -139,8 +139,8 @@ export default function PoolCard(props: PoolCardDetail) {
           </Text>
         </Flex>
         <TokenSymbolPair
-          token0={token0}
-          token1={token1}
+          token0={token1}
+          token1={token0}
           style={{ marginTop: "12px" }}
         />
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>

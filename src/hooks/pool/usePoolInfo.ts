@@ -105,7 +105,7 @@ const useInverter = ({
 
 export function usePoolInfo() {
   const { info } = usePositionInfo();
-  const { mode, subMode } = useGetMode();
+  const { subMode } = useGetMode();
 
   if (info === undefined || subMode.add === true) {
     return {

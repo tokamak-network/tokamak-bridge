@@ -25,11 +25,13 @@ export const GET_POSITIONS = gql`
         id
         symbol
         name
+        decimals
       }
       token1 {
         id
         symbol
         name
+        decimals
       }
     }
   }  

@@ -77,6 +77,10 @@ export function Chart({
     }
   }, [brushDomain, onBrushDomainChange, xScale]);
 
+  console.log("yScale");
+  console.log(yAccessor);
+  console.log(series);
+
   return (
     <>
       <Zoom

@@ -36,14 +36,11 @@ import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
 
 //logic through subGraph
-export default function useGetPositionIds(): {
-  positionInfo: PoolCardDetail[] | undefined;
+export function useGetPositionIds(): {
+  positions: PoolCardDetail[] | undefined;
 } {
   const { address } = useAccount();
   const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
-  const [positionInfo, setPositionInfo] = useState<
-    PoolCardDetail[] | undefined
-  >(undefined);
 
   const client = connectedChainId
     ? subgraphApolloClients[connectedChainId]
@@ -74,7 +71,7 @@ export default function useGetPositionIds(): {
     async (positionData: any[], chainId: number) => {
       const batchSize = positionData.length;
       const promises: any[] = [];
-      const positions: any[] = [];
+      const positions: PoolCardDetail[] = [];
 
       for (let i = 0; i < batchSize; i++) {
         promises.push(async () => {
@@ -99,6 +96,7 @@ export default function useGetPositionIds(): {
               liquiditySub,
               false
             );
+            amount1 = JSBI.BigInt(0);
           } else if (slot0TickSub < tickUpperSub) {
             amount0 = SqrtPriceMath.getAmount0Delta(
               sqrtPriceSub,
@@ -113,6 +111,7 @@ export default function useGetPositionIds(): {
               false
             );
           } else {
+            amount0 = JSBI.BigInt(0);
             amount1 = SqrtPriceMath.getAmount1Delta(
               lowersqrtPriceSub,
               uppersqrtPriceSub,
@@ -124,13 +123,28 @@ export default function useGetPositionIds(): {
             JSBI.add(amount0 as JSBI, amount1 as JSBI),
             JSBI.BigInt(0)
           );
-          const token0Amount = amount0 && parseFloat(amount0.toString());
-          const token1Amount = amount1 && parseFloat(amount1.toString());
-          const token0CollectedFee = amount0 && parseFloat(amount0.toString());
-          const token1CollectedFee = amount0 && parseFloat(amount0.toString());
+          const token0Amount =
+            amount0 &&
+            ethers.utils.formatUnits(amount0.toString(), token0.decimals);
+          const token1Amount =
+            amount1 &&
+            ethers.utils.formatUnits(amount1.toString(), token1.decimals);
 
-          const token0MarketPrice = await fetchMarketPrice(token0.Name);
-          const token1MarketPrice = await fetchMarketPrice(token1.Name);
+          const token0CollectedFee =
+            amount0 &&
+            ethers.utils.formatUnits(
+              parseFloat(amount0.toString()).toString(),
+              token0.decimals
+            );
+          const token1CollectedFee =
+            amount0 &&
+            ethers.utils.formatUnits(
+              parseFloat(amount0.toString()).toString(),
+              token1.decimals
+            );
+
+          const token0MarketPrice = await fetchMarketPrice(token0.name);
+          const token1MarketPrice = await fetchMarketPrice(token1.name);
           const token0Value = token0MarketPrice * Number(token0Amount);
           const token1Value = token1MarketPrice * Number(token1Amount);
           const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
@@ -146,8 +160,8 @@ export default function useGetPositionIds(): {
             fee: feeTier,
             token0Amount: Number(token0Amount),
             token1Amount: Number(token1Amount),
-            token0CollectedFee,
-            token1CollectedFee,
+            token0CollectedFee: token0CollectedFee.toString(),
+            token1CollectedFee: token1CollectedFee.toString(),
             token0MarketPrice,
             token1MarketPrice,
             inRange,
@@ -159,6 +173,27 @@ export default function useGetPositionIds(): {
             feeValue: isNaN(feeValue) ? 0 : feeValue,
             chainId,
             owner,
+            hasETH: false,
+            liquidity: "",
+            rawPositionInfo: "",
+            sqrtPriceX96: "",
+            tickCurrent: 0,
+            tickLower: 0,
+            tickUpper: 0,
+            token0: new Token(
+              chainId,
+              token0.id,
+              Number(token0.decimals),
+              token0.symbol === "WETH" ? "ETH" : token0.symbol,
+              token0.name
+            ),
+            token1: new Token(
+              chainId,
+              token1.id,
+              Number(token1.decimals),
+              token1.symbol === "WETH" ? "ETH" : token1.symbol,
+              token1.name
+            ),
           });
         });
       }
@@ -168,22 +203,66 @@ export default function useGetPositionIds(): {
     []
   );
 
-  const [test, setTest] = useState<any[] | undefined>(undefined);
+  const [positions, setPositions] = useRecoilState(ATOM_positions);
+  const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
+  const [account, setAccount] = useState<string | undefined>(undefined);
+  const [chainId, setChainId] = useState<number | undefined>(undefined);
+  const txLog = useRecoilValue(txHashLog);
 
   useEffect(() => {
-    const fetchPositionData = async (data: any[], chainId: number) => {
-      const result = await makePositionDatas(data, chainId);
+    const fetchPositionData = async () => {
+      console.log(data, connectedChainId, otherLayerData, otherLayerChainInfo);
+      if (data && connectedChainId && otherLayerData && otherLayerChainInfo) {
+        if (
+          (address && account !== address) ||
+          (connectedChainId && chainId !== connectedChainId)
+        ) {
+          setAccount(address);
+          setChainId(connectedChainId);
+          setPositionsLoading(true);
+          setPositions(undefined);
+        }
+        const result = await Promise.all([
+          makePositionDatas(data.positions, connectedChainId),
+          makePositionDatas(
+            otherLayerData.positions,
+            otherLayerChainInfo.chainId
+          ),
+        ]);
 
-      setTest(result);
+        try {
+          if (result[0] && result[1]) {
+            const positions = [...result[0], ...result[1]];
+            const sortedPositions = sortPositions(positions);
+            return setPositions(sortedPositions);
+          }
+          if (result[0]) {
+            const sortedPositions = sortPositions(result[0]);
+            return setPositions(sortedPositions);
+          }
+          if (result[1]) {
+            const sortedPositions = sortPositions(result[1]);
+            return setPositions(sortedPositions);
+          }
+          return setPositions(undefined);
+        } catch (e) {
+          console.log(e);
+        } finally {
+          setPositionsLoading(false);
+        }
+      }
     };
-    if (data && data.positions && connectedChainId) {
-      fetchPositionData(data.positions, connectedChainId);
-    }
-  }, [data, connectedChainId]);
+    fetchPositionData();
+  }, [
+    data,
+    connectedChainId,
+    otherLayerData,
+    otherLayerChainInfo,
+    txLog,
+    address,
+  ]);
 
-  const positionDatas = useMemo(() => {}, [data]);
-
-  return { positionInfo: data?.length > 0 ? data : undefined };
+  return { positions };
 }
 
 //logic through contract calls
@@ -202,7 +281,9 @@ export function useGetPositions(positionId?: number) {
     isSupportedChain,
   } = useConnectedNetwork();
 
-  const [positions, setPositions] = useRecoilState(ATOM_positions);
+  const [positions, setPositions] = useState<PoolCardDetail[] | undefined>(
+    undefined
+  );
 
   const callPositionIds = useCallback(
     async (otherLayer?: boolean, positionTokenId?: number) => {
@@ -228,12 +309,13 @@ export function useGetPositions(positionId?: number) {
           _provider
         );
         // Get number of positions
-        const balance: number =
-          await NonfungiblePositionManagerContract.balanceOf(address);
+        // const balance: number =
+        //   await NonfungiblePositionManagerContract.balanceOf(address);
 
         // Get all positions
         const positions: PoolCardDetail[] = [];
-        const batchSize = positionTokenId ? 1 : balance;
+        // const batchSize = positionTokenId ? 1 : balance;
+        const batchSize = 1;
 
         const promises: any[] = [];
         for (let i = 0; i < batchSize; i++) {
@@ -448,21 +530,9 @@ export function useGetPositions(positionId?: number) {
     ]
   );
 
-  const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
-  const [account, setAccount] = useState<string | undefined>(undefined);
-  const [chainId, setChainId] = useState<number | undefined>(undefined);
   const txLog = useRecoilValue(txHashLog);
   useEffect(() => {
     const fetchPositionIds = async () => {
-      if (
-        (address && account !== address) ||
-        (connectedChainId && chainId !== connectedChainId)
-      ) {
-        setAccount(address);
-        setChainId(connectedChainId);
-        setPositionsLoading(true);
-        setPositions(undefined);
-      }
       const result = positionId
         ? await Promise.all([callPositionIds(false, positionId)])
         : await Promise.all([callPositionIds(false), callPositionIds(true)]);
@@ -481,16 +551,14 @@ export function useGetPositions(positionId?: number) {
           return setPositions(sortedPositions);
         }
         return setPositions(undefined);
-      } finally {
-        setPositionsLoading(false);
-      }
+      } catch (e) {}
     };
     fetchPositionIds().catch((e) => {
       console.log("**fetchPositionIds err**");
       console.log(e);
       // setPositionsLoading(false);
     });
-  }, [blockNumber, connectedChainId, address, chainId, txLog, positionId]);
+  }, [blockNumber, connectedChainId, address, txLog, positionId]);
 
   return { positions };
 }
@@ -502,32 +570,10 @@ export function useGetPositionIdFromPath() {
   return { positionId };
 }
 
-function useGetPositionInfo() {
-  const pathName = usePathname();
-  const positionId = pathName.split("/")[pathName.split("/").length - 1];
-
-  const { positions } = useGetPositions(Number(positionId));
-  const { otherLayerProvider } = useProvier();
-
-  const { otherLayerChainInfo } = useConnectedNetwork();
-  // const existingPositionInfo = useMemo(() => {
-  //   const positionId = pathName.split("/")[pathName.split("/").length - 1];
-
-  //   if (!isNaN(Number(positionId)) && positions) {
-  //     const result = positions.filter(
-  //       (poisitonData) => poisitonData.id === Number(positionId)
-  //     );
-  //     return result[0] ?? undefined;
-  //   }
-  // }, [pathName, positions, otherLayerProvider, otherLayerChainInfo]);
-
-  return {
-    existingPositionInfo: positions?.length === 1 ? positions[0] : undefined,
-  };
-}
-
 export function usePositionInfo() {
-  const { existingPositionInfo } = useGetPositionInfo();
+  const positionId = useGetPositionIdFromPath();
+  const { positions } = useGetPositions(Number(positionId));
+  const existingPositionInfo = positions ? positions[0] : undefined;
   const mintPositionInfo = useRecoilValue(poolModalProp);
   const { subMode } = useGetMode();
 
