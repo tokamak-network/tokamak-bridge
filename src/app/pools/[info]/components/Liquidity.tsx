@@ -57,45 +57,30 @@ const TokenLiquidityData = (props: {
   );
 };
 export default function Liquidity() {
-  const {} = useInOutNetwork();
   const { info } = usePositionInfo();
-
-  if (info === undefined) {
-    return null;
-  }
-
   const { ratio } = usePoolInfo();
-  const {
-    token0,
-    token0Amount,
-    token1,
-    token1Amount,
-    isClosed,
-    token0MarketPrice,
-    token1MarketPrice,
-    owner,
-  } = info;
   const { address } = useAccount();
 
   const { totalMarketPrice } = usePricePair({
-    token0Name: token0.name,
-    token0Amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
-    token1Name: token1.name,
-    token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
+    token0Name: info?.token0.name,
+    token0Amount: Number(commafy(info?.token0Amount, 4).replaceAll(",", "")),
+    token1Name: info?.token1.name,
+    token1Amount: Number(commafy(info?.token1Amount, 4).replaceAll(",", "")),
   });
 
   const router = useRouter();
   const noMarketPrices =
-    (token0MarketPrice === undefined && token1MarketPrice === undefined) ||
-    Number(token0MarketPrice) + Number(token1MarketPrice) === 0;
+    (info?.token0MarketPrice === undefined &&
+      info?.token1MarketPrice === undefined) ||
+    Number(info.token0MarketPrice) + Number(info.token1MarketPrice) === 0;
 
   const onClickToRoute = useCallback(async (remove?: boolean) => {
     return router.push(
-      remove ? `/pools/remove/${info.id}` : `/pools/increase/${info.id}/`
+      remove ? `/pools/remove/${info?.id}` : `/pools/increase/${info?.id}/`
     );
   }, []);
 
-  const actionDisabled = owner !== address;
+  const actionDisabled = info?.owner !== address;
 
   const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
   const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
@@ -106,6 +91,10 @@ export default function Liquidity() {
       setToken1Ratio(100 - ratio);
     }
   }, [ratio]);
+
+  if (info === undefined) {
+    return null;
+  }
 
   return (
     <Box
@@ -133,20 +122,20 @@ export default function Liquidity() {
                 Remove
               </Text>
               <Box
-                onClick={() => (isClosed ? null : onClickToRoute(true))}
-                cursor={isClosed ? "" : "pointer"}
+                onClick={() => (info?.isClosed ? null : onClickToRoute(true))}
+                cursor={info?.isClosed ? "" : "pointer"}
               >
                 <Flex
                   w={"32px"}
                   h={"32px"}
                   bg="#15161D"
-                  border={isClosed ? "" : " 1px solid #007AFF"}
+                  border={info?.isClosed ? "" : " 1px solid #007AFF"}
                   borderRadius={"8px"}
                   alignItems={"center"}
                   justifyContent={"center"}
                 >
                   <Image
-                    src={isClosed ? RemoveInactiveIcon : RemoveIcon}
+                    src={info?.isClosed ? RemoveInactiveIcon : RemoveIcon}
                     alt={"RemoveIcon"}
                   />
                 </Flex>

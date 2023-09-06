@@ -362,7 +362,6 @@ export function usePoolContract() {
   );
 
   const { info } = usePositionInfo();
-  const { inverted } = usePoolInfo();
 
   const increaseLiquidity = useCallback(
     async (estimatedGas?: boolean) => {
@@ -482,7 +481,7 @@ export function usePoolContract() {
         }
       }
     },
-    [provider, inToken, outToken, address, UNISWAP_CONTRACT, inverted]
+    [provider, inToken, outToken, address, UNISWAP_CONTRACT]
   );
 
   const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);

@@ -29,7 +29,6 @@ export default function ClaimEarningsModal() {
       token1Amount,
     });
 
-  const {} = useBlockNum();
   const [estimatedGasUsageValue, setEstimatedGasUsage] = useState<
     string | undefined
   >(undefined);

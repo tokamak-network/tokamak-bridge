@@ -34,6 +34,7 @@ import { GET_POSITIONS } from "@/graphql/data/queries";
 import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
+import { getProvider } from "@/config/getProvider";
 
 //logic through subGraph
 export function useGetPositionIds(): {
@@ -270,7 +271,6 @@ export function useGetPositionById(positionId?: number) {
   const { provider, otherLayerProvider } = useProvier();
   const { UNISWAP_CONTRACT } = useContract();
   const { UNISWAP_CONTRACT_OTHER_LAYER } = useUniswapContracts();
-
   const { address } = useAccount();
   const { blockNumber } = useBlockNum();
   const {
@@ -281,9 +281,9 @@ export function useGetPositionById(positionId?: number) {
     isSupportedChain,
   } = useConnectedNetwork();
 
-  const [positions, setPositions] = useState<PoolCardDetail[] | undefined>(
-    undefined
-  );
+  const [positions, setPositions] = useRecoilState<
+    PoolCardDetail[] | undefined
+  >(ATOM_positions);
 
   const callPositionIds = useCallback(
     async (otherLayer?: boolean, positionTokenId?: number) => {

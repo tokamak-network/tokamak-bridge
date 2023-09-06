@@ -2,7 +2,6 @@ import { Flex, Text } from "@chakra-ui/react";
 import { RangeText } from "../../components/ui";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
-import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 
 export default function InfoTitle() {
