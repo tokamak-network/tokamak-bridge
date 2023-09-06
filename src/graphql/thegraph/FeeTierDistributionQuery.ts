@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { useMemo } from "react";
 
 import { FeeTierDistributionQuery } from "./__generated__/types-and-hooks";
-import { apolloClient, subgraphApolloClients } from "./apollo";
+import { subgraphApolloClients } from "./apollo";
 import useConnectedNetwork from "@/hooks/network";
 
 const query = gql`
