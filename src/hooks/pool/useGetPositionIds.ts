@@ -320,21 +320,13 @@ export function useGetPositions(positionId?: number) {
         const promises: any[] = [];
         for (let i = 0; i < batchSize; i++) {
           promises.push(async () => {
-            const tokenOfOwnerByIndex: number =
-              positionTokenId ??
-              (await NonfungiblePositionManagerContract.tokenOfOwnerByIndex(
-                address,
-                i
-              ));
-            const owner = positionTokenId
-              ? await NonfungiblePositionManagerContract.ownerOf(
-                  positionTokenId
-                )
-              : address;
+            const owner = await NonfungiblePositionManagerContract.ownerOf(
+              positionTokenId
+            );
 
             const positionInfo =
               await NonfungiblePositionManagerContract.positions(
-                positionTokenId ?? tokenOfOwnerByIndex
+                positionTokenId
               );
 
             const { token0, token1, fee, tickLower, tickUpper, liquidity } =
@@ -400,9 +392,7 @@ export function useGetPositions(positionId?: number) {
             const { tick, sqrtPriceX96 } = slot;
             const inRange = tickLower <= tick && tick < tickUpper;
 
-            const positionId = Number(
-              positionTokenId ?? tokenOfOwnerByIndex.toString()
-            );
+            const positionId = Number(positionTokenId);
 
             const earningFee =
               await NonfungiblePositionManagerContract.callStatic.collect({
@@ -533,22 +523,10 @@ export function useGetPositions(positionId?: number) {
   const txLog = useRecoilValue(txHashLog);
   useEffect(() => {
     const fetchPositionIds = async () => {
-      const result = positionId
-        ? await Promise.all([callPositionIds(false, positionId)])
-        : await Promise.all([callPositionIds(false), callPositionIds(true)]);
+      const result = await callPositionIds(false, positionId);
       try {
-        if (result[0] && result[1]) {
-          const positions = [...result[0], ...result[1]];
-          const sortedPositions = sortPositions(positions);
-          return setPositions(sortedPositions);
-        }
-        if (result[0]) {
-          const sortedPositions = sortPositions(result[0]);
-          return setPositions(sortedPositions);
-        }
-        if (result[1]) {
-          const sortedPositions = sortPositions(result[1]);
-          return setPositions(sortedPositions);
+        if (result) {
+          return setPositions(result);
         }
         return setPositions(undefined);
       } catch (e) {}
