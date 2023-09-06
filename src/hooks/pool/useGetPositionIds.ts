@@ -538,11 +538,11 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
-  return positionId;
+  return { positionId };
 }
 
 export function usePositionInfo() {
-  const positionId = useGetPositionIdFromPath();
+  const { positionId } = useGetPositionIdFromPath();
   const { positions } = useGetPositionById(Number(positionId));
   const existingPositionInfo = positions ? positions[0] : undefined;
   const mintPositionInfo = useRecoilValue(poolModalProp);
