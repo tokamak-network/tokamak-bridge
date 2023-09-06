@@ -266,6 +266,7 @@ function useAllV3Ticks(
   }, [data?.ticks]);
 
   return {
+    //@ts-ignore
     isLoading: useSubgraph
       ? isLoading || data?.ticks.length === MAX_THE_GRAPH_TICK_FETCH_VALUE
       : tickLensTickData.isLoading,
