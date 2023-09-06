@@ -1,7 +1,4 @@
-import {
-  useGetPositionIds,
-  useGetPositions,
-} from "@/hooks/pool/useGetPositionIds";
+import { useGetPositionIds } from "@/hooks/pool/useGetPositionIds";
 import { Grid } from "@chakra-ui/react";
 import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";

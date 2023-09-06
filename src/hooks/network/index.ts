@@ -16,10 +16,8 @@ export function useInOutNetwork() {
 }
 
 export default function useConnectedNetwork() {
-  // const network = useRecoilValue(networkStatus);
+  const { inNetwork } = useInOutNetwork();
   const { chain } = useNetwork();
-
-  const { inNetwork, outNetwork } = useInOutNetwork();
 
   const chainInfo = useMemo(() => {
     //connected wallet
@@ -58,9 +56,6 @@ export default function useConnectedNetwork() {
     }
     return { chainName: "MAINNET" as keyof typeof SupportedChainId };
   }, [chain, inNetwork]);
-
-  // console.log("inNetwork");
-  // console.log(inNetwork);
 
   const otherLayerChainInfo = useMemo(() => {
     if (chainInfo) {

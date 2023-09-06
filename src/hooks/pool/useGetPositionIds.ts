@@ -266,7 +266,7 @@ export function useGetPositionIds(): {
 }
 
 //logic through contract calls
-export function useGetPositions(positionId?: number) {
+export function useGetPositionById(positionId?: number) {
   const { provider, otherLayerProvider } = useProvier();
   const { UNISWAP_CONTRACT } = useContract();
   const { UNISWAP_CONTRACT_OTHER_LAYER } = useUniswapContracts();
@@ -315,194 +315,187 @@ export function useGetPositions(positionId?: number) {
         // Get all positions
         const positions: PoolCardDetail[] = [];
         // const batchSize = positionTokenId ? 1 : balance;
-        const batchSize = 1;
-
         const promises: any[] = [];
-        for (let i = 0; i < batchSize; i++) {
-          promises.push(async () => {
-            const owner = await NonfungiblePositionManagerContract.ownerOf(
-              positionTokenId
-            );
 
-            const positionInfo =
-              await NonfungiblePositionManagerContract.positions(
-                positionTokenId
+        promises.push(async () => {
+          const owner = await NonfungiblePositionManagerContract.ownerOf(
+            positionTokenId
+          );
+
+          const positionInfo =
+            await NonfungiblePositionManagerContract.positions(positionTokenId);
+
+          const { token0, token1, fee, tickLower, tickUpper, liquidity } =
+            positionInfo;
+
+          const token0Contract = new ethers.Contract(
+            token0,
+            ERC20_ABI.abi,
+            _provider
+          );
+          const token1Contract = new ethers.Contract(
+            token1,
+            ERC20_ABI.abi,
+            _provider
+          );
+
+          const [
+            token0Symbol,
+            token1Symbol,
+            token0Name,
+            token1Name,
+            token0Decimals,
+            token1Decimals,
+          ] = await Promise.all([
+            token0Contract.symbol(),
+            token1Contract.symbol(),
+            token0Contract.name(),
+            token1Contract.name(),
+            token0Contract.decimals(),
+            token1Contract.decimals(),
+          ]);
+
+          const currentPoolAddress = computePoolAddress({
+            factoryAddress: otherLayer
+              ? UNISWAP_CONTRACT_OTHER_LAYER.POOL_FACTORY_CONTRACT_ADDRESS
+              : UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
+            tokenA: new Token(
+              otherLayer ? _otherLayerChainId : connectedChainId,
+              token0,
+              token0Decimals
+            ),
+            tokenB: new Token(
+              otherLayer ? _otherLayerChainId : connectedChainId,
+              token1,
+              token1Decimals
+            ),
+            fee,
+            initCodeHashManualOverride:
+              otherLayer && layer === "L1"
+                ? L2_initCodeHashManualOverride
+                : !otherLayer && layer === "L2"
+                ? L2_initCodeHashManualOverride
+                : undefined,
+          });
+
+          const POOL_CONTRACT = new ethers.Contract(
+            currentPoolAddress,
+            IUniswapV3PoolABI.abi,
+            _provider
+          );
+
+          const slot = await POOL_CONTRACT.slot0();
+          const { tick, sqrtPriceX96 } = slot;
+          const inRange = tickLower <= tick && tick < tickUpper;
+          const positionId = Number(positionTokenId);
+
+          const earningFee =
+            await NonfungiblePositionManagerContract.callStatic.collect({
+              tokenId: positionId,
+              recipient: address,
+              amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
+              amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
+            });
+
+          const token0CollectedFee = ethers.utils.formatUnits(
+            earningFee.amount0.toString(),
+            token0Decimals
+          );
+          const token1CollectedFee = ethers.utils.formatUnits(
+            earningFee.amount1.toString(),
+            token1Decimals
+          );
+
+          const hasNoLiquidity = Number(liquidity.toString()) === 0;
+
+          const remainedTokens = hasNoLiquidity
+            ? undefined
+            : await NonfungiblePositionManagerContract.callStatic.decreaseLiquidity(
+                {
+                  tokenId: positionId,
+                  liquidity,
+                  deadline: Math.floor(Date.now() / 1000) + 60 * 20,
+                  amount0Min: 0,
+                  amount1Min: 0,
+                }
               );
 
-            const { token0, token1, fee, tickLower, tickUpper, liquidity } =
-              positionInfo;
+          console.log("remainedTokens");
+          console.log(remainedTokens);
 
-            const token0Contract = new ethers.Contract(
-              token0,
-              ERC20_ABI.abi,
-              _provider
-            );
-            const token1Contract = new ethers.Contract(
-              token1,
-              ERC20_ABI.abi,
-              _provider
-            );
-
-            const [
-              token0Symbol,
-              token1Symbol,
-              token0Name,
-              token1Name,
-              token0Decimals,
-              token1Decimals,
-            ] = await Promise.all([
-              token0Contract.symbol(),
-              token1Contract.symbol(),
-              token0Contract.name(),
-              token1Contract.name(),
-              token0Contract.decimals(),
-              token1Contract.decimals(),
-            ]);
-
-            const currentPoolAddress = computePoolAddress({
-              factoryAddress: otherLayer
-                ? UNISWAP_CONTRACT_OTHER_LAYER.POOL_FACTORY_CONTRACT_ADDRESS
-                : UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-              tokenA: new Token(
-                otherLayer ? _otherLayerChainId : connectedChainId,
-                token0,
+          const token0Amount = hasNoLiquidity
+            ? "0"
+            : ethers.utils.formatUnits(
+                remainedTokens.amount0.toString(),
                 token0Decimals
-              ),
-              tokenB: new Token(
-                otherLayer ? _otherLayerChainId : connectedChainId,
-                token1,
+              );
+
+          const token1Amount = hasNoLiquidity
+            ? "0"
+            : ethers.utils.formatUnits(
+                remainedTokens.amount1.toString(),
                 token1Decimals
-              ),
-              fee,
-              initCodeHashManualOverride:
-                otherLayer && layer === "L1"
-                  ? L2_initCodeHashManualOverride
-                  : !otherLayer && layer === "L2"
-                  ? L2_initCodeHashManualOverride
-                  : undefined,
-            });
+              );
 
-            const POOL_CONTRACT = new ethers.Contract(
-              currentPoolAddress,
-              IUniswapV3PoolABI.abi,
-              _provider
-            );
+          const WETH_ADDRESS = getWETHAddress(chainName);
+          const token0IsNative =
+            WETH_ADDRESS.toLowerCase() === token0.toLowerCase();
+          const token1IsNative =
+            WETH_ADDRESS.toLowerCase() === token1.toLowerCase();
 
-            const slot = await POOL_CONTRACT.slot0();
-            const { tick, sqrtPriceX96 } = slot;
-            const inRange = tickLower <= tick && tick < tickUpper;
+          const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
 
-            const positionId = Number(positionTokenId);
+          const token0MarketPrice = await fetchMarketPrice(token0Name);
+          const token1MarketPrice = await fetchMarketPrice(token1Name);
+          const token0Value = token0MarketPrice * Number(token0Amount);
+          const token1Value = token1MarketPrice * Number(token1Amount);
+          const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
+          const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
+          const token0FeeValue = token0MarketPrice * token0FeeAmount;
+          const token1FeeValue = token0MarketPrice * token1FeeAmount;
+          const feeValue = token0FeeValue + token1FeeValue;
 
-            const earningFee =
-              await NonfungiblePositionManagerContract.callStatic.collect({
-                tokenId: positionId,
-                recipient: address,
-                amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
-                amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
-              });
-
-            const token0CollectedFee = ethers.utils.formatUnits(
-              earningFee.amount0.toString(),
-              token0Decimals
-            );
-            const token1CollectedFee = ethers.utils.formatUnits(
-              earningFee.amount1.toString(),
-              token1Decimals
-            );
-
-            const hasNoLiquidity = Number(liquidity.toString()) === 0;
-
-            const remainedTokens = hasNoLiquidity
-              ? undefined
-              : await NonfungiblePositionManagerContract.callStatic.decreaseLiquidity(
-                  {
-                    tokenId: positionId,
-                    liquidity,
-                    deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-                    amount0Min: 0,
-                    amount1Min: 0,
-                  }
-                );
-
-            const token0Amount = hasNoLiquidity
-              ? "0"
-              : ethers.utils.formatUnits(
-                  remainedTokens.amount0.toString(),
-                  token0Decimals
-                );
-
-            const token1Amount = hasNoLiquidity
-              ? "0"
-              : ethers.utils.formatUnits(
-                  remainedTokens.amount1.toString(),
-                  token1Decimals
-                );
-
-            const WETH_ADDRESS = getWETHAddress(chainName);
-            const token0IsNative =
-              WETH_ADDRESS.toLowerCase() === token0.toLowerCase();
-            const token1IsNative =
-              WETH_ADDRESS.toLowerCase() === token1.toLowerCase();
-
-            const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
-
-            const token0MarketPrice = await fetchMarketPrice(token0Name);
-            const token1MarketPrice = await fetchMarketPrice(token1Name);
-            const token0Value = token0MarketPrice * Number(token0Amount);
-            const token1Value = token1MarketPrice * Number(token1Amount);
-            const token0FeeAmount = Number(
-              commafy(token0CollectedFee, 8, true)
-            );
-            const token1FeeAmount = Number(
-              commafy(token1CollectedFee, 8, true)
-            );
-            const token0FeeValue = token0MarketPrice * token0FeeAmount;
-            const token1FeeValue = token0MarketPrice * token1FeeAmount;
-            const feeValue = token0FeeValue + token1FeeValue;
-
-            positions.push({
-              id: positionId,
-              fee,
-              token0: new Token(
-                otherLayer ? _otherLayerChainId : connectedChainId,
-                token0,
-                token0Decimals,
-                token0Symbol === "WETH" ? "ETH" : token0Symbol,
-                token0Name
-              ),
-              token1: new Token(
-                otherLayer ? _otherLayerChainId : connectedChainId,
-                token1,
-                token1Decimals,
-                token1Symbol === "WETH" ? "ETH" : token1Symbol,
-                token1Name
-              ),
-              token0Amount: Number(token0Amount),
-              token1Amount: Number(token1Amount),
-              token0CollectedFee,
-              token1CollectedFee,
-              token0MarketPrice,
-              token1MarketPrice,
-              inRange,
-              liquidity: liquidity.toString(),
-              sqrtPriceX96: sqrtPriceX96.toString(),
-              tickLower,
-              tickCurrent: tick,
-              tickUpper,
-              rawPositionInfo: { ...positionInfo, sqrtPriceX96 },
-              hasETH: token0IsNative || token1IsNative,
-              isClosed,
-              token0Value: isNaN(token0Value) ? 0 : token0Value,
-              token1Value: isNaN(token1Value) ? 0 : token1Value,
-              token0FeeValue,
-              token1FeeValue,
-              feeValue: isNaN(feeValue) ? 0 : feeValue,
-              chainId: otherLayer ? _otherLayerChainId : connectedChainId,
-              owner,
-            });
+          positions.push({
+            id: positionId,
+            fee,
+            token0: new Token(
+              otherLayer ? _otherLayerChainId : connectedChainId,
+              token0,
+              token0Decimals,
+              token0Symbol === "WETH" ? "ETH" : token0Symbol,
+              token0Name
+            ),
+            token1: new Token(
+              otherLayer ? _otherLayerChainId : connectedChainId,
+              token1,
+              token1Decimals,
+              token1Symbol === "WETH" ? "ETH" : token1Symbol,
+              token1Name
+            ),
+            token0Amount: Number(token0Amount),
+            token1Amount: Number(token1Amount),
+            token0CollectedFee,
+            token1CollectedFee,
+            token0MarketPrice,
+            token1MarketPrice,
+            inRange,
+            liquidity: liquidity.toString(),
+            sqrtPriceX96: sqrtPriceX96.toString(),
+            tickLower,
+            tickCurrent: tick,
+            tickUpper,
+            rawPositionInfo: { ...positionInfo, sqrtPriceX96 },
+            hasETH: token0IsNative || token1IsNative,
+            isClosed,
+            token0Value: isNaN(token0Value) ? 0 : token0Value,
+            token1Value: isNaN(token1Value) ? 0 : token1Value,
+            token0FeeValue,
+            token1FeeValue,
+            feeValue: isNaN(feeValue) ? 0 : feeValue,
+            chainId: otherLayer ? _otherLayerChainId : connectedChainId,
+            owner,
           });
-        }
+        });
         await Promise.all(promises.map((func) => func()));
         return positions;
       }
@@ -545,12 +538,12 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
-  return { positionId };
+  return positionId;
 }
 
 export function usePositionInfo() {
   const positionId = useGetPositionIdFromPath();
-  const { positions } = useGetPositions(Number(positionId));
+  const { positions } = useGetPositionById(Number(positionId));
   const existingPositionInfo = positions ? positions[0] : undefined;
   const mintPositionInfo = useRecoilValue(poolModalProp);
   const { subMode } = useGetMode();

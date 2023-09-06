@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount } from "wagmi";
+import { useInOutNetwork } from "@/hooks/network";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -56,6 +57,7 @@ const TokenLiquidityData = (props: {
   );
 };
 export default function Liquidity() {
+  const {} = useInOutNetwork();
   const { info } = usePositionInfo();
 
   if (info === undefined) {

@@ -4,13 +4,14 @@ import PLUS_ICON from "assets/icons/plus.svg";
 import NextLink from "next/link";
 import ConnecteWalletCard from "./ConnectWalletCard";
 import { useAccount } from "wagmi";
-import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
 import useConnectedNetwork from "@/hooks/network";
 import UnspportedNetwork from "./UnspportedNetwork";
+import { ATOM_positions } from "@/recoil/pool/positions";
+import { useRecoilValue } from "recoil";
 
 export default function AddLiquidity() {
   const { isConnected } = useAccount();
-  const { positions } = useGetPositions();
+  const positions = useRecoilValue(ATOM_positions);
   const { isSupportedChain } = useConnectedNetwork();
 
   if (!isConnected) return <ConnecteWalletCard />;
