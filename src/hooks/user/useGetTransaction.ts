@@ -405,7 +405,7 @@ export default function useGetTransaction() {
     fetchTransactions();
     fetchDepositTransactions(true);
     const xx = setInterval(() => {
-      fetchTransactions();
+      fetchTransactions(false);
       fetchDepositTransactions(false);
     }, 3000);
 
