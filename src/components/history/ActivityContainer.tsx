@@ -224,6 +224,7 @@ export default function ActivityContainer(props: {
       h={"calc(100vh - 165px)"}
       bg={"transparent"}
       w="100%"
+     
       // height={'110%'}
     >
       <Flex
@@ -233,7 +234,7 @@ export default function ActivityContainer(props: {
         overflow={"scroll"}
         overflowX={"hidden"}
         rowGap={"8px"}
-        h={"calc(100vh - 300px)"}
+        h={"calc(100vh - 200px)"}
         css={{
           "&::-webkit-scrollbar": {
             width: "6px",
@@ -252,7 +253,7 @@ export default function ActivityContainer(props: {
       </Flex>
       {getLayerFiltered.length > getPaginatedData.length &&
         tData.loadingState === "present" && (
-          <Flex mb={"32px"} justifyContent={"center"} alignItems={"start"}>
+          <Flex mb={"32px"} mt={'32px'} justifyContent={"center"} alignItems={"start"}>
             <Button
               bg="transparent"
               border={"1px solid #313442"}

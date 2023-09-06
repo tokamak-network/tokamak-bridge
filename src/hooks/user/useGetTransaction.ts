@@ -407,7 +407,7 @@ export default function useGetTransaction() {
     const xx = setInterval(() => {
       fetchTransactions();
       fetchDepositTransactions(false);
-    }, 12000);
+    }, 3000);
 
     return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);
