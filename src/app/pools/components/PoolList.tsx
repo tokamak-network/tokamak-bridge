@@ -5,7 +5,7 @@ import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 
 export default function PoolList() {
-  const { positionInfo } = useGetPositionIds();
+  // const { positionInfo } = useGetPositionIds();
 
   // console.log(positionInfo);
 
