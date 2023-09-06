@@ -259,11 +259,14 @@ export default function useGetTransaction() {
         const status =
           alltx.length === 0
             ? "absent"
-            : allTxs.length > 0
+            : alltx.length > 0 && allTxs.length > 0
             ? "present"
-            : "loading";
+            :    "loading";
+            
+
+            const stats = userAllTransactions.formattedWithdraw.length === 0? 'absent': userAllTransactions.formattedWithdraw.length !== 0 && allTxs.length > 0 ?'present':'loading'
         setTDataWithdraw(allTxs);
-        setLoadingState(status);
+        setLoadingState(stats);
       }
     }
   }, [address, layer, connectedChainId, crossMessenger]);
@@ -404,12 +407,12 @@ export default function useGetTransaction() {
   useEffect(() => {
     fetchTransactions();
     fetchDepositTransactions(true);
-    const xx = setInterval(() => {
-      fetchTransactions();
-      fetchDepositTransactions(false);
-    }, 3000);
+    // const xx = setInterval(() => {
+     
+    //   fetchDepositTransactions(false);
+    // }, 3000);
 
-    return () => clearInterval(xx);
+    // return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);
 
   const allTxs =
