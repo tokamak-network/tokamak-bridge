@@ -33,23 +33,24 @@ export default function useGetTransaction() {
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
-  const [loadingState, setLoadingState] = useState<"loading" | "present" | "absent">("loading");
+  const [loadingState, setLoadingState] = useState<
+    "loading" | "present" | "absent"
+  >("loading");
   const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const fetchTransactions = useCallback(async () => {
-    
     if (
       chain?.id &&
       l2ProSDK !== undefined &&
       l1Pro !== undefined &&
       l2Pro !== undefined &&
-      crossMessenger !== undefined && crossMessengerTokamak !== undefined &&
+      crossMessenger !== undefined &&
+      crossMessengerTokamak !== undefined &&
       isConnectedToMainNetwork !== undefined
     ) {
-      
       const userAllTransactions = await fetchUserTransactions(
         address,
         isConnectedToMainNetwork
@@ -61,7 +62,6 @@ export default function useGetTransaction() {
         ...userAllTransactions?.formattedWithdraw,
       ];
 
-
       // setLoadingState(alltx.length > 0 ? "loading" : "absent");
 
       if (userAllTransactions !== undefined) {
@@ -70,7 +70,7 @@ export default function useGetTransaction() {
             const resolved = await crossMessengerTokamak.toCrossChainMessage(
               tx.transactionHash
             ); //  office node ok
-            
+
             const currentStatus = await crossMessenger.getMessageStatus(
               resolved
             );
@@ -125,18 +125,24 @@ export default function useGetTransaction() {
             ) {
               const messageTxIndex = l2TxReceipt.blockNumber - 1;
 
-              const stateBatchAppendedEvent =
-                await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
-                  messageTxIndex
-                ); // no office node
+              // const stateBatchAppendedEvent =
+              //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
+              //     messageTxIndex
+              //   ); // no office node
 
-              const bn = stateBatchAppendedEvent.blockNumber;
+              // const bn = stateBatchAppendedEvent.blockNumber;
 
-              const block = await l1Pro.getBlock(bn);
+              // const block = await l1Pro.getBlock(bn);
+              const l2BlockNum = await l2Pro.getBlock(l2TxReceipt.blockNumber);
 
-              const challengePeriod =
-                await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
-              const timeReadyForRelay = block.timestamp + challengePeriod;
+              const calculatedTimePeriod =
+                layer === "L1" ? 11 * 60 + 7 * 24 * 60 * 60 : 2 * 60 + 10 + 150;
+              const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
+              console.log("testPeriod", testPeriod);
+
+              // const challengePeriod =
+              //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
+              const timeReadyForRelay = testPeriod;
 
               const messageTxReceipt = await l2Pro.getTransactionReceipt(
                 resolved.transactionHash
@@ -165,10 +171,9 @@ export default function useGetTransaction() {
                 _l1Token: l1Token,
                 _l2Token: l2Token,
                 _amount: amnt,
-                timeReadyForRelay: Number(timeReadyForRelay)+150,
+                timeReadyForRelay: Number(timeReadyForRelay),
                 currentStatus: currentStatus,
                 resolved: resolved,
-             
               };
               return copy;
             } else {
@@ -179,14 +184,14 @@ export default function useGetTransaction() {
                 receipt.transactionReceipt != null
               ) {
                 const matchTx = receipt.transactionReceipt.transactionHash;
-                
+
                 const l1tx =
                   userAllTransactions.formattedL1WithdrawResults.filter(
                     (tx: EthType | Erc20Type) => {
                       return tx.transactionHash === matchTx;
                     }
                   )[0];
-                  
+
                 let copy = {
                   ...tx,
                   ...l1tx,
@@ -265,139 +270,149 @@ export default function useGetTransaction() {
     }
   }, [address, layer, connectedChainId, crossMessenger]);
 
-  const fetchDepositTransactions = useCallback(async (set:boolean) => {
-    if (
-      chain?.id &&
-      l2ProSDK !== undefined &&
-      l1Pro !== undefined &&
-      l2Pro !== undefined &&
-      isConnectedToMainNetwork !== undefined
-    ) {
-      const l2Bridge = new ethers.Contract(
-        L2BRIDGE_CONTRACT,
-        L2BridgeAbi,
-        l2ProSDK
-      );
-      
-      const userAllTransactions = await fetchUserTransactions(
-        address,
-        isConnectedToMainNetwork
-      );
-      const alltx = [
-        ...userAllTransactions?.formattedL1DepositResults,
-        ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
-        ...userAllTransactions?.formattedWithdraw,
-      ];
-
-      set === true &&  setLoadingState(alltx.length > 0 ? "loading" : "absent");
-
-      const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
-        "DepositFinalized"
-      );
-      
-      const l2Transactions = l2Transactions_DepositFinalized;
-      const userL2Transactions = l2Transactions.filter(
-        (event) => event.args?._from === address
-      );
-
+  const fetchDepositTransactions = useCallback(
+    async (set: boolean) => {
       if (
-        userL2Transactions !== undefined &&
-        userAllTransactions !== undefined
+        chain?.id &&
+        l2ProSDK !== undefined &&
+        l1Pro !== undefined &&
+        l2Pro !== undefined &&
+        isConnectedToMainNetwork !== undefined
       ) {
-        const l2DepTxs = await Promise.all(
-          userL2Transactions
-            .sort(
-              (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
-                tx1.blockNumber - tx2.blockNumber
-            )
-            .map(async (tx: UserL2Transaction) => {
-              const txion = await tx.getTransaction();
-              const l2block = await l2ProSDK.getBlock(tx.blockNumber);
-              const l1Block = await getProvider(providers.l1Provider)?.getBlock(
-                txion.l1BlockNumber
-              );
-              const l1tx =
-                userAllTransactions.formattedL1DepositResults?.filter(
-                  (l1tx: SentMessages) => {
-                    return Number(l1tx.messageNonce) === txion.nonce;
-                  }
-                );
-
-              if (l1tx.length > 0) {
-                const l1BlockNum = Number(l1tx[0].blockNumber);
-                const l1TxHash = l1tx[0].transactionHash;
-                const l1timeStamp = Number(l1tx[0].blockTimestamp);
-                let txCopy = {
-                  ...tx,
-                  ...txion,
-                  l2timeStamp: l2block.timestamp,
-                  l1timeStamp: l1timeStamp,
-                  l1Block: l1Block,
-                  l2txHash: tx.transactionHash,
-                  l1txHash: l1TxHash,
-                  event: "deposit",
-                  _amount: l1tx[0]._amount,
-                  _l1Token: l1tx[0]._l1Token,
-                  _l2Token: l1tx[0]._l2Token,
-                };
-                return txCopy;
-              }
-            })
+        const l2Bridge = new ethers.Contract(
+          L2BRIDGE_CONTRACT,
+          L2BridgeAbi,
+          l2ProSDK
         );
-        
-        const l1DepTxs = await Promise.all(
-          userAllTransactions.formattedL1DepositResults.map(
-            async (tx: DepositTx) => {
-              const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
-                return l2tx.nonce === Number(tx.messageNonce);
-              });
 
-              if (l2tx.length > 0) {
-                const l2BlockNum = l2tx[0].blockNumber;
-                const l2Block = await l2Pro.getBlock(l2BlockNum);
-                const l2timestamp = await l2Block.timestamp;
-                const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
-                const l1timeStamp = l1Block.timestamp;
-                let txCopy = {
-                  ...tx,
-                  l2timeStamp: l2timestamp,
-                  l1timeStamp: l1timeStamp,
-                  l1Block: l1Block,
-                  l2txHash: l2tx[0].transactionHash,
-                  l1txHash: tx.transactionHash,
-                };
-                return txCopy;
-              }
+        const userAllTransactions = await fetchUserTransactions(
+          address,
+          isConnectedToMainNetwork
+        );
+        const alltx = [
+          ...userAllTransactions?.formattedL1DepositResults,
+          ...(<[]>userAllTransactions?.formattedL1WithdrawResults),
+          ...userAllTransactions?.formattedWithdraw,
+        ];
 
-              else {
-                const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
-                const l1timeStamp = l1Block.timestamp;
-                let txCopy = {
-                  ...tx,
-                  l1timeStamp: l1timeStamp,
-                  l1txHash: tx.transactionHash,
+        set === true &&
+          setLoadingState(alltx.length > 0 ? "loading" : "absent");
+
+        const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
+          "DepositFinalized"
+        );
+
+        const l2Transactions = l2Transactions_DepositFinalized;
+        const userL2Transactions = l2Transactions.filter(
+          (event) => event.args?._from === address
+        );
+
+        if (
+          userL2Transactions !== undefined &&
+          userAllTransactions !== undefined
+        ) {
+          const l2DepTxs = await Promise.all(
+            userL2Transactions
+              .sort(
+                (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
+                  tx1.blockNumber - tx2.blockNumber
+              )
+              .map(async (tx: UserL2Transaction) => {
+                const txion = await tx.getTransaction();
+                const l2block = await l2ProSDK.getBlock(tx.blockNumber);
+                const l1Block = await getProvider(
+                  providers.l1Provider
+                )?.getBlock(txion.l1BlockNumber);
+                const l1tx =
+                  userAllTransactions.formattedL1DepositResults?.filter(
+                    (l1tx: SentMessages) => {
+                      return Number(l1tx.messageNonce) === txion.nonce;
+                    }
+                  );
+
+                if (l1tx.length > 0) {
+                  const l1BlockNum = Number(l1tx[0].blockNumber);
+                  const l1TxHash = l1tx[0].transactionHash;
+                  const l1timeStamp = Number(l1tx[0].blockTimestamp);
+                  let txCopy = {
+                    ...tx,
+                    ...txion,
+                    l2timeStamp: l2block.timestamp,
+                    l1timeStamp: l1timeStamp,
+                    l1Block: l1Block,
+                    l2txHash: tx.transactionHash,
+                    l1txHash: l1TxHash,
+                    event: "deposit",
+                    _amount: l1tx[0]._amount,
+                    _l1Token: l1tx[0]._l1Token,
+                    _l2Token: l1tx[0]._l2Token,
+                  };
+                  return txCopy;
                 }
-                return txCopy;
+              })
+          );
+
+          const l1DepTxs = await Promise.all(
+            userAllTransactions.formattedL1DepositResults.map(
+              async (tx: DepositTx) => {
+                const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
+                  return l2tx.nonce === Number(tx.messageNonce);
+                });
+
+                if (l2tx.length > 0) {
+                  const l2BlockNum = l2tx[0].blockNumber;
+                  const l2Block = await l2Pro.getBlock(l2BlockNum);
+                  const l2timestamp = await l2Block.timestamp;
+                  const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+                  const l1timeStamp = l1Block.timestamp;
+                  let txCopy = {
+                    ...tx,
+                    l2timeStamp: l2timestamp,
+                    l1timeStamp: l1timeStamp,
+                    l1Block: l1Block,
+                    l2txHash: l2tx[0].transactionHash,
+                    l1txHash: tx.transactionHash,
+                  };
+                  return txCopy;
+                } else {
+                  const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+                  const l1timeStamp = l1Block.timestamp;
+                  let txCopy = {
+                    ...tx,
+                    l1timeStamp: l1timeStamp,
+                    l1txHash: tx.transactionHash,
+                  };
+                  return txCopy;
+                }
               }
-            }
-          )
-        );        
-        const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
+            )
+          );
+          const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
 
-
-        setTDataDeposit(txLogs);
-        const status =
-          txLogs.length === 0
-            ? "absent"
-            : txLogs.length > 0
-            ? "present"
-            : "loading";
-        setLoadingState(status);
+          setTDataDeposit(txLogs);
+          const status =
+            txLogs.length === 0
+              ? "absent"
+              : txLogs.length > 0
+              ? "present"
+              : "loading";
+          setLoadingState(status);
+        }
       }
-    }
-  }, [address, connectedChainId]);
+    },
+    [address, connectedChainId]
+  );
 
+  useEffect(() => {
+    fetchTransactions();
+    fetchDepositTransactions(true);
+    const xx = setInterval(() => {
+      fetchTransactions();
+      fetchDepositTransactions(false);
+    }, 3000);
 
+    return () => clearInterval(xx);
+  }, [address, layer, connectedChainId, crossMessenger]);
 
   const allTxs =
     layer == "L1"
@@ -414,24 +429,5 @@ export default function useGetTransaction() {
               Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
           );
 
-
-  useEffect(() => {
-    fetchTransactions();
-    fetchDepositTransactions(true);
-    const xx = setInterval(() => {
-      fetchTransactions();
-      fetchDepositTransactions(false);
-    }, 12000);
-
-   
-
-    return () => clearInterval(xx);
-  }, [address, layer, connectedChainId,crossMessenger]);
-
-
-  useEffect(() => {
-    console.log('depositTxs',allTxs);
-    
-  },[allTxs])
   return { depositTxs: allTxs, loadingState: loadingState };
 }
