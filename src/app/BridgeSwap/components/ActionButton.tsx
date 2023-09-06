@@ -18,6 +18,8 @@ import {
   confirmWithdrawData,
 } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
+import { bannerStatus } from "@/recoil/bridgeSwap/atom";
+import { useInOutNetwork } from "@/hooks/network";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -29,11 +31,16 @@ export default function ActionButton() {
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const { isPending } = useTransaction();
-  const { outToken } = useInOutTokens();
+  const { outToken, outTokenInfo } = useInOutTokens();
   const { isTONatPair } = useIsTon();
+  const status = useRecoilValue(bannerStatus);
+  const { inNetwork, outNetwork } = useInOutNetwork();
 
   const needToOpenModal = mode === "Deposit" || mode === "Swap";
   const needToOpenWithdrawModal = mode === "Withdraw";
+
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
+  const deactivateButton = status === "Active" && isL2;
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -46,7 +53,8 @@ export default function ActionButton() {
         isPending ||
         (mode === "Swap" && outToken === null) ||
         isInputZero ||
-        (mode === "Swap" && isTONatPair);
+        (mode === "Swap" && isTONatPair) ||
+        deactivateButton;
       setIsDisabled(disabled);
     }, 200);
 
@@ -101,7 +109,11 @@ export default function ActionButton() {
         ? null
         : isConnected && mode === null
         ? "Select Network"
-        : mode}
+        : mode?.replaceAll("ETH-", "")}{" "}
+      <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
+        {deactivateButton ? "(Service under maintenance)" : ""}
+        {/* {'(Service under maintenance)'} */}
+      </span>
     </Button>
   );
 }

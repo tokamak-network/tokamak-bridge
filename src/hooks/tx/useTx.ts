@@ -155,30 +155,26 @@ export function useTx(params: {
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
-  const { connectedChainId } = useConnectedNetwork();
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setIsAccountDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
-  const { mode } = useGetMode();
+
+  const { connectedChainId } = useConnectedNetwork();
+  const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
+    if (connectedChainId !== exChainId) return setExChainId(connectedChainId);
     if (isLoading) {
       return setTxPending(true);
     }
-
     return setTxPending(false);
-  }, [isLoading]);
+  }, [isLoading, connectedChainId]);
 
   useEffect(() => {
-    if (isSuccess) {
-      if (mode === "Deposit" || mode === "Withdraw") {
-        setIsAccountDrawerOpen(true);
-      }
-      return setModalOpen("confirmed");
-    }
+    if (isSuccess) return setModalOpen("confirmed");
   }, [isSuccess]);
 
   useEffect(() => {

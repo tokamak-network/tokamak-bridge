@@ -32,7 +32,7 @@ export default function InToken() {
             fontWeight={"semibold"}
             pos={"absolute"}
           >
-            {mode}
+            {mode.replaceAll("ETH-", "")}
           </Text>
         )}
       </Flex>

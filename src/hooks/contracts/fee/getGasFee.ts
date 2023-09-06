@@ -21,6 +21,7 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
+import useTokenBalance from "../balance/useTokenBalance";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -56,14 +57,23 @@ export function useGasFee() {
     L2BridgeAbi,
     l2Pro
   );
+  const tokenData = useTokenBalance(inToken);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
-      if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
+      if (
+        inToken &&
+        inToken.amountBN &&
+        inNetwork &&
+        outNetwork &&
+        address &&
+        tokenData?.data.balanceBN.value
+      ) {
         const isETH = inToken.isNativeCurrency?.includes(
           SupportedChainId.MAINNET || SupportedChainId.GOERLI
         );
-        const parsedAmount = inToken.amountBN;
+        // const parsedAmount = inToken.amountBN;
+        const parsedAmount = tokenData?.data.balanceBN.value;
 
         switch (mode) {
           case "Swap":
@@ -207,6 +217,7 @@ export function useGasFee() {
     feeData,
     l2Prov,
     swapGasUseEstimate,
+    tokenData?.data.balanceBN.value,
   ]);
 
   const gasCostUS = useMemo(() => {

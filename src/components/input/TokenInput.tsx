@@ -1,4 +1,5 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -10,11 +11,12 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
+import { isETH } from "@/utils/token/isETH";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import JSBI from "jsbi";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
 
 export default function TokenInput(props: {
@@ -112,25 +114,35 @@ export default function TokenInput(props: {
     }
   };
 
-  const inputRef = useRef(null);
+  const { totalGasCost } = useGasFee();
 
   const onMax = useCallback(() => {
     if (isDisabled) return null;
     if (tokenData) {
       if (inToken && selectedInToken) {
-        if (mode === "Pool") {
-          setSelectedInToken({
+        if (isETH(selectedInToken)) {
+          // if (!totalGasCost) return;
+          const parsedAmount =
+            Number(
+              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
+            ) -
+            Number(totalGasCost ?? 0.001) -
+            (mode === "Withdraw" ? 0.00025 : 0);
+
+          const isMinus = parsedAmount <= 0;
+
+          const amountBN = ethers.utils.parseUnits(
+            isMinus ? "0" : parsedAmount.toString(),
+            18
+          );
+
+          return setSelectedInToken({
             ...selectedInToken,
-            amountBN: tokenData.data.balanceBN.value,
-            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+            amountBN: amountBN.toBigInt(),
+            parsedAmount: isMinus ? "0" : parsedAmount.toString(),
           });
-          return setTimeout(() => {
-            //@ts-ignore
-            inputRef?.current?.focus();
-            //@ts-ignore
-            inputRef?.current?.blur();
-          }, 100);
         }
+
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -159,7 +171,14 @@ export default function TokenInput(props: {
       }
       return console.error("a input field not found");
     }
-  }, [tokenData, inToken, selectedInToken, mode, isDisabled]);
+  }, [
+    tokenData,
+    inToken,
+    selectedInToken,
+    selectedOutToken,
+    totalGasCost,
+    mode,
+  ]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -217,7 +236,10 @@ export default function TokenInput(props: {
 
   const valueProp = useMemo(() => {
     if (
-      (mode === "Wrap" || mode === "Unwrap") &&
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
       inTokenFromHook?.parsedAmount
     ) {
       return inTokenFromHook.parsedAmount;

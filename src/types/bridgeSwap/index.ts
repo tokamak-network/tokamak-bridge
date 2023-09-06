@@ -7,6 +7,8 @@ export type ActionMode =
   | "Pool"
   | "Wrap"
   | "Unwrap"
+  | "ETH-Wrap"
+  | "ETH-Unwrap"
   | null;
 export type InOutNetworks = {
   inNetwork: SupportedChainProperties | null;

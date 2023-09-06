@@ -6,6 +6,20 @@ import { ethers } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { loadingStatus } from "./isLoading";
+import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+
+import {
+  addWeeks,
+  getISODay,
+  format,
+  startOfWeek,
+  addDays,
+  add,
+  getTime,
+} from "date-fns";
+import { isETH } from "@/utils/token/isETH";
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -51,6 +65,77 @@ export const selectedOutTokenStatus = atom<SelectedToken | null>({
   default: null,
 });
 
+type Banner = "Pending" | "Active" | "Hidden";
+
+export const bannerStatus = atom<Banner>({
+  key: "bannerStatus",
+  default: "Hidden",
+});
+
+export const relayBannerStatus = atom<Banner>({
+  key: "relayBannerStatus",
+  default: "Hidden",
+});
+
+export const relayBannerSelector = selector<{
+  previewTimeStartThisWeek: number;
+}>({
+  key: "relayBannerSelector",
+  get: ({ get }) => {
+    
+      const today = new Date();
+      // const currentISODay = getISODay(today);
+      // const nowTime = getTime(today);
+      // const desiredDateThisWeek = addDays(weekStart, 3);
+      const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      const uTCTime = zonedTimeToUtc(today, "Asia/Seoul");
+      const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
+    return {
+      previewTimeStartThisWeek: getTime(zoneTime),
+    };
+  },
+});
+
+export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
+  key: "bannerSelector",
+  get: ({ get }) => {
+    const status = get(bannerStatus);
+    const dayINeed = 4; // Thursday (ISO weekday 4)
+    const network = get(networkStatus);
+    const isTestnet =
+      network.inNetwork?.chainId === SupportedChainId["GOERLI"] ||
+      network.inNetwork?.chainId === SupportedChainId["DARIUS"] ||
+      network.outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+      network.outNetwork?.chainId === SupportedChainId["DARIUS"];
+    const today = new Date();
+    const currentISODay = getISODay(today);
+    const nowTime = getTime(today);
+    // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
+    const weekStart = startOfWeek(today);
+    const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
+    //  const desiredDateThisWeek = addWeeks(addDays(weekStart, 3),1)
+    const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const previewTimeStartThisWeek =
+      isTestnet === true
+        ? add(desiredDateThisWeek, {
+            hours: 17,
+            minutes: 30,
+            seconds: 0,
+          })
+        : add(desiredDateThisWeek, {
+            hours: 18,
+            minutes: 0,
+            seconds: 0,
+          });
+
+    const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
+    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
+    return {
+      previewTimeStartThisWeek: getTime(zoneTime),
+    };
+  },
+});
+
 export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
   key: "inTokenSeletor",
   get: ({ get }) => {
@@ -92,6 +177,13 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
           outTokenStatus?.address === supportedTokens[2].address,
       ];
 
+      const isETHWrap = [
+        isETH(inTokenStatus) &&
+          outTokenStatus?.address === supportedTokens[1].address,
+        inTokenStatus?.address === supportedTokens[1].address &&
+          isETH(outTokenStatus),
+      ];
+
       if (isWrap.includes(true) && network.inNetwork === network.outNetwork) {
         if (isWrap[0]) {
           return {
@@ -102,6 +194,24 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
         if (isWrap[1]) {
           return {
             mode: "Unwrap",
+            isReady: isInTokenReady,
+          };
+        }
+      }
+
+      if (
+        isETHWrap.includes(true) &&
+        network.inNetwork === network.outNetwork
+      ) {
+        if (isETHWrap[0]) {
+          return {
+            mode: "ETH-Wrap",
+            isReady: isInTokenReady,
+          };
+        }
+        if (isETHWrap[1]) {
+          return {
+            mode: "ETH-Unwrap",
             isReady: isInTokenReady,
           };
         }

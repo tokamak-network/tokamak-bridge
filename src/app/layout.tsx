@@ -3,7 +3,8 @@
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
 import { RecoilRoot } from "recoil";
-// import HistoryDrawer from "@/components/history/Drawer";
+import Header from "@/components/header/Index";
+import HistoryDrawer from "@/components/history/Drawer";
 
 import "css/scrollbar.css";
 import Modals from "./Modals";
@@ -11,7 +12,11 @@ import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
-// import AccountHistory from "@/components/history/AccountHistory";
+import Script from "next/script";
+
+//New build
+//Sep 5, 2023
+
 export const GlobalComponents = () => {
   return (
     <>
@@ -27,22 +32,39 @@ export const HeadMeta = () => {
       <title>Tokamak Bridge</title>
       <meta property="og:type" content="website" />
       <meta property="og:url" content="https://bridge.tokamak.network" />
-      <meta property="title" content="Tokamak Bridge - dev" />
-      <meta property="og:title" content="Tokamak Bridge - dev" />
+      <meta property="og:title" content="Tokamak Bridge" />
       <meta
         name="viewport"
         content="width=device-width,user-scalable=no,initial-scale=1,shrink-to-fit=n"
       />
       <meta
         name="description"
-        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+        content="Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
       ></meta>
       <meta
-        name="og:description"
-        content=" Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
+        property="og:description"
+        content="Tokamak Bridge offers a unified bridge and swap experience between Ethereum and Titan Network."
       ></meta>
+      <meta name="keywords" content="tokamak bridge titan swap pool" />
       <link rel="icon" href="/favicon.ico" />
     </head>
+  );
+};
+
+const GoogleAnalyticsScript = () => {
+  return (
+    <>
+      <Script
+        async
+        src="https://www.googletagmanager.com/gtag/js?id=G-DVJG6CWTNM"
+      ></Script>
+      <Script>
+        {`window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-DVJG6CWTNM');`}
+      </Script>
+    </>
   );
 };
 
@@ -54,6 +76,7 @@ export default function RootLayout({
   const queryClient = getQueryClient();
   return (
     <html lang="en">
+      <GoogleAnalyticsScript />
       <HeadMeta />
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRoot>
