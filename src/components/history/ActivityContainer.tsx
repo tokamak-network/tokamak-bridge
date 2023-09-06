@@ -234,6 +234,19 @@ export default function ActivityContainer(props: {
         overflowX={"hidden"}
         rowGap={"8px"}
         h={"calc(100vh - 300px)"}
+        css={{
+          "&::-webkit-scrollbar": {
+            width: "6px",
+          },
+          "::-webkit-scrollbar-track": {
+            background: "transparent",
+            borderRadius: "4px",
+          },
+          "::-webkit-scrollbar-thumb": {
+            background: "#343741",
+            borderRadius: "3px",
+          },
+        }}
       >
         {txes}
       </Flex>

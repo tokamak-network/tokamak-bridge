@@ -412,7 +412,7 @@ export default function ConfirmWithdraw() {
 
     useEffect(() => {
       if (feeData && tokenMarketPrice) {
-        const gasLimit = 1000000;
+        const gasLimit = 600000;
         const { gasPrice } = feeData;
         const gasCost = gasLimit * Number(gasPrice);
         const parsedTotalGasCost = ethers.utils.formatUnits(
