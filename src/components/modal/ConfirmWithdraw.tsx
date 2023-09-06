@@ -9,6 +9,7 @@ import {
   Button,
   useDisclosure,
   Checkbox,
+  Td,
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import CloseButton from "../button/CloseButton";
@@ -29,7 +30,6 @@ import { TokenSymbol } from "../image/TokenSymbol";
 import { useState, useEffect, useMemo } from "react";
 import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
 import commafy from "@/utils/trim/commafy";
-import Step2 from "../history/modalComponents/Step2";
 import {
   add,
   getTime,
@@ -56,7 +56,8 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { FullWithTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
-import { confirmWithdrawData,confirmWithdrawStats} from "@/recoil/modal/atom";
+import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
+import useGetTransaction from "@/hooks/user/useGetTransaction";
 
 type TxType = FullWithTx & {
   inTokenAmount: string;
@@ -65,7 +66,8 @@ type TxType = FullWithTx & {
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
 
   const [, setClaimTx] = useRecoilState(claimTx);
   const providers = useGetTxLayers();
@@ -79,10 +81,12 @@ export default function ConfirmWithdraw() {
     useConnectedNetwork();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const [txData, setTxData] = useRecoilState(txDataStatus);
+  const tData = useGetTransaction();
 
   const { data: feeData } = useFeeData({
     chainId: 1,
-  });  
+  });
+
 
   const check = (progress: string) => {
     switch (progress) {
@@ -272,62 +276,73 @@ export default function ConfirmWithdraw() {
     );
   };
 
-  // const Step2 = (props: { tx:any,progress: string; timeStamp?: number }) => {
-  //   const { timeStamp,tx } = props;
-  //   const [duration, setDuration] = useState("0");
+  const Step2 = (props: { tx: any; progress: string; timeStamp?: number }) => {
+    const { timeStamp, tx } = props;
+    const [duration, setDuration] = useState("0");
 
-  //   useEffect(() => {
-  //     if (timeStamp) {
-  //       const getDuration = setInterval(() => {
-  //         const startDate = new Date(timeStamp * 1000);
-  //         const currentTime = new Date();
-  //         const elapsedTimeInSeconds = differenceInSeconds(
-  //           currentTime,
-  //           startDate
-  //         );
-  //         const formattedTime = format(
-  //           new Date(elapsedTimeInSeconds * 1000),
-  //           "mm:ss"
-  //         );
-  //         setDuration(formattedTime);
-  //       }, 1000);
-  //       return () => clearInterval(getDuration);
-  //     }
-  //   }, []);
-  //   // const elapsedTimeInSeconds = differenceInSeconds(currentTime, startTime);
+    const getTx = useMemo(() => {
+      return (
+        tx &&
+        tData.depositTxs.filter((tdTx: any) => tdTx.l2txHash === tx.l2txHash)[0]
+      );
+    }, [tData, tx]);
 
-  //   // // Format the elapsed time as hours, minutes, and seconds
-  //   // const formattedTime = format(new Date(elapsedTimeInSeconds * 1000), 'HH:mm:ss');
+    const progress = !getTx
+      ? "todo"
+      : getTx.currentStatus === 2
+      ? "inProgress"
+      : getTx.currentStatus > 2
+      ? "done"
+      : "todo";
 
-  //   return (
-  //     <Flex
-  //       h="36px"
-  //       justifyContent={"space-between"}
-  //       alignItems={"center"}
-  //       // border={"1px solid red"}
-  //       w="100%"
-  //     >
-  //       <Flex>
-  //         <Image src={check(props.progress).check} alt="check" />
-  //         <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-  //           Wait {isConnectedToMainNetwork ? "11" : "2"} min for rollup
-  //         </Text>
-  //       </Flex>
-  //       {props.progress !== "done" && (
-  //         <Flex>
-  //           <Text
-  //             mr="6px"
-  //             fontSize={"14px"}
-  //             color={check(props.progress).color}
-  //           >
-  //             {"~ "}
-  //             {tx ? duration : isConnectedToMainNetwork ? "~11 min" : "~2 min"}
-  //           </Text>
-  //         </Flex>
-  //       )}
-  //     </Flex>
-  //   );
-  // };
+    useEffect(() => {
+      if (getTx && getTx.l2timeStamp) {
+        const getDuration = setInterval(() => {
+          const startDate = new Date(getTx.l2timeStamp * 1000);
+          const currentTime = new Date();
+          const elapsedTimeInSeconds = differenceInSeconds(
+            currentTime,
+            startDate
+          );
+          const formattedTime = format(
+            new Date(elapsedTimeInSeconds * 1000),
+            "mm:ss"
+          );
+          setDuration(formattedTime);
+        }, 1000);
+        return () => clearInterval(getDuration);
+      }
+    }, []);
+    // const elapsedTimeInSeconds = differenceInSeconds(currentTime, startTime);
+
+    // // Format the elapsed time as hours, minutes, and seconds
+    // const formattedTime = format(new Date(elapsedTimeInSeconds * 1000), 'HH:mm:ss');
+
+    return (
+      <Flex
+        h="36px"
+        justifyContent={"space-between"}
+        alignItems={"center"}
+        // border={"1px solid red"}
+        w="100%"
+      >
+        <Flex>
+          <Image src={check(progress).check} alt="check" />
+          <Text ml="8px" fontSize={"14px"} color={check(progress).color}>
+            Wait {isConnectedToMainNetwork ? "11" : "2"} min for rollup
+          </Text>
+        </Flex>
+        {progress !== "done" && (
+          <Flex>
+            <Text mr="6px" fontSize={"14px"} color={check(progress).color}>
+              {"~ "}
+              {tx ? duration : isConnectedToMainNetwork ? "~11 min" : "~2 min"}
+            </Text>
+          </Flex>
+        )}
+      </Flex>
+    );
+  };
 
   const Step3 = (props: { progress: string; timeStamp: number }) => {
     const [duration, setDuration] = useState<Duration>({
@@ -339,12 +354,27 @@ export default function ConfirmWithdraw() {
       years: 0,
     });
 
+    const getTx = useMemo(() => {
+      return (
+        tx &&
+        tData.depositTxs.filter((tdTx: any) => tdTx.l2txHash === tx.l2txHash)[0]
+      );
+    }, [tData, tx]);
+
+    const progress = !getTx
+      ? "todo"
+      : getTx.currentStatus === 4
+      ? "inProgress"
+      : getTx.currentStatus > 4
+      ? "done"
+      : "todo";
+
     useEffect(() => {
-      if (props.timeStamp) {
+      if (getTx &&  getTx.timeReadyForRelay) {
         const intervalID = setInterval(() => {
           const nowTime = getUnixTime(new Date());
 
-          if (nowTime > props.timeStamp) {
+          if (nowTime > getTx.timeReadyForRelay) {
             setDuration({
               days: 0,
               hours: 0,
@@ -356,7 +386,7 @@ export default function ConfirmWithdraw() {
           } else {
             setDuration(
               intervalToDuration({
-                start: getTime(props.timeStamp * 1000),
+                start: getTime(getTx.timeReadyForRelay * 1000),
                 end: getTime(nowTime * 1000),
               })
             );
@@ -364,7 +394,7 @@ export default function ConfirmWithdraw() {
         }, 1000);
         return () => clearInterval(intervalID);
       }
-    }, [props.timeStamp]);
+    }, [getTx]);
 
     return (
       <Flex
@@ -375,18 +405,14 @@ export default function ConfirmWithdraw() {
         w="100%"
       >
         <Flex>
-          <Image src={check(props.progress).check} alt="check" />
-          <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
+          <Image src={check(progress).check} alt="check" />
+          <Text ml="8px" fontSize={"14px"} color={check(progress).color}>
             Wait 7 days
           </Text>
         </Flex>
-        {tx && props.progress === "inProgress" && (
+        {tx && progress === "inProgress" && (
           <Flex>
-            <Text
-              mr="6px"
-              fontSize={"14px"}
-              color={check(props.progress).color}
-            >
+            <Text mr="6px" fontSize={"14px"} color={check(progress).color}>
               {" "}
               {duration.days !== undefined && duration.days < 10 ? "0" : ""}
               {duration.days}:
@@ -520,7 +546,7 @@ export default function ConfirmWithdraw() {
               ? "done"
               : "todo"
           }
-   
+          tx={tx}
           timeStamp={tx ? tx.l2timeStamp : undefined}
         />
         <Dots
@@ -660,9 +686,8 @@ export default function ConfirmWithdraw() {
           !tx
             ? () => {
                 onClick();
-                setWithdrawStatus({ isOpen: false,})
+                setWithdrawStatus({ isOpen: false });
                 setWithdrawData({
-                
                   modalData: null,
                 });
               }
@@ -699,9 +724,8 @@ export default function ConfirmWithdraw() {
                   // setClaimTx(null)
                   setWithdrawStatus({
                     isOpen: false,
-                  })
+                  });
                   setWithdrawData({
-                   
                     modalData: null,
                   });
                 }}
