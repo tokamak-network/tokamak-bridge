@@ -47,8 +47,7 @@ type SelectOption = {
   networkImage: any;
 };
 
-export default function AccountHistory(props: { tData: tData }) {
-  const { tData } = props;
+export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
   const toast = useToast();
@@ -117,7 +116,7 @@ export default function AccountHistory(props: { tData: tData }) {
           ) : (
             <ActivityContainer network={selectedNetwork} />
           )} */}
-          <ActivityContainer network={selectedNetwork} tData={tData} />
+          <ActivityContainer network={selectedNetwork} />
         </Flex>
         <Flex
           pos={"absolute"}

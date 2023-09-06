@@ -5,11 +5,11 @@ import { useAccount } from "wagmi";
 import { tData } from "@/types/activity/history";
 
 export default function Drawers() {
-  const tData = useGetTransaction();
+  // const tData = useGetTransaction();
 
-  const data = useMemo(() => {
-    return tData
-  },[tData])
+  // const data = useMemo(() => {
+  //   return tData
+  // },[tData])
 
-  return <AccountHistory tData={data} />;
+  return <AccountHistory />;
 }

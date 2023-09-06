@@ -17,6 +17,7 @@ import { useAccount } from "wagmi";
 import { L1TxType, Erc20Type, EthType } from "@/types/activity/history";
 import HalfLoadingTx from "./HalfLoadingTx";
 import { transactionData } from "@/recoil/global/transaction";
+import useGetTransaction from "@/hooks/user/useGetTransaction";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -28,9 +29,9 @@ type SelectOption = {
 
 export default function ActivityContainer(props: {
   network: SelectOption;
-  tData: tData;
+  
 }) {
-  const { network, tData } = props;
+  const { network } = props;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const [preLoadData, setPreLoadData] = useState<L1TxType[]>([]);
@@ -39,7 +40,8 @@ export default function ActivityContainer(props: {
   const searchTxString = useRecoilValue(searchTxStatus);
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [txnData, setTxnData] = useRecoilState(transactionData);
-
+  const tData = useGetTransaction();
+  
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
