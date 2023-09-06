@@ -1,3 +1,5 @@
+import { Bound } from "./pool";
+
 export interface ZoomLevels {
   initialMin: number;
   initialMax: number;
