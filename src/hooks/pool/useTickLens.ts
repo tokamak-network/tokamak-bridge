@@ -6,6 +6,7 @@ export function useTickLens(): TickLens | null {
   const { connectedChainId: chainId } = useConnectedNetwork();
   const address = chainId ? TICK_LENS_ADDRESSES[chainId] : undefined;
 
+  return null;
   //here to return TICKLENS_CONTRACT to each network
   //   return useContract(address, TickLensABI) as TickLens | null;
 }
