@@ -16,8 +16,9 @@ import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import JSBI from "jsbi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState ,useRef} from "react";
 import { useRecoilState } from "recoil";
+import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -115,6 +116,7 @@ export default function TokenInput(props: {
   };
 
   const { totalGasCost } = useGasFee();
+  const inputRef = useRef(null);
 
   const onMax = useCallback(() => {
     if (isDisabled) return null;

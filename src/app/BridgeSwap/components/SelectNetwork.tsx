@@ -9,7 +9,7 @@ export default function SelectNetwork() {
     
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={false} height="32px"/>
+        <NetworkDropdown inNetwork={false} height="32px" width={"200px"}/>
       </Box>
     );
   }, []);
