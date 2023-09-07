@@ -32,3 +32,13 @@ export function getProvider(inNetwork: SupportedChainProperties | null) {
   }
   return providers[inNetwork.chainName];
 }
+
+export const providerByChainId: Record<
+  number,
+  ethers.providers.JsonRpcProvider
+> = {
+  [SupportedChainId.MAINNET]: EthereumProvider,
+  [SupportedChainId.GOERLI]: GoerliProvider,
+  [SupportedChainId.TITAN]: TitanProvider,
+  [SupportedChainId.DARIUS]: TitanGoerliProvider,
+};

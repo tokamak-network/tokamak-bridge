@@ -33,5 +33,11 @@ export function useUniswapContracts() {
       ? L2_TESTNET_UniswapContracts
       : L1_UniswapContracts;
 
-  return { UNISWAP_CONTRACT, QUOTER_CONTRACT, UNISWAP_CONTRACT_OTHER_LAYER };
+  return {
+    UNISWAP_CONTRACT,
+    QUOTER_CONTRACT,
+    UNISWAP_CONTRACT_OTHER_LAYER,
+    L1_UniswapContracts,
+    L2_UniswapContracts,
+  };
 }

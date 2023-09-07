@@ -14,14 +14,15 @@ import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/I
 import { Token } from "@uniswap/sdk-core";
 import ERC20_ABI from "@/abis/erc20.json";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   ATOM_positions,
+  ATOM_positionForInfo,
   ATOM_positions_loading,
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
-import { getWETHAddress } from "@/utils/token/isETH";
+import { getWETHAddress, getWETHAddressByChainId } from "@/utils/token/isETH";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
@@ -29,19 +30,24 @@ import { sortPositions } from "@/utils/pool/sortPositions";
 import { Hash } from "viem";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
-import { supportedChain } from "@/types/network/supportedNetwork";
+import {
+  SupportedChainId,
+  supportedChain,
+} from "@/types/network/supportedNetwork";
 import { GET_POSITIONS } from "@/graphql/data/queries";
 import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
-import { getProvider } from "@/config/getProvider";
+import { getProvider, providerByChainId } from "@/config/getProvider";
+import { supportedTokens } from "@/types/token/supportedToken";
 
 //logic through subGraph
 export function useGetPositionIds(): {
   positions: PoolCardDetail[] | undefined;
 } {
   const { address } = useAccount();
-  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
+  const { connectedChainId, otherLayerChainInfo, isSupportedChain } =
+    useConnectedNetwork();
 
   const client = connectedChainId
     ? subgraphApolloClients[connectedChainId]
@@ -70,9 +76,11 @@ export function useGetPositionIds(): {
 
   const makePositionDatas = useCallback(
     async (positionData: any[], chainId: number) => {
+      const positions: PoolCardDetail[] = [];
+      if (!isSupportedChain) return positions;
+
       const batchSize = positionData.length;
       const promises: any[] = [];
-      const positions: PoolCardDetail[] = [];
 
       for (let i = 0; i < batchSize; i++) {
         promises.push(async () => {
@@ -267,44 +275,37 @@ export function useGetPositionIds(): {
 }
 
 //logic through contract calls
-export function useGetPositionById(positionId?: number) {
+export function useGetPositionById(positionId: number, chainId: number) {
   const { provider, otherLayerProvider } = useProvier();
-  const { UNISWAP_CONTRACT } = useContract();
-  const { UNISWAP_CONTRACT_OTHER_LAYER } = useUniswapContracts();
+  const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
   const { address } = useAccount();
   const { blockNumber } = useBlockNum();
-  const {
-    layer,
-    connectedChainId,
-    chainName,
-    otherLayerChainInfo,
-    isSupportedChain,
-  } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
+  const isL1 =
+    chainId === SupportedChainId["MAINNET"] ||
+    chainId === SupportedChainId["GOERLI"];
+  const isL2 =
+    chainId === SupportedChainId["TITAN"] ||
+    chainId === SupportedChainId["DARIUS"];
+  const UNISWAP_CONTRACT = isL1 ? L1_UniswapContracts : L2_UniswapContracts;
+
+  const providerForInfo = useMemo(() => {
+    if (connectedChainId === chainId) {
+      return provider;
+    }
+    return providerByChainId[chainId];
+  }, [provider, connectedChainId, chainId]);
 
   const [positions, setPositions] = useRecoilState<
     PoolCardDetail[] | undefined
-  >(ATOM_positions);
+  >(ATOM_positionForInfo);
 
   const callPositionIds = useCallback(
-    async (otherLayer?: boolean, positionTokenId?: number) => {
-      if (!isSupportedChain) {
-        return setPositions(undefined);
-      }
-      if (
-        address &&
-        connectedChainId &&
-        provider &&
-        chainName &&
-        otherLayerProvider &&
-        otherLayerChainInfo
-      ) {
-        const _provider = otherLayer ? otherLayerProvider : provider;
-        const _otherLayerChainId = otherLayerChainInfo.chainId;
-
+    async (positionTokenId: number) => {
+      if (providerForInfo && chainId && positionTokenId) {
+        const _provider = providerForInfo;
         const NonfungiblePositionManagerContract = new ethers.Contract(
-          otherLayer
-            ? UNISWAP_CONTRACT_OTHER_LAYER.NONFUNGIBLE_POSITION_MANAGER
-            : UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
           NONFUNGIBLE_POSITION_MANAGER_ABI,
           _provider
         );
@@ -316,7 +317,6 @@ export function useGetPositionById(positionId?: number) {
         const positions: PoolCardDetail[] = [];
         // const batchSize = positionTokenId ? 1 : balance;
         const promises: any[] = [];
-
         promises.push(async () => {
           const owner = await NonfungiblePositionManagerContract.ownerOf(
             positionTokenId
@@ -355,27 +355,29 @@ export function useGetPositionById(positionId?: number) {
             token1Contract.decimals(),
           ]);
 
+          const tokenA = new Token(
+            chainId,
+            token0,
+            token0Decimals,
+            token0Symbol,
+            token0Name
+          );
+          const tokenB = new Token(
+            chainId,
+            token1,
+            token1Decimals,
+            token1Symbol,
+            token1Name
+          );
+
           const currentPoolAddress = computePoolAddress({
-            factoryAddress: otherLayer
-              ? UNISWAP_CONTRACT_OTHER_LAYER.POOL_FACTORY_CONTRACT_ADDRESS
-              : UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-            tokenA: new Token(
-              otherLayer ? _otherLayerChainId : connectedChainId,
-              token0,
-              token0Decimals
-            ),
-            tokenB: new Token(
-              otherLayer ? _otherLayerChainId : connectedChainId,
-              token1,
-              token1Decimals
-            ),
+            factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
+            tokenA,
+            tokenB,
             fee,
-            initCodeHashManualOverride:
-              otherLayer && layer === "L1"
-                ? L2_initCodeHashManualOverride
-                : !otherLayer && layer === "L2"
-                ? L2_initCodeHashManualOverride
-                : undefined,
+            initCodeHashManualOverride: isL2
+              ? L2_initCodeHashManualOverride
+              : undefined,
           });
 
           const POOL_CONTRACT = new ethers.Contract(
@@ -392,7 +394,7 @@ export function useGetPositionById(positionId?: number) {
           const earningFee =
             await NonfungiblePositionManagerContract.callStatic.collect({
               tokenId: positionId,
-              recipient: address,
+              recipient: owner,
               amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
               amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
             });
@@ -434,7 +436,7 @@ export function useGetPositionById(positionId?: number) {
                 token1Decimals
               );
 
-          const WETH_ADDRESS = getWETHAddress(chainName);
+          const WETH_ADDRESS = getWETHAddressByChainId(chainId);
           const token0IsNative =
             WETH_ADDRESS.toLowerCase() === token0.toLowerCase();
           const token1IsNative =
@@ -455,20 +457,8 @@ export function useGetPositionById(positionId?: number) {
           positions.push({
             id: positionId,
             fee,
-            token0: new Token(
-              otherLayer ? _otherLayerChainId : connectedChainId,
-              token0,
-              token0Decimals,
-              token0Symbol === "WETH" ? "ETH" : token0Symbol,
-              token0Name
-            ),
-            token1: new Token(
-              otherLayer ? _otherLayerChainId : connectedChainId,
-              token1,
-              token1Decimals,
-              token1Symbol === "WETH" ? "ETH" : token1Symbol,
-              token1Name
-            ),
+            token0: tokenA,
+            token1: tokenB,
             token0Amount: Number(token0Amount),
             token1Amount: Number(token1Amount),
             token0CollectedFee,
@@ -489,7 +479,7 @@ export function useGetPositionById(positionId?: number) {
             token0FeeValue,
             token1FeeValue,
             feeValue: isNaN(feeValue) ? 0 : feeValue,
-            chainId: otherLayer ? _otherLayerChainId : connectedChainId,
+            chainId,
             owner,
           });
         });
@@ -498,22 +488,13 @@ export function useGetPositionById(positionId?: number) {
       }
       return undefined;
     },
-    [
-      UNISWAP_CONTRACT,
-      address,
-      provider,
-      otherLayerProvider,
-      chainName,
-      UNISWAP_CONTRACT_OTHER_LAYER,
-      otherLayerChainInfo,
-      isSupportedChain,
-    ]
+    [UNISWAP_CONTRACT, isL2, providerForInfo, chainId]
   );
 
   const txLog = useRecoilValue(txHashLog);
   useEffect(() => {
     const fetchPositionIds = async () => {
-      const result = await callPositionIds(false, positionId);
+      const result = await callPositionIds(positionId);
       try {
         if (result) {
           return setPositions(result);
@@ -522,8 +503,8 @@ export function useGetPositionById(positionId?: number) {
       } catch (e) {}
     };
     fetchPositionIds().catch((e) => {
-      // console.log("**fetchPositionIds err**");
-      // console.log(e);
+      console.log("**fetchPositionIds err**");
+      console.log(e);
     });
   }, [blockNumber, connectedChainId, address, txLog, positionId]);
 
@@ -534,12 +515,18 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
-  return { positionId };
+  const searchParams = useSearchParams();
+  const chainIdParam = searchParams.get("chainId");
+
+  return { positionId, chainIdParam };
 }
 
 export function usePositionInfo() {
-  const { positionId } = useGetPositionIdFromPath();
-  const { positions } = useGetPositionById(Number(positionId));
+  const { positionId, chainIdParam } = useGetPositionIdFromPath();
+  const { positions } = useGetPositionById(
+    Number(positionId),
+    Number(chainIdParam)
+  );
   const existingPositionInfo = positions ? positions[0] : undefined;
   const mintPositionInfo = useRecoilValue(poolModalProp);
   const { subMode } = useGetMode();
