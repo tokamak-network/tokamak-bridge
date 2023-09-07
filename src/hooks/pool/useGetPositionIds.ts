@@ -420,9 +420,6 @@ export function useGetPositionById(positionId?: number) {
                 }
               );
 
-          console.log("remainedTokens");
-          console.log(remainedTokens);
-
           const token0Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
@@ -525,9 +522,8 @@ export function useGetPositionById(positionId?: number) {
       } catch (e) {}
     };
     fetchPositionIds().catch((e) => {
-      console.log("**fetchPositionIds err**");
-      console.log(e);
-      // setPositionsLoading(false);
+      // console.log("**fetchPositionIds err**");
+      // console.log(e);
     });
   }, [blockNumber, connectedChainId, address, txLog, positionId]);
 

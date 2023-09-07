@@ -48,6 +48,7 @@ export default function ChartWrapper({
   onLeftRangeInput,
   onRightRangeInput,
   interactive,
+  disabled,
 }: {
   currencyA?: Currency;
   currencyB?: Currency;
@@ -59,6 +60,7 @@ export default function ChartWrapper({
   onLeftRangeInput: (typedValue: string) => void;
   onRightRangeInput: (typedValue: string) => void;
   interactive: boolean;
+  disabled: boolean;
 }) {
   const { invertPrice } = useV3MintInfo();
 
@@ -170,6 +172,7 @@ export default function ChartWrapper({
       onBrushDomainChange={onBrushDomainChangeEnded}
       zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
       ticksAtLimit={ticksAtLimit}
+      disabled={disabled}
     />
   );
 }

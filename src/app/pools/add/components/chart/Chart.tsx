@@ -24,6 +24,7 @@ export function Chart({
   brushLabels,
   onBrushDomainChange,
   zoomLevels,
+  disabled,
 }: LiquidityChartRangeInputProps) {
   const zoomRef = useRef<SVGRectElement | null>(null);
 
@@ -110,7 +111,7 @@ export function Chart({
         width="100%"
         height="100%"
         viewBox={`0 0 ${width} ${height}`}
-        style={{ overflow: "visible" }}
+        style={{ overflow: "visible", opacity: disabled ? 0.5 : 1 }}
       >
         <defs>
           <clipPath id={`${id}-chart-clip`}>

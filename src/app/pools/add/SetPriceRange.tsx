@@ -14,6 +14,7 @@ import ChartWrapper from "./components/ChartWrapper";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useRecoilState } from "recoil";
 import { maxPrice, minPrice } from "@/recoil/pool/setPoolPosition";
+import { TICK_SPACINGS } from "@uniswap/v3-sdk";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
@@ -31,12 +32,23 @@ export default function SetPriceRange() {
     noLiquidity,
     price: priceInfo,
     invertPrice,
+    fee,
+    ticks,
+    invalidRange,
   } = useV3MintInfo();
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
 
   //need to disabled interactive
   //when maxTick >= minTick
+  const interactive =
+    !noLiquidity ||
+    (fee &&
+    ticks["LOWER"] &&
+    ticks["LOWER"] + TICK_SPACINGS[fee] === ticks["UPPER"]
+      ? true
+      : false);
+  const disabled = invalidRange;
 
   return (
     <Flex
@@ -61,7 +73,8 @@ export default function SetPriceRange() {
         priceUpper={pricesAtTicks["UPPER"]}
         onLeftRangeInput={setMinPrice}
         onRightRangeInput={setMaxPrice}
-        interactive={!noLiquidity}
+        interactive={interactive}
+        disabled={disabled}
       />
       {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
         <Text textAlign={"center"} mt={"24px"} mb={"16px"}>
