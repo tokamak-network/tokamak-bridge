@@ -1,4 +1,3 @@
-import { transactionModalStatus } from "@/recoil/modal/atom";
 import {
   Modal,
   ModalOverlay,
@@ -13,7 +12,6 @@ import { useRecoilValue } from "recoil";
 import "@/css/spinner.css";
 import ConfirmedImage from "assets/image/modal/confirmed.svg";
 import ErrorImage from "assets/image/modal/error.svg";
-
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";

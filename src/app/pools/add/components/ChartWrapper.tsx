@@ -9,6 +9,12 @@ import { FeeAmount } from "@uniswap/v3-sdk";
 import { Bound } from "@/types/pool/pool";
 import { format } from "d3";
 import { ZoomLevels } from "@/types/pool/chart";
+import { Box } from "@chakra-ui/react";
+import "@/css/spinner.css";
+import SpinnerImage from "assets/image/spinner.svg";
+import UninitializedPoolImage from "assets/image/uninitializedPool.svg";
+
+import Image from "next/image";
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -35,6 +41,42 @@ const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
     min: 0.00001,
     max: 20,
   },
+};
+
+const UninitializedPool = () => {
+  return (
+    <Box
+      w={"100%"}
+      h={"180px"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      pos={"relative"}
+    >
+      <Image src={UninitializedPoolImage} alt={"UninitializedPoolImage"} />
+    </Box>
+  );
+};
+
+const LoadingSpinner = () => {
+  return (
+    <Box
+      w={"100%"}
+      h={"180px"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      pos={"relative"}
+    >
+      <Box
+        animation={"spinner 1.2s linear infinite"}
+        w={"40px"}
+        pos={"absolute"}
+        top={"80px"}
+        left={"165px"}
+      >
+        <Image src={SpinnerImage} alt={"SpinnerImage"} />
+      </Box>
+    </Box>
+  );
 };
 
 export default function ChartWrapper({
@@ -146,9 +188,9 @@ export default function ChartWrapper({
   const isUninitialized =
     !currencyA || !currencyB || (formattedData === undefined && !isLoading);
 
-  // if (isUninitialized) return
-  // if (isLoading) return
-  // if(error) return
+  if (isUninitialized) return null;
+  if (error) return <UninitializedPool />;
+  if (isLoading) return <LoadingSpinner />;
   if (!formattedData || formattedData.length === 0 || !price) return null;
   return (
     <Chart
@@ -161,8 +203,8 @@ export default function ChartWrapper({
         },
         brush: {
           handle: {
-            west: disabled ? "#fff" : "#2775FF",
-            east: disabled ? "#fff" : "#2775FF",
+            west: disabled ? "#8E8E92" : "#2775FF",
+            east: disabled ? "#8E8E92" : "#2775FF",
           },
         },
       }}
