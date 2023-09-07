@@ -136,7 +136,7 @@ export default function HalfLoadingTx(props: { tx: any }) {
       >
         <Flex justifyContent={"space-between"} w="100%">
           <Text fontSize={"14px"} fontWeight={600}>
-            Withdraw
+           {tx.event === 'withdraw'? 'Withdraw':'Deposit'}
           </Text>
           <Button
             w={tx?.currentStatus > 5 ? "72px" : "57px"}

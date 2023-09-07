@@ -62,8 +62,6 @@ export default function useGetTransaction() {
         ...userAllTransactions?.formattedWithdraw,
       ];
 
-      // setLoadingState(alltx.length > 0 ? "loading" : "absent");
-
       if (userAllTransactions !== undefined) {
         const l2WithdrawTxs = await Promise.all(
           userAllTransactions.formattedWithdraw.map(async (tx: L1TxType) => {
@@ -74,10 +72,10 @@ export default function useGetTransaction() {
             const currentStatus = await crossMessenger.getMessageStatus(
               resolved
             );
-
+            
             //no office node
 
-            const l2TxReceipt = await l2Pro.getTransaction(tx.transactionHash); //l2 tx receipt
+            const l2TxReceipt = await l2Pro.getTransactionReceipt(tx.transactionHash); //l2 tx receipt
 
             // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
             //if status is 4, rollup is finish and tx ready for challenge period
@@ -86,20 +84,17 @@ export default function useGetTransaction() {
               (currentStatus === 2 || currentStatus === 3) &&
               l2TxReceipt !== undefined
             ) {
-              const messageTxReceipt = await l2Pro.getTransactionReceipt(
-                resolved.transactionHash
-              );
               const logs = await ethers.utils.defaultAbiCoder.decode(
                 ["address", "uint256", "bytes"],
-                messageTxReceipt.logs[3].data
+                l2TxReceipt.logs[3].data
               );
               const l1Token = ethers.utils.defaultAbiCoder.decode(
                 ["address"],
-                messageTxReceipt.logs[3].topics[1]
+                l2TxReceipt.logs[3].topics[1]
               )[0];
               const l2Token = ethers.utils.defaultAbiCoder.decode(
                 ["address"],
-                messageTxReceipt.logs[3].topics[2]
+                l2TxReceipt.logs[3].topics[2]
               )[0];
               const amnt = BigInt(logs[1]).toString();
 
@@ -118,21 +113,11 @@ export default function useGetTransaction() {
               return copy;
             }
 
-            // if current status is 4, then tx is in challenge period
             else if (
               currentStatus === 4 &&
               l2TxReceipt.blockNumber !== undefined
             ) {
-              const messageTxIndex = l2TxReceipt.blockNumber - 1;
-
-              // const stateBatchAppendedEvent =
-              //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
-              //     messageTxIndex
-              //   ); // no office node
-
-              // const bn = stateBatchAppendedEvent.blockNumber;
-
-              // const block = await l1Pro.getBlock(bn);
+            
               const l2BlockNum = await l2Pro.getBlock(l2TxReceipt.blockNumber);
               const calculatedTimePeriod =
                 isConnectedToMainNetwork  ? 11 * 60 + 7 * 24 * 60 * 60 : 2 * 60 + 10 + 150;
@@ -142,20 +127,17 @@ export default function useGetTransaction() {
               //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
               const timeReadyForRelay = testPeriod;
 
-              const messageTxReceipt = await l2Pro.getTransactionReceipt(
-                resolved.transactionHash
-              );
               const logs = await ethers.utils.defaultAbiCoder.decode(
                 ["address", "uint256", "bytes"],
-                messageTxReceipt.logs[3].data
+                l2TxReceipt.logs[3].data
               );
               const l1Token = ethers.utils.defaultAbiCoder.decode(
                 ["address"],
-                messageTxReceipt.logs[3].topics[1]
+                l2TxReceipt.logs[3].topics[1]
               )[0];
               const l2Token = ethers.utils.defaultAbiCoder.decode(
                 ["address"],
-                messageTxReceipt.logs[3].topics[2]
+                l2TxReceipt.logs[3].topics[2]
               )[0];
               const amnt = BigInt(logs[1]).toString();
 
@@ -176,6 +158,7 @@ export default function useGetTransaction() {
               return copy;
             } else {
               const receipt = await crossMessenger.getMessageReceipt(resolved); //  no office node
+              
               if (
                 l2TxReceipt.blockNumber !== undefined &&
                 receipt != null &&
@@ -186,16 +169,19 @@ export default function useGetTransaction() {
                 const l1tx =
                   userAllTransactions.formattedL1WithdrawResults.filter(
                     (tx: EthType | Erc20Type) => {
+                     
+                      
                       return tx.transactionHash === matchTx;
                     }
                   )[0];
 
+               if (l1tx) {
                 let copy = {
                   ...tx,
                   ...l1tx,
                   l2TxReceipt: l2TxReceipt,
                   l2timeStamp: tx.blockTimestamp,
-                  l1timeStamp: l1tx.blockTimestamp,
+                  l1timeStamp: l1tx? l1tx.blockTimestamp:0,
                   l1Block: l1tx.blockNumber,
                   l2txHash: tx.transactionHash,
                   l1txHash: l1tx.transactionHash,
@@ -208,21 +194,22 @@ export default function useGetTransaction() {
                   // timeReadyForRelay:1692685734
                 };
                 return copy;
+               }
+                  
+                 
               } else {
-                const messageTxReceipt = await l2Pro.getTransactionReceipt(
-                  resolved.transactionHash
-                );
+              
                 const logs = await ethers.utils.defaultAbiCoder.decode(
                   ["address", "uint256", "bytes"],
-                  messageTxReceipt.logs[3].data
+                  l2TxReceipt.logs[3].data
                 );
                 const l1Token = ethers.utils.defaultAbiCoder.decode(
                   ["address"],
-                  messageTxReceipt.logs[3].topics[1]
+                  l2TxReceipt.logs[3].topics[1]
                 )[0];
                 const l2Token = ethers.utils.defaultAbiCoder.decode(
                   ["address"],
-                  messageTxReceipt.logs[3].topics[2]
+                  l2TxReceipt.logs[3].topics[2]
                 )[0];
                 const amnt = BigInt(logs[1]).toString();
                 let copy = {
@@ -264,9 +251,8 @@ export default function useGetTransaction() {
             :    "loading";
             
 
-            const stats = userAllTransactions.formattedWithdraw.length === 0? 'absent': userAllTransactions.formattedWithdraw.length !== 0 && allTxs.length > 0 ?'present':'loading'
+            // const stats = userAllTransactions.formattedWithdraw.length === 0? 'absent': userAllTransactions.formattedWithdraw.length !== 0 && allTxs.length > 0 ?'present':'loading'
         setTDataWithdraw(allTxs);
-        setLoadingState(stats);
       }
     }
   }, [address, layer, connectedChainId, crossMessenger]);
@@ -296,8 +282,7 @@ export default function useGetTransaction() {
           ...userAllTransactions?.formattedWithdraw,
         ];
 
-        set === true &&
-          setLoadingState(alltx.length > 0 ? "loading" : "absent");
+        // set === true &&
 
         const l2Transactions_DepositFinalized = await l2Bridge.queryFilter(
           "DepositFinalized"
@@ -312,7 +297,7 @@ export default function useGetTransaction() {
           userL2Transactions !== undefined &&
           userAllTransactions !== undefined
         ) {
-          const l2DepTxs = await Promise.all(
+          const l2DepTxs =  await Promise.all(
             userL2Transactions
               .sort(
                 (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
@@ -353,7 +338,7 @@ export default function useGetTransaction() {
               })
           );
 
-          const l1DepTxs = await Promise.all(
+          const l1DepTxs =   await Promise.all(
             userAllTransactions.formattedL1DepositResults.map(
               async (tx: DepositTx) => {
                 const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
@@ -389,7 +374,7 @@ export default function useGetTransaction() {
             )
           );
           const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
-
+          
           setTDataDeposit(txLogs);
           const status =
             txLogs.length === 0
@@ -397,6 +382,9 @@ export default function useGetTransaction() {
               : txLogs.length > 0
               ? "present"
               : "loading";
+
+              console.log('status',status);
+              
           setLoadingState(status);
         }
       }
@@ -415,7 +403,7 @@ export default function useGetTransaction() {
     // return () => clearInterval(xx);
   }, [address, layer, connectedChainId, crossMessenger]);
 
-  const allTxs =
+  const allTxs = loadingState === 'present'? 
     layer == "L1"
       ? tDataWithdraw
           .concat(tDataDeposit)
@@ -428,7 +416,8 @@ export default function useGetTransaction() {
           .sort(
             (tx1: FullDepTx, tx2: FullDepTx) =>
               Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-          );
+          ):[];
 
+          
   return { depositTxs: allTxs, loadingState: loadingState };
 }

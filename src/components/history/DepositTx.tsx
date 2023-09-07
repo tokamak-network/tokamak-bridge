@@ -28,6 +28,8 @@ type TokenData = {
 };
 
 export default function DepositTx(props: { tx: FullWithTx }) {
+
+  
   const { tx } = props;
   const { provider } = useProvier();
   const [tokenData, setTokenData] = useState<TokenData | undefined>();

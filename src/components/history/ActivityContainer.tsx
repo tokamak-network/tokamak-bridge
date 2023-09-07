@@ -27,10 +27,7 @@ type SelectOption = {
   networkImage: any;
 };
 
-export default function ActivityContainer(props: {
-  network: SelectOption;
-  
-}) {
+export default function ActivityContainer(props: { network: SelectOption }) {
   const { network } = props;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
@@ -41,7 +38,7 @@ export default function ActivityContainer(props: {
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [txnData, setTxnData] = useRecoilState(transactionData);
   const tData = useGetTransaction();
-  
+
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -64,57 +61,6 @@ export default function ActivityContainer(props: {
       window.removeEventListener("resize", handleResize);
     };
   }, []);
-
-  const filteredTx = useMemo(() => {
-    if (searchTxString?.id === "" || searchTxString === null) {
-      return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
-    } else {
-      if (tData.depositTxs.length > 0) {
-        const filteredTx = tData.depositTxs.filter(
-          (tx: FullDepTx | FullWithTx) => {
-            if (tx.l1txHash && tx.l2txHash === undefined) return tx.l1txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash === undefined) return tx.l2txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash)
-              return (
-                tx.l1txHash.includes(searchTxString.id) ||
-                tx.l2txHash.includes(searchTxString.id)
-              );
-          }
-        );
-        return filteredTx;
-      } else {
-        return preLoadData;
-      }
-    }
-  }, [tData, searchTxString, preLoadData]);
-
-  const getLayerFiltered = useMemo(() => {
-    const depSelected =
-      network.chainId === SupportedChainId["MAINNET"] ||
-      network.chainId === SupportedChainId["GOERLI"];
-    const withSelected =
-      network.chainId === SupportedChainId["DARIUS"] ||
-      network.chainId === SupportedChainId["TITAN"];
-    const allSelected = network.chainId === undefined;
-
-    if (depSelected === true) {
-      const txs = filteredTx.filter((tx: FullDepTx) => tx.event === "deposit");
-      return txs;
-    } else if (withSelected === true) {
-      const txs = filteredTx.filter(
-        (tx: FullWithTx) => tx.event === "withdraw"
-      );
-      return txs;
-    } else {
-      return filteredTx;
-    }
-  }, [searchTxString, tData, network, filteredTx, preLoadData]);
-
-  const getPaginatedData = useMemo(() => {
-    const startIndex = 0;
-    const endIndex = startIndex + numData;
-    return getLayerFiltered.slice(startIndex, endIndex);
-  }, [filteredTx, tData, numData, getLayerFiltered, preLoadData]);
 
   useEffect(() => {
     const getTxs = async () => {
@@ -150,6 +96,62 @@ export default function ActivityContainer(props: {
 
     getTxs();
   }, [isConnectedToMainNetwork, address]);
+
+  const filteredTx = useMemo(() => {
+    if (searchTxString?.id === "" || searchTxString === null) {
+      return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
+    } else {
+      if (tData.depositTxs.length > 0) {
+        const filteredTx = tData.depositTxs.filter(
+          (tx: FullDepTx | FullWithTx) => {
+            if (tx.l1txHash && tx.l2txHash === undefined)
+              return tx.l1txHash.includes(searchTxString.id);
+            if (tx.l2txHash && tx.l1txHash === undefined)
+              return tx.l2txHash.includes(searchTxString.id);
+            if (tx.l2txHash && tx.l1txHash)
+              return (
+                tx.l1txHash.includes(searchTxString.id) ||
+                tx.l2txHash.includes(searchTxString.id)
+              );
+          }
+        );
+        return filteredTx;
+      } else {
+        return preLoadData;
+      }
+    }
+  }, [tData, searchTxString, preLoadData]);
+
+  const getLayerFiltered = useMemo(() => {
+    const depSelected =
+      network.chainId === SupportedChainId["MAINNET"] ||
+      network.chainId === SupportedChainId["GOERLI"];
+    const withSelected =
+      network.chainId === SupportedChainId["DARIUS"] ||
+      network.chainId === SupportedChainId["TITAN"];
+
+    const allSelected = network.chainId === undefined;
+    if (depSelected === true) {
+      const txs = filteredTx.filter(
+        (tx: FullDepTx) => tx && tx.event === "deposit"
+      );
+      return txs;
+    }
+    if (withSelected === true) {
+      const txs = filteredTx.filter(
+        (tx: FullWithTx) => tx && tx.event === "withdraw"
+      );
+      return txs;
+    } else {
+      return filteredTx;
+    }
+  }, [searchTxString, filteredTx, network]);
+
+  const getPaginatedData = useMemo(() => {
+    const startIndex = 0;
+    const endIndex = startIndex + numData;
+    return getLayerFiltered.slice(startIndex, endIndex);
+  }, [getLayerFiltered]);
 
   const txes = useMemo(() => {
     switch (tData.loadingState) {
@@ -217,7 +219,7 @@ export default function ActivityContainer(props: {
           );
         }
     }
-  }, [tData.loadingState, getPaginatedData, preLoadData]);
+  }, [getPaginatedData]);
 
   return (
     <Flex
@@ -226,7 +228,7 @@ export default function ActivityContainer(props: {
       h={"calc(100vh - 165px)"}
       bg={"transparent"}
       w="100%"
-     
+
       // height={'110%'}
     >
       <Flex
@@ -255,7 +257,12 @@ export default function ActivityContainer(props: {
       </Flex>
       {getLayerFiltered.length > getPaginatedData.length &&
         tData.loadingState === "present" && (
-          <Flex mb={"32px"} mt={'32px'} justifyContent={"center"} alignItems={"start"}>
+          <Flex
+            mb={"32px"}
+            mt={"32px"}
+            justifyContent={"center"}
+            alignItems={"start"}
+          >
             <Button
               bg="transparent"
               border={"1px solid #313442"}

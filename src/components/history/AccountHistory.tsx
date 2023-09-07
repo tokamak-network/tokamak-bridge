@@ -91,10 +91,22 @@ export default function AccountHistory() {
   }, []);
 
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={() => {}} variant="clickThrough" trapFocus={false} useInert={true}>
+    <Drawer
+      isOpen={isOpen}
+      placement="right"
+      onClose={() =>
+        setSelectedNetwork({
+          chainId: 0,
+          chainName: undefined,
+          networkImage: undefined,
+        })
+      }
+      variant="clickThrough"
+      trapFocus={false}
+      useInert={true}
+    >
       <DrawerOverlay bg={"none"} />
       <DrawerContent
-       
         px="12px"
         pb="0px"
         minW={"360px"}
@@ -132,7 +144,14 @@ export default function AccountHistory() {
             bg: "rgba(31, 33, 40, 0.50)",
             zIndex: -1,
           }}
-          onClick={() => setIsOpen(false)}
+          onClick={() => {
+            setIsOpen(false);
+            setSelectedNetwork({
+              chainId: 0,
+              chainName: undefined,
+              networkImage: undefined,
+            });
+          }}
           cursor={"pointer"}
           // transform={"translate(-7px)"}
           transition={"background 250ms ease 0s, transform 250ms ease 0s"}
