@@ -161,8 +161,8 @@ export default function ChartWrapper({
         },
         brush: {
           handle: {
-            west: saturate(0.1, tokenAColor) ?? "#FF0000",
-            east: saturate(0.1, tokenBColor) ?? "#fff",
+            west: disabled ? "#fff" : "#2775FF",
+            east: disabled ? "#fff" : "#2775FF",
           },
         },
       }}

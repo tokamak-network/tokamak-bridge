@@ -299,7 +299,10 @@ export const Brush = ({
                 )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
               >
                 <g>
-                  <Handle color={"#007AFF"} d={brushHandlePath(innerHeight)} />
+                  <Handle
+                    color={westHandleColor}
+                    d={brushHandlePath(innerHeight)}
+                  />
                   <HandleAccent d={brushHandleAccentPath()} />
                 </g>
 
@@ -335,7 +338,10 @@ export const Brush = ({
                 )}, 0), scale(${flipEastHandle ? "-1" : "1"}, 1)`}
               >
                 <g>
-                  <Handle color={"#007AFF"} d={brushHandlePath(innerHeight)} />
+                  <Handle
+                    color={eastHandleColor}
+                    d={brushHandlePath(innerHeight)}
+                  />
                   <HandleAccent d={brushHandleAccentPath()} />
                 </g>
                 <LabelGroup
