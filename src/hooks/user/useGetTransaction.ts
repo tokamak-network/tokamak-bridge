@@ -362,10 +362,17 @@ export default function useGetTransaction() {
   );
 
 const getUpdatedWithdraw = async(incompleteWiths:any) => {
+  console.log('incompleteWiths',incompleteWiths);
+  
   if (incompleteWiths.length > 0) {
     const l2WithdrawTxs = await Promise.all(incompleteWiths.map((incompleteWith:any) => {
-console.log('l2WithdrawTxs',l2WithdrawTxs);
-
+if (
+                (incompleteWith.currentStatus === 2 || incompleteWith.currentStatus === 3) &&
+                incompleteWith.l2TxReceipt !== undefined
+              ){
+                console.log('mm');
+                
+              }
     })
     )
   }
@@ -374,7 +381,6 @@ console.log('l2WithdrawTxs',l2WithdrawTxs);
 const getUpdatedDep = async(incompleteDeps:any) => {
   if (incompleteDeps.length > 0) {
     const l2WithdrawTxs = await Promise.all(incompleteDeps.map((incompleteDep:any) => {
-console.log('l2WithdrawTxs',l2WithdrawTxs);
 
     })
     )
@@ -384,12 +390,12 @@ console.log('l2WithdrawTxs',l2WithdrawTxs);
   useEffect(() => {
     fetchTransactions(true);
     fetchDepositTransactions(true);
-    // const xx = setInterval(() => {
-    //   fetchTransactions(false);
-    //   fetchDepositTransactions(false);
-    // }, 3000);
+    const xx = setInterval(() => {
+      fetchTransactions(false);
+      fetchDepositTransactions(false);
+    }, 3000);
 
-    // return () => clearInterval(xx);
+    return () => clearInterval(xx);
   }, [address, connectedChainId, crossMessenger]);
 
   const stat =
@@ -418,78 +424,82 @@ console.log('l2WithdrawTxs',l2WithdrawTxs);
             )
       : [];
 
-  useEffect(() => {
-    const xx = async () => {
-      if (isConnectedToMainNetwork !== undefined) {
-        const allTxs =
-          stat === "present"
-            ? layer == "L1"
-              ? tDataWithdraw
-                  .concat(tDataDeposit)
-                  .sort(
-                    (tx1: FullDepTx, tx2: FullDepTx) =>
-                      Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
-                  )
-              : tDataWithdraw
-                  .concat(tDataDeposit)
-                  .sort(
-                    (tx1: FullDepTx, tx2: FullDepTx) =>
-                      Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-                  )
-            : [];
+  // useEffect(() => {
+  //   console.log('stat',stat);
+    
+  //   const xx = async () => {
+  //     if (isConnectedToMainNetwork !== undefined) {
+  //       const allTxs =
+  //         stat === "present"
+  //           ? layer == "L1"
+  //             ? tDataWithdraw
+  //                 .concat(tDataDeposit)
+  //                 .sort(
+  //                   (tx1: FullDepTx, tx2: FullDepTx) =>
+  //                     Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+  //                 )
+  //             : tDataWithdraw
+  //                 .concat(tDataDeposit)
+  //                 .sort(
+  //                   (tx1: FullDepTx, tx2: FullDepTx) =>
+  //                     Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+  //                 )
+  //           : [];
 
-        const userAllTransactions = await fetchUserTransactions(
-          address,
-          isConnectedToMainNetwork
-        );
-        const txFromGraph =
-          layer === "L1"
-            ? userAllTransactions?.formattedL1DepositResults.concat(
-                userAllTransactions.formattedL1WithdrawResults
-              )
-            : userAllTransactions?.formattedDeposit.concat(
-                userAllTransactions.formattedWithdraw
-              );
+  //       const userAllTransactions = await fetchUserTransactions(
+  //         address,
+  //         isConnectedToMainNetwork
+  //       );
+  //       const txFromGraph =
+  //         layer === "L1"
+  //           ? userAllTransactions?.formattedL1DepositResults.concat(
+  //               userAllTransactions.formattedL1WithdrawResults
+  //             )
+  //           : userAllTransactions?.formattedDeposit.concat(
+  //               userAllTransactions.formattedWithdraw
+  //             );
 
-        const newTxfromGraph = txFromGraph.filter((tx: any) => {
-          const newTx =
-            tx.event === "deposit"
-              ? allTxs.filter((tx2) => tx2.l1txHash === tx.transactionHash)
-              : allTxs.map((tx2) => tx2.l2txHash === tx.transactionHash);
-        });
+  //       const newTxfromGraph = txFromGraph.filter((tx: any) => {
+  //         const newTx =
+  //           tx.event === "deposit"
+  //             ? allTxs.filter((tx2) => tx2.l1txHash === tx.transactionHash)
+  //             : allTxs.map((tx2) => tx2.l2txHash === tx.transactionHash);
+  //       });
 
 
-        const incompleted = allTxs.filter((tx: any) => {
-          return (
-            (tx.event === "withdraw" && tx.currentStatus !== 6) ||
-            (tx.event === "deposit" && tx.l2txHash === undefined)
-          );
-        });
+  //       const incompleted = allTxs.filter((tx: any) => {
+  //         return (
+  //           (tx.event === "withdraw" && tx.currentStatus !== 6) ||
+  //           (tx.event === "deposit" && tx.l2txHash === undefined)
+  //         );
+  //       });        
 
-        const completed = allTxs.filter(
-          (element: any) => !incompleted.includes(element)
-        );
+  //       const completed = allTxs.filter(
+  //         (element: any) => !incompleted.includes(element)
+  //       );
 
-        if (incompleted.length> 0) {
-          incompleted.map((incompletedTx) => {
-            if (incompletedTx.event === 'deposit') {
-              getUpdatedDep(incompletedTx)
-            }
+  //       if (incompleted.length> 0) {
+          
+  //         incompleted.map((incompletedTx) => {
+  //           if (incompletedTx.event === 'deposit') {
+  //             getUpdatedDep(incompletedTx)
+  //           }
 
-            else {
-              getUpdatedWithdraw(incompletedTx)
-            }
-          })
-        }
+  //           else {
+  //             getUpdatedWithdraw(incompletedTx)
+  //           }
+  //         })
+  //       }
 
-      }
+  //     }
+  //   };
+  // const timeinterval = setInterval(() => {
+  //   xx();
+  //   }, 3000);
 
-      
-
-    };
-
-    xx();
-  }, [tDataWithdraw, tDataDeposit, stat, layer]);
+  //   return () => clearInterval(timeinterval);
+   
+  // }, [tDataWithdraw, tDataDeposit, stat, layer]);
 
   return { depositTxs: allTxs, loadingState: stat };
 }
