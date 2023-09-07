@@ -110,7 +110,7 @@ export default function DepositTx(props: { tx: FullWithTx }) {
 
     fetchTokenData();
   }, []);
-
+  
   return (
     <Flex
       h={"160px"}

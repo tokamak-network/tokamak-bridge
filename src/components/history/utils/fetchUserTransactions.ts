@@ -114,16 +114,41 @@ export const fetchUserTransactions = async (
           sender
           target
           transactionHash
-        }}`,
+        }
+        depositFinalizeds(
+          where: {_from: "${account}"}
+        )
+      {
+        id
+        _l1Token
+        _l2Token
+        _from
+        _amount
+        _data
+        _to
+        blockNumber
+        blockTimestamp
+        transactionHash
+
+      }}`,
         variables: null,
       }
-    );
+    );    
 
-    const withdrawTxs = withdrawTx.data.data.sentMessages;
-    const formattedWithdraw = withdrawTxs.map((tx: SentMessages) => {
+    const withdrawTxsL2 = withdrawTx.data.data.sentMessages;
+    const depositTcxsL2 = withdrawTx.data.data.depositFinalizeds
+    const formattedWithdraw = withdrawTxsL2.map((tx: SentMessages) => {
       let copy = {
         ...tx,
         event: "withdraw",
+      };
+      return copy;
+    });
+
+    const formattedDeposit = depositTcxsL2.map((tx: SentMessages) => {
+      let copy = {
+        ...tx,
+        event: "deposit",
       };
       return copy;
     });
@@ -158,6 +183,7 @@ export const fetchUserTransactions = async (
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,
       formattedWithdraw: formattedWithdraw,
+      formattedDeposit:formattedDeposit
     };
   }
 };

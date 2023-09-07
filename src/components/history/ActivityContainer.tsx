@@ -1,7 +1,6 @@
 import { Flex, Text, Button, Spinner } from "@chakra-ui/react";
 import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
-// import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
@@ -32,13 +31,12 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const [preLoadData, setPreLoadData] = useState<L1TxType[]>([]);
-  // const tData = useGetTransaction();
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [txnData, setTxnData] = useRecoilState(transactionData);
   const tData = useGetTransaction();
-
+      
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -68,8 +66,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         const txs = await fetchUserTransactions(
           address,
           isConnectedToMainNetwork
-        );
-
+        );        
+        
         const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
           return {
             ...tx,
@@ -90,6 +88,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             (tx1: L1TxType, tx2: L1TxType) =>
               Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
           );
+
+          
         setPreLoadData(allTxs);
       }
     };
@@ -99,6 +99,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
 
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
+      
       return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
     } else {
       if (tData.depositTxs.length > 0) {
@@ -115,14 +116,15 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               );
           }
         );
+        
         return filteredTx;
-      } else {
+      } else {        
         return preLoadData;
       }
     }
-  }, [tData, searchTxString, preLoadData]);
+  }, [ searchTxString, preLoadData,tData.depositTxs, tData.loadingState]);
 
-  const getLayerFiltered = useMemo(() => {
+  const getLayerFiltered = useMemo(() => {    
     const depSelected =
       network.chainId === SupportedChainId["MAINNET"] ||
       network.chainId === SupportedChainId["GOERLI"];
@@ -145,15 +147,15 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     } else {
       return filteredTx;
     }
-  }, [searchTxString, filteredTx, network]);
+  }, [searchTxString, filteredTx, network, tData]);
 
-  const getPaginatedData = useMemo(() => {
+  const getPaginatedData = useMemo(() => {    
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return getLayerFiltered.slice(startIndex, endIndex);
-  }, [getLayerFiltered]);
+  }, [getLayerFiltered,tData,filteredTx]);
 
-  const txes = useMemo(() => {
+  const txes = useMemo(() => {    
     switch (tData.loadingState) {
       case "absent":
         return (
@@ -190,7 +192,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
           </Flex>
         );
 
-      case "present":
+      case "present":        
         return (
           getPaginatedData.length !== 0 &&
           getPaginatedData.map((tx: any, index: number) => {
@@ -219,7 +221,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
           );
         }
     }
-  }, [getPaginatedData]);
+  }, [getPaginatedData,tData]);
 
   return (
     <Flex
