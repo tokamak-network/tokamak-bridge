@@ -42,6 +42,7 @@ export default function DepositTx(props: { tx: FullWithTx }) {
   const zero_address = "0x0000000000000000000000000000000000000000";
 
   const getTokenData = useCallback(async () => {
+    
     if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
 
@@ -110,7 +111,7 @@ export default function DepositTx(props: { tx: FullWithTx }) {
 
     fetchTokenData();
   }, []);
-  
+
   return (
     <Flex
       h={"160px"}

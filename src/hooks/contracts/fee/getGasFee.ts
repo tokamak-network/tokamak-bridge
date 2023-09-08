@@ -22,6 +22,8 @@ import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
 import useTokenBalance from "../balance/useTokenBalance";
+// @ts-ignore
+import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -33,7 +35,6 @@ export function useGasFee() {
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
   const { contract: _withdraw_contract } = useCallWithdraw("withdraw");
   const providers = useGetTxLayers();
-  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
 
   //   const { provider } = useProvier();
   const provider = usePublicClient();
@@ -138,7 +139,7 @@ export function useGasFee() {
               parsedAmount,
               0,
               "0x"
-            );
+            );            
             tx.from = address;
             const l2ProSDK = titanSDK.asL2Provider(
               getProvider(providers.l2Provider)
@@ -146,6 +147,7 @@ export function useGasFee() {
             const signer = l2ProSDK?.getSigner(address);
 
             const estimateProvider = signer?.provider;
+            
             return estimateProvider?.estimateTotalGasCost(tx);
 
           // const yy = await _withdraw_contract.estimateGas.withdraw({
@@ -168,7 +170,7 @@ export function useGasFee() {
       .then((estimatedGasUsage) => {
         if (provider && estimatedGasUsage && feeData) {
           const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
-          
+
           // console.log(
           //   "gasPrice : ",
           //   gasPrice,
@@ -186,10 +188,10 @@ export function useGasFee() {
                 totalGasCost.toString(),
                 "ether"
               );
-             
-              
+
               return setTotalGasCost(parsedTotalGasCost);
             } else {
+
               const totalGas = ethers.utils.formatUnits(
                 estimatedGasUsage.toString(),
                 "ether"

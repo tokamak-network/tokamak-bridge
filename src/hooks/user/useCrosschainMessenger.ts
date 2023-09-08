@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useState } from "react";
+import { useMemo } from "react";
 import useGetTxLayers from "./useGetTxLayers";
 import { useAccount } from "wagmi";
 import useConnectedNetwork from "../network";
 import { useProvier } from "../provider/useProvider";
 import { getProvider } from "@/config/getProvider";
 import { ethers } from "ethers";
+// @ts-ignore
+import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
 
 export default function useCrosschainMessenger() {
-  const [crossMessenger, setCrossMessenger] = useState<any>();
-  const [crossMessengerTokamak, setCrossMessengerTokamak] = useState<any>();
-  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
   const { provider } = useProvier();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
@@ -18,53 +17,47 @@ export default function useCrosschainMessenger() {
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
 
-  const fetchMessenger = useCallback(() => {
-    if (l1Pro !== undefined && l2Pro !== undefined) {
-      const crossChainMessenger = new titanSDK.CrossChainMessenger({
-        l1ChainId: providers.l1ChainID,
-        l2ChainId: providers.l2ChainID,
-        l1SignerOrProvider:
-          layer === "L1"
-            ? l1Pro.getSigner(address)
-            : new ethers.providers.JsonRpcProvider(
-                isConnectedToMainNetwork
-                  ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
-                  : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
-              ).getSigner(address),
-        l2SignerOrProvider: l2Pro.getSigner(address),
-      });
+const rpcCrossMessenger = useMemo(() => {
+  if (l1Pro !== undefined && l2Pro !== undefined) {
+    const crossChainMessenger = new titanSDK.CrossChainMessenger({
+      l1ChainId: providers.l1ChainID,
+      l2ChainId: providers.l2ChainID,
+      l1SignerOrProvider:
+        layer === "L1"
+          ? l1Pro.getSigner(address)
+          : new ethers.providers.JsonRpcProvider(
+              isConnectedToMainNetwork
+                ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+                : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
+            ).getSigner(address),
+      l2SignerOrProvider: l2Pro.getSigner(address),
+    });
 
-      setCrossMessenger(crossChainMessenger);
-    }
-  }, [l1Pro, l2Pro, layer]);
+    return crossChainMessenger
+  }
+},[l1Pro, l2Pro, layer])
 
-  const fetchTokamakMessenger = useCallback(() => {
-    if (l1Pro !== undefined && l2Pro !== undefined) {
-      const crossChainMessenger = new titanSDK.CrossChainMessenger({
-        l1ChainId: providers.l1ChainID,
-        l2ChainId: providers.l2ChainID,
-        l1SignerOrProvider:
-          layer === "L1"
-            ? l1Pro.getSigner(address)
-            : new ethers.providers.JsonRpcProvider(
-                isConnectedToMainNetwork
-                  ? process.env.NEXT_PUBLIC_ETHEREUM_RPC
-                  : process.env.NEXT_PUBLIC_GOERLI_RPC
-              ).getSigner(address),
-        l2SignerOrProvider: l2Pro.getSigner(address),
-      });
+const tokamakCrossMessenger = useMemo(()=> {
+  if (l1Pro !== undefined && l2Pro !== undefined) {
+    const crossChainMessenger = new titanSDK.CrossChainMessenger({
+      l1ChainId: providers.l1ChainID,
+      l2ChainId: providers.l2ChainID,
+      l1SignerOrProvider:
+        layer === "L1"
+          ? l1Pro.getSigner(address)
+          : new ethers.providers.JsonRpcProvider(
+              isConnectedToMainNetwork
+                ? process.env.NEXT_PUBLIC_ETHEREUM_RPC
+                : process.env.NEXT_PUBLIC_GOERLI_RPC
+            ).getSigner(address),
+      l2SignerOrProvider: l2Pro.getSigner(address),
+    });
+return crossChainMessenger
+  }
+},[l1Pro, l2Pro, layer])
 
-      setCrossMessengerTokamak(crossChainMessenger);
-    }
-  }, [l1Pro, l2Pro, layer]);
-
-  useEffect(() => {
-    fetchMessenger();
-    fetchTokamakMessenger()
-    // fetL1CrossMessenger();
-  }, [l2Pro, l1Pro, layer]);
   return {
-    crossMessenger: crossMessenger,
-    crossMessengerTokamak: crossMessengerTokamak,
+    crossMessenger: rpcCrossMessenger,
+    crossMessengerTokamak: tokamakCrossMessenger,
   };
 }

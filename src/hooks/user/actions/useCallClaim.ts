@@ -21,6 +21,8 @@ import useGetTxLayers from "../useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import { txDataStatus } from "@/recoil/global/transaction";
 import { TxSort } from "@/types/tx/txType";
+// @ts-ignore
+import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
 
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
@@ -32,8 +34,6 @@ export default function useCallClaim(functionName: string) {
   const [isConnectedToL1, setIsConnectedToL1] = useState(false);
   const [withdrawStatus, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [estimatedGas, setEstimatedGas] = useState(0);
-  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
   const providers = useGetTxLayers();
   const { provider: l2Prov } = useProvier();
   const [txData, setTxData] = useRecoilState(txDataStatus);

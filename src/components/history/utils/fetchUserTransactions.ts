@@ -1,6 +1,7 @@
 import axios from "axios";
 import useConnectedNetwork from "@/hooks/network";
 import { L1TxType, SentMessages } from "@/types/activity/history";
+
 const formatAddress = (address: string) => {
   const formattedAddress = address.substring(2);
   return formattedAddress;
@@ -11,7 +12,6 @@ export const fetchUserTransactions = async (
   isConnectedToMainnet: boolean
 ) => {
   if (account) {
-    // const acc = "0x24884B9A47049B7663aEdaC7c7C91afd406EA09e";
     const formattedAddress = formatAddress(account);
     const L1Bridge = isConnectedToMainnet
       ? "0x59aa194798Ba87D26Ba6bEF80B85ec465F4bbcfD"
@@ -99,8 +99,8 @@ export const fetchUserTransactions = async (
     const withdrawTx = await axios.post(
       `${
         isConnectedToMainnet
-          ? process.env.NEXT_PUBLIC_L2MESSENGER_MAINNET
-          : process.env.NEXT_PUBLIC_L2MESSENGER_GOERLI
+          ? process.env.NEXT_PUBLIC_L2MESSENGER_TITAN
+          : process.env.NEXT_PUBLIC_L2MESSENGER_TITAN_GOERLI
       }`,
       {
         query: `{sentMessages(
@@ -133,10 +133,10 @@ export const fetchUserTransactions = async (
       }}`,
         variables: null,
       }
-    );    
+    );
 
     const withdrawTxsL2 = withdrawTx.data.data.sentMessages;
-    const depositTcxsL2 = withdrawTx.data.data.depositFinalizeds
+    const depositTcxsL2 = withdrawTx.data.data.depositFinalizeds;
     const formattedWithdraw = withdrawTxsL2.map((tx: SentMessages) => {
       let copy = {
         ...tx,
@@ -183,7 +183,7 @@ export const fetchUserTransactions = async (
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,
       formattedWithdraw: formattedWithdraw,
-      formattedDeposit:formattedDeposit
+      formattedDeposit: formattedDeposit,
     };
   }
 };
