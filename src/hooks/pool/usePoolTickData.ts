@@ -22,6 +22,18 @@ import { useTickLens } from "hooks/pool/useTickLens";
 import useConnectedNetwork from "../network";
 import { usePool } from "./usePool";
 import { PoolState } from "@/types/pool/pool";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  L2_TESTNET_UniswapContracts,
+  L2_UniswapContracts,
+} from "@/constant/contracts/uniswap";
+
+const V3_CORE_FACTORY_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
+  ...V3_CORE_FACTORY_ADDRESSES,
+  [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.DARIUS]:
+    L2_TESTNET_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+};
 
 const PRICE_FIXED_DIGITS = 8;
 const CHAIN_IDS_MISSING_SUBGRAPH_DATA = [
@@ -81,7 +93,7 @@ function useTicksFromTickLens(
           currencyB?.wrapped,
           feeAmount,
           undefined,
-          chainId ? V3_CORE_FACTORY_ADDRESSES[chainId] : undefined
+          chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined
         )
       : undefined;
 
@@ -208,9 +220,12 @@ function useTicksFromSubgraph(
           currencyB?.wrapped,
           feeAmount,
           undefined,
-          chainId ? V3_CORE_FACTORY_ADDRESSES[chainId] : undefined
+          chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined
         )
       : undefined;
+
+  console.log(chainId);
+  console.log(subgraphApolloClients);
 
   return useAllV3TicksQuery({
     variables: { poolAddress: poolAddress?.toLowerCase(), skip },
@@ -265,6 +280,12 @@ function useAllV3Ticks(
     }
   }, [data?.ticks]);
 
+  console.log("---gogo");
+  console.log(data);
+
+  console.log(subgraphTickData);
+  console.log(tickLensTickData.tickData);
+
   return {
     //@ts-ignore
     isLoading: useSubgraph
@@ -287,6 +308,9 @@ export function usePoolActiveLiquidity(
 } {
   const pool = usePool(currencyA, currencyB, feeAmount);
 
+  console.log("pool");
+  console.log(pool);
+
   // Find nearest valid tick for pool in case tick is not initialized.
   const activeTick = useMemo(
     () => getActiveTick(pool[1]?.tickCurrent, feeAmount),
@@ -298,6 +322,9 @@ export function usePoolActiveLiquidity(
     currencyB,
     feeAmount
   );
+
+  console.log("ticks");
+  console.log(ticks);
 
   return useMemo(() => {
     if (

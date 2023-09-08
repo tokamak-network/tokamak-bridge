@@ -23,6 +23,9 @@ export function useDensityChartData({
     feeAmount
   );
 
+  console.log("data");
+  console.log(data);
+
   const formatData = useCallback(() => {
     if (!data?.length) {
       return undefined;

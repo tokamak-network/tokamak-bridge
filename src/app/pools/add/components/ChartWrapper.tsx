@@ -112,8 +112,6 @@ export default function ChartWrapper({
     feeAmount,
   });
 
-  const tokenAColor = "#fff";
-  const tokenBColor = "#fff";
   const isSorted = !invertPrice;
 
   const onBrushDomainChangeEnded = useCallback(
@@ -187,6 +185,9 @@ export default function ChartWrapper({
 
   const isUninitialized =
     !currencyA || !currencyB || (formattedData === undefined && !isLoading);
+
+  console.log("formattedData");
+  console.log(formattedData);
 
   if (isUninitialized) return null;
   if (error) return <UninitializedPool />;
