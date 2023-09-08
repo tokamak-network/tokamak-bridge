@@ -268,7 +268,7 @@ export default function useGetTransaction() {
               const l2block = await l2ProSDK.getBlock(Number(tx.blockNumber));
               const l1Block = await getProvider(providers.l1Provider)?.getBlock(
                 Number(l1Tx.l1BlockNumber)
-              );
+              ); ///take a look to use proviver instead of tokamak providee
               const l1tx = userTxfromSubgrap.formattedL1DepositResults?.filter(
                 (l1tx: SentMessages) => {
                   return Number(l1tx.messageNonce) === l1Tx.nonce;
