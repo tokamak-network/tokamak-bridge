@@ -46,7 +46,7 @@ export default function Confirmation() {
 
   const { mode } = useGetMode();
   return (
-    <Modal trapFocus={true} isOpen={isOpen} onClose={closeModal}>
+    <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}

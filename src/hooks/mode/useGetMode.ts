@@ -2,7 +2,6 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { accountDrawerStatus } from "@/recoil/modal/atom";
 export function useGetMode() {
   const { mode, isReady } = useRecoilValue(actionMode);
 

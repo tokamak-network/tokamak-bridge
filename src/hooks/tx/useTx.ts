@@ -147,7 +147,7 @@ export function useTx(params: {
   tokenOutAddress?: `0x${string}`;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress } = params;
-
+  const { mode } = useGetMode();
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
   });
@@ -174,7 +174,12 @@ export function useTx(params: {
   }, [isLoading, connectedChainId]);
 
   useEffect(() => {
-    if (isSuccess) return setModalOpen("confirmed");
+    if (isSuccess) {
+      if (mode === "Deposit" || mode === "Withdraw") {
+        setIsAccountDrawerOpen(true);
+      }
+      return setModalOpen("confirmed");
+    }
   }, [isSuccess]);
 
   useEffect(() => {

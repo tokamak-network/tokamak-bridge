@@ -21,9 +21,6 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
-import useTokenBalance from "../balance/useTokenBalance";
-// @ts-ignore
-import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -35,6 +32,7 @@ export function useGasFee() {
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
   const { contract: _withdraw_contract } = useCallWithdraw("withdraw");
   const providers = useGetTxLayers();
+  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
 
   //   const { provider } = useProvier();
   const provider = usePublicClient();
@@ -58,24 +56,14 @@ export function useGasFee() {
     L2BridgeAbi,
     l2Pro
   );
-  const tokenData = useTokenBalance(inToken);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
-      if (
-        inToken &&
-        inToken.amountBN &&
-        inNetwork &&
-        outNetwork &&
-        address &&
-        tokenData?.data.balanceBN.value
-      ) {
+      if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
         const isETH = inToken.isNativeCurrency?.includes(
           SupportedChainId.MAINNET || SupportedChainId.GOERLI
         );
-        // const parsedAmount = inToken.amountBN;
-        const parsedAmount = tokenData?.data.balanceBN.value;
-
+        const parsedAmount = inToken.amountBN;
         switch (mode) {
           case "Swap":
             return swapGasUseEstimate;
@@ -126,20 +114,13 @@ export function useGasFee() {
               const estimateProvider = signer?.provider;
 
               return estimateProvider?.estimateTotalGasCost(tx);
-
-              // const yy = await _withdraw_contract.estimateGas.withdraw({
-              //   //@ts-ignore
-              //   account: address,
-              //   args: [predeploys.OVM_ETH, parsedAmount, 0, "0x"],
-              // });
-              // console.log("yy", yy);
             }
             const tx = await withdrawContract.populateTransaction.withdraw(
               inToken.address[inNetwork.chainName],
               parsedAmount,
               0,
               "0x"
-            );            
+            );
             tx.from = address;
             const l2ProSDK = titanSDK.asL2Provider(
               getProvider(providers.l2Provider)
@@ -147,20 +128,9 @@ export function useGasFee() {
             const signer = l2ProSDK?.getSigner(address);
 
             const estimateProvider = signer?.provider;
-            
             return estimateProvider?.estimateTotalGasCost(tx);
 
-          // const yy = await _withdraw_contract.estimateGas.withdraw({
-          //   //@ts-ignore
-          //   account: address,
-          //   args: [
-          //     inToken.address[inNetwork.chainName],
-          //     parsedAmount,
-          //     0,
-          //     "0x",
-          //   ],
-          // });
-          // console.log("yy", yy);
+          
           default:
             return;
         }
@@ -170,17 +140,6 @@ export function useGasFee() {
       .then((estimatedGasUsage) => {
         if (provider && estimatedGasUsage && feeData) {
           const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
-
-          // console.log(
-          //   "gasPrice : ",
-          //   gasPrice,
-          //   "estimatedGasUsage : ",
-          //   estimatedGasUsage,
-          //   "maxFeePerGas : ",
-          //   maxFeePerGas,
-          //   "maxPriorityFeePerGas : ",
-          //   maxPriorityFeePerGas
-          // );
           if (gasPrice) {
             if (mode !== "Withdraw") {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
@@ -188,10 +147,10 @@ export function useGasFee() {
                 totalGasCost.toString(),
                 "ether"
               );
-
+             
+              
               return setTotalGasCost(parsedTotalGasCost);
             } else {
-
               const totalGas = ethers.utils.formatUnits(
                 estimatedGasUsage.toString(),
                 "ether"
@@ -219,7 +178,6 @@ export function useGasFee() {
     feeData,
     l2Prov,
     swapGasUseEstimate,
-    tokenData?.data.balanceBN.value,
   ]);
 
   const gasCostUS = useMemo(() => {
