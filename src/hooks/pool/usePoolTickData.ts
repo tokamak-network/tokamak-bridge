@@ -1,9 +1,11 @@
 import {
   ChainId,
   Currency,
+  Token,
   V3_CORE_FACTORY_ADDRESSES,
 } from "@uniswap/sdk-core";
 import {
+  computePoolAddress,
   FeeAmount,
   nearestUsableTick,
   Pool,
@@ -26,6 +28,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
   L2_TESTNET_UniswapContracts,
   L2_UniswapContracts,
+  L2_initCodeHashManualOverride,
 } from "@/constant/contracts/uniswap";
 
 const V3_CORE_FACTORY_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
@@ -213,22 +216,39 @@ function useTicksFromSubgraph(
   skip = 0
 ) {
   const { connectedChainId: chainId } = useConnectedNetwork();
+
   const poolAddress =
-    currencyA && currencyB && feeAmount
-      ? Pool.getAddress(
-          currencyA?.wrapped,
-          currencyB?.wrapped,
-          feeAmount,
-          undefined,
-          chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined
-        )
+    chainId && currencyA && currencyB && feeAmount
+      ? computePoolAddress({
+          factoryAddress: V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId],
+          tokenA: currencyA as Token,
+          tokenB: currencyB as Token,
+          fee: feeAmount,
+          initCodeHashManualOverride:
+            chainId === 55004 || chainId === 5050
+              ? L2_initCodeHashManualOverride
+              : undefined,
+        })
       : undefined;
 
-  console.log(chainId);
-  console.log(subgraphApolloClients);
+  // const poolAddress =
+  //   currencyA && currencyB && feeAmount
+  //     ? Pool.getAddress(
+  //         currencyA?.wrapped,
+  //         currencyB?.wrapped,
+  //         feeAmount,
+  //         undefined,
+  //       chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined,
+  //         initCodeHashManualOverride:
+  //         chainId === 55004 || chainId === 5050 ? L2_initCodeHashManualOverride : undefined
+  //       )
+  //     : undefined;
 
   return useAllV3TicksQuery({
-    variables: { poolAddress: poolAddress?.toLowerCase(), skip },
+    variables: {
+      poolAddress: poolAddress?.toLowerCase(),
+      skip,
+    },
     skip: !poolAddress,
     pollInterval: ms(`30s`),
     client: chainId ? subgraphApolloClients[chainId] : undefined,
@@ -280,12 +300,6 @@ function useAllV3Ticks(
     }
   }, [data?.ticks]);
 
-  console.log("---gogo");
-  console.log(data);
-
-  console.log(subgraphTickData);
-  console.log(tickLensTickData.tickData);
-
   return {
     //@ts-ignore
     isLoading: useSubgraph
@@ -308,9 +322,6 @@ export function usePoolActiveLiquidity(
 } {
   const pool = usePool(currencyA, currencyB, feeAmount);
 
-  console.log("pool");
-  console.log(pool);
-
   // Find nearest valid tick for pool in case tick is not initialized.
   const activeTick = useMemo(
     () => getActiveTick(pool[1]?.tickCurrent, feeAmount),
@@ -322,9 +333,6 @@ export function usePoolActiveLiquidity(
     currencyB,
     feeAmount
   );
-
-  console.log("ticks");
-  console.log(ticks);
 
   return useMemo(() => {
     if (

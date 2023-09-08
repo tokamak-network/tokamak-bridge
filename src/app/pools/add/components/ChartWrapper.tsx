@@ -186,9 +186,6 @@ export default function ChartWrapper({
   const isUninitialized =
     !currencyA || !currencyB || (formattedData === undefined && !isLoading);
 
-  console.log("formattedData");
-  console.log(formattedData);
-
   if (isUninitialized) return null;
   if (error) return <UninitializedPool />;
   if (isLoading) return <LoadingSpinner />;

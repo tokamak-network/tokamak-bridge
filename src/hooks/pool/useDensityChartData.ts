@@ -5,7 +5,6 @@ import {
   usePoolActiveLiquidity,
 } from "hooks/pool/usePoolTickData";
 import { useCallback, useMemo } from "react";
-
 import { ChartEntry } from "types/pool/chart";
 
 export function useDensityChartData({
@@ -22,9 +21,6 @@ export function useDensityChartData({
     currencyB,
     feeAmount
   );
-
-  console.log("data");
-  console.log(data);
 
   const formatData = useCallback(() => {
     if (!data?.length) {
