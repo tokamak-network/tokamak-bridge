@@ -9,7 +9,7 @@ import { useNetwork } from "wagmi";
 import { getProvider } from "@/config/getProvider";
 import useGetTxLayers from "./useGetTxLayers";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
-import { ethers } from "ethers";
+import { Contract, ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import {
   L1TxType,
@@ -29,16 +29,19 @@ import { useRecoilState } from "recoil";
 export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<FullDepTx[]>([]);
   const [tDataWithdraw, setTDataWithdraw] = useState<any[]>([]);
-  const { provider } = useProvier();
+  const { provider, L1Provider, L2Provider } = useProvier();
   const { L2BRIDGE_CONTRACT } = useContract();
   const { address } = useAccount();
   const { layer, connectedChainId } = useConnectedNetwork();
   const { chain } = useNetwork();
   const providers = useGetTxLayers();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
-  const l2ProSDK = titanSDK.asL2Provider(getProvider(providers.l2Provider));
-  const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
-  const l1Pro = layer === "L1" ? provider : getProvider(providers.l1Provider);
+  const l2ProSDK = titanSDK.asL2Provider(
+    layer === "L2" ? provider : L2Provider
+  );
+  const l2Pro = layer === "L2" ? provider : L2Provider;
+  const l1Pro = layer === "L1" ? provider : L1Provider;
+
   const [userTxfromSubgrap, setUserTxfromSubgraph] =
     useRecoilState(userTransactions);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
@@ -84,126 +87,81 @@ export default function useGetTransaction() {
           );
 
         const l2WithdrawTxs = await Promise.all(
-          userTxfromSubgrap.formattedWithdraw.map(async (tx: L1TxType) => {
-            const resolved = await crossMessengerTokamak.toCrossChainMessage(
-              tx.transactionHash
-            ); //  office node ok
+          userTxfromSubgrap.formattedWithdraw.map(
+            async (tx: L1TxType, index: number) => {
+              const resolved = await crossMessengerTokamak.toCrossChainMessage(
+                tx.transactionHash
+              ); //  office node ok
 
-            const currentStatus = await crossMessenger.getMessageStatus(
-              resolved
-            ); //no office node
+              const currentStatus = await crossMessenger.getMessageStatus(
+                resolved
+              ); //no office node
 
-            const l2TxReceipt = await l2Pro.getTransactionReceipt(
-              tx.transactionHash
-            ); //l2 tx receipt
-            const logs = await ethers.utils.defaultAbiCoder.decode(
-              ["address", "uint256", "bytes"],
-              l2TxReceipt.logs[3].data
-            );
-            const l1Token = ethers.utils.defaultAbiCoder.decode(
-              ["address"],
-              l2TxReceipt.logs[3].topics[1]
-            )[0];
-            const l2Token = ethers.utils.defaultAbiCoder.decode(
-              ["address"],
-              l2TxReceipt.logs[3].topics[2]
-            )[0];
+              const l2TxReceipt = await l2Pro.getTransactionReceipt(
+                tx.transactionHash
+              ); //l2 tx receipt
+              const logs = ethers.utils.defaultAbiCoder.decode(
+                ["address", "uint256", "bytes"],
+                l2TxReceipt.logs[3].data
+              );
+              const l1Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3].topics[1]
+              )[0];
+              const l2Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3].topics[2]
+              )[0];
 
-            // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
-            //if status is 4, rollup is finish and tx ready for challenge period
-            if (
-              (currentStatus === 2 || currentStatus === 3) &&
-              l2TxReceipt !== undefined
-            ) {
-              const amnt = BigInt(logs[1]).toString();
-
-              // let copy = {
-              //   ...tx,
-              //   event: "withdraw",
-              //   l2timeStamp: tx.blockTimestamp,
-              //   l2txHash: tx.transactionHash,
-              //   _l1Token: l1Token,
-              //   _l2Token: l2Token,
-              //   _amount: amnt,
-              //   l2TxReceipt: l2TxReceipt,
-              //   currentStatus: currentStatus,
-              //   resolved: resolved,
-              // };
-              return {
-                ...tx,
-                l2timeStamp: tx.blockTimestamp,
-                l2txHash: tx.transactionHash,
-                _l1Token: l1Token,
-                _l2Token: l2Token,
-                _amount: amnt,
-                l2TxReceipt: l2TxReceipt,
-                currentStatus: currentStatus,
-                resolved: resolved,
-              };
-            } else if (
-              currentStatus === 4 &&
-              l2TxReceipt.blockNumber !== undefined
-            ) {
-              const l2BlockNum = await l2Pro.getBlock(l2TxReceipt.blockNumber);
-              const calculatedTimePeriod = isConnectedToMainNetwork
-                ? 11 * 60 + 7 * 24 * 60 * 60
-                : 2 * 60 + 10 + 150;
-              const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
-
-              // const challengePeriod =
-              //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
-              const timeReadyForRelay = testPeriod;
-              const amnt = BigInt(logs[1]).toString();
-              return {
-                ...tx,
-                l2TxReceipt: l2TxReceipt,
-                l2timeStamp: tx.blockTimestamp,
-                l2txHash: tx.transactionHash,
-                event: "withdraw",
-                _l1Token: l1Token,
-                _l2Token: l2Token,
-                _amount: amnt,
-                timeReadyForRelay: Number(timeReadyForRelay),
-                currentStatus: currentStatus,
-                resolved: resolved,
-              };
-            } else {
-              const receipt = await crossMessenger.getMessageReceipt(resolved); //  no office node
+              // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
+              //if status is 4, rollup is finish and tx ready for challenge period
               if (
-                l2TxReceipt.blockNumber !== undefined &&
-                receipt != null &&
-                receipt.transactionReceipt != null
+                (currentStatus === 2 || currentStatus === 3) &&
+                l2TxReceipt !== undefined
               ) {
-                const matchTx = receipt.transactionReceipt.transactionHash;
-                const l1tx =
-                  userTxfromSubgrap.formattedL1WithdrawResults.filter(
-                    (tx: EthType | Erc20Type) => {
-                      return tx.transactionHash === matchTx;
-                    }
-                  )[0];
-
-                if (l1tx) {
-                  let copy = {
-                    ...tx,
-                    ...l1tx,
-                    l2TxReceipt: l2TxReceipt,
-                    l2timeStamp: tx.blockTimestamp,
-                    l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
-                    l1Block: l1tx.blockNumber,
-                    l2txHash: tx.transactionHash,
-                    l1txHash: l1tx.transactionHash,
-                    event: "withdraw",
-                    _amount: l1tx._amount,
-                    _l1Token: l1tx._l1Token,
-                    _l2Token: l1tx._l2Token,
-                    currentStatus: currentStatus,
-                    resolved: resolved,
-                  };
-                  return copy;
-                }
-              } else {
                 const amnt = BigInt(logs[1]).toString();
-                let copy = {
+
+                // let copy = {
+                //   ...tx,
+                //   event: "withdraw",
+                //   l2timeStamp: tx.blockTimestamp,
+                //   l2txHash: tx.transactionHash,
+                //   _l1Token: l1Token,
+                //   _l2Token: l2Token,
+                //   _amount: amnt,
+                //   l2TxReceipt: l2TxReceipt,
+                //   currentStatus: currentStatus,
+                //   resolved: resolved,
+                // };
+                return {
+                  ...tx,
+                  l2timeStamp: tx.blockTimestamp,
+                  l2txHash: tx.transactionHash,
+                  _l1Token: l1Token,
+                  _l2Token: l2Token,
+                  _amount: amnt,
+                  l2TxReceipt: l2TxReceipt,
+                  currentStatus: currentStatus,
+                  resolved: resolved,
+                };
+              } else if (
+                currentStatus === 4 &&
+                l2TxReceipt.blockNumber !== undefined
+              ) {
+                console.log(index);
+                const l2BlockNum = await l2Pro.getBlock(
+                  l2TxReceipt.blockNumber
+                );
+                const calculatedTimePeriod = isConnectedToMainNetwork
+                  ? 11 * 60 + 7 * 24 * 60 * 60
+                  : 2 * 60 + 10 + 150;
+                const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
+
+                // const challengePeriod =
+                //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
+                const timeReadyForRelay = testPeriod;
+                const amnt = BigInt(logs[1]).toString();
+                return {
                   ...tx,
                   l2TxReceipt: l2TxReceipt,
                   l2timeStamp: tx.blockTimestamp,
@@ -212,13 +170,66 @@ export default function useGetTransaction() {
                   _l1Token: l1Token,
                   _l2Token: l2Token,
                   _amount: amnt,
+                  timeReadyForRelay: Number(timeReadyForRelay),
                   currentStatus: currentStatus,
                   resolved: resolved,
                 };
-                return copy;
+              } else {
+                console.log(index);
+                const receipt = await crossMessenger.getMessageReceipt(
+                  resolved
+                ); //  no office node
+                if (
+                  l2TxReceipt.blockNumber !== undefined &&
+                  receipt != null &&
+                  receipt.transactionReceipt != null
+                ) {
+                  const matchTx = receipt.transactionReceipt.transactionHash;
+                  const l1tx =
+                    userTxfromSubgrap.formattedL1WithdrawResults.filter(
+                      (tx: EthType | Erc20Type) => {
+                        return tx.transactionHash === matchTx;
+                      }
+                    )[0];
+
+                  if (l1tx) {
+                    let copy = {
+                      ...tx,
+                      ...l1tx,
+                      l2TxReceipt: l2TxReceipt,
+                      l2timeStamp: tx.blockTimestamp,
+                      l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
+                      l1Block: l1tx.blockNumber,
+                      l2txHash: tx.transactionHash,
+                      l1txHash: l1tx.transactionHash,
+                      event: "withdraw",
+                      _amount: l1tx._amount,
+                      _l1Token: l1tx._l1Token,
+                      _l2Token: l1tx._l2Token,
+                      currentStatus: currentStatus,
+                      resolved: resolved,
+                    };
+                    return copy;
+                  }
+                } else {
+                  const amnt = BigInt(logs[1]).toString();
+                  let copy = {
+                    ...tx,
+                    l2TxReceipt: l2TxReceipt,
+                    l2timeStamp: tx.blockTimestamp,
+                    l2txHash: tx.transactionHash,
+                    event: "withdraw",
+                    _l1Token: l1Token,
+                    _l2Token: l2Token,
+                    _amount: amnt,
+                    currentStatus: currentStatus,
+                    resolved: resolved,
+                  };
+                  return copy;
+                }
               }
             }
-          })
+          )
         );
 
         const allTxs =
@@ -266,9 +277,7 @@ export default function useGetTransaction() {
             .map(async (tx: UserL2Transaction) => {
               const l1Tx = await l2ProSDK.getTransaction(tx.transactionHash);
               const l2block = await l2ProSDK.getBlock(Number(tx.blockNumber));
-              const l1Block = await getProvider(providers.l1Provider)?.getBlock(
-                Number(l1Tx.l1BlockNumber)
-              ); ///take a look to use proviver instead of tokamak providee
+              const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak providee
               const l1tx = userTxfromSubgrap.formattedL1DepositResults?.filter(
                 (l1tx: SentMessages) => {
                   return Number(l1tx.messageNonce) === l1Tx.nonce;
@@ -344,6 +353,8 @@ export default function useGetTransaction() {
   );
 
   useEffect(() => {
+    console.log(address, connectedChainId, crossMessenger, userTxfromSubgrap);
+
     fetchWithdrawTransactions(true);
     fetchDepositTransactions(true);
     // const timer = setInterval(() => {
@@ -352,7 +363,7 @@ export default function useGetTransaction() {
     // }, 3000);
 
     // return () => clearInterval(timer);
-  }, [address, connectedChainId, crossMessenger, userTxfromSubgrap]);
+  }, [address, isConnectedToMainNetwork, userTxfromSubgrap]);
 
   const stat = useMemo(() => {
     return withdrawLoading === "loading" || depositLoading === "loading"
