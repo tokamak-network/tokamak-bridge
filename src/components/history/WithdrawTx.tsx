@@ -79,44 +79,43 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             _active={{}}
             zIndex={10000}
             _disabled={{ bg: "#1F2128" }}
-            onClick={
-              tx?.currentStatus !== 5
-                ? () => {
-                    setClaimTx(tx);
-                    setWithdrawStatus({
-                      isOpen: true,
-                    });
-                    setWithdrawData({
-                      modalData: {
-                        ...tx,
-                        inTokenSymbol: data?.symbol,
-                        outTokenSymbol: data?.symbol,
-                        inTokenAmount: ethers.utils.formatUnits(
-                          tx._amount.toString(),
-                          data?.decimals
-                        ),
-                      },
-                    });
-                  }
-                : () => {
-                    setClaimTx(tx);
-                    claim(tx);
-                    setWithdrawStatus({
-                      isOpen: false,
-                    });
-                    setWithdrawData({
-                      modalData: {
-                        ...tx,
-                        inTokenSymbol: data?.symbol,
-                        outTokenSymbol: data?.symbol,
-                        inTokenAmount: ethers.utils.formatUnits(
-                          tx._amount.toString(),
-                          data?.decimals
-                        ),
-                      },
-                    });
-                  }
-            }
+            onClick={(event) => {
+              event.stopPropagation(); // Prevent the click event from propagating to the parent Flex
+              if (tx?.currentStatus !== 5) {
+                setClaimTx(tx);
+                setWithdrawStatus({
+                  isOpen: false,
+                });
+                setWithdrawData({
+                  modalData: {
+                    ...tx,
+                    inTokenSymbol: data?.symbol,
+                    outTokenSymbol: data?.symbol,
+                    inTokenAmount: ethers.utils.formatUnits(
+                      tx._amount.toString(),
+                      data?.decimals
+                    ),
+                  },
+                });
+              } else {
+                setClaimTx(tx);
+                claim(tx);
+                setWithdrawStatus({
+                  isOpen: false,
+                });
+                setWithdrawData({
+                  modalData: {
+                    ...tx,
+                    inTokenSymbol: data?.symbol,
+                    outTokenSymbol: data?.symbol,
+                    inTokenAmount: ethers.utils.formatUnits(
+                      tx._amount.toString(),
+                      data?.decimals
+                    ),
+                  },
+                });
+              }
+            }}
           >
             {!tx
               ? "Details"

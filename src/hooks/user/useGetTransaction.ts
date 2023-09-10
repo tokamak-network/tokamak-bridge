@@ -148,7 +148,7 @@ export default function useGetTransaction() {
                 currentStatus === 4 &&
                 l2TxReceipt.blockNumber !== undefined
               ) {
-                console.log(index);
+                // console.log(index);
                 const l2BlockNum = await l2Pro.getBlock(
                   l2TxReceipt.blockNumber
                 );
@@ -175,7 +175,7 @@ export default function useGetTransaction() {
                   resolved: resolved,
                 };
               } else {
-                console.log(index);
+                // console.log(index);
                 const receipt = await crossMessenger.getMessageReceipt(
                   resolved
                 ); //  no office node
@@ -263,7 +263,7 @@ export default function useGetTransaction() {
         l2Pro !== undefined &&
         userTxfromSubgrap !== undefined
       ) {
-        console.log('userTxfromSubgrap?.formattedL1DepositResults',userTxfromSubgrap?.formattedL1DepositResults);
+        // console.log('userTxfromSubgrap?.formattedL1DepositResults',userTxfromSubgrap?.formattedL1DepositResults);
 
         set &&
           setDepositLoading(
@@ -355,7 +355,7 @@ export default function useGetTransaction() {
   );
 
   useEffect(() => {
-    console.log(address, connectedChainId, crossMessenger, userTxfromSubgrap);
+    // console.log(address, connectedChainId, crossMessenger, userTxfromSubgrap);
 
     fetchWithdrawTransactions(true);
     fetchDepositTransactions(true);
