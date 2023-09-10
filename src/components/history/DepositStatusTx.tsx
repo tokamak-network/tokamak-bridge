@@ -1,5 +1,5 @@
 import { Flex, Text, Link } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
 import { useRecoilState } from "recoil";
@@ -16,6 +16,7 @@ import {
   intervalToDuration,
   Duration,
   subMinutes,
+  differenceInSeconds,
 } from "date-fns";
 
 export default function DepositStatusTx(props: {
@@ -28,6 +29,56 @@ export default function DepositStatusTx(props: {
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
+  const [duration, setDuration] = useState("0");
+  const durationRef = useRef("0");
+
+  useEffect(() => {
+    if (tx.l1timeStamp) {
+      const getDuration = setInterval(() => {
+        const startDate = new Date(Number(tx.l1timeStamp) * 1000);
+        const currentTime = new Date();
+        const elapsedTimeInSeconds = differenceInSeconds(
+          currentTime,
+          startDate
+        );
+        const formattedTime = format(
+          new Date(elapsedTimeInSeconds * 1000),
+          "mm:ss"
+        );
+        durationRef.current = formattedTime;
+
+        setDuration(formattedTime);
+      }, 1000);
+      return () => clearInterval(getDuration);
+    }
+  }, []);
+
+  // useEffect(() => {
+  //   if (props.timeStamp) {
+  //     const intervalID = setInterval(() => {
+  //       const nowTime = getUnixTime(new Date());
+
+  //       if (nowTime > Number(tx.l1timeStamp)) {
+  //         setDuration({
+  //           days: 0,
+  //           hours: 0,
+  //           minutes: 0,
+  //           months: 0,
+  //           seconds: 0,
+  //           years: 0,
+  //         });
+  //       } else {
+  //         setDuration(
+  //           intervalToDuration({
+  //             start: getTime(Number(tx.l1timeStamp) * 1000),
+  //             end: getTime(nowTime * 1000),
+  //           })
+  //         );
+  //       }
+  //     }, 1000);
+  //     return () => clearInterval(intervalID);
+  //   }
+  // }, [tx.l1timeStamp]);
 
   return (
     <Flex justifyContent={"space-between"} h="18px" alignItems={"center"}>
@@ -37,8 +88,7 @@ export default function DepositStatusTx(props: {
           w="6px"
           borderRadius={"50%"}
           bg={completed ? "#03D187" : "#8497DB"}
-          mr="6px"
-        ></Flex>
+          mr="6px"></Flex>
         {completed ? (
           <Link
             target="_blank"
@@ -50,16 +100,14 @@ export default function DepositStatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}
-          >
+            style={{ textDecoration: "none" }}>
             {`${layer}: Completed`}
           </Link>
         ) : (
           <Text
             fontSize={"11px"}
             fontWeight={600}
-            style={{ textDecoration: "none" }}
-          >
+            style={{ textDecoration: "none" }}>
             {`${layer}:`} {completed ? "Completed" : "Waiting"}
           </Text>
         )}
@@ -72,7 +120,11 @@ export default function DepositStatusTx(props: {
           </Text>
         </Flex>
       ) : (
-        <Flex></Flex>
+        <Flex>
+          <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+            {duration}
+          </Text>
+        </Flex>
       )}
     </Flex>
   );

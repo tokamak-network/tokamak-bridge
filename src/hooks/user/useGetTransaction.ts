@@ -231,11 +231,11 @@ export default function useGetTransaction() {
                 (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               );
-
+              
         setWithdrawLoading(
           userTxfromSubgrap.formattedWithdraw.length > 0 && allTxs.length > 0
             ? "present"
-            : "loading"
+            :  userTxfromSubgrap.formattedWithdraw.length === 0? 'absent': "loading"
         );
 
         return setTDataWithdraw(allTxs);
@@ -250,10 +250,10 @@ export default function useGetTransaction() {
         l2ProSDK !== undefined &&
         l1Pro !== undefined &&
         l2Pro !== undefined &&
-        userTxfromSubgrap !== undefined &&
-        userTxfromSubgrap.formattedL1DepositResults.length !== 0 &&
-        userTxfromSubgrap.formattedDeposit !== 0
+        userTxfromSubgrap !== undefined
       ) {
+        console.log('userTxfromSubgrap?.formattedL1DepositResults',userTxfromSubgrap?.formattedL1DepositResults);
+
         set &&
           setDepositLoading(
             userTxfromSubgrap?.formattedL1DepositResults.length > 0
@@ -334,9 +334,11 @@ export default function useGetTransaction() {
             }
           )
         );
+
+        
         const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
         setTDataDeposit(txLogs);
-        const status = txLogs.length > 0 ? "present" : "loading";
+        const status = txLogs.length > 0 ? "present" : userTxfromSubgrap?.formattedL1DepositResults.length === 0? 'absent': "loading";
         setDepositLoading(status);
       }
     },
@@ -347,7 +349,7 @@ export default function useGetTransaction() {
     fetchWithdrawTransactions(true);
     fetchDepositTransactions(true);
     // const timer = setInterval(() => {
-    //   fetchTransactions(false);
+    //   fetchWithdrawTransactions(false);
     //   fetchDepositTransactions(false);
     // }, 3000);
 
@@ -371,13 +373,13 @@ export default function useGetTransaction() {
             .concat(tDataDeposit)
             .sort(
               (tx1: FullDepTx, tx2: FullDepTx) =>
-                Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+                Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp) ||Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
             )
         : tDataWithdraw
             .concat(tDataDeposit)
             .sort(
               (tx1: FullDepTx, tx2: FullDepTx) =>
-                Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+                Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp) ||   Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
             )
       : [];
   }, [tDataWithdraw, , stat, tDataDeposit]);

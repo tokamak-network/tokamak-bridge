@@ -124,8 +124,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
       bg={"#15161D"}
       p="12px"
       flexDir={"column"}
-      rowGap={"8px"}
-    >
+      rowGap={"8px"}>
       <Flex
         flexDir={"column"}
         rowGap={"8px"}
@@ -148,8 +147,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
               },
             });
           }
-        }}
-      >
+        }}>
         <Flex justifyContent={"space-between"} w="100%">
           <Text fontSize={"14px"} fontWeight={600}>
             Withdraw
@@ -169,45 +167,44 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             _active={{}}
             zIndex={10000}
             _disabled={{ bg: "#1F2128" }}
-            onClick={
-              tx?.currentStatus !== 5
-                ? () => {
-                    setClaimTx(tx);
-                    setWithdrawStatus({
-                      isOpen: true,
-                    });
-                    setWithdrawData({
-                      modalData: {
-                        ...tx,
-                        inTokenSymbol: tokenData?.token0Symbol,
-                        outTokenSymbol: tokenData?.token1Symbol,
-                        inTokenAmount: ethers.utils.formatUnits(
-                          tx._amount.toString(),
-                          tokenData?.token0Decimals
-                        ),
-                      },
-                    });
-                  }
-                : () => {
-                    setClaimTx(tx);
-                    claim(tx);
-                    setWithdrawStatus({
-                      isOpen: false,
-                    });
-                    setWithdrawData({
-                      modalData: {
-                        ...tx,
-                        inTokenSymbol: tokenData?.token0Symbol,
-                        outTokenSymbol: tokenData?.token1Symbol,
-                        inTokenAmount: ethers.utils.formatUnits(
-                          tx._amount.toString(),
-                          tokenData?.token0Decimals
-                        ),
-                      },
-                    });
-                  }
-            }
-          >
+           
+            onClick={(event) => {
+              event.stopPropagation(); // Prevent the click event from propagating to the parent Flex
+              if (tx?.currentStatus !== 5) {
+                setClaimTx(tx);
+                setWithdrawStatus({
+                  isOpen: false,
+                });
+                setWithdrawData({
+                  modalData: {
+                    ...tx,
+                    inTokenSymbol: tokenData?.token0Symbol,
+                    outTokenSymbol: tokenData?.token1Symbol,
+                    inTokenAmount: ethers.utils.formatUnits(
+                      tx._amount.toString(),
+                      tokenData?.token0Decimals
+                    ),
+                  },
+                });
+              } else {
+                setClaimTx(tx);
+                claim(tx);
+                setWithdrawStatus({
+                  isOpen: false,
+                });
+                setWithdrawData({
+                  modalData: {
+                    ...tx,
+                    inTokenSymbol: tokenData?.token0Symbol,
+                    outTokenSymbol: tokenData?.token1Symbol,
+                    inTokenAmount: ethers.utils.formatUnits(
+                      tx._amount.toString(),
+                      tokenData?.token0Decimals
+                    ),
+                  },
+                });
+              }
+            }}>
             {!tx
               ? "Details"
               : tx.currentStatus === 5
