@@ -359,12 +359,12 @@ export default function useGetTransaction() {
 
     fetchWithdrawTransactions(true);
     fetchDepositTransactions(true);
-    const timer = setInterval(() => {
-      fetchWithdrawTransactions(false);
-      fetchDepositTransactions(false);
-    }, 3000);
+    // const timer = setInterval(() => {
+    //   fetchWithdrawTransactions(false);
+    //   fetchDepositTransactions(false);
+    // }, 3000);
 
-    return () => clearInterval(timer);
+    // return () => clearInterval(timer);
   }, [address, isConnectedToMainNetwork, userTxfromSubgrap]);
 
   const stat = useMemo(() => {

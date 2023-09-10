@@ -76,6 +76,7 @@ export function useGasFee() {
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
+                  //@ts-ignore
                 account: address,
                 //@ts-ignore
                 args: [200000, "0x"],
@@ -85,6 +86,7 @@ export function useGasFee() {
             }
 
             return _depositERC20_contract.estimateGas.depositERC20({
+                //@ts-ignore
               account: address,
               //@ts-ignore
               args: [
