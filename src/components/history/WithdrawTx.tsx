@@ -1,119 +1,31 @@
 import { Flex, Text, Button } from "@chakra-ui/react";
-import Image from "next/image";
 import TokenPairTx from "./TokenPairTx";
 import StatusTx from "./StatusTx";
-import { useEffect, useCallback, useState } from "react";
 import { ethers } from "ethers";
-import ERC20_ABI from "@/abis/erc20.json";
-import { useProvier } from "@/hooks/provider/useProvider";
-import { supportedChain } from "@/types/network/supportedNetwork";
-import { l2RpcProvider } from "@/config/l2Provider";
-import { getL1Provider } from "@/config/l1Provider";
-import { useNetwork } from "wagmi";
-import { getKeyByValue } from "@/utils/ts/getKeyByValue";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useToken } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
-import { getProvider } from "@/config/getProvider";
-import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import { FullWithTx, FullDepTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
-type TokenData = {
-  token0Symbol: string;
-  token1Symbol: string;
-  token0Name: string;
-  token1Name: string;
-  token0Decimals: number;
-  token1Decimals: number;
-};
+
 import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
 import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
+import { Hash } from "viem";
 
 export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
-  const { provider } = useProvier();
-  const [tokenData, setTokenData] = useState<TokenData | undefined>();
-  const { chain } = useNetwork();
-  const { layer, chainName } = useConnectedNetwork();
-  const providers = useGetTxLayers();
+  const { layer } = useConnectedNetwork();
   const { claim } = useCallClaim("relayMessage");
-  const zero_address = "0x0000000000000000000000000000000000000000";
   const [, setClaimTx] = useRecoilState(claimTx);
-  // console.log('tx',tx);
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] =
-    useRecoilState(confirmWithdrawStats);
+  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
 
-  const [txData, setTxData] = useRecoilState(txDataStatus);
+  const [txData] = useRecoilState(txDataStatus);
 
-  const getTokenData = useCallback(async () => {
-    if (tx._l1Token !== undefined && tx._l2Token !== undefined && chain?.id) {
-      let token0Symbol, token0Name, token0Decimals;
-      let token1Symbol, token1Name, token1Decimals;
-
-      const l2Pro =
-        layer === "L2" ? provider : getProvider(providers.l2Provider);
-      const l1Pro =
-        layer === "L1" ? provider : getProvider(providers.l1Provider);
-
-      if (tx._l1Token === zero_address || tx._l1Token === undefined) {
-        token0Symbol = "ETH";
-        token0Name = "ETH";
-        token0Decimals = 18;
-      } else {
-        const l1TokenContract = new ethers.Contract(
-          tx._l1Token,
-          ERC20_ABI.abi,
-          l1Pro
-        );
-        [token0Symbol, token0Name, token0Decimals] = await Promise.all([
-          l1TokenContract.symbol(),
-          l1TokenContract.name(),
-          l1TokenContract.decimals(),
-        ]);
-      }
-
-      if (tx._l1Token === zero_address || tx._l1Token === undefined) {
-        token0Symbol = "ETH";
-        token0Name = "ETH";
-        token0Decimals = 18;
-      } else {
-        const l2TokenContract = new ethers.Contract(
-          tx._l2Token,
-          ERC20_ABI.abi,
-          l2Pro
-        );
-
-        [token1Symbol, token1Name, token1Decimals] = await Promise.all([
-          l2TokenContract.symbol(),
-          l2TokenContract.name(),
-          l2TokenContract.decimals(),
-        ]);
-      }
-
-      return {
-        token0Symbol: token0Symbol,
-        token1Symbol: token1Symbol,
-        token0Name: token0Name,
-        token1Name: token1Name,
-        token0Decimals: token0Decimals,
-        token1Decimals: token1Decimals,
-      };
-    }
-
-    return;
-  }, []);
-
-  useEffect(() => {
-    const fetchTokenData = async () => {
-      const result = await getTokenData();
-      setTokenData(result);
-      return;
-    };
-
-    fetchTokenData();
-  }, []);
+  const { data, isError, isLoading } = useToken({
+    address: layer === "L1" ? (tx._l1Token as Hash) : (tx._l2Token as Hash),
+  });
 
   return (
     <Flex
@@ -138,11 +50,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             setWithdrawData({
               modalData: {
                 ...tx,
-                inTokenSymbol: tokenData?.token0Symbol,
-                outTokenSymbol: tokenData?.token1Symbol,
+                inTokenSymbol: data?.symbol,
+                outTokenSymbol: data?.symbol,
                 inTokenAmount: ethers.utils.formatUnits(
                   tx._amount.toString(),
-                  tokenData?.token0Decimals
+                  data?.decimals
                 ),
               },
             });
@@ -167,44 +79,45 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             _active={{}}
             zIndex={10000}
             _disabled={{ bg: "#1F2128" }}
-           
-            onClick={(event) => {
-              event.stopPropagation(); // Prevent the click event from propagating to the parent Flex
-              if (tx?.currentStatus !== 5) {
-                setClaimTx(tx);
-                setWithdrawStatus({
-                  isOpen: false,
-                });
-                setWithdrawData({
-                  modalData: {
-                    ...tx,
-                    inTokenSymbol: tokenData?.token0Symbol,
-                    outTokenSymbol: tokenData?.token1Symbol,
-                    inTokenAmount: ethers.utils.formatUnits(
-                      tx._amount.toString(),
-                      tokenData?.token0Decimals
-                    ),
-                  },
-                });
-              } else {
-                setClaimTx(tx);
-                claim(tx);
-                setWithdrawStatus({
-                  isOpen: false,
-                });
-                setWithdrawData({
-                  modalData: {
-                    ...tx,
-                    inTokenSymbol: tokenData?.token0Symbol,
-                    outTokenSymbol: tokenData?.token1Symbol,
-                    inTokenAmount: ethers.utils.formatUnits(
-                      tx._amount.toString(),
-                      tokenData?.token0Decimals
-                    ),
-                  },
-                });
-              }
-            }}>
+            onClick={
+              tx?.currentStatus !== 5
+                ? () => {
+                    setClaimTx(tx);
+                    setWithdrawStatus({
+                      isOpen: true,
+                    });
+                    setWithdrawData({
+                      modalData: {
+                        ...tx,
+                        inTokenSymbol: data?.symbol,
+                        outTokenSymbol: data?.symbol,
+                        inTokenAmount: ethers.utils.formatUnits(
+                          tx._amount.toString(),
+                          data?.decimals
+                        ),
+                      },
+                    });
+                  }
+                : () => {
+                    setClaimTx(tx);
+                    claim(tx);
+                    setWithdrawStatus({
+                      isOpen: false,
+                    });
+                    setWithdrawData({
+                      modalData: {
+                        ...tx,
+                        inTokenSymbol: data?.symbol,
+                        outTokenSymbol: data?.symbol,
+                        inTokenAmount: ethers.utils.formatUnits(
+                          tx._amount.toString(),
+                          data?.decimals
+                        ),
+                      },
+                    });
+                  }
+            }
+          >
             {!tx
               ? "Details"
               : tx.currentStatus === 5
@@ -217,15 +130,15 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         <TokenPairTx
           inAmount={ethers.utils.formatUnits(
             tx._amount.toString(),
-            tokenData?.token0Decimals
+            data?.decimals
           )}
           action="withdraw"
           outAmount={ethers.utils.formatUnits(
             tx._amount.toString(),
-            tokenData?.token1Decimals
+            data?.decimals
           )}
-          inTokenSymbol={tokenData?.token0Symbol || "ETH"}
-          outTokenSymbol={tokenData?.token1Symbol || "ETH"}
+          inTokenSymbol={data?.symbol || "ETH"}
+          outTokenSymbol={data?.symbol || "ETH"}
         />
       </Flex>
       <StatusTx
@@ -235,11 +148,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         layer={"L2"}
         tx={{
           ...tx,
-          inTokenSymbol: tokenData?.token0Symbol,
-          outTokenSymbol: tokenData?.token1Symbol,
+          inTokenSymbol: data?.symbol,
+          outTokenSymbol: data?.symbol,
           inTokenAmount: ethers.utils.formatUnits(
             tx._amount.toString(),
-            tokenData?.token0Decimals
+            data?.decimals
           ),
         }}
       />
@@ -252,11 +165,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         layer={"L1"}
         tx={{
           ...tx,
-          inTokenSymbol: tokenData?.token0Symbol,
-          outTokenSymbol: tokenData?.token1Symbol,
+          inTokenSymbol: data?.symbol,
+          outTokenSymbol: data?.symbol,
           inTokenAmount: ethers.utils.formatUnits(
             tx._amount.toString(),
-            tokenData?.token0Decimals
+            data?.decimals
           ),
         }}
       />

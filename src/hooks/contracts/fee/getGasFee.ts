@@ -76,8 +76,8 @@ export function useGasFee() {
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
-                //@ts-ignore
                 account: address,
+                //@ts-ignore
                 args: [200000, "0x"],
                 //need to put gasAmount with gasOrcale later
                 value: parsedAmount as bigint,
@@ -85,8 +85,8 @@ export function useGasFee() {
             }
 
             return _depositERC20_contract.estimateGas.depositERC20({
-              //@ts-ignore
               account: address,
+              //@ts-ignore
               args: [
                 inToken.address[inNetwork.chainName],
                 outTokenAddress,
@@ -130,7 +130,6 @@ export function useGasFee() {
             const estimateProvider = signer?.provider;
             return estimateProvider?.estimateTotalGasCost(tx);
 
-          
           default:
             return;
         }
@@ -147,8 +146,7 @@ export function useGasFee() {
                 totalGasCost.toString(),
                 "ether"
               );
-             
-              
+
               return setTotalGasCost(parsedTotalGasCost);
             } else {
               const totalGas = ethers.utils.formatUnits(
