@@ -67,7 +67,7 @@ export default function useGetTransaction() {
       }
     };
     subgraphData();
-  }, [isConnectedToMainNetwork, address]);
+  }, [isConnectedToMainNetwork, address, layer]);
 
   const fetchWithdrawTransactions = useCallback(
     async (set: boolean) => {
@@ -85,6 +85,8 @@ export default function useGetTransaction() {
               ? "loading"
               : "absent"
           );
+        userTxfromSubgrap.formattedWithdraw.length === 0 &&
+          setTDataWithdraw([]);
 
         const l2WithdrawTxs = await Promise.all(
           userTxfromSubgrap.formattedWithdraw.map(
@@ -120,19 +122,6 @@ export default function useGetTransaction() {
                 l2TxReceipt !== undefined
               ) {
                 const amnt = BigInt(logs[1]).toString();
-
-                // let copy = {
-                //   ...tx,
-                //   event: "withdraw",
-                //   l2timeStamp: tx.blockTimestamp,
-                //   l2txHash: tx.transactionHash,
-                //   _l1Token: l1Token,
-                //   _l2Token: l2Token,
-                //   _amount: amnt,
-                //   l2TxReceipt: l2TxReceipt,
-                //   currentStatus: currentStatus,
-                //   resolved: resolved,
-                // };
                 return {
                   ...tx,
                   l2timeStamp: tx.blockTimestamp,
@@ -148,7 +137,6 @@ export default function useGetTransaction() {
                 currentStatus === 4 &&
                 l2TxReceipt.blockNumber !== undefined
               ) {
-                // console.log(index);
                 const l2BlockNum = await l2Pro.getBlock(
                   l2TxReceipt.blockNumber
                 );
@@ -175,7 +163,6 @@ export default function useGetTransaction() {
                   resolved: resolved,
                 };
               } else {
-                // console.log(index);
                 const receipt = await crossMessenger.getMessageReceipt(
                   resolved
                 ); //  no office node
@@ -242,14 +229,15 @@ export default function useGetTransaction() {
                 (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               );
-              
+
+        setTDataWithdraw(allTxs);
         setWithdrawLoading(
           userTxfromSubgrap.formattedWithdraw.length > 0 && allTxs.length > 0
             ? "present"
-            :  userTxfromSubgrap.formattedWithdraw.length === 0? 'absent': "loading"
+            : userTxfromSubgrap.formattedWithdraw.length === 0
+            ? "absent"
+            : "loading"
         );
-
-        return setTDataWithdraw(allTxs);
       }
     },
     [userTxfromSubgrap]
@@ -263,8 +251,6 @@ export default function useGetTransaction() {
         l2Pro !== undefined &&
         userTxfromSubgrap !== undefined
       ) {
-        // console.log('userTxfromSubgrap?.formattedL1DepositResults',userTxfromSubgrap?.formattedL1DepositResults);
-
         set &&
           setDepositLoading(
             userTxfromSubgrap?.formattedL1DepositResults.length > 0
@@ -344,19 +330,21 @@ export default function useGetTransaction() {
           )
         );
 
-        
-        const txLogs = layer == "L1" ? l1DepTxs : l2DepTxs;
+        const txLogs = l1DepTxs;
         setTDataDeposit(txLogs);
-        const status = txLogs.length > 0 ? "present" : userTxfromSubgrap?.formattedL1DepositResults.length === 0? 'absent': "loading";
+        const status =
+          txLogs.length > 0
+            ? "present"
+            : userTxfromSubgrap?.formattedL1DepositResults.length === 0
+            ? "absent"
+            : "loading";
         setDepositLoading(status);
       }
     },
-    [userTxfromSubgrap]
+    [userTxfromSubgrap, address]
   );
 
   useEffect(() => {
-    // console.log(address, connectedChainId, crossMessenger, userTxfromSubgrap);
-
     fetchWithdrawTransactions(true);
     fetchDepositTransactions(true);
     // const timer = setInterval(() => {
@@ -368,6 +356,15 @@ export default function useGetTransaction() {
   }, [address, isConnectedToMainNetwork, userTxfromSubgrap]);
 
   const stat = useMemo(() => {
+    if (
+      userTxfromSubgrap !== undefined &&
+      userTxfromSubgrap.formattedDeposit.length === 0 &&
+      userTxfromSubgrap.formattedL1DepositResults.length === 0 &&
+      userTxfromSubgrap.formattedL1WithdrawResults.length === 0 &&
+      userTxfromSubgrap.formattedWithdraw.length === 0
+    ) {
+      return "absent";
+    }
     return withdrawLoading === "loading" || depositLoading === "loading"
       ? "loading"
       : withdrawLoading === "absent" && depositLoading === "absent"
@@ -375,25 +372,260 @@ export default function useGetTransaction() {
       : withdrawLoading === "present" || depositLoading === "present"
       ? "present"
       : "loading";
-  }, [withdrawLoading, depositLoading]);
+  }, [address, withdrawLoading, depositLoading]);
 
   const allTxs = useMemo(() => {
+    if (
+      userTxfromSubgrap !== undefined &&
+      userTxfromSubgrap.formattedDeposit.length === 0 &&
+      userTxfromSubgrap.formattedL1DepositResults.length === 0 &&
+      userTxfromSubgrap.formattedL1WithdrawResults.length === 0 &&
+      userTxfromSubgrap.formattedWithdraw.length === 0
+    ) {
+      return [];
+    }
     return stat === "present"
-      ? layer == "L1"
-        ? tDataWithdraw
-            .concat(tDataDeposit)
-            .sort(
-              (tx1: FullDepTx, tx2: FullDepTx) =>
-                Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp) ||Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-            )
-        : tDataWithdraw
-            .concat(tDataDeposit)
-            .sort(
-              (tx1: FullDepTx, tx2: FullDepTx) =>
-                Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp) ||   Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
-            )
+      ? tDataWithdraw
+          .concat(tDataDeposit)
+          .sort((tx1: FullDepTx, tx2: FullDepTx) =>
+            // Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp) ||
+            // Number(tx1.l2timeStamp) - Number(tx2.l2timeStamp)
+            tx2.l1timeStamp && tx1.l1timeStamp
+              ? Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+              : tx2.l1timeStamp && tx1.l1timeStamp === undefined
+              ? Number(tx2.l1timeStamp) - Number(tx1.l2timeStamp)
+              : tx2.l1timeStamp === undefined && tx1.l1timeStamp
+              ? Number(tx2.l2timeStamp) - Number(tx1.l1timeStamp)
+              : Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+          )
       : [];
-  }, [tDataWithdraw, , stat, tDataDeposit]);
+  }, [address, tDataWithdraw, , stat, tDataDeposit]);
+
+  // const getUpdatedWithdraw = async (incompleteWiths: any) => {
+  //   let tx;
+  //   if (incompleteWiths.l2TxReceipt !== undefined && l2Pro !== undefined) {
+  //     const resolved = await crossMessengerTokamak.toCrossChainMessage(
+  //       incompleteWiths.transactionHash
+  //     ); //  office node ok
+
+  //     const currentStatus = await crossMessenger.getMessageStatus(resolved); //no office node
+
+  //     const l2TxReceipt = await l2Pro.getTransactionReceipt(
+  //       incompleteWiths.transactionHash
+  //     ); //l2 tx receipt
+  //     const logs = ethers.utils.defaultAbiCoder.decode(
+  //       ["address", "uint256", "bytes"],
+  //       l2TxReceipt.logs[3].data
+  //     );
+  //     const l1Token = ethers.utils.defaultAbiCoder.decode(
+  //       ["address"],
+  //       l2TxReceipt.logs[3].topics[1]
+  //     )[0];
+  //     const l2Token = ethers.utils.defaultAbiCoder.decode(
+  //       ["address"],
+  //       l2TxReceipt.logs[3].topics[2]
+  //     )[0];
+
+  //     // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
+  //     //if status is 4, rollup is finish and tx ready for challenge period
+  //     if (
+  //       (currentStatus === 2 || currentStatus === 3) &&
+  //       l2TxReceipt !== undefined
+  //     ) {
+  //       const amnt = BigInt(logs[1]).toString();
+  //       tx = {
+  //         ...incompleteWiths,
+  //         l2timeStamp: incompleteWiths.blockTimestamp,
+  //         l2txHash: incompleteWiths.transactionHash,
+  //         _l1Token: l1Token,
+  //         _l2Token: l2Token,
+  //         _amount: amnt,
+  //         l2TxReceipt: l2TxReceipt,
+  //         currentStatus: currentStatus,
+  //         resolved: resolved,
+  //       };
+  //     } else if (currentStatus === 4 && l2TxReceipt.blockNumber !== undefined) {
+  //       const l2BlockNum = await l2Pro.getBlock(l2TxReceipt.blockNumber);
+  //       const calculatedTimePeriod = isConnectedToMainNetwork
+  //         ? 11 * 60 + 7 * 24 * 60 * 60
+  //         : 2 * 60 + 10 + 150;
+  //       const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
+
+  //       // const challengePeriod =
+  //       //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
+  //       const timeReadyForRelay = testPeriod;
+  //       const amnt = BigInt(logs[1]).toString();
+  //       tx = {
+  //         ...incompleteWiths,
+  //         l2TxReceipt: l2TxReceipt,
+  //         l2timeStamp: incompleteWiths.blockTimestamp,
+  //         l2txHash: incompleteWiths.transactionHash,
+  //         event: "withdraw",
+  //         _l1Token: l1Token,
+  //         _l2Token: l2Token,
+  //         _amount: amnt,
+  //         timeReadyForRelay: Number(timeReadyForRelay),
+  //         currentStatus: currentStatus,
+  //         resolved: resolved,
+  //       };
+  //     } else {
+  //       const receipt = await crossMessenger.getMessageReceipt(resolved); //  no office node
+  //       if (
+  //         l2TxReceipt.blockNumber !== undefined &&
+  //         receipt != null &&
+  //         receipt.transactionReceipt != null
+  //       ) {
+  //         const matchTx = receipt.transactionReceipt.transactionHash;
+  //         const l1tx = userTxfromSubgrap.formattedL1WithdrawResults.filter(
+  //           (tx: EthType | Erc20Type) => {
+  //             return tx.transactionHash === matchTx;
+  //           }
+  //         )[0];
+
+  //         if (l1tx) {
+  //           let copy = {
+  //             ...incompleteWiths,
+  //             ...l1tx,
+  //             l2TxReceipt: l2TxReceipt,
+  //             l2timeStamp: incompleteWiths.blockTimestamp,
+  //             l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
+  //             l1Block: l1tx.blockNumber,
+  //             l2txHash: incompleteWiths.transactionHash,
+  //             l1txHash: l1tx.transactionHash,
+  //             event: "withdraw",
+  //             _amount: l1tx._amount,
+  //             _l1Token: l1tx._l1Token,
+  //             _l2Token: l1tx._l2Token,
+  //             currentStatus: currentStatus,
+  //             resolved: resolved,
+  //           };
+  //           tx = copy;
+  //         }
+  //       } else {
+  //         const amnt = BigInt(logs[1]).toString();
+  //         let copy = {
+  //           ...incompleteWiths,
+  //           l2TxReceipt: l2TxReceipt,
+  //           l2timeStamp: incompleteWiths.blockTimestamp,
+  //           l2txHash: incompleteWiths.transactionHash,
+  //           event: "withdraw",
+  //           _l1Token: l1Token,
+  //           _l2Token: l2Token,
+  //           _amount: amnt,
+  //           currentStatus: currentStatus,
+  //           resolved: resolved,
+  //         };
+  //         tx = copy;
+  //       }
+  //     }
+  //   }
+
+  //   return tx;
+  // };
+
+  // const getUpdatedDep = async (incompleteDeps: any) => {
+  //   console.log('incompleteDeps',incompleteDeps);
+    
+  //   if (l1Pro !== undefined && incompleteDeps !== undefined) {
+  //     const l1Tx = await l2ProSDK.getTransaction(
+  //       incompleteDeps.transactionHash
+  //     );
+  //     const l2block = await l2ProSDK.getBlock(
+  //       Number(incompleteDeps.blockNumber)
+  //     );
+  //     const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak providee
+  //     const l1tx = userTxfromSubgrap.formattedL1DepositResults?.filter(
+  //       (l1tx: SentMessages) => {
+  //         return Number(l1tx.messageNonce) === l1Tx.nonce;
+  //       }
+  //     );
+
+  //     if (l1tx.length > 0) {
+  //       const l1TxHash = l1tx[0].transactionHash;
+  //       const l1timeStamp = Number(l1tx[0].blockTimestamp);
+  //       let txCopy = {
+  //         ...incompleteDeps,
+  //         ...l1Tx,
+  //         l2block: l2block,
+  //         l2timeStamp: l2block.timestamp,
+  //         l1timeStamp: l1timeStamp,
+  //         l1Block: l1Block,
+  //         l2txHash: incompleteDeps.transactionHash,
+  //         l1txHash: l1TxHash,
+  //         event: "deposit",
+  //         _amount: l1tx[0]._amount,
+  //         _l1Token: l1tx[0]._l1Token,
+  //         _l2Token: l1tx[0]._l2Token,
+  //       };
+  //       return txCopy;
+  //     }
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   const getUpdatedTxs = async () => {
+  //     if (userTxfromSubgrap !== undefined) {
+  //       const txFromGraph =
+  //         layer === "L1"
+  //           ? userTxfromSubgrap?.formattedL1DepositResults.concat(
+  //               userTxfromSubgrap.formattedL1WithdrawResults
+  //             )
+  //           : userTxfromSubgrap?.formattedDeposit.concat(
+  //               userTxfromSubgrap.formattedWithdraw
+  //             );
+
+  //       const newTxfromGraph = txFromGraph.filter((tx: any) => {
+  //         const newTx =
+  //           tx.event === "deposit"
+  //             ? allTxs.filter((tx2) => tx2.l1txHash === tx.transactionHash)
+  //             : allTxs.map((tx2) => tx2.l2txHash === tx.transactionHash);
+  //       });
+
+  //       const incompleted = allTxs.filter((tx: any) => {
+  //         return (
+  //           (tx.event === "withdraw" && tx.currentStatus !== 6) ||
+  //           (tx.event === "withdraw" && tx.currentStatus !== 5) ||
+  //           (tx.event === "deposit" && tx.l2txHash === undefined)
+  //         );
+  //       });
+
+  //       const completed = allTxs.filter(
+  //         (element: any) => !incompleted.includes(element)
+  //       );
+
+  //       let txs: any = [];
+  //       if (incompleted.length > 0) {
+  //         const updated = await Promise.all(
+  //           incompleted.map(async (incompletedTx) => {
+  //             if (incompletedTx.event === "deposit") {
+  //               // const updatedDeps = await getUpdatedDep(incompletedTx);
+
+  //               // console.log("updatedDeps", updatedDeps);
+
+  //               // return updatedDeps;
+  //             } else {
+  //               const updatedWiths = await getUpdatedWithdraw(incompletedTx);
+  //               return updatedWiths;
+  //             }
+  //           })
+  //         );
+  //         txs = updated
+  //       }
+
+  //       console.log('txs',txs);
+        
+  //       const allTx = completed.concat(txs)
+  //       console.log(allTx);
+        
+  //     }
+  //   };
+
+  //   const timeinterval = setInterval(() => {
+  //     getUpdatedTxs();
+  //   }, 3000);
+
+  //   return () => clearInterval(timeinterval);
+  // }, [userTxfromSubgrap, stat]);
 
   return { depositTxs: allTxs, loadingState: stat };
 }

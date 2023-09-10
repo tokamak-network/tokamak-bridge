@@ -646,6 +646,7 @@ export default function ConfirmWithdraw() {
         h="48px"
         _active={{}}
         _hover={{}}
+        color={'#fff'}
         isDisabled={
           txData?.hash.transactionHash !== undefined &&
           txData?.hash.txSort === "Claim"

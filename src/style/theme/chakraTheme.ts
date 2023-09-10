@@ -94,6 +94,7 @@ const theme = extendTheme({
       ".css-17pwl6t": {
         zIndex: Overlay_Index.OverHeader,
       },
+
     }),
     // Additional overrides for specific components can be added here
     // For example, to reset the button styles
@@ -105,6 +106,7 @@ const theme = extendTheme({
         fontWeight: "normal",
         _hover: { backgroundColor: "none" },
         _active: {},
+        color:'#fff'
       },
     },
     Input: {

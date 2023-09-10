@@ -63,6 +63,7 @@ export default function ApproveToken() {
         fontSize={14}
         fontWeight={500}
         bgColor={"#007AFF"}
+        color={'#fff'}
         _active={{}}
         _hover={{}}
         onClick={() => {

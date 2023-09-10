@@ -351,6 +351,7 @@ export default function TokenInput(props: {
             fontWeight={700}
             _hover={{}}
             _active={{}}
+            color={'#fff'}
             mt={"3px"}
             onClick={() => onMax()}
           >

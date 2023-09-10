@@ -69,6 +69,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             h="24px"
             bg="#007AFF"
             fontSize={"12px"}
+            color={'#fff'}
             isDisabled={
               tx.currentStatus > 5 ||
               (txData?.hash.transactionHash !== undefined &&

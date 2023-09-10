@@ -36,7 +36,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [txnData, setTxnData] = useRecoilState(transactionData);
   const tData = useGetTransaction();
-      
+  
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
@@ -46,9 +46,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         setNumData(numTxs);
       }
     };
-
     updateNumData();
-
     const handleResize = () => {
       updateNumData();
     };
@@ -66,8 +64,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         const txs = await fetchUserTransactions(
           address,
           isConnectedToMainNetwork
-        );        
-        
+        );
+
         const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
           return {
             ...tx,
@@ -89,7 +87,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
           );
 
-          
         setPreLoadData(allTxs);
       }
     };
@@ -99,7 +96,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
 
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
-      
       return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
     } else {
       if (tData.depositTxs.length > 0) {
@@ -116,15 +112,21 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               );
           }
         );
-        
+
         return filteredTx;
-      } else {        
+      } else {
         return preLoadData;
       }
     }
-  }, [ searchTxString, preLoadData,tData.depositTxs, tData.loadingState]);
+  }, [
+    address,
+    searchTxString,
+    preLoadData,
+    tData.depositTxs,
+    tData.loadingState,
+  ]);
 
-  const getLayerFiltered = useMemo(() => {    
+  const getLayerFiltered = useMemo(() => {
     const depSelected =
       network.chainId === SupportedChainId["MAINNET"] ||
       network.chainId === SupportedChainId["GOERLI"];
@@ -149,13 +151,13 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     }
   }, [searchTxString, filteredTx, network, tData]);
 
-  const getPaginatedData = useMemo(() => {    
+  const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return getLayerFiltered.slice(startIndex, endIndex);
-  }, [getLayerFiltered,tData,filteredTx]);
+  }, [getLayerFiltered, tData, filteredTx]);
 
-  const txes = useMemo(() => {    
+  const txes = useMemo(() => {
     switch (tData.loadingState) {
       case "absent":
         return (
@@ -164,8 +166,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             h={"100%"}
             justifyContent={"center"}
             alignItems={"center"}
-            flexDir={"column"}
-          >
+            flexDir={"column"}>
             <Image
               alt="noActivityIcon"
               src={noActivityIcon}
@@ -176,8 +177,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#e3f3ff"}
               fontWeight={500}
               fontSize={"16px"}
-              mt="24px"
-            >
+              mt="24px">
               No activity yet
             </Text>
             <Text
@@ -185,14 +185,13 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               fontWeight={400}
               fontSize={"11px"}
               mt="7px"
-              w="191px"
-            >
+              w="191px">
               Your onchain transactions and crypto purchases will appear here.
             </Text>
           </Flex>
         );
 
-      case "present":        
+      case "present":
         return (
           getPaginatedData.length !== 0 &&
           getPaginatedData.map((tx: any, index: number) => {
@@ -221,7 +220,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
           );
         }
     }
-  }, [getPaginatedData,tData]);
+  }, [getPaginatedData, tData]);
 
   return (
     <Flex
@@ -253,8 +252,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             background: "#343741",
             borderRadius: "3px",
           },
-        }}
-      >
+        }}>
         {txes}
       </Flex>
       {getLayerFiltered.length > getPaginatedData.length &&
@@ -263,17 +261,16 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             mb={"32px"}
             mt={"32px"}
             justifyContent={"center"}
-            alignItems={"start"}
-          >
+            alignItems={"start"}>
             <Button
               bg="transparent"
               border={"1px solid #313442"}
               fontSize={"12px"}
+              color={'#fff'}
               fontWeight={500}
               _hover={{}}
               _active={{}}
-              onClick={() => setNumData(numData + 2)}
-            >
+              onClick={() => setNumData(numData + 2)}>
               Load more
             </Button>
           </Flex>
