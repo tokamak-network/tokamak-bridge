@@ -3,50 +3,38 @@ import {
   SupportedChainId,
   supportedChain,
 } from "@/types/network/supportedNetwork";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { networkStatus } from "@/recoil/bridgeSwap/atom";
+import { useRecoilState } from "recoil";
 import L1CrossDomainMessenger_ABI from "constant/abis/L1CrossDomainMessenger.json";
 import useContract from "@/hooks/contracts/useContract";
-import { getL1Provider } from "@/config/l1Provider";
 import { ethers } from "ethers";
-import { confirmWithdrawData, confirmWithdrawStats} from "@/recoil/modal/atom";
-import useCrosschainMessenger from "../useCrosschainMessenger";
+import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useCallback, useEffect, useState } from "react";
 import { useAccount, useContractWrite, useSwitchNetwork } from "wagmi";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useGetTxLayers from "../useGetTxLayers";
-import { getProvider } from "@/config/getProvider";
-import { txDataStatus } from "@/recoil/global/transaction";
-import { TxSort } from "@/types/tx/txType";
-// @ts-ignore
-import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
+import useCrosschainMessenger from "../useCrosschainMessenger";
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
-  const [claimTxArgs, setClaimTxArgs] = useRecoilState(claimTx);
   const { switchNetworkAsync, switchNetwork } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
   const { address } = useAccount();
   const [isConnectedToL1, setIsConnectedToL1] = useState(false);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const providers = useGetTxLayers();
   const { provider: l2Prov } = useProvier();
-  const [txData, setTxData] = useRecoilState(txDataStatus);
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
-
-  const l2Pro = layer === "L2" ? l2Prov : getProvider(providers.l2Provider);
+  const { provider, L2Provider } = useProvier();
+  const l2Pro = layer === "L2" ? provider : L2Provider;
 
   const { data, write, isError } = useContractWrite({
     address: L1MESSENGER_CONTRACT,
     abi: L1CrossDomainMessenger_ABI,
     functionName,
   });
-  const { provider } = useProvier();
-
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   const messengerContract = new ethers.Contract(
@@ -75,27 +63,6 @@ export default function useCallClaim(functionName: string) {
   }, [connectedChainId, layer]);
 
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
-
-
-  useEffect(() => {
-    if (data && connectedChainId) {
-      const tx = {
-        transactionHash: data?.hash,
-        txSort: "Claim" as TxSort,
-        transactionState: undefined,
-        tokenData: undefined,
-        network: connectedChainId,
-        isToasted: false,
-      };
-      setTxData({ hash: tx });
-    }
-  }, [data]);
-  
-  useEffect(() => {
-    if (isError) {
-      setModalOpen("error");
-    }
-  }, [isError]);
 
   const claim = useCallback(
     async (txt: any) => {
@@ -157,7 +124,7 @@ export default function useCallClaim(functionName: string) {
         }
       }
     },
-    [isConnectedToL1, connectedChainId, provider, switchNetworkAsync]
+    [isConnectedToL1, connectedChainId, switchNetworkAsync]
   );
 
   return { claim };
