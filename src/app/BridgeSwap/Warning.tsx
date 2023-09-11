@@ -76,7 +76,10 @@ export default function Warning() {
           }. Unwrap to ETH and deposit.`}
         />
       );
-    if (inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS)
+    if (
+      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS ||
+      inToken?.tokenAddress === GOERLI_CONTRACTS.WTON_ADDRESS
+    )
       return (
         <WarningText
           label={`WTON is not supported on L2. Please unwrap to TON and deposit`}
