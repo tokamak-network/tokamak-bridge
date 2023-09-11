@@ -100,7 +100,9 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
-            if (tx.l1txHash && tx.l2txHash === undefined)
+            
+            if (tx !== undefined) {
+              if (tx.l1txHash && tx.l2txHash === undefined)
               return tx.l1txHash.includes(searchTxString.id);
             if (tx.l2txHash && tx.l1txHash === undefined)
               return tx.l2txHash.includes(searchTxString.id);
@@ -109,6 +111,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
                 tx.l1txHash.includes(searchTxString.id) ||
                 tx.l2txHash.includes(searchTxString.id)
               );
+            }
+          
           }
         );
 
