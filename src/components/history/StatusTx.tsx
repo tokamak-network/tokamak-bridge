@@ -65,7 +65,7 @@ export default function StatusTx(props: {
   );
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const durationRef = useRef("0");
+
 
   const getCalendarEvent = useMemo(() => {
     if (timeStamp) {
@@ -87,6 +87,8 @@ export default function StatusTx(props: {
   useEffect(() => {
     if (tx.l2timeStamp) {
       const getDuration = setInterval(() => {
+        console.log('tx.l2timeStamp',tx.l2timeStamp);
+        
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
@@ -97,7 +99,8 @@ export default function StatusTx(props: {
           new Date(elapsedTimeInSeconds * 1000),
           "mm:ss"
         );
-        durationRef.current = formattedTime;
+      
+console.log('formattedTime',formattedTime);
 
         setDurationRollup(formattedTime);
       }, 1000);
