@@ -35,19 +35,6 @@ const getSymbolSize = (
   return 86;
 };
 
-
-const getFontSize = (
-  index: number,
-  currentIndex: number | null,
-  maxIndex: number
-
-) => {
-  const markIndex = currentIndex === null ? 2 : currentIndex;
-
-  if (markIndex === index) return 20;
-  if (isSecondSideIndex(index, currentIndex, maxIndex)) return 18;
-  return 16;
-}
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
   currentIndex: number | null;
@@ -83,6 +70,13 @@ export default function CarousellCardComponent<T>(props: {
   const styleCode = useMemo(() => {
     return getTokenCardStyle(index, maxIndex);
   }, [filteredTokenList]);
+
+  const size =
+    getSymbolSize(index, currentIndex, maxIndex) === 118
+      ? "large"
+      : getSymbolSize(index, currentIndex, maxIndex) === 110
+      ? "medium"
+      : "small";
 
   return (
     <motion.div
@@ -147,7 +141,7 @@ export default function CarousellCardComponent<T>(props: {
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
         }}
-        fontSize={getFontSize(index, currentIndex, maxIndex)}
+        type={size}
         onClick={() => {
           try {
             setSelectedToken(tokenData);

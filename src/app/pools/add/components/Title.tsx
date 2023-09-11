@@ -4,7 +4,7 @@ export default function Title(props: { title: string; style?: {} }) {
   return (
     <Text
       w={"100%"}
-      h={"100%"}
+      h={"23px"}
       textAlign={"left"}
       fontSize={15}
       fontWeight={500}

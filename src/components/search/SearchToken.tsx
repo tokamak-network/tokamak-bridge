@@ -25,10 +25,14 @@ export default function SearchToken(props: { onClick?: () => any }) {
       onClick={props?.onClick}
       opacity={deactivateButton?0.2:1}
     >
-      <Text fontSize={20} fontWeight={"semibold"}>
+      <Text fontSize={18} fontWeight={500}>
         Search Tokens
       </Text>
-      <Image src={ICON_SEARCH} alt={"ICON_SEARCH"} />
+      <Image
+        src={ICON_SEARCH}
+        alt={"ICON_SEARCH"}
+        style={{ width: "24px", height: "24px" }}
+      />
     </Flex>
   );
 }

@@ -62,5 +62,19 @@ export default function useConnectedNetwork() {
   // console.log("inNetwork");
   // console.log(inNetwork);
 
-  return chainInfo;
+  const otherLayerChainInfo = useMemo(() => {
+    if (chainInfo) {
+      if (chainInfo.layer === "L1" && chainInfo.isConnectedToMainNetwork)
+        return supportedChain[2];
+      if (chainInfo.layer === "L1" && !chainInfo.isConnectedToMainNetwork)
+        return supportedChain[3];
+      if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
+        return supportedChain[0];
+
+      if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
+        return supportedChain[1];
+    }
+  }, [chainInfo]);
+
+  return { ...chainInfo, otherLayerChainInfo };
 }

@@ -43,7 +43,7 @@ export default function useTokenBalance(tokenInfo: TokenInfo | null) {
               data.decimals as number
             ),
             data.decimals as number
-          ),
+          ).replaceAll(",", ""),
         },
         error,
         isLoading,

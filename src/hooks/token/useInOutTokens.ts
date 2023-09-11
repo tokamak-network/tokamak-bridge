@@ -1,13 +1,17 @@
 import {
+  inTokenSelector,
+  outTokenSelector,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { Token, Ether } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
-import { useEffect, useMemo, useState } from "react";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
-import { useAccount } from "wagmi";
+import { getWETHAddress, isETH } from "@/utils/token/isETH";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -16,19 +20,31 @@ export function useInOutTokens() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { connectedChainId, chainName } = useConnectedNetwork();
+
+  const { connectedChainId, chainName, layer, isConnectedToMainNetwork } =
+    useConnectedNetwork();
   const { provider } = useProvier();
   const { mode } = useGetMode();
-  const { isConnected } = useAccount();
 
   const inToken = useMemo(() => {
-    return inTokenRecoilValue && chainName
+    return inTokenRecoilValue && connectedChainId && chainName
       ? inTokenRecoilValue.address[chainName] === null ||
         inTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...inTokenRecoilValue,
-            tokenAddress: inTokenRecoilValue.address[chainName],
+            tokenAddress: isETH(inTokenRecoilValue)
+              ? getWETHAddress(chainName)
+              : (inTokenRecoilValue.address[chainName] as string),
+            token: new Token(
+              connectedChainId,
+              isETH(inTokenRecoilValue)
+                ? getWETHAddress(chainName)
+                : (inTokenRecoilValue.address[chainName] as string),
+              inTokenRecoilValue.decimals,
+              inTokenRecoilValue.tokenSymbol as string,
+              inTokenRecoilValue.tokenName as string
+            ),
           }
       : null;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
@@ -37,13 +53,25 @@ export function useInOutTokens() {
     if (mode === "Deposit" || mode === "Withdraw") {
       return null;
     }
-    return outTokenRecoilValue && chainName
+
+    return outTokenRecoilValue && connectedChainId && chainName
       ? outTokenRecoilValue.address[chainName] === null ||
         outTokenRecoilValue.address[chainName] === undefined
         ? null
         : {
             ...outTokenRecoilValue,
-            tokenAddress: outTokenRecoilValue.address[chainName],
+            tokenAddress: isETH(outTokenRecoilValue)
+              ? getWETHAddress(chainName)
+              : (outTokenRecoilValue.address[chainName] as string),
+            token: new Token(
+              connectedChainId,
+              isETH(outTokenRecoilValue)
+                ? getWETHAddress(chainName)
+                : (outTokenRecoilValue.address[chainName] as string),
+              outTokenRecoilValue.decimals,
+              outTokenRecoilValue.tokenSymbol as string,
+              outTokenRecoilValue.tokenName as string
+            ),
           }
       : null;
   }, [outTokenRecoilValue, connectedChainId, chainName, mode]);
@@ -62,9 +90,6 @@ export function useInOutTokens() {
 
   useEffect(() => {
     const thisTokenExist = async () => {
-      if (isConnected === false) {
-        return;
-      }
       if (connectedChainId && provider && inToken?.tokenAddress) {
         const code = await provider.getCode(inToken?.tokenAddress);
 
@@ -86,12 +111,55 @@ export function useInOutTokens() {
       console.log("**thisTokenExist err**");
       console.log(e);
     });
-  }, [connectedChainId, provider, inToken?.tokenAddress, isConnected]);
+  }, [connectedChainId, provider, inToken?.tokenAddress]);
+
+  const { inTokenHasAmount } = useRecoilValue(inTokenSelector);
+  const { outTokenHasAmount } = useRecoilValue(outTokenSelector);
+
+  const tokensPairHasAmount = useMemo(() => {
+    return inTokenHasAmount && outTokenHasAmount;
+  }, [inTokenHasAmount, outTokenHasAmount]);
+
+  const invertTokenPair = useCallback(() => {
+    if (inTokenRecoilValue && outTokenRecoilValue) {
+      setInTokenRecoilValue(outTokenRecoilValue);
+      return setOutTokenRecoilValue(inTokenRecoilValue);
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
+  const initializeTokenPair = useCallback(() => {
+    setInTokenRecoilValue(null);
+    return setOutTokenRecoilValue(null);
+  }, [setInTokenRecoilValue, setOutTokenRecoilValue]);
+
+  const initializeTokenPairAmount = () => {
+    if (inTokenRecoilValue) {
+      setInTokenRecoilValue({
+        ...inTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+
+    if (outTokenRecoilValue) {
+      setOutTokenRecoilValue({
+        ...outTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+  };
 
   return {
     inToken,
     outToken,
     inTokenInfo: inTokenRecoilValue,
     outTokenInfo: outTokenRecoilValue,
+    inTokenHasAmount,
+    outTokenHasAmount,
+    tokensPairHasAmount,
+    invertTokenPair,
+    initializeTokenPair,
+    initializeTokenPairAmount,
   };
 }

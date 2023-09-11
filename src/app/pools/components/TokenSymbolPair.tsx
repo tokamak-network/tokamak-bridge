@@ -2,16 +2,18 @@ import { NetworkSymbol } from "@/components/image/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { Box, Flex } from "@chakra-ui/react";
 import { Token } from "@uniswap/sdk-core";
+import { CSSProperties } from "react";
 
 export default function TokenSymbolPair(props: {
   token0: Token;
   token1: Token;
   symbolSize?: number;
+  style?: CSSProperties;
 }) {
-  const { token0, token1, symbolSize } = props;
+  const { token0, token1, symbolSize, style } = props;
 
   return (
-    <Flex position="relative" justifyContent="center" mt={"19px"}>
+    <Flex position="relative" justifyContent="center" style={style}>
       <Box pos={"absolute"} right={"70px"} zIndex={100}>
         <TokenSymbol
           tokenType={token0?.symbol as string}
@@ -21,8 +23,8 @@ export default function TokenSymbolPair(props: {
         <Box pos={"relative"} top={"-18px"} left={"43px"}>
           <NetworkSymbol
             network={token0?.chainId}
-            w={20}
-            h={20}
+            w={24}
+            h={24}
             style={{
               borderRadius: "4px",
               position: "absolute",
@@ -40,8 +42,8 @@ export default function TokenSymbolPair(props: {
         <Box pos={"relative"} top={"-18px"} left={"43px"}>
           <NetworkSymbol
             network={token1?.chainId}
-            w={20}
-            h={20}
+            w={24}
+            h={24}
             style={{
               borderRadius: "4px",
               position: "absolute",

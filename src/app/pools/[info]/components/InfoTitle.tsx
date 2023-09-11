@@ -1,28 +1,56 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { RangeText } from "../../components/ui";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
 
 export default function InfoTitle() {
   const { info } = usePositionInfo();
+  const { inverted } = usePoolInfo();
+
+  if (!info) return null;
+  const token0 = inverted ? info.token1 : info.token0;
+  const token1 = inverted ? info.token0 : info.token1;
+  const { fee } = info;
 
   return (
-    <Flex justifyContent={"space-between"}>
-      <Flex alignItems={"center"}>
-        {/* <TokenSymbolPair
-              token0={info.token0}
-              token1={info.token1}
-              symbolSize={32}
-            /> */}
-        <Text fontWeight="bold" fontSize="23px">
-          {info?.token0.symbol} / {info?.token1.symbol}
-        </Text>
-        <Flex bgColor={"#1F2128"} borderRadius={8} p={1} ml={2}>
-          <Text fontSize={"12px"} as="b">
-            {"0.30%"}
+    <Flex justifyContent={"space-between"} w={"100%"}>
+      <Flex columnGap={"8px"}>
+        <Flex alignItems={"center"}>
+          <TokenSymbolWithNetwork
+            tokenSymbol={token1.symbol as string}
+            chainId={token1.chainId}
+            symbolW={24}
+            symbolH={24}
+            networkSymbolH={12}
+            networkSymbolW={12}
+            bottom={"-2px"}
+            style={{ zIndex: 10 }}
+          />
+          <TokenSymbolWithNetwork
+            tokenSymbol={token0.symbol as string}
+            chainId={token0.chainId}
+            symbolW={24}
+            symbolH={24}
+            networkSymbolH={12}
+            networkSymbolW={12}
+            bottom={"-2px"}
+            style={{ left: "-8px" }}
+          />
+        </Flex>
+        <Flex alignItems={"center"} columnGap={"8px"}>
+          <Text fontWeight="bold" fontSize="23px">
+            {token1.symbol} / {token0.symbol}
           </Text>
+          <Flex bgColor={"#1F2128"} borderRadius={8} p={1}>
+            <Text fontSize={"12px"} as="b">
+              {convertFeeToPercent(fee)}
+            </Text>
+          </Flex>
         </Flex>
       </Flex>
-      <RangeText inRange={info?.inRange ?? false} />
+      <RangeText inRange={info?.inRange ?? false} style={{ fontSize: 14 }} />
     </Flex>
   );
 }

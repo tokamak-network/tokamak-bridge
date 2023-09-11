@@ -22,6 +22,7 @@ import { useState } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { txHashStatus } from "@/recoil/global/transaction";
+import { Overlay_Index } from "@/types/style/overlayIndex";
 
 export default function Confirmation() {
   // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -33,10 +34,17 @@ export default function Confirmation() {
   const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
-  const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
-    useTxConfirmModal();
-  const { mode } = useGetMode();
+  const {
+    isConfirmed,
+    isConfirming,
+    isError,
+    isOpen,
+    setIsOpen,
+    closeModal,
+    isClaiming,
+  } = useTxConfirmModal();
 
+  const { mode } = useGetMode();
   return (
     <Modal isOpen={isOpen} onClose={closeModal}>
       <ModalOverlay />
@@ -59,7 +67,9 @@ export default function Confirmation() {
             <CloseButton onClick={closeModal} />
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
-            {isConfirming
+            {isClaiming
+              ? "Confirming Claim"
+              : isConfirming
               ? `Confirming ${mode}`
               : isConfirmed
               ? "Transaction Confirmed!"
@@ -89,7 +99,7 @@ export default function Confirmation() {
           </Flex>
 
           <Text
-            w={"203px"}
+            w={"254px"}
             mt={"46px"}
             px={isConfirming ? "32px" : ""}
             textAlign={"center"}

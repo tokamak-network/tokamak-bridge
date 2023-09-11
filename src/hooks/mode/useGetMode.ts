@@ -1,9 +1,10 @@
 import { actionMode } from "@/recoil/bridgeSwap/atom";
+import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-
 export function useGetMode() {
   const { mode, isReady } = useRecoilValue(actionMode);
+
   const swapSection = useMemo(() => {
     return (
       mode === "Swap" ||
@@ -14,5 +15,14 @@ export function useGetMode() {
     );
   }, [mode]);
 
-  return { mode, swapSection, isReady };
+  const pathname = usePathname();
+  const isPool = pathname.includes("pools");
+
+  
+  
+  return {
+    mode: isPool ? "Pool" :  mode,
+    swapSection,
+    isReady,
+  };
 }

@@ -13,6 +13,11 @@ import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
+import {
+  confirmWithdrawStats,
+  confirmWithdrawData,
+} from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 
@@ -31,8 +36,8 @@ export default function ActionButton() {
   const status = useRecoilValue(bannerStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
 
-  const needToOpenModal =
-    mode === "Deposit" || mode === "Withdraw" || mode === "Swap";
+  const needToOpenModal = mode === "Deposit" || mode === "Swap";
+  const needToOpenWithdrawModal = mode === "Withdraw";
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
   const deactivateButton = status === "Active" && isL2;
@@ -72,6 +77,10 @@ export default function ActionButton() {
   const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();
   const { connetAndDisconntWallet } = useConnectWallet();
+  const [withdrawStatus, setWithdrawStatus] = useRecoilState(
+    confirmWithdrawStats
+  );
+  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
 
   return (
     <Button
@@ -82,12 +91,14 @@ export default function ActionButton() {
       _active={{}}
       _hover={{}}
       _disabled={{}}
-      bgColor={isDisabled ? "#17181D" : "#007AFF"}
-      color={isDisabled ? "#8E8E92" : "#fff"}
+      bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
+      color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={!isConnected ? false : isDisabled}
       onClick={
         isConnected === false
           ? () => connetAndDisconntWallet()
+          : needToOpenWithdrawModal
+          ? () => setWithdrawStatus({ isOpen: true })
           : needToOpenModal
           ? onOpenConfirmModal
           : onClick

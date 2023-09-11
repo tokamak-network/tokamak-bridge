@@ -1,11 +1,11 @@
-import useGetPositionIds from "@/hooks/pool/useGetPositionIds";
+// import useGetPositionIds from "@/hooks/pool/useGetPositionIds";
 import { Wrap } from "@chakra-ui/react";
 import LPGuide from "./LPGuide";
 import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 
 export default function PoolList() {
-  const { positionInfo } = useGetPositionIds();
+  // const { positionInfo } = useGetPositionIds();
 
   // console.log(positionInfo);
 
@@ -13,9 +13,9 @@ export default function PoolList() {
     <Wrap spacing="16px">
       <LPGuide />
       <AddLiquidity />
-      {positionInfo?.map((position) => {
+      {/* {positionInfo?.map((position) => {
         return <PoolCard {...position} />;
-      })}
+      })} */}
     </Wrap>
   );
 }

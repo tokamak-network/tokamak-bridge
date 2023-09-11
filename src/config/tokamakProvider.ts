@@ -41,11 +41,11 @@ export const titan_goerli = {
   blockExplorers: {
     etherscan: {
       name: "BlockScout",
-      url: "https://goerli.explorer.tokamak.network/",
+      url: "https://explorer.titan-goerli.tokamak.network",
     },
     default: {
       name: "BlockScout",
-      url: "https://goerli.explorer.tokamak.network/",
+      url: "https://explorer.titan-goerli.tokamak.network",
     },
   },
 } as const satisfies Chain;

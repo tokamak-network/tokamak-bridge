@@ -60,6 +60,35 @@ export default function Setting() {
     }
   };
 
+  const onBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const id = e.target.id;
+    const value = e.target.value;
+
+    if (id === "slippage") {
+      if (
+        Number(value) > 100 ||
+        Number(value) < 0 ||
+        value.split(".")[1]?.length > 2 ||
+        isNaN(Number(value)) ||
+        value === ""
+      ) {
+        return setTxSetting({
+          ...txSetting,
+          [id]: "0.5",
+        });
+      }
+    }
+
+    if (id === "deadline") {
+      console.log(
+        value.length > 4 || isNaN(Number(value)) || Number(value) < 1
+      );
+      if (value.length > 4 || isNaN(Number(value)) || Number(value) < 1) {
+        return setTxSetting({ ...txSetting, [id]: 1 });
+      }
+    }
+  };
+
   const wrapperRef = useRef(null);
 
   //close when click at outside
@@ -116,16 +145,18 @@ export default function Setting() {
                 h={"40px"}
                 border={"1px solid #313442"}
                 borderRadius={"8px"}
-                _focus={{
-                  boxShadow: "none",
-                }}
                 _hover={{}}
                 _active={{}}
                 onChange={onChange}
+                onBlur={onBlur}
                 value={txSetting.slippage}
                 id="slippage"
                 fontSize={16}
                 fontWeight={600}
+                _focus={{
+                  boxShadow: "none !important",
+                  border: "1px solid #313442 !important",
+                }}
               />
               <InputRightElement pr={"5px"}>
                 <Text fontSize={16} fontWeight={400} color={"#A0A3AD"}>
@@ -133,20 +164,28 @@ export default function Setting() {
                 </Text>
               </InputRightElement>
             </InputGroup>
-          </Flex>
-          {Number(txSetting.slippage) >= 10 &&
-            Number(txSetting.slippage) < 50 && (
-              <WarningText
-                label="Slippage above 10% may result in an unfavorable swap"
+            {Number(txSetting.slippage) >= 0 &&
+              Number(txSetting.slippage) < 0.05 && (
+                <WarningText
+                  label="Slippage below 0.05% may result in a failed transaction"
+                  style={{ fontWeight: 400 }}
+                />
+              )}
+            {Number(txSetting.slippage) >= 10 &&
+              Number(txSetting.slippage) < 50 && (
+                <WarningText
+                  label="Slippage below 10% may result in an unfavorable swap"
+                  style={{ fontWeight: 400 }}
+                />
+              )}
+            {Number(txSetting.slippage) >= 50 && (
+              <RedWarningText
+                label="Slippage above 50% may result in an unfavorable swap"
                 style={{ fontWeight: 400 }}
               />
             )}
-          {Number(txSetting.slippage) >= 50 && (
-            <RedWarningText
-              label="Slippage above 50% may result in an unfavorable swap"
-              style={{ fontWeight: 400 }}
-            />
-          )}
+          </Flex>
+
           <Flex
             p={"16px"}
             bgColor={"#0F0F12"}
@@ -167,16 +206,18 @@ export default function Setting() {
                 h={"40px"}
                 border={"1px solid #313442"}
                 borderRadius={"8px"}
-                _focus={{
-                  boxShadow: "none",
-                }}
                 _hover={{}}
                 _active={{}}
                 onChange={onChange}
+                onBlur={onBlur}
                 value={txSetting.deadline}
                 id="deadline"
                 fontSize={16}
                 fontWeight={600}
+                _focus={{
+                  boxShadow: "none !important",
+                  border: "1px solid #313442 !important",
+                }}
               />
               <InputRightElement mr={"25px"} pr={"10px"}>
                 <Text fontSize={16} fontWeight={400} color={"#A0A3AD"}>

@@ -17,7 +17,7 @@ export default function InToken() {
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={true} height="32px" />
+        <NetworkDropdown inNetwork={true} width={"200px"} height="32px" />
       </Box>
     );
   }, []);
@@ -46,7 +46,12 @@ export default function InToken() {
           onClick={onOpenInToken}
         >
           {inToken?.tokenName ? (
-            <TokenCard tokenInfo={inToken} hasInput={true} inNetwork={true} />
+            <TokenCard
+              tokenInfo={inToken}
+              hasInput={true}
+              inNetwork={true}
+              forBridge={true}
+            />
           ) : (
             <Box
               className="card card-empty"

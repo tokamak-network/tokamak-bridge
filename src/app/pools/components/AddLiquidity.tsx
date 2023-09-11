@@ -2,18 +2,27 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import PLUS_ICON from "assets/icons/plus.svg";
 import NextLink from "next/link";
+import ConnecteWalletCard from "./ConnectWalletCard";
+import { useAccount } from "wagmi";
+import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
 
 export default function AddLiquidity() {
+  const { isConnected } = useAccount();
+  const { positions } = useGetPositions();
+
+  if (!isConnected) return <ConnecteWalletCard />;
   return (
     <NextLink href="/pools/add" passHref>
       <Flex
         flexDir="column"
-        border="1px solid #20212B"
+        borderWidth={1}
+        borderColor={positions?.length === 0 ? "#007AFF" : "#20212B"}
         w="200px"
         h="248px"
         paddingTop={"32px"}
         paddingBottom={"24px"}
         borderRadius={"16px"}
+        justifyContent={"center"}
         alignItems="center"
         textAlign="center"
         cursor={"pointer"}

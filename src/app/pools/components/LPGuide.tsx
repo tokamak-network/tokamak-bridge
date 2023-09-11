@@ -11,8 +11,8 @@ export default function LPGuide() {
       h="248px"
       paddingTop={"32px"}
       paddingBottom={"24px"}
-      marginRight={"16px"}
       borderRadius={"16px"}
+      justifyContent={"center"}
       alignItems="center"
       textAlign="center"
       _hover={{

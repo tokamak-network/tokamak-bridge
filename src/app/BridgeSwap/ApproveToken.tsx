@@ -8,7 +8,8 @@ import { useTransaction } from "@/hooks/tx/useTx";
 import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
-
+import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
   const { isApproved, callApprove } = useApprove();
@@ -17,6 +18,7 @@ export default function ApproveToken() {
   const { isTONatPair } = useIsTon();
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
+  const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -61,9 +63,13 @@ export default function ApproveToken() {
         fontSize={14}
         fontWeight={500}
         bgColor={"#007AFF"}
+        color={'#fff'}
         _active={{}}
         _hover={{}}
-        onClick={callApprove}
+        onClick={() => {
+          callApprove();
+          setIsDrawerOpen(false);
+        }}
         isDisabled={approveBtnDisabled}
         _disabled={{ bg: "#15161D", color: "#8E8E92" }}
       >

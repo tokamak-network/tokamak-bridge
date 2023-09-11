@@ -2,14 +2,10 @@
 
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
-import { Center } from "@chakra-ui/react";
 import { RecoilRoot } from "recoil";
 import Header from "@/components/header/Index";
-import HistoryDrawer from "@/components/history/Drawer";
 
 import "css/scrollbar.css";
-import { ApolloProvider } from "@apollo/client";
-import { apolloClient } from "@/apollo";
 import Modals from "./Modals";
 import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -84,17 +80,17 @@ export default function RootLayout({
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            <ApolloProvider client={apolloClient}>
-              <ChakraProvidersForNextJs>
-                <WagmiProviders>
-                  <Entry children={children} />
-                  {/* <Header />
+            <ChakraProvidersForNextJs>
+              <WagmiProviders>
+                <Entry children={children} />
+                {/* <AccountHistory /> */}
+                {/* <Header />
                   <Center h={"100vh"}>{children}</Center>
                   <GlobalComponents />
                   <Modals /> */}
-                </WagmiProviders>
-              </ChakraProvidersForNextJs>
-            </ApolloProvider>
+                  {/* <Drawers/> */}
+              </WagmiProviders>
+            </ChakraProvidersForNextJs>
           </QueryClientProvider>
         </RecoilRoot>
       </body>
