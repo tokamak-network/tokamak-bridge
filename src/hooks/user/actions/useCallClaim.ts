@@ -37,11 +37,6 @@ export default function useCallClaim(functionName: string) {
   });
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
-  const messengerContract = new ethers.Contract(
-    L1MESSENGER_CONTRACT,
-    L1CrossDomainMessenger_ABI,
-    l2Pro
-  );
   const crossChainMessenger = new titanSDK.CrossChainMessenger({
     l1ChainId: providers.l1ChainID,
     l2ChainId: providers.l2ChainID,
@@ -63,6 +58,12 @@ export default function useCallClaim(functionName: string) {
   }, [connectedChainId, layer]);
 
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
+
+  useEffect(() => {
+    if (isError) {
+      setModalOpen("error");
+    }
+  }, [isError]);
 
   const claim = useCallback(
     async (txt: any) => {
@@ -123,7 +124,7 @@ export default function useCallClaim(functionName: string) {
         }
       }
     },
-    [crossChainMessenger, isConnectedToL1, connectedChainId, switchNetworkAsync]
+    [isConnectedToL1, connectedChainId, switchNetworkAsync]
   );
 
   return { claim };
