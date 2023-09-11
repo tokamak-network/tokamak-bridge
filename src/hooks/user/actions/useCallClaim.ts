@@ -42,7 +42,7 @@ export default function useCallClaim(functionName: string) {
   const claim = useCallback(
     async (txt: any) => {
       const proof = await crossMessenger.getMessageProof(txt.resolved);
-      if (!layer === "L1" || layer === "L2") {
+      if (Boolean(layer !== "L1") || layer === "L2") {
         const selectedWork = supportedChain.filter((supportedChain) => {
           if (isConnectedToMainNetwork === true) {
             return [SupportedChainId["MAINNET"]].includes(
@@ -55,7 +55,7 @@ export default function useCallClaim(functionName: string) {
           }
         })[0];
 
-        const res = switchNetworkAsync?.(selectedWork.chainId);
+        const res = await switchNetworkAsync?.(selectedWork.chainId);
         const tx = txt;
 
         if (res) {
