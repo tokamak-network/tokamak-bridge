@@ -6,27 +6,21 @@ import {
 import { useRecoilState } from "recoil";
 import L1CrossDomainMessenger_ABI from "constant/abis/L1CrossDomainMessenger.json";
 import useContract from "@/hooks/contracts/useContract";
-import { ethers } from "ethers";
 import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
-import { useCallback, useEffect, useState } from "react";
-import { useAccount, useContractWrite, useSwitchNetwork } from "wagmi";
+import { useCallback, useEffect } from "react";
+import { useContractWrite, useSwitchNetwork } from "wagmi";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
-import useGetTxLayers from "../useGetTxLayers";
 import useCrosschainMessenger from "../useCrosschainMessenger";
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
-  const { switchNetworkAsync, switchNetwork } = useSwitchNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
-  const { address } = useAccount();
-  const [isConnectedToL1, setIsConnectedToL1] = useState(false);
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const providers = useGetTxLayers();
-  const { provider: l2Prov } = useProvier();
-  const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
+  const { crossMessenger } = useCrosschainMessenger();
   const { provider, L2Provider } = useProvier();
   const l2Pro = layer === "L2" ? provider : L2Provider;
 
@@ -37,37 +31,18 @@ export default function useCallClaim(functionName: string) {
   });
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
-  const messengerContract = new ethers.Contract(
-    L1MESSENGER_CONTRACT,
-    L1CrossDomainMessenger_ABI,
-    l2Pro
-  );
-  // const crossChainMessenger = new titanSDK.CrossChainMessenger({
-  //   l1ChainId: providers.l1ChainID,
-  //   l2ChainId: providers.l2ChainID,
-  //   l1SignerOrProvider: new ethers.providers.JsonRpcProvider(
-  //     isConnectedToMainNetwork
-  //       ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
-  //       : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
-  //   ).getSigner(address),
-  //   l2SignerOrProvider: new ethers.providers.JsonRpcProvider(
-  //     process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC
-  //   ).getSigner(address),
-  // });
+  const {} = useTx({ hash: data?.hash, txSort: "Claim" });
 
   useEffect(() => {
-    const isCnnctdToL1 =
-      connectedChainId === SupportedChainId["MAINNET"] ||
-      connectedChainId === SupportedChainId["GOERLI"];
-    setIsConnectedToL1(isCnnctdToL1);
-  }, [connectedChainId, layer]);
-
-  const {} = useTx({ hash: data?.hash, txSort: "Claim" });
+    if (isError) {
+      setModalOpen("error");
+    }
+  }, [isError]);
 
   const claim = useCallback(
     async (txt: any) => {
-      const proof = await crossMessenger.getMessageProof(txt.resolved);      
-      if (!isConnectedToL1 || layer === "L2") {
+      const proof = await crossMessenger.getMessageProof(txt.resolved);
+      if (Boolean(layer !== "L1") || layer === "L2") {
         const selectedWork = supportedChain.filter((supportedChain) => {
           if (isConnectedToMainNetwork === true) {
             return [SupportedChainId["MAINNET"]].includes(
@@ -79,11 +54,11 @@ export default function useCallClaim(functionName: string) {
             );
           }
         })[0];
-        
-        const res = switchNetworkAsync?.(selectedWork.chainId);
+
+        const res = await switchNetworkAsync?.(selectedWork.chainId);
         const tx = txt;
-       
-        if (res) {          
+
+        if (res) {
           try {
             write({
               args: [
@@ -97,8 +72,7 @@ export default function useCallClaim(functionName: string) {
             setIsOpen(true);
             setModalOpen("confirming");
             setWithdrawData({ modalData: null });
-            setWithdrawStatus({isOpen: false})
-            
+            setWithdrawStatus({ isOpen: false });
           } catch (e) {
             console.log(e);
           }
@@ -117,14 +91,13 @@ export default function useCallClaim(functionName: string) {
           setIsOpen(true);
           setModalOpen("confirming");
           setWithdrawData({ modalData: null });
-          setWithdrawStatus({isOpen: false})
-        
+          setWithdrawStatus({ isOpen: false });
         } catch (e) {
           console.log(e);
         }
       }
     },
-    [isConnectedToL1, connectedChainId, switchNetworkAsync]
+    [layer, connectedChainId, switchNetworkAsync]
   );
 
   return { claim };
