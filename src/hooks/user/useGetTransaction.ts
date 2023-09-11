@@ -63,6 +63,8 @@ export default function useGetTransaction() {
           isConnectedToMainNetwork
         );
         
+        console.log('userAllTransactions',userAllTransactions);
+        
         return setUserTxfromSubgraph(userAllTransactions);
       }
     };
@@ -104,17 +106,24 @@ export default function useGetTransaction() {
               ); //l2 tx receipt
               const logs = ethers.utils.defaultAbiCoder.decode(
                 ["address", "uint256", "bytes"],
-                l2TxReceipt.logs[3].data
+                l2TxReceipt.logs[3]?.data
               );
+
+              console.log('logs',logs);
+              
               const l1Token = ethers.utils.defaultAbiCoder.decode(
                 ["address"],
-                l2TxReceipt.logs[3].topics[1]
-              )[0];
-              const l2Token = ethers.utils.defaultAbiCoder.decode(
-                ["address"],
-                l2TxReceipt.logs[3].topics[2]
+                l2TxReceipt.logs[3]?.topics[1]
               )[0];
 
+              console.log('l1Token',l1Token);
+              
+              const l2Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3]?.topics[2]
+              )[0];
+              console.log('l2Token',l2Token);
+              
               // if currentStatus is 2 then the tx is still in rollup period ( wait 5 mins for rollup).
               //if status is 4, rollup is finish and tx ready for challenge period
               if (
