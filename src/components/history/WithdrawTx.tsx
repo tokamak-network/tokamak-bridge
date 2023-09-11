@@ -81,7 +81,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             zIndex={10000}
             _disabled={{ bg: "#1F2128" }}
             onClick={(event) => {
-              event.stopPropagation(); // Prevent the click event from propagating to the parent Flex
+               // Prevent the click event from propagating to the parent Flex
               if (tx?.currentStatus !== 5) {
                 setClaimTx(tx);
                 setWithdrawStatus({
@@ -99,6 +99,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                   },
                 });
               } else {
+                event.stopPropagation();
                 setClaimTx(tx);
                 claim(tx);
                 setWithdrawStatus({

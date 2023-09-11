@@ -62,7 +62,7 @@ export default function useGetTransaction() {
           address,
           isConnectedToMainNetwork
         );
-
+        
         return setUserTxfromSubgraph(userAllTransactions);
       }
     };
@@ -298,10 +298,10 @@ export default function useGetTransaction() {
 
         const l1DepTxs = await Promise.all(
           userTxfromSubgrap.formattedL1DepositResults.map(
-            async (tx: DepositTx) => {
-              const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
-                return l2tx.nonce === Number(tx.messageNonce);
-              });
+            async (tx: any) => {
+              const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {                
+                return l2tx!== undefined && l2tx.nonce === Number(tx.messageNonce);
+              });              
 
               if (l2tx.length > 0) {
                 const l2BlockNum = l2tx[0].blockNumber;
@@ -314,6 +314,10 @@ export default function useGetTransaction() {
                   l1Block: l1Block,
                   l2txHash: l2tx[0].transactionHash,
                   l1txHash: tx.transactionHash,
+                  _amount: tx._amount,
+                  _l1Token: tx._l1Token,
+                  _l2Token: tx._l2Token,
+                  
                 };
                 return txCopy;
               } else {
@@ -330,7 +334,7 @@ export default function useGetTransaction() {
           )
         );
 
-        const txLogs = l1DepTxs;
+        const txLogs = l1DepTxs;        
         setTDataDeposit(txLogs);
         const status =
           txLogs.length > 0

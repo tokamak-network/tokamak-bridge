@@ -130,13 +130,14 @@ export default function TutorialModal() {
             {steps[currentStep].stepDescription.map((text: string) => {
               return currentStep !== 5 ? (
                 <Text
+                key={text}
                   textAlign={currentStep === 0 ? "center" : "left"}
                   mb={"40px"}
                 >
                   {text}
                 </Text>
               ) : (
-                <Text mb={"16px"} textAlign={"left"}>
+                <Text mb={"16px"} textAlign={"left"}   key={text}>
                   To get a more in-depth guide on how to use Tokamak Bridge, you
                   can find a link to our{" "}
                   <Link
@@ -187,6 +188,7 @@ export default function TutorialModal() {
               {steps.map((step: any, index: number) => {
                 return (
                   <Flex
+                  key={step}
                     h="5px"
                     w={"5px"}
                     mr={index === 5 ? "0px" : "7px"}

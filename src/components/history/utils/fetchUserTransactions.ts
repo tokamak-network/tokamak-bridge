@@ -163,22 +163,32 @@ export const fetchUserTransactions = async (
       ...resTxs.data.data.ethwithdrawalFinalizeds,
     ];
 
-    const formattedL1DepositResults = resTxs.data.data.sentMessages.map(
-      (result: SentMessages) => {
-        const tx = allDepL1Txs.filter(
-          (tx: L1TxType) => tx.transactionHash === result.transactionHash
-        )[0];
+    const formattedL1DepositResultsUnfiltered =
+      resTxs.data.data.sentMessages.map((result: SentMessages) => {
+        const tx = allDepL1Txs.filter((tx: L1TxType) => {
+          const regex = new RegExp(
+            `${formattedAddress.toLocaleLowerCase()}`,
+            "g"
+          );
+          const occurance = result.message.match(regex)?.length;
+
+          return (
+            tx.transactionHash === result.transactionHash && occurance === 2
+          );
+        })[0];
+
         let copy = {
           ...result,
           ...tx,
           event: "deposit",
         };
-        return copy;
-      }
-    );
-
+        if (tx !== undefined) {
+          return copy;
+        }
+      });
+    const formattedL1DepositResults =
+      formattedL1DepositResultsUnfiltered.filter((tx: any) => tx !== undefined);
     const formattedL1WithdrawResults = allWithL1Txs;
-
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,

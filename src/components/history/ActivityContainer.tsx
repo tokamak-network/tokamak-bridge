@@ -36,7 +36,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const zero_address = "0x0000000000000000000000000000000000000000";
   const [txnData, setTxnData] = useRecoilState(transactionData);
   const tData = useGetTransaction();
-  
+    
   useEffect(() => {
     const updateNumData = () => {
       const element = document.getElementById("tx-history");
