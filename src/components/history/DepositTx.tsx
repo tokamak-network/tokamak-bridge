@@ -33,11 +33,11 @@ export default function DepositTx(props: { tx: FullWithTx }) {
       <TokenPairTx
         action="deposit"
         inAmount={ethers.utils.formatUnits(
-          tx._amount.toString(),
+          tx._amount === undefined? '0':tx._amount.toString(),
           data?.decimals
         )}
         outAmount={ethers.utils.formatUnits(
-          tx._amount.toString(),
+          tx._amount === undefined? '0':tx._amount.toString(),
           data?.decimals
         )}
         inTokenSymbol={data?.symbol || "ETH"}

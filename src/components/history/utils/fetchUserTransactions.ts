@@ -170,10 +170,10 @@ export const fetchUserTransactions = async (
             `${formattedAddress.toLocaleLowerCase()}`,
             "g"
           );
-          const occurance = result.message.match(regex)?.length;
+          const occurrence = result.message.match(regex)?.length;
 
           return (
-            tx.transactionHash === result.transactionHash && occurance === 2
+            tx.transactionHash === result.transactionHash && occurrence === 2
           );
         })[0];
 

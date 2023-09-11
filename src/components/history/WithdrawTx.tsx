@@ -40,7 +40,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
       <Flex
         flexDir={"column"}
         rowGap={"8px"}
-        cursor={"pointer"}
+        cursor={tx !== undefined && tx.currentStatus < 6?"pointer":'default'}
         onClick={() => {
           if (tx !== undefined && tx.currentStatus < 6) {
             setClaimTx(tx);
