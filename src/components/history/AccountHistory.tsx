@@ -20,6 +20,7 @@ import {
   useState,
   SetStateAction,
   Dispatch,
+  useEffect,
 } from "react";
 import DrawerCloseIcon from "assets/icons/accountHistory/drawerClose.svg";
 import { useRecoilState } from "recoil";
@@ -55,7 +56,13 @@ export default function AccountHistory() {
     chainId: 0,
     chainName: undefined,
     networkImage: undefined,
-  });  
+  });
+
+  useEffect(() => {
+    if (address === undefined) {
+      setIsOpen(false);
+    }
+  }, [address]);
 
   const TabContainer = (props: {
     setTab: Dispatch<SetStateAction<string>>;
@@ -92,17 +99,17 @@ export default function AccountHistory() {
     <Drawer
       isOpen={isOpen && address !== undefined}
       placement="right"
-      onClose={() =>
+      onClose={() => {
+        setIsOpen(false);
         setSelectedNetwork({
           chainId: 0,
           chainName: undefined,
           networkImage: undefined,
-        })
-      }
+        });
+      }}
       variant="clickThrough"
       trapFocus={false}
-      useInert={true}
-    >
+      useInert={true}>
       <DrawerOverlay bg={"none"} />
       <DrawerContent
         px="12px"
@@ -152,8 +159,7 @@ export default function AccountHistory() {
           }}
           cursor={"pointer"}
           // transform={"translate(-7px)"}
-          transition={"background 250ms ease 0s, transform 250ms ease 0s"}
-        >
+          transition={"background 250ms ease 0s, transform 250ms ease 0s"}>
           <Flex
             m={"16px 20px 16px 12px"}
             w={"40px"}
@@ -161,8 +167,7 @@ export default function AccountHistory() {
             border={"1px solid #313442"}
             borderRadius={"8px"}
             bgColor={"transparent"}
-            justifyContent={"center"}
-          >
+            justifyContent={"center"}>
             <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
           </Flex>
         </Flex>

@@ -30,7 +30,6 @@ export default function DepositStatusTx(props: {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
   const [duration, setDuration] = useState("0");
-  const durationRef = useRef("0");
 
   useEffect(() => {
     if (tx.l1timeStamp) {
@@ -45,8 +44,6 @@ export default function DepositStatusTx(props: {
           new Date(elapsedTimeInSeconds * 1000),
           "mm:ss"
         );
-        durationRef.current = formattedTime;
-
         setDuration(formattedTime);
       }, 1000);
       return () => clearInterval(getDuration);

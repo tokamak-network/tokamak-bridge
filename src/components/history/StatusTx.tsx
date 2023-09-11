@@ -86,9 +86,7 @@ export default function StatusTx(props: {
 
   useEffect(() => {
     if (tx.l2timeStamp) {
-      const getDuration = setInterval(() => {
-        console.log('tx.l2timeStamp',tx.l2timeStamp);
-        
+      const getDuration = setInterval(() => {        
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
@@ -99,9 +97,6 @@ export default function StatusTx(props: {
           new Date(elapsedTimeInSeconds * 1000),
           "mm:ss"
         );
-      
-console.log('formattedTime',formattedTime);
-
         setDurationRollup(formattedTime);
       }, 1000);
       return () => clearInterval(getDuration);
