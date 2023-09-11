@@ -33,7 +33,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
   const tData = useGetTransaction();
-  const ref = useRef<HTMLBodyElement | null>(null);
+  const ref = useRef<HTMLDivElement| null>(null);
 
   useEffect(() => {
     const updateNumData = () => {
