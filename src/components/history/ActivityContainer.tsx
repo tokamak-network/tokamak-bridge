@@ -200,7 +200,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             if (tx.event === "deposit") {
               return <DepositTx tx={tx} key={tx.transactionHash} />;
             } else {
-              return <WithdrawTx tx={tx} key={tx.transactionHash} />;
+              return <WithdrawTx tx={tx} key={index} />;
             }
           })
         );
