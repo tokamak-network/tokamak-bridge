@@ -2,21 +2,20 @@ import { Flex, Text, Button, Spinner } from "@chakra-ui/react";
 import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
 import { useEffect, useMemo, useState } from "react";
-import { useRecoilValue, useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
 import LoadingTx from "./LoadingTx";
 import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
-import { supportedChain } from "@/types/network/supportedNetwork";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { tData, FullWithTx, FullDepTx } from "@/types/activity/history";
+import { FullWithTx, FullDepTx } from "@/types/activity/history";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
-import { L1TxType, Erc20Type, EthType } from "@/types/activity/history";
+import { L1TxType } from "@/types/activity/history";
 import HalfLoadingTx from "./HalfLoadingTx";
-import { transactionData } from "@/recoil/global/transaction";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
+import { useRef } from "react";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -33,17 +32,17 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [preLoadData, setPreLoadData] = useState<L1TxType[]>([]);
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
-  const zero_address = "0x0000000000000000000000000000000000000000";
-  const [txnData, setTxnData] = useRecoilState(transactionData);
   const tData = useGetTransaction();
-    
+  const ref = useRef<HTMLBodyElement | null>(null);
+
   useEffect(() => {
     const updateNumData = () => {
-      const element = document.getElementById("tx-history");
-      const height = element?.offsetHeight;
-      if (height !== undefined) {
-        const numTxs = parseInt((height / 160).toString());
-        setNumData(numTxs);
+      if (ref?.current) {
+        const height = ref?.current?.offsetHeight;
+        if (height !== undefined) {
+          const numTxs = parseInt((height / 160).toString());
+          setNumData(numTxs);
+        }
       }
     };
     updateNumData();
@@ -56,7 +55,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, []);
+  }, [ref?.current]);
 
   useEffect(() => {
     const getTxs = async () => {
@@ -166,7 +165,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             h={"100%"}
             justifyContent={"center"}
             alignItems={"center"}
-            flexDir={"column"}>
+            flexDir={"column"}
+          >
             <Image
               alt="noActivityIcon"
               src={noActivityIcon}
@@ -177,7 +177,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#e3f3ff"}
               fontWeight={500}
               fontSize={"16px"}
-              mt="24px">
+              mt="24px"
+            >
               No activity yet
             </Text>
             <Text
@@ -185,7 +186,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               fontWeight={400}
               fontSize={"11px"}
               mt="7px"
-              w="191px">
+              w="191px"
+            >
               Your onchain transactions and crypto purchases will appear here.
             </Text>
           </Flex>
@@ -233,6 +235,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       // height={'110%'}
     >
       <Flex
+        ref={ref}
         id={"tx-history"}
         flexDir={"column"}
         bg={"transparent"}
@@ -252,7 +255,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             background: "#343741",
             borderRadius: "3px",
           },
-        }}>
+        }}
+      >
         {txes}
       </Flex>
       {getLayerFiltered.length > getPaginatedData.length &&
@@ -261,16 +265,18 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             mb={"32px"}
             mt={"32px"}
             justifyContent={"center"}
-            alignItems={"start"}>
+            alignItems={"start"}
+          >
             <Button
               bg="transparent"
               border={"1px solid #313442"}
               fontSize={"12px"}
-              color={'#fff'}
+              color={"#fff"}
               fontWeight={500}
               _hover={{}}
               _active={{}}
-              onClick={() => setNumData(numData + 2)}>
+              onClick={() => setNumData(numData + 2)}
+            >
               Load more
             </Button>
           </Flex>
