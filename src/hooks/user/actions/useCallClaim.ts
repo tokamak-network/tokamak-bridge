@@ -123,7 +123,7 @@ export default function useCallClaim(functionName: string) {
         }
       }
     },
-    [isConnectedToL1, connectedChainId, switchNetworkAsync]
+    [crossChainMessenger, isConnectedToL1, connectedChainId, switchNetworkAsync]
   );
 
   return { claim };
