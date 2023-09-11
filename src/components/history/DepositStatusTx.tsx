@@ -108,7 +108,7 @@ export default function DepositStatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             style={{ textDecoration: "none" }}>
-            {`${layer}:`} {completed ? "Completed" : "Waiting"}
+            {`${layer}:`} {completed ? "Completed" : " Wait ~5 min for relay"}
           </Text>
         )}
       </Flex>

@@ -1,5 +1,5 @@
 import { Flex, Text, Link } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
 import {
@@ -21,6 +21,7 @@ import {
   Duration,
   subMinutes,
   addHours,
+  differenceInSeconds
 } from "date-fns";
 
 // type TokenData = {
@@ -48,6 +49,8 @@ export default function StatusTx(props: {
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
+  const [durationRollup, setDurationRollup] = useState("0");
+  
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,
@@ -62,6 +65,7 @@ export default function StatusTx(props: {
   );
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const durationRef = useRef("0");
 
   const getCalendarEvent = useMemo(() => {
     if (timeStamp) {
@@ -79,6 +83,27 @@ export default function StatusTx(props: {
       };
     }
   }, [timeStamp]);
+
+  useEffect(() => {
+    if (tx.l2timeStamp) {
+      const getDuration = setInterval(() => {
+        const startDate = new Date(Number(tx.l2timeStamp) * 1000);
+        const currentTime = new Date();
+        const elapsedTimeInSeconds = differenceInSeconds(
+          currentTime,
+          startDate
+        );
+        const formattedTime = format(
+          new Date(elapsedTimeInSeconds * 1000),
+          "mm:ss"
+        );
+        durationRef.current = formattedTime;
+
+        setDurationRollup(formattedTime);
+      }, 1000);
+      return () => clearInterval(getDuration);
+    }
+  }, []);
 
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
@@ -275,9 +300,9 @@ export default function StatusTx(props: {
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>
-      ) : (
-        <></>
-      )}
+      ) : tx.currentStatus=== 2 ?(
+        <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>{durationRollup}</Text>
+      ):<></>}
     </Flex>
   );
 }

@@ -66,7 +66,7 @@ function Step2(props: { progress: string; timeStamp?: number }) {
       <Flex>
         <Image src={check(props.progress).check} alt="check" />
         <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
-          Wait {isConnectedToMainNetwork ? "11" : "2"} min for rollup
+          Wait {isConnectedToMainNetwork ? "~11" : "~2"} min for rollup
         </Text>
       </Flex>
       {props.progress !== "done" && (
@@ -76,7 +76,7 @@ function Step2(props: { progress: string; timeStamp?: number }) {
             fontSize={"14px"}
             color={check(props.progress).color}
           >
-            {"~ "}
+           
             {tx ? duration : isConnectedToMainNetwork ? "11 min" : "2 min"}
           </Text>
         </Flex>

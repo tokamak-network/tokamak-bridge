@@ -11,10 +11,8 @@ import {
   InputRightElement,
   InputGroup,
 } from "@chakra-ui/react";
-import MetamaskIcon from "assets/icons/metamaskAccount.svg";
 import Image from "next/image";
 import { useAccount } from "wagmi";
-import CopyIcon from "assets/icons/accountHistory/copy.png";
 import {
   CSSProperties,
   useCallback,
@@ -57,7 +55,7 @@ export default function AccountHistory() {
     chainId: 0,
     chainName: undefined,
     networkImage: undefined,
-  });
+  });  
 
   const TabContainer = (props: {
     setTab: Dispatch<SetStateAction<string>>;
@@ -92,7 +90,7 @@ export default function AccountHistory() {
 
   return (
     <Drawer
-      isOpen={isOpen}
+      isOpen={isOpen && address !== undefined}
       placement="right"
       onClose={() =>
         setSelectedNetwork({
