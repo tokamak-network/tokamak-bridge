@@ -159,10 +159,6 @@ export default function PoolCard(props: PoolCardDetail) {
           position: rawData,
           NonfungiblePositionManagerContract,
         });
-        if (id === 75475) {
-          console.log("--75742");
-          console.log(feeData);
-        }
         const token0FeeAmount =
           Number(feeData.token0Fee) === 0
             ? "0"

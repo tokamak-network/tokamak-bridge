@@ -45,12 +45,12 @@ export default function Page() {
         height={"720px"}
         maxH={"720px"}
       >
-        <InfoTitle />
-        <Liquidity />
-        <UnclaimedEarnings />
-        <PriceRange />
+        <InfoTitle info={info} />
+        <Liquidity info={info} />
+        <UnclaimedEarnings info={info} />
+        <PriceRange info={info} />
       </Flex>
-      <ClaimEarningsModal />
+      {/* <ClaimEarningsModal /> */}
     </Flex>
   );
 }

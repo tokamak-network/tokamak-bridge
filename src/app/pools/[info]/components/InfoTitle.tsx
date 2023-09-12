@@ -3,9 +3,10 @@ import { RangeText } from "../../components/ui";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
+import { PoolCardDetail } from "../../components/PoolCard";
 
-export default function InfoTitle() {
-  const { info } = usePositionInfo();
+export default function InfoTitle(props: { info: PoolCardDetail | undefined }) {
+  const { info } = props;
 
   if (!info) return null;
   const token0 = info.token0;

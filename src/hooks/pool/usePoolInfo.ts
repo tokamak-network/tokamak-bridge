@@ -118,6 +118,7 @@ export function usePoolInfo() {
 
   const { token0, token1, fee, liquidity, tickLower, tickUpper, tickCurrent } =
     info;
+
   // construct Position from details returned
   const [, pool] = usePool(token0, token1, fee);
 

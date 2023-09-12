@@ -521,7 +521,7 @@ export function usePositionInfo() {
   const { positionId, chainIdParam } = useGetPositionIdFromPath();
   const { positions } = useGetPositionById(
     Number(positionId),
-    Number(chainIdParam)
+    Number(chainIdParam ?? 55004)
   );
   const existingPositionInfo = positions ? positions[0] : undefined;
   const mintPositionInfo = useRecoilValue(poolModalProp);

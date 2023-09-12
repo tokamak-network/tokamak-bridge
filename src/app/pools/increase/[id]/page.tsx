@@ -7,7 +7,10 @@ import AddMoreLiquidity from "../components/AddMoreLiquidity";
 import ActionButton from "../components/ActionButton";
 import IncreaseModal from "../../components/IncreaseModal";
 import PriceRange from "../../[info]/components/PriceRange";
-import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
+import {
+  useGetPositionIdFromPath,
+  usePositionInfo,
+} from "@/hooks/pool/useGetPositionIds";
 import { ApproveButtonsContrainer } from "../../add/ActionButton";
 import useBlockNum from "@/hooks/network/useBlockNumber";
 import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";
@@ -18,6 +21,7 @@ import commafy from "@/utils/trim/commafy";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function IncreaseLiquidity() {
+  const {} = usePositionInfo();
   const { positionId } = useGetPositionIdFromPath();
   const { estimateGasToIncrease } = usePoolContract();
   const { blockNumber } = useBlockNum();

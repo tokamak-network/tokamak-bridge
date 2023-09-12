@@ -3,18 +3,17 @@ import RemoveInactiveIcon from "@/assets/icons/pool/removeInactiveIcon.svg";
 import RemoveIcon from "@/assets/icons/pool/removeIconBlue.svg";
 import IncreaseIcon from "@/assets/icons/pool/increaseIconBlue.svg";
 import Image from "next/image";
-import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { Token } from "@uniswap/sdk-core";
 import commafy from "@/utils/trim/commafy";
-import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount } from "wagmi";
 import { useInOutNetwork } from "@/hooks/network";
+import { PoolCardDetail } from "../../components/PoolCard";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -26,7 +25,9 @@ const TokenLiquidityData = (props: {
     <Flex justifyContent="space-between" h={"32px"} alignItems={"center"}>
       <Flex justifyContent="start">
         <TokenSymbolWithNetwork
-          tokenSymbol={token.symbol as string}
+          tokenSymbol={
+            token.symbol === "WETH" ? "ETH" : (token.symbol as string)
+          }
           chainId={token.chainId}
           symbolW={32}
           symbolH={32}
@@ -34,7 +35,7 @@ const TokenLiquidityData = (props: {
           networkSymbolW={16}
         />
         <Text ml="12px" color="#A0A3AD" fontSize="18px">
-          {token.symbol}
+          {token.symbol === "WETH" ? "ETH" : token.symbol}
         </Text>
       </Flex>
       <Flex justifyContent="end" columnGap={"12px"}>
@@ -56,9 +57,8 @@ const TokenLiquidityData = (props: {
     </Flex>
   );
 };
-export default function Liquidity() {
-  const { info } = usePositionInfo();
-  const { ratio } = usePoolInfo();
+export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
+  const { info } = props;
   const { address } = useAccount();
 
   const { totalMarketPrice } = usePricePair({
@@ -82,14 +82,13 @@ export default function Liquidity() {
 
   const actionDisabled = info?.owner !== address;
 
-  const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
-  const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
+  const ratio = 0;
 
-  useEffect(() => {
-    if (ratio && token0Ratio === undefined && token1Ratio === undefined) {
-      setToken0Ratio(ratio);
-      setToken1Ratio(100 - ratio);
-    }
+  const token0Ratio = useMemo(() => {
+    return ratio;
+  }, [ratio]);
+  const token1Ratio = useMemo(() => {
+    return ratio ? 100 - ratio : undefined;
   }, [ratio]);
 
   if (info === undefined) {
