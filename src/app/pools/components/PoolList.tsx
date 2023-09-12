@@ -13,9 +13,6 @@ export default function PoolList() {
   const { isConnected } = useAccount();
   const isLoading = useRecoilValue(ATOM_positions_loading);
 
-  console.log("positions_");
-  console.log(positions);
-
   return (
     <Grid
       templateColumns="repeat(3, 1fr)"
@@ -30,7 +27,7 @@ export default function PoolList() {
           <EmptyCard key={index} />
         ))}
       {positions?.map((position) => {
-        return <PoolCard {...position} />;
+        return <PoolCard key={position.id} {...position} />;
       })}
       {positions &&
         Array.from(

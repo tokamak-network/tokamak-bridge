@@ -3,7 +3,6 @@
 import { ethers } from "ethers";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { useProvier } from "../provider/useProvider";
-import useContract from "../contracts/useContract";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useBlockNum from "../network/useBlockNumber";
@@ -22,24 +21,19 @@ import {
   ATOM_positions_loading,
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
-import { getWETHAddress, getWETHAddressByChainId } from "@/utils/token/isETH";
+import { getWETHAddressByChainId } from "@/utils/token/isETH";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
-import { Hash } from "viem";
-import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
+import { txHashLog } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
-import {
-  SupportedChainId,
-  supportedChain,
-} from "@/types/network/supportedNetwork";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { GET_POSITIONS } from "@/graphql/data/queries";
 import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
-import { getProvider, providerByChainId } from "@/config/getProvider";
-import { supportedTokens } from "@/types/token/supportedToken";
+import { providerByChainId } from "@/config/getProvider";
 
 //logic through subGraph
 export function useGetPositionIds(): {
@@ -164,7 +158,7 @@ export function useGetPositionIds(): {
           const inRange =
             tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
 
-          positions.push({
+          return {
             id,
             fee: feeTier,
             token0Amount: Number(token0Amount),
@@ -203,11 +197,12 @@ export function useGetPositionIds(): {
               token1.symbol === "WETH" ? "ETH" : token1.symbol,
               token1.name
             ),
-          });
+            rawData: position,
+          };
         });
       }
-      await Promise.all(promises.map((func) => func()));
-      return positions;
+      const result = await Promise.all(promises.map((func) => func()));
+      return result;
     },
     []
   );
@@ -481,6 +476,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
             feeValue: isNaN(feeValue) ? 0 : feeValue,
             chainId,
             owner,
+            rawData: positionInfo,
           });
         });
         await Promise.all(promises.map((func) => func()));

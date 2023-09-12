@@ -6,17 +6,22 @@ export const GET_POSITIONS = gql`
     id
     owner
     liquidity
+    feeGrowthInside0LastX128
+    feeGrowthInside1LastX128
     tickLower {
         tickIdx
+        feeGrowthOutside0X128
+        feeGrowthOutside1X128
       }
     tickUpper {
         tickIdx
-      
+        feeGrowthOutside0X128
+        feeGrowthOutside1X128
     }
     pool {
       id
       feeTier
-       sqrtPrice
+      sqrtPrice
       tick
       liquidity
       feeGrowthGlobal0X128
