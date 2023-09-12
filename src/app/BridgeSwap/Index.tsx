@@ -14,7 +14,7 @@ export default function BridgeSwap() {
         w={"100%"}
         h={"100%"}
       >
-          <RelayBanner/>
+          {/* <RelayBanner/> */}
         <MaintenanceBanner/>
       
         <Swap />
