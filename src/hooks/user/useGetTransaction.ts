@@ -42,7 +42,7 @@ export default function useGetTransaction() {
   const l2Pro = layer === "L2" ? provider : L2Provider;
   const l1Pro = layer === "L1" ? provider : L1Provider;
 
-  const [userTxfromSubgrap, setUserTxfromSubgraph] =
+  const [userTxfromSubgraph, setUserTxfromSubgraph] =
     useRecoilState(userTransactions);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [withdrawLoading, setWithdrawLoading] = useState<
@@ -77,19 +77,19 @@ export default function useGetTransaction() {
         l2Pro !== undefined &&
         crossMessenger !== undefined &&
         crossMessengerTokamak !== undefined &&
-        userTxfromSubgrap !== undefined
+        userTxfromSubgraph !== undefined
       ) {
         set &&
           setWithdrawLoading(
-            userTxfromSubgrap.formattedWithdraw.length > 0
+            userTxfromSubgraph.formattedWithdraw.length > 0
               ? "loading"
               : "absent"
           );
-        userTxfromSubgrap.formattedWithdraw.length === 0 &&
+        userTxfromSubgraph.formattedWithdraw.length === 0 &&
           setTDataWithdraw([]);
 
         const l2WithdrawTxs = await Promise.all(
-          userTxfromSubgrap.formattedWithdraw.map(
+          userTxfromSubgraph.formattedWithdraw.map(
             async (tx: L1TxType, index: number) => {
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
                 tx.transactionHash
@@ -178,7 +178,7 @@ export default function useGetTransaction() {
                   ) {
                     const matchTx = receipt.transactionReceipt.transactionHash;
                     const l1tx =
-                      userTxfromSubgrap.formattedL1WithdrawResults.filter(
+                      userTxfromSubgraph.formattedL1WithdrawResults.filter(
                         (tx: EthType | Erc20Type) => {
                           return tx.transactionHash === matchTx;
                         }
@@ -239,15 +239,15 @@ export default function useGetTransaction() {
 
         setTDataWithdraw(allTxs);
         setWithdrawLoading(
-          userTxfromSubgrap.formattedWithdraw.length > 0 && allTxs.length > 0
+          userTxfromSubgraph.formattedWithdraw.length > 0 && allTxs.length > 0
             ? "present"
-            : userTxfromSubgrap.formattedWithdraw.length === 0
+            : userTxfromSubgraph.formattedWithdraw.length === 0
             ? "absent"
             : "loading"
         );
       }
     },
-    [userTxfromSubgrap]
+    [userTxfromSubgraph]
   );
 
   const fetchDepositTransactions = useCallback(
@@ -256,22 +256,22 @@ export default function useGetTransaction() {
         l2ProSDK !== undefined &&
         l1Pro !== undefined &&
         l2Pro !== undefined &&
-        userTxfromSubgrap !== undefined
+        userTxfromSubgraph !== undefined
       ) {
         set &&
           setDepositLoading(
-            userTxfromSubgrap?.formattedL1DepositResults.length > 0
+            userTxfromSubgraph?.formattedL1DepositResults.length > 0
               ? "loading"
               : "absent"
           );
 
         const l2DepTxs = await Promise.all(
-          userTxfromSubgrap.formattedDeposit
+          userTxfromSubgraph.formattedDeposit
             .map(async (tx: UserL2Transaction) => {
               const l1Tx = await l2ProSDK.getTransaction(tx.transactionHash);
               const l2block = await l2ProSDK.getBlock(Number(tx.blockNumber));
               const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak providee
-              const l1tx = userTxfromSubgrap.formattedL1DepositResults?.filter(
+              const l1tx = userTxfromSubgraph.formattedL1DepositResults?.filter(
                 (l1tx: SentMessages) => {
                   return Number(l1tx.messageNonce) === l1Tx.nonce;
                 }
@@ -304,7 +304,7 @@ export default function useGetTransaction() {
         );
 
         const l1DepTxs = await Promise.all(
-          userTxfromSubgrap.formattedL1DepositResults.map(async (tx: any) => {
+          userTxfromSubgraph.formattedL1DepositResults.map(async (tx: any) => {
             const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
               return (
                 l2tx !== undefined && l2tx.nonce === Number(tx.messageNonce)
@@ -345,13 +345,13 @@ export default function useGetTransaction() {
         const status =
           txLogs.length > 0
             ? "present"
-            : userTxfromSubgrap?.formattedL1DepositResults.length === 0
+            : userTxfromSubgraph?.formattedL1DepositResults.length === 0
             ? "absent"
             : "loading";
         setDepositLoading(status);
       }
     },
-    [userTxfromSubgrap, address]
+    [userTxfromSubgraph, address]
   );
 
   useEffect(() => {
@@ -363,15 +363,15 @@ export default function useGetTransaction() {
     // }, 3000);
 
     // return () => clearInterval(timer);
-  }, [address, isConnectedToMainNetwork, userTxfromSubgrap]);
+  }, [address, isConnectedToMainNetwork, userTxfromSubgraph]);
 
   const stat = useMemo(() => {
     if (
-      userTxfromSubgrap !== undefined &&
-      userTxfromSubgrap.formattedDeposit.length === 0 &&
-      userTxfromSubgrap.formattedL1DepositResults.length === 0 &&
-      userTxfromSubgrap.formattedL1WithdrawResults.length === 0 &&
-      userTxfromSubgrap.formattedWithdraw.length === 0
+      userTxfromSubgraph !== undefined &&
+      userTxfromSubgraph.formattedDeposit.length === 0 &&
+      userTxfromSubgraph.formattedL1DepositResults.length === 0 &&
+      userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
+      userTxfromSubgraph.formattedWithdraw.length === 0
     ) {
       return "absent";
     }
@@ -385,13 +385,15 @@ export default function useGetTransaction() {
       : "loading";
   }, [address, withdrawLoading, depositLoading]);
 
+  console.log('tDataWithdraw',tDataWithdraw);
+  
   const allTxs = useMemo(() => {
     if (
-      userTxfromSubgrap !== undefined &&
-      userTxfromSubgrap.formattedDeposit.length === 0 &&
-      userTxfromSubgrap.formattedL1DepositResults.length === 0 &&
-      userTxfromSubgrap.formattedL1WithdrawResults.length === 0 &&
-      userTxfromSubgrap.formattedWithdraw.length === 0
+      userTxfromSubgraph !== undefined &&
+      userTxfromSubgraph.formattedDeposit.length === 0 &&
+      userTxfromSubgraph.formattedL1DepositResults.length === 0 &&
+      userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
+      userTxfromSubgraph.formattedWithdraw.length === 0
     ) {
       return [];
     }
@@ -487,7 +489,7 @@ export default function useGetTransaction() {
   //         receipt.transactionReceipt != null
   //       ) {
   //         const matchTx = receipt.transactionReceipt.transactionHash;
-  //         const l1tx = userTxfromSubgrap.formattedL1WithdrawResults.filter(
+  //         const l1tx = userTxfromSubgraph.formattedL1WithdrawResults.filter(
   //           (tx: EthType | Erc20Type) => {
   //             return tx.transactionHash === matchTx;
   //           }
@@ -545,7 +547,7 @@ export default function useGetTransaction() {
   //       Number(incompleteDeps.blockNumber)
   //     );
   //     const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak providee
-  //     const l1tx = userTxfromSubgrap.formattedL1DepositResults?.filter(
+  //     const l1tx = userTxfromSubgraph.formattedL1DepositResults?.filter(
   //       (l1tx: SentMessages) => {
   //         return Number(l1tx.messageNonce) === l1Tx.nonce;
   //       }
@@ -575,14 +577,14 @@ export default function useGetTransaction() {
 
   // useEffect(() => {
   //   const getUpdatedTxs = async () => {
-  //     if (userTxfromSubgrap !== undefined) {
+  //     if (userTxfromSubgraph !== undefined) {
   //       const txFromGraph =
   //         layer === "L1"
-  //           ? userTxfromSubgrap?.formattedL1DepositResults.concat(
-  //               userTxfromSubgrap.formattedL1WithdrawResults
+  //           ? userTxfromSubgraph?.formattedL1DepositResults.concat(
+  //               userTxfromSubgraph.formattedL1WithdrawResults
   //             )
-  //           : userTxfromSubgrap?.formattedDeposit.concat(
-  //               userTxfromSubgrap.formattedWithdraw
+  //           : userTxfromSubgraph?.formattedDeposit.concat(
+  //               userTxfromSubgraph.formattedWithdraw
   //             );
 
   //       const newTxfromGraph = txFromGraph.filter((tx: any) => {
@@ -636,7 +638,7 @@ export default function useGetTransaction() {
   //   }, 3000);
 
   //   return () => clearInterval(timeinterval);
-  // }, [userTxfromSubgrap, stat]);
+  // }, [userTxfromSubgraph, stat]);
 
   return { depositTxs: allTxs, loadingState: stat };
 }
