@@ -76,7 +76,10 @@ export default function Warning() {
           }. Unwrap to ETH and deposit.`}
         />
       );
-    if (inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS)
+    if (
+      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS ||
+      inToken?.tokenAddress === GOERLI_CONTRACTS.WTON_ADDRESS
+    )
       return (
         <WarningText
           label={`WTON is not supported on L2. Please unwrap to TON and deposit`}
@@ -97,7 +100,7 @@ export default function Warning() {
     return (
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-        <Text>Swap route not founded on this network</Text>
+        <Text>Swap route not found on this network</Text>
       </Flex>
     );
   }

@@ -8,6 +8,8 @@ import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
+import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
+
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import {
@@ -21,7 +23,8 @@ import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
-
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
@@ -32,6 +35,9 @@ const getInterface = () => {
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
 
+  const L1CrossDomainMessengerI = new ethers.utils.Interface(
+    L1CrossDomainMessengerAbi
+  );
   return {
     l1BridgeI,
     l2BridgeI,
@@ -39,6 +45,7 @@ const getInterface = () => {
     erc20I,
     swapperI,
     nonFungiblePositionManagerI,
+    L1CrossDomainMessengerI,
   };
 };
 
@@ -147,7 +154,7 @@ export function useTx(params: {
   tokenOutAddress?: `0x${string}`;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress } = params;
-
+  const { mode } = useGetMode();
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
   });
@@ -157,6 +164,7 @@ export function useTx(params: {
   );
   const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const [, setIsAccountDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
@@ -174,7 +182,12 @@ export function useTx(params: {
   }, [isLoading, connectedChainId]);
 
   useEffect(() => {
-    if (isSuccess) return setModalOpen("confirmed");
+    if (isSuccess) {
+      if (mode === "Deposit" || mode === "Withdraw") {
+        setIsAccountDrawerOpen(true);
+      }
+      return setModalOpen("confirmed");
+    }
   }, [isSuccess]);
 
   useEffect(() => {

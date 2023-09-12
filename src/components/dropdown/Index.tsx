@@ -165,7 +165,7 @@ export default function NetworkDropdown(props: {
     } finally {
       setIsOpen(false);
       if (isError) {
-        console.error(`Can't get to switch a network`);
+        console.error(`Couldn't switch network`);
       }
     }
   };

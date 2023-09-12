@@ -14,7 +14,10 @@ import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { isETH } from "@/utils/token/isETH";
+import JSBI from "jsbi";
 import { useRecoilState } from "recoil";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -117,6 +120,7 @@ export default function TokenInput(props: {
     }
   };
 
+  const { totalGasCost } = useGasFee();
   const inputRef = useRef(null);
 
   const onMax = useCallback(() => {
@@ -137,6 +141,29 @@ export default function TokenInput(props: {
             inputRef?.current?.blur();
           }, 100);
         }
+        if (isETH(selectedInToken)) {
+          // if (!totalGasCost) return;
+          const parsedAmount =
+            Number(
+              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
+            ) -
+            Number(totalGasCost ?? 0.001) -
+            (mode === "Withdraw" ? 0.00025 : 0);
+
+          const isMinus = parsedAmount <= 0;
+
+          const amountBN = ethers.utils.parseUnits(
+            isMinus ? "0" : parsedAmount.toString(),
+            18
+          );
+
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: amountBN.toBigInt(),
+            parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+          });
+        }
+
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -164,9 +191,17 @@ export default function TokenInput(props: {
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
       }
-      return console.error("a input field not founded");
+      return console.error("a input field not found");
     }
-  }, [tokenData, inToken, selectedInToken, mode, isDisabled]);
+  }, [
+    tokenData,
+    inToken,
+    selectedInToken,
+    selectedOutToken,
+    totalGasCost,
+    mode,
+    isDisabled,
+  ]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -357,6 +392,7 @@ export default function TokenInput(props: {
             fontWeight={700}
             _hover={{}}
             _active={{}}
+            color={"#fff"}
             mt={"3px"}
             onClick={() => onMax()}
           >

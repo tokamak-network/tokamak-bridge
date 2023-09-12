@@ -127,7 +127,7 @@ export function TokenInputForLiquidity(props: {
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
         }
-        return console.error("a input field not founded");
+        return console.error("a input field not found");
       }
     } finally {
       setTimeout(() => {

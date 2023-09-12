@@ -91,15 +91,11 @@ export const ethPrice = graphQLSelector({
 //   },
 // });
 
-type TransactionData = {
-  isLoading: boolean;
-};
 
-export const transactionData = atom<TransactionData>({
+
+export const transactionData = atom<any[]>({
   key: "transactionData",
-  default: {
-    isLoading: false,
-  },
+  default: [],
 });
 
 export const txDataStatus = atom<{ [txHash: string]: TxInterface } | undefined>(

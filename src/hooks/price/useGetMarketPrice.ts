@@ -13,6 +13,8 @@ export const trimTokenName = (tokenName: string | undefined) => {
 export const changeTokenNameForAPI = (tokenName: string | undefined) => {
   if (tokenName === "Wrapped TON") return "tokamak-network";
   if (tokenName === "Wrapped Ether" || tokenName === "ETH") return "ethereum";
+  if (tokenName === "USD Coin") return "usd-coin";
+  if (tokenName === "Tether USD") return "tether";
   return tokenName?.toLowerCase();
 };
 

@@ -25,9 +25,11 @@ export default function Account() {
       className="header-right-common"
       w={isConnected ? "174px" : "220px"}
       h={"48px"}
+      bg={!isConnected ? "#007AFF" : ""}
       columnGap={"17px"}
       fontSize={18}
       fontWeight={500}
+      _hover={{ bg: isConnected ? "#313442" : "" }}
       /**
        * About connectors
        *
@@ -40,7 +42,7 @@ export default function Account() {
         isConnected ? setIsOpen(true) : connetAndDisconntWallet()
       }
     >
-      {txPending ? (
+      {isConnected && txPending ? (
         <Flex columnGap={"8px"}>
           <Spinner color={"#007AFF"} />
           <Text fontSize={18} fontWeight={500}>

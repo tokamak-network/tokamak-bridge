@@ -107,7 +107,7 @@ export default function Confirmation() {
           </Flex>
 
           <Text
-            w={"203px"}
+            w={"254px"}
             mt={"46px"}
             px={isConfirming ? "32px" : ""}
             textAlign={"center"}

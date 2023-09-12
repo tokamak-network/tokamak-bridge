@@ -4,16 +4,21 @@ import { GlobalComponents } from "./layout";
 import Modals from "./Modals";
 import MobileView from "./Mobile";
 import { ApolloProvider } from "@apollo/client";
-import useConnectedNetwork from "@/hooks/network";
 import { apolloClient } from "@/apollo";
+import Drawers from "./Drawers";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const [isMobile] = useMediaQuery("(max-width: 1200px)");
-
-  const { connectedChainId } = useConnectedNetwork();
   const { mode } = useGetMode();
 
+  if (isMobile) {
+    return (
+      <Center h={"100vh"}>
+        <MobileView />
+      </Center>
+    );
+  }
   // if (isMobile) {
   //   return (
   //     <Center h={"100vh"}>
@@ -32,8 +37,8 @@ export default function Entry({ children }: { children: React.ReactNode }) {
           {children}
         </Flex>
       )}
-
       <GlobalComponents />
+      <Drawers />
       <Modals />
     </ApolloProvider>
   );

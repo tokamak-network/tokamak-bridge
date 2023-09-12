@@ -71,6 +71,7 @@ const ApproveButton = (props: { isInToken: boolean }) => {
         _hover={{}}
         _active={{}}
         _disabled={{}}
+        color={'#fff'}
         onClick={() => write?.()}
         isDisabled={isLoading}
       >

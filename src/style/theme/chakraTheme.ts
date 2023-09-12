@@ -2,7 +2,7 @@ import { extendTheme } from "@chakra-ui/theme-utils";
 import "@fontsource/poppins";
 import "@fontsource/quicksand";
 import "@fontsource/quicksand/700.css";
-
+import { Overlay_Index } from "@/types/style/overlayIndex";
 const fonts = {
   Poppins: "Poppins",
   Quicksand: "Quicksand",
@@ -27,6 +27,27 @@ const theme = extendTheme({
             outline: "none",
             border: "none",
           },
+        },
+      },
+    },
+    Drawer: {
+      variants: {
+        clickThrough: {
+          overlay: {
+            pointerEvents: "none",
+            background: "transparent",
+          },
+          
+          dialogContainer: {
+            pointerEvents: "none",
+            background: "transparent",
+          },
+          dialog: {
+            pointerEvents: "auto",
+          },
+          input: {
+            pointerEvents: "auto",
+          }
         },
       },
     },
@@ -70,6 +91,10 @@ const theme = extendTheme({
         border: "1px dashed #313442",
         borderRadius: "16px",
       },
+      ".css-17pwl6t": {
+        zIndex: Overlay_Index.OverHeader,
+      },
+
     }),
     // Additional overrides for specific components can be added here
     // For example, to reset the button styles
@@ -81,6 +106,7 @@ const theme = extendTheme({
         fontWeight: "normal",
         _hover: { backgroundColor: "none" },
         _active: {},
+        color:'#fff'
       },
     },
     Input: {

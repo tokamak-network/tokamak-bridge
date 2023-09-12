@@ -134,6 +134,7 @@ export function useAllowance() {
     UNISWAP_CONTRACT,
     connectedChainId,
     provider,
+    L1BRIDGE_CONTRACT,
     chainName,
   ]);
 
