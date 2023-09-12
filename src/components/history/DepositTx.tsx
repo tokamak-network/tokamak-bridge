@@ -6,13 +6,25 @@ import useConnectedNetwork from "@/hooks/network";
 import DepositStatusTx from "./DepositStatusTx";
 import { FullWithTx } from "@/types/activity/history";
 import { Hash } from "viem";
+import { supportedTokens } from "@/types/token/supportedToken";
 
 export default function DepositTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { layer } = useConnectedNetwork();
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+  const ethToken = {
+    decimals: supportedTokens[0].decimals,
+    symbol: supportedTokens[0].tokenSymbol,
+  };
+  
   const { data, isError, isLoading } = useToken({
     address: layer === "L1" ? (tx._l1Token as Hash) : (tx._l2Token as Hash),
+    enabled: false,
   });
+
+  const token = layer === "L1" && tx._l1Token === zeroAddress ? ethToken : data;
+
 
   return (
     <Flex
@@ -34,14 +46,14 @@ export default function DepositTx(props: { tx: FullWithTx }) {
         action="deposit"
         inAmount={ethers.utils.formatUnits(
           tx._amount === undefined? '0':tx._amount.toString(),
-          data?.decimals
+          token?.decimals
         )}
         outAmount={ethers.utils.formatUnits(
           tx._amount === undefined? '0':tx._amount.toString(),
-          data?.decimals
+          token?.decimals
         )}
-        inTokenSymbol={data?.symbol || "ETH"}
-        outTokenSymbol={data?.symbol || "ETH"}
+        inTokenSymbol={token?.symbol as string|| "ETH"}
+        outTokenSymbol={token?.symbol as string|| "ETH"}
       />
       <DepositStatusTx
         completed={true}
