@@ -90,7 +90,7 @@ export default function SetPriceRange() {
         <RangeInput isMinPrice={true} />
         <RangeInput isMinPrice={false} />
       </Flex>
-      {poolStatus !== PoolState.NOT_EXISTS && (
+      {/* {poolStatus !== PoolState.NOT_EXISTS && (
         <Button
           w={"100%"}
           minH={"32px"}
@@ -106,7 +106,7 @@ export default function SetPriceRange() {
         >
           Full Range
         </Button>
-      )}
+      )} */}
     </Flex>
   );
 }

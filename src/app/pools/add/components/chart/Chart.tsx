@@ -98,9 +98,12 @@ export function Chart({
             "reset"
           );
         }}
-        showResetButton={Boolean(
-          ticksAtLimit[Bound.LOWER] || ticksAtLimit[Bound.UPPER]
-        )}
+        showResetButton={
+          // Boolean(
+          // ticksAtLimit[Bound.LOWER] || ticksAtLimit[Bound.UPPER]
+          // )
+          true
+        }
         zoomLevels={zoomLevels}
       />
       <svg

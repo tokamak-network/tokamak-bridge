@@ -15,7 +15,6 @@ import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
-import JSBI from "jsbi";
 import { useRecoilState } from "recoil";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 

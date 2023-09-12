@@ -7,13 +7,14 @@ import {
   ZoomTransform,
 } from "d3";
 import React, { useEffect, useMemo, useRef } from "react";
-import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
+// import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import ZOOM_IN_ICON from "assets/icons/pool/zoomIn.svg";
+import REFRESH_ICON from "assets/icons/pool/refreshIcon.svg";
 import Title from "../Title";
+import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -50,6 +51,7 @@ export default function Zoom({
   showResetButton: boolean;
   zoomLevels: ZoomLevels;
 }) {
+  const { getSetFullRange } = useRangeHopCallbacks();
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
@@ -121,24 +123,33 @@ export default function Zoom({
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>
       <Title title="Set Price Range" />
       <Flex justifyContent={"flex-end"} columnGap={"8px"}>
-        {showResetButton && (
-          <Button
-            w={"40px"}
-            h={"40px"}
-            bgColor={"transparent"}
-            border={"1px solid #313442"}
-            onClick={() => {
-              resetBrush();
-              zoomReset();
-            }}
-            disabled={false}
-            _hover={{}}
-            _active={{}}
-          >
-            <RefreshCcw size={16} />
-          </Button>
-        )}
-        <Button
+        <Center
+          w={"32px"}
+          h={"32px"}
+          bgColor={"transparent"}
+          border={"1px solid #313442"}
+          borderRadius={"8px"}
+          onClick={() => {
+            resetBrush();
+            zoomReset();
+          }}
+          cursor={"pointer"}
+        >
+          <Image src={REFRESH_ICON} alt={"REFRESH_ICON"} />
+        </Center>
+        <Center
+          w={"80px"}
+          h={"32px"}
+          bgColor={"transparent"}
+          border={"1px solid #313442"}
+          borderRadius={"8px"}
+          fontSize={12}
+          cursor={"pointer"}
+          onClick={getSetFullRange}
+        >
+          <Text>Full Range</Text>
+        </Center>
+        {/* <Button
           w={"40px"}
           h={"40px"}
           bgColor={"transparent"}
@@ -159,7 +170,7 @@ export default function Zoom({
           _active={{}}
         >
           <ZoomOut size={16} />
-        </Button>
+        </Button> */}
       </Flex>
     </Flex>
   );
