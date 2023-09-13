@@ -85,6 +85,10 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
 
   const { ratio, inverted } = usePoolInfo();
 
+  // console.log("ratio");
+  // console.log(ratio);
+  // console.log(inverted);
+
   const token0Ratio = useMemo(() => {
     return ratio;
   }, [ratio]);
@@ -200,7 +204,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               info.token1Amount.toString(),
               6
             )}
-            liquidityPercent={inverted ? token0Ratio : token1Ratio}
+            liquidityPercent={inverted ? token1Ratio : token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
@@ -208,7 +212,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               info.token0Amount.toString(),
               6
             )}
-            liquidityPercent={inverted ? token1Ratio : token0Ratio}
+            liquidityPercent={inverted ? token0Ratio : token0Ratio}
           />
         </Flex>
       </Flex>

@@ -21,7 +21,7 @@ import commafy from "@/utils/trim/commafy";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function IncreaseLiquidity() {
-  const {} = usePositionInfo();
+  const { info } = usePositionInfo();
   const { positionId } = useGetPositionIdFromPath();
   const { estimateGasToIncrease } = usePoolContract();
   const { blockNumber } = useBlockNum();
@@ -60,7 +60,7 @@ export default function IncreaseLiquidity() {
                 : undefined
             }
           />
-          <PriceRange />
+          <PriceRange info={info} />
         </Flex>
         <Flex flexDirection={"column"} justifyContent={"space-between"}>
           <AddMoreLiquidity />

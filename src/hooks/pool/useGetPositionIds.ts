@@ -353,14 +353,14 @@ export function useGetPositionById(positionId: number, chainId: number) {
             chainId,
             token0,
             token0Decimals,
-            token0Symbol,
+            token0Symbol === "WETH" ? "ETH" : token0Symbol,
             token0Name
           );
           const tokenB = new Token(
             chainId,
             token1,
             token1Decimals,
-            token1Symbol,
+            token1Symbol === "WETH" ? "ETH" : token1Symbol,
             token1Name
           );
 
@@ -522,6 +522,7 @@ export function usePositionInfo() {
     Number(positionId),
     Number(chainIdParam ?? 55004)
   );
+
   const existingPositionInfo = positions ? positions[0] : undefined;
   const mintPositionInfo = useRecoilValue(poolModalProp);
   const { subMode } = useGetMode();
