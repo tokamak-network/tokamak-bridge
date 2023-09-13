@@ -160,7 +160,7 @@ export function useGetPositionIds(): {
 
           return {
             id,
-            fee: feeTier,
+            fee: Number(feeTier),
             token0Amount: Number(token0Amount),
             token1Amount: Number(token1Amount),
             token0CollectedFee: token0CollectedFee.toString(),

@@ -22,17 +22,27 @@ import { useGetFeeTier } from "./useGetFeeTier";
 import { PoolState } from "@/types/pool/pool";
 import { useGetPositionIdFromPath } from "./useGetPositionIds";
 import { providerByChainId } from "@/config/getProvider";
+import { useGetMode } from "../mode/useGetMode";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
   const { provider: _provider, L1Provider, L2Provider } = useProvier();
   const { chainIdParam } = useGetPositionIdFromPath();
   const { connectedChainId } = useConnectedNetwork();
+  const { subMode } = useGetMode();
 
   const provider = useMemo(() => {
+    if (subMode.add) return _provider;
     if (connectedChainId === Number(chainIdParam)) return _provider;
     if (chainIdParam) return providerByChainId[Number(chainIdParam)];
-  }, [_provider, L1Provider, L2Provider, chainIdParam, connectedChainId]);
+  }, [
+    _provider,
+    L1Provider,
+    L2Provider,
+    chainIdParam,
+    connectedChainId,
+    subMode,
+  ]);
 
   useEffect(() => {
     const fetchPoolData = async () => {
@@ -42,9 +52,6 @@ export function usePoolData(poolAddress: string | undefined) {
           IUniswapV3PoolABI.abi,
           provider
         );
-
-        console.log("poolContract");
-        console.log(poolContract);
 
         const [liquidity, slot0] = await Promise.all([
           poolContract.liquidity(),
@@ -152,7 +159,8 @@ export function usePools(
   // : [PoolState, Pool | null][]
   const { connectedChainId, layer } = useConnectedNetwork();
   const { chainIdParam } = useGetPositionIdFromPath();
-  const chainId = Number(chainIdParam);
+  const { subMode } = useGetMode();
+  const chainId = subMode.add ? connectedChainId : Number(chainIdParam);
 
   const poolTokens: ([Token, Token, FeeAmount] | undefined)[] = useMemo(() => {
     // if (!connectedChainId) return new Array(poolKeys.length);
