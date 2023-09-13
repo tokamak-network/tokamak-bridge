@@ -315,9 +315,6 @@ export function useV3MintInfo() {
     outToken?.token,
   ]);
 
-  // console.log("dd");
-  // console.log(dependentAmount?.toSignificant(6));
-
   return {
     pool,
     poolState,

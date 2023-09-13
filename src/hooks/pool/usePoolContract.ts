@@ -37,7 +37,6 @@ import { useGetMarketPrice } from "../price/useGetMarketPrice";
 import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
-import { usePoolInfo } from "./usePoolInfo";
 import JSBI from "jsbi";
 
 export function usePoolMint() {

@@ -14,6 +14,7 @@ import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount } from "wagmi";
 import { useInOutNetwork } from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
+import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -82,13 +83,13 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
 
   const actionDisabled = info?.owner !== address;
 
-  const ratio = 0;
+  const { ratio, inverted } = usePoolInfo();
 
   const token0Ratio = useMemo(() => {
     return ratio;
   }, [ratio]);
   const token1Ratio = useMemo(() => {
-    return ratio ? 100 - ratio : undefined;
+    return ratio !== undefined ? 100 - ratio : undefined;
   }, [ratio]);
 
   if (info === undefined) {
@@ -199,7 +200,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               info.token1Amount.toString(),
               6
             )}
-            liquidityPercent={token1Ratio}
+            liquidityPercent={inverted ? token0Ratio : token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
@@ -207,7 +208,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               info.token0Amount.toString(),
               6
             )}
-            liquidityPercent={token0Ratio}
+            liquidityPercent={inverted ? token1Ratio : token0Ratio}
           />
         </Flex>
       </Flex>

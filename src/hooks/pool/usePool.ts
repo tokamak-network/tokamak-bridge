@@ -23,6 +23,7 @@ import { PoolState } from "@/types/pool/pool";
 import { useGetPositionIdFromPath } from "./useGetPositionIds";
 import { providerByChainId } from "@/config/getProvider";
 import { useGetMode } from "../mode/useGetMode";
+import { checkLayer } from "@/utils/network/checkLayer";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
@@ -157,10 +158,11 @@ export function usePools(
   ][]
 ) {
   // : [PoolState, Pool | null][]
-  const { connectedChainId, layer } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
   const { chainIdParam } = useGetPositionIdFromPath();
   const { subMode } = useGetMode();
   const chainId = subMode.add ? connectedChainId : Number(chainIdParam);
+  const layer = checkLayer(chainId);
 
   const poolTokens: ([Token, Token, FeeAmount] | undefined)[] = useMemo(() => {
     // if (!connectedChainId) return new Array(poolKeys.length);

@@ -215,7 +215,6 @@ export function useGetPositionIds(): {
 
   useEffect(() => {
     const fetchPositionData = async () => {
-      console.log(data, connectedChainId, otherLayerData, otherLayerChainInfo);
       if (data && connectedChainId && otherLayerData && otherLayerChainInfo) {
         if (
           (address && account !== address) ||
