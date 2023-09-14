@@ -24,7 +24,7 @@ export default function HalfLoadingTx(props: { tx: any }) {
   };
   const { data, isError, isLoading } = useToken({
     address: layer === "L1" ? (tx._l1Token as Hash) : (tx._l2Token as Hash),
-    enabled: false,
+    enabled:tx._l1Token ===  zeroAddress? false :true,
   });
 
   const token = layer === "L1" && tx._l1Token === zeroAddress ? ethToken : data;
