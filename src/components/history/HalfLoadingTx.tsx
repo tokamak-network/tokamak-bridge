@@ -6,6 +6,7 @@ import { useToken } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import GradientSpinner from "@/components/ui/gradientSpinner";
 import { Hash } from "viem";
+import { supportedTokens } from "types/token/supportedToken";
 
 const gradientAnimation = keyframes`
   0% { background-position: -200% 0%; }
@@ -15,9 +16,18 @@ const gradientAnimation = keyframes`
 export default function HalfLoadingTx(props: { tx: any }) {
   const { tx } = props;
   const { layer } = useConnectedNetwork();
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+  const ethToken = {
+    decimals: supportedTokens[0].decimals,
+    symbol: supportedTokens[0].tokenSymbol,
+  };
   const { data, isError, isLoading } = useToken({
     address: layer === "L1" ? (tx._l1Token as Hash) : (tx._l2Token as Hash),
+    enabled: false,
   });
+
+  const token = layer === "L1" && tx._l1Token === zeroAddress ? ethToken : data;
 
   return (
     <Flex
@@ -28,8 +38,7 @@ export default function HalfLoadingTx(props: { tx: any }) {
       bg={"#15161D"}
       p="12px"
       flexDir={"column"}
-      rowGap={"8px"}
-    >
+      rowGap={"8px"}>
       <Flex flexDir={"column"} rowGap={"8px"} cursor={"pointer"}>
         <Flex justifyContent={"space-between"} w="100%">
           <Text fontSize={"14px"} fontWeight={600}>
@@ -47,8 +56,7 @@ export default function HalfLoadingTx(props: { tx: any }) {
             zIndex={1000}
             bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
             bgSize="200% 100%"
-            animation={`${gradientAnimation} 10s linear infinite`}
-          ></Button>
+            animation={`${gradientAnimation} 10s linear infinite`}></Button>
         </Flex>
         <TokenPairTx
           inAmount={ethers.utils.formatUnits(
@@ -60,8 +68,8 @@ export default function HalfLoadingTx(props: { tx: any }) {
             tx._amount.toString(),
             data?.decimals
           )}
-          inTokenSymbol={data?.symbol || "ETH"}
-          outTokenSymbol={data?.symbol || "ETH"}
+          inTokenSymbol={(token?.symbol as string) || "ETH"}
+          outTokenSymbol={(token?.symbol as string) || "ETH"}
         />
       </Flex>
       <Flex w="100%" height={"18px"}>
