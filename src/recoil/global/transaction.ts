@@ -1,7 +1,7 @@
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 import { TxInterface } from "@/types/tx/txType";
-import { gql } from "@apollo/client";
-import { graphQLSelector } from "recoil-relay";
+// import { gql } from "@apollo/client";
+// import { graphQLSelector } from "recoil-relay";
 
 export enum TransactionState {
   Failed = "Failed",
@@ -59,18 +59,18 @@ export const estimatedGasUsage = atom<number | undefined>({
   default: undefined,
 });
 
-export const ethPrice = graphQLSelector({
-  key: "ethPrice",
-  environment: "dev",
-  query: gql`
-    query GetTokenMarketData($tokenName: String!) @api(contextKey: "apiName") {
-    getTokenMarketData(tokenName: $tokenName) {
-      current_price
-    }
-  }`,
-  variables: ({ get }) => ({ tokenName: "ethereum", apiName: "price" }),
-  mapResponse: (data) => data.getTokenMarketData?.current_price,
-});
+// export const ethPrice = graphQLSelector({
+//   key: "ethPrice",
+//   environment: "dev",
+//   query: gql`
+//     query GetTokenMarketData($tokenName: String!) @api(contextKey: "apiName") {
+//     getTokenMarketData(tokenName: $tokenName) {
+//       current_price
+//     }
+//   }`,
+//   variables: ({ get }) => ({ tokenName: "ethereum", apiName: "price" }),
+//   mapResponse: (data) => data.getTokenMarketData?.current_price,
+// });
 
 export const estimatedGasFee = selector<number | undefined>({
   key: "estimatedGasFee",
@@ -84,8 +84,6 @@ export const estimatedGasFee = selector<number | undefined>({
     return undefined;
   },
 });
-
-
 
 export const transactionData = atom<any[]>({
   key: "transactionData",
