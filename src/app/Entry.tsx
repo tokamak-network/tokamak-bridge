@@ -32,7 +32,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <Header />
       <Center h={"100vh"}>{children}</Center>
       <GlobalComponents />
-      <Drawers/>
+      {/* <Drawers/> */}
       <Modals />
     </ApolloProvider>
   );
