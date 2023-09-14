@@ -26,14 +26,12 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
 const zeroAddress = '0x0000000000000000000000000000000000000000'
   const { data, isError, isLoading } = useToken({
     address: layer === "L1" ? ( tx._l1Token as Hash) : (tx._l2Token as Hash),
-    enabled: false,
+    enabled:tx._l1Token ===  zeroAddress? false :true,
   });
-  
   const ethToken = {
     symbol: supportedTokens[0].tokenSymbol,
     decimals: supportedTokens[0].decimals
-  }
-
+  }  
   const token = layer === "L1" &&  tx._l1Token === zeroAddress?ethToken :data
 
   return (
