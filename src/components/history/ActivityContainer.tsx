@@ -129,7 +129,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     tData.loadingState,
   ]);
 
-  const getLayerFiltered = useMemo(() => {
+  const getLayerFiltered = useMemo(() => {    
     const depSelected =
       network.chainId === SupportedChainId["MAINNET"] ||
       network.chainId === SupportedChainId["GOERLI"];
@@ -140,13 +140,13 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     const allSelected = network.chainId === undefined;
     if (depSelected === true) {
       const txs = filteredTx.filter(
-        (tx: FullDepTx) => tx && tx.event === "deposit"
+        (tx: FullDepTx) => tx !== undefined && tx.event === "deposit"
       );
       return txs;
     }
     if (withSelected === true) {
       const txs = filteredTx.filter(
-        (tx: FullWithTx) => tx && tx.event === "withdraw"
+        (tx: FullWithTx) => tx !== undefined  && tx.event === "withdraw"
       );
       return txs;
     } else {
