@@ -11,8 +11,8 @@ import { useRouter } from "next/navigation";
 import { useCallback, useMemo } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
-import { useAccount } from "wagmi";
-import { useInOutNetwork } from "@/hooks/network";
+import { useAccount, useSwitchNetwork } from "wagmi";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 
@@ -70,6 +70,9 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   });
 
   const router = useRouter();
+  const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
+
   const noMarketPrices =
     (info?.token0MarketPrice === undefined &&
       info?.token1MarketPrice === undefined) ||
@@ -78,6 +81,16 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
       if (info) {
+        if (info.chainId !== connectedChainId && otherLayerChainInfo) {
+          const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+          if (res && res.id === otherLayerChainInfo.chainId) {
+            return router.push(
+              remove
+                ? `/pools/remove/${info.id}?chainId=${info.chainId}`
+                : `/pools/increase/${info.id}?chainId=${info.chainId}`
+            );
+          }
+        }
         return router.push(
           remove
             ? `/pools/remove/${info.id}?chainId=${info.chainId}`
@@ -85,7 +98,13 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
         );
       }
     },
-    [info?.id, info?.chainId]
+    [
+      info?.id,
+      info?.chainId,
+      connectedChainId,
+      otherLayerChainInfo,
+      switchNetworkAsync,
+    ]
   );
 
   const actionDisabled = info?.owner !== address;

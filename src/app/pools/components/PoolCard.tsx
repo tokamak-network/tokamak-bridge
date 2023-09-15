@@ -91,7 +91,7 @@ export default function PoolCard(props: PoolCardDetail) {
 
   const { connectedChainId, otherLayerChainInfo, layer } =
     useConnectedNetwork();
-  const { switchNetworkAsync, isLoading, error } = useSwitchNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
   const { provider, L1Provider, L2Provider } = useProvier();
   const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
@@ -188,7 +188,7 @@ export default function PoolCard(props: PoolCardDetail) {
       }
     }
     return router.push(`/pools/${id}?chainId=${chainId}`);
-  }, [chainId, connectedChainId, otherLayerChainInfo]);
+  }, [id, chainId, connectedChainId, otherLayerChainInfo, switchNetworkAsync]);
 
   const token0HasMarketPrice = Number(token0MarketPrice) > 0;
   const token1HasMarketPrice = Number(token1MarketPrice) > 0;
