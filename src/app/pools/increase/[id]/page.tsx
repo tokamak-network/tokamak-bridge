@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Text, Box } from "@chakra-ui/layout";
+import { Flex } from "@chakra-ui/layout";
 import TopLine from "../../common/TopLine";
 import Range from "../../components/Range";
 import AddMoreLiquidity from "../components/AddMoreLiquidity";
@@ -11,14 +11,15 @@ import {
   useGetPositionIdFromPath,
   usePositionInfo,
 } from "@/hooks/pool/useGetPositionIds";
-import { ApproveButtonsContrainer } from "../../add/ActionButton";
 import useBlockNum from "@/hooks/network/useBlockNumber";
-import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";
+import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { estimatedGasFee } from "@/recoil/global/transaction";
 import commafy from "@/utils/trim/commafy";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useIsOwner } from "@/hooks/pool/useIsOwner";
+import { redirect } from "next/navigation";
 
 export default function IncreaseLiquidity() {
   const { info } = usePositionInfo();
@@ -28,6 +29,7 @@ export default function IncreaseLiquidity() {
   const [estimatedGasUsageValue, setEstimatedGasUsage] =
     useRecoilState(estimatedGasFee);
   const { inToken, outToken } = useInOutTokens();
+  const { needToRedirect } = useIsOwner(info);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +38,10 @@ export default function IncreaseLiquidity() {
     };
     fetchData();
   }, [blockNumber, inToken?.amountBN, outToken?.amountBN]);
+
+  if (needToRedirect) {
+    redirect(`/pools/${info?.id}?chainId=${info?.chainId}`);
+  }
 
   return (
     <Flex flexDir={"column"} w={"852px"} rowGap={"8px"}>

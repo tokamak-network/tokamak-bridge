@@ -75,11 +75,18 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
       info?.token1MarketPrice === undefined) ||
     Number(info.token0MarketPrice) + Number(info.token1MarketPrice) === 0;
 
-  const onClickToRoute = useCallback(async (remove?: boolean) => {
-    return router.push(
-      remove ? `/pools/remove/${info?.id}` : `/pools/increase/${info?.id}/`
-    );
-  }, []);
+  const onClickToRoute = useCallback(
+    async (remove?: boolean) => {
+      if (info) {
+        return router.push(
+          remove
+            ? `/pools/remove/${info.id}?chainId=${info.chainId}`
+            : `/pools/increase/${info.id}?chainId=${info.chainId}`
+        );
+      }
+    },
+    [info?.id, info?.chainId]
+  );
 
   const actionDisabled = info?.owner !== address;
 

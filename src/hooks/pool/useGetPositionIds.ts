@@ -19,7 +19,7 @@ import {
   ATOM_positions,
   ATOM_positionForInfo,
   ATOM_positions_loading,
-  ATOM_PositionForInfo_loading,
+  ATOM_positionForInfo_loading,
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
 import { getWETHAddressByChainId } from "@/utils/token/isETH";
@@ -295,7 +295,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
     PoolCardDetail[] | undefined
   >(ATOM_positionForInfo);
   const [, setIsLoading] = useRecoilState<boolean>(
-    ATOM_PositionForInfo_loading
+    ATOM_positionForInfo_loading
   );
 
   const callPositionIds = useCallback(
@@ -493,14 +493,18 @@ export function useGetPositionById(positionId: number, chainId: number) {
   const txLog = useRecoilValue(txHashLog);
   useEffect(() => {
     const fetchPositionIds = async () => {
-      setIsLoading(true);
-      const result = await callPositionIds(positionId);
+      if (positions === undefined) {
+        setIsLoading(true);
+      }
       try {
+        // setIsLoading(true);
+        const result = await callPositionIds(positionId);
         if (result) {
           return setPositions(result);
         }
         return setPositions(undefined);
       } finally {
+        // setIsLoading(false);
         setIsLoading(false);
       }
     };
@@ -508,8 +512,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
       console.log("**fetchPositionIds err**");
       console.log(e);
       if (e.toString().includes("nonexistent")) {
-        setIsLoading(false);
-        setPositions(undefined);
+        // setIsLoading(false);
+        return setPositions(undefined);
       }
     });
   }, [blockNumber, connectedChainId, address, txLog, positionId]);

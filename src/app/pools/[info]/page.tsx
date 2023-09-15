@@ -10,11 +10,11 @@ import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
 import GradientSpinner from "@/components/ui/gradientSpinner";
 import { useRecoilValue } from "recoil";
-import { ATOM_PositionForInfo_loading } from "@/recoil/pool/positions";
+import { ATOM_positionForInfo_loading } from "@/recoil/pool/positions";
 
 export default function Page() {
   const { info } = usePositionInfo();
-  const isLoading = useRecoilValue(ATOM_PositionForInfo_loading);
+  const isLoading = useRecoilValue(ATOM_positionForInfo_loading);
 
   if (isLoading) {
     return (

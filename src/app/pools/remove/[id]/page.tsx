@@ -8,13 +8,23 @@ import ActionButton from "../components/ActionButton";
 import IncreaseModal from "../../components/IncreaseModal";
 import TxDetails from "../components/TxDetails";
 import RemoveModal from "../../components/RemoveModal";
-import { usePathname } from "next/navigation";
-import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
+import { redirect, usePathname } from "next/navigation";
+import {
+  useGetPositionIdFromPath,
+  usePositionInfo,
+} from "@/hooks/pool/useGetPositionIds";
 import UnclaimedEarnings from "../../[info]/components/UnclaimedEarnings";
 import ClaimEarningsModal from "../../[info]/components/ClaimEarningsModal";
+import { useIsOwner } from "@/hooks/pool/useIsOwner";
 
 export default function RemoveLiquidity() {
   const { positionId } = useGetPositionIdFromPath();
+  const { info } = usePositionInfo();
+  const { needToRedirect } = useIsOwner(info);
+
+  if (needToRedirect) {
+    redirect(`/pools/${info?.id}?chainId=${info?.chainId}`);
+  }
 
   return (
     <Flex flexDir={"column"} rowGap={"8px"}>
@@ -32,7 +42,7 @@ export default function RemoveLiquidity() {
       >
         <Flex flexDirection={"column"} rowGap={"16px"} maxW={"364px"}>
           <Range page="removeLiquidity" />
-          <UnclaimedEarnings />
+          <UnclaimedEarnings info={info} />
           <SelectPercentage />
           <TxDetails />
           <ActionButton />

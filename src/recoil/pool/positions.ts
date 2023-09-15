@@ -11,7 +11,7 @@ export const ATOM_positionForInfo = atom<PoolCardDetail[] | undefined>({
   default: undefined,
 });
 
-export const ATOM_PositionForInfo_loading = atom<boolean>({
+export const ATOM_positionForInfo_loading = atom<boolean>({
   key: "poistionsForInfoLoading",
   default: false,
 });
