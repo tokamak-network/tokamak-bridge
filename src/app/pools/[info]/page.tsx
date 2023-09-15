@@ -9,11 +9,14 @@ import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
 import GradientSpinner from "@/components/ui/gradientSpinner";
+import { useRecoilValue } from "recoil";
+import { ATOM_PositionForInfo_loading } from "@/recoil/pool/positions";
 
 export default function Page() {
   const { info } = usePositionInfo();
+  const isLoading = useRecoilValue(ATOM_PositionForInfo_loading);
 
-  if (info === undefined) {
+  if (isLoading) {
     return (
       <Flex w={"95%"} flexDir={"column"}>
         <Flex h={"25px"}>
@@ -29,6 +32,10 @@ export default function Page() {
         </Flex>
       </Flex>
     );
+  }
+
+  if (info === undefined) {
+    return <>{"no position :("}</>;
   }
 
   return (

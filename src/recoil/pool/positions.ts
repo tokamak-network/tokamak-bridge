@@ -7,8 +7,13 @@ export const ATOM_positions = atom<PoolCardDetail[] | undefined>({
 });
 
 export const ATOM_positionForInfo = atom<PoolCardDetail[] | undefined>({
-  key: "poistions",
+  key: "poistionsForInfo",
   default: undefined,
+});
+
+export const ATOM_PositionForInfo_loading = atom<boolean>({
+  key: "poistionsForInfoLoading",
+  default: false,
 });
 
 export const ATOM_positions_loading = atom<boolean>({
