@@ -6,7 +6,7 @@ import {
   zoomIdentity,
   ZoomTransform,
 } from "d3";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 // import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
@@ -15,6 +15,7 @@ import Image from "next/image";
 import REFRESH_ICON from "assets/icons/pool/refreshIcon.svg";
 import Title from "../Title";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -53,6 +54,7 @@ export default function Zoom({
 }) {
   const { getSetFullRange } = useRangeHopCallbacks();
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
+  const { invertPrice } = useV3MintInfo();
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [
@@ -118,6 +120,18 @@ export default function Zoom({
     // reset zoom to initial on zoomLevel change
     zoomInitial();
   }, [zoomInitial, zoomLevels]);
+
+  const [triggerEffect, setTriggerEffect] = useState<number>(0);
+
+  //disable to trigger before it's initialized
+  //invert price changes twice, it makes a flicker with this hook
+  useEffect(() => {
+    if (triggerEffect < 2 || invertPrice === undefined) {
+      return setTriggerEffect(triggerEffect + 1);
+    }
+    resetBrush();
+    zoomReset();
+  }, [invertPrice]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>
