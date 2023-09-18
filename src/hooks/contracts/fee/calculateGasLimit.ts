@@ -1,0 +1,26 @@
+import { providerByChainId } from "@/config/getProvider";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { calculateGasMargin } from "@/utils/gas/calculateGasMargin";
+//@ts-ignore
+import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
+import { BigNumber, Contract, ethers } from "ethers";
+
+export async function calculateGasLimit(
+  provider: ethers.providers.JsonRpcProvider,
+  tx: any,
+  isLayer2: boolean
+) {
+  if (!isLayer2) {
+    const estimatedGas = await provider.estimateGas(tx);
+    return calculateGasMargin(estimatedGas);
+  }
+
+  const gasPrice = await provider.getGasPrice();
+  const l2ProSDK = titanSDK.asL2Provider(
+    providerByChainId[SupportedChainId.DARIUS]
+  );
+  const totalGasCost = await l2ProSDK.estimateTotalGasCost(tx);
+  const estimatedGas = BigNumber.from(totalGasCost)
+  .div(BigNumber.from("1000000000"));
+  return calculateGasMargin(estimatedGas);
+}

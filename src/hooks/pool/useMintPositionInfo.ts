@@ -59,6 +59,7 @@ export function useMintPositionInfo() {
         feeValue: 0,
         chainId: pool.token0.chainId,
         owner: "",
+        rawData: pool,
       };
     }
     return undefined;

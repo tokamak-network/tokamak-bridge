@@ -19,6 +19,7 @@ import useBlockNum from "@/hooks/network/useBlockNumber";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useRecoilValue } from "recoil";
 import { estimatedGasFee } from "@/recoil/global/transaction";
+import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
@@ -28,16 +29,18 @@ export default function IncreaseModal() {
   const [gasToAdd, setGasToAdd] = useState<number | undefined>(undefined);
   const { blockNumber } = useBlockNum();
   const gasFeeToIncrease = useRecoilValue(estimatedGasFee);
+  const { info } = usePositionInfo();
 
   useEffect(() => {
     const fetchData = async () => {
       const gasData = await estimateGasToMint();
       setGasToAdd(gasData);
     };
-    if (poolModal === "increaseLiquidity") {
-      fetchData();
-    }
-  }, [estimateGasToMint, blockNumber]);
+    // if (poolModal === "increaseLiquidity") {
+    //   fetchData();
+    // }
+    fetchData();
+  }, [estimateGasToMint]);
 
   return (
     <Modal
@@ -80,7 +83,7 @@ export default function IncreaseModal() {
               : commafy(gasFeeToIncrease, 2)
           }
         />
-        <PriceRange />
+        <PriceRange info={info} />
         <Flex w={"100%"}>
           <Button
             w={"100%"}

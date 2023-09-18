@@ -1,4 +1,4 @@
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import {
   computePoolAddress,
   MintOptions,
@@ -38,6 +38,10 @@ import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import JSBI from "jsbi";
+import {
+  calculateGasFee,
+  calculateGasLimit,
+} from "../contracts/fee/calculateGasLimit";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -184,12 +188,44 @@ export function usePoolMint() {
               ? [calldata, refundETHData]
               : [calldata];
 
+          // Specify the function and parameters you want to call
+          const functionName = "multicall"; // The function you want to call on the NFT Position Manager contract
+          const functionParams = [multicallParam]; // Add your multicallParam here
+
+          // Encode the function call data
+          const functionData =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              functionName,
+              functionParams
+            );
+
+          // Calculate the total value based on your conditions
+          const totalValue = inIsEth
+            ? inHexAmount
+            : outIsETH
+            ? outHexAmount
+            : value;
+
+          // Create a TransactionRequest object
+          const transactionRequest = {
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER, // NFT Position Manager contract address
+            data: functionData, // Encoded function call data
+            from: address, // Your Ethereum or Optimism address
+            value: totalValue, // Convert totalValue to Ether
+          };
+
+          const gasLimit = await calculateGasLimit(
+            provider,
+            transactionRequest,
+            true
+          );
+
           try {
             const tx = estimateGas
               ? await NonfungiblePositionManagerContract.estimateGas.multicall(
                   multicallParam,
                   {
-                    gasLimit: 8000000,
+                    gasLimit,
                     value: inIsEth
                       ? inHexAmount
                       : outIsETH
@@ -201,13 +237,14 @@ export function usePoolMint() {
               : await NonfungiblePositionManagerContract.multicall(
                   multicallParam,
                   {
-                    gasLimit: 8000000,
+                    gasLimit,
                     value: inIsEth
                       ? inHexAmount
                       : outIsETH
                       ? outHexAmount
                       : value,
                     from: address,
+                    gasPrice: BigNumber.from("1000000000"),
                   }
                 );
             if (estimateGas) return tx;

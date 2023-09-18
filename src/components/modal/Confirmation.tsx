@@ -24,7 +24,7 @@ import { useRouter } from "next/navigation";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 export default function Confirmation() {
-  const { blockExplorer } = useConnectedNetwork();
+  const { blockExplorer, connectedChainId } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
@@ -38,12 +38,23 @@ export default function Confirmation() {
     if (
       (subMode.add || subMode.increase || subMode.remove) &&
       txLog.logs &&
-      isConfirmed
+      isConfirmed &&
+      connectedChainId
     ) {
-      router.push(`/pools/${txLog.logs.tokenId.toString()}`);
+      router.push(
+        `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`
+      );
     }
     closeModal();
-  }, [subMode, isConfirmed, isConfirming, isError, closeModal, txLog]);
+  }, [
+    subMode,
+    isConfirmed,
+    isConfirming,
+    isError,
+    closeModal,
+    txLog,
+    connectedChainId,
+  ]);
 
   const subModeValue = Object.keys(subMode).filter(
     (key) => subMode[key as keyof typeof subMode] === true
