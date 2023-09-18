@@ -73,7 +73,8 @@ export function usePoolMint() {
         address &&
         ticks.LOWER &&
         ticks.UPPER &&
-        feeAmount
+        feeAmount &&
+        provider
       ) {
         const configuredPool = new Pool(
           pool.token0,
