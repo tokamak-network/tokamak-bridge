@@ -7,16 +7,18 @@ import { supportedChain } from "@/types/network/supportedNetwork";
 import { getProvider } from "@/config/getProvider";
 
 export function useProvier() {
-  const { isConnectedToMainNetwork, layer } = useConnectedNetwork();
+  const { isConnectedToMainNetwork, layer, connectedChainId } =
+    useConnectedNetwork();
 
   const provider = useMemo(() => {
     if (!window.ethereum) {
-      return layer === "L2" ? getL2Provider() : getL1Provider();
+      return undefined;
+      // return layer === "L2" ? getL2Provider() : getL1Provider();
     }
     const { ethereum } = window;
     const provider = new ethers.providers.Web3Provider(ethereum);
     return provider;
-  }, [window]);
+  }, [window.ethereum, connectedChainId]);
 
   const L1Provider = useMemo(() => {
     if (isConnectedToMainNetwork) return getProvider(supportedChain[0]);

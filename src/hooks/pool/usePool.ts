@@ -33,7 +33,9 @@ export function usePoolData(poolAddress: string | undefined) {
   const { subMode } = useGetMode();
 
   const provider = useMemo(() => {
-    if (subMode.add) return _provider;
+    if (subMode.add) {
+      return _provider;
+    }
     if (connectedChainId === Number(chainIdParam)) return _provider;
     if (chainIdParam) return providerByChainId[Number(chainIdParam)];
   }, [
@@ -71,7 +73,7 @@ export function usePoolData(poolAddress: string | undefined) {
     fetchPoolData().catch((e) => {
       console.log("**fetchPoolData err**");
       setPoolData(undefined);
-      console.log(e);
+      // console.log(e);
     });
   }, [poolAddress, provider]);
 

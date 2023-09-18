@@ -152,13 +152,10 @@ export default function NetworkDropdown(props: {
         const res = isConnected
           ? await switchNetworkAsync?.(selectedWork.chainId)
           : setNetwork({ ...network, inNetwork: selectedWork });
-        if (
-          isConnected &&
-          res &&
-          res.id === selectedWork.chainId &&
-          isPool &&
-          subMode.add
-        ) {
+        console.log("--res");
+        console.log(res);
+        if (res && res.id === selectedWork.chainId && isPool && subMode.add) {
+          console.log("gogo");
           initializeTokenPair();
         }
       }
@@ -166,6 +163,7 @@ export default function NetworkDropdown(props: {
       setIsOpen(false);
       if (isError) {
         console.error(`Couldn't switch network`);
+        console.log(isError);
       }
     }
   };

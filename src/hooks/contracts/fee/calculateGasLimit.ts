@@ -20,7 +20,8 @@ export async function calculateGasLimit(
     providerByChainId[SupportedChainId.DARIUS]
   );
   const totalGasCost = await l2ProSDK.estimateTotalGasCost(tx);
-  const estimatedGas = BigNumber.from(totalGasCost)
-  .div(BigNumber.from("1000000000"));
+  const estimatedGas = BigNumber.from(totalGasCost).div(
+    BigNumber.from("1000000000")
+  );
   return calculateGasMargin(estimatedGas);
 }

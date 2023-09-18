@@ -21,6 +21,8 @@ export default function SelectPair() {
     initialzePoolValues();
   }, []);
 
+  console.log(inTokenInfo, outTokenInfo);
+
   return (
     <Flex flexDir={"column"}>
       <Title title="Select Pair" />

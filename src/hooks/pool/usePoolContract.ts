@@ -38,10 +38,7 @@ import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import JSBI from "jsbi";
-import {
-  calculateGasFee,
-  calculateGasLimit,
-} from "../contracts/fee/calculateGasLimit";
+import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
