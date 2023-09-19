@@ -9,16 +9,13 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 export default function useTokenBalance(tokenInfo: TokenInfo | null) {
   const { chainName, layer } = useConnectedNetwork();
 
-  const isETH =
-    // layer === "L1" &&
-    tokenInfo?.isNativeCurrency?.includes(
-      SupportedChainId.MAINNET ||
-        SupportedChainId.GOERLI ||
-        SupportedChainId.TITAN ||
-        SupportedChainId.DARIUS
-    );
+  const isETH = tokenInfo?.isNativeCurrency?.includes(
+    SupportedChainId.MAINNET ||
+      SupportedChainId.GOERLI ||
+      SupportedChainId.TITAN ||
+      SupportedChainId.DARIUS
+  );
   const tokenAddress = chainName && tokenInfo?.address[chainName];
-
   const { address: accountAddress } = useAccount();
   const { data: blockNumber } = useBlockNumber({ watch: true });
   const { data, error, isLoading, isSuccess } = useBalance({

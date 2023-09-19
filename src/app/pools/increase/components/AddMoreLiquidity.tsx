@@ -33,7 +33,7 @@ export default function AddMoreLiquidity() {
       DARIUS: token0.address,
     },
     isNativeCurrency:
-      token0.address === getWETHAddress(chainName)
+      token0.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
         ? [
             SupportedChainId.MAINNET,
             SupportedChainId.GOERLI,
@@ -54,7 +54,8 @@ export default function AddMoreLiquidity() {
       DARIUS: token1.address,
     },
     isNativeCurrency:
-      token1.address === getWETHAddress(chainName)
+      token1.address.toLowerCase() ===
+      getWETHAddress(chainName).toLocaleLowerCase()
         ? [
             SupportedChainId.MAINNET,
             SupportedChainId.GOERLI,

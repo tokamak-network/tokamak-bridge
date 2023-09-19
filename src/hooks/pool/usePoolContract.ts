@@ -40,6 +40,8 @@ import { transactionModalStatus } from "@/recoil/modal/atom";
 import JSBI from "jsbi";
 import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
 import { uniswapTxSettingSelector } from "@/recoil/uniswap/setting";
+import { encodeMulticall } from "@/utils/contract/encodeMulticall";
+import { convertDeadlineSetting } from "@/utils/contract/convertDeadlineSetting";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -135,9 +137,11 @@ export function usePoolMint() {
         if (positionToMint) {
           const mintOptions: MintOptions = {
             recipient: address,
-            deadline: txSettingValue.deadline,
+            deadline: convertDeadlineSetting(txSettingValue.deadline),
             slippageTolerance: txSettingValue.slippage,
           };
+
+          console.log(mintOptions);
 
           // get calldata for minting a position
           const { calldata, value } =
@@ -189,16 +193,16 @@ export function usePoolMint() {
               ? [calldata, refundETHData]
               : [calldata];
 
-          // Specify the function and parameters you want to call
-          const functionName = "multicall"; // The function you want to call on the NFT Position Manager contract
-          const functionParams = [multicallParam]; // Add your multicallParam here
+          // // Specify the function and parameters you want to call
+          // const functionName = "multicall"; // The function you want to call on the NFT Position Manager contract
+          // const functionParams = [multicallParam]; // Add your multicallParam here
 
-          // Encode the function call data
-          const functionData =
-            NonfungiblePositionManagerContract.interface.encodeFunctionData(
-              functionName,
-              functionParams
-            );
+          // // Encode the function call data
+          // const functionData =
+          //   NonfungiblePositionManagerContract.interface.encodeFunctionData(
+          //     functionName,
+          //     functionParams
+          //   );
 
           // Calculate the total value based on your conditions
           const totalValue = inIsEth
@@ -208,12 +212,19 @@ export function usePoolMint() {
             : value;
 
           // Create a TransactionRequest object
-          const transactionRequest = {
-            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER, // NFT Position Manager contract address
-            data: functionData, // Encoded function call data
+          const transactionRequest = encodeMulticall({
+            contract: NonfungiblePositionManagerContract,
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
             from: address,
             value: totalValue,
-          };
+            multicallParam: multicallParam,
+          });
+          // {
+          //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER, // NFT Position Manager contract address
+          //   data: functionData, // Encoded function call data
+          //   from: address,
+          //   value: totalValue,
+          // };
 
           const isLayer2 = Boolean(layer === "L2");
 
@@ -224,34 +235,18 @@ export function usePoolMint() {
             isConnectedToMainNetwork
           );
 
+          if (estimateGas) return gasLimit;
+
           try {
-            const tx = estimateGas
-              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                  multicallParam,
-                  {
-                    gasLimit,
-                    value: inIsEth
-                      ? inHexAmount
-                      : outIsETH
-                      ? outHexAmount
-                      : value,
-                    from: address,
-                  }
-                )
-              : await NonfungiblePositionManagerContract.multicall(
-                  multicallParam,
-                  {
-                    gasLimit,
-                    value: inIsEth
-                      ? inHexAmount
-                      : outIsETH
-                      ? outHexAmount
-                      : value,
-                    from: address,
-                    gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
-                  }
-                );
-            if (estimateGas) return tx;
+            const tx = await NonfungiblePositionManagerContract.multicall(
+              multicallParam,
+              {
+                gasLimit,
+                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+                from: address,
+                // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
+              }
+            );
             if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
             if (!estimateGas) {
@@ -494,14 +489,21 @@ export function usePoolContract() {
                 from: address,
               }
             );
+
           if (estimatedGas) {
             return estimatedGasUsage;
           }
+          console.log("--test");
+          console.log(multicallParam, {
+            gasLimit: 1500000,
+            value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+            from: address,
+          });
           try {
             const tx = await NonfungiblePositionManagerContract.multicall(
               multicallParam,
               {
-                gasLimit: 3000000,
+                gasLimit: 1500000,
                 value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
                 from: address,
               }
