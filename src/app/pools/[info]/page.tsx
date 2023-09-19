@@ -11,6 +11,7 @@ import ClaimEarningsModal from "./components/ClaimEarningsModal";
 import GradientSpinner from "@/components/ui/gradientSpinner";
 import { useRecoilValue } from "recoil";
 import { ATOM_positionForInfo_loading } from "@/recoil/pool/positions";
+import { NoPosition } from "./components/NoPosition";
 
 export default function Page() {
   const { info } = usePositionInfo();
@@ -35,7 +36,7 @@ export default function Page() {
   }
 
   if (info === undefined) {
-    return <>{"no position :("}</>;
+    return <NoPosition />;
   }
 
   return (

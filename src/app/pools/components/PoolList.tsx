@@ -7,10 +7,13 @@ import EmptyCard from "./EmptyCard";
 import { useAccount } from "wagmi";
 import { useRecoilValue } from "recoil";
 import { ATOM_positions_loading } from "@/recoil/pool/positions";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function PoolList() {
   const { positions } = useGetPositionIds();
   const { isConnected } = useAccount();
+  const { isSupportedChain } = useConnectedNetwork();
+
   const isLoading = useRecoilValue(ATOM_positions_loading);
 
   return (
@@ -26,9 +29,14 @@ export default function PoolList() {
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} />
         ))}
-      {positions?.map((position) => {
-        return <PoolCard key={position.id} {...position} />;
-      })}
+      {!isSupportedChain &&
+        Array.from({ length: 7 }, (_, index) => (
+          <EmptyCard key={index} noSpinner={true} />
+        ))}
+      {isSupportedChain &&
+        positions?.map((position) => {
+          return <PoolCard key={position.id} {...position} />;
+        })}
       {positions &&
         Array.from(
           {

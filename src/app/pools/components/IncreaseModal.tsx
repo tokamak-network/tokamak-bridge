@@ -40,7 +40,7 @@ export default function IncreaseModal() {
     //   fetchData();
     // }
     fetchData();
-  }, [estimateGasToMint]);
+  }, []);
 
   return (
     <Modal
