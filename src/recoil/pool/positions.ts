@@ -30,3 +30,8 @@ export const ATOM_collectWethOption = atom<boolean>({
   key: "collectWethOption",
   default: false,
 });
+
+export const ATOM_addInverted = atom<boolean>({
+  key: "manuallyInverted",
+  default: false,
+});

@@ -10,23 +10,25 @@ import { InputContainer } from "./components/InputContainer";
 import { useAddLiquidityCondition } from "@/hooks/pool/useAddLiquidityCondition";
 import { useInitialize } from "@/hooks/pool/useInitialize";
 import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { ATOM_addInverted } from "@/recoil/pool/positions";
 
 export default function SelectPair() {
   const { inTokenInfo, outTokenInfo } = useInOutTokens();
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
   const { secondStepPassed } = useAddLiquidityCondition();
   const { initialzePoolValues } = useInitialize();
+  const [inverted, setInvert] = useRecoilState(ATOM_addInverted);
 
   useEffect(() => {
     initialzePoolValues();
+    setInvert(false);
   }, []);
-
-  console.log(inTokenInfo, outTokenInfo);
 
   return (
     <Flex flexDir={"column"}>
       <Title title="Select Pair" />
-      <Flex columnGap={"6px"}>
+      <Flex columnGap={"6px"} flexDir={inverted ? "row-reverse" : "row"}>
         <Flex flexDir={"column"} rowGap={"16px"}>
           <Box
             className="card-empty"

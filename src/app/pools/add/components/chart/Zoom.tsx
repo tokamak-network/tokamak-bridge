@@ -121,18 +121,15 @@ export default function Zoom({
     zoomInitial();
   }, [zoomInitial, zoomLevels]);
 
-  const [triggerEffect, setTriggerEffect] = useState<boolean>(false);
+  // const [triggerEffect, setTriggerEffect] = useState<boolean>(false);
 
   //disable to trigger before it's initialized
   //invert price changes twice, it makes a flicker with this hook
   useEffect(() => {
-    if (triggerEffect === false || invertPrice === undefined) {
-      return setTriggerEffect(true);
-    }
     setTimeout(() => {
       resetBrush();
       zoomReset();
-    }, 100);
+    }, 50);
   }, [invertPrice]);
 
   return (
