@@ -7,8 +7,9 @@ import { BigNumber, Contract, ethers } from "ethers";
 
 export async function calculateGasLimit(
   provider: ethers.providers.JsonRpcProvider,
-  tx: any,
-  isLayer2: boolean
+  tx: ethers.utils.Deferrable<ethers.providers.TransactionRequest>,
+  isLayer2: boolean,
+  isConnectedToMainNetwork: boolean | undefined
 ) {
   if (!isLayer2) {
     const estimatedGas = await provider.estimateGas(tx);
@@ -17,11 +18,13 @@ export async function calculateGasLimit(
 
   const gasPrice = await provider.getGasPrice();
   const l2ProSDK = titanSDK.asL2Provider(
-    providerByChainId[SupportedChainId.DARIUS]
+    providerByChainId[
+      isConnectedToMainNetwork
+        ? SupportedChainId.TITAN
+        : SupportedChainId.DARIUS
+    ]
   );
   const totalGasCost = await l2ProSDK.estimateTotalGasCost(tx);
-  const estimatedGas = BigNumber.from(totalGasCost).div(
-    BigNumber.from("1000000000")
-  );
+  const estimatedGas = BigNumber.from(totalGasCost).div(gasPrice);
   return calculateGasMargin(estimatedGas);
 }

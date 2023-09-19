@@ -64,7 +64,7 @@ export function usePoolMint() {
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
-  const { layer } = useConnectedNetwork();
+  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
   const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
 
   const mintPosition = useCallback(
@@ -220,7 +220,8 @@ export function usePoolMint() {
           const gasLimit = await calculateGasLimit(
             provider,
             transactionRequest,
-            isLayer2
+            isLayer2,
+            isConnectedToMainNetwork
           );
 
           try {
@@ -276,6 +277,7 @@ export function usePoolMint() {
       deposit0Disabled,
       deposit1Disabled,
       layer,
+      isConnectedToMainNetwork,
     ]
   );
 
