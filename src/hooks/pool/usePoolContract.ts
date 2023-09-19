@@ -63,6 +63,7 @@ export function usePoolMint() {
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const { layer } = useConnectedNetwork();
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -208,14 +209,16 @@ export function usePoolMint() {
           const transactionRequest = {
             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER, // NFT Position Manager contract address
             data: functionData, // Encoded function call data
-            from: address, // Your Ethereum or Optimism address
-            value: totalValue, // Convert totalValue to Ether
+            from: address,
+            value: totalValue,
           };
+
+          const isLayer2 = Boolean(layer === "L2");
 
           const gasLimit = await calculateGasLimit(
             provider,
             transactionRequest,
-            true
+            isLayer2
           );
 
           try {
@@ -242,7 +245,7 @@ export function usePoolMint() {
                       ? outHexAmount
                       : value,
                     from: address,
-                    gasPrice: BigNumber.from("1000000000"),
+                    gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
                   }
                 );
             if (estimateGas) return tx;
@@ -270,6 +273,7 @@ export function usePoolMint() {
       dependentAmount,
       deposit0Disabled,
       deposit1Disabled,
+      layer,
     ]
   );
 
