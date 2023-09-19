@@ -39,6 +39,7 @@ import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import JSBI from "jsbi";
 import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
+import { uniswapTxSettingSelector } from "@/recoil/uniswap/setting";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -64,6 +65,7 @@ export function usePoolMint() {
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { layer } = useConnectedNetwork();
+  const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -133,8 +135,8 @@ export function usePoolMint() {
         if (positionToMint) {
           const mintOptions: MintOptions = {
             recipient: address,
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-            slippageTolerance: new Percent(50, 10_000),
+            deadline: txSettingValue.deadline,
+            slippageTolerance: txSettingValue.slippage,
           };
 
           // get calldata for minting a position
