@@ -137,16 +137,20 @@ export function useGetPositionIds(): {
 
           const token0CollectedFee =
             amount0 &&
-            ethers.utils.formatUnits(
-              parseFloat(amount0.toString()).toString(),
-              token0.decimals
-            );
+            ethers.utils
+              .formatUnits(
+                parseFloat(amount0.toString()).toString(),
+                token0.decimals
+              )
+              .slice(0, 10);
           const token1CollectedFee =
             amount0 &&
-            ethers.utils.formatUnits(
-              parseFloat(amount0.toString()).toString(),
-              token1.decimals
-            );
+            ethers.utils
+              .formatUnits(
+                parseFloat(amount0.toString()).toString(),
+                token1.decimals
+              )
+              .slice(0, 10);
 
           const token0MarketPrice = await fetchMarketPrice(token0.name);
           const token1MarketPrice = await fetchMarketPrice(token1.name);
@@ -398,14 +402,12 @@ export function useGetPositionById(positionId: number, chainId: number) {
               amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
             });
 
-          const token0CollectedFee = ethers.utils.formatUnits(
-            earningFee.amount0.toString(),
-            token0Decimals
-          );
-          const token1CollectedFee = ethers.utils.formatUnits(
-            earningFee.amount1.toString(),
-            token1Decimals
-          );
+          const token0CollectedFee = ethers.utils
+            .formatUnits(earningFee.amount0, token0Decimals)
+            .slice(0, 10);
+          const token1CollectedFee = ethers.utils
+            .formatUnits(earningFee.amount1, token1Decimals)
+            .slice(0, 10);
 
           const hasNoLiquidity = Number(liquidity.toString()) === 0;
 

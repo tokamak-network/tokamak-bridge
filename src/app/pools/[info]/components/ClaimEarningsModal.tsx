@@ -12,11 +12,14 @@ import useBlockNum from "@/hooks/network/useBlockNumber";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { useRecoilValue } from "recoil";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
   const { info } = usePositionInfo();
   const { collectFees, estimateGasToCollect } = usePoolContract();
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
@@ -100,7 +103,11 @@ export default function ClaimEarningsModal() {
                   columnGap={"8px"}
                 >
                   <TokenSymbolWithNetwork
-                    tokenSymbol={info?.token0.symbol as string}
+                    tokenSymbol={
+                      info?.token0.symbol === "ETH" && collectAsWETH
+                        ? "WETH"
+                        : (info?.token0.symbol as string)
+                    }
                     chainId={info?.token0.chainId}
                     symbolW={24}
                     symbolH={24}
@@ -108,7 +115,9 @@ export default function ClaimEarningsModal() {
                     networkSymbolW={12}
                   />
                   <Text fontSize={16} color="#A0A3AD">
-                    {info?.token0.symbol}
+                    {info?.token0.symbol === "ETH" && collectAsWETH
+                      ? "WETH"
+                      : info?.token0.symbol}
                   </Text>
                 </Flex>
                 <Flex
@@ -118,7 +127,7 @@ export default function ClaimEarningsModal() {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {commafy(info?.token0CollectedFee, 6)}
+                    {smallNumberFormmater(info?.token0CollectedFee, 6)}
                   </Text>
                   <Text
                     minW={"60px"}
@@ -133,7 +142,11 @@ export default function ClaimEarningsModal() {
                   columnGap={"8px"}
                 >
                   <TokenSymbolWithNetwork
-                    tokenSymbol={info?.token1.symbol as string}
+                    tokenSymbol={
+                      info?.token1.symbol === "ETH" && collectAsWETH
+                        ? "WETH"
+                        : (info?.token1.symbol as string)
+                    }
                     chainId={info?.token1.chainId}
                     symbolW={24}
                     symbolH={24}
@@ -141,7 +154,9 @@ export default function ClaimEarningsModal() {
                     networkSymbolW={12}
                   />
                   <Text fontSize={16} color="#A0A3AD">
-                    {info?.token1.symbol}
+                    {info?.token1.symbol === "ETH" && collectAsWETH
+                      ? "WETH"
+                      : info?.token1.symbol}
                   </Text>
                 </Flex>
                 <Flex
@@ -151,7 +166,7 @@ export default function ClaimEarningsModal() {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {commafy(info?.token1CollectedFee, 6)}
+                    {smallNumberFormmater(info?.token1CollectedFee, 6)}
                   </Text>
                   <Text
                     minW={"60px"}
@@ -168,7 +183,7 @@ export default function ClaimEarningsModal() {
                 </Flex>
                 <Flex justifyContent="end">
                   <Text fontSize={16} fontWeight="semibold">
-                    {`$${estimatedGasUsageValue}`}
+                    {`$${estimatedGasUsageValue ?? "-"}`}
                   </Text>
                 </Flex>
               </Flex>

@@ -830,17 +830,19 @@ export function usePoolContract() {
     if (feeData && ethPrice) {
       const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
       const estimatedGasUsage = await collectFees(true);
-      const totalGasCost =
-        Number(gasPrice) * Number(estimatedGasUsage.toString());
-      const parsedTotalGasCost = ethers.utils.formatUnits(
-        totalGasCost.toString(),
-        "ether"
-      );
+      if (estimatedGasUsage) {
+        const totalGasCost =
+          Number(gasPrice) * Number(estimatedGasUsage.toString());
+        const parsedTotalGasCost = ethers.utils.formatUnits(
+          totalGasCost.toString(),
+          "ether"
+        );
 
-      const totalGasCostUSD =
-        Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
+        const totalGasCostUSD =
+          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
-      return totalGasCostUSD;
+        return totalGasCostUSD;
+      }
     }
   }, [feeData, ethPrice]);
 

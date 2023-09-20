@@ -16,12 +16,12 @@ function commafy(
   }
   if (num === 0 || num === "0") {
     if (defaultDecilamPoint === 0) {
-      return "0";
+      return defaultValue ?? "0";
     }
     if (defaultDecilamPoint) {
       return `0.${"0".repeat(defaultDecilamPoint)}`;
     }
-    return "0.00";
+    return defaultValue ?? "0.00";
   }
   let str = num.toString().split(".");
   if (str[0].length >= 4) {
