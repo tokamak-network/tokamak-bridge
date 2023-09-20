@@ -495,7 +495,7 @@ export function usePoolContract() {
             isConnectedToMainNetwork
           );
 
-          if (estimatedGas) return;
+          if (estimatedGas) return gasLimit;
 
           try {
             const tx = await NonfungiblePositionManagerContract.multicall(
