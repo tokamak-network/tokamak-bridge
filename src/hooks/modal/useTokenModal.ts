@@ -8,7 +8,9 @@ import { useCallback, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
-import { bannerStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  bannerStatus,
+} from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
 
@@ -25,11 +27,11 @@ export default function useTokenModal() {
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
   const onOpenInToken = () => {
-    !(status === "Active" && isL2) &&
+      !(status === "Active" && isL2) &&
       setTokenModal({ isOpen: "INPUT", modalData: null });
   };
   const onOpenOutToken = () => {
-    !(status === "Active" && isL2) &&
+     !(status === "Active" && isL2) &&
       setTokenModal({ isOpen: "OUTPUT", modalData: null });
   };
 
