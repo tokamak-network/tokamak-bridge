@@ -604,7 +604,7 @@ export function usePoolContract() {
             const NonfungiblePositionManagerContract = new Contract(
               UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
               NONFUNGIBLE_POSITION_MANAGER_ABI,
-              provider
+              getProviderOrSigner(provider, address)
             );
 
             const isLayer2 = Boolean(layer === "L2");
