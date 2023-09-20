@@ -1,6 +1,6 @@
 "use client";
 
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -35,7 +35,6 @@ import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
 import { providerByChainId } from "@/config/getProvider";
-import { PositionForInfo } from "@/app/pools/[info]/page";
 
 //logic through subGraph
 export function useGetPositionIds(): {
@@ -171,6 +170,8 @@ export function useGetPositionIds(): {
             token1Amount: Number(token1Amount),
             token0CollectedFee: token0CollectedFee.toString(),
             token1CollectedFee: token1CollectedFee.toString(),
+            token0CollectedFeeBN: amount0,
+            token1CollectedFeeBN: amount1,
             token0MarketPrice,
             token1MarketPrice,
             inRange,
@@ -297,7 +298,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
   }, [provider, connectedChainId, chainId]);
 
   const [positions, setPositions] = useRecoilState<
-    PositionForInfo[] | undefined
+    PoolCardDetail[] | undefined
   >(ATOM_positionForInfo);
   const [, setIsLoading] = useRecoilState<boolean>(
     ATOM_positionForInfo_loading
@@ -317,7 +318,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
         //   await NonfungiblePositionManagerContract.balanceOf(address);
 
         // Get all positions
-        const positions: PositionForInfo[] = [];
+        const positions: PoolCardDetail[] = [];
         // const batchSize = positionTokenId ? 1 : balance;
         const promises: any[] = [];
         promises.push(async () => {

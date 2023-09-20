@@ -4,6 +4,7 @@ import { useV3MintInfo } from "./useV3MintInfo";
 import { useMemo } from "react";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
+import { BigNumber } from "ethers";
 
 export function useMintPositionInfo() {
   const { inToken, outToken } = useInOutTokens();
@@ -39,9 +40,11 @@ export function useMintPositionInfo() {
         token0Amount,
         token0CollectedFee: "0",
         token0MarketPrice: "0",
+        token0CollectedFeeBN: BigNumber.from("0"),
         token1Amount,
         token1CollectedFee: "0",
         token1MarketPrice: "0",
+        token1CollectedFeeBN: BigNumber.from("0"),
         fee,
         inRange: !inRange,
         liquidity,

@@ -17,7 +17,7 @@ import { trimAmount } from "@/utils/trim";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { useUniswapContracts } from "@/hooks/uniswap/useUniswapContracts";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
-import { Contract, ethers } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { calculateFeeToCollect } from "@/utils/pool/calculateFeeToCollect";
 import { l2Provider } from "@/config/l2Provider";
@@ -50,6 +50,8 @@ export type PoolCardDetail = {
   chainId: number;
   owner: string;
   rawData: any;
+  token0CollectedFeeBN: BigNumber;
+  token1CollectedFeeBN: BigNumber;
 };
 
 export default function PoolCard(props: PoolCardDetail) {

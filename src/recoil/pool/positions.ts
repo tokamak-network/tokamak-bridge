@@ -1,4 +1,3 @@
-import { PositionForInfo } from "@/app/pools/[info]/page";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { atom } from "recoil";
 
@@ -7,7 +6,7 @@ export const ATOM_positions = atom<PoolCardDetail[] | undefined>({
   default: undefined,
 });
 
-export const ATOM_positionForInfo = atom<PositionForInfo[] | undefined>({
+export const ATOM_positionForInfo = atom<PoolCardDetail[] | undefined>({
   key: "poistionsForInfo",
   default: undefined,
 });

@@ -12,13 +12,6 @@ import GradientSpinner from "@/components/ui/gradientSpinner";
 import { useRecoilValue } from "recoil";
 import { ATOM_positionForInfo_loading } from "@/recoil/pool/positions";
 import { NoPosition } from "./components/NoPosition";
-import { PoolCardDetail } from "../components/PoolCard";
-import { BigNumber } from "ethers";
-
-export type PositionForInfo = PoolCardDetail & {
-  token0CollectedFeeBN: BigNumber;
-  token1CollectedFeeBN: BigNumber;
-};
 
 export default function Page() {
   const { info } = usePositionInfo();

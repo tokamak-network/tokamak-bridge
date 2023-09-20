@@ -13,7 +13,6 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import JSBI from "jsbi";
 import { PoolCardDetail } from "../../components/PoolCard";
-import { PositionForInfo } from "../page";
 
 const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
@@ -44,15 +43,13 @@ const CollectFeeAsWETH = () => {
 };
 
 export default function UnclaimedEarnings(props: {
-  info: PositionForInfo | undefined;
+  info: PoolCardDetail | undefined;
 }) {
   const { info } = props;
   const { onOpenClaimEarning } = usePoolModals();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
   const token0Amount = Number(info?.token0CollectedFee);
   const token1Amount = Number(info?.token1CollectedFee);
-  const token0marketPrice = Number(info?.token0CollectedFee);
-  const token1MarketPrice = Number(info?.token1CollectedFee);
 
   const { totalMarketPrice, hasTokenPrice } = usePricePair({
     token0Name: info?.token0.name,

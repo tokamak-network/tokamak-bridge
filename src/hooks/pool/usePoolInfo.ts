@@ -20,7 +20,6 @@ import {
 import { Bound } from "@/types/pool/pool";
 import { useRecoilValue } from "recoil";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
-import { poolModalProp } from "@/recoil/modal/atom";
 import { useGetMode } from "../mode/useGetMode";
 
 function getPriceOrderingFromPositionForUI(position?: Position): {
