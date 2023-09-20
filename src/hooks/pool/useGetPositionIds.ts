@@ -129,26 +129,24 @@ export function useGetPositionIds(): {
           );
           const token0Amount =
             amount0 &&
-            ethers.utils.formatUnits(amount0.toString(), token0.decimals);
+            ethers.utils
+              .formatUnits(amount0.toString(), token0.decimals)
+              .slice(0, 10);
           const token1Amount =
             amount1 &&
-            ethers.utils.formatUnits(amount1.toString(), token1.decimals);
+            ethers.utils
+              .formatUnits(amount1.toString(), token1.decimals)
+              .slice(0, 10);
 
           const token0CollectedFee =
             amount0 &&
             ethers.utils
-              .formatUnits(
-                parseFloat(amount0.toString()).toString(),
-                token0.decimals
-              )
+              .formatUnits(amount0.toString(), token0.decimals)
               .slice(0, 10);
           const token1CollectedFee =
             amount0 &&
             ethers.utils
-              .formatUnits(
-                parseFloat(amount0.toString()).toString(),
-                token1.decimals
-              )
+              .formatUnits(amount0.toString(), token1.decimals)
               .slice(0, 10);
 
           const token0MarketPrice = await fetchMarketPrice(token0.name);

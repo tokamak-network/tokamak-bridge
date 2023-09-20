@@ -548,9 +548,6 @@ export function usePoolContract() {
       removeLiquidityPercentage: number | undefined,
       estimateGas?: boolean
     ) => {
-      console.log("--removeLiquidity--");
-      console.log(info, address, positionId, removeLiquidityPercentage);
-
       try {
         if (info && address && positionId && removeLiquidityPercentage) {
           const {
@@ -638,7 +635,7 @@ export function usePoolContract() {
           }
         }
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         if (!estimateGas) {
           setModalOpen("error");
         }
@@ -664,9 +661,6 @@ export function usePoolContract() {
         const token0 = info.token0;
         const token1 = info.token1;
 
-        console.log("info");
-        console.log(info);
-
         const collectOptions: CollectOptions = {
           tokenId: info.id,
           expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
@@ -689,8 +683,6 @@ export function usePoolContract() {
         );
 
         if (info.hasETH && collectAsWETH === false) {
-          console.log("collect as ETH");
-
           const collectData =
             NonfungiblePositionManagerContract.interface.encodeFunctionData(
               "collect",
