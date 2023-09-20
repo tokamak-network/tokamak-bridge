@@ -77,12 +77,6 @@ export const relayBannerStatus = atom<Banner>({
   default: "Hidden",
 });
 
-
-export const serviceSuspensionStatus = atom<Boolean>({
-  key: "serviceSuspensionStatus",
-  default: true,
-})
-
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
 }>({
@@ -118,8 +112,8 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
     const weekStart = startOfWeek(today);
-    const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
-    //  const desiredDateThisWeek = addWeeks(addDays(weekStart, 3),1)
+    // const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
+     const desiredDateThisWeek = addWeeks(addDays(weekStart, 3),1)
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const previewTimeStartThisWeek =
       isTestnet === true
@@ -136,6 +130,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
 
     const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
     const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
+    console.log('getTime(zoneTime)',getTime(zoneTime));
     
     return {
       previewTimeStartThisWeek: getTime(zoneTime),

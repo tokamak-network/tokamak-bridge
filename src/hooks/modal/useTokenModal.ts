@@ -10,7 +10,6 @@ import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
 import {
   bannerStatus,
-  serviceSuspensionStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
@@ -19,7 +18,6 @@ export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const status = useRecoilValue(bannerStatus);
-  const suspended = useRecoilValue(serviceSuspensionStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
 
@@ -29,12 +27,11 @@ export default function useTokenModal() {
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
   const onOpenInToken = () => {
-    !suspended &&
       !(status === "Active" && isL2) &&
       setTokenModal({ isOpen: "INPUT", modalData: null });
   };
   const onOpenOutToken = () => {
-    !suspended &&  !(status === "Active" && isL2) &&
+     !(status === "Active" && isL2) &&
       setTokenModal({ isOpen: "OUTPUT", modalData: null });
   };
 
