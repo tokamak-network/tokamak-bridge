@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { ApproveButtonsContrainer } from "../../add/ActionButton";
+import { useApproveToken } from "@/hooks/pool/useApproveToken";
 
 const ActionButton = () => {
   const [, setPoolModal] = useRecoilState(poolModalStatus);
@@ -16,16 +17,22 @@ const ActionButton = () => {
   const { deposit0Disabled, deposit1Disabled, pool } = usePoolInfo();
   const { isBalanceOver, isInputZero, isOutInputZero, isOutTokenBalanceOver } =
     useInputBalanceCheck();
+  const { inTokenApproved, outTokenApproved } = useApproveToken();
 
   const btnIsDisabled = useMemo(() => {
     if (deposit1Disabled) {
-      return isBalanceOver || isInputZero;
+      return isBalanceOver || isInputZero || inTokenApproved;
     }
     if (deposit0Disabled) {
-      return isOutTokenBalanceOver || isOutInputZero;
+      return isOutTokenBalanceOver || isOutInputZero || outTokenApproved;
     }
     return (
-      isBalanceOver || isOutTokenBalanceOver || isInputZero || isOutInputZero
+      isBalanceOver ||
+      isOutTokenBalanceOver ||
+      isInputZero ||
+      isOutInputZero ||
+      inTokenApproved ||
+      outTokenApproved
     );
   }, [
     deposit0Disabled,
@@ -34,6 +41,8 @@ const ActionButton = () => {
     isOutTokenBalanceOver,
     isOutInputZero,
     isInputZero,
+    inTokenApproved,
+    outTokenApproved,
   ]);
 
   const buttonName = useMemo(() => {

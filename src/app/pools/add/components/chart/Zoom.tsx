@@ -128,7 +128,7 @@ export default function Zoom({
   useEffect(() => {
     setTimeout(() => {
       resetBrush();
-      zoomReset();
+      // zoomReset();
     }, 50);
   }, [invertPrice]);
 
