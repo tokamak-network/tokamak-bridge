@@ -18,14 +18,12 @@ import useConnectedNetwork from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { BigintIsh, CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
-import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
 import { useAccount, useFeeData } from "wagmi";
-import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { lastFocusedInput, poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
-import { useGetPool, useV3MintInfo } from "./useV3MintInfo";
+import { useV3MintInfo } from "./useV3MintInfo";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
@@ -241,6 +239,7 @@ export function usePoolMint() {
             );
             if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
+            console.log(e);
             if (!estimateGas) {
               setModalOpen("error");
             }
@@ -463,7 +462,7 @@ export function usePoolContract() {
           const NonfungiblePositionManagerContract = new Contract(
             UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
             NONFUNGIBLE_POSITION_MANAGER_ABI,
-            provider
+            getProviderOrSigner(provider, address)
           );
 
           const refundETHData =
@@ -509,6 +508,7 @@ export function usePoolContract() {
 
             if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
+            console.log(e);
             setModalOpen("error");
           }
 
@@ -635,7 +635,7 @@ export function usePoolContract() {
           }
         }
       } catch (e) {
-        // console.log(e);
+        console.log(e);
         if (!estimateGas) {
           setModalOpen("error");
         }
@@ -742,6 +742,7 @@ export function usePoolContract() {
             );
             if (tx.hash) return setTxHashToCollect(tx.hash);
           } catch (e) {
+            console.log(e);
             if (!estimateGas) {
               return setModalOpen("error");
             }
@@ -775,6 +776,7 @@ export function usePoolContract() {
           );
           if (tx.hash) return setTxHashToCollect(tx.hash);
         } catch (e) {
+          console.log(e);
           return setModalOpen("error");
         }
       }

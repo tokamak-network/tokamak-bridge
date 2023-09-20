@@ -39,15 +39,15 @@ export default function ClaimEarningsModal() {
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { blockNumber } = useBlockNum();
 
-  // useEffect(() => {
-  //   const fetchGasPrice = async () => {
-  //     const estimatedGas = await estimateGasToCollect();
-  //     setEstimatedGasUsage(
-  //       smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
-  //     );
-  //   };
-  //   if (isOpen === "collectFee") fetchGasPrice();
-  // }, [blockNumber, isOpen]);
+  useEffect(() => {
+    const fetchGasPrice = async () => {
+      const estimatedGas = await estimateGasToCollect();
+      setEstimatedGasUsage(
+        smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
+      );
+    };
+    if (isOpen === "collectFee") fetchGasPrice();
+  }, [blockNumber, isOpen]);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
