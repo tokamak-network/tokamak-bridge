@@ -35,6 +35,7 @@ import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
 import { providerByChainId } from "@/config/getProvider";
+import { PositionForInfo } from "@/app/pools/[info]/page";
 
 //logic through subGraph
 export function useGetPositionIds(): {
@@ -292,7 +293,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
   }, [provider, connectedChainId, chainId]);
 
   const [positions, setPositions] = useRecoilState<
-    PoolCardDetail[] | undefined
+    PositionForInfo[] | undefined
   >(ATOM_positionForInfo);
   const [, setIsLoading] = useRecoilState<boolean>(
     ATOM_positionForInfo_loading
@@ -312,7 +313,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
         //   await NonfungiblePositionManagerContract.balanceOf(address);
 
         // Get all positions
-        const positions: PoolCardDetail[] = [];
+        const positions: PositionForInfo[] = [];
         // const batchSize = positionTokenId ? 1 : balance;
         const promises: any[] = [];
         promises.push(async () => {
@@ -461,6 +462,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
             token1Amount: Number(token1Amount),
             token0CollectedFee,
             token1CollectedFee,
+            token0CollectedFeeBN: earningFee.amount0,
+            token1CollectedFeeBN: earningFee.amount1,
             token0MarketPrice,
             token1MarketPrice,
             inRange,

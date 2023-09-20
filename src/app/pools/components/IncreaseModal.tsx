@@ -23,7 +23,7 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
-  const { increaseLiquidity } = usePoolContract();
+  const { increaseLiquidity, estimateGasToIncrease } = usePoolContract();
   const { mintPosition, estimateGasToMint } = usePoolMint();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const [gasToAdd, setGasToAdd] = useState<number | undefined>(undefined);
@@ -33,14 +33,23 @@ export default function IncreaseModal() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const gasData = await estimateGasToMint();
-      setGasToAdd(gasData);
+      if (gasToAdd !== undefined) {
+        return;
+      }
+      if (poolModal === "addLiquidity") {
+        const gasData = await estimateGasToMint();
+        return setGasToAdd(gasData);
+      }
+
+      if (poolModal === "increaseLiquidity") {
+        const gasData = await estimateGasToIncrease();
+        return setGasToAdd(gasData);
+      }
     };
-    // if (poolModal === "increaseLiquidity") {
+    // setInterval(() => {
     //   fetchData();
-    // }
-    fetchData();
-  }, []);
+    // }, 200);
+  }, [gasToAdd]);
 
   return (
     <Modal

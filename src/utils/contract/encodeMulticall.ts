@@ -3,7 +3,7 @@ import { Contract } from "ethers";
 export function encodeMulticall(params: {
   to: string;
   from: string;
-  value: string;
+  value: string | undefined;
   contract: Contract;
   multicallParam: string[];
 }) {

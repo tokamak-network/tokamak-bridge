@@ -1,3 +1,4 @@
+import { PositionForInfo } from "@/app/pools/[info]/page";
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { atom } from "recoil";
 
@@ -6,7 +7,7 @@ export const ATOM_positions = atom<PoolCardDetail[] | undefined>({
   default: undefined,
 });
 
-export const ATOM_positionForInfo = atom<PoolCardDetail[] | undefined>({
+export const ATOM_positionForInfo = atom<PositionForInfo[] | undefined>({
   key: "poistionsForInfo",
   default: undefined,
 });
@@ -32,6 +33,6 @@ export const ATOM_collectWethOption = atom<boolean>({
 });
 
 export const ATOM_addInverted = atom<boolean>({
-  key: "manuallyInverted",
+  key: "addInterted",
   default: false,
 });

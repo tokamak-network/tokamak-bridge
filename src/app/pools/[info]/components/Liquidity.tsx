@@ -81,9 +81,9 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
       if (info) {
-        if (info.chainId !== connectedChainId && otherLayerChainInfo) {
-          const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
-          if (res && res.id === otherLayerChainInfo.chainId) {
+        if (info.chainId !== connectedChainId) {
+          const res = await switchNetworkAsync?.(info.chainId);
+          if (res && res.id === info.chainId) {
             return router.push(
               remove
                 ? `/pools/remove/${info.id}?chainId=${info.chainId}`
@@ -110,10 +110,6 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const actionDisabled = info?.owner !== address;
 
   const { ratio, inverted } = usePoolInfo();
-
-  // console.log("ratio");
-  // console.log(ratio);
-  // console.log(inverted);
 
   const token0Ratio = useMemo(() => {
     return ratio;
