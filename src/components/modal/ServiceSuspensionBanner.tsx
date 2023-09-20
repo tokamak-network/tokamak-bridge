@@ -1,6 +1,4 @@
 import { Flex, Text } from "@chakra-ui/react";
-import { useRecoilValue, useRecoilState } from "recoil";
-import { serviceSuspensionStatus } from "@/recoil/bridgeSwap/atom";
 
 const ServiceSuspensionBanner = () => {
   return (
