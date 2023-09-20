@@ -16,6 +16,9 @@ import { L1TxType } from "@/types/activity/history";
 import HalfLoadingTx from "./HalfLoadingTx";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useRef } from "react";
+import useCrosschainMessenger from "@/hooks/user/useCrosschainMessenger";
+import { txListStatus } from "@/recoil/userHistory/transaction";
+import { useRecoilState } from "recoil";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -33,7 +36,9 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
   const tData = useGetTransaction();
-  const ref = useRef<HTMLDivElement| null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
+  const [txList, setTxList] = useRecoilState(txListStatus);
 
   useEffect(() => {
     const updateNumData = () => {
@@ -58,21 +63,49 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   }, [ref?.current]);
 
   useEffect(() => {
-    const getTxs = async () => {
-      if (isConnectedToMainNetwork !== undefined) {
-        const txs = await fetchUserTransactions(
-          address,
-          isConnectedToMainNetwork
-        );
+    // const getTxs = async () => {
+    //   if (isConnectedToMainNetwork !== undefined && crossMessenger !== undefined) {
+    //     const txs = await fetchUserTransactions(
+    //       address,
+    //       isConnectedToMainNetwork,
+    //       crossMessenger
+    //     );
 
-        const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
+    //     const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
+    //       return {
+    //         ...tx,
+    //         event: "deposit",
+    //       };
+    //     });
+
+    //     const wthTx = txs?.formattedL1WithdrawResults.map((tx: any) => {
+    //       return {
+    //         ...tx,
+    //         event: "withdraw",
+    //       };
+    //     });
+
+    //     const allTxs = depTx
+    //       .concat(wthTx)
+    //       .sort(
+    //         (tx1: L1TxType, tx2: L1TxType) =>
+    //           Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
+    //       );
+
+    //     setPreLoadData(allTxs);
+    //   }
+    // };
+
+    // getTxs();
+    if (txList !== null) {
+       const depTx = txList?.formattedL1DepositResults.map((tx: any) => {
           return {
             ...tx,
             event: "deposit",
           };
         });
 
-        const wthTx = txs?.formattedL1WithdrawResults.map((tx: any) => {
+        const wthTx = txList?.formattedL1WithdrawResults.map((tx: any) => {
           return {
             ...tx,
             event: "withdraw",
@@ -85,13 +118,9 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             (tx1: L1TxType, tx2: L1TxType) =>
               Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
           );
-
-        setPreLoadData(allTxs);
-      }
-    };
-
-    getTxs();
-  }, [isConnectedToMainNetwork, address]);
+      setPreLoadData(allTxs);
+    }
+  }, [isConnectedToMainNetwork, address, crossMessenger, txList]);
 
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
@@ -100,19 +129,17 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
-            
             if (tx !== undefined) {
               if (tx.l1txHash && tx.l2txHash === undefined)
-              return tx.l1txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash === undefined)
-              return tx.l2txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash)
-              return (
-                tx.l1txHash.includes(searchTxString.id) ||
-                tx.l2txHash.includes(searchTxString.id)
-              );
+                return tx.l1txHash.includes(searchTxString.id);
+              if (tx.l2txHash && tx.l1txHash === undefined)
+                return tx.l2txHash.includes(searchTxString.id);
+              if (tx.l2txHash && tx.l1txHash)
+                return (
+                  tx.l1txHash.includes(searchTxString.id) ||
+                  tx.l2txHash.includes(searchTxString.id)
+                );
             }
-          
           }
         );
 
@@ -129,7 +156,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     tData.loadingState,
   ]);
 
-  const getLayerFiltered = useMemo(() => {    
+  const getLayerFiltered = useMemo(() => {
     const depSelected =
       network.chainId === SupportedChainId["MAINNET"] ||
       network.chainId === SupportedChainId["GOERLI"];
@@ -146,7 +173,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     }
     if (withSelected === true) {
       const txs = filteredTx.filter(
-        (tx: FullWithTx) => tx !== undefined  && tx.event === "withdraw"
+        (tx: FullWithTx) => tx !== undefined && tx.event === "withdraw"
       );
       return txs;
     } else {
@@ -169,8 +196,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             h={"100%"}
             justifyContent={"center"}
             alignItems={"center"}
-            flexDir={"column"}
-          >
+            flexDir={"column"}>
             <Image
               alt="noActivityIcon"
               src={noActivityIcon}
@@ -181,8 +207,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#e3f3ff"}
               fontWeight={500}
               fontSize={"16px"}
-              mt="24px"
-            >
+              mt="24px">
               No activity yet
             </Text>
             <Text
@@ -190,8 +215,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               fontWeight={400}
               fontSize={"11px"}
               mt="7px"
-              w="191px"
-            >
+              w="191px">
               Your onchain transactions and crypto purchases will appear here.
             </Text>
           </Flex>
@@ -259,8 +283,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             background: "#343741",
             borderRadius: "3px",
           },
-        }}
-      >
+        }}>
         {txes}
       </Flex>
       {getLayerFiltered.length > getPaginatedData.length &&
@@ -269,8 +292,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             mb={"32px"}
             mt={"32px"}
             justifyContent={"center"}
-            alignItems={"start"}
-          >
+            alignItems={"start"}>
             <Button
               bg="transparent"
               border={"1px solid #313442"}
@@ -279,8 +301,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               fontWeight={500}
               _hover={{}}
               _active={{}}
-              onClick={() => setNumData(numData + 2)}
-            >
+              onClick={() => setNumData(numData + 2)}>
               Load more
             </Button>
           </Flex>

@@ -24,7 +24,6 @@ export type Erc20Type = {
   transactionHash: string;
 };
 
-
 export type EthType = {
   id: string;
   _from: string;
@@ -37,9 +36,9 @@ export type EthType = {
 };
 
 export type L1TxType =
-  | SentMessages
+  | ({ stateBatchAppendedEvent: any } & SentMessages)
   | Erc20Type
-  | EthType
+  | EthType;
 
 export type DepositTx = SentMessages &
   L1TxType & {
@@ -130,20 +129,21 @@ export type Resolved = {
   value: BigInt;
 };
 
-export type FullWithTx =  Erc20Type & SentMessages &{
-  currentStatus: number;
-  event: string;
-  l1Block: string;
-  l1timeStamp: string;
-  l1txHash: string;
-  l2TxReceipt: Receipt;
-  l2timeStamp: string;
-  l2txHash: string;
-  resolved: Resolved;
-  timeReadyForRelay: number | string
-};
+export type FullWithTx = Erc20Type &
+  SentMessages & {
+    currentStatus: number;
+    event: string;
+    l1Block: string;
+    l1timeStamp: string;
+    l1txHash: string;
+    l2TxReceipt: Receipt;
+    l2timeStamp: string;
+    l2txHash: string;
+    resolved: Resolved;
+    timeReadyForRelay: number | string;
+  };
 
 export type tData = {
-  loadingState: 'present' | 'loading' | 'absent'
-  depositTxs: any[]
-}
+  loadingState: "present" | "loading" | "absent";
+  depositTxs: any[];
+};

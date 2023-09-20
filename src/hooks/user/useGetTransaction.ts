@@ -1,4 +1,3 @@
-import { transactionData } from "@/recoil/global/transaction";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import useContract from "@/hooks/contracts/useContract";
@@ -22,8 +21,8 @@ import {
   FullWithTx,
 } from "@/types/activity/history";
 // @ts-ignore
-import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
-import { userTransactions } from "@/recoil/userHistory/transaction";
+import * as titanSDK from "@tokamak-network/titan-sdk";
+import { userTransactions,txListStatus } from "@/recoil/userHistory/transaction";
 import { useRecoilState } from "recoil";
 
 export default function useGetTransaction() {
@@ -41,9 +40,11 @@ export default function useGetTransaction() {
   );
   const l2Pro = layer === "L2" ? provider : L2Provider;
   const l1Pro = layer === "L1" ? provider : L1Provider;
+  const [txList, setTxList] = useRecoilState(txListStatus)
 
   const [userTxfromSubgraph, setUserTxfromSubgraph] =
     useRecoilState(userTransactions);
+
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [withdrawLoading, setWithdrawLoading] = useState<
     "loading" | "present" | "absent"
@@ -57,17 +58,23 @@ export default function useGetTransaction() {
 
   useEffect(() => {
     const subgraphData = async () => {
-      if (isConnectedToMainNetwork !== undefined && address) {
-        const userAllTransactions = await fetchUserTransactions(
-          address,
-          isConnectedToMainNetwork
-        );
+      if (
+        txList!== null
+      ) {        
+        // const userAllTransactions = await fetchUserTransactions(
+        //   address,
+        //   isConnectedToMainNetwork,
+        //   crossMessenger
+        // );
+        // console.log("userAllTransactions", userAllTransactions);
 
-        return setUserTxfromSubgraph(userAllTransactions);
+        console.log('txList',txList);
+        
+        return setUserTxfromSubgraph(txList);
       }
     };
     subgraphData();
-  }, [address,layer, isConnectedToMainNetwork]);
+  }, [address, layer, isConnectedToMainNetwork, txList]);
 
   const fetchWithdrawTransactions = useCallback(
     async (set: boolean) => {
@@ -84,23 +91,35 @@ export default function useGetTransaction() {
             userTxfromSubgraph.formattedWithdraw.length > 0
               ? "loading"
               : "absent"
-          );          
+          );
 
         const l2WithdrawTxs = await Promise.all(
           userTxfromSubgraph.formattedWithdraw.map(
-            async (tx: L1TxType, index: number) => {
+            async (tx: any, index: number) => {
+              console.log('tx',tx);
+              
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
                 tx.transactionHash
-              ); //  office node ok   
+              ); //  office node ok
+
+              let currentStatus
+              if (tx.stateBatchAppendedEvent === null) {
+                currentStatus = await crossMessenger.getMessageStatus(
+                  resolved
+                ); //no office node  
+              } else {
+                currentStatus = await crossMessenger.getMessageStatusPostRollup(
+                  resolved, 
+                  tx.stateBatchAppendedEvent
+                )+1;
+              }
+              console.log('currentStatus',currentStatus);
               
-             
-              
-              const currentStatus = await crossMessenger.getMessageStatus(
-                resolved
-              ); //no office node  
-              
-              
-              
+
+              // const currentStatus = await crossMessenger.getMessageStatus(
+              //   resolved
+              // ); //no office node
+
               const l2TxReceipt = await l2Pro.getTransactionReceipt(
                 tx.transactionHash
               ); //l2 tx receipt
@@ -144,9 +163,11 @@ export default function useGetTransaction() {
                   currentStatus === 4 &&
                   l2TxReceipt.blockNumber !== undefined
                 ) {
-                  const l2BlockNum = await l2Pro.getBlock(
-                    l2TxReceipt.blockNumber
-                  );
+                  // const l2BlockNum = await l2Pro.getBlock(
+                  //   l2TxReceipt.blockNumber
+                  // );
+
+                  const l2BlockNum = Number(tx.blockNumber)
 
                   // const messageTxIndex = l2TxReceipt.blockNumber - 1;
 
@@ -154,16 +175,15 @@ export default function useGetTransaction() {
                   //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
                   //     messageTxIndex
                   //   ); // no office node
-    
+
                   // const bn = stateBatchAppendedEvent.blockNumber;
-    
+
                   // const block = await l1Pro.getBlock(bn);
-    
+
                   // const challengePeriod =
                   //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
                   // const timeReadyForRelay = block.timestamp + challengePeriod;
 
-                  
                   const calculatedTimePeriod = isConnectedToMainNetwork
                     ? 11 * 60 + 7 * 24 * 60 * 60
                     : 2 * 60 + 10 + 150;

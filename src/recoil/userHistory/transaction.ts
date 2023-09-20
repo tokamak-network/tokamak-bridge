@@ -5,3 +5,10 @@ export const userTransactions = atom<any>({
 key: 'userTransactions',
 default:undefined
 })
+
+
+export const txListStatus = atom<any>({
+    key: 'txListStatus',
+    default: null
+  })
+  
