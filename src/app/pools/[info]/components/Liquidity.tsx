@@ -43,17 +43,19 @@ const TokenLiquidityData = (props: {
         <Text color="#A0A3AD" fontSize="18px" fontWeight={500}>
           {liquidityAmount}
         </Text>
-        <Text
-          bgColor={"#15161D"}
-          borderRadius={8}
-          px={"8px"}
-          py={"4px"}
-          fontSize={"14px"}
-          fontWeight={600}
-          w={"53px"}
-        >
-          {liquidityPercent} {"%"}
-        </Text>
+        {liquidityPercent && (
+          <Text
+            bgColor={"#15161D"}
+            borderRadius={8}
+            px={"8px"}
+            py={"4px"}
+            fontSize={"14px"}
+            fontWeight={600}
+            w={"53px"}
+          >
+            {liquidityPercent} {"%"}
+          </Text>
+        )}
       </Flex>
     </Flex>
   );
@@ -117,13 +119,13 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
   const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setToken0Ratio(ratio);
-      setToken1Ratio(ratio !== undefined ? 100 - ratio : undefined);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [ratio]);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setToken0Ratio(ratio);
+  //     setToken1Ratio(ratio !== undefined ? 100 - ratio : undefined);
+  //   }, 1000);
+  //   return () => clearInterval(interval);
+  // }, [ratio]);
 
   if (info === undefined) {
     return null;

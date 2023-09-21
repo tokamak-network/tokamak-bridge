@@ -494,6 +494,15 @@ export function usePoolContract() {
             isConnectedToMainNetwork
           );
 
+          console.log("--increaseLiquidity--");
+          console.log(`multicallParam:`, multicallParam);
+          console.log(`gasLimit:`, gasLimit);
+          console.log(
+            `value:`,
+            inIsEth ? inHexAmount : outIsETH ? outHexAmount : value
+          );
+          console.log(`from:`, address);
+
           if (estimatedGas) return gasLimit;
 
           try {
