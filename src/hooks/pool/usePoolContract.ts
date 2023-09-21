@@ -289,8 +289,6 @@ export function usePoolMint() {
       const totalGasCostUSD =
         Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
-      console.log("gogogo");
-
       return totalGasCostUSD;
     }
   }, [feeData, ethPrice, mintPosition]);

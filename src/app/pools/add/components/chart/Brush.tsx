@@ -295,9 +295,10 @@ export const Brush = ({
             {westHandleInView ? (
               <g
                 id={"test"}
-                transform={`translate(${Math.max(0, 100)}, 0), scale(${
-                  flipWestHandle ? "-1" : "1"
-                }, 1)`}
+                transform={`translate(${Math.max(
+                  0,
+                  localBrushExtent[0]
+                )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
                 onClick={() => setOnWestHandle(true)}
               >
                 <g>

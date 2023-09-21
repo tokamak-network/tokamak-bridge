@@ -8,7 +8,7 @@ import commafy from "@/utils/trim/commafy";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useEffect, useState } from "react";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount, useSwitchNetwork } from "wagmi";
@@ -110,12 +110,15 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const actionDisabled = info?.owner !== address;
 
   const { ratio, inverted } = usePoolInfo();
+  const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
+  const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
 
-  const token0Ratio = useMemo(() => {
-    return ratio;
-  }, [ratio]);
-  const token1Ratio = useMemo(() => {
-    return ratio !== undefined ? 100 - ratio : undefined;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setToken0Ratio(ratio);
+      setToken1Ratio(ratio !== undefined ? 100 - ratio : undefined);
+    }, 1000);
+    return () => clearInterval(interval);
   }, [ratio]);
 
   if (info === undefined) {
@@ -226,7 +229,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               info.token1Amount.toString(),
               6
             )}
-            liquidityPercent={inverted ? token1Ratio : token1Ratio}
+            liquidityPercent={token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
@@ -234,7 +237,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               info.token0Amount.toString(),
               6
             )}
-            liquidityPercent={inverted ? token0Ratio : token0Ratio}
+            liquidityPercent={token0Ratio}
           />
         </Flex>
       </Flex>
