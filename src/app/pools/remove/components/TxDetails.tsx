@@ -51,7 +51,11 @@ const Title = (props: {
       setEstimatedGasUsage(gasData);
     };
     fetchData();
-  }, [blockNumber, removeLiquidityPercentage, info]);
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [removeLiquidityPercentage, info]);
 
   return (
     <Flex
