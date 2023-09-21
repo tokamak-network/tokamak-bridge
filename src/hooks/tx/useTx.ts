@@ -193,8 +193,6 @@ export function useTx(params: {
 
   useEffect(() => {
     const getTxs = async () => {
-      console.log('fff');
-      
       if (
         isConnectedToMainNetwork !== undefined &&
         crossMessenger !== undefined 
@@ -202,7 +200,7 @@ export function useTx(params: {
         const txs = await fetchUserTransactions(
           address,
           isConnectedToMainNetwork,
-
+          crossMessenger
         );
 
         if (isSuccess && (mode === "Deposit" || mode === "Withdraw")) {

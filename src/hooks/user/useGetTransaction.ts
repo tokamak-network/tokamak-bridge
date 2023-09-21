@@ -96,29 +96,21 @@ export default function useGetTransaction() {
         const l2WithdrawTxs = await Promise.all(
           userTxfromSubgraph.formattedWithdraw.map(
             async (tx: any, index: number) => {
-        
               console.log('tx',tx);
               
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
                 tx.transactionHash
               ); //  office node ok
-              const messageTxIndex = Number(tx.blockNumber) - 1;
-              console.log('messageTxIndex',messageTxIndex);
-              
-              const stateBatchAppendedEvent = await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
-                messageTxIndex
-              );
-              console.log('stateBatchAppendedEvent',stateBatchAppendedEvent);
-              
+
               let currentStatus
-              if (stateBatchAppendedEvent === null) {
+              if (tx.stateBatchAppendedEvent === null) {
                 currentStatus = await crossMessenger.getMessageStatus(
                   resolved
                 ); //no office node  
               } else {
                 currentStatus = await crossMessenger.getMessageStatusPostRollup(
                   resolved, 
-                  stateBatchAppendedEvent
+                  tx.stateBatchAppendedEvent
                 )+1;
               }
               console.log('currentStatus',currentStatus);
@@ -171,11 +163,9 @@ export default function useGetTransaction() {
                   currentStatus === 4 &&
                   l2TxReceipt.blockNumber !== undefined
                 ) {
-                  // const l2BlockNum = await l2Pro.getBlock(
-                  //   l2TxReceipt.blockNumber
-                  // );
-
-                  const l2BlockNum = Number(tx.blockNumber)
+                  const l2BlockNum = await l2Pro.getBlock(
+                    l2TxReceipt.blockNumber
+                  );
 
                   // const messageTxIndex = l2TxReceipt.blockNumber - 1;
 
@@ -196,7 +186,7 @@ export default function useGetTransaction() {
                     ? 11 * 60 + 7 * 24 * 60 * 60
                     : 2 * 60 + 10 + 150;
                   const testPeriod =
-                  Number(tx.timestamp) + calculatedTimePeriod;
+                    l2BlockNum.timestamp + calculatedTimePeriod;
 
                   // const challengePeriod =
                   //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
