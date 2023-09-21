@@ -37,3 +37,4 @@ const [txList, setTxList] = useRecoilState(txListStatus)
   
   return <AccountHistory />;
 }
+

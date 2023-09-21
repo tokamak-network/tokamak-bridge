@@ -1,13 +1,14 @@
 import { TxSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { useWaitForTransaction } from "wagmi";
+import { useAccount, useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
+import { txListStatus } from "@/recoil/userHistory/transaction";
 
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
@@ -23,6 +24,9 @@ import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
+import useCrosschainMessenger from "../user/useCrosschainMessenger";
+import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
+
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
@@ -161,7 +165,11 @@ export function useTx(params: {
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
-
+  const [txList, setTxList] = useRecoilState(txListStatus);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
+  const { address } = useAccount();
+  
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
@@ -177,10 +185,34 @@ export function useTx(params: {
     if (isSuccess) {
       if (mode === "Deposit" || mode === "Withdraw") {
         setIsAccountDrawerOpen(true);
+
       }
       return setModalOpen("confirmed");
     }
   }, [isSuccess]);
+
+  useEffect(() => {
+    const getTxs = async () => {
+      if (
+        isConnectedToMainNetwork !== undefined &&
+        crossMessenger !== undefined 
+      ) {
+        const txs = await fetchUserTransactions(
+          address,
+          isConnectedToMainNetwork,
+          crossMessenger
+        );
+
+        if (isSuccess && (mode === "Deposit" || mode === "Withdraw")) {
+          setTxList(txs);
+        }
+       
+      }
+    };
+
+    getTxs();
+  }, [isSuccess,mode]);
+  
 
   useEffect(() => {
     if (isError) return setModalOpen("error");
