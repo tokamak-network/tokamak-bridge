@@ -21,18 +21,18 @@ const ActionButton = () => {
 
   const btnIsDisabled = useMemo(() => {
     if (deposit1Disabled) {
-      return isBalanceOver || isInputZero || inTokenApproved;
+      return isBalanceOver || isInputZero || !inTokenApproved;
     }
     if (deposit0Disabled) {
-      return isOutTokenBalanceOver || isOutInputZero || outTokenApproved;
+      return isOutTokenBalanceOver || isOutInputZero || !outTokenApproved;
     }
     return (
       isBalanceOver ||
       isOutTokenBalanceOver ||
       isInputZero ||
       isOutInputZero ||
-      inTokenApproved ||
-      outTokenApproved
+      !inTokenApproved ||
+      !outTokenApproved
     );
   }, [
     deposit0Disabled,
@@ -47,6 +47,8 @@ const ActionButton = () => {
 
   const buttonName = useMemo(() => {
     if (isBalanceOver) return `Insufficient ${pool?.token0.symbol} balance`;
+    if (isOutTokenBalanceOver)
+      return `Insufficient ${pool?.token1.symbol} balance`;
     if (isOutTokenBalanceOver)
       return `Insufficient ${pool?.token1.symbol} balance`;
     if (isInputZero || isOutInputZero) return "Enter an amount";

@@ -174,7 +174,10 @@ export function useTx(params: {
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (connectedChainId !== exChainId) return setExChainId(connectedChainId);
+    if (connectedChainId !== exChainId) {
+      setTxPending(false);
+      return setExChainId(connectedChainId);
+    }
     if (isLoading) {
       return setTxPending(true);
     }
