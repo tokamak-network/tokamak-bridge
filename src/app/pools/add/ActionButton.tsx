@@ -104,7 +104,7 @@ export const ApproveButtonsContrainer = () => {
       {outToken &&
         outTokenHasAmount &&
         !outTokenApproved &&
-        isOutTokenBalanceOver && <ApproveButton isInToken={false} />}
+        !isOutTokenBalanceOver && <ApproveButton isInToken={false} />}
     </Flex>
   );
 };
