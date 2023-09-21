@@ -496,7 +496,7 @@ export function usePoolContract() {
 
           console.log("--increaseLiquidity--");
           console.log(`multicallParam:`, multicallParam);
-          console.log(`gasLimit:`, gasLimit);
+          console.log(`gasLimit:`, gasLimit.toString());
           console.log(
             `value:`,
             inIsEth ? inHexAmount : outIsETH ? outHexAmount : value
