@@ -33,9 +33,6 @@ export default function IncreaseModal() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (gasToAdd !== undefined) {
-        return;
-      }
       if (poolModal === "addLiquidity") {
         const gasData = await estimateGasToMint();
         return setGasToAdd(gasData);
@@ -46,10 +43,12 @@ export default function IncreaseModal() {
         return setGasToAdd(gasData);
       }
     };
-    // setInterval(() => {
-    //   fetchData();
-    // }, 200);
-  }, [gasToAdd]);
+    fetchData();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [poolModal]);
 
   return (
     <Modal
