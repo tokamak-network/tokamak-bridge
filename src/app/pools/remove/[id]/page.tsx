@@ -18,12 +18,12 @@ import ClaimEarningsModal from "../../[info]/components/ClaimEarningsModal";
 import { useIsOwner } from "@/hooks/pool/useIsOwner";
 
 export default function RemoveLiquidity() {
-  const { positionId, chainIdParam } = useGetPositionIdFromPath();
+  const { positionId, chainIdParam, backwardLink } = useGetPositionIdFromPath();
   const { info } = usePositionInfo();
   const { needToRedirect } = useIsOwner(info);
 
   if (needToRedirect) {
-    redirect(`/pools/${positionId}?chainId=${chainIdParam}`);
+    redirect(backwardLink);
   }
 
   return (
@@ -32,7 +32,7 @@ export default function RemoveLiquidity() {
         title="Remove Liquidity"
         clear={false}
         switcher={false}
-        backwardLink={`/pools/${positionId}`}
+        backwardLink={backwardLink}
       />
       <Flex
         border="1px solid #20212B"

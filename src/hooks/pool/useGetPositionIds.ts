@@ -529,12 +529,14 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
-  console.log(pathName);
-
   const searchParams = useSearchParams();
   const chainIdParam = searchParams.get("chainId");
 
-  return { positionId, chainIdParam };
+  const backwardLink = useMemo(() => {
+    return `/pools/${positionId}?chainId=${chainIdParam}`;
+  }, [positionId, chainIdParam]);
+
+  return { positionId, chainIdParam, backwardLink };
 }
 
 export function usePositionInfo() {
