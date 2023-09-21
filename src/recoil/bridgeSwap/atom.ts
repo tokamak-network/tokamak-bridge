@@ -84,7 +84,6 @@ export const relayBannerSelector = selector<{
   get: ({ get }) => {
     
       const today = new Date();
-      // const currentISODay = getISODay(today);
       // const nowTime = getTime(today);
       // const desiredDateThisWeek = addDays(weekStart, 3);
       const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
