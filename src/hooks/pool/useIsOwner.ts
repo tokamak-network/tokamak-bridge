@@ -15,8 +15,9 @@ export function useIsOwner(info: PoolCardDetail | undefined) {
   }, [connectedChainId, info?.chainId]);
 
   const needToRedirect = useMemo(() => {
+    if (info === undefined) return true;
     return !isOwner || !isOnSameNetwork;
-  }, [isOwner, isOnSameNetwork]);
+  }, [isOwner, isOnSameNetwork, info]);
 
   return { isOwner, isOnSameNetwork, needToRedirect };
 }

@@ -23,7 +23,7 @@ import { redirect } from "next/navigation";
 
 export default function IncreaseLiquidity() {
   const { info } = usePositionInfo();
-  const { positionId } = useGetPositionIdFromPath();
+  const { positionId, chainIdParam } = useGetPositionIdFromPath();
   const { estimateGasToIncrease } = usePoolContract();
   const { blockNumber } = useBlockNum();
   const [estimatedGasUsageValue, setEstimatedGasUsage] =
@@ -40,7 +40,7 @@ export default function IncreaseLiquidity() {
   }, [blockNumber, inToken?.amountBN, outToken?.amountBN]);
 
   if (needToRedirect) {
-    redirect(`/pools/${info?.id}?chainId=${info?.chainId}`);
+    redirect(`/pools/${positionId}?chainId=${chainIdParam}`);
   }
 
   return (

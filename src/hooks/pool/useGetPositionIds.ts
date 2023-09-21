@@ -529,6 +529,8 @@ export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = pathName.split("/")[pathName.split("/").length - 1];
 
+  console.log(pathName);
+
   const searchParams = useSearchParams();
   const chainIdParam = searchParams.get("chainId");
 

@@ -146,6 +146,8 @@ export const Brush = ({
 
   const previousBrushExtent = usePrevious(brushExtent);
 
+  const [onWestHandle, setOnWestHandle] = useState<boolean>(false);
+
   const brushed = useCallback(
     (event: D3BrushEvent<unknown>) => {
       const { type, selection, mode } = event;
@@ -160,11 +162,10 @@ export const Brush = ({
         number
       ];
 
-      // avoid infinite render loop by checking for change
       if (type === "end" && !compare(brushExtent, scaled, xScale)) {
+        // avoid infinite render loop by checking for change
         setBrushExtent(scaled, mode);
       }
-
       setLocalBrushExtent(scaled);
     },
     [xScale, brushExtent, setBrushExtent]
@@ -293,10 +294,11 @@ export const Brush = ({
             {/* west handle */}
             {westHandleInView ? (
               <g
-                transform={`translate(${Math.max(
-                  0,
-                  xScale(localBrushExtent[0])
-                )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
+                id={"test"}
+                transform={`translate(${Math.max(0, 100)}, 0), scale(${
+                  flipWestHandle ? "-1" : "1"
+                }, 1)`}
+                onClick={() => setOnWestHandle(true)}
               >
                 <g>
                   <Handle
