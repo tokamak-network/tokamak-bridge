@@ -12,29 +12,28 @@ export default function Drawers() {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
   const { address } = useAccount();
-const [txList, setTxList] = useRecoilState(txListStatus)
+  const [txList, setTxList] = useRecoilState(txListStatus);
 
   useEffect(() => {
     const getTxs = async () => {
-      if (isConnectedToMainNetwork !== undefined && crossMessenger !== undefined) {
+      if (
+        isConnectedToMainNetwork !== undefined 
+       
+      ) {
         const txs = await fetchUserTransactions(
           address,
           isConnectedToMainNetwork,
-          crossMessenger
-        );
-        console.log('txs',txs);
-    
-        setTxList(txs)
          
+        );
+        console.log('ggg');
+        
+        setTxList(txs);
       }
     };
 
-   
     getTxs();
-  }, [isConnectedToMainNetwork, address,crossMessenger]);
+  }, [isConnectedToMainNetwork, address]);
 
-  console.log('txList',txList);
-  
   return <AccountHistory />;
 }
 
