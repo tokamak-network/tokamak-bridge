@@ -84,7 +84,6 @@ export const relayBannerSelector = selector<{
   get: ({ get }) => {
     
       const today = new Date();
-      // const currentISODay = getISODay(today);
       // const nowTime = getTime(today);
       // const desiredDateThisWeek = addDays(weekStart, 3);
       const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -129,7 +128,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
           });
 
     const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
-    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
+    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);        
     return {
       previewTimeStartThisWeek: getTime(zoneTime),
     };
