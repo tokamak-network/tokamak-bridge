@@ -5,8 +5,8 @@ import AddLiquidity from "./AddLiquidity";
 import PoolCard from "./PoolCard";
 import EmptyCard from "./EmptyCard";
 import { useAccount } from "wagmi";
-import { useRecoilValue } from "recoil";
-import { ATOM_positions_loading } from "@/recoil/pool/positions";
+// import { useRecoilValue } from "recoil";
+// import { ATOM_positions_loading } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
 
 export default function PoolList() {
@@ -14,7 +14,7 @@ export default function PoolList() {
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
 
-  const isLoading = useRecoilValue(ATOM_positions_loading);
+  // const isLoading = useRecoilValue(ATOM_positions_loading);
 
   return (
     <Grid
@@ -29,7 +29,7 @@ export default function PoolList() {
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} />
         ))}
-      {!isSupportedChain &&
+      {(!isSupportedChain || !isConnected) &&
         Array.from({ length: 7 }, (_, index) => (
           <EmptyCard key={index} noSpinner={true} />
         ))}

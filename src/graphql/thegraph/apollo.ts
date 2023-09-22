@@ -15,18 +15,18 @@ import { ChainId } from "@uniswap/sdk-core";
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.MAINNET]:
     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
-  [ChainId.ARBITRUM_ONE]:
-    "https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-arbitrum-one",
-  [ChainId.OPTIMISM]:
-    "https://api.thegraph.com/subgraphs/name/ianlapham/optimism-post-regenesis",
-  [ChainId.POLYGON]:
-    "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
-  [ChainId.CELO]:
-    "https://api.thegraph.com/subgraphs/name/jesse-sawa/uniswap-celo",
-  [ChainId.BNB]:
-    "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc",
-  [ChainId.AVALANCHE]:
-    "https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax",
+  // [ChainId.ARBITRUM_ONE]:
+  //   "https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-arbitrum-one",
+  // [ChainId.OPTIMISM]:
+  //   "https://api.thegraph.com/subgraphs/name/ianlapham/optimism-post-regenesis",
+  // [ChainId.POLYGON]:
+  //   "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-polygon",
+  // [ChainId.CELO]:
+  //   "https://api.thegraph.com/subgraphs/name/jesse-sawa/uniswap-celo",
+  // [ChainId.BNB]:
+  //   "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc",
+  // [ChainId.AVALANCHE]:
+  //   "https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax",
   [SupportedChainId.GOERLI]:
     "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-gorli ",
   // "https://api.thegraph.com/subgraphs/name/liqwiz/uniswap-v3-goerli",

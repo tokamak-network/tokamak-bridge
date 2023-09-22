@@ -51,25 +51,24 @@ export function useGetPositionIds(): {
     ? subgraphApolloClients[otherLayerChainInfo?.chainId]
     : undefined;
 
-  const { data, error } = useQuery(GET_POSITIONS, {
+  const { data, error, loading } = useQuery(GET_POSITIONS, {
     variables: {
       account: address,
-      // account: "0xceB2196aDdf345F68d1F536DdAA49FE54BcBDDAD",
     },
     pollInterval: 10000,
     client,
   });
-  const { data: otherLayerData, error: otherLayerError } = useQuery(
-    GET_POSITIONS,
-    {
-      variables: {
-        account: address,
-        // account: "0xceB2196aDdf345F68d1F536DdAA49FE54BcBDDAD",
-      },
-      pollInterval: 10000,
-      client: otherLayerClient,
-    }
-  );
+  const {
+    data: otherLayerData,
+    error: otherLayerError,
+    loading: otherLayerLoading,
+  } = useQuery(GET_POSITIONS, {
+    variables: {
+      account: address,
+    },
+    pollInterval: 10000,
+    client: otherLayerClient,
+  });
 
   const makePositionDatas = useCallback(
     async (positionData: any[], chainId: number) => {
