@@ -158,7 +158,7 @@ export function useGetPositionIds(): {
           const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
           const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
           const token0FeeValue = token0MarketPrice * token0FeeAmount;
-          const token1FeeValue = token0MarketPrice * token1FeeAmount;
+          const token1FeeValue = token1MarketPrice * token1FeeAmount;
           const feeValue = token0FeeValue + token1FeeValue;
           const inRange =
             tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
@@ -460,7 +460,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
           const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
           const token0FeeValue = token0MarketPrice * token0FeeAmount;
-          const token1FeeValue = token0MarketPrice * token1FeeAmount;
+          const token1FeeValue = token1MarketPrice * token1FeeAmount;
           const feeValue = token0FeeValue + token1FeeValue;
 
           positions.push({
