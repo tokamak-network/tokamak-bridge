@@ -146,8 +146,6 @@ export const Brush = ({
 
   const previousBrushExtent = usePrevious(brushExtent);
 
-  const [onWestHandle, setOnWestHandle] = useState<boolean>(false);
-
   const brushed = useCallback(
     (event: D3BrushEvent<unknown>) => {
       const { type, selection, mode } = event;
@@ -166,6 +164,7 @@ export const Brush = ({
         // avoid infinite render loop by checking for change
         setBrushExtent(scaled, mode);
       }
+
       setLocalBrushExtent(scaled);
     },
     [xScale, brushExtent, setBrushExtent]

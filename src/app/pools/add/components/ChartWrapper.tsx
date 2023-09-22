@@ -15,6 +15,8 @@ import SpinnerImage from "assets/image/spinner.svg";
 import UninitializedPoolImage from "assets/image/uninitializedPool.svg";
 
 import Image from "next/image";
+import { useRecoilState } from "recoil";
+import { atMinTick } from "@/recoil/pool/setPoolPosition";
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -113,6 +115,7 @@ export default function ChartWrapper({
   });
 
   const isSorted = !invertPrice;
+  const [, setAtMinTick] = useRecoilState(atMinTick);
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
@@ -130,6 +133,7 @@ export default function ChartWrapper({
           mode === "reset") &&
         leftRangeValue > 0
       ) {
+        if (Number(leftRangeValue.toFixed(6)) > 0) setAtMinTick(false);
         onLeftRangeInput(leftRangeValue.toFixed(6));
       }
 

@@ -46,7 +46,7 @@ export default function IncreaseModal() {
       fetchData();
     }, 10000);
     return () => clearInterval(interval);
-  }, [poolModal]);
+  }, [poolModal, blockNumber]);
 
   return (
     <Modal

@@ -184,7 +184,11 @@ export const CurrentPriceInfo = () => {
               : smallNumberFormmater(Number(currentPrice ?? 0))}
           </Text>
         }
-        tooltipLabel={currentPrice?.toString()}
+        tooltipLabel={
+          poolModal === "addLiquidity"
+            ? currentPriceToAdd
+            : smallNumberFormmater(Number(currentPrice ?? 0))
+        }
       ></CustomTooltip>
 
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
