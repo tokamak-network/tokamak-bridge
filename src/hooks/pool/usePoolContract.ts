@@ -41,6 +41,7 @@ import { uniswapTxSettingSelector } from "@/recoil/uniswap/setting";
 import { encodeMulticall } from "@/utils/contract/encodeMulticall";
 import { convertDeadlineSetting } from "@/utils/contract/convertDeadlineSetting";
 import TxDetails from "@/app/pools/remove/components/TxDetails";
+import { useIncreaseAmount } from "./useIncreaseAmount";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -67,6 +68,7 @@ export function usePoolMint() {
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
   const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
+  const { token0Input, token1Input } = useIncreaseAmount();
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -88,32 +90,6 @@ export function usePoolMint() {
           pool.liquidity.toString(),
           pool.tickCurrent
         );
-
-        const token0Input =
-          lastFocused === "LeftInput"
-            ? invertPrice
-              ? outToken.amountBN
-              : inToken.amountBN
-            : invertPrice
-            ? deposit1Disabled
-              ? 0
-              : outToken.amountBN
-            : deposit0Disabled
-            ? 0
-            : dependentAmount?.quotient;
-
-        const token1Input =
-          lastFocused === "RightInput"
-            ? invertPrice
-              ? inToken.amountBN
-              : outToken.amountBN
-            : invertPrice
-            ? deposit0Disabled
-              ? 0
-              : inToken.amountBN
-            : deposit1Disabled
-            ? 0
-            : dependentAmount?.quotient;
 
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
@@ -265,6 +241,8 @@ export function usePoolMint() {
       deposit1Disabled,
       layer,
       isConnectedToMainNetwork,
+      token0Input,
+      token1Input,
     ]
   );
 
@@ -494,15 +472,6 @@ export function usePoolContract() {
             isLayer2,
             isConnectedToMainNetwork
           );
-
-          console.log("--increaseLiquidity--");
-          console.log(`multicallParam:`, multicallParam);
-          console.log(`gasLimit:`, gasLimit?.toString());
-          console.log(
-            `value:`,
-            inIsEth ? inHexAmount : outIsETH ? outHexAmount : value
-          );
-          console.log(`from:`, address);
 
           if (estimatedGas) return gasLimit;
 

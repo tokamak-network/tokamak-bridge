@@ -12,6 +12,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -56,16 +57,8 @@ export default function Range(props: {
   const { inRange, token0Amount, token1Amount, fee, token0, token1 } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { poolModal } = usePreview();
+  const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
   const { inToken, outToken } = useInOutTokens();
-  const { invertPrice } = usePriceTickConversion();
-  const token0AmountForAdding =
-    page === "addLiquidity" && invertPrice
-      ? commafy(token1Amount, 6)
-      : commafy(token0Amount, 6);
-  const token1AmountForAdding =
-    page === "addLiquidity" && invertPrice
-      ? commafy(token0Amount, 6)
-      : commafy(token1Amount, 6);
 
   return (
     <Flex
@@ -104,10 +97,15 @@ export default function Range(props: {
         amount={page === "addLiquidity" ? undefined : commafy(token1Amount, 6)}
         page={page}
         alterAmount={
-          page === "addLiquidity"
-            ? token1AmountForAdding
-            : page === "increaseLiquidity"
-            ? commafyWithUndefined(outToken?.parsedAmount, 6, false, true)
+          page === "addLiquidity" || page === "increaseLiquidity"
+            ? commafyWithUndefined(
+                page === "addLiquidity"
+                  ? token1ParsedAmount
+                  : outToken?.parsedAmount,
+                6,
+                false,
+                true
+              )
             : commafy(amount1Removed, 6)
         }
         style={{ marginBottom: "9px" }}
@@ -117,10 +115,15 @@ export default function Range(props: {
         amount={page === "addLiquidity" ? undefined : commafy(token0Amount, 6)}
         page={page}
         alterAmount={
-          page === "addLiquidity"
-            ? token0AmountForAdding
-            : page === "increaseLiquidity"
-            ? commafyWithUndefined(inToken?.parsedAmount, 6, false, true)
+          page === "addLiquidity" || page === "increaseLiquidity"
+            ? commafyWithUndefined(
+                page === "addLiquidity"
+                  ? token0ParsedAmount
+                  : inToken?.parsedAmount,
+                6,
+                false,
+                true
+              )
             : commafy(amount0Removed, 6)
         }
       />

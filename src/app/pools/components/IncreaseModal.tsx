@@ -9,7 +9,6 @@ import {
 import Range from "./Range";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import Title from "../add/components/Title";
-import ActionButton from "../increase/components/ActionButton";
 import CloseButton from "@/components/button/CloseButton";
 import PriceRange from "../[info]/components/PriceRange";
 import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";

@@ -7,9 +7,9 @@ import useContract from "@/hooks/contracts/useContract";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useApproveToken } from "@/hooks/pool/useApproveToken";
+import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
-import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
@@ -93,6 +93,7 @@ export const ApproveButtonsContrainer = () => {
   const [poolState] = usePool();
   const { subMode } = useGetMode();
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+  const { token0Input, token1Input } = useIncreaseAmount();
 
   if (subMode.add && poolState === PoolState.INVALID) return null;
   if (isBalanceOver || isOutTokenBalanceOver) return null;

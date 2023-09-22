@@ -6,6 +6,9 @@ import { Hash } from "viem";
 import { useMemo } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { TokenInfo } from "@/types/token/supportedToken";
+import { useIncreaseAmount } from "./useIncreaseAmount";
+import { useV3MintInfo } from "./useV3MintInfo";
+import { ethers } from "ethers";
 
 export function useAllowance(params: {
   tokenAddress: Hash | undefined;
@@ -41,7 +44,7 @@ export function useAllowance(params: {
       return false;
     }
     return false;
-  }, [allowance, token]);
+  }, [allowance, token, inputTokenAmount]);
 
   return { isApproved };
 }
@@ -49,20 +52,34 @@ export function useAllowance(params: {
 export function useApproveToken() {
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
+  const { invertPrice } = useV3MintInfo();
+  const { token0Input, token1Input } = useIncreaseAmount();
 
   const contractAddress = UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER;
+
+  const inTokenAmount = invertPrice
+    ? token1Input &&
+      ethers.utils.parseUnits(token1Input.toString(), 0).toBigInt()
+    : token0Input &&
+      ethers.utils.parseUnits(token0Input.toString(), 0).toBigInt();
+
+  const outTokenAmount = invertPrice
+    ? token0Input &&
+      ethers.utils.parseUnits(token0Input.toString(), 0).toBigInt()
+    : token1Input &&
+      ethers.utils.parseUnits(token1Input.toString(), 0).toBigInt();
 
   const inTokenApproved = useAllowance({
     tokenAddress: inToken?.tokenAddress as Hash | undefined,
     contractAddress,
-    inputTokenAmount: inToken?.amountBN,
+    inputTokenAmount: inTokenAmount === 0 ? undefined : inTokenAmount,
     token: inToken,
   });
 
   const outTokenApproved = useAllowance({
     tokenAddress: outToken?.tokenAddress as Hash | undefined,
     contractAddress,
-    inputTokenAmount: outToken?.amountBN,
+    inputTokenAmount: outTokenAmount === 0 ? undefined : outTokenAmount,
     token: outToken,
   });
 

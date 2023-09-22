@@ -51,7 +51,10 @@ export default function UnclaimedEarnings(props: {
   const token0Amount = Number(info?.token0CollectedFee);
   const token1Amount = Number(info?.token1CollectedFee);
 
-  const { totalMarketPrice, hasTokenPrice } = usePricePair({
+  const totalMarketPrice =
+    Number(info?.token0FeeValue) + Number(info?.token1FeeValue);
+
+  const { hasTokenPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
@@ -117,7 +120,7 @@ export default function UnclaimedEarnings(props: {
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
-              {`$${totalMarketPrice}`}
+              {`$${commafy(totalMarketPrice, 2)}`}
             </Text>
             <Flex alignItems={"center"} color="#A0A3AD">
               <Text fontSize={"12px"}>

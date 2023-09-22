@@ -17,8 +17,6 @@ export async function calculateGasLimit(
   }
 
   try {
-    const gasPrice = await provider.getGasPrice();
-    console.log("gasPrice", gasPrice.toString());
     const estimatedGas = await provider.estimateGas(tx);
     return calculateGasMargin(estimatedGas);
   } catch (e) {
