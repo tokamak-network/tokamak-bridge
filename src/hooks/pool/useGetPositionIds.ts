@@ -27,7 +27,7 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
-import { txHashLog } from "@/recoil/global/transaction";
+import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { GET_POSITIONS } from "@/graphql/data/queries";
@@ -54,6 +54,7 @@ export function useGetPositionIds(): {
   const { data, error } = useQuery(GET_POSITIONS, {
     variables: {
       account: address,
+      // account: "0xceB2196aDdf345F68d1F536DdAA49FE54BcBDDAD",
     },
     pollInterval: 10000,
     client,
@@ -63,6 +64,7 @@ export function useGetPositionIds(): {
     {
       variables: {
         account: address,
+        // account: "0xceB2196aDdf345F68d1F536DdAA49FE54BcBDDAD",
       },
       pollInterval: 10000,
       client: otherLayerClient,
@@ -213,7 +215,7 @@ export function useGetPositionIds(): {
   );
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
-  const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
+  // const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
   const [account, setAccount] = useState<string | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const txLog = useRecoilValue(txHashLog);
@@ -227,18 +229,18 @@ export function useGetPositionIds(): {
         ) {
           setAccount(address);
           setChainId(connectedChainId);
-          setPositionsLoading(true);
+          // setPositionsLoading(true);
           setPositions(undefined);
         }
-        const result = await Promise.all([
-          makePositionDatas(data.positions, connectedChainId),
-          makePositionDatas(
-            otherLayerData.positions,
-            otherLayerChainInfo.chainId
-          ),
-        ]);
-
         try {
+          const result = await Promise.all([
+            makePositionDatas(data.positions, connectedChainId),
+            makePositionDatas(
+              otherLayerData.positions,
+              otherLayerChainInfo.chainId
+            ),
+          ]);
+
           if (result[0] && result[1]) {
             const positions = [...result[0], ...result[1]];
             const sortedPositions = sortPositions(positions);
@@ -252,11 +254,11 @@ export function useGetPositionIds(): {
             const sortedPositions = sortPositions(result[1]);
             return setPositions(sortedPositions);
           }
-          return setPositions(undefined);
+          return setPositions([]);
         } catch (e) {
           console.log(e);
         } finally {
-          setPositionsLoading(false);
+          // setPositionsLoading(false);
         }
       }
     };
@@ -270,12 +272,19 @@ export function useGetPositionIds(): {
     address,
   ]);
 
+  // useEffect(() => {
+  //   if (positions === undefined) return setPositionsLoading(true);
+  //   setPositionsLoading(false);
+  // }, [positions]);
+
   return { positions };
 }
 
 //logic through contract calls
 export function useGetPositionById(positionId: number, chainId: number) {
   const { provider, otherLayerProvider } = useProvier();
+  // const txPending = useRecoilValue(txPendingStatus);
+
   const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
   const { address } = useAccount();
   const { blockNumber } = useBlockNum();
@@ -491,7 +500,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
       }
       return undefined;
     },
-    [UNISWAP_CONTRACT, isL2, providerForInfo, chainId]
+    [UNISWAP_CONTRACT, isL2, providerForInfo, chainId, blockNumber]
   );
 
   const txLog = useRecoilValue(txHashLog);

@@ -25,7 +25,7 @@ export default function PoolList() {
     >
       <LPGuide />
       <AddLiquidity />
-      {isLoading &&
+      {positions === undefined &&
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} />
         ))}

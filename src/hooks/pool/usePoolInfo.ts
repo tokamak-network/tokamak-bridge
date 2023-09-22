@@ -123,6 +123,7 @@ export function usePoolInfo() {
 
   const position = useMemo(() => {
     if (pool && liquidity && tickLower && tickUpper) {
+      //trouble
       return new Position({
         pool,
         liquidity: liquidity.toString(),

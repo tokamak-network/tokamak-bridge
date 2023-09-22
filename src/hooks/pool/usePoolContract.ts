@@ -40,6 +40,7 @@ import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
 import { uniswapTxSettingSelector } from "@/recoil/uniswap/setting";
 import { encodeMulticall } from "@/utils/contract/encodeMulticall";
 import { convertDeadlineSetting } from "@/utils/contract/convertDeadlineSetting";
+import TxDetails from "@/app/pools/remove/components/TxDetails";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -496,7 +497,7 @@ export function usePoolContract() {
 
           console.log("--increaseLiquidity--");
           console.log(`multicallParam:`, multicallParam);
-          console.log(`gasLimit:`, gasLimit.toString());
+          console.log(`gasLimit:`, gasLimit?.toString());
           console.log(
             `value:`,
             inIsEth ? inHexAmount : outIsETH ? outHexAmount : value
@@ -514,6 +515,10 @@ export function usePoolContract() {
                 from: address,
               }
             );
+
+            const dd = await tx.wait();
+
+            console.log("tx", dd);
 
             if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {

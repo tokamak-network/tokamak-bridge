@@ -194,12 +194,19 @@ export function useTx(params: {
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) return setModalOpen("error");
+    if (isError) {
+      setTxPending(false);
+      return setModalOpen("error");
+    }
   }, [isError]);
 
   useEffect(() => {
     if (data?.transactionHash) return setTxHash(data.transactionHash);
   }, [data]);
+
+  useEffect(() => {
+    if (hash === undefined) return setTxPending(false);
+  }, [hash]);
 
   useEffect(() => {
     if (isError) {

@@ -95,6 +95,7 @@ export const ApproveButtonsContrainer = () => {
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
 
   if (subMode.add && poolState === PoolState.INVALID) return null;
+  if (isBalanceOver || isOutTokenBalanceOver) return null;
 
   return (
     <Flex columnGap={"12px"}>

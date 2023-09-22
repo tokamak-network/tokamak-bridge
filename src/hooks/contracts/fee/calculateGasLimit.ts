@@ -16,8 +16,14 @@ export async function calculateGasLimit(
     return calculateGasMargin(estimatedGas);
   }
 
-  const estimatedGas = await provider.estimateGas(tx);
-  return calculateGasMargin(estimatedGas);
+  try {
+    const gasPrice = await provider.getGasPrice();
+    console.log("gasPrice", gasPrice.toString());
+    const estimatedGas = await provider.estimateGas(tx);
+    return calculateGasMargin(estimatedGas);
+  } catch (e) {
+    console.log(e);
+  }
 
   // const gasPrice = await provider.getGasPrice();
   // const l2ProSDK = titanSDK.asL2Provider(
