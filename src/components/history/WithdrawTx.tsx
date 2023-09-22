@@ -12,6 +12,7 @@ import { claimTx } from "@/recoil/userHistory/claimTx";
 import { useRecoilState } from "recoil";
 import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { Hash } from "viem";
+import { supportedTokens } from "@/types/token/supportedToken";
 
 export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
@@ -20,12 +21,18 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const [, setClaimTx] = useRecoilState(claimTx);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
-
+  
   const [txData] = useRecoilState(txDataStatus);
-
+const zeroAddress = '0x0000000000000000000000000000000000000000'
   const { data, isError, isLoading } = useToken({
-    address: layer === "L1" ? (tx._l1Token as Hash) : (tx._l2Token as Hash),
+    address: layer === "L1" ? ( tx._l1Token as Hash) : (tx._l2Token as Hash),
+    enabled:tx._l1Token ===  zeroAddress? false :true,
   });
+  const ethToken = {
+    symbol: supportedTokens[0].tokenSymbol,
+    decimals: supportedTokens[0].decimals
+  }  
+  const token = layer === "L1" &&  tx._l1Token === zeroAddress?ethToken :data
 
   return (
     <Flex
@@ -50,11 +57,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             setWithdrawData({
               modalData: {
                 ...tx,
-                inTokenSymbol: data?.symbol,
-                outTokenSymbol: data?.symbol,
+                inTokenSymbol: token?.symbol,
+                outTokenSymbol: token?.symbol,
                 inTokenAmount: ethers.utils.formatUnits(
                   tx._amount.toString(),
-                  data?.decimals
+                  token?.decimals
                 ),
               },
             });
@@ -90,11 +97,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                 setWithdrawData({
                   modalData: {
                     ...tx,
-                    inTokenSymbol: data?.symbol,
-                    outTokenSymbol: data?.symbol,
+                    inTokenSymbol:  token?.symbol,
+                    outTokenSymbol: token?.symbol,
                     inTokenAmount: ethers.utils.formatUnits(
                       tx._amount.toString(),
-                      data?.decimals
+                      token?.decimals
                     ),
                   },
                 });
@@ -108,11 +115,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                 setWithdrawData({
                   modalData: {
                     ...tx,
-                    inTokenSymbol: data?.symbol,
-                    outTokenSymbol: data?.symbol,
+                    inTokenSymbol: token?.symbol,
+                    outTokenSymbol: token?.symbol,
                     inTokenAmount: ethers.utils.formatUnits(
                       tx._amount.toString(),
-                      data?.decimals
+                      token?.decimals
                     ),
                   },
                 });
@@ -131,15 +138,15 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         <TokenPairTx
           inAmount={ethers.utils.formatUnits(
             tx._amount.toString(),
-            data?.decimals
+            token?.decimals
           )}
           action="withdraw"
           outAmount={ethers.utils.formatUnits(
             tx._amount.toString(),
-            data?.decimals
+            token?.decimals
           )}
-          inTokenSymbol={data?.symbol || "ETH"}
-          outTokenSymbol={data?.symbol || "ETH"}
+          inTokenSymbol={token?.symbol as string|| "ETH"}
+          outTokenSymbol={token?.symbol as string|| "ETH"}
         />
       </Flex>
       <StatusTx
@@ -149,11 +156,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         layer={"L2"}
         tx={{
           ...tx,
-          inTokenSymbol: data?.symbol,
-          outTokenSymbol: data?.symbol,
+          inTokenSymbol: token?.symbol as string,
+          outTokenSymbol: token?.symbol as string,
           inTokenAmount: ethers.utils.formatUnits(
             tx._amount.toString(),
-            data?.decimals
+            token?.decimals
           ),
         }}
       />
@@ -166,11 +173,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         layer={"L1"}
         tx={{
           ...tx,
-          inTokenSymbol: data?.symbol,
-          outTokenSymbol: data?.symbol,
+          inTokenSymbol: token?.symbol as string,
+          outTokenSymbol: token?.symbol as string,
           inTokenAmount: ethers.utils.formatUnits(
             tx._amount.toString(),
-            data?.decimals
+            token?.decimals
           ),
         }}
       />

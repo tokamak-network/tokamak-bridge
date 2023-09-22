@@ -14,6 +14,9 @@ export default function PoolList() {
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
 
+  console.log("positions");
+  console.log(positions);
+
   // const isLoading = useRecoilValue(ATOM_positions_loading);
 
   return (

@@ -27,7 +27,7 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
-import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
+import { txHashLog } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { GET_POSITIONS } from "@/graphql/data/queries";
@@ -35,6 +35,144 @@ import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
 import { providerByChainId } from "@/config/getProvider";
+
+const makePositionDatas = async (positionData: any[], chainId: number) => {
+  const positions: PoolCardDetail[] = [];
+  const batchSize = positionData.length;
+  const promises: any[] = [];
+
+  for (let i = 0; i < batchSize; i++) {
+    promises.push(async () => {
+      const position = positionData[i];
+      const { id, owner, pool } = position;
+      const { token0, token1, feeTier } = pool;
+
+      //logic to calculate remained tokens amounts
+      let amount0;
+      let amount1;
+      const slot0TickSub = parseInt(position.pool.tick);
+      const tickLowerSub = parseInt(position.tickLower.tickIdx);
+      const tickUpperSub = parseInt(position.tickUpper.tickIdx);
+      const sqrtPriceSub = JSBI.BigInt(position.pool.sqrtPrice);
+      const uppersqrtPriceSub = TickMath.getSqrtRatioAtTick(tickUpperSub);
+      const lowersqrtPriceSub = TickMath.getSqrtRatioAtTick(tickLowerSub);
+      const liquiditySub = JSBI.BigInt(position.liquidity);
+      if (slot0TickSub < tickLowerSub) {
+        amount0 = SqrtPriceMath.getAmount0Delta(
+          lowersqrtPriceSub,
+          uppersqrtPriceSub,
+          liquiditySub,
+          false
+        );
+        amount1 = JSBI.BigInt(0);
+      } else if (slot0TickSub < tickUpperSub) {
+        amount0 = SqrtPriceMath.getAmount0Delta(
+          sqrtPriceSub,
+          uppersqrtPriceSub,
+          liquiditySub,
+          false
+        );
+        amount1 = SqrtPriceMath.getAmount1Delta(
+          lowersqrtPriceSub,
+          sqrtPriceSub,
+          liquiditySub,
+          false
+        );
+      } else {
+        amount0 = JSBI.BigInt(0);
+        amount1 = SqrtPriceMath.getAmount1Delta(
+          lowersqrtPriceSub,
+          uppersqrtPriceSub,
+          liquiditySub,
+          false
+        );
+      }
+      const isClosed = JSBI.equal(
+        JSBI.add(amount0 as JSBI, amount1 as JSBI),
+        JSBI.BigInt(0)
+      );
+      const token0Amount =
+        amount0 &&
+        ethers.utils
+          .formatUnits(amount0.toString(), token0.decimals)
+          .slice(0, 10);
+      const token1Amount =
+        amount1 &&
+        ethers.utils
+          .formatUnits(amount1.toString(), token1.decimals)
+          .slice(0, 10);
+
+      const token0CollectedFee =
+        amount0 &&
+        ethers.utils
+          .formatUnits(amount0.toString(), token0.decimals)
+          .slice(0, 10);
+      const token1CollectedFee =
+        amount0 &&
+        ethers.utils
+          .formatUnits(amount0.toString(), token1.decimals)
+          .slice(0, 10);
+
+      const token0MarketPrice = await fetchMarketPrice(token0.name);
+      const token1MarketPrice = await fetchMarketPrice(token1.name);
+      const token0Value = token0MarketPrice * Number(token0Amount);
+      const token1Value = token1MarketPrice * Number(token1Amount);
+      const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
+      const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
+      const token0FeeValue = token0MarketPrice * token0FeeAmount;
+      const token1FeeValue = token1MarketPrice * token1FeeAmount;
+      const feeValue = token0FeeValue + token1FeeValue;
+      const inRange =
+        tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
+
+      return {
+        id,
+        fee: Number(feeTier),
+        token0Amount: Number(token0Amount),
+        token1Amount: Number(token1Amount),
+        token0CollectedFee: token0CollectedFee.toString(),
+        token1CollectedFee: token1CollectedFee.toString(),
+        token0CollectedFeeBN: amount0,
+        token1CollectedFeeBN: amount1,
+        token0MarketPrice,
+        token1MarketPrice,
+        inRange,
+        isClosed,
+        token0Value: isNaN(token0Value) ? 0 : token0Value,
+        token1Value: isNaN(token1Value) ? 0 : token1Value,
+        token0FeeValue,
+        token1FeeValue,
+        feeValue: isNaN(feeValue) ? 0 : feeValue,
+        chainId,
+        owner,
+        hasETH: false,
+        liquidity: "",
+        rawPositionInfo: "",
+        sqrtPriceX96: "",
+        tickCurrent: 0,
+        tickLower: 0,
+        tickUpper: 0,
+        token0: new Token(
+          chainId,
+          token0.id,
+          Number(token0.decimals),
+          token0.symbol === "WETH" ? "ETH" : token0.symbol,
+          token0.name
+        ),
+        token1: new Token(
+          chainId,
+          token1.id,
+          Number(token1.decimals),
+          token1.symbol === "WETH" ? "ETH" : token1.symbol,
+          token1.name
+        ),
+        rawData: position,
+      };
+    });
+  }
+  const result = await Promise.all(promises.map((func) => func()));
+  return result;
+};
 
 //logic through subGraph
 export function useGetPositionIds(): {
@@ -70,149 +208,6 @@ export function useGetPositionIds(): {
     client: otherLayerClient,
   });
 
-  const makePositionDatas = useCallback(
-    async (positionData: any[], chainId: number) => {
-      const positions: PoolCardDetail[] = [];
-      if (!isSupportedChain) return positions;
-
-      const batchSize = positionData.length;
-      const promises: any[] = [];
-
-      for (let i = 0; i < batchSize; i++) {
-        promises.push(async () => {
-          const position = positionData[i];
-          const { id, owner, pool } = position;
-          const { token0, token1, feeTier } = pool;
-
-          //logic to calculate remained tokens amounts
-          let amount0;
-          let amount1;
-          const slot0TickSub = parseInt(position.pool.tick);
-          const tickLowerSub = parseInt(position.tickLower.tickIdx);
-          const tickUpperSub = parseInt(position.tickUpper.tickIdx);
-          const sqrtPriceSub = JSBI.BigInt(position.pool.sqrtPrice);
-          const uppersqrtPriceSub = TickMath.getSqrtRatioAtTick(tickUpperSub);
-          const lowersqrtPriceSub = TickMath.getSqrtRatioAtTick(tickLowerSub);
-          const liquiditySub = JSBI.BigInt(position.liquidity);
-          if (slot0TickSub < tickLowerSub) {
-            amount0 = SqrtPriceMath.getAmount0Delta(
-              lowersqrtPriceSub,
-              uppersqrtPriceSub,
-              liquiditySub,
-              false
-            );
-            amount1 = JSBI.BigInt(0);
-          } else if (slot0TickSub < tickUpperSub) {
-            amount0 = SqrtPriceMath.getAmount0Delta(
-              sqrtPriceSub,
-              uppersqrtPriceSub,
-              liquiditySub,
-              false
-            );
-            amount1 = SqrtPriceMath.getAmount1Delta(
-              lowersqrtPriceSub,
-              sqrtPriceSub,
-              liquiditySub,
-              false
-            );
-          } else {
-            amount0 = JSBI.BigInt(0);
-            amount1 = SqrtPriceMath.getAmount1Delta(
-              lowersqrtPriceSub,
-              uppersqrtPriceSub,
-              liquiditySub,
-              false
-            );
-          }
-          const isClosed = JSBI.equal(
-            JSBI.add(amount0 as JSBI, amount1 as JSBI),
-            JSBI.BigInt(0)
-          );
-          const token0Amount =
-            amount0 &&
-            ethers.utils
-              .formatUnits(amount0.toString(), token0.decimals)
-              .slice(0, 10);
-          const token1Amount =
-            amount1 &&
-            ethers.utils
-              .formatUnits(amount1.toString(), token1.decimals)
-              .slice(0, 10);
-
-          const token0CollectedFee =
-            amount0 &&
-            ethers.utils
-              .formatUnits(amount0.toString(), token0.decimals)
-              .slice(0, 10);
-          const token1CollectedFee =
-            amount0 &&
-            ethers.utils
-              .formatUnits(amount0.toString(), token1.decimals)
-              .slice(0, 10);
-
-          const token0MarketPrice = await fetchMarketPrice(token0.name);
-          const token1MarketPrice = await fetchMarketPrice(token1.name);
-          const token0Value = token0MarketPrice * Number(token0Amount);
-          const token1Value = token1MarketPrice * Number(token1Amount);
-          const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
-          const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-          const token0FeeValue = token0MarketPrice * token0FeeAmount;
-          const token1FeeValue = token1MarketPrice * token1FeeAmount;
-          const feeValue = token0FeeValue + token1FeeValue;
-          const inRange =
-            tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
-
-          return {
-            id,
-            fee: Number(feeTier),
-            token0Amount: Number(token0Amount),
-            token1Amount: Number(token1Amount),
-            token0CollectedFee: token0CollectedFee.toString(),
-            token1CollectedFee: token1CollectedFee.toString(),
-            token0CollectedFeeBN: amount0,
-            token1CollectedFeeBN: amount1,
-            token0MarketPrice,
-            token1MarketPrice,
-            inRange,
-            isClosed,
-            token0Value: isNaN(token0Value) ? 0 : token0Value,
-            token1Value: isNaN(token1Value) ? 0 : token1Value,
-            token0FeeValue,
-            token1FeeValue,
-            feeValue: isNaN(feeValue) ? 0 : feeValue,
-            chainId,
-            owner,
-            hasETH: false,
-            liquidity: "",
-            rawPositionInfo: "",
-            sqrtPriceX96: "",
-            tickCurrent: 0,
-            tickLower: 0,
-            tickUpper: 0,
-            token0: new Token(
-              chainId,
-              token0.id,
-              Number(token0.decimals),
-              token0.symbol === "WETH" ? "ETH" : token0.symbol,
-              token0.name
-            ),
-            token1: new Token(
-              chainId,
-              token1.id,
-              Number(token1.decimals),
-              token1.symbol === "WETH" ? "ETH" : token1.symbol,
-              token1.name
-            ),
-            rawData: position,
-          };
-        });
-      }
-      const result = await Promise.all(promises.map((func) => func()));
-      return result;
-    },
-    []
-  );
-
   const [positions, setPositions] = useRecoilState(ATOM_positions);
   // const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
   const [account, setAccount] = useState<string | undefined>(undefined);
@@ -231,6 +226,9 @@ export function useGetPositionIds(): {
           // setPositionsLoading(true);
           setPositions(undefined);
         }
+
+        if (!isSupportedChain) return setPositions([]);
+
         try {
           const result = await Promise.all([
             makePositionDatas(data.positions, connectedChainId),

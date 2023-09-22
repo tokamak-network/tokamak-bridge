@@ -88,6 +88,8 @@ export default function StatusTx(props: {
     if (tx.l2timeStamp) {
       const getDuration = setInterval(() => {        
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
+        // console.log('startDate',startDate);
+        
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
@@ -101,7 +103,7 @@ export default function StatusTx(props: {
       }, 1000);
       return () => clearInterval(getDuration);
     }
-  }, []);
+  }, [tx.l2timeStamp]);
 
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
