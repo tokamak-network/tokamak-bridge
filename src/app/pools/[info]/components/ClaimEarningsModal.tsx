@@ -14,6 +14,7 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
@@ -37,17 +38,22 @@ export default function ClaimEarningsModal() {
   >(undefined);
 
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { layer } = useConnectedNetwork();
   const { blockNumber } = useBlockNum();
-
   useEffect(() => {
-    const fetchGasPrice = async () => {
-      const estimatedGas = await estimateGasToCollect();
-      setEstimatedGasUsage(
-        smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
-      );
+    const fetchData = async () => {
+      if (isOpen === "collectFee") {
+        const estimatedGas = await estimateGasToCollect();
+        return setEstimatedGasUsage(
+          smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
+        );
+      }
     };
-    if (isOpen === "collectFee") fetchGasPrice();
-  }, [blockNumber, isOpen]);
+    fetchData();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
@@ -178,7 +184,9 @@ export default function ClaimEarningsModal() {
               <Flex justifyContent="space-between" pt="8px">
                 <Flex justifyContent="start" alignItems="center">
                   <Text fontSize={14} color="#A0A3AD">
-                    Estimated gas fees
+                    {layer === "L1"
+                      ? "Estimated gas fee "
+                      : "Estimated L2 execution fee"}
                   </Text>
                 </Flex>
                 <Flex justifyContent="end">

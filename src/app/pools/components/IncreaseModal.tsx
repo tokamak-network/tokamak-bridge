@@ -27,7 +27,6 @@ export default function IncreaseModal() {
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const [gasToAdd, setGasToAdd] = useState<number | undefined>(undefined);
   const { blockNumber } = useBlockNum();
-  const gasFeeToIncrease = useRecoilValue(estimatedGasFee);
   const { info } = usePositionInfo();
 
   useEffect(() => {
@@ -84,11 +83,7 @@ export default function IncreaseModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={poolModal}
-          estimatedGas={
-            poolModal === "addLiquidity"
-              ? commafy(gasToAdd, 2)
-              : commafy(gasFeeToIncrease, 2)
-          }
+          estimatedGas={commafy(gasToAdd)}
         />
         <PriceRange info={info} />
         <Flex w={"100%"}>

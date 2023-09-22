@@ -120,7 +120,7 @@ export default function UnclaimedEarnings(props: {
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
-              {`$${commafy(totalMarketPrice, 2)}`}
+              {`$${commafy(totalMarketPrice, 2, undefined, "0.00")}`}
             </Text>
             <Flex alignItems={"center"} color="#A0A3AD">
               <Text fontSize={"12px"}>

@@ -13,6 +13,7 @@ import usePreview from "@/hooks/modal/usePreviewModal";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
+import useConnectedNetwork from "@/hooks/network";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -59,6 +60,7 @@ export default function Range(props: {
   const { poolModal } = usePreview();
   const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
   const { inToken, outToken } = useInOutTokens();
+  const { layer } = useConnectedNetwork();
 
   return (
     <Flex
@@ -133,7 +135,11 @@ export default function Range(props: {
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
             <Flex justifyContent={"space-between"}>
-              <Text fontSize={"14px"}>Estimated gas fee</Text>
+              <Text fontSize={"14px"}>
+                {layer === "L1"
+                  ? "Estimated gas fee "
+                  : "Estimated L2 execution fee"}
+              </Text>
               <Text fontSize={"16px"} fontWeight={500}>
                 {`$${estimatedGas}`}
               </Text>
