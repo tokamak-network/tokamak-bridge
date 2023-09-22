@@ -63,49 +63,21 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   }, [ref?.current]);
 
   useEffect(() => {
-    // const getTxs = async () => {
-    //   if (isConnectedToMainNetwork !== undefined && crossMessenger !== undefined) {
-    //     const txs = await fetchUserTransactions(
-    //       address,
-    //       isConnectedToMainNetwork,
-    //       crossMessenger
-    //     );
+    const getTxs = async () => {
+      if (isConnectedToMainNetwork !== undefined && crossMessenger !== undefined) {
+        const txs = await fetchUserTransactions(
+          address,
+          isConnectedToMainNetwork,
+        );
 
-    //     const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
-    //       return {
-    //         ...tx,
-    //         event: "deposit",
-    //       };
-    //     });
-
-    //     const wthTx = txs?.formattedL1WithdrawResults.map((tx: any) => {
-    //       return {
-    //         ...tx,
-    //         event: "withdraw",
-    //       };
-    //     });
-
-    //     const allTxs = depTx
-    //       .concat(wthTx)
-    //       .sort(
-    //         (tx1: L1TxType, tx2: L1TxType) =>
-    //           Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
-    //       );
-
-    //     setPreLoadData(allTxs);
-    //   }
-    // };
-
-    // getTxs();
-    if (txList !== null) {
-       const depTx = txList?.formattedL1DepositResults.map((tx: any) => {
+        const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
           return {
             ...tx,
             event: "deposit",
           };
         });
 
-        const wthTx = txList?.formattedL1WithdrawResults.map((tx: any) => {
+        const wthTx = txs?.formattedL1WithdrawResults.map((tx: any) => {
           return {
             ...tx,
             event: "withdraw",
@@ -118,8 +90,37 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             (tx1: L1TxType, tx2: L1TxType) =>
               Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
           );
-      setPreLoadData(allTxs);
-    }
+
+        setPreLoadData(allTxs);
+      }
+    };
+
+    getTxs();
+
+
+    // if (txList !== null) {
+    //    const depTx = txList?.formattedL1DepositResults.map((tx: any) => {
+    //       return {
+    //         ...tx,
+    //         event: "deposit",
+    //       };
+    //     });
+
+    //     const wthTx = txList?.formattedL1WithdrawResults.map((tx: any) => {
+    //       return {
+    //         ...tx,
+    //         event: "withdraw",
+    //       };
+    //     });
+
+    //     const allTxs = depTx
+    //       .concat(wthTx)
+    //       .sort(
+    //         (tx1: L1TxType, tx2: L1TxType) =>
+    //           Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
+    //       );
+    //   setPreLoadData(allTxs);
+    // }
   }, [isConnectedToMainNetwork, address, crossMessenger, txList]);
 
   const filteredTx = useMemo(() => {

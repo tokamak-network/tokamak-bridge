@@ -25,13 +25,11 @@ import checkTodo from "assets/icons/check_todo.svg";
 import CalendarIcon from "assets/icons/Google_Calendar_icon.svg";
 import "./CalendarButton.css";
 import { atcb_action } from "add-to-calendar-button";
-import { TokenSymbol } from "../image/TokenSymbol";
 import { useState, useEffect, useMemo } from "react";
 import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
 import commafy from "@/utils/trim/commafy";
 import Step2 from "../history/modalComponents/Step2";
 import {
-  add,
   getTime,
   getUnixTime,
   intervalToDuration,
@@ -56,7 +54,7 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { FullWithTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
-import { confirmWithdrawData,confirmWithdrawStats} from "@/recoil/modal/atom";
+import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 
 type TxType = FullWithTx & {
   inTokenAmount: string;
@@ -65,11 +63,13 @@ type TxType = FullWithTx & {
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
 
   const [, setClaimTx] = useRecoilState(claimTx);
   const providers = useGetTxLayers();
   const tx = withdrawData.modalData;
+  const [status, setStatus] = useState(tx?.currentStatus);
   const { outToken } = useInOutTokens();
   const { amountOut } = useAmountOut();
   const { onClick } = useCallBridgeSwapAction();
@@ -82,7 +82,55 @@ export default function ConfirmWithdraw() {
 
   const { data: feeData } = useFeeData({
     chainId: 1,
-  });  
+  });
+
+  useEffect(() => {
+    if (tx !== null) {
+      const timeStamp = tx.l2timeStamp;
+
+      const status2Duration = isConnectedToMainNetwork ? 300 : 120;
+      const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
+      const status2EndTimestamp = timeStamp + status2Duration;
+      const status4EndTimestamp = timeStamp + status4Duration;
+
+      // const getStatus = setInterval(() => {
+      //   const today = new Date();
+      //   const nowTime = getTime(today);
+      //    if (nowTime > status4EndTimestamp * 1000) {
+      //   const receipt = await crossMessenger.getMessageReceipt(resolved);
+      //   if (receipt !== null) {
+      //     currentStatus = 6;
+      //     l1receipt = receipt;
+      //   } else {
+      //     currentStatus = 5;
+      //   }
+      // } else if (
+      //   nowTime < status4EndTimestamp * 1000 &&
+      //   nowTime > status2EndTimestamp * 1000
+      // ) {
+      //   currentStatus = 4;
+      // } else {
+      //   currentStatus = 2;
+      // }
+
+      // }, 1000);
+      // return () => clearInterval(getStatus);
+      // setStatus(tx?.currentStatus);
+    }
+  }, [tx]);
+
+  const handleCloseModal = () => {
+    setWithdrawStatus({
+      isOpen: false,
+    });
+    setWithdrawData({
+      modalData: null,
+    });
+    setStatus(0);
+    onClose;
+  };
+
+  console.log("status", status);
 
   const check = (progress: string) => {
     switch (progress) {
@@ -155,8 +203,7 @@ export default function ConfirmWithdraw() {
         border={"1px solid #313442"}
         borderRadius={"12px"}
         flexDir={"column"}
-        alignItems={"center"}
-      >
+        alignItems={"center"}>
         <Flex w="56px" h="56px">
           <TokenSymbolWithNetwork
             tokenSymbol={
@@ -178,8 +225,7 @@ export default function ConfirmWithdraw() {
           mt={"3px"}
           fontSize={"14px"}
           fontWeight={600}
-          color={"#A0A3AD"}
-        >
+          color={"#A0A3AD"}>
           ${" "}
           {inToken?.tokenSymbol && usdPrice !== undefined
             ? commafy(Number(usdPrice) * Number(inToken?.parsedAmount), 2)
@@ -201,8 +247,7 @@ export default function ConfirmWithdraw() {
         borderRadius={"12px"}
         flexDir={"column"}
         justifyContent={"center"}
-        alignItems={"center"}
-      >
+        alignItems={"center"}>
         <Image src={ETH} alt="ETH" height={40} width={40} />
         {/* <TokenSymbol
           tokenType={
@@ -225,8 +270,7 @@ export default function ConfirmWithdraw() {
         justifyContent={"space-between"}
         alignItems={"center"}
         // border={"1px solid red"}
-        w="100%"
-      >
+        w="100%">
         <Flex>
           <Image src={check(props.progress).check} alt="check" />
           <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
@@ -240,8 +284,7 @@ export default function ConfirmWithdraw() {
               href={`${providers.l2BlockExplorer}/tx/${tx.l2txHash}`}
               textDecor={"none"}
               _hover={{ textDecor: "none" }}
-              display={"flex"}
-            >
+              display={"flex"}>
               <Text mr="6px" fontSize={"14px"} color={"#FFFFFF"}>
                 Transaction
               </Text>
@@ -253,8 +296,7 @@ export default function ConfirmWithdraw() {
             <Text
               mr="6px"
               fontSize={"14px"}
-              color={check(props.progress).color}
-            >
+              color={check(props.progress).color}>
               {Number(gasCostUS) < 0.01 ? `< $0.01` : `~ $ ${gasCostUS}`}
             </Text>
 
@@ -372,8 +414,7 @@ export default function ConfirmWithdraw() {
         justifyContent={"space-between"}
         alignItems={"center"}
         // border={"1px solid red"}
-        w="100%"
-      >
+        w="100%">
         <Flex>
           <Image src={check(props.progress).check} alt="check" />
           <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
@@ -385,8 +426,7 @@ export default function ConfirmWithdraw() {
             <Text
               mr="6px"
               fontSize={"14px"}
-              color={check(props.progress).color}
-            >
+              color={check(props.progress).color}>
               {" "}
               {duration.days !== undefined && duration.days < 10 ? "0" : ""}
               {duration.days}:
@@ -452,8 +492,7 @@ export default function ConfirmWithdraw() {
         justifyContent={"space-between"}
         alignItems={"center"}
         // border={"1px solid red"}
-        w="100%"
-      >
+        w="100%">
         <Flex>
           <Image src={check(props.progress).check} alt="check" />
           <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
@@ -465,8 +504,7 @@ export default function ConfirmWithdraw() {
             <Text
               mr="6px"
               fontSize={"14px"}
-              color={check(props.progress).color}
-            >
+              color={check(props.progress).color}>
               {" "}
               ~ ${relayGasCost}
             </Text>
@@ -502,8 +540,7 @@ export default function ConfirmWithdraw() {
         w="364px"
         h="218px"
         px="12px"
-        py="8px"
-      >
+        py="8px">
         <Step1
           progress={
             props.tx === undefined || props.tx === null ? "inProgress" : "done"
@@ -520,7 +557,6 @@ export default function ConfirmWithdraw() {
               ? "done"
               : "todo"
           }
-   
           timeStamp={tx ? tx.l2timeStamp : undefined}
         />
         <Dots
@@ -590,14 +626,12 @@ export default function ConfirmWithdraw() {
           onChange={(e) => {
             const checkValue = e.target.checked;
             setIsConfirm(checkValue);
-          }}
-        ></Checkbox>
+          }}></Checkbox>
         <Text
           lineHeight={"20px"}
           fontSize={13}
           fontWeight={500}
-          color={isConfirm ? "#fff" : "#A0A3AD"}
-        >
+          color={isConfirm ? "#fff" : "#A0A3AD"}>
           I understand that I have to send a transaction on Ethereum to "Claim"
           my withdraw after 7 days.{" "}
         </Text>
@@ -613,8 +647,7 @@ export default function ConfirmWithdraw() {
         cursor={"pointer"}
         w="100%"
         h="70px"
-        onClick={() => atcb_action(config)}
-      >
+        onClick={() => atcb_action(config)}>
         <Text h="19px" fontSize={"12px"} textAlign={"center"}>
           Set calendar reminder to claim withdraw on Ethereum
         </Text>
@@ -625,8 +658,7 @@ export default function ConfirmWithdraw() {
           borderRadius={"8px"}
           border={"1px solid #A0A3AD"}
           justifyContent={"center"}
-          alignItems={"center"}
-        >
+          alignItems={"center"}>
           <Text fontSize={"12px"} mr="8px">
             Add to Google Calendar
           </Text>
@@ -646,7 +678,7 @@ export default function ConfirmWithdraw() {
         h="48px"
         _active={{}}
         _hover={{}}
-        color={'#fff'}
+        color={"#fff"}
         isDisabled={
           txData?.hash.transactionHash !== undefined &&
           txData?.hash.txSort === "Claim"
@@ -661,9 +693,8 @@ export default function ConfirmWithdraw() {
           !tx
             ? () => {
                 onClick();
-                setWithdrawStatus({ isOpen: false,})
+                setWithdrawStatus({ isOpen: false });
                 setWithdrawData({
-                
                   modalData: null,
                 });
               }
@@ -671,15 +702,14 @@ export default function ConfirmWithdraw() {
                 setClaimTx(tx);
                 claim(tx);
               }
-        }
-      >
+        }>
         {tx ? "Claim Withdraw" : "Initiate Withdraw"}
       </Button>
     );
   };
 
   return (
-    <Modal isOpen={withdrawStatus.isOpen} onClose={onClose} isCentered>
+    <Modal isOpen={withdrawStatus.isOpen} onClose={handleCloseModal} isCentered>
       <ModalOverlay />
       <ModalContent
         w="404px"
@@ -687,26 +717,14 @@ export default function ConfirmWithdraw() {
         alignItems={"center"}
         borderRadius={"16px"}
         bgColor={"#1f2128"}
-        m={0}
-      >
+        m={0}>
         <Flex w={"100%"} h={"100%"} flexDir={"column"} p="20px" rowGap={"16px"}>
           <Flex>
             <Text fontWeight={500} fontSize={"20px"} w="100%">
               Confirm Withdraw
             </Text>
             <Flex w={"100%"} justifyContent={"flex-end"} mt={"-14px"}>
-              <CloseButton
-                onClick={() => {
-                  // setClaimTx(null)
-                  setWithdrawStatus({
-                    isOpen: false,
-                  })
-                  setWithdrawData({
-                   
-                    modalData: null,
-                  });
-                }}
-              />
+              <CloseButton onClick={handleCloseModal} />
             </Flex>
           </Flex>
           <Flex alignItems={"center"}>
@@ -721,8 +739,7 @@ export default function ConfirmWithdraw() {
               ml={"-10px"}
               bg={"#1F2128"}
               zIndex={10}
-              mr={"-10px"}
-            >
+              mr={"-10px"}>
               <Image src={ARROW_ICON} alt="ARROW_ICON" />
             </Flex>
             <EthereumContainer />

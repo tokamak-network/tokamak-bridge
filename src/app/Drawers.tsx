@@ -14,26 +14,26 @@ export default function Drawers() {
   const { address } = useAccount();
 const [txList, setTxList] = useRecoilState(txListStatus)
 
-  useEffect(() => {
-    const getTxs = async () => {
-      if (isConnectedToMainNetwork !== undefined && crossMessenger !== undefined) {
-        const txs = await fetchUserTransactions(
-          address,
-          isConnectedToMainNetwork,
-          crossMessenger
-        );
-        console.log('txs',txs);
+  // useEffect(() => {
+  //   const getTxs = async () => {
+  //     if (isConnectedToMainNetwork !== undefined && crossMessenger !== undefined) {
+  //       const txs = await fetchUserTransactions(
+  //         address,
+  //         isConnectedToMainNetwork,
+  //         crossMessenger
+  //       );
+  //       console.log('txs',txs);
     
-        setTxList(txs)
+  //       setTxList(txs)
          
-      }
-    };
+  //     }
+  //   };
 
    
-    getTxs();
-  }, [isConnectedToMainNetwork, address,crossMessenger]);
+  //   getTxs();
+  // }, [isConnectedToMainNetwork, address,crossMessenger]);
 
-  console.log('txList',txList);
+  // console.log('txList',txList);
   
   return <AccountHistory />;
 }

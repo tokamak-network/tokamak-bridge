@@ -9,8 +9,7 @@ const formatAddress = (address: string) => {
 
 export const fetchUserTransactions = async (
   account: string | undefined,
-  isConnectedToMainnet: boolean,
-  crossMessenger: any
+  isConnectedToMainnet: boolean
 ) => {
   if (account) {
     const formattedAddress = formatAddress(account);
@@ -138,22 +137,13 @@ export const fetchUserTransactions = async (
 
     const withdrawTxsL2 = withdrawTx.data.data.sentMessages;
     const depositTcxsL2 = withdrawTx.data.data.depositFinalizeds;
-    const formattedWithdraw = await Promise.all(
-      withdrawTxsL2.map(async (tx: SentMessages) => {
-        const messageTxIndex = Number(tx.blockNumber) - 1;
-        const stateBatchAppendedEvent =
-          crossMessenger &&
-          (await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
-            messageTxIndex
-          ));
-        let copy = {
-          ...tx,
-          event: "withdraw",
-          stateBatchAppendedEvent:stateBatchAppendedEvent
-        };
-        return copy;
-      })
-    );
+    const formattedWithdraw = withdrawTxsL2.map((tx: SentMessages) => {
+      let copy = {
+        ...tx,
+        event: "withdraw",
+      };
+      return copy;
+    });
 
     const formattedDeposit = depositTcxsL2.map((tx: SentMessages) => {
       let copy = {
@@ -199,7 +189,6 @@ export const fetchUserTransactions = async (
     const formattedL1DepositResults =
       formattedL1DepositResultsUnfiltered.filter((tx: any) => tx !== undefined);
     const formattedL1WithdrawResults = allWithL1Txs;
-
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,
@@ -208,4 +197,3 @@ export const fetchUserTransactions = async (
     };
   }
 };
-
