@@ -73,18 +73,18 @@ export const estimatedGasUsage = atom<number | undefined>({
 //   mapResponse: (data) => data.getTokenMarketData?.current_price,
 // });
 
-// export const estimatedGasFee = selector<number | undefined>({
-//   key: "estimatedGasFee",
-//   get: async ({ get }) => {
-//     const searchedToken = get(estimatedGasUsage);
-//     // const ethMarketPrice = get(ethPrice);
+export const estimatedGasFee = selector<number | undefined>({
+  key: "estimatedGasFee",
+  get: async ({ get }) => {
+    const searchedToken = get(estimatedGasUsage);
+    // const ethMarketPrice = get(ethPrice);
 
-//     if (searchedToken) {
-//       return undefined;
-//     }
-//     return undefined;
-//   },
-// });
+    if (searchedToken) {
+      return undefined;
+    }
+    return undefined;
+  },
+});
 
 export const transactionData = atom<any[]>({
   key: "transactionData",
