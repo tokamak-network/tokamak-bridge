@@ -49,7 +49,11 @@ export default function InfoTitle(props: { info: PoolCardDetail | undefined }) {
           </Flex>
         </Flex>
       </Flex>
-      <RangeText inRange={info?.inRange ?? false} style={{ fontSize: 14 }} />
+      <RangeText
+        inRange={info?.inRange ?? false}
+        isClosed={info.isClosed}
+        style={{ fontSize: 14 }}
+      />
     </Flex>
   );
 }
