@@ -12,13 +12,15 @@ export function getRatio(
       return 0;
     }
 
-    const a = Number.parseFloat(lower.toSignificant(15));
-    const b = Number.parseFloat(upper.toSignificant(15));
-    const c = Number.parseFloat(current.toSignificant(15));
+    const lowerN = Number.parseFloat(lower.toSignificant(15));
+    const upperN = Number.parseFloat(upper.toSignificant(15));
+    const currentN = Number.parseFloat(current.toSignificant(15));
 
     const ratio = Math.floor(
       (1 /
-        ((Math.sqrt(a * b) - Math.sqrt(b * c)) / (c - Math.sqrt(b * c)) + 1)) *
+        ((Math.sqrt(lowerN * upperN) - Math.sqrt(upperN * currentN)) /
+          (currentN - Math.sqrt(upperN * currentN)) +
+          1)) *
         100
     );
 

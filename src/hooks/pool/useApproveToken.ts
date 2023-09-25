@@ -9,6 +9,7 @@ import { TokenInfo } from "@/types/token/supportedToken";
 import { useIncreaseAmount } from "./useIncreaseAmount";
 import { useV3MintInfo } from "./useV3MintInfo";
 import { ethers } from "ethers";
+import { useGetMode } from "../mode/useGetMode";
 
 export function useAllowance(params: {
   tokenAddress: Hash | undefined;
@@ -54,6 +55,7 @@ export function useApproveToken() {
   const { UNISWAP_CONTRACT } = useContract();
   const { invertPrice } = useV3MintInfo();
   const { token0Input, token1Input } = useIncreaseAmount();
+  const { subMode } = useGetMode();
 
   const contractAddress = UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER;
 
@@ -72,14 +74,22 @@ export function useApproveToken() {
   const inTokenApproved = useAllowance({
     tokenAddress: inToken?.tokenAddress as Hash | undefined,
     contractAddress,
-    inputTokenAmount: inTokenAmount === 0 ? undefined : inTokenAmount,
+    inputTokenAmount: subMode.add
+      ? inTokenAmount === 0
+        ? undefined
+        : inTokenAmount
+      : inToken?.amountBN,
     token: inToken,
   });
 
   const outTokenApproved = useAllowance({
     tokenAddress: outToken?.tokenAddress as Hash | undefined,
     contractAddress,
-    inputTokenAmount: outTokenAmount === 0 ? undefined : outTokenAmount,
+    inputTokenAmount: subMode.add
+      ? outTokenAmount === 0
+        ? undefined
+        : outTokenAmount
+      : outToken?.amountBN,
     token: outToken,
   });
 

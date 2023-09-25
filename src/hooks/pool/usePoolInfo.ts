@@ -150,9 +150,13 @@ export function usePoolInfo() {
 
   const ratio = useMemo(() => {
     return priceLower && pool && priceUpper
-      ? getRatio(priceLower, pool?.token0Price, priceUpper)
+      ? getRatio(
+          inverted ? priceUpper.invert() : priceLower,
+          pool?.token0Price,
+          inverted ? priceLower.invert() : priceUpper
+        )
       : undefined;
-  }, [pool, priceLower, priceUpper]);
+  }, [pool, priceLower, priceUpper, inverted]);
 
   const currentPrice = useMemo(() => {
     if (token0 && token1 && tickCurrent)
