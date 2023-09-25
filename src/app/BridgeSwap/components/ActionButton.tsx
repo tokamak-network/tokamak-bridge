@@ -84,7 +84,7 @@ export default function ActionButton() {
 
   return (
     <Button
-      w={"100%"}
+      w={"495px"}
       h={"48px"}
       fontSize={16}
       fontWeight={600}

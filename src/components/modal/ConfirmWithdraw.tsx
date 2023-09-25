@@ -237,7 +237,7 @@ export default function ConfirmWithdraw() {
           <Flex>
             <Link
               target="_blank"
-              href={`${providers.l2BlockExplorer}/tx/${tx.l2txHash}`}
+              href={`${providers.l2BlockExplorer}tx/${tx.l2txHash}`}
               textDecor={"none"}
               _hover={{ textDecor: "none" }}
               display={"flex"}
