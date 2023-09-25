@@ -298,7 +298,6 @@ export const Brush = ({
                   0,
                   xScale(localBrushExtent[0])
                 )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
-                onClick={() => setOnWestHandle(true)}
               >
                 <g>
                   <Handle

@@ -526,7 +526,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
         return setPositions(undefined);
       }
     });
-  }, [blockNumber, connectedChainId, address, txLog, positionId]);
+  }, [blockNumber, txLog, positionId]);
 
   return { positions };
 }
