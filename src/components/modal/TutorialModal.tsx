@@ -125,7 +125,7 @@ export default function TutorialModal() {
   }, [constraintsRef?.current, setSize]);
   
   return (
-    <Modal onClose={() => {}} isOpen={isOpen} isCentered>
+    <Modal onClose={() => {}} isOpen={isOpen} >
       <ModalOverlay
         bg={"rgba(0, 0, 0, 0)"}
         mt={bgs[currentStep].px}
@@ -141,6 +141,7 @@ export default function TutorialModal() {
       />
 
       <ModalContent
+      top={'30%'}
         as={motion.div}
         drag
         dragElastic={{top: 0, bottom: 0.3}}
