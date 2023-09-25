@@ -21,6 +21,7 @@ import { Bound } from "@/types/pool/pool";
 import { useRecoilValue } from "recoil";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
 import { useGetMode } from "../mode/useGetMode";
+import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 
 function getPriceOrderingFromPositionForUI(position?: Position): {
   priceLower?: Price<Token, Token>;
@@ -102,8 +103,8 @@ const useInverter = ({
   };
 };
 
-export function usePoolInfo() {
-  const { info } = usePositionInfo();
+export function usePoolInfo(params: { info: PoolCardDetail | undefined }) {
+  const info = params?.info;
   const { subMode } = useGetMode();
 
   if (info === undefined || subMode.add === true) {

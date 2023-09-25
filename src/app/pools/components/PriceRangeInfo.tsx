@@ -2,7 +2,7 @@ import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
-import { Box, Flex, Text, Tooltip } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import SWITCHBUTTON_INFO_IMAGE from "assets/icons/pool/switch_info.svg";
 
@@ -16,13 +16,9 @@ import {
   maxPriceForAddModal,
   minPriceForAddModal,
 } from "@/recoil/pool/setPoolPosition";
-import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
-import commafy from "@/utils/trim/commafy";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useMemo } from "react";
 import { tickToPrice } from "@uniswap/v3-sdk";
-import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
@@ -139,7 +135,6 @@ export const CurrentPriceInfo = () => {
   const { invertPrice } = useV3MintInfo();
 
   const { poolModal } = usePreview();
-  const price = usePriceTickConversion();
   const startingPrice = useRecoilState(initialPrice);
 
   const manuallyInverted = useRecoilValue(ATOM_manuallyInverted);

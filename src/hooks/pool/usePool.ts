@@ -1,6 +1,4 @@
-import { Interface } from "@ethersproject/abi";
 import { BigintIsh, Currency, Token } from "@uniswap/sdk-core";
-import IUniswapV3PoolStateJSON from "@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json";
 import { computePoolAddress } from "@uniswap/v3-sdk";
 import { FeeAmount, Pool } from "@uniswap/v3-sdk";
 import JSBI from "jsbi";
@@ -11,12 +9,9 @@ import {
   V3_CORE_FACTORY_ADDRESSES,
 } from "@/constant/contracts/uniswap";
 import useConnectedNetwork from "../network";
-import { useAccount, useContractRead } from "wagmi";
-import useBlockNum from "../network/useBlockNumber";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { ethers } from "ethers";
 import { useProvier } from "../provider/useProvider";
-import { FACTORY_ADDRESS } from "@uniswap/v3-sdk";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { PoolState } from "@/types/pool/pool";
@@ -49,7 +44,7 @@ export function usePoolData(poolAddress: string | undefined) {
 
   useEffect(() => {
     const fetchPoolData = async () => {
-      if (poolAddress) {
+      if (poolAddress && provider) {
         const poolContract = new ethers.Contract(
           poolAddress,
           IUniswapV3PoolABI.abi,
@@ -67,14 +62,21 @@ export function usePoolData(poolAddress: string | undefined) {
         };
         return setPoolData(result);
       }
-      return setPoolData(undefined);
     };
-
     fetchPoolData().catch((e) => {
       console.log("**fetchPoolData err**");
       setPoolData(undefined);
-      // console.log(e);
     });
+    // const interval = setInterval(
+    //   () =>
+    //     fetchPoolData().catch((e) => {
+    //       console.log("**fetchPoolData err**");
+    //       setPoolData(undefined);
+    //       // console.log(e);
+    //     }),
+    //   1000
+    // );
+    // return () => clearInterval(interval);
   }, [poolAddress, provider]);
 
   return poolData;
@@ -191,7 +193,7 @@ export function usePools(
       (value) =>
         value && PoolCache.getPoolAddress(v3CoreFactoryAddress, ...value, layer)
     );
-  }, [chainId, poolTokens, layer]);
+  }, [chainId, poolTokens, layer, connectedChainId]);
 
   const pooldata = usePoolData(poolAddresses[0]);
 
@@ -244,7 +246,7 @@ export function usePool(
     () => [
       [token0 ?? inToken?.token, token1 ?? outToken?.token, fee ?? feeTier],
     ],
-    [inToken, outToken, feeTier]
+    [token0, token1, fee, inToken, outToken, feeTier]
   );
 
   //@ts-ignore
