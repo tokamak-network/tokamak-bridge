@@ -117,16 +117,17 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const actionDisabled = info?.owner !== address;
 
   const { ratio, inverted } = usePoolInfo();
-  const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
-  const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
+  // const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
+  // const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setToken0Ratio(ratio);
-      setToken1Ratio(ratio !== undefined ? 100 - ratio : undefined);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [ratio]);
+  const token0Ratio = useMemo(() => {
+    if (info?.isClosed) return undefined;
+    return ratio;
+  }, [ratio, info?.isClosed]);
+  const token1Ratio = useMemo(() => {
+    if (info?.isClosed) return undefined;
+    return ratio !== undefined ? 100 - ratio : undefined;
+  }, [ratio, info?.isClosed]);
 
   if (info === undefined) {
     return null;
