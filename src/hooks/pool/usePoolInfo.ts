@@ -103,9 +103,9 @@ const useInverter = ({
   };
 };
 
-export function usePoolInfo(params: { info: PoolCardDetail | undefined }) {
-  const info = params?.info;
+export function usePoolInfo() {
   const { subMode } = useGetMode();
+  const { info } = usePositionInfo();
 
   if (info === undefined || subMode.add === true) {
     return {
