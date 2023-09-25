@@ -56,12 +56,48 @@ export default function useGetTransaction() {
 
   // const subgraphData = useMemo(() => {},[])
 
+  /**
+   * Message is an L1 to L2 message and has not been processed by the L2.
+   */
+  // UNCONFIRMED_L1_TO_L2_MESSAGE,  ==> 0
+
+  /**
+   * Message is an L1 to L2 message and the transaction to execute the message failed.
+   * When this status is returned, you will need to resend the L1 to L2 message, probably with a
+   * higher gas limit.
+   */
+  //  FAILED_L1_TO_L2_MESSAGE, ===> 1
+
+  /**
+   * Message is an L2 to L1 message and no state root has been published yet.
+   */
+  //  STATE_ROOT_NOT_PUBLISHED, ===> 2
+
+  /**
+   * Message is ready to be proved on L1 to initiate the challenge period.
+   */
+  //  READY_TO_PROVE, ===>3
+
+  /**
+   * Message is a proved L2 to L1 message and is undergoing the challenge period.
+   */
+  //  IN_CHALLENGE_PERIOD,   ===> 4
+
+  /**
+   * Message is ready to be relayed.
+   */
+  //  READY_FOR_RELAY,   ===> 5
+
+  /**
+   * Message has been relayed.
+   */
+  //  RELAYED, ===> 6
+
   const getStatus = async (resolved: any, timeStamp: number) => {
     if (crossMessenger !== undefined) {
       const today = new Date();
 
       const nowTime = getTime(today);
-      console.log("nowTime", nowTime);
 
       const status2Duration = isConnectedToMainNetwork ? 300 : 120;
       const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
@@ -93,7 +129,6 @@ export default function useGetTransaction() {
     }
   };
 
-  
   useEffect(() => {
     const subgraphData = async () => {
       if (isConnectedToMainNetwork !== undefined && address) {
@@ -106,7 +141,7 @@ export default function useGetTransaction() {
       }
     };
     subgraphData();
-  }, [address,layer, isConnectedToMainNetwork]);
+  }, [address, layer, isConnectedToMainNetwork]);
 
   const fetchWithdrawTransactions = useCallback(
     async (set: boolean) => {
@@ -123,24 +158,25 @@ export default function useGetTransaction() {
             userTxfromSubgraph.formattedWithdraw.length > 0
               ? "loading"
               : "absent"
-          );          
+          );
 
         const l2WithdrawTxs = await Promise.all(
           userTxfromSubgraph.formattedWithdraw.map(
             async (tx: L1TxType, index: number) => {
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
                 tx.transactionHash
-              ); //  office node ok   
-              
-              const status =  await getStatus(resolved, Number(tx.blockTimestamp));
-           const currentStatus = status?.currentStatus
-              
+              ); //  office node ok
+
+              const status = await getStatus(
+                resolved,
+                Number(tx.blockTimestamp)
+              );
+              const currentStatus = status?.currentStatus;
+
               // const currentStatus = await crossMessenger.getMessageStatus(
               //   resolved
-              // ); //no office node  
-              
-              
-              
+              // ); //no office node
+
               const l2TxReceipt = await l2Pro.getTransactionReceipt(
                 tx.transactionHash
               ); //l2 tx receipt
@@ -194,16 +230,15 @@ export default function useGetTransaction() {
                   //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
                   //     messageTxIndex
                   //   ); // no office node
-    
+
                   // const bn = stateBatchAppendedEvent.blockNumber;
-    
+
                   // const block = await l1Pro.getBlock(bn);
-    
+
                   // const challengePeriod =
                   //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
                   // const timeReadyForRelay = block.timestamp + challengePeriod;
 
-                  
                   const calculatedTimePeriod = isConnectedToMainNetwork
                     ? 11 * 60 + 7 * 24 * 60 * 60
                     : 2 * 60 + 10 + 150;
@@ -228,8 +263,8 @@ export default function useGetTransaction() {
                     resolved: resolved,
                   };
                 } else {
-                  const receipt = status?.l1receipt
-                   //  no office node
+                  const receipt = status?.l1receipt;
+                  //  no office node
                   if (
                     l2TxReceipt.blockNumber !== undefined &&
                     receipt != null &&

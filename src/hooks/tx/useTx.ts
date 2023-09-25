@@ -173,6 +173,8 @@ export function useTx(params: {
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
+console.log('data,',data);
+
   useEffect(() => {
     if (connectedChainId !== exChainId) return setExChainId(connectedChainId);
     if (isLoading) {

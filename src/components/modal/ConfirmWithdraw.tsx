@@ -90,31 +90,25 @@ export default function ConfirmWithdraw() {
 
       const status2Duration = isConnectedToMainNetwork ? 300 : 120;
       const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
-      const status2EndTimestamp = timeStamp + status2Duration;
-      const status4EndTimestamp = timeStamp + status4Duration;
+      const status2EndTimestamp = Number(timeStamp) + status2Duration;
+      const status4EndTimestamp = Number(timeStamp) + status4Duration;
 
-      // const getStatus = setInterval(() => {
-      //   const today = new Date();
-      //   const nowTime = getTime(today);
-      //    if (nowTime > status4EndTimestamp * 1000) {
-      //   const receipt = await crossMessenger.getMessageReceipt(resolved);
-      //   if (receipt !== null) {
-      //     currentStatus = 6;
-      //     l1receipt = receipt;
-      //   } else {
-      //     currentStatus = 5;
-      //   }
-      // } else if (
-      //   nowTime < status4EndTimestamp * 1000 &&
-      //   nowTime > status2EndTimestamp * 1000
-      // ) {
-      //   currentStatus = 4;
-      // } else {
-      //   currentStatus = 2;
-      // }
-
-      // }, 1000);
-      // return () => clearInterval(getStatus);
+      const getStatus = setInterval(() => {
+        const today = new Date();
+        const nowTime = getTime(today);
+       
+        if (nowTime > status4EndTimestamp * 1000) {
+          setStatus(5);
+        } else if (
+          nowTime < status4EndTimestamp * 1000 &&
+          nowTime > status2EndTimestamp * 1000
+        ) {
+          setStatus(4);
+        } else {
+          setStatus(2);
+        }
+      }, 1000);
+      return () => clearInterval(getStatus);
       // setStatus(tx?.currentStatus);
     }
   }, [tx]);
@@ -129,8 +123,6 @@ export default function ConfirmWithdraw() {
     setStatus(0);
     onClose;
   };
-
-  console.log("status", status);
 
   const check = (progress: string) => {
     switch (progress) {
@@ -551,9 +543,9 @@ export default function ConfirmWithdraw() {
           progress={
             !props.tx
               ? "todo"
-              : props.tx.currentStatus === 2
+              : status === 2
               ? "inProgress"
-              : props.tx.currentStatus > 2
+              : status > 2
               ? "done"
               : "todo"
           }
@@ -563,9 +555,9 @@ export default function ConfirmWithdraw() {
           progress={
             !props.tx
               ? "todo"
-              : props.tx.currentStatus === 2
+              : status === 2
               ? "inProgress"
-              : props.tx.currentStatus > 2
+              : status > 2
               ? "done"
               : "todo"
           }
@@ -574,9 +566,9 @@ export default function ConfirmWithdraw() {
           progress={
             !props.tx
               ? "todo"
-              : props.tx.currentStatus === 4
+              : status === 4
               ? "inProgress"
-              : props.tx.currentStatus > 4
+              : status > 4
               ? "done"
               : "todo"
           }
@@ -586,9 +578,9 @@ export default function ConfirmWithdraw() {
           progress={
             !props.tx
               ? "todo"
-              : props.tx.currentStatus === 4
+              : status === 4
               ? "inProgress"
-              : props.tx.currentStatus > 4
+              : status > 4
               ? "done"
               : "todo"
           }
@@ -597,9 +589,9 @@ export default function ConfirmWithdraw() {
           progress={
             !props.tx
               ? "todo"
-              : props.tx.currentStatus === 5
+              : status === 5
               ? "inProgress"
-              : props.tx.currentStatus > 4
+              : status > 4
               ? "done"
               : "todo"
           }
@@ -685,7 +677,7 @@ export default function ConfirmWithdraw() {
             ? true
             : !tx && isChecked
             ? false
-            : tx?.currentStatus !== 5
+            : status !== 5
         }
         _disabled={{ color: "#8E8E92", bg: "#17181D" }}
         bg="#007AFF"
@@ -747,7 +739,7 @@ export default function ConfirmWithdraw() {
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />
-          ) : tx.currentStatus === 4 ? (
+          ) : status=== 4 ? (
             <CalendarComponent />
           ) : null}
           <ActionButton />

@@ -2,10 +2,7 @@ import { Flex, Text, Link } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
-import {
-  confirmWithdrawStats,
-  confirmWithdrawData,
-} from "@/recoil/modal/atom";
+import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
@@ -21,7 +18,7 @@ import {
   Duration,
   subMinutes,
   addHours,
-  differenceInSeconds
+  differenceInSeconds,
 } from "date-fns";
 
 // type TokenData = {
@@ -49,8 +46,11 @@ export default function StatusTx(props: {
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
+  console.log("tx", tx);
+
   const [durationRollup, setDurationRollup] = useState("0");
-  
+  const [status, setStatus] = useState(0);
+
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,
@@ -60,16 +60,14 @@ export default function StatusTx(props: {
     years: 0,
   });
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(
-    confirmWithdrawStats
-  );
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
+
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
-
   const getCalendarEvent = useMemo(() => {
     if (timeStamp) {
-      
       const startDate = new Date(timeStamp * 1000);
       const formattedDate = format(startDate, "yyyy-MM-dd");
       const add1Hour = addHours(startDate, 1);
@@ -86,10 +84,10 @@ export default function StatusTx(props: {
 
   useEffect(() => {
     if (tx.l2timeStamp) {
-      const getDuration = setInterval(() => {        
+      const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
         // console.log('startDate',startDate);
-        
+
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
@@ -104,6 +102,38 @@ export default function StatusTx(props: {
       return () => clearInterval(getDuration);
     }
   }, [tx.l2timeStamp]);
+
+  useEffect(() => {
+    if (tx !== null) {
+      const timeStamp = tx.l2timeStamp;
+
+      const status2Duration = isConnectedToMainNetwork ? 300 : 120;
+      const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
+      const status2EndTimestamp = Number(timeStamp) + status2Duration;
+      const status4EndTimestamp = Number(timeStamp) + status4Duration;
+
+      const getStatus = setInterval(() => {
+        const today = new Date();
+        const nowTime = getTime(today);
+        if (tx.currentStatus === 6) {
+          setStatus(6);
+        } else if (nowTime > status4EndTimestamp * 1000) {
+          setStatus(5);
+        } else if (
+          nowTime < status4EndTimestamp * 1000 &&
+          nowTime > status2EndTimestamp * 1000
+        ) {
+          setStatus(4);
+        } else {
+          setStatus(2);
+        }
+      }, 1000);
+      return () => clearInterval(getStatus);
+      // setStatus(tx?.currentStatus);
+    }
+  }, [tx]);
+
+  console.log("status", status);
 
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
@@ -154,11 +184,11 @@ export default function StatusTx(props: {
    */
   //  RELAYED, ===> 6
 
-  useEffect(() => {    
-    if (timeStamp!== undefined && !isNaN(timeStamp)) {
+  useEffect(() => {
+    if (timeStamp !== undefined && !isNaN(timeStamp)) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
-        
+
         // setDuration(
         //   intervalToDuration({
         //     start: getTime(timeStamp * 1000),
@@ -195,15 +225,14 @@ export default function StatusTx(props: {
           w="6px"
           borderRadius={"50%"}
           bg={
-            tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
+            status === 6 || (layer === "L2" && tx.l2txHash)
               ? "#03D187"
-              : tx.currentStatus === 5
+              : status === 5
               ? "#007AFF"
               : "#8497DB"
           }
-          mr="6px"
-        ></Flex>
-        {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
+          mr="6px"></Flex>
+        {status === 6 || (layer === "L2" && tx.l2txHash) ? (
           <Link
             target="_blank"
             href={`${
@@ -214,11 +243,10 @@ export default function StatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}
-          >
+            style={{ textDecoration: "none" }}>
             {`${layer}: Completed`}
           </Link>
-        ) : tx.currentStatus === 5 ? (
+        ) : status === 5 ? (
           <Text
             fontSize={"11px"}
             cursor={"pointer"}
@@ -233,9 +261,8 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }
-          >{`${layer}: Ready to be claimed`}</Text>
-        ) : tx.currentStatus === 4 ? (
+            }>{`${layer}: Ready to be claimed`}</Text>
+        ) : status === 4 ? (
           <Text
             fontSize={"11px"}
             cursor={"pointer"}
@@ -250,8 +277,7 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }
-          >{`${layer}: Wait 7 days`}</Text>
+            }>{`${layer}: Wait 7 days`}</Text>
         ) : (
           <Text
             fontSize={"11px"}
@@ -267,20 +293,19 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }
-          >{`${layer}: Wait ~${
+            }>{`${layer}: Wait ~${
             isConnectedToMainNetwork ? "11" : "2"
           } min for rollup`}</Text>
         )}
       </Flex>
-      {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
+      {status === 6 || (layer === "L2" && tx.l2txHash) ? (
         <Flex fontSize={"11px"}>
           <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
           <Text ml="3px" color={"#A0A3AD"}>
             {format(fromUnixTime(date), "hh:mm b (z)")}
           </Text>
         </Flex>
-      ) : tx.currentStatus === 4 ? (
+      ) : status === 4 ? (
         <Flex>
           <Text fontSize={"12px"} color={"#8497DB"}>
             {duration.days !== undefined && duration.days < 10 ? "0" : ""}
@@ -295,14 +320,17 @@ export default function StatusTx(props: {
           <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
-            cursor={"pointer"}
-          >
+            cursor={"pointer"}>
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>
-      ) : tx.currentStatus=== 2 ?(
-        <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>{durationRollup}</Text>
-      ):<></>}
+      ) : status === 2 ? (
+        <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+          {durationRollup}
+        </Text>
+      ) : (
+        <></>
+      )}
     </Flex>
   );
 }
