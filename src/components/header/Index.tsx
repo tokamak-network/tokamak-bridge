@@ -131,12 +131,6 @@ export default function Header() {
       hoverIcon: twitterHover,
     },
     {
-      title: "Kakaotalk",
-      link: "https://open.kakao.com/o/g2zlglHd",
-      icon: kakao,
-      hoverIcon: kakaoHover,
-    },
-    {
       title: "Discord",
       link: "https://discord.com/invite/J4chV2zuAK",
       icon: discord,
