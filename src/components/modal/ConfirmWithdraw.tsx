@@ -88,7 +88,7 @@ export default function ConfirmWithdraw() {
     if (tx !== null) {
       const timeStamp = tx.l2timeStamp;
 
-      const status2Duration = isConnectedToMainNetwork ? 300 : 120;
+      const status2Duration = isConnectedToMainNetwork ? 660+12 : 120;
       const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
       const status2EndTimestamp = Number(timeStamp) + status2Duration;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;

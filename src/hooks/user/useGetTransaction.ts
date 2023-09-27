@@ -99,8 +99,10 @@ export default function useGetTransaction() {
 
       const nowTime = getTime(today);
 
-      const status2Duration = isConnectedToMainNetwork ? 300 : 120;
-      const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
+      //rollup time in mainnet => 11 minutes + 12 seconds buffer
+      //challenge period in mainnet => 7 days => 7*24*60*60 + 660 +12
+      const status2Duration = isConnectedToMainNetwork ? 660+12 : 120;
+      const status4Duration = isConnectedToMainNetwork ? 605472 : 130;
       const status2EndTimestamp = timeStamp + status2Duration;
       const status4EndTimestamp = timeStamp + status4Duration;
 
@@ -240,7 +242,7 @@ export default function useGetTransaction() {
                   // const timeReadyForRelay = block.timestamp + challengePeriod;
 
                   const calculatedTimePeriod = isConnectedToMainNetwork
-                    ? 11 * 60 + 7 * 24 * 60 * 60
+                    ? 11 * 60 + 12 +7 * 24 * 60 * 60
                     : 2 * 60 + 10 + 150;
                   const testPeriod =
                     l2BlockNum.timestamp + calculatedTimePeriod;

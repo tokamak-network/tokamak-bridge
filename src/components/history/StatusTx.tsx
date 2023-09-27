@@ -46,8 +46,6 @@ export default function StatusTx(props: {
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
-  console.log("tx", tx);
-
   const [durationRollup, setDurationRollup] = useState("0");
   const [status, setStatus] = useState(0);
 
@@ -132,8 +130,6 @@ export default function StatusTx(props: {
       // setStatus(tx?.currentStatus);
     }
   }, [tx]);
-
-  console.log("status", status);
 
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
