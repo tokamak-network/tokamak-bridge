@@ -5,8 +5,18 @@ import BalanceChecker from "@/abis/BalanceChecker.json";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { supportedTokens } from "@/types/token/supportedToken";
+import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
+
+type marketList = {
+  address: string;
+  balance: number;
+  balanceInUSD: number;
+  id: string;
+  name: string;
+  symbol: string;
+};
 
 const getList = async (queryParam: string | undefined | null) => {
   if (queryParam === undefined || queryParam === null) {
@@ -32,7 +42,7 @@ export function useFetchBalance() {
   const { layer } = useConnectedNetwork();
   const l1Pro = layer === "L1" ? provider : L1Provider;
   const { address } = useAccount();
-
+  const [marketList, setMarketList] = useState<marketList[]>([]);
   const balanceCheck = new ethers.Contract(
     MAINNET_CONTRACTS.BalanceChecker,
     BalanceChecker,
@@ -44,51 +54,72 @@ export function useFetchBalance() {
     queryFn: () => getList(`${process.env.NEXT_PUBLIC_TOKEN_LIST}?chainId=1`),
   });
 
-  const { isLoading:isLoadingID, error:errorID, data:dataID, isError:isErrorID, isLoadingError:isLoadingErrorID } = useQuery({
+  const {
+    isLoading: isLoadingID,
+    error: errorID,
+    data: dataID,
+    isError: isErrorID,
+    isLoadingError: isLoadingErrorID,
+  } = useQuery({
     queryKey: [process.env.NEXT_PUBLIC_TOKEN_ID_LIST],
     queryFn: () => getList(`${process.env.NEXT_PUBLIC_TOKEN_ID_LIST}`),
   });
 
-  console.log('dataID',dataID);
-  
-
   const getBalances = useCallback(async () => {
     if (data) {
+      // take only the necessary data from the api
       const tokens = data.tokens.map((token: any) => {
         return {
           address: token.address,
           decimals: token.decimals,
-          name: token.name
+          name: token.name,
+          symbol: token.tokenSymbol,
         };
       });
 
-      const tokamakTokens = supportedTokens.map((token: any) => {        
+      //take only the necessary data from the supported tokens
+      const tokamakTokens = supportedTokens.map((token: any) => {
         return {
           address:
             token.address.MAINNET !== ""
               ? token.address.MAINNET.toLowerCase()
               : "0x0000000000000000000000000000000000000000",
           decimals: token.decimals,
-          name: token.tokenName
+          name:
+            token.tokenName === "Tether USD"
+              ? "tether"
+              : token.tokenName === "USD Coin"
+              ? "usdc"
+              : token.tokenName === "ETH"
+              ? "ethereum"
+              : token.tokenName,
+          symbol: token.tokenSymbol,
         };
       });
+
+      //make a list with coingecko tokens and tokamak tokens
       const tokensList = tokamakTokens.concat(tokens);
 
+      //filter out the duplicate tokens from the token list above
       const uniqueTokensList = tokensList.filter(
         (obj: any, index: any) =>
           tokensList.findIndex((item: any) => item.address === obj.address) ===
           index
       );
 
+      //create an array with only token addresses to pass to the contract function
       const tokenAddresses = uniqueTokensList.map((token: any) => {
         return token.address;
       });
+
       if (address && tokenAddresses) {
+        //call the balance contract to get the balances of all 4000 something tokens
         const balances = await balanceCheck.balances(
           ["0xFF1F43422A0240CCbD29C16197853b372a61255d"],
           tokenAddresses
         );
 
+        //format the balance to readable number using the decimals from the uniqueTokensList. match each balance to corresponding decimal using the index
         const formattedBalances = balances.map(
           (balance: BigNumber, index: number) => {
             return {
@@ -99,16 +130,58 @@ export function useFetchBalance() {
                 )
               ),
               address: uniqueTokensList[index].address,
-              name:  uniqueTokensList[index].name,
+              name: uniqueTokensList[index].name,
+              symbol: uniqueTokensList[index].symbol,
             };
           }
         );
 
-        const tokensWithBalances = formattedBalances.filter((token:any) => token.balance !== 0)
-        console.log("tokensWithBalances", tokensWithBalances);
+        //filter out only the tokens that have any balance > 0
+        const tokensWithBalances = formattedBalances.filter(
+          (token: any) => token.balance > 0
+        );
+
+        //get the matching id from coingecko v3 token list using the token name and manually add some tokens
+        const tokensWithId = tokensWithBalances.map((token: any) => {
+          // console.log(token);
+          const tokenId = dataID.filter(
+            (data: any) => data.name.toLowerCase() === token.name.toLowerCase()
+          );
+          return {
+            ...token,
+            id:
+              tokenId.length > 0
+                ? tokenId[0].id
+                : token.symbol === "DOC"
+                ? "dooropen"
+                : token.symbol === "WTON"
+                ? "tokamak-network"
+                : token.symbol.toLowerCase(),
+          };
+        });
+
+        //call the fetchMarketPrice function for all the tokens in the tokensWithId array
+        const marketPricedList = await Promise.all(
+          tokensWithId.map(async (token: any) => {
+            const marketprice = await fetchMarketPrice(token.id);
+            const balanceInUSD = token.balance * marketprice;
+
+            return {
+              ...token,
+              balanceInUSD: balanceInUSD,
+            };
+          })
+        );
+        
+        return marketPricedList
+        
       }
+
+
     }
   }, [data]);
-  getBalances();
-  return data;
+ getBalances();
+ 
+ 
+  return marketList;
 }
