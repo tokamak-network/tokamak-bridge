@@ -67,7 +67,7 @@ export default function useGetTransaction() {
       }
     };
     subgraphData();
-  }, [address,layer, isConnectedToMainNetwork]);
+  }, [address, layer, isConnectedToMainNetwork]);
 
   const fetchWithdrawTransactions = useCallback(
     async (set: boolean) => {
@@ -84,23 +84,19 @@ export default function useGetTransaction() {
             userTxfromSubgraph.formattedWithdraw.length > 0
               ? "loading"
               : "absent"
-          );          
+          );
 
         const l2WithdrawTxs = await Promise.all(
           userTxfromSubgraph.formattedWithdraw.map(
             async (tx: L1TxType, index: number) => {
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
                 tx.transactionHash
-              ); //  office node ok   
-              
-             
-              
+              ); //  office node ok
+
               const currentStatus = await crossMessenger.getMessageStatus(
                 resolved
-              ); //no office node  
-              
-              
-              
+              ); //no office node
+
               const l2TxReceipt = await l2Pro.getTransactionReceipt(
                 tx.transactionHash
               ); //l2 tx receipt
@@ -154,16 +150,15 @@ export default function useGetTransaction() {
                   //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
                   //     messageTxIndex
                   //   ); // no office node
-    
+
                   // const bn = stateBatchAppendedEvent.blockNumber;
-    
+
                   // const block = await l1Pro.getBlock(bn);
-    
+
                   // const challengePeriod =
                   //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
                   // const timeReadyForRelay = block.timestamp + challengePeriod;
 
-                  
                   const calculatedTimePeriod = isConnectedToMainNetwork
                     ? 11 * 60 + 7 * 24 * 60 * 60
                     : 2 * 60 + 10 + 150;

@@ -37,6 +37,7 @@ import { tData } from "@/types/activity/history";
 import SearchComponent from "./SearchComponent";
 import AccountContainer from "./AccountContainer";
 import { Overlay_Index } from "@/types/style/overlayIndex";
+import { useFetchBalance } from "./utils/fetchUserBalance";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -57,6 +58,17 @@ export default function AccountHistory() {
     chainName: undefined,
     networkImage: undefined,
   });
+
+  const xx = useFetchBalance()
+  console.log('xx',xx);
+  
+// useEffect(() => {
+//   const getBalances = async() => {
+//     const xx = await fetchUserBalance(address)
+//   }
+//   getBalances()
+ 
+// },[])
 
   useEffect(() => {
     if (address === undefined) {
