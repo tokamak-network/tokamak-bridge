@@ -5,7 +5,7 @@ import BalanceChecker from "@/abis/BalanceChecker.json";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { supportedTokens } from "@/types/token/supportedToken";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 
@@ -27,7 +27,7 @@ const getList = async (queryParam: string | undefined | null) => {
   });
 
   if (res.status !== 200) {
-    throw new Error("no route founded");
+    throw new Error("token list error");
   }
 
   if (res.ok) {
@@ -42,7 +42,7 @@ export function useFetchBalance() {
   const { layer } = useConnectedNetwork();
   const l1Pro = layer === "L1" ? provider : L1Provider;
   const { address } = useAccount();
-  const [marketList, setMarketList] = useState<marketList[]>([]);
+  const [marketList, setMarketList] = useState<any[] | undefined>([]);
   const balanceCheck = new ethers.Contract(
     MAINNET_CONTRACTS.BalanceChecker,
     BalanceChecker,
@@ -65,8 +65,11 @@ export function useFetchBalance() {
     queryFn: () => getList(`${process.env.NEXT_PUBLIC_TOKEN_ID_LIST}`),
   });
 
+  // console.log(data, dataID);
+  
+
   const getBalances = useCallback(async () => {
-    if (data) {
+    if (data && dataID && address) {
       // take only the necessary data from the api
       const tokens = data.tokens.map((token: any) => {
         return {
@@ -115,7 +118,7 @@ export function useFetchBalance() {
       if (address && tokenAddresses) {
         //call the balance contract to get the balances of all 4000 something tokens
         const balances = await balanceCheck.balances(
-          ["0xFF1F43422A0240CCbD29C16197853b372a61255d"],
+          [address],
           tokenAddresses
         );
 
@@ -143,7 +146,7 @@ export function useFetchBalance() {
 
         //get the matching id from coingecko v3 token list using the token name and manually add some tokens
         const tokensWithId = tokensWithBalances.map((token: any) => {
-          // console.log(token);
+         
           const tokenId = dataID.filter(
             (data: any) => data.name.toLowerCase() === token.name.toLowerCase()
           );
@@ -160,10 +163,14 @@ export function useFetchBalance() {
           };
         });
 
+        // console.log('tokensWithId',tokensWithId);
+        
         //call the fetchMarketPrice function for all the tokens in the tokensWithId array
         const marketPricedList = await Promise.all(
           tokensWithId.map(async (token: any) => {
             const marketprice = await fetchMarketPrice(token.id);
+            // console.log('marketprice',token.id,marketprice);
+            
             const balanceInUSD = token.balance * marketprice;
 
             return {
@@ -172,16 +179,23 @@ export function useFetchBalance() {
             };
           })
         );
-        
-        return marketPricedList
-        
+        return marketPricedList;
       }
-
-
     }
-  }, [data]);
- getBalances();
- 
- 
+    return undefined;
+  }, [isLoading, address, isLoadingID]);
+
+  useEffect(() => {
+    const fetchBalances = async () => {
+      const balances = await getBalances();
+      return setMarketList(balances);
+    };
+
+    fetchBalances().catch((e) => {
+      console.log("**fetchBalances err**");
+      console.log(e);
+    });
+  }, [data,address]);
+
   return marketList;
 }

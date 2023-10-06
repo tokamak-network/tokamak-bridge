@@ -645,9 +645,6 @@ export default function useGetTransaction() {
   //           incompleted.map(async (incompletedTx) => {
   //             if (incompletedTx.event === "deposit") {
   //               // const updatedDeps = await getUpdatedDep(incompletedTx);
-
-  //               // console.log("updatedDeps", updatedDeps);
-
   //               // return updatedDeps;
   //             } else {
   //               const updatedWiths = await getUpdatedWithdraw(incompletedTx);

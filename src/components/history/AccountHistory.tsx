@@ -59,16 +59,22 @@ export default function AccountHistory() {
     networkImage: undefined,
   });
 
-  const xx = useFetchBalance()
-  console.log('xx',xx);
+  const balances = useFetchBalance()
+
+ const totalBal = useMemo(() => {
+  const totalBalance = balances?.reduce((accumulator, expense) => {
+    return accumulator + expense.balanceInUSD;
+  },0)
+  return totalBalance
+ },[balances])
   
-// useEffect(() => {
-//   const getBalances = async() => {
-//     const xx = await fetchUserBalance(address)
-//   }
-//   getBalances()
+// useEffect(() => {  
+//   const toalBalance = balances?.reduce((accumulator, expense) => {
+//     return accumulator + expense.balanceInUSD;
+//   },0)
+  
  
-// },[])
+// },[balances])
 
   useEffect(() => {
     if (address === undefined) {
@@ -132,7 +138,7 @@ export default function AccountHistory() {
 
         // pos={"relative"}
       >
-        <AccountContainer />
+        <AccountContainer balance={totalBal} />
         <TabContainer setTab={setTab} tab={tab} />
         <Flex>
           {Network}

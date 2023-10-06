@@ -23,7 +23,8 @@ import copy from "copy-to-clipboard";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 
-export default function AccountContainer() {
+export default function AccountContainer(props: { balance: number }) {
+  const {balance} = props
   const toast = useToast();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
@@ -40,8 +41,7 @@ export default function AccountContainer() {
           left={"-100px"}
           bg={"#007AFF"}
           transform={"rotate(-30deg)"}
-          opacity={0.15}
-        ></Box>
+          opacity={0.15}></Box>
         <Box
           pos={"absolute"}
           w={"400px"}
@@ -49,8 +49,7 @@ export default function AccountContainer() {
           top={"15px"}
           left={"-100px"}
           bg={"rgba(255, 255, 255, 0.5)"}
-          transform={"rotate(-30deg)"}
-        ></Box>
+          transform={"rotate(-30deg)"}></Box>
         <Box
           pos={"absolute"}
           w={"400px"}
@@ -58,8 +57,7 @@ export default function AccountContainer() {
           top={"28px"}
           left={"-100px"}
           bg={`linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)`}
-          transform={"rotate(-30deg)"}
-        ></Box>
+          transform={"rotate(-30deg)"}></Box>
       </>
     );
   };
@@ -83,21 +81,18 @@ export default function AccountContainer() {
             "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), #007AFF;",
         }}
         pos={"relative"}
-        overflow={"hidden"}
-      >
+        overflow={"hidden"}>
         <Flex
           borderRadius={"16px"}
           border={"3px solid #007AFF"}
-          h="64px"
+          h="136px"
           w="336px"
-          flexDir={"column"}
-        >
+          flexDir={"column"}>
           <TopLine />
           <Flex
             p="13px 16px 16px 13px"
             justifyContent={"space-between"}
-            zIndex={1001}
-          >
+            zIndex={1001}>
             <Flex alignItems={"center"}>
               <Image
                 height={32}
@@ -110,15 +105,13 @@ export default function AccountContainer() {
                 ml="8px"
                 mr="4px"
                 fontWeight={500}
-                color={"#222"}
-              >
+                color={"#222"}>
                 {trimAddress({ address: address, firstChar: 6 })}
               </Text>
               <Flex
                 onClick={() => {
                   handleCopyToClipboard();
-                }}
-              >
+                }}>
                 <Image
                   height={14}
                   width={14}
@@ -138,8 +131,7 @@ export default function AccountContainer() {
                 h="32px"
                 bg="#5D6978"
                 borderRadius={"8px"}
-                justifyContent={"center"}
-              >
+                justifyContent={"center"}>
                 <Image src={userguide} alt="userguide" height={16} width={16} />
               </Flex>
               <Flex
@@ -152,13 +144,12 @@ export default function AccountContainer() {
                 h="32px"
                 bg="#5D6978"
                 borderRadius={"8px"}
-                justifyContent={"center"}
-              >
+                justifyContent={"center"}>
                 <Image src={off} alt="off" height={16} width={16} />
               </Flex>
             </Flex>
           </Flex>
-          {/* <Flex flexDir={"column"} pl="16px">
+          <Flex flexDir={"column"} pl="16px">
             <Text color={"#5D6978"} fontSize={"14px"} zIndex={1001}>
               Balance
             </Text>
@@ -168,11 +159,12 @@ export default function AccountContainer() {
               lineHeight={"normal"}
               zIndex={1001}
               mt="-3px"
-              fontWeight={600}
-            >
-              $410.55
+              fontWeight={600}>
+              ${balance && balance.toLocaleString(undefined, {
+        minimumFractionDigits: 2,
+      })}
             </Text>
-          </Flex> */}
+          </Flex>
         </Flex>
       </Flex>
     </Flex>
