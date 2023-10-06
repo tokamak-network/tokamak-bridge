@@ -18,7 +18,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { layer } = useConnectedNetwork();
   const { claim } = useCallClaim("relayMessage");
-  const [, setClaimTx] = useRecoilState(claimTx);
+  const [claimTX, setClaimTx] = useRecoilState(claimTx);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   
@@ -34,6 +34,8 @@ const zeroAddress = '0x0000000000000000000000000000000000000000'
   }  
   const token = layer === "L1" &&  tx._l1Token === zeroAddress?ethToken :data
 
+  console.log('claimTX',claimTX);
+  
   return (
     <Flex
       h={"160px"}
@@ -80,7 +82,7 @@ const zeroAddress = '0x0000000000000000000000000000000000000000'
             isDisabled={
               tx.currentStatus > 5 ||
               (txData?.hash.transactionHash !== undefined &&
-                txData?.hash.txSort === "Claim")
+                txData?.hash.txSort === "Claim") || (tx.currentStatus === 5 && claimTX?.l2txHash === tx.l2txHash)
             }
             _hover={{}}
             _focus={{}}

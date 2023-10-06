@@ -3,7 +3,7 @@ import {
   SupportedChainId,
   supportedChain,
 } from "@/types/network/supportedNetwork";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import L1CrossDomainMessenger_ABI from "constant/abis/L1CrossDomainMessenger.json";
 import useContract from "@/hooks/contracts/useContract";
 import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
@@ -13,17 +13,20 @@ import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useCrosschainMessenger from "../useCrosschainMessenger";
+import { claimTx } from "@/recoil/userHistory/claimTx";
+
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
-  const { switchNetworkAsync } = useSwitchNetwork();
+  const { switchNetworkAsync, error,isError:switchNetwork,status } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [claimTX, setClaimTX] = useRecoilState(claimTx);
   const { crossMessenger } = useCrosschainMessenger();
   const { provider, L2Provider } = useProvier();
   const l2Pro = layer === "L2" ? provider : L2Provider;
-
+  
   const { data, write, isError } = useContractWrite({
     address: L1MESSENGER_CONTRACT,
     abi: L1CrossDomainMessenger_ABI,
@@ -33,6 +36,8 @@ export default function useCallClaim(functionName: string) {
 
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
 
+  console.log( error,switchNetwork,status);
+  
   useEffect(() => {
     if (isError) {
       setModalOpen("error");
@@ -56,6 +61,7 @@ export default function useCallClaim(functionName: string) {
         })[0];
 
         const res = await switchNetworkAsync?.(selectedWork.chainId);
+        
         const tx = txt;
 
         if (res) {
@@ -73,9 +79,16 @@ export default function useCallClaim(functionName: string) {
             setModalOpen("confirming");
             setWithdrawData({ modalData: null });
             setWithdrawStatus({ isOpen: false });
+            // setClaimTX(undefined)
           } catch (e) {
+            setClaimTX(undefined)
             console.log(e);
           }
+        }
+         if (error) {
+          console.log('hhhhhii');
+          
+          setClaimTX(undefined)
         }
       } else {
         try {
@@ -92,7 +105,9 @@ export default function useCallClaim(functionName: string) {
           setModalOpen("confirming");
           setWithdrawData({ modalData: null });
           setWithdrawStatus({ isOpen: false });
+          // setClaimTX(undefined)
         } catch (e) {
+          setClaimTX(undefined)
           console.log(e);
         }
       }

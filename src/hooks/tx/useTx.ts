@@ -149,6 +149,7 @@ export function useTx(params: {
   txSort: TxSort;
   tokenAddress?: `0x${string}`;
   tokenOutAddress?: `0x${string}`;
+  l2Tx?: `0x${string}`;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress } = params;
   const { mode } = useGetMode();
@@ -173,7 +174,7 @@ export function useTx(params: {
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
-console.log('data,',data);
+// console.log('data,',data);
 
   useEffect(() => {
     if (connectedChainId !== exChainId) return setExChainId(connectedChainId);

@@ -189,6 +189,7 @@ export const fetchUserTransactions = async (
     const formattedL1DepositResults =
       formattedL1DepositResultsUnfiltered.filter((tx: any) => tx !== undefined);
     const formattedL1WithdrawResults = allWithL1Txs;
+    
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,

@@ -65,8 +65,13 @@ export default function StatusTx(props: {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const getCalendarEvent = useMemo(() => {
-    if (timeStamp) {
-      const startDate = new Date(timeStamp * 1000);
+    if (tx.l2timeStamp) {
+      const timeStamp = tx.l2timeStamp;
+      const status2Duration = isConnectedToMainNetwork ? 300 : 120;
+      const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
+      const status2EndTimestamp = Number(timeStamp) + status2Duration;
+      const status4EndTimestamp = Number(timeStamp) + status4Duration;
+      const startDate = new Date(status4EndTimestamp * 1000);
       const formattedDate = format(startDate, "yyyy-MM-dd");
       const add1Hour = addHours(startDate, 1);
       const startTime = format(startDate, "HH:mm");
@@ -78,7 +83,7 @@ export default function StatusTx(props: {
         endTime: formattedEndTime,
       };
     }
-  }, [timeStamp]);
+  }, [tx]);
 
   useEffect(() => {
     if (tx.l2timeStamp) {
@@ -113,6 +118,7 @@ export default function StatusTx(props: {
       const getStatus = setInterval(() => {
         const today = new Date();
         const nowTime = getTime(today);
+
         if (tx.currentStatus === 6) {
           setStatus(6);
         } else if (nowTime > status4EndTimestamp * 1000) {
@@ -321,9 +327,17 @@ export default function StatusTx(props: {
           </Flex>
         </Flex>
       ) : status === 2 ? (
-        <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
-          {durationRollup}
-        </Text>
+        <Flex>
+          <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+            {durationRollup} Left
+          </Text>
+          <Flex
+            ml={"5px"}
+            onClick={() => atcb_action(config)}
+            cursor={"pointer"}>
+            <Image src={Calendar} alt="google calendar" />
+          </Flex>
+        </Flex>
       ) : (
         <></>
       )}
