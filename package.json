@@ -18,7 +18,7 @@
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@eth-optimism/contracts": "^0.5.32",
-    "@eth-optimism/sdk": "file:../../tokamak-titan/packages/sdk",
+    "@eth-optimism/sdk": "^0.0.0-2022812163333",
     "@fontsource/poppins": "^4.5.10",
     "@fontsource/quicksand": "^5.0.8",
     "@graphql-codegen/cli": "^2.15.0",
