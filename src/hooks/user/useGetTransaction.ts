@@ -177,7 +177,8 @@ export default function useGetTransaction() {
 
               // const currentStatus = await crossMessenger.getMessageStatus(
               //   resolved
-              // ); //no office node
+              // ); 
+              //no office node
 
               const l2TxReceipt = await l2Pro.getTransactionReceipt(
                 tx.transactionHash
