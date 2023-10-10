@@ -2,6 +2,7 @@ import { MotionStyle } from "framer-motion";
 import { useAnimation } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useGetTokenList } from "./useGetTokenList";
+import useConnectedNetwork from "../network";
 
 type LocationType =
   | "outLeft"
@@ -196,6 +197,7 @@ export function useCarrousellAnimation(params: {
   const waitControl = useAnimation();
 
   const { filteredTokenList } = useGetTokenList();
+  const { layer } = useConnectedNetwork();
 
   useEffect(() => {
     endLeftControl.start(positionStyles.endLeft);
@@ -246,136 +248,12 @@ export function useCarrousellAnimation(params: {
   }, [filteredTokenList.length]);
 
   useEffect(() => {
-    // if (currentIndex === 0) {
-    //   centerControl.start({
-    //     rotate: -10,
-    //     translateY: "-272px",
-    //     translateX: "-265px",
-    //     width: "186px",
-    //     height: "242px",
-    //     opacity: 1,
-    //   });
-    // }`
-    // if (currentIndex === 1) {
-    //   centerControl.start({
-    //     rotate: -5,
-    //     translateY: "-315px",
-    //     translateX: "-151px",
-    //     width: "204px",
-    //     height: "282px",
-    //     zIndex: CardOverlay.Side,
-    //     opacity: 1,
-    //   });
-    //   sideLeftControl.start({
-    //     translateY: "-330px",
-    //     translateX: "-150px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.Side,
-    //     width: "204px",
-    //     height: "282px",
-    //     minWidth: "204px",
-    //     maxWidth: "204px",
-    //     rotate: -5,
-    //   });
-    //   sideRightControl.start({
-    //     translateY: "-330px",
-    //     translateX: "150px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.Side,
-    //     width: "204px",
-    //     height: "282px",
-    //   });
-    //   sideLeftControl.start({
-    //     translateY: "-320px",
-    //     translateX: "-250px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.End,
-    //   });
-    //   sideRightControl.start({
-    //     translateY: "-320px",
-    //     translateX: "250px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.End,
-    //   });
-    //   outLeftControl.start({
-    //     rotate: -25,
-    //     translateY: "500px",
-    //     translateX: "-500px",
-    //     opacity: 1,
-    //     width: "186px",
-    //     height: "242px",
-    //   });
-    // }
-    // if (currentIndex === 2) {
-    //   centerControl.start({
-    //     rotate: 0,
-    //     translateY: "-350px",
-    //     translateX: "1px",
-    //     opacity: 1,
-    //     width: "254px",
-    //     height: "332px",
-    //     zIndex: CardOverlay.Center,
-    //   });
-    //   sideLeftControl.start({
-    //     translateY: "-330px",
-    //     translateX: "-150px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.Side,
-    //     width: "204px",
-    //     height: "282px",
-    //     minWidth: "204px",
-    //     maxWidth: "204px",
-    //     rotate: -5,
-    //   });
-    //   sideRightControl.start({
-    //     translateY: "-330px",
-    //     translateX: "150px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.Side,
-    //     width: "204px",
-    //     height: "282px",
-    //   });
-    //   sideLeftControl.start({
-    //     translateY: "-320px",
-    //     translateX: "-250px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.End,
-    //   });
-    //   sideRightControl.start({
-    //     translateY: "-320px",
-    //     translateX: "250px",
-    //     opacity: 1,
-    //     zIndex: CardOverlay.End,
-    //   });
-    //   outLeftControl.start({
-    //     rotate: -25,
-    //     translateY: "500px",
-    //     translateX: "-500px",
-    //     opacity: 1,
-    //     width: "186px",
-    //     height: "242px",
-    //   });
-    // }
-
     if (currentIndex === 3) {
-      // endLeftControl.start(positionStyles.outLeft);
-      // sideLeftControl.start(positionStyles.endLeft);
-      // centerControl.start(positionStyles.sideLeft);
-      // sideRightControl.start(positionStyles.center);
-      // endRightControl.start(positionStyles.sideRight);
-
-      // outRightControl.start({
-      //   ...positionStyles.endLeft,
-      //   position: "absolute",
-      //   transform: getTrasnformParams(10, 295, -62),
-      //   opacity: 1,
-      // });
       endLeftControl.start(positionStyles.sideLeft);
       sideLeftControl.start(positionStyles.center);
       centerControl.start(positionStyles.sideLeft);
       sideRightControl.start(positionStyles.endRight);
       endRightControl.start(positionStyles.outRight);
-
       outLeftControl.start({
         ...positionStyles.endLeft,
         position: "absolute",
@@ -434,7 +312,39 @@ export function useCarrousellAnimation(params: {
       });
     }
 
+    //currentIndex 11, 10 only for L2
+    //because of cards length
+    if (currentIndex === 11) {
+      endLeftControl.start(positionStyles.sideRight);
+      sideLeftControl.start(positionStyles.endRight);
+      centerControl.start(positionStyles.outRight);
+
+      outLeftControl.start({
+        ...positionStyles.center,
+        transform: getTrasnformParams(0, -170, 0),
+      });
+    }
+
+    if (currentIndex === 10) {
+      endLeftControl.start(positionStyles.endRight);
+      sideLeftControl.start(positionStyles.outRight);
+
+      outLeftControl.start({
+        ...positionStyles.sideRight,
+        transform: getTrasnformParams(5, 178, -30),
+      });
+    }
+
     if (currentIndex === 9) {
+      if (layer === "L2") {
+        endLeftControl.start(positionStyles.outRight);
+
+        outLeftControl.start({
+          ...positionStyles.endRight,
+          transform: getTrasnformParams(10, 295, -62),
+        });
+        return;
+      }
       endLeftControl.start(positionStyles.sideRight);
       sideLeftControl.start(positionStyles.endRight);
       centerControl.start(positionStyles.outRight);
@@ -446,6 +356,15 @@ export function useCarrousellAnimation(params: {
     }
 
     if (currentIndex === 8) {
+      if (layer === "L2") {
+        endLeftControl.start(positionStyles.outRight);
+
+        outLeftControl.start({
+          ...positionStyles.endRight,
+          transform: getTrasnformParams(10, 295, -62),
+        });
+        return;
+      }
       endLeftControl.start(positionStyles.endRight);
       sideLeftControl.start(positionStyles.outRight);
 
@@ -456,6 +375,13 @@ export function useCarrousellAnimation(params: {
     }
 
     if (currentIndex === 7) {
+      if (layer === "L2") {
+        outLeftControl.start({
+          ...positionStyles.outRight,
+          transform: getTrasnformParams(10, 400, -62),
+        });
+        return;
+      }
       endLeftControl.start(positionStyles.outRight);
 
       outLeftControl.start({
@@ -471,6 +397,24 @@ export function useCarrousellAnimation(params: {
       });
     }
 
+    if (currentIndex === 5) {
+      if (layer === "L2") {
+        outLeftControl.start({
+          ...positionStyles.outRight,
+          transform: getTrasnformParams(10, 400, -62),
+        });
+      }
+    }
+
+    if (currentIndex === 4) {
+      if (layer === "L2") {
+        outLeftControl.start({
+          ...positionStyles.outRight,
+          transform: getTrasnformParams(10, 400, -62),
+        });
+      }
+    }
+
     // if (currentIndex === 5) {
     //   outLeftControl.start({
     //     ...positionStyles.outRight,
@@ -481,7 +425,7 @@ export function useCarrousellAnimation(params: {
     // return () => {
     //   setInisialized(false);
     // };
-  }, [currentIndex]);
+  }, [currentIndex, layer]);
 
   const startIndex = useMemo(() => {
     if (currentIndex !== null) {
@@ -492,6 +436,9 @@ export function useCarrousellAnimation(params: {
       return startIndex;
     }
   }, [currentIndex]);
+
+  console.log("currentIndex", currentIndex);
+  console.log("startIndex", startIndex, filteredTokenList.length);
 
   useEffect(() => {
     if (currentIndex === null || startIndex === null) return;
@@ -530,6 +477,8 @@ export function useCarrousellAnimation(params: {
         opacity: 0,
       });
     }
+
+    // console.log("startIndex - 8 === index", startIndex - 8 === index, index);
 
     //locate at endLeft
     if (
@@ -634,6 +583,7 @@ export function useCarrousellAnimation(params: {
           startIndex !== undefined &&
           index === startIndex + 7
     ) {
+      console.log("gogo", startIndex, index);
       waitControl.start({
         ...positionStyles.outRight,
         position: "absolute",

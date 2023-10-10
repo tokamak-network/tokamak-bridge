@@ -78,6 +78,25 @@ export default function CarousellCardComponent<T>(props: {
       ? "medium"
       : "small";
 
+  // console.log(
+  //   index,
+  //   index === 0
+  //     ? "endLeftControl"
+  //     : index === 1
+  //     ? "sideLeftControl"
+  //     : index === 2
+  //     ? "centerControl"
+  //     : index === 3
+  //     ? "sideRightControl"
+  //     : index === 4
+  //     ? "endRightControl"
+  //     : index === 5
+  //     ? "outRightControl"
+  //     : index === filteredTokenList.length - 1
+  //     ? "outLeftControl"
+  //     : "waitControl"
+  // );
+
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
