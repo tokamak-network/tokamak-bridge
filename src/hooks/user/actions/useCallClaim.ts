@@ -18,7 +18,12 @@ import { claimTx } from "@/recoil/userHistory/claimTx";
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
-  const { switchNetworkAsync, error,isError:switchNetwork,status } = useSwitchNetwork();
+  const {
+    switchNetworkAsync,
+    error,
+    isError: switchNetworkError,
+    status,
+  } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
@@ -26,23 +31,30 @@ export default function useCallClaim(functionName: string) {
   const { crossMessenger } = useCrosschainMessenger();
   const { provider, L2Provider } = useProvier();
   const l2Pro = layer === "L2" ? provider : L2Provider;
-  
+
   const { data, write, isError } = useContractWrite({
     address: L1MESSENGER_CONTRACT,
     abi: L1CrossDomainMessenger_ABI,
     functionName,
   });
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
-
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
 
-  console.log( error,switchNetwork,status);
-  
   useEffect(() => {
     if (isError) {
       setModalOpen("error");
+      setClaimTX(undefined);
     }
   }, [isError]);
+
+  console.log("isError", isError);
+
+  useEffect(() => {
+    if (switchNetworkError) {
+      setModalOpen("error");
+      setClaimTX(undefined);
+    }
+  }, [switchNetworkError]);
 
   const claim = useCallback(
     async (txt: any) => {
@@ -60,35 +72,34 @@ export default function useCallClaim(functionName: string) {
           }
         })[0];
 
-        const res = await switchNetworkAsync?.(selectedWork.chainId);
-        
-        const tx = txt;
+        try {
+          const res = await switchNetworkAsync?.(selectedWork.chainId);
+          const tx = txt;
 
-        if (res) {
-          try {
-            write({
-              args: [
-                tx.resolved.target,
-                tx.resolved.sender,
-                tx.resolved.message,
-                tx.resolved.messageNonce,
-                proof,
-              ],
-            });
-            setIsOpen(true);
-            setModalOpen("confirming");
-            setWithdrawData({ modalData: null });
-            setWithdrawStatus({ isOpen: false });
-            // setClaimTX(undefined)
-          } catch (e) {
-            setClaimTX(undefined)
-            console.log(e);
+          if (res) {
+            try {
+              write({
+                args: [
+                  tx.resolved.target,
+                  tx.resolved.sender,
+                  tx.resolved.message,
+                  tx.resolved.messageNonce,
+                  proof,
+                ],
+              });
+              setIsOpen(true);
+              setModalOpen("confirming");
+              setWithdrawData({ modalData: null });
+              setWithdrawStatus({ isOpen: false });
+            } finally {
+              console.log("errorrrrrr");
+              setClaimTX(undefined);
+            }
           }
-        }
-         if (error) {
-          console.log('hhhhhii');
-          
-          setClaimTX(undefined)
+
+          // setClaimTX(undefined)
+        } finally {
+          setClaimTX(undefined);
         }
       } else {
         try {
@@ -106,9 +117,8 @@ export default function useCallClaim(functionName: string) {
           setWithdrawData({ modalData: null });
           setWithdrawStatus({ isOpen: false });
           // setClaimTX(undefined)
-        } catch (e) {
-          setClaimTX(undefined)
-          console.log(e);
+        } finally {
+          setClaimTX(undefined);
         }
       }
     },

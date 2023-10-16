@@ -664,6 +664,7 @@ export default function ConfirmWithdraw() {
 
   const ActionButton = () => {
     const isChecked = useRecoilValue(confirmWithdrawStatus);
+console.log('isChecked',isChecked);
 
     return (
       <Button

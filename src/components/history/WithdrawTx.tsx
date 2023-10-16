@@ -35,6 +35,7 @@ const zeroAddress = '0x0000000000000000000000000000000000000000'
   const token = layer === "L1" &&  tx._l1Token === zeroAddress?ethToken :data
 
   console.log('claimTX',claimTX);
+  console.log('tx',tx);
   
   return (
     <Flex
