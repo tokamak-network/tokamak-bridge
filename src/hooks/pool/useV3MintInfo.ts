@@ -24,6 +24,7 @@ import {
   atMinTick,
   initialPrice,
 } from "@/recoil/pool/setPoolPosition";
+import { useGetMode } from "../mode/useGetMode";
 
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
@@ -34,6 +35,7 @@ export function useV3MintInfo() {
   const startPriceTypedValue = useRecoilValue(initialPrice);
   const [isAtMinTick] = useRecoilState(atMinTick);
   const [isAtMaxTick] = useRecoilState(atMaxTick);
+  const { mode } = useGetMode();
 
   //note to parse inputs in reverse
   const invertPrice = Boolean(
@@ -52,7 +54,7 @@ export function useV3MintInfo() {
 
   const [token0, token1] = useMemo(
     () =>
-      tokenA && tokenB
+      tokenA && tokenB && mode === "Pool"
         ? tokenA.sortsBefore(tokenB)
           ? [tokenA, tokenB]
           : [tokenB, tokenA]
