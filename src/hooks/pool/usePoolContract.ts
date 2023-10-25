@@ -208,7 +208,7 @@ export function usePoolMint() {
             const tx = await NonfungiblePositionManagerContract.multicall(
               multicallParam,
               {
-                gasLimit,
+                gasLimit: 100000,
                 value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
                 from: address,
                 // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
