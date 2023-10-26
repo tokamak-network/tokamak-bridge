@@ -8,7 +8,10 @@ import { useAccount } from "wagmi";
 import useBlockNum from "../network/useBlockNumber";
 import { SqrtPriceMath, TickMath, computePoolAddress } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
-import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
+import {
+  L2_TESTNET_UniswapContracts,
+  L2_initCodeHashManualOverride,
+} from "@/constant/contracts/uniswap";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { Token } from "@uniswap/sdk-core";
 import ERC20_ABI from "@/abis/erc20.json";
@@ -285,14 +288,18 @@ export function useGetPositionById(positionId: number, chainId: number) {
   const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
   const { address } = useAccount();
   const { blockNumber } = useBlockNum();
-  const { connectedChainId } = useConnectedNetwork();
+  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const isL1 =
     chainId === SupportedChainId["MAINNET"] ||
     chainId === SupportedChainId["GOERLI"];
   const isL2 =
     chainId === SupportedChainId["TITAN"] ||
     chainId === SupportedChainId["DARIUS"];
-  const UNISWAP_CONTRACT = isL1 ? L1_UniswapContracts : L2_UniswapContracts;
+  const UNISWAP_CONTRACT = isL1
+    ? L1_UniswapContracts
+    : isConnectedToMainNetwork
+    ? L2_UniswapContracts
+    : L2_TESTNET_UniswapContracts;
 
   const providerForInfo = useMemo(() => {
     if (connectedChainId === chainId) {
@@ -312,6 +319,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
     async (positionTokenId: number) => {
       if (providerForInfo && chainId && positionTokenId) {
         const _provider = providerForInfo;
+
         const NonfungiblePositionManagerContract = new ethers.Contract(
           UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
           NONFUNGIBLE_POSITION_MANAGER_ABI,
