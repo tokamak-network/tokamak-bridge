@@ -15,7 +15,6 @@ import { getEncodedPath } from "@/utils/swap/encodePath";
 import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { useInOutTokens } from "../token/useInOutTokens";
-import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;

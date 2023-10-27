@@ -1,7 +1,7 @@
 import { useCallback, useEffect } from "react";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import WethABi from "@/abis/WETH.json";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useTx } from "../tx/useTx";
@@ -9,12 +9,18 @@ import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
 import { getWETHAddress } from "@/utils/token/isETH";
 import useConnectedNetwork from "../network";
+import { useProvier } from "../provider/useProvider";
+import { Contract } from "ethers";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 // import { useRecoilState } from "recoil";
 // import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
   const [txData, setTxData] = useRecoilState(txDataStatus);
+  const { provider } = useProvier();
+  const { address } = useAccount();
 
   const { inToken } = useInOutTokens();
   const { data, write: tonWton } = useContractWrite({
@@ -22,6 +28,11 @@ export default function useWrap() {
     abi: SwapperV2ABI.abi,
     functionName: "tonToWton",
   });
+  const WrapContract = new Contract(
+    SWAPPER_V2_CONTRACT,
+    SwapperV2ABI.abi,
+    getProviderOrSigner(provider, address)
+  );
 
   const { data: unswrapData, write: wtonTon } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
@@ -65,18 +76,24 @@ export default function useWrap() {
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
 
-  const wrapTON = useCallback(() => {
+  const wrapTON = useCallback(async () => {
     try {
       if (inToken && inToken.amountBN) {
+        const estimateGas = await provider.estimateGas(
+          WrapContract.tonToWton(inToken.amountBN)
+        );
+
+        console.log("estimateGas", estimateGas);
         tonWton({
           args: [inToken.amountBN],
+          // gas: BigInt("2100000"),
         });
       }
     } catch (e) {
       console.log("**wrapTON err**");
       console.log(e);
     }
-  }, [inToken]);
+  }, [inToken, WrapContract]);
 
   const unwrapWTON = useCallback(() => {
     try {
