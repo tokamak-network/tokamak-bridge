@@ -1,12 +1,10 @@
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import WethABi from "@/abis/WETH.json";
-import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
+import { useAccount, useContractWrite, usePublicClient } from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useTx } from "../tx/useTx";
-import { useRecoilState } from "recoil";
-import { txDataStatus } from "@/recoil/global/transaction";
 import { getWETHAddress } from "@/utils/token/isETH";
 import useConnectedNetwork from "../network";
 import { useProvier } from "../provider/useProvider";
@@ -18,7 +16,6 @@ import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
-  const [txData, setTxData] = useRecoilState(txDataStatus);
   const { provider } = useProvier();
   const { address } = useAccount();
 
@@ -48,6 +45,11 @@ export default function useWrap() {
     functionName: "deposit",
     value: inToken?.amountBN as any,
   });
+  const ETHWrapContract = new Contract(
+    WETH_CONTRACT as string,
+    WethABi,
+    getProviderOrSigner(provider, address)
+  );
 
   const { data: unwrapETHData, write: withdraw } = useContractWrite({
     address: WETH_CONTRACT as `0x${string}`,
@@ -79,14 +81,12 @@ export default function useWrap() {
   const wrapTON = useCallback(async () => {
     try {
       if (inToken && inToken.amountBN) {
-        const estimateGas = await provider.estimateGas(
-          WrapContract.tonToWton(inToken.amountBN)
+        const estimateGas = await WrapContract.estimateGas.tonToWton(
+          inToken.amountBN
         );
-
-        console.log("estimateGas", estimateGas);
         tonWton({
           args: [inToken.amountBN],
-          // gas: BigInt("2100000"),
+          gas: calculateGasMargin(estimateGas).toBigInt(),
         });
       }
     } catch (e) {
@@ -95,42 +95,51 @@ export default function useWrap() {
     }
   }, [inToken, WrapContract]);
 
-  const unwrapWTON = useCallback(() => {
+  const unwrapWTON = useCallback(async () => {
     try {
       if (inToken && inToken.amountBN) {
+        const estimateGas = await WrapContract.estimateGas.wtonToTon(
+          inToken.amountBN
+        );
         wtonTon({
           args: [inToken.amountBN],
+          gas: calculateGasMargin(estimateGas).toBigInt(),
         });
       }
     } catch (e) {
       console.log("**unwrapWTON err**");
       console.log(e);
     }
-  }, [inToken]);
+  }, [inToken, WrapContract]);
 
-  const wrapETH = useCallback(() => {
+  const wrapETH = useCallback(async () => {
     try {
       if (inToken && inToken.amountBN) {
-        deposit();
+        const estimateGas = await ETHWrapContract.estimateGas.deposit();
+        deposit({
+          gas: calculateGasMargin(estimateGas).toBigInt(),
+        });
       }
     } catch (e) {
       console.log("**wrapTON err**");
       console.log(e);
     }
-  }, [inToken]);
+  }, [inToken, ETHWrapContract]);
 
-  const unwrapWETH = useCallback(() => {
+  const unwrapWETH = useCallback(async () => {
     try {
       if (inToken && inToken.amountBN) {
+        const estimateGas = await ETHWrapContract.estimateGas.unwrapWETH();
         withdraw({
           args: [inToken.amountBN],
+          gas: calculateGasMargin(estimateGas).toBigInt(),
         });
       }
     } catch (e) {
       console.log("**unwrapWTON err**");
       console.log(e);
     }
-  }, [inToken]);
+  }, [inToken, ETHWrapContract]);
 
   return { wrapTON, unwrapWTON, wrapETH, unwrapWETH };
 }
