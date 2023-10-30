@@ -170,9 +170,6 @@ export function useApprove() {
   });
 
   const isApproved = useMemo(() => {
-    console.log("gogo", approved, mode);
-
-    console.log("test");
     switch (mode) {
       case "Deposit":
         return approved;

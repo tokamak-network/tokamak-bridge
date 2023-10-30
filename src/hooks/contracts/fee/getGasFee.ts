@@ -21,9 +21,11 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 
 export function useGasFee() {
   const { address } = useAccount();
+  const [gasLimit, setGasLimit] = useState<BigInt | undefined>(undefined);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
@@ -34,22 +36,20 @@ export function useGasFee() {
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
 
-  //   const { provider } = useProvier();
-  const provider = usePublicClient();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
   const { layer, connectedChainId } = useConnectedNetwork();
-  const { provider: l2Prov } = useProvier();
+  const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
-  const l2Pro = layer === "L2" ? l2Prov : getProvider(providers.l2Provider);
+  const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
+  const { estimatedGasUsage } = useAmountOut();
 
   const swapGasUseEstimate = useMemo(() => {
-    if (routingPath && tokenMarketPrice) {
-      const { gasUseEstimate } = routingPath;
-      return gasUseEstimate;
+    if (estimatedGasUsage) {
+      return estimatedGasUsage;
     }
-  }, [routingPath]);
+  }, [estimatedGasUsage]);
 
   const withdrawContract = new ethers.Contract(
     TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
@@ -76,7 +76,7 @@ export function useGasFee() {
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
-                  //@ts-ignore
+                //@ts-ignore
                 account: address,
                 //@ts-ignore
                 args: [200000, "0x"],
@@ -86,7 +86,7 @@ export function useGasFee() {
             }
 
             return _depositERC20_contract.estimateGas.depositERC20({
-                //@ts-ignore
+              //@ts-ignore
               account: address,
               //@ts-ignore
               args: [
@@ -139,8 +139,11 @@ export function useGasFee() {
     };
     fetchEstimatedGas()
       .then((estimatedGasUsage) => {
-        if (provider && estimatedGasUsage && feeData) {
-          const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+        if (estimatedGasUsage && feeData) {
+          setGasLimit(BigInt(Number(estimatedGasUsage)));
+
+          const { gasPrice } = feeData;
+
           if (gasPrice) {
             if (mode !== "Withdraw") {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
@@ -176,7 +179,6 @@ export function useGasFee() {
     _withdraw_contract,
     provider,
     feeData,
-    l2Prov,
     swapGasUseEstimate,
   ]);
 

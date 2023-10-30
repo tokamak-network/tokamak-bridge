@@ -34,11 +34,10 @@ export default function useCallBridgeSwapAction() {
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
-  
+
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   const onClick = useCallback(async () => {
-    
     if (!isConnected) {
       return connectToWallet();
     }
@@ -47,7 +46,7 @@ export default function useCallBridgeSwapAction() {
         SupportedChainId.MAINNET || SupportedChainId.GOERLI
       );
       const parsedAmount = inToken.amountBN;
-      setIsDrawerOpen(false)
+      setIsDrawerOpen(false);
       if (
         mode === "Wrap" ||
         mode === "Unwrap" ||
@@ -72,6 +71,7 @@ export default function useCallBridgeSwapAction() {
               args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
+              gas: BigInt("142542"),
             });
           }
 
