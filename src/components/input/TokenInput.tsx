@@ -19,6 +19,7 @@ import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -41,11 +42,11 @@ export default function TokenInput(props: {
     inTokenInfo,
     outTokenInfo,
   } = useInOutTokens();
-  const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const [, setLastFocused] = useRecoilState(lastFocusedInput);
 
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
+  const { layer } = useConnectedNetwork();
 
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
 
@@ -123,13 +124,18 @@ export default function TokenInput(props: {
     if (tokenData) {
       if (inToken && selectedInToken) {
         if (isETH(selectedInToken)) {
-          // if (!totalGasCost) return;
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
             ) -
-            Number(totalGasCost ?? 0.001) -
-            Number(21000 * 2) -
+            //deduct ETH for gasFee to swap on ETH pair
+            Number(
+              mode === "Swap"
+                ? layer === "L1"
+                  ? 0.01
+                  : 0.001
+                : totalGasCost ?? 0.001
+            ) -
             (mode === "Withdraw" ? 0.00025 : 0);
 
           const isMinus = parsedAmount <= 0;
@@ -181,6 +187,7 @@ export default function TokenInput(props: {
     selectedOutToken,
     totalGasCost,
     mode,
+    layer,
   ]);
 
   const handleFocus = () => {
