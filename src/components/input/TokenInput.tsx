@@ -16,7 +16,7 @@ import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import JSBI from "jsbi";
-import { useCallback, useEffect, useMemo, useState ,useRef} from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 
@@ -129,6 +129,7 @@ export default function TokenInput(props: {
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
             ) -
             Number(totalGasCost ?? 0.001) -
+            Number(21000 * 2) -
             (mode === "Withdraw" ? 0.00025 : 0);
 
           const isMinus = parsedAmount <= 0;
@@ -351,7 +352,7 @@ export default function TokenInput(props: {
             fontWeight={700}
             _hover={{}}
             _active={{}}
-            color={'#fff'}
+            color={"#fff"}
             mt={"3px"}
             onClick={() => onMax()}
           >
