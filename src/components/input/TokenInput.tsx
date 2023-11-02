@@ -146,6 +146,8 @@ export default function TokenInput(props: {
           }, 100);
         }
         if (isETH(selectedInToken)) {
+          console.log("totalGasCost(ETH) : ", totalGasCost);
+
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
@@ -153,10 +155,11 @@ export default function TokenInput(props: {
             //deduct ETH for gasFee to swap on ETH pair
             Number(
               mode === "Swap"
-                ? layer === "L1"
-                  ? 0.01
-                  : 0.001
-                : totalGasCost ?? 0.001
+                ? totalGasCost
+                : // ? layer === "L1"
+                  //   ? 0.01
+                  //   : 0.001 + Number(totalGasCost)
+                  totalGasCost ?? 0.001
             ) -
             (mode === "Withdraw" ? 0.00025 : 0);
 

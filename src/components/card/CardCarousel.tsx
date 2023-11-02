@@ -154,8 +154,6 @@ export const CardCarrousel = () => {
                   startIndex !== undefined &&
                   startIndex + 7 === index);
 
-          console.log("startIndex", startIndex, filteredTokenList.length);
-
           return (
             <CarousellCardComponent
               tokenData={tokenData}
