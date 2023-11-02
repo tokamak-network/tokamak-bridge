@@ -61,7 +61,7 @@ export const L2_TESTNET_UniswapContracts: L2_TESTNET_UniswapContracts = {
 };
 
 export const L2_initCodeHashManualOverride =
-  "0xa598dd2fba360510c5a8f02f44423a4468e902df5857dbce3ca162a43a3a31ff";
+  "0xe34f199b19b2b4f47f68442619d555527d244f78a3297ea89325f843f87b8b54";
 
 export const V3_CORE_FACTORY_ADDRESSES: { [chainId: number]: string } = {
   [SupportedChainId.MAINNET]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
