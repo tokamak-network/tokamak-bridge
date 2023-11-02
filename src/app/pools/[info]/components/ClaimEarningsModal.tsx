@@ -7,22 +7,20 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { usePricePair } from "@/hooks/price/usePricePair";
-import { useEstimateGasCollect } from "@/hooks/pool/useEstimateGasPool";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import useBlockNum from "@/hooks/network/useBlockNumber";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  estimatedGasFee,
-  estimatedGasUsage,
-} from "@/recoil/global/transaction";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import { useRecoilValue } from "recoil";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function ClaimEarningsModal() {
   const { isOpen, onClose } = usePoolModals();
   const { info } = usePositionInfo();
   const { collectFees, estimateGasToCollect } = usePoolContract();
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
@@ -35,15 +33,27 @@ export default function ClaimEarningsModal() {
       token1Amount,
     });
 
-  const { blockNumber } = useBlockNum();
-  const [estimatedGasUsageValue, setEstimatedGasUsage] =
-    useRecoilState(estimatedGasUsage);
+  const [estimatedGasUsageValue, setEstimatedGasUsage] = useState<
+    string | undefined
+  >(undefined);
 
-  const { tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: "ethereum",
-    amount: estimatedGasUsageValue,
-  });
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { layer } = useConnectedNetwork();
+  const { blockNumber } = useBlockNum();
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isOpen === "collectFee") {
+        const estimatedGas = await estimateGasToCollect();
+        return setEstimatedGasUsage(
+          smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
+        );
+      }
+    };
+    fetchData();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+  }, [isOpen]);
 
   return (
     <Modal isOpen={isOpen === "collectFee"} onClose={onClose}>
@@ -99,7 +109,11 @@ export default function ClaimEarningsModal() {
                   columnGap={"8px"}
                 >
                   <TokenSymbolWithNetwork
-                    tokenSymbol={info?.token0.symbol as string}
+                    tokenSymbol={
+                      info?.token0.symbol === "ETH" && collectAsWETH
+                        ? "WETH"
+                        : (info?.token0.symbol as string)
+                    }
                     chainId={info?.token0.chainId}
                     symbolW={24}
                     symbolH={24}
@@ -107,7 +121,9 @@ export default function ClaimEarningsModal() {
                     networkSymbolW={12}
                   />
                   <Text fontSize={16} color="#A0A3AD">
-                    {info?.token0.symbol}
+                    {info?.token0.symbol === "ETH" && collectAsWETH
+                      ? "WETH"
+                      : info?.token0.symbol}
                   </Text>
                 </Flex>
                 <Flex
@@ -117,7 +133,7 @@ export default function ClaimEarningsModal() {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {commafy(info?.token0CollectedFee, 6)}
+                    {smallNumberFormmater(info?.token0CollectedFee, 6)}
                   </Text>
                   <Text
                     minW={"60px"}
@@ -132,7 +148,11 @@ export default function ClaimEarningsModal() {
                   columnGap={"8px"}
                 >
                   <TokenSymbolWithNetwork
-                    tokenSymbol={info?.token1.symbol as string}
+                    tokenSymbol={
+                      info?.token1.symbol === "ETH" && collectAsWETH
+                        ? "WETH"
+                        : (info?.token1.symbol as string)
+                    }
                     chainId={info?.token1.chainId}
                     symbolW={24}
                     symbolH={24}
@@ -140,7 +160,9 @@ export default function ClaimEarningsModal() {
                     networkSymbolW={12}
                   />
                   <Text fontSize={16} color="#A0A3AD">
-                    {info?.token1.symbol}
+                    {info?.token1.symbol === "ETH" && collectAsWETH
+                      ? "WETH"
+                      : info?.token1.symbol}
                   </Text>
                 </Flex>
                 <Flex
@@ -150,7 +172,7 @@ export default function ClaimEarningsModal() {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {commafy(info?.token1CollectedFee, 6)}
+                    {smallNumberFormmater(info?.token1CollectedFee, 6)}
                   </Text>
                   <Text
                     minW={"60px"}
@@ -162,12 +184,14 @@ export default function ClaimEarningsModal() {
               <Flex justifyContent="space-between" pt="8px">
                 <Flex justifyContent="start" alignItems="center">
                   <Text fontSize={14} color="#A0A3AD">
-                    Estimated gas fees
+                    {layer === "L1"
+                      ? "Estimated gas fee "
+                      : "Estimated L2 execution fee"}
                   </Text>
                 </Flex>
                 <Flex justifyContent="end">
                   <Text fontSize={16} fontWeight="semibold">
-                    $4.34
+                    {`$${estimatedGasUsageValue ?? "-"}`}
                   </Text>
                 </Flex>
               </Flex>

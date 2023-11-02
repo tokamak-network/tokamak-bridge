@@ -1,6 +1,7 @@
 import {
   FeeAmount,
   Pool,
+  Position,
   TICK_SPACINGS,
   TickMath,
   encodeSqrtRatioX96,
@@ -14,7 +15,7 @@ import { Bound, PoolState } from "@/types/pool/pool";
 import JSBI from "jsbi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import tryParseCurrencyAmount from "@/utils/token/tryParseCurrencyAmount";
-import { Price, Token } from "@uniswap/sdk-core";
+import { Currency, CurrencyAmount, Price, Token } from "@uniswap/sdk-core";
 import { tryParseTick } from "@/utils/pool/tryParseTick";
 import { useGetPoolInput } from "./useGetPoolInput";
 import { getTickToPrice } from "@/utils/pool/getTickToPrice";
@@ -23,12 +24,14 @@ import {
   atMaxTick,
   atMinTick,
   initialPrice,
+  lastFocusedInput,
 } from "@/recoil/pool/setPoolPosition";
 import { useGetMode } from "../mode/useGetMode";
 
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
   const [poolState, pool] = usePool();
+
   const noLiquidity = poolState === PoolState.NOT_EXISTS;
   const { inToken, outToken } = useInOutTokens();
   const { minPriceInput, maxPriceInput } = useGetPoolInput();
@@ -51,10 +54,11 @@ export function useV3MintInfo() {
     ],
     [inToken?.token, outToken?.token, pool?.token0]
   );
+  const { subMode } = useGetMode();
 
   const [token0, token1] = useMemo(
     () =>
-      tokenA && tokenB && mode === "Pool"
+      tokenA && tokenB && subMode.add
         ? tokenA.sortsBefore(tokenB)
           ? [tokenA, tokenB]
           : [tokenB, tokenA]
@@ -242,6 +246,76 @@ export function useV3MintInfo() {
     return true;
   }, [inToken, token0Address]);
 
+  const lastFocused = useRecoilValue(lastFocusedInput);
+  // amounts
+  const independentAmount: CurrencyAmount<Currency> | undefined | null =
+    lastFocused === "LeftInput" && inToken?.parsedAmount
+      ? tryParseCurrencyAmount(inToken?.parsedAmount, inToken?.token)
+      : lastFocused === "RightInput" && outToken?.parsedAmount
+      ? tryParseCurrencyAmount(outToken?.parsedAmount, outToken?.token)
+      : undefined;
+
+  const dependentAmount: CurrencyAmount<Currency> | undefined = useMemo(() => {
+    // we wrap the currencies just to get the price in terms of the other token
+    const wrappedIndependentAmount = independentAmount?.wrapped;
+    const dependentCurrency =
+      lastFocused === "LeftInput" ? outToken?.token : inToken?.token;
+
+    if (
+      independentAmount &&
+      wrappedIndependentAmount &&
+      typeof tickLower === "number" &&
+      typeof tickUpper === "number" &&
+      poolForPosition
+    ) {
+      // if price is out of range or invalid range - return 0 (single deposit will be independent)
+      if (outOfRange || invalidRange) {
+        return undefined;
+      }
+
+      const position: Position | undefined =
+        wrappedIndependentAmount.currency.equals(poolForPosition.token0)
+          ? Position.fromAmount0({
+              pool: poolForPosition,
+              tickLower,
+              tickUpper,
+              amount0: independentAmount.quotient,
+              useFullPrecision: true, // we want full precision for the theoretical position
+            })
+          : Position.fromAmount1({
+              pool: poolForPosition,
+              tickLower,
+              tickUpper,
+              amount1: independentAmount.quotient,
+            });
+
+      const dependentTokenAmount = wrappedIndependentAmount.currency.equals(
+        poolForPosition.token0
+      )
+        ? position.amount1
+        : position.amount0;
+      return (
+        dependentCurrency &&
+        CurrencyAmount.fromRawAmount(
+          dependentCurrency,
+          dependentTokenAmount.quotient
+        )
+      );
+    }
+
+    return undefined;
+  }, [
+    independentAmount,
+    outOfRange,
+    tickLower,
+    tickUpper,
+    poolForPosition,
+    invalidRange,
+    lastFocused,
+    inToken?.token,
+    outToken?.token,
+  ]);
+
   return {
     pool,
     poolState,
@@ -261,6 +335,10 @@ export function useV3MintInfo() {
     deposit1Disabled: invertPrice ? deposit0Disabled : deposit1Disabled,
     tickSpaceLimits,
     poolForPosition,
+    dependentAmount,
+    currencyA: token0,
+    currencyB: token1,
+    fee: feeAmount,
   };
 }
 

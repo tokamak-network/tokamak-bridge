@@ -3,7 +3,7 @@ import { ReactNode, useState } from "react";
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
-  tooltipLabel?: string;
+  tooltipLabel?: string | ReactNode;
   style?: {
     width?: string;
     bgColor?: string;
@@ -16,8 +16,10 @@ export default function CustomTooltip(props: {
       p={0}
       defaultIsOpen={false}
       isOpen={isOpen}
+      zIndex={10000}
       label={
         <Box
+          w={"100%"}
           flex={1}
           px={"8px"}
           h={"28px"}

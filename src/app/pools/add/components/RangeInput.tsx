@@ -23,8 +23,6 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
-import { ethers } from "ethers";
 
 type RangeInputProps = {
   isMinPrice: boolean;
@@ -35,8 +33,14 @@ export default function RangeInput(props: RangeInputProps) {
   const { inToken, outToken } = useInOutTokens();
   const { onDecreaseLower, onIncreaseLower, onDecreaseUpper, onIncreaseUpper } =
     useRangeHopCallbacks();
-  const { pricesAtTicks, ticksAtLimit, invertPrice, invalidRange } =
-    useV3MintInfo();
+  const {
+    pricesAtTicks,
+    ticksAtLimit,
+    invertPrice,
+    invalidRange,
+    dependentAmount: _dependentAmount,
+  } = useV3MintInfo();
+  const dependentAmount = _dependentAmount?.toSignificant(6);
 
   const [, setMinPrice] = useRecoilState(minPrice);
   const [, setMaxPrice] = useRecoilState(maxPrice);
@@ -56,52 +60,41 @@ export default function RangeInput(props: RangeInputProps) {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
   const lastFocused = useRecoilValue(lastFocusedInput);
 
-  const handleBlur = useCallback(() => {
-    //for pool's price and amount on liquidity
-    if (lastFocused === "LeftInput" && selectedOutToken && amountForToken1) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken1.toString().replaceAll("-", ""),
-        selectedOutToken.decimals
-      );
+  // const handleBlur = useCallback(() => {
+  //   //for pool's price and amount on liquidity
+  //   if (lastFocused === "LeftInput" && selectedOutToken && dependentAmount) {
+  //     const parsedAmount = ethers.utils.parseUnits(
+  //       dependentAmount,
+  //       selectedOutToken.decimals
+  //     );
 
-      const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
-        selectedOutToken.decimals
-      );
+  //     return setSelectedOutToken({
+  //       ...selectedOutToken,
+  //       amountBN: parsedAmount.toBigInt(),
+  //       parsedAmount: dependentAmount,
+  //     });
+  //   }
+  //   if (lastFocused === "RightInput" && selectedInToken && dependentAmount) {
+  //     const parsedAmount = ethers.utils.parseUnits(
+  //       dependentAmount,
+  //       selectedInToken.decimals
+  //     );
 
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
-      });
-    }
-    if (lastFocused === "RightInput" && selectedInToken && amountForToken0) {
-      const formattedAmount = ethers.utils.formatUnits(
-        amountForToken0.toString().replaceAll("-", ""),
-        selectedInToken.decimals
-      );
-
-      const parsedAmount = ethers.utils.parseUnits(
-        formattedAmount,
-        selectedInToken.decimals
-      );
-
-      return setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: formattedAmount.toString(),
-      });
-    }
-  }, [
-    selectedInToken,
-    selectedOutToken,
-    amountForToken0,
-    amountForToken1,
-    lastFocused,
-  ]);
+  //     return setSelectedInToken({
+  //       ...selectedInToken,
+  //       amountBN: parsedAmount.toBigInt(),
+  //       parsedAmount: dependentAmount,
+  //     });
+  //   }
+  // }, [
+  //   selectedInToken,
+  //   selectedOutToken,
+  //   amountForToken0,
+  //   amountForToken1,
+  //   lastFocused,
+  // ]);
 
   const onChangeHandler = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -134,11 +127,11 @@ export default function RangeInput(props: RangeInputProps) {
     if (pricesAtTicks) {
       return isMinPrice
         ? invertPrice
-          ? pricesAtTicks?.UPPER?.invert().toSignificant(5)
-          : pricesAtTicks?.LOWER?.toSignificant(5)
+          ? pricesAtTicks?.UPPER?.invert().toSignificant(6)
+          : pricesAtTicks?.LOWER?.toSignificant(6)
         : invertPrice
-        ? pricesAtTicks?.LOWER?.invert().toSignificant(5)
-        : pricesAtTicks?.UPPER?.toSignificant(5);
+        ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
+        : pricesAtTicks?.UPPER?.toSignificant(6);
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
 
@@ -157,8 +150,8 @@ export default function RangeInput(props: RangeInputProps) {
   useEffect(() => {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
-        setLocalValue(value);
-        handleBlur();
+        setLocalValue(value ?? "");
+        // handleBlur();
       }, 0);
     }
   }, [localValue, useLocalValue, value]);
@@ -169,20 +162,6 @@ export default function RangeInput(props: RangeInputProps) {
       return setMaxPriceForAddModal(localValue);
     }
   }, [localValue, isMinPrice]);
-
-  // useEffect(() => {
-  //   if (minPriceInput?.replaceAll(",", "") !== pricesAtLimit["LOWER"]) {
-  //     invertPrice ? setAtMaxTick(false) : setAtMinTick(false);
-  //   } else {
-  //     invertPrice ? setAtMaxTick(true) : setAtMinTick(true);
-  //   }
-
-  //   if (maxPriceInput !== "∞") {
-  //     return invertPrice ? setAtMinTick(false) : setAtMaxTick(false);
-  //   } else {
-  //     return invertPrice ? setAtMinTick(true) : setAtMaxTick(true);
-  //   }
-  // }, [minPriceInput, maxPriceInput, invertPrice, pricesAtLimit]);
 
   return (
     <Flex flexDir={"column"}>

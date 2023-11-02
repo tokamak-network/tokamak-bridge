@@ -7,12 +7,14 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
+import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
 
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import {
   txDataStatus,
+  txHashLog,
   txHashStatus,
   txPendingStatus,
 } from "@/recoil/global/transaction";
@@ -29,6 +31,10 @@ const getInterface = () => {
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
+  const nonFungiblePositionManagerI = new ethers.utils.Interface(
+    NONFUNGIBLE_POSITION_MANAGER_ABI
+  );
+
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
     L1CrossDomainMessengerAbi
   );
@@ -38,6 +44,7 @@ const getInterface = () => {
     swapRouterI,
     erc20I,
     swapperI,
+    nonFungiblePositionManagerI,
     L1CrossDomainMessengerI,
   };
 };
@@ -161,12 +168,16 @@ export function useTx(params: {
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
+  const [, setTxLog] = useRecoilState(txHashLog);
 
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
-    if (connectedChainId !== exChainId) return setExChainId(connectedChainId);
+    if (connectedChainId !== exChainId) {
+      setTxPending(false);
+      return setExChainId(connectedChainId);
+    }
     if (isLoading) {
       return setTxPending(true);
     }
@@ -183,12 +194,42 @@ export function useTx(params: {
   }, [isSuccess]);
 
   useEffect(() => {
-    if (isError) return setModalOpen("error");
+    if (isError) {
+      setTxPending(false);
+      return setModalOpen("error");
+    }
   }, [isError]);
 
   useEffect(() => {
     if (data?.transactionHash) return setTxHash(data.transactionHash);
   }, [data]);
+
+  useEffect(() => {
+    if (hash === undefined) return setTxPending(false);
+  }, [hash]);
+
+  useEffect(() => {
+    if (isError) {
+      return;
+    }
+    if (
+      data &&
+      (txSort === "Add Liquidity" ||
+        txSort === "Increase Liquidity" ||
+        txSort === "Remove Liquidity")
+    ) {
+      const { logs, transactionHash } = data;
+      const { nonFungiblePositionManagerI } = getInterface();
+      const result = nonFungiblePositionManagerI.parseLog(
+        logs[logs.length - 1]
+      );
+      const { args } = result;
+      setTxLog({
+        txSort,
+        logs: args,
+      });
+    }
+  }, [isSuccess, isError, txSort, data, hash]);
 
   // useEffect(() => {
   //   if (isLoading && connectedChainId && hash) {

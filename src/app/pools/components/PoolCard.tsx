@@ -1,26 +1,35 @@
-import { NetworkSymbol } from "@/components/image/NetworkSymbol";
-import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import { Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import Link from "next/link";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
 import commafy from "@/utils/trim/commafy";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { usePricePair } from "@/hooks/price/usePricePair";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { priceFormmater } from "@/utils/trim/priceFormatter";
+import { useSwitchNetwork } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
+import { useRouter } from "next/navigation";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import QUESTION_ICON from "assets/icons/questionGray.svg";
+import Image from "next/image";
+import { trimAmount } from "@/utils/trim";
+import { useProvier } from "@/hooks/provider/useProvider";
+import { useUniswapContracts } from "@/hooks/uniswap/useUniswapContracts";
+import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
+import { BigNumber, Contract, ethers } from "ethers";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { calculateFeeToCollect } from "@/utils/pool/calculateFeeToCollect";
+import { l2Provider } from "@/config/l2Provider";
 
 export type PoolCardDetail = {
   id: number;
   token0: Token;
   token1: Token;
-  token0Amount: string;
+  token0Amount: number;
   token0CollectedFee: string;
   token0MarketPrice: string;
-  token1Amount: string;
+  token1Amount: number;
   token1CollectedFee: string;
   token1MarketPrice: string;
   fee: FeeAmount;
@@ -35,8 +44,14 @@ export type PoolCardDetail = {
   isClosed: boolean;
   token0Value: number;
   token1Value: number;
+  token0FeeValue: number;
+  token1FeeValue: number;
   feeValue: number;
   chainId: number;
+  owner: string;
+  rawData: any;
+  token0CollectedFeeBN: BigNumber;
+  token1CollectedFeeBN: BigNumber;
 };
 
 export default function PoolCard(props: PoolCardDetail) {
@@ -50,7 +65,15 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Amount,
     token0CollectedFee,
     token1CollectedFee,
+    token0Value,
+    token1Value,
+    token0MarketPrice,
+    token1MarketPrice,
     isClosed,
+    token0FeeValue,
+    token1FeeValue,
+    chainId,
+    rawData,
   } = props;
 
   const feePercent = useMemo(() => {
@@ -68,27 +91,144 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [fee]);
 
-  const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
-  const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-  const { token0Price, token1Price, hasTokenPrice } = usePricePair({
-    token0Name: token0.name,
-    token0Amount: Number(commafy(token0Amount, 4).replaceAll(",", "")),
-    token1Name: token1.name,
-    token1Amount: Number(commafy(token1Amount, 4).replaceAll(",", "")),
-  });
+  const { connectedChainId, otherLayerChainInfo, layer } =
+    useConnectedNetwork();
+  const { switchNetworkAsync } = useSwitchNetwork();
+  const router = useRouter();
+  const { provider, L1Provider, L2Provider } = useProvier();
+  const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
+  const [token0FeeAmount, setToken0FeeAmount] = useState<string | undefined>(
+    undefined
+  );
+  const [token1FeeAmount, setToken1FeeAmount] = useState<string | undefined>(
+    undefined
+  );
 
-  const { totalMarketPrice } = usePricePair({
-    token0Name: token0.name,
-    token0Amount: token0FeeAmount,
-    token1Name: token1.name,
-    token1Amount: token1FeeAmount,
-  });
+  const NonfungiblePositionManagerContract = useMemo(() => {
+    //for the network which is connected by a wallet
+    if (connectedChainId === chainId) {
+      if (layer === "L1") {
+        return new Contract(
+          L1_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
+          NONFUNGIBLE_POSITION_MANAGER_ABI,
+          provider
+        );
+      }
+      if (layer === "L2") {
+        return new Contract(
+          L2_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
+          NONFUNGIBLE_POSITION_MANAGER_ABI,
+          provider
+        );
+      }
+    }
+
+    //for the network which is not connectd by a wallet
+    if (
+      chainId === SupportedChainId["MAINNET"] ||
+      chainId === SupportedChainId["GOERLI"]
+    ) {
+      return new Contract(
+        L1_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
+        NONFUNGIBLE_POSITION_MANAGER_ABI,
+        L1Provider
+      );
+    }
+    if (
+      chainId === SupportedChainId["TITAN"] ||
+      chainId === SupportedChainId["DARIUS"]
+    ) {
+      return new Contract(
+        L2_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
+        NONFUNGIBLE_POSITION_MANAGER_ABI,
+        L2Provider
+      );
+    }
+  }, [
+    chainId,
+    provider,
+    L1Provider,
+    l2Provider,
+    L1_UniswapContracts,
+    L2_UniswapContracts,
+    NONFUNGIBLE_POSITION_MANAGER_ABI,
+  ]);
+
+  useEffect(() => {
+    const fetchFeeData = async () => {
+      if (rawData && NonfungiblePositionManagerContract) {
+        const feeData = await calculateFeeToCollect({
+          position: rawData,
+          NonfungiblePositionManagerContract,
+        });
+        const token0FeeAmount =
+          Number(feeData.token0Fee) === 0
+            ? "0"
+            : ethers.utils.formatUnits(feeData.token0Fee, token0.decimals);
+        const token1FeeAmount =
+          Number(feeData.token1Fee) === 0
+            ? "0"
+            : ethers.utils.formatUnits(feeData.token1Fee, token1.decimals);
+
+        setToken0FeeAmount(token0FeeAmount);
+        setToken1FeeAmount(token1FeeAmount);
+      }
+    };
+    fetchFeeData();
+  }, [
+    rawData,
+    NonfungiblePositionManagerContract,
+    token0.decimals,
+    token1.decimals,
+  ]);
+
+  const onClickToRoute = useCallback(async () => {
+    if (chainId !== connectedChainId && otherLayerChainInfo) {
+      const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+      if (res && res.id === otherLayerChainInfo.chainId) {
+        return router.push(`/pools/${id}?chainId=${chainId}`);
+      }
+    }
+    return router.push(`/pools/${id}?chainId=${chainId}`);
+  }, [id, chainId, connectedChainId, otherLayerChainInfo, switchNetworkAsync]);
+
+  const token0HasMarketPrice = Number(token0MarketPrice) > 0;
+  const token1HasMarketPrice = Number(token1MarketPrice) > 0;
+  const bothHaveMarketData = token0HasMarketPrice && token1HasMarketPrice;
+  const token0FeeValueForTooltip = token0HasMarketPrice
+    ? `($${commafy(token0FeeAmount, 2, undefined, "0.00")})`
+    : "";
+  const token1FeeValueForTooltip = token1HasMarketPrice
+    ? `($${commafy(token1FeeAmount, 2, undefined, "0.00")})`
+    : "";
+  const feeValue = useMemo(() => {
+    if (!bothHaveMarketData) return undefined;
+    try {
+      const token0MarketValue =
+        Number(token0FeeAmount) * Number(token0MarketPrice);
+      const token1MarketValue =
+        Number(token1FeeAmount) * Number(token1MarketPrice);
+      return commafy(token0MarketValue + token1MarketValue, 2, undefined, "");
+    } catch (e) {
+      console.log("feevalue error");
+      console.log(e);
+    }
+  }, [
+    token0FeeAmount,
+    token1FeeAmount,
+    token0MarketPrice,
+    token1MarketPrice,
+    bothHaveMarketData,
+  ]);
 
   return (
-    <Link href="/pools/[info]" as={`/pools/${id}`} key={id}>
+    <Box onClick={() => onClickToRoute()}>
       <Flex
         flexDir="column"
-        border="3px solid #383736"
+        borderWidth={"3px"}
+        borderColor={
+          chainId === 55004 || chainId === 5050 ? "#05274C" : "#383736"
+        }
         bgColor={!props.id ? "#15161D" : ""}
         w="200px"
         h="248px"
@@ -116,44 +256,95 @@ export default function PoolCard(props: PoolCardDetail) {
           </Text>
         </Flex>
         <TokenSymbolPair
-          token0={token0}
-          token1={token1}
+          token0={token1}
+          token1={token0}
           style={{ marginTop: "12px" }}
         />
         <Flex direction="column" fontSize={"12px"} mt={"auto"} pr={"4px"}>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token0.symbol}</Text>
-            <Text>
-              {smallNumberFormmater(commafy(token0Amount, 4))}{" "}
+            <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+              {token0Amount < 0.001
+                ? smallNumberFormmater(token0Amount)
+                : commafy(token0Amount, 4)}{" "}
               <span style={{ color: "#A0A3AD" }}>
-                {priceFormmater(token0Price) === "NA"
-                  ? `(${priceFormmater(token0Price)})`
-                  : `($${priceFormmater(token0Price)})`}
+                {token0MarketPrice === undefined || token0Value === 0
+                  ? undefined
+                  : `($${priceFormmater(token0Value)})`}
               </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token1.symbol}</Text>
-            <Text>
-              {smallNumberFormmater(commafy(token1Amount, 4))}{" "}
+            <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+              {token1Amount < 0.001
+                ? smallNumberFormmater(token1Amount)
+                : commafy(token1Amount, 4)}{" "}
               <span style={{ color: "#A0A3AD" }}>
                 {" "}
-                {priceFormmater(token1Price) === "NA"
-                  ? `(${priceFormmater(token1Price)})`
-                  : `($${priceFormmater(token1Price)})`}
+                {token1MarketPrice === undefined || token1Value === 0
+                  ? undefined
+                  : `($${priceFormmater(token1Value)})`}
               </span>
             </Text>
           </Flex>
-          <Flex justifyContent="space-between" h={"20px"}>
+          <Flex justifyContent="space-between" alignItems={"center"} h={"20px"}>
             <Text>Fees</Text>
-            {hasTokenPrice ? (
-              <Text>${commafy(totalMarketPrice, 2)}</Text>
-            ) : (
-              <Text color={"#A0A3AD"}>No market data</Text>
-            )}
+            <Flex columnGap={"5px"}>
+              {bothHaveMarketData ? (
+                <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
+                  ${commafy(feeValue, 2)}
+                </Text>
+              ) : (
+                <Text color={"#A0A3AD"}>No market data</Text>
+              )}
+              <Flex w={"14px"} h={"18px"} alignItems={"center"}>
+                <CustomTooltip
+                  content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
+                  tooltipLabel={
+                    <Flex
+                      w={
+                        token0HasMarketPrice && token1HasMarketPrice
+                          ? "300px"
+                          : "260px"
+                      }
+                      px={"10px"}
+                      pos={"absolute"}
+                      zIndex={500}
+                      h={"28px"}
+                      bg={"#383A49"}
+                      textAlign={"center"}
+                      right={"-125px"}
+                      borderRadius={"4px"}
+                      justifyContent={"center"}
+                    >
+                      <Text w={"100%"} pos={"relative"}>
+                        FEES :{" "}
+                        {`${trimAmount(token0FeeAmount, 7)} ${
+                          token0.symbol
+                        } ${token0FeeValueForTooltip}`}{" "}
+                        <span
+                          style={{
+                            width: "7px",
+                            height: "7px",
+                            color: "##A0A3AD",
+                          }}
+                        >
+                          +
+                        </span>{" "}
+                        {`${trimAmount(token1FeeAmount, 7)} ${
+                          token1.symbol
+                        } ${token1FeeValueForTooltip}`}{" "}
+                      </Text>
+                    </Flex>
+                  }
+                  style={{ width: "10px" }}
+                />
+              </Flex>
+            </Flex>
           </Flex>
         </Flex>
       </Flex>
-    </Link>
+    </Box>
   );
 }

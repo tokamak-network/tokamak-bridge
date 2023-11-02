@@ -5,10 +5,11 @@ import {
 } from "@/generated";
 import useContract from "@/hooks/contracts/useContract";
 import usePreview from "@/hooks/modal/usePreviewModal";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useApproveToken } from "@/hooks/pool/useApproveToken";
+import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
-import { usePoolMint } from "@/hooks/pool/usePoolContract";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
@@ -70,7 +71,7 @@ const ApproveButton = (props: { isInToken: boolean }) => {
         _hover={{}}
         _active={{}}
         _disabled={{}}
-        color={'#fff'}
+        color={"#fff"}
         onClick={() => write?.()}
         isDisabled={isLoading}
       >
@@ -87,12 +88,25 @@ const ApproveButton = (props: { isInToken: boolean }) => {
 
 export const ApproveButtonsContrainer = () => {
   const { inTokenApproved, outTokenApproved } = useApproveToken();
-  const { inToken, outToken } = useInOutTokens();
+  const { inToken, outToken, inTokenHasAmount, outTokenHasAmount } =
+    useInOutTokens();
+  const [poolState] = usePool();
+  const { subMode } = useGetMode();
+  const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+  const { token0Input, token1Input } = useIncreaseAmount();
+
+  if (subMode.add && poolState === PoolState.INVALID) return null;
+  if (isBalanceOver || isOutTokenBalanceOver) return null;
 
   return (
     <Flex columnGap={"12px"}>
-      {inToken && !inTokenApproved && <ApproveButton isInToken={true} />}
-      {outToken && !outTokenApproved && <ApproveButton isInToken={false} />}
+      {inToken && inTokenHasAmount && !inTokenApproved && !isBalanceOver && (
+        <ApproveButton isInToken={true} />
+      )}
+      {outToken &&
+        outTokenHasAmount &&
+        !outTokenApproved &&
+        !isOutTokenBalanceOver && <ApproveButton isInToken={false} />}
     </Flex>
   );
 };
@@ -101,23 +115,57 @@ export default function ActionButton() {
   const [poolState] = usePool();
   const { tokensPairHasAmount } = useInOutTokens();
   const { inTokenApproved, outTokenApproved } = useApproveToken();
-  const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+  const { isBalanceOver, isOutTokenBalanceOver, isInputZero, isOutInputZero } =
+    useInputBalanceCheck();
   const { inToken, outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
   const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
 
+  const [, setPoolModal] = useRecoilState(poolModalStatus);
+  const [, setPollModalProp] = useRecoilState(poolModalProp);
+
+  const btnDisabled =
+    (!deposit0Disabled && !deposit1Disabled && !tokensPairHasAmount) ||
+    (!deposit0Disabled && !inTokenApproved) ||
+    (!deposit1Disabled && !outTokenApproved) ||
+    (!deposit0Disabled && isBalanceOver) ||
+    (!deposit1Disabled && isOutTokenBalanceOver) ||
+    isTONatPair ||
+    (!deposit0Disabled && isInputZero) ||
+    (!deposit1Disabled && isOutInputZero);
+
+  const { mintPositionInfo } = useMintPositionInfo();
+
+  const handleAction = () => {
+    setPollModalProp(mintPositionInfo);
+    return setPoolModal("addLiquidity");
+  };
+
   const buttonName = useMemo(() => {
-    if (isBalanceOver) return `Insufficient ${inToken?.tokenSymbol} balance`;
-    if (isOutTokenBalanceOver)
+    if (!deposit0Disabled && isBalanceOver)
+      return `Insufficient ${inToken?.tokenSymbol} balance`;
+    if (!deposit1Disabled && isOutTokenBalanceOver)
       return `Insufficient ${outToken?.tokenSymbol} balance`;
 
     switch (poolState) {
       case PoolState.EXISTS:
-        return tokensPairHasAmount ? "Preview" : "Enter an amount";
+        return (!deposit0Disabled &&
+          !deposit1Disabled &&
+          tokensPairHasAmount) ||
+          (deposit0Disabled && !isOutInputZero) ||
+          (deposit1Disabled && !isInputZero)
+          ? "Preview"
+          : "Enter an amount";
       case PoolState.INVALID:
         return "Invalid pair";
       case PoolState.NOT_EXISTS:
-        return tokensPairHasAmount ? "Preview" : "Invalid pair";
+        return (!deposit0Disabled &&
+          !deposit1Disabled &&
+          tokensPairHasAmount) ||
+          (deposit0Disabled && !isOutInputZero) ||
+          (deposit1Disabled && !isInputZero)
+          ? "Preview"
+          : "Enter an amount";
     }
     return "Invalid pair";
   }, [
@@ -127,25 +175,9 @@ export default function ActionButton() {
     isOutTokenBalanceOver,
     inToken,
     outToken,
+    deposit0Disabled,
+    deposit1Disabled,
   ]);
-
-  const [, setPoolModal] = useRecoilState(poolModalStatus);
-  const [, setPollModalProp] = useRecoilState(poolModalProp);
-
-  const btnDisabled =
-    !tokensPairHasAmount ||
-    (!deposit0Disabled && !inTokenApproved) ||
-    (!deposit1Disabled && !outTokenApproved) ||
-    isBalanceOver ||
-    isOutTokenBalanceOver ||
-    isTONatPair;
-
-  const { mintPositionInfo } = useMintPositionInfo();
-
-  const handleAction = () => {
-    setPollModalProp(mintPositionInfo);
-    return setPoolModal("addLiquidity");
-  };
 
   return (
     <Flex flexDir={"column"} rowGap={"12px"} mt={"auto"}>

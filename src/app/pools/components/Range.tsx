@@ -6,20 +6,25 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy, { commafyWithUndefined } from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
-import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
+import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
+import useConnectedNetwork from "@/hooks/network";
 
-const TokenPairTitle = (props: { page: T_PoolModal }) => {
+const TokenPairTitle = (props: {
+  page: T_PoolModal;
+  // invertedPair: boolean;
+}) => {
   const { page } = props;
-  const { inverted } = usePoolInfo();
   const { info } = usePositionInfo();
 
   if (!info) return null;
-  const token0 = inverted ? info.token1 : info.token0;
-  const token1 = inverted ? info.token0 : info.token1;
+  const token0 = info.token0;
+  const token1 = info.token1;
 
   const isBigFont = page === "increaseLiquidity" || page === "removeLiquidity";
 
@@ -50,23 +55,12 @@ export default function Range(props: {
 
   if (!info) return null;
 
-  const { inRange, token0Amount, token1Amount, fee } = info;
+  const { inRange, token0Amount, token1Amount, fee, token0, token1 } = info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
-  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
   const { poolModal } = usePreview();
-
+  const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
   const { inToken, outToken } = useInOutTokens();
-
-  const token0 = inverted ? info.token0 : info.token1;
-  const token1 = inverted ? info.token1 : info.token0;
-  const token0AmountForAdding = commafy(
-    inverted ? token0Amount : token1Amount,
-    6
-  );
-  const token1AmountForAdding = commafy(
-    inverted ? token1Amount : token0Amount,
-    6
-  );
+  const { layer } = useConnectedNetwork();
 
   return (
     <Flex
@@ -89,10 +83,10 @@ export default function Range(props: {
         </Flex>
         <RangeText inRange={inRange} style={{ fontSize: 14 }} />
       </Flex>
-      <Flex justifyContent={"center"} w="100%">
+      <Flex justifyContent={"center"} w="100%" mb={"16px"}>
         <TokenSymbolPair
-          token0={token1}
-          token1={token0}
+          token0={token0}
+          token1={token1}
           marginTop="12px"
           networkSymbolSize={24}
           networkSymbolStyle={{
@@ -100,62 +94,39 @@ export default function Range(props: {
           }}
         />
       </Flex>
-
-      <RangeToken
-        token={token0}
-        amount={
-          page === "addLiquidity"
-            ? undefined
-            : commafy(inverted ? token0Amount : token1Amount, 6)
-        }
-        page={page}
-        alterAmount={
-          page === "addLiquidity"
-            ? token0AmountForAdding
-            : page === "increaseLiquidity"
-            ? commafyWithUndefined(
-                inverted ? inToken?.parsedAmount : outToken?.parsedAmount,
-                6,
-                false,
-                true
-              )
-            : commafy(
-                inverted
-                  ? deposit1Disabled
-                    ? undefined
-                    : amount0Removed
-                  : amount1Removed,
-                6
-              )
-        }
-        style={{ marginBottom: "9px", marginTop: "16px" }}
-      />
       <RangeToken
         token={token1}
-        amount={
-          page === "addLiquidity"
-            ? undefined
-            : commafy(inverted ? token1Amount : token0Amount, 6)
-        }
+        amount={page === "addLiquidity" ? undefined : commafy(token1Amount, 6)}
         page={page}
         alterAmount={
-          page === "addLiquidity"
-            ? token1AmountForAdding
-            : page === "increaseLiquidity"
+          page === "addLiquidity" || page === "increaseLiquidity"
             ? commafyWithUndefined(
-                inverted ? outToken?.parsedAmount : inToken?.parsedAmount,
+                page === "addLiquidity"
+                  ? token1ParsedAmount
+                  : outToken?.parsedAmount,
                 6,
                 false,
                 true
               )
-            : commafy(
-                inverted
-                  ? deposit0Disabled
-                    ? undefined
-                    : amount1Removed
-                  : amount0Removed,
-                6
+            : commafy(amount1Removed, 6)
+        }
+        style={{ marginBottom: "9px" }}
+      />
+      <RangeToken
+        token={token0}
+        amount={page === "addLiquidity" ? undefined : commafy(token0Amount, 6)}
+        page={page}
+        alterAmount={
+          page === "addLiquidity" || page === "increaseLiquidity"
+            ? commafyWithUndefined(
+                page === "addLiquidity"
+                  ? token0ParsedAmount
+                  : inToken?.parsedAmount,
+                6,
+                false,
+                true
               )
+            : commafy(amount0Removed, 6)
         }
       />
       {(page === "addLiquidity" ||
@@ -164,7 +135,11 @@ export default function Range(props: {
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
             <Flex justifyContent={"space-between"}>
-              <Text fontSize={"14px"}>Estimated gas fee</Text>
+              <Text fontSize={"14px"}>
+                {layer === "L1"
+                  ? "Estimated gas fee "
+                  : "Estimated L2 execution fee"}
+              </Text>
               <Text fontSize={"16px"} fontWeight={500}>
                 {`$${estimatedGas}`}
               </Text>
@@ -181,28 +156,18 @@ export default function Range(props: {
               <Flex alignItems={"center"}>
                 <Text>
                   {smallNumberFormmater(
-                    commafy(
-                      inverted
-                        ? info?.token1CollectedFee
-                        : info?.token0CollectedFee,
-                      8
-                    ) ?? "-"
+                    commafy(info?.token0CollectedFee, 8) ?? "-"
                   )}{" "}
-                  {inverted ? info?.token1.symbol : info?.token0.symbol}
+                  {info?.token0.symbol}
                 </Text>
                 <Text w={"10px"} mx={"2px"}>
                   +
                 </Text>
                 <Text>
                   {smallNumberFormmater(
-                    commafy(
-                      inverted
-                        ? info?.token0CollectedFee
-                        : info?.token1CollectedFee,
-                      8
-                    ) ?? "-"
+                    commafy(info?.token1CollectedFee, 8) ?? "-"
                   )}{" "}
-                  {inverted ? info?.token0.symbol : info?.token1.symbol}
+                  {info?.token1.symbol}
                 </Text>
               </Flex>
             </Flex>

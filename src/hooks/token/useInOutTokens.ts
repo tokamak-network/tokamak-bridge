@@ -5,10 +5,9 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { Token, Ether } from "@uniswap/sdk-core";
+import { Token } from "@uniswap/sdk-core";
 import useConnectedNetwork from "../network";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
@@ -20,9 +19,7 @@ export function useInOutTokens() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
-
-  const { connectedChainId, chainName, layer, isConnectedToMainNetwork } =
-    useConnectedNetwork();
+  const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
   const { mode } = useGetMode();
 
@@ -109,7 +106,7 @@ export function useInOutTokens() {
     };
     thisTokenExist().catch((e) => {
       console.log("**thisTokenExist err**");
-      console.log(e);
+      // console.log(e);
     });
   }, [connectedChainId, provider, inToken?.tokenAddress]);
 
@@ -132,8 +129,8 @@ export function useInOutTokens() {
     return setOutTokenRecoilValue(null);
   }, [setInTokenRecoilValue, setOutTokenRecoilValue]);
 
-  const initializeTokenPairAmount = () => {
-    if (inTokenRecoilValue) {
+  const initializeTokenPairAmount = useCallback(() => {
+    if (inTokenRecoilValue && inTokenRecoilValue !== null) {
       setInTokenRecoilValue({
         ...inTokenRecoilValue,
         amountBN: null,
@@ -141,14 +138,34 @@ export function useInOutTokens() {
       });
     }
 
-    if (outTokenRecoilValue) {
+    if (outTokenRecoilValue && outTokenRecoilValue !== null) {
       setOutTokenRecoilValue({
         ...outTokenRecoilValue,
         amountBN: null,
         parsedAmount: null,
       });
     }
-  };
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
+  const initializeInTokenAmount = useCallback(() => {
+    if (inTokenRecoilValue && inTokenRecoilValue !== null) {
+      return setInTokenRecoilValue({
+        ...inTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
+  const initializeOutTokenAmount = useCallback(() => {
+    if (outTokenRecoilValue && outTokenRecoilValue !== null) {
+      setOutTokenRecoilValue({
+        ...outTokenRecoilValue,
+        amountBN: null,
+        parsedAmount: null,
+      });
+    }
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
 
   return {
     inToken,
@@ -161,5 +178,7 @@ export function useInOutTokens() {
     invertTokenPair,
     initializeTokenPair,
     initializeTokenPairAmount,
+    initializeInTokenAmount,
+    initializeOutTokenAmount,
   };
 }

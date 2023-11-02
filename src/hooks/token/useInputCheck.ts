@@ -54,5 +54,12 @@ export default function useInputBalanceCheck() {
     return false;
   }, [outToken?.parsedAmount]);
 
-  return { isBalanceOver, isOutTokenBalanceOver, isInputZero, isOutInputZero };
+  return {
+    isBalanceOver,
+    isOutTokenBalanceOver,
+    isInputZero,
+    isOutInputZero,
+    tokenData,
+    outTokenData,
+  };
 }

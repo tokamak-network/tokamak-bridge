@@ -72,8 +72,6 @@ export const CardCarrousel = () => {
         h={"332px"}
         pos={"relative"}
       >
-      
-        {/* 시연용 */}
         {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
           // const {
           //   endLeftControl,
@@ -97,7 +95,9 @@ export const CardCarrousel = () => {
             filteredTokenList.length < 6
               ? false
               : startIndex === filteredTokenList.length
-              ? startIndex - 9 === index ||
+              ? startIndex - 11 === index ||
+                startIndex - 10 === index ||
+                startIndex - 9 === index ||
                 startIndex - 8 === index ||
                 startIndex - 7 === index ||
                 startIndex - 6 === index ||
@@ -108,7 +108,9 @@ export const CardCarrousel = () => {
                 startIndex - 1 === index ||
                 startIndex === index
               : startIndex === filteredTokenList.length - 1
-              ? startIndex - 9 === index ||
+              ? startIndex - 11 === index ||
+                startIndex - 10 === index ||
+                startIndex - 9 === index ||
                 startIndex - 8 === index ||
                 startIndex - 7 === index ||
                 startIndex - 6 === index ||
@@ -152,6 +154,8 @@ export const CardCarrousel = () => {
                   startIndex !== undefined &&
                   startIndex + 7 === index);
 
+          console.log("startIndex", startIndex, filteredTokenList.length);
+
           return (
             <CarousellCardComponent
               tokenData={tokenData}
@@ -166,7 +170,7 @@ export const CardCarrousel = () => {
           );
         })}
       </Flex>
-    
+
       <Flex
         onClick={handleNext}
         // border={"2px solid #17181D"}

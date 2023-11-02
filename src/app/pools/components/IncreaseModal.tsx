@@ -9,7 +9,6 @@ import {
 import Range from "./Range";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import Title from "../add/components/Title";
-import ActionButton from "../increase/components/ActionButton";
 import CloseButton from "@/components/button/CloseButton";
 import PriceRange from "../[info]/components/PriceRange";
 import { usePoolContract, usePoolMint } from "@/hooks/pool/usePoolContract";
@@ -17,30 +16,43 @@ import { useEffect, useState } from "react";
 import commafy from "@/utils/trim/commafy";
 import useBlockNum from "@/hooks/network/useBlockNumber";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { useRecoilValue } from "recoil";
+import { estimatedGasFee } from "@/recoil/global/transaction";
+import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 
 export default function IncreaseModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
-  const { addLiquidity } = usePoolContract();
+  const { increaseLiquidity, estimateGasToIncrease } = usePoolContract();
   const { mintPosition, estimateGasToMint } = usePoolMint();
-  const [gas, setGas] = useState<number | undefined>(undefined);
-  const { blockNumber } = useBlockNum();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const [gasToAdd, setGasToAdd] = useState<number | undefined>(undefined);
+  const { blockNumber } = useBlockNum();
+  const { info } = usePositionInfo();
 
   useEffect(() => {
     const fetchData = async () => {
-      if (gas !== undefined) return;
-      const gasData = await estimateGasToMint();
-      setGas(gasData);
+      if (poolModal === "addLiquidity") {
+        const gasData = await estimateGasToMint();
+        return setGasToAdd(gasData);
+      }
+
+      if (poolModal === "increaseLiquidity") {
+        const gasData = await estimateGasToIncrease();
+        return setGasToAdd(gasData);
+      }
     };
     fetchData();
-  }, [gas, estimateGasToMint, blockNumber]);
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [poolModal, blockNumber]);
 
   return (
     <Modal
       isOpen={poolModal === "increaseLiquidity" || poolModal === "addLiquidity"}
       onClose={() => {
         onClosePreviewModal();
-        setGas(undefined);
       }}
       isCentered
     >
@@ -71,9 +83,9 @@ export default function IncreaseModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={poolModal}
-          estimatedGas={commafy(gas)}
+          estimatedGas={commafy(gasToAdd)}
         />
-        <PriceRange />
+        <PriceRange info={info} />
         <Flex w={"100%"}>
           <Button
             w={"100%"}
@@ -89,8 +101,10 @@ export default function IncreaseModal() {
               setModalOpen("confirming");
               setIsOpen(true);
               onClosePreviewModal();
-              setGas(undefined);
-              poolModal === "addLiquidity" ? mintPosition() : addLiquidity();
+              // setGas(undefined);
+              poolModal === "addLiquidity"
+                ? mintPosition()
+                : increaseLiquidity();
             }}
           >
             {poolModal === "addLiquidity" ? "Add" : "Increase"}
