@@ -273,7 +273,7 @@ export default function Header() {
         <Network />
         <Flex flexDir={"column"} alignItems={"flex-end"}>
           <Account />
-          {/* <AccountModal /> */}
+          <AccountModal />
         </Flex>
 
         {/* <UserMenu /> */}
