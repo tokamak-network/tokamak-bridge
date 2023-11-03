@@ -13,10 +13,7 @@ import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
-import {
-  confirmWithdrawStats,
-  confirmWithdrawData,
-} from "@/recoil/modal/atom";
+import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
@@ -77,9 +74,8 @@ export default function ActionButton() {
   const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();
   const { connetAndDisconntWallet } = useConnectWallet();
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(
-    confirmWithdrawStats
-  );
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
 
   return (

@@ -82,13 +82,12 @@ export const relayBannerSelector = selector<{
 }>({
   key: "relayBannerSelector",
   get: ({ get }) => {
-    
-      const today = new Date();
-      // const nowTime = getTime(today);
-      // const desiredDateThisWeek = addDays(weekStart, 3);
-      const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const uTCTime = zonedTimeToUtc(today, "Asia/Seoul");
-      const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
+    const today = new Date();
+    // const nowTime = getTime(today);
+    // const desiredDateThisWeek = addDays(weekStart, 3);
+    const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const uTCTime = zonedTimeToUtc(today, "Asia/Seoul");
+    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
     return {
       previewTimeStartThisWeek: getTime(zoneTime),
     };
@@ -111,8 +110,8 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
     const weekStart = startOfWeek(today);
-    const desiredDateThisWeek = addDays(weekStart, 3); // You can use `addDays(thisWed, dayINeed - 1)` as well
-    //  const desiredDateThisWeek = addWeeks(addDays(weekStart, 3),1)
+    // const desiredDateThisWeek = addDays(weekStart, 3);  //to show the banner
+    const desiredDateThisWeek = addWeeks(addDays(weekStart, 3), 1); // to hide the banner
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const previewTimeStartThisWeek =
       isTestnet === true
@@ -128,7 +127,9 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
           });
 
     const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
-    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);        
+    const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);
+    // console.log("getTime(zoneTime),", getTime(zoneTime));
+
     return {
       previewTimeStartThisWeek: getTime(zoneTime),
     };

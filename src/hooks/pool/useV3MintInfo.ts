@@ -38,6 +38,7 @@ export function useV3MintInfo() {
   const startPriceTypedValue = useRecoilValue(initialPrice);
   const [isAtMinTick] = useRecoilState(atMinTick);
   const [isAtMaxTick] = useRecoilState(atMaxTick);
+  const { mode } = useGetMode();
 
   //note to parse inputs in reverse
   const invertPrice = Boolean(

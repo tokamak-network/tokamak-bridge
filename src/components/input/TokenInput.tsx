@@ -13,10 +13,13 @@ import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
+import JSBI from "jsbi";
+import { useRecoilState } from "recoil";
+import useConnectedNetwork from "@/hooks/network";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
-import { useRecoilState } from "recoil";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -39,8 +42,10 @@ export default function TokenInput(props: {
     inTokenInfo,
     outTokenInfo,
   } = useInOutTokens();
-  const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
+  const { layer } = useConnectedNetwork();
   const [isMax, setIsMax] = useState<boolean>(false);
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
 
@@ -141,12 +146,21 @@ export default function TokenInput(props: {
           }, 100);
         }
         if (isETH(selectedInToken)) {
-          // if (!totalGasCost) return;
+          console.log("totalGasCost(ETH) : ", totalGasCost);
+
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
             ) -
-            Number(totalGasCost ?? 0.001) -
+            //deduct ETH for gasFee to swap on ETH pair
+            Number(
+              mode === "Swap"
+                ? totalGasCost
+                : // ? layer === "L1"
+                  //   ? 0.01
+                  //   : 0.001 + Number(totalGasCost)
+                  totalGasCost ?? 0.001
+            ) -
             (mode === "Withdraw" ? 0.00025 : 0);
 
           const isMinus = parsedAmount <= 0;
@@ -199,6 +213,7 @@ export default function TokenInput(props: {
     selectedOutToken,
     totalGasCost,
     mode,
+    layer,
     isDisabled,
   ]);
 

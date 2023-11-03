@@ -1,4 +1,4 @@
-import { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { Box, Checkbox, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -229,6 +229,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const { title, content, gasFee, slippage } = props;
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
+  const { layer } = useConnectedNetwork();
 
   return (
     <Flex flexDir={"column"}>
@@ -249,7 +250,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
           {gasFee && (
             <Text
-              ml={"27px"}
+              ml={layer === "L2" ? 0 : "27px"}
               fontWeight={500}
               color={isOpen ? "#fff" : "#A0A3AD"}
             >
