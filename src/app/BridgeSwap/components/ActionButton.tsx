@@ -40,8 +40,8 @@ export default function ActionButton() {
   const needToOpenWithdrawModal = mode === "Withdraw";
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
+  // const deactivateButton = isL2;
   const deactivateButton = status === "Active" && isL2;
-
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const disabled =

@@ -41,8 +41,8 @@ const MaintenanceBanner = () => {
       });
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-        hours: 1,
-        minutes: 0,
+        hours: 0,
+        minutes: 30,
         seconds: 0,
       });
 
