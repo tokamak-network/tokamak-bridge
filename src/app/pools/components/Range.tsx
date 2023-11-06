@@ -55,7 +55,8 @@ export default function Range(props: {
 
   if (!info) return null;
 
-  const { inRange, token0Amount, token1Amount, fee, token0, token1 } = info;
+  const { inRange, token0Amount, token1Amount, fee, token0, token1, isClosed } =
+    info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { poolModal } = usePreview();
   const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
@@ -81,7 +82,11 @@ export default function Range(props: {
             </Text>
           </Flex>
         </Flex>
-        <RangeText inRange={inRange} style={{ fontSize: 14 }} />
+        <RangeText
+          inRange={inRange}
+          isClosed={isClosed}
+          style={{ fontSize: 14 }}
+        />
       </Flex>
       <Flex justifyContent={"center"} w="100%" mb={"16px"}>
         <TokenSymbolPair

@@ -2,8 +2,6 @@ import { Flex, Text } from "@chakra-ui/react";
 import PoolList from "./components/PoolList";
 import { useAccount } from "wagmi";
 import { useGetPositionIds } from "@/hooks/pool/useGetPositionIds";
-import { useRecoilValue } from "recoil";
-import { ATOM_positions } from "@/recoil/pool/positions";
 
 export default function YourPools() {
   const { isConnected } = useAccount();

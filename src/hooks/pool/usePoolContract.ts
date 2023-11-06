@@ -606,7 +606,7 @@ export function usePoolContract() {
 
             if (estimateGas) return gasLimit;
             const tx = await NonfungiblePositionManagerContract.multicall(
-              [calldata],
+              calldata,
               {
                 gasLimit,
                 value,
@@ -752,7 +752,7 @@ export function usePoolContract() {
           );
           if (estimateGas) return gasLimit;
           const tx = await NonfungiblePositionManagerContract.multicall(
-            [calldata],
+            calldata,
             {
               gasLimit,
             }
