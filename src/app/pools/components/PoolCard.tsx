@@ -96,7 +96,12 @@ export default function PoolCard(props: PoolCardDetail) {
   const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
   const { provider, L1Provider, L2Provider } = useProvier();
-  const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
+  const {
+    L1_UniswapContracts,
+    L2_UniswapContracts,
+    UNISWAP_CONTRACT,
+    L2_TESTNET_UniswapContracts,
+  } = useUniswapContracts();
   const [token0FeeAmount, setToken0FeeAmount] = useState<string | undefined>(
     undefined
   );
@@ -107,20 +112,11 @@ export default function PoolCard(props: PoolCardDetail) {
   const NonfungiblePositionManagerContract = useMemo(() => {
     //for the network which is connected by a wallet
     if (connectedChainId === chainId) {
-      if (layer === "L1") {
-        return new Contract(
-          L1_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
-          NONFUNGIBLE_POSITION_MANAGER_ABI,
-          provider
-        );
-      }
-      if (layer === "L2") {
-        return new Contract(
-          L2_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
-          NONFUNGIBLE_POSITION_MANAGER_ABI,
-          provider
-        );
-      }
+      return new Contract(
+        UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+        NONFUNGIBLE_POSITION_MANAGER_ABI,
+        provider
+      );
     }
 
     //for the network which is not connectd by a wallet
@@ -134,16 +130,22 @@ export default function PoolCard(props: PoolCardDetail) {
         L1Provider
       );
     }
-    if (
-      chainId === SupportedChainId["TITAN"] ||
-      chainId === SupportedChainId["DARIUS"]
-    ) {
+    if (chainId === SupportedChainId["TITAN"]) {
       return new Contract(
         L2_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
         NONFUNGIBLE_POSITION_MANAGER_ABI,
         L2Provider
       );
     }
+    if (chainId === SupportedChainId["DARIUS"]) {
+      return new Contract(
+        L2_TESTNET_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
+        NONFUNGIBLE_POSITION_MANAGER_ABI,
+        L2Provider
+      );
+    }
+
+    L2_TESTNET_UniswapContracts;
   }, [
     chainId,
     provider,
@@ -151,6 +153,8 @@ export default function PoolCard(props: PoolCardDetail) {
     l2Provider,
     L1_UniswapContracts,
     L2_UniswapContracts,
+    UNISWAP_CONTRACT,
+    L2_TESTNET_UniswapContracts,
     NONFUNGIBLE_POSITION_MANAGER_ABI,
   ]);
 
@@ -174,7 +178,10 @@ export default function PoolCard(props: PoolCardDetail) {
         setToken1FeeAmount(token1FeeAmount);
       }
     };
-    fetchFeeData();
+    fetchFeeData().catch((e) => {
+      console.log("**fetchFeeData err**");
+      console.log(e);
+    });
   }, [
     rawData,
     NonfungiblePositionManagerContract,

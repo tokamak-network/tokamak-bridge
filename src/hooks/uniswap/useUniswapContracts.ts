@@ -39,5 +39,6 @@ export function useUniswapContracts() {
     UNISWAP_CONTRACT_OTHER_LAYER,
     L1_UniswapContracts,
     L2_UniswapContracts,
+    L2_TESTNET_UniswapContracts,
   };
 }

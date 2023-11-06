@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useTransaction, useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { txPendingStatus } from "@/recoil/global/transaction";
+import { useMemo } from "react";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
@@ -19,6 +20,15 @@ export default function Account() {
   const txPending = useRecoilValue(txPendingStatus);
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
+
+  const ImageContainer = useMemo(() => {
+    return (
+      <>
+        <Image src={WALLET_ICON} alt={""} />
+        <Text>{buttonText}</Text>
+      </>
+    );
+  }, [WALLET_ICON, buttonText]);
 
   return (
     <Center
@@ -50,10 +60,7 @@ export default function Account() {
           </Text>
         </Flex>
       ) : (
-        <>
-          <Image src={WALLET_ICON} alt={""} />
-          <Text>{buttonText}</Text>
-        </>
+        ImageContainer
       )}
     </Center>
   );
