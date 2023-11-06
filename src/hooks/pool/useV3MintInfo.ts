@@ -40,20 +40,16 @@ export function useV3MintInfo() {
   const [isAtMaxTick] = useRecoilState(atMaxTick);
   const { mode } = useGetMode();
 
-  //note to parse inputs in reverse
-  const invertPrice = Boolean(
-    inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
-  );
-
   // formatted with tokens
   const [tokenA, tokenB, baseToken] = useMemo(
     () => [
       inToken?.token?.wrapped,
       outToken?.token?.wrapped,
-      pool?.token0.wrapped,
+      pool?.token0.wrapped ?? inToken?.token?.wrapped,
     ],
     [inToken?.token, outToken?.token, pool?.token0]
   );
+
   const { subMode } = useGetMode();
 
   const [token0, token1] = useMemo(
@@ -65,6 +61,17 @@ export function useV3MintInfo() {
         : [undefined, undefined],
     [tokenA, tokenB]
   );
+
+  /*note to parse inputs in reverse
+  use pool data from the hook if it was initialized.
+  use tokens sorted if it's not initialized becuase pool is null.
+  It's related to the problem token is not sorted when it's not initialized and try to mint
+  */
+  const invertPrice = pool?.token0
+    ? Boolean(
+        inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
+      )
+    : Boolean(baseToken && token0 && !baseToken.equals(token0));
 
   //   always returns the price with 0 as base token
   const price: Price<Token, Token> | undefined = useMemo(() => {

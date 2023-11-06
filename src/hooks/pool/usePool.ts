@@ -208,6 +208,7 @@ export function usePools(
       const slot0 = pooldata?.slot0;
 
       if (poolTokens === undefined) return [PoolState.INVALID, null];
+      //not initialized
       if (!slot0 || !liquidity) return [PoolState.NOT_EXISTS, null];
       if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0))
         return [PoolState.NOT_EXISTS, null];
