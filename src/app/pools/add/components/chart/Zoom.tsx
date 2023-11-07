@@ -16,6 +16,8 @@ import REFRESH_ICON from "assets/icons/pool/refreshIcon.svg";
 import Title from "../Title";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { useRecoilState } from "recoil";
+import { atMaxTick, atMinTick } from "@/recoil/pool/setPoolPosition";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -132,6 +134,9 @@ export default function Zoom({
     }, 50);
   }, [invertPrice]);
 
+  const [, setAtMinTick] = useRecoilState(atMinTick);
+  const [, setAtMaxTick] = useRecoilState(atMaxTick);
+
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>
       <Title title="Set Price Range" />
@@ -145,6 +150,8 @@ export default function Zoom({
           onClick={() => {
             resetBrush();
             zoomReset();
+            setAtMinTick(false);
+            setAtMaxTick(false);
           }}
           cursor={"pointer"}
         >
