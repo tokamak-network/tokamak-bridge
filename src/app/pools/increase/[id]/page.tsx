@@ -20,7 +20,6 @@ import commafy from "@/utils/trim/commafy";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useIsOwner } from "@/hooks/pool/useIsOwner";
 import { redirect } from "next/navigation";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 export default function IncreaseLiquidity() {
   const { info } = usePositionInfo();
@@ -35,7 +34,7 @@ export default function IncreaseLiquidity() {
   useEffect(() => {
     const fetchData = async () => {
       const gasData = await estimateGasToIncrease();
-      setEstimatedGasUsage(Number(gasData?.totalGasCostETH));
+      setEstimatedGasUsage(gasData);
     };
     fetchData();
   }, [blockNumber, inToken?.amountBN, outToken?.amountBN]);
@@ -43,8 +42,6 @@ export default function IncreaseLiquidity() {
   if (needToRedirect) {
     redirect(backwardLink);
   }
-
-  console.log("estimatedGasUsageValue(ETH)", estimatedGasUsageValue);
 
   return (
     <Flex flexDir={"column"} w={"852px"} rowGap={"8px"}>
@@ -65,7 +62,7 @@ export default function IncreaseLiquidity() {
             page="increaseLiquidity"
             estimatedGas={
               estimatedGasUsageValue
-                ? smallNumberFormmater(estimatedGasUsageValue, 2)
+                ? commafy(estimatedGasUsageValue, 2)
                 : undefined
             }
           />

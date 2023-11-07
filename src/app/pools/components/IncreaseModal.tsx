@@ -16,6 +16,8 @@ import { useEffect, useState } from "react";
 import commafy from "@/utils/trim/commafy";
 import useBlockNum from "@/hooks/network/useBlockNumber";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { useRecoilValue } from "recoil";
+import { estimatedGasFee } from "@/recoil/global/transaction";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 
 export default function IncreaseModal() {
@@ -36,7 +38,7 @@ export default function IncreaseModal() {
 
       if (poolModal === "increaseLiquidity") {
         const gasData = await estimateGasToIncrease();
-        return setGasToAdd(gasData?.totalGasCostUSD);
+        return setGasToAdd(gasData);
       }
     };
     fetchData();
