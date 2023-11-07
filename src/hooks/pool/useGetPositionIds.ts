@@ -241,19 +241,19 @@ export function useGetPositionIds(): {
             ),
           ]);
 
-          // if (result[0] && result[1]) {
-          //   const positions = [...result[0], ...result[1]];
-          //   const sortedPositions = sortPositions(positions);
-          //   return setPositions(sortedPositions);
-          // }
+          if (result[0] && result[1]) {
+            const positions = [...result[0], ...result[1]];
+            const sortedPositions = sortPositions(positions);
+            return setPositions(sortedPositions);
+          }
           if (result[0]) {
             const sortedPositions = sortPositions(result[0]);
             return setPositions(sortedPositions);
           }
-          // if (result[1]) {
-          //   const sortedPositions = sortPositions(result[1]);
-          //   return setPositions(sortedPositions);
-          // }
+          if (result[1]) {
+            const sortedPositions = sortPositions(result[1]);
+            return setPositions(sortedPositions);
+          }
           return setPositions([]);
         } catch (e) {
           console.log(e);

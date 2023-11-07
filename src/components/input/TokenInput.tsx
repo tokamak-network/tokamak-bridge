@@ -269,7 +269,10 @@ export default function TokenInput(props: {
 
   const valueProp = useMemo(() => {
     if (
-      (mode === "Wrap" || mode === "Unwrap") &&
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
       inTokenFromHook?.parsedAmount
     ) {
       return inTokenFromHook.parsedAmount;

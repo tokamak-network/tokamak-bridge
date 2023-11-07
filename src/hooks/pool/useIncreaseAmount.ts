@@ -63,7 +63,6 @@ export function useIncreaseAmount() {
           invertPrice ? outToken?.decimals : inToken?.decimals
         )
         .toString();
-      console.log("result", result);
       return smallNumberFormmater(result, 6, false, true);
     }
   }, [token0Input, inToken, outToken, invertPrice]);
