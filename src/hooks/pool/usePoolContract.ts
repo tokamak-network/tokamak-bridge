@@ -204,6 +204,9 @@ export function usePoolMint() {
 
           if (estimateGas) return gasLimit;
 
+          console.log("calldata", calldata);
+          console.log("multicallParam", multicallParam);
+
           try {
             const tx = await NonfungiblePositionManagerContract.multicall(
               multicallParam,
@@ -214,6 +217,7 @@ export function usePoolMint() {
                 // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
               }
             );
+
             if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
             console.log(e);
@@ -798,7 +802,7 @@ export function usePoolContract() {
         const totalGasCostUSD =
           Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
-        return totalGasCostUSD;
+        return { totalGasCostUSD, totalGasCostETH: parsedTotalGasCost };
       }
     }
   }, [feeData, ethPrice]);

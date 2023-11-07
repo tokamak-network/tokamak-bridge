@@ -235,7 +235,10 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
             token={info.token1}
             liquidityAmount={smallNumberFormmater(
               info.token1Amount.toString(),
-              6
+              6,
+              undefined,
+              undefined,
+              0.000001
             )}
             liquidityPercent={token1Ratio}
           />
@@ -243,7 +246,10 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
             token={info.token0}
             liquidityAmount={smallNumberFormmater(
               info.token0Amount.toString(),
-              6
+              6,
+              undefined,
+              undefined,
+              0.000001
             )}
             liquidityPercent={token0Ratio}
           />

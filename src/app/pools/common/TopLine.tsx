@@ -7,6 +7,7 @@ import Setting from "@/components/Setting";
 import { useInitialize } from "@/hooks/pool/useInitialize";
 import { useGetPool } from "@/hooks/pool/useV3MintInfo";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function TopLine(props: {
   title: string;
@@ -17,12 +18,19 @@ export default function TopLine(props: {
   const { title, clear, switcher, backwardLink } = props;
   const { pool } = useGetPool();
   const { initialzePoolValues } = useInitialize();
+  const { initializeTokenPair } = useInOutTokens();
   const { subMode } = useGetMode();
 
   return (
     <Flex alignItems={"center"} justifyContent="space-between">
       <Flex w="100%" alignItems={"center"} columnGap={"12px"}>
-        <Link href={backwardLink ?? "/pools"} onClick={initialzePoolValues}>
+        <Link
+          href={backwardLink ?? "/pools"}
+          onClick={() => {
+            initialzePoolValues();
+            initializeTokenPair();
+          }}
+        >
           <Image src={BACK_ICON} alt="BACK_ICON" />
         </Link>
         <Text fontSize={28} fontWeight={500}>

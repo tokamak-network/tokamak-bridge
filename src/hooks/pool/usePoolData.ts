@@ -130,11 +130,11 @@ export function usePriceTickConversion() {
   // const { tickToPriceParams } = usePoolToken();
   //using contract call
   const [, pool] = usePool();
-  const { ticksAtLimit, tickSpaceLimits, deposit0Disabled, deposit1Disabled } =
-    useV3MintInfo();
+  // const { ticksAtLimit, tickSpaceLimits, deposit0Disabled, deposit1Disabled } =
+  //   useV3MintInfo();
 
-  const [, setMinPrice] = useRecoilState(minPriceStatus);
-  const [, setMaxPrice] = useRecoilState(maxPriceStatus);
+  // const [, setMinPrice] = useRecoilState(minPriceStatus);
+  // const [, setMaxPrice] = useRecoilState(maxPriceStatus);
   const { inToken } = useInOutTokens();
 
   const baseToken = pool?.token0;
@@ -150,31 +150,33 @@ export function usePriceTickConversion() {
       return tickToPrice(baseToken, quoteToken, currentTick);
   }, [baseToken, quoteToken, currentTick]);
 
-  const minPrice = useMemo(() => {
-    if (baseToken && quoteToken && currentTick && ticksAtLimit)
-      return tickToPrice(
-        baseToken,
-        quoteToken,
-        Boolean(ticksAtLimit[Bound.LOWER]) &&
-          tickSpaceLimits?.LOWER !== undefined
-          ? tickSpaceLimits.LOWER
-          : currentTick - 6932
-      );
-  }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
+  // const minPrice = useMemo(() => {
+  //   if (baseToken && quoteToken && currentTick !== undefined && ticksAtLimit)
+  //     return tickToPrice(
+  //       baseToken,
+  //       quoteToken,
+  //       Boolean(ticksAtLimit[Bound.LOWER]) &&
+  //         tickSpaceLimits?.LOWER !== undefined
+  //         ? tickSpaceLimits.LOWER
+  //         : currentTick && currentTick - 6932 < -887272
+  //         ? currentTick
+  //         : currentTick && currentTick - 6932
+  //     );
+  // }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
 
-  const maxPrice = useMemo(() => {
-    if (baseToken && quoteToken && currentTick && ticksAtLimit)
-      return tickToPrice(
-        baseToken,
-        quoteToken,
-        Boolean(ticksAtLimit[Bound.UPPER]) &&
-          tickSpaceLimits?.UPPER !== undefined
-          ? tickSpaceLimits.UPPER
-          : currentTick + 6932
-      );
-  }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
+  // const maxPrice = useMemo(() => {
+  //   if (baseToken && quoteToken && currentTick && ticksAtLimit)
+  //     return tickToPrice(
+  //       baseToken,
+  //       quoteToken,
+  //       Boolean(ticksAtLimit[Bound.UPPER]) &&
+  //         tickSpaceLimits?.UPPER !== undefined
+  //         ? tickSpaceLimits.UPPER
+  //         : currentTick + 6932
+  //     );
+  // }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
 
-  const [initialized, setInitialized] = useState<boolean>(false);
+  // const [initialized, setInitialized] = useState<boolean>(false);
 
   return {
     currentPrice: invertPrice

@@ -1,8 +1,8 @@
 import { trimAmount } from "../trim";
 import commafy from "../trim/commafy";
 
-export function isBiggerThanMinimumNum(param: number) {
-  const minimumNum = 0.000001;
+export function isBiggerThanMinimumNum(param: number, minimumValue?: number) {
+  const minimumNum = minimumValue ?? 0.0001;
   if (param > minimumNum) {
     return true;
   }
@@ -13,7 +13,8 @@ export function smallNumberFormmater(
   param: number | string | undefined | null,
   deciplaPoints?: number,
   trimed?: boolean,
-  removeComma?: boolean
+  removeComma?: boolean,
+  minimumValue?: number
 ) {
   if (param === undefined || param === null) {
     return "-";
@@ -25,7 +26,8 @@ export function smallNumberFormmater(
   const isBiggerThanMinimum = isBiggerThanMinimumNum(
     typeof param === "string"
       ? Number(param.replaceAll(",", ""))
-      : Number(param)
+      : Number(param),
+    minimumValue
   );
 
   return isBiggerThanMinimum

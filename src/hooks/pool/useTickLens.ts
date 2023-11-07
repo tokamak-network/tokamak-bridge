@@ -10,6 +10,10 @@ import { isAddress } from "viem";
 import { ADDRESS_ZERO } from "@uniswap/v3-sdk";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import TickLensJson from "@uniswap/v3-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json";
+import {
+  L2_TESTNET_UniswapContracts,
+  L2_UniswapContracts,
+} from "@/constant/contracts/uniswap";
 
 export function getContract(
   address: string,
@@ -67,8 +71,8 @@ function useContract<T extends Contract = Contract>(
 
 const TICK_LENS_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
   ...TICK_LENS_ADDRESSES,
-  [55004]: "0x15054be74B3957d038c2FCC983D6Ccc0D441fE67",
-  [5050]: "0x15054be74B3957d038c2FCC983D6Ccc0D441fE67",
+  [55004]: L2_UniswapContracts.TICK_LENS,
+  [5050]: L2_TESTNET_UniswapContracts.TICK_LENS,
 };
 
 export function useTickLens(): TickLens | null {

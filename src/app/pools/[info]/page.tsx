@@ -9,13 +9,25 @@ import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
 import GradientSpinner from "@/components/ui/gradientSpinner";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_positionForInfo_loading } from "@/recoil/pool/positions";
 import { NoPosition } from "./components/NoPosition";
+import { useEffect } from "react";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { removeAmount } from "@/recoil/pool/setPoolPosition";
 
 export default function Page() {
   const { info } = usePositionInfo();
   const isLoading = useRecoilValue(ATOM_positionForInfo_loading);
+
+  const { initializeTokenPairAmount } = useInOutTokens();
+  const [, setAmountPercentage] = useRecoilState(removeAmount);
+
+  //initialize input values
+  useEffect(() => {
+    initializeTokenPairAmount();
+    setAmountPercentage(0);
+  }, []);
 
   if (isLoading) {
     return (
