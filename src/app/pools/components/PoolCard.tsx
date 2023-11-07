@@ -202,31 +202,35 @@ export default function PoolCard(props: PoolCardDetail) {
   const token0HasMarketPrice = Number(token0MarketPrice) > 0;
   const token1HasMarketPrice = Number(token1MarketPrice) > 0;
   const bothHaveMarketData = token0HasMarketPrice && token1HasMarketPrice;
+
+  const token0FeeMarketValue = useMemo(() => {
+    return Number(token0FeeAmount) * Number(token0MarketPrice);
+  }, [token0FeeAmount, token0MarketPrice]);
+  const token1FeeMarketValue = useMemo(() => {
+    return Number(token1FeeAmount) * Number(token1MarketPrice);
+  }, [token1FeeAmount, token1MarketPrice]);
+
   const token0FeeValueForTooltip = token0HasMarketPrice
-    ? `($${commafy(token0FeeAmount, 2, undefined, "0.00")})`
+    ? `($${commafy(token0FeeMarketValue, 2, undefined, "0.00")})`
     : "";
+
   const token1FeeValueForTooltip = token1HasMarketPrice
-    ? `($${commafy(token1FeeAmount, 2, undefined, "0.00")})`
+    ? `($${commafy(token1FeeMarketValue, 2, undefined, "0.00")})`
     : "";
   const feeValue = useMemo(() => {
     if (!bothHaveMarketData) return undefined;
     try {
-      const token0MarketValue =
-        Number(token0FeeAmount) * Number(token0MarketPrice);
-      const token1MarketValue =
-        Number(token1FeeAmount) * Number(token1MarketPrice);
-      return commafy(token0MarketValue + token1MarketValue, 2, undefined, "");
+      return commafy(
+        token0FeeMarketValue + token1FeeMarketValue,
+        2,
+        undefined,
+        ""
+      );
     } catch (e) {
       console.log("feevalue error");
       console.log(e);
     }
-  }, [
-    token0FeeAmount,
-    token1FeeAmount,
-    token0MarketPrice,
-    token1MarketPrice,
-    bothHaveMarketData,
-  ]);
+  }, [token0FeeMarketValue, token1FeeMarketValue, bothHaveMarketData]);
 
   return (
     <Box onClick={() => onClickToRoute()}>
