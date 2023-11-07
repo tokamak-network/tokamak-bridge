@@ -28,7 +28,10 @@ export default function SelectPair() {
   return (
     <Flex flexDir={"column"}>
       <Title title="Select Pair" />
-      <Flex columnGap={"6px"} flexDir={inverted ? "row-reverse" : "row"}>
+      <Flex
+        columnGap={"6px"}
+        // flexDir={inverted ? "row-reverse" : "row"}
+      >
         <Flex flexDir={"column"} rowGap={"16px"}>
           <Box
             className="card-empty"

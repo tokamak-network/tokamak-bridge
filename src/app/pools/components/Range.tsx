@@ -104,15 +104,10 @@ export default function Range(props: {
         amount={page === "addLiquidity" ? undefined : commafy(token1Amount, 6)}
         page={page}
         alterAmount={
-          page === "addLiquidity" || page === "increaseLiquidity"
-            ? commafyWithUndefined(
-                page === "addLiquidity"
-                  ? token1ParsedAmount
-                  : outToken?.parsedAmount,
-                6,
-                false,
-                true
-              )
+          page === "addLiquidity"
+            ? token1ParsedAmount ?? "0.00"
+            : page === "increaseLiquidity"
+            ? smallNumberFormmater(outToken?.parsedAmount, 6, false, true)
             : commafy(amount1Removed, 6)
         }
         style={{ marginBottom: "9px" }}
@@ -122,15 +117,10 @@ export default function Range(props: {
         amount={page === "addLiquidity" ? undefined : commafy(token0Amount, 6)}
         page={page}
         alterAmount={
-          page === "addLiquidity" || page === "increaseLiquidity"
-            ? commafyWithUndefined(
-                page === "addLiquidity"
-                  ? token0ParsedAmount
-                  : inToken?.parsedAmount,
-                6,
-                false,
-                true
-              )
+          page === "addLiquidity"
+            ? token0ParsedAmount ?? "0.00"
+            : page === "increaseLiquidity"
+            ? smallNumberFormmater(inToken?.parsedAmount, 6, false, true)
             : commafy(amount0Removed, 6)
         }
       />

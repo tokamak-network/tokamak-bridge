@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { ethers } from "ethers";
+import commafy from "@/utils/trim/commafy";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 export function useIncreaseAmount() {
   const { invertPrice, dependentAmount, deposit0Disabled, deposit1Disabled } =
@@ -55,23 +57,26 @@ export function useIncreaseAmount() {
 
   const token0ParsedAmount = useMemo(() => {
     if (token0Input !== undefined && token0Input !== null) {
-      return ethers.utils
+      const result = ethers.utils
         .formatUnits(
           token0Input?.toString(),
           invertPrice ? outToken?.decimals : inToken?.decimals
         )
         .toString();
+      console.log("result", result);
+      return smallNumberFormmater(result, 6, false, true);
     }
   }, [token0Input, inToken, outToken, invertPrice]);
 
   const token1ParsedAmount = useMemo(() => {
     if (token1Input !== undefined && token1Input !== null) {
-      return ethers.utils
+      const result = ethers.utils
         .formatUnits(
           token1Input?.toString(),
           invertPrice ? inToken?.decimals : outToken?.decimals
         )
         .toString();
+      return smallNumberFormmater(result, 6, false, true);
     }
   }, [token1Input, inToken, outToken, invertPrice]);
 
