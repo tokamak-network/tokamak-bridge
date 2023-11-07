@@ -39,6 +39,7 @@ export default function RangeInput(props: RangeInputProps) {
     invertPrice,
     invalidRange,
     dependentAmount: _dependentAmount,
+    notExistPool,
   } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(6);
 
@@ -124,6 +125,11 @@ export default function RangeInput(props: RangeInputProps) {
     if (!isMinPrice && ticksAtLimit[invertPrice ? Bound.LOWER : Bound.UPPER]) {
       return "∞";
     }
+    if (notExistPool && pricesAtTicks) {
+      return isMinPrice
+        ? pricesAtTicks?.LOWER?.toSignificant(6)
+        : pricesAtTicks?.UPPER?.toSignificant(6);
+    }
     if (pricesAtTicks) {
       return isMinPrice
         ? invertPrice
@@ -133,7 +139,7 @@ export default function RangeInput(props: RangeInputProps) {
         ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
         : pricesAtTicks?.UPPER?.toSignificant(6);
     }
-  }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice]);
+  }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice, notExistPool]);
 
   const blurHandler = useCallback(
     (e: any) => {

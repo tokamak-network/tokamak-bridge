@@ -38,7 +38,6 @@ export function useV3MintInfo() {
   const startPriceTypedValue = useRecoilValue(initialPrice);
   const [isAtMinTick] = useRecoilState(atMinTick);
   const [isAtMaxTick] = useRecoilState(atMaxTick);
-  const { mode } = useGetMode();
 
   // formatted with tokens
   const [tokenA, tokenB, baseToken] = useMemo(
@@ -59,7 +58,7 @@ export function useV3MintInfo() {
           ? [tokenA, tokenB]
           : [tokenB, tokenA]
         : [undefined, undefined],
-    [tokenA, tokenB]
+    [tokenA, tokenB, subMode.add]
   );
 
   /*note to parse inputs in reverse
