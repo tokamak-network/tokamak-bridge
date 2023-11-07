@@ -40,6 +40,7 @@ import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
 import AccountModal from "../modal/AccountModal";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const menuList = [
   {
@@ -60,6 +61,7 @@ const HeaderMenu = (props: {
   const { title, link, menuState } = props;
   const pathname = usePathname();
   const router = useRouter();
+  const { initializeTokenPair } = useInOutTokens();
 
   return (
     <Center
@@ -70,7 +72,10 @@ const HeaderMenu = (props: {
           ? "3px solid #007AFF"
           : ""
       }
-      onClick={() => router.push(link)}
+      onClick={() => {
+        router.push(link);
+        initializeTokenPair();
+      }}
     >
       <Text>{title}</Text>
     </Center>
