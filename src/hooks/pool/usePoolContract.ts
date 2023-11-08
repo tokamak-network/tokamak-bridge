@@ -42,6 +42,7 @@ import { encodeMulticall } from "@/utils/contract/encodeMulticall";
 import { convertDeadlineSetting } from "@/utils/contract/convertDeadlineSetting";
 import TxDetails from "@/app/pools/remove/components/TxDetails";
 import { useIncreaseAmount } from "./useIncreaseAmount";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -184,27 +185,43 @@ export function usePoolMint() {
             ? outHexAmount
             : value;
 
-          // Create a TransactionRequest object
-          const transactionRequest = encodeMulticall({
-            contract: NonfungiblePositionManagerContract,
+          const txData = {
             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
             from: address,
             value: totalValue,
+          };
+
+          // Create a TransactionRequest object
+          const transactionRequest = encodeMulticall({
+            ...txData,
+            contract: NonfungiblePositionManagerContract,
             multicallParam: multicallParam,
           });
 
           const isLayer2 = Boolean(layer === "L2");
 
-          const gasLimit = await calculateGasLimit(
-            provider,
-            transactionRequest,
-            isLayer2,
-            isConnectedToMainNetwork
-          );
+          const gasLimit = txData
+            ? await provider.estimateGas({ ...txData, data: calldata })
+            : await calculateGasLimit(
+                provider,
+                transactionRequest,
+                isLayer2,
+                isConnectedToMainNetwork
+              );
 
           if (estimateGas) return gasLimit;
 
           try {
+            if (multicallParam.length === 1) {
+              const tx = await provider.getSigner().sendTransaction({
+                ...txData,
+                data: calldata,
+                gasLimit,
+              });
+              if (tx.hash) return setTxHash(tx.hash as Hash);
+              return;
+            }
+
             const tx = await NonfungiblePositionManagerContract.multicall(
               multicallParam,
               {
@@ -458,24 +475,41 @@ export function usePoolContract() {
             : value;
           const isLayer2 = Boolean(layer === "L2");
 
-          const transactionRequest = encodeMulticall({
-            contract: NonfungiblePositionManagerContract,
+          const txData = {
             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
             from: address,
             value: txValue,
+          };
+
+          const transactionRequest = encodeMulticall({
+            ...txData,
+            contract: NonfungiblePositionManagerContract,
             multicallParam,
           });
 
-          const gasLimit = await calculateGasLimit(
-            provider,
-            transactionRequest,
-            isLayer2,
-            isConnectedToMainNetwork
-          );
+          const gasLimit =
+            multicallParam.length === 1
+              ? await provider.estimateGas({ ...txData, data: calldata })
+              : await calculateGasLimit(
+                  provider,
+                  transactionRequest,
+                  isLayer2,
+                  isConnectedToMainNetwork
+                );
 
           if (estimatedGas) return gasLimit;
 
           try {
+            if (multicallParam.length === 1) {
+              const tx = await provider.getSigner().sendTransaction({
+                ...txData,
+                data: calldata,
+                gasLimit,
+              });
+              if (tx.hash) return setTxHash(tx.hash as Hash);
+              return;
+            }
+
             const tx = await NonfungiblePositionManagerContract.multicall(
               multicallParam,
               {
@@ -484,11 +518,6 @@ export function usePoolContract() {
                 from: address,
               }
             );
-
-            const dd = await tx.wait();
-
-            console.log("tx", dd);
-
             if (tx.hash) return setTxHash(tx.hash);
           } catch (e) {
             console.log(e);
@@ -581,40 +610,28 @@ export function usePoolContract() {
                 currentPosition,
                 removeLiquidityOptions
               );
-            const NonfungiblePositionManagerContract = new Contract(
-              UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-              NONFUNGIBLE_POSITION_MANAGER_ABI,
-              getProviderOrSigner(provider, address)
-            );
 
-            const isLayer2 = Boolean(layer === "L2");
-
-            const transactionRequest = encodeMulticall({
-              contract: NonfungiblePositionManagerContract,
+            const txn = {
+              data: calldata,
               to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
               from: address,
               value,
-              multicallParam: [calldata],
-            });
+            };
 
-            const gasLimit = await calculateGasLimit(
-              provider,
-              transactionRequest,
-              isLayer2,
-              isConnectedToMainNetwork
-            );
+            const gasLimit = await provider.estimateGas(txn);
 
             if (estimateGas) return gasLimit;
-            const tx = await NonfungiblePositionManagerContract.multicall(
-              calldata,
-              {
-                gasLimit,
-                value,
-                from: address,
-              }
-            );
 
-            if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash);
+            try {
+              const tx = await provider.getSigner().sendTransaction({
+                ...txn,
+                gasLimit: calculateGasMargin(gasLimit),
+              });
+
+              if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+            } catch (e) {
+              console.log(e);
+            }
           }
         }
       } catch (e) {
@@ -736,28 +753,22 @@ export function usePoolContract() {
         try {
           const { calldata } =
             NonfungiblePositionManager.collectCallParameters(collectOptions);
-          const transactionRequest = encodeMulticall({
-            contract: NonfungiblePositionManagerContract,
+
+          const txn = {
+            data: calldata,
             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
             from: address,
             value: undefined,
-            multicallParam: [calldata],
-          });
-          const isLayer2 = Boolean(layer === "L2");
-          const gasLimit = await calculateGasLimit(
-            provider,
-            transactionRequest,
-            isLayer2,
-            isConnectedToMainNetwork
-          );
+          };
+
+          const gasLimit = await provider.estimateGas(txn);
+
           if (estimateGas) return gasLimit;
-          const tx = await NonfungiblePositionManagerContract.multicall(
-            calldata,
-            {
-              gasLimit,
-            }
-          );
-          if (tx.hash) return setTxHashToCollect(tx.hash);
+          const tx = await provider.getSigner().sendTransaction({
+            ...txn,
+            gasLimit: calculateGasMargin(gasLimit),
+          });
+          if (tx.hash) return setTxHashToCollect(tx.hash as Hash);
         } catch (e) {
           console.log(e);
           return setModalOpen("error");
