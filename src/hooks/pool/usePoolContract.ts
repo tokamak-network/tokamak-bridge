@@ -200,14 +200,15 @@ export function usePoolMint() {
 
           const isLayer2 = Boolean(layer === "L2");
 
-          const gasLimit = txData
-            ? await provider.estimateGas({ ...txData, data: calldata })
-            : await calculateGasLimit(
-                provider,
-                transactionRequest,
-                isLayer2,
-                isConnectedToMainNetwork
-              );
+          const gasLimit =
+            multicallParam.length === 1
+              ? await provider.estimateGas({ ...txData, data: calldata })
+              : await calculateGasLimit(
+                  provider,
+                  transactionRequest,
+                  isLayer2,
+                  isConnectedToMainNetwork
+                );
 
           if (estimateGas) return gasLimit;
 

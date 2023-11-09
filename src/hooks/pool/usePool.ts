@@ -65,6 +65,7 @@ export function usePoolData(poolAddress: string | undefined) {
     };
     fetchPoolData().catch((e) => {
       console.log("**fetchPoolData err**");
+      // console.log(e);
       setPoolData(undefined);
     });
     // const interval = setInterval(
