@@ -25,7 +25,8 @@ export default function PoolList() {
     >
       <LPGuide />
       <AddLiquidity />
-      {positions === undefined &&
+      {isSupportedChain &&
+        positions === undefined &&
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} />
         ))}

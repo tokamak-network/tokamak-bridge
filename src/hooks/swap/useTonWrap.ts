@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import WethABi from "@/abis/WETH.json";
 import { useAccount, useContractWrite, usePublicClient } from "wagmi";
@@ -37,7 +37,7 @@ export default function useWrap() {
     functionName: "wtonToTon",
   });
 
-  const { chainName } = useConnectedNetwork();
+  const { chainName, isSupportedChain } = useConnectedNetwork();
   const WETH_CONTRACT = chainName && getWETHAddress(chainName);
   const { data: wrapETHData, write: deposit } = useContractWrite({
     address: WETH_CONTRACT as `0x${string}`,
@@ -45,17 +45,22 @@ export default function useWrap() {
     functionName: "deposit",
     value: inToken?.amountBN as any,
   });
-  const ETHWrapContract = new Contract(
-    WETH_CONTRACT as string,
-    WethABi,
-    getProviderOrSigner(provider, address)
-  );
 
   const { data: unwrapETHData, write: withdraw } = useContractWrite({
     address: WETH_CONTRACT as `0x${string}`,
     abi: WethABi,
     functionName: "withdraw",
   });
+
+  const ETHWrapContract = useMemo(() => {
+    if (isSupportedChain) {
+      return new Contract(
+        WETH_CONTRACT as string,
+        WethABi,
+        getProviderOrSigner(provider, address)
+      );
+    }
+  }, [isSupportedChain, WETH_CONTRACT, WethABi, provider, address]);
 
   const {} = useTx({
     hash: data?.hash,
@@ -114,7 +119,7 @@ export default function useWrap() {
 
   const wrapETH = useCallback(async () => {
     try {
-      if (inToken && inToken.amountBN) {
+      if (inToken && inToken.amountBN && ETHWrapContract) {
         const estimateGas = await ETHWrapContract.estimateGas.deposit();
         deposit({
           gas: calculateGasMargin(estimateGas).toBigInt(),
@@ -128,7 +133,7 @@ export default function useWrap() {
 
   const unwrapWETH = useCallback(async () => {
     try {
-      if (inToken && inToken.amountBN) {
+      if (inToken && inToken.amountBN && ETHWrapContract) {
         const estimateGas = await ETHWrapContract.estimateGas.unwrapWETH();
         withdraw({
           args: [inToken.amountBN],
