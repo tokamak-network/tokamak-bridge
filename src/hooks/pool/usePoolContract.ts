@@ -736,7 +736,7 @@ export function usePoolContract() {
 
           try {
             const tx = await NonfungiblePositionManagerContract.multicall(
-              [collectData, unwrapWETH9, sweepToken],
+              multicallParam,
               {
                 gasLimit,
               }

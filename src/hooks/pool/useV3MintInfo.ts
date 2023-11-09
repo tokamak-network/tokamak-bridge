@@ -53,7 +53,7 @@ export function useV3MintInfo() {
 
   const [token0, token1] = useMemo(
     () =>
-      tokenA && tokenB && subMode.add
+      tokenA && tokenB && subMode.add && tokenA.address !== tokenB.address
         ? tokenA.sortsBefore(tokenB)
           ? [tokenA, tokenB]
           : [tokenB, tokenA]

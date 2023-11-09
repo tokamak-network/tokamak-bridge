@@ -13,7 +13,6 @@ import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import JSBI from "jsbi";
 import { useRecoilState } from "recoil";
 import useConnectedNetwork from "@/hooks/network";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
