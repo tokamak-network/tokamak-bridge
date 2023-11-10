@@ -57,3 +57,8 @@ export const poolModalProp = atom<PoolCardDetail | undefined>({
   key: "poolModalPropStatus",
   default: undefined,
 });
+
+export const mobileMenuStatus = atom<boolean>({
+  key: "mobileMenuStatus",
+  default: false,
+});

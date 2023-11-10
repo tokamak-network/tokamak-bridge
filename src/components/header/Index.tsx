@@ -11,6 +11,7 @@ import {
   MenuDivider,
   Button,
   Link,
+  useMediaQuery,
 } from "@chakra-ui/react";
 import Network from "./Network";
 import Account from "./Account";
@@ -20,6 +21,7 @@ import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { mobileMenuStatus } from "@/recoil/modal/atom";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
@@ -39,7 +41,9 @@ import discordHover from "assets/icons/header/discordHover.svg";
 import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
+import hamburger from "assets/icons/header/hamburger.svg";
 import AccountModal from "../modal/AccountModal";
+import { useRecoilState } from "recoil";
 
 const menuList = [
   {
@@ -114,47 +118,50 @@ const CustomMenuItem = (props: {
   );
 };
 
+export const menuLinks = [
+  {
+    title: "Medium",
+    link: "https://medium.com/onther-tech",
+    icon: medium,
+    hoverIcon: mediumHover,
+  },
+  {
+    title: "Twitter",
+    link: "https://twitter.com/tokamak_network",
+    icon: twitter,
+    hoverIcon: twitterHover,
+  },
+  {
+    title: "Discord",
+    link: "https://discord.com/invite/J4chV2zuAK",
+    icon: discord,
+    hoverIcon: discordHover,
+  },
+  {
+    title: "Telegram",
+    link: "https://t.me/tokamak_network",
+    icon: telegram,
+    hoverIcon: telegramHover,
+  },
+  {
+    title: "LinkedIn",
+    link: "https://www.linkedin.com/company/tokamaknetwork/",
+    icon: linkedIn,
+    hoverIcon: linkedInHover,
+  },
+  {
+    title: "Github",
+    link: "https://github.com/tokamak-network",
+    icon: github,
+    hoverIcon: githubHover,
+  },
+];
+
 export default function Header() {
+  const [isMobile] = useMediaQuery("(max-width: 768px)");
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
-  const menuLinks = [
-    {
-      title: "Medium",
-      link: "https://medium.com/onther-tech",
-      icon: medium,
-      hoverIcon: mediumHover,
-    },
-    {
-      title: "Twitter",
-      link: "https://twitter.com/tokamak_network",
-      icon: twitter,
-      hoverIcon: twitterHover,
-    },
-    {
-      title: "Discord",
-      link: "https://discord.com/invite/J4chV2zuAK",
-      icon: discord,
-      hoverIcon: discordHover,
-    },
-    {
-      title: "Telegram",
-      link: "https://t.me/tokamak_network",
-      icon: telegram,
-      hoverIcon: telegramHover,
-    },
-    {
-      title: "LinkedIn",
-      link: "https://www.linkedin.com/company/tokamaknetwork/",
-      icon: linkedIn,
-      hoverIcon: linkedInHover,
-    },
-    {
-      title: "Github",
-      link: "https://github.com/tokamak-network",
-      icon: github,
-      hoverIcon: githubHover,
-    },
-  ];
+  const [, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
 
   const handleMenuButtonhover = (event: any) => {
     event.preventDefault();
@@ -168,22 +175,26 @@ export default function Header() {
   };
 
   const router = useRouter();
-
+  console.log(isMobile);
   return (
     <Flex
       minW={"100%"}
       zIndex={Overlay_Index.Header}
       justifyContent={"space-between"}
-      alignItems={"flex-start"}
-      mt={"22px"}
-      px={"40px"}
+      alignItems={{ base: "center", md: "flex-start" }}
+      mt={{ base: "16px", md: "22px" }}
+      px={{base: "12px", md: "40px"}}
       pos={"absolute"}
     >
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
         <Box onClick={() => router.push("/")} cursor={"pointer"}>
-          <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
+          <Image
+            width={isMobile ? 28 : 36}
+            src={LOGO_IMAGE}
+            alt={"LOGO_IMAGE"}
+          />
         </Box>
-        <Flex columnGap={"30px"}>
+        <Flex columnGap={"30px"} display={{ base: "none", md: "flex" }}>
           {menuList.map((menuInfo) => (
             <HeaderMenu
               key={menuInfo.title}
@@ -269,12 +280,27 @@ export default function Header() {
           </Menu>
         </Flex>
       </Flex>
-      <Flex columnGap={"6px"}>
-        <Network />
+      <Flex columnGap={{base:"8px", md:"6px"}}>
+        {!isMobile && <Network />}
         <Flex flexDir={"column"} alignItems={"flex-end"}>
           <Account />
           {/* <AccountModal /> */}
         </Flex>
+
+        {isMobile && (
+          <Flex
+            w={"32px"}
+            h={"32px"}
+            justify={"center"}
+            align={"center"}
+            borderRadius={8}
+            border={"1px solid #313442"}
+            cursor={"pointer"}
+            onClick={() => setMobileMenuOpen(true)}
+          >
+            <Image alt="hamburger" src={hamburger} />
+          </Flex>
+        )}
 
         {/* <UserMenu /> */}
       </Flex>

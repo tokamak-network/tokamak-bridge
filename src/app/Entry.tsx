@@ -12,13 +12,13 @@ export default function Entry({ children }: { children: React.ReactNode }) {
 
   const { connectedChainId } = useConnectedNetwork();
 
-  if (isMobile) {
-    return (
-      <Center h={"100vh"}>
-        <MobileView />
-      </Center>
-    );
-  }
+  // if (isMobile) {
+  //   return (
+  //     <Center h={"100vh"}>
+  //       <MobileView />
+  //     </Center>
+  //   );
+  // }
   // if (isMobile) {
   //   return (
   //     <Center h={"100vh"}>

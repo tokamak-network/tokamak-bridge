@@ -1,5 +1,5 @@
 import { Center, Text } from "@chakra-ui/layout";
-import { Flex, Spinner } from "@chakra-ui/react";
+import { Flex, Spinner, useMediaQuery } from "@chakra-ui/react";
 import Image from "next/image";
 import WALLET_ICON from "assets/icons/wallet.svg";
 import { useAccount, useConnect } from "wagmi";
@@ -20,11 +20,13 @@ export default function Account() {
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
+  const [isMobile] = useMediaQuery("(max-width: 768px)");
+
   return (
     <Center
       className="header-right-common"
-      w={isConnected ? "174px" : "220px"}
-      h={"48px"}
+      w={isMobile ? "84px" : isConnected ? "174px" : "220px"}
+      h={{base: "32px", md: "48px"}}
       bg={!isConnected ? "#007AFF" : ""}
       columnGap={"17px"}
       fontSize={18}
@@ -51,8 +53,8 @@ export default function Account() {
         </Flex>
       ) : (
         <>
-          <Image src={WALLET_ICON} alt={""} />
-          <Text>{buttonText}</Text>
+          {!isMobile && <Image src={WALLET_ICON} alt={""} />}
+          <Text fontSize={{base: 12, md: 18}}>{buttonText}</Text> 
         </>
       )}
     </Center>
