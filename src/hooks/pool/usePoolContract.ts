@@ -42,7 +42,10 @@ import { encodeMulticall } from "@/utils/contract/encodeMulticall";
 import { convertDeadlineSetting } from "@/utils/contract/convertDeadlineSetting";
 import TxDetails from "@/app/pools/remove/components/TxDetails";
 import { useIncreaseAmount } from "./useIncreaseAmount";
-import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import {
+  calculateGasMargin,
+  getSingleCalldataGasLimit,
+} from "@/utils/txn/calculateGasMargin";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -202,7 +205,7 @@ export function usePoolMint() {
 
           const gasLimit =
             multicallParam.length === 1
-              ? await provider.estimateGas({ ...txData, data: calldata })
+              ? await getSingleCalldataGasLimit(provider, txData, calldata)
               : await calculateGasLimit(
                   provider,
                   transactionRequest,
@@ -213,7 +216,7 @@ export function usePoolMint() {
           if (estimateGas) return gasLimit;
 
           try {
-            if (multicallParam.length === 1) {
+            if (multicallParam.length === 1 && gasLimit) {
               const tx = await provider.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
@@ -223,16 +226,23 @@ export function usePoolMint() {
               return;
             }
 
-            const tx = await NonfungiblePositionManagerContract.multicall(
-              multicallParam,
-              {
-                gasLimit,
-                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-                from: address,
-                // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
-              }
-            );
-            if (tx.hash) return setTxHash(tx.hash);
+            if (gasLimit) {
+              const tx = await NonfungiblePositionManagerContract.multicall(
+                multicallParam,
+                {
+                  gasLimit,
+                  value: inIsEth
+                    ? inHexAmount
+                    : outIsETH
+                    ? outHexAmount
+                    : value,
+                  from: address,
+                  // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
+                }
+              );
+              if (tx.hash) return setTxHash(tx.hash);
+              return;
+            }
           } catch (e) {
             console.log(e);
             if (!estimateGas) {
@@ -490,7 +500,7 @@ export function usePoolContract() {
 
           const gasLimit =
             multicallParam.length === 1
-              ? await provider.estimateGas({ ...txData, data: calldata })
+              ? await getSingleCalldataGasLimit(provider, txData, calldata)
               : await calculateGasLimit(
                   provider,
                   transactionRequest,
@@ -501,7 +511,7 @@ export function usePoolContract() {
           if (estimatedGas) return gasLimit;
 
           try {
-            if (multicallParam.length === 1) {
+            if (multicallParam.length === 1 && gasLimit) {
               const tx = await provider.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
@@ -511,15 +521,22 @@ export function usePoolContract() {
               return;
             }
 
-            const tx = await NonfungiblePositionManagerContract.multicall(
-              multicallParam,
-              {
-                gasLimit,
-                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-                from: address,
-              }
-            );
-            if (tx.hash) return setTxHash(tx.hash);
+            if (gasLimit) {
+              const tx = await NonfungiblePositionManagerContract.multicall(
+                multicallParam,
+                {
+                  gasLimit,
+                  value: inIsEth
+                    ? inHexAmount
+                    : outIsETH
+                    ? outHexAmount
+                    : value,
+                  from: address,
+                }
+              );
+              if (tx.hash) return setTxHash(tx.hash);
+              return;
+            }
           } catch (e) {
             console.log(e);
             setModalOpen("error");
@@ -764,7 +781,7 @@ export function usePoolContract() {
 
           const gasLimit = await provider.estimateGas(txn);
 
-          if (estimateGas) return gasLimit;
+          if (estimateGas) return calculateGasMargin(gasLimit);
           const tx = await provider.getSigner().sendTransaction({
             ...txn,
             gasLimit: calculateGasMargin(gasLimit),

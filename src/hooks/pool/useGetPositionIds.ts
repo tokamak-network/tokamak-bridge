@@ -30,7 +30,7 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
-import { txHashLog } from "@/recoil/global/transaction";
+import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { GET_POSITIONS } from "@/graphql/data/queries";
@@ -507,7 +507,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
     [UNISWAP_CONTRACT, isL2, providerForInfo, chainId, blockNumber]
   );
 
-  const txLog = useRecoilValue(txHashLog);
+  const txPending = useRecoilValue(txPendingStatus);
+
   useEffect(() => {
     const fetchPositionIds = async () => {
       if (positions === undefined) {
@@ -534,7 +535,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
       }
     });
     //add pathName to fetch new data when it's back from increase / decrease liquidity page
-  }, [blockNumber, txLog, positionId, pathName]);
+  }, [blockNumber, txPending, positionId, pathName]);
 
   return { positions };
 }

@@ -5,9 +5,10 @@ import {
   Flex,
   Text,
   Box,
-  Link,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useRecoilValue } from "recoil";
 import "@/css/spinner.css";
 import ConfirmedImage from "assets/image/modal/confirmed.svg";
@@ -35,26 +36,8 @@ export default function Confirmation() {
 
   const router = useRouter();
   const closeThisModal = useCallback(() => {
-    if (
-      (subMode.add || subMode.increase || subMode.remove) &&
-      txLog.logs &&
-      isConfirmed &&
-      connectedChainId
-    ) {
-      router.push(
-        `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`
-      );
-    }
     closeModal();
-  }, [
-    subMode,
-    isConfirmed,
-    isConfirming,
-    isError,
-    closeModal,
-    txLog,
-    connectedChainId,
-  ]);
+  }, [closeModal]);
 
   const subModeValue = Object.keys(subMode).filter(
     (key) => subMode[key as keyof typeof subMode] === true
@@ -79,7 +62,16 @@ export default function Confirmation() {
           alignItems={"center"}
         >
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeThisModal} />
+            {/*it's for fetching new data after tx confirmed on those pages */}
+            {subMode.add || subMode.increase || subMode.remove ? (
+              <Link
+                href={`/pools/${txLog?.logs?.tokenId.toString()}?chainId=${connectedChainId}`}
+              >
+                <CloseButton onClick={closeThisModal} />
+              </Link>
+            ) : (
+              <CloseButton onClick={closeThisModal} />
+            )}
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
@@ -128,14 +120,14 @@ export default function Confirmation() {
             {isConfirming ? (
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
-              <Link
+              <ChakraLink
                 href={`${blockExplorer}/tx/${txHash}`}
                 isExternal={true}
                 textDecoration={"underline"}
                 w={"100%"}
               >
                 See your transaction history
-              </Link>
+              </ChakraLink>
             ) : isError ? (
               "Error occurred, please try again."
             ) : null}

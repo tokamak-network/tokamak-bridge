@@ -25,6 +25,7 @@ import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { useProvier } from "../provider/useProvider";
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
@@ -172,6 +173,19 @@ export function useTx(params: {
 
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
+
+  const { provider } = useProvier();
+
+  useEffect(() => {
+    const test = async () => {
+      if (data?.transactionHash) {
+        const transactionReceipt = await provider.getTransactionReceipt(
+          data.transactionHash
+        );
+      }
+    };
+    test();
+  }, [data?.transactionHash]);
 
   useEffect(() => {
     if (connectedChainId !== exChainId) {
