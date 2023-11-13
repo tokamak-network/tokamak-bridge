@@ -187,13 +187,13 @@ export const CurrentPriceInfo = () => {
       ></CustomTooltip>
 
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
-        {manuallyInverted
-          ? tokenPairForInfo?.token1Symbol
-          : tokenPairForInfo?.token0Symbol}{" "}
-        per{" "}
-        {manuallyInverted
+        {inverted || manuallyInverted
           ? tokenPairForInfo?.token0Symbol
-          : tokenPairForInfo?.token1Symbol}
+          : tokenPairForInfo?.token1Symbol}{" "}
+        per{" "}
+        {inverted || manuallyInverted
+          ? tokenPairForInfo?.token1Symbol
+          : tokenPairForInfo?.token0Symbol}
       </Text>
     </Flex>
   );
