@@ -282,13 +282,12 @@ export function useGetPositionIds(): {
 
 //logic through contract calls
 export function useGetPositionById(positionId: number, chainId: number) {
-  const { provider, otherLayerProvider } = useProvier();
-  // const txPending = useRecoilValue(txPendingStatus);
-
+  const { provider } = useProvier();
   const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
-  const { address } = useAccount();
   const { blockNumber } = useBlockNum();
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
+  const pathName = usePathname();
+
   const isL1 =
     chainId === SupportedChainId["MAINNET"] ||
     chainId === SupportedChainId["GOERLI"];
@@ -534,7 +533,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
         return setPositions(undefined);
       }
     });
-  }, [blockNumber, txLog, positionId]);
+    //add pathName to fetch new data when it's back from increase / decrease liquidity page
+  }, [blockNumber, txLog, positionId, pathName]);
 
   return { positions };
 }
@@ -557,7 +557,7 @@ export function usePositionInfo() {
   const { positionId, chainIdParam } = useGetPositionIdFromPath();
   const { positions } = useGetPositionById(
     Number(positionId),
-    Number(chainIdParam ?? 55004)
+    Number(chainIdParam)
   );
 
   const existingPositionInfo = positions ? positions[0] : undefined;
