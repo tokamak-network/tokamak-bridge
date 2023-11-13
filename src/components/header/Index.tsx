@@ -11,7 +11,6 @@ import {
   MenuDivider,
   Button,
   Link,
-  useMediaQuery,
 } from "@chakra-ui/react";
 import Network from "./Network";
 import Account from "./Account";
@@ -44,6 +43,7 @@ import githubHover from "assets/icons/header/githubHover.svg";
 import hamburger from "assets/icons/header/hamburger.svg";
 import AccountModal from "../modal/AccountModal";
 import { useRecoilState } from "recoil";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const menuList = [
   {
@@ -158,11 +158,11 @@ export const menuLinks = [
 ];
 
 export default function Header() {
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const [, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
-
+  const {mobileView} = useMediaView();
+  
   const handleMenuButtonhover = (event: any) => {
     event.preventDefault();
     setMenuState(true);
@@ -175,7 +175,6 @@ export default function Header() {
   };
 
   const router = useRouter();
-  console.log(isMobile);
   return (
     <Flex
       minW={"100%"}
@@ -189,7 +188,7 @@ export default function Header() {
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
         <Box onClick={() => router.push("/")} cursor={"pointer"}>
           <Image
-            width={isMobile ? 28 : 36}
+            width={mobileView ? 28 : 36}
             src={LOGO_IMAGE}
             alt={"LOGO_IMAGE"}
           />
@@ -281,13 +280,13 @@ export default function Header() {
         </Flex>
       </Flex>
       <Flex columnGap={{base:"8px", md:"6px"}}>
-        {!isMobile && <Network />}
+        {!mobileView && <Network />}
         <Flex flexDir={"column"} alignItems={"flex-end"}>
           <Account />
           {/* <AccountModal /> */}
         </Flex>
 
-        {isMobile && (
+        {mobileView && (
           <Flex
             w={"32px"}
             h={"32px"}

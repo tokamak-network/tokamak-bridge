@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { useTransaction, useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { txPendingStatus } from "@/recoil/global/transaction";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
@@ -20,12 +21,12 @@ export default function Account() {
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
-  const [isMobile] = useMediaQuery("(max-width: 768px)");
+  const {mobileView} = useMediaView();
 
   return (
     <Center
       className="header-right-common"
-      w={isMobile ? "84px" : isConnected ? "174px" : "220px"}
+      w={mobileView ? "84px" : isConnected ? "174px" : "220px"}
       h={{base: "32px", md: "48px"}}
       bg={!isConnected ? "#007AFF" : ""}
       columnGap={"17px"}
@@ -53,7 +54,7 @@ export default function Account() {
         </Flex>
       ) : (
         <>
-          {!isMobile && <Image src={WALLET_ICON} alt={""} />}
+          {!mobileView && <Image src={WALLET_ICON} alt={""} />}
           <Text fontSize={{base: 12, md: 18}}>{buttonText}</Text> 
         </>
       )}

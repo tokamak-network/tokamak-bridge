@@ -62,3 +62,8 @@ export const mobileMenuStatus = atom<boolean>({
   key: "mobileMenuStatus",
   default: false,
 });
+
+export const actionMethodStatus = atom<boolean>({
+  key: "actionMethodStatus",
+  default: true,
+});
