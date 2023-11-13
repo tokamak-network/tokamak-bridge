@@ -291,12 +291,11 @@ export function useGetPositionById(positionId: number, chainId: number) {
   const isL1 =
     chainId === SupportedChainId["MAINNET"] ||
     chainId === SupportedChainId["GOERLI"];
-  const isL2 =
-    chainId === SupportedChainId["TITAN"] ||
-    chainId === SupportedChainId["DARIUS"];
+  const isL2 = chainId === SupportedChainId["TITAN"];
+  const isL2Testnet = chainId === SupportedChainId["DARIUS"];
   const UNISWAP_CONTRACT = isL1
     ? L1_UniswapContracts
-    : isConnectedToMainNetwork
+    : isL2
     ? L2_UniswapContracts
     : L2_TESTNET_UniswapContracts;
 
