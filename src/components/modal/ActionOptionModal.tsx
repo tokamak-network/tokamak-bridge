@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -10,6 +11,7 @@ import { useRecoilState } from "recoil";
 
 import { actionMethod } from "@/recoil/bridgeSwap/atom";
 import { actionMethodStatus } from "@/recoil/modal/atom";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 
 import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
 import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
@@ -18,24 +20,72 @@ import Image from "next/image";
 
 import "@fontsource/poppins/400.css";
 import { ActionMethod } from "@/types/bridgeSwap";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import useConnectedNetwork from "@/hooks/network";
+import {
+  SupportedChainProperties,
+  supportedChain,
+} from "@/types/network/supportedNetwork";
+import { switchNetwork } from "wagmi/dist/actions";
+import { useAccount, useSwitchNetwork } from "wagmi";
 
 interface MethodItemProps {
-  from?: string;
-  to?: string;
+  from?: Number;
+  to?: Number;
   title: string;
-  method: ActionMethod;
 }
 
-const ActionMethodItem = ({ from, to, title, method }: MethodItemProps) => {
+const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
+  const [network, setNetwork] = useRecoilState(networkStatus);
   const [, setActionMethod] = useRecoilState(actionMethod);
-  const [, setActionMethodStatus] =
-    useRecoilState(actionMethodStatus);
+  const [, setActionMethodStatus] = useRecoilState(actionMethodStatus);
+  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
+  const { isConnected } = useAccount();
+  const [outTokenSelected, setOutTokenSelected] =
+    useState<SupportedChainProperties>();
   const theme = useTheme();
-  
-  const handleMethodItem = () => {
-    setActionMethod(method);
-    setActionMethodStatus(false);
-  }
+
+  const handleMethodItem = async () => {
+    try {
+      const value: SupportedChainProperties["chainId"] = Number(from);
+      const outValue: SupportedChainProperties["chainId"] = Number(to);
+      const selectedInNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === value;
+      })[0];
+
+      const selectedOutNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === outValue;
+      })[0];
+
+      setOutTokenSelected(selectedOutNetwork);
+
+      if (selectedInNetwork.chainId !== connectedChainId) {
+        return isConnected
+          ? (await switchNetworkAsync?.(selectedInNetwork.chainId),
+            setNetwork({
+              inNetwork: selectedInNetwork,
+              outNetwork: selectedOutNetwork,
+            }),
+            setActionMethodStatus(false))
+          : setNetwork({
+              inNetwork: selectedInNetwork,
+              outNetwork: selectedOutNetwork,
+            });
+      } else if (selectedInNetwork.chainId === connectedChainId) {
+        setNetwork({
+          inNetwork: selectedInNetwork,
+          outNetwork: selectedOutNetwork,
+        });
+      }
+
+    } finally {
+      setActionMethodStatus(false);
+      if (isError) {
+        console.error(`Couldn't switch network`);
+      }
+    }
+  };
 
   return (
     <Flex
@@ -48,13 +98,24 @@ const ActionMethodItem = ({ from, to, title, method }: MethodItemProps) => {
       mt={"12px"}
       h={"96px"}
       _hover={{ borderColor: "#007AFF" }}
+      cursor={"pointer"}
       onClick={handleMethodItem}
     >
       {from && to && (
         <Flex columnGap={"6px"} align={"center"} mb={"8px"}>
-          <Image width={20} height={20} alt="from_network" src={from} />
+          <Image
+            width={20}
+            height={20}
+            alt="from_network"
+            src={from === 1 ? ETH_CIRCLE : TITAN_CIRCLE}
+          />
           <Image width={16} alt="arrow" src={Arrow} />
-          <Image width={20} height={20} alt="to_network" src={to} />
+          <Image
+            width={20}
+            height={20}
+            alt="to_network"
+            src={to === 1 ? ETH_CIRCLE : TITAN_CIRCLE}
+          />
         </Flex>
       )}
       <Text fontFamily={theme.fonts.body} fontSize={16} fontWeight={400}>
@@ -69,8 +130,14 @@ const ActionOptionModal = () => {
   const [methodStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
 
+  const { mobileView } = useMediaView();
+
   return (
-    <Modal isOpen={methodStatus} onClose={() => setActionMethodStatus(false)}>
+    <Modal
+      size={"xl"}
+      isOpen={methodStatus && mobileView}
+      onClose={() => setActionMethodStatus(false)}
+    >
       <ModalOverlay opacity={0.1} />
       <ModalContent
         bg={"#1F2128"}
@@ -84,18 +151,8 @@ const ActionOptionModal = () => {
         </Text>
 
         <Flex columnGap={"8px"}>
-          <ActionMethodItem
-            from={ETH_CIRCLE}
-            to={TITAN_CIRCLE}
-            title="Deposit"
-            method={ActionMethod.Deposit}
-          />
-          <ActionMethodItem
-            from={TITAN_CIRCLE}
-            to={ETH_CIRCLE}
-            title="Withdraw"
-            method={ActionMethod.Withdraw}
-          />
+          <ActionMethodItem from={1} to={55004} title="Deposit" />
+          <ActionMethodItem from={55004} to={1} title="Withdraw" />
         </Flex>
 
         <Text fontWeight={500} fontSize={16} mt={"20px"}>
@@ -103,24 +160,9 @@ const ActionOptionModal = () => {
         </Text>
 
         <Flex columnGap={"8px"}>
-          <ActionMethodItem
-            from={ETH_CIRCLE}
-            to={ETH_CIRCLE}
-            title="Swap"
-            method={ActionMethod.Swap_ETH}
-          />
-          <ActionMethodItem
-            from={TITAN_CIRCLE}
-            to={TITAN_CIRCLE}
-            title="Swap"
-            method={ActionMethod.Swap_Titan}
-
-          />
-          <ActionMethodItem
-            title="Pool"
-            method={ActionMethod.Pool}
-
-          />
+          <ActionMethodItem from={1} to={1} title="Swap" />
+          <ActionMethodItem from={55004} to={55004} title="Swap" />
+          <ActionMethodItem title="Pool" />
         </Flex>
       </ModalContent>
     </Modal>
@@ -128,3 +170,6 @@ const ActionOptionModal = () => {
 };
 
 export default ActionOptionModal;
+function setNetwork(arg0: any) {
+  throw new Error("Function not implemented.");
+}

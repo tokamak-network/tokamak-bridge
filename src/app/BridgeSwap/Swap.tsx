@@ -1,33 +1,33 @@
 "use client";
 
-import { Flex, Text } from "@chakra-ui/layout";
-import InToken from "./components/InToken";
-import OutToken from "./components/OutToken";
 import Image from "next/image";
-import ArrowImg from "assets/icons/arrow.svg";
-import SelectNetwork from "./components/SelectNetwork";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { actionMethod } from "@/recoil/bridgeSwap/atom";
-import { actionMethodStatus } from "@/recoil/modal/atom";
-
+import { Flex, Text, Box } from "@chakra-ui/layout";
 import { useRecoilValue, useRecoilState } from "recoil";
+
+import { actionMode } from "@/recoil/bridgeSwap/atom";
+import { actionMethodStatus } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
+import InToken from "./components/InToken";
+import OutToken from "./components/OutToken";
+import SelectNetwork from "./components/SelectNetwork";
+import MobileInToken from "./components/Mobile/MobileInToken";
+import MobileOutToken from "./components/Mobile/MobileOutToken";
+
+import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
-import { ActionMethod } from "@/types/bridgeSwap";
 
 export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
-  const method = useRecoilValue(actionMethod);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
 
   const { pcView, mobileView } = useMediaView();
 
   return (
-    <Flex w={"100%"} justifyContent={"space-between"} columnGap={"14.6px"}>
+    <>
       {pcView ? (
-        <>
+        <Flex w={"100%"} justifyContent={"space-between"} columnGap={"14.6px"}>
           <InToken />
           <Flex
             justifyContent={"center"}
@@ -37,17 +37,17 @@ export default function Swap() {
             <Image src={ArrowImg} alt={"arrow"} />
           </Flex>
           {mode === null ? <SelectNetwork /> : <OutToken />}
-        </>
+        </Flex>
       ) : mobileView ? (
-        <>
-          <Flex w={"full"} justify={"space-between"}>
+        <Box w={"full"} mt={"16px"}>
+          <Flex w={"full"} justify={"space-between"} mb={"12px"}>
             <Flex
               columnGap={"8px"}
               cursor={"pointer"}
               onClick={() => setMethodStatus(true)}
             >
               <Text fontWeight={500} fontSize={24}>
-                {method}
+                {mode}
               </Text>
               <Image src={arrow} alt="icon_arrow" />
             </Flex>
@@ -58,10 +58,24 @@ export default function Swap() {
               style={{ cursor: "pointer" }}
             />
           </Flex>
-        </>
+
+          <Flex w={"100%"} justifyContent={"space-between"} columnGap={"8px"}>
+            <MobileInToken/>
+
+            <Flex
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <Image src={ArrowImg} alt={"arrow"} />
+            </Flex>
+
+            <MobileOutToken/>
+
+          </Flex>
+        </Box>
       ) : (
         <></>
       )}
-    </Flex>
+    </>
   );
 }

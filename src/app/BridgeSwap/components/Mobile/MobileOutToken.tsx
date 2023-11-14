@@ -7,7 +7,7 @@ import { useRecoilValue } from "recoil";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 
 const MobileInToken = () => {
-  const {inNetwork} = useRecoilValue(networkStatus);
+  const {outNetwork} = useRecoilValue(networkStatus);
 
   return (
     <Flex
@@ -35,7 +35,7 @@ const MobileInToken = () => {
           h={"28px"}
           borderRadius={"0px 6px 0px 6px"}
         >
-          <Image alt="eth" src={inNetwork?.chainId === 1 ? ETHIcon : TitanIcon}/>
+          <Image alt="eth" src={outNetwork?.chainId === 1 ? ETHIcon : TitanIcon}/>
         </Flex>
       </Flex>
 
