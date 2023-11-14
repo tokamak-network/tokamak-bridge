@@ -622,12 +622,44 @@ export function usePoolContract() {
             collectOptions,
           };
 
-          if (currentPosition) {
+          if (currentPosition && chainName) {
             const { calldata, value } =
               NonfungiblePositionManager.removeCallParameters(
                 currentPosition,
                 removeLiquidityOptions
               );
+
+            const NonfungiblePositionManagerContract = new Contract(
+              UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+              NONFUNGIBLE_POSITION_MANAGER_ABI,
+              getProviderOrSigner(provider, address)
+            );
+            const amountMinimum = 0;
+            const unwrapWETH9 =
+              NonfungiblePositionManagerContract.interface.encodeFunctionData(
+                "unwrapWETH9",
+                [amountMinimum, address]
+              );
+            const WETH_ADDRESS = getWETHAddress(chainName);
+            const token0IsNative =
+              WETH_ADDRESS.toLowerCase() === token0.address.toLowerCase();
+            const sweepTokenAddress = token0IsNative
+              ? token1.address
+              : token0.address;
+
+            const sweepToken =
+              NonfungiblePositionManagerContract.interface.encodeFunctionData(
+                "sweepToken",
+                [sweepTokenAddress, amountMinimum, address]
+              );
+            const multicallParam = [calldata, unwrapWETH9, sweepToken];
+            const transactionRequest = encodeMulticall({
+              contract: NonfungiblePositionManagerContract,
+              to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+              from: address,
+              value: undefined,
+              multicallParam,
+            });
 
             const txn = {
               data: calldata,
@@ -636,17 +668,36 @@ export function usePoolContract() {
               value,
             };
 
-            const gasLimit = await provider.estimateGas(txn);
+            const gasLimit = info.hasETH
+              ? await calculateGasLimit(
+                  provider,
+                  transactionRequest,
+                  layer === "L2",
+                  false
+                )
+              : await provider.estimateGas(txn);
 
             if (estimateGas) return gasLimit;
 
             try {
-              const tx = await provider.getSigner().sendTransaction({
-                ...txn,
-                gasLimit: calculateGasMargin(gasLimit),
-              });
-
-              if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+              if (info.hasETH && gasLimit) {
+                const tx = await NonfungiblePositionManagerContract.multicall(
+                  multicallParam,
+                  {
+                    gasLimit,
+                  }
+                );
+                if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                return;
+              }
+              if (gasLimit) {
+                const tx = await provider.getSigner().sendTransaction({
+                  ...txn,
+                  gasLimit: calculateGasMargin(gasLimit),
+                });
+                if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                return;
+              }
             } catch (e) {
               console.log(e);
             }
@@ -659,7 +710,7 @@ export function usePoolContract() {
         }
       }
     },
-    [provider, info, address, UNISWAP_CONTRACT, layer]
+    [provider, info, address, UNISWAP_CONTRACT, layer, chainName]
   );
 
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
