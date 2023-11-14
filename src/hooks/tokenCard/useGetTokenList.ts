@@ -29,6 +29,9 @@ export function useGetTokenList() {
     //in case searching token with an address
     if (tokenSelector && chainName && tokenListForSelectedNetwork) {
       const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
+
+      console.log("tokenListAll", tokenListAll);
+
       const result = tokenListAll.filter(
         (token) => token.address[chainName] === tokenSelector.address[chainName]
       );
@@ -40,9 +43,14 @@ export function useGetTokenList() {
       const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
       //remove duplicated value when a user search it with an address
       return tokenListAll.filter((token) => {
-        return token.tokenName
-          .toLocaleLowerCase()
-          .includes(searchedTokenName.nameOrAdd.toLocaleLowerCase());
+        return (
+          token.tokenName
+            .toLocaleLowerCase()
+            .includes(searchedTokenName.nameOrAdd.toLocaleLowerCase()) ||
+          token.tokenSymbol
+            .toLocaleLowerCase()
+            .includes(searchedTokenName.nameOrAdd.toLocaleLowerCase())
+        );
       });
     }
 
