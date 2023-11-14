@@ -1,4 +1,3 @@
-import { MotionStyle } from "framer-motion";
 import { useAnimation } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 import { useGetTokenList } from "./useGetTokenList";
@@ -357,19 +356,9 @@ export function useCarrousellAnimation(params: {
     //   });
     // }
 
-    if (currentIndex === 3) {
-      // endLeftControl.start(positionStyles.outLeft);
-      // sideLeftControl.start(positionStyles.endLeft);
-      // centerControl.start(positionStyles.sideLeft);
-      // sideRightControl.start(positionStyles.center);
-      // endRightControl.start(positionStyles.sideRight);
+    console.log("currentIndex", currentIndex);
 
-      // outRightControl.start({
-      //   ...positionStyles.endLeft,
-      //   position: "absolute",
-      //   transform: getTrasnformParams(10, 295, -62),
-      //   opacity: 1,
-      // });
+    if (currentIndex === 3) {
       endLeftControl.start(positionStyles.sideLeft);
       sideLeftControl.start(positionStyles.center);
       centerControl.start(positionStyles.sideLeft);
@@ -382,6 +371,7 @@ export function useCarrousellAnimation(params: {
         transform: getTrasnformParams(-10, -295, -62),
         opacity: 1,
       });
+      return;
     }
 
     if (currentIndex === 2) {
@@ -404,6 +394,7 @@ export function useCarrousellAnimation(params: {
         height: "242px",
         position: "absolute",
       });
+      return;
     }
 
     if (currentIndex === 1) {
@@ -419,6 +410,7 @@ export function useCarrousellAnimation(params: {
         transform: getTrasnformParams(-10, -295, -62),
         opacity: 1,
       });
+      return;
     }
 
     if (currentIndex === 0) {
@@ -434,7 +426,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 9) {
+    if (currentIndex === filteredTokenList.length - 1) {
       endLeftControl.start(positionStyles.sideRight);
       sideLeftControl.start(positionStyles.endRight);
       centerControl.start(positionStyles.outRight);
@@ -445,7 +437,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 8) {
+    if (currentIndex === filteredTokenList.length - 2) {
       endLeftControl.start(positionStyles.endRight);
       sideLeftControl.start(positionStyles.outRight);
 
@@ -455,7 +447,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 7) {
+    if (currentIndex === filteredTokenList.length - 3) {
       endLeftControl.start(positionStyles.outRight);
 
       outLeftControl.start({
@@ -464,7 +456,7 @@ export function useCarrousellAnimation(params: {
       });
     }
 
-    if (currentIndex === 6) {
+    if (currentIndex === filteredTokenList.length - 4) {
       outLeftControl.start({
         ...positionStyles.outRight,
         transform: getTrasnformParams(10, 400, -62),
@@ -534,7 +526,7 @@ export function useCarrousellAnimation(params: {
     //locate at endLeft
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - 8 === index
+        ? startIndex - filteredTokenList.length - 2 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 2
@@ -553,7 +545,7 @@ export function useCarrousellAnimation(params: {
     //locate at sideLeft
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - 7 === index
+        ? startIndex - filteredTokenList.length - 3 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 3
@@ -572,7 +564,7 @@ export function useCarrousellAnimation(params: {
     //locate at center
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - 6 === index
+        ? startIndex - filteredTokenList.length - 4 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 4
@@ -591,7 +583,7 @@ export function useCarrousellAnimation(params: {
     //locate at sideRight
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - 5 === index
+        ? startIndex - filteredTokenList.length - 5 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 5
@@ -610,7 +602,7 @@ export function useCarrousellAnimation(params: {
     //locate at endRight
     if (
       startIndex !== null && startIndex !== undefined && startIndex > 7
-        ? startIndex - 4 === index
+        ? startIndex - filteredTokenList.length - 6 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 6
@@ -629,7 +621,7 @@ export function useCarrousellAnimation(params: {
     //locate at outRight
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - 3 === index
+        ? startIndex - filteredTokenList.length - 7 === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 7
