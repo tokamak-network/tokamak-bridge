@@ -89,10 +89,10 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
             content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"}></Image>}
             tooltipLabel={`Your position will be 100% ${
               isMinPrice
-                ? inverted || manuallyInverted
+                ? inverted
                   ? tokenPairForInfo?.token1Symbol
                   : tokenPairForInfo?.token0Symbol
-                : inverted || manuallyInverted
+                : inverted
                 ? tokenPairForInfo?.token0Symbol
                 : tokenPairForInfo?.token1Symbol
             } at this price.`}
@@ -117,11 +117,11 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
         tooltipLabel={priceData?.toString()}
       ></CustomTooltip>
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
-        {inverted || manuallyInverted
+        {inverted
           ? tokenPairForInfo?.token0Symbol
           : tokenPairForInfo?.token1Symbol}{" "}
         per{" "}
-        {inverted || manuallyInverted
+        {inverted
           ? tokenPairForInfo?.token1Symbol
           : tokenPairForInfo?.token0Symbol}
       </Text>
@@ -187,11 +187,11 @@ export const CurrentPriceInfo = () => {
       ></CustomTooltip>
 
       <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
-        {inverted || manuallyInverted
+        {inverted
           ? tokenPairForInfo?.token0Symbol
           : tokenPairForInfo?.token1Symbol}{" "}
         per{" "}
-        {inverted || manuallyInverted
+        {inverted
           ? tokenPairForInfo?.token1Symbol
           : tokenPairForInfo?.token0Symbol}
       </Text>

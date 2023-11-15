@@ -87,20 +87,19 @@ export default function CarousellCardComponent<T>(props: {
       initial={{ opacity: 0 }}
       whileHover={{ zIndex: 200 }}
       animate={
-        // maxIndex < 6
-        //   ? index === 0
-        //     ? centerControl
-        //     : index === 1
-        //     ? sideLeftControl
-        //     : index === 2
-        //     ? sideRightControl
-        //     : index === 3
-        //     ? endLeftControl
-        //     : endRightControl
-        //   : waitCondition
-        //   ? waitControl
-        //     :
-        index === 0
+        maxIndex < 6
+          ? index === 0
+            ? centerControl
+            : index === 1
+            ? sideLeftControl
+            : index === 2
+            ? sideRightControl
+            : index === 3
+            ? endLeftControl
+            : endRightControl
+          : waitCondition
+          ? waitControl
+          : index === 0
           ? endLeftControl
           : index === 1
           ? sideLeftControl

@@ -356,8 +356,6 @@ export function useCarrousellAnimation(params: {
     //   });
     // }
 
-    console.log("currentIndex", currentIndex);
-
     if (currentIndex === 3) {
       endLeftControl.start(positionStyles.sideLeft);
       sideLeftControl.start(positionStyles.center);
@@ -526,7 +524,7 @@ export function useCarrousellAnimation(params: {
     //locate at endLeft
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - filteredTokenList.length - 2 === index
+        ? startIndex - (filteredTokenList.length - 2) === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 2
@@ -545,7 +543,7 @@ export function useCarrousellAnimation(params: {
     //locate at sideLeft
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - filteredTokenList.length - 3 === index
+        ? startIndex - (filteredTokenList.length - 3) === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 3
@@ -564,7 +562,7 @@ export function useCarrousellAnimation(params: {
     //locate at center
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - filteredTokenList.length - 4 === index
+        ? startIndex - (filteredTokenList.length - 4) === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 4
@@ -583,7 +581,7 @@ export function useCarrousellAnimation(params: {
     //locate at sideRight
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - filteredTokenList.length - 5 === index
+        ? startIndex - (filteredTokenList.length - 5) === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 5
@@ -602,7 +600,7 @@ export function useCarrousellAnimation(params: {
     //locate at endRight
     if (
       startIndex !== null && startIndex !== undefined && startIndex > 7
-        ? startIndex - filteredTokenList.length - 6 === index
+        ? startIndex - (filteredTokenList.length - 6) === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 6
@@ -621,7 +619,7 @@ export function useCarrousellAnimation(params: {
     //locate at outRight
     if (
       startIndex !== null && startIndex !== undefined && startIndex > benchIndex
-        ? startIndex - filteredTokenList.length - 7 === index
+        ? startIndex - (filteredTokenList.length - 7) === index
         : startIndex !== null &&
           startIndex !== undefined &&
           index === startIndex + 7
