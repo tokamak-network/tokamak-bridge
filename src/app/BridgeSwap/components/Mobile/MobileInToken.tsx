@@ -3,11 +3,13 @@ import { Flex, Text } from "@chakra-ui/react";
 import ETHIcon from "@/assets/tokens/eth_half_rounded.svg"
 import TitanIcon from "@/assets/tokens/titan_half_rounded.svg"
 
-import { useRecoilValue } from "recoil";
-import { networkStatus } from "@/recoil/bridgeSwap/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import { Field } from "@/types/swap/swap";
 
 const MobileInToken = () => {
   const {inNetwork} = useRecoilValue(networkStatus);
+  const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
 
   return (
     <Flex
@@ -18,11 +20,13 @@ const MobileInToken = () => {
       rounded={"9px"}
       justify={"center"}
       align={"center"}
+      cursor={"pointer"}
+      onClick={() => setTokenModal({...tokenModal, isOpen: "INPUT"})}
     >
       <Flex
         pos={"absolute"}
-        top={0}
-        right={0}
+        top={"-2px"}
+        right={"-2px"}
         w={"34px"}
         h={"34px"}
         borderRadius={"0px 9px 0px 9px"}

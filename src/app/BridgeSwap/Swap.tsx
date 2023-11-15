@@ -47,7 +47,7 @@ export default function Swap() {
               onClick={() => setMethodStatus(true)}
             >
               <Text fontWeight={500} fontSize={24}>
-                {mode}
+                {mode === null ? "Swap" : mode}
               </Text>
               <Image src={arrow} alt="icon_arrow" />
             </Flex>

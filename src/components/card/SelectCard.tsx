@@ -13,6 +13,8 @@ import { CardCarrousel } from "./CardCarousel";
 import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 import { Overlay_Index } from "@/types/style/overlayIndex";
+import { CardCarouselMobile } from "./mobile/CardCarouselMobile";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 enum CardOverlay {
   Middle = 100,
@@ -55,6 +57,7 @@ export function SelectCardButton(props: { field: Field }) {
 const SearchToken = () => {
   const { onCloseTokenModal } = useTokenModal();
   const [searchToken, setSearchToken] = useRecoilState(searchTokenStatus);
+  const {pcView} = useMediaView();
 
   const { connectedChainId } = useConnectedNetwork();
 
@@ -77,9 +80,9 @@ const SearchToken = () => {
       zIndex={Overlay_Index.BelowHeader}
     >
       <Input
-        w={"430px"}
+        w={{ base:"100%", lg:"430px" }}
         h={"42px"}
-        borderRadius={"21.5px"}
+        borderRadius={{ base:"8px", lg:"21.5px" }}
         placeholder={"Search token name or address"}
         _placeholder={{ color: "#8E8E92", fontWeight: 500 }}
         boxShadow={"none !important"}
@@ -89,20 +92,23 @@ const SearchToken = () => {
         _active={{}}
         onChange={onChange}
       ></Input>
-      <Box pos={"absolute"} right={"69px"}>
-        <Image
-          src={CloseIcon}
-          alt={"close"}
-          style={{ cursor: "pointer" }}
-          onClick={() => onCloseTokenModal()}
-        />
-      </Box>
+      {pcView &&
+        <Box pos={"absolute"} right={"69px"}>
+          <Image
+            src={CloseIcon}
+            alt={"close"}
+            style={{ cursor: "pointer" }}
+            onClick={() => onCloseTokenModal()}
+          />
+        </Box>
+      }
     </Flex>
   );
 };
 
 export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
+  const {pcView} = useMediaView();
 
   //close when click at outside
   useEffect(() => {
@@ -150,29 +156,44 @@ export function SelectCardModal() {
         >
           <Flex
             w={"1362px"}
-            h={"486px"}
-            // bgColor={"#1F2128"}
+            h={{ base:"fit-content", lg:"486px" }}
+            bgColor={ {base: "#1F2128", lg:"transparent" }}
+            rounded={"24px 24px 0px 0px"}
+            padding={{ base:"16px 10px", lg:0 }}
             // borderRadius={"150px 150px 0px 0px"}
             rowGap={"17.43px"}
             flexDir={"column"}
             alignItems={"center"}
             backgroundImage={BgImage}
             zIndex={100}
+            overflow={{base: "hidden"}}
           >
-            <Flex pos={"absolute"}>
-              <Image
-                src={BgImage}
-                alt={"CloseIcon"}
-                style={{
-                  minWidth: "1362px",
-                  width: "1362px",
-                  minHeight: "486px",
-                  height: "486px",
-                }}
-              ></Image>
-            </Flex>
-            <CardCarrousel />
-            <SearchToken />
+            {pcView &&
+              <Flex pos={"absolute"}>
+                <Image
+                  src={BgImage}
+                  alt={"CloseIcon"}
+                  style={{
+                    minWidth: "1362px",
+                    width: "1362px",
+                    minHeight: "486px",
+                    height: "486px",
+                  }}
+                ></Image>
+              </Flex>
+            }
+            {pcView && 
+            <>
+              <CardCarrousel />
+              <SearchToken />
+            </>
+            }
+            {!pcView &&
+            <>
+              <SearchToken />
+              <CardCarouselMobile />
+            </>
+            }
           </Flex>
         </ModalBody>
       </ModalContent>

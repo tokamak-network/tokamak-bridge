@@ -52,6 +52,7 @@
     "react-redux": "^8.1.1",
     "react-relay": "^15.0.0",
     "react-select": "^5.7.3",
+    "react-stacked-center-carousel": "^1.0.12",
     "recoil": "^0.7.7",
     "recoil-relay": "^0.1.0",
     "tls": "^0.0.1",

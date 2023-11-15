@@ -8,6 +8,8 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 import { type } from "os";
 import { isETH } from "@/utils/token/isETH";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import "@fontsource/quicksand/500.css"
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -149,6 +151,8 @@ export default function TokenCard(props: TokenCardProps) {
     return setAgreeToAdd(true);
   }, [agreeToAdd]);
 
+  const {pcView} = useMediaView();
+
   return (
     <Flex
       w={typeof w === "string" ? w : `${w ?? 200}px`}
@@ -156,20 +160,22 @@ export default function TokenCard(props: TokenCardProps) {
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
       opacity={isNew ? 0.25 : 0.85}
       border={`3px solid ${tokenColorCode} `}
-      borderRadius={"16px"}
+      borderRadius={{ base:"9px", lg:"16px" }}
       pos={"relative"}
-      pt={"15px"}
+      pt={{ base:"12px", lg:"15px" }}
       pb={type === "small" ? "13px" : type === "medium" ? "15px" : "30px"}
       overflow={"hidden"}
       flexDir={"column"}
       justifyContent={"space-between"}
-      px={"16px"}
+      px={{base: "12px", lg: "16px"}}
       cursor={"pointer"}
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />
+
+      {pcView && 
       <Flex justifyContent={"space-between"} w={"100%"}>
         <TokenTitle
           tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
@@ -187,7 +193,18 @@ export default function TokenCard(props: TokenCardProps) {
               type === "small" ? "12px" : type === "medium" ? "16px" : "18px",
           }}
         />
-      </Flex>
+      </Flex>}
+      
+      {!pcView && 
+      <Flex flexDir={"column"} justifyContent={"space-between"} w={"100%"} color={"#222222"}>
+        <Text fontWeight={700} fontSize={16} zIndex={100}>
+          {tokenInfo?.tokenSymbol ?? "TOK"}
+        </Text>
+        <Text fontWeight={700} fontSize={10} zIndex={100}>
+          {thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+        </Text>
+      </Flex>}
+
       <Flex
         // pt={"25px"}
         // pb={"37px"}
@@ -195,6 +212,7 @@ export default function TokenCard(props: TokenCardProps) {
         h={"100%"}
         justifyContent={"center"}
         alignItems={notAdded ? "baseline" : "center"}
+        my={{base: "10px", lg: "0px"}}
       >
         <TokenSymbol
           w={symbolSize?.w ?? (notAdded ? 40 : 92)}
@@ -229,7 +247,7 @@ export default function TokenCard(props: TokenCardProps) {
       ) : forBridge ? (
         <Flex flexDir={"column"} rowGap={"13px"}>
           <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-            <Text fontWeight={400}>Balance: </Text>
+            <Text fontWeight={500}>Balance: </Text>
             <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
           </Flex>
         </Flex>
@@ -247,13 +265,21 @@ export default function TokenCard(props: TokenCardProps) {
           >
             balance:{" "}
           </Text>
+
+          {pcView && 
           <Text
             fontWeight={700}
             fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
             h={type === "small" ? "33px" : type === "medium" ? "40px" : "40px"}
           >
             {tokenData?.data.parsedBalance}
+          </Text>}
+
+          {!pcView &&
+          <Text fontWeight={700} fontSize={18}>
+            {tokenData?.data.parsedBalance}
           </Text>
+          }
         </Flex>
       )}
     </Flex>
