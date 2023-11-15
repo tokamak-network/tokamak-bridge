@@ -2,6 +2,8 @@ import { Flex, Text } from "@chakra-ui/react";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { Token } from "@uniswap/sdk-core";
 import { T_PoolModal } from "@/recoil/modal/atom";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
+import { useRecoilValue } from "recoil";
 
 export default function RangeToken(props: {
   token: Token;
@@ -11,12 +13,19 @@ export default function RangeToken(props: {
   alterAmount: string | undefined;
 }) {
   const { token, amount, style, page, alterAmount } = props;
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   return (
     <Flex width={"100%"} justifyContent={"space-between"} {...props.style}>
       <Flex>
         <TokenSymbolWithNetwork
-          tokenSymbol={token.symbol as string}
+          tokenSymbol={
+            token?.symbol === "ETH"
+              ? collectAsWETH
+                ? "WETH"
+                : "ETH"
+              : (token?.symbol as string)
+          }
           chainId={token.chainId}
           symbolW={24}
           symbolH={24}
@@ -25,7 +34,13 @@ export default function RangeToken(props: {
           bottom={-1}
           right={-1}
         />
-        <Text ml="8px">{token.symbol}</Text>
+        <Text ml="8px">
+          {token?.symbol === "ETH"
+            ? collectAsWETH
+              ? "WETH"
+              : "ETH"
+            : token?.symbol}
+        </Text>
       </Flex>
       <Flex>
         <Text color={"#A0A3AD"}>{amount}</Text>

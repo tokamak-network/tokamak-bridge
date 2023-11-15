@@ -14,6 +14,7 @@ import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import useConnectedNetwork from "@/hooks/network";
+import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -26,11 +27,13 @@ const TokenPairTitle = (props: {
   const token0 = info.token0;
   const token1 = info.token1;
 
+  const { token0Symbol, token1Symbol } = useConvertWETH();
+
   const isBigFont = page === "increaseLiquidity" || page === "removeLiquidity";
 
   return (
     <Text fontWeight="bold" fontSize={isBigFont ? "24px" : "23px"}>
-      {token1.symbol}{" "}
+      {token1Symbol}{" "}
       <span
         style={{
           fontSize: isBigFont ? 16 : 15,
@@ -39,7 +42,7 @@ const TokenPairTitle = (props: {
       >
         /
       </span>{" "}
-      {token0.symbol}
+      {token0Symbol}
     </Text>
   );
 };
