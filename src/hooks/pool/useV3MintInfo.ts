@@ -27,6 +27,7 @@ import {
   lastFocusedInput,
 } from "@/recoil/pool/setPoolPosition";
 import { useGetMode } from "../mode/useGetMode";
+import useBlockNum from "../network/useBlockNumber";
 
 export function useV3MintInfo() {
   const { feeTier: feeAmount } = useGetFeeTier();
@@ -72,6 +73,8 @@ export function useV3MintInfo() {
       )
     : Boolean(baseToken && token0 && !baseToken.equals(token0));
 
+  const { blockNumber } = useBlockNum();
+
   //   always returns the price with 0 as base token
   const price: Price<Token, Token> | undefined = useMemo(() => {
     // if no liquidity use typed value
@@ -102,7 +105,15 @@ export function useV3MintInfo() {
       // get the amount of quote currency
       return pool && token0 ? pool.priceOf(token0) : undefined;
     }
-  }, [noLiquidity, invertPrice, token1, token0, pool, startPriceTypedValue]);
+  }, [
+    noLiquidity,
+    invertPrice,
+    token1,
+    token0,
+    pool,
+    startPriceTypedValue,
+    blockNumber,
+  ]);
 
   // check for invalid price input (converts to invalid ratio)
   const invalidPrice = useMemo(() => {

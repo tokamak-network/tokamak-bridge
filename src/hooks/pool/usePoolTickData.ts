@@ -87,7 +87,7 @@ function useTicksFromTickLens(
       ? nearestUsableTick(pool?.tickCurrent, tickSpacing)
       : undefined;
 
-  const { connectedChainId: chainId } = useConnectedNetwork();
+  const { connectedChainId: chainId, layer } = useConnectedNetwork();
 
   const poolAddress =
     currencyA && currencyB && feeAmount && poolState === PoolState.EXISTS
@@ -95,7 +95,7 @@ function useTicksFromTickLens(
           currencyA?.wrapped,
           currencyB?.wrapped,
           feeAmount,
-          undefined,
+          layer === "L2" ? L2_initCodeHashManualOverride : undefined,
           chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined
         )
       : undefined;
@@ -231,6 +231,8 @@ function useTicksFromSubgraph(
         })
       : undefined;
 
+  console.log("poolAddress", poolAddress);
+
   // const poolAddress =
   //   currencyA && currencyB && feeAmount
   //     ? Pool.getAddress(
@@ -289,14 +291,36 @@ function useAllV3Ticks(
     skipNumber
   );
 
+  console.log("data.ticks", data?.ticks);
+  console.log("--params");
+  console.log(
+    useSubgraph ? currencyA : undefined,
+    currencyB,
+    feeAmount,
+    skipNumber
+  );
+  console.log(skipNumber);
+
   useEffect(() => {
     if (data?.ticks.length) {
-      setSubgraphTickData((tickData) => [...tickData, ...data.ticks]);
-      if (data.ticks.length === MAX_THE_GRAPH_TICK_FETCH_VALUE) {
-        setSkipNumber(
+      console.log("go?gogo");
+      console.log(data?.ticks);
+
+      // setSkipNumber(0);
+      // if (data.ticks.length >= MAX_THE_GRAPH_TICK_FETCH_VALUE) {
+      //   setSubgraphTickData(data.ticks);
+      // } else {
+      //   setSubgraphTickData((tickData) => [...tickData, ...data.ticks]);
+      // }
+      setSubgraphTickData(data.ticks);
+
+      if (data.ticks.length >= MAX_THE_GRAPH_TICK_FETCH_VALUE) {
+        return setSkipNumber(
           (skipNumber) => skipNumber + MAX_THE_GRAPH_TICK_FETCH_VALUE
         );
       }
+      // return setSkipNumber((skipNumber) => 0);
+      // return setSkipNumber(0);
     }
   }, [data?.ticks]);
 
@@ -333,7 +357,6 @@ export function usePoolActiveLiquidity(
     currencyB,
     feeAmount
   );
-
   return useMemo(() => {
     if (
       !currencyA ||
@@ -355,10 +378,16 @@ export function usePoolActiveLiquidity(
     const token0 = currencyA?.wrapped;
     const token1 = currencyB?.wrapped;
 
+    console.log("activeTick", activeTick);
+    console.log("ticks-go", ticks);
+
     // find where the active tick would be to partition the array
     // if the active tick is initialized, the pivot will be an element
     // if not, take the previous tick as pivot
-    const pivot = ticks.findIndex(({ tick }) => tick > activeTick) - 1;
+    const pivot = ticks.findIndex(({ tick }) => tick >= activeTick) - 1;
+
+    console.log("pivottt", pivot);
+    console.log("pool-go", pool);
 
     if (pivot < 0) {
       // consider setting a local error
