@@ -57,7 +57,7 @@ export function SelectCardButton(props: { field: Field }) {
 const SearchToken = () => {
   const { onCloseTokenModal } = useTokenModal();
   const [searchToken, setSearchToken] = useRecoilState(searchTokenStatus);
-  const {pcView} = useMediaView();
+  const { pcView } = useMediaView();
 
   const { connectedChainId } = useConnectedNetwork();
 
@@ -80,9 +80,9 @@ const SearchToken = () => {
       zIndex={Overlay_Index.BelowHeader}
     >
       <Input
-        w={{ base:"100%", lg:"430px" }}
+        w={{ base: "100%", lg: "430px" }}
         h={"42px"}
-        borderRadius={{ base:"8px", lg:"21.5px" }}
+        borderRadius={{ base: "8px", lg: "21.5px" }}
         placeholder={"Search token name or address"}
         _placeholder={{ color: "#8E8E92", fontWeight: 500 }}
         boxShadow={"none !important"}
@@ -92,7 +92,7 @@ const SearchToken = () => {
         _active={{}}
         onChange={onChange}
       ></Input>
-      {pcView &&
+      {pcView && (
         <Box pos={"absolute"} right={"69px"}>
           <Image
             src={CloseIcon}
@@ -101,14 +101,14 @@ const SearchToken = () => {
             onClick={() => onCloseTokenModal()}
           />
         </Box>
-      }
+      )}
     </Flex>
   );
 };
 
 export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
-  const {pcView} = useMediaView();
+  const { pcView } = useMediaView();
 
   //close when click at outside
   useEffect(() => {
@@ -156,19 +156,19 @@ export function SelectCardModal() {
         >
           <Flex
             w={"1362px"}
-            h={{ base:"fit-content", lg:"486px" }}
-            bgColor={ {base: "#1F2128", lg:"transparent" }}
+            h={{ base: "fit-content", lg: "486px" }}
+            bgColor={{ base: "#1F2128", lg: "transparent" }}
             rounded={"24px 24px 0px 0px"}
-            padding={{ base:"16px 10px", lg:0 }}
+            padding={{ base: "16px 10px", lg: 0 }}
             // borderRadius={"150px 150px 0px 0px"}
             rowGap={"17.43px"}
             flexDir={"column"}
             alignItems={"center"}
             backgroundImage={BgImage}
             zIndex={100}
-            overflow={{base: "hidden"}}
+            overflow={{ base: "hidden" }}
           >
-            {pcView &&
+            {pcView && (
               <Flex pos={"absolute"}>
                 <Image
                   src={BgImage}
@@ -181,19 +181,19 @@ export function SelectCardModal() {
                   }}
                 ></Image>
               </Flex>
-            }
-            {pcView && 
-            <>
-              <CardCarrousel />
-              <SearchToken />
-            </>
-            }
-            {!pcView &&
-            <>
-              <SearchToken />
-              <CardCarouselMobile />
-            </>
-            }
+            )}
+            {pcView && (
+              <>
+                <CardCarrousel />
+                <SearchToken />
+              </>
+            )}
+            {!pcView && (
+              <>
+                <SearchToken />
+                <CardCarouselMobile />
+              </>
+            )}
           </Flex>
         </ModalBody>
       </ModalContent>
