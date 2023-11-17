@@ -27,7 +27,20 @@ export function usePoolData(poolAddress: string | undefined) {
   const { connectedChainId } = useConnectedNetwork();
   const { subMode } = useGetMode();
 
-  const { provider } = useProvier();
+  const provider = useMemo(() => {
+    if (subMode.add) {
+      return _provider;
+    }
+    if (connectedChainId === Number(chainIdParam)) return _provider;
+    if (chainIdParam) return providerByChainId[Number(chainIdParam)];
+  }, [
+    _provider,
+    L1Provider,
+    L2Provider,
+    chainIdParam,
+    connectedChainId,
+    subMode,
+  ]);
 
   useEffect(() => {
     const fetchPoolData = async () => {

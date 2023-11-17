@@ -14,7 +14,7 @@ import { ChainId } from "@uniswap/sdk-core";
 
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.MAINNET]:
-    "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3?source=uniswap",
+    "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
   // [ChainId.ARBITRUM_ONE]:
   //   "https://thegraph.com/hosted-service/subgraph/ianlapham/uniswap-arbitrum-one",
   // [ChainId.OPTIMISM]:
