@@ -22,6 +22,8 @@ export function useDensityChartData({
     feeAmount
   );
 
+  console.log("before formatted", data);
+
   const formatData = useCallback(() => {
     if (!data?.length) {
       return undefined;
@@ -37,6 +39,12 @@ export function useDensityChartData({
         price0: parseFloat(t.price0),
       };
 
+      // if (i + 1 === data.length && chartEntry.activeLiquidity < 0) {
+      //   newData.push({
+      //     ...chartEntry,
+      //     activeLiquidity: newData[newData.length - 1].activeLiquidity,
+      //   });
+      // }
       if (chartEntry.activeLiquidity > 0) {
         newData.push(chartEntry);
       }
@@ -44,6 +52,8 @@ export function useDensityChartData({
 
     return newData;
   }, [data]);
+
+  console.log("formatted Data", formatData());
 
   return useMemo(() => {
     return {

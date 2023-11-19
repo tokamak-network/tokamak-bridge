@@ -34,6 +34,10 @@ export default function computeSurroundingTicks(
       price0: tickToPrice(token0, token1, tick).toFixed(PRICE_FIXED_DIGITS),
     };
 
+    console.log("ascending", ascending);
+    console.log("sortedTickData", sortedTickData);
+    console.log("pivot", pivot);
+
     // Update the active liquidity.
     // If we are iterating ascending and we found an initialized tick we immediately apply
     // it to the current processed tick we are building.

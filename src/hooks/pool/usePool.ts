@@ -22,25 +22,10 @@ import { checkLayer } from "@/utils/network/checkLayer";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
-  const { provider: _provider, L1Provider, L2Provider } = useProvier();
+  const { provider, L1Provider, L2Provider } = useProvier();
   const { chainIdParam } = useGetPositionIdFromPath();
   const { connectedChainId } = useConnectedNetwork();
   const { subMode } = useGetMode();
-
-  const provider = useMemo(() => {
-    if (subMode.add) {
-      return _provider;
-    }
-    if (connectedChainId === Number(chainIdParam)) return _provider;
-    if (chainIdParam) return providerByChainId[Number(chainIdParam)];
-  }, [
-    _provider,
-    L1Provider,
-    L2Provider,
-    chainIdParam,
-    connectedChainId,
-    subMode,
-  ]);
 
   useEffect(() => {
     const fetchPoolData = async () => {
