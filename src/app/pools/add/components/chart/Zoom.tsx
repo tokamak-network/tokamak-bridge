@@ -6,7 +6,13 @@ import {
   zoomIdentity,
   ZoomTransform,
 } from "d3";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 // import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
@@ -17,7 +23,11 @@ import Title from "../Title";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useRecoilState } from "recoil";
-import { atMaxTick, atMinTick } from "@/recoil/pool/setPoolPosition";
+import {
+  atMaxTick,
+  atMinTick,
+  chartIsOnLoading,
+} from "@/recoil/pool/setPoolPosition";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -56,7 +66,7 @@ export default function Zoom({
 }) {
   const { getSetFullRange } = useRangeHopCallbacks();
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
-  const { invertPrice } = useV3MintInfo();
+  const { invertPrice, pool } = useV3MintInfo();
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [
@@ -93,6 +103,7 @@ export default function Zoom({
   );
 
   useEffect(() => {
+    console.log("gogogo-go");
     if (!svg) return;
 
     zoomBehavior.current = zoom()
@@ -123,19 +134,37 @@ export default function Zoom({
     zoomInitial();
   }, [zoomInitial, zoomLevels]);
 
-  // const [triggerEffect, setTriggerEffect] = useState<boolean>(false);
-
   //disable to trigger before it's initialized
   //invert price changes twice, it makes a flicker with this hook
   useEffect(() => {
     setTimeout(() => {
-      resetBrush();
-      zoomReset();
+      zoomInitial();
     }, 50);
   }, [invertPrice]);
 
   const [, setAtMinTick] = useRecoilState(atMinTick);
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
+  const [isLoading, setIsLoading] = useRecoilState(chartIsOnLoading);
+
+  const initializeTicks = () => {
+    resetBrush();
+    // zoomInitial();
+    setAtMinTick(false);
+    setAtMaxTick(false);
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      initializeTicks();
+    }, 50);
+  }, [pool, initializeTicks]);
+
+  useEffect(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 350);
+  }, [pool]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>
@@ -148,10 +177,7 @@ export default function Zoom({
           border={"1px solid #313442"}
           borderRadius={"8px"}
           onClick={() => {
-            resetBrush();
-            zoomReset();
-            setAtMinTick(false);
-            setAtMaxTick(false);
+            initializeTicks();
           }}
           cursor={"pointer"}
         >

@@ -294,14 +294,17 @@ function useAllV3Ticks(
 
   console.log("go");
 
-  useEffect(() => {
-    if (isLoading) setSubgraphTickData([]);
-  }, [isLoading]);
+  // useEffect(() => {
+  //   if (isLoading) setSubgraphTickData([]);
+  // }, [isLoading]);
 
   useEffect(() => {
     if (data?.ticks.length) {
-      // setSubgraphTickData([...data.ticks, ...data.ticks]);
-      setSubgraphTickData((tickData) => [...tickData, ...data.ticks]);
+      if (skipNumber > 0) {
+        setSubgraphTickData((tickData) => [...tickData, ...data.ticks]);
+      } else {
+        setSubgraphTickData([...data.ticks, ...data.ticks]);
+      }
       if (data.ticks.length === MAX_THE_GRAPH_TICK_FETCH_VALUE) {
         setSkipNumber(
           (skipNumber) => skipNumber + MAX_THE_GRAPH_TICK_FETCH_VALUE
@@ -365,16 +368,10 @@ export function usePoolActiveLiquidity(
     const token0 = currencyA?.wrapped;
     const token1 = currencyB?.wrapped;
 
-    console.log("ticks", ticks);
-
     // find where the active tick would be to partition the array
     // if the active tick is initialized, the pivot will be an element
     // if not, take the previous tick as pivot
     const pivot = ticks.findIndex(({ tick }) => tick > activeTick) - 0;
-
-    console.log("pivot", pivot);
-    console.log("activeTick", activeTick);
-    console.log(ticks[pivot].tick);
 
     if (pivot < 0) {
       // consider setting a local error

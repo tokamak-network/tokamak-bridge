@@ -15,8 +15,8 @@ import SpinnerImage from "assets/image/spinner.svg";
 import UninitializedPoolImage from "assets/image/uninitializedPool.svg";
 
 import Image from "next/image";
-import { useRecoilState } from "recoil";
-import { atMinTick } from "@/recoil/pool/setPoolPosition";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { atMinTick, chartIsOnLoading } from "@/recoil/pool/setPoolPosition";
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -116,6 +116,8 @@ export default function ChartWrapper({
 
   const isSorted = !invertPrice;
   const [, setAtMinTick] = useRecoilState(atMinTick);
+
+  console.log("isLoading---", isLoading);
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
