@@ -15,6 +15,10 @@ import useConnectedNetwork from "@/hooks/network";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { CardCarouselMobile } from "./mobile/CardCarouselMobile";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import TokenInput from "../input/TokenInput";
+import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import { useRecoilValue } from "recoil";
 
 enum CardOverlay {
   Middle = 100,
@@ -109,6 +113,8 @@ const SearchToken = () => {
 export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
   const { pcView } = useMediaView();
+  const { inToken, outToken } = useInOutTokens();
+  const { isOpen } = useRecoilValue(tokenModalStatus);
 
   //close when click at outside
   useEffect(() => {
@@ -143,8 +149,6 @@ export function SelectCardModal() {
         <ModalBody
           minW={"100%"}
           maxW={"100%"}
-          h={"100px"}
-          mt={"auto"}
           p={0}
           display={"flex"}
           justifyContent={"center"}
@@ -192,6 +196,11 @@ export function SelectCardModal() {
               <>
                 <SearchToken />
                 <CardCarouselMobile />
+                <TokenInput
+                  inToken={isOpen === "INPUT" ? true : false}
+                  hasMaxButton={true}
+                  isDisabled={false}
+                />
               </>
             )}
           </Flex>

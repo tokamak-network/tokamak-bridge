@@ -84,12 +84,13 @@ export default function AccountContainer() {
         }}
         pos={"relative"}
         overflow={"hidden"}
-      >
+        w={"100%"}
+        >
         <Flex
           borderRadius={"16px"}
           border={"3px solid #007AFF"}
           h="64px"
-          w="336px"
+          w={{ base:"100%", lg:"336px" }}
           flexDir={"column"}
         >
           <TopLine />
@@ -97,6 +98,7 @@ export default function AccountContainer() {
             p="13px 16px 16px 13px"
             justifyContent={"space-between"}
             zIndex={1001}
+            w={"100%"}
           >
             <Flex alignItems={"center"}>
               <Image

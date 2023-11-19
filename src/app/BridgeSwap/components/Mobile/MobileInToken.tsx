@@ -1,52 +1,70 @@
 import Image from "next/image";
-import { Flex, Text } from "@chakra-ui/react";
-import ETHIcon from "@/assets/tokens/eth_half_rounded.svg"
-import TitanIcon from "@/assets/tokens/titan_half_rounded.svg"
+import { Flex, Text, Box } from "@chakra-ui/react";
+import ETHIcon from "@/assets/tokens/eth_half_rounded.svg";
+import TitanIcon from "@/assets/tokens/titan_half_rounded.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
-import { Field } from "@/types/swap/swap";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import TokenCard from "@/components/card/TokenCard";
 
 const MobileInToken = () => {
-  const {inNetwork} = useRecoilValue(networkStatus);
+  const { inNetwork } = useRecoilValue(networkStatus);
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
+  const { inToken } = useInOutTokens();
 
   return (
-    <Flex
-      pos={"relative"}
-      w={"full"}
+    <Box
+      pos="relative"
+      w={"148px"}
       h={"184px"}
-      border={"2px dashed #313442"}
-      rounded={"9px"}
-      justify={"center"}
-      align={"center"}
-      cursor={"pointer"}
-      onClick={() => setTokenModal({...tokenModal, isOpen: "INPUT"})}
+      onClick={() => setTokenModal({ ...tokenModal, isOpen: "INPUT" })}
     >
+      {inToken?.tokenName ? (
+        <TokenCard
+          w={"100%"}
+          h={"100%"}
+          tokenInfo={inToken}
+          hasInput={true}
+          inNetwork={true}
+          symbolSize={{ w: 64, h: 64 }}
+        />
+      ) : (
+        <Flex
+          pos={"relative"}
+          w={"full"}
+          h={"full"}
+          border={"2px dashed #313442"}
+          rounded={"9px"}
+          justify={"center"}
+          align={"center"}
+          cursor={"pointer"}
+        >
+          <Text fontSize={16} fontWeight={500}>
+            Select Token
+          </Text>
+        </Flex>
+      )}
       <Flex
         pos={"absolute"}
-        top={"-2px"}
-        right={"-2px"}
+        top={"0px"}
+        right={"0px"}
         w={"34px"}
         h={"34px"}
         borderRadius={"0px 9px 0px 9px"}
-        bg={"#2E3140"}
+        bg={inToken?.tokenName ? "#007AFF6F" : "#2E3140"}
         justify={"center"}
         align={"center"}
+        zIndex={100}
       >
-        <Flex
-          w={"28px"}
-          h={"28px"}
-          borderRadius={"0px 6px 0px 6px"}
-        >
-          <Image alt="eth" src={inNetwork?.chainId === 1 ? ETHIcon : TitanIcon}/>
+        <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
+          <Image
+            alt="eth"
+            src={inNetwork?.chainId === 1 ? ETHIcon : TitanIcon}
+          />
         </Flex>
       </Flex>
-
-      <Text fontSize={16} fontWeight={500}>
-        Select Token
-      </Text>
-    </Flex>
+    </Box>
   );
 };
 

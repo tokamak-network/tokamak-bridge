@@ -11,14 +11,11 @@ import { TokenInfo } from '@/types/token/supportedToken';
 import useTokenModal from '@/hooks/modal/useTokenModal';
 
 import "@/css/carousel.css";
-import { Box } from '@chakra-ui/react';
 
 const CarouselCard = React.memo((props) => {
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
   const { data, dataIndex } : any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
-
-  console.log("--------------------------", tokenData);
 
   return (
     tokenData &&
@@ -27,7 +24,7 @@ const CarouselCard = React.memo((props) => {
       h={"184px"}
       tokenInfo={tokenData}
       inNetwork={true}
-      hasInput={false}
+      hasInput={true}
       isNew={tokenData?.isNew}
       symbolSize={{
         w: 60,

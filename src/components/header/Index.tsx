@@ -180,9 +180,9 @@ export default function Header() {
       minW={"100%"}
       zIndex={Overlay_Index.Header}
       justifyContent={"space-between"}
-      alignItems={{ base: "center", md: "flex-start" }}
-      mt={{ base: "16px", md: "22px" }}
-      px={{base: "12px", md: "40px"}}
+      alignItems={{ base: "center", lg: "flex-start" }}
+      mt={{ base: "16px", lg: "22px" }}
+      px={{base: "12px", lg: "40px"}}
       pos={"absolute"}
     >
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
@@ -193,7 +193,7 @@ export default function Header() {
             alt={"LOGO_IMAGE"}
           />
         </Box>
-        <Flex columnGap={"30px"} display={{ base: "none", md: "flex" }}>
+        <Flex columnGap={"30px"} display={{ base: "none", lg: "flex" }}>
           {menuList.map((menuInfo) => (
             <HeaderMenu
               key={menuInfo.title}

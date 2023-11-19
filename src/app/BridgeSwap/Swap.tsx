@@ -38,7 +38,7 @@ export default function Swap() {
           </Flex>
           {mode === null ? <SelectNetwork /> : <OutToken />}
         </Flex>
-      ) : mobileView ? (
+      ) : (
         <Box w={"full"} mt={"16px"}>
           <Flex w={"full"} justify={"space-between"} mb={"12px"}>
             <Flex
@@ -59,7 +59,7 @@ export default function Swap() {
             />
           </Flex>
 
-          <Flex w={"100%"} justifyContent={"space-between"} columnGap={"8px"}>
+          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"}>
             <MobileInToken/>
 
             <Flex
@@ -73,8 +73,6 @@ export default function Swap() {
 
           </Flex>
         </Box>
-      ) : (
-        <></>
       )}
     </>
   );

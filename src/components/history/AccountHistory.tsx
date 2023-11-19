@@ -114,8 +114,9 @@ export default function AccountHistory() {
       <DrawerContent
         px="12px"
         pb="0px"
-        minW={"360px"}
-        maxW={"360px"}
+        mt={{base: "64px", lg: "0px"}}
+        minW={{ base: "100%", lg: "360px" }}
+        maxW={{ base: "100%", lg: "360px" }}
         bgColor={"#1F2128"}
 
         // pos={"relative"}

@@ -11,6 +11,7 @@ import { useTransaction, useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import HISTORYICON from "assets/icons/header/history.svg"
 
 export default function Account() {
   const { isConnected, address } = useAccount();
@@ -21,15 +22,15 @@ export default function Account() {
 
   const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
 
-  const {mobileView} = useMediaView();
+  const {mobileView, pcView} = useMediaView();
 
   return (
     <Center
       className="header-right-common"
-      w={mobileView ? "84px" : isConnected ? "174px" : "220px"}
+      w={mobileView ? "106px" : isConnected ? "174px" : "220px"}
       h={{base: "32px", md: "48px"}}
       bg={!isConnected ? "#007AFF" : ""}
-      columnGap={"17px"}
+      columnGap={{ base:"8px", lg:"17px" }}
       fontSize={18}
       fontWeight={500}
       _hover={{ bg: isConnected ? "#313442" : "" }}
@@ -42,7 +43,7 @@ export default function Account() {
        * index 2 = wallet injected like wallet connet
        */
       onClick={() =>
-        isConnected ? setIsOpen(true) : connetAndDisconntWallet()
+        isConnected ? setIsOpen(prev => !prev) : connetAndDisconntWallet()
       }
     >
       {isConnected && txPending ? (
@@ -55,7 +56,8 @@ export default function Account() {
       ) : (
         <>
           {!mobileView && <Image src={WALLET_ICON} alt={""} />}
-          <Text fontSize={{base: 12, md: 18}}>{buttonText}</Text> 
+          <Text fontSize={{base: 12, md: 18}}>{buttonText}</Text>
+          {isConnected && mobileView && <Image src={HISTORYICON} alt={""} />}
         </>
       )}
     </Center>
