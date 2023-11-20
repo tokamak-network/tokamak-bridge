@@ -6,6 +6,7 @@ export default function CustomTooltip(props: {
   tooltipLabel?: string | ReactNode;
   style?: {
     width?: string;
+    maxW?: string;
     bgColor?: string;
     height?: string;
     px?: string;
