@@ -92,6 +92,7 @@ export default function AddMoreLiquidity() {
                 inToken={false}
                 tokenInfo={token1Info}
                 otherTokenInfo={token0Info}
+                tickCurrent={info?.tickCurrent}
               />
             )}
           </Flex>
@@ -116,6 +117,7 @@ export default function AddMoreLiquidity() {
                 inToken={true}
                 tokenInfo={token0Info}
                 otherTokenInfo={token1Info}
+                tickCurrent={info?.tickCurrent}
               />
             )}
             {deposit0Disabled && <OutRangeWarning />}

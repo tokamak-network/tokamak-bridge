@@ -21,6 +21,7 @@ import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -375,12 +376,14 @@ export default function TokenInput(props: {
   const { subMode } = useGetMode();
 
   useEffect(() => {
-    setTriggerForSpinner(true);
-    initializeTokenPairAmount();
-    setTimeout(() => {
-      setTriggerForSpinner(false);
-    }, 1000);
-  }, [currentPrice]);
+    if (subMode.add) {
+      setTriggerForSpinner(true);
+      initializeTokenPairAmount();
+      setTimeout(() => {
+        setTriggerForSpinner(false);
+      }, 1000);
+    }
+  }, [currentPrice, subMode]);
 
   return (
     <Flex
@@ -391,7 +394,7 @@ export default function TokenInput(props: {
       rowGap={"6px"}
       {...style}
     >
-      {triggerForSpinner && (subMode.add || subMode.increase) ? (
+      {triggerForSpinner && subMode.add ? (
         <Flex w={"100%"} h={"27px"}>
           <GradientSpinner />
         </Flex>

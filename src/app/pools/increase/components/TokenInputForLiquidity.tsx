@@ -1,8 +1,11 @@
+import GradientSpinner from "@/components/ui/gradientSpinner";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   SelectedToken,
   selectedInTokenStatus,
@@ -20,9 +23,10 @@ export function TokenInputForLiquidity(props: {
   inToken: boolean;
   tokenInfo: TokenInfo;
   otherTokenInfo: TokenInfo;
+  tickCurrent: number;
   style?: {};
 }) {
-  const { inToken, tokenInfo, otherTokenInfo, style } = props;
+  const { inToken, tokenInfo, otherTokenInfo, tickCurrent, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -42,29 +46,6 @@ export function TokenInputForLiquidity(props: {
   const dependentAmount = _dependentAmount?.toSignificant(18);
 
   const tokenData = useTokenBalance(tokenInfo);
-
-  useEffect(() => {
-    if (deposit0Disabled) {
-      return setSelectedInToken(null);
-    }
-    if (deposit1Disabled) {
-      return setSelectedOutToken(null);
-    }
-    if (inToken && !amountForToken1)
-      return setSelectedOutToken({
-        ...otherTokenInfo,
-        amountBN: null,
-        parsedAmount: null,
-        tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
-      });
-    if (!inToken && !amountForToken0)
-      return setSelectedInToken({
-        ...otherTokenInfo,
-        amountBN: null,
-        parsedAmount: null,
-        tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
-      });
-  }, [deposit0Disabled, deposit1Disabled]);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value: string = e.target.value;
@@ -220,6 +201,40 @@ export function TokenInputForLiquidity(props: {
     return "0.00";
   }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
 
+  useEffect(() => {
+    if (deposit0Disabled) {
+      return setSelectedInToken(null);
+    }
+    if (deposit1Disabled) {
+      return setSelectedOutToken(null);
+    }
+    if (inToken && !amountForToken1)
+      return setSelectedOutToken({
+        ...otherTokenInfo,
+        amountBN: null,
+        parsedAmount: null,
+        tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
+      });
+    if (!inToken && !amountForToken0)
+      return setSelectedInToken({
+        ...otherTokenInfo,
+        amountBN: null,
+        parsedAmount: null,
+        tokenAddress: chainName ? otherTokenInfo.address[chainName] : null,
+      });
+  }, [deposit0Disabled, deposit1Disabled]);
+
+  const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
+  const { initializeTokenPairAmount } = useInOutTokens();
+
+  useEffect(() => {
+    setTriggerForSpinner(true);
+    initializeTokenPairAmount();
+    setTimeout(() => {
+      setTriggerForSpinner(false);
+    }, 1000);
+  }, [tickCurrent]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -227,45 +242,51 @@ export function TokenInputForLiquidity(props: {
       pb={"16px"}
       w={"100%"}
       rowGap={"6px"}
-      h={"34px"}
       {...style}
     >
-      <Flex>
-        <Input
-          w={"100%"}
-          h={"27px"}
-          m={0}
-          p={0}
-          border={{}}
-          _active={{}}
-          _focus={{ boxShadow: "none !important" }}
-          placeholder="0"
-          _placeholder={{ color: "#C6C6D1 !important" }}
-          color={"#ffffff"}
-          fontSize={28}
-          fontWeight={700}
-          ref={inputRef}
-          // isDisabled={isDisabled}
-          _disabled={{ color: "#fff" }}
-          value={valueProp}
-          onChange={onChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        ></Input>
-        <Button
-          w={"40px"}
-          h={"22px"}
-          bgColor={"#6a00f1"}
-          fontSize={12}
-          fontWeight={700}
-          _hover={{}}
-          _active={{}}
-          mt={"3px"}
-          onClick={() => onMax()}
-        >
-          Max
-        </Button>
-      </Flex>
+      {triggerForSpinner ? (
+        <Flex w={"100%"} h={"27px"}>
+          <GradientSpinner />
+        </Flex>
+      ) : (
+        <Flex>
+          <Input
+            w={"100%"}
+            h={"27px"}
+            m={0}
+            p={0}
+            border={{}}
+            _active={{}}
+            _focus={{ boxShadow: "none !important" }}
+            placeholder="0"
+            _placeholder={{ color: "#C6C6D1 !important" }}
+            color={"#ffffff"}
+            fontSize={28}
+            fontWeight={700}
+            ref={inputRef}
+            // isDisabled={isDisabled}
+            _disabled={{ color: "#fff" }}
+            value={valueProp}
+            onChange={onChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          ></Input>
+          <Button
+            w={"40px"}
+            h={"22px"}
+            bgColor={"#6a00f1"}
+            fontSize={12}
+            fontWeight={700}
+            _hover={{}}
+            _active={{}}
+            mt={"3px"}
+            onClick={() => onMax()}
+          >
+            Max
+          </Button>
+        </Flex>
+      )}
+
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
         <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
           {`$${marketPrice}`}
