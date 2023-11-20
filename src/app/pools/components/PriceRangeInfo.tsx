@@ -20,6 +20,7 @@ import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useMemo } from "react";
 import { tickToPrice } from "@uniswap/v3-sdk";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { CurrentPriceTooltip } from "./CurrentPriceTooltip";
 
 export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { isMinPrice } = props;
@@ -161,9 +162,12 @@ export const CurrentPriceInfo = () => {
       flexDir={"column"}
       rowGap={"8px"}
     >
-      <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
-        Current Price
-      </Text>
+      <Flex justifyContent={"center"} alignItems={"center"} columnGap={"2px"}>
+        <Text fontSize={12} fontWeight={400} color={"#A0A3AD"}>
+          Current Price
+        </Text>
+        <CurrentPriceTooltip />
+      </Flex>
       <CustomTooltip
         content={
           <Text
