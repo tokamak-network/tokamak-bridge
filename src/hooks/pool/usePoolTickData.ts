@@ -371,7 +371,8 @@ export function usePoolActiveLiquidity(
     // find where the active tick would be to partition the array
     // if the active tick is initialized, the pivot will be an element
     // if not, take the previous tick as pivot
-    const pivot = ticks.findIndex(({ tick }) => tick > activeTick) - 0;
+    const pivotIndex = ticks && ticks.length > 20 ? 1 : 0;
+    const pivot = ticks.findIndex(({ tick }) => tick > activeTick) - pivotIndex;
 
     if (pivot < 0) {
       // consider setting a local error

@@ -103,7 +103,6 @@ export default function Zoom({
   );
 
   useEffect(() => {
-    console.log("gogogo-go");
     if (!svg) return;
 
     zoomBehavior.current = zoom()

@@ -274,9 +274,6 @@ export function usePool(
     [token0, token1, fee, inToken, outToken, feeTier, blockNum]
   );
 
-  console.log("blockNumber", blockNumber);
-  console.log("blockNum", blockNum);
-
   //@ts-ignore
   return usePools(poolKeys)[0];
 }

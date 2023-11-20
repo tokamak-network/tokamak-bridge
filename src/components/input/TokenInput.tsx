@@ -385,8 +385,6 @@ export default function TokenInput(props: {
     }
   }, [currentPrice]);
 
-  console.log("currentPrice", currentPrice);
-
   return (
     <Flex
       flexDir={"column"}
