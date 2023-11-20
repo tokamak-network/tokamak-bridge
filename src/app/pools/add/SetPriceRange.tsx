@@ -1,4 +1,4 @@
-import { Button, Flex, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Text } from "@chakra-ui/react";
 import Title from "./components/Title";
 import RangeInput from "./components/RangeInput";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -15,6 +15,9 @@ import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useRecoilState } from "recoil";
 import { maxPrice, minPrice } from "@/recoil/pool/setPoolPosition";
 import { TICK_SPACINGS } from "@uniswap/v3-sdk";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import Image from "next/image";
+import QUESTION_ICON from "assets/icons/questionGray.svg";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
@@ -77,10 +80,29 @@ export default function SetPriceRange() {
         disabled={disabled}
       />
       {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
-        <Text textAlign={"center"} mt={"24px"} mb={"16px"}>
-          Current Price : {commafy(price?.currentPrice, 4)}{" "}
-          {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
-        </Text>
+        <Flex justifyContent={"center"} columnGap={"4px"} alignItems={"center"}>
+          <Text textAlign={"center"} mt={"24px"} mb={"16px"}>
+            Current Price : {commafy(price?.currentPrice, 4)}{" "}
+            {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
+          </Text>
+          <CustomTooltip
+            content={
+              <Flex mt={"5px"}>
+                <Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />
+              </Flex>
+            }
+            tooltipLabel={
+              "The input amount can be automatically updated based on the current price."
+            }
+            style={{
+              maxW: "245px",
+              height: "48px",
+              px: "8px",
+              py: "10px",
+              tooltipLineHeight: "14px",
+            }}
+          />
+        </Flex>
       )}
       <Flex
         columnGap={"12px"}

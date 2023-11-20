@@ -19,6 +19,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
+import GradientSpinner from "../ui/gradientSpinner";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -40,6 +42,7 @@ export default function TokenInput(props: {
     inToken: inTokenFromHook,
     inTokenInfo,
     outTokenInfo,
+    initializeTokenPairAmount,
   } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -367,6 +370,18 @@ export default function TokenInput(props: {
     }
   }, [selectedInToken, selectedOutToken, inToken, tokenData]);
 
+  const { currentPrice } = usePriceTickConversion();
+  const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
+  const { subMode } = useGetMode();
+
+  useEffect(() => {
+    setTriggerForSpinner(true);
+    initializeTokenPairAmount();
+    setTimeout(() => {
+      setTriggerForSpinner(false);
+    }, 1000);
+  }, [currentPrice]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -376,46 +391,53 @@ export default function TokenInput(props: {
       rowGap={"6px"}
       {...style}
     >
-      <Flex>
-        <Input
-          id={inToken ? "LeftInput" : "RightInput"}
-          w={"100%"}
-          h={"27px"}
-          m={0}
-          p={0}
-          border={{}}
-          _active={{}}
-          _focus={{ boxShadow: "none !important" }}
-          placeholder="0"
-          _placeholder={{ color: "#C6C6D1 !important" }}
-          color={"#ffffff"}
-          fontSize={28}
-          fontWeight={700}
-          isDisabled={isDisabled}
-          _disabled={{ color: "#fff" }}
-          value={valueProp}
-          ref={inputRef}
-          onChange={onChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        ></Input>
-        {hasMaxButton && !isMax && (
-          <Button
-            w={"40px"}
-            h={"22px"}
-            bgColor={"#6a00f1"}
-            fontSize={12}
-            fontWeight={700}
-            _hover={{}}
+      {triggerForSpinner && (subMode.add || subMode.increase) ? (
+        <Flex w={"100%"} h={"27px"}>
+          <GradientSpinner />
+        </Flex>
+      ) : (
+        <Flex>
+          <Input
+            id={inToken ? "LeftInput" : "RightInput"}
+            w={"100%"}
+            h={"27px"}
+            m={0}
+            p={0}
+            border={{}}
             _active={{}}
-            color={"#fff"}
-            mt={"3px"}
-            onClick={() => onMax()}
-          >
-            Max
-          </Button>
-        )}
-      </Flex>
+            _focus={{ boxShadow: "none !important" }}
+            placeholder="0"
+            _placeholder={{ color: "#C6C6D1 !important" }}
+            color={"#ffffff"}
+            fontSize={28}
+            fontWeight={700}
+            isDisabled={isDisabled}
+            _disabled={{ color: "#fff" }}
+            value={valueProp}
+            ref={inputRef}
+            onChange={onChange}
+            onFocus={handleFocus}
+            onBlur={handleBlur}
+          ></Input>
+          {hasMaxButton && !isMax && (
+            <Button
+              w={"40px"}
+              h={"22px"}
+              bgColor={"#6a00f1"}
+              fontSize={12}
+              fontWeight={700}
+              _hover={{}}
+              _active={{}}
+              color={"#fff"}
+              mt={"3px"}
+              onClick={() => onMax()}
+            >
+              Max
+            </Button>
+          )}
+        </Flex>
+      )}
+
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
         <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
           {`$${marketPrice}`}

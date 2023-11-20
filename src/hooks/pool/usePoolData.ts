@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { tickToPrice } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
-import { Token } from "@uniswap/sdk-core";
+import { Price, Token } from "@uniswap/sdk-core";
 import { useNetwork } from "wagmi";
 import { useRecoilState } from "recoil";
 import {
@@ -136,6 +136,9 @@ export function usePriceTickConversion() {
   // const [, setMinPrice] = useRecoilState(minPriceStatus);
   // const [, setMaxPrice] = useRecoilState(maxPriceStatus);
   const { inToken } = useInOutTokens();
+  const [oldCurrentTick, setOldCurrentTick] = useState<number | undefined>(
+    undefined
+  );
 
   const baseToken = pool?.token0;
   const quoteToken = pool?.token1;
@@ -149,6 +152,19 @@ export function usePriceTickConversion() {
     if (baseToken && quoteToken && currentTick)
       return tickToPrice(baseToken, quoteToken, currentTick);
   }, [baseToken, quoteToken, currentTick]);
+
+  // const priceIsUpdated = useMemo(() => {
+  //   if (
+  //     currentTick !== undefined &&
+  //     oldCurrentTick !== undefined &&
+  //     currentTick !== oldCurrentTick
+  //   ) {
+  //     setOldCurrentTick(currentTick);
+  //     return true;
+  //   }
+  //   setOldCurrentTick(currentTick);
+  //   return false;
+  // }, [currentTick]);
 
   // const minPrice = useMemo(() => {
   //   if (baseToken && quoteToken && currentTick !== undefined && ticksAtLimit)
@@ -183,6 +199,7 @@ export function usePriceTickConversion() {
       ? currentPrice?.invert().toSignificant(10)
       : currentPrice?.toSignificant(10),
     invertPrice,
+    // priceIsUpdated,
   };
 }
 

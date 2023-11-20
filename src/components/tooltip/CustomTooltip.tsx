@@ -7,6 +7,10 @@ export default function CustomTooltip(props: {
   style?: {
     width?: string;
     bgColor?: string;
+    height?: string;
+    px?: string;
+    py?: string;
+    tooltipLineHeight?: string;
   };
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -36,7 +40,7 @@ export default function CustomTooltip(props: {
           <Text
             w={"100%"}
             h={"100%"}
-            lineHeight={"28px"}
+            lineHeight={props.style?.tooltipLineHeight ?? "28px"}
             textAlign={"center"}
             verticalAlign={"center"}
           >
