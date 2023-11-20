@@ -28,6 +28,18 @@ export function usePoolData(poolAddress: string | undefined) {
   const { connectedChainId } = useConnectedNetwork();
   const { subMode } = useGetMode();
   const { blockNumber } = useBlockNum();
+  const { layer } = useConnectedNetwork();
+  const [blockNum, setBlockNum] = useState<bigint | undefined>(undefined);
+
+  useEffect(() => {
+    if (layer === "L2" && blockNumber) {
+      setTimeout(() => {
+        setBlockNum(blockNumber);
+      }, 10000);
+    } else {
+      setBlockNum(blockNumber);
+    }
+  }, [layer, blockNumber]);
 
   useEffect(() => {
     const fetchPoolData = async () => {
@@ -65,7 +77,7 @@ export function usePoolData(poolAddress: string | undefined) {
     //   1000
     // );
     // return () => clearInterval(interval);
-  }, [poolAddress, provider, blockNumber]);
+  }, [poolAddress, provider, blockNum]);
 
   return poolData;
 }
@@ -196,6 +208,8 @@ export function usePools(
       const liquidity = pooldata?.liquidity;
       const slot0 = pooldata?.slot0;
 
+      console.log("pooldata", pooldata);
+
       if (poolTokens === undefined) return [PoolState.INVALID, null];
       //not initialized
       if (!slot0 || !liquidity) return [PoolState.NOT_EXISTS, null];
@@ -211,13 +225,14 @@ export function usePools(
           liquidity,
           slot0.tick
         );
+        console.log("pool--", pool);
         return [PoolState.EXISTS, pool];
       } catch (error) {
         console.error("Error when constructing the pool", error);
         return [PoolState.NOT_EXISTS, null];
       }
     });
-  }, [pooldata?.liquidity, poolKeys, pooldata?.slot0, poolTokens]);
+  }, [pooldata?.liquidity, poolKeys, pooldata?.slot0, poolKeys]);
 }
 
 export function usePool(
@@ -228,6 +243,19 @@ export function usePool(
   const { inToken, outToken } = useInOutTokens();
   const { feeTier } = useGetFeeTier();
   const { blockNumber } = useBlockNum();
+  const { layer } = useConnectedNetwork();
+
+  const [blockNum, setBlockNum] = useState<bigint | undefined>(undefined);
+
+  useEffect(() => {
+    if (layer === "L2" && blockNumber) {
+      setTimeout(() => {
+        setBlockNum(blockNumber);
+      }, 5000);
+    } else {
+      setBlockNum(blockNumber);
+    }
+  }, [layer, blockNumber]);
 
   const poolKeys: [
     Currency | undefined,
@@ -240,11 +268,14 @@ export function usePool(
         token0 ?? inToken?.token,
         token1 ?? outToken?.token,
         fee ?? feeTier,
-        blockNumber,
+        blockNum,
       ],
     ],
-    [token0, token1, fee, inToken, outToken, feeTier, blockNumber]
+    [token0, token1, fee, inToken, outToken, feeTier, blockNum]
   );
+
+  console.log("blockNumber", blockNumber);
+  console.log("blockNum", blockNum);
 
   //@ts-ignore
   return usePools(poolKeys)[0];

@@ -21,7 +21,7 @@ import { CurrentPriceTooltip } from "../components/CurrentPriceTooltip";
 
 export default function SetPriceRange() {
   const { inToken, outToken } = useInOutTokens();
-  const price = usePriceTickConversion();
+  const { currentPrice } = usePriceTickConversion();
   const { getSetFullRange } = useRangeHopCallbacks();
   const [poolStatus, pool] = usePool();
   const { firstStepPassed, priceInitialized } = useAddLiquidityCondition();
@@ -79,11 +79,11 @@ export default function SetPriceRange() {
         interactive={interactive}
         disabled={disabled}
       />
-      {poolStatus !== PoolState.NOT_EXISTS && price?.currentPrice && (
+      {poolStatus !== PoolState.NOT_EXISTS && currentPrice && (
         <Flex justifyContent={"center"} columnGap={"4px"} alignItems={"center"}>
           <Text textAlign={"center"} mt={"24px"} mb={"16px"}>
-            Current Price : {commafy(price?.currentPrice, 4)}{" "}
-            {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
+            Current Price : {commafy(currentPrice, 4)} {outToken?.tokenSymbol}{" "}
+            per {inToken?.tokenSymbol}
           </Text>
           <CurrentPriceTooltip style={{ marginTop: "5px" }} />
         </Flex>

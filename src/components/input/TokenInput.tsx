@@ -376,14 +376,16 @@ export default function TokenInput(props: {
   const { subMode } = useGetMode();
 
   useEffect(() => {
-    if (subMode.add) {
+    if (currentPrice) {
       setTriggerForSpinner(true);
       initializeTokenPairAmount();
       setTimeout(() => {
         setTriggerForSpinner(false);
       }, 1000);
     }
-  }, [currentPrice, subMode]);
+  }, [currentPrice]);
+
+  console.log("currentPrice", currentPrice);
 
   return (
     <Flex

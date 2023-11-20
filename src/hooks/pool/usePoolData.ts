@@ -136,9 +136,6 @@ export function usePriceTickConversion() {
   // const [, setMinPrice] = useRecoilState(minPriceStatus);
   // const [, setMaxPrice] = useRecoilState(maxPriceStatus);
   const { inToken } = useInOutTokens();
-  const [oldCurrentTick, setOldCurrentTick] = useState<number | undefined>(
-    undefined
-  );
 
   const baseToken = pool?.token0;
   const quoteToken = pool?.token1;
@@ -147,6 +144,8 @@ export function usePriceTickConversion() {
   const invertPrice = Boolean(
     inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
   );
+
+  console.log("currentTick", currentTick);
 
   const currentPrice = useMemo(() => {
     if (baseToken && quoteToken && currentTick)

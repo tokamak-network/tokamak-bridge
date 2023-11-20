@@ -250,7 +250,7 @@ function useTicksFromSubgraph(
       skip,
     },
     skip: !poolAddress,
-    pollInterval: ms(`30s`),
+    pollInterval: ms(`10s`),
     client: chainId ? subgraphApolloClients[chainId] : undefined,
   });
 }
