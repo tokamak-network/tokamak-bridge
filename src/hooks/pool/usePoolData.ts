@@ -22,6 +22,7 @@ import {
   minPrice as minPriceStatus,
 } from "@/recoil/pool/setPoolPosition";
 import { useRangeHopCallbacks } from "./useV3Hooks";
+import { useTicks } from "./useTicks";
 
 // const existPool = (poolData: PoolData_Subgraph) => {
 //   if (poolData === undefined) return false;
@@ -137,9 +138,10 @@ export function usePriceTickConversion() {
   // const [, setMaxPrice] = useRecoilState(maxPriceStatus);
   const { inToken } = useInOutTokens();
 
+  const { currentTick } = useTicks();
+
   const baseToken = pool?.token0;
   const quoteToken = pool?.token1;
-  const currentTick = pool?.tickCurrent;
 
   const invertPrice = Boolean(
     inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)

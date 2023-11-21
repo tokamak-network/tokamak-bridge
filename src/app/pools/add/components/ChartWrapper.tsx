@@ -117,8 +117,6 @@ export default function ChartWrapper({
   const isSorted = !invertPrice;
   const [, setAtMinTick] = useRecoilState(atMinTick);
 
-  console.log("isLoading---", isLoading);
-
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
       let leftRangeValue = Number(domain[0]);

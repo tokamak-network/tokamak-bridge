@@ -16,10 +16,8 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { PoolState } from "@/types/pool/pool";
 import { useGetPositionIdFromPath } from "./useGetPositionIds";
-import { providerByChainId } from "@/config/getProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { checkLayer } from "@/utils/network/checkLayer";
-import useBlockNum from "../network/useBlockNumber";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
@@ -27,7 +25,6 @@ export function usePoolData(poolAddress: string | undefined) {
   const { chainIdParam } = useGetPositionIdFromPath();
   const { connectedChainId } = useConnectedNetwork();
   const { subMode } = useGetMode();
-  const { blockNumber } = useBlockNum();
 
   useEffect(() => {
     const fetchPoolData = async () => {
@@ -65,7 +62,7 @@ export function usePoolData(poolAddress: string | undefined) {
     //   1000
     // );
     // return () => clearInterval(interval);
-  }, [poolAddress, provider, blockNumber]);
+  }, [poolAddress, provider]);
 
   return poolData;
 }
@@ -146,8 +143,7 @@ export function usePools(
   poolKeys: [
     Currency | undefined,
     Currency | undefined,
-    FeeAmount | undefined,
-    bigint | undefined
+    FeeAmount | undefined
   ][]
 ) {
   // : [PoolState, Pool | null][]
@@ -227,23 +223,16 @@ export function usePool(
 ): [PoolState, Pool | null] {
   const { inToken, outToken } = useInOutTokens();
   const { feeTier } = useGetFeeTier();
-  const { blockNumber } = useBlockNum();
 
   const poolKeys: [
     Currency | undefined,
     Currency | undefined,
-    FeeAmount | undefined,
-    bigint | undefined
+    FeeAmount | undefined
   ][] = useMemo(
     () => [
-      [
-        token0 ?? inToken?.token,
-        token1 ?? outToken?.token,
-        fee ?? feeTier,
-        blockNumber,
-      ],
+      [token0 ?? inToken?.token, token1 ?? outToken?.token, fee ?? feeTier],
     ],
-    [token0, token1, fee, inToken, outToken, feeTier, blockNumber]
+    [token0, token1, fee, inToken, outToken, feeTier]
   );
 
   //@ts-ignore

@@ -8,7 +8,6 @@ import commafy from "@/utils/trim/commafy";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useEffect, useState } from "react";
-import useBlockNum from "@/hooks/network/useBlockNumber";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
@@ -39,7 +38,6 @@ export default function ClaimEarningsModal() {
 
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { layer } = useConnectedNetwork();
-  const { blockNumber } = useBlockNum();
   useEffect(() => {
     const fetchData = async () => {
       if (isOpen === "collectFee") {

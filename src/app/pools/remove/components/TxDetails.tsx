@@ -12,9 +12,7 @@ import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import commafy from "@/utils/trim/commafy";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
-import useBlockNum from "@/hooks/network/useBlockNumber";
 import { estimatedGasFee } from "@/recoil/global/transaction";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
 
 const Title = (props: {
@@ -40,7 +38,6 @@ const Title = (props: {
   const [estimatedGasUsageValue, setEstimatedGasUsage] =
     useRecoilState(estimatedGasFee);
   const removeLiquidityPercentage = useRecoilValue(removeAmount);
-  const { blockNumber } = useBlockNum();
 
   useEffect(() => {
     const fetchData = async () => {

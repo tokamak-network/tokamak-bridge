@@ -289,15 +289,6 @@ function useAllV3Ticks(
     skipNumber
   );
 
-  console.log("ticksFromSubgraph", data);
-  console.log("skipNumber", skipNumber);
-
-  console.log("go");
-
-  // useEffect(() => {
-  //   if (isLoading) setSubgraphTickData([]);
-  // }, [isLoading]);
-
   useEffect(() => {
     if (data?.ticks.length) {
       if (skipNumber > 0) {
@@ -397,8 +388,6 @@ export function usePoolActiveLiquidity(
       ),
     };
 
-    console.log("ticks before computing", ticks, "gogo, gogo");
-
     const subsequentTicks = computeSurroundingTicks(
       token0,
       token1,
@@ -416,15 +405,6 @@ export function usePoolActiveLiquidity(
       pivot,
       false
     );
-
-    console.log("previousTicks", previousTicks);
-    console.log(
-      "activeTickProcessed",
-      activeTickProcessed.liquidityActive.toString(),
-      activeTickProcessed.price0,
-      activeTickProcessed.tick
-    );
-    console.log("subsequentTicks", subsequentTicks, "gogogogogogo");
 
     const ticksProcessed = previousTicks
       .concat(activeTickProcessed)

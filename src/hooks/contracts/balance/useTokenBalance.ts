@@ -1,13 +1,17 @@
-import { useAccount, useBalance, useBlockNumber } from "wagmi";
+import { useAccount, useBalance } from "wagmi";
 import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { useMemo } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useTokenModal from "@/hooks/modal/useTokenModal";
 
-export default function useTokenBalance(tokenInfo: TokenInfo | null) {
-  const { chainName, layer } = useConnectedNetwork();
+export default function useTokenBalance(
+  tokenInfo: TokenInfo | null,
+  requreCalls?: boolean
+) {
+  const { chainName } = useConnectedNetwork();
 
   const isETH = tokenInfo?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET ||
@@ -17,11 +21,12 @@ export default function useTokenBalance(tokenInfo: TokenInfo | null) {
   );
   const tokenAddress = chainName && tokenInfo?.address[chainName];
   const { address: accountAddress } = useAccount();
-  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
     token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
-    watch: true,
+    watch: isInTokenOpen || isOutTokenOpen ? true : false,
+    enabled: requreCalls,
   });
 
   const tokenBalance = useMemo(() => {
@@ -51,7 +56,7 @@ export default function useTokenBalance(tokenInfo: TokenInfo | null) {
       };
     }
     return null;
-  }, [blockNumber, accountAddress, data]);
+  }, [accountAddress, data]);
 
   return tokenBalance;
 }
