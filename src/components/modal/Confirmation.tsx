@@ -23,18 +23,18 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
 import { useRouter } from "next/navigation";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
+import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
 
 export default function Confirmation() {
   const { blockExplorer, connectedChainId } = useConnectedNetwork();
-  const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
   const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
     useTxConfirmModal();
   const { mode, subMode } = useGetMode();
   const txLog = useRecoilValue(txHashLog);
+  const { positionId } = useGetPositionIdFromPath();
 
-  const router = useRouter();
   const closeThisModal = useCallback(() => {
     closeModal();
   }, [closeModal]);
@@ -63,7 +63,8 @@ export default function Confirmation() {
         >
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
             {/*it's for fetching new data after tx confirmed on those pages */}
-            {subMode.add || subMode.increase || subMode.remove ? (
+            {(subMode.add || subMode.increase || subMode.remove) &&
+            isConfirmed ? (
               <Link
                 href={`/pools/${txLog?.logs?.tokenId.toString()}?chainId=${connectedChainId}`}
               >

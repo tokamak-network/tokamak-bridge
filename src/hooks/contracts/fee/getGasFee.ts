@@ -141,16 +141,7 @@ export function useGasFee() {
       .then((estimatedGasUsage) => {
         if (estimatedGasUsage && feeData) {
           setGasLimit(BigInt(Number(estimatedGasUsage)));
-
-          console.log(
-            "estimatedGasUsage(x1.2) : ",
-            estimatedGasUsage.toString()
-          );
-
           const { gasPrice } = feeData;
-
-          console.log("gasPrice", gasPrice);
-
           if (gasPrice) {
             if (mode !== "Withdraw") {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);

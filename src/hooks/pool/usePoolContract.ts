@@ -1,4 +1,4 @@
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import {
   computePoolAddress,
   MintOptions,
@@ -37,15 +37,14 @@ import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import JSBI from "jsbi";
 import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
-import { uniswapTxSettingSelector } from "@/recoil/uniswap/setting";
+import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { encodeMulticall } from "@/utils/contract/encodeMulticall";
-import { convertDeadlineSetting } from "@/utils/contract/convertDeadlineSetting";
-import TxDetails from "@/app/pools/remove/components/TxDetails";
 import { useIncreaseAmount } from "./useIncreaseAmount";
 import {
   calculateGasMargin,
   getSingleCalldataGasLimit,
 } from "@/utils/txn/calculateGasMargin";
+import { useSettingValue } from "../uniswap/useSettingValue";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -71,8 +70,8 @@ export function usePoolMint() {
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
-  const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
   const { token0Input, token1Input } = useIncreaseAmount();
+  const settingValues = useSettingValue();
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -116,8 +115,8 @@ export function usePoolMint() {
         if (positionToMint) {
           const mintOptions: MintOptions = {
             recipient: address,
-            deadline: convertDeadlineSetting(txSettingValue.deadline),
-            slippageTolerance: txSettingValue.slippage,
+            deadline: settingValues.deadlineBySeconds,
+            slippageTolerance: settingValues.slippage,
           };
 
           // get calldata for minting a position
@@ -271,6 +270,7 @@ export function usePoolMint() {
       isConnectedToMainNetwork,
       token0Input,
       token1Input,
+      settingValues,
     ]
   );
 
@@ -397,6 +397,7 @@ export function usePoolContract() {
   );
 
   const { info } = usePositionInfo();
+  const settingValues = useSettingValue();
 
   const increaseLiquidity = useCallback(
     async (estimatedGas?: boolean) => {
@@ -441,8 +442,8 @@ export function usePoolContract() {
         });
 
         const addLiquidityOptions: AddLiquidityOptions = {
-          deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-          slippageTolerance: new Percent(50, 10_000),
+          deadline: settingValues.deadlineBySeconds,
+          slippageTolerance: settingValues.slippage,
           tokenId: id,
         };
         if (positionToIncreaseBy) {
@@ -561,6 +562,7 @@ export function usePoolContract() {
       UNISWAP_CONTRACT,
       layer,
       isConnectedToMainNetwork,
+      settingValues,
     ]
   );
 
@@ -571,6 +573,7 @@ export function usePoolContract() {
     hash: txHashToRemoveLiquidity,
     txSort: "Remove Liquidity",
   });
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   const removeLiquidity = useCallback(
     async (
@@ -610,12 +613,14 @@ export function usePoolContract() {
           const collectOptions: Omit<CollectOptions, "tokenId"> = {
             expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(token0, 0),
             expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(token1, 0),
-            recipient: address,
+            recipient: collectAsWETH
+              ? address
+              : "0x0000000000000000000000000000000000000000",
           };
 
           const removeLiquidityOptions: RemoveLiquidityOptions = {
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-            slippageTolerance: new Percent(50, 10_000),
+            deadline: settingValues.deadlineBySeconds,
+            slippageTolerance: settingValues.slippage,
             tokenId: positionId,
             // percentage of liquidity to remove
             liquidityPercentage: new Percent(removeLiquidityPercentage, 100),
@@ -680,7 +685,7 @@ export function usePoolContract() {
             if (estimateGas) return gasLimit;
 
             try {
-              if (info.hasETH && gasLimit) {
+              if (info.hasETH && collectAsWETH === false && gasLimit) {
                 const tx = await NonfungiblePositionManagerContract.multicall(
                   multicallParam,
                   {
@@ -710,10 +715,18 @@ export function usePoolContract() {
         }
       }
     },
-    [provider, info, address, UNISWAP_CONTRACT, layer, chainName]
+    [
+      provider,
+      info,
+      address,
+      UNISWAP_CONTRACT,
+      layer,
+      chainName,
+      settingValues,
+      collectAsWETH,
+    ]
   );
 
-  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
   const [txHashToCollect, setTxHashToCollect] = useState<Hash | undefined>(
     undefined
   );
