@@ -41,8 +41,8 @@ const MaintenanceBanner = () => {
       });
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-        hours: 0,
-        minutes: 30,
+        hours: 1,
+        minutes: 0,
         seconds: 0,
       });
 
@@ -110,7 +110,7 @@ const MaintenanceBanner = () => {
         <Text fontSize={"10px"}>
           Maintenance scheduled from{" "}
           <span style={{ fontWeight: "bold" }}>
-            {isTestnet ? "18:30 - 19:00 GMT +9" : "19:00 - 19:30 GMT +9"}
+            {isTestnet ? "17:00 - 18:00 GMT +9" : "9:00 - 10:00 GMT +9"}
           </span>{" "}
           *You may still swap on {isTestnet ? "Goerli" : "Ethereum"} Network{" "}
         </Text>

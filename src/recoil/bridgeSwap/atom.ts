@@ -110,18 +110,18 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
     const weekStart = startOfWeek(today);
-    // const desiredDateThisWeek = addDays(weekStart, 3);  //to show the banner
-    const desiredDateThisWeek = addWeeks(addDays(weekStart, 3), 1); // to hide the banner
+    // const desiredDateThisWeek = addDays(weekStart, isTestnet? 4:5);  //to show the banner
+    const desiredDateThisWeek = addWeeks(addDays(weekStart, isTestnet? 4:5), 1); // to hide the banner
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
-            hours: 17,
-            minutes: 30,
+            hours: 16,
+            minutes: 0,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
-            hours: 18,
+            hours: 8,
             minutes: 0,
             seconds: 0,
           });

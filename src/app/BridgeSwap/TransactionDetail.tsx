@@ -520,10 +520,10 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
       minH={"48px"}
       bg={"#1f2128"}
       borderRadius={"8px"}
-      px={isOpen ? 0 : "20px"}
+      px={ "20px"}
       flexDir={"column"}
-      pt={isOpen ? 0 : isExpanded ? "20px" : "14px"}
-      pb={isOpen ? 0 : isExpanded ? "20px" : ""}
+      pt={ isExpanded ? "20px" : "14px"}
+      pb={ isExpanded ? "20px" : ""}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       <Content isExpanded={isExpanded} isOnConfirm={isOnConfirm}></Content>
