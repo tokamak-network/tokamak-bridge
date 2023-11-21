@@ -13,7 +13,9 @@ import {
   useGetPositionIdFromPath,
   usePositionInfo,
 } from "@/hooks/pool/useGetPositionIds";
-import UnclaimedEarnings from "../../[info]/components/UnclaimedEarnings";
+import UnclaimedEarnings, {
+  CollectFeeAsWETH,
+} from "../../[info]/components/UnclaimedEarnings";
 import ClaimEarningsModal from "../../[info]/components/ClaimEarningsModal";
 import { useIsOwner } from "@/hooks/pool/useIsOwner";
 
@@ -45,6 +47,7 @@ export default function RemoveLiquidity() {
           <UnclaimedEarnings info={info} />
           <SelectPercentage />
           <TxDetails />
+          <CollectFeeAsWETH />
           <ActionButton />
         </Flex>
       </Flex>

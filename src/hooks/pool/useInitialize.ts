@@ -11,6 +11,7 @@ import {
 } from "@/recoil/pool/setPoolPosition";
 import { useCallback } from "react";
 import { estimatedGasFee } from "@/recoil/global/transaction";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 
 export function useInitialize() {
   const { initializeTokenPair, initializeTokenPairAmount } = useInOutTokens();
@@ -43,5 +44,17 @@ export function useInitialize() {
     initializeTokenPairAmount();
   }, [initializeTokenPair, setPoolFee]);
 
-  return { initialzePoolValues, initializePoolValuesForSelectingFee };
+  const [collectAsWETH, setCollectAsWETH] = useRecoilState(
+    ATOM_collectWethOption
+  );
+
+  const initializeInfoValues = useCallback(() => {
+    setCollectAsWETH(false);
+  }, [setCollectAsWETH]);
+
+  return {
+    initialzePoolValues,
+    initializePoolValuesForSelectingFee,
+    initializeInfoValues,
+  };
 }

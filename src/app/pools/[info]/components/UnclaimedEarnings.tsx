@@ -13,8 +13,9 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import JSBI from "jsbi";
 import { PoolCardDetail } from "../../components/PoolCard";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
-const CollectFeeAsWETH = () => {
+export const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
     ATOM_collectWethOption
   );
@@ -35,7 +36,8 @@ const CollectFeeAsWETH = () => {
         size={"lg"}
         className="switch_info"
         isChecked={collectAsWETH}
-        w={"56px"}
+        w={"58px"}
+        height={"28px"}
         onChange={() => setCollectAsWETH(!collectAsWETH)}
       />
     </Flex>
@@ -89,6 +91,7 @@ export default function UnclaimedEarnings(props: {
 
   const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
+  const { subMode } = useGetMode();
 
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
@@ -147,23 +150,25 @@ export default function UnclaimedEarnings(props: {
             </Flex>
           </Flex>
         )}
-        <Flex alignItems={"flex-end"} pb={"13px"}>
-          <Button
-            bgColor={"#007AFF"}
-            _hover={{ bgColor: "#007AFF" }}
-            _active={{}}
-            onClick={() => onClickToRoute()}
-            isDisabled={btnIsDisabled}
-            _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
-            fontSize={14}
-            w={"76px"}
-            h={"35px"}
-          >
-            Claim
-          </Button>
-        </Flex>
+        {!subMode.remove && (
+          <Flex alignItems={"flex-end"} pb={"13px"}>
+            <Button
+              bgColor={"#007AFF"}
+              _hover={{ bgColor: "#007AFF" }}
+              _active={{}}
+              onClick={() => onClickToRoute()}
+              isDisabled={btnIsDisabled}
+              _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
+              fontSize={14}
+              w={"76px"}
+              h={"35px"}
+            >
+              Claim
+            </Button>
+          </Flex>
+        )}
       </Flex>
-      <CollectFeeAsWETH />
+      {!subMode.remove && <CollectFeeAsWETH />}
     </Flex>
   );
 }

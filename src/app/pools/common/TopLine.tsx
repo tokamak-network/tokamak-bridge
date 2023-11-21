@@ -17,7 +17,7 @@ export default function TopLine(props: {
 }) {
   const { title, clear, switcher, backwardLink } = props;
   const { pool } = useGetPool();
-  const { initialzePoolValues } = useInitialize();
+  const { initialzePoolValues, initializeInfoValues } = useInitialize();
   const { initializeTokenPair } = useInOutTokens();
   const { subMode } = useGetMode();
 
@@ -29,6 +29,7 @@ export default function TopLine(props: {
           onClick={() => {
             initialzePoolValues();
             initializeTokenPair();
+            initializeInfoValues();
           }}
         >
           <Image src={BACK_ICON} alt="BACK_ICON" />
