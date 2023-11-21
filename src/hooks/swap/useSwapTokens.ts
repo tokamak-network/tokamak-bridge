@@ -2,7 +2,7 @@ import { ethers, Contract } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import SwapRouterAbi from "@/abis/SwapRouter.json";
 import { useProvier } from "../provider/useProvider";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Trade } from "@uniswap/v3-sdk";
 import { TradeType, Token } from "@uniswap/sdk-core";
 import { useGetMode } from "../mode/useGetMode";
@@ -16,6 +16,7 @@ import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import { useSettingValue } from "../uniswap/useSettingValue";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -155,8 +156,18 @@ export function useAmountOut() {
     tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
   });
 
+  const { slippage } = useSettingValue();
+  const minimumReceived = useMemo(() => {
+    if (amountOut && slippage) {
+      const slippagePercent = Number(slippage.toSignificant(5)) / 100;
+      return Number(amountOut) * (1 / (1 + slippagePercent));
+    }
+    return undefined;
+  }, [slippage, amountOut]);
+
   return {
     amountOut,
+    minimumReceived,
     callTokenSwap: sendTransaction,
     isError,
     estimatedGasUsage: txData?.gas,

@@ -167,7 +167,7 @@ export function useTransactionDetail() {
     return null;
   }, [mode, inToken, totalGasFee, inputAmount]);
 
-  const { amountOut } = useAmountOut();
+  const { amountOut, minimumReceived } = useAmountOut();
   const { priceImpact } = usePriceImpact();
   const { isOpen } = useConfirm();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
@@ -184,7 +184,7 @@ export function useTransactionDetail() {
           title: isOpen
             ? "Minimum received"
             : "Minimum received after slippage",
-          content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
+          content: `${commafy(minimumReceived, 4)} ${outToken?.tokenSymbol}`,
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {

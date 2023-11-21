@@ -145,8 +145,6 @@ export function usePriceTickConversion() {
     inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
   );
 
-  console.log("currentTick", currentTick);
-
   const currentPrice = useMemo(() => {
     if (baseToken && quoteToken && currentTick)
       return tickToPrice(baseToken, quoteToken, currentTick);
