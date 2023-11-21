@@ -613,9 +613,10 @@ export function usePoolContract() {
           const collectOptions: Omit<CollectOptions, "tokenId"> = {
             expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(token0, 0),
             expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(token1, 0),
-            recipient: collectAsWETH
-              ? address
-              : "0x0000000000000000000000000000000000000000",
+            recipient:
+              collectAsWETH || !info.hasETH
+                ? address
+                : "0x0000000000000000000000000000000000000000",
           };
 
           const removeLiquidityOptions: RemoveLiquidityOptions = {
