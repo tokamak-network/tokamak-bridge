@@ -79,12 +79,14 @@ export function useAmountOut() {
         const isETH = inToken.isNativeCurrency?.includes(
           SupportedChainId.MAINNET ||
             SupportedChainId.GOERLI ||
-            SupportedChainId.TITAN
+            SupportedChainId.TITAN ||
+            SupportedChainId.DARIUS
         );
         const isOutETH = outToken.isNativeCurrency?.includes(
           SupportedChainId.MAINNET ||
             SupportedChainId.GOERLI ||
-            SupportedChainId.TITAN
+            SupportedChainId.TITAN ||
+            SupportedChainId.DARIUS
         );
 
         if (isOutETH) {
@@ -93,6 +95,8 @@ export function useAmountOut() {
             SwapRouterAbi,
             provider
           );
+
+          console.log("routingPath.route", routingPath.route);
 
           const callData = getEncodedPath({
             route: routingPath.route,
@@ -122,15 +126,9 @@ export function useAmountOut() {
           to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
           value: isETH ? hexAmount : routingPath.methodParameters.value,
           from: address,
-          // maxFeePerGas: "250000",
-          // maxPriorityFeePerGas: "250000",
-          // gasLimit: "21000",
-          // gasPrice: gasPrice.toString(),
         };
         const estimateGas = await provider.estimateGas(tx);
         return setTxData({ ...tx, gas: calculateGasMargin(estimateGas) });
-        // const res = await sendTransaction(tx);
-        // console.log(res);
       }
     };
     getSwapTxnData();
