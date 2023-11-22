@@ -19,13 +19,6 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       </Center>
     );
   }
-  // if (isMobile) {
-  //   return (
-  //     <Center h={"100vh"}>
-  //       <MobileView />
-  //     </Center>
-  //   );
-  // }
 
   return (
     <ApolloProvider client={apolloClient}>

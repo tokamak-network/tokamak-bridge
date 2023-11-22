@@ -163,7 +163,6 @@ export function useTx(params: {
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
-  const { TON_ADDRESS, WTON_ADDRESS } = useTONAddress();
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setIsAccountDrawerOpen] = useRecoilState(accountDrawerStatus);
 
@@ -173,19 +172,6 @@ export function useTx(params: {
 
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
-
-  const { provider } = useProvier();
-
-  useEffect(() => {
-    const test = async () => {
-      if (data?.transactionHash) {
-        const transactionReceipt = await provider.getTransactionReceipt(
-          data.transactionHash
-        );
-      }
-    };
-    test();
-  }, [data?.transactionHash]);
 
   useEffect(() => {
     if (connectedChainId !== exChainId) {

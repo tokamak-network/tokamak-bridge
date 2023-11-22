@@ -37,7 +37,6 @@ export default function IncreaseModal() {
       }
 
       if (poolModal === "increaseLiquidity") {
-        console.log("go!!");
         const gasData = await estimateGasToIncrease();
         return setGasToAdd(gasData);
       }

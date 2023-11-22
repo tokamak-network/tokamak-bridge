@@ -70,7 +70,7 @@ export default function Page() {
         <UnclaimedEarnings info={info} />
         <PriceRange info={info} />
       </Flex>
-      <ClaimEarningsModal />
+      <ClaimEarningsModal info={info} />
     </Flex>
   );
 }

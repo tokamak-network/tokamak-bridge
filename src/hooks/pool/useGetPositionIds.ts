@@ -282,29 +282,26 @@ export function useGetPositionIds(): {
 
 //logic through contract calls
 export function useGetPositionById(positionId: number, chainId: number) {
-  const { provider } = useProvier();
-  const { L1_UniswapContracts, L2_UniswapContracts } = useUniswapContracts();
+  const { provider: _provider } = useProvier();
+  const {
+    L1_UniswapContracts,
+    L2_UniswapContracts,
+    L2_TESTNET_UniswapContracts,
+  } = useUniswapContracts();
   const { blockNumber } = useBlockNum();
-  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { connectedChainId, layer, isConnectedToMainNetwork } =
+    useConnectedNetwork();
   const pathName = usePathname();
 
   const isL1 =
     chainId === SupportedChainId["MAINNET"] ||
     chainId === SupportedChainId["GOERLI"];
   const isL2 = chainId === SupportedChainId["TITAN"];
-  const isL2Testnet = chainId === SupportedChainId["DARIUS"];
   const UNISWAP_CONTRACT = isL1
     ? L1_UniswapContracts
     : isL2
     ? L2_UniswapContracts
     : L2_TESTNET_UniswapContracts;
-
-  const providerForInfo = useMemo(() => {
-    if (connectedChainId === chainId) {
-      return provider;
-    }
-    return providerByChainId[chainId];
-  }, [provider, connectedChainId, chainId]);
 
   const [positions, setPositions] = useRecoilState<
     PoolCardDetail[] | undefined
@@ -313,15 +310,20 @@ export function useGetPositionById(positionId: number, chainId: number) {
     ATOM_positionForInfo_loading
   );
 
+  const provider = useMemo(() => {
+    if (connectedChainId === chainId) {
+      return _provider;
+    }
+    return providerByChainId[chainId];
+  }, [_provider, connectedChainId, chainId]);
+
   const callPositionIds = useCallback(
     async (positionTokenId: number) => {
-      if (providerForInfo && chainId && positionTokenId) {
-        const _provider = providerForInfo;
-
+      if (provider && chainId && positionTokenId) {
         const NonfungiblePositionManagerContract = new ethers.Contract(
           UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
           NONFUNGIBLE_POSITION_MANAGER_ABI,
-          _provider
+          provider
         );
         // Get number of positions
         // const balance: number =
@@ -345,12 +347,12 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const token0Contract = new ethers.Contract(
             token0,
             ERC20_ABI.abi,
-            _provider
+            provider
           );
           const token1Contract = new ethers.Contract(
             token1,
             ERC20_ABI.abi,
-            _provider
+            provider
           );
 
           const [
@@ -389,15 +391,14 @@ export function useGetPositionById(positionId: number, chainId: number) {
             tokenA,
             tokenB,
             fee,
-            initCodeHashManualOverride: isL2
-              ? L2_initCodeHashManualOverride
-              : undefined,
+            initCodeHashManualOverride:
+              layer === "L2" ? L2_initCodeHashManualOverride : undefined,
           });
 
           const POOL_CONTRACT = new ethers.Contract(
             currentPoolAddress,
             IUniswapV3PoolABI.abi,
-            _provider
+            provider
           );
 
           const slot = await POOL_CONTRACT.slot0();
@@ -503,7 +504,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
       }
       return undefined;
     },
-    [UNISWAP_CONTRACT, isL2, providerForInfo, chainId, blockNumber]
+    [UNISWAP_CONTRACT, layer, provider, chainId, blockNumber]
   );
 
   const txPending = useRecoilValue(txPendingStatus);
@@ -541,10 +542,14 @@ export function useGetPositionById(positionId: number, chainId: number) {
 
 export function useGetPositionIdFromPath() {
   const pathName = usePathname();
-  const positionId = pathName.split("/")[pathName.split("/").length - 1];
+  const positionId = useMemo(() => {
+    return pathName.split("/")[pathName.split("/").length - 1];
+  }, [pathName]);
 
   const searchParams = useSearchParams();
-  const chainIdParam = searchParams.get("chainId");
+  const chainIdParam = useMemo(() => {
+    return searchParams.get("chainId");
+  }, [searchParams]);
 
   const backwardLink = useMemo(() => {
     return `/pools/${positionId}?chainId=${chainIdParam}`;
@@ -552,6 +557,8 @@ export function useGetPositionIdFromPath() {
 
   return { positionId, chainIdParam, backwardLink };
 }
+
+let count = 0;
 
 export function usePositionInfo() {
   const { positionId, chainIdParam } = useGetPositionIdFromPath();

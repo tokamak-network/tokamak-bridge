@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useBlockNumber } from "wagmi";
 import useConnectedNetwork from ".";
 

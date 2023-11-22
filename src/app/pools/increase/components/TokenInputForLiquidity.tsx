@@ -2,7 +2,6 @@ import GradientSpinner from "@/components/ui/gradientSpinner";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
-import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";

@@ -304,97 +304,15 @@ export function usePoolMint() {
 }
 
 export function usePoolContract() {
-  const { mode } = useGetMode();
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
   const { layer, chainName, isConnectedToMainNetwork } = useConnectedNetwork();
   const { provider } = useProvier();
   const { address } = useAccount();
-  const feeAmount = useRecoilValue(poolFeeStatus);
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
   const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
-  const getPoolInfo = useCallback(
-    async (tokenA?: Token, tokenB?: Token) => {
-      if (inToken && outToken && feeAmount) {
-        const currentPoolAddress = computePoolAddress({
-          factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-          tokenA: tokenA ?? inToken.token,
-          tokenB: tokenB ?? outToken.token,
-          fee: feeAmount,
-          initCodeHashManualOverride:
-            layer === "L2" ? L2_initCodeHashManualOverride : undefined,
-        });
-
-        const POOL_CONTRACT = new ethers.Contract(
-          currentPoolAddress,
-          IUniswapV3PoolABI.abi,
-          provider
-        );
-
-        const [token0, token1, fee, tickSpacing, liquidity, slot0] =
-          await Promise.all([
-            POOL_CONTRACT.token0(),
-            POOL_CONTRACT.token1(),
-            POOL_CONTRACT.fee(),
-            POOL_CONTRACT.tickSpacing(),
-            POOL_CONTRACT.liquidity(),
-            POOL_CONTRACT.slot0(),
-          ]);
-
-        return {
-          token0,
-          token1,
-          fee,
-          tickSpacing,
-          liquidity,
-          sqrtPriceX96: slot0[0],
-          tick: slot0[1],
-        };
-      }
-    },
-    [mode, inToken, outToken, feeAmount]
-  );
-
-  const constructPosition = useCallback(
-    async (
-      token0Amount: CurrencyAmount<Token>,
-      token1Amount: CurrencyAmount<Token>
-    ): Promise<Position | undefined> => {
-      // get pool info
-      const poolInfo = await getPoolInfo();
-
-      if (poolInfo) {
-        // construct pool instance
-        const configuredPool = new Pool(
-          token0Amount.currency,
-          token1Amount.currency,
-          poolInfo.fee,
-          poolInfo.sqrtPriceX96.toString(),
-          poolInfo.liquidity.toString(),
-          poolInfo.tick
-        );
-
-        // create position using the maximum liquidity from input amounts
-        return Position.fromAmounts({
-          pool: configuredPool,
-          tickLower:
-            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) -
-            poolInfo.tickSpacing * 2,
-          tickUpper:
-            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) +
-            poolInfo.tickSpacing * 2,
-          amount0: token0Amount.quotient,
-          amount1: token1Amount.quotient,
-          useFullPrecision: true,
-        });
-      }
-      return undefined;
-    },
-    []
-  );
 
   const { info } = usePositionInfo();
   const settingValues = useSettingValue();
@@ -542,15 +460,6 @@ export function usePoolContract() {
             console.log(e);
             setModalOpen("error");
           }
-
-          // build transaction
-          // const transaction = {
-          //   data: [calldata, refundETHData],
-          //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          //   value: value,
-          //   from: address,
-          // };
-          // return sendTransaction(transaction);
         }
       }
     },

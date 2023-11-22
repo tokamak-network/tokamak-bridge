@@ -4,7 +4,8 @@ import { supportedChain } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
+import { useGetPositionIdFromPath } from "../pool/useGetPositionIds";
 
 export function useInOutNetwork() {
   const { inNetwork, outNetwork } = useRecoilValue(networkStatus);
@@ -17,6 +18,14 @@ export function useInOutNetwork() {
 
 export default function useConnectedNetwork() {
   const { inNetwork } = useInOutNetwork();
+  const { isConnected } = useAccount();
+
+  //to optimize rpc calls
+  //if it's enabled always, then useNetwork would make so many calls to check connectecd network datas when it's not connected
+  if (!isConnected) {
+    return undefined;
+  }
+
   const { chain } = useNetwork();
 
   const chainInfo = useMemo(() => {

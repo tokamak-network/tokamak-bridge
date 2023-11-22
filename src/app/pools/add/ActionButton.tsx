@@ -190,7 +190,7 @@ export default function ActionButton() {
         borderRadius={"8px"}
         _hover={{}}
         _active={{}}
-        onClick={() => handleAction}
+        onClick={handleAction}
         isDisabled={btnDisabled}
         _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
       >

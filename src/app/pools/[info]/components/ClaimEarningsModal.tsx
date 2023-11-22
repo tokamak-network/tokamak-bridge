@@ -3,7 +3,6 @@ import { Modal, ModalOverlay, ModalContent, Button } from "@chakra-ui/react";
 import ModalCloseButton from "@/assets/icons/close.svg";
 import Image from "next/image";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
-import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy from "@/utils/trim/commafy";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { usePricePair } from "@/hooks/price/usePricePair";
@@ -14,10 +13,11 @@ import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
+import { PoolCardDetail } from "../../components/PoolCard";
 
-export default function ClaimEarningsModal() {
+export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
+  const { info } = props;
   const { isOpen, onClose } = usePoolModals();
-  const { info } = usePositionInfo();
   const { collectFees, estimateGasToCollect } = usePoolContract();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 

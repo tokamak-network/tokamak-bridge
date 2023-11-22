@@ -7,7 +7,6 @@ import { usePricePair } from "../price/usePricePair";
 
 export function useRemoveLiquidity() {
   const { info } = usePositionInfo();
-
   if (!info)
     return {
       amount0Removed: undefined,

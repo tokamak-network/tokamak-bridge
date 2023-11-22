@@ -21,7 +21,6 @@ import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
-import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 
 export default function TokenInput(props: {
   inToken: boolean;
