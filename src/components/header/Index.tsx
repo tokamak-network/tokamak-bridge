@@ -41,9 +41,12 @@ import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
 import hamburger from "assets/icons/header/hamburger.svg";
+import ETHCircle from "assets/icons/network/circle/Ethereum_circle.svg";
+import TitanCircle from "assets/icons/network/circle/Titan_circle.svg";
 import AccountModal from "../modal/AccountModal";
 import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import useConnectedNetwork from "@/hooks/network";
 
 const menuList = [
   {
@@ -161,8 +164,10 @@ export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const [, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
-  const {mobileView} = useMediaView();
-  
+  const { mobileView } = useMediaView();
+
+  const network = useConnectedNetwork();
+
   const handleMenuButtonhover = (event: any) => {
     event.preventDefault();
     setMenuState(true);
@@ -182,7 +187,7 @@ export default function Header() {
       justifyContent={"space-between"}
       alignItems={{ base: "center", lg: "flex-start" }}
       mt={{ base: "16px", lg: "22px" }}
-      px={{base: "12px", lg: "40px"}}
+      px={{ base: "12px", lg: "40px" }}
       pos={"absolute"}
     >
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
@@ -279,8 +284,33 @@ export default function Header() {
           </Menu>
         </Flex>
       </Flex>
-      <Flex columnGap={{base:"8px", md:"6px"}}>
+      <Flex columnGap={{ base: "8px", md: "6px" }}>
         {!mobileView && <Network />}
+        {mobileView &&
+          (network.connectedChainId === 5 ||
+            network.connectedChainId === 5050) && (
+            <Flex columnGap={"10px"} align={"center"} px={"8px"}>
+              <Image
+                width={16}
+                height={16}
+                alt={network.chainName!}
+                src={
+                  network.connectedChainId === 5
+                    ? ETHCircle
+                    : network.connectedChainId === 5050
+                    ? TitanCircle
+                    : ""
+                }
+              />
+              <Text fontSize={13}>
+                {network.connectedChainId === 5
+                  ? "Goerli"
+                  : network.connectedChainId === 5050
+                  ? "Titan Goerli"
+                  : ""}
+              </Text>
+            </Flex>
+          )}
         <Flex flexDir={"column"} alignItems={"flex-end"}>
           <Account />
           {/* <AccountModal /> */}
