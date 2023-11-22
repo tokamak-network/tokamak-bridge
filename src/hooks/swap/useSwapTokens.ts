@@ -68,8 +68,6 @@ export function useAmountOut() {
   useEffect(() => {
     const getSwapTxnData = async () => {
       if (routingPath && inToken?.amountBN && outToken) {
-        // console.log(routingPath);
-
         const wei = ethers.utils.formatUnits(
           inToken.amountBN.toString(),
           "wei"
@@ -88,22 +86,8 @@ export function useAmountOut() {
         );
 
         if (isOutETH) {
-          const SwapRouterContract = new Contract(
-            UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-            SwapRouterAbi,
-            provider
-          );
-
-          const callData = getEncodedPath({
-            route: routingPath.route,
-            swapRouterAddress: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-            SwapRouterContract,
-            slippage: Number(txSettingValue.slippage) / 100,
-            deadlineMin: txSettingValue.deadline,
-          });
-
           const tx = {
-            data: callData,
+            data: routingPath.methodParameters.calldata,
             to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
             value: routingPath.methodParameters.value,
             from: address,

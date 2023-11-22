@@ -596,6 +596,7 @@ export function usePoolContract() {
 
             try {
               if (info.hasETH && collectAsWETH === false && gasLimit) {
+                console.log("passed--");
                 const tx = await NonfungiblePositionManagerContract.multicall(
                   multicallParam,
                   {
