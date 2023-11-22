@@ -7,17 +7,22 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import TokenCard from "@/components/card/TokenCard";
+import { useNetwork } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
 
 const MobileInToken = () => {
   const { inNetwork } = useRecoilValue(networkStatus);
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { inToken } = useInOutTokens();
 
+  const network = useConnectedNetwork();
+
   return (
     <Box
       pos="relative"
       w={"148px"}
       h={"184px"}
+      cursor={"pointer"}
       onClick={() => setTokenModal({ ...tokenModal, isOpen: "INPUT" })}
     >
       {inToken?.tokenName ? (
@@ -38,7 +43,6 @@ const MobileInToken = () => {
           rounded={"9px"}
           justify={"center"}
           align={"center"}
-          cursor={"pointer"}
         >
           <Text fontSize={16} fontWeight={500}>
             Select Token
@@ -60,7 +64,7 @@ const MobileInToken = () => {
         <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
           <Image
             alt="eth"
-            src={inNetwork?.chainId === 1 ? ETHIcon : TitanIcon}
+            src={network?.connectedChainId === 1 || network?.connectedChainId === 5 ? ETHIcon : TitanIcon}
           />
         </Flex>
       </Flex>

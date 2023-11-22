@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -6,6 +6,7 @@ import {
   Text,
   Flex,
   useTheme,
+  Box,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 
@@ -19,15 +20,16 @@ import Arrow from "@/assets/icons/arrow.svg";
 import Image from "next/image";
 
 import "@fontsource/poppins/400.css";
-import { ActionMethod } from "@/types/bridgeSwap";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import {
   SupportedChainProperties,
   supportedChain,
 } from "@/types/network/supportedNetwork";
-import { switchNetwork } from "wagmi/dist/actions";
-import { useAccount, useSwitchNetwork } from "wagmi";
+import { useAccount, useConnect, useSwitchNetwork } from "wagmi";
+
+import "@fontsource/poppins/300.css";
+import "@fontsource/poppins/700.css";
 
 interface MethodItemProps {
   from?: Number;
@@ -39,11 +41,9 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
   const [network, setNetwork] = useRecoilState(networkStatus);
   const [, setActionMethod] = useRecoilState(actionMethod);
   const [, setActionMethodStatus] = useRecoilState(actionMethodStatus);
-  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
   const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
   const { isConnected } = useAccount();
-  const [outTokenSelected, setOutTokenSelected] =
-    useState<SupportedChainProperties>();
   const theme = useTheme();
 
   const handleMethodItem = async () => {
@@ -57,8 +57,6 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
       const selectedOutNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === outValue;
       })[0];
-
-      setOutTokenSelected(selectedOutNetwork);
 
       if (selectedInNetwork.chainId !== connectedChainId) {
         return isConnected
@@ -78,7 +76,6 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
           outNetwork: selectedOutNetwork,
         });
       }
-
     } finally {
       setActionMethodStatus(false);
       if (isError) {
@@ -86,6 +83,16 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
       }
     }
   };
+
+  const fromIcon = useMemo(
+    () => ((from === 1 || from === 5) ? ETH_CIRCLE : TITAN_CIRCLE),
+    [from]
+  );
+
+  const toIcon = useMemo(
+    () => ((to === 55004 || to === 5050) ? TITAN_CIRCLE : ETH_CIRCLE),
+    [to]
+  );
 
   return (
     <Flex
@@ -103,19 +110,9 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
     >
       {from && to && (
         <Flex columnGap={"6px"} align={"center"} mb={"8px"}>
-          <Image
-            width={20}
-            height={20}
-            alt="from_network"
-            src={from === 1 ? ETH_CIRCLE : TITAN_CIRCLE}
-          />
+          <Image width={20} height={20} alt="from_network" src={fromIcon} />
           <Image width={16} alt="arrow" src={Arrow} />
-          <Image
-            width={20}
-            height={20}
-            alt="to_network"
-            src={to === 1 ? ETH_CIRCLE : TITAN_CIRCLE}
-          />
+          <Image width={20} height={20} alt="to_network" src={toIcon} />
         </Flex>
       )}
       <Text fontFamily={theme.fonts.body} fontSize={16} fontWeight={400}>
@@ -126,11 +123,29 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
 };
 
 const ActionOptionModal = () => {
-  const [, setActionMethod] = useRecoilState(actionMethod);
   const [methodStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
+  const connectedNetwork = useConnectedNetwork();
 
   const { mobileView } = useMediaView();
+
+  const ethChainId = useMemo(
+    () =>
+      connectedNetwork.connectedChainId === 1 ||
+      connectedNetwork.connectedChainId === 55004
+        ? 1
+        : 5,
+    [connectedNetwork]
+  );
+
+  const titanChainId = useMemo(
+    () =>
+      connectedNetwork.connectedChainId === 1 ||
+      connectedNetwork.connectedChainId === 55004
+        ? 55004
+        : 5050,
+    [connectedNetwork]
+  );
 
   return (
     <Modal
@@ -138,7 +153,7 @@ const ActionOptionModal = () => {
       isOpen={methodStatus && mobileView}
       onClose={() => setActionMethodStatus(false)}
     >
-      <ModalOverlay opacity={0.1} />
+      <ModalOverlay bg={"#0F0F12F0"} />
       <ModalContent
         bg={"#1F2128"}
         mt={"auto"}
@@ -146,24 +161,63 @@ const ActionOptionModal = () => {
         p={"16px 12px"}
         roundedTop={"2xl"}
       >
-        <Text fontWeight={500} fontSize={16}>
-          Bridge
-        </Text>
+        <Box pos={"relative"}>
+          <Box w={"100%"} pos={"absolute"} top={"-45px"}>
+            <Text textAlign={"center"} fontWeight={300} fontSize={14}>
+              Please select a transaction
+            </Text>
+          </Box>
 
-        <Flex columnGap={"8px"}>
-          <ActionMethodItem from={1} to={55004} title="Deposit" />
-          <ActionMethodItem from={55004} to={1} title="Withdraw" />
-        </Flex>
+          <Box pos={"fixed"} w={"100%"} top={"100px"} left={0}>
+            <Text
+              fontWeight={300}
+              fontSize={24}
+              lineHeight={"36px"}
+              textAlign={"center"}
+            >
+              Welcome to
+            </Text>
+            <Text
+              fontWeight={700}
+              fontSize={32}
+              letterSpacing={"2px"}
+              textAlign={"center"}
+            >
+              TOKAMAK BRIDGE
+            </Text>
+          </Box>
 
-        <Text fontWeight={500} fontSize={16} mt={"20px"}>
-          Swap
-        </Text>
+          <Text fontWeight={500} fontSize={16}>
+            Bridge
+          </Text>
 
-        <Flex columnGap={"8px"}>
-          <ActionMethodItem from={1} to={1} title="Swap" />
-          <ActionMethodItem from={55004} to={55004} title="Swap" />
-          <ActionMethodItem title="Pool" />
-        </Flex>
+          <Flex columnGap={"8px"}>
+            <ActionMethodItem
+              from={ethChainId}
+              to={titanChainId}
+              title="Deposit"
+            />
+            <ActionMethodItem
+              from={titanChainId}
+              to={ethChainId}
+              title="Withdraw"
+            />
+          </Flex>
+
+          <Text fontWeight={500} fontSize={16} mt={"20px"}>
+            Swap
+          </Text>
+
+          <Flex columnGap={"8px"}>
+            <ActionMethodItem from={ethChainId} to={ethChainId} title="Swap" />
+            <ActionMethodItem
+              from={titanChainId}
+              to={titanChainId}
+              title="Swap"
+            />
+            <ActionMethodItem title="Pool" />
+          </Flex>
+        </Box>
       </ModalContent>
     </Modal>
   );

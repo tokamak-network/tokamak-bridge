@@ -20,6 +20,7 @@ const MobileInToken = () => {
       pos="relative"
       w={"148px"}
       h={"184px"}
+      cursor={"pointer"}
       onClick={() => setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })}
     >
       {outToken?.tokenName ? (
@@ -74,7 +75,7 @@ const MobileInToken = () => {
           <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
             <Image
               alt="eth"
-              src={outNetwork?.chainId === 1 ? ETHIcon : TitanIcon}
+              src={outNetwork?.chainId === 1 || outNetwork?.chainId === 5 ? ETHIcon : TitanIcon}
             />
           </Flex>
         </Flex>
