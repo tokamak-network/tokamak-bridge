@@ -28,6 +28,8 @@ export default function RemoveLiquidity() {
     redirect(backwardLink);
   }
 
+  if (info === undefined) return null;
+
   return (
     <Flex flexDir={"column"} rowGap={"8px"}>
       <TopLine
@@ -53,7 +55,7 @@ export default function RemoveLiquidity() {
       </Flex>
       <IncreaseModal />
       <RemoveModal />
-      <ClaimEarningsModal />
+      <ClaimEarningsModal info={info} />
     </Flex>
   );
 }
