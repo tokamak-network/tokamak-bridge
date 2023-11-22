@@ -3,19 +3,20 @@ import { useBlockNumber } from "wagmi";
 import useConnectedNetwork from ".";
 
 export default function useBlockNum() {
-  const { data: blockNumber } = useBlockNumber({ watch: true });
+  const { data: _blockNumber } = useBlockNumber({ watch: true });
   const { layer } = useConnectedNetwork();
 
-  const [blockNum, setBlockNum] = useState<bigint | undefined>(undefined);
+  const [blockNumber, setBlockNumber] = useState<bigint | undefined>(undefined);
+
   useEffect(() => {
     if (layer === "L2" && blockNumber) {
       setTimeout(() => {
-        setBlockNum(blockNumber);
-      }, 15000);
-    } else {
-      setBlockNum(blockNumber);
+        setBlockNumber(_blockNumber);
+      }, 5000);
+      return;
     }
-  }, [layer, blockNumber]);
+    return setBlockNumber(_blockNumber);
+  }, [layer, _blockNumber]);
 
-  return { blockNumber: blockNum };
+  return { blockNumber };
 }

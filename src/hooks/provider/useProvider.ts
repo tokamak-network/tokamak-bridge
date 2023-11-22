@@ -4,7 +4,7 @@ import { getL2Provider } from "@/config/l2Provider";
 import { ethers } from "ethers";
 import { useMemo } from "react";
 import { supportedChain } from "@/types/network/supportedNetwork";
-import { getProvider } from "@/config/getProvider";
+import { getProvider, providerByChainId } from "@/config/getProvider";
 
 export function useProvier() {
   const { isConnectedToMainNetwork, layer, connectedChainId } =
@@ -17,9 +17,8 @@ export function useProvier() {
   }, [isConnectedToMainNetwork]);
 
   const L2Provider = useMemo(() => {
-    if (isConnectedToMainNetwork)
-      return getProvider(supportedChain[2]) as ethers.providers.JsonRpcProvider;
-    return getProvider(supportedChain[3]) as ethers.providers.JsonRpcProvider;
+    if (isConnectedToMainNetwork) return getProvider(supportedChain[2]);
+    return getProvider(supportedChain[3]);
   }, [isConnectedToMainNetwork]);
 
   const otherLayerProvider = useMemo(() => {
@@ -37,9 +36,8 @@ export function useProvier() {
     if (!window.ethereum) {
       return layer === "L1" ? L1Provider : L2Provider;
     }
-
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
-    return provider;
+    const _provider = new ethers.providers.Web3Provider(window.ethereum);
+    return _provider;
   }, [window.ethereum, connectedChainId, layer]);
 
   return { provider, L1Provider, L2Provider, otherLayerProvider };

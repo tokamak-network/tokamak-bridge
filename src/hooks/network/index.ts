@@ -19,14 +19,13 @@ export function useInOutNetwork() {
 export default function useConnectedNetwork() {
   const { inNetwork } = useInOutNetwork();
   const { isConnected } = useAccount();
+  const { chainIdParam } = useGetPositionIdFromPath();
+
+  const { chain } = useNetwork();
+  // const chain = { id: 1 };
 
   //to optimize rpc calls
   //if it's enabled always, then useNetwork would make so many calls to check connectecd network datas when it's not connected
-  if (!isConnected) {
-    return undefined;
-  }
-
-  const { chain } = useNetwork();
 
   const chainInfo = useMemo(() => {
     //connected wallet
