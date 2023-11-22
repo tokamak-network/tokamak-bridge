@@ -1,10 +1,8 @@
-import { getL1Provider } from "@/config/l1Provider";
 import useConnectedNetwork from "../network";
-import { getL2Provider } from "@/config/l2Provider";
 import { ethers } from "ethers";
 import { useMemo } from "react";
 import { supportedChain } from "@/types/network/supportedNetwork";
-import { getProvider, providerByChainId } from "@/config/getProvider";
+import { getProvider } from "@/config/getProvider";
 
 export function useProvier() {
   const { isConnectedToMainNetwork, layer, connectedChainId } =
@@ -17,8 +15,9 @@ export function useProvier() {
   }, [isConnectedToMainNetwork]);
 
   const L2Provider = useMemo(() => {
-    if (isConnectedToMainNetwork) return getProvider(supportedChain[2]);
-    return getProvider(supportedChain[3]);
+    if (isConnectedToMainNetwork)
+      return getProvider(supportedChain[2]) as ethers.providers.JsonRpcProvider;
+    return getProvider(supportedChain[3]) as ethers.providers.JsonRpcProvider;
   }, [isConnectedToMainNetwork]);
 
   const otherLayerProvider = useMemo(() => {
