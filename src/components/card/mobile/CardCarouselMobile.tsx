@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   ResponsiveContainer,
   StackedCarousel,
@@ -14,8 +14,14 @@ import "@/css/carousel.css";
 
 const CarouselCard = React.memo((props) => {
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-  const { data, dataIndex } : any = props;
+  const { data, dataIndex, slideIndex } : any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
+
+  useEffect(() => {
+    if(slideIndex === 0 ) {
+      setSelectedToken(tokenData);
+    }
+  },[slideIndex])
 
   return (
     tokenData &&
@@ -33,7 +39,7 @@ const CarouselCard = React.memo((props) => {
       type={"small"}
       onClick={() => {
         try {
-          setSelectedToken(tokenData);
+          // setSelectedToken(tokenData);
         } catch (e) {
         } finally {
           onCloseTokenModal();

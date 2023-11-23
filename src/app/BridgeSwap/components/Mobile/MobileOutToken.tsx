@@ -31,6 +31,7 @@ const MobileInToken = () => {
           hasInput={true}
           inNetwork={true}
           symbolSize={{ w: 64, h: 64 }}
+          isPrice
         />
       ) : (
         <Flex

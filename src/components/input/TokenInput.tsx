@@ -13,7 +13,7 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { isETH } from "@/utils/token/isETH";
 import { trimAmount } from "@/utils/trim";
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Input, Text, useTheme } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState ,useRef} from "react";
@@ -48,6 +48,7 @@ export default function TokenInput(props: {
   const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
 
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
+  const theme = useTheme();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -68,7 +69,7 @@ export default function TokenInput(props: {
       );
       return setSelectedInToken({
         ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
+        amountBN: parsedAmount.toBigInt(), 
         parsedAmount: value,
       });
     }
@@ -267,25 +268,25 @@ export default function TokenInput(props: {
     isFocused,
   ]);
 
-  const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({
+  const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedInToken?.tokenName as string,
     amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { tokenPriceWithAmount: token1PriceWiwhtAmount } = useGetMarketPrice({
+  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedOutToken?.tokenName as string,
     amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
   });
 
   const marketPrice = useMemo(() => {
-    if (inToken && token0PriceWiwhtAmount) {
-      return token0PriceWiwhtAmount;
+    if (inToken && token0PriceWithAmount) {
+      return token0PriceWithAmount;
     }
-    if (!inToken && token1PriceWiwhtAmount) {
-      return token1PriceWiwhtAmount;
+    if (!inToken && token1PriceWithAmount) {
+      return token1PriceWithAmount;
     }
     return "0.00";
-  }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
+  }, [token0PriceWithAmount, token1PriceWithAmount, inToken]);
 
   useEffect(() => {
     if (mode === "Pool") return;
@@ -351,6 +352,7 @@ export default function TokenInput(props: {
             fontWeight={700}
             _hover={{}}
             _active={{}}
+            fontFamily={theme.fonts.Quicksand}
             color={'#fff'}
             mt={"3px"}
             onClick={() => onMax()}

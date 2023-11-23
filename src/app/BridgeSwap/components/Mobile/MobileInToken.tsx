@@ -30,9 +30,11 @@ const MobileInToken = () => {
           w={"100%"}
           h={"100%"}
           tokenInfo={inToken}
-          hasInput={true}
+          hasInput={false}
           inNetwork={true}
           symbolSize={{ w: 64, h: 64 }}
+          isPrice={true}
+          type="small"
         />
       ) : (
         <Flex

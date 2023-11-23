@@ -160,7 +160,7 @@ export function SelectCardModal() {
         >
           <Flex
             w={"1362px"}
-            h={{ base: "fit-content", lg: "486px" }}
+            h={{ base: "calc(100% - 60px)", lg: "486px" }}
             bgColor={{ base: "#1F2128", lg: "transparent" }}
             rounded={"24px 24px 0px 0px"}
             padding={{ base: "16px 10px", lg: 0 }}
@@ -196,11 +196,13 @@ export function SelectCardModal() {
               <>
                 <SearchToken />
                 <CardCarouselMobile />
-                <TokenInput
-                  inToken={isOpen === "INPUT" ? true : false}
-                  hasMaxButton={true}
-                  isDisabled={false}
-                />
+                <Flex px={"12px"} justify={"center"}>
+                  <TokenInput
+                    inToken={isOpen === "INPUT" ? true : false}
+                    hasMaxButton={true}
+                    isDisabled={false}
+                  />
+                </Flex>
               </>
             )}
           </Flex>
