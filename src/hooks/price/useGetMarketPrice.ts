@@ -29,6 +29,7 @@ export function useGetMarketPrice(params: {
       tokenName: trimTokenName(tokenName),
     },
     pollInterval: 13000,
+
     context: {
       apiName: "price",
     },

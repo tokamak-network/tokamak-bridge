@@ -9,7 +9,8 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 
 export default function useTokenBalance(
   tokenInfo: TokenInfo | null,
-  requreCalls?: boolean
+  requireCall?: boolean,
+  watch?: boolean
 ) {
   const { chainName } = useConnectedNetwork();
 
@@ -25,8 +26,8 @@ export default function useTokenBalance(
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
     token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
-    watch: isInTokenOpen || isOutTokenOpen ? true : false,
-    enabled: requreCalls,
+    watch: isInTokenOpen || isOutTokenOpen ? true : watch,
+    enabled: requireCall,
   });
 
   const tokenBalance = useMemo(() => {

@@ -5,12 +5,7 @@ import { ethers, Contract } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import USDT_ABI from "@/constant/abis/USDT.json";
 
-import {
-  useAccount,
-  useBlockNumber,
-  useContractRead,
-  useContractWrite,
-} from "wagmi";
+import { useContractRead, useContractWrite } from "wagmi";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";

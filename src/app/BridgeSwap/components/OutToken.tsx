@@ -59,6 +59,7 @@ export const SearchTokenComponent = () => {
         style={{ marginTop: "12px", minHeight: "248px" }}
         onClick={onOpenOutToken}
         forBridge={true}
+        watch={true}
       />
     );
   }

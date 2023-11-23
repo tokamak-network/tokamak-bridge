@@ -6,7 +6,6 @@ import { useRecoilValue } from "recoil";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
-import { type } from "os";
 import { isETH } from "@/utils/token/isETH";
 
 type TokenCardSizeType = "small" | "medium" | "large";
@@ -26,7 +25,8 @@ type TokenCardProps = {
   style?: {};
   type?: TokenCardSizeType;
   forBridge?: boolean;
-  requreCalls?: boolean;
+  requireCalls?: boolean;
+  watch?: boolean;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -109,7 +109,8 @@ export default function TokenCard(props: TokenCardProps) {
     style,
     type,
     forBridge,
-    requreCalls,
+    requireCalls,
+    watch,
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
@@ -141,7 +142,7 @@ export default function TokenCard(props: TokenCardProps) {
     }
   }, [tokenInfo]);
 
-  const tokenData = useTokenBalance(tokenInfo);
+  const tokenData = useTokenBalance(tokenInfo, requireCalls, watch);
   const thisTokenIsETH = isETH(tokenInfo);
   const theme = useTheme();
 

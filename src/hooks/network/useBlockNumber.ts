@@ -3,7 +3,10 @@ import { useBlockNumber } from "wagmi";
 import useConnectedNetwork from ".";
 
 export default function useBlockNum() {
-  const { data: _blockNumber } = useBlockNumber({ watch: true });
+  const { data: _blockNumber } = useBlockNumber({
+    watch: true,
+    cacheTime: 10000,
+  });
   const { layer } = useConnectedNetwork();
 
   const [blockNumber, setBlockNumber] = useState<bigint | undefined>(undefined);
