@@ -36,19 +36,6 @@ export function useAmountOut() {
   useEffect(() => {
     const getAmountOut = async () => {
       if (mode === "Swap" && routingPath) {
-        // const quotedAmountOut =
-        //   await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
-        //     inToken.token.address,
-        //     outToken.token.address,
-        //     FeeAmount.MEDIUM,
-        //     inToken.amountBN,
-        //     // fromReadableAmount(
-        //     //   Number(inToken.parsedAmount),
-        //     //   inToken.decimals
-        //     // ).toString(),
-        //     0
-        //   );
-
         const { quoteDecimals } = routingPath;
         return setAmountOut(quoteDecimals);
       }
@@ -95,8 +82,6 @@ export function useAmountOut() {
             SwapRouterAbi,
             provider
           );
-
-          console.log("routingPath.route", routingPath.route);
 
           const callData = getEncodedPath({
             route: routingPath.route,
