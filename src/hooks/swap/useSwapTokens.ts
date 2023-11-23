@@ -1,8 +1,8 @@
-import { ethers, Contract } from "ethers";
+import { ethers, Contract, BigNumber } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import SwapRouterAbi from "@/abis/SwapRouter.json";
 import { useProvier } from "../provider/useProvider";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Trade } from "@uniswap/v3-sdk";
 import { TradeType, Token } from "@uniswap/sdk-core";
 import { useGetMode } from "../mode/useGetMode";
@@ -12,48 +12,41 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 import { useTx } from "../tx/useTx";
 import { getEncodedPath } from "@/utils/swap/encodePath";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { useSettingValue } from "../uniswap/useSettingValue";
+import { Hash } from "viem";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
-
-export function useSwapTokens() {}
-
-export function useAmountOut() {
+let count = 0;
+export function useSwapTokens() {
   const { provider } = useProvier();
   const { address } = useAccount();
   const { mode } = useGetMode();
-
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT, QUOTER_CONTRACT } = useUniswapContracts();
-
-  const [amountOut, setAmountOut] = useState<string | null>(null);
   const { routingPath } = useSmartRouter();
+  const [isError, setIsError] = useState<boolean>(false);
 
-  useEffect(() => {
-    const getAmountOut = async () => {
-      if (mode === "Swap" && routingPath) {
-        const { quoteDecimals } = routingPath;
-        return setAmountOut(quoteDecimals);
-      }
-
-      return setAmountOut(null);
-    };
-
-    getAmountOut().catch((e) => {
-      console.log("**getAmountOut err**");
-      console.log(e);
-    });
+  const amountOut = useMemo(() => {
+    if (mode === "Swap" && routingPath) {
+      const { quoteDecimals } = routingPath;
+      return quoteDecimals;
+    }
+    return null;
   }, [mode, routingPath]);
 
   const [txData, setTxData] = useState<any>(undefined);
   const txSettingValue = useRecoilValue(uniswapTxSetting);
 
-  useEffect(() => {
-    const getSwapTxnData = async () => {
+  const [txHashToSwap, setTxHashToSwap] = useState<Hash | undefined>(undefined);
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+
+  const callTokenSwap = useCallback(
+    async (estimateGasUsage?: boolean) => {
       if (routingPath && inToken?.amountBN && outToken) {
         // console.log(routingPath);
 
@@ -90,50 +83,60 @@ export function useAmountOut() {
             slippage: Number(txSettingValue.slippage) / 100,
             deadlineMin: txSettingValue.deadline,
           });
-
-          const tx = {
+          const txn = {
             data: callData,
             to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
             value: routingPath.methodParameters.value,
             from: address,
-            // maxFeePerGas: "250000",
-            // maxPriorityFeePerGas: "250000",
-            // gasLimit: "21000",
-            // gasPrice: gasPrice.toString(),
           };
-          const estimateGas = await provider.estimateGas(tx);
 
-          return setTxData({ ...tx, gas: calculateGasMargin(estimateGas) });
+          const estimatedGas = await provider.estimateGas(txn);
+          if (estimateGasUsage) return estimatedGas;
+
+          try {
+            if (estimatedGas) {
+              const tx = await provider.getSigner().sendTransaction({
+                ...txn,
+                gasLimit: calculateGasMargin(estimatedGas),
+              });
+              if (tx.hash) return setTxHashToSwap(tx.hash as Hash);
+              return;
+            }
+            return;
+          } catch (e) {
+            setModalOpen("error");
+            // setIsError(true);
+          }
         }
 
-        const tx = {
+        const txn = {
           data: routingPath.methodParameters.calldata,
           to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
           value: isETH ? hexAmount : routingPath.methodParameters.value,
           from: address,
         };
-        const estimateGas = await provider.estimateGas(tx);
-        return setTxData({ ...tx, gas: calculateGasMargin(estimateGas) });
+        const estimatedGas = await provider.estimateGas(txn);
+        if (estimateGasUsage) return estimatedGas;
+        try {
+          if (estimatedGas) {
+            const tx = await provider.getSigner().sendTransaction({
+              ...txn,
+              gasLimit: calculateGasMargin(estimatedGas),
+            });
+            if (tx.hash) return setTxHashToSwap(tx.hash as Hash);
+            return;
+          }
+        } catch (e) {
+          setModalOpen("error");
+          // setIsError(true);
+        }
       }
-    };
-    getSwapTxnData();
-  }, [
-    routingPath?.methodParameters,
-    inToken,
-    outToken,
-    provider,
-    txSettingValue,
-  ]);
-
-  const {
-    data: _swapData,
-    sendTransaction,
-    isError,
-    isSuccess,
-  } = useSendTransaction(txData);
+    },
+    [routingPath?.methodParameters, inToken, outToken, provider, txSettingValue]
+  );
 
   const {} = useTx({
-    hash: _swapData?.hash,
+    hash: txHashToSwap,
     txSort: "Swap",
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
     tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
@@ -148,11 +151,24 @@ export function useAmountOut() {
     return undefined;
   }, [slippage, amountOut]);
 
+  const [estimatedGasUsage, setEstimatedGasUsage] = useState<
+    BigNumber | undefined
+  >(undefined);
+  useEffect(() => {
+    const fetchEstimatedGasusage = async () => {
+      const estimatedGasUsage = await callTokenSwap(true);
+      if (estimatedGasUsage) setEstimatedGasUsage(estimatedGasUsage);
+    };
+    if (amountOut) {
+      fetchEstimatedGasusage();
+    }
+  }, [amountOut]);
+
   return {
     amountOut,
     minimumReceived,
-    callTokenSwap: sendTransaction,
+    callTokenSwap,
     isError,
-    estimatedGasUsage: txData?.gas,
+    estimatedGasUsage,
   };
 }

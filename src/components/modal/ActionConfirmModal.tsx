@@ -21,13 +21,13 @@ import TransactionDetail from "@/app/BridgeSwap/TransactionDetail";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
-  const { amountOut } = useAmountOut();
+  const { amountOut } = useSwapTokens();
   return (
     <>
       <TokenSymbol

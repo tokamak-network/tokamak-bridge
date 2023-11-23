@@ -43,7 +43,6 @@ import {
 } from "date-fns";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import { claimTx } from "@/recoil/userHistory/claimTx";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
@@ -56,7 +55,7 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { FullWithTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
-import { confirmWithdrawData,confirmWithdrawStats} from "@/recoil/modal/atom";
+import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 
 type TxType = FullWithTx & {
   inTokenAmount: string;
@@ -65,13 +64,12 @@ type TxType = FullWithTx & {
 export default function ConfirmWithdraw() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
 
   const [, setClaimTx] = useRecoilState(claimTx);
   const providers = useGetTxLayers();
   const tx = withdrawData.modalData;
-  const { outToken } = useInOutTokens();
-  const { amountOut } = useAmountOut();
   const { onClick } = useCallBridgeSwapAction();
   const { gasCostUS } = useGasFee();
   const { claim } = useCallClaim("relayMessage");
@@ -82,7 +80,7 @@ export default function ConfirmWithdraw() {
 
   const { data: feeData } = useFeeData({
     chainId: 1,
-  });  
+  });
 
   const check = (progress: string) => {
     switch (progress) {
@@ -520,7 +518,6 @@ export default function ConfirmWithdraw() {
               ? "done"
               : "todo"
           }
-   
           timeStamp={tx ? tx.l2timeStamp : undefined}
         />
         <Dots
@@ -646,7 +643,7 @@ export default function ConfirmWithdraw() {
         h="48px"
         _active={{}}
         _hover={{}}
-        color={'#fff'}
+        color={"#fff"}
         isDisabled={
           txData?.hash.transactionHash !== undefined &&
           txData?.hash.txSort === "Claim"
@@ -661,9 +658,8 @@ export default function ConfirmWithdraw() {
           !tx
             ? () => {
                 onClick();
-                setWithdrawStatus({ isOpen: false,})
+                setWithdrawStatus({ isOpen: false });
                 setWithdrawData({
-                
                   modalData: null,
                 });
               }
@@ -700,9 +696,8 @@ export default function ConfirmWithdraw() {
                   // setClaimTx(null)
                   setWithdrawStatus({
                     isOpen: false,
-                  })
+                  });
                   setWithdrawData({
-                   
                     modalData: null,
                   });
                 }}

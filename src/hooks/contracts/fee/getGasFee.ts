@@ -1,10 +1,9 @@
-import { getL2Provider } from "@/config/l2Provider";
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
@@ -12,7 +11,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
 import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useAccount, useFeeData, usePublicClient } from "wagmi";
@@ -21,7 +20,6 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
-import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -43,7 +41,7 @@ export function useGasFee() {
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
-  const { estimatedGasUsage } = useAmountOut();
+  const { estimatedGasUsage } = useSwapTokens();
 
   const swapGasUseEstimate = useMemo(() => {
     if (estimatedGasUsage) {

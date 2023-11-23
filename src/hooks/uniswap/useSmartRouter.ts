@@ -102,8 +102,7 @@ export function useSmartRouter() {
     queryKey: [debouncedQueryParam],
     queryFn: () => getPath(queryParam),
     refetchInterval: 99999999,
-    cacheTime: 20000,
-
+    cacheTime: 10000,
     // refetchOnMount: false,
   });
 
