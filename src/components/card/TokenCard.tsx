@@ -16,6 +16,8 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import "@fontsource/quicksand/500.css";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { trimAmount } from "@/utils/trim";
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -35,6 +37,7 @@ type TokenCardProps = {
   type?: TokenCardSizeType;
   forBridge?: boolean;
   isPrice?: boolean;
+  isInput?: boolean;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -118,6 +121,7 @@ export default function TokenCard(props: TokenCardProps) {
     type,
     forBridge,
     isPrice,
+    isInput
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
@@ -160,9 +164,17 @@ export default function TokenCard(props: TokenCardProps) {
   }, [agreeToAdd]);
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
+  const [outTokenInfo] = useRecoilState(selectedOutTokenStatus);
+  const { amountOut } = useAmountOut();
+  
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
+    tokenName: outTokenInfo?.tokenName as string,
+    amount: Number(amountOut),
   });
 
   const { pcView } = useMediaView();
@@ -307,11 +319,11 @@ export default function TokenCard(props: TokenCardProps) {
 
           {isPrice &&
             <Flex flexDir={"column"} rowGap={0}>
-            <Text h={"28px"} fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={22}>
-              {inTokenInfo?.parsedAmount ? inTokenInfo.parsedAmount : "0"}
+            <Text h={"28px"} fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={22} textOverflow={"ellipsis"}>
+              {isInput ? inTokenInfo?.parsedAmount || "0" : trimAmount(amountOut, 11) || "0"}
             </Text>
             <Text fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={10}>
-              ${inTokenWithPrice ? inTokenWithPrice : "0"}
+              ${isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
             </Text>
             </Flex>
           }

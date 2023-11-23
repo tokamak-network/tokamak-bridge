@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router';
 import React, {useEffect} from 'react';
 import {
   ResponsiveContainer,
@@ -9,8 +8,12 @@ import TokenCard from '../TokenCard';
 import { useGetTokenList } from '@/hooks/tokenCard/useGetTokenList';
 import { TokenInfo } from '@/types/token/supportedToken';
 import useTokenModal from '@/hooks/modal/useTokenModal';
+import { useInOutTokens } from '@/hooks/token/useInOutTokens';
+import useConnectedNetwork from '@/hooks/network';
+import { tokenModalStatus } from '@/recoil/bridgeSwap/atom';
 
 import "@/css/carousel.css";
+import { useRecoilValue } from 'recoil';
 
 const CarouselCard = React.memo((props) => {
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
@@ -52,6 +55,12 @@ const CarouselCard = React.memo((props) => {
 export function CardCarouselMobile() {
   const ref: any = React.useRef();
   const { filteredTokenList } = useGetTokenList();
+  const { inToken, outToken } = useInOutTokens();
+  const {isOpen} = useRecoilValue(tokenModalStatus);
+
+  const resultTokenList = filteredTokenList.filter(
+    (token) => (isOpen === "INPUT" ? token.tokenName !== outToken?.tokenName : token.tokenName !== inToken?.tokenName)
+  );
 
   return (
     <ResponsiveContainer
@@ -65,7 +74,7 @@ export function CardCarouselMobile() {
               slideComponent={CarouselCard}
               slideWidth={150}
               carouselWidth={parentWidth}
-              data={filteredTokenList}
+              data={resultTokenList}
               currentVisibleSlide={currentVisibleSlide}
               maxVisibleSlide={3}
               customScales={[1, 0.85, 0.4]}
