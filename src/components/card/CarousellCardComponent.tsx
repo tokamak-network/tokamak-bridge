@@ -142,6 +142,7 @@ export default function CarousellCardComponent<T>(props: {
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
         }}
         type={size}
+        requireCalls={false}
         onClick={() => {
           try {
             setSelectedToken(tokenData);
