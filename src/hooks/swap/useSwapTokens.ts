@@ -154,6 +154,7 @@ export function useSwapTokens() {
   const [estimatedGasUsage, setEstimatedGasUsage] = useState<
     BigNumber | undefined
   >(undefined);
+
   useEffect(() => {
     const fetchEstimatedGasusage = async () => {
       const estimatedGasUsage = await callTokenSwap(true);

@@ -93,7 +93,6 @@ export const ApproveButtonsContrainer = () => {
   const [poolState] = usePool();
   const { subMode } = useGetMode();
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
-  const { token0Input, token1Input } = useIncreaseAmount();
 
   if (subMode.add && poolState === PoolState.INVALID) return null;
   if (isBalanceOver || isOutTokenBalanceOver) return null;

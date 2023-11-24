@@ -18,11 +18,11 @@ export function useInOutNetwork() {
 
 export default function useConnectedNetwork() {
   const { inNetwork } = useInOutNetwork();
-  const { isConnected } = useAccount();
-  const { chainIdParam } = useGetPositionIdFromPath();
+  const { chain: _chain } = useNetwork();
 
-  const { chain } = useNetwork();
-  // const chain = { id: 1 };
+  const chain = useMemo(() => {
+    return _chain;
+  }, [_chain]);
 
   //to optimize rpc calls
   //if it's enabled always, then useNetwork would make so many calls to check connectecd network datas when it's not connected

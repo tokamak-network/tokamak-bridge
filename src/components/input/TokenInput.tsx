@@ -46,7 +46,6 @@ export default function TokenInput(props: {
   } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
   const { layer } = useConnectedNetwork();
   const [isMax, setIsMax] = useState<boolean>(false);
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);

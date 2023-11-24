@@ -231,29 +231,29 @@ export function useTx(params: {
     }
   }, [isSuccess, isError, txSort, data, hash]);
 
-  // useEffect(() => {
-  //   if (isLoading && connectedChainId && hash) {
-  //     if (selectedInToken) {
-  //       setSelectedInToken({
-  //         ...selectedInToken,
-  //         amountBN: null,
-  //         parsedAmount: null,
-  //       });
-  //     }
+  useEffect(() => {
+    if (isLoading && connectedChainId && hash) {
+      if (selectedInToken) {
+        setSelectedInToken({
+          ...selectedInToken,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
 
-  //     return setTxData({
-  //       ...txData,
-  //       [hash]: {
-  //         transactionHash: undefined,
-  //         txSort,
-  //         transactionState: undefined,
-  //         tokenData: undefined,
-  //         network: connectedChainId,
-  //         isToasted: false,
-  //       },
-  //     });
-  //   }
-  // }, [isLoading, hash, connectedChainId]);
+      return setTxData({
+        ...txData,
+        [hash]: {
+          transactionHash: undefined,
+          txSort,
+          transactionState: undefined,
+          tokenData: undefined,
+          network: connectedChainId,
+          isToasted: false,
+        },
+      });
+    }
+  }, [isLoading, hash, connectedChainId]);
 
   // useEffect(() => {
   //   if (isSuccess && data && connectedChainId && hash) {

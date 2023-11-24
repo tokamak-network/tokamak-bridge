@@ -77,7 +77,7 @@ export function useApprove() {
     inToken?.tokenAddress === TOKAMAK_CONTRACTS.USDT_ADDRES ||
     inToken?.tokenAddress === TOKAMAK_GOERLI_CONTRACTS.USDT_ADDRES;
 
-  const { write, data } = useContractWrite({
+  const { write, data, isLoading } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
     //@ts-ignore
     abi: isUSDT ? USDT_ABI : ERC20_ABI.abi,
@@ -127,5 +127,5 @@ export function useApprove() {
     }
   }, [mode, totalSupply, chainName]);
 
-  return { isApproved, callApprove };
+  return { isApproved, callApprove, isLoading };
 }
