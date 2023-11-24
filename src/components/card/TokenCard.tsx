@@ -18,6 +18,8 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import GradientSpinner from "../ui/gradientSpinner";
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -172,12 +174,27 @@ export default function TokenCard(props: TokenCardProps) {
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
-    tokenName: outTokenInfo?.tokenName as string,
-    amount: Number(amountOut),
-  });
+
 
   const { pcView } = useMediaView();
+  const { mode } = useGetMode();
+
+  const outAmount = useMemo(() => {
+    if (
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
+        inTokenInfo?.parsedAmount
+    ) {
+      return inTokenInfo.parsedAmount;
+    }
+    return amountOut },[mode, inTokenInfo, amountOut])
+
+  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
+    tokenName: outTokenInfo?.tokenName as string,
+    amount: Number(outAmount),
+  });
 
   return (
     <Flex
@@ -318,14 +335,18 @@ export default function TokenCard(props: TokenCardProps) {
           )}
 
           {isPrice &&
-            <Flex flexDir={"column"} rowGap={0}>
-            <Text h={"28px"} fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={22} textOverflow={"ellipsis"}>
-              {isInput ? inTokenInfo?.parsedAmount || "0" : trimAmount(amountOut, 11) || "0"}
-            </Text>
-            <Text fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={10}>
-              ${isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
-            </Text>
-            </Flex>
+            // (inTokenInfo && inTokenWithPrice) || (outAmount && outTokenWithPrice) ?
+              <Flex flexDir={"column"} rowGap={0}>
+                <Text h={"28px"} fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={22} textOverflow={"ellipsis"}>
+                  {isInput ? inTokenInfo?.parsedAmount || "0" : trimAmount(outAmount, 10) || "0"}
+                </Text>
+                <Text fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={10}>
+                  ${isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
+                </Text>
+              </Flex> 
+              // <Box w={"118px"} h={"43px"}>
+              //   <GradientSpinner/>
+              // </Box>
           }
         </Flex>
       )}

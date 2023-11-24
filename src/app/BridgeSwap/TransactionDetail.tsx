@@ -232,7 +232,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
 
   return (
     <Flex flexDir={"column"}>
-      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+      <Flex justifyContent={"space-between"} fontSize={{base: 11, md: 14}} h={"16px"}>
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
           {slippage && (
@@ -392,7 +392,7 @@ const Title = (props: {
         justifyContent={"space-between"}
         cursor={isOpen ? "" : "pointer"}
         onClick={() => isOpen === false && setIsExpended(!isExpanded)}
-        fontSize={14}
+        fontSize={{base: 12, md: 14}}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
@@ -407,7 +407,7 @@ const Title = (props: {
             {isOpen === isExpanded && <Image src={GasImg} alt={"gasStation"} />}
             {isOpen === isExpanded && (
               <Text
-                fontSize={14}
+                fontSize={{base: 12, md: 14}}
                 fontWeight={400}
                 color={"#A0A3AD"}
                 ml={"6px"}
@@ -433,7 +433,7 @@ const Title = (props: {
         alignItems={"center"}
         cursor={isOpen ? "" : "pointer"}
         onClick={() => isOpen === false && setIsExpended(!isExpanded)}
-        fontSize={14}
+        fontSize={{base: 12, md: 14}}
       >
         {isLoading ? (
           <Box w={"100%"} h={"20px"} mb={"5px"}>
@@ -464,7 +464,7 @@ const Title = (props: {
                 )}
                 {isOpen === isExpanded && (
                   <Text
-                    fontSize={14}
+                    fontSize={{base: 11, md: 14}}
                     fontWeight={400}
                     color={"#A0A3AD"}
                     ml={"6px"}

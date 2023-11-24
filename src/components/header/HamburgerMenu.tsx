@@ -20,6 +20,7 @@ import lightbulbHover from "assets/icons/header/LightbulbHover.svg";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import lightbulb from "assets/icons/header/Lightbulb.svg";
 import LOGO from "assets/icons/header/logo-dark-hc.svg";
+import { Overlay_Index } from "@/types/style/overlayIndex";
 
 const CustomMenuItem = (props: {
   link: string;

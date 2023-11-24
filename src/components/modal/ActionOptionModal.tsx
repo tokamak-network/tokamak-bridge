@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -30,6 +30,7 @@ import { useAccount, useConnect, useSwitchNetwork } from "wagmi";
 
 import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/700.css";
+import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
 
 interface MethodItemProps {
   from?: Number;
@@ -146,14 +147,21 @@ const ActionOptionModal = () => {
         : 5050,
     [connectedNetwork]
   );
+  const [storedValue, setValue] = useLocalStorage("tutorial", false);
+  const isWelcomeMsg = storedValue === false && mobileView;
+
+  const closeModal = useCallback(() => {
+    setValue(true);
+    setActionMethodStatus(false);
+  }, []);  
 
   return (
     <Modal
       size={"xl"}
       isOpen={methodStatus && mobileView}
-      onClose={() => setActionMethodStatus(false)}
+      onClose={() => closeModal()}
     >
-      <ModalOverlay bg={"#0F0F12F0"} />
+      <ModalOverlay bg={isWelcomeMsg ? "#0F0F12" : "#0F0F12F0"} />
       <ModalContent
         bg={"#1F2128"}
         mt={"auto"}
@@ -168,6 +176,7 @@ const ActionOptionModal = () => {
             </Text>
           </Box>
 
+          {isWelcomeMsg &&
           <Box pos={"fixed"} w={"100%"} top={"100px"} left={0}>
             <Text
               fontWeight={300}
@@ -185,7 +194,7 @@ const ActionOptionModal = () => {
             >
               TOKAMAK BRIDGE
             </Text>
-          </Box>
+          </Box>}
 
           <Text fontWeight={500} fontSize={16}>
             Bridge

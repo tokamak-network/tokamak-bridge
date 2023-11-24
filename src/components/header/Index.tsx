@@ -20,7 +20,7 @@ import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { mobileMenuStatus } from "@/recoil/modal/atom";
+import { mobileMenuStatus, actionMethodStatus } from "@/recoil/modal/atom";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
@@ -163,7 +163,8 @@ export const menuLinks = [
 export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
-  const [, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
+  const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
+  const [actionModalStatus] = useRecoilState(actionMethodStatus);
   const { mobileView } = useMediaView();
 
   const network = useConnectedNetwork();
@@ -183,7 +184,7 @@ export default function Header() {
   return (
     <Flex
       minW={"100%"}
-      zIndex={Overlay_Index.Header}
+      zIndex={actionModalStatus && !isMobileMenu ? Overlay_Index.AlwaysTop : Overlay_Index.Header}
       justifyContent={"space-between"}
       alignItems={{ base: "center", lg: "flex-start" }}
       mt={{ base: "16px", lg: "22px" }}

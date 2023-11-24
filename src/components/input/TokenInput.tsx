@@ -7,6 +7,7 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import Warning from "@/app/BridgeSwap/Warning";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
@@ -19,6 +20,7 @@ import JSBI from "jsbi";
 import { useCallback, useEffect, useMemo, useState ,useRef} from "react";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -49,6 +51,7 @@ export default function TokenInput(props: {
 
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const theme = useTheme();
+  const {pcView} = useMediaView();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
