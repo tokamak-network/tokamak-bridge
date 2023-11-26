@@ -47,6 +47,7 @@ import AccountModal from "../modal/AccountModal";
 import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 
 const menuList = [
   {
@@ -165,6 +166,7 @@ export default function Header() {
   const [hoverOn, setHoverOn] = useState(false);
   const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
   const [actionModalStatus] = useRecoilState(actionMethodStatus);
+  const [historyStatus] = useRecoilState(accountDrawerStatus);
   const { mobileView } = useMediaView();
 
   const network = useConnectedNetwork();
@@ -184,7 +186,11 @@ export default function Header() {
   return (
     <Flex
       minW={"100%"}
-      zIndex={actionModalStatus && !isMobileMenu ? Overlay_Index.AlwaysTop : Overlay_Index.Header}
+      zIndex={
+        actionModalStatus && !isMobileMenu && !historyStatus
+          ? Overlay_Index.AlwaysTop
+          : Overlay_Index.Header
+      }
       justifyContent={"space-between"}
       alignItems={{ base: "center", lg: "flex-start" }}
       mt={{ base: "16px", lg: "22px" }}
