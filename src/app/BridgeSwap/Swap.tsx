@@ -5,7 +5,7 @@ import { Flex, Text, Box } from "@chakra-ui/layout";
 import { useRecoilValue, useRecoilState } from "recoil";
 
 import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { actionMethodStatus } from "@/recoil/modal/atom";
+import { actionMethodStatus, swapSettingStatus } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
 import InToken from "./components/InToken";
@@ -21,6 +21,7 @@ import SettingIcon from "assets/icons/setting.svg";
 export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
+  const [, setSettingStatus] = useRecoilState(swapSettingStatus);
 
   const { pcView, mobileView } = useMediaView();
 
@@ -52,25 +53,24 @@ export default function Swap() {
               <Image src={arrow} alt="icon_arrow" />
             </Flex>
 
-            <Image
-              src={SettingIcon}
-              alt={"SettingIcon"}
-              style={{ cursor: "pointer" }}
-            />
+            {mode === "Swap" && (
+              <Image
+                onClick={() => setSettingStatus(true)}
+                src={SettingIcon}
+                alt={"SettingIcon"}
+                style={{ cursor: "pointer" }}
+              />
+            )}
           </Flex>
 
           <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"}>
-            <MobileInToken/>
+            <MobileInToken />
 
-            <Flex
-              justifyContent={"center"}
-              alignItems={"center"}
-            >
+            <Flex justifyContent={"center"} alignItems={"center"}>
               <Image src={ArrowImg} alt={"arrow"} />
             </Flex>
 
-            <MobileOutToken/>
-
+            <MobileOutToken />
           </Flex>
         </Box>
       )}

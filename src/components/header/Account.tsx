@@ -19,10 +19,10 @@ export default function Account() {
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   // const { isPending } = useTransaction();
   const txPending = useRecoilValue(txPendingStatus);
-
-  const buttonText = isConnected ? trimAddress({ address }) : "Connect Wallet";
-
   const { mobileView, pcView } = useMediaView();
+
+  const buttonText = isConnected ? trimAddress({ address }) : mobileView ? "Connect" : "Connect Wallet";
+
 
   return (
     <Center
@@ -58,7 +58,7 @@ export default function Account() {
           {mobileView && isConnected ? (
             ""
           ) : (
-            <Image src={WALLET_ICON} alt={""} />
+            <Image src={WALLET_ICON} width={mobileView ? 16 : 24} alt={""} />
           )}
           <Text fontSize={{ base: 12, md: 18 }}>{buttonText}</Text>
           {isConnected && mobileView && <Image src={HISTORYICON} alt={""} />}

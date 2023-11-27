@@ -67,3 +67,8 @@ export const actionMethodStatus = atom<boolean>({
   key: "actionMethodStatus",
   default: true,
 });
+
+export const swapSettingStatus = atom<boolean>({
+  key: "swapSettingStatus",
+  default: false
+})
