@@ -28,6 +28,7 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useAccount } from "wagmi";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -35,10 +36,12 @@ const DivisionLine = () => {
 
 const DepositDetailRow = (props: DepositDetailProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
+  const {pcView} = useMediaView();
+
   return (
     <Flex flexDir={"column"}>
-      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
-        <Text fontWeight={300}>{title}</Text>
+      <Flex justifyContent={"space-between"} fontSize={{ base: 11, lg: 14 }} h={"16px"}>
+        <Text  fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
           <Text fontWeight={500}>
             {tooltip ? (
@@ -50,7 +53,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
-      {gasFee && (
+      {gasFee && pcView && (
         <Flex
           w={"100%"}
           h={"54px"}

@@ -165,7 +165,7 @@ export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
-  const [actionModalStatus] = useRecoilState(actionMethodStatus);
+  const [actionModalStatus, setActionMethod] = useRecoilState(actionMethodStatus);
   const [historyStatus] = useRecoilState(accountDrawerStatus);
   const { mobileView } = useMediaView();
 
@@ -187,7 +187,7 @@ export default function Header() {
     <Flex
       minW={"100%"}
       zIndex={
-        actionModalStatus && !isMobileMenu && !historyStatus
+        actionModalStatus && mobileView
           ? Overlay_Index.AlwaysTop
           : Overlay_Index.Header
       }
@@ -332,7 +332,10 @@ export default function Header() {
             borderRadius={8}
             border={"1px solid #313442"}
             cursor={"pointer"}
-            onClick={() => setMobileMenuOpen(true)}
+            onClick={() => {
+              setActionMethod(false);
+              setMobileMenuOpen(true)
+            }}
           >
             <Image alt="hamburger" src={hamburger} />
           </Flex>

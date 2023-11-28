@@ -26,7 +26,7 @@ const SwapSettingModal = () => {
     >
       <ModalOverlay opacity={0.1} />
       <ModalContent
-        h={"fit-content"}
+        h={{ base: "calc(100% - 60px)", lg: "fit-content" }}
         bg={"#1F2128"}
         mt={"auto"}
         mb={0}

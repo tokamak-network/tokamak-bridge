@@ -86,12 +86,12 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
   };
 
   const fromIcon = useMemo(
-    () => ((from === 1 || from === 5) ? ETH_CIRCLE : TITAN_CIRCLE),
+    () => (from === 1 || from === 5 ? ETH_CIRCLE : TITAN_CIRCLE),
     [from]
   );
 
   const toIcon = useMemo(
-    () => ((to === 55004 || to === 5050) ? TITAN_CIRCLE : ETH_CIRCLE),
+    () => (to === 55004 || to === 5050 ? TITAN_CIRCLE : ETH_CIRCLE),
     [to]
   );
 
@@ -112,7 +112,7 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
       {from && to && (
         <Flex columnGap={"6px"} align={"center"} mb={"8px"}>
           <Image width={20} height={20} alt="from_network" src={fromIcon} />
-          <Image width={16} alt="arrow" src={Arrow} />
+          {title !== "Pool" && <Image width={16} alt="arrow" src={Arrow} />}
           <Image width={20} height={20} alt="to_network" src={toIcon} />
         </Flex>
       )}
@@ -153,7 +153,7 @@ const ActionOptionModal = () => {
   const closeModal = useCallback(() => {
     setValue(true);
     setActionMethodStatus(false);
-  }, []);  
+  }, []);
 
   return (
     <Modal
@@ -176,25 +176,26 @@ const ActionOptionModal = () => {
             </Text>
           </Box>
 
-          {isWelcomeMsg &&
-          <Box pos={"fixed"} w={"100%"} top={"100px"} left={0}>
-            <Text
-              fontWeight={300}
-              fontSize={24}
-              lineHeight={"36px"}
-              textAlign={"center"}
-            >
-              Welcome to
-            </Text>
-            <Text
-              fontWeight={700}
-              fontSize={32}
-              letterSpacing={"2px"}
-              textAlign={"center"}
-            >
-              TOKAMAK BRIDGE
-            </Text>
-          </Box>}
+          {isWelcomeMsg && (
+            <Box pos={"fixed"} w={"100%"} top={"100px"} left={0}>
+              <Text
+                fontWeight={300}
+                fontSize={24}
+                lineHeight={"36px"}
+                textAlign={"center"}
+              >
+                Welcome to
+              </Text>
+              <Text
+                fontWeight={700}
+                fontSize={32}
+                letterSpacing={"2px"}
+                textAlign={"center"}
+              >
+                TOKAMAK BRIDGE
+              </Text>
+            </Box>
+          )}
 
           <Text fontWeight={500} fontSize={16}>
             Bridge
@@ -224,7 +225,11 @@ const ActionOptionModal = () => {
               to={titanChainId}
               title="Swap"
             />
-            <ActionMethodItem title="Pool" />
+            <ActionMethodItem
+              from={ethChainId}
+              to={titanChainId}
+              title="Pool"
+            />
           </Flex>
         </Box>
       </ModalContent>
