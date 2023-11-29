@@ -20,7 +20,11 @@ import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { mobileMenuStatus, actionMethodStatus } from "@/recoil/modal/atom";
+import {
+  mobileMenuStatus,
+  actionMethodStatus,
+  accountDrawerStatus,
+} from "@/recoil/modal/atom";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
@@ -47,7 +51,6 @@ import AccountModal from "../modal/AccountModal";
 import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
-import { accountDrawerStatus } from "@/recoil/modal/atom";
 
 const menuList = [
   {
@@ -165,7 +168,8 @@ export default function Header() {
   const [menuState, setMenuState] = useState(false);
   const [hoverOn, setHoverOn] = useState(false);
   const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
-  const [actionModalStatus, setActionMethod] = useRecoilState(actionMethodStatus);
+  const [actionModalStatus, setActionMethod] =
+    useRecoilState(actionMethodStatus);
   const [historyStatus] = useRecoilState(accountDrawerStatus);
   const { mobileView } = useMediaView();
 
@@ -198,7 +202,13 @@ export default function Header() {
       pos={"absolute"}
     >
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
-        <Box onClick={() => router.push("/")} cursor={"pointer"}>
+        <Box
+          onClick={() => {
+            router.push("/");
+            mobileView ? setActionMethod(true) : "";
+          }}
+          cursor={"pointer"}
+        >
           <Image
             width={mobileView ? 28 : 36}
             src={LOGO_IMAGE}
@@ -334,7 +344,7 @@ export default function Header() {
             cursor={"pointer"}
             onClick={() => {
               setActionMethod(false);
-              setMobileMenuOpen(true)
+              setMobileMenuOpen(true);
             }}
           >
             <Image alt="hamburger" src={hamburger} />

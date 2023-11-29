@@ -36,14 +36,19 @@ interface MethodItemProps {
   from?: Number;
   to?: Number;
   title: string;
+  handleClose: () => void;
 }
 
-const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
-  const [network, setNetwork] = useRecoilState(networkStatus);
-  const [, setActionMethod] = useRecoilState(actionMethod);
+const ActionMethodItem = ({
+  from,
+  to,
+  title,
+  handleClose,
+}: MethodItemProps) => {
+  const [, setNetwork] = useRecoilState(networkStatus);
   const [, setActionMethodStatus] = useRecoilState(actionMethodStatus);
   const { connectedChainId } = useConnectedNetwork();
-  const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
+  const { switchNetworkAsync, isError } = useSwitchNetwork();
   const { isConnected } = useAccount();
   const theme = useTheme();
 
@@ -78,7 +83,7 @@ const ActionMethodItem = ({ from, to, title }: MethodItemProps) => {
         });
       }
     } finally {
-      setActionMethodStatus(false);
+      handleClose();
       if (isError) {
         console.error(`Couldn't switch network`);
       }
@@ -150,6 +155,8 @@ const ActionOptionModal = () => {
   const [storedValue, setValue] = useLocalStorage("tutorial", false);
   const isWelcomeMsg = storedValue === false && mobileView;
 
+  console.log(isWelcomeMsg);
+
   const closeModal = useCallback(() => {
     setValue(true);
     setActionMethodStatus(false);
@@ -206,11 +213,13 @@ const ActionOptionModal = () => {
               from={ethChainId}
               to={titanChainId}
               title="Deposit"
+              handleClose={closeModal}
             />
             <ActionMethodItem
               from={titanChainId}
               to={ethChainId}
               title="Withdraw"
+              handleClose={closeModal}
             />
           </Flex>
 
@@ -219,16 +228,23 @@ const ActionOptionModal = () => {
           </Text>
 
           <Flex columnGap={"8px"}>
-            <ActionMethodItem from={ethChainId} to={ethChainId} title="Swap" />
+            <ActionMethodItem
+              from={ethChainId}
+              to={ethChainId}
+              title="Swap"
+              handleClose={closeModal}
+            />
             <ActionMethodItem
               from={titanChainId}
               to={titanChainId}
               title="Swap"
+              handleClose={closeModal}
             />
             <ActionMethodItem
               from={ethChainId}
               to={titanChainId}
               title="Pool"
+              handleClose={closeModal}
             />
           </Flex>
         </Box>
