@@ -6,6 +6,8 @@ import ToggleSwitch from "../add/components/TokenToggle";
 import Setting from "@/components/Setting";
 import { useInitialize } from "@/hooks/pool/useInitialize";
 import { useGetPool } from "@/hooks/pool/useV3MintInfo";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function TopLine(props: {
   title: string;
@@ -15,12 +17,21 @@ export default function TopLine(props: {
 }) {
   const { title, clear, switcher, backwardLink } = props;
   const { pool } = useGetPool();
-  const { initialzePoolValues } = useInitialize();
+  const { initialzePoolValues, initializeInfoValues } = useInitialize();
+  const { initializeTokenPair } = useInOutTokens();
+  const { subMode } = useGetMode();
 
   return (
     <Flex alignItems={"center"} justifyContent="space-between">
       <Flex w="100%" alignItems={"center"} columnGap={"12px"}>
-        <Link href={backwardLink ?? "/pools"} onClick={initialzePoolValues}>
+        <Link
+          href={backwardLink ?? "/pools"}
+          onClick={() => {
+            initialzePoolValues();
+            initializeTokenPair();
+            initializeInfoValues();
+          }}
+        >
           <Image src={BACK_ICON} alt="BACK_ICON" />
         </Link>
         <Text fontSize={28} fontWeight={500}>
@@ -39,7 +50,7 @@ export default function TopLine(props: {
             Clear all
           </Text>
         )}
-        {switcher && pool?.token0.symbol && pool?.token1.symbol && (
+        {subMode.add && pool?.token0.symbol && pool?.token1.symbol && (
           <ToggleSwitch />
         )}
         <Box w={"20px"} h={"20px"}>

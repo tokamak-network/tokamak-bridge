@@ -43,7 +43,7 @@ export function useRangeHopCallbacks() {
         tickLower - TICK_SPACINGS[feeAmount]
       );
 
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
 
     // use pool current tick as starting tick if we have pool but no tick input
@@ -59,7 +59,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent - TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     return "";
   }, [baseToken, quoteToken, tickLower, feeAmount, pool]);
@@ -72,7 +72,7 @@ export function useRangeHopCallbacks() {
         tickLower + TICK_SPACINGS[feeAmount]
       );
 
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     // use pool current tick as starting tick if we have pool but no tick input
     if (
@@ -87,7 +87,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent + TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     return "";
   }, [baseToken, quoteToken, tickLower, feeAmount, pool]);
@@ -99,7 +99,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         tickUpper - TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     // use pool current tick as starting tick if we have pool but no tick input
     if (
@@ -114,7 +114,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent - TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     return "";
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
@@ -126,7 +126,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         tickUpper + TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     // use pool current tick as starting tick if we have pool but no tick input
     if (
@@ -141,7 +141,7 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent + TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(5, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
     }
     return "";
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
@@ -152,8 +152,8 @@ export function useRangeHopCallbacks() {
   //need to bind with Recoil
   const getSetFullRange = useCallback(() => {
     if (pricesAtLimit) {
-      const lowerLimitPrice = pricesAtLimit.LOWER?.toSignificant(5);
-      const upperLimitPrice = pricesAtLimit.UPPER?.toSignificant(5);
+      const lowerLimitPrice = pricesAtLimit.LOWER?.toSignificant(6);
+      const upperLimitPrice = pricesAtLimit.UPPER?.toSignificant(6);
       setMinPrice(lowerLimitPrice);
       setMaxPrice(upperLimitPrice);
       setAtMinTick(true);

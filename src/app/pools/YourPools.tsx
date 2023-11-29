@@ -1,15 +1,16 @@
 import { Flex, Text } from "@chakra-ui/react";
 import PoolList from "./components/PoolList";
 import { useAccount } from "wagmi";
-import { useGetPositions } from "@/hooks/pool/useGetPositionIds";
+import { useGetPositionIds } from "@/hooks/pool/useGetPositionIds";
 
 export default function YourPools() {
   const { isConnected } = useAccount();
-  const { positions } = useGetPositions();
+  const { positions } = useGetPositionIds();
+
   const isReducedHeight = !isConnected || positions?.length === 0;
 
   return (
-    <Flex flexDir="column" alignSelf={"baseline"} mt={"180px"}>
+    <Flex flexDir="column" alignSelf={"baseline"}>
       <Text fontSize={36} fontWeight="medium" marginBottom="24px">
         Your Pools
       </Text>
@@ -38,6 +39,7 @@ export default function YourPools() {
       >
         <PoolList />
       </Flex>
+      {/* <LoadingModal /> */}
     </Flex>
   );
 }

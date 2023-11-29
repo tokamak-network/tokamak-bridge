@@ -17,6 +17,8 @@ import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
@@ -133,6 +135,8 @@ export default function NetworkDropdown(props: {
   const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
   const { isConnected } = useAccount();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const { subMode } = useGetMode();
+  const { initializeTokenPair } = useInOutTokens();
 
   const onChange = async (data: SupportedChainProperties) => {
     try {
@@ -145,16 +149,18 @@ export default function NetworkDropdown(props: {
         return setNetwork({ ...network, outNetwork: selectedWork });
       }
       if (selectedWork.chainId !== connectedChainId) {
-        
-        return isConnected
-          ? switchNetwork?.(selectedWork.chainId)
+        const res = isConnected
+          ? await switchNetworkAsync?.(selectedWork.chainId)
           : setNetwork({ ...network, inNetwork: selectedWork });
+        if (res && res.id === selectedWork.chainId && isPool && subMode.add) {
+          initializeTokenPair();
+        }
       }
     } finally {
       setIsOpen(false);
-
       if (isError) {
         console.error(`Couldn't switch network`);
+        console.log(isError);
       }
     }
   };

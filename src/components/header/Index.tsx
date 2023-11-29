@@ -51,6 +51,7 @@ import AccountModal from "../modal/AccountModal";
 import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const menuList = [
   {
@@ -71,6 +72,7 @@ const HeaderMenu = (props: {
   const { title, link, menuState } = props;
   const pathname = usePathname();
   const router = useRouter();
+  const { initializeTokenPair } = useInOutTokens();
 
   return (
     <Center
@@ -81,7 +83,10 @@ const HeaderMenu = (props: {
           ? "3px solid #007AFF"
           : ""
       }
-      onClick={() => router.push(link)}
+      onClick={() => {
+        router.push(link);
+        initializeTokenPair();
+      }}
     >
       <Text>{title}</Text>
     </Center>

@@ -2,7 +2,6 @@ import { Flex } from "@chakra-ui/react";
 import Warning from "./Warning";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import TransactionDetail from "./TransactionDetail";
-import { useApprove } from "@/hooks/token/useApproval";
 import ActionButton from "./components/ActionButton";
 import ApproveToken from "@/app/BridgeSwap/ApproveToken";
 

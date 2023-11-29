@@ -1,5 +1,5 @@
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
-import { TxInterface } from "@/types/tx/txType";
+import { TxInterface, TxSort } from "@/types/tx/txType";
 // import { gql } from "@apollo/client";
 // import { graphQLSelector } from "recoil-relay";
 
@@ -32,6 +32,7 @@ export type T_SwapTransactionDetail = {
 };
 
 import { atom, selector } from "recoil";
+import { ethers } from "ethers";
 
 type GasDataAtom = {
   l1GasPrice: BigInt | null;
@@ -72,17 +73,9 @@ export const estimatedGasUsage = atom<number | undefined>({
 //   mapResponse: (data) => data.getTokenMarketData?.current_price,
 // });
 
-export const estimatedGasFee = selector<number | undefined>({
+export const estimatedGasFee = atom<number | undefined>({
   key: "estimatedGasFee",
-  get: async ({ get }) => {
-    const searchedToken = get(estimatedGasUsage);
-    // const ethMarketPrice = get(ethPrice);
-
-    if (searchedToken) {
-      return undefined;
-    }
-    return undefined;
-  },
+  default: undefined,
 });
 
 export const transactionData = atom<any[]>({
@@ -112,4 +105,15 @@ export const txPendingStatus = atom<boolean>({
 export const txHashStatus = atom<string | undefined>({
   key: "txHashStatus",
   default: undefined,
+});
+
+export const txHashLog = atom<{
+  txSort: TxSort | undefined;
+  logs: ethers.utils.Result | undefined;
+}>({
+  key: "txHashLog",
+  default: {
+    txSort: undefined,
+    logs: undefined,
+  },
 });

@@ -12,6 +12,7 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import HISTORYICON from "assets/icons/header/history.svg";
+import { useMemo } from "react";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
@@ -23,6 +24,15 @@ export default function Account() {
 
   const buttonText = isConnected ? trimAddress({ address }) : mobileView ? "Connect" : "Connect Wallet";
 
+
+  const ImageContainer = useMemo(() => {
+    return (
+      <>
+        <Image src={WALLET_ICON} alt={""} />
+        <Text>{buttonText}</Text>
+      </>
+    );
+  }, [WALLET_ICON, buttonText]);
 
   return (
     <Center

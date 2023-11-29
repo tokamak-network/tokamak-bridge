@@ -1,9 +1,8 @@
 import {
-  confirmModalStatus,
   transactionModalOpenStatus,
   transactionModalStatus,
 } from "@/recoil/modal/atom";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 
