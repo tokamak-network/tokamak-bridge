@@ -327,10 +327,12 @@ export function usePoolActiveLiquidity(
   const pool = usePool(currencyA, currencyB, feeAmount);
 
   // Find nearest valid tick for pool in case tick is not initialized.
-  const activeTick = useMemo(
-    () => getActiveTick(pool[1]?.tickCurrent, feeAmount),
-    [pool, feeAmount]
-  );
+  const activeTick = useMemo(() => {
+    const currentTick = getActiveTick(pool[1]?.tickCurrent, feeAmount);
+    if (currentTick && currentTick < -887272) return -887272;
+    if (currentTick && currentTick > 887272) return 887272;
+    return currentTick;
+  }, [pool, feeAmount]);
 
   const { isLoading, error, ticks } = useAllV3Ticks(
     currencyA,
