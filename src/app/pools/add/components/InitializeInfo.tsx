@@ -60,7 +60,7 @@ export default function InitializeInfo() {
             onChange={(e) => {
               setInitialPrice(e.target.value);
             }}
-            value={valueProp ?? undefined}
+            value={valueProp === undefined ? "" : valueProp}
             boxShadow={"none !important"}
             fontSize={18}
             fontWeight={500}
