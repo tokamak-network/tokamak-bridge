@@ -25,7 +25,7 @@ type TokenCardProps = {
   style?: {};
   type?: TokenCardSizeType;
   forBridge?: boolean;
-  requireCalls?: boolean;
+  requireCall?: boolean;
   watch?: boolean;
 };
 
@@ -109,7 +109,7 @@ export default function TokenCard(props: TokenCardProps) {
     style,
     type,
     forBridge,
-    requireCalls,
+    requireCall,
     watch,
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
@@ -142,7 +142,7 @@ export default function TokenCard(props: TokenCardProps) {
     }
   }, [tokenInfo]);
 
-  const tokenData = useTokenBalance(tokenInfo, requireCalls, watch);
+  const tokenData = useTokenBalance(tokenInfo, requireCall, watch);
   const thisTokenIsETH = isETH(tokenInfo);
   const theme = useTheme();
 

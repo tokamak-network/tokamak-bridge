@@ -29,7 +29,8 @@ export function useGetMarketPrice(params: {
       tokenName: trimTokenName(tokenName),
     },
     pollInterval: 13000,
-
+    fetchPolicy: "cache-and-network",
+    nextFetchPolicy: "cache-first",
     context: {
       apiName: "price",
     },
