@@ -99,8 +99,14 @@ export default function ConfirmWithdraw() {
   };
 
   const getCalendarEvent = useMemo(() => {
-    if (tx && tx.timeReadyForRelay) {
-      const startDate = new Date(tx.timeReadyForRelay * 1000);
+    if (tx && tx.l2timeStamp) {
+      const timeStamp = tx.l2timeStamp;
+      const status2Duration = isConnectedToMainNetwork ? 300 : 120; //5 minutes rollup on mainnet
+      const status4Duration = isConnectedToMainNetwork ? 605100 : 130; //7 days challenge period on mainnet +  5 minutes rollup
+      const status2EndTimestamp = Number(timeStamp) + status2Duration;
+      const status4EndTimestamp = Number(timeStamp) + status4Duration;
+      const startDate = new Date(status4EndTimestamp * 1000);
+
       const formattedDate = format(startDate, "yyyy-MM-dd");
       const add1Hour = addHours(startDate, 1);
       const startTime = format(startDate, "HH:mm");
@@ -730,7 +736,7 @@ export default function ConfirmWithdraw() {
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />
-          ) : tx.currentStatus === 4 ? (
+          ) : tx.currentStatus >= 2  && tx.currentStatus < 5? (
             <CalendarComponent />
           ) : null}
           <ActionButton />
