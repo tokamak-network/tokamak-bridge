@@ -152,11 +152,11 @@ export default function Zoom({
     setAtMaxTick(false);
   };
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     initializeTicks();
-  //   }, 50);
-  // }, [pool, initializeTicks]);
+  useEffect(() => {
+    setTimeout(() => {
+      initializeTicks();
+    }, 50);
+  }, [pool]);
 
   useEffect(() => {
     setIsLoading(true);
