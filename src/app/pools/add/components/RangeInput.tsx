@@ -55,6 +55,8 @@ export default function RangeInput(props: RangeInputProps) {
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
+  console.log("invertPrice", invertPrice);
+
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -125,11 +127,11 @@ export default function RangeInput(props: RangeInputProps) {
     if (!isMinPrice && ticksAtLimit[invertPrice ? Bound.LOWER : Bound.UPPER]) {
       return "∞";
     }
-    if (notExistPool && pricesAtTicks) {
-      return isMinPrice
-        ? pricesAtTicks?.LOWER?.toSignificant(6)
-        : pricesAtTicks?.UPPER?.toSignificant(6);
-    }
+    // if (notExistPool && pricesAtTicks) {
+    //   return isMinPrice
+    //     ? pricesAtTicks?.LOWER?.toSignificant(6)
+    //     : pricesAtTicks?.UPPER?.toSignificant(6);
+    // }
     if (pricesAtTicks) {
       return isMinPrice
         ? invertPrice
