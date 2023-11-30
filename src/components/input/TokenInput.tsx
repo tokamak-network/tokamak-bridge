@@ -5,15 +5,17 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import Warning from "@/app/BridgeSwap/Warning";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { trimAmount } from "@/utils/trim";
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
+import { Button, Flex, Input, Text, useTheme } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
+import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
@@ -56,6 +58,8 @@ export default function TokenInput(props: {
     18
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
+  const theme = useTheme();
+  const {pcView} = useMediaView();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -77,7 +81,7 @@ export default function TokenInput(props: {
 
       return setSelectedInToken({
         ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
+        amountBN: parsedAmount.toBigInt(), 
         parsedAmount: value,
       });
     }
@@ -313,25 +317,25 @@ export default function TokenInput(props: {
     lastFocused,
   ]);
 
-  const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({
+  const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedInToken?.tokenName as string,
     amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { tokenPriceWithAmount: token1PriceWiwhtAmount } = useGetMarketPrice({
+  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedOutToken?.tokenName as string,
     amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
   });
 
   const marketPrice = useMemo(() => {
-    if (inToken && token0PriceWiwhtAmount) {
-      return token0PriceWiwhtAmount;
+    if (inToken && token0PriceWithAmount) {
+      return token0PriceWithAmount;
     }
-    if (!inToken && token1PriceWiwhtAmount) {
-      return token1PriceWiwhtAmount;
+    if (!inToken && token1PriceWithAmount) {
+      return token1PriceWithAmount;
     }
     return "0.00";
-  }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
+  }, [token0PriceWithAmount, token1PriceWithAmount, inToken]);
 
   useEffect(() => {
     if (mode === "Pool") return;

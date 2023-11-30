@@ -53,14 +53,14 @@ export default function ApproveToken() {
         {approveBtnDisabled && (
           <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
         )}
-        <Text fontSize={14}>
+        <Text fontSize={{base: 12, lg: 14}}>
           Tokamak Bridge wants to use your {inToken?.tokenSymbol}
         </Text>
       </Flex>
       <Button
-        w={"92px"}
+        w={{ base:"64px", lg:"92px" }}
         h={"28px"}
-        fontSize={14}
+        fontSize={{base: 12, lg: 14}}
         fontWeight={500}
         bgColor={"#007AFF"}
         color={"#fff"}

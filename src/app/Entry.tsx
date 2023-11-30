@@ -12,13 +12,13 @@ export default function Entry({ children }: { children: React.ReactNode }) {
   const [isMobile] = useMediaQuery("(max-width: 1200px)");
   const { mode } = useGetMode();
 
-  if (isMobile) {
-    return (
-      <Center h={"100vh"}>
-        <MobileView />
-      </Center>
-    );
-  }
+  // if (isMobile) {
+  //   return (
+  //     <Center h={"100vh"}>
+  //       <MobileView />
+  //     </Center>
+  //   );
+  // }
 
   return (
     <ApolloProvider client={apolloClient}>

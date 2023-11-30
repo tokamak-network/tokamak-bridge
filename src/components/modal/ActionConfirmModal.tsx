@@ -91,7 +91,7 @@ const TokenContainer = () => {
   return (
     <Flex pos={"relative"} columnGap={"12px"}>
       <Flex
-        w={"176px"}
+        w={{base: "full", lg: "176px"}}
         h={"168px"}
         border={"1px solid #313442"}
         borderRadius={"12px"}
@@ -123,7 +123,7 @@ const TokenContainer = () => {
         <Image src={ARROW_ICON} alt={"ARROW_ICON"} />
       </Box>
       <Flex
-        w={"176px"}
+        w={{base: "full", lg: "176px"}}
         h={"168px"}
         border={"1px solid #313442"}
         borderRadius={"12px"}
@@ -157,16 +157,17 @@ export default function ActionConfirmModal() {
         m={0}
       >
         <Flex
-          w={"404px"}
-          p={"20px"}
+          w={{ base: "full", lg: "404px" }}
+          p={{ base: "16px 12px", lg:"20px" }}
           bgColor={"#1f2128"}
-          borderRadius={"16px"}
+          borderRadius={{ base: "16px 16px 0px 0px", lg:"16px" }}
           flexDir={"column"}
           flexDirection={"column"}
           rowGap={"16px"}
+          mt={{ base: "auto", lg: "0" }}
         >
           <Flex justifyContent={"space-between"} pos={"relative"}>
-            <Text fontSize={20} fontWeight={500}>
+            <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
               Confirm {mode}
             </Text>
             <Box pos={"absolute"} right={0} top={"-6px"}>

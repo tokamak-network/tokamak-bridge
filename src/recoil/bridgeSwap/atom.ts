@@ -20,6 +20,12 @@ import {
   getTime,
 } from "date-fns";
 import { isETH } from "@/utils/token/isETH";
+import { ActionMethod } from "@/types/bridgeSwap";
+
+export const actionMethod = atom<ActionMethod>({
+  key: "actionMethod",
+  default: ActionMethod.Swap_ETH
+})
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
