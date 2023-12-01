@@ -22,12 +22,14 @@ import REFRESH_ICON from "assets/icons/pool/refreshIcon.svg";
 import Title from "../Title";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import {
   atMaxTick,
   atMinTick,
   chartIsOnLoading,
 } from "@/recoil/pool/setPoolPosition";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { ATOM_graph_isLoading } from "@/recoil/pool/graph";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -152,18 +154,23 @@ export default function Zoom({
     setAtMaxTick(false);
   };
 
-  useEffect(() => {
-    setTimeout(() => {
-      initializeTicks();
-    }, 50);
-  }, [pool]);
+  const { inToken, outToken } = useInOutTokens();
+
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     initializeTicks();
+  //   }, 100);
+  // }, [inToken?.address, outToken?.address]);
 
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      initializeTicks();
     }, 350);
   }, [pool]);
+
+  console.log("isLoading", isLoading);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>

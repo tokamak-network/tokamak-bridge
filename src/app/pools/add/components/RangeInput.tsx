@@ -125,11 +125,11 @@ export default function RangeInput(props: RangeInputProps) {
     if (!isMinPrice && ticksAtLimit[invertPrice ? Bound.LOWER : Bound.UPPER]) {
       return "∞";
     }
-    if (notExistPool && pricesAtTicks) {
-      return isMinPrice
-        ? pricesAtTicks?.LOWER?.toSignificant(6)
-        : pricesAtTicks?.UPPER?.toSignificant(6);
-    }
+    // if (notExistPool && pricesAtTicks) {
+    //   return isMinPrice
+    //     ? pricesAtTicks?.LOWER?.toSignificant(6)
+    //     : pricesAtTicks?.UPPER?.toSignificant(6);
+    // }
     if (pricesAtTicks) {
       return isMinPrice
         ? invertPrice
@@ -223,10 +223,10 @@ export default function RangeInput(props: RangeInputProps) {
               ticksAtLimit.LOWER
                 ? () => {}
                 : isMinPrice
-                ? invertPrice && !notExistPool
+                ? invertPrice
                   ? onIncreaseUpper
                   : onDecreaseLower
-                : invertPrice && !notExistPool
+                : invertPrice
                 ? onIncreaseLower
                 : onDecreaseUpper
             }
@@ -266,10 +266,10 @@ export default function RangeInput(props: RangeInputProps) {
             cursor={"pointer"}
             onClick={
               isMinPrice
-                ? invertPrice && !notExistPool
+                ? invertPrice
                   ? onDecreaseUpper
                   : onIncreaseLower
-                : invertPrice && !notExistPool
+                : invertPrice
                 ? onDecreaseLower
                 : onIncreaseUpper
             }

@@ -187,7 +187,7 @@ export function useV3MintInfo() {
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {};
 
-  console.log("ticks", ticks);
+  // console.log("ticks", ticks);
   // console.log("minPriceInput", minPriceInput);
   // console.log(
   //   "price",

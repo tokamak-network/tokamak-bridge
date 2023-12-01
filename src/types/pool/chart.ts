@@ -69,4 +69,5 @@ export interface LiquidityChartRangeInputProps {
 
   zoomLevels: ZoomLevels;
   disabled: boolean;
+  isLoading: boolean;
 }
