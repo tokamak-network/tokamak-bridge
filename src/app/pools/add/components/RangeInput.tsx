@@ -10,6 +10,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import {
   atMaxTick,
   atMinTick,
+  initialPrice,
   lastFocusedInput,
   maxPrice,
   maxPriceForAddModal,
@@ -52,6 +53,8 @@ export default function RangeInput(props: RangeInputProps) {
   //let user type value and only update parent value on blur
   const [localValue, setLocalValue] = useState<string | undefined>(undefined);
   const [useLocalValue, setUseLocalValue] = useState<boolean>(false);
+
+  console.log("useLocalValue", useLocalValue);
 
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
@@ -170,12 +173,12 @@ export default function RangeInput(props: RangeInputProps) {
 
   const [, setMinPriceForAddModal] = useRecoilState(minPriceForAddModal);
   const [, setMaxPriceForAddModal] = useRecoilState(maxPriceForAddModal);
+  const initialPriceData = useRecoilValue(initialPrice);
 
   useEffect(() => {
     if (localValue !== value && !useLocalValue) {
       setTimeout(() => {
         setLocalValue(value ?? "");
-        // handleBlur();
       }, 0);
     }
   }, [localValue, useLocalValue, value]);
@@ -186,6 +189,8 @@ export default function RangeInput(props: RangeInputProps) {
       return setMaxPriceForAddModal(localValue);
     }
   }, [localValue, isMinPrice]);
+
+  console.log("gh", value, "localValue", localValue);
 
   return (
     <Flex flexDir={"column"}>
@@ -251,10 +256,8 @@ export default function RangeInput(props: RangeInputProps) {
             onBlur={blurHandler}
             onFocus={onFocusHandler}
             placeholder="0"
-            value={localValue}
-          >
-            {/* {isMinPrice ? commafy(minPriceInput, 5) : commafy(maxPriceInput, 5)} */}
-          </Input>
+            value={localValue === undefined ? "0" : localValue}
+          ></Input>
           <Flex
             w={"32px"}
             h={"32px"}

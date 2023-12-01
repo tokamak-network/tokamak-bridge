@@ -6,13 +6,7 @@ import {
   zoomIdentity,
   ZoomTransform,
 } from "d3";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 // import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
@@ -22,14 +16,12 @@ import REFRESH_ICON from "assets/icons/pool/refreshIcon.svg";
 import Title from "../Title";
 import { useRangeHopCallbacks } from "@/hooks/pool/useV3Hooks";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   atMaxTick,
   atMinTick,
   chartIsOnLoading,
 } from "@/recoil/pool/setPoolPosition";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { ATOM_graph_isLoading } from "@/recoil/pool/graph";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -68,7 +60,7 @@ export default function Zoom({
 }) {
   const { getSetFullRange } = useRangeHopCallbacks();
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
-  const { invertPrice, pool } = useV3MintInfo();
+  const { invertPrice, pool, notExistPool } = useV3MintInfo();
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [
@@ -154,8 +146,6 @@ export default function Zoom({
     setAtMaxTick(false);
   };
 
-  const { inToken, outToken } = useInOutTokens();
-
   // useEffect(() => {
   //   setTimeout(() => {
   //     initializeTicks();
@@ -169,8 +159,6 @@ export default function Zoom({
       initializeTicks();
     }, 350);
   }, [pool]);
-
-  console.log("isLoading", isLoading);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>

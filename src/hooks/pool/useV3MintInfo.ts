@@ -158,6 +158,8 @@ export function useV3MintInfo() {
   // parse typed range values and determine closest ticks
   // lower should always be a smaller tick
   const ticks = useMemo(() => {
+    console.log("gogo");
+    console.log(minPriceInput, maxPriceInput);
     return {
       [Bound.LOWER]:
         (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)
@@ -186,13 +188,6 @@ export function useV3MintInfo() {
   ]);
 
   const { [Bound.LOWER]: tickLower, [Bound.UPPER]: tickUpper } = ticks || {};
-
-  // console.log("ticks", ticks);
-  // console.log("minPriceInput", minPriceInput);
-  // console.log(
-  //   "price",
-  //   tryParseTick(token0, token1, feeAmount, minPriceInput?.toString())
-  // );
 
   // specifies whether the lower and upper ticks is at the exteme bounds
   const ticksAtLimit = useMemo(

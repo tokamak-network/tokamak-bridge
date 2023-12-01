@@ -6,7 +6,7 @@ import { useDensityChartData } from "@/hooks/pool/useDensityChartData";
 import { useCallback, useMemo } from "react";
 import { Currency, Price, Token } from "@uniswap/sdk-core";
 import { FeeAmount } from "@uniswap/v3-sdk";
-import { Bound } from "@/types/pool/pool";
+import { Bound, PoolState } from "@/types/pool/pool";
 import { format } from "d3";
 import { ZoomLevels } from "@/types/pool/chart";
 import { Box } from "@chakra-ui/react";
@@ -116,6 +116,7 @@ export default function ChartWrapper({
 
   const isSorted = !invertPrice;
   const [, setAtMinTick] = useRecoilState(atMinTick);
+  const { notExistPool, poolState } = useV3MintInfo();
 
   const onBrushDomainChangeEnded = useCallback(
     (domain: [number, number], mode: string | undefined) => {
@@ -140,7 +141,8 @@ export default function ChartWrapper({
       if (
         (!ticksAtLimit[isSorted ? Bound.UPPER : Bound.LOWER] ||
           mode === "reset") &&
-        rightRangeValue > 0
+        rightRangeValue > 0 &&
+        poolState === PoolState.EXISTS
       ) {
         // todo: remove this check. Upper bound for large numbers
         // sometimes fails to parse to tick.
@@ -149,8 +151,10 @@ export default function ChartWrapper({
         }
       }
     },
-    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit]
+    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit, poolState]
   );
+
+  console.log("notExistPool", notExistPool);
 
   interactive = interactive && Boolean(formattedData?.length);
 
