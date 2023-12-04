@@ -1,3 +1,4 @@
+import Image from "next/image";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -23,6 +24,9 @@ import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import "@fontsource/poppins/600.css";
+import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -59,7 +63,8 @@ export default function TokenInput(props: {
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const theme = useTheme();
-  const {pcView} = useMediaView();
+  const { mobileView } = useMediaView();
+  const { isBalanceOver } = useInputBalanceCheck();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -81,7 +86,7 @@ export default function TokenInput(props: {
 
       return setSelectedInToken({
         ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(), 
+        amountBN: parsedAmount.toBigInt(),
         parsedAmount: value,
       });
     }
@@ -414,8 +419,8 @@ export default function TokenInput(props: {
             placeholder="0"
             _placeholder={{ color: "#C6C6D1 !important" }}
             color={"#ffffff"}
-            fontSize={28}
-            fontWeight={700}
+            fontSize={{ base: 22, lg: 28 }}
+            fontWeight={600}
             isDisabled={isDisabled}
             _disabled={{ color: "#fff" }}
             value={valueProp}
@@ -444,9 +449,17 @@ export default function TokenInput(props: {
       )}
 
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
-          {`$${marketPrice}`}
-        </Text>
+        {mobileView && isBalanceOver ? (
+          <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+            <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+            <Text>Insufficient ({inTokenFromHook?.tokenSymbol}) balance </Text>
+          </Flex>
+        ) : (
+          <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+            {`$${marketPrice}`}
+          </Text>
+        )}
+
         {/* {inToken === false && mode === "Swap" && (
           <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
             ({priceImpact ?? "-"}%)
