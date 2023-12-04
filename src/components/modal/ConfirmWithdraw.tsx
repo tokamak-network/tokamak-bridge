@@ -101,9 +101,7 @@ export default function ConfirmWithdraw() {
   const getCalendarEvent = useMemo(() => {
     if (tx && tx.l2timeStamp) {
       const timeStamp = tx.l2timeStamp;
-      const status2Duration = isConnectedToMainNetwork ? 300 : 120; //5 minutes rollup on mainnet
-      const status4Duration = isConnectedToMainNetwork ? 605100 : 130; //7 days challenge period on mainnet +  5 minutes rollup
-      const status2EndTimestamp = Number(timeStamp) + status2Duration;
+      const status4Duration = isConnectedToMainNetwork ? 605400 : 610; //7 days challenge period on mainnet +  5 minutes rollup
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 

@@ -51,6 +51,8 @@ export default function StatusTx(props: {
   const providers = useGetTxLayers();
   const [durationRollup, setDurationRollup] = useState("0");
   
+  console.log(tx);
+  
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,
@@ -68,12 +70,9 @@ export default function StatusTx(props: {
 
 
   const getCalendarEvent = useMemo(() => {
-    if (tx.l2timeStamp) {
-      
+    if (tx.l2timeStamp) {      
       const timeStamp = tx.l2timeStamp;
-      const status2Duration = isConnectedToMainNetwork ? 300 : 120;
-      const status4Duration = isConnectedToMainNetwork ? 605100 : 130;
-      const status2EndTimestamp = Number(timeStamp) + status2Duration;
+      const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 
@@ -88,7 +87,7 @@ export default function StatusTx(props: {
         endTime: formattedEndTime,
       };
     }
-  }, [timeStamp]);
+  }, [tx.l2timeStamp]);
 
   useEffect(() => {
     if (tx.l2timeStamp) {
