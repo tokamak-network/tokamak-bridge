@@ -50,7 +50,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
-      {gasFee && (
+      {/* {gasFee && (
         <Flex
           w={"100%"}
           h={"54px"}
@@ -85,7 +85,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
             </Flex>
           </Flex>
         </Flex>
-      )}
+      )} */}
     </Flex>
   );
 };
@@ -96,15 +96,26 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
-        <Text fontWeight={500}>
+        <Flex columnGap={"35px"}>
+          <Text fontWeight={500}>
+            {tooltip ? (
+              <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
+            ) : (
+              content
+            )}
+          </Text>
+          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l2GasUS}</Text>}
+        </Flex>
+
+        {/* <Text fontWeight={500}>
           {tooltip ? (
             <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
           ) : (
             content
           )}
-        </Text>
+        </Text> */}
       </Flex>
-      {gasFee && (
+      {/* {gasFee && (
         <Flex
           w={"100%"}
           h={"54px"}
@@ -125,7 +136,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
             <Text>{gasFee.l2Gas}</Text>
           </Flex>
         </Flex>
-      )}
+      )} */}
     </Flex>
   );
 };
@@ -274,7 +285,7 @@ const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
     withdrawNewPropsData,
   } = useTransactionDetail();
   const { isOpen } = useConfirm();
-
+  
   const detailRow = useMemo(() => {
     switch (mode) {
       case "Deposit":

@@ -131,7 +131,7 @@ export function useTransactionDetail() {
             l2GasUS: `${gasCostUS}`,
           },
           tooltip: true,
-          tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
+          tooltipLabel: `${commafy(totalGasFeeToWithdraw, 18)} ETH`,
         },
         {
           title: "Time to Withdraw",
@@ -189,9 +189,7 @@ export function useTransactionDetail() {
         },
         {
           title:
-            layer === "L2"
-              ? "Estimated L2 execution fee (sans L1 fee)"
-              : "Estimated gas fees",
+            "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
           gasFee: `$${gasCostUS}`,
         },
