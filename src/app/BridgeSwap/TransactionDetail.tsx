@@ -88,7 +88,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
             </Flex>
           </Flex>
         </Flex>
-      )} */}
+      )} 
     </Flex>
   );
 };
