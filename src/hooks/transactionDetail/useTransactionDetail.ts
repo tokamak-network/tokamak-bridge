@@ -81,6 +81,7 @@ export function useTransactionDetail() {
     4
   )} ${inToken?.tokenSymbol}`;
 
+  
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
     if (mode === "Deposit" && inToken && totalGasCost) {
       return [
