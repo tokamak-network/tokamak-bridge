@@ -11,7 +11,7 @@ export default function SearchToken(props: { onClick?: () => any }) {
 
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
-  const deactivateButton = status === "Active" && isL2;
+  const deactivateButton = status === "Active" && isL2; //disable search tokens UI when the maintenance banner is active and the action is L2
 
   return (
     <Flex

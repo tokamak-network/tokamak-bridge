@@ -1,3 +1,5 @@
+// this banner can be used incase L2 needs to be shut down or for any other notices. Same logics as MaintenanceBanner
+
 import { Flex, Text } from "@chakra-ui/react";
 import {
   relayBannerSelector,
