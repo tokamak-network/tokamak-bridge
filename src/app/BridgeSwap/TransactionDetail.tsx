@@ -53,7 +53,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
-      {gasFee && pcView && (
+      {/* {gasFee && pcView && (
         <Flex
           w={"100%"}
           h={"54px"}
@@ -88,7 +88,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
             </Flex>
           </Flex>
         </Flex>
-      )} 
+      )}  */}
     </Flex>
   );
 };
@@ -264,7 +264,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
           {gasFee && (
             <Text
-              ml={layer === "L2" ? 0 : "27px"}
+            ml={"27px"}
               fontWeight={500}
               color={isOpen ? "#fff" : "#A0A3AD"}
             >

@@ -189,12 +189,11 @@ export function useTransactionDetail() {
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {
-          title:
-            layer === "L2"
-              ? "Estimated L2 execution fee (sans L1 fee)"
-              : "Estimated gas fees",
-          content: isOpen ? "" : `${layer === "L1" ? totalGasFee : ""} `,
-          gasFee: layer === "L1" ? `$${gasCostUS}` : `${totalGasFee}`,
+         title:
+            "Estimated gas fees",
+          content: isOpen ? "" : `${totalGasFee} `,
+          gasFee: `$${gasCostUS}`,
+
         },
       ];
     }
