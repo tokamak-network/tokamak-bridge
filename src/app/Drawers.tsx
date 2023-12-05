@@ -1,7 +1,8 @@
-import AccountHistory from "@/components/history/AccountHistory";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import { tData } from "@/types/activity/history";
+import AccountHistory from "@/components/history/AccountHistory";
+import HamburgerMenu from "@/components/header/HamburgerMenu";
 
 export default function Drawers() {
   // const tData = useGetTransaction();
@@ -9,5 +10,10 @@ export default function Drawers() {
   //   return tData
   // },[tData])
 
-  return <AccountHistory />;
+  return (
+    <>
+      <AccountHistory />
+      <HamburgerMenu />
+    </>
+  );
 }

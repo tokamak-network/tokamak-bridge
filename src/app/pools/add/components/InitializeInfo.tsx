@@ -8,19 +8,21 @@ import { initialPrice } from "@/recoil/pool/setPoolPosition";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { trimAmount } from "@/utils/trim";
 import { useState, useMemo } from "react";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export default function InitializeInfo() {
   const [poolStatus] = usePool();
   const [inputIntialPrice, setInitialPrice] = useRecoilState(initialPrice);
   const { inToken, outToken } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);
+  const { isTONatPair } = useIsTon();
 
   const valueProp = useMemo(() => {
     if (Number(inputIntialPrice) === 0) return undefined;
     return isFocused ? inputIntialPrice : trimAmount(inputIntialPrice, 20);
   }, [isFocused, inputIntialPrice]);
 
-  if (poolStatus === PoolState.NOT_EXISTS)
+  if (poolStatus === PoolState.NOT_EXISTS && !isTONatPair)
     return (
       <Flex flexDir={"column"}>
         <Title title="Set Starting Price" />
@@ -58,7 +60,7 @@ export default function InitializeInfo() {
             onChange={(e) => {
               setInitialPrice(e.target.value);
             }}
-            value={valueProp ?? undefined}
+            value={valueProp === undefined ? "" : valueProp}
             boxShadow={"none !important"}
             fontSize={18}
             fontWeight={500}

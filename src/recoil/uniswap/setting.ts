@@ -29,7 +29,7 @@ export const uniswapTxSettingSelector = selector<UniswapTxSetting>({
 
     return {
       slippage: new Percent(Number(slippage.replaceAll(".", "")) * 100, 10_000),
-      deadline: Math.floor(Date.now() / 1000) + 60 * deadline,
+      deadline,
     };
   },
 });

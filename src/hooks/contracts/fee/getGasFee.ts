@@ -1,10 +1,9 @@
-import { getL2Provider } from "@/config/l2Provider";
 import useCallDeposit from "@/hooks/bridge/actions/useCallDeposit";
 import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
@@ -12,7 +11,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
 import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useAccount, useFeeData, usePublicClient } from "wagmi";
@@ -24,6 +23,7 @@ import useConnectedNetwork from "@/hooks/network";
 
 export function useGasFee() {
   const { address } = useAccount();
+  const [gasLimit, setGasLimit] = useState<BigInt | undefined>(undefined);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
@@ -34,22 +34,20 @@ export function useGasFee() {
   const providers = useGetTxLayers();
   const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
 
-  //   const { provider } = useProvier();
-  const provider = usePublicClient();
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
   const { layer, connectedChainId } = useConnectedNetwork();
-  const { provider: l2Prov } = useProvier();
+  const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
-  const l2Pro = layer === "L2" ? l2Prov : getProvider(providers.l2Provider);
+  const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
+  const { estimatedGasUsage } = useSwapTokens();
 
   const swapGasUseEstimate = useMemo(() => {
-    if (routingPath && tokenMarketPrice) {
-      const { gasUseEstimate } = routingPath;
-      return gasUseEstimate;
+    if (estimatedGasUsage) {
+      return estimatedGasUsage;
     }
-  }, [routingPath]);
+  }, [estimatedGasUsage]);
 
   const withdrawContract = new ethers.Contract(
     TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
@@ -76,7 +74,7 @@ export function useGasFee() {
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
-                  //@ts-ignore
+                //@ts-ignore
                 account: address,
                 //@ts-ignore
                 args: [200000, "0x"],
@@ -86,7 +84,7 @@ export function useGasFee() {
             }
 
             return _depositERC20_contract.estimateGas.depositERC20({
-                //@ts-ignore
+              //@ts-ignore
               account: address,
               //@ts-ignore
               args: [
@@ -139,8 +137,9 @@ export function useGasFee() {
     };
     fetchEstimatedGas()
       .then((estimatedGasUsage) => {
-        if (provider && estimatedGasUsage && feeData) {
-          const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+        if (estimatedGasUsage && feeData) {
+          setGasLimit(BigInt(Number(estimatedGasUsage)));
+          const { gasPrice } = feeData;
           if (gasPrice) {
             if (mode !== "Withdraw") {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
@@ -176,7 +175,6 @@ export function useGasFee() {
     _withdraw_contract,
     provider,
     feeData,
-    l2Prov,
     swapGasUseEstimate,
   ]);
 

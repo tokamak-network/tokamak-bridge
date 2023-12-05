@@ -8,13 +8,27 @@ import ActionButton from "../components/ActionButton";
 import IncreaseModal from "../../components/IncreaseModal";
 import TxDetails from "../components/TxDetails";
 import RemoveModal from "../../components/RemoveModal";
-import { usePathname } from "next/navigation";
-import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
-import UnclaimedEarnings from "../../[info]/components/UnclaimedEarnings";
+import { redirect, usePathname } from "next/navigation";
+import {
+  useGetPositionIdFromPath,
+  usePositionInfo,
+} from "@/hooks/pool/useGetPositionIds";
+import UnclaimedEarnings, {
+  CollectFeeAsWETH,
+} from "../../[info]/components/UnclaimedEarnings";
 import ClaimEarningsModal from "../../[info]/components/ClaimEarningsModal";
+import { useIsOwner } from "@/hooks/pool/useIsOwner";
 
 export default function RemoveLiquidity() {
-  const { positionId } = useGetPositionIdFromPath();
+  const { positionId, chainIdParam, backwardLink } = useGetPositionIdFromPath();
+  const { info } = usePositionInfo();
+  const { needToRedirect } = useIsOwner(info);
+
+  if (needToRedirect) {
+    redirect(backwardLink);
+  }
+
+  if (info === undefined) return null;
 
   return (
     <Flex flexDir={"column"} rowGap={"8px"}>
@@ -22,7 +36,7 @@ export default function RemoveLiquidity() {
         title="Remove Liquidity"
         clear={false}
         switcher={false}
-        backwardLink={`/pools/${positionId}`}
+        backwardLink={backwardLink}
       />
       <Flex
         border="1px solid #20212B"
@@ -32,15 +46,16 @@ export default function RemoveLiquidity() {
       >
         <Flex flexDirection={"column"} rowGap={"16px"} maxW={"364px"}>
           <Range page="removeLiquidity" />
-          <UnclaimedEarnings />
+          <UnclaimedEarnings info={info} />
           <SelectPercentage />
           <TxDetails />
+          <CollectFeeAsWETH />
           <ActionButton />
         </Flex>
       </Flex>
       <IncreaseModal />
       <RemoveModal />
-      <ClaimEarningsModal />
+      <ClaimEarningsModal info={info} />
     </Flex>
   );
 }

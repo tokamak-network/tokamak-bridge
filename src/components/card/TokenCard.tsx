@@ -2,12 +2,23 @@ import { TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Text, TextProps, useTheme } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useCallback, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { networkStatus } from "@/recoil/bridgeSwap/atom";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  networkStatus,
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
-import { type } from "os";
 import { isETH } from "@/utils/token/isETH";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import "@fontsource/quicksand/500.css";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { trimAmount } from "@/utils/trim";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import GradientSpinner from "../ui/gradientSpinner";
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -26,6 +37,10 @@ type TokenCardProps = {
   style?: {};
   type?: TokenCardSizeType;
   forBridge?: boolean;
+  isPrice?: boolean;
+  isInput?: boolean;
+  requireCall?: boolean;
+  watch?: boolean;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -108,9 +123,14 @@ export default function TokenCard(props: TokenCardProps) {
     style,
     type,
     forBridge,
+    isPrice,
+    isInput,
+    requireCall,
+    watch,
   } = props;
   const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
+
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenSymbol) {
       case "ETH":
@@ -138,7 +158,7 @@ export default function TokenCard(props: TokenCardProps) {
     }
   }, [tokenInfo]);
 
-  const tokenData = useTokenBalance(tokenInfo);
+  const tokenData = useTokenBalance(tokenInfo, requireCall, watch);
   const thisTokenIsETH = isETH(tokenInfo);
   const theme = useTheme();
 
@@ -149,6 +169,143 @@ export default function TokenCard(props: TokenCardProps) {
     return setAgreeToAdd(true);
   }, [agreeToAdd]);
 
+  const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
+  const [outTokenInfo] = useRecoilState(selectedOutTokenStatus);
+  const { amountOut } = useSwapTokens();
+
+  const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
+    tokenName: inTokenInfo?.tokenName as string,
+    amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const { pcView } = useMediaView();
+  const { mode } = useGetMode();
+
+  const outAmount = useMemo(() => {
+    if (
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
+      inTokenInfo?.parsedAmount
+    ) {
+      return inTokenInfo.parsedAmount;
+    }
+    return amountOut;
+  }, [mode, inTokenInfo, amountOut]);
+
+  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
+    tokenName: outTokenInfo?.tokenName as string,
+    amount: Number(outAmount),
+  });
+  const cache = useMemo(() => {
+    return notAdded ? (
+      <Flex flexDir={"column"} alignItems={"center"}>
+        <Text fontSize={12} color={"#222222"} w={"206px"}>
+          This token isn’t traded on leading U.S. centralized exchanges or
+          frequently swapped on Tokamak Network. Always conduct your own
+          research before trading.
+        </Text>
+        <Button
+          w={"206px"}
+          h={"40px"}
+          my={"20px"}
+          bg={"#007AFF"}
+          _hover={{}}
+          _active={{}}
+          fontSize={16}
+          fontWeight={600}
+          onClick={() => addNewCard}
+        >
+          I Agree
+        </Button>
+        <Text fontSize={16} fontWeight={400} color={"#222222"}>
+          Cancel
+        </Text>
+      </Flex>
+    ) : forBridge ? (
+      <Flex flexDir={"column"} rowGap={"13px"}>
+        <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
+          <Text fontWeight={500}>Balance: </Text>
+          <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
+        </Flex>
+      </Flex>
+    ) : (
+      <Flex
+        flexDir={"column"}
+        mt={"auto"}
+        color={"#222"}
+        rowGap={type === "small" ? "8px" : type === "medium" ? "9px" : "12px"}
+      >
+        {!isPrice && (
+          <>
+            <Text
+              fontWeight={400}
+              fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
+              h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
+            >
+              balance:{" "}
+            </Text>
+
+            {pcView ? (
+              <Text
+                fontWeight={700}
+                fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
+                h={
+                  type === "small"
+                    ? "33px"
+                    : type === "medium"
+                    ? "40px"
+                    : "40px"
+                }
+              >
+                {tokenData?.data.parsedBalance}
+              </Text>
+            ) : (
+              <Text fontWeight={700} fontSize={18}>
+                {tokenData?.data.parsedBalance}
+              </Text>
+            )}
+          </>
+        )}
+
+        {
+          isPrice && (
+            <Flex flexDir={"column"} rowGap={0}>
+              <Text
+                h={"28px"}
+                fontFamily={theme.fonts.Quicksand}
+                fontWeight={700}
+                fontSize={22}
+                textOverflow={"ellipsis"}
+              >
+                {isInput
+                  ? inTokenInfo?.parsedAmount || "0"
+                  : trimAmount(outAmount, 10) || "0"}
+              </Text>
+              <Text
+                fontFamily={theme.fonts.Quicksand}
+                fontWeight={700}
+                fontSize={10}
+              >
+                ${isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
+              </Text>
+            </Flex>
+          )
+        }
+      </Flex>
+    );
+  }, [
+    notAdded,
+    tokenData?.data.parsedBalance,
+    forBridge,
+    isInput,
+    inTokenInfo,
+    outTokenInfo,
+    inTokenWithPrice,
+    outTokenWithPrice,
+  ]);
+
   return (
     <Flex
       w={typeof w === "string" ? w : `${w ?? 200}px`}
@@ -156,38 +313,58 @@ export default function TokenCard(props: TokenCardProps) {
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
       opacity={isNew ? 0.25 : 0.85}
       border={`3px solid ${tokenColorCode} `}
-      borderRadius={"16px"}
+      borderRadius={{ base: "9px", lg: "16px" }}
       pos={"relative"}
-      pt={"15px"}
+      pt={{ base: "12px", lg: "15px" }}
       pb={type === "small" ? "13px" : type === "medium" ? "15px" : "30px"}
       overflow={"hidden"}
       flexDir={"column"}
       justifyContent={"space-between"}
-      px={"16px"}
+      px={{ base: "12px", lg: "16px" }}
       cursor={"pointer"}
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />
-      <Flex justifyContent={"space-between"} w={"100%"}>
-        <TokenTitle
-          tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
-          isName={true}
-          style={{
-            fontSize:
-              type === "small" ? "16px" : type === "medium" ? "20px" : "22px",
-          }}
-        />
-        <TokenTitle
-          tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
-          isName={false}
-          style={{
-            fontSize:
-              type === "small" ? "12px" : type === "medium" ? "16px" : "18px",
-          }}
-        />
-      </Flex>
+
+      {pcView && (
+        <Flex justifyContent={"space-between"} w={"100%"}>
+          <TokenTitle
+            tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+            isName={true}
+            style={{
+              fontSize:
+                type === "small" ? "16px" : type === "medium" ? "20px" : "22px",
+            }}
+          />
+          <TokenTitle
+            tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
+            isName={false}
+            style={{
+              fontSize:
+                type === "small" ? "12px" : type === "medium" ? "16px" : "18px",
+            }}
+          />
+        </Flex>
+      )}
+
+      {!pcView && (
+        <Flex
+          flexDir={"column"}
+          justifyContent={"space-between"}
+          w={"100%"}
+          color={"#222222"}
+        >
+          <Text fontWeight={700} fontSize={16} zIndex={100}>
+            {tokenInfo?.tokenSymbol ?? "TOK"}
+          </Text>
+          <Text fontWeight={700} fontSize={10} zIndex={100}>
+            {thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+          </Text>
+        </Flex>
+      )}
+
       <Flex
         // pt={"25px"}
         // pb={"37px"}
@@ -195,6 +372,7 @@ export default function TokenCard(props: TokenCardProps) {
         h={"100%"}
         justifyContent={"center"}
         alignItems={notAdded ? "baseline" : "center"}
+        my={{ base: "10px", lg: "0px" }}
       >
         <TokenSymbol
           w={symbolSize?.w ?? (notAdded ? 40 : 92)}
@@ -202,60 +380,7 @@ export default function TokenCard(props: TokenCardProps) {
           tokenType={tokenInfo?.tokenSymbol}
         />
       </Flex>
-      {notAdded ? (
-        <Flex flexDir={"column"} alignItems={"center"}>
-          <Text fontSize={12} color={"#222222"} w={"206px"}>
-            This token isn’t traded on leading U.S. centralized exchanges or
-            frequently swapped on Tokamak Network. Always conduct your own
-            research before trading.
-          </Text>
-          <Button
-            w={"206px"}
-            h={"40px"}
-            my={"20px"}
-            bg={"#007AFF"}
-            _hover={{}}
-            _active={{}}
-            fontSize={16}
-            fontWeight={600}
-            onClick={() => addNewCard}
-          >
-            I Agree
-          </Button>
-          <Text fontSize={16} fontWeight={400} color={"#222222"}>
-            Cancel
-          </Text>
-        </Flex>
-      ) : forBridge ? (
-        <Flex flexDir={"column"} rowGap={"13px"}>
-          <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-            <Text fontWeight={400}>Balance: </Text>
-            <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
-          </Flex>
-        </Flex>
-      ) : (
-        <Flex
-          flexDir={"column"}
-          mt={"auto"}
-          color={"#222"}
-          rowGap={type === "small" ? "8px" : type === "medium" ? "9px" : "12px"}
-        >
-          <Text
-            fontWeight={400}
-            fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
-            h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
-          >
-            balance:{" "}
-          </Text>
-          <Text
-            fontWeight={700}
-            fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
-            h={type === "small" ? "33px" : type === "medium" ? "40px" : "40px"}
-          >
-            {tokenData?.data.parsedBalance}
-          </Text>
-        </Flex>
-      )}
+      {cache}
     </Flex>
   );
 }

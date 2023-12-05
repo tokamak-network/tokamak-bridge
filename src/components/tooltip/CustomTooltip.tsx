@@ -3,10 +3,15 @@ import { ReactNode, useState } from "react";
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
-  tooltipLabel?: string;
+  tooltipLabel?: string | ReactNode;
   style?: {
     width?: string;
+    maxW?: string;
     bgColor?: string;
+    height?: string;
+    px?: string;
+    py?: string;
+    tooltipLineHeight?: string;
   };
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -17,8 +22,10 @@ export default function CustomTooltip(props: {
       defaultIsOpen={false}
       isOpen={isOpen}
       bg={'transparent'}
+      zIndex={10000}
       label={
         <Box
+          w={"100%"}
           flex={1}
           px={"8px"}
           h={"28px"}
@@ -35,7 +42,7 @@ export default function CustomTooltip(props: {
           <Text
             w={"100%"}
             h={"100%"}
-            lineHeight={"28px"}
+            lineHeight={props.style?.tooltipLineHeight ?? "28px"}
             textAlign={"center"}
             verticalAlign={"center"}
           >

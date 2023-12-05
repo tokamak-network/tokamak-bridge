@@ -5,7 +5,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "../token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
 import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
-import { useAmountOut } from "../swap/useSwapTokens";
+import { useSwapTokens } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
 import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
@@ -168,7 +168,7 @@ export function useTransactionDetail() {
     return null;
   }, [mode, inToken, totalGasFee, inputAmount]);
 
-  const { amountOut } = useAmountOut();
+  const { amountOut, minimumReceived } = useSwapTokens();
   const { priceImpact } = usePriceImpact();
   const { isOpen } = useConfirm();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
@@ -185,14 +185,16 @@ export function useTransactionDetail() {
           title: isOpen
             ? "Minimum received"
             : "Minimum received after slippage",
-          content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
+          content: `${commafy(minimumReceived, 4)} ${outToken?.tokenSymbol}`,
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {
           title:
-            "Estimated gas fees",
-          content: isOpen ? "" : `${totalGasFee} `,
-          gasFee: `$${gasCostUS}`,
+            layer === "L2"
+              ? "Estimated L2 execution fee (sans L1 fee)"
+              : "Estimated gas fees",
+          content: isOpen ? "" : `${layer === "L1" ? totalGasFee : ""} `,
+          gasFee: layer === "L1" ? `$${gasCostUS}` : `${totalGasFee}`,
         },
       ];
     }

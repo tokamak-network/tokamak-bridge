@@ -4,30 +4,35 @@ import { poolModalStatus } from "@/recoil/modal/atom";
 import { useMemo } from "react";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { ApproveButtonsContrainer } from "../../add/ActionButton";
+import { useApproveToken } from "@/hooks/pool/useApproveToken";
 
-const ActionButton = (props: { step: string }) => {
-  const { step } = props;
+const ActionButton = () => {
   const [, setPoolModal] = useRecoilState(poolModalStatus);
 
   const handleAction = () => {
     return setPoolModal("increaseLiquidity");
   };
 
-  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { deposit0Disabled, deposit1Disabled, pool } = usePoolInfo();
   const { isBalanceOver, isInputZero, isOutInputZero, isOutTokenBalanceOver } =
     useInputBalanceCheck();
+  const { inTokenApproved, outTokenApproved } = useApproveToken();
 
   const btnIsDisabled = useMemo(() => {
-    if (deposit0Disabled) {
-      if (inverted) return isBalanceOver || isInputZero;
-      return isOutTokenBalanceOver || isOutInputZero;
-    }
     if (deposit1Disabled) {
-      if (inverted) return isOutTokenBalanceOver || isOutInputZero;
-      return isBalanceOver || isInputZero;
+      return isBalanceOver || isInputZero || !inTokenApproved;
+    }
+    if (deposit0Disabled) {
+      return isOutTokenBalanceOver || isOutInputZero || !outTokenApproved;
     }
     return (
-      isBalanceOver || isOutTokenBalanceOver || isInputZero || isOutInputZero
+      isBalanceOver ||
+      isOutTokenBalanceOver ||
+      isInputZero ||
+      isOutInputZero ||
+      !inTokenApproved ||
+      !outTokenApproved
     );
   }, [
     deposit0Disabled,
@@ -36,11 +41,30 @@ const ActionButton = (props: { step: string }) => {
     isOutTokenBalanceOver,
     isOutInputZero,
     isInputZero,
-    inverted,
+    inTokenApproved,
+    outTokenApproved,
+  ]);
+
+  const buttonName = useMemo(() => {
+    if (isBalanceOver) return `Insufficient ${pool?.token0.symbol} balance`;
+    if (isOutTokenBalanceOver)
+      return `Insufficient ${pool?.token1.symbol} balance`;
+    if (isOutTokenBalanceOver)
+      return `Insufficient ${pool?.token1.symbol} balance`;
+    if (isInputZero || isOutInputZero) return "Enter an amount";
+    return "Preview";
+  }, [
+    isBalanceOver,
+    isOutTokenBalanceOver,
+    pool?.token0.symbol,
+    pool?.token1.symbol,
+    isInputZero,
+    isOutInputZero,
   ]);
 
   return (
-    <Flex w={"100%"}>
+    <Flex w={"100%"} flexDir={"column"} rowGap={"12px"}>
+      <ApproveButtonsContrainer />
       <Button
         w={"100%"}
         h={"48px"}
@@ -54,7 +78,7 @@ const ActionButton = (props: { step: string }) => {
         onClick={handleAction}
         isDisabled={btnIsDisabled}
       >
-        <Text>{step}</Text>
+        <Text>{buttonName}</Text>
       </Button>
     </Flex>
   );

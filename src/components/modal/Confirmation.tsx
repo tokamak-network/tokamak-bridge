@@ -1,4 +1,3 @@
-import { transactionModalStatus } from "@/recoil/modal/atom";
 import {
   Modal,
   ModalOverlay,
@@ -6,47 +5,46 @@ import {
   Flex,
   Text,
   Box,
-  Link,
+  Link as ChakraLink,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { useRecoilState, useRecoilValue } from "recoil";
+import Link from "next/link";
+import { useRecoilValue } from "recoil";
 import "@/css/spinner.css";
 import ConfirmedImage from "assets/image/modal/confirmed.svg";
 import ErrorImage from "assets/image/modal/error.svg";
-
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";
 import { useTransaction } from "@/hooks/tx/useTx";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { txHashStatus } from "@/recoil/global/transaction";
-import { Overlay_Index } from "@/types/style/overlayIndex";
+import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
+import { useRouter } from "next/navigation";
+import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
+import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
 
 export default function Confirmation() {
-  // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
-  // const isConfirming = modalOpen === "confirming";
-  // const isConfirmed = modalOpen === "confirmed";
-  // const isError = modalOpen === "error";
-
-  const { blockExplorer } = useConnectedNetwork();
-  const { confirmedTransaction } = useTransaction();
+  const { blockExplorer, connectedChainId } = useConnectedNetwork();
   const txHash = useRecoilValue(txHashStatus);
 
-  const {
-    isConfirmed,
-    isConfirming,
-    isError,
-    isOpen,
-    setIsOpen,
-    closeModal,
-    isClaiming,
-  } = useTxConfirmModal();
+  const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
+    useTxConfirmModal();
+  const { mode, subMode } = useGetMode();
+  const txLog = useRecoilValue(txHashLog);
+  const { positionId } = useGetPositionIdFromPath();
 
-  const { mode } = useGetMode();
+  const closeThisModal = useCallback(() => {
+    closeModal();
+  }, [closeModal]);
+
+  const subModeValue = Object.keys(subMode).filter(
+    (key) => subMode[key as keyof typeof subMode] === true
+  );
+
   return (
-    <Modal isOpen={isOpen} onClose={closeModal}>
+    <Modal isOpen={isOpen} onClose={closeThisModal}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}
@@ -64,13 +62,27 @@ export default function Confirmation() {
           alignItems={"center"}
         >
           <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeModal} />
+            {/*it's for fetching new data after tx confirmed on those pages */}
+            {(subMode.add || subMode.increase || subMode.remove) &&
+            isConfirmed ? (
+              <Link
+                href={`/pools/${txLog?.logs?.tokenId.toString()}?chainId=${connectedChainId}`}
+              >
+                <CloseButton onClick={closeThisModal} />
+              </Link>
+            ) : (
+              <CloseButton onClick={closeThisModal} />
+            )}
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
-            {isClaiming
-              ? "Confirming Claim"
-              : isConfirming
-              ? `Confirming ${mode}`
+            {isConfirming
+              ? `Confirming ${
+                  subModeValue.length === 1
+                    ? capitalizeFirstChar(subModeValue[0])
+                    : mode === "Pool"
+                    ? "Claim"
+                    : mode
+                }`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError
@@ -109,14 +121,14 @@ export default function Confirmation() {
             {isConfirming ? (
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
-              <Link
+              <ChakraLink
                 href={`${blockExplorer}/tx/${txHash}`}
                 isExternal={true}
                 textDecoration={"underline"}
                 w={"100%"}
               >
                 See your transaction history
-              </Link>
+              </ChakraLink>
             ) : isError ? (
               "Error occurred, please try again."
             ) : null}

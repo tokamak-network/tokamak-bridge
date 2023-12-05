@@ -14,6 +14,7 @@ import {
 } from "@/constant/contracts";
 import { isETH } from "@/utils/token/isETH";
 import { useGetMode } from "../mode/useGetMode";
+import { useDebounce } from "../network/useDebounce";
 
 const getPath = async (queryParmam: string | undefined | null) => {
   if (queryParmam === undefined || queryParmam === null) {
@@ -35,12 +36,11 @@ const getPath = async (queryParmam: string | undefined | null) => {
 };
 
 export function useSmartRouter() {
-  const { connectedChainId } = useConnectedNetwork();
   const { inToken, outToken } = useInOutTokens();
-  const [routeNotFounded, setRouteNotFounded] = useState<boolean>(false);
   const { address } = useAccount();
   const txSettingValue = useRecoilValue(uniswapTxSetting);
-  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { layer, isConnectedToMainNetwork, connectedChainId } =
+    useConnectedNetwork();
   const { mode } = useGetMode();
 
   const queryParam = useMemo(() => {
@@ -96,10 +96,13 @@ export function useSmartRouter() {
 
   const [, setIsLoading] = useIsLoading();
 
+  const debouncedQueryParam = useDebounce(queryParam, 1000);
+
   const { isLoading, error, data, isError, isLoadingError } = useQuery({
-    queryKey: [queryParam],
+    queryKey: [debouncedQueryParam],
     queryFn: () => getPath(queryParam),
     refetchInterval: 99999999,
+    cacheTime: 10000,
     // refetchOnMount: false,
   });
 
@@ -107,11 +110,11 @@ export function useSmartRouter() {
     setIsLoading(isLoading);
   }, [isLoading]);
 
-  useEffect(() => {
+  const routeNotFounded = useMemo(() => {
     if (error) {
-      return setRouteNotFounded(true);
+      return true;
     }
-    setRouteNotFounded(false);
+    return false;
   }, [error]);
 
   return { routingPath: data, routeNotFounded };

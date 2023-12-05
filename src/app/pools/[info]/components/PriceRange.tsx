@@ -1,11 +1,12 @@
-import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
-import { Flex, Text, Box } from "@chakra-ui/layout";
+import { Flex, Text } from "@chakra-ui/layout";
 import Title from "../../add/components/Title";
 import { PriceRangeInfo } from "@/pools/components/PriceRangeInfo";
-import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
+import { PoolCardDetail } from "../../components/PoolCard";
 
-export default function PriceRange() {
-  const { info } = usePositionInfo();
+export default function PriceRange(props: {
+  info: PoolCardDetail | undefined;
+}) {
+  const { info } = props;
 
   if (info === undefined) {
     return null;

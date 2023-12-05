@@ -32,7 +32,7 @@ export default function HalfLoadingTx(props: { tx: any }) {
   return (
     <Flex
       h={"160px"}
-      w="336px"
+      w={{ baes:"100%", lg:"336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}
       bg={"#15161D"}

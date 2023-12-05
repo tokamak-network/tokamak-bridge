@@ -51,6 +51,7 @@ export default function InToken() {
               hasInput={true}
               inNetwork={true}
               forBridge={true}
+              watch={true}
             />
           ) : (
             <Box

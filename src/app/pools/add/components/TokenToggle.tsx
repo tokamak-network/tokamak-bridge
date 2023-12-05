@@ -1,11 +1,19 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetPool, useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
+import { useRecoilState } from "recoil";
+import { ATOM_addInverted } from "@/recoil/pool/positions";
 
 export default function ToggleSwitch() {
   const { invertTokenPair } = useInOutTokens();
   const { pool } = useGetPool();
   const { invertPrice } = useV3MintInfo();
+  const [inverted, setInvert] = useRecoilState(ATOM_addInverted);
+
+  const onClick = () => {
+    invertTokenPair();
+    setInvert(!inverted);
+  };
 
   return (
     <Flex
@@ -25,7 +33,7 @@ export default function ToggleSwitch() {
         h={"24px !important"}
         bg={!invertPrice ? "#313442" : "transparent"}
         borderRadius={!invertPrice ? "8px" : ""}
-        onClick={invertTokenPair}
+        onClick={onClick}
         alignItems={"center"}
       >
         <Text verticalAlign={"center"} lineHeight={"24px"}>
@@ -37,7 +45,7 @@ export default function ToggleSwitch() {
         h={"24px !important"}
         bg={invertPrice ? "#313442" : "transparent"}
         borderRadius={invertPrice ? "8px" : ""}
-        onClick={invertTokenPair}
+        onClick={onClick}
         alignItems={"center"}
       >
         <Text verticalAlign={"center"} lineHeight={"24px"}>

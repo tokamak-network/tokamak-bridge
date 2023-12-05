@@ -17,12 +17,10 @@ import { useCallback, useState } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import { CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
-import { fromReadableAmount } from "@/utils/uniswap/libs/converstion";
+import { BigintIsh, CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import { useAccount, useFeeData } from "wagmi";
-import { sendTransaction } from "@/utils/uniswap/libs/provider";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
+import { lastFocusedInput, poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
@@ -31,13 +29,22 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { PoolState } from "@/types/pool/pool";
-import { useGetAmountForLiquidity } from "./useGetAmountForLiquidity";
 import { usePositionInfo } from "./useGetPositionIds";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useGetMarketPrice } from "../price/useGetMarketPrice";
 import { useTx } from "../tx/useTx";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
+import JSBI from "jsbi";
+import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
+import { uniswapTxSetting } from "@/recoil/uniswap/setting";
+import { encodeMulticall } from "@/utils/contract/encodeMulticall";
+import { useIncreaseAmount } from "./useIncreaseAmount";
+import {
+  calculateGasMargin,
+  getSingleCalldataGasLimit,
+} from "@/utils/txn/calculateGasMargin";
+import { useSettingValue } from "../uniswap/useSettingValue";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -47,14 +54,24 @@ export function usePoolMint() {
   const feeAmount = useRecoilValue(poolFeeStatus);
 
   const [poolStatus, poolData] = usePool();
-  const { ticks, poolForPosition, noLiquidity } = useV3MintInfo();
+  const {
+    ticks,
+    poolForPosition,
+    noLiquidity,
+    dependentAmount,
+    invertPrice,
+    deposit0Disabled,
+    deposit1Disabled,
+  } = useV3MintInfo();
   const pool = poolStatus === PoolState.EXISTS ? poolData : poolForPosition;
-  const { invertAmount } = useGetAmountForLiquidity();
+  const lastFocused = useRecoilValue(lastFocusedInput);
 
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
-
   const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { token0Input, token1Input } = useIncreaseAmount();
+  const settingValues = useSettingValue();
 
   const mintPosition = useCallback(
     async (estimateGas?: boolean) => {
@@ -65,7 +82,8 @@ export function usePoolMint() {
         address &&
         ticks.LOWER &&
         ticks.UPPER &&
-        feeAmount
+        feeAmount &&
+        provider
       ) {
         const configuredPool = new Pool(
           pool.token0,
@@ -78,17 +96,11 @@ export function usePoolMint() {
 
         const token0 = CurrencyAmount.fromRawAmount(
           pool.token0,
-          fromReadableAmount(
-            Number(invertAmount ? outToken.parsedAmount : inToken.parsedAmount),
-            pool.token0.decimals
-          ).toString()
+          JSBI.BigInt(token0Input?.toString() ?? 0)
         );
         const token1 = CurrencyAmount.fromRawAmount(
           pool.token1,
-          fromReadableAmount(
-            Number(invertAmount ? inToken.parsedAmount : outToken.parsedAmount),
-            pool.token1.decimals
-          ).toString()
+          JSBI.BigInt(token1Input?.toString() ?? 0)
         );
 
         const positionToMint = Position.fromAmounts({
@@ -103,8 +115,8 @@ export function usePoolMint() {
         if (positionToMint) {
           const mintOptions: MintOptions = {
             recipient: address,
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-            slippageTolerance: new Percent(50, 10_000),
+            deadline: settingValues.deadlineBySeconds,
+            slippageTolerance: settingValues.slippage,
           };
 
           // get calldata for minting a position
@@ -115,8 +127,8 @@ export function usePoolMint() {
             );
 
           //for ETH value
-          const inIsEth = invertAmount ? isETH(outToken) : isETH(inToken);
-          const outIsETH = invertAmount ? isETH(inToken) : isETH(outToken);
+          const inIsEth = invertPrice ? isETH(outToken) : isETH(inToken);
+          const outIsETH = invertPrice ? isETH(inToken) : isETH(outToken);
           const inWeiAmount = ethers.BigNumber.from(token0.quotient.toString());
           const outWeiAmount = ethers.BigNumber.from(
             token1.quotient.toString()
@@ -157,35 +169,81 @@ export function usePoolMint() {
               ? [calldata, refundETHData]
               : [calldata];
 
-          try {
-            const tx = estimateGas
-              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                  multicallParam,
-                  {
-                    gasLimit: 8000000,
-                    value: inIsEth
-                      ? inHexAmount
-                      : outIsETH
-                      ? outHexAmount
-                      : value,
-                    from: address,
-                  }
-                )
-              : await NonfungiblePositionManagerContract.multicall(
-                  multicallParam,
-                  {
-                    gasLimit: 8000000,
-                    value: inIsEth
-                      ? inHexAmount
-                      : outIsETH
-                      ? outHexAmount
-                      : value,
-                    from: address,
-                  }
+          // // Specify the function and parameters you want to call
+          // const functionName = "multicall"; // The function you want to call on the NFT Position Manager contract
+          // const functionParams = [multicallParam]; // Add your multicallParam here
+
+          // // Encode the function call data
+          // const functionData =
+          //   NonfungiblePositionManagerContract.interface.encodeFunctionData(
+          //     functionName,
+          //     functionParams
+          //   );
+
+          // Calculate the total value based on your conditions
+          const totalValue = inIsEth
+            ? inHexAmount
+            : outIsETH
+            ? outHexAmount
+            : value;
+
+          const txData = {
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            from: address,
+            value: totalValue,
+          };
+
+          // Create a TransactionRequest object
+          const transactionRequest = encodeMulticall({
+            ...txData,
+            contract: NonfungiblePositionManagerContract,
+            multicallParam: multicallParam,
+          });
+
+          const isLayer2 = Boolean(layer === "L2");
+
+          const gasLimit =
+            multicallParam.length === 1
+              ? await getSingleCalldataGasLimit(provider, txData, calldata)
+              : await calculateGasLimit(
+                  provider,
+                  transactionRequest,
+                  isLayer2,
+                  isConnectedToMainNetwork
                 );
-            if (estimateGas) return tx;
-            if (tx.hash) return setTxHash(tx.hash);
+
+          if (estimateGas) return gasLimit;
+
+          try {
+            if (multicallParam.length === 1 && gasLimit) {
+              const tx = await provider.getSigner().sendTransaction({
+                ...txData,
+                data: calldata,
+                gasLimit,
+              });
+              if (tx.hash) return setTxHash(tx.hash as Hash);
+              return;
+            }
+
+            if (gasLimit) {
+              const tx = await NonfungiblePositionManagerContract.multicall(
+                multicallParam,
+                {
+                  gasLimit,
+                  value: inIsEth
+                    ? inHexAmount
+                    : outIsETH
+                    ? outHexAmount
+                    : value,
+                  from: address,
+                  // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
+                }
+              );
+              if (tx.hash) return setTxHash(tx.hash);
+              return;
+            }
           } catch (e) {
+            console.log(e);
             if (!estimateGas) {
               setModalOpen("error");
             }
@@ -201,9 +259,18 @@ export function usePoolMint() {
       UNISWAP_CONTRACT,
       pool,
       ticks,
-      invertAmount,
+      invertPrice,
       feeAmount,
       noLiquidity,
+      lastFocused,
+      dependentAmount,
+      deposit0Disabled,
+      deposit1Disabled,
+      layer,
+      isConnectedToMainNetwork,
+      token0Input,
+      token1Input,
+      settingValues,
     ]
   );
 
@@ -237,215 +304,177 @@ export function usePoolMint() {
 }
 
 export function usePoolContract() {
-  const { mode } = useGetMode();
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
-  const { layer, chainName } = useConnectedNetwork();
+  const { layer, chainName, isConnectedToMainNetwork } = useConnectedNetwork();
   const { provider } = useProvier();
   const { address } = useAccount();
-  const feeAmount = useRecoilValue(poolFeeStatus);
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
   const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
-  const getPoolInfo = useCallback(
-    async (tokenA?: Token, tokenB?: Token) => {
-      if (inToken && outToken && feeAmount) {
-        const currentPoolAddress = computePoolAddress({
-          factoryAddress: UNISWAP_CONTRACT.POOL_FACTORY_CONTRACT_ADDRESS,
-          tokenA: tokenA ?? inToken.token,
-          tokenB: tokenB ?? outToken.token,
-          fee: feeAmount,
-          initCodeHashManualOverride:
-            layer === "L2" ? L2_initCodeHashManualOverride : undefined,
-        });
+  const { info } = usePositionInfo();
+  const settingValues = useSettingValue();
 
-        const POOL_CONTRACT = new ethers.Contract(
-          currentPoolAddress,
-          IUniswapV3PoolABI.abi,
-          provider
+  const increaseLiquidity = useCallback(
+    async (estimatedGas?: boolean) => {
+      if (address && info && (inToken || outToken)) {
+        const {
+          token0,
+          token1,
+          rawPositionInfo,
+          tickCurrent,
+          tickLower,
+          tickUpper,
+          sqrtPriceX96,
+          id,
+        } = info;
+        const { fee, liquidity } = rawPositionInfo;
+
+        const token0Amount = CurrencyAmount.fromRawAmount(
+          token0,
+          inToken?.amountBN?.toString() ?? "0"
+        );
+        const token1Amount = CurrencyAmount.fromRawAmount(
+          token1,
+          outToken?.amountBN?.toString() ?? "9"
         );
 
-        const [token0, token1, fee, tickSpacing, liquidity, slot0] =
-          await Promise.all([
-            POOL_CONTRACT.token0(),
-            POOL_CONTRACT.token1(),
-            POOL_CONTRACT.fee(),
-            POOL_CONTRACT.tickSpacing(),
-            POOL_CONTRACT.liquidity(),
-            POOL_CONTRACT.slot0(),
-          ]);
-
-        return {
+        const configuredPool = new Pool(
           token0,
           token1,
           fee,
-          tickSpacing,
-          liquidity,
-          sqrtPriceX96: slot0[0],
-          tick: slot0[1],
-        };
-      }
-    },
-    [mode, inToken, outToken, feeAmount]
-  );
-
-  const constructPosition = useCallback(
-    async (
-      token0Amount: CurrencyAmount<Token>,
-      token1Amount: CurrencyAmount<Token>
-    ): Promise<Position | undefined> => {
-      // get pool info
-      const poolInfo = await getPoolInfo();
-
-      if (poolInfo) {
-        // construct pool instance
-        const configuredPool = new Pool(
-          token0Amount.currency,
-          token1Amount.currency,
-          poolInfo.fee,
-          poolInfo.sqrtPriceX96.toString(),
-          poolInfo.liquidity.toString(),
-          poolInfo.tick
+          sqrtPriceX96,
+          liquidity.toString(),
+          tickCurrent
         );
 
-        // create position using the maximum liquidity from input amounts
-        return Position.fromAmounts({
+        const positionToIncreaseBy = Position.fromAmounts({
           pool: configuredPool,
-          tickLower:
-            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) -
-            poolInfo.tickSpacing * 2,
-          tickUpper:
-            nearestUsableTick(poolInfo.tick, poolInfo.tickSpacing) +
-            poolInfo.tickSpacing * 2,
+          tickLower,
+          tickUpper,
           amount0: token0Amount.quotient,
           amount1: token1Amount.quotient,
           useFullPrecision: true,
         });
+
+        const addLiquidityOptions: AddLiquidityOptions = {
+          deadline: settingValues.deadlineBySeconds,
+          slippageTolerance: settingValues.slippage,
+          tokenId: id,
+        };
+        if (positionToIncreaseBy) {
+          const { calldata, value } =
+            NonfungiblePositionManager.addCallParameters(
+              positionToIncreaseBy,
+              addLiquidityOptions
+            );
+
+          //for ETH value
+          const inIsEth = isETH(inToken);
+          const outIsETH = isETH(outToken);
+          const inWeiAmount = ethers.BigNumber.from(
+            token0Amount.quotient.toString()
+          );
+          const outWeiAmount = ethers.BigNumber.from(
+            token1Amount.quotient.toString()
+          );
+          const inHexAmount = ethers.utils.hexlify(inWeiAmount);
+          const outHexAmount = ethers.utils.hexlify(outWeiAmount);
+
+          //refundETH
+          //it will return if All ETH won't be used to be deposit for some reasons like a price change
+          const NonfungiblePositionManagerContract = new Contract(
+            UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            NONFUNGIBLE_POSITION_MANAGER_ABI,
+            getProviderOrSigner(provider, address)
+          );
+
+          const refundETHData =
+            NonfungiblePositionManagerContract.interface.encodeFunctionData(
+              "refundETH"
+            );
+
+          const multicallParam =
+            inIsEth || outIsETH ? [calldata, refundETHData] : [calldata];
+          const txValue = inIsEth
+            ? inHexAmount
+            : outIsETH
+            ? outHexAmount
+            : value;
+          const isLayer2 = Boolean(layer === "L2");
+
+          const txData = {
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            from: address,
+            value: txValue,
+          };
+
+          const transactionRequest = encodeMulticall({
+            ...txData,
+            contract: NonfungiblePositionManagerContract,
+            multicallParam,
+          });
+
+          const gasLimit =
+            multicallParam.length === 1
+              ? await getSingleCalldataGasLimit(provider, txData, calldata)
+              : await calculateGasLimit(
+                  provider,
+                  transactionRequest,
+                  isLayer2,
+                  isConnectedToMainNetwork
+                );
+
+          if (estimatedGas) return gasLimit;
+
+          try {
+            if (multicallParam.length === 1 && gasLimit) {
+              const tx = await provider.getSigner().sendTransaction({
+                ...txData,
+                data: calldata,
+                gasLimit,
+              });
+              if (tx.hash) return setTxHash(tx.hash as Hash);
+              return;
+            }
+
+            if (gasLimit) {
+              const tx = await NonfungiblePositionManagerContract.multicall(
+                multicallParam,
+                {
+                  gasLimit,
+                  value: inIsEth
+                    ? inHexAmount
+                    : outIsETH
+                    ? outHexAmount
+                    : value,
+                  from: address,
+                }
+              );
+              if (tx.hash) return setTxHash(tx.hash);
+              return;
+            }
+          } catch (e) {
+            console.log(e);
+            setModalOpen("error");
+          }
+        }
       }
-      return undefined;
     },
-    []
+    [
+      provider,
+      inToken,
+      outToken,
+      address,
+      UNISWAP_CONTRACT,
+      layer,
+      isConnectedToMainNetwork,
+      settingValues,
+    ]
   );
 
-  const { info } = usePositionInfo();
-
-  const addLiquidity = useCallback(async () => {
-    if (address && info) {
-      const {
-        token0,
-        token1,
-        rawPositionInfo,
-        tickCurrent,
-        tickLower,
-        tickUpper,
-        sqrtPriceX96,
-        id,
-      } = info;
-      const { fee, liquidity } = rawPositionInfo;
-
-      const token0Amount = CurrencyAmount.fromRawAmount(
-        token0,
-        fromReadableAmount(
-          Number(inToken?.parsedAmount ?? 0),
-          inToken?.decimals ?? 0
-        ).toString()
-      );
-      const token1Amount = CurrencyAmount.fromRawAmount(
-        token0,
-        fromReadableAmount(
-          Number(outToken?.parsedAmount ?? 0),
-          outToken?.decimals ?? 0
-        ).toString()
-      );
-
-      const configuredPool = new Pool(
-        token0,
-        token1,
-        fee,
-        sqrtPriceX96,
-        liquidity.toString(),
-        tickCurrent
-      );
-
-      const positionToIncreaseBy = Position.fromAmounts({
-        pool: configuredPool,
-        tickLower,
-        tickUpper,
-        amount0: token0Amount.quotient,
-        amount1: token1Amount.quotient,
-        useFullPrecision: true,
-      });
-
-      const addLiquidityOptions: AddLiquidityOptions = {
-        deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-        slippageTolerance: new Percent(50, 10_000),
-        tokenId: id,
-      };
-      if (positionToIncreaseBy) {
-        const { calldata, value } =
-          NonfungiblePositionManager.addCallParameters(
-            positionToIncreaseBy,
-            addLiquidityOptions
-          );
-
-        //for ETH value
-        const inIsEth = isETH(inToken);
-        const outIsETH = isETH(outToken);
-        const inWeiAmount = ethers.BigNumber.from(
-          token0Amount.quotient.toString()
-        );
-        const outWeiAmount = ethers.BigNumber.from(
-          token1Amount.quotient.toString()
-        );
-        const inHexAmount = ethers.utils.hexlify(inWeiAmount);
-        const outHexAmount = ethers.utils.hexlify(outWeiAmount);
-
-        //refundETH
-        //it will return if All ETH won't be used to be deposit for some reasons like a price change
-        const NonfungiblePositionManagerContract = new Contract(
-          UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-          NONFUNGIBLE_POSITION_MANAGER_ABI,
-          getProviderOrSigner(provider, address)
-        );
-
-        const refundETHData =
-          NonfungiblePositionManagerContract.interface.encodeFunctionData(
-            "refundETH"
-          );
-
-        const multicallParam =
-          inIsEth || outIsETH ? [calldata, refundETHData] : [calldata];
-
-        try {
-          const tx = await NonfungiblePositionManagerContract.multicall(
-            multicallParam,
-            {
-              gasLimit: 3000000,
-              value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
-              from: address,
-            }
-          );
-
-          if (tx.hash) return setTxHash(tx.hash);
-        } catch (e) {
-          setModalOpen("error");
-        }
-
-        // build transaction
-        // const transaction = {
-        //   data: [calldata, refundETHData],
-        //   to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-        //   value: value,
-        //   from: address,
-        // };
-        // return sendTransaction(transaction);
-      }
-    }
-  }, [provider, inToken, outToken, address, UNISWAP_CONTRACT]);
-
-  const [, poolData] = usePool(info?.token0, info?.token1, info?.fee);
   const [txHashToRemoveLiquidity, setTxHashToRemoveLiquidity] = useState<
     Hash | undefined
   >(undefined);
@@ -453,6 +482,7 @@ export function usePoolContract() {
     hash: txHashToRemoveLiquidity,
     txSort: "Remove Liquidity",
   });
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   const removeLiquidity = useCallback(
     async (
@@ -460,17 +490,8 @@ export function usePoolContract() {
       removeLiquidityPercentage: number | undefined,
       estimateGas?: boolean
     ) => {
-      console.log("--removeLiquidity--");
-      console.log(info, address, positionId, removeLiquidityPercentage);
-
       try {
-        if (
-          info &&
-          address &&
-          positionId &&
-          removeLiquidityPercentage &&
-          poolData
-        ) {
+        if (info && address && positionId && removeLiquidityPercentage) {
           const {
             token0,
             token1,
@@ -478,90 +499,123 @@ export function usePoolContract() {
             tickCurrent,
             tickLower,
             tickUpper,
-            sqrtPriceX96,
+            // sqrtPriceX96,
           } = info;
-          const { fee, liquidity } = rawPositionInfo;
-
-          const token0Amount = CurrencyAmount.fromRawAmount(
-            token0,
-            fromReadableAmount(
-              Number(info.token0Amount),
-              token0.decimals
-            ).toString()
-          );
-          const token1Amount = CurrencyAmount.fromRawAmount(
-            token0,
-            fromReadableAmount(
-              Number(info.token1Amount),
-              token1.decimals
-            ).toString()
-          );
+          const { fee, liquidity, sqrtPriceX96 } = rawPositionInfo;
 
           const configuredPool = new Pool(
             token0,
             token1,
             fee,
             sqrtPriceX96,
-            liquidity.toString(),
+            liquidity,
             tickCurrent
           );
 
-          const currentPosition = Position.fromAmounts({
+          const currentPosition = new Position({
             pool: configuredPool,
             tickLower,
             tickUpper,
-            amount0: token0Amount.quotient,
-            amount1: token1Amount.quotient,
-            useFullPrecision: true,
+            liquidity: liquidity.toString(),
           });
 
           const collectOptions: Omit<CollectOptions, "tokenId"> = {
             expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(token0, 0),
             expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(token1, 0),
-            recipient: address,
+            recipient:
+              collectAsWETH || !info.hasETH
+                ? address
+                : "0x0000000000000000000000000000000000000000",
           };
 
           const removeLiquidityOptions: RemoveLiquidityOptions = {
-            deadline: Math.floor(Date.now() / 1000) + 60 * 20,
-            slippageTolerance: new Percent(50, 10_000),
+            deadline: settingValues.deadlineBySeconds,
+            slippageTolerance: settingValues.slippage,
             tokenId: positionId,
             // percentage of liquidity to remove
             liquidityPercentage: new Percent(removeLiquidityPercentage, 100),
             collectOptions,
           };
 
-          console.log("currentPosition");
-          console.log(currentPosition);
-
-          if (currentPosition) {
+          if (currentPosition && chainName) {
             const { calldata, value } =
               NonfungiblePositionManager.removeCallParameters(
                 currentPosition,
                 removeLiquidityOptions
               );
+
             const NonfungiblePositionManagerContract = new Contract(
               UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
               NONFUNGIBLE_POSITION_MANAGER_ABI,
               getProviderOrSigner(provider, address)
             );
+            const amountMinimum = 0;
+            const unwrapWETH9 =
+              NonfungiblePositionManagerContract.interface.encodeFunctionData(
+                "unwrapWETH9",
+                [amountMinimum, address]
+              );
+            const WETH_ADDRESS = getWETHAddress(chainName);
+            const token0IsNative =
+              WETH_ADDRESS.toLowerCase() === token0.address.toLowerCase();
+            const sweepTokenAddress = token0IsNative
+              ? token1.address
+              : token0.address;
 
-            const tx = estimateGas
-              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                  [calldata],
-                  {
-                    gasLimit: 3000000,
-                    value,
-                    from: address,
-                  }
+            const sweepToken =
+              NonfungiblePositionManagerContract.interface.encodeFunctionData(
+                "sweepToken",
+                [sweepTokenAddress, amountMinimum, address]
+              );
+            const multicallParam = [calldata, unwrapWETH9, sweepToken];
+            const transactionRequest = encodeMulticall({
+              contract: NonfungiblePositionManagerContract,
+              to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+              from: address,
+              value: undefined,
+              multicallParam,
+            });
+
+            const txn = {
+              data: calldata,
+              to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+              from: address,
+              value,
+            };
+
+            const gasLimit = info.hasETH
+              ? await calculateGasLimit(
+                  provider,
+                  transactionRequest,
+                  layer === "L2",
+                  false
                 )
-              : await NonfungiblePositionManagerContract.multicall([calldata], {
-                  gasLimit: 3000000,
-                  value,
-                  from: address,
-                });
+              : await provider.estimateGas(txn);
 
-            if (estimateGas) return tx;
-            if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash);
+            if (estimateGas) return gasLimit;
+
+            try {
+              if (info.hasETH && collectAsWETH === false && gasLimit) {
+                const tx = await NonfungiblePositionManagerContract.multicall(
+                  multicallParam,
+                  {
+                    gasLimit,
+                  }
+                );
+                if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                return;
+              }
+              if (gasLimit) {
+                const tx = await provider.getSigner().sendTransaction({
+                  ...txn,
+                  gasLimit: calculateGasMargin(gasLimit),
+                });
+                if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                return;
+              }
+            } catch (e) {
+              console.log(e);
+            }
           }
         }
       } catch (e) {
@@ -571,10 +625,18 @@ export function usePoolContract() {
         }
       }
     },
-    [provider, info, address, UNISWAP_CONTRACT, poolData]
+    [
+      provider,
+      info,
+      address,
+      UNISWAP_CONTRACT,
+      layer,
+      chainName,
+      settingValues,
+      collectAsWETH,
+    ]
   );
 
-  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
   const [txHashToCollect, setTxHashToCollect] = useState<Hash | undefined>(
     undefined
   );
@@ -585,8 +647,8 @@ export function usePoolContract() {
 
   const collectFees = useCallback(
     async (estimateGas?: boolean) => {
-      console.log("--collectFees--");
-      console.log(info, address);
+      // console.log("--collectFees--");
+      // console.log(info, address);
       if (info && address && provider && chainName) {
         const token0 = info.token0;
         const token1 = info.token1;
@@ -595,17 +657,13 @@ export function usePoolContract() {
           tokenId: info.id,
           expectedCurrencyOwed0: CurrencyAmount.fromRawAmount(
             token0,
-            fromReadableAmount(
-              Number(info.token0CollectedFee),
-              token0.decimals
-            ).toString()
+            //@ts-ignore
+            info.token0CollectedFeeBN as BigintIsh
           ),
           expectedCurrencyOwed1: CurrencyAmount.fromRawAmount(
             token1,
-            fromReadableAmount(
-              Number(info.token1CollectedFee),
-              token1.decimals
-            ).toString()
+            //@ts-ignore
+            info.token1CollectedFeeBN as BigintIsh
           ),
           recipient: address,
         };
@@ -617,8 +675,6 @@ export function usePoolContract() {
         );
 
         if (info.hasETH && collectAsWETH === false) {
-          console.log("collect as ETH");
-
           const collectData =
             NonfungiblePositionManagerContract.interface.encodeFunctionData(
               "collect",
@@ -650,47 +706,64 @@ export function usePoolContract() {
               "sweepToken",
               [sweepTokenAddress, amountMinimum, address]
             );
+          const multicallParam = [collectData, unwrapWETH9, sweepToken];
+
+          const transactionRequest = encodeMulticall({
+            contract: NonfungiblePositionManagerContract,
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            from: address,
+            value: undefined,
+            multicallParam,
+          });
+          const isLayer2 = Boolean(layer === "L2");
+          const gasLimit = await calculateGasLimit(
+            provider,
+            transactionRequest,
+            isLayer2,
+            isConnectedToMainNetwork
+          );
+
+          if (estimateGas) return gasLimit;
+
           try {
-            const tx = estimateGas
-              ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                  [collectData, unwrapWETH9, sweepToken],
-                  {
-                    gasLimit: 3000000,
-                  }
-                )
-              : await NonfungiblePositionManagerContract.multicall(
-                  [collectData, unwrapWETH9, sweepToken],
-                  {
-                    gasLimit: 3000000,
-                  }
-                );
-            if (estimateGas) return tx;
+            const tx = await NonfungiblePositionManagerContract.multicall(
+              multicallParam,
+              {
+                gasLimit,
+              }
+            );
             if (tx.hash) return setTxHashToCollect(tx.hash);
           } catch (e) {
+            console.log(e);
             if (!estimateGas) {
-              setModalOpen("error");
+              return setModalOpen("error");
             }
           }
         }
 
         //collect as WETH
         try {
-          const { calldata, value } =
+          const { calldata } =
             NonfungiblePositionManager.collectCallParameters(collectOptions);
-          const tx = estimateGas
-            ? await NonfungiblePositionManagerContract.estimateGas.multicall(
-                [calldata],
-                {
-                  gasLimit: 3000000,
-                }
-              )
-            : await NonfungiblePositionManagerContract.multicall([calldata], {
-                gasLimit: 3000000,
-              });
-          if (estimateGas) return tx;
-          if (tx.hash) return setTxHashToCollect(tx.hash);
+
+          const txn = {
+            data: calldata,
+            to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+            from: address,
+            value: undefined,
+          };
+
+          const gasLimit = await provider.estimateGas(txn);
+
+          if (estimateGas) return calculateGasMargin(gasLimit);
+          const tx = await provider.getSigner().sendTransaction({
+            ...txn,
+            gasLimit: calculateGasMargin(gasLimit),
+          });
+          if (tx.hash) return setTxHashToCollect(tx.hash as Hash);
         } catch (e) {
-          setModalOpen("error");
+          console.log(e);
+          return setModalOpen("error");
         }
       }
     },
@@ -702,6 +775,7 @@ export function usePoolContract() {
       collectAsWETH,
       provider,
       chainName,
+      layer,
     ]
   );
 
@@ -710,21 +784,45 @@ export function usePoolContract() {
     tokenName: "ethereum",
   });
 
+  const estimateGasToIncrease = useCallback(async () => {
+    if (feeData && ethPrice) {
+      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const estimatedGasUsage = await increaseLiquidity(true);
+
+      if (estimatedGasUsage) {
+        const totalGasCost =
+          Number(gasPrice) * Number(estimatedGasUsage.toString());
+
+        const parsedTotalGasCost = ethers.utils.formatUnits(
+          totalGasCost.toString(),
+          "ether"
+        );
+
+        const totalGasCostUSD =
+          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
+
+        return totalGasCostUSD;
+      }
+    }
+  }, [feeData, ethPrice]);
+
   const estimateGasToCollect = useCallback(async () => {
     if (feeData && ethPrice) {
       const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
       const estimatedGasUsage = await collectFees(true);
-      const totalGasCost =
-        Number(gasPrice) * Number(estimatedGasUsage.toString());
-      const parsedTotalGasCost = ethers.utils.formatUnits(
-        totalGasCost.toString(),
-        "ether"
-      );
+      if (estimatedGasUsage) {
+        const totalGasCost =
+          Number(gasPrice) * Number(estimatedGasUsage.toString());
+        const parsedTotalGasCost = ethers.utils.formatUnits(
+          totalGasCost.toString(),
+          "ether"
+        );
 
-      const totalGasCostUSD =
-        Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
+        const totalGasCostUSD =
+          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
-      return totalGasCostUSD;
+        return totalGasCostUSD;
+      }
     }
   }, [feeData, ethPrice]);
 
@@ -740,30 +838,29 @@ export function usePoolContract() {
           removeLiquidityPercentage,
           true
         );
-        const totalGasCost =
-          Number(gasPrice) * Number(estimatedGasUsage.toString());
-        const parsedTotalGasCost = ethers.utils.formatUnits(
-          totalGasCost.toString(),
-          "ether"
-        );
+        if (estimatedGasUsage) {
+          const totalGasCost =
+            Number(gasPrice) * Number(estimatedGasUsage.toString());
+          const parsedTotalGasCost = ethers.utils.formatUnits(
+            totalGasCost.toString(),
+            "ether"
+          );
 
-        console.log("parsedTotalGasCost");
-        console.log(parsedTotalGasCost);
-        console.log(ethPrice);
+          const totalGasCostUSD =
+            Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
-        const totalGasCostUSD =
-          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
-
-        return totalGasCostUSD;
+          return totalGasCostUSD;
+        }
       }
     },
     [feeData, ethPrice]
   );
 
   return {
-    addLiquidity,
+    increaseLiquidity,
     removeLiquidity,
     collectFees,
+    estimateGasToIncrease,
     estimateGasToCollect,
     estimateGasToRemove,
   };

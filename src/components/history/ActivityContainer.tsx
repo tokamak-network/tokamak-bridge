@@ -232,7 +232,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      h={"calc(100vh - 165px)"}
+      h={{ base:"calc(100vh - 248px)", lg: "calc(100vh - 165px)" }}
       bg={"transparent"}
       w="100%"
 
@@ -266,8 +266,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       {getLayerFiltered.length > getPaginatedData.length &&
         tData.loadingState === "present" && (
           <Flex
-            mb={"32px"}
-            mt={"32px"}
+            my={{ base:"16px", lg: "32px" }}
             justifyContent={"center"}
             alignItems={"start"}
           >

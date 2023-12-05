@@ -8,13 +8,49 @@ import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
+import GradientSpinner from "@/components/ui/gradientSpinner";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { ATOM_positionForInfo_loading } from "@/recoil/pool/positions";
+import { NoPosition } from "./components/NoPosition";
+import { useEffect } from "react";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { removeAmount } from "@/recoil/pool/setPoolPosition";
 
 export default function Page() {
   const { info } = usePositionInfo();
+  const isLoading = useRecoilValue(ATOM_positionForInfo_loading);
+
+  const { initializeTokenPairAmount } = useInOutTokens();
+  const [, setAmountPercentage] = useRecoilState(removeAmount);
+
+  //initialize input values
+  useEffect(() => {
+    initializeTokenPairAmount();
+    setAmountPercentage(0);
+  }, []);
+
+  if (isLoading) {
+    return (
+      <Flex w={"95%"} flexDir={"column"}>
+        <Flex h={"25px"}>
+          <GradientSpinner />
+        </Flex>
+        <Flex mt={"10px"} justifyContent={"space-between"}>
+          <Flex w={"49%"} h={"25px"}>
+            <GradientSpinner />
+          </Flex>
+          <Flex w={"49%"} h={"25px"}>
+            <GradientSpinner />
+          </Flex>
+        </Flex>
+      </Flex>
+    );
+  }
 
   if (info === undefined) {
-    return <>{`position id not found with this account :(`}</>;
+    return <NoPosition />;
   }
+
   return (
     <Flex w={"424px"} flexDir="column">
       <InfoHeader />
@@ -26,13 +62,15 @@ export default function Page() {
         borderRadius={"16px"}
         flexGrow={1}
         rowGap={"16px"}
+        height={"720px"}
+        maxH={"720px"}
       >
-        <InfoTitle />
-        <Liquidity />
-        <UnclaimedEarnings />
-        <PriceRange />
+        <InfoTitle info={info} />
+        <Liquidity info={info} />
+        <UnclaimedEarnings info={info} />
+        <PriceRange info={info} />
       </Flex>
-      <ClaimEarningsModal />
+      <ClaimEarningsModal info={info} />
     </Flex>
   );
 }
