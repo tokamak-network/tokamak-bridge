@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 
 export const handUiOpenedStatus = atom<boolean>({
-  key: "searchTokenStatus",
+  key: "handUiOpenStatus",
   default: false,
 });

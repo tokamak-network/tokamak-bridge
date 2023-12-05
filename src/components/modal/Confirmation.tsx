@@ -47,15 +47,16 @@ export default function Confirmation() {
     <Modal isOpen={isOpen} onClose={closeThisModal}>
       <ModalOverlay />
       <ModalContent
-        h={"100%"}
+        w={"254px"}
+        h={"350px"}
         bg={"transparent"}
         justifyContent={"center"}
         alignItems={"center"}
-        m={0}
+        m={"auto"}
       >
         <Flex
-          w={"254px"}
-          h={"350px"}
+          w={"full"}
+          h={"full"}
           bgColor={"#1f2128"}
           borderRadius={"16px"}
           flexDir={"column"}

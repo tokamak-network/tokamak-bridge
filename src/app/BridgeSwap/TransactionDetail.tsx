@@ -95,9 +95,11 @@ const DepositDetailRow = (props: DepositDetailProp) => {
 
 const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
+  const { mobileView } = useMediaView();
+  
   return (
     <Flex flexDir={"column"}>
-      <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
+      <Flex justifyContent={"space-between"} fontSize={{ base: 11, lg: 14 }} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
         <Text fontWeight={500}>
           {tooltip ? (
@@ -107,7 +109,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
           )}
         </Text>
       </Flex>
-      {gasFee && (
+      {gasFee && !mobileView && (
         <Flex
           w={"100%"}
           h={"54px"}
@@ -266,8 +268,8 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   );
 };
 
-const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
-  const { isExpanded, isOnConfirm } = props;
+const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean; isMobile?: boolean }) => {
+  const { isExpanded, isOnConfirm, isMobile } = props;
   const { mode } = useRecoilValue(actionMode);
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
@@ -325,7 +327,7 @@ const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
-          <DivisionLine></DivisionLine>
+          <DivisionLine />
           <Flex flexDir={"column"} rowGap={"10px"}>
             {detailRow}
           </Flex>
@@ -350,7 +352,7 @@ const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean }) => {
                 ></Checkbox>
                 <Text
                   lineHeight={"20px"}
-                  fontSize={14}
+                  fontSize={{ base: 13, lg: 14 }}
                   fontWeight={500}
                   color={isConfirm ? "#fff" : "#A0A3AD"}
                 >
@@ -488,8 +490,8 @@ const Title = (props: {
   return null;
 };
 
-export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
-  const { isOnConfirm } = props;
+export default function TransactionDetail(props: { isOnConfirm?: boolean, isMobile?: boolean }) {
+  const { isOnConfirm, isMobile } = props;
   const { isOpen } = useConfirm();
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
@@ -520,16 +522,16 @@ export default function TransactionDetail(props: { isOnConfirm?: boolean }) {
     <Flex
       w={"100%"}
       // h={isExpanded ? "310px" : "48px"}
-      minH={"48px"}
+      minH={{ base: "40px", lg: "48px" }}
       bg={"#1f2128"}
       borderRadius={"8px"}
-      px={ "20px"}
+      px={!isMobile ? { base: "16px", lg: "20px" } : ""}
       flexDir={"column"}
-      pt={ isExpanded ? "20px" : "14px"}
-      pb={ isExpanded ? "20px" : ""}
+      pt={!isMobile ? { base: isExpanded ? "16px" : "11px", lg: isExpanded ? "20px" : "14px" } : ""}
+      pb={{ base: isExpanded ? "12px" : "", lg: isExpanded ? "20px" : "" }}
     >
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      <Content isExpanded={isExpanded} isOnConfirm={isOnConfirm}></Content>
+      <Content isExpanded={isExpanded} isOnConfirm={isOnConfirm} isMobile={isMobile}></Content>
     </Flex>
   );
 }

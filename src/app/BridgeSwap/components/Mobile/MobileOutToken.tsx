@@ -8,10 +8,11 @@ import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import TokenCard from "@/components/card/TokenCard";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 const MobileInToken = () => {
   const { outNetwork } = useRecoilValue(networkStatus);
-  const { mode } = useRecoilValue(actionMode);
+  const { mode, swapSection } = useGetMode();
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { outToken } = useInOutTokens();
 
@@ -21,7 +22,7 @@ const MobileInToken = () => {
       w={"148px"}
       h={"184px"}
       cursor={"pointer"}
-      onClick={() => setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })}
+      onClick={() => swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })}
     >
       {outToken?.tokenName ? (
         <TokenCard
@@ -39,7 +40,7 @@ const MobileInToken = () => {
           w={"148px"}
           h={"184px"}
           border={"2px dashed #313442"}
-          rounded={"9px"}
+        rounded={"9px"}
           justify={"center"}
           align={"center"}
           rowGap={"8px"}

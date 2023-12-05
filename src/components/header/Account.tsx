@@ -58,8 +58,8 @@ export default function Account() {
     >
       {isConnected && txPending ? (
         <Flex columnGap={"8px"}>
-          <Spinner color={"#007AFF"} />
-          <Text fontSize={18} fontWeight={500}>
+          <Spinner size={{base: "sm", lg:"md"}} color={"#007AFF"} />
+          <Text fontSize={{ base: 12, lg: 18 }} fontWeight={500}>
             {/* {pendingTransaction.length} */} Pending
           </Text>
         </Flex>
