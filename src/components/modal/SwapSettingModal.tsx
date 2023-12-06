@@ -23,6 +23,7 @@ const SwapSettingModal = () => {
       onClose={() => {
         setSettingStatus(false);
       }}
+      size={"xl"}
     >
       <ModalOverlay opacity={0.1} />
       <ModalContent
