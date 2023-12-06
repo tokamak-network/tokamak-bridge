@@ -25,6 +25,7 @@ import checkDone from "assets/icons/check_done.svg";
 import checkProgress from "assets/icons/check_progress.svg";
 import checkTodo from "assets/icons/check_todo.svg";
 import CalendarIcon from "assets/icons/Google_Calendar_icon.svg";
+import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
 import "./CalendarButton.css";
 import { atcb_action } from "add-to-calendar-button";
 import { TokenSymbol } from "../image/TokenSymbol";
@@ -59,6 +60,7 @@ import { txDataStatus } from "@/recoil/global/transaction";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 type TxType = FullWithTx & {
   inTokenAmount: string;
@@ -131,6 +133,7 @@ export default function ConfirmWithdraw() {
     const { tx } = props;
     const { inToken } = useInOutTokens();
     const [usdPrice, setUsdPrice] = useState(0);
+    const { mode } = useGetMode();
 
     // const tokenPrice = useMemo(async () => {
     //   const marketPrice = await fetchMarketPrice(
@@ -149,6 +152,7 @@ export default function ConfirmWithdraw() {
     }, [inToken, tx]);
     return (
       <Flex
+        pos={"relative"}
         bg="transparent"
         w={{ base: "full", lg: "176px" }}
         pt={{ base: "26px", lg: "30px" }}
@@ -160,6 +164,24 @@ export default function ConfirmWithdraw() {
         flexDir={"column"}
         alignItems={"center"}
       >
+        {mobileView && (
+          <Flex
+            pos={"absolute"}
+            top={"0px"}
+            right={"0px"}
+            w={"34px"}
+            h={"34px"}
+            borderRadius={"0px 9px 0px 9px"}
+            bg={"#2E3140"}
+            justify={"center"}
+            align={"center"}
+            zIndex={100}
+          >
+            <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
+              <Image alt="eth" src={mode === "Withdraw" ? TitanHalfRounded : ""} />
+            </Flex>
+          </Flex>
+        )}
         {mobileView ? (
           <TokenSymbol
             tokenType={inToken?.tokenSymbol ?? "default"}

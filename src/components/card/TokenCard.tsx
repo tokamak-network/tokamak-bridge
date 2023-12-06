@@ -174,14 +174,12 @@ export default function TokenCard(props: TokenCardProps) {
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(selectedOutTokenStatus);
   const { amountOut } = useSwapTokens();
 
-  console.log(outTokenInfo);
-
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { pcView } = useMediaView();
+  const { pcView, mobileView } = useMediaView();
   const { mode } = useGetMode();
 
   const outAmount = useMemo(() => {
@@ -204,7 +202,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   useEffect(() => {
     if (mode === "Pool") return;
-    if (!isInput && outTokenInfo && amountOut) {
+    if (!isInput && outTokenInfo && amountOut && mobileView) {
       const value: string = amountOut;
       if (value === "" || value === null) {
         return setOutTokenInfo({
