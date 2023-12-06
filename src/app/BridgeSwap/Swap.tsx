@@ -41,8 +41,6 @@ export default function Swap() {
       return setOutTokenRecoilValue(inTokenRecoilValue);
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
-
-  console.log('inTokenRecoilValue',inTokenRecoilValue,'outTokenRecoilValue',outTokenRecoilValue );
   
   return (
     <>
