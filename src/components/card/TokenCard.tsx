@@ -174,8 +174,6 @@ export default function TokenCard(props: TokenCardProps) {
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(selectedOutTokenStatus);
   const { amountOut } = useSwapTokens();
 
-  console.log(outTokenInfo);
-
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
