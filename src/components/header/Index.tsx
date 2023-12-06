@@ -52,6 +52,7 @@ import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import HamburgerMenu from "./HamburgerMenu";
 
 const menuList = [
   {
@@ -196,7 +197,7 @@ export default function Header() {
     <Flex
       minW={"100%"}
       zIndex={
-        actionModalStatus && mobileView
+        actionModalStatus && mobileView && !isMobileMenu
           ? Overlay_Index.AlwaysTop
           : Overlay_Index.Header
       }
@@ -348,7 +349,7 @@ export default function Header() {
             border={"1px solid #313442"}
             cursor={"pointer"}
             onClick={() => {
-              setActionMethod(false);
+              // setActionMethod(false);
               setMobileMenuOpen(true);
             }}
           >

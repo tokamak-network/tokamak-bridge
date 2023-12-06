@@ -26,6 +26,7 @@ import useTxConfirmModal from "../modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useProvier } from "../provider/useProvider";
+import useMediaView from "../mediaView/useMediaView";
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
@@ -173,6 +174,8 @@ export function useTx(params: {
   const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
+  const { mobileView } = useMediaView();
+
   useEffect(() => {
     if (connectedChainId !== exChainId) {
       setTxPending(false);
@@ -186,7 +189,7 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess) {
-      if (mode === "Deposit" || mode === "Withdraw") {
+      if ((mode === "Deposit" || mode === "Withdraw") && !mobileView) {
         setIsAccountDrawerOpen(true);
       }
       return setModalOpen("confirmed");
