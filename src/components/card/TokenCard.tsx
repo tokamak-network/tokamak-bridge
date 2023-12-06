@@ -1,7 +1,7 @@
 import { TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Text, TextProps, useTheme } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   networkStatus,
@@ -19,6 +19,7 @@ import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import GradientSpinner from "../ui/gradientSpinner";
+import { ethers } from "ethers";
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -170,8 +171,10 @@ export default function TokenCard(props: TokenCardProps) {
   }, [agreeToAdd]);
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
-  const [outTokenInfo] = useRecoilState(selectedOutTokenStatus);
+  const [outTokenInfo, setOutTokenInfo] = useRecoilState(selectedOutTokenStatus);
   const { amountOut } = useSwapTokens();
+
+  console.log(outTokenInfo);
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
@@ -198,6 +201,29 @@ export default function TokenCard(props: TokenCardProps) {
     tokenName: outTokenInfo?.tokenName as string,
     amount: Number(outAmount),
   });
+
+  useEffect(() => {
+    if (mode === "Pool") return;
+    if (!isInput && outTokenInfo && amountOut) {
+      const value: string = amountOut;
+      if (value === "" || value === null) {
+        return setOutTokenInfo({
+          ...outTokenInfo,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+      const parsedAmount = ethers.utils.parseUnits(
+        value,
+        outTokenInfo.decimals
+      );
+      return setOutTokenInfo({
+        ...outTokenInfo,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
+      });
+    }
+  }, [amountOut, mode]);
 
   return (
     <Flex
