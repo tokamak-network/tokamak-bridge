@@ -79,7 +79,7 @@ const zeroAddress = '0x0000000000000000000000000000000000000000'
             color={'#fff'}
             isDisabled={
               tx.currentStatus > 5 ||
-              (txData?.hash.transactionHash !== undefined &&
+              (txData?.hash?.transactionHash !== undefined &&
                 txData?.hash.txSort === "Claim")
             }
             _hover={{}}

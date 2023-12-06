@@ -83,7 +83,7 @@ export default function ConfirmWithdraw() {
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const [txData, setTxData] = useRecoilState(txDataStatus);
 
-  const { mobileView } = useMediaView();
+  const { mobileView, pcView } = useMediaView();
 
   const { data: feeData } = useFeeData({
     chainId: 1,
@@ -178,7 +178,7 @@ export default function ConfirmWithdraw() {
             zIndex={100}
           >
             <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
-              <Image alt="eth" src={mode === "Withdraw" ? TitanHalfRounded : ""} />
+              <Image alt="eth" src={TitanHalfRounded} />
             </Flex>
           </Flex>
         )}
@@ -251,7 +251,7 @@ export default function ConfirmWithdraw() {
           w={40}
           h={40}
         /> */}
-        <Text fontSize={"16px"} mt="12px" fontWeight={{ base: 700, lg: 500 }}>
+        <Text fontSize={"16px"} mt="12px" fontWeight={500}>
           {isConnectedToMainNetwork ? "Ethereum" : "Goerli"}
         </Text>
       </Flex>
@@ -651,12 +651,12 @@ export default function ConfirmWithdraw() {
         alignItems={"center"}
         cursor={"pointer"}
         w="100%"
-        h="70px"
+        h={{base: "fit-content", lg: "70px"}}
         onClick={() => atcb_action(config)}
       >
-        <Text h="19px" fontSize={"12px"} textAlign={"center"}>
+        {pcView && <Text h="19px" fontSize={"12px"} textAlign={"center"}>
           Set calendar reminder to claim withdraw on Ethereum
-        </Text>
+        </Text>}
         <Flex
           mt="6px"
           w="196px"
@@ -687,7 +687,7 @@ export default function ConfirmWithdraw() {
         _hover={{}}
         color={"#fff"}
         isDisabled={
-          txData?.hash.transactionHash !== undefined &&
+          txData?.hash?.transactionHash !== undefined &&
           txData?.hash.txSort === "Claim"
             ? true
             : !tx && isChecked

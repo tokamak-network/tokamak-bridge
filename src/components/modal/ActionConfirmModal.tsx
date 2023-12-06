@@ -130,7 +130,7 @@ const TokenContainer = () => {
         justifyContent={"center"}
         flexDir={"column"}
       >
-        {mobileView && (
+        {mobileView && mode === "Deposit" && (
           <Flex
             pos={"absolute"}
             top={"0px"}
