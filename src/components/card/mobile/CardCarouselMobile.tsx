@@ -1,54 +1,54 @@
-import React, {useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import {
   ResponsiveContainer,
   StackedCarousel,
-} from 'react-stacked-center-carousel';
+} from "react-stacked-center-carousel";
+import { useRecoilValue, useRecoilState } from "recoil";
 
-import TokenCard from '../TokenCard';
-import { useGetTokenList } from '@/hooks/tokenCard/useGetTokenList';
-import { TokenInfo } from '@/types/token/supportedToken';
-import useTokenModal from '@/hooks/modal/useTokenModal';
-import { useInOutTokens } from '@/hooks/token/useInOutTokens';
-import useConnectedNetwork from '@/hooks/network';
-import { tokenModalStatus } from '@/recoil/bridgeSwap/atom';
-
+import TokenCard from "../TokenCard";
+import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
+import { TokenInfo } from "@/types/token/supportedToken";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useConnectedNetwork from "@/hooks/network";
+import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import "@/css/carousel.css";
-import { useRecoilValue } from 'recoil';
 
 const CarouselCard = React.memo((props) => {
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-  const { data, dataIndex, slideIndex } : any = props;
+  const { data, dataIndex, slideIndex }: any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
 
   useEffect(() => {
-    if(slideIndex === 0 ) {
+    if (slideIndex === 0) {
       setSelectedToken(tokenData);
     }
-  },[slideIndex])
+  }, [slideIndex]);
 
   return (
-    tokenData &&
-    <TokenCard
-      w={"148px"}
-      h={"184px"}
-      tokenInfo={tokenData}
-      inNetwork={true}
-      hasInput={true}
-      isNew={tokenData?.isNew}
-      symbolSize={{
-        w: 60,
-        h: 60,
-      }}
-      type={"small"}
-      onClick={() => {
-        try {
-          // setSelectedToken(tokenData);
-        } catch (e) {
-        } finally {
-          onCloseTokenModal();
-        }
-      }}
-    />
+    tokenData && (
+      <TokenCard
+        w={"148px"}
+        h={"184px"}
+        tokenInfo={tokenData}
+        inNetwork={true}
+        hasInput={true}
+        isNew={tokenData?.isNew}
+        symbolSize={{
+          w: 60,
+          h: 60,
+        }}
+        type={"small"}
+        onClick={() => {
+          try {
+            // setSelectedToken(tokenData);
+          } catch (e) {
+          } finally {
+            onCloseTokenModal();
+          }
+        }}
+      />
+    )
   );
 });
 
@@ -56,11 +56,32 @@ export function CardCarouselMobile() {
   const ref: any = React.useRef();
   const { filteredTokenList } = useGetTokenList();
   const { inToken, outToken } = useInOutTokens();
-  const {isOpen} = useRecoilValue(tokenModalStatus);
+  const { isOpen } = useRecoilValue(tokenModalStatus);
+  const [resultTokenArr, setResultTokenArr] = useState<TokenInfo[]>([]);
 
-  const resultTokenList = filteredTokenList.filter(
-    (token) => (isOpen === "INPUT" ? token.tokenName !== outToken?.tokenName : token.tokenName !== inToken?.tokenName)
-  );
+  const move = (input: TokenInfo[], from: number) => {
+    let numberOfDeletedElm = 1;
+
+    const elm = input.splice(from, numberOfDeletedElm)[0];
+
+    numberOfDeletedElm = 0;
+
+    input.splice(0, numberOfDeletedElm, elm);
+    return input;
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      const isSelectedToken = (el: TokenInfo) =>
+        el.tokenName ===
+        (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
+      const resultTokenArr = move(
+        filteredTokenList,
+        filteredTokenList.findIndex(isSelectedToken)
+      );
+      setResultTokenArr(resultTokenArr);
+    }
+  }, []);
 
   return (
     <ResponsiveContainer
@@ -74,7 +95,7 @@ export function CardCarouselMobile() {
               slideComponent={CarouselCard}
               slideWidth={150}
               carouselWidth={parentWidth}
-              data={resultTokenList}
+              data={resultTokenArr}
               currentVisibleSlide={currentVisibleSlide}
               maxVisibleSlide={3}
               customScales={[1, 0.85, 0.4]}
@@ -89,5 +110,5 @@ export function CardCarouselMobile() {
   );
 }
 
-CarouselCard.displayName = 'CarouselCard';
-CardCarouselMobile.displayName = 'ResponsiveCarousel';
+CarouselCard.displayName = "CarouselCard";
+CardCarouselMobile.displayName = "ResponsiveCarousel";
