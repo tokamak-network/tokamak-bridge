@@ -17,6 +17,7 @@ import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
+import "@fontsource/poppins/600.css"
 
 export default function ActionButton() {
   const { isConnected } = useAccount();

@@ -13,9 +13,11 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import CloseButton from "../button/CloseButton";
 import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
+import ARROW from "assets/icons/arrow.svg";
 import Image from "next/image";
 import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
 import ETH from "assets/tokens/ETH2.svg";
+import ETH_Rounded from "assets/tokens/eth_half_rounded.svg";
 import GasImgTodo from "assets/icons/gasStation.svg";
 import GasImgDone from "assets/icons/gasStation_done.svg";
 import GasImgProgress from "assets/icons/gasStation_progress.svg";
@@ -56,6 +58,7 @@ import { FullWithTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 type TxType = FullWithTx & {
   inTokenAmount: string;
@@ -77,6 +80,8 @@ export default function ConfirmWithdraw() {
     useConnectedNetwork();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const [txData, setTxData] = useRecoilState(txDataStatus);
+
+  const { mobileView } = useMediaView();
 
   const { data: feeData } = useFeeData({
     chainId: 1,
@@ -149,17 +154,23 @@ export default function ConfirmWithdraw() {
     return (
       <Flex
         bg="transparent"
-        w="176px"
-        pt="30px"
+        w={{ base: "full", lg: "176px" }}
+        pt={{ base: "26px", lg: "30px" }}
         pb={"24px"}
         // justifyContent={"center"}
-        h="172px"
+        h={{ base: "148px", lg: "172px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         flexDir={"column"}
         alignItems={"center"}
       >
-        <Flex w="56px" h="56px">
+        {mobileView ? (
+          <TokenSymbol
+            tokenType={inToken?.tokenSymbol ?? "default"}
+            w={mobileView ? 48 : 56}
+            h={mobileView ? 48 : 56}
+          />
+        ) : (
           <TokenSymbolWithNetwork
             tokenSymbol={
               tx ? tx.inTokenSymbol : (inToken?.tokenSymbol as string)
@@ -170,11 +181,22 @@ export default function ConfirmWithdraw() {
             networkSymbolH={20}
             networkSymbolW={20}
           />
+        )}
+
+        <Flex
+          fontSize={{ base: 17, lg: 18 }}
+          fontWeight={600}
+          columnGap={"8px"}
+          h={"24px"}
+          mt={"10px"}
+        >
+          <Text fontWeight={600}>
+            {commafy(tx?.inTokenAmount || inToken?.parsedAmount, 2)}{" "}
+          </Text>
+          <Text fontWeight={400}>
+            {tx?.inTokenSymbol || inToken?.tokenSymbol}
+          </Text>
         </Flex>
-        <Text h="24px" mt={"14px"} fontSize={"18px"} fontWeight={600}>
-          {commafy(tx?.inTokenAmount || inToken?.parsedAmount, 2)}{" "}
-          {tx?.inTokenSymbol || inToken?.tokenSymbol}
-        </Text>
         <Text
           h="21px"
           mt={"3px"}
@@ -192,20 +214,18 @@ export default function ConfirmWithdraw() {
   };
 
   const EthereumContainer = () => {
-    const { inToken } = useInOutTokens();
-
     return (
       <Flex
         bg="#0F0F12"
-        w="176px"
-        h="172px"
+        w={{ base: "full", lg: "176px" }}
+        h={{ base: "148px", lg: "172px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         flexDir={"column"}
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <Image src={ETH} alt="ETH" height={40} width={40} />
+        <Image src={mobileView ? ETH_Rounded : ETH} alt="ETH" height={40} width={40} />
         {/* <TokenSymbol
           tokenType={
             tx ? (tx.inTokenSymbol as string) : (inToken?.tokenSymbol as string)
@@ -213,7 +233,7 @@ export default function ConfirmWithdraw() {
           w={40}
           h={40}
         /> */}
-        <Text fontSize={"16px"} mt="12px">
+        <Text fontSize={"16px"} mt="12px" fontWeight={{ base: 700, lg: 500 }}>
           {isConnectedToMainNetwork ? "Ethereum" : "Goerli"}
         </Text>
       </Flex>
@@ -501,7 +521,7 @@ export default function ConfirmWithdraw() {
         flexDir={"column"}
         bg="#15161D"
         borderRadius={"8px"}
-        w="364px"
+        w={{ base: "full", lg: "364px" }}
         h="218px"
         px="12px"
         py="8px"
@@ -679,22 +699,40 @@ export default function ConfirmWithdraw() {
   };
 
   return (
-    <Modal isOpen={withdrawStatus.isOpen} onClose={onClose} isCentered>
+    <Modal
+      isOpen={withdrawStatus.isOpen}
+      onClose={() => {
+        // setClaimTx(null)
+        setWithdrawStatus({
+          isOpen: false,
+        });
+        setWithdrawData({
+          modalData: null,
+        });
+      }}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent
-        w="404px"
+        w={{ base: "full", lg: "404px" }}
         justifyContent={"center"}
         alignItems={"center"}
-        borderRadius={"16px"}
+        borderRadius={{ base: "16px 16px 0px 0px", lg: "16px" }}
         bgColor={"#1f2128"}
-        m={0}
+        mb={{ base: "0", lg: "auto" }}
       >
-        <Flex w={"100%"} h={"100%"} flexDir={"column"} p="20px" rowGap={"16px"}>
+        <Flex
+          w={"100%"}
+          h={"100%"}
+          flexDir={"column"}
+          p={{ base: "16px 12px", lg: "20px" }}
+          rowGap={"16px"}
+        >
           <Flex>
-            <Text fontWeight={500} fontSize={"20px"} w="100%">
+            <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500} w="100%">
               Confirm Withdraw
             </Text>
-            <Flex w={"100%"} justifyContent={"flex-end"} mt={"-14px"}>
+            <Flex w={"100%"} justifyContent={"flex-end"}>
               <CloseButton
                 onClick={() => {
                   // setClaimTx(null)
@@ -708,22 +746,28 @@ export default function ConfirmWithdraw() {
               />
             </Flex>
           </Flex>
-          <Flex alignItems={"center"}>
+          <Flex alignItems={"center"} columnGap={{ base: "8px", lg: "0px" }}>
             <TitanContainer tx={tx} />
-            <Flex
-              h="32px"
-              w="32px"
-              borderRadius={"8px"}
-              border={"1px solid #313442"}
-              justifyContent={"center"}
-              alignItems={"center"}
-              ml={"-10px"}
-              bg={"#1F2128"}
-              zIndex={10}
-              mr={"-10px"}
-            >
-              <Image src={ARROW_ICON} alt="ARROW_ICON" />
-            </Flex>
+
+            {mobileView ? (
+              <Image width={24} height={24} src={ARROW} alt={"ARROW"} />
+            ) : (
+              <Flex
+                h="32px"
+                w="32px"
+                borderRadius={"8px"}
+                border={"1px solid #313442"}
+                justifyContent={"center"}
+                alignItems={"center"}
+                ml={"-10px"}
+                bg={"#1F2128"}
+                zIndex={10}
+                mr={"-10px"}
+              >
+                <Image src={ARROW_ICON} alt="ARROW_ICON" />
+              </Flex>
+            )}
+
             <EthereumContainer />
           </Flex>
           <TimelineComponent tx={tx} />
