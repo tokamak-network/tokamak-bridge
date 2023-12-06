@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import { useRecoilValue, useRecoilState } from "recoil";
-
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   actionMode,
   selectedInTokenStatus,
@@ -26,7 +26,7 @@ export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
-
+  const { invertTokenPair } = useInOutTokens();
   const { pcView, mobileView } = useMediaView();
 
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -35,13 +35,7 @@ export default function Swap() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
-  const invertTokenPair = useCallback(() => {
-    if (inTokenRecoilValue && outTokenRecoilValue) {
-      setInTokenRecoilValue(outTokenRecoilValue);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
-  }, [inTokenRecoilValue, outTokenRecoilValue]);
-  
+
   return (
     <>
       {pcView ? (
@@ -87,7 +81,10 @@ export default function Swap() {
           <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"}>
             <MobileInToken />
 
-            <Flex justifyContent={"center"} alignItems={"center"}  onClick={invertTokenPair}>
+            <Flex
+              justifyContent={"center"}
+              alignItems={"center"}
+              onClick={invertTokenPair}>
               <Image src={ArrowImg} alt={"arrow"} />
             </Flex>
 
