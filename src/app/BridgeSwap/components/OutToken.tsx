@@ -94,7 +94,7 @@ export default function OutToken() {
         {mode === "Swap" && <Setting />}
       </Flex>
 
-      <Flex className="card-wrapper" w={"224px"} h={"386px"} mt={"50px"}>
+      <Flex className="card-wrapper" w={"224px"} h={"386px"}>
         {NetworkSwitcher}
         {swapSection && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
