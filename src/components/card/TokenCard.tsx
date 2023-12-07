@@ -179,7 +179,7 @@ export default function TokenCard(props: TokenCardProps) {
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { pcView } = useMediaView();
+  const { pcView, mobileView } = useMediaView();
   const { mode } = useGetMode();
 
   const outAmount = useMemo(() => {
@@ -202,7 +202,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   useEffect(() => {
     if (mode === "Pool") return;
-    if (!isInput && outTokenInfo && amountOut) {
+    if (!isInput && outTokenInfo && amountOut && mobileView) {
       const value: string = amountOut;
       if (value === "" || value === null) {
         return setOutTokenInfo({
@@ -354,11 +354,11 @@ export default function TokenCard(props: TokenCardProps) {
                     : "40px"
                 }
               >
-                {tokenData?.data.parsedBalance || "0.0"}
+                {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
               </Text>
             ) : (
               <Text fontWeight={700} fontSize={18}>
-                {tokenData?.data.parsedBalance || "0.0"}
+                {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
               </Text>
             )}
           </>
@@ -371,10 +371,10 @@ export default function TokenCard(props: TokenCardProps) {
               fontFamily={theme.fonts.Quicksand}
               fontWeight={700}
               fontSize={22}
-              textOverflow={"ellipsis"}
+              textOverflow={"hidden"}
             >
               {isInput
-                ? inTokenInfo?.parsedAmount || "0"
+                ? trimAmount(inTokenInfo?.parsedAmount, 10) || "0"
                 : trimAmount(outAmount, 10) || "0"}
             </Text>
             <Text

@@ -14,6 +14,8 @@ import CloseButton from "../button/CloseButton";
 import Image from "next/image";
 import ARROW_ICON from "assets/icons/confirm/arrow.svg";
 import ARROW from "assets/icons/arrow.svg";
+import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
+import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
@@ -32,7 +34,7 @@ const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
   const { amountOut } = useSwapTokens();
   const { mobileView } = useMediaView();
-  
+
   const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
     tokenName: outToken?.tokenName as string,
     amount: Number(amountOut),
@@ -58,7 +60,7 @@ const OutTokenContainer = () => {
           {outToken?.tokenSymbol}
         </Text>
       </Flex>
-      
+
       <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
         ${outTokenWithPrice || "0"}
       </Text>
@@ -68,6 +70,7 @@ const OutTokenContainer = () => {
 
 const OutNetworkContrainer = () => {
   const { outNetwork } = useInOutNetwork();
+  const { mobileView } = useMediaView();
 
   if (outNetwork) {
     return (
@@ -82,12 +85,21 @@ const OutNetworkContrainer = () => {
         pt={"10px"}
         borderRadius={"12px"}
       >
-        <NetworkSymbol
-          network={outNetwork.chainId}
-          w={40}
-          h={40}
-          isCircle={true}
-        />
+        {mobileView ? (
+          <Image
+            alt="titan rounded"
+            src={TitanHalfRounded}
+            width={40}
+            height={40}
+          />
+        ) : (
+          <NetworkSymbol
+            network={outNetwork.chainId}
+            w={40}
+            h={40}
+            isCircle={true}
+          />
+        )}
         <Text fontSize={16} fontWeight={400}>
           {convertNetworkName(outNetwork.chainName)}
         </Text>
@@ -109,6 +121,7 @@ const TokenContainer = () => {
   return (
     <Flex pos={"relative"} columnGap={{ base: "8px", lg: "12px" }}>
       <Flex
+        pos={"relative"}
         w={{ base: "full", lg: "176px" }}
         h={"168px"}
         border={"1px solid #313442"}
@@ -117,6 +130,25 @@ const TokenContainer = () => {
         justifyContent={"center"}
         flexDir={"column"}
       >
+        {mobileView && mode === "Deposit" && (
+          <Flex
+            pos={"absolute"}
+            top={"0px"}
+            right={"0px"}
+            w={"34px"}
+            h={"34px"}
+            borderRadius={"0px 9px 0px 9px"}
+            bg={"#2E3140"}
+            justify={"center"}
+            align={"center"}
+            zIndex={100}
+          >
+            <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
+              <Image alt="eth" src={mode === "Deposit" ? ETHHalfRounded : ""} />
+            </Flex>
+          </Flex>
+        )}
+
         <TokenSymbol
           tokenType={inToken?.tokenSymbol ?? "default"}
           w={mobileView ? 48 : 56}

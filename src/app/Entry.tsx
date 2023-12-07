@@ -26,7 +26,11 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       {mode !== "Pool" ? (
         <Center h={"100vh"}>{children}</Center>
       ) : (
-        <Flex h={"100vh"} pt={"140px"} justifyContent={"center"}>
+        <Flex
+          h={"100vh"}
+          pt={{ base: "32px", lg: "140px" }}
+          justifyContent={"center"}
+        >
           {children}
         </Flex>
       )}

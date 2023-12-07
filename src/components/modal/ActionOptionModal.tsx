@@ -31,6 +31,7 @@ import { useAccount, useConnect, useSwitchNetwork } from "wagmi";
 import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/700.css";
 import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
+import { useRouter } from "next/navigation";
 
 interface MethodItemProps {
   from?: Number;
@@ -51,6 +52,7 @@ const ActionMethodItem = ({
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const { isConnected } = useAccount();
   const theme = useTheme();
+  const router = useRouter();
 
   const handleMethodItem = async () => {
     try {
@@ -83,6 +85,9 @@ const ActionMethodItem = ({
         });
       }
     } finally {
+      if (title === "Pool") {
+        router.push("pools");
+      }
       handleClose();
       if (isError) {
         console.error(`Couldn't switch network`);
