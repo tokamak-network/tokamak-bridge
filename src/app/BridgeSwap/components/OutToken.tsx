@@ -24,8 +24,7 @@ export const SelectedNetwork = () => {
       rowGap={"16px"}
       justifyContent={"center"}
       alignItems={"center"}
-      mt={"15px"}
-    >
+      mt={"15px"}>
       <ImageSymbol
         ImgFile={outNetwork?.networkImage as ImageFileType}
         w={48}
@@ -36,8 +35,7 @@ export const SelectedNetwork = () => {
         maxH={"44px"}
         fontSize={18}
         fontWeight={500}
-        textAlign={"center"}
-      >
+        textAlign={"center"}>
         {convertNetworkName(outNetwork?.chainName)}
       </Text>
     </Box>
@@ -69,8 +67,7 @@ export const SearchTokenComponent = () => {
       display={"flex"}
       flexDir={"column"}
       rowGap={"70px"}
-      mt={"12px"}
-    >
+      mt={"12px"}>
       <SearchToken onClick={onOpenOutToken} />
     </Box>
   );
@@ -97,7 +94,7 @@ export default function OutToken() {
         {mode === "Swap" && <Setting />}
       </Flex>
 
-      <Flex className="card-wrapper" w={"224px"} h={"386px"}>
+      <Flex className="card-wrapper" w={"224px"} h={"386px"} mt={"50px"}>
         {NetworkSwitcher}
         {swapSection && <SearchTokenComponent />}
         {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}

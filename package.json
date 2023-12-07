@@ -29,6 +29,7 @@
     "@graphql-codegen/typescript-resolvers": "^2.7.8",
     "@habx/apollo-multi-endpoint-link": "^2.9.0",
     "@tanstack/react-query": "^4.29.17",
+    "@tokamak-network/titan-sdk": "^0.0.8",
     "@tokamak-network/tokamak-layer2-sdk": "^0.0.4",
     "@uniswap/conedison": "^1.8.0",
     "@uniswap/sdk-core": "^3.2.2",
