@@ -50,9 +50,7 @@ export default function StatusTx(props: {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
   const [durationRollup, setDurationRollup] = useState("0");
-  
-  console.log(tx);
-  
+    
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,

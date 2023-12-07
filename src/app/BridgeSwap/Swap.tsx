@@ -6,8 +6,6 @@ import { useRecoilValue, useRecoilState } from "recoil";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   actionMode,
-  selectedInTokenStatus,
-  selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { actionMethodStatus, swapSettingStatus } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
@@ -20,7 +18,6 @@ import MobileOutToken from "./components/Mobile/MobileOutToken";
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
-import { useCallback } from "react";
 
 export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
@@ -29,12 +26,6 @@ export default function Swap() {
   const { invertTokenPair } = useInOutTokens();
   const { pcView, mobileView } = useMediaView();
 
-  const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
-    selectedInTokenStatus
-  );
-  const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
-    selectedOutTokenStatus
-  );
 
   return (
     <>
