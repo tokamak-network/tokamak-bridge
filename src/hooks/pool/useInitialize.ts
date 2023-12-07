@@ -44,9 +44,7 @@ export function useInitialize() {
     initializeTokenPairAmount();
   }, [initializeTokenPair, setPoolFee]);
 
-  const [collectAsWETH, setCollectAsWETH] = useRecoilState(
-    ATOM_collectWethOption
-  );
+  const [, setCollectAsWETH] = useRecoilState(ATOM_collectWethOption);
 
   const initializeInfoValues = useCallback(() => {
     setCollectAsWETH(false);

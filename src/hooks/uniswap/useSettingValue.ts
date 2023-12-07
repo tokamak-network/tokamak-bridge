@@ -1,6 +1,6 @@
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { Percent } from "@uniswap/sdk-core";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 
 export function useSettingValue() {
@@ -10,8 +10,17 @@ export function useSettingValue() {
     return new Percent(Number(txSettingValue.slippage) * 100, 10_000);
   }, [txSettingValue.slippage]);
 
-  const deadlineBySeconds = useMemo(() => {
-    return Math.floor(Date.now() / 1000) + txSettingValue.deadline * 60;
+  const initialDeadline = txSettingValue.deadline * 60;
+  const [deadlineBySeconds, setDeadlineInSeconds] = useState(
+    Math.floor(Date.now() / 1000) + initialDeadline
+  );
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDeadlineInSeconds((prevDeadline) => prevDeadline + 1);
+    }, 1000); //update every second
+
+    return () => clearInterval(interval);
   }, [txSettingValue.deadline]);
 
   const deadlineByMins = useMemo(() => {

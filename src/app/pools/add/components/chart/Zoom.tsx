@@ -6,13 +6,7 @@ import {
   zoomIdentity,
   ZoomTransform,
 } from "d3";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useEffect, useMemo, useRef } from "react";
 // import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
@@ -66,7 +60,7 @@ export default function Zoom({
 }) {
   const { getSetFullRange } = useRangeHopCallbacks();
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
-  const { invertPrice, pool } = useV3MintInfo();
+  const { invertPrice, pool, notExistPool } = useV3MintInfo();
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [
@@ -155,13 +149,14 @@ export default function Zoom({
   // useEffect(() => {
   //   setTimeout(() => {
   //     initializeTicks();
-  //   }, 50);
-  // }, [pool, initializeTicks]);
+  //   }, 100);
+  // }, [inToken?.address, outToken?.address]);
 
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
+      initializeTicks();
     }, 350);
   }, [pool]);
 
