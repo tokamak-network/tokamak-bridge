@@ -23,13 +23,17 @@ const rpcCrossMessenger = useMemo(() => {
       l1ChainId: providers.l1ChainID,
       l2ChainId: providers.l2ChainID,
       l1SignerOrProvider:
-        layer === "L1"
-          ? l1Pro.getSigner(address)
-          : new ethers.providers.JsonRpcProvider(
-              isConnectedToMainNetwork
-                ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
-                : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
-            ).getSigner(address),
+          layer === "L1"
+            ? isConnectedToMainNetwork
+              ? new ethers.providers.JsonRpcProvider(
+                  process.env.NEXT_PUBLIC_ALCHEMY_RPC_ETHEREUM
+                )
+              : l1Pro.getSigner(address)
+            : new ethers.providers.JsonRpcProvider(
+                isConnectedToMainNetwork
+                  ? process.env.NEXT_PUBLIC_ALCHEMY_RPC_ETHEREUM
+                  : process.env.NEXT_PUBLIC_INFURA_RPC_GOERLI
+              ).getSigner(address),
       l2SignerOrProvider: l2Pro.getSigner(address),
     });
 
