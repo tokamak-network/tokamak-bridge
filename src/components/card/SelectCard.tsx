@@ -197,13 +197,11 @@ export function SelectCardModal() {
                 <SearchToken />
                 <CardCarouselMobile />
                 <Flex px={"12px"} justify={"center"}>
-                  {isOpen === "INPUT" && (
-                    <TokenInput
-                      inToken={true}
-                      hasMaxButton={true}
-                      isDisabled={false}
-                    />
-                  )}
+                  <TokenInput
+                    inToken={isOpen === "INPUT" ? true : false}
+                    hasMaxButton={isOpen === "INPUT" ? true : false}
+                    style={isOpen === "INPUT" ? "" : { display: "none" }}
+                  />
                 </Flex>
               </>
             )}

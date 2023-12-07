@@ -81,6 +81,7 @@ export function useTransactionDetail() {
     4
   )} ${inToken?.tokenSymbol}`;
 
+  
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
     if (mode === "Deposit" && inToken && totalGasCost) {
       return [
@@ -131,7 +132,7 @@ export function useTransactionDetail() {
             l2GasUS: `${gasCostUS}`,
           },
           tooltip: true,
-          tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
+          tooltipLabel: `${commafy(totalGasFeeToWithdraw, 18)} ETH`,
         },
         {
           title: "Time to Withdraw",
@@ -188,12 +189,11 @@ export function useTransactionDetail() {
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {
-          title:
-            layer === "L2"
-              ? "Estimated L2 execution fee (sans L1 fee)"
-              : "Estimated gas fees",
-          content: isOpen ? "" : `${layer === "L1" ? totalGasFee : ""} `,
-          gasFee: layer === "L1" ? `$${gasCostUS}` : `${totalGasFee}`,
+         title:
+            "Estimated gas fees",
+          content: isOpen ? "" : `${totalGasFee} `,
+          gasFee: `$${gasCostUS}`,
+
         },
       ];
     }
