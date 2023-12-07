@@ -196,7 +196,7 @@ export function SelectCardModal() {
               <>
                 <SearchToken />
                 <CardCarouselMobile />
-                <Flex px={"12px"} justify={"center"}>
+                <Flex w={"full"} px={"12px"} justify={"center"}>
                   <TokenInput
                     inToken={isOpen === "INPUT" ? true : false}
                     hasMaxButton={isOpen === "INPUT" ? true : false}

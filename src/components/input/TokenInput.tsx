@@ -27,6 +27,7 @@ import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
 import WARNING_RED_ICON from "assets/icons/warningRed.svg";
+import useTokenModal from "@/hooks/modal/useTokenModal";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -65,6 +66,7 @@ export default function TokenInput(props: {
   const theme = useTheme();
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
+  const { onCloseTokenModal } = useTokenModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -234,6 +236,7 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
+    onCloseTokenModal();
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {

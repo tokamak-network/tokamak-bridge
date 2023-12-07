@@ -9,6 +9,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import TokenCard from "@/components/card/TokenCard";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { useMemo } from "react";
 
 const MobileInToken = () => {
   const { outNetwork } = useRecoilValue(networkStatus);
@@ -16,6 +17,33 @@ const MobileInToken = () => {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { outToken } = useInOutTokens();
 
+  const tokenColorCode = useMemo(() => {
+    switch (outToken?.tokenSymbol) {
+      case "ETH":
+        return "#627EEA";
+      case "WETH":
+        return "#393939";
+      case "TON":
+        return "#007AFF";
+      case "WTON":
+        return "#007AFF";
+      case "TOS":
+        return "#007AFF";
+      case "DOC":
+        return "#9e9e9e";
+      case "AURA":
+        return "#CB1000";
+      case "LYDA":
+        return "#4361EE";
+      case "USDC":
+        return "#2775CA";
+      case "USDT":
+        return "#50AF95";
+      default:
+        return "#9e9e9e";
+    }
+  }, [outToken]);
+  
   return (
     <Box
       pos="relative"
@@ -70,7 +98,7 @@ const MobileInToken = () => {
           w={"34px"}
           h={"34px"}
           borderRadius={"0px 9px 0px 9px"}
-          bg={"#2E3140"}
+          bg={outToken?.tokenName ? tokenColorCode : "#2E3140"}
           justify={"center"}
           align={"center"}
         >

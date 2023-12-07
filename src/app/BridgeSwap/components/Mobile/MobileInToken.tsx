@@ -9,6 +9,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import TokenCard from "@/components/card/TokenCard";
 import { useNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
+import { useMemo } from "react";
 
 const MobileInToken = () => {
   const { inNetwork } = useRecoilValue(networkStatus);
@@ -16,7 +17,34 @@ const MobileInToken = () => {
   const { inToken } = useInOutTokens();
 
   const network = useConnectedNetwork();
-
+  
+  const tokenColorCode = useMemo(() => {
+    switch (inToken?.tokenSymbol) {
+      case "ETH":
+        return "#627EEA";
+      case "WETH":
+        return "#393939";
+      case "TON":
+        return "#007AFF";
+      case "WTON":
+        return "#007AFF";
+      case "TOS":
+        return "#007AFF";
+      case "DOC":
+        return "#9e9e9e";
+      case "AURA":
+        return "#CB1000";
+      case "LYDA":
+        return "#4361EE";
+      case "USDC":
+        return "#2775CA";
+      case "USDT":
+        return "#50AF95";
+      default:
+        return "#9e9e9e";
+    }
+  }, [inToken]);
+  
   return (
     <Box
       pos="relative"
@@ -59,7 +87,7 @@ const MobileInToken = () => {
         w={"34px"}
         h={"34px"}
         borderRadius={"0px 9px 0px 9px"}
-        bg={inToken?.tokenName ? "#007AFF6F" : "#2E3140"}
+        bg={inToken?.tokenName ? tokenColorCode : "#2E3140"}
         justify={"center"}
         align={"center"}
         zIndex={100}

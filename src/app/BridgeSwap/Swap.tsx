@@ -52,8 +52,9 @@ export default function Swap() {
             <Flex
               columnGap={"8px"}
               cursor={"pointer"}
-              onClick={() => setMethodStatus(true)}>
-              <Text fontWeight={500} fontSize={24}>
+              onClick={() => setMethodStatus(true)}
+            >
+              <Text fontWeight={500} fontSize={24} userSelect={"none"}>
                 {mode === null ? "Swap" : mode.replaceAll("ETH-", "")}
               </Text>
               <Image src={arrow} alt="icon_arrow" />
