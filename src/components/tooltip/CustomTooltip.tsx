@@ -21,6 +21,7 @@ export default function CustomTooltip(props: {
       p={0}
       defaultIsOpen={false}
       isOpen={isOpen}
+      bg={'transparent'}
       zIndex={10000}
       label={
         <Box

@@ -13,6 +13,8 @@ import {
   minPrice,
 } from "@/recoil/pool/setPoolPosition";
 
+const sigificantDigits = 28;
+
 export function useRangeHopCallbacks() {
   // baseCurrency: Currency | undefined,
   // quoteCurrency: Currency | undefined,
@@ -43,7 +45,11 @@ export function useRangeHopCallbacks() {
         tickLower - TICK_SPACINGS[feeAmount]
       );
 
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
 
     // use pool current tick as starting tick if we have pool but no tick input
@@ -59,7 +65,11 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent - TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     return "";
   }, [baseToken, quoteToken, tickLower, feeAmount, pool]);
@@ -72,7 +82,11 @@ export function useRangeHopCallbacks() {
         tickLower + TICK_SPACINGS[feeAmount]
       );
 
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     // use pool current tick as starting tick if we have pool but no tick input
     if (
@@ -87,7 +101,11 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent + TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     return "";
   }, [baseToken, quoteToken, tickLower, feeAmount, pool]);
@@ -99,7 +117,11 @@ export function useRangeHopCallbacks() {
         quoteToken,
         tickUpper - TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     // use pool current tick as starting tick if we have pool but no tick input
     if (
@@ -114,7 +136,11 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent - TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     return "";
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
@@ -126,7 +152,11 @@ export function useRangeHopCallbacks() {
         quoteToken,
         tickUpper + TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     // use pool current tick as starting tick if we have pool but no tick input
     if (
@@ -141,7 +171,11 @@ export function useRangeHopCallbacks() {
         quoteToken,
         pool.tickCurrent + TICK_SPACINGS[feeAmount]
       );
-      return newPrice.toSignificant(6, undefined, Rounding.ROUND_UP);
+      return newPrice.toSignificant(
+        sigificantDigits,
+        undefined,
+        Rounding.ROUND_UP
+      );
     }
     return "";
   }, [baseToken, quoteToken, tickUpper, feeAmount, pool]);
@@ -170,6 +204,7 @@ export function useRangeHopCallbacks() {
 
   const onIncreaseLower = useCallback(() => {
     const result = getIncrementLower();
+    console.log("result", result);
     if (result) return invertPrice ? setMaxPrice(result) : setMinPrice(result);
   }, [getIncrementLower, invertPrice]);
 
@@ -180,6 +215,8 @@ export function useRangeHopCallbacks() {
 
   const onIncreaseUpper = useCallback(() => {
     const result = getIncrementUpper();
+    console.log("result", result);
+
     if (result) return invertPrice ? setMinPrice(result) : setMaxPrice(result);
   }, [getIncrementUpper, invertPrice]);
 

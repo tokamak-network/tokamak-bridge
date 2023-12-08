@@ -7,7 +7,6 @@ import { Brush } from "./Brush";
 import { Line } from "./Line";
 import { ChartEntry, LiquidityChartRangeInputProps } from "types/pool/chart";
 import Zoom, { ZoomOverlay } from "./Zoom";
-import { Bound } from "@/types/pool/pool";
 
 const xAccessor = (d: ChartEntry) => d.price0;
 const yAccessor = (d: ChartEntry) => d.activeLiquidity;

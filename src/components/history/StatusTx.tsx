@@ -50,7 +50,7 @@ export default function StatusTx(props: {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
   const [durationRollup, setDurationRollup] = useState("0");
-  
+    
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,
@@ -68,9 +68,12 @@ export default function StatusTx(props: {
 
 
   const getCalendarEvent = useMemo(() => {
-    if (timeStamp) {
-      
-      const startDate = new Date(timeStamp * 1000);
+    if (tx.l2timeStamp) {      
+      const timeStamp = tx.l2timeStamp;
+      const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
+      const status4EndTimestamp = Number(timeStamp) + status4Duration;
+      const startDate = new Date(status4EndTimestamp * 1000);
+
       const formattedDate = format(startDate, "yyyy-MM-dd");
       const add1Hour = addHours(startDate, 1);
       const startTime = format(startDate, "HH:mm");
@@ -82,7 +85,7 @@ export default function StatusTx(props: {
         endTime: formattedEndTime,
       };
     }
-  }, [timeStamp]);
+  }, [tx.l2timeStamp]);
 
   useEffect(() => {
     if (tx.l2timeStamp) {
@@ -104,7 +107,7 @@ export default function StatusTx(props: {
       return () => clearInterval(getDuration);
     }
   }, [tx.l2timeStamp]);
-
+  
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
     name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
@@ -301,7 +304,15 @@ export default function StatusTx(props: {
           </Flex>
         </Flex>
       ) : tx.currentStatus=== 2 ?(
+        <Flex>
         <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>{durationRollup}</Text>
+        <Flex
+            ml={"5px"}
+            onClick={() => atcb_action(config)}
+            cursor={"pointer"}>
+            <Image src={Calendar} alt="google calendar" />
+          </Flex>
+        </Flex>
       ):<></>}
     </Flex>
   );

@@ -107,7 +107,7 @@ export default function OutToken() {
             isDisabled={false}
             style={{
               marginTop: "16px",
-              widht: "100%",
+              width: "100%",
               paddingLeft: "12px",
               paddingRight: "12px",
             }}

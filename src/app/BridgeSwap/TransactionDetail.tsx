@@ -53,7 +53,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
-      {gasFee && pcView && (
+      {/* {gasFee && pcView && (
         <Flex
           w={"100%"}
           h={"54px"}
@@ -88,7 +88,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
             </Flex>
           </Flex>
         </Flex>
-      )}
+      )}  */}
     </Flex>
   );
 };
@@ -101,15 +101,28 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={{ base: 11, lg: 14 }} h={"16px"}>
         <Text fontWeight={300}>{title}</Text>
-        <Text fontWeight={500}>
+        <Flex columnGap={"35px"}>
+          <Text fontWeight={500}>
+            {tooltip ? (
+              <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
+            ) : (
+              content
+            )}
+          </Text>
+          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l2GasUS}</Text>}
+        </Flex>
+
+        {/* <Text fontWeight={500}>
           {tooltip ? (
             <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
           ) : (
             content
           )}
-        </Text>
+        </Text> */}
       </Flex>
-      {gasFee && !mobileView && (
+
+      {/* {gasFee && (
+
         <Flex
           w={"100%"}
           h={"54px"}
@@ -130,7 +143,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
             <Text>{gasFee.l2Gas}</Text>
           </Flex>
         </Flex>
-      )}
+      )} */}
     </Flex>
   );
 };
@@ -255,7 +268,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
           {gasFee && (
             <Text
-              ml={layer === "L2" ? 0 : "27px"}
+            ml={"27px"}
               fontWeight={500}
               color={isOpen ? "#fff" : "#A0A3AD"}
             >
@@ -280,7 +293,7 @@ const Content = (props: { isExpanded: boolean; isOnConfirm?: boolean; isMobile?:
     withdrawNewPropsData,
   } = useTransactionDetail();
   const { isOpen } = useConfirm();
-
+  
   const detailRow = useMemo(() => {
     switch (mode) {
       case "Deposit":

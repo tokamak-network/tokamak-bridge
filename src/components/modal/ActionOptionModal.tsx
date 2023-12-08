@@ -158,8 +158,6 @@ const ActionOptionModal = () => {
   const [storedValue, setValue] = useLocalStorage("tutorial", false);
   const isWelcomeMsg = storedValue === false && mobileView;
 
-  console.log(isWelcomeMsg);
-
   const closeModal = useCallback(() => {
     setValue(true);
     setActionMethodStatus(false);
