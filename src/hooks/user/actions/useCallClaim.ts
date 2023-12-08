@@ -49,12 +49,12 @@ export default function useCallClaim(functionName: string) {
 
   const claim = useCallback(
     async (txt: any) => {
-     setClaimModal(true)
-     setIsOpen(true);
-     setModalOpen("confirming");
-     
+      setClaimModal(true);
+      setIsOpen(true);
+      setModalOpen("confirming");
+
       getProof(txt).then(async (proof) => {
-        setClaimModal(false)
+        setClaimModal(false);
 
         if (Boolean(layer !== "L1") || layer === "L2") {
           const selectedWork = supportedChain.filter((supportedChain) => {
@@ -89,6 +89,7 @@ export default function useCallClaim(functionName: string) {
               setWithdrawStatus({ isOpen: false });
             } catch (e) {
               console.log(e);
+              setClaimModal(false);
             }
           }
         } else {
@@ -108,6 +109,7 @@ export default function useCallClaim(functionName: string) {
             setWithdrawStatus({ isOpen: false });
           } catch (e) {
             console.log(e);
+            setClaimModal(false);
           }
         }
       });
