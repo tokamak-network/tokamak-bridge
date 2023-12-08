@@ -18,6 +18,7 @@ import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
+import { txPendingStatus } from "@/recoil/global/transaction";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -28,7 +29,7 @@ export default function ActionButton() {
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
-  const { isPending } = useTransaction();
+  const txPending = useRecoilValue(txPendingStatus);
   const { outToken, outTokenInfo } = useInOutTokens();
   const { isTONatPair } = useIsTon();
   const status = useRecoilValue(bannerStatus);
@@ -48,7 +49,7 @@ export default function ActionButton() {
         (mode === "Swap" && isLoading) ||
         isNotSupportForSwap ||
         isBalanceOver ||
-        isPending ||
+        txPending ||
         (mode === "Swap" && outToken === null) ||
         isInputZero ||
         (mode === "Swap" && isTONatPair) ||
@@ -65,7 +66,7 @@ export default function ActionButton() {
     isLoading,
     isNotSupportForSwap,
     isBalanceOver,
-    isPending,
+    txPending,
     isTONatPair,
     isInputZero,
     mode,
