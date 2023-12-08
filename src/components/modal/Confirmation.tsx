@@ -34,7 +34,7 @@ export default function Confirmation() {
   const { blockExplorer } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
-  
+
   const {
     isConfirmed,
     isConfirming,
@@ -43,9 +43,8 @@ export default function Confirmation() {
     setIsOpen,
     closeModal,
     isClaiming,
-    isClaimWaiting
+    isClaimWaiting,
   } = useTxConfirmModal();
-
 
   const { mode } = useGetMode();
   return (
@@ -64,9 +63,15 @@ export default function Confirmation() {
           borderRadius={"16px"}
           flexDir={"column"}
           alignItems={"center"}>
-          <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeModal} />
-          </Flex>
+          { !isClaimWaiting &&
+            <Flex
+              w={"100%"}
+              justifyContent={"flex-end"}
+              pt={"14px"}
+              pr={"14px"}>
+              <CloseButton onClick={closeModal} />
+            </Flex>
+          }
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isClaiming
               ? "Confirming Claim"
@@ -102,11 +107,13 @@ export default function Confirmation() {
           <Text
             w={"254px"}
             mt={"46px"}
-            px={isClaimWaiting? '':isConfirming  ? "32px" : ""}
+            px={isClaimWaiting ? "" : isConfirming ? "32px" : ""}
             textAlign={"center"}
             fontSize={14}
             fontWeight={500}>
-            {isClaimWaiting? 'Please wait for 20+ seconds for MetaMask popup to appear.':  isConfirming ? (
+            {isClaimWaiting ? (
+              "Please wait for 20+ seconds for MetaMask popup to appear."
+            ) : isConfirming ? (
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
               <Link
