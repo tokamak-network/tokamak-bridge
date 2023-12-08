@@ -34,7 +34,6 @@ export default function Confirmation() {
   const { blockExplorer } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
-  const claimModalState = useRecoilValue(claimModalStatus);
   
   const {
     isConfirmed,
@@ -44,7 +43,9 @@ export default function Confirmation() {
     setIsOpen,
     closeModal,
     isClaiming,
+    isClaimWaiting
   } = useTxConfirmModal();
+
 
   const { mode } = useGetMode();
   return (
@@ -101,11 +102,11 @@ export default function Confirmation() {
           <Text
             w={"254px"}
             mt={"46px"}
-            px={claimModalState? '':isConfirming  ? "32px" : ""}
+            px={isClaimWaiting? '':isConfirming  ? "32px" : ""}
             textAlign={"center"}
             fontSize={14}
             fontWeight={500}>
-            {claimModalState? 'Please wait for 20+ seconds for MetaMask popup to appear.':  isConfirming ? (
+            {isClaimWaiting? 'Please wait for 20+ seconds for MetaMask popup to appear.':  isConfirming ? (
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
               <Link
