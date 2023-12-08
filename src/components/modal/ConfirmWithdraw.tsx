@@ -79,6 +79,7 @@ export default function ConfirmWithdraw() {
     useConnectedNetwork();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const [txData, setTxData] = useRecoilState(txDataStatus);
+  const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
 
   const { data: feeData } = useFeeData({
     chainId: 1,
@@ -705,6 +706,7 @@ export default function ConfirmWithdraw() {
                    
                     modalData: null,
                   });
+                  setIsConfirm(false)
                 }}
               />
             </Flex>
