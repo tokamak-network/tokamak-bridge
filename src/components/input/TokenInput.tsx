@@ -3,10 +3,8 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import Warning from "@/app/BridgeSwap/Warning";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
@@ -21,7 +19,6 @@ import useConnectedNetwork from "@/hooks/network";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
@@ -36,7 +33,7 @@ export default function TokenInput(props: {
   hasMaxButton?: boolean;
   style?: {};
 }) {
-  const { inToken, defaultValue, hasMaxButton, isDisabled, style } = props;
+  const { inToken, hasMaxButton, isDisabled, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );

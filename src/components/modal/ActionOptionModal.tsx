@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
+import { useCallback, useMemo } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -8,30 +9,27 @@ import {
   useTheme,
   Box,
 } from "@chakra-ui/react";
+import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
+import { useRouter } from "next/navigation";
 import { useRecoilState } from "recoil";
+import { useAccount, useSwitchNetwork } from "wagmi";
 
-import { actionMethod } from "@/recoil/bridgeSwap/atom";
 import { actionMethodStatus } from "@/recoil/modal/atom";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
-
-import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
-import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
-import Arrow from "@/assets/icons/arrow.svg";
-import Image from "next/image";
-
-import "@fontsource/poppins/400.css";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import {
   SupportedChainProperties,
   supportedChain,
 } from "@/types/network/supportedNetwork";
-import { useAccount, useConnect, useSwitchNetwork } from "wagmi";
+
+import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
+import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
+import Arrow from "@/assets/icons/arrow.svg";
 
 import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/700.css";
-import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
-import { useRouter } from "next/navigation";
+import "@fontsource/poppins/400.css";
 
 interface MethodItemProps {
   from?: Number;
@@ -259,6 +257,3 @@ const ActionOptionModal = () => {
 };
 
 export default ActionOptionModal;
-function setNetwork(arg0: any) {
-  throw new Error("Function not implemented.");
-}

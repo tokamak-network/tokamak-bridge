@@ -1,15 +1,14 @@
 import Image from "next/image";
+import { useMemo } from "react";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import ETHIcon from "@/assets/tokens/eth_half_rounded.svg";
 import TitanIcon from "@/assets/tokens/titan_half_rounded.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
 import TokenCard from "@/components/card/TokenCard";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useMemo } from "react";
 
 const MobileInToken = () => {
   const { outNetwork } = useRecoilValue(networkStatus);

@@ -1,10 +1,10 @@
 import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
-import Modals from "../Modals";
 import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
 import RelayBanner from "@/components/modal/RelayBanner";
 import ServiceSuspensionBanner from "@/components/modal/ServiceSuspensionBanner";
+
 export default function BridgeSwap() {
   return (
     <Flex
@@ -28,7 +28,6 @@ export default function BridgeSwap() {
         <Swap />
         <Details />
       </Flex>
-      {/* <Modals /> */}
     </Flex>
   );
 }

@@ -5,8 +5,6 @@ import {
   Drawer,
   DrawerContent,
   DrawerOverlay,
-  MenuList,
-  Menu,
   Box,
 } from "@chakra-ui/react";
 import Image from "next/image";
@@ -17,10 +15,8 @@ import { mobileMenuStatus } from "@/recoil/modal/atom";
 import userguide from "assets/icons/header/userGuide.svg";
 import userGuideHover from "assets/icons/header/userGuideHover.svg";
 import lightbulbHover from "assets/icons/header/LightbulbHover.svg";
-import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import lightbulb from "assets/icons/header/Lightbulb.svg";
 import LOGO from "assets/icons/header/logo-dark-hc.svg";
-import { Overlay_Index } from "@/types/style/overlayIndex";
 
 const CustomMenuItem = (props: {
   link: string;
@@ -74,6 +70,7 @@ const HamburgerMenu = () => {
       useInert={true}
     >
       <DrawerOverlay bg={"#000000CC"} onClick={() => setHamburgerOpen(false)} />
+      <Box zIndex={1400} pos={"fixed"} w={"full"} h={"full"} left={0} top={0} bg={'#000000B0'}/>
 
       <DrawerContent maxW={"248px"}>
         <Flex

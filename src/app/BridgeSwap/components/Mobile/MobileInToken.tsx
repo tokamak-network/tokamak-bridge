@@ -1,18 +1,17 @@
 import Image from "next/image";
+import { useMemo } from "react";
 import { Flex, Text, Box } from "@chakra-ui/react";
+
+import { useRecoilState } from "recoil";
+import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import TokenCard from "@/components/card/TokenCard";
+import useConnectedNetwork from "@/hooks/network";
+
 import ETHIcon from "@/assets/tokens/eth_half_rounded.svg";
 import TitanIcon from "@/assets/tokens/titan_half_rounded.svg";
 
-import { useRecoilState, useRecoilValue } from "recoil";
-import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import TokenCard from "@/components/card/TokenCard";
-import { useNetwork } from "wagmi";
-import useConnectedNetwork from "@/hooks/network";
-import { useMemo } from "react";
-
 const MobileInToken = () => {
-  const { inNetwork } = useRecoilValue(networkStatus);
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { inToken } = useInOutTokens();
 
