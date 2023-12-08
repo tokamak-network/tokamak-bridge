@@ -13,6 +13,8 @@ import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useCrosschainMessenger from "../useCrosschainMessenger";
+import { claimModalStatus } from "@/recoil/modal/atom";
+
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
@@ -23,6 +25,7 @@ export default function useCallClaim(functionName: string) {
   const { crossMessenger } = useCrosschainMessenger();
   const { provider, L2Provider } = useProvier();
   const l2Pro = layer === "L2" ? provider : L2Provider;
+  const [claimModal, setClaimModal] = useRecoilState(claimModalStatus);
 
   const { data, write, isError } = useContractWrite({
     address: L1MESSENGER_CONTRACT,
@@ -39,33 +42,63 @@ export default function useCallClaim(functionName: string) {
     }
   }, [isError]);
 
+  const getProof = async (txt: any) => {
+    const proof = await crossMessenger.getMessageProof(txt.resolved);
+    return proof;
+  };
+
   const claim = useCallback(
     async (txt: any) => {
-      const proof = await crossMessenger.getMessageProof(txt.resolved);
-      if (Boolean(layer !== "L1") || layer === "L2") {
-        const selectedWork = supportedChain.filter((supportedChain) => {
-          if (isConnectedToMainNetwork === true) {
-            return [SupportedChainId["MAINNET"]].includes(
-              supportedChain.chainId
-            );
-          } else {
-            return [SupportedChainId["GOERLI"]].includes(
-              supportedChain.chainId
-            );
+     setClaimModal(true)
+     setIsOpen(true);
+     setModalOpen("confirming");
+     
+      getProof(txt).then(async (proof) => {
+        setClaimModal(false)
+
+        if (Boolean(layer !== "L1") || layer === "L2") {
+          const selectedWork = supportedChain.filter((supportedChain) => {
+            if (isConnectedToMainNetwork === true) {
+              return [SupportedChainId["MAINNET"]].includes(
+                supportedChain.chainId
+              );
+            } else {
+              return [SupportedChainId["GOERLI"]].includes(
+                supportedChain.chainId
+              );
+            }
+          })[0];
+
+          const res = await switchNetworkAsync?.(selectedWork.chainId);
+          const tx = txt;
+
+          if (res) {
+            try {
+              write({
+                args: [
+                  tx.resolved.target,
+                  tx.resolved.sender,
+                  tx.resolved.message,
+                  tx.resolved.messageNonce,
+                  proof,
+                ],
+              });
+              setIsOpen(true);
+              setModalOpen("confirming");
+              setWithdrawData({ modalData: null });
+              setWithdrawStatus({ isOpen: false });
+            } catch (e) {
+              console.log(e);
+            }
           }
-        })[0];
-
-        const res = await switchNetworkAsync?.(selectedWork.chainId);
-        const tx = txt;
-
-        if (res) {
+        } else {
           try {
             write({
               args: [
-                tx.resolved.target,
-                tx.resolved.sender,
-                tx.resolved.message,
-                tx.resolved.messageNonce,
+                txt.resolved.target,
+                txt.resolved.sender,
+                txt.resolved.message,
+                txt.resolved.messageNonce,
                 proof,
               ],
             });
@@ -77,25 +110,7 @@ export default function useCallClaim(functionName: string) {
             console.log(e);
           }
         }
-      } else {
-        try {
-          write({
-            args: [
-              txt.resolved.target,
-              txt.resolved.sender,
-              txt.resolved.message,
-              txt.resolved.messageNonce,
-              proof,
-            ],
-          });
-          setIsOpen(true);
-          setModalOpen("confirming");
-          setWithdrawData({ modalData: null });
-          setWithdrawStatus({ isOpen: false });
-        } catch (e) {
-          console.log(e);
-        }
-      }
+      });
     },
     [layer, connectedChainId, switchNetworkAsync]
   );
