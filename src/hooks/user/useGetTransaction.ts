@@ -53,7 +53,6 @@ export default function useGetTransaction() {
     "loading" | "present" | "absent"
   >("loading");
 
-  // const subgraphData = useMemo(() => {},[])
 
   useEffect(() => {
     const subgraphData = async () => {
