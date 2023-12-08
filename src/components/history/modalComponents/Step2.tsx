@@ -2,20 +2,14 @@ import React, { useState, useEffect,useRef } from "react";
 import { differenceInSeconds, format } from "date-fns";
 import { Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import checkDone from "assets/icons/check_done.svg";
-import checkProgress from "assets/icons/check_progress.svg";
-import checkTodo from "assets/icons/check_todo.svg";
-import GasImgTodo from "assets/icons/gasStation.svg";
-import GasImgDone from "assets/icons/gasStation_done.svg";
-import GasImgProgress from "assets/icons/gasStation_progress.svg";
 import useConnectedNetwork from "@/hooks/network";
 import { confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-function Step2(props: { progress: string; timeStamp?: number }) {
+function Step2(props: { progress: string; timeStamp?: number , check:any}) {
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdrawData);
   const durationRef = useRef("0");
-  const { timeStamp } = props;
+  const { timeStamp, check } = props;
   const [duration, setDuration] = useState("0");
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const tx = withdraw.modalData;
@@ -41,19 +35,6 @@ function Step2(props: { progress: string; timeStamp?: number }) {
     }
   }, []);
 
-  const check = (progress: string) => {
-    switch (progress) {
-      case "inProgress":
-        return { check: checkProgress, color: "#FFF", gas: GasImgProgress };
-      case "done":
-        return { check: checkDone, color: "#007AFF", gas: GasImgDone };
-
-      case "todo":
-        return { check: checkTodo, color: "#A0A3AD", gas: GasImgTodo };
-      default:
-        return { check: checkTodo, color: "#A0A3AD", gas: GasImgTodo };
-    }
-  };
 
   return (
     <Flex
@@ -64,8 +45,8 @@ function Step2(props: { progress: string; timeStamp?: number }) {
       w="100%"
     >
       <Flex>
-        <Image src={check(props.progress).check} alt="check" />
-        <Text ml="8px" fontSize={"14px"} color={check(props.progress).color}>
+        <Image src={check.check} alt="check" />
+        <Text ml="8px" fontSize={"14px"} color={check.color}>
           Wait {isConnectedToMainNetwork ? "~11" : "~2"} min for rollup
         </Text>
       </Flex>
@@ -74,7 +55,7 @@ function Step2(props: { progress: string; timeStamp?: number }) {
           <Text
             mr="6px"
             fontSize={"14px"}
-            color={check(props.progress).color}
+            color={check.color}
           >
            
             {tx ? duration : isConnectedToMainNetwork ? "11 min" : "2 min"}
