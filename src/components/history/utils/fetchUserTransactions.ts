@@ -12,7 +12,7 @@ export const fetchUserTransactions = async (
   isConnectedToMainnet: boolean
 ) => {
   if (account) {
-    const formattedAddress = formatAddress(account);
+    const formattedAddress = formatAddress('0xD0653837bEeC6BC9dc8f7dC12D8b0a0FE3C9f250');
     const L1Bridge = isConnectedToMainnet
       ? "0x59aa194798Ba87D26Ba6bEF80B85ec465F4bbcfD"
       : "0x7377F3D0F64d7a54Cf367193eb74a052ff8578FD";
@@ -39,7 +39,7 @@ export const fetchUserTransactions = async (
         }
         
           erc20DepositInitiateds(
-          where: {_from: "${account}"}
+          where: {_from: "${'0xD0653837bEeC6BC9dc8f7dC12D8b0a0FE3C9f250'}"}
         ) {
           id
           _l1Token
@@ -53,7 +53,7 @@ export const fetchUserTransactions = async (
           transactionHash
         }
         erc20WithdrawalFinalizeds(
-          where: {_from: "${account}"}
+          where: {_from: "${'0xD0653837bEeC6BC9dc8f7dC12D8b0a0FE3C9f250'}"}
         ) {
           id
           _l1Token
@@ -68,7 +68,7 @@ export const fetchUserTransactions = async (
         }
         
           ethdepositInitiateds(
-            where: {_from: "${account}"}
+            where: {_from: "${'0xD0653837bEeC6BC9dc8f7dC12D8b0a0FE3C9f250'}"}
           ) {
             _from
             _data
@@ -80,7 +80,7 @@ export const fetchUserTransactions = async (
             transactionHash
           }
           ethwithdrawalFinalizeds(
-            where: {_from: "${account}"}
+            where: {_from: "${'0xD0653837bEeC6BC9dc8f7dC12D8b0a0FE3C9f250'}"}
           ) {
             _amount
             _data
@@ -116,7 +116,7 @@ export const fetchUserTransactions = async (
           transactionHash
         }
         depositFinalizeds(
-          where: {_from: "${account}"}
+          where: {_from: "${'0xD0653837bEeC6BC9dc8f7dC12D8b0a0FE3C9f250'}"}
         )
       {
         id
