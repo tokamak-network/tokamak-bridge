@@ -3,10 +3,7 @@
 import Image from "next/image";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import {
-  actionMode,
-} from "@/recoil/bridgeSwap/atom";
+import { actionMode, selectedInTokenStatus, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { actionMethodStatus, swapSettingStatus } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
@@ -18,13 +15,47 @@ import MobileOutToken from "./components/Mobile/MobileOutToken";
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
+import { useCallback } from "react";
 
 export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
-  const { invertTokenPair } = useInOutTokens();
   const { pcView, mobileView } = useMediaView();
+
+  const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
+    selectedOutTokenStatus
+  );
+
+  const invertTokenPair = useCallback(() => {
+    if (inTokenRecoilValue && outTokenRecoilValue) {
+      setInTokenRecoilValue(outTokenRecoilValue);
+      return setOutTokenRecoilValue(inTokenRecoilValue);
+    }
+
+    if (inTokenRecoilValue && !outTokenRecoilValue) {
+      setInTokenRecoilValue(null)
+      return setOutTokenRecoilValue(inTokenRecoilValue)
+    }
+
+    if (!inTokenRecoilValue && outTokenRecoilValue) {
+      setOutTokenRecoilValue(null)
+      return setInTokenRecoilValue(outTokenRecoilValue)
+    }
+
+  }, [inTokenRecoilValue, outTokenRecoilValue]);
+
+
+  
+  const switchable =
+    mode === "Swap" ||
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    mode === "ETH-Unwrap" ||
+    mode === "ETH-Wrap";
 
 
   return (
@@ -42,7 +73,14 @@ export default function Swap() {
             justifyContent={"center"}
             alignItems={"center"}
             pt={mode === null ? "65px" : "80px"}>
-            <Image src={ArrowImg} alt={"arrow"} width={24} />
+            <Flex
+              bg={switchable ? "#1F2128" : "transparent"}
+              w={"36px"}
+              h={"36px"}
+              justifyContent={"center"}
+              alignItems={"center"} borderRadius={'5px'} _hover={{border:switchable?'2px solid #313442':''}}>
+              <Image src={ArrowImg} alt={"arrow"} width={24} />
+            </Flex>
           </Flex>
           {mode === null ? <SelectNetwork /> : <OutToken />}
         </Flex>
@@ -52,8 +90,7 @@ export default function Swap() {
             <Flex
               columnGap={"8px"}
               cursor={"pointer"}
-              onClick={() => setMethodStatus(true)}
-            >
+              onClick={() => setMethodStatus(true)}>
               <Text fontWeight={500} fontSize={24} userSelect={"none"}>
                 {mode === null ? "Swap" : mode.replaceAll("ETH-", "")}
               </Text>
