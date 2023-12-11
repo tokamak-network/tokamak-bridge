@@ -67,10 +67,52 @@ export default function TokenInput(props: {
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
-
+  const switchable =
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    mode === "ETH-Wrap" ||
+    mode === "ETH-Unwrap";
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value;
+
+    //for wrap/unwrap switch
+    if (inToken && switchable) {
+      if ( selectedInToken && selectedOutToken) {
+        if (value === "") {
+          setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
+
+        const parsedAmountOut = ethers.utils.parseUnits(
+          value,
+          selectedOutToken?.decimals
+        );
+        const parsedAmountIn = ethers.utils.parseUnits(
+          value,
+          selectedInToken?.decimals
+        );
+        setSelectedInToken({
+          ...selectedInToken,
+          amountBN: parsedAmountIn.toBigInt(),
+          parsedAmount: value,
+        });
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: parsedAmountOut.toBigInt(),
+          parsedAmount: value,
+        });
+      }
+     
+    }
 
     //This token is inToken
     if (inToken && selectedInToken) {
@@ -128,6 +170,7 @@ export default function TokenInput(props: {
         value,
         selectedOutToken.decimals
       );
+
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -158,8 +201,6 @@ export default function TokenInput(props: {
           }, 100);
         }
         if (isETH(selectedInToken)) {
-          console.log("totalGasCost(ETH) : ", totalGasCost);
-
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
@@ -402,8 +443,7 @@ export default function TokenInput(props: {
       pb={"16px"}
       w={"100%"}
       rowGap={"6px"}
-      {...style}
-    >
+      {...style}>
       {triggerForSpinner && subMode.add ? (
         <Flex w={"100%"} h={"27px"}>
           <GradientSpinner />
@@ -430,8 +470,7 @@ export default function TokenInput(props: {
             ref={inputRef}
             onChange={onChange}
             onFocus={handleFocus}
-            onBlur={handleBlur}
-          ></Input>
+            onBlur={handleBlur}></Input>
           {hasMaxButton && !isMax && (
             <Button
               w={"40px"}
@@ -443,8 +482,7 @@ export default function TokenInput(props: {
               _active={{}}
               color={"#fff"}
               mt={"3px"}
-              onClick={() => onMax()}
-            >
+              onClick={() => onMax()}>
               Max
             </Button>
           )}
