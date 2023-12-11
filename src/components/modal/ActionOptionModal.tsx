@@ -9,13 +9,12 @@ import {
   useTheme,
   Box,
 } from "@chakra-ui/react";
-import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
 import { useRouter } from "next/navigation";
 import { useRecoilState } from "recoil";
 import { useAccount, useSwitchNetwork } from "wagmi";
 
 import { actionMethodStatus } from "@/recoil/modal/atom";
-import { networkStatus } from "@/recoil/bridgeSwap/atom";
+import { networkStatus, welcomeMsgStatus } from "@/recoil/bridgeSwap/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import {
@@ -135,6 +134,7 @@ const ActionOptionModal = () => {
   const [methodStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
   const connectedNetwork = useConnectedNetwork();
+  const [welcomeMsg, setWelcomeMsgStatus] = useRecoilState(welcomeMsgStatus);
 
   const { mobileView } = useMediaView();
 
@@ -155,12 +155,11 @@ const ActionOptionModal = () => {
         : 5050,
     [connectedNetwork]
   );
-  const [storedValue, setValue] = useLocalStorage("tutorial", false);
-  const isWelcomeMsg = storedValue === false && mobileView;
+  const isWelcomeMsg = welcomeMsg && mobileView;
 
   const closeModal = useCallback(() => {
-    setValue(true);
     setActionMethodStatus(false);
+    setWelcomeMsgStatus(false);
   }, []);
 
   return (

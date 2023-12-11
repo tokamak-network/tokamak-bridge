@@ -71,6 +71,11 @@ export const relayBannerStatus = atom<Banner>({
   default: "Hidden",
 });
 
+export const welcomeMsgStatus = atom<Boolean>({
+  key: "welcomeMsgStatus",
+  default: true
+})
+
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
 }>({

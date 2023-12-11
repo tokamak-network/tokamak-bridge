@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";

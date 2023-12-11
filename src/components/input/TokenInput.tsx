@@ -10,13 +10,13 @@ import {
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { trimAmount } from "@/utils/trim";
-import { Button, Flex, Input, Text, useTheme } from "@chakra-ui/react";
+import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -32,8 +32,9 @@ export default function TokenInput(props: {
   isDisabled?: boolean;
   hasMaxButton?: boolean;
   style?: {};
+  customRef?: RefObject<HTMLInputElement>;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style } = props;
+  const { inToken, hasMaxButton, isDisabled, style, customRef } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -60,7 +61,6 @@ export default function TokenInput(props: {
     18
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
-  const theme = useTheme();
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
@@ -392,6 +392,10 @@ export default function TokenInput(props: {
     }
   }, [currentPrice]);
 
+  useEffect(() => {
+    customRef?.current?.focus();
+  }, [customRef])
+
   return (
     <Flex
       flexDir={"column"}
@@ -424,7 +428,7 @@ export default function TokenInput(props: {
             isDisabled={isDisabled}
             _disabled={{ color: "#fff" }}
             value={valueProp}
-            ref={inputRef}
+            ref={customRef ? customRef : inputRef}
             onChange={onChange}
             onFocus={handleFocus}
             onBlur={handleBlur}

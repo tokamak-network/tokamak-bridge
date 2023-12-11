@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Flex,
   Text,
@@ -24,20 +23,16 @@ const CustomMenuItem = (props: {
   icon: any;
   hoverIcon: any;
 }) => {
-  const { link, title, icon, hoverIcon } = props;
-  const [hover, setHover] = useState(false);
+  const { link, title, icon } = props;
   return (
     <Flex
       align={"center"}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       target="_blank"
       as={"a"}
       href={link}
       h={"40px"}
       marginBottom={"8px"}
       padding={"8px"}
-      // border={'1px solid red'}
       _focus={{ background: "0F0F12" }}
       _hover={{ bg: "#313442" }}
       borderRadius={"8px"}
