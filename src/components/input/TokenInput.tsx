@@ -43,6 +43,7 @@ export default function TokenInput(props: {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+
   const { amountOut } = useSwapTokens();
   const { mode } = useGetMode();
   const {
@@ -78,7 +79,7 @@ export default function TokenInput(props: {
 
     //for wrap/unwrap switch
     if (inToken && switchable) {
-      if ( selectedInToken && selectedOutToken) {
+      if (selectedInToken && selectedOutToken) {
         if (value === "") {
           setSelectedOutToken({
             ...selectedOutToken,
@@ -111,7 +112,6 @@ export default function TokenInput(props: {
           parsedAmount: value,
         });
       }
-     
     }
 
     //This token is inToken
@@ -222,6 +222,13 @@ export default function TokenInput(props: {
             isMinus ? "0" : parsedAmount.toString(),
             18
           );
+          // if (switchable && selectedOutToken) {
+          //   setSelectedOutToken({
+          //     ...selectedOutToken,
+          //     amountBN: amountBN.toBigInt(),
+          //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+          //   });
+          // }
 
           return setSelectedInToken({
             ...selectedInToken,
@@ -229,7 +236,6 @@ export default function TokenInput(props: {
             parsedAmount: isMinus ? "0" : parsedAmount.toString(),
           });
         }
-
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
