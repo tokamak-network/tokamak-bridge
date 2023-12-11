@@ -11,6 +11,7 @@ export default function BridgeSwap() {
       flexDir={"column"}
       w={{ base: "100%", lg: "496px" }}
       h={"100%"}
+      pt={{ base: "80px", lg: 0 }}
       px={{ base: "12px", lg: 0 }}
       pb={{ base: "16px", lg: 0 }}
     >
@@ -20,7 +21,6 @@ export default function BridgeSwap() {
         justifyContent={{ base: "space-between", lg: "center" }}
         w={"100%"}
         h={"100%"}
-        mt={{ base: "80px", lg: "0" }}
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
