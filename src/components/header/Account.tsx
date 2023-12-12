@@ -1,7 +1,6 @@
 import { Center, Text } from "@chakra-ui/layout";
 import { Flex, Spinner } from "@chakra-ui/react";
 import Image from "next/image";
-import { useMemo } from "react";
 import { useAccount } from "wagmi";
 
 import useConnectWallet from "@/hooks/account/useConnectWallet";
@@ -18,21 +17,10 @@ export default function Account() {
   const { isConnected, address } = useAccount();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
-  // const { isPending } = useTransaction();
   const txPending = useRecoilValue(txPendingStatus);
   const { mobileView } = useMediaView();
 
   const buttonText = isConnected ? trimAddress({ address }) : mobileView ? "Connect" : "Connect Wallet";
-
-
-  const ImageContainer = useMemo(() => {
-    return (
-      <>
-        <Image src={WALLET_ICON} alt={""} />
-        <Text>{buttonText}</Text>
-      </>
-    );
-  }, [WALLET_ICON, buttonText]);
 
   return (
     <Center
