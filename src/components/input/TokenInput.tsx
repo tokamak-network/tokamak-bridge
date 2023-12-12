@@ -6,13 +6,12 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import Warning from "@/app/BridgeSwap/Warning";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { trimAmount } from "@/utils/trim";
-import { Button, Flex, Input, Text, useTheme } from "@chakra-ui/react";
+import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
@@ -21,7 +20,6 @@ import useConnectedNetwork from "@/hooks/network";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
@@ -43,6 +41,7 @@ export default function TokenInput(props: {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+
   const { amountOut } = useSwapTokens();
   const { mode } = useGetMode();
   const {
@@ -63,14 +62,56 @@ export default function TokenInput(props: {
     18
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
-  const theme = useTheme();
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
 
+  const switchable =
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    mode === "ETH-Wrap" ||
+    mode === "ETH-Unwrap";
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value;
+
+    //for wrap/unwrap switch
+    if (inToken && switchable) {
+      if (selectedInToken && selectedOutToken) {
+        if (value === "") {
+          setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
+
+        const parsedAmountOut = ethers.utils.parseUnits(
+          value,
+          selectedOutToken?.decimals
+        );
+        const parsedAmountIn = ethers.utils.parseUnits(
+          value,
+          selectedInToken?.decimals
+        );
+        setSelectedInToken({
+          ...selectedInToken,
+          amountBN: parsedAmountIn.toBigInt(),
+          parsedAmount: value,
+        });
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: parsedAmountOut.toBigInt(),
+          parsedAmount: value,
+        });
+      }
+    }
 
     //This token is inToken
     if (inToken && selectedInToken) {
@@ -128,6 +169,7 @@ export default function TokenInput(props: {
         value,
         selectedOutToken.decimals
       );
+
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -158,8 +200,6 @@ export default function TokenInput(props: {
           }, 100);
         }
         if (isETH(selectedInToken)) {
-          console.log("totalGasCost(ETH) : ", totalGasCost);
-
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
@@ -181,6 +221,13 @@ export default function TokenInput(props: {
             isMinus ? "0" : parsedAmount.toString(),
             18
           );
+          // if (switchable && selectedOutToken) {
+          //   setSelectedOutToken({
+          //     ...selectedOutToken,
+          //     amountBN: amountBN.toBigInt(),
+          //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+          //   });
+          // }
 
           return setSelectedInToken({
             ...selectedInToken,
@@ -188,7 +235,6 @@ export default function TokenInput(props: {
             parsedAmount: isMinus ? "0" : parsedAmount.toString(),
           });
         }
-
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
