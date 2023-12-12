@@ -3,7 +3,11 @@
 import Image from "next/image";
 import { Flex, Text, Box } from "@chakra-ui/layout";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { actionMode, selectedInTokenStatus, selectedOutTokenStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  actionMode,
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 import { actionMethodStatus, swapSettingStatus } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
@@ -37,26 +41,22 @@ export default function Swap() {
     }
 
     if (inTokenRecoilValue && !outTokenRecoilValue) {
-      setInTokenRecoilValue(null)
-      return setOutTokenRecoilValue(inTokenRecoilValue)
+      setInTokenRecoilValue(null);
+      return setOutTokenRecoilValue(inTokenRecoilValue);
     }
 
     if (!inTokenRecoilValue && outTokenRecoilValue) {
-      setOutTokenRecoilValue(null)
-      return setInTokenRecoilValue(outTokenRecoilValue)
+      setOutTokenRecoilValue(null);
+      return setInTokenRecoilValue(outTokenRecoilValue);
     }
-
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
-
-  
   const switchable =
     mode === "Swap" ||
     mode === "Wrap" ||
     mode === "Unwrap" ||
     mode === "ETH-Unwrap" ||
     mode === "ETH-Wrap";
-
 
   return (
     <>
@@ -72,13 +72,17 @@ export default function Swap() {
             }
             justifyContent={"center"}
             alignItems={"center"}
-            pt={mode === null ? "65px" : "80px"}>
+            pt={mode === null ? "65px" : "80px"}
+          >
             <Flex
               bg={switchable ? "#1F2128" : "transparent"}
               w={"36px"}
               h={"36px"}
               justifyContent={"center"}
-              alignItems={"center"} borderRadius={'5px'} _hover={{border:switchable?'2px solid #313442':''}}>
+              alignItems={"center"}
+              borderRadius={"5px"}
+              _hover={{ border: switchable ? "2px solid #313442" : "" }}
+            >
               <Image src={ArrowImg} alt={"arrow"} width={24} />
             </Flex>
           </Flex>
@@ -90,7 +94,8 @@ export default function Swap() {
             <Flex
               columnGap={"8px"}
               cursor={"pointer"}
-              onClick={() => setMethodStatus(true)}>
+              onClick={() => setMethodStatus(true)}
+            >
               <Text fontWeight={500} fontSize={24} userSelect={"none"}>
                 {mode === null ? "Swap" : mode.replaceAll("ETH-", "")}
               </Text>
@@ -113,7 +118,8 @@ export default function Swap() {
             <Flex
               justifyContent={"center"}
               alignItems={"center"}
-              onClick={invertTokenPair}>
+              onClick={invertTokenPair}
+            >
               <Image src={ArrowImg} alt={"arrow"} />
             </Flex>
 

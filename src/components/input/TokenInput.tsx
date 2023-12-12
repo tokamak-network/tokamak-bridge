@@ -6,13 +6,12 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import Warning from "@/app/BridgeSwap/Warning";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { trimAmount } from "@/utils/trim";
-import { Button, Flex, Input, Text, useTheme } from "@chakra-ui/react";
+import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
@@ -21,7 +20,6 @@ import useConnectedNetwork from "@/hooks/network";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
@@ -64,15 +62,16 @@ export default function TokenInput(props: {
     18
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
-  const theme = useTheme();
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
+
   const switchable =
     mode === "Wrap" ||
     mode === "Unwrap" ||
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value;
@@ -449,7 +448,8 @@ export default function TokenInput(props: {
       pb={"16px"}
       w={"100%"}
       rowGap={"6px"}
-      {...style}>
+      {...style}
+    >
       {triggerForSpinner && subMode.add ? (
         <Flex w={"100%"} h={"27px"}>
           <GradientSpinner />
@@ -476,7 +476,8 @@ export default function TokenInput(props: {
             ref={inputRef}
             onChange={onChange}
             onFocus={handleFocus}
-            onBlur={handleBlur}></Input>
+            onBlur={handleBlur}
+          ></Input>
           {hasMaxButton && !isMax && (
             <Button
               w={"40px"}
@@ -488,7 +489,8 @@ export default function TokenInput(props: {
               _active={{}}
               color={"#fff"}
               mt={"3px"}
-              onClick={() => onMax()}>
+              onClick={() => onMax()}
+            >
               Max
             </Button>
           )}
