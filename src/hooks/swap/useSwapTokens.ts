@@ -27,7 +27,7 @@ export function useSwapTokens() {
   const { address } = useAccount();
   const { mode } = useGetMode();
   const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT, QUOTER_CONTRACT } = useUniswapContracts();
+  const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { routingPath } = useSmartRouter();
   const [isError, setIsError] = useState<boolean>(false);
 

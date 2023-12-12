@@ -52,7 +52,6 @@ export default function usePriceImpact() {
   const [markPrice, setMarkPrice] = useState<number | undefined>(undefined);
 
   const { inToken, outToken } = useInOutTokens();
-  const { QUOTER_CONTRACT } = useUniswapContracts();
   const { amountOut } = useSwapTokens();
   const { mode } = useGetMode();
   const [, setIsLoading] = useIsLoading();
