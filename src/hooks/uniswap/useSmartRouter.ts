@@ -72,9 +72,9 @@ export function useSmartRouter() {
         process.env.NEXT_PUBLIC_ROUTING_API
       }/quote?tokenInAddress=${
         isEther ? WETHAddress : inToken.tokenAddress
-      }&tokenInChainId=${connectedChainId}&tokenOutAddress=${
+      }&tokenInChainId=${11155111}&tokenOutAddress=${
         isOutEther ? WETHAddress : outToken.tokenAddress
-      }&tokenOutChainId=${connectedChainId}&amount=${
+      }&tokenOutChainId=${11155111}&amount=${
         inToken.amountBN
       }&type=exactIn&slippageTolerance=${txSettingValue.slippage}&deadline=${
         txSettingValue.deadline * 60
