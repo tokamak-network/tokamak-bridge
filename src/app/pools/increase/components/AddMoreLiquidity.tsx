@@ -31,6 +31,7 @@ export default function AddMoreLiquidity() {
       GOERLI: token0.address,
       TITAN: token0.address,
       DARIUS: token0.address,
+      SEPOLIA: token0.address,
     },
     isNativeCurrency:
       token0.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
@@ -39,6 +40,7 @@ export default function AddMoreLiquidity() {
             SupportedChainId.GOERLI,
             SupportedChainId.TITAN,
             SupportedChainId.DARIUS,
+            SupportedChainId.SEPOLIA,
           ]
         : null,
     decimals: token0.decimals,
@@ -52,6 +54,7 @@ export default function AddMoreLiquidity() {
       GOERLI: token1.address,
       TITAN: token1.address,
       DARIUS: token1.address,
+      SEPOLIA: token1.address,
     },
     isNativeCurrency:
       token1.address.toLowerCase() ===
@@ -61,6 +64,7 @@ export default function AddMoreLiquidity() {
             SupportedChainId.GOERLI,
             SupportedChainId.TITAN,
             SupportedChainId.DARIUS,
+            SupportedChainId.SEPOLIA,
           ]
         : null,
     decimals: token1.decimals,
