@@ -35,6 +35,9 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const tData = useGetTransaction();
   const ref = useRef<HTMLDivElement| null>(null);
 
+  console.log("TData:::", tData);
+  console.log("preLoadData", preLoadData);
+
   useEffect(() => {
     const updateNumData = () => {
       if (ref?.current) {
@@ -199,8 +202,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
 
       case "present":
         return (
-          getPaginatedData.length !== 0 &&
-          getPaginatedData.map((tx: any, index: number) => {
+          // getPaginatedData.length !== 0 &&
+          tData.depositTxs.map((tx: any, index: number) => {
             if (tx.event === "deposit") {
               return <DepositTx tx={tx} key={tx.transactionHash} />;
             } else {
@@ -210,10 +213,10 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         );
 
       case "loading":
-        if (preLoadData.length > 0) {
+        if (tData.depositTxs.length > 0) {
           return (
-            getPaginatedData.length !== 0 &&
-            getPaginatedData.map((tx: any) => {
+            // getPaginatedData.length !== 0 &&
+            tData.depositTxs.map((tx: any) => {
               return <HalfLoadingTx tx={tx} key={tx.transactionHash} />;
             })
           );
@@ -232,7 +235,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      h={{ base:"calc(100vh - 248px)", lg: "calc(100vh - 165px)" }}
+      h={{ base:"calc(100vh - 105px)", lg: "calc(100vh - 165px)" }}
       bg={"transparent"}
       w="100%"
 
@@ -263,7 +266,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       >
         {txes}
       </Flex>
-      {getLayerFiltered.length > getPaginatedData.length &&
+      {/* {getLayerFiltered.length > getPaginatedData.length &&
         tData.loadingState === "present" && (
           <Flex
             my={{ base:"16px", lg: "32px" }}
@@ -283,7 +286,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               Load more
             </Button>
           </Flex>
-        )}
+        )} */}
     </Flex>
   );
 }

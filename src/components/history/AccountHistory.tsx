@@ -3,7 +3,6 @@ import {
   DrawerContent,
   DrawerOverlay,
   Flex,
-  useToast,
   Text,
   Box,
 } from "@chakra-ui/react";
@@ -13,7 +12,6 @@ import { useMemo, useState, SetStateAction, Dispatch, useEffect } from "react";
 import DrawerCloseIcon from "assets/icons/accountHistory/drawerClose.svg";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
-import useConnectWallet from "@/hooks/account/useConnectWallet";
 import ActivityContainer from "./ActivityContainer";
 import NetworkSelector from "./NetworkSelector";
 import SearchComponent from "./SearchComponent";
@@ -32,8 +30,6 @@ type SelectOption = {
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
-  const toast = useToast();
-  const { connetAndDisconntWallet } = useConnectWallet();
   const [tab, setTab] = useState("Activity");
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
     chainId: 0,
@@ -126,12 +122,14 @@ export default function AccountHistory() {
       >
         {!mobileView && <AccountContainer />}
         <TabContainer setTab={setTab} tab={tab} />
-        <Flex>
-          {Network}
-          {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
-          <SearchComponent tab={tab} />
-        </Flex>
-        <Flex mt="12px" height={"80%"}>
+        {!mobileView && (
+          <Flex>
+            {Network}
+            {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
+            <SearchComponent tab={tab} />
+          </Flex>
+        )}
+        <Flex mt={{ base: "0px", lg: "12px"}} height={"80%"}>
           {/* {tab === "Balance" ? (
             <BalanceContainer network={selectedNetwork} />
           ) : (
