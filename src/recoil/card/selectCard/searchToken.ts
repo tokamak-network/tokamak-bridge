@@ -53,6 +53,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
               GOERLI: nameOrAdd,
               TITAN: nameOrAdd,
               DARIUS: nameOrAdd,
+              SEPOLIA: nameOrAdd,
             },
             decimals,
             isNativeCurrency: null,

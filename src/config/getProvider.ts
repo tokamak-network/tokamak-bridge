@@ -45,4 +45,5 @@ export const providerByChainId: Record<
   [SupportedChainId.GOERLI]: GoerliProvider,
   [SupportedChainId.TITAN]: TitanProvider,
   [SupportedChainId.DARIUS]: TitanGoerliProvider,
+  [SupportedChainId.SEPOLIA]: SepoliaProvider,
 };
