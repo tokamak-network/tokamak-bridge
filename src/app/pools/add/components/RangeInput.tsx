@@ -54,8 +54,6 @@ export default function RangeInput(props: RangeInputProps) {
   const [localValue, setLocalValue] = useState<string | undefined>(undefined);
   const [useLocalValue, setUseLocalValue] = useState<boolean>(false);
 
-  console.log("useLocalValue", useLocalValue);
-
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
@@ -144,24 +142,6 @@ export default function RangeInput(props: RangeInputProps) {
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice, notExistPool]);
 
-  console.log("invertPrice", invertPrice);
-  console.log(
-    "pricesAtTicks?.LOWER?.toSignificant(6)",
-    pricesAtTicks?.LOWER?.toSignificant(6)
-  );
-  console.log(
-    "pricesAtTicks?.UPPER?.invert().toSignificant(6)",
-    pricesAtTicks?.UPPER?.invert().toSignificant(6)
-  );
-  console.log(
-    "pricesAtTicks?.LOWER?.invert().toSignificant(6)",
-    pricesAtTicks?.LOWER?.invert().toSignificant(6)
-  );
-  console.log(
-    "pricesAtTicks?.UPPER?.toSignificant(6)",
-    pricesAtTicks?.UPPER?.toSignificant(6)
-  );
-
   const blurHandler = useCallback(
     (e: any) => {
       setIsFocused(false);
@@ -189,8 +169,6 @@ export default function RangeInput(props: RangeInputProps) {
       return setMaxPriceForAddModal(localValue);
     }
   }, [localValue, isMinPrice]);
-
-  console.log("gh", value, "localValue", localValue);
 
   return (
     <Flex flexDir={"column"}>

@@ -11,7 +11,7 @@ import { useState, useMemo } from "react";
 import useIsTon from "@/hooks/token/useIsTon";
 
 export default function InitializeInfo() {
-  const [poolStatus] = usePool();
+  const [poolStatus, pool] = usePool();
   const [inputIntialPrice, setInitialPrice] = useRecoilState(initialPrice);
   const { inToken, outToken } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);

@@ -40,6 +40,7 @@ const getInterface = () => {
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
     L1CrossDomainMessengerAbi
   );
+
   return {
     l1BridgeI,
     l2BridgeI,
