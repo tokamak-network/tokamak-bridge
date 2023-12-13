@@ -338,7 +338,7 @@ export default function NetworkDropdown(props: {
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+      return [SupportedChainId["SEPOLIA"], SupportedChainId["DARIUS"]].includes(
         chainInfo.chainId
       );
     })

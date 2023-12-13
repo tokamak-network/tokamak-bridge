@@ -18,6 +18,7 @@ export enum SupportedChainId {
   //   BNB = 56,
   TITAN = 55004,
   DARIUS = 5050,
+  SEPOLIA = 11155111,
 }
 
 export interface SupportedChainProperties {
@@ -42,6 +43,14 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.GOERLI,
     chainName: "GOERLI",
+    networkImage: NETWORK_ETHEREUM,
+    rpcAddress: "",
+    nativeToken: "ETH",
+    layer: "L1",
+  },
+  {
+    chainId: SupportedChainId.SEPOLIA,
+    chainName: "SEPOLIA",
     networkImage: NETWORK_ETHEREUM,
     rpcAddress: "",
     nativeToken: "ETH",

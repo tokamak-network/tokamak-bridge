@@ -8,6 +8,8 @@ export function convertNetworkName(
       return "Ethereum";
     case "GOERLI":
       return "Goerli";
+    case "SEPOLIA":
+      return "Sepolia";
     case "TITAN":
       return "Titan";
     case "DARIUS":

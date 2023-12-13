@@ -1,6 +1,7 @@
 import {
   GOERLI_CONTRACTS,
   MAINNET_CONTRACTS,
+  SEPOLIA_CONTRACTS,
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts";
@@ -13,7 +14,9 @@ import { TokenInfo } from "@/types/token/supportedToken";
 export function isETH(token: TokenInfo | null) {
   if (token === null) return false;
   return token?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET || SupportedChainId.GOERLI
+    SupportedChainId.MAINNET ||
+      SupportedChainId.GOERLI ||
+      SupportedChainId.SEPOLIA
   );
 }
 
@@ -26,6 +29,7 @@ export function getWETHAddress(
       GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
+      SEPOLIA: SEPOLIA_CONTRACTS.WETH_ADDRESS,
     };
 
   return wethAddress[chainName];
@@ -37,6 +41,7 @@ export function getWETHAddressByChainId(chainId: number) {
     [5]: GOERLI_CONTRACTS.WETH_ADDRESS,
     [55004]: TOKAMAK_CONTRACTS.WETH_ADDRESS,
     [5050]: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
+    [11155111]: SEPOLIA_CONTRACTS.WETH_ADDRESS,
   };
 
   return wethAddress[chainId];

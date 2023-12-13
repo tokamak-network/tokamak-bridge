@@ -60,13 +60,15 @@ export function useSwapTokens() {
           SupportedChainId.MAINNET ||
             SupportedChainId.GOERLI ||
             SupportedChainId.TITAN ||
-            SupportedChainId.DARIUS
+            SupportedChainId.DARIUS ||
+            SupportedChainId.SEPOLIA
         );
         const isOutETH = outToken.isNativeCurrency?.includes(
           SupportedChainId.MAINNET ||
             SupportedChainId.GOERLI ||
             SupportedChainId.TITAN ||
-            SupportedChainId.DARIUS
+            SupportedChainId.DARIUS ||
+            SupportedChainId.SEPOLIA
         );
 
         if (isOutETH) {
