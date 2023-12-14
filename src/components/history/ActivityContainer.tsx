@@ -35,6 +35,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const tData = useGetTransaction();
   const ref = useRef<HTMLDivElement| null>(null);
 
+  //decides the number of txs that can be shown depending on the height of the screen
   useEffect(() => {
     const updateNumData = () => {
       if (ref?.current) {
@@ -57,6 +58,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     };
   }, [ref?.current]);
 
+  //get the data from the subgraphs to show as initial data until the proper data is loaded in the useGetTransactions hook
+ //sets the preloaded data
   useEffect(() => {
     const getTxs = async () => {
       if (isConnectedToMainNetwork !== undefined) {
@@ -93,6 +96,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     getTxs();
   }, [isConnectedToMainNetwork, address]);
 
+  //used to filter the data for the search string
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
       return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
@@ -129,6 +133,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     tData.loadingState,
   ]);
 
+//filter the above filtered data with the selected network 
   const getLayerFiltered = useMemo(() => {    
     const depSelected =
       network.chainId === SupportedChainId["MAINNET"] ||
@@ -154,12 +159,15 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     }
   }, [searchTxString, filteredTx, network, tData]);
 
+
+  //creates the pagination array from the filtered txs
   const getPaginatedData = useMemo(() => {
     const startIndex = 0;
     const endIndex = startIndex + numData;
     return getLayerFiltered.slice(startIndex, endIndex);
   }, [getLayerFiltered, tData, filteredTx]);
 
+  //returns the appropriate component depending on the loading status of the data from the hook
   const txes = useMemo(() => {
     switch (tData.loadingState) {
       case "absent":
