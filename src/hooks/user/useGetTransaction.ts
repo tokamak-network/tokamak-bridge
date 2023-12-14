@@ -337,7 +337,7 @@ export default function useGetTransaction() {
               const l1Tx = await l2ProSDK.getTransaction(tx.transactionHash);
 
               //gets the l2 block from the titan sdk
-              const l2block = await l2ProSDK.getBlock(Number(tx.blockNumsber));
+              const l2block = await l2ProSDK.getBlock(Number(tx.blockNumber));
 
               //gets the l1 block from the titan sdk using the l2 deposit tx data fetched form the SDK 
               const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak provider
