@@ -92,7 +92,7 @@ export default function AccountHistory() {
       useInert={true}
     >
       <DrawerOverlay
-        bg={"#000000F0"}
+        bg={{ base: "#000000F0", lg: "none" }}
         pointerEvents={"auto"}
         onClick={() => setIsOpen(false)}
       />
@@ -129,7 +129,7 @@ export default function AccountHistory() {
             <SearchComponent tab={tab} />
           </Flex>
         )}
-        <Flex mt={{ base: "0px", lg: "12px"}} height={"80%"}>
+        <Flex mt={{ base: "0px", lg: "12px" }} height={"100%"}>
           {/* {tab === "Balance" ? (
             <BalanceContainer network={selectedNetwork} />
           ) : (
