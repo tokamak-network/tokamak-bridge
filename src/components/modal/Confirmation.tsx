@@ -9,35 +9,39 @@ import {
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRecoilValue } from "recoil";
-import "@/css/spinner.css";
+import { useRecoilState, useRecoilValue } from "recoil";
 import ConfirmedImage from "assets/image/modal/confirmed.svg";
 import ErrorImage from "assets/image/modal/error.svg";
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";
-import { useTransaction } from "@/hooks/tx/useTx";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
-import { useRouter } from "next/navigation";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
-import { useGetPositionIdFromPath } from "@/hooks/pool/useGetPositionIds";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
+
+import "@/css/spinner.css";
 
 export default function Confirmation() {
   const { blockExplorer, connectedChainId } = useConnectedNetwork();
   const txHash = useRecoilValue(txHashStatus);
 
-  const { isConfirmed, isConfirming, isError, isOpen, setIsOpen, closeModal } =
+  const { isConfirmed, isConfirming, isError, isOpen, closeModal } =
     useTxConfirmModal();
   const { mode, subMode } = useGetMode();
   const txLog = useRecoilValue(txHashLog);
-  const { positionId } = useGetPositionIdFromPath();
+  const { mobileView } = useMediaView();
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
 
   const closeThisModal = useCallback(() => {
     closeModal();
-  }, [closeModal]);
+    if (mobileView && (mode === "Deposit" || mode === "Withdraw") && isConfirmed) {
+      setIsOpen(true);
+    }
+  }, [closeModal, mobileView, mode, isConfirmed]);
 
   const subModeValue = Object.keys(subMode).filter(
     (key) => subMode[key as keyof typeof subMode] === true

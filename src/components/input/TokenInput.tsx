@@ -3,7 +3,6 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
@@ -17,7 +16,7 @@ import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -33,8 +32,9 @@ export default function TokenInput(props: {
   isDisabled?: boolean;
   hasMaxButton?: boolean;
   style?: {};
+  customRef?: RefObject<HTMLInputElement>;
 }) {
-  const { inToken, defaultValue, hasMaxButton, isDisabled, style } = props;
+  const { inToken, hasMaxButton, isDisabled, style, customRef } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -441,6 +441,10 @@ export default function TokenInput(props: {
     }
   }, [currentPrice]);
 
+  useEffect(() => {
+    customRef?.current?.focus();
+  }, [customRef])
+
   return (
     <Flex
       flexDir={"column"}
@@ -473,7 +477,7 @@ export default function TokenInput(props: {
             isDisabled={isDisabled}
             _disabled={{ color: "#fff" }}
             value={valueProp}
-            ref={inputRef}
+            ref={customRef ? customRef : inputRef}
             onChange={onChange}
             onFocus={handleFocus}
             onBlur={handleBlur}

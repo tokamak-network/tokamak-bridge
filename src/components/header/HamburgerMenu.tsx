@@ -1,12 +1,9 @@
-import { useState } from "react";
 import {
   Flex,
   Text,
   Drawer,
   DrawerContent,
   DrawerOverlay,
-  MenuList,
-  Menu,
   Box,
 } from "@chakra-ui/react";
 import Image from "next/image";
@@ -17,10 +14,8 @@ import { mobileMenuStatus } from "@/recoil/modal/atom";
 import userguide from "assets/icons/header/userGuide.svg";
 import userGuideHover from "assets/icons/header/userGuideHover.svg";
 import lightbulbHover from "assets/icons/header/LightbulbHover.svg";
-import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import lightbulb from "assets/icons/header/Lightbulb.svg";
 import LOGO from "assets/icons/header/logo-dark-hc.svg";
-import { Overlay_Index } from "@/types/style/overlayIndex";
 
 const CustomMenuItem = (props: {
   link: string;
@@ -28,20 +23,16 @@ const CustomMenuItem = (props: {
   icon: any;
   hoverIcon: any;
 }) => {
-  const { link, title, icon, hoverIcon } = props;
-  const [hover, setHover] = useState(false);
+  const { link, title, icon } = props;
   return (
     <Flex
       align={"center"}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       target="_blank"
       as={"a"}
       href={link}
       h={"40px"}
       marginBottom={"8px"}
       padding={"8px"}
-      // border={'1px solid red'}
       _focus={{ background: "0F0F12" }}
       _hover={{ bg: "#313442" }}
       borderRadius={"8px"}
@@ -74,6 +65,7 @@ const HamburgerMenu = () => {
       useInert={true}
     >
       <DrawerOverlay bg={"#000000CC"} onClick={() => setHamburgerOpen(false)} />
+      <Box zIndex={1400} pos={"fixed"} w={"full"} h={"full"} left={0} top={0} bg={'#000000B0'}/>
 
       <DrawerContent maxW={"248px"}>
         <Flex

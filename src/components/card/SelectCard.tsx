@@ -5,7 +5,7 @@ import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
@@ -113,8 +113,8 @@ const SearchToken = () => {
 export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
   const { pcView } = useMediaView();
-  const { inToken, outToken } = useInOutTokens();
   const { isOpen } = useRecoilValue(tokenModalStatus);
+  const ref =  useRef<HTMLInputElement>(null);
 
   //close when click at outside
   useEffect(() => {
@@ -129,7 +129,7 @@ export function SelectCardModal() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-
+  
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
@@ -201,6 +201,7 @@ export function SelectCardModal() {
                     inToken={isOpen === "INPUT" ? true : false}
                     hasMaxButton={isOpen === "INPUT" ? true : false}
                     style={isOpen === "INPUT" ? "" : { display: "none" }}
+                    customRef={ref}
                   />
                 </Flex>
               </>

@@ -1,6 +1,5 @@
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 import { atom } from "recoil";
-import { Duration } from "date-fns";
 
 type withdrawModal = {
   isOpen: boolean;

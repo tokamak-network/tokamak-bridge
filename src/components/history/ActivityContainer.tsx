@@ -1,6 +1,7 @@
 import { Flex, Text, Button, Spinner } from "@chakra-ui/react";
 import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
+import DepositTxMobile from "./DepositTxMobile";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { searchTxStatus } from "@/recoil/userHistory/searchTx";
@@ -16,6 +17,7 @@ import { L1TxType } from "@/types/activity/history";
 import HalfLoadingTx from "./HalfLoadingTx";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useRef } from "react";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
@@ -33,7 +35,11 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
   const tData = useGetTransaction();
-  const ref = useRef<HTMLDivElement| null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const { mobileView } = useMediaView();
+
+  console.log("TData:::", tData);
+  console.log("preLoadData", preLoadData);
 
   useEffect(() => {
     const updateNumData = () => {
@@ -100,19 +106,17 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
-            
             if (tx !== undefined) {
               if (tx.l1txHash && tx.l2txHash === undefined)
-              return tx.l1txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash === undefined)
-              return tx.l2txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash)
-              return (
-                tx.l1txHash.includes(searchTxString.id) ||
-                tx.l2txHash.includes(searchTxString.id)
-              );
+                return tx.l1txHash.includes(searchTxString.id);
+              if (tx.l2txHash && tx.l1txHash === undefined)
+                return tx.l2txHash.includes(searchTxString.id);
+              if (tx.l2txHash && tx.l1txHash)
+                return (
+                  tx.l1txHash.includes(searchTxString.id) ||
+                  tx.l2txHash.includes(searchTxString.id)
+                );
             }
-          
           }
         );
 
@@ -129,7 +133,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     tData.loadingState,
   ]);
 
-  const getLayerFiltered = useMemo(() => {    
+  const getLayerFiltered = useMemo(() => {
     const depSelected =
       network.chainId === SupportedChainId["MAINNET"] ||
       network.chainId === SupportedChainId["GOERLI"];
@@ -146,7 +150,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     }
     if (withSelected === true) {
       const txs = filteredTx.filter(
-        (tx: FullWithTx) => tx !== undefined  && tx.event === "withdraw"
+        (tx: FullWithTx) => tx !== undefined && tx.event === "withdraw"
       );
       return txs;
     } else {
@@ -199,10 +203,14 @@ export default function ActivityContainer(props: { network: SelectOption }) {
 
       case "present":
         return (
-          getPaginatedData.length !== 0 &&
-          getPaginatedData.map((tx: any, index: number) => {
+          // getPaginatedData.length !== 0 &&
+          tData.depositTxs.map((tx: any, index: number) => {
             if (tx.event === "deposit") {
-              return <DepositTx tx={tx} key={tx.transactionHash} />;
+              return mobileView ? (
+                <DepositTxMobile tx={tx} key={tx.transactionHash} />
+              ) : (
+                <DepositTx tx={tx} key={tx.transactionHash} />
+              );
             } else {
               return <WithdrawTx tx={tx} key={index} />;
             }
@@ -210,10 +218,10 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         );
 
       case "loading":
-        if (preLoadData.length > 0) {
+        if (tData.depositTxs.length > 0) {
           return (
-            getPaginatedData.length !== 0 &&
-            getPaginatedData.map((tx: any) => {
+            // getPaginatedData.length !== 0 &&
+            tData.depositTxs.map((tx: any) => {
               return <HalfLoadingTx tx={tx} key={tx.transactionHash} />;
             })
           );
@@ -232,7 +240,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      h={{ base:"calc(100vh - 248px)", lg: "calc(100vh - 165px)" }}
+      h={"100%"}
       bg={"transparent"}
       w="100%"
 
@@ -263,7 +271,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       >
         {txes}
       </Flex>
-      {getLayerFiltered.length > getPaginatedData.length &&
+      {/* {getLayerFiltered.length > getPaginatedData.length &&
         tData.loadingState === "present" && (
           <Flex
             my={{ base:"16px", lg: "32px" }}
@@ -283,7 +291,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               Load more
             </Button>
           </Flex>
-        )}
+        )} */}
     </Flex>
   );
 }

@@ -1,38 +1,26 @@
 import { Center, Text } from "@chakra-ui/layout";
-import { Flex, Spinner, useMediaQuery } from "@chakra-ui/react";
+import { Flex, Spinner } from "@chakra-ui/react";
 import Image from "next/image";
-import WALLET_ICON from "assets/icons/wallet.svg";
-import { useAccount, useConnect } from "wagmi";
-import { trimAddress } from "@/utils/trim";
+import { useAccount } from "wagmi";
+
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { useTransaction, useTx } from "@/hooks/tx/useTx";
-import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { trimAddress } from "@/utils/trim";
+
 import HISTORYICON from "assets/icons/header/history.svg";
-import { useMemo } from "react";
+import WALLET_ICON from "assets/icons/wallet.svg";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
-  // const { isPending } = useTransaction();
   const txPending = useRecoilValue(txPendingStatus);
-  const { mobileView, pcView } = useMediaView();
+  const { mobileView } = useMediaView();
 
   const buttonText = isConnected ? trimAddress({ address }) : mobileView ? "Connect" : "Connect Wallet";
-
-
-  const ImageContainer = useMemo(() => {
-    return (
-      <>
-        <Image src={WALLET_ICON} alt={""} />
-        <Text>{buttonText}</Text>
-      </>
-    );
-  }, [WALLET_ICON, buttonText]);
 
   return (
     <Center
