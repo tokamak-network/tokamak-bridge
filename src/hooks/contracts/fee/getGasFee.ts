@@ -20,6 +20,7 @@ import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
+import useWrap from "@/hooks/swap/useTonWrap";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -42,12 +43,19 @@ export function useGasFee() {
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const { estimatedGasUsage } = useSwapTokens();
+  const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
 
   const swapGasUseEstimate = useMemo(() => {
     if (estimatedGasUsage) {
       return estimatedGasUsage;
     }
   }, [estimatedGasUsage]);
+
+  const wrapUnwrapGasEstimate = useMemo(() => {
+    if (wrapUnwrapGasUsage) {
+      return wrapUnwrapGasUsage;
+    }
+  }, [wrapUnwrapGasUsage]);
 
   const withdrawContract = new ethers.Contract(
     TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
@@ -65,6 +73,16 @@ export function useGasFee() {
         switch (mode) {
           case "Swap":
             return swapGasUseEstimate;
+          case "ETH-Unwrap":
+            return wrapUnwrapGasEstimate;
+
+          case "ETH-Wrap":
+            return wrapUnwrapGasEstimate;
+
+          case "Unwrap":
+            return wrapUnwrapGasEstimate;
+          case "Wrap":
+            return wrapUnwrapGasEstimate;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
