@@ -221,7 +221,16 @@ export function useTransactionDetail() {
         gasFeeUS: `$${gasCostUS}`,
       },
     ];
-  }, []);
+  }, [
+    mode,
+    inToken,
+    outToken,
+    inputAmount,
+    amountOut,
+    totalGasFee,
+    gasCostUS,
+    layer,
+  ]);
   return {
     depositPropsData,
     withdrawPropsData,

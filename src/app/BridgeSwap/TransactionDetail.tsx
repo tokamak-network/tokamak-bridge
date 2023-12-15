@@ -298,7 +298,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
       <Flex
         justifyContent={"space-between"}
         fontSize={{ base: 11, md: 14 }}
-        h={"16px"}>
+        h={"30px"}>
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
         </Flex>
@@ -332,7 +332,7 @@ const Content = (props: {
     WrapUnwrapPropsData
   } = useTransactionDetail();
   const { isOpen } = useConfirm();
-
+    
   const detailRow = useMemo(() => {
     switch (mode) {
       case "Deposit":

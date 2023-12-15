@@ -152,7 +152,7 @@ export default function useWrap() {
   const unwrapWETH = useCallback(
     async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract) {
-        const estimateGas = await ETHWrapContract.estimateGas.unwrapWETH();
+        const estimateGas = await ETHWrapContract.estimateGas.withdraw(inToken.amountBN);
         if (estimateGasUsage) return estimateGas;
         try {
           withdraw({
