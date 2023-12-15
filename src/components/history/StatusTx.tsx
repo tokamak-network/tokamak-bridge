@@ -1,28 +1,26 @@
-import { Flex, Text, Link } from "@chakra-ui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Flex, Text, Link, Button } from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
-import {
-  confirmWithdrawStats,
-  confirmWithdrawData,
-} from "@/recoil/modal/atom";
+import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { claimTx } from "@/recoil/userHistory/claimTx";
-import { FullDepTx, FullWithTx } from "@/types/activity/history";
+import { FullWithTx } from "@/types/activity/history";
 import {
-  add,
   getTime,
   getUnixTime,
   intervalToDuration,
   Duration,
-  subMinutes,
   addHours,
-  differenceInSeconds
+  differenceInSeconds,
 } from "date-fns";
+
+import useCallClaim from "@/hooks/user/actions/useCallClaim";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 // type TokenData = {
 //   token0Symbol: string;
@@ -50,7 +48,7 @@ export default function StatusTx(props: {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
   const [durationRollup, setDurationRollup] = useState("0");
-    
+
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,
@@ -59,16 +57,14 @@ export default function StatusTx(props: {
     seconds: 0,
     years: 0,
   });
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(
-    confirmWithdrawStats
-  );
+  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
-
   const getCalendarEvent = useMemo(() => {
-    if (tx.l2timeStamp) {      
+    if (tx.l2timeStamp) {
       const timeStamp = tx.l2timeStamp;
       const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
@@ -87,12 +83,15 @@ export default function StatusTx(props: {
     }
   }, [tx.l2timeStamp]);
 
+  const { claim } = useCallClaim("relayMessage");
+  const { mobileView } = useMediaView();
+
   useEffect(() => {
     if (tx.l2timeStamp) {
-      const getDuration = setInterval(() => {        
+      const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
         // console.log('startDate',startDate);
-        
+
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
@@ -107,7 +106,7 @@ export default function StatusTx(props: {
       return () => clearInterval(getDuration);
     }
   }, [tx.l2timeStamp]);
-  
+
   // todo: should be adjusted for the browser's timezone
   const config: Object = {
     name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
@@ -157,11 +156,11 @@ export default function StatusTx(props: {
    */
   //  RELAYED, ===> 6
 
-  useEffect(() => {    
-    if (timeStamp!== undefined && !isNaN(timeStamp)) {
+  useEffect(() => {
+    if (timeStamp !== undefined && !isNaN(timeStamp)) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
-        
+
         // setDuration(
         //   intervalToDuration({
         //     start: getTime(timeStamp * 1000),
@@ -219,7 +218,7 @@ export default function StatusTx(props: {
             cursor={"pointer"}
             style={{ textDecoration: "none" }}
           >
-            {`${layer}: Completed`}
+            {mobileView ? "Claimed" : `${layer}: Completed`}
           </Link>
         ) : tx.currentStatus === 5 ? (
           <Text
@@ -237,7 +236,9 @@ export default function StatusTx(props: {
                   }
                 : undefined
             }
-          >{`${layer}: Ready to be claimed`}</Text>
+          >
+            {mobileView ? "Claim" : `${layer}: Ready to be claimed`}
+          </Text>
         ) : tx.currentStatus === 4 ? (
           <Text
             fontSize={"11px"}
@@ -254,7 +255,9 @@ export default function StatusTx(props: {
                   }
                 : undefined
             }
-          >{`${layer}: Wait 7 days`}</Text>
+          >
+            {mobileView ? "Wait 7 days" : `${layer}: Wait 7 days`}
+          </Text>
         ) : (
           <Text
             fontSize={"11px"}
@@ -271,9 +274,13 @@ export default function StatusTx(props: {
                   }
                 : undefined
             }
-          >{`${layer}: Wait ~${
-            isConnectedToMainNetwork ? "11" : "2"
-          } min for rollup`}</Text>
+          >
+            {mobileView
+              ? "Wait for rollup"
+              : `${layer}: Wait ~${
+                  isConnectedToMainNetwork ? "11" : "2"
+                } min for rollup`}
+          </Text>
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
@@ -303,17 +310,52 @@ export default function StatusTx(props: {
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>
-      ) : tx.currentStatus=== 2 ?(
+      ) : tx.currentStatus === 2 ? (
         <Flex>
-        <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>{durationRollup}</Text>
-        <Flex
+          <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+            {durationRollup}
+          </Text>
+          {/* <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
-            cursor={"pointer"}>
+            cursor={"pointer"}
+          >
             <Image src={Calendar} alt="google calendar" />
-          </Flex>
+          </Flex> */}
         </Flex>
-      ):<></>}
+      ) : tx.currentStatus === 5 ? (
+        mobileView && (
+          <Button
+            w={"64px"}
+            h="24px"
+            bg="#007AFF"
+            fontSize={"12px"}
+            color={"#fff"}
+            zIndex={10000}
+            _disabled={{ bg: "#1F2128" }}
+            onClick={(event) => {
+              event.stopPropagation();
+              setClaimTx(tx);
+              claim(tx);
+              setWithdrawStatus({
+                isOpen: false,
+              });
+              setWithdrawData({
+                modalData: {
+                  ...tx,
+                  inTokenSymbol: tx.inTokenSymbol,
+                  outTokenSymbol: tx.outTokenSymbol,
+                  inTokenAmount: tx.inTokenAmount,
+                },
+              });
+            }}
+          >
+            {"Claim"}
+          </Button>
+        )
+      ) : (
+        <></>
+      )}
     </Flex>
   );
 }
