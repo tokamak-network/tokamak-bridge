@@ -309,7 +309,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
               {gasFee}
             </Text>
           )}
-           {gasFee && <Text color={"#A0A3AD"}>{gasFeeUS}</Text>}
+          {gasFee && <Text color={"#A0A3AD"}>{gasFeeUS}</Text>}
         </Flex>
       </Flex>
     </Flex>
@@ -329,10 +329,10 @@ const Content = (props: {
     withdrawPropsData,
     swapPropsData,
     withdrawNewPropsData,
-    WrapUnwrapPropsData
+    WrapUnwrapPropsData,
   } = useTransactionDetail();
   const { isOpen } = useConfirm();
-    
+
   const detailRow = useMemo(() => {
     switch (mode) {
       case "Deposit":
@@ -380,7 +380,7 @@ const Content = (props: {
     withdrawPropsData,
     swapPropsData,
     withdrawNewPropsData,
-    WrapUnwrapPropsData
+    WrapUnwrapPropsData,
   ]);
 
   if (isExpanded) {
@@ -499,8 +499,10 @@ const Title = (props: {
         w={"100%"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        cursor={isOpen ||isWrapUnwrap? "" : "pointer"}
-        onClick={ () =>!isWrapUnwrap && isOpen === false && setIsExpended(!isExpanded)}
+        cursor={isOpen || isWrapUnwrap ? "" : "pointer"}
+        onClick={() =>
+          !isWrapUnwrap && isOpen === false && setIsExpended(!isExpanded)
+        }
         fontSize={{ base: 12, md: 14 }}>
         {isLoading ? (
           <Box w={"100%"} h={"20px"} mb={"5px"}>
@@ -522,7 +524,7 @@ const Title = (props: {
             )} */}
           </Flex>
         )}
-        {isLoading ||isWrapUnwrap
+        {isLoading || isWrapUnwrap
           ? null
           : isOpen === false && (
               <Flex>
@@ -607,7 +609,7 @@ export default function TransactionDetail(props: {
       pb={{ base: isExpanded ? "12px" : "", lg: isExpanded ? "20px" : "" }}>
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       <Content
-        isExpanded={isWrapUnwrap? true: isExpanded}
+        isExpanded={isWrapUnwrap ? true : isExpanded}
         isOnConfirm={isOnConfirm}
         isMobile={isMobile}></Content>
     </Flex>
