@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
@@ -13,11 +13,12 @@ import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
-import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
+import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
-import "@fontsource/poppins/600.css"
+import "@fontsource/poppins/600.css";
+import { txPendingStatus } from "@/recoil/global/transaction";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -28,7 +29,7 @@ export default function ActionButton() {
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
-  const { isPending } = useTransaction();
+  const txPending = useRecoilValue(txPendingStatus);
   const { outToken, outTokenInfo } = useInOutTokens();
   const { isTONatPair } = useIsTon();
   const status = useRecoilValue(bannerStatus);
@@ -48,7 +49,7 @@ export default function ActionButton() {
         (mode === "Swap" && isLoading) ||
         isNotSupportForSwap ||
         isBalanceOver ||
-        isPending ||
+        txPending ||
         (mode === "Swap" && outToken === null) ||
         isInputZero ||
         (mode === "Swap" && isTONatPair) ||
@@ -65,7 +66,7 @@ export default function ActionButton() {
     isLoading,
     isNotSupportForSwap,
     isBalanceOver,
-    isPending,
+    txPending,
     isTONatPair,
     isInputZero,
     mode,
@@ -77,7 +78,6 @@ export default function ActionButton() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [withdrawStatus, setWithdrawStatus] =
     useRecoilState(confirmWithdrawStats);
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
 
   return (
     <Button

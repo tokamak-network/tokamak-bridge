@@ -2,30 +2,18 @@ import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
 import { Field } from "@/types/swap/swap";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { atom, selector } from "recoil";
-import { ethers } from "ethers";
-import ERC20_ABI from "@/constant/abis/erc20.json";
-import { useProvier } from "@/hooks/provider/useProvider";
-import { loadingStatus } from "./isLoading";
-import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 import {
   addWeeks,
   getISODay,
-  format,
   startOfWeek,
   addDays,
   add,
   getTime,
 } from "date-fns";
 import { isETH } from "@/utils/token/isETH";
-import { ActionMethod } from "@/types/bridgeSwap";
-
-export const actionMethod = atom<ActionMethod>({
-  key: "actionMethod",
-  default: ActionMethod.Swap_ETH
-})
 
 export const networkStatus = atom<InOutNetworks>({
   key: "networkStatus",
@@ -82,6 +70,11 @@ export const relayBannerStatus = atom<Banner>({
   key: "relayBannerStatus",
   default: "Hidden",
 });
+
+export const welcomeMsgStatus = atom<Boolean>({
+  key: "welcomeMsgStatus",
+  default: true
+})
 
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;

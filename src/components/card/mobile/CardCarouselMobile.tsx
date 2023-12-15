@@ -3,14 +3,13 @@ import {
   ResponsiveContainer,
   StackedCarousel,
 } from "react-stacked-center-carousel";
-import { useRecoilValue, useRecoilState } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import TokenCard from "../TokenCard";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import { TokenInfo } from "@/types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import useConnectedNetwork from "@/hooks/network";
 import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import "@/css/carousel.css";
 
@@ -41,7 +40,6 @@ const CarouselCard = React.memo((props) => {
         type={"small"}
         onClick={() => {
           try {
-            // setSelectedToken(tokenData);
           } catch (e) {
           } finally {
             onCloseTokenModal();
@@ -57,7 +55,8 @@ export function CardCarouselMobile() {
   const { filteredTokenList } = useGetTokenList();
   const { inToken, outToken } = useInOutTokens();
   const { isOpen } = useRecoilValue(tokenModalStatus);
-  const [resultTokenArr, setResultTokenArr] = useState<TokenInfo[]>([]);
+  const [resultTokenArr, setResultTokenArr] =
+    useState<TokenInfo[]>(filteredTokenList);
 
   const move = (input: TokenInfo[], from: number) => {
     let numberOfDeletedElm = 1;
@@ -71,7 +70,7 @@ export function CardCarouselMobile() {
   };
 
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && (inToken || outToken)) {
       const isSelectedToken = (el: TokenInfo) =>
         el.tokenName ===
         (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
@@ -79,7 +78,13 @@ export function CardCarouselMobile() {
         filteredTokenList,
         filteredTokenList.findIndex(isSelectedToken)
       );
-      setResultTokenArr(resultTokenArr);
+
+      const resultTokenList = resultTokenArr.filter((token) =>
+        isOpen === "INPUT"
+          ? token.tokenName !== outToken?.tokenName
+          : token.tokenName !== inToken?.tokenName
+      );
+      setResultTokenArr(resultTokenList);
     }
   }, []);
 
@@ -109,6 +114,3 @@ export function CardCarouselMobile() {
     />
   );
 }
-
-CarouselCard.displayName = "CarouselCard";
-CardCarouselMobile.displayName = "ResponsiveCarousel";
