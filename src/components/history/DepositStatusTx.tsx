@@ -31,6 +31,7 @@ export default function DepositStatusTx(props: {
   const providers = useGetTxLayers();
   const [duration, setDuration] = useState("0");
 
+//calculates the duration of the relay time 
   useEffect(() => {
     if (tx.l1timeStamp) {
       const getDuration = setInterval(() => {

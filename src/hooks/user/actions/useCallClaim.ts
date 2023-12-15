@@ -13,6 +13,7 @@ import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useCrosschainMessenger from "../useCrosschainMessenger";
+
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
@@ -33,6 +34,7 @@ export default function useCallClaim(functionName: string) {
 
   const {} = useTx({ hash: data?.hash, txSort: "Claim" });
 
+  //open the error confirmation modal if there is an error with the claim tx
   useEffect(() => {
     if (isError) {
       setModalOpen("error");
@@ -41,8 +43,12 @@ export default function useCallClaim(functionName: string) {
 
   const claim = useCallback(
     async (txt: any) => {
+
+      //gets the MessageProof from the SDK to pass as parameter for the claim function
       const proof = await crossMessenger.getMessageProof(txt.resolved);
       if (Boolean(layer !== "L1") || layer === "L2") {
+
+      //returns the appropriate ethereum network depending on the testnet mainnet status
         const selectedWork = supportedChain.filter((supportedChain) => {
           if (isConnectedToMainNetwork === true) {
             return [SupportedChainId["MAINNET"]].includes(
@@ -54,10 +60,12 @@ export default function useCallClaim(functionName: string) {
             );
           }
         })[0];
-
+        
+        //if connected to titan networks, switch the network to ethereum network
         const res = await switchNetworkAsync?.(selectedWork.chainId);
         const tx = txt;
 
+        //if connected to ethereum network, execute the claim tx
         if (res) {
           try {
             write({
