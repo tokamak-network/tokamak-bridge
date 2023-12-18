@@ -254,7 +254,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         overflow={"scroll"}
         overflowX={"hidden"}
         rowGap={"8px"}
-        h={"c(100vh - 200px)"}
         css={{
           "&::-webkit-scrollbar": {
             width: "6px",

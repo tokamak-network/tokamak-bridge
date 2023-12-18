@@ -5,17 +5,11 @@ import {
   Flex,
   Text,
   Button,
-  useDisclosure,
   Checkbox,
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import CloseButton from "../button/CloseButton";
-import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
-import ARROW from "assets/icons/arrow.svg";
+
 import Image from "next/image";
-import CalendarIcon from "assets/icons/Google_Calendar_icon.svg";
-import "./CalendarButton.css";
-import { atcb_action } from "add-to-calendar-button";
 import { useMemo } from "react";
 import { format, addHours } from "date-fns";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
@@ -29,9 +23,14 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import TimelineComponent from "../history/modalComponents/TimelineComponent";
 import TitanContainer from "./TitanContainer";
 import EthereumContainer from "./EthereumContainer";
+import CalendarComponent from "../history/modalComponents/CalendarComponent";
+import CloseButton from "../button/CloseButton";
+
+import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
+import ARROW from "assets/icons/arrow.svg";
+import "./CalendarButton.css";
 
 export default function ConfirmWithdraw() {
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const [withdrawStatus, setWithdrawStatus] =
     useRecoilState(confirmWithdrawStats);
@@ -40,11 +39,10 @@ export default function ConfirmWithdraw() {
   const tx = withdrawData.modalData;
   const { onClick } = useCallBridgeSwapAction();
   const { claim } = useCallClaim("relayMessage");
-  const { isConnectedToMainNetwork } =
-    useConnectedNetwork();
-  const [txData, setTxData] = useRecoilState(txDataStatus);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const [txData] = useRecoilState(txDataStatus);
 
-  const { mobileView, pcView } = useMediaView();
+  const { mobileView } = useMediaView();
 
   const getCalendarEvent = useMemo(() => {
     if (tx && tx.l2timeStamp) {
@@ -94,48 +92,17 @@ export default function ConfirmWithdraw() {
           onChange={(e) => {
             const checkValue = e.target.checked;
             setIsConfirm(checkValue);
-          }}></Checkbox>
+          }}
+        ></Checkbox>
         <Text
           lineHeight={"20px"}
           fontSize={13}
           fontWeight={500}
-          color={isConfirm ? "#fff" : "#A0A3AD"}>
+          color={isConfirm ? "#fff" : "#A0A3AD"}
+        >
           I understand that I have to send a transaction on Ethereum to "Claim"
           my withdraw after 7 days.{" "}
         </Text>
-      </Flex>
-    );
-  };
-  const CalendarComponent = () => {
-    return (
-      <Flex
-        flexDir={"column"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        cursor={"pointer"}
-        w="100%"
-        h={{ base: "fit-content", lg: "70px" }}
-        onClick={() => atcb_action(config)}>
-        {pcView && (
-          <Text h="19px" fontSize={"12px"} textAlign={"center"}>
-            Set calendar reminder to claim withdraw on Ethereum
-          </Text>
-        )}
-        <Flex
-          mt="6px"
-          w="196px"
-          h="36px"
-          borderRadius={"8px"}
-          border={"1px solid #A0A3AD"}
-          justifyContent={"center"}
-          alignItems={"center"}>
-          <Text fontSize={"12px"} mr="8px">
-            Add to Google Calendar
-          </Text>
-          <Flex height={"16px"} w="16px" p="0px">
-            <Image src={CalendarIcon} alt="calendar" />
-          </Flex>
-        </Flex>
       </Flex>
     );
   };
@@ -172,7 +139,8 @@ export default function ConfirmWithdraw() {
                 setClaimTx(tx);
                 claim(tx);
               }
-        }>
+        }
+      >
         {tx ? "Claim Withdraw" : "Initiate Withdraw"}
       </Button>
     );
@@ -190,7 +158,8 @@ export default function ConfirmWithdraw() {
           modalData: null,
         });
       }}
-      isCentered>
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent
         w={{ base: "full", lg: "404px" }}
@@ -198,13 +167,15 @@ export default function ConfirmWithdraw() {
         alignItems={"center"}
         borderRadius={{ base: "16px 16px 0px 0px", lg: "16px" }}
         bgColor={"#1f2128"}
-        mb={{ base: "0", lg: "auto" }}>
+        mb={{ base: "0", lg: "auto" }}
+      >
         <Flex
           w={"100%"}
           h={"100%"}
           flexDir={"column"}
           p={{ base: "16px 12px", lg: "20px" }}
-          rowGap={"16px"}>
+          rowGap={"16px"}
+        >
           <Flex>
             <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500} w="100%">
               Confirm Withdraw
@@ -239,7 +210,8 @@ export default function ConfirmWithdraw() {
                 ml={"-10px"}
                 bg={"#1F2128"}
                 zIndex={10}
-                mr={"-10px"}>
+                mr={"-10px"}
+              >
                 <Image src={ARROW_ICON} alt="ARROW_ICON" />
               </Flex>
             )}
@@ -250,7 +222,7 @@ export default function ConfirmWithdraw() {
           {!tx ? (
             <CheckContainer />
           ) : tx.currentStatus >= 2 && tx.currentStatus < 5 ? (
-            <CalendarComponent />
+            <CalendarComponent config={config} />
           ) : null}
           <ActionButton />
         </Flex>
