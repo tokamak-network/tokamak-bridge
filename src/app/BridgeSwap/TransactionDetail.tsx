@@ -296,9 +296,10 @@ const WrapDetailRow = (props: WrapDetailProp) => {
   return (
     <Flex flexDir={"column"}>
       <Flex
+      height={'14px'}
         justifyContent={"space-between"}
         fontSize={{ base: 11, md: 14 }}
-        h={"30px"}>
+        >
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
         </Flex>
@@ -606,7 +607,7 @@ export default function TransactionDetail(props: {
             }
           : ""
       }
-      pb={{ base: isExpanded ? "12px" : "", lg: isExpanded ? "20px" : "" }}>
+      pb={{ base: isExpanded ? "12px" : "", lg:isWrapUnwrap? '20px': isExpanded ? "20px" : "" }}>
       <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       <Content
         isExpanded={isWrapUnwrap ? true : isExpanded}
