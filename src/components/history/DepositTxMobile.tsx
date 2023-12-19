@@ -9,7 +9,7 @@ import { FullWithTx } from "@/types/activity/history";
 import { Hash } from "viem";
 import { supportedTokens } from "@/types/token/supportedToken";
 
-import TitanIcon from "@/assets/icons/network/Titan_rect.svg";
+import TitanIcon from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 

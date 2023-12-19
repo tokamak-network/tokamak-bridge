@@ -58,8 +58,7 @@ export default function StatusTx(props: {
     years: 0,
   });
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [, setWithdrawStatus] =
-    useRecoilState(confirmWithdrawStats);
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
@@ -90,7 +89,6 @@ export default function StatusTx(props: {
     if (tx.l2timeStamp) {
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
-        // console.log('startDate',startDate);
 
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
@@ -284,7 +282,26 @@ export default function StatusTx(props: {
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
-        <Flex fontSize={"11px"}>
+        <Flex
+          fontSize={"11px"}
+          onClick={(event) => {
+            if (mobileView) {
+              event.stopPropagation();
+              setClaimTx(tx);
+              setWithdrawStatus({
+                isOpen: true,
+              });
+              setWithdrawData({
+                modalData: {
+                  ...tx,
+                  inTokenSymbol: tx.inTokenSymbol,
+                  outTokenSymbol: tx.outTokenSymbol,
+                  inTokenAmount: tx.inTokenAmount,
+                },
+              });
+            }
+          }}
+        >
           <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
           <Text ml="3px" color={"#A0A3AD"}>
             {format(fromUnixTime(date), "hh:mm b (z)")}

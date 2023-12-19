@@ -17,7 +17,7 @@ import { supportedTokens } from "@/types/token/supportedToken";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
-import TitanRect from "@/assets/icons/network/Titan_rect.svg";
+import TitanRect from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 
 export default function WithdrawTx(props: { tx: FullWithTx }) {

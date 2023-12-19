@@ -230,11 +230,10 @@ export default function useGetTransaction() {
           )
         );
 
-        console.log(l2WithdrawTxs);
+        // remove undefined fields of old Tx using old smart contract schema
         const filteredl2WithdrawTxs = l2WithdrawTxs.filter(
           (tx: FullWithTx) => tx !== undefined
         );
-        console.log(filteredl2WithdrawTxs);
 
         const allTxs =
           layer == "L1"

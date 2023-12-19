@@ -227,6 +227,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             <Flex flexDir={"column"} rowGap={"8px"}>
               <LoadingTx />
               <LoadingTx />
+              <LoadingTx />
+              <LoadingTx />
             </Flex>
           );
         }

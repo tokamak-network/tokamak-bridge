@@ -119,11 +119,11 @@ const TokenContainer = () => {
   });
 
   return (
-    <Flex pos={"relative"} columnGap={{ base: "8px", lg: "12px" }}>
+    <Flex pos={"relative"} justify={"center"} columnGap={{ base: "8px", lg: "12px" }}>
       <Flex
         pos={"relative"}
-        w={{ base: "full", lg: "176px" }}
-        h={"168px"}
+        w={{ base: "148px", lg: "176px" }}
+        h={{ base: "148px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
@@ -184,8 +184,8 @@ const TokenContainer = () => {
       {mobileView && <Image width={24} height={24} src={ARROW} alt={"ARROW"} />}
 
       <Flex
-        w={{ base: "full", lg: "176px" }}
-        h={"168px"}
+        w={{ base: "148px", lg: "176px" }}
+        h={{ base: "148px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
