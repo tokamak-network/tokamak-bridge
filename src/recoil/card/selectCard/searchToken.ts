@@ -1,14 +1,12 @@
 import { ethers } from "ethers";
 import { atom, selector } from "recoil";
 import ERC20_ABI from "@/abis/erc20.json";
-import { getL1Provider } from "@/config/l1Provider";
 import {
   SupportedTokens_T,
   TokenInfo,
   supportedTokens,
 } from "@/types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import { getProvider } from "@/config/getProvider";
 
@@ -29,7 +27,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
     const { inNetwork } = get(networkStatus);
 
     if (searchToken) {
-      const { nameOrAdd, chainId } = searchToken;
+      const { nameOrAdd } = searchToken;
       const isEthHex = nameOrAdd?.startsWith("0x");
 
       try {
@@ -39,7 +37,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
             ERC20_ABI.abi,
             getProvider(inNetwork)
           );
-          const [tokenName, tokenSymbol, decimals] = await Promise.all([
+          const [tokenName,  tokenSymbol, decimals] = await Promise.all([
             tokenContract.name(),
             tokenContract.symbol(),
             tokenContract.decimals(),
@@ -82,4 +80,9 @@ export const searchTokenList = selector<SupportedTokens_T>({
     }
     return supportedTokens;
   },
+});
+
+export const IsSearchToken = atom<Boolean>({
+  key: "isSearchToken",
+  default: false
 });

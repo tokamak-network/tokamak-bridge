@@ -1,22 +1,15 @@
-import { transactionData } from "@/recoil/global/transaction";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useContract from "@/hooks/contracts/useContract";
 import { useAccount } from "wagmi";
-import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useConnectedNetwork from "../network";
-import { useNetwork } from "wagmi";
-import { getProvider } from "@/config/getProvider";
-import useGetTxLayers from "./useGetTxLayers";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
-import { Contract, ethers } from "ethers";
+import {  ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import {
   L1TxType,
   SentMessages,
   EthType,
   Erc20Type,
-  DepositTx,
   UserL2Transaction,
   FullDepTx,
   FullWithTx,
@@ -30,11 +23,8 @@ export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<FullDepTx[]>([]);
   const [tDataWithdraw, setTDataWithdraw] = useState<any[]>([]);
   const { provider, L1Provider, L2Provider } = useProvier();
-  const { L2BRIDGE_CONTRACT } = useContract();
   const { address } = useAccount();
-  const { layer, connectedChainId } = useConnectedNetwork();
-  const { chain } = useNetwork();
-  const providers = useGetTxLayers();
+  const { layer } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
   const l2ProSDK = titanSDK.asL2Provider(
     layer === "L2" ? provider : L2Provider
@@ -67,7 +57,7 @@ export default function useGetTransaction() {
       }
     };
     subgraphData();
-  }, [address,layer, isConnectedToMainNetwork]);
+  }, [address, layer, isConnectedToMainNetwork]);
 
   const fetchWithdrawTransactions = useCallback(
     async (set: boolean) => {
@@ -84,19 +74,19 @@ export default function useGetTransaction() {
             userTxfromSubgraph.formattedWithdraw.length > 0
               ? "loading"
               : "absent"
-          );          
+          );
 
         const l2WithdrawTxs = await Promise.all(
           userTxfromSubgraph.formattedWithdraw.map(
             async (tx: L1TxType, index: number) => {
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
                 tx.transactionHash
-              ); //  office node ok   
-              
+              ); //  office node ok
+
               const currentStatus = await crossMessenger.getMessageStatus(
                 resolved
-              ); //no office node  
-              
+              ); //no office node
+
               const l2TxReceipt = await l2Pro.getTransactionReceipt(
                 tx.transactionHash
               ); //l2 tx receipt
@@ -150,16 +140,15 @@ export default function useGetTransaction() {
                   //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
                   //     messageTxIndex
                   //   ); // no office node
-    
+
                   // const bn = stateBatchAppendedEvent.blockNumber;
-    
+
                   // const block = await l1Pro.getBlock(bn);
-    
+
                   // const challengePeriod =
                   //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
                   // const timeReadyForRelay = block.timestamp + challengePeriod;
 
-                  
                   const calculatedTimePeriod = isConnectedToMainNetwork
                     ? 11 * 60 + 7 * 24 * 60 * 60
                     : 2 * 60 + 10 + 150;
@@ -241,13 +230,19 @@ export default function useGetTransaction() {
           )
         );
 
+        console.log(l2WithdrawTxs);
+        const filteredl2WithdrawTxs = l2WithdrawTxs.filter(
+          (tx: FullWithTx) => tx !== undefined
+        );
+        console.log(filteredl2WithdrawTxs);
+
         const allTxs =
           layer == "L1"
-            ? l2WithdrawTxs.sort(
+            ? filteredl2WithdrawTxs.sort(
                 (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               )
-            : l2WithdrawTxs.sort(
+            : filteredl2WithdrawTxs.sort(
                 (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               );

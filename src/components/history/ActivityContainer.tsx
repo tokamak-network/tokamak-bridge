@@ -38,9 +38,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const { mobileView } = useMediaView();
 
-  console.log("TData:::", tData);
-  console.log("preLoadData", preLoadData);
-
   useEffect(() => {
     const updateNumData = () => {
       if (ref?.current) {

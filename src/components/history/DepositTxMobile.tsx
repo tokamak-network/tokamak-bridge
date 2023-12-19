@@ -18,7 +18,6 @@ export default function DepositTx(props: { tx: FullWithTx }) {
   const { layer } = useConnectedNetwork();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
   const providers = useGetTxLayers();
-  console.log(tx);
   const ethToken = {
     decimals: supportedTokens[0].decimals,
     symbol: supportedTokens[0].tokenSymbol,
@@ -71,7 +70,7 @@ export default function DepositTx(props: { tx: FullWithTx }) {
               {ethers.utils.formatUnits(
                 tx._amount === undefined ? "0" : tx._amount.toString(),
                 token?.decimals
-              )}
+              )}{" "}
               {(token?.symbol as string) || " ETH"}
             </Text>
             <Image alt="link" src={LinkIcon} />
