@@ -63,7 +63,7 @@ export default function Confirmation() {
           borderRadius={"16px"}
           flexDir={"column"}
           alignItems={"center"}>
-          { !isClaimWaiting &&
+          {!isClaimWaiting ? (
             <Flex
               w={"100%"}
               justifyContent={"flex-end"}
@@ -71,7 +71,9 @@ export default function Confirmation() {
               pr={"14px"}>
               <CloseButton onClick={closeModal} />
             </Flex>
-          }
+          ) : (
+            <Flex h={"38px"} pt={"14px"} pr={"14px"}></Flex>
+          )}
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isClaiming
               ? "Confirming Claim"
@@ -112,7 +114,7 @@ export default function Confirmation() {
             fontSize={14}
             fontWeight={500}>
             {isClaimWaiting ? (
-              "Please wait for 20+ seconds for MetaMask popup to appear."
+              "Please wait a few seconds for MetaMask popup to appear."
             ) : isConfirming ? (
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
