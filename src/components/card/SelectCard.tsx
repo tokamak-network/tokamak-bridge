@@ -1,8 +1,5 @@
 import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
-import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
-import CloseIcon from "assets/icons/close.svg";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
 import { useEffect, useRef } from "react";
@@ -10,15 +7,23 @@ import Image from "next/image";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
 import { CardCarrousel } from "./CardCarousel";
-import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
+import {
+  searchTokenStatus,
+  IsSearchToken,
+} from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { CardCarouselMobile } from "./mobile/CardCarouselMobile";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import TokenInput from "../input/TokenInput";
 import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
+
+import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
+import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
+import CloseIcon from "assets/icons/close.svg";
+import SearchIcon from "assets/icons/search.svg";
+import CancelIcon from "assets/icons/close.svg";
 
 enum CardOverlay {
   Middle = 100,
@@ -29,6 +34,7 @@ enum CardOverlay {
 export function SelectCardButton(props: { field: Field }) {
   const { field } = props;
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
+
   return (
     <Flex
       w={"562px"}
@@ -60,7 +66,7 @@ export function SelectCardButton(props: { field: Field }) {
 
 const SearchToken = () => {
   const { onCloseTokenModal } = useTokenModal();
-  const [searchToken, setSearchToken] = useRecoilState(searchTokenStatus);
+  const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const { pcView } = useMediaView();
 
   const { connectedChainId } = useConnectedNetwork();
@@ -114,7 +120,8 @@ export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
   const { pcView } = useMediaView();
   const { isOpen } = useRecoilValue(tokenModalStatus);
-  const ref =  useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLInputElement>(null);
+  const [isSearch, setIsSearch] = useRecoilState(IsSearchToken);
 
   //close when click at outside
   useEffect(() => {
@@ -129,7 +136,7 @@ export function SelectCardModal() {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
-  
+
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
@@ -194,15 +201,41 @@ export function SelectCardModal() {
             )}
             {!pcView && (
               <>
-                <SearchToken />
                 <CardCarouselMobile />
-                <Flex w={"full"} px={"12px"} justify={"center"}>
+                <Flex
+                  w={"full"}
+                  px={"12px"}
+                  justify={"center"}
+                  align={"start"}
+                  columnGap={"11px"}
+                >
                   <TokenInput
                     inToken={isOpen === "INPUT" ? true : false}
                     hasMaxButton={isOpen === "INPUT" ? true : false}
                     style={isOpen === "INPUT" ? "" : { display: "none" }}
                     customRef={ref}
+                    placeholder="input amount"
                   />
+
+                  <Flex
+                    minW={"40px"}
+                    minH={"40px"}
+                    rounded={"8px"}
+                    bg={"#0F0F12"}
+                    align={"center"}
+                    justify={"center"}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsSearch((prev) => !prev);
+                    }}
+                  >
+                    <Image
+                      width={20}
+                      height={20}
+                      alt="search"
+                      src={isSearch ? CancelIcon : SearchIcon}
+                    />
+                  </Flex>
                 </Flex>
               </>
             )}

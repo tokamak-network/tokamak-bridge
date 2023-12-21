@@ -1,5 +1,5 @@
-import { Flex, Text, Link } from "@chakra-ui/react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Flex, Text, Link, Button } from "@chakra-ui/react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
 import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
@@ -9,17 +9,18 @@ import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { claimTx } from "@/recoil/userHistory/claimTx";
-import { FullDepTx, FullWithTx } from "@/types/activity/history";
+import { FullWithTx } from "@/types/activity/history";
 import {
-  add,
   getTime,
   getUnixTime,
   intervalToDuration,
   Duration,
-  subMinutes,
   addHours,
   differenceInSeconds,
 } from "date-fns";
+
+import useCallClaim from "@/hooks/user/actions/useCallClaim";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 // type TokenData = {
 //   token0Symbol: string;
@@ -56,9 +57,8 @@ export default function StatusTx(props: {
     seconds: 0,
     years: 0,
   });
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] =
-    useRecoilState(confirmWithdrawStats);
+  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
@@ -66,7 +66,6 @@ export default function StatusTx(props: {
   const getCalendarEvent = useMemo(() => {
     if (tx.l2timeStamp) {
       const timeStamp = tx.l2timeStamp;
-
       //605400 === 7 days +10 minutes of rollup & challenge period => mainnet
       //610 === 10 minutes  and 10 seconds of rollup & challenge period => testnet
       const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
@@ -86,6 +85,9 @@ export default function StatusTx(props: {
     }
   }, [tx.l2timeStamp]);
 
+  const { claim } = useCallClaim("relayMessage");
+  const { mobileView } = useMediaView();
+        
   //creates the count up clock for the rollup period
   useEffect(() => {
     if (tx.l2timeStamp) {
@@ -106,6 +108,7 @@ export default function StatusTx(props: {
     }
   }, [tx.l2timeStamp]);
 
+  // todo: should be adjusted for the browser's timezone
  //creates the calendar config. 
   const config: Object = {
     name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
@@ -155,12 +158,12 @@ export default function StatusTx(props: {
    */
   //  RELAYED, ===> 6
 
-
   //create the count up duration for the challenge period
   useEffect(() => {
     if (timeStamp !== undefined && !isNaN(timeStamp)) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
+
         if (nowTime > timeStamp) {
           setDuration({
             days: 0,
@@ -209,8 +212,9 @@ export default function StatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}>
-            {`${layer}: Completed`}
+            style={{ textDecoration: "none" }}
+          >
+            {mobileView ? "Claimed" : `${layer}: Completed`}
           </Link>
         ) : tx.currentStatus === 5 ? (
           <Text
@@ -227,7 +231,10 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }>{`${layer}: Ready to be claimed`}</Text>
+            }
+          >
+            {mobileView ? "Claim" : `${layer}: Ready to be claimed`}
+          </Text>
         ) : tx.currentStatus === 4 ? (
           <Text
             fontSize={"11px"}
@@ -243,7 +250,10 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }>{`${layer}: Wait 7 days`}</Text>
+            }
+          >
+            {mobileView ? "Wait 7 days" : `${layer}: Wait 7 days`}
+          </Text>
         ) : (
           <Text
             fontSize={"11px"}
@@ -259,13 +269,37 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }>{`${layer}: Wait ~${
-            isConnectedToMainNetwork ? "11" : "2"
-          } min for rollup`}</Text>
+            }
+          >
+            {mobileView
+              ? "Wait for rollup"
+              : `${layer}: Wait ~${
+                  isConnectedToMainNetwork ? "11" : "2"
+                } min for rollup`}
+          </Text>
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
-        <Flex fontSize={"11px"}>
+        <Flex
+          fontSize={"11px"}
+          onClick={(event) => {
+            if (mobileView) {
+              event.stopPropagation();
+              setClaimTx(tx);
+              setWithdrawStatus({
+                isOpen: true,
+              });
+              setWithdrawData({
+                modalData: {
+                  ...tx,
+                  inTokenSymbol: tx.inTokenSymbol,
+                  outTokenSymbol: tx.outTokenSymbol,
+                  inTokenAmount: tx.inTokenAmount,
+                },
+              });
+            }
+          }}
+        >
           <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
           <Text ml="3px" color={"#A0A3AD"}>
             {format(fromUnixTime(date), "hh:mm b (z)")}
@@ -295,13 +329,44 @@ export default function StatusTx(props: {
           <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
             {durationRollup}
           </Text>
-          <Flex
+          {/* <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
-            cursor={"pointer"}>
+            cursor={"pointer"}
+          >
             <Image src={Calendar} alt="google calendar" />
-          </Flex>
+          </Flex> */}
         </Flex>
+      ) : tx.currentStatus === 5 ? (
+        mobileView && (
+          <Button
+            w={"64px"}
+            h="24px"
+            bg="#007AFF"
+            fontSize={"12px"}
+            color={"#fff"}
+            zIndex={10000}
+            _disabled={{ bg: "#1F2128" }}
+            onClick={(event) => {
+              event.stopPropagation();
+              setClaimTx(tx);
+              claim(tx);
+              setWithdrawStatus({
+                isOpen: false,
+              });
+              setWithdrawData({
+                modalData: {
+                  ...tx,
+                  inTokenSymbol: tx.inTokenSymbol,
+                  outTokenSymbol: tx.outTokenSymbol,
+                  inTokenAmount: tx.inTokenAmount,
+                },
+              });
+            }}
+          >
+            {"Claim"}
+          </Button>
+        )
       ) : (
         <></>
       )}

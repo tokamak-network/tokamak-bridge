@@ -1,22 +1,15 @@
-import { transactionData } from "@/recoil/global/transaction";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import useContract from "@/hooks/contracts/useContract";
 import { useAccount } from "wagmi";
-import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import useConnectedNetwork from "../network";
-import { useNetwork } from "wagmi";
-import { getProvider } from "@/config/getProvider";
-import useGetTxLayers from "./useGetTxLayers";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
-import { Contract, ethers } from "ethers";
+import {  ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import {
   L1TxType,
   SentMessages,
   EthType,
   Erc20Type,
-  DepositTx,
   UserL2Transaction,
   FullDepTx,
   FullWithTx,
@@ -31,7 +24,7 @@ export default function useGetTransaction() {
   const [tDataWithdraw, setTDataWithdraw] = useState<any[]>([]);
   const { provider, L1Provider, L2Provider } = useProvier();
   const { address } = useAccount();
-  const { layer, connectedChainId } = useConnectedNetwork();
+  const { layer } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
 
   //titanSDK as an L2 provider for certain functions
@@ -285,15 +278,21 @@ export default function useGetTransaction() {
             }
           )
         );
+        
+        // remove undefined fields of old Tx using old smart contract schema
+        const filteredl2WithdrawTxs = l2WithdrawTxs.filter(
+          (tx: FullWithTx) => tx !== undefined
+        );
+
         //l2WithdrawTxs returns all the withdraw txs that belong to the user.
         //sort the txs by the descending order of the l2 timestamp
         const allTxs =
           layer == "L1"
-            ? l2WithdrawTxs.sort(
+            ? filteredl2WithdrawTxs.sort(
                 (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               )
-            : l2WithdrawTxs.sort(
+            : filteredl2WithdrawTxs.sort(
                 (tx1: FullWithTx, tx2: FullWithTx) =>
                   Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
               );

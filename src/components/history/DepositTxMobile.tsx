@@ -9,7 +9,7 @@ import { FullWithTx } from "@/types/activity/history";
 import { Hash } from "viem";
 import { supportedTokens } from "@/types/token/supportedToken";
 
-import TitanIcon from "@/assets/icons/network/Titan_rect.svg";
+import TitanIcon from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
@@ -18,7 +18,6 @@ export default function DepositTx(props: { tx: FullWithTx }) {
   const { layer } = useConnectedNetwork();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
   const providers = useGetTxLayers();
-  console.log(tx);
   const ethToken = {
     decimals: supportedTokens[0].decimals,
     symbol: supportedTokens[0].tokenSymbol,
@@ -71,7 +70,7 @@ export default function DepositTx(props: { tx: FullWithTx }) {
               {ethers.utils.formatUnits(
                 tx._amount === undefined ? "0" : tx._amount.toString(),
                 token?.decimals
-              )}
+              )}{" "}
               {(token?.symbol as string) || " ETH"}
             </Text>
             <Image alt="link" src={LinkIcon} />

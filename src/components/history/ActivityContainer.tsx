@@ -38,10 +38,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const ref = useRef<HTMLDivElement | null>(null);
   const { mobileView } = useMediaView();
 
-  console.log("TData:::", tData);
-  console.log("preLoadData", preLoadData);
-
-  //decides the number of txs that can be shown depending on the height of the screen
   useEffect(() => {
     const updateNumData = () => {
       if (ref?.current) {
@@ -237,6 +233,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             <Flex flexDir={"column"} rowGap={"8px"}>
               <LoadingTx />
               <LoadingTx />
+              <LoadingTx />
+              <LoadingTx />
             </Flex>
           );
         }
@@ -261,7 +259,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         overflow={"scroll"}
         overflowX={"hidden"}
         rowGap={"8px"}
-        h={"calc(100vh - 200px)"}
+        h={"calc(100vh - 140px)"}
         css={{
           "&::-webkit-scrollbar": {
             width: "6px",

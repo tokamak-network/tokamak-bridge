@@ -33,8 +33,9 @@ export default function TokenInput(props: {
   hasMaxButton?: boolean;
   style?: {};
   customRef?: RefObject<HTMLInputElement>;
+  placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef } = props;
+  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -469,8 +470,8 @@ export default function TokenInput(props: {
             border={{}}
             _active={{}}
             _focus={{ boxShadow: "none !important" }}
-            placeholder="0"
-            _placeholder={{ color: "#C6C6D1 !important" }}
+            placeholder={placeholder || "0"}
+            _placeholder={{ color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important" }}
             color={"#ffffff"}
             fontSize={{ base: 22, lg: 28 }}
             fontWeight={600}
