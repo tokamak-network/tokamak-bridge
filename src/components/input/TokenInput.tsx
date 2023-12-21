@@ -1,4 +1,3 @@
-import Image from "next/image";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -16,7 +15,14 @@ import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -35,7 +41,8 @@ export default function TokenInput(props: {
   customRef?: RefObject<HTMLInputElement>;
   placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } = props;
+  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } =
+    props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -283,7 +290,7 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onCloseTokenModal();
+    // onCloseTokenModal();
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {
@@ -444,7 +451,7 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     customRef?.current?.focus();
-  }, [customRef])
+  }, [customRef]);
 
   return (
     <Flex
@@ -460,7 +467,12 @@ export default function TokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex>
+        <Flex
+          py={{ base: "7px", lg: 0 }}
+          px={{ base: "10px", lg: 0 }}
+          bg={{ base: "#0F0F12", lg: "none" }}
+          rounded={{ base: "8px", lg: 0 }}
+        >
           <Input
             id={inToken ? "LeftInput" : "RightInput"}
             w={"100%"}
@@ -471,7 +483,9 @@ export default function TokenInput(props: {
             _active={{}}
             _focus={{ boxShadow: "none !important" }}
             placeholder={placeholder || "0"}
-            _placeholder={{ color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important" }}
+            _placeholder={{
+              color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+            }}
             color={"#ffffff"}
             fontSize={{ base: 22, lg: 28 }}
             fontWeight={600}
@@ -503,22 +517,19 @@ export default function TokenInput(props: {
       )}
 
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        {mobileView && isBalanceOver ? (
+        {/* {mobileView && isBalanceOver ? (
           <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
             <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
             <Text>Insufficient ({inTokenFromHook?.tokenSymbol}) balance </Text>
           </Flex>
+        )  */}
+        {mobileView ? (
+          <></>
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
             {`$${marketPrice}`}
           </Text>
         )}
-
-        {/* {inToken === false && mode === "Swap" && (
-          <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
-            ({priceImpact ?? "-"}%)
-          </Text>
-        )}  */}
       </Flex>
     </Flex>
   );

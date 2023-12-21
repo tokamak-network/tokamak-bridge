@@ -24,7 +24,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
     <ApolloProvider client={apolloClient}>
       <Header />
       {mode !== "Pool" ? (
-        <Center h={{ base: "calc(100vh - 105px)", lg: "100vh" }}>{children}</Center>
+        <Center h={"100vh"}>{children}</Center>
       ) : (
         <Flex
           h={"100vh"}

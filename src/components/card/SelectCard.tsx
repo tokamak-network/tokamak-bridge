@@ -208,6 +208,7 @@ export function SelectCardModal() {
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
+                  onBlur={() => {console.log("123123")}}
                 >
                   <TokenInput
                     inToken={isOpen === "INPUT" ? true : false}

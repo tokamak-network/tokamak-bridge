@@ -42,14 +42,16 @@ const MobileInToken = () => {
         return "#9e9e9e";
     }
   }, [outToken]);
-  
+
   return (
     <Box
       pos="relative"
       w={"148px"}
       h={"184px"}
       cursor={"pointer"}
-      onClick={() => swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })}
+      onClick={() =>
+        swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })
+      }
     >
       {outToken?.tokenName ? (
         <TokenCard
@@ -67,7 +69,7 @@ const MobileInToken = () => {
           w={"148px"}
           h={"184px"}
           border={"2px dashed #313442"}
-        rounded={"9px"}
+          rounded={"9px"}
           justify={"center"}
           align={"center"}
           rowGap={"8px"}
@@ -104,7 +106,11 @@ const MobileInToken = () => {
           <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
             <Image
               alt="eth"
-              src={outNetwork?.chainId === 1 || outNetwork?.chainId === 5 ? ETHIcon : TitanIcon}
+              src={
+                outNetwork?.chainId === 1 || outNetwork?.chainId === 5
+                  ? ETHIcon
+                  : TitanIcon
+              }
             />
           </Flex>
         </Flex>

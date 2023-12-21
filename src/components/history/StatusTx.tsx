@@ -215,6 +215,7 @@ export default function StatusTx(props: {
             style={{ textDecoration: "none" }}
           >
             {mobileView ? "Claimed" : `${layer}: Completed`}
+
           </Link>
         ) : tx.currentStatus === 5 ? (
           <Text
@@ -269,6 +270,7 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
+
             }
           >
             {mobileView
