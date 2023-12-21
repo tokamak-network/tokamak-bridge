@@ -24,9 +24,10 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { layer } = useConnectedNetwork();
   const { claim } = useCallClaim("relayMessage");
-  const [, setClaimTx] = useRecoilState(claimTx);
-  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+
+  const [, setClaimTx] = useRecoilState(claimTx); //sets data for the claim withdraw function
+  const [, setWithdrawData] = useRecoilState(confirmWithdrawData); //sets the data for the withdraw confirm modal
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats); //status of the confirm withdraw modal
 
   const [txData] = useRecoilState(txDataStatus);
   const { mobileView } = useMediaView();
@@ -44,6 +45,8 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const token = layer === "L1" && tx._l1Token === zeroAddress ? ethToken : data;
 
   const handleCheckWithdrawModal = () => {
+    //when the general area of the withdraw tx is clicked, it should open the confirm withdraw modal.
+    //setting up the necessary data for the claim withdraw modal and set it to open 
     if (tx !== undefined && tx.currentStatus < 6) {
       setClaimTx(tx);
       setWithdrawStatus({
@@ -143,7 +146,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                 zIndex={10000}
                 _disabled={{ bg: "#1F2128" }}
                 onClick={(event) => {
-                  // Prevent the click event from propagating to the parent Flex
+                  //if the claim is not ready, when this button is clicked the confirm withdraw modal opens and displays the details
                   if (tx?.currentStatus !== 5) {
                     setClaimTx(tx);
                     setWithdrawStatus({
@@ -161,6 +164,8 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                       },
                     });
                   } else {
+                    // Prevent the click event from propagating to the parent Flex
+                    //when the status is 5, the user can claim. confirm withdraw modal opens 
                     event.stopPropagation();
                     setClaimTx(tx);
                     claim(tx);
@@ -181,6 +186,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                   }
                 }}
               >
+                {/* depending on the currentStatus of the tx, show the name of the button */}
                 {!tx
                   ? "Details"
                   : tx.currentStatus === 5

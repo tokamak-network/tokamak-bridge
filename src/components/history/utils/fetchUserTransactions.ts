@@ -16,6 +16,8 @@ export const fetchUserTransactions = async (
     const L1Bridge = isConnectedToMainnet
       ? "0x59aa194798Ba87D26Ba6bEF80B85ec465F4bbcfD"
       : "0x7377F3D0F64d7a54Cf367193eb74a052ff8578FD";
+
+      //gets transactions on L1
     const resTxs = await axios.post(
       `${
         isConnectedToMainnet
@@ -96,6 +98,7 @@ export const fetchUserTransactions = async (
       }
     );
 
+    //gets transactions on L2 
     const withdrawTx = await axios.post(
       `${
         isConnectedToMainnet
@@ -135,8 +138,10 @@ export const fetchUserTransactions = async (
       }
     );
 
-    const withdrawTxsL2 = withdrawTx.data.data.sentMessages;
-    const depositTcxsL2 = withdrawTx.data.data.depositFinalizeds;
+    const withdrawTxsL2 = withdrawTx.data.data.sentMessages; //filter the withdraw txs on L2 
+    const depositTxsL2 = withdrawTx.data.data.depositFinalizeds; //filter the deposit finalized txs on L2
+
+    //add the event name to the withdraw txs 
     const formattedWithdraw = withdrawTxsL2.map((tx: SentMessages) => {
       let copy = {
         ...tx,
@@ -145,7 +150,8 @@ export const fetchUserTransactions = async (
       return copy;
     });
 
-    const formattedDeposit = depositTcxsL2.map((tx: SentMessages) => {
+    //add the even name to the deposit txs
+    const formattedDeposit = depositTxsL2.map((tx: SentMessages) => {
       let copy = {
         ...tx,
         event: "deposit",
@@ -153,18 +159,23 @@ export const fetchUserTransactions = async (
       return copy;
     });
 
+    //combine the erc20 deposits and eth deposits on L1
     const allDepL1Txs = [
       ...resTxs.data.data.erc20DepositInitiateds,
       ...resTxs.data.data.ethdepositInitiateds,
     ];
 
+    //combine the erc20 withdraws and eth withdraws on L1
     const allWithL1Txs = [
       ...resTxs.data.data.erc20WithdrawalFinalizeds,
       ...resTxs.data.data.ethwithdrawalFinalizeds,
     ];
 
     const formattedL1DepositResultsUnfiltered =
+
+    //combine the txs in sent messages and l1 deposit txs and add event name 
       resTxs.data.data.sentMessages.map((result: SentMessages) => {
+        //filter txs from all the l1 deposit txs where the user address occurs twice and the tx hash has a match in the sentMessages on L1
         const tx = allDepL1Txs.filter((tx: L1TxType) => {
           const regex = new RegExp(
             `${formattedAddress.toLocaleLowerCase()}`,
@@ -186,9 +197,14 @@ export const fetchUserTransactions = async (
           return copy;
         }
       });
+
+
+      //filter out any undefined txs from the array of results from the above array
     const formattedL1DepositResults =
       formattedL1DepositResultsUnfiltered.filter((tx: any) => tx !== undefined);
     const formattedL1WithdrawResults = allWithL1Txs;
+
+    
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,

@@ -62,15 +62,18 @@ export default function StatusTx(props: {
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
+  //creates the calendar event start time, end time, and even date
   const getCalendarEvent = useMemo(() => {
     if (tx.l2timeStamp) {
       const timeStamp = tx.l2timeStamp;
+      //605400 === 7 days +10 minutes of rollup & challenge period => mainnet
+      //610 === 10 minutes  and 10 seconds of rollup & challenge period => testnet
       const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 
       const formattedDate = format(startDate, "yyyy-MM-dd");
-      const add1Hour = addHours(startDate, 1);
+      const add1Hour = addHours(startDate, 1); //even duration is 1 hour
       const startTime = format(startDate, "HH:mm");
       const formattedEndTime = format(add1Hour, "HH:mm");
 
@@ -84,12 +87,12 @@ export default function StatusTx(props: {
 
   const { claim } = useCallClaim("relayMessage");
   const { mobileView } = useMediaView();
-
+        
+  //creates the count up clock for the rollup period
   useEffect(() => {
     if (tx.l2timeStamp) {
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
-
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
@@ -106,6 +109,7 @@ export default function StatusTx(props: {
   }, [tx.l2timeStamp]);
 
   // todo: should be adjusted for the browser's timezone
+ //creates the calendar config. 
   const config: Object = {
     name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
     description:
@@ -154,17 +158,12 @@ export default function StatusTx(props: {
    */
   //  RELAYED, ===> 6
 
+  //create the count up duration for the challenge period
   useEffect(() => {
     if (timeStamp !== undefined && !isNaN(timeStamp)) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
 
-        // setDuration(
-        //   intervalToDuration({
-        //     start: getTime(timeStamp * 1000),
-        //     end: getTime(nowTime * 1000),
-        //   })
-        // );
         if (nowTime > timeStamp) {
           setDuration({
             days: 0,
@@ -201,8 +200,7 @@ export default function StatusTx(props: {
               ? "#007AFF"
               : "#8497DB"
           }
-          mr="6px"
-        ></Flex>
+          mr="6px"></Flex>
         {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
           <Link
             target="_blank"
@@ -322,8 +320,7 @@ export default function StatusTx(props: {
           <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
-            cursor={"pointer"}
-          >
+            cursor={"pointer"}>
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>

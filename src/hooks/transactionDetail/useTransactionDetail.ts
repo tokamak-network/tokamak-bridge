@@ -51,6 +51,12 @@ export type WithdrawDetailProp = {
   };
 };
 
+export type WrapDetailProp = {
+  title: string;
+  gasFee?: string;
+  gasFeeUS?: string;
+};
+
 export type SwapDetailProp = {
   title:
     | "Expected output"
@@ -81,7 +87,6 @@ export function useTransactionDetail() {
     4
   )} ${inToken?.tokenSymbol}`;
 
-  
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
     if (mode === "Deposit" && inToken && totalGasCost) {
       return [
@@ -189,11 +194,9 @@ export function useTransactionDetail() {
           slippage: `${uniswapTxSettingValueForUI.slippage}%`,
         },
         {
-         title:
-            "Estimated gas fees",
+          title: "Estimated gas fees",
           content: isOpen ? "" : `${totalGasFee} `,
           gasFee: `$${gasCostUS}`,
-
         },
       ];
     }
@@ -210,10 +213,29 @@ export function useTransactionDetail() {
     layer,
   ]);
 
+  const WrapUnwrapPropsData: WrapDetailProp[] | null = useMemo(() => {
+    return [
+      {
+        title: "Estimated gas fees",
+        gasFee: `${totalGasFee} `,
+        gasFeeUS: `$${gasCostUS}`,
+      },
+    ];
+  }, [
+    mode,
+    inToken,
+    outToken,
+    inputAmount,
+    amountOut,
+    totalGasFee,
+    gasCostUS,
+    layer,
+  ]);
   return {
     depositPropsData,
     withdrawPropsData,
     swapPropsData,
     withdrawNewPropsData,
+    WrapUnwrapPropsData,
   };
 }
