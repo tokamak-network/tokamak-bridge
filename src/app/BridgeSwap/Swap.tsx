@@ -61,7 +61,7 @@ export default function Swap() {
   return (
     <>
       {pcView ? (
-        <Flex w={"100%"} justifyContent={"space-between"} columnGap={switchable?'6px':"14.6px"}>
+        <Flex w={"100%"} justifyContent={"space-between"} columnGap={switchable?'6px':"5px"}>
           <InToken />
           <Flex
             onClick={invertTokenPair}
