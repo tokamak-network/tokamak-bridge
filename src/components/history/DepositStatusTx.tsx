@@ -20,6 +20,7 @@ export default function DepositStatusTx(props: {
   const [duration, setDuration] = useState("0");
   const { mobileView } = useMediaView();
 
+//calculates the duration of the relay time 
   useEffect(() => {
     if (tx.l1timeStamp) {
       const getDuration = setInterval(() => {

@@ -2,10 +2,7 @@ import { Flex, Text, Link } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import Calendar from "assets/icons/Google_Calendar_icon.svg";
-import {
-  confirmWithdrawStats,
-  confirmWithdrawData,
-} from "@/recoil/modal/atom";
+import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
@@ -21,7 +18,7 @@ import {
   Duration,
   subMinutes,
   addHours,
-  differenceInSeconds
+  differenceInSeconds,
 } from "date-fns";
 
 // type TokenData = {
@@ -50,7 +47,7 @@ export default function StatusTx(props: {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
   const [durationRollup, setDurationRollup] = useState("0");
-    
+
   const [duration, setDuration] = useState<Duration>({
     days: 0,
     hours: 0,
@@ -60,22 +57,24 @@ export default function StatusTx(props: {
     years: 0,
   });
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [withdrawStatus, setWithdrawStatus] = useRecoilState(
-    confirmWithdrawStats
-  );
+  const [withdrawStatus, setWithdrawStatus] =
+    useRecoilState(confirmWithdrawStats);
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
-
+  //creates the calendar event start time, end time, and even date
   const getCalendarEvent = useMemo(() => {
-    if (tx.l2timeStamp) {      
+    if (tx.l2timeStamp) {
       const timeStamp = tx.l2timeStamp;
+
+      //605400 === 7 days +10 minutes of rollup & challenge period => mainnet
+      //610 === 10 minutes  and 10 seconds of rollup & challenge period => testnet
       const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 
       const formattedDate = format(startDate, "yyyy-MM-dd");
-      const add1Hour = addHours(startDate, 1);
+      const add1Hour = addHours(startDate, 1); //even duration is 1 hour
       const startTime = format(startDate, "HH:mm");
       const formattedEndTime = format(add1Hour, "HH:mm");
 
@@ -87,12 +86,11 @@ export default function StatusTx(props: {
     }
   }, [tx.l2timeStamp]);
 
+  //creates the count up clock for the rollup period
   useEffect(() => {
     if (tx.l2timeStamp) {
-      const getDuration = setInterval(() => {        
+      const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
-        // console.log('startDate',startDate);
-        
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
@@ -107,8 +105,8 @@ export default function StatusTx(props: {
       return () => clearInterval(getDuration);
     }
   }, [tx.l2timeStamp]);
-  
-  // todo: should be adjusted for the browser's timezone
+
+ //creates the calendar config. 
   const config: Object = {
     name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
     description:
@@ -157,17 +155,12 @@ export default function StatusTx(props: {
    */
   //  RELAYED, ===> 6
 
-  useEffect(() => {    
-    if (timeStamp!== undefined && !isNaN(timeStamp)) {
+
+  //create the count up duration for the challenge period
+  useEffect(() => {
+    if (timeStamp !== undefined && !isNaN(timeStamp)) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
-        
-        // setDuration(
-        //   intervalToDuration({
-        //     start: getTime(timeStamp * 1000),
-        //     end: getTime(nowTime * 1000),
-        //   })
-        // );
         if (nowTime > timeStamp) {
           setDuration({
             days: 0,
@@ -204,8 +197,7 @@ export default function StatusTx(props: {
               ? "#007AFF"
               : "#8497DB"
           }
-          mr="6px"
-        ></Flex>
+          mr="6px"></Flex>
         {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
           <Link
             target="_blank"
@@ -217,8 +209,7 @@ export default function StatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}
-          >
+            style={{ textDecoration: "none" }}>
             {`${layer}: Completed`}
           </Link>
         ) : tx.currentStatus === 5 ? (
@@ -236,8 +227,7 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }
-          >{`${layer}: Ready to be claimed`}</Text>
+            }>{`${layer}: Ready to be claimed`}</Text>
         ) : tx.currentStatus === 4 ? (
           <Text
             fontSize={"11px"}
@@ -253,8 +243,7 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }
-          >{`${layer}: Wait 7 days`}</Text>
+            }>{`${layer}: Wait 7 days`}</Text>
         ) : (
           <Text
             fontSize={"11px"}
@@ -270,8 +259,7 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-            }
-          >{`${layer}: Wait ~${
+            }>{`${layer}: Wait ~${
             isConnectedToMainNetwork ? "11" : "2"
           } min for rollup`}</Text>
         )}
@@ -298,22 +286,25 @@ export default function StatusTx(props: {
           <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
-            cursor={"pointer"}
-          >
+            cursor={"pointer"}>
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>
-      ) : tx.currentStatus=== 2 ?(
+      ) : tx.currentStatus === 2 ? (
         <Flex>
-        <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>{durationRollup}</Text>
-        <Flex
+          <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+            {durationRollup}
+          </Text>
+          <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
             cursor={"pointer"}>
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>
-      ):<></>}
+      ) : (
+        <></>
+      )}
     </Flex>
   );
 }

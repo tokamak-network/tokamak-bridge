@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import WethABi from "@/abis/WETH.json";
 import { useAccount, useContractWrite, usePublicClient } from "wagmi";
@@ -8,9 +8,11 @@ import { useTx } from "../tx/useTx";
 import { getWETHAddress } from "@/utils/token/isETH";
 import useConnectedNetwork from "../network";
 import { useProvier } from "../provider/useProvider";
-import { Contract } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
+import { useGetMode } from "../mode/useGetMode";
+import OutToken from "@/app/BridgeSwap/components/OutToken";
 // import { useRecoilState } from "recoil";
 // import { transactionModalStatus } from "@/recoil/modal/atom";
 
@@ -18,8 +20,12 @@ export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
   const { provider } = useProvier();
   const { address } = useAccount();
+  const [estimatedGasUsage, setEstimatedGasUsage] = useState<
+    BigNumber | undefined
+  >(undefined);
+  const { mode } = useGetMode();
 
-  const { inToken } = useInOutTokens();
+  const { inToken, outToken } = useInOutTokens();
   const { data, write: tonWton } = useContractWrite({
     address: SWAPPER_V2_CONTRACT as `0x${string}`,
     abi: SwapperV2ABI.abi,
@@ -83,68 +89,100 @@ export default function useWrap() {
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
 
-  const wrapTON = useCallback(async () => {
-    try {
+  const wrapTON = useCallback(
+    async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN) {
         const estimateGas = await WrapContract.estimateGas.tonToWton(
           inToken.amountBN
         );
-        tonWton({
-          args: [inToken.amountBN],
-          gas: calculateGasMargin(estimateGas).toBigInt(),
-        });
+        if (estimateGasUsage) return estimateGas;
+        try {
+          tonWton({
+            args: [inToken.amountBN],
+            gas: calculateGasMargin(estimateGas).toBigInt(),
+          });
+        } catch (e) {
+          console.log("**wrapTON err**");
+          console.log(e);
+        }
       }
-    } catch (e) {
-      console.log("**wrapTON err**");
-      console.log(e);
-    }
-  }, [inToken, WrapContract]);
+    },
+    [inToken, WrapContract]
+  );
 
-  const unwrapWTON = useCallback(async () => {
-    try {
+  const unwrapWTON = useCallback(
+    async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN) {
         const estimateGas = await WrapContract.estimateGas.wtonToTon(
           inToken.amountBN
         );
-        wtonTon({
-          args: [inToken.amountBN],
-          gas: calculateGasMargin(estimateGas).toBigInt(),
-        });
+        if (estimateGasUsage) return estimateGas;
+        try {
+          wtonTon({
+            args: [inToken.amountBN],
+            gas: calculateGasMargin(estimateGas).toBigInt(),
+          });
+        } catch (e) {
+          console.log("**unwrapWTON err**");
+          console.log(e);
+        }
       }
-    } catch (e) {
-      console.log("**unwrapWTON err**");
-      console.log(e);
-    }
-  }, [inToken, WrapContract]);
+    },
+    [inToken, WrapContract]
+  );
 
-  const wrapETH = useCallback(async () => {
-    try {
+  const wrapETH = useCallback(
+    async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract) {
         const estimateGas = await ETHWrapContract.estimateGas.deposit();
-        deposit({
-          gas: calculateGasMargin(estimateGas).toBigInt(),
-        });
+        if (estimateGasUsage) return estimateGas;
+        try {
+          deposit({
+            gas: calculateGasMargin(estimateGas).toBigInt(),
+          });
+        } catch (e) {
+          console.log("**wrapTON err**");
+          console.log(e);
+        }
       }
-    } catch (e) {
-      console.log("**wrapTON err**");
-      console.log(e);
-    }
-  }, [inToken, ETHWrapContract]);
+    },
+    [inToken, ETHWrapContract]
+  );
 
-  const unwrapWETH = useCallback(async () => {
-    try {
+  const unwrapWETH = useCallback(
+    async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract) {
-        const estimateGas = await ETHWrapContract.estimateGas.unwrapWETH();
-        withdraw({
-          args: [inToken.amountBN],
-          gas: calculateGasMargin(estimateGas).toBigInt(),
-        });
+        const estimateGas = await ETHWrapContract.estimateGas.withdraw(inToken.amountBN);
+        if (estimateGasUsage) return estimateGas;
+        try {
+          withdraw({
+            args: [inToken.amountBN],
+            gas: calculateGasMargin(estimateGas).toBigInt(),
+          });
+        } catch (e) {
+          console.log("**unwrapWTON err**");
+          console.log(e);
+        }
       }
-    } catch (e) {
-      console.log("**unwrapWTON err**");
-      console.log(e);
-    }
-  }, [inToken, ETHWrapContract]);
+    },
+    [inToken, ETHWrapContract]
+  );
 
-  return { wrapTON, unwrapWTON, wrapETH, unwrapWETH };
+  useEffect(() => {
+    const fetchEstimatedGasUsage = async () => {
+      const estimatedGas =
+        mode === "Wrap"
+          ? await wrapTON(true)
+          : mode === "Unwrap"
+          ? await unwrapWTON(true)
+          : mode === "ETH-Wrap"
+          ? await wrapETH(true)
+          : await unwrapWETH(true);
+      if (estimatedGas) setEstimatedGasUsage(estimatedGas);
+    };
+
+    fetchEstimatedGasUsage();
+  }, [mode, inToken, outToken]);
+
+  return { wrapTON, unwrapWTON, wrapETH, unwrapWETH, estimatedGasUsage };
 }
