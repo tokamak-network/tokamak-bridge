@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useCallback, useMemo } from "react";
+import { useEffect, useCallback, useMemo } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -21,6 +21,7 @@ import {
   SupportedChainProperties,
   supportedChain,
 } from "@/types/network/supportedNetwork";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
 import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
@@ -135,6 +136,11 @@ const ActionOptionModal = () => {
     useRecoilState(actionMethodStatus);
   const connectedNetwork = useConnectedNetwork();
   const [welcomeMsg, setWelcomeMsgStatus] = useRecoilState(welcomeMsgStatus);
+  const { isConnected } = useAccount();
+  const { switchNetworkAsync, isError } = useSwitchNetwork();
+  const [, setNetwork] = useRecoilState(networkStatus);
+  const { mode } = useGetMode();
+  console.log(mode)
 
   const { mobileView } = useMediaView();
 
@@ -161,6 +167,49 @@ const ActionOptionModal = () => {
     setActionMethodStatus(false);
     setWelcomeMsgStatus(false);
   }, []);
+
+  // useEffect(() => {
+  //   console.log(mode)
+  //   const handleDefaultMode = async () => {
+  //     try {
+  //       const value: SupportedChainProperties["chainId"] = Number(1);
+  //       const outValue: SupportedChainProperties["chainId"] = Number(1);
+  //       const selectedInNetwork = supportedChain.filter((supportedChain) => {
+  //         return supportedChain.chainId === value;
+  //       })[0];
+  
+  //       const selectedOutNetwork = supportedChain.filter((supportedChain) => {
+  //         return supportedChain.chainId === outValue;
+  //       })[0];
+  
+  //       if (selectedInNetwork.chainId !== connectedNetwork.connectedChainId) {
+  //         return isConnected
+  //           ? (await switchNetworkAsync?.(selectedInNetwork.chainId),
+  //             setNetwork({
+  //               inNetwork: selectedInNetwork,
+  //               outNetwork: selectedOutNetwork,
+  //             }),
+  //             setActionMethodStatus(false))
+  //           : setNetwork({
+  //               inNetwork: selectedInNetwork,
+  //               outNetwork: selectedOutNetwork,
+  //             });
+  //       } else if (selectedInNetwork.chainId === connectedNetwork.connectedChainId) {
+  //         setNetwork({
+  //           inNetwork: selectedInNetwork,
+  //           outNetwork: selectedOutNetwork,
+  //         });
+  //       }
+  //     } finally {
+  //       if (isError) {
+  //         console.error(`Couldn't switch network`);
+  //       }
+  //     }
+  //   }
+  //   if (mode === null) {
+  //     handleDefaultMode();
+  //   }
+  // }, [])
 
   return (
     <Modal

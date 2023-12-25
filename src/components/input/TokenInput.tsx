@@ -1,3 +1,4 @@
+import Image from "next/image";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -485,10 +486,11 @@ export default function TokenInput(props: {
             placeholder={placeholder || "0"}
             _placeholder={{
               color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+              // fontSize: mobileView ? 20 : 28
             }}
-            color={"#ffffff"}
+            color={mobileView && isBalanceOver ? "#DD3A44" : "#ffffff"}
             fontSize={{ base: 22, lg: 28 }}
-            fontWeight={600}
+            fontWeight={{ base: 500, lg: 600 }}
             isDisabled={isDisabled}
             _disabled={{ color: "#fff" }}
             value={valueProp}
@@ -496,12 +498,13 @@ export default function TokenInput(props: {
             onChange={onChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
           ></Input>
           {hasMaxButton && !isMax && (
             <Button
               w={"40px"}
               h={"22px"}
-              bgColor={"#6a00f1"}
+              bgColor={"#007AFF"}
               fontSize={12}
               fontWeight={700}
               _hover={{}}
@@ -524,7 +527,14 @@ export default function TokenInput(props: {
           </Flex>
         )  */}
         {mobileView ? (
-          <></>
+          isBalanceOver && (
+            <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+              <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+              <Text>
+                Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
+              </Text>
+            </Flex>
+          )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
             {`$${marketPrice}`}

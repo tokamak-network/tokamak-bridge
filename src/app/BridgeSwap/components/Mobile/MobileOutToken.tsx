@@ -107,9 +107,9 @@ const MobileInToken = () => {
             <Image
               alt="eth"
               src={
-                outNetwork?.chainId === 1 || outNetwork?.chainId === 5
-                  ? ETHIcon
-                  : TitanIcon
+                outNetwork?.chainId === 5050 || outNetwork?.chainId === 55004
+                  ? TitanIcon
+                  : ETHIcon
               }
             />
           </Flex>

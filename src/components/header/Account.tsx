@@ -31,7 +31,7 @@ export default function Account() {
       columnGap={{ base: "8px", lg: "17px" }}
       fontSize={18}
       fontWeight={500}
-      _hover={{ bg: isConnected ? "#313442" : "" }}
+      _hover={{ bg: isConnected && !mobileView ? "#313442" : "" }}
       /**
        * About connectors
        *

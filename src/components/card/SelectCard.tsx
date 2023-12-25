@@ -204,11 +204,10 @@ export function SelectCardModal() {
                 <CardCarouselMobile />
                 <Flex
                   w={"full"}
-                  px={"12px"}
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
-                  onBlur={() => {console.log("123123")}}
+                  // px={"10px"}
                 >
                   <TokenInput
                     inToken={isOpen === "INPUT" ? true : false}
@@ -225,6 +224,7 @@ export function SelectCardModal() {
                     bg={"#0F0F12"}
                     align={"center"}
                     justify={"center"}
+                    display={isOpen === "INPUT" ? "flex" : "none"}
                     onClick={(e) => {
                       e.stopPropagation();
                       setIsSearch((prev) => !prev);

@@ -45,6 +45,7 @@ const CarouselCard = React.memo((props) => {
             onCloseTokenModal();
           }
         }}
+        isDark={slideIndex === 0 ? false : true}
       />
     )
   );
