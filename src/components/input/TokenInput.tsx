@@ -32,6 +32,10 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
 import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import {
+  IsSearchToken,
+  searchTokenStatus,
+} from "@/recoil/card/selectCard/searchToken";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -74,6 +78,10 @@ export default function TokenInput(props: {
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+  const { connectedChainId } = useConnectedNetwork();
+  const [, setSearchToken] = useRecoilState(searchTokenStatus);
+  const [searchValue, setSearchValue] = useState("");
 
   const switchable =
     mode === "Wrap" ||
@@ -84,9 +92,12 @@ export default function TokenInput(props: {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value;
+    if (isTokenSearch) {
+      setSearchValue(value);
+    }
 
     //for wrap/unwrap switch
-    if (inToken && switchable) {
+    if (inToken && switchable && !isTokenSearch) {
       if (selectedInToken && selectedOutToken) {
         if (value === "") {
           setSelectedOutToken({
@@ -120,6 +131,16 @@ export default function TokenInput(props: {
           parsedAmount: value,
         });
       }
+    }
+
+    if (searchValue === "" && isTokenSearch) {
+      return setSearchToken(null);
+    }
+    if (connectedChainId && isTokenSearch) {
+      return setSearchToken({
+        nameOrAdd: value,
+        chainId: connectedChainId,
+      });
     }
 
     //This token is inToken
@@ -493,14 +514,14 @@ export default function TokenInput(props: {
             fontWeight={{ base: 500, lg: 600 }}
             isDisabled={isDisabled}
             _disabled={{ color: "#fff" }}
-            value={valueProp}
+            value={isTokenSearch ? searchValue : valueProp}
             ref={customRef ? customRef : inputRef}
             onChange={onChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
             style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
           ></Input>
-          {hasMaxButton && !isMax && (
+          {hasMaxButton && !isMax && !isTokenSearch && (
             <Button
               w={"40px"}
               h={"22px"}

@@ -20,7 +20,7 @@ export default function DepositStatusTx(props: {
   const [duration, setDuration] = useState("0");
   const { mobileView } = useMediaView();
 
-//calculates the duration of the relay time 
+  //calculates the duration of the relay time
   useEffect(() => {
     if (tx.l1timeStamp) {
       const getDuration = setInterval(() => {
@@ -88,7 +88,9 @@ export default function DepositStatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}
+            _hover={{
+              textDecoration: mobileView ? "none" : "underline"
+            }}
           >
             {mobileView ? "Deposited" : `${layer}: Completed`}
           </Link>
@@ -116,18 +118,26 @@ export default function DepositStatusTx(props: {
             style={{ textDecoration: "none" }}
           >
             <Flex fontSize={"11px"}>
-              <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
-              <Text ml="3px" color={"#A0A3AD"}>
-                {format(fromUnixTime(date), "hh:mm b (z)")}
+              <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
+                {format(fromUnixTime(date), "yyyy.MM.dd")}
               </Text>
+              {!mobileView && (
+                <Text ml="3px" color={"#A0A3AD"}>
+                  {format(fromUnixTime(date), "hh:mm b (z)")}
+                </Text>
+              )}
             </Flex>
           </Link>
         ) : (
           <Flex fontSize={"11px"}>
-            <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
-            <Text ml="3px" color={"#A0A3AD"}>
-              {format(fromUnixTime(date), "hh:mm b (z)")}
+            <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
+              {format(fromUnixTime(date), "yyyy.MM.dd")}
             </Text>
+            {!mobileView && (
+              <Text ml="3px" color={"#A0A3AD"}>
+                {format(fromUnixTime(date), "hh:mm b (z)")}
+              </Text>
+            )}
           </Flex>
         )
       ) : mobileView ? (

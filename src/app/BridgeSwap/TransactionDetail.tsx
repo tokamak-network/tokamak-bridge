@@ -602,7 +602,7 @@ export default function TransactionDetail(props: {
       pt={
         !isMobile
           ? {
-              base: isExpanded ? "16px" : "11px",
+              base: isExpanded ? "11px" : "11px",
               lg: isExpanded ? "20px" : "14px",
             }
           : ""

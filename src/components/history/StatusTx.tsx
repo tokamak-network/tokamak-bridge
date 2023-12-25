@@ -5,7 +5,6 @@ import Calendar from "assets/icons/Google_Calendar_icon.svg";
 import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
-import { format, fromUnixTime } from "date-fns";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { claimTx } from "@/recoil/userHistory/claimTx";
@@ -17,6 +16,8 @@ import {
   Duration,
   addHours,
   differenceInSeconds,
+  format,
+  fromUnixTime,
 } from "date-fns";
 
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
@@ -87,7 +88,7 @@ export default function StatusTx(props: {
 
   const { claim } = useCallClaim("relayMessage");
   const { mobileView } = useMediaView();
-        
+
   //creates the count up clock for the rollup period
   useEffect(() => {
     if (tx.l2timeStamp) {
@@ -109,7 +110,7 @@ export default function StatusTx(props: {
   }, [tx.l2timeStamp]);
 
   // todo: should be adjusted for the browser's timezone
- //creates the calendar config. 
+  //creates the calendar config.
   const config: Object = {
     name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
     description:
@@ -200,22 +201,39 @@ export default function StatusTx(props: {
               ? "#007AFF"
               : "#8497DB"
           }
-          mr="6px"></Flex>
+          mr="6px"
+        ></Flex>
         {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
           <Link
             target="_blank"
-            href={`${
-              layer === "L1"
-                ? providers.l1BlockExplorer
-                : providers.l2BlockExplorer
-            }/tx/${txHash}`}
+            href={
+              mobileView
+                ? undefined
+                : `${
+                    layer === "L1"
+                      ? providers.l1BlockExplorer
+                      : providers.l2BlockExplorer
+                  }/tx/${txHash}`
+            }
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}
+            _hover={{
+              textDecoration: mobileView ? "none" : "underline"
+            }}
+            onClick={
+              mobileView
+                ? () => {
+                    setClaimTx(tx);
+                    setWithdrawStatus({
+                      isOpen: true,
+                    });
+                    setWithdrawData({ modalData: tx });
+                  }
+                : undefined
+            }
           >
             {mobileView ? "Claimed" : `${layer}: Completed`}
-
           </Link>
         ) : tx.currentStatus === 5 ? (
           <Text
@@ -270,7 +288,6 @@ export default function StatusTx(props: {
                     setWithdrawData({ modalData: tx });
                   }
                 : undefined
-
             }
           >
             {mobileView
@@ -302,10 +319,14 @@ export default function StatusTx(props: {
             }
           }}
         >
-          <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
-          <Text ml="3px" color={"#A0A3AD"}>
-            {format(fromUnixTime(date), "hh:mm b (z)")}
+          <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
+            {format(fromUnixTime(date), "yyyy.MM.dd")}
           </Text>
+          {!mobileView && (
+            <Text ml="3px" color={"#A0A3AD"}>
+              {format(fromUnixTime(date), "hh:mm b (z)")}
+            </Text>
+          )}
         </Flex>
       ) : tx.currentStatus === 4 ? (
         <Flex>
@@ -322,7 +343,8 @@ export default function StatusTx(props: {
           <Flex
             ml={"5px"}
             onClick={() => atcb_action(config)}
-            cursor={"pointer"}>
+            cursor={"pointer"}
+          >
             <Image src={Calendar} alt="google calendar" />
           </Flex>
         </Flex>
@@ -348,7 +370,7 @@ export default function StatusTx(props: {
             fontSize={"12px"}
             color={"#fff"}
             zIndex={10000}
-            _disabled={{ bg: "#1F2128" }}
+            _hover={{}}
             onClick={(event) => {
               event.stopPropagation();
               setClaimTx(tx);
