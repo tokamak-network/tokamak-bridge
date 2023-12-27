@@ -26,7 +26,7 @@ export default function Account() {
     <Center
       className="header-right-common"
       w={mobileView ? "106px" : isConnected ? "174px" : "220px"}
-      h={{ base: "32px", md: "48px" }}
+      h={{ base: "32px", lg: "48px" }}
       bg={!isConnected ? "#007AFF" : ""}
       columnGap={{ base: "8px", lg: "17px" }}
       fontSize={18}
@@ -58,7 +58,7 @@ export default function Account() {
           ) : (
             <Image src={WALLET_ICON} width={mobileView ? 16 : 24} alt={""} />
           )}
-          <Text fontSize={{ base: 12, md: 18 }}>{buttonText}</Text>
+          <Text fontSize={{ base: 12, lg: 18 }}>{buttonText}</Text>
           {isConnected && mobileView && <Image src={HISTORYICON} alt={""} />}
         </>
       )}

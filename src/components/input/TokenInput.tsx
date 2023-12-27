@@ -494,6 +494,7 @@ export default function TokenInput(props: {
           px={{ base: "10px", lg: 0 }}
           bg={{ base: "#0F0F12", lg: "none" }}
           rounded={{ base: "8px", lg: 0 }}
+          align={{ base: "center", lg: "start" }}
         >
           <Input
             id={inToken ? "LeftInput" : "RightInput"}
@@ -521,6 +522,11 @@ export default function TokenInput(props: {
             onBlur={handleBlur}
             style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
           ></Input>
+          {mobileView && !isTokenSearch && (
+            <Text mr={"12px"} fontSize={14} color={"#A0A3AD"}>{`$${
+              token0PriceWithAmount || "0.00"
+            }`}</Text>
+          )}
           {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
             <Button
               w={"40px"}
@@ -531,7 +537,6 @@ export default function TokenInput(props: {
               _hover={{}}
               _active={{}}
               color={"#fff"}
-              mt={"3px"}
               onClick={() => onMax()}
             >
               Max

@@ -84,9 +84,6 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
     }
 
     if (id === "deadline") {
-      console.log(
-        value.length > 4 || isNaN(Number(value)) || Number(value) < 1
-      );
       if (value.length > 4 || isNaN(Number(value)) || Number(value) < 1) {
         return setTxSetting({ ...txSetting, [id]: 1 });
       }
