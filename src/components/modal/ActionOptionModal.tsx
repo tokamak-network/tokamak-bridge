@@ -140,7 +140,6 @@ const ActionOptionModal = () => {
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const [, setNetwork] = useRecoilState(networkStatus);
   const { mode } = useGetMode();
-  console.log(mode)
 
   const { mobileView } = useMediaView();
 

@@ -78,7 +78,7 @@ export default function TokenInput(props: {
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
-  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
   const { connectedChainId } = useConnectedNetwork();
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const [searchValue, setSearchValue] = useState("");
@@ -521,7 +521,7 @@ export default function TokenInput(props: {
             onBlur={handleBlur}
             style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
           ></Input>
-          {hasMaxButton && !isMax && !isTokenSearch && (
+          {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
             <Button
               w={"40px"}
               h={"22px"}
