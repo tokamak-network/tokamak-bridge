@@ -60,6 +60,4 @@ const main = (param: any) => {
 
     return test.push(result);
   }
-
-  console.log(test);
 };

@@ -16,7 +16,14 @@ import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -25,6 +32,10 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
 import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import {
+  IsSearchToken,
+  searchTokenStatus,
+} from "@/recoil/card/selectCard/searchToken";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -35,7 +46,8 @@ export default function TokenInput(props: {
   customRef?: RefObject<HTMLInputElement>;
   placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } = props;
+  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } =
+    props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -66,6 +78,10 @@ export default function TokenInput(props: {
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
   const { onCloseTokenModal } = useTokenModal();
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
+  const { connectedChainId } = useConnectedNetwork();
+  const [, setSearchToken] = useRecoilState(searchTokenStatus);
+  const [searchValue, setSearchValue] = useState("");
 
   const switchable =
     mode === "Wrap" ||
@@ -76,9 +92,12 @@ export default function TokenInput(props: {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value;
+    if (isTokenSearch) {
+      setSearchValue(value);
+    }
 
     //for wrap/unwrap switch
-    if (inToken && switchable) {
+    if (inToken && switchable && !isTokenSearch) {
       if (selectedInToken && selectedOutToken) {
         if (value === "") {
           setSelectedOutToken({
@@ -112,6 +131,16 @@ export default function TokenInput(props: {
           parsedAmount: value,
         });
       }
+    }
+
+    if (searchValue === "" && isTokenSearch) {
+      return setSearchToken(null);
+    }
+    if (connectedChainId && isTokenSearch) {
+      return setSearchToken({
+        nameOrAdd: value,
+        chainId: connectedChainId,
+      });
     }
 
     //This token is inToken
@@ -283,7 +312,7 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    onCloseTokenModal();
+    // onCloseTokenModal();
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {
@@ -444,7 +473,7 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     customRef?.current?.focus();
-  }, [customRef])
+  }, [customRef]);
 
   return (
     <Flex
@@ -460,7 +489,13 @@ export default function TokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex>
+        <Flex
+          py={{ base: "7px", lg: 0 }}
+          px={{ base: "10px", lg: 0 }}
+          bg={{ base: "#0F0F12", lg: "none" }}
+          rounded={{ base: "8px", lg: 0 }}
+          align={{ base: "center", lg: "start" }}
+        >
           <Input
             id={inToken ? "LeftInput" : "RightInput"}
             w={"100%"}
@@ -471,29 +506,37 @@ export default function TokenInput(props: {
             _active={{}}
             _focus={{ boxShadow: "none !important" }}
             placeholder={placeholder || "0"}
-            _placeholder={{ color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important" }}
-            color={"#ffffff"}
+            _placeholder={{
+              color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+              // fontSize: mobileView ? 20 : 28
+            }}
+            color={mobileView && isBalanceOver ? "#DD3A44" : "#ffffff"}
             fontSize={{ base: 22, lg: 28 }}
-            fontWeight={600}
+            fontWeight={{ base: 500, lg: 600 }}
             isDisabled={isDisabled}
             _disabled={{ color: "#fff" }}
-            value={valueProp}
+            value={isTokenSearch ? searchValue : valueProp}
             ref={customRef ? customRef : inputRef}
             onChange={onChange}
             onFocus={handleFocus}
             onBlur={handleBlur}
+            style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
           ></Input>
-          {hasMaxButton && !isMax && (
+          {mobileView && !isTokenSearch && (
+            <Text mr={"12px"} fontSize={14} color={"#A0A3AD"}>{`$${
+              token0PriceWithAmount || "0.00"
+            }`}</Text>
+          )}
+          {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
             <Button
               w={"40px"}
               h={"22px"}
-              bgColor={"#6a00f1"}
+              bgColor={"#007AFF"}
               fontSize={12}
               fontWeight={700}
               _hover={{}}
               _active={{}}
               color={"#fff"}
-              mt={"3px"}
               onClick={() => onMax()}
             >
               Max
@@ -503,22 +546,26 @@ export default function TokenInput(props: {
       )}
 
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        {mobileView && isBalanceOver ? (
+        {/* {mobileView && isBalanceOver ? (
           <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
             <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
             <Text>Insufficient ({inTokenFromHook?.tokenSymbol}) balance </Text>
           </Flex>
+        )  */}
+        {mobileView ? (
+          isBalanceOver && (
+            <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+              <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+              <Text>
+                Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
+              </Text>
+            </Flex>
+          )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
             {`$${marketPrice}`}
           </Text>
         )}
-
-        {/* {inToken === false && mode === "Swap" && (
-          <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
-            ({priceImpact ?? "-"}%)
-          </Text>
-        )}  */}
       </Flex>
     </Flex>
   );

@@ -45,6 +45,7 @@ const CarouselCard = React.memo((props) => {
             onCloseTokenModal();
           }
         }}
+        isDark={slideIndex === 0 ? false : true}
       />
     )
   );
@@ -55,7 +56,7 @@ export function CardCarouselMobile() {
   const { filteredTokenList } = useGetTokenList();
   const { inToken, outToken } = useInOutTokens();
   const { isOpen } = useRecoilValue(tokenModalStatus);
-  const [resultTokenArr, setResultTokenArr] =
+  const [resultToken, setResultTokenArr] =
     useState<TokenInfo[]>(filteredTokenList);
 
   const move = (input: TokenInfo[], from: number) => {
@@ -81,12 +82,12 @@ export function CardCarouselMobile() {
 
       const resultTokenList = resultTokenArr.filter((token) =>
         isOpen === "INPUT"
-          ? token.tokenName !== outToken?.tokenName
-          : token.tokenName !== inToken?.tokenName
+          ? token?.tokenName !== outToken?.tokenName
+          : token?.tokenName !== inToken?.tokenName
       );
       setResultTokenArr(resultTokenList);
     }
-  }, []);
+  }, [filteredTokenList]);
 
   return (
     <ResponsiveContainer
@@ -100,7 +101,7 @@ export function CardCarouselMobile() {
               slideComponent={CarouselCard}
               slideWidth={150}
               carouselWidth={parentWidth}
-              data={resultTokenArr}
+              data={resultToken}
               currentVisibleSlide={currentVisibleSlide}
               maxVisibleSlide={3}
               customScales={[1, 0.85, 0.4]}

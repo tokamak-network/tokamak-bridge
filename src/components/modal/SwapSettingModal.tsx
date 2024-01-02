@@ -3,10 +3,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  Flex,
-  Text,
-  Box,
-  Button,
 } from "@chakra-ui/react";
 
 import { swapSettingStatus } from "@/recoil/modal/atom";

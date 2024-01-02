@@ -61,7 +61,7 @@ export default function Swap() {
   return (
     <>
       {pcView ? (
-        <Flex w={"100%"} justifyContent={"space-between"} columnGap={switchable?'6px':"14.6px"}>
+        <Flex w={"100%"} justifyContent={"space-between"} columnGap={switchable?'6px':"5px"}>
           <InToken />
           <Flex
             onClick={invertTokenPair}
@@ -112,13 +112,18 @@ export default function Swap() {
             )}
           </Flex>
 
-          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"}>
+          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"} align={"center"}>
             <MobileInToken />
 
             <Flex
               justifyContent={"center"}
               alignItems={"center"}
               onClick={invertTokenPair}
+              rounded={"5px"}
+              w={"24px"}
+              h={"24px"}
+              p={"4px"}
+              bg={switchable ? "#1F2128" : "transparent"}
             >
               <Image src={ArrowImg} alt={"arrow"} />
             </Flex>

@@ -121,7 +121,7 @@ export function SelectCardModal() {
   const { pcView } = useMediaView();
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const ref = useRef<HTMLInputElement>(null);
-  const [isSearch, setIsSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
 
   //close when click at outside
   useEffect(() => {
@@ -204,17 +204,17 @@ export function SelectCardModal() {
                 <CardCarouselMobile />
                 <Flex
                   w={"full"}
-                  px={"12px"}
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
+                  // px={"10px"}
                 >
                   <TokenInput
                     inToken={isOpen === "INPUT" ? true : false}
                     hasMaxButton={isOpen === "INPUT" ? true : false}
                     style={isOpen === "INPUT" ? "" : { display: "none" }}
                     customRef={ref}
-                    placeholder="input amount"
+                    placeholder={isTokenSearch ? "Name or Address" : "input amount"}
                   />
 
                   <Flex
@@ -224,16 +224,17 @@ export function SelectCardModal() {
                     bg={"#0F0F12"}
                     align={"center"}
                     justify={"center"}
+                    display={isOpen === "INPUT" ? "flex" : "none"}
                     onClick={(e) => {
                       e.stopPropagation();
-                      setIsSearch((prev) => !prev);
+                      setTokenSearch((prev) => !prev);
                     }}
                   >
                     <Image
                       width={20}
                       height={20}
                       alt="search"
-                      src={isSearch ? CancelIcon : SearchIcon}
+                      src={isTokenSearch ? CancelIcon : SearchIcon}
                     />
                   </Flex>
                 </Flex>

@@ -19,6 +19,7 @@ import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
 import TitanRect from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
+import commafy from "@/utils/trim/commafy";
 
 export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
@@ -47,7 +48,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
   const handleCheckWithdrawModal = () => {
     //when the general area of the withdraw tx is clicked, it should open the confirm withdraw modal.
     //setting up the necessary data for the claim withdraw modal and set it to open 
-    if (tx !== undefined && tx.currentStatus < 6) {
+    if (tx !== undefined) {
       setClaimTx(tx);
       setWithdrawStatus({
         isOpen: true,
@@ -88,44 +89,22 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         <Flex justifyContent={"space-between"} w="100%">
           {mobileView ? (
             <>
-              <Link
-                target="_blank"
-                href={
-                  tx.currentStatus === 6 || tx.l1txHash
-                    ? `${providers.l1BlockExplorer}/tx/${tx.l1txHash}`
-                    : undefined
-                }
-                style={{ textDecoration: "none" }}
-                onClick={handleCheckWithdrawModal}
-              >
-                <Flex columnGap={"4px"}>
+                <Flex columnGap={"4px"} onClick={handleCheckWithdrawModal}>
                   <Text fontSize={"14px"} fontWeight={600}>
                     Withdraw from
                   </Text>
                   <Image alt="titan" width={18} height={18} src={TitanRect} />
                 </Flex>
-              </Link>
-              <Link
-                target="_blank"
-                href={
-                  tx.currentStatus === 6 || tx.l1txHash
-                    ? `${providers.l1BlockExplorer}/tx/${tx.l1txHash}`
-                    : undefined
-                }
-                style={{ textDecoration: "none" }}
-                onClick={handleCheckWithdrawModal}
-              >
-                <Flex columnGap={"4px"} align={"center"}>
+                <Flex columnGap={"4px"} align={"center"} onClick={handleCheckWithdrawModal}>
                   <Text fontSize={12}>
-                    {ethers.utils.formatUnits(
+                    {commafy(ethers.utils.formatUnits(
                       tx._amount.toString(),
                       token?.decimals
-                    )}{" "}
+                    ), 2)}{" "}
                     {(token?.symbol as string) || "ETH"}
                   </Text>
                   <Image width={18} height={18} alt="link" src={LinkIcon} />
                 </Flex>
-              </Link>
             </>
           ) : (
             <>

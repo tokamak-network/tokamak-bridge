@@ -42,6 +42,7 @@ type TokenCardProps = {
   isInput?: boolean;
   requireCall?: boolean;
   watch?: boolean;
+  isDark?: boolean;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -128,8 +129,8 @@ export default function TokenCard(props: TokenCardProps) {
     isInput,
     requireCall,
     watch,
+    isDark
   } = props;
-  const { inNetwork: inNetworkInfo } = useRecoilValue(networkStatus);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
 
   const tokenColorCode = useMemo(() => {
@@ -228,7 +229,7 @@ export default function TokenCard(props: TokenCardProps) {
       w={typeof w === "string" ? w : `${w ?? 200}px`}
       height={typeof h === "string" ? h : `${h ?? 248}px`}
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
-      opacity={isNew ? 0.25 : 0.85}
+      opacity={isNew || isDark ? 0.25 : 0.85}
       border={`3px solid ${tokenColorCode} `}
       borderRadius={{ base: "9px", lg: "16px" }}
       pos={"relative"}

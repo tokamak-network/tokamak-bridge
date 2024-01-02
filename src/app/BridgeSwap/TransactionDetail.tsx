@@ -44,7 +44,8 @@ const DepositDetailRow = (props: DepositDetailProp) => {
       <Flex
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
-        h={"16px"}>
+        h={"16px"}
+      >
         <Text fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
           <Text fontWeight={500}>
@@ -106,7 +107,8 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
       <Flex
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
-        h={"16px"}>
+        h={"16px"}
+      >
         <Text fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
           <Text fontWeight={500}>
@@ -175,7 +177,8 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
                 verticalAlign={"center"}
                 lineHeight={"22px"}
                 fontSize={11}
-                fontWeight={600}>
+                fontWeight={600}
+              >
                 <CustomTooltip
                   content={
                     <Text
@@ -183,7 +186,8 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
                       bgColor={isTON ? "#007AFF" : ""}
                       borderRadius={"8px"}
                       cursor={"pointer"}
-                      onClick={() => setIsTON(true)}>
+                      onClick={() => setIsTON(true)}
+                    >
                       TON
                     </Text>
                   }
@@ -191,14 +195,16 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
                   style={{
                     width: "185px",
                     bgColor: "#007AFF",
-                  }}></CustomTooltip>
+                  }}
+                ></CustomTooltip>
 
                 <Text
                   w={"50%"}
                   bgColor={!isTON ? "#007AFF" : ""}
                   borderRadius={"8px"}
                   cursor={"pointer"}
-                  onClick={() => setIsTON(false)}>
+                  onClick={() => setIsTON(false)}
+                >
                   ETH
                 </Text>
               </Flex>
@@ -219,7 +225,8 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
           justifyContent={"center"}
           mt={"9px"}
           px={"16px"}
-          borderRadius={"8px"}>
+          borderRadius={"8px"}
+        >
           <Flex justifyContent={"space-between"}>
             <Text>L1 gas fee</Text>
             <Text>{isTON ? gasFee.l1Gas.ton : gasFee.l1Gas.eth}</Text>
@@ -258,8 +265,9 @@ const SwapDetailRow = (props: SwapDetailProp) => {
     <Flex flexDir={"column"}>
       <Flex
         justifyContent={"space-between"}
-        fontSize={{ base: 11, md: 14 }}
-        h={"16px"}>
+        fontSize={{ base: 11, lg: 14 }}
+        h={"16px"}
+      >
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
           {slippage && (
@@ -278,7 +286,8 @@ const SwapDetailRow = (props: SwapDetailProp) => {
             <Text
               ml={"27px"}
               fontWeight={500}
-              color={isOpen ? "#fff" : "#A0A3AD"}>
+              color={isOpen ? "#fff" : "#A0A3AD"}
+            >
               {gasFee}
             </Text>
           )}
@@ -296,10 +305,10 @@ const WrapDetailRow = (props: WrapDetailProp) => {
   return (
     <Flex flexDir={"column"}>
       <Flex
-      height={'14px'}
+        height={"14px"}
         justifyContent={"space-between"}
-        fontSize={{ base: 11, md: 14 }}
-        >
+        fontSize={{ base: 11, lg: 14 }}
+      >
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
         </Flex>
@@ -350,7 +359,8 @@ const Content = (props: {
         return withdrawNewPropsData?.map((data) => (
           <WithdrawDetailRowNew
             key={data.title}
-            {...data}></WithdrawDetailRowNew>
+            {...data}
+          ></WithdrawDetailRowNew>
         ));
       case "Swap":
         return swapPropsData?.map((data) => (
@@ -388,7 +398,7 @@ const Content = (props: {
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
-          <DivisionLine />
+          {!isMobile && <DivisionLine />}
           <Flex flexDir={"column"} rowGap={"10px"}>
             {detailRow}
           </Flex>
@@ -409,12 +419,14 @@ const Content = (props: {
                   onChange={(e) => {
                     const checkValue = e.target.checked;
                     setIsConfirm(checkValue);
-                  }}></Checkbox>
+                  }}
+                ></Checkbox>
                 <Text
                   lineHeight={"20px"}
                   fontSize={{ base: 13, lg: 14 }}
                   fontWeight={500}
-                  color={isConfirm ? "#fff" : "#A0A3AD"}>
+                  color={isConfirm ? "#fff" : "#A0A3AD"}
+                >
                   I understand it will take approximately 7 days until my funds
                   are claimable on Ethereum Mainnet.{" "}
                 </Text>
@@ -463,7 +475,8 @@ const Title = (props: {
         justifyContent={"space-between"}
         cursor={isOpen ? "" : "pointer"}
         onClick={() => isOpen === false && setIsExpended(!isExpanded)}
-        fontSize={{ base: 12, md: 14 }}>
+        fontSize={{ base: 12, lg: 14 }}
+      >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
           <Text>{convertNetworkName(inNetwork?.chainName)}</Text>
@@ -477,11 +490,12 @@ const Title = (props: {
             {isOpen === isExpanded && <Image src={GasImg} alt={"gasStation"} />}
             {isOpen === isExpanded && (
               <Text
-                fontSize={{ base: 12, md: 14 }}
+                fontSize={{ base: 12, lg: 14 }}
                 fontWeight={400}
                 color={"#A0A3AD"}
                 ml={"6px"}
-                mr={"13px"}>
+                mr={"13px"}
+              >
                 ${gasCostUS}
               </Text>
             )}
@@ -504,7 +518,8 @@ const Title = (props: {
         onClick={() =>
           !isWrapUnwrap && isOpen === false && setIsExpended(!isExpanded)
         }
-        fontSize={{ base: 12, md: 14 }}>
+        fontSize={{ base: 12, lg: 14 }}
+      >
         {isLoading ? (
           <Box w={"100%"} h={"20px"} mb={"5px"}>
             <GradientSpinner />
@@ -534,11 +549,12 @@ const Title = (props: {
                 )}
                 {isOpen === isExpanded && (
                   <Text
-                    fontSize={{ base: 11, md: 14 }}
+                    fontSize={{ base: 11, lg: 14 }}
                     fontWeight={400}
                     color={"#A0A3AD"}
                     ml={"6px"}
-                    mr={"13px"}>
+                    mr={"13px"}
+                  >
                     ${gasCostUS}
                   </Text>
                 )}
@@ -602,17 +618,24 @@ export default function TransactionDetail(props: {
       pt={
         !isMobile
           ? {
-              base: isExpanded ? "16px" : "11px",
+              base: isExpanded ? "11px" : "11px",
               lg: isExpanded ? "20px" : "14px",
             }
           : ""
       }
-      pb={{ base: isExpanded ? "12px" : "", lg:isWrapUnwrap? '20px': isExpanded ? "20px" : "" }}>
-      <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
+      pb={{
+        base: isExpanded ? "12px" : "",
+        lg: isWrapUnwrap ? "20px" : isExpanded ? "20px" : "",
+      }}
+    >
+      {!isMobile && (
+        <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
+      )}
       <Content
         isExpanded={isWrapUnwrap ? true : isExpanded}
         isOnConfirm={isOnConfirm}
-        isMobile={isMobile}></Content>
+        isMobile={isMobile}
+      ></Content>
     </Flex>
   );
 }

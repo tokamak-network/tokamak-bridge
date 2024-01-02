@@ -7,7 +7,6 @@ import {
   Box,
   Button,
 } from "@chakra-ui/react";
-import "@/css/spinner.css";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import CloseButton from "../button/CloseButton";
@@ -29,6 +28,8 @@ import { trimAmount } from "@/utils/trim";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+
+import "@/css/spinner.css";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -55,7 +56,9 @@ const OutTokenContainer = () => {
         mt={"14px"}
         mb={"3px"}
       >
-        <Text fontSize={{ base: 17, lg: 18 }}>{trimAmount(amountOut, 8)}</Text>
+        <Text fontSize={{ base: 17, lg: 18 }}>
+          {trimAmount(amountOut, mobileView ? 6 : 8)}
+        </Text>
         <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
           {outToken?.tokenSymbol}
         </Text>
@@ -119,7 +122,11 @@ const TokenContainer = () => {
   });
 
   return (
-    <Flex pos={"relative"} justify={"center"} columnGap={{ base: "8px", lg: "12px" }}>
+    <Flex
+      pos={"relative"}
+      justify={"center"}
+      columnGap={{ base: "8px", lg: "12px" }}
+    >
       <Flex
         pos={"relative"}
         w={{ base: "148px", lg: "176px" }}
@@ -163,7 +170,7 @@ const TokenContainer = () => {
           mb={"3px"}
         >
           <Text fontSize={{ base: 17, lg: 18 }}>
-            {trimAmount(inToken?.parsedAmount, 8)}
+            {trimAmount(inToken?.parsedAmount, mobileView ? 6 : 8)}
           </Text>
           <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
             {inToken?.tokenSymbol}
@@ -206,16 +213,16 @@ export default function ActionConfirmModal() {
   const { isOpen, onCloseConfirmModal } = useConfirm();
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
+  const { mobileView } = useMediaView();
 
   return (
-    <Modal isOpen={isOpen} onClose={onCloseConfirmModal}>
+    <Modal isOpen={isOpen} onClose={onCloseConfirmModal} size={"xl"} isCentered>
       <ModalOverlay opacity={0.1} />
       <ModalContent
-        h={"100%"}
         bg={"transparent"}
         justifyContent={"center"}
         alignItems={"center"}
-        m={0}
+        mb={{ base: 0, lg: "auto" }}
       >
         <Flex
           w={{ base: "full", lg: "404px" }}
@@ -225,15 +232,16 @@ export default function ActionConfirmModal() {
           flexDir={"column"}
           flexDirection={"column"}
           rowGap={"16px"}
-          mt={{ base: "auto", lg: "0" }}
         >
           <Flex justifyContent={"space-between"} pos={"relative"}>
             <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
               Confirm {mode}
             </Text>
-            <Box pos={"absolute"} right={0} top={"-6px"}>
-              <CloseButton onClick={onCloseConfirmModal} />
-            </Box>
+            {!mobileView && (
+              <Box pos={"absolute"} right={0} top={"-6px"}>
+                <CloseButton onClick={onCloseConfirmModal} />
+              </Box>
+            )}
           </Flex>
           <TokenContainer />
           <Box mt={"16px"}>
