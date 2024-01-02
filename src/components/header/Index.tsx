@@ -294,7 +294,7 @@ export default function Header() {
           </Menu>
         </Flex>
       </Flex>
-      <Flex columnGap={{ base: "8px", md: "6px" }}>
+      <Flex columnGap={{ base: "8px", lg: "6px" }}>
         {!mobileView && <Network />}
         {mobileView &&
           ((network.connectedChainId === 5 ||

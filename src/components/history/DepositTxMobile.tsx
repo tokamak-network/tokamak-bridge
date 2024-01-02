@@ -12,6 +12,7 @@ import { supportedTokens } from "@/types/token/supportedToken";
 import TitanIcon from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import commafy from "@/utils/trim/commafy";
 
 export default function DepositTx(props: { tx: FullWithTx }) {
   const { tx } = props;
@@ -67,10 +68,10 @@ export default function DepositTx(props: { tx: FullWithTx }) {
         >
           <Flex align={"center"} columnGap={"4px"}>
             <Text fontSize={"12px"}>
-              {ethers.utils.formatUnits(
+              {commafy(ethers.utils.formatUnits(
                 tx._amount === undefined ? "0" : tx._amount.toString(),
                 token?.decimals
-              )}{" "}
+              ), 2)}{" "}
               {(token?.symbol as string) || " ETH"}
             </Text>
             <Image alt="link" src={LinkIcon} />

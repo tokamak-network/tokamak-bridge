@@ -19,21 +19,18 @@ const GradientSpinner = () => {
   );
 };
 
-export default function LoadingTx () {
-return (
+export default function LoadingTx() {
+  return (
     <Flex
-    h={"73px"}
-    w={{ baes:"100%", lg:"336px" }}
-    borderRadius={"8px"}
-    border={"1px solid #313442"}
-    bg={"#15161D"}
-  
-    flexDir={"column"}
-    rowGap={"8px"}
-  >
-    <GradientSpinner/>
-
-  </Flex>
-)
-    
+      h={{ base: "73px", lg: "160px" }}
+      w={{ baes: "100%", lg: "336px" }}
+      borderRadius={"8px"}
+      border={"1px solid #313442"}
+      bg={"#15161D"}
+      flexDir={"column"}
+      rowGap={"8px"}
+    >
+      <GradientSpinner />
+    </Flex>
+  );
 }
