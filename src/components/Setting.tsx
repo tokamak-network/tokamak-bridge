@@ -1,4 +1,5 @@
-import SettingIcon from "assets/icons/setting.svg";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
 import {
   Flex,
   Input,
@@ -6,18 +7,15 @@ import {
   InputRightElement,
   Text,
 } from "@chakra-ui/react";
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   uniswapTxSetting,
   uniswapTxSettingSelector,
 } from "@/recoil/uniswap/setting";
-import { Percent } from "@uniswap/sdk-core";
-import CustomTooltip from "./tooltip/CustomTooltip";
-import QUESTION_ICON from "assets/icons/question.svg";
 import { RedWarningText, WarningText } from "./ui/WarningText";
+import SettingIcon from "assets/icons/setting.svg";
+import { swapSettingStatus } from "@/recoil/modal/atom";
 
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
@@ -27,6 +25,9 @@ interface SettingProps {
 export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
   const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
+  const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
+  const slipRef = useRef(null);
+  const deadlineRef = useRef(null);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = e.target.id;
@@ -149,9 +150,14 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
               boxShadow: "none !important",
               border: "1px solid #313442 !important",
             }}
+            ref={slipRef}
           />
           <InputRightElement pr={"5px"}>
-            <Text fontSize={{ base: 14, lg: 16 }} fontWeight={400} color={"#A0A3AD"}>
+            <Text
+              fontSize={{ base: 14, lg: 16 }}
+              fontWeight={400}
+              color={"#A0A3AD"}
+            >
               %
             </Text>
           </InputRightElement>
@@ -186,7 +192,9 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
         flexDir={"column"}
       >
         <Flex columnGap={"4px"}>
-          <Text fontSize={{ base: "14px", lg: "16px" }}>Transaction deadline</Text>
+          <Text fontSize={{ base: "14px", lg: "16px" }}>
+            Transaction deadline
+          </Text>
           {/* <CustomTooltip
           content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
           tooltipLabel="testtesttest"
@@ -210,9 +218,14 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
               boxShadow: "none !important",
               border: "1px solid #313442 !important",
             }}
+            ref={deadlineRef}
           />
           <InputRightElement mr={"25px"} pr={"10px"}>
-            <Text fontSize={{ base: 14, lg: 16 }} fontWeight={400} color={"#A0A3AD"}>
+            <Text
+              fontSize={{ base: 14, lg: 16 }}
+              fontWeight={400}
+              color={"#A0A3AD"}
+            >
               minutes
             </Text>
           </InputRightElement>

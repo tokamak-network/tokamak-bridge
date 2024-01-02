@@ -9,6 +9,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { trimAddress } from "@/utils/trim";
+import { actionMethodStatus } from "@/recoil/modal/atom";
 
 import HISTORYICON from "assets/icons/header/history.svg";
 import WALLET_ICON from "assets/icons/wallet.svg";
@@ -19,8 +20,13 @@ export default function Account() {
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   const txPending = useRecoilValue(txPendingStatus);
   const { mobileView } = useMediaView();
+  const [actionOptionStatus, setActionMethodStatus] = useRecoilState(actionMethodStatus);
 
-  const buttonText = isConnected ? trimAddress({ address }) : mobileView ? "Connect" : "Connect Wallet";
+  const buttonText = isConnected
+    ? trimAddress({ address })
+    : mobileView
+    ? "Connect"
+    : "Connect Wallet";
 
   return (
     <Center
@@ -40,13 +46,14 @@ export default function Account() {
        * index 1 = coinbase wallet
        * index 2 = wallet injected like wallet connet
        */
-      onClick={() =>
-        isConnected ? setIsOpen((prev) => !prev) : connetAndDisconntWallet()
-      }
+      onClick={() => {
+        isConnected ? setIsOpen((prev) => !prev) : connetAndDisconntWallet();
+        actionOptionStatus ? setActionMethodStatus(false) : "";
+      }}
     >
       {isConnected && txPending ? (
         <Flex columnGap={"8px"}>
-          <Spinner size={{base: "sm", lg:"md"}} color={"#007AFF"} />
+          <Spinner size={{ base: "sm", lg: "md" }} color={"#007AFF"} />
           <Text fontSize={{ base: 12, lg: 18 }} fontWeight={500}>
             {/* {pendingTransaction.length} */} Pending
           </Text>
