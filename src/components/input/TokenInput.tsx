@@ -16,7 +16,14 @@ import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -35,7 +42,8 @@ export default function TokenInput(props: {
   customRef?: RefObject<HTMLInputElement>;
   placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } = props;
+  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } =
+    props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -75,7 +83,7 @@ export default function TokenInput(props: {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
-    const value: string = e.target.value;
+    const value: string = e.target.value === "." ? "0." : e.target.value;
 
     //for wrap/unwrap switch
     if (inToken && switchable) {
@@ -444,7 +452,7 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     customRef?.current?.focus();
-  }, [customRef])
+  }, [customRef]);
 
   return (
     <Flex
@@ -471,7 +479,9 @@ export default function TokenInput(props: {
             _active={{}}
             _focus={{ boxShadow: "none !important" }}
             placeholder={placeholder || "0"}
-            _placeholder={{ color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important" }}
+            _placeholder={{
+              color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+            }}
             color={"#ffffff"}
             fontSize={{ base: 22, lg: 28 }}
             fontWeight={600}
