@@ -8,8 +8,6 @@ import Drawers from "./Drawers";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
-import "@/css/test.css";
-
 export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
   const { mobileView } = useMediaView()
