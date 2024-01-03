@@ -91,7 +91,7 @@ export default function TokenInput(props: {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
-    const value: string = e.target.value;
+    const value: string = e.target.value === "." ? "0." : e.target.value;
     if (isTokenSearch) {
       setSearchValue(value);
     }
