@@ -15,7 +15,7 @@ import "@/css/carousel.css";
 
 const CarouselCard = React.memo((props) => {
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-  const { data, dataIndex, slideIndex }: any = props;
+  const { data, dataIndex, slideIndex, swipeTo }: any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
 
   useEffect(() => {
@@ -42,7 +42,9 @@ const CarouselCard = React.memo((props) => {
           try {
           } catch (e) {
           } finally {
-            onCloseTokenModal();
+            if (slideIndex === 0) onCloseTokenModal();
+            else if (slideIndex === 1) swipeTo(1);
+            else if (slideIndex === -1) swipeTo(-1);
           }
         }}
         isDark={slideIndex === 0 ? false : true}
