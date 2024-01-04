@@ -160,8 +160,9 @@ export function SelectCardModal() {
       <ModalContent
         minW={"100%"}
         maxW={"100%"}
-        h={"100%"}
-        m={0}
+        h={{ base: "calc(100% - 60px)", lg: "100%" }}
+        m={{base: "none", lg: 0}}
+        mb={{base: 0, lg: "none"}}
         p={0}
         bg={"transparent"}
         overflow={"hidden"}
@@ -174,13 +175,12 @@ export function SelectCardModal() {
           justifyContent={"center"}
           alignItems={"end"}
           bg={"transparent"}
-          // onClick={onClose}
           id="out-area"
           zIndex={1}
         >
           <Flex
             w={"1362px"}
-            h={{ base: "calc(100% - 60px)", lg: "486px" }}
+            h={{ base: "100%", lg: "486px" }}
             bgColor={{ base: "#1F2128", lg: "transparent" }}
             rounded={"24px 24px 0px 0px"}
             padding={{ base: "16px 10px", lg: 0 }}
