@@ -132,8 +132,6 @@ export function SelectCardModal() {
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      if (mobileView && selectedInToken?.parsedAmount === null)
-        setSelectedInToken(null);
       if (event.target.id === "out-area") {
         return onCloseTokenModal();
       }
@@ -148,23 +146,32 @@ export function SelectCardModal() {
   const handleBlur = useCallback(() => {
     if (!isTokenSearch) {
       onCloseTokenModal();
-    }}, [isTokenSearch]);
+    }
+    if (mobileView && selectedInToken?.parsedAmount === null)
+      setSelectedInToken(null);
+  }, [isTokenSearch, selectedInToken?.parsedAmount, mobileView]);
+
+  const handleClose = useCallback(() => {
+    if (mobileView && selectedInToken?.parsedAmount === null)
+      setSelectedInToken(null);
+  }, [selectedInToken?.parsedAmount, mobileView]);
 
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
       // isOpen={false}
-      onClose={onCloseTokenModal}
+      onClose={mobileView ? handleClose : onCloseTokenModal}
     >
       <ModalOverlay />
       <ModalContent
         minW={"100%"}
         maxW={"100%"}
         h={{ base: "calc(100% - 60px)", lg: "100%" }}
-        m={{base: "none", lg: 0}}
-        mb={{base: 0, lg: "none"}}
+        m={{ base: "none", lg: 0 }}
+        mt={"auto"}
+        mb={0}
         p={0}
-        bg={"transparent"}
+        bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
       >
         <ModalBody
@@ -191,6 +198,7 @@ export function SelectCardModal() {
             backgroundImage={BgImage}
             zIndex={100}
             overflow={{ base: "hidden" }}
+            mb={{ base: "auto", lg: "0" }}
           >
             {pcView && (
               <Flex pos={"absolute"}>
