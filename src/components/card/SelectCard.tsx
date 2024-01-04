@@ -2,7 +2,7 @@ import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
@@ -16,7 +16,10 @@ import { Overlay_Index } from "@/types/style/overlayIndex";
 import { CardCarouselMobile } from "./mobile/CardCarouselMobile";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import TokenInput from "../input/TokenInput";
-import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  selectedInTokenStatus,
+  tokenModalStatus,
+} from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
 
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
@@ -118,14 +121,19 @@ const SearchToken = () => {
 
 export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
-  const { pcView } = useMediaView();
+  const { mobileView, pcView } = useMediaView();
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const ref = useRef<HTMLInputElement>(null);
   const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
 
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
+      if (mobileView && selectedInToken?.parsedAmount === null)
+        setSelectedInToken(null);
       if (event.target.id === "out-area") {
         return onCloseTokenModal();
       }
@@ -135,7 +143,12 @@ export function SelectCardModal() {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [selectedInToken?.parsedAmount]);
+
+  const handleBlur = useCallback(() => {
+    if (!isTokenSearch) {
+      onCloseTokenModal();
+    }}, [isTokenSearch]);
 
   return (
     <Modal
@@ -207,6 +220,7 @@ export function SelectCardModal() {
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
+                  onBlur={handleBlur}
                   // px={"10px"}
                 >
                   <TokenInput
@@ -214,7 +228,10 @@ export function SelectCardModal() {
                     hasMaxButton={isOpen === "INPUT" ? true : false}
                     style={isOpen === "INPUT" ? "" : { display: "none" }}
                     customRef={ref}
-                    placeholder={isTokenSearch ? "Name or Address" : "input amount"}
+                    placeholder={
+                      isTokenSearch ? "Name or Address" : "input amount"
+                    }
+                    defaultValue={selectedInToken?.parsedAmount}
                   />
 
                   <Flex
@@ -225,8 +242,9 @@ export function SelectCardModal() {
                     align={"center"}
                     justify={"center"}
                     display={isOpen === "INPUT" ? "flex" : "none"}
-                    onClick={(e) => {
+                    onMouseDown={(e) => {
                       e.stopPropagation();
+                      e.preventDefault();
                       setTokenSearch((prev) => !prev);
                     }}
                   >

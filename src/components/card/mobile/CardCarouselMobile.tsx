@@ -3,7 +3,7 @@ import {
   ResponsiveContainer,
   StackedCarousel,
 } from "react-stacked-center-carousel";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import TokenCard from "../TokenCard";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
@@ -12,11 +12,13 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import "@/css/carousel.css";
+import { IsSearchToken } from "@/recoil/card/selectCard/searchToken";
 
 const CarouselCard = React.memo((props) => {
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
+  const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
 
   useEffect(() => {
     if (slideIndex === 0) {
@@ -42,7 +44,7 @@ const CarouselCard = React.memo((props) => {
           try {
           } catch (e) {
           } finally {
-            if (slideIndex === 0) onCloseTokenModal();
+            if (slideIndex === 0 && isTokenSearch) setIsTokenSearch(false);
             else if (slideIndex === 1) swipeTo(1);
             else if (slideIndex === -1) swipeTo(-1);
           }
