@@ -534,7 +534,10 @@ export default function TokenInput(props: {
               _hover={{}}
               _active={{}}
               color={"#fff"}
-              onClick={() => onMax()}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onMax()
+              }}
             >
               Max
             </Button>
