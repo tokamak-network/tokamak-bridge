@@ -15,16 +15,16 @@ import "@/css/carousel.css";
 import { IsSearchToken } from "@/recoil/card/selectCard/searchToken";
 
 const CarouselCard = React.memo((props) => {
-  const { onCloseTokenModal, setSelectedToken } = useTokenModal();
+  const { setSelectedToken } = useTokenModal();
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
   const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
 
   useEffect(() => {
-    if (slideIndex === 0) {
+    if (slideIndex === 0 && tokenData) {
       setSelectedToken(tokenData);
     }
-  }, [slideIndex]);
+  }, [slideIndex, data]);
 
   return (
     tokenData && (
@@ -40,14 +40,11 @@ const CarouselCard = React.memo((props) => {
           h: 60,
         }}
         type={"small"}
-        onClick={() => {
-          try {
-          } catch (e) {
-          } finally {
-            if (slideIndex === 0 && isTokenSearch) setIsTokenSearch(false);
-            else if (slideIndex === 1) swipeTo(1);
-            else if (slideIndex === -1) swipeTo(-1);
-          }
+        onMouseDown={(e: any) => {
+          e.preventDefault();
+          if (slideIndex === 0 && isTokenSearch) setIsTokenSearch(false);
+          else if (slideIndex === 1) swipeTo(1);
+          else if (slideIndex === -1) swipeTo(-1);
         }}
         isDark={slideIndex === 0 ? false : true}
       />

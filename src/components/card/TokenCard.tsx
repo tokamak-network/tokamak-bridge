@@ -34,7 +34,8 @@ type TokenCardProps = {
     w: number;
     h: number;
   };
-  onClick?: () => any;
+  onClick?: (e: any) => any;
+  onMouseDown?: (e: any) => any;
   style?: {};
   type?: TokenCardSizeType;
   forBridge?: boolean;
@@ -122,6 +123,7 @@ export default function TokenCard(props: TokenCardProps) {
     isNew,
     symbolSize,
     onClick,
+    onMouseDown,
     style,
     type,
     forBridge,
@@ -240,6 +242,7 @@ export default function TokenCard(props: TokenCardProps) {
       justifyContent={"space-between"}
       px={{ base: "12px", lg: "16px" }}
       cursor={"pointer"}
+      onMouseDown={onMouseDown}
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
       {...style}

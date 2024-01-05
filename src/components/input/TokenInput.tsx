@@ -39,14 +39,14 @@ import {
 
 export default function TokenInput(props: {
   inToken: boolean;
-  defaultValue?: string | number | null;
+  defaultValue?: any;
   isDisabled?: boolean;
   hasMaxButton?: boolean;
   style?: {};
   customRef?: RefObject<HTMLInputElement>;
   placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } =
+  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder, defaultValue } =
     props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
@@ -90,12 +90,18 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('...')
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
-    if (isTokenSearch) {
-      setSearchValue(value);
-    }
 
+    if (isTokenSearch && connectedChainId) {
+      setSearchValue(value);
+      return setSearchToken({
+        nameOrAdd: value,
+        chainId: connectedChainId,
+      });
+    }
+    
     //for wrap/unwrap switch
     if (inToken && switchable && !isTokenSearch) {
       if (selectedInToken && selectedOutToken) {
@@ -131,16 +137,6 @@ export default function TokenInput(props: {
           parsedAmount: value,
         });
       }
-    }
-
-    if (searchValue === "" && isTokenSearch) {
-      return setSearchToken(null);
-    }
-    if (connectedChainId && isTokenSearch) {
-      return setSearchToken({
-        nameOrAdd: value,
-        chainId: connectedChainId,
-      });
     }
 
     //This token is inToken
@@ -312,7 +308,6 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    // onCloseTokenModal();
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {
@@ -388,7 +383,7 @@ export default function TokenInput(props: {
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
         : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : "";
+      : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -399,6 +394,8 @@ export default function TokenInput(props: {
     isFocused,
     dependentAmount,
     lastFocused,
+    isTokenSearch,
+    defaultValue
   ]);
 
   const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({

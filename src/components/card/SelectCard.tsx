@@ -146,12 +146,14 @@ export function SelectCardModal() {
   const handleBlur = useCallback(() => {
     if (!isTokenSearch) {
       onCloseTokenModal();
+      if (mobileView && selectedInToken?.parsedAmount === null)
+        setSelectedInToken(null);
     }
-    if (mobileView && selectedInToken?.parsedAmount === null)
-      setSelectedInToken(null);
+
   }, [isTokenSearch, selectedInToken?.parsedAmount, mobileView]);
 
   const handleClose = useCallback(() => {
+    onCloseTokenModal();
     if (mobileView && selectedInToken?.parsedAmount === null)
       setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
@@ -239,7 +241,7 @@ export function SelectCardModal() {
                     placeholder={
                       isTokenSearch ? "Name or Address" : "input amount"
                     }
-                    defaultValue={selectedInToken?.parsedAmount}
+                    defaultValue={isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""}
                   />
 
                   <Flex
