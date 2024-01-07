@@ -624,7 +624,7 @@ export default function TransactionDetail(props: {
           : ""
       }
       pb={{
-        base: isExpanded ? "12px" : "",
+        base: isExpanded || isWrapUnwrap ? "12px" : "",
         lg: isWrapUnwrap ? "20px" : isExpanded ? "20px" : "",
       }}
     >

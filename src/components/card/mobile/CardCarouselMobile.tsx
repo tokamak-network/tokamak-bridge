@@ -10,19 +10,47 @@ import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import { TokenInfo } from "@/types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
-import "@/css/carousel.css";
+import {
+  tokenModalStatus,
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 import { IsSearchToken } from "@/recoil/card/selectCard/searchToken";
+import useConnectedNetwork from "@/hooks/network";
+
+import "@/css/carousel.css";
 
 const CarouselCard = React.memo((props) => {
-  const { setSelectedToken } = useTokenModal();
+  const { setSelectedToken, onCloseTokenModal, isInTokenOpen } =
+    useTokenModal();
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
   const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const { chainName } = useConnectedNetwork();
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
 
   useEffect(() => {
     if (slideIndex === 0 && tokenData) {
-      setSelectedToken(tokenData);
+      const inToken = selectedInToken;
+      isInTokenOpen && chainName
+        ? setSelectedInToken({
+            ...tokenData,
+            amountBN: inToken?.amountBN || null,
+            parsedAmount: inToken?.parsedAmount || null,
+            tokenAddress: inToken?.tokenAddress || null,
+          })
+        : chainName &&
+          setSelectedOutToken({
+            ...tokenData,
+            amountBN: null,
+            parsedAmount: null,
+            tokenAddress: tokenData.address[chainName],
+          });
     }
   }, [slideIndex, data]);
 
@@ -43,7 +71,15 @@ const CarouselCard = React.memo((props) => {
         onMouseDown={(e: any) => {
           e.preventDefault();
           if (slideIndex === 0 && isTokenSearch) setIsTokenSearch(false);
-          else if (slideIndex === 1) swipeTo(1);
+          if (
+            slideIndex === 0 &&
+            !isTokenSearch &&
+            selectedInToken?.parsedAmount
+          )
+            onCloseTokenModal();
+        }}
+        onClick={(e: any) => {
+          if (slideIndex === 1) swipeTo(1);
           else if (slideIndex === -1) swipeTo(-1);
         }}
         isDark={slideIndex === 0 ? false : true}
