@@ -514,9 +514,9 @@ const Title = (props: {
         w={"100%"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        cursor={isOpen || isWrapUnwrap ? "" : "pointer"}
+        cursor={isOpen ? "" : "pointer"}
         onClick={() =>
-          !isWrapUnwrap && isOpen === false && setIsExpended(!isExpanded)
+           isOpen === false && setIsExpended(!isExpanded)
         }
         fontSize={{ base: 12, lg: 14 }}
       >
@@ -540,7 +540,7 @@ const Title = (props: {
             )} */}
           </Flex>
         )}
-        {isLoading || isWrapUnwrap
+        {isLoading 
           ? null
           : isOpen === false && (
               <Flex>
@@ -624,15 +624,15 @@ export default function TransactionDetail(props: {
           : ""
       }
       pb={{
-        base: isExpanded || isWrapUnwrap ? "12px" : "",
-        lg: isWrapUnwrap ? "20px" : isExpanded ? "20px" : "",
+        base: isExpanded  ? "12px" : "",
+        lg: isExpanded ? "20px" : "",
       }}
     >
       {!isMobile && (
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       )}
       <Content
-        isExpanded={isWrapUnwrap ? true : isExpanded}
+        isExpanded={isExpanded}
         isOnConfirm={isOnConfirm}
         isMobile={isMobile}
       ></Content>

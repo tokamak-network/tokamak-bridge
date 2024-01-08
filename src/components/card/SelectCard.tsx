@@ -75,6 +75,7 @@ const SearchToken = () => {
   const { connectedChainId } = useConnectedNetwork();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.preventDefault();
     const value = e.target.value;
 
     if (value === "") {
@@ -224,6 +225,7 @@ export function SelectCardModal() {
             )}
             {!pcView && (
               <>
+                <SearchToken />
                 <CardCarouselMobile />
                 <Flex
                   w={"full"}
@@ -236,15 +238,15 @@ export function SelectCardModal() {
                   <TokenInput
                     inToken={isOpen === "INPUT" ? true : false}
                     hasMaxButton={isOpen === "INPUT" ? true : false}
-                    style={isOpen === "INPUT" ? "" : { display: "none" }}
-                    customRef={ref}
+                    // style={isOpen === "INPUT" ? "" : { display: "none" }}
+                    // customRef={ref}
                     placeholder={
                       isTokenSearch ? "Name or Address" : "input amount"
                     }
                     defaultValue={isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""}
                   />
 
-                  <Flex
+                  {/* <Flex
                     minW={"40px"}
                     minH={"40px"}
                     rounded={"8px"}
@@ -264,7 +266,7 @@ export function SelectCardModal() {
                       alt="search"
                       src={isTokenSearch ? CancelIcon : SearchIcon}
                     />
-                  </Flex>
+                  </Flex> */}
                 </Flex>
               </>
             )}
