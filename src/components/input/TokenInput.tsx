@@ -46,8 +46,15 @@ export default function TokenInput(props: {
   customRef?: RefObject<HTMLInputElement>;
   placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder, defaultValue } =
-    props;
+  const {
+    inToken,
+    hasMaxButton,
+    isDisabled,
+    style,
+    customRef,
+    placeholder,
+    defaultValue,
+  } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -90,7 +97,7 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('...')
+    console.log("...");
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
 
@@ -101,7 +108,7 @@ export default function TokenInput(props: {
         chainId: connectedChainId,
       });
     }
-    
+
     //for wrap/unwrap switch
     if (inToken && switchable && !isTokenSearch) {
       if (selectedInToken && selectedOutToken) {
@@ -205,7 +212,8 @@ export default function TokenInput(props: {
   };
 
   const { totalGasCost } = useGasFee();
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLInputElement>(null);
 
   const onMax = useCallback(() => {
     if (isDisabled) return null;
@@ -395,7 +403,7 @@ export default function TokenInput(props: {
     dependentAmount,
     lastFocused,
     isTokenSearch,
-    defaultValue
+    defaultValue,
   ]);
 
   const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
@@ -447,7 +455,7 @@ export default function TokenInput(props: {
         tokenData.data.balanceBN.value === selectedInToken.amountBN
       );
     }
-    if (!inToken && selectedOutToken && tokenData) {
+      if (!inToken && selectedOutToken && tokenData) {
       return setIsMax(
         tokenData.data.balanceBN.value === selectedOutToken.amountBN
       );
@@ -472,6 +480,14 @@ export default function TokenInput(props: {
     customRef?.current?.focus();
   }, [customRef]);
 
+  useEffect(() => {
+    console.log("abcd")
+    inputRef?.current?.focus();
+    if (ref.current) {
+      ref.current.style.borderColor = '#313442';
+    }
+  }, [inputRef])
+
   return (
     <Flex
       flexDir={"column"}
@@ -492,7 +508,10 @@ export default function TokenInput(props: {
           bg={{ base: "#0F0F12", lg: "none" }}
           rounded={{ base: "8px", lg: 0 }}
           align={{ base: "center", lg: "start" }}
-        >
+          border={"1px solid transparent"}
+          _hover={{ border: "1px solid #313442" }}
+          ref={ref}
+          >
           <Input
             id={inToken ? "LeftInput" : "RightInput"}
             w={"100%"}
@@ -520,9 +539,11 @@ export default function TokenInput(props: {
             style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
           ></Input>
           {mobileView && !isTokenSearch && (
-            <Text mr={"12px"} fontSize={14} color={"#A0A3AD"}>{`$${
-              token0PriceWithAmount || "0.00"
-            }`}</Text>
+            <Text
+              mr={"12px"}
+              fontSize={14}
+              color={"#A0A3AD"}
+            >{`$${marketPrice}`}</Text>
           )}
           {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
             <Button
@@ -536,7 +557,7 @@ export default function TokenInput(props: {
               color={"#fff"}
               onMouseDown={(e) => {
                 e.preventDefault();
-                onMax()
+                onMax();
               }}
             >
               Max

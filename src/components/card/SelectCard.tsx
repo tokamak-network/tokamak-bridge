@@ -10,6 +10,7 @@ import { CardCarrousel } from "./CardCarousel";
 import {
   searchTokenStatus,
   IsSearchToken,
+  isInputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 import { Overlay_Index } from "@/types/style/overlayIndex";
@@ -25,8 +26,8 @@ import { useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
-import SearchIcon from "assets/icons/search.svg";
-import CancelIcon from "assets/icons/close.svg";
+// import SearchIcon from "assets/icons/search.svg";
+// import CancelIcon from "assets/icons/close.svg";
 
 enum CardOverlay {
   Middle = 100,
@@ -70,9 +71,16 @@ export function SelectCardButton(props: { field: Field }) {
 const SearchToken = () => {
   const { onCloseTokenModal } = useTokenModal();
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
-  const { pcView } = useMediaView();
+  const { mobileView, pcView } = useMediaView();
 
   const { connectedChainId } = useConnectedNetwork();
+  const ref = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setTimeout(() => {
+      ref.current?.blur();
+    }, 0);
+  }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -92,6 +100,9 @@ const SearchToken = () => {
       justifyContent={"center"}
       pos={"relative"}
       zIndex={Overlay_Index.BelowHeader}
+      border={"1px solid transparent"}
+      _hover={{ border: mobileView ? "1px solid #313442" : "" }}
+      rounded={{ base: "8px", lg: "21.5px" }}
     >
       <Input
         w={{ base: "100%", lg: "430px" }}
@@ -105,6 +116,7 @@ const SearchToken = () => {
         _focus={{}}
         _active={{}}
         onChange={onChange}
+        ref={ref}
       ></Input>
       {pcView && (
         <Box pos={"absolute"} right={"69px"}>
@@ -124,11 +136,11 @@ export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
   const { mobileView, pcView } = useMediaView();
   const { isOpen } = useRecoilValue(tokenModalStatus);
-  const ref = useRef<HTMLInputElement>(null);
   const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
+  const [isInputAmount] = useRecoilState(isInputTokenAmount);
 
   //close when click at outside
   useEffect(() => {
@@ -150,7 +162,6 @@ export function SelectCardModal() {
       if (mobileView && selectedInToken?.parsedAmount === null)
         setSelectedInToken(null);
     }
-
   }, [isTokenSearch, selectedInToken?.parsedAmount, mobileView]);
 
   const handleClose = useCallback(() => {
@@ -169,7 +180,10 @@ export function SelectCardModal() {
       <ModalContent
         minW={"100%"}
         maxW={"100%"}
-        h={{ base: "calc(100% - 60px)", lg: "100%" }}
+        h={{
+          base: isInputAmount ? "calc(100% - 60px)" : "fit-content",
+          lg: "100%",
+        }}
         m={{ base: "none", lg: 0 }}
         mt={"auto"}
         mb={0}
@@ -235,17 +249,21 @@ export function SelectCardModal() {
                   onBlur={handleBlur}
                   // px={"10px"}
                 >
-                  <TokenInput
-                    inToken={isOpen === "INPUT" ? true : false}
-                    hasMaxButton={isOpen === "INPUT" ? true : false}
-                    // style={isOpen === "INPUT" ? "" : { display: "none" }}
-                    // customRef={ref}
-                    placeholder={
-                      isTokenSearch ? "Name or Address" : "input amount"
-                    }
-                    defaultValue={isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""}
-                  />
-
+                  {isInputAmount && (
+                    <TokenInput
+                      inToken={isOpen === "INPUT" ? true : false}
+                      hasMaxButton={isOpen === "INPUT" ? true : false}
+                      style={isInputAmount ? "" : { display: "none" }}
+                      // customRef={ref}
+                      placeholder={
+                        isTokenSearch ? "Name or Address" : "input amount"
+                      }
+                      isDisabled={isOpen === "INPUT" ? false : true}
+                      defaultValue={
+                        isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""
+                      }
+                    />
+                  )}
                   {/* <Flex
                     minW={"40px"}
                     minH={"40px"}

@@ -3,7 +3,7 @@ import {
   selectedOutTokenStatus,
   tokenModalStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
+import { searchTokenStatus, isInputTokenAmount } from "@/recoil/card/selectCard/searchToken";
 import { useCallback, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
@@ -17,6 +17,7 @@ import { getWETHAddress, isETH } from "@/utils/token/isETH";
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
+  const [, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const status = useRecoilValue(bannerStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
@@ -38,6 +39,7 @@ export default function useTokenModal() {
   const onCloseTokenModal = () => {
     setSearchToken(null);
     setTokenModal({ isOpen: null, modalData: null });
+    setIsInputAmount(false);
   };
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(

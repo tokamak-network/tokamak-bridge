@@ -86,3 +86,8 @@ export const IsSearchToken = atom<Boolean>({
   key: "isSearchToken",
   default: false
 });
+
+export const isInputTokenAmount = atom<Boolean>({
+  key: "isInputToken",
+  default: false
+});
