@@ -411,12 +411,26 @@ export default function TokenInput(props: {
     amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
   });
 
+  const outAmount = useMemo(() => {
+    if (
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
+      inTokenInfo?.parsedAmount
+    ) {
+      return inTokenInfo.parsedAmount;
+    }
+    return amountOut;
+  }, [mode, inTokenInfo, amountOut]);
+
   const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedOutToken?.tokenName as string,
-    amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(outAmount),
   });
 
   const marketPrice = useMemo(() => {
+    console.log(selectedOutToken)
     if (inToken && token0PriceWithAmount) {
       return token0PriceWithAmount;
     }
@@ -483,10 +497,10 @@ export default function TokenInput(props: {
   useEffect(() => {
     console.log("abcd")
     inputRef?.current?.focus();
-    if (ref.current) {
+    if (ref.current && inToken && mobileView) {
       ref.current.style.borderColor = '#313442';
     }
-  }, [inputRef])
+  }, [inputRef, mobileView])
 
   return (
     <Flex
@@ -509,7 +523,7 @@ export default function TokenInput(props: {
           rounded={{ base: "8px", lg: 0 }}
           align={{ base: "center", lg: "start" }}
           border={"1px solid transparent"}
-          _hover={{ border: "1px solid #313442" }}
+          _hover={{ border: mobileView ? "1px solid #313442" : "" }}
           ref={ref}
           >
           <Input
@@ -526,7 +540,7 @@ export default function TokenInput(props: {
               color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
               // fontSize: mobileView ? 20 : 28
             }}
-            color={mobileView && isBalanceOver ? "#DD3A44" : "#ffffff"}
+            color={mobileView && isBalanceOver ? "#DD3A44" : mobileView && !inToken ? "#A0A3AD" : "#ffffff"}
             fontSize={{ base: 22, lg: 28 }}
             fontWeight={{ base: 500, lg: 600 }}
             isDisabled={isDisabled}
