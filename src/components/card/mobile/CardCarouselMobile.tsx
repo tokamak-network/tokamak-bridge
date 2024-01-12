@@ -36,7 +36,7 @@ const CarouselCard = React.memo((props) => {
   );
 
   useEffect(() => {
-    if (slideIndex === 0 && tokenData) {
+    if (slideIndex === 0 && tokenData && isInputAmount) {
       const inToken = selectedInToken;
       isInTokenOpen && chainName
         ? setSelectedInToken({
@@ -82,6 +82,21 @@ const CarouselCard = React.memo((props) => {
         onClick={(e: any) => {
           if (slideIndex === 0) {
             setIsInputAmount(true);
+            const inToken = selectedInToken;
+            isInTokenOpen && chainName
+              ? setSelectedInToken({
+                  ...tokenData,
+                  amountBN: inToken?.amountBN || null,
+                  parsedAmount: inToken?.parsedAmount || null,
+                  tokenAddress: inToken?.tokenAddress || null,
+                })
+              : chainName &&
+                setSelectedOutToken({
+                  ...tokenData,
+                  amountBN: null,
+                  parsedAmount: null,
+                  tokenAddress: tokenData.address[chainName],
+                });
           }
           else if (slideIndex === 1) swipeTo(1);
           else if (slideIndex === -1) swipeTo(-1);

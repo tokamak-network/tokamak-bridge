@@ -75,6 +75,7 @@ const SearchToken = () => {
 
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
+  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
 
   useEffect(() => {
     setTimeout(() => {

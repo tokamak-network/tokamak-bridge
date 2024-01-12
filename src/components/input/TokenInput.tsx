@@ -566,7 +566,6 @@ export default function TokenInput(props: {
           ></Input>
           }
 
-
           {mobileView &&
             !isTokenSearch &&
             (marketPrice === "0.00" && !inToken ? (
