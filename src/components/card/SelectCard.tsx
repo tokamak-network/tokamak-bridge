@@ -2,7 +2,7 @@ import { Box, Flex, Input, Text } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { Field } from "@/types/swap/swap";
@@ -26,8 +26,8 @@ import { useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
-// import SearchIcon from "assets/icons/search.svg";
-// import CancelIcon from "assets/icons/close.svg";
+import SearchIcon from "assets/icons/search.svg";
+import CancelIcon from "assets/icons/close.svg";
 
 enum CardOverlay {
   Middle = 100,
@@ -76,6 +76,7 @@ const SearchToken = () => {
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
+  const [searchValue, setSearchValue] = useState<string>("");
 
   useEffect(() => {
     setTimeout(() => {
@@ -86,14 +87,17 @@ const SearchToken = () => {
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const value = e.target.value;
+    setSearchValue(value);
+  };
 
-    if (value === "") {
+  useEffect(() => {
+    if (searchValue === "") {
       return setSearchToken(null);
     }
     if (connectedChainId) {
-      return setSearchToken({ nameOrAdd: value, chainId: connectedChainId });
+      return setSearchToken({ nameOrAdd: searchValue, chainId: connectedChainId });
     }
-  };
+  }, [searchValue])
 
   return (
     <Flex
@@ -104,6 +108,7 @@ const SearchToken = () => {
       border={"1px solid transparent"}
       _hover={{ border: mobileView ? "1px solid #313442" : "" }}
       rounded={{ base: "8px", lg: "21.5px" }}
+      bgColor={{ base: "#0F0F12", lg: "transparent" }}
     >
       <Input
         w={{ base: "100%", lg: "430px" }}
@@ -118,7 +123,18 @@ const SearchToken = () => {
         _active={{}}
         onChange={onChange}
         ref={ref}
+        value={searchValue}
       ></Input>
+
+      {mobileView && (
+        <Image
+          src={searchValue ? CancelIcon : SearchIcon}
+          alt={"close"}
+          style={{ cursor: "pointer", marginRight: "10px"}}
+          onClick={() => searchValue && setSearchValue("")}
+        />
+      )}
+
       {pcView && (
         <Box pos={"absolute"} right={"69px"}>
           <Image

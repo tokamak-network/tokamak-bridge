@@ -127,7 +127,7 @@ export function CardCarouselMobile() {
   };
 
   useEffect(() => {
-    if (isOpen && (inToken || outToken)) {
+    if (isOpen) {
       const isSelectedToken = (el: TokenInfo) =>
         el.tokenName ===
         (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
