@@ -608,7 +608,7 @@ export default function TokenInput(props: {
           </Flex>
         )  */}
         {mobileView ? (
-          isBalanceOver && (
+          isBalanceOver && inToken && (
             <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
               <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
               <Text>

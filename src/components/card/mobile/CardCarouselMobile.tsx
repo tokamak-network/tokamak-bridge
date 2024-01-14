@@ -15,13 +15,16 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { IsSearchToken, isInputTokenAmount } from "@/recoil/card/selectCard/searchToken";
+import {
+  IsSearchToken,
+  isInputTokenAmount,
+} from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 
 import "@/css/carousel.css";
 
 const CarouselCard = React.memo((props) => {
-  const { setSelectedToken, onCloseTokenModal, isInTokenOpen } =
+  const { setSelectedToken, onCloseTokenModal, isInTokenOpen, isOutTokenOpen } =
     useTokenModal();
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
@@ -97,8 +100,14 @@ const CarouselCard = React.memo((props) => {
                   parsedAmount: null,
                   tokenAddress: tokenData.address[chainName],
                 });
-          }
-          else if (slideIndex === 1) swipeTo(1);
+
+            if (
+              (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
+              (isOutTokenOpen && isInputAmount)
+            ) {
+              onCloseTokenModal();
+            }
+          } else if (slideIndex === 1) swipeTo(1);
           else if (slideIndex === -1) swipeTo(-1);
         }}
         isDark={slideIndex === 0 ? false : true}
