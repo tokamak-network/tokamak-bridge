@@ -86,6 +86,7 @@ const CarouselCard = React.memo((props) => {
           if (slideIndex === 0) {
             setIsInputAmount(true);
             const inToken = selectedInToken;
+            setSelectedToken(tokenData, true)
             isInTokenOpen && chainName
               ? setSelectedInToken({
                   ...tokenData,
@@ -100,7 +101,7 @@ const CarouselCard = React.memo((props) => {
                   parsedAmount: null,
                   tokenAddress: tokenData.address[chainName],
                 });
-
+              
             if (
               (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
               (isOutTokenOpen && isInputAmount)
@@ -109,6 +110,7 @@ const CarouselCard = React.memo((props) => {
             }
           } else if (slideIndex === 1) swipeTo(1);
           else if (slideIndex === -1) swipeTo(-1);
+          
         }}
         isDark={slideIndex === 0 ? false : true}
       />
@@ -150,7 +152,7 @@ export function CardCarouselMobile() {
           ? token?.tokenName !== outToken?.tokenName
           : token?.tokenName !== inToken?.tokenName
       );
-      setResultTokenArr(resultTokenList);
+      setResultTokenArr(filteredTokenList);
     }
   }, [filteredTokenList]);
 

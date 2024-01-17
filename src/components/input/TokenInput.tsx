@@ -495,7 +495,6 @@ export default function TokenInput(props: {
   }, [customRef]);
 
   useEffect(() => {
-    console.log("abcd");
     inputRef?.current?.focus();
     if (ref.current && inToken && mobileView) {
       ref.current.style.borderColor = "#313442";

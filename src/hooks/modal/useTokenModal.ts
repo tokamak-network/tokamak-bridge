@@ -13,6 +13,8 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
+import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
+import useMediaView from "../mediaView/useMediaView";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
@@ -20,7 +22,9 @@ export default function useTokenModal() {
   const [, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const status = useRecoilValue(bannerStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
+  const { mobileView } = useMediaView()
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
+  const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
 
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
@@ -55,7 +59,8 @@ export default function useTokenModal() {
     (
       tokenData: TokenInfo & {
         isNew?: boolean | undefined;
-      }
+      },
+      isMobile?: boolean
     ) => {
       if (chainName) {
         const isDuplicated = isInTokenOpen
@@ -66,6 +71,7 @@ export default function useTokenModal() {
 
         //remove if same token is selected at other side
         if (isDuplicated) {
+          if (isMobile) onCloseTokenModal()
           if (isInTokenOpen) {
             setSelectedOutToken(null);
           } else {

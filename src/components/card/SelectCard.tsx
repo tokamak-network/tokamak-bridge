@@ -263,7 +263,7 @@ export function SelectCardModal() {
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
-                  onBlur={handleBlur}
+                  // onBlur={handleBlur}
                   // px={"10px"}
                 >
                   {isInputAmount && (
