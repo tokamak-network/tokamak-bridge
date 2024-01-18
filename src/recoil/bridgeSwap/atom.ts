@@ -75,7 +75,7 @@ export const bannerStatus = atom<Banner>({
 export const relayBannerStatus = atom<Banner>({
   key: "relayBannerStatus",
   default: "Hidden",
-}); //for relay banner or any other banner that needs to show 
+}); //for relay banner or any other banner that needs to show
 
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
@@ -109,19 +109,20 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const currentISODay = getISODay(today);
     const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
-    const weekStart = startOfWeek(today);
-    // const desiredDateThisWeek = addDays(weekStart, isTestnet? 4:5);  //to show the banner
-    const desiredDateThisWeek = addWeeks(addDays(weekStart, isTestnet? 4:5), 1); // to hide the banner
+    // const weekStart = startOfWeek(today);
+    const desiredDateThisWeek = isTestnet ? 1705564800000 : 1705651200000;
+    // const desiredDateThisWeek = addDays(weekStart, isTestnet ? 5 : 6); //to show the banner
+    // const desiredDateThisWeek = addWeeks(addDays(weekStart, isTestnet? 4:5), 1); // to hide the banner
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
-            hours: 16,
+            hours: 0,
             minutes: 0,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
-            hours: 8,
+            hours: 0,
             minutes: 0,
             seconds: 0,
           });
