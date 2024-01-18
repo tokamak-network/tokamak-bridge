@@ -527,9 +527,9 @@ export default function TokenInput(props: {
           justify={"space-between"}
         >
         {mobileView && !valueProp && !inToken ? (
-        <Flex h={"27px"} w={"20px"} >
-          <GradientSpinner />
-        </Flex>
+          <Flex h={"27px"} w={"20px"} >
+            <GradientSpinner />
+          </Flex>
           ) :
           <Input
             id={inToken ? "LeftInput" : "RightInput"}
@@ -549,13 +549,13 @@ export default function TokenInput(props: {
               mobileView && isBalanceOver
                 ? "#DD3A44"
                 : mobileView && !inToken
-                ? "#A0A3AD!important"
-                : "#ffffff"
+                ? "#A0A3AD !important"
+                : "#A0A3AD"
             }
             fontSize={{ base: 22, lg: 28 }}
             fontWeight={{ base: 500, lg: 600 }}
             isDisabled={isDisabled}
-            _disabled={{ color: "#fff" }}
+            _disabled={{ color: "#A0A3AD" }}
             value={isTokenSearch ? searchValue : valueProp}
             ref={customRef ? customRef : inputRef}
             onChange={onChange}

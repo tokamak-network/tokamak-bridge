@@ -101,6 +101,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
 const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
   const { mobileView } = useMediaView();
+  const { isBalanceOver } = useInputBalanceCheck();
 
   return (
     <Flex flexDir={"column"}>
@@ -108,6 +109,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
         h={"16px"}
+        color={isBalanceOver ? '#A0A3AD' : ''}
       >
         <Text fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
@@ -260,13 +262,15 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { layer } = useConnectedNetwork();
-
+  const { isBalanceOver } = useInputBalanceCheck();
+  
   return (
     <Flex flexDir={"column"}>
       <Flex
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
         h={"16px"}
+        color={isBalanceOver ? '#A0A3AD' : '#fff'}
       >
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
@@ -280,7 +284,11 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           {isLoading ? (
             <GradientSpinner />
           ) : (
-            <Text fontWeight={500}>{content}</Text>
+            <Text 
+              fontWeight={500}
+            >
+              {content}
+            </Text>
           )}
           {gasFee && (
             <Text
@@ -301,9 +309,10 @@ const WrapDetailRow = (props: WrapDetailProp) => {
   const { title, gasFee, gasFeeUS } = props;
   const [isLoading] = useIsLoading();
   const { layer } = useConnectedNetwork();
+  const { isBalanceOver } = useInputBalanceCheck();
 
   return (
-    <Flex flexDir={"column"}>
+    <Flex flexDir={"column"} color={isBalanceOver ? '#a0a3ad' : ''}>
       <Flex
         height={"14px"}
         justifyContent={"space-between"}
@@ -315,7 +324,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
         <Flex>
           {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{}</Text>}
           {gasFee && (
-            <Text mr={"27px"} fontWeight={500} color={"#fff"}>
+            <Text mr={"27px"} fontWeight={500} >
               {gasFee}
             </Text>
           )}
@@ -453,6 +462,7 @@ const Title = (props: {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { gasCostUS } = useGasFee();
+  const { isBalanceOver } = useInputBalanceCheck()
 
   useEffect(() => {
     if (isExpanded) {
@@ -476,6 +486,7 @@ const Title = (props: {
         cursor={isOpen ? "" : "pointer"}
         onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
+        color={isBalanceOver ? '#A0A3AD' : ''}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
@@ -525,7 +536,9 @@ const Title = (props: {
             <GradientSpinner />
           </Box>
         ) : (
-          <Flex>
+          <Flex
+            color={isBalanceOver ? '#A0A3AD' : ''}
+          >
             <Text>
               {1} {inToken?.tokenSymbol}
             </Text>
@@ -581,7 +594,7 @@ export default function TransactionDetail(props: {
 
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
-  const { isInputZero } = useInputBalanceCheck();
+  const { isInputZero, isBalanceOver } = useInputBalanceCheck();
   const { isConnected } = useAccount();
 
   const isWrapUnwrap =
