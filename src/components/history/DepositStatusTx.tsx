@@ -35,7 +35,7 @@ export default function DepositStatusTx(props: {
     if (tx.l1timeStamp) {
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l1timeStamp) * 1000);
-        const currentTime = new Date();
+        const currentTime = new Date(Date.now());
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
           startDate
@@ -85,7 +85,8 @@ export default function DepositStatusTx(props: {
           w="6px"
           borderRadius={"50%"}
           bg={completed ? "#03D187" : "#8497DB"}
-          mr="6px"></Flex>
+          mr="6px"
+        ></Flex>
         {completed ? (
           <Link
             target="_blank"
@@ -97,14 +98,16 @@ export default function DepositStatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}>
+            style={{ textDecoration: "none" }}
+          >
             {`${layer}: Completed`}
           </Link>
         ) : (
           <Text
             fontSize={"11px"}
             fontWeight={600}
-            style={{ textDecoration: "none" }}>
+            style={{ textDecoration: "none" }}
+          >
             {`${layer}:`} {completed ? "Completed" : " Wait ~5 min for relay"}
           </Text>
         )}
