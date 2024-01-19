@@ -36,6 +36,7 @@ import {
   IsSearchToken,
   searchTokenStatus,
 } from "@/recoil/card/selectCard/searchToken";
+import Warning from "@/app/BridgeSwap/Warning";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -515,87 +516,94 @@ export default function TokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex
-          py={{ base: "7px", lg: 0 }}
-          px={{ base: "10px", lg: 0 }}
-          bg={{ base: "#0F0F12", lg: "none" }}
-          rounded={{ base: "8px", lg: 0 }}
-          align={{ base: "center", lg: "start" }}
-          border={"1px solid transparent"}
-          _hover={{ border: mobileView ? "1px solid #313442" : "" }}
-          ref={ref}
-          justify={"space-between"}
-        >
-        {mobileView && !valueProp && !inToken ? (
-          <Flex h={"27px"} w={"20px"} >
-            <GradientSpinner />
-          </Flex>
-          ) :
-          <Input
-            id={inToken ? "LeftInput" : "RightInput"}
-            w={"100%"}
-            h={"27px"}
-            m={0}
-            p={0}
-            border={{}}
-            _active={{}}
-            _focus={{ boxShadow: "none !important" }}
-            placeholder={inToken ? placeholder || "0" : ""}
-            _placeholder={{
-              color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
-              // fontSize: mobileView ? 20 : 28
-            }}
-            color={
-              mobileView && isBalanceOver
-                ? "#DD3A44"
-                : mobileView && !inToken
-                ? "#A0A3AD !important"
-                : "#A0A3AD"
+        <Flex flexDir={'column'}>
+          {/* {mobileView && <Warning />} */}
+          <Flex
+            py={{ base: "7px", lg: 0 }}
+            px={{ base: "10px", lg: 0 }}
+            bg={{ base: "#0F0F12", lg: "none" }}
+            rounded={{ base: "8px", lg: 0 }}
+            align={{ base: "center", lg: "start" }}
+            border={"1px solid transparent"}
+            _hover={{ border: mobileView ? "1px solid #313442" : "" }}
+            ref={ref}
+            justify={"space-between"}
+          >
+          
+          {mobileView && !valueProp && !inToken ? (
+            <Flex h={"27px"} w={"20px"} >
+              <GradientSpinner />
+            </Flex>
+            ) :
+            <Flex flexDir={'column'}>
+              {/* <Warning /> */}
+              <Input
+                id={inToken ? "LeftInput" : "RightInput"}
+                w={"100%"}
+                h={"27px"}
+                m={0}
+                p={0}
+                border={{}}
+                _active={{}}
+                _focus={{ boxShadow: "none !important" }}
+                placeholder={inToken ? placeholder || "0" : ""}
+                _placeholder={{
+                  color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+                  // fontSize: mobileView ? 20 : 28
+                }}
+                color={
+                  mobileView && isBalanceOver
+                    ? "#DD3A44"
+                    : mobileView && !inToken
+                    ? "#A0A3AD !important"
+                    : "#A0A3AD"
+                }
+                fontSize={{ base: 22, lg: 28 }}
+                fontWeight={{ base: 500, lg: 600 }}
+                isDisabled={isDisabled}
+                _disabled={{ color: "#A0A3AD" }}
+                value={isTokenSearch ? searchValue : valueProp}
+                ref={customRef ? customRef : inputRef}
+                onChange={onChange}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+              ></Input>
+            </Flex>
             }
-            fontSize={{ base: 22, lg: 28 }}
-            fontWeight={{ base: 500, lg: 600 }}
-            isDisabled={isDisabled}
-            _disabled={{ color: "#A0A3AD" }}
-            value={isTokenSearch ? searchValue : valueProp}
-            ref={customRef ? customRef : inputRef}
-            onChange={onChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
-          ></Input>
-          }
 
-          {mobileView &&
-            !isTokenSearch &&
-            (marketPrice === "0.00" && !inToken ? (
-              <Flex w={"20px"} h={"27px"} mr={"80px"}>
-                <GradientSpinner />
-              </Flex>
-            ) : (
-              <Text
-                mr={"12px"}
-                fontSize={14}
-                color={"#A0A3AD"}
-              >{`$${marketPrice}`}</Text>
-            ))}
-          {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
-            <Button
-              w={"40px"}
-              h={"22px"}
-              bgColor={"#007AFF"}
-              fontSize={12}
-              fontWeight={700}
-              _hover={{}}
-              _active={{}}
-              color={"#fff"}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onMax();
-              }}
-            >
-              Max
-            </Button>
-          )}
+            {mobileView &&
+              !isTokenSearch &&
+              (marketPrice === "0.00" && !inToken ? (
+                <Flex w={"20px"} h={"27px"} mr={"80px"}>
+                  <GradientSpinner />
+                </Flex>
+              ) : (
+                <Text
+                  mr={"12px"}
+                  fontSize={14}
+                  color={"#A0A3AD"}
+                >{`$${marketPrice}`}</Text>
+              ))}
+            {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
+              <Button
+                w={"40px"}
+                h={"22px"}
+                bgColor={"#007AFF"}
+                fontSize={12}
+                fontWeight={700}
+                _hover={{}}
+                _active={{}}
+                color={"#fff"}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onMax();
+                }}
+              >
+                Max
+              </Button>
+            )}
+          </Flex>
         </Flex>
       )}
 
@@ -607,13 +615,14 @@ export default function TokenInput(props: {
           </Flex>
         )  */}
         {mobileView ? (
-          isBalanceOver && inToken && (
-            <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-              <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-              <Text>
-                Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
-              </Text>
-            </Flex>
+          inToken && (
+            // <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+            //   <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+            //   <Text>
+            //     Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
+            //   </Text>
+            // </Flex>
+            <Warning />
           )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
