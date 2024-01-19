@@ -106,7 +106,7 @@ export function useInOutTokens() {
     };
     thisTokenExist().catch((e) => {
       console.log("**thisTokenExist err**");
-      // console.log(e);
+      console.log(e);
     });
   }, [connectedChainId, provider, inToken?.tokenAddress]);
 

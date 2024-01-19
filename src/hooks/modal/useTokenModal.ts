@@ -43,7 +43,7 @@ export default function useTokenModal() {
   const onCloseTokenModal = () => {
     setSearchToken(null);
     setTokenModal({ isOpen: null, modalData: null });
-    setIsInputAmount(false);
+    // setIsInputAmount(false);
   };
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
@@ -71,14 +71,17 @@ export default function useTokenModal() {
 
         //remove if same token is selected at other side
         if (isDuplicated) {
-          if (isMobile) onCloseTokenModal()
+          if (isMobile) {
+            onCloseTokenModal()
+            setIsInputAmount(false)
+          } 
           if (isInTokenOpen) {
             setSelectedOutToken(null);
           } else {
             setSelectedInToken(null);
           }
         }
-
+        console.log(tokenData)
         isInTokenOpen && chainName
           ? setSelectedInToken({
               ...tokenData,

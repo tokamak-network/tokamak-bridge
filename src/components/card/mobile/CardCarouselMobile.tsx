@@ -27,6 +27,7 @@ const CarouselCard = React.memo((props) => {
   const { setSelectedToken, onCloseTokenModal, isInTokenOpen, isOutTokenOpen } =
     useTokenModal();
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
+  
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
   const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
@@ -39,6 +40,7 @@ const CarouselCard = React.memo((props) => {
   );
 
   useEffect(() => {
+    console.log(data)
     if (slideIndex === 0 && tokenData && isInputAmount) {
       const inToken = selectedInToken;
       isInTokenOpen && chainName
@@ -56,7 +58,7 @@ const CarouselCard = React.memo((props) => {
             tokenAddress: tokenData.address[chainName],
           });
     }
-  }, [slideIndex, data]);
+  }, [slideIndex]);
 
   return (
     tokenData && (
@@ -154,7 +156,7 @@ export function CardCarouselMobile() {
       );
       setResultTokenArr(filteredTokenList);
     }
-  }, [filteredTokenList]);
+  }, []);
 
   return (
     <ResponsiveContainer

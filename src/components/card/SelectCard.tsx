@@ -186,7 +186,6 @@ export function SelectCardModal() {
     if (mobileView && selectedInToken?.parsedAmount === null)
       setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
-
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
