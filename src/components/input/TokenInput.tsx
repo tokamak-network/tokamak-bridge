@@ -44,7 +44,7 @@ export default function TokenInput(props: {
   isDisabled?: boolean;
   hasMaxButton?: boolean;
   style?: {};
-  customRef?: RefObject<HTMLInputElement>;
+  customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
 }) {
   const {
@@ -431,7 +431,6 @@ export default function TokenInput(props: {
   });
 
   const marketPrice = useMemo(() => {
-    console.log(selectedOutToken);
     if (inToken && token0PriceWithAmount) {
       return token0PriceWithAmount;
     }

@@ -81,7 +81,6 @@ export default function useTokenModal() {
             setSelectedInToken(null);
           }
         }
-        console.log(tokenData)
         isInTokenOpen && chainName
           ? setSelectedInToken({
               ...tokenData,

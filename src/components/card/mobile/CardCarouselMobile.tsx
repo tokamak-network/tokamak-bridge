@@ -40,7 +40,6 @@ const CarouselCard = React.memo((props) => {
   );
 
   useEffect(() => {
-    console.log(data)
     if (slideIndex === 0 && tokenData && isInputAmount) {
       const inToken = selectedInToken;
       isInTokenOpen && chainName

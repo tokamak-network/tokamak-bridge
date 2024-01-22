@@ -154,6 +154,7 @@ export function SelectCardModal() {
   const { mobileView, pcView } = useMediaView();
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+  const ref = useRef<HTMLInputElement>(null);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -270,7 +271,7 @@ export function SelectCardModal() {
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}
                       style={isInputAmount ? "" : { display: "none" }}
-                      // customRef={ref}
+                      customRef={isTokenSearch ? null : ref}
                       placeholder={
                         isTokenSearch ? "Name or Address" : "input amount"
                       }
