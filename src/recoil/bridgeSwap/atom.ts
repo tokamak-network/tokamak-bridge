@@ -64,12 +64,12 @@ type Banner = "Pending" | "Active" | "Hidden";
 export const bannerStatus = atom<Banner>({
   key: "bannerStatus",
   default: "Hidden",
-});
+}); //for maintenance banner
 
 export const relayBannerStatus = atom<Banner>({
   key: "relayBannerStatus",
   default: "Hidden",
-});
+}); //for relay banner or any other banner that needs to show 
 
 export const welcomeMsgStatus = atom<Boolean>({
   key: "welcomeMsgStatus",
