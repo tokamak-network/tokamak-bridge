@@ -271,7 +271,7 @@ export function SelectCardModal() {
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}
                       style={isInputAmount ? "" : { display: "none" }}
-                      customRef={isTokenSearch ? null : ref}
+                      customRef={isTokenSearch ? ref : ref}
                       placeholder={
                         isTokenSearch ? "Name or Address" : "input amount"
                       }
