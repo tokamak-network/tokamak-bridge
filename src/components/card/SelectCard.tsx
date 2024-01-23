@@ -159,7 +159,6 @@ export function SelectCardModal() {
     selectedInTokenStatus
   );
   const [isInputAmount] = useRecoilState(isInputTokenAmount);
-
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -187,6 +186,7 @@ export function SelectCardModal() {
     if (mobileView && selectedInToken?.parsedAmount === null)
       setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
+
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
@@ -271,7 +271,7 @@ export function SelectCardModal() {
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}
                       style={isInputAmount ? "" : { display: "none" }}
-                      customRef={isTokenSearch ? ref : ref}
+                      customRef={isTokenSearch ? null : ref}
                       placeholder={
                         isTokenSearch ? "Name or Address" : "input amount"
                       }

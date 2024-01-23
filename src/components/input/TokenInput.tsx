@@ -90,7 +90,7 @@ export default function TokenInput(props: {
   const { connectedChainId } = useConnectedNetwork();
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const [searchValue, setSearchValue] = useState("");
-
+  // console.log(customRef)
   const switchable =
     mode === "Wrap" ||
     mode === "Unwrap" ||
