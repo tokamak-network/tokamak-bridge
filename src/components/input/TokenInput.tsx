@@ -555,7 +555,7 @@ export default function TokenInput(props: {
                     ? "#DD3A44"
                     : mobileView && !inToken
                     ? "#A0A3AD !important"
-                    : "#A0A3AD"
+                    : "#FFFFFF"
                 }
                 fontSize={{ base: 22, lg: 28 }}
                 fontWeight={{ base: 500, lg: 600 }}

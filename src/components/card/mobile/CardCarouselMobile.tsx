@@ -29,13 +29,13 @@ const CarouselCard = React.memo((props) => {
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
   
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
-  const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
+  // const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
   const { chainName } = useConnectedNetwork();
-  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+  const [, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
 
@@ -122,40 +122,40 @@ const CarouselCard = React.memo((props) => {
 export function CardCarouselMobile() {
   const ref: any = React.useRef();
   const { filteredTokenList } = useGetTokenList();
-  const { inToken, outToken } = useInOutTokens();
-  const { isOpen } = useRecoilValue(tokenModalStatus);
-  const [resultToken, setResultTokenArr] =
-    useState<TokenInfo[]>(filteredTokenList);
+  // const { inToken, outToken } = useInOutTokens();
+  // const { isOpen } = useRecoilValue(tokenModalStatus);
+  // const [resultToken, setResultTokenArr] =
+  //   useState<TokenInfo[]>(filteredTokenList);
 
-  const move = (input: TokenInfo[], from: number) => {
-    let numberOfDeletedElm = 1;
+  // const move = (input: TokenInfo[], from: number) => {
+  //   let numberOfDeletedElm = 1;
 
-    const elm = input.splice(from, numberOfDeletedElm)[0];
+  //   const elm = input.splice(from, numberOfDeletedElm)[0];
 
-    numberOfDeletedElm = 0;
+  //   numberOfDeletedElm = 0;
 
-    input.splice(0, numberOfDeletedElm, elm);
-    return input;
-  };
+  //   input.splice(0, numberOfDeletedElm, elm);
+  //   return input;
+  // };
 
-  useEffect(() => {
-    if (isOpen) {
-      const isSelectedToken = (el: TokenInfo) =>
-        el.tokenName ===
-        (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
-      const resultTokenArr = move(
-        filteredTokenList,
-        filteredTokenList.findIndex(isSelectedToken)
-      );
+  // useEffect(() => {
+  //   if (isOpen) {
+  //     const isSelectedToken = (el: TokenInfo) =>
+  //       el.tokenName ===
+  //       (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
+  //     const resultTokenArr = move(
+  //       filteredTokenList,
+  //       filteredTokenList.findIndex(isSelectedToken)
+  //     );
 
-      const resultTokenList = resultTokenArr.filter((token) =>
-        isOpen === "INPUT"
-          ? token?.tokenName !== outToken?.tokenName
-          : token?.tokenName !== inToken?.tokenName
-      );
-      setResultTokenArr(filteredTokenList);
-    }
-  }, []);
+  //     const resultTokenList = resultTokenArr.filter((token) =>
+  //       isOpen === "INPUT"
+  //         ? token?.tokenName !== outToken?.tokenName
+  //         : token?.tokenName !== inToken?.tokenName
+  //     );
+  //     setResultTokenArr(filteredTokenList);
+  //   }
+  // }, []);
 
   return (
     <ResponsiveContainer
@@ -169,7 +169,7 @@ export function CardCarouselMobile() {
               slideComponent={CarouselCard}
               slideWidth={150}
               carouselWidth={parentWidth}
-              data={resultToken}
+              data={filteredTokenList}
               currentVisibleSlide={currentVisibleSlide}
               maxVisibleSlide={3}
               customScales={[1, 0.85, 0.4]}
