@@ -23,6 +23,7 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { txHashStatus } from "@/recoil/global/transaction";
 import { Overlay_Index } from "@/types/style/overlayIndex";
+import { claimModalStatus } from "@/recoil/modal/atom";
 
 export default function Confirmation() {
   // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -42,6 +43,7 @@ export default function Confirmation() {
     setIsOpen,
     closeModal,
     isClaiming,
+    isClaimWaiting,
   } = useTxConfirmModal();
 
   const { mode } = useGetMode();
@@ -53,19 +55,25 @@ export default function Confirmation() {
         bg={"transparent"}
         justifyContent={"center"}
         alignItems={"center"}
-        m={0}
-      >
+        m={0}>
         <Flex
           w={"254px"}
           h={"350px"}
           bgColor={"#1f2128"}
           borderRadius={"16px"}
           flexDir={"column"}
-          alignItems={"center"}
-        >
-          <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
-            <CloseButton onClick={closeModal} />
-          </Flex>
+          alignItems={"center"}>
+          {!isClaimWaiting ? (
+            <Flex
+              w={"100%"}
+              justifyContent={"flex-end"}
+              pt={"14px"}
+              pr={"14px"}>
+              <CloseButton onClick={closeModal} />
+            </Flex>
+          ) : (
+            <Flex h={"38px"} pt={"14px"} pr={"14px"}></Flex>
+          )}
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isClaiming
               ? "Confirming Claim"
@@ -101,20 +109,20 @@ export default function Confirmation() {
           <Text
             w={"254px"}
             mt={"46px"}
-            px={isConfirming ? "32px" : ""}
+            px={isClaimWaiting ? "" : isConfirming ? "32px" : ""}
             textAlign={"center"}
             fontSize={14}
-            fontWeight={500}
-          >
-            {isConfirming ? (
+            fontWeight={500}>
+            {isClaimWaiting ? (
+              "Please wait a few seconds for MetaMask popup to appear."
+            ) : isConfirming ? (
               "Please confirm transaction in your wallet"
             ) : isConfirmed ? (
               <Link
                 href={`${blockExplorer}/tx/${txHash}`}
                 isExternal={true}
                 textDecoration={"underline"}
-                w={"100%"}
-              >
+                w={"100%"}>
                 See your transaction history
               </Link>
             ) : isError ? (

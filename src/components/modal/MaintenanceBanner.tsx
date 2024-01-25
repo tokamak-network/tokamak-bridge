@@ -38,15 +38,16 @@ const MaintenanceBanner = () => {
         hours: 1,
         minutes: 0,
         seconds: 0,
-      });
+      }); //the duration when the warning banner (yellow) is visible
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
         hours: 1,
         minutes: 0,
         seconds: 0,
-      });
+      }); //the duration when the red banner is visible and L2 actions are disabled
 
       if (nowTime < getTime(banner)) {
+        //if the current time is smaller than the banner show time, hide the banner
         setIsBannerStatus("Hidden");
         setStatus("Hidden");
       } else if (
@@ -55,7 +56,7 @@ const MaintenanceBanner = () => {
       ) {
         const duration1 = getTime(activeTimeStartThisWeek) - nowTime;
         setDuration(intervalToDuration({ start: 0, end: duration1 }));
-        setStatus("Pending");
+        setStatus("Pending"); //when the status is pending, the yellow warning banner will show
         setIsBannerStatus("Pending");
       } else if (
         nowTime >= getTime(activeTimeStartThisWeek) &&
@@ -63,7 +64,7 @@ const MaintenanceBanner = () => {
       ) {
         const duration2 = getTime(activeTimeEndThisWeek) - nowTime;
         setDuration(intervalToDuration({ start: 0, end: duration2 }));
-        setStatus("Active");
+        setStatus("Active"); //when the status is active, red banner will show
         setIsBannerStatus("Active");
       } else {
         setStatus("Hidden");

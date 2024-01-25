@@ -70,12 +70,12 @@ type Banner = "Pending" | "Active" | "Hidden";
 export const bannerStatus = atom<Banner>({
   key: "bannerStatus",
   default: "Hidden",
-});
+}); //for maintenance banner
 
 export const relayBannerStatus = atom<Banner>({
   key: "relayBannerStatus",
   default: "Hidden",
-});
+}); //for relay banner or any other banner that needs to show
 
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
@@ -116,12 +116,12 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const previewTimeStartThisWeek =
       isTestnet === true
         ? add(desiredDateThisWeek, {
-            hours: 16,
+            hours: 0,
             minutes: 0,
             seconds: 0,
           })
         : add(desiredDateThisWeek, {
-            hours: 8,
+            hours: 0,
             minutes: 0,
             seconds: 0,
           });

@@ -27,11 +27,11 @@ export default function useTokenModal() {
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
   const onOpenInToken = () => {
-      !(status === "Active" && isL2) &&
+      !(status === "Active" && isL2) && //disable inToken select UI when the maintenance banner is active
       setTokenModal({ isOpen: "INPUT", modalData: null });
   };
   const onOpenOutToken = () => {
-     !(status === "Active" && isL2) &&
+     !(status === "Active" && isL2) && //disable outToken select UI when the maintenance banner is active
       setTokenModal({ isOpen: "OUTPUT", modalData: null });
   };
 
