@@ -99,6 +99,10 @@ const SearchToken = () => {
     setTokenSearch(false);
   }
 
+  const onKeyDown = (e: any) => {
+    if (e.key === "Enter") ref?.current?.blur();
+  }
+
   useEffect(() => {
     if (searchValue === "") {
       return setSearchToken(null);
@@ -133,6 +137,7 @@ const SearchToken = () => {
         onChange={onChange}
         onFocus={handleFocus}
         onBlur={handleBlur}
+        onKeyDown={onKeyDown}
         ref={ref}
         value={searchValue}
       ></Input>
