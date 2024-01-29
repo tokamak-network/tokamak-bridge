@@ -77,6 +77,7 @@ const SearchToken = () => {
   const ref = useRef<HTMLInputElement>(null);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [searchValue, setSearchValue] = useState<string>("");
+  const [, setTokenSearch] = useRecoilState(IsSearchToken);
 
   useEffect(() => {
     setTimeout(() => {
@@ -89,6 +90,14 @@ const SearchToken = () => {
     const value = e.target.value;
     setSearchValue(value);
   };
+
+  const handleFocus = () => {
+    setTokenSearch(true);
+  }
+
+  const handleBlur = () => {
+    setTokenSearch(false);
+  }
 
   useEffect(() => {
     if (searchValue === "") {
@@ -122,6 +131,8 @@ const SearchToken = () => {
         _focus={{}}
         _active={{}}
         onChange={onChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         ref={ref}
         value={searchValue}
       ></Input>
@@ -198,7 +209,7 @@ export function SelectCardModal() {
         minW={"100%"}
         maxW={"100%"}
         h={{
-          base: isInputAmount ? "calc(100% - 60px)" : "fit-content",
+          base: isInputAmount || isTokenSearch ? "calc(100% - 60px)" : "fit-content",
           lg: "100%",
         }}
         m={{ base: "none", lg: 0 }}
