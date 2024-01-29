@@ -90,7 +90,6 @@ export default function TokenInput(props: {
   const { connectedChainId } = useConnectedNetwork();
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const [searchValue, setSearchValue] = useState("");
-  // console.log(customRef)
   const switchable =
     mode === "Wrap" ||
     mode === "Unwrap" ||
@@ -98,17 +97,16 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log("...");
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
 
-    if (isTokenSearch && connectedChainId) {
-      setSearchValue(value);
-      return setSearchToken({
-        nameOrAdd: value,
-        chainId: connectedChainId,
-      });
-    }
+    // if (isTokenSearch && connectedChainId) {
+    //   setSearchValue(value);
+    //   return setSearchToken({
+    //     nameOrAdd: value,
+    //     chainId: connectedChainId,
+    //   });
+    // }
 
     //for wrap/unwrap switch
     if (inToken && switchable && !isTokenSearch) {
@@ -211,6 +209,10 @@ export default function TokenInput(props: {
       });
     }
   };
+
+  const onKeyDown = (e: any) => {
+    if (e.key === "Enter") customRef?.current?.blur();
+  }
 
   const { totalGasCost } = useGasFee();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -564,6 +566,7 @@ export default function TokenInput(props: {
                 value={isTokenSearch ? searchValue : valueProp}
                 ref={customRef ? customRef : inputRef}
                 onChange={onChange}
+                onKeyDown={onKeyDown}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
