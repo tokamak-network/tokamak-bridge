@@ -211,7 +211,7 @@ export default function TokenInput(props: {
   };
 
   const onKeyDown = (e: any) => {
-    if (e.key === "Enter") customRef?.current?.blur();
+    if (e.key === "Enter" && mobileView) customRef?.current?.blur();
   }
 
   const { totalGasCost } = useGasFee();

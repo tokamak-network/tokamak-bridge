@@ -100,7 +100,7 @@ const SearchToken = () => {
   }
 
   const onKeyDown = (e: any) => {
-    if (e.key === "Enter") ref?.current?.blur();
+    if (e.key === "Enter" && mobileView) ref?.current?.blur();
   }
 
   useEffect(() => {
