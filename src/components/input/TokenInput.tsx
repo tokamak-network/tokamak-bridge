@@ -1,4 +1,3 @@
-import Image from "next/image";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -34,6 +33,7 @@ import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import {
   IsSearchToken,
+  isInputTokenAmount,
   searchTokenStatus,
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
@@ -85,11 +85,9 @@ export default function TokenInput(props: {
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
-  const { onCloseTokenModal } = useTokenModal();
   const [isTokenSearch] = useRecoilState(IsSearchToken);
   const { connectedChainId } = useConnectedNetwork();
-  const [, setSearchToken] = useRecoilState(searchTokenStatus);
-  const [searchValue, setSearchValue] = useState("");
+  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const switchable =
     mode === "Wrap" ||
     mode === "Unwrap" ||
@@ -319,6 +317,7 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
+    setIsInputAmount(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {
@@ -494,7 +493,7 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     customRef?.current?.focus();
-  }, [customRef]);
+  }, [customRef, isInputAmount]);
 
   useEffect(() => {
     inputRef?.current?.focus();
@@ -563,7 +562,7 @@ export default function TokenInput(props: {
                 fontWeight={{ base: 500, lg: 600 }}
                 isDisabled={isDisabled}
                 _disabled={{ color: "#A0A3AD" }}
-                value={isTokenSearch ? searchValue : valueProp}
+                value={valueProp}
                 ref={customRef ? customRef : inputRef}
                 onChange={onChange}
                 onKeyDown={onKeyDown}
@@ -575,7 +574,6 @@ export default function TokenInput(props: {
             }
 
             {mobileView &&
-              !isTokenSearch &&
               (marketPrice === "0.00" && !inToken ? (
                 <Flex w={"20px"} h={"27px"} mr={"80px"}>
                   <GradientSpinner />
@@ -587,7 +585,7 @@ export default function TokenInput(props: {
                   color={"#A0A3AD"}
                 >{`$${marketPrice}`}</Text>
               ))}
-            {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
+            {hasMaxButton && !isMax && (
               <Button
                 w={"40px"}
                 h={"22px"}

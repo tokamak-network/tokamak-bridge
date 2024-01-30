@@ -48,7 +48,7 @@ export function SelectCardButton(props: { field: Field }) {
       cursor={"pointer"}
       onClick={() => (field === "INPUT" ? onOpenInToken() : onOpenOutToken())}
       pos={"relative"}
-      // zIndex={Overlay_Index}
+    // zIndex={Overlay_Index}
     >
       <Image
         src={BgImageButton}
@@ -75,9 +75,8 @@ const SearchToken = () => {
 
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
-  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
 
   useEffect(() => {
     setTimeout(() => {
@@ -146,8 +145,13 @@ const SearchToken = () => {
         <Image
           src={searchValue ? CancelIcon : SearchIcon}
           alt={"close"}
-          style={{ cursor: "pointer", marginRight: "10px"}}
-          onClick={() => searchValue && setSearchValue("")}
+          style={{ cursor: "pointer", marginRight: "10px" }}
+          onMouseDown={(e) => {
+            if (searchValue) {
+              e.preventDefault();
+              setSearchValue("");
+            }
+          }}
         />
       )}
 
@@ -279,18 +283,16 @@ export function SelectCardModal() {
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
-                  // onBlur={handleBlur}
-                  // px={"10px"}
+                // onBlur={handleBlur}
+                // px={"10px"}
                 >
                   {isInputAmount && (
                     <TokenInput
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}
                       style={isInputAmount ? "" : { display: "none" }}
-                      customRef={isTokenSearch ? null : ref}
-                      placeholder={
-                        isTokenSearch ? "Name or Address" : "input amount"
-                      }
+                      customRef={ref}
+                      placeholder={"input amount"}
                       isDisabled={isOpen === "INPUT" ? false : true}
                       defaultValue={
                         isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""

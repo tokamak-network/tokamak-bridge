@@ -11,7 +11,6 @@ import { TokenInfo } from "@/types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
-  tokenModalStatus,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
@@ -29,7 +28,7 @@ const CarouselCard = React.memo((props) => {
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
   
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
-  // const [isTokenSearch, setIsTokenSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
