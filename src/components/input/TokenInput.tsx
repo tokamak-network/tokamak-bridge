@@ -546,7 +546,7 @@ export default function TokenInput(props: {
                 border={{}}
                 _active={{}}
                 _focus={{ boxShadow: "none !important" }}
-                placeholder={inToken ? placeholder || "0" : ""}
+                placeholder={inToken ? placeholder || "0" : "0"}
                 _placeholder={{
                   color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
                   // fontSize: mobileView ? 20 : 28
