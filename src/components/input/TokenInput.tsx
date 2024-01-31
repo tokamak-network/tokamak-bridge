@@ -94,6 +94,8 @@ export default function TokenInput(props: {
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
 
+  const { onCloseTokenModal } = useTokenModal();
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
@@ -209,7 +211,10 @@ export default function TokenInput(props: {
   };
 
   const onKeyDown = (e: any) => {
-    if (e.key === "Enter" && mobileView) customRef?.current?.blur();
+    if (e.key === "Enter" && mobileView) {
+      onCloseTokenModal();
+      // customRef?.current?.blur();
+    }
   }
 
   const { totalGasCost } = useGasFee();
