@@ -147,11 +147,9 @@ const SearchToken = () => {
           alt={"close"}
           style={{ cursor: "pointer", marginRight: "10px" }}
           onMouseDown={(e) => {
-            if (searchValue) {
-              e.preventDefault();
-              setSearchValue("");
-            }
+            e.preventDefault();
           }}
+          onClick={() => { setSearchValue("") }}
         />
       )}
 
