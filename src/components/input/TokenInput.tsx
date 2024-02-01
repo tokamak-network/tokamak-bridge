@@ -94,7 +94,7 @@ export default function TokenInput(props: {
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
 
-  const { onCloseTokenModal } = useTokenModal();
+  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -212,7 +212,11 @@ export default function TokenInput(props: {
 
   const onKeyDown = (e: any) => {
     if (e.key === "Enter" && mobileView) {
-      onCloseTokenModal();
+      if (
+        (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
+      ) {
+        onCloseTokenModal();
+      }
       // customRef?.current?.blur();
     }
   }
