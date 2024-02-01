@@ -248,7 +248,6 @@ export function SelectCardModal() {
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
-      // isOpen={false}
       onClose={mobileView ? handleClose : onCloseTokenModal}
     >
       <ModalOverlay bg="rgb(0 0 0 / 95%)" />
