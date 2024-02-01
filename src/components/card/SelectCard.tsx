@@ -1,33 +1,27 @@
-import { Box, Flex, Input, Text } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
+import { Box, Flex, HStack, Input, Text } from '@chakra-ui/react';
+import { useRecoilState } from 'recoil';
 
-import { Modal, ModalOverlay, ModalContent, ModalBody } from "@chakra-ui/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import useTokenModal from "@/hooks/modal/useTokenModal";
-import { Field } from "@/types/swap/swap";
-import { CardCarrousel } from "./CardCarousel";
-import {
-  searchTokenStatus,
-  IsSearchToken,
-  isInputTokenAmount,
-} from "@/recoil/card/selectCard/searchToken";
-import useConnectedNetwork from "@/hooks/network";
-import { Overlay_Index } from "@/types/style/overlayIndex";
-import { CardCarouselMobile } from "./mobile/CardCarouselMobile";
-import useMediaView from "@/hooks/mediaView/useMediaView";
-import TokenInput from "../input/TokenInput";
-import {
-  selectedInTokenStatus,
-  tokenModalStatus,
-} from "@/recoil/bridgeSwap/atom";
-import { useRecoilValue } from "recoil";
+import { Modal, ModalOverlay, ModalContent, ModalBody } from '@chakra-ui/react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import Image from 'next/image';
+import useTokenModal from '@/hooks/modal/useTokenModal';
+import { Field } from '@/types/swap/swap';
+import { CardCarrousel } from './CardCarousel';
+import { searchTokenStatus, IsSearchToken, isInputTokenAmount } from '@/recoil/card/selectCard/searchToken';
+import useConnectedNetwork from '@/hooks/network';
+import { Overlay_Index } from '@/types/style/overlayIndex';
+import { CardCarouselMobile } from './mobile/CardCarouselMobile';
+import useMediaView from '@/hooks/mediaView/useMediaView';
+import { selectedInTokenStatus, selectedOutTokenStatus, tokenModalStatus } from '@/recoil/bridgeSwap/atom';
+import { useRecoilValue } from 'recoil';
 
-import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
-import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
-import CloseIcon from "assets/icons/close.svg";
-import SearchIcon from "assets/icons/search.svg";
-import CancelIcon from "assets/icons/close.svg";
+import BgImage from 'assets/image/BridgeSwap/selectTokenCardBg.svg';
+import BgImageButton from 'assets/image/BridgeSwap/selectTokenBg.svg';
+import CloseIcon from 'assets/icons/close.svg';
+import SearchIcon from 'assets/icons/search.svg';
+import CancelIcon from 'assets/icons/close.svg';
+import { TokenSymbol } from '../image/TokenSymbol';
+import { useGetTokenList } from '@/hooks/tokenCard/useGetTokenList';
 
 enum CardOverlay {
   Middle = 100,
@@ -41,27 +35,17 @@ export function SelectCardButton(props: { field: Field }) {
 
   return (
     <Flex
-      w={"562px"}
-      h={"100px"}
-      alignItems={"center"}
-      justifyContent={"center"}
-      cursor={"pointer"}
-      onClick={() => (field === "INPUT" ? onOpenInToken() : onOpenOutToken())}
-      pos={"relative"}
-    // zIndex={Overlay_Index}
+      w={'562px'}
+      h={'100px'}
+      alignItems={'center'}
+      justifyContent={'center'}
+      cursor={'pointer'}
+      onClick={() => (field === 'INPUT' ? onOpenInToken() : onOpenOutToken())}
+      pos={'relative'}
+      // zIndex={Overlay_Index}
     >
-      <Image
-        src={BgImageButton}
-        alt={"BgImageButton"}
-        style={{ position: "absolute" }}
-      />
-      <Text
-        color={"#FFFFFF"}
-        fontSize={24}
-        fontWeight={"semibold"}
-        zIndex={100}
-        mt={"10px"}
-      >
+      <Image src={BgImageButton} alt={'BgImageButton'} style={{ position: 'absolute' }} />
+      <Text color={'#FFFFFF'} fontSize={24} fontWeight={'semibold'} zIndex={100} mt={'10px'}>
         Select Token
       </Text>
     </Flex>
@@ -75,7 +59,7 @@ const SearchToken = () => {
 
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
-  const [searchValue, setSearchValue] = useState<string>("");
+  const [searchValue, setSearchValue] = useState<string>('');
   const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
 
   useEffect(() => {
@@ -92,45 +76,45 @@ const SearchToken = () => {
 
   const handleFocus = () => {
     setTokenSearch(true);
-  }
+  };
 
   const handleBlur = () => {
     setTokenSearch(false);
-  }
+  };
 
   const onKeyDown = (e: any) => {
-    if (e.key === "Enter" && mobileView) ref?.current?.blur();
-  }
+    if (e.key === 'Enter' && mobileView) ref?.current?.blur();
+  };
 
   useEffect(() => {
-    if (searchValue === "") {
+    if (searchValue === '') {
       return setSearchToken(null);
     }
     if (connectedChainId) {
       return setSearchToken({ nameOrAdd: searchValue, chainId: connectedChainId });
     }
-  }, [searchValue])
+  }, [searchValue]);
 
   return (
     <Flex
-      w={"100%"}
-      justifyContent={"center"}
-      pos={"relative"}
+      w={'100%'}
+      justifyContent={'center'}
+      pos={'relative'}
       zIndex={Overlay_Index.BelowHeader}
-      border={"1px solid transparent"}
-      _hover={{ border: mobileView ? "1px solid #313442" : "" }}
-      rounded={{ base: "8px", lg: "21.5px" }}
-      bgColor={{ base: "#0F0F12", lg: "transparent" }}
+      border={'1px solid transparent'}
+      _hover={{ border: mobileView ? '1px solid #313442' : '' }}
+      rounded={{ base: '8px', lg: '21.5px' }}
+      bgColor={{ base: '#0F0F12', lg: 'transparent' }}
     >
       <Input
-        w={{ base: "100%", lg: "430px" }}
-        h={"42px"}
-        borderRadius={{ base: "8px", lg: "21.5px" }}
-        placeholder={"Search token name or address"}
-        _placeholder={{ color: "#8E8E92", fontWeight: 500 }}
-        boxShadow={"none !important"}
+        w={{ base: '100%', lg: '430px' }}
+        h={'42px'}
+        borderRadius={{ base: '8px', lg: '21.5px' }}
+        placeholder={'Search token name or address'}
+        _placeholder={{ color: '#8E8E92', fontWeight: 500 }}
+        boxShadow={'none !important'}
         border={{}}
-        bgColor={"#0F0F12"}
+        bgColor={'#0F0F12'}
         _focus={{}}
         _active={{}}
         onChange={onChange}
@@ -144,26 +128,86 @@ const SearchToken = () => {
       {mobileView && (
         <Image
           src={searchValue ? CancelIcon : SearchIcon}
-          alt={"close"}
-          style={{ cursor: "pointer", marginRight: "10px" }}
+          alt={'close'}
+          style={{ cursor: 'pointer', marginRight: '10px' }}
           onMouseDown={(e) => {
             e.preventDefault();
           }}
-          onClick={() => { setSearchValue("") }}
+          onClick={() => {
+            setSearchValue('');
+          }}
         />
       )}
 
       {pcView && (
-        <Box pos={"absolute"} right={"69px"}>
-          <Image
-            src={CloseIcon}
-            alt={"close"}
-            style={{ cursor: "pointer" }}
-            onClick={() => onCloseTokenModal()}
-          />
+        <Box pos={'absolute'} right={'69px'}>
+          <Image src={CloseIcon} alt={'close'} style={{ cursor: 'pointer' }} onClick={() => onCloseTokenModal()} />
         </Box>
       )}
     </Flex>
+  );
+};
+
+const SuggestTokenItem = ({ tokenSymbol, onClick }: { tokenSymbol: string; onClick: () => void }) => {
+  return (
+    <HStack borderRadius="24px" bg="#17181D" p="4px 8px" gap="0" cursor="pointer" onClick={onClick}>
+      <TokenSymbol w={18} h={18} tokenType={tokenSymbol} />
+
+      <Text fontSize="15px" lineHeight="22px">
+        {tokenSymbol}
+      </Text>
+    </HStack>
+  );
+};
+
+const SuggestTokenList = () => {
+  const { filteredTokenList } = useGetTokenList();
+  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
+  const [selectedInToken, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
+  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
+  const { chainName } = useConnectedNetwork();
+
+  const ethTokenData = filteredTokenList?.find((token: any) => token.tokenSymbol === 'ETH');
+  const usdcTokenData = filteredTokenList?.find((token: any) => token.tokenSymbol === 'USDC');
+  const usdtTokenData = filteredTokenList?.find((token: any) => token.tokenSymbol === 'USDT');
+  const tonTokenData = filteredTokenList?.find((token: any) => token.tokenSymbol === 'TON');
+
+  const handleSelectToken = (tokenSymbol: string) => {
+    const tokenData =
+      tokenSymbol === 'ETH'
+        ? ethTokenData
+        : tokenSymbol === 'USDC'
+        ? usdcTokenData
+        : tokenSymbol === 'USDT'
+        ? usdtTokenData
+        : tonTokenData;
+
+    isInTokenOpen && tokenData
+      ? setSelectedInToken({
+          ...tokenData,
+          amountBN: null,
+          parsedAmount: null,
+          tokenAddress: selectedInToken?.tokenAddress || null,
+        })
+      : tokenData &&
+        chainName &&
+        setSelectedOutToken({
+          ...tokenData,
+          amountBN: null,
+          parsedAmount: null,
+          tokenAddress: tokenData.address[chainName],
+        });
+
+    onCloseTokenModal();
+  };
+
+  return (
+    <HStack justifyContent="space-between" w="100%">
+      <SuggestTokenItem tokenSymbol="ETH" onClick={() => handleSelectToken('ETH')} />
+      <SuggestTokenItem tokenSymbol="USDC" onClick={() => handleSelectToken('USDC')} />
+      <SuggestTokenItem tokenSymbol="USDT" onClick={() => handleSelectToken('USDT')} />
+      <SuggestTokenItem tokenSymbol="TON" onClick={() => handleSelectToken('TON')} />
+    </HStack>
   );
 };
 
@@ -173,36 +217,32 @@ export function SelectCardModal() {
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   const ref = useRef<HTMLInputElement>(null);
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
+  const [selectedInToken, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
   const [isInputAmount] = useRecoilState(isInputTokenAmount);
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      if (event.target.id === "out-area") {
+      if (event.target.id === 'out-area') {
         return onCloseTokenModal();
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [selectedInToken?.parsedAmount]);
 
   const handleBlur = useCallback(() => {
     if (!isTokenSearch) {
       onCloseTokenModal();
-      if (mobileView && selectedInToken?.parsedAmount === null)
-        setSelectedInToken(null);
+      if (mobileView && selectedInToken?.parsedAmount === null) setSelectedInToken(null);
     }
   }, [isTokenSearch, selectedInToken?.parsedAmount, mobileView]);
 
   const handleClose = useCallback(() => {
     onCloseTokenModal();
-    if (mobileView && selectedInToken?.parsedAmount === null)
-      setSelectedInToken(null);
+    if (mobileView && selectedInToken?.parsedAmount === null) setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
 
   return (
@@ -211,57 +251,63 @@ export function SelectCardModal() {
       // isOpen={false}
       onClose={mobileView ? handleClose : onCloseTokenModal}
     >
-      <ModalOverlay />
+      <ModalOverlay bg="rgb(0 0 0 / 95%)" />
       <ModalContent
-        minW={"100%"}
-        maxW={"100%"}
+        minW={'100%'}
+        maxW={'100%'}
         h={{
-          base: isInputAmount || isTokenSearch ? "calc(100% - 60px)" : "fit-content",
-          lg: "100%",
+          base: isTokenSearch ? "calc(100% - 60px)" : "fit-content",
+          lg: '100%',
         }}
-        m={{ base: "none", lg: 0 }}
-        mt={"auto"}
+        m={{ base: 'none', lg: 0 }}
+        mt={'auto'}
         mb={0}
         p={0}
-        bg={{ base: "#1F2128", lg: "transparent" }}
-        overflow={"hidden"}
+        bg={{ base: '#1F2128', lg: 'transparent' }}
+        overflow={'hidden'}
+        __css={{
+          '.react-stacked-center-carousel-slide--3, .react-stacked-center-carousel-slide--2, .react-stacked-center-carousel-slide--1':
+            {
+              opacity: 0.5,
+            },
+        }}
       >
         <ModalBody
-          minW={"100%"}
-          maxW={"100%"}
+          minW={'100%'}
+          maxW={'100%'}
           p={0}
-          display={"flex"}
-          justifyContent={"center"}
-          alignItems={"end"}
-          bg={"transparent"}
+          display={'flex'}
+          justifyContent={'center'}
+          alignItems={'end'}
+          bg={'transparent'}
           id="out-area"
           zIndex={1}
         >
           <Flex
-            w={"1362px"}
-            h={{ base: "100%", lg: "486px" }}
-            bgColor={{ base: "#1F2128", lg: "transparent" }}
-            rounded={"24px 24px 0px 0px"}
-            padding={{ base: "16px 10px", lg: 0 }}
+            w={'1362px'}
+            h={{ base: '100%', lg: '486px' }}
+            bgColor={{ base: '#1F2128', lg: 'transparent' }}
+            rounded={'24px 24px 0px 0px'}
+            padding={{ base: '16px 10px', lg: 0 }}
             // borderRadius={"150px 150px 0px 0px"}
-            rowGap={"17.43px"}
-            flexDir={"column"}
-            alignItems={"center"}
+            rowGap={'17.43px'}
+            flexDir={'column'}
+            alignItems={'center'}
             backgroundImage={BgImage}
             zIndex={100}
-            overflow={{ base: "hidden" }}
-            mb={{ base: "auto", lg: "0" }}
+            overflow={{ base: 'hidden' }}
+            mb={{ base: 'auto', lg: '0' }}
           >
             {pcView && (
-              <Flex pos={"absolute"}>
+              <Flex pos={'absolute'}>
                 <Image
                   src={BgImage}
-                  alt={"CloseIcon"}
+                  alt={'CloseIcon'}
                   style={{
-                    minWidth: "1362px",
-                    width: "1362px",
-                    minHeight: "486px",
-                    height: "486px",
+                    minWidth: '1362px',
+                    width: '1362px',
+                    minHeight: '486px',
+                    height: '486px',
                   }}
                 ></Image>
               </Flex>
@@ -274,51 +320,23 @@ export function SelectCardModal() {
             )}
             {!pcView && (
               <>
+                <HStack justifyContent="space-between" w="100%" px="2px">
+                  <Text fontWeight={500} fontSize="15px" lineHeight="22.5px">
+                    Select token
+                  </Text>
+
+                  <Image
+                    width={20}
+                    height={20}
+                    src={CloseIcon}
+                    alt={'close'}
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => onCloseTokenModal()}
+                  />
+                </HStack>
                 <SearchToken />
+                <SuggestTokenList />
                 <CardCarouselMobile />
-                <Flex
-                  w={"full"}
-                  justify={"center"}
-                  align={"start"}
-                  columnGap={"11px"}
-                // onBlur={handleBlur}
-                // px={"10px"}
-                >
-                  {isInputAmount && (
-                    <TokenInput
-                      inToken={isOpen === "INPUT" ? true : false}
-                      hasMaxButton={isOpen === "INPUT" ? true : false}
-                      style={isInputAmount ? "" : { display: "none" }}
-                      customRef={ref}
-                      placeholder={"input amount"}
-                      isDisabled={isOpen === "INPUT" ? false : true}
-                      defaultValue={
-                        isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""
-                      }
-                    />
-                  )}
-                  {/* <Flex
-                    minW={"40px"}
-                    minH={"40px"}
-                    rounded={"8px"}
-                    bg={"#0F0F12"}
-                    align={"center"}
-                    justify={"center"}
-                    display={isOpen === "INPUT" ? "flex" : "none"}
-                    onMouseDown={(e) => {
-                      e.stopPropagation();
-                      e.preventDefault();
-                      setTokenSearch((prev) => !prev);
-                    }}
-                  >
-                    <Image
-                      width={20}
-                      height={20}
-                      alt="search"
-                      src={isTokenSearch ? CancelIcon : SearchIcon}
-                    />
-                  </Flex> */}
-                </Flex>
               </>
             )}
           </Flex>

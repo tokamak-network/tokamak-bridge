@@ -44,6 +44,7 @@ type TokenCardProps = {
   requireCall?: boolean;
   watch?: boolean;
   isDark?: boolean;
+  isSwapPair?: boolean;
 };
 
 const TopLine = (props: { mainSchemCol: string }) => {
@@ -131,7 +132,8 @@ export default function TokenCard(props: TokenCardProps) {
     isInput,
     requireCall,
     watch,
-    isDark
+    isDark,
+    isSwapPair
   } = props;
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
 
@@ -231,7 +233,7 @@ export default function TokenCard(props: TokenCardProps) {
       w={typeof w === "string" ? w : `${w ?? 200}px`}
       height={typeof h === "string" ? h : `${h ?? 248}px`}
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
-      opacity={isNew || isDark ? 0.25 : 0.85}
+      opacity={isNew || isDark ? 0.5 : 0.85}
       border={`3px solid ${tokenColorCode} `}
       borderRadius={{ base: "9px", lg: "16px" }}
       pos={"relative"}
@@ -275,10 +277,11 @@ export default function TokenCard(props: TokenCardProps) {
           w={"100%"}
           color={"#222222"}
         >
-          <Text fontWeight={700} fontSize={16} zIndex={100}>
+          <Text fontWeight={700} fontSize={isSwapPair ? 16 : 12} zIndex={100} lineHeight={isSwapPair ? "20px" : "15px"}>
             {tokenInfo?.tokenSymbol ?? "TOK"}
           </Text>
-          <Text fontWeight={700} fontSize={10} zIndex={100}>
+          
+          <Text fontWeight={700} fontSize={isSwapPair ? 10 : 7} zIndex={100} lineHeight={isSwapPair ? "12.5px" : "8.75px"}>
             {thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
           </Text>
         </Flex>
@@ -290,7 +293,9 @@ export default function TokenCard(props: TokenCardProps) {
         h={"100%"}
         justifyContent={"center"}
         alignItems={notAdded ? "baseline" : "center"}
-        my={{ base: "10px", lg: "0px" }}
+        // my={{ base: "10px", lg: "0px" }}
+        mt="5px"
+        mb="0"
       >
         <TokenSymbol
           w={symbolSize?.w ?? (notAdded ? 40 : 92)}
@@ -333,17 +338,18 @@ export default function TokenCard(props: TokenCardProps) {
       <Flex
         flexDir={"column"}
         mt={"auto"}
-        color={"#222"}
-        rowGap={type === "small" ? "8px" : type === "medium" ? "9px" : "12px"}
+        color={"#222222"}
+        rowGap={type === "small" ? "3px" : type === "medium" ? "9px" : "12px"}
       >
         {!isPrice && (
           <>
             <Text
-              fontWeight={400}
-              fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
+              fontWeight={500}
+              fontSize={isSwapPair ? 12 : type === "small" ? 8 : type === "medium" ? 13 : 14}
               h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
+              lineHeight={isSwapPair ? "15px" : "10px"}
             >
-              balance:{" "}
+              Balance:{" "}
             </Text>
 
             {pcView ? (
@@ -361,7 +367,7 @@ export default function TokenCard(props: TokenCardProps) {
                 {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
               </Text>
             ) : (
-              <Text fontWeight={700} fontSize={18}>
+              <Text fontWeight={700} fontSize={isSwapPair ? 18 : 14} lineHeight={isSwapPair ? "22.5px" : "17px"} mt={isSwapPair ? "4px" : 0}>
                 {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
               </Text>
             )}

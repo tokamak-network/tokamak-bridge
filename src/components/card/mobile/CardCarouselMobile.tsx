@@ -61,15 +61,15 @@ const CarouselCard = React.memo((props) => {
   return (
     tokenData && (
       <TokenCard
-        w={"148px"}
-        h={"184px"}
+        w={"80px"}
+        h={"104px"}
         tokenInfo={tokenData}
         inNetwork={true}
         hasInput={true}
         isNew={tokenData?.isNew}
         symbolSize={{
-          w: 60,
-          h: 60,
+          w: 32,
+          h: 32,
         }}
         type={"small"}
         onMouseDown={(e: any) => {
@@ -102,17 +102,18 @@ const CarouselCard = React.memo((props) => {
                   tokenAddress: tokenData.address[chainName],
                 });
               
-            if (
-              (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
-              (isOutTokenOpen && isInputAmount)
-            ) {
+            // if (
+            //   (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
+            //   (isOutTokenOpen && isInputAmount)
+            // ) {
               onCloseTokenModal();
-            }
+            // }
           } else if (slideIndex === 1) swipeTo(1);
           else if (slideIndex === -1) swipeTo(-1);
           
         }}
         isDark={slideIndex === 0 ? false : true}
+        style={{padding: '6px'}}
       />
     )
   );
@@ -160,19 +161,19 @@ export function CardCarouselMobile() {
     <ResponsiveContainer
       carouselRef={ref}
       render={(parentWidth, carouselRef) => {
-        let currentVisibleSlide = 3;
+        const currentVisibleSlide = 5;
         return (
           <>
             <StackedCarousel
               ref={carouselRef}
               slideComponent={CarouselCard}
-              slideWidth={150}
+              slideWidth={80}
               carouselWidth={parentWidth}
               data={filteredTokenList}
               currentVisibleSlide={currentVisibleSlide}
-              maxVisibleSlide={3}
-              customScales={[1, 0.85, 0.4]}
-              fadeDistance={0}
+              maxVisibleSlide={5}
+              customScales={[1, 0.85, 0.85, 0.7]}
+              fadeDistance={0.13}
               useGrabCursor
               transitionTime={800}
             />

@@ -112,7 +112,7 @@ export default function Swap() {
             )}
           </Flex>
 
-          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"} align={"center"}>
+          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"} align={"start"}>
             <MobileInToken />
 
             <Flex
@@ -124,6 +124,7 @@ export default function Swap() {
               h={"24px"}
               p={"4px"}
               bg={switchable ? "#1F2128" : "transparent"}
+              mt="81px"
             >
               <Image src={ArrowImg} alt={"arrow"} />
             </Flex>

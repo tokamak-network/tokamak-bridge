@@ -46,6 +46,7 @@ export default function TokenInput(props: {
   style?: {};
   customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
+  onClose: () => void;
 }) {
   const {
     inToken,
@@ -55,6 +56,7 @@ export default function TokenInput(props: {
     customRef,
     placeholder,
     defaultValue,
+    onClose,
   } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
@@ -209,7 +211,9 @@ export default function TokenInput(props: {
   };
 
   const onKeyDown = (e: any) => {
-    if (e.key === "Enter" && mobileView) customRef?.current?.blur();
+    if (e.key === "Enter" && mobileView) {
+      onClose?.();
+    };
   }
 
   const { totalGasCost } = useGasFee();
@@ -548,8 +552,8 @@ export default function TokenInput(props: {
                 _focus={{ boxShadow: "none !important" }}
                 placeholder={inToken ? placeholder || "0" : ""}
                 _placeholder={{
-                  color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
-                  // fontSize: mobileView ? 20 : 28
+                  color: mobileView ? "#A0A3AD !important" : "#C6C6D1 !important",
+                  fontSize: 14
                 }}
                 color={
                   mobileView && isBalanceOver
@@ -558,7 +562,7 @@ export default function TokenInput(props: {
                     ? "#A0A3AD !important"
                     : "#FFFFFF"
                 }
-                fontSize={{ base: 22, lg: 28 }}
+                fontSize={{ base: 16, lg: 28 }}
                 fontWeight={{ base: 500, lg: 600 }}
                 isDisabled={isDisabled}
                 _disabled={{ color: "#A0A3AD" }}
@@ -569,6 +573,7 @@ export default function TokenInput(props: {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+                autoComplete="off"
               ></Input>
             </Flex>
             }
@@ -622,7 +627,8 @@ export default function TokenInput(props: {
             //     Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
             //   </Text>
             // </Flex>
-            <Warning />
+            // <Warning />
+            <></>
           )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>

@@ -18,8 +18,10 @@ export function Details() {
       rowGap={"10px"}
     >
       {mode !== null ? (
-        <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
+        <Flex w={"100%"} flexDir={"column"} rowGap={"10px"} h="100%" position="relative">
+          <Box position="absolute" bottom="20px" left={0}>
           <Warning />
+          </Box>
           <TransactionDetail />
           <ApproveToken />
         </Flex>
