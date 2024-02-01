@@ -1,27 +1,23 @@
-import { TokenInfo } from "types/token/supportedToken";
-import { Box, Button, Flex, Text, TextProps, useTheme } from "@chakra-ui/react";
-import { TokenSymbol } from "../image/TokenSymbol";
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  networkStatus,
-  selectedInTokenStatus,
-  selectedOutTokenStatus,
-} from "@/recoil/bridgeSwap/atom";
-import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
-import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
-import { isETH } from "@/utils/token/isETH";
-import useMediaView from "@/hooks/mediaView/useMediaView";
-import "@fontsource/quicksand/500.css";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
-import { trimAmount } from "@/utils/trim";
-import { useGetMode } from "@/hooks/mode/useGetMode";
-import GradientSpinner from "../ui/gradientSpinner";
-import { ethers } from "ethers";
+import { TokenInfo } from 'types/token/supportedToken';
+import { Box, Button, Flex, Text, TextProps, useTheme } from '@chakra-ui/react';
+import { TokenSymbol } from '../image/TokenSymbol';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { networkStatus, selectedInTokenStatus, selectedOutTokenStatus } from '@/recoil/bridgeSwap/atom';
+import useTokenBalance from '@/hooks/contracts/balance/useTokenBalance';
+import useAddTokenToStorage from '@/hooks/storage/useAddTokenToStorage';
+import { isETH } from '@/utils/token/isETH';
+import useMediaView from '@/hooks/mediaView/useMediaView';
+import '@fontsource/quicksand/500.css';
+import { useGetMarketPrice } from '@/hooks/price/useGetMarketPrice';
+import { useInOutTokens } from '@/hooks/token/useInOutTokens';
+import { useSwapTokens } from '@/hooks/swap/useSwapTokens';
+import { trimAmount } from '@/utils/trim';
+import { useGetMode } from '@/hooks/mode/useGetMode';
+import GradientSpinner from '../ui/gradientSpinner';
+import { ethers } from 'ethers';
 
-type TokenCardSizeType = "small" | "medium" | "large";
+type TokenCardSizeType = 'small' | 'medium' | 'large';
 
 type TokenCardProps = {
   tokenInfo: TokenInfo;
@@ -51,32 +47,32 @@ const TopLine = (props: { mainSchemCol: string }) => {
   return (
     <>
       <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"100px"}
-        top={"-83px"}
-        left={"-100px"}
+        pos={'absolute'}
+        w={'400px'}
+        h={'100px'}
+        top={'-83px'}
+        left={'-100px'}
         bg={props.mainSchemCol}
-        transform={"rotate(-30deg)"}
+        transform={'rotate(-30deg)'}
         opacity={0.15}
       ></Box>
       <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"4.63px"}
-        top={"15px"}
-        left={"-100px"}
-        bg={"rgba(255, 255, 255, 0.5)"}
-        transform={"rotate(-30deg)"}
+        pos={'absolute'}
+        w={'400px'}
+        h={'4.63px'}
+        top={'15px'}
+        left={'-100px'}
+        bg={'rgba(255, 255, 255, 0.5)'}
+        transform={'rotate(-30deg)'}
       ></Box>
       <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"47px"}
-        top={"28px"}
-        left={"-100px"}
+        pos={'absolute'}
+        w={'400px'}
+        h={'47px'}
+        top={'28px'}
+        left={'-100px'}
         bg={`linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)`}
-        transform={"rotate(-30deg)"}
+        transform={'rotate(-30deg)'}
       ></Box>
       {/* <Box
         pos={"absolute"}
@@ -91,20 +87,16 @@ const TopLine = (props: { mainSchemCol: string }) => {
   );
 };
 
-const TokenTitle = (props: {
-  tokenName: String;
-  isName: boolean;
-  style?: TextProps;
-}) => {
+const TokenTitle = (props: { tokenName: String; isName: boolean; style?: TextProps }) => {
   const { style } = props;
   return (
     <Text
-      w={props.isName ? "110px" : "60px"}
+      w={props.isName ? '110px' : '60px'}
       fontSize={props.isName ? 18 : 14}
       fontWeight={props.isName ? 700 : 400}
-      color={"#222222"}
-      textAlign={props.isName ? "left" : "right"}
-      lineHeight={props?.isName ? "20px" : ""}
+      color={'#222222'}
+      textAlign={props.isName ? 'left' : 'right'}
+      lineHeight={props?.isName ? '20px' : ''}
       zIndex={100}
       {...props.style}
     >
@@ -133,34 +125,34 @@ export default function TokenCard(props: TokenCardProps) {
     requireCall,
     watch,
     isDark,
-    isSwapPair
+    isSwapPair,
   } = props;
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
 
   const tokenColorCode = useMemo(() => {
     switch (tokenInfo?.tokenSymbol) {
-      case "ETH":
-        return "#627EEA";
-      case "WETH":
-        return "#393939";
-      case "TON":
-        return "#007AFF";
-      case "WTON":
-        return "#007AFF";
-      case "TOS":
-        return "#007AFF";
-      case "DOC":
-        return "#9e9e9e";
-      case "AURA":
-        return "#CB1000";
-      case "LYDA":
-        return "#4361EE";
-      case "USDC":
-        return "#2775CA";
-      case "USDT":
-        return "#50AF95";
+      case 'ETH':
+        return '#627EEA';
+      case 'WETH':
+        return '#393939';
+      case 'TON':
+        return '#007AFF';
+      case 'WTON':
+        return '#007AFF';
+      case 'TOS':
+        return '#007AFF';
+      case 'DOC':
+        return '#9e9e9e';
+      case 'AURA':
+        return '#CB1000';
+      case 'LYDA':
+        return '#4361EE';
+      case 'USDC':
+        return '#2775CA';
+      case 'USDT':
+        return '#50AF95';
       default:
-        return "#9e9e9e";
+        return '#9e9e9e';
     }
   }, [tokenInfo]);
 
@@ -181,7 +173,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
-    amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(inTokenInfo?.parsedAmount?.replaceAll(',', '')),
   });
 
   const { pcView, mobileView } = useMediaView();
@@ -189,10 +181,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const outAmount = useMemo(() => {
     if (
-      (mode === "Wrap" ||
-        mode === "Unwrap" ||
-        mode === "ETH-Wrap" ||
-        mode === "ETH-Unwrap") &&
+      (mode === 'Wrap' || mode === 'Unwrap' || mode === 'ETH-Wrap' || mode === 'ETH-Unwrap') &&
       inTokenInfo?.parsedAmount
     ) {
       return inTokenInfo.parsedAmount;
@@ -206,20 +195,17 @@ export default function TokenCard(props: TokenCardProps) {
   });
 
   useEffect(() => {
-    if (mode === "Pool") return;
+    if (mode === 'Pool') return;
     if (!isInput && outTokenInfo && amountOut && mobileView) {
       const value: string = amountOut;
-      if (value === "" || value === null) {
+      if (value === '' || value === null) {
         return setOutTokenInfo({
           ...outTokenInfo,
           amountBN: null,
           parsedAmount: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        outTokenInfo.decimals
-      );
+      const parsedAmount = ethers.utils.parseUnits(value, outTokenInfo.decimals);
       return setOutTokenInfo({
         ...outTokenInfo,
         amountBN: parsedAmount.toBigInt(),
@@ -230,20 +216,20 @@ export default function TokenCard(props: TokenCardProps) {
 
   return (
     <Flex
-      w={typeof w === "string" ? w : `${w ?? 200}px`}
-      height={typeof h === "string" ? h : `${h ?? 248}px`}
+      w={typeof w === 'string' ? w : `${w ?? 200}px`}
+      height={typeof h === 'string' ? h : `${h ?? 248}px`}
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
       opacity={isNew || isDark ? 0.5 : 0.85}
       border={`3px solid ${tokenColorCode} `}
-      borderRadius={{ base: "9px", lg: "16px" }}
-      pos={"relative"}
-      pt={{ base: "12px", lg: "15px" }}
-      pb={type === "small" ? "13px" : type === "medium" ? "15px" : "30px"}
-      overflow={"hidden"}
-      flexDir={"column"}
-      justifyContent={"space-between"}
-      px={{ base: "12px", lg: "16px" }}
-      cursor={"pointer"}
+      borderRadius={{ base: '9px', lg: '16px' }}
+      pos={'relative'}
+      pt={{ base: '12px', lg: '15px' }}
+      pb={type === 'small' ? '13px' : type === 'medium' ? '15px' : '30px'}
+      overflow={'hidden'}
+      flexDir={'column'}
+      justifyContent={'space-between'}
+      px={{ base: '12px', lg: '16px' }}
+      cursor={'pointer'}
       onMouseDown={onMouseDown}
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
@@ -251,38 +237,37 @@ export default function TokenCard(props: TokenCardProps) {
     >
       <TopLine mainSchemCol={tokenColorCode} />
       {pcView && (
-        <Flex justifyContent={"space-between"} w={"100%"}>
+        <Flex justifyContent={'space-between'} w={'100%'}>
           <TokenTitle
-            tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+            tokenName={thisTokenIsETH ? 'ETH' : tokenInfo?.tokenName ?? 'TOKEN'}
             isName={true}
             style={{
-              fontSize:
-                type === "small" ? "16px" : type === "medium" ? "20px" : "22px",
+              fontSize: type === 'small' ? '16px' : type === 'medium' ? '20px' : '22px',
             }}
           />
           <TokenTitle
-            tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
+            tokenName={tokenInfo?.tokenSymbol ?? 'TOK'}
             isName={false}
             style={{
-              fontSize:
-                type === "small" ? "12px" : type === "medium" ? "16px" : "18px",
+              fontSize: type === 'small' ? '12px' : type === 'medium' ? '16px' : '18px',
             }}
           />
         </Flex>
       )}
       {!pcView && (
-        <Flex
-          flexDir={"column"}
-          justifyContent={"space-between"}
-          w={"100%"}
-          color={"#222222"}
-        >
-          <Text fontWeight={700} fontSize={isSwapPair ? 16 : 12} zIndex={100} lineHeight={isSwapPair ? "20px" : "15px"}>
-            {tokenInfo?.tokenSymbol ?? "TOK"}
+        <Flex flexDir={'column'} justifyContent={'space-between'} w={'100%'} color={'#222222'}>
+          <Text fontWeight={700} fontSize={isSwapPair ? 16 : 12} zIndex={100} lineHeight={isSwapPair ? '20px' : '15px'}>
+            {tokenInfo?.tokenSymbol ?? 'TOK'}
           </Text>
-          
-          <Text fontWeight={700} fontSize={isSwapPair ? 10 : 7} zIndex={100} lineHeight={isSwapPair ? "12.5px" : "8.75px"}>
-            {thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+
+          <Text
+            fontWeight={700}
+            fontSize={isSwapPair ? 10 : 7}
+            zIndex={100}
+            lineHeight={isSwapPair ? '12.5px' : '8.75px'}
+            whiteSpace="nowrap"
+          >
+            {thisTokenIsETH ? 'ETH' : tokenInfo?.tokenName ?? 'TOKEN'}
           </Text>
         </Flex>
       )}
@@ -290,9 +275,9 @@ export default function TokenCard(props: TokenCardProps) {
         // pt={"25px"}
         // pb={"37px"}
         // my={notAdded ? "20px" : ""}
-        h={"100%"}
-        justifyContent={"center"}
-        alignItems={notAdded ? "baseline" : "center"}
+        h={'100%'}
+        justifyContent={'center'}
+        alignItems={notAdded ? 'baseline' : 'center'}
         // my={{ base: "10px", lg: "0px" }}
         mt="5px"
         mb="0"
@@ -304,99 +289,91 @@ export default function TokenCard(props: TokenCardProps) {
         />
       </Flex>
       {notAdded ? (
-      <Flex flexDir={"column"} alignItems={"center"}>
-        <Text fontSize={12} color={"#222222"} w={"206px"}>
-          This token isn’t traded on leading U.S. centralized exchanges or
-          frequently swapped on Tokamak Network. Always conduct your own
-          research before trading.
-        </Text>
-        <Button
-          w={"206px"}
-          h={"40px"}
-          my={"20px"}
-          bg={"#007AFF"}
-          _hover={{}}
-          _active={{}}
-          fontSize={16}
-          fontWeight={600}
-          onClick={() => addNewCard}
-        >
-          I Agree
-        </Button>
-        <Text fontSize={16} fontWeight={400} color={"#222222"}>
-          Cancel
-        </Text>
-      </Flex>
-      ) : forBridge ? (
-      <Flex flexDir={"column"} rowGap={"13px"}>
-        <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-          <Text fontWeight={500}>Balance: </Text>
-          <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
+        <Flex flexDir={'column'} alignItems={'center'}>
+          <Text fontSize={12} color={'#222222'} w={'206px'}>
+            This token isn’t traded on leading U.S. centralized exchanges or frequently swapped on Tokamak Network.
+            Always conduct your own research before trading.
+          </Text>
+          <Button
+            w={'206px'}
+            h={'40px'}
+            my={'20px'}
+            bg={'#007AFF'}
+            _hover={{}}
+            _active={{}}
+            fontSize={16}
+            fontWeight={600}
+            onClick={() => addNewCard}
+          >
+            I Agree
+          </Button>
+          <Text fontSize={16} fontWeight={400} color={'#222222'}>
+            Cancel
+          </Text>
         </Flex>
-      </Flex>
-      ) : (
-      <Flex
-        flexDir={"column"}
-        mt={"auto"}
-        color={"#222222"}
-        rowGap={type === "small" ? "3px" : type === "medium" ? "9px" : "12px"}
-      >
-        {!isPrice && (
-          <>
-            <Text
-              fontWeight={500}
-              fontSize={isSwapPair ? 12 : type === "small" ? 8 : type === "medium" ? 13 : 14}
-              h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
-              lineHeight={isSwapPair ? "15px" : "10px"}
-            >
-              Balance:{" "}
-            </Text>
-
-            {pcView ? (
-              <Text
-                fontWeight={700}
-                fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
-                h={
-                  type === "small"
-                    ? "33px"
-                    : type === "medium"
-                    ? "40px"
-                    : "40px"
-                }
-              >
-                {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
-              </Text>
-            ) : (
-              <Text fontWeight={700} fontSize={isSwapPair ? 18 : 14} lineHeight={isSwapPair ? "22.5px" : "17px"} mt={isSwapPair ? "4px" : 0}>
-                {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
-              </Text>
-            )}
-          </>
-        )}
-
-        {isPrice && (
-          <Flex flexDir={"column"} rowGap={0}>
-            <Text
-              h={"28px"}
-              fontFamily={theme.fonts.Quicksand}
-              fontWeight={700}
-              fontSize={22}
-              textOverflow={"hidden"}
-            >
-              {isInput
-                ? trimAmount(inTokenInfo?.parsedAmount, 10) || "0"
-                : trimAmount(outAmount, 10) || "0"}
-            </Text>
-            <Text
-              fontFamily={theme.fonts.Quicksand}
-              fontWeight={700}
-              fontSize={10}
-            >
-              ${isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
-            </Text>
+      ) : forBridge ? (
+        <Flex flexDir={'column'} rowGap={'13px'}>
+          <Flex fontSize={16} h={'8px'} color={'#222222'} columnGap={'2px'}>
+            <Text fontWeight={500}>Balance: </Text>
+            <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
           </Flex>
-        )}
-      </Flex>
+        </Flex>
+      ) : (
+        <Flex
+          flexDir={'column'}
+          mt={'auto'}
+          color={'#222222'}
+          rowGap={type === 'small' ? '3px' : type === 'medium' ? '9px' : '12px'}
+        >
+          {!isPrice && (
+            <>
+              <Text
+                fontWeight={500}
+                fontSize={isSwapPair ? 12 : type === 'small' ? 8 : type === 'medium' ? 13 : 14}
+                h={type === 'small' ? '8px' : type === 'medium' ? '9px' : '10px'}
+                lineHeight={isSwapPair ? '15px' : '10px'}
+              >
+                Balance:{' '}
+              </Text>
+
+              {pcView ? (
+                <Text
+                  fontWeight={700}
+                  fontSize={type === 'small' ? 24 : type === 'medium' ? 30 : 36}
+                  h={type === 'small' ? '33px' : type === 'medium' ? '40px' : '40px'}
+                >
+                  {trimAmount(tokenData?.data.parsedBalance, 10) || '0.0'}
+                </Text>
+              ) : (
+                <Text
+                  fontWeight={700}
+                  fontSize={isSwapPair ? 18 : 14}
+                  lineHeight={isSwapPair ? '22.5px' : '17px'}
+                  mt={isSwapPair ? '4px' : 0}
+                >
+                  {trimAmount(tokenData?.data.parsedBalance, 10) || '0.0'}
+                </Text>
+              )}
+            </>
+          )}
+
+          {isPrice && (
+            <Flex flexDir={'column'} rowGap={0}>
+              <Text
+                h={'28px'}
+                fontFamily={theme.fonts.Quicksand}
+                fontWeight={700}
+                fontSize={22}
+                textOverflow={'hidden'}
+              >
+                {isInput ? trimAmount(inTokenInfo?.parsedAmount, 10) || '0' : trimAmount(outAmount, 10) || '0'}
+              </Text>
+              <Text fontFamily={theme.fonts.Quicksand} fontWeight={700} fontSize={10}>
+                ${isInput ? inTokenWithPrice || '0' : outTokenWithPrice || '0'}
+              </Text>
+            </Flex>
+          )}
+        </Flex>
       )}
     </Flex>
   );

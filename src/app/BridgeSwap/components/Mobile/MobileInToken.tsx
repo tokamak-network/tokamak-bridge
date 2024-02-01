@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import { Flex, Text, Box, VStack } from '@chakra-ui/react';
 
 import { useRecoilState } from 'recoil';
-import { tokenModalStatus } from '@/recoil/bridgeSwap/atom';
+import { selectedInTokenStatus, tokenModalStatus } from '@/recoil/bridgeSwap/atom';
 import { useInOutTokens } from '@/hooks/token/useInOutTokens';
 import TokenCard from '@/components/card/TokenCard';
 import useConnectedNetwork from '@/hooks/network';
@@ -20,12 +20,12 @@ const MobileInToken = () => {
   const [_, setOpenInputTokenModal] = useRecoilState(inputTokenAmountOpenedStatus);
   const [isTokenSearch] = useRecoilState(IsSearchToken);
   const { isInTokenOpen } = useTokenModal();
-  
+
   const { inToken } = useInOutTokens();
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: inToken?.tokenName as string,
-    amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(inToken?.parsedAmount?.replaceAll(',', '')),
   });
 
   const network = useConnectedNetwork();
@@ -138,7 +138,16 @@ const MobileInToken = () => {
             {inToken?.parsedAmount || '0.0'}
           </Text>
 
-          <Text color="#A0A3AD" fontSize={14} fontWeight={500} lineHeight="18px">
+          <Text
+            color="#A0A3AD"
+            fontSize={14}
+            fontWeight={500}
+            lineHeight="18px"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            maxWidth="148px"
+          >
             ${tokenPriceWithAmount || '0.00'}
           </Text>
         </Box>

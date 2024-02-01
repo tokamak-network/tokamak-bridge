@@ -1,4 +1,4 @@
-import { Flex, HStack } from '@chakra-ui/react';
+import { Flex, HStack, Text } from '@chakra-ui/react';
 import { useRecoilState } from 'recoil';
 
 import { Modal, ModalOverlay, ModalContent, ModalBody } from '@chakra-ui/react';
@@ -11,8 +11,10 @@ import Warning from '@/app/BridgeSwap/Warning';
 
 import BgImage from 'assets/image/BridgeSwap/selectTokenCardBg.svg';
 import CloseIcon from 'assets/icons/close.svg';
+import useTokenModal from '@/hooks/modal/useTokenModal';
 
 export function InputTokenAmountModal() {
+  const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
   const [isOpenModal, setOpenModal] = useRecoilState(inputTokenAmountOpenedStatus);
   const ref = useRef<HTMLInputElement>(null);
   const [selectedInToken] = useRecoilState(selectedInTokenStatus);
@@ -36,7 +38,7 @@ export function InputTokenAmountModal() {
   }, [selectedInToken?.parsedAmount]);
 
   return (
-    <Modal isOpen={isOpenModal} onClose={handleClose}>
+    <Modal isOpen={isOpenModal && !isInTokenOpen && !isOutTokenOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent
         minW={'100%'}
@@ -77,7 +79,13 @@ export function InputTokenAmountModal() {
           >
             <>
               <HStack justifyContent="space-between" w="100%" px="2px">
-                <Warning />
+                <Warning
+                  fallbackComponent={
+                    <Text fontWeight={500} fontSize="15px" lineHeight="22.5px">
+                      Enter amount
+                    </Text>
+                  }
+                />
 
                 <Image
                   width={20}

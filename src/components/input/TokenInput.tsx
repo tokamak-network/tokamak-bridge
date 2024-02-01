@@ -1,42 +1,28 @@
-import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
-import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
-import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import {
-  selectedInTokenStatus,
-  selectedOutTokenStatus,
-} from "@/recoil/bridgeSwap/atom";
-import { trimAmount } from "@/utils/trim";
-import { Button, Flex, Input, Text } from "@chakra-ui/react";
-import { ethers } from "ethers";
-import { useRecoilState } from "recoil";
-import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
-import useMediaView from "@/hooks/mediaView/useMediaView";
-import useConnectedNetwork from "@/hooks/network";
-import {
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
-import { isETH } from "@/utils/token/isETH";
-import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import GradientSpinner from "../ui/gradientSpinner";
-import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
-import useInputBalanceCheck from "@/hooks/token/useInputCheck";
-import "@fontsource/poppins/600.css";
-import WARNING_RED_ICON from "assets/icons/warningRed.svg";
-import useTokenModal from "@/hooks/modal/useTokenModal";
-import {
-  IsSearchToken,
-  isInputTokenAmount,
-  searchTokenStatus,
-} from "@/recoil/card/selectCard/searchToken";
-import Warning from "@/app/BridgeSwap/Warning";
+import useTokenBalance from '@/hooks/contracts/balance/useTokenBalance';
+import { useGetMode } from '@/hooks/mode/useGetMode';
+import { useV3MintInfo } from '@/hooks/pool/useV3MintInfo';
+import { useGetMarketPrice } from '@/hooks/price/useGetMarketPrice';
+import { useSwapTokens } from '@/hooks/swap/useSwapTokens';
+import { useInOutTokens } from '@/hooks/token/useInOutTokens';
+import { selectedInTokenStatus, selectedOutTokenStatus } from '@/recoil/bridgeSwap/atom';
+import { trimAmount } from '@/utils/trim';
+import { Button, Flex, HStack, Input, Text } from '@chakra-ui/react';
+import { ethers } from 'ethers';
+import { useRecoilState } from 'recoil';
+import { lastFocusedInput } from '@/recoil/pool/setPoolPosition';
+import useMediaView from '@/hooks/mediaView/useMediaView';
+import useConnectedNetwork from '@/hooks/network';
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { isETH } from '@/utils/token/isETH';
+import { useGasFee } from '@/hooks/contracts/fee/getGasFee';
+import GradientSpinner from '../ui/gradientSpinner';
+import { usePriceTickConversion } from '@/hooks/pool/usePoolData';
+import useInputBalanceCheck from '@/hooks/token/useInputCheck';
+import '@fontsource/poppins/600.css';
+import WARNING_RED_ICON from 'assets/icons/warningRed.svg';
+import useTokenModal from '@/hooks/modal/useTokenModal';
+import { IsSearchToken, isInputTokenAmount, searchTokenStatus } from '@/recoil/card/selectCard/searchToken';
+import Warning from '@/app/BridgeSwap/Warning';
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -48,31 +34,13 @@ export default function TokenInput(props: {
   placeholder?: string;
   onClose?: () => void;
 }) {
-  const {
-    inToken,
-    hasMaxButton,
-    isDisabled,
-    style,
-    customRef,
-    placeholder,
-    defaultValue,
-    onClose,
-  } = props;
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
-  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
-  );
+  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder, defaultValue, onClose } = props;
+  const [selectedInToken, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   const { amountOut } = useSwapTokens();
   const { mode } = useGetMode();
-  const {
-    inToken: inTokenFromHook,
-    inTokenInfo,
-    outTokenInfo,
-    initializeTokenPairAmount,
-  } = useInOutTokens();
+  const { inToken: inTokenFromHook, inTokenInfo, outTokenInfo, initializeTokenPairAmount } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const { layer } = useConnectedNetwork();
@@ -82,7 +50,7 @@ export default function TokenInput(props: {
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
-    18
+    18,
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const { mobileView } = useMediaView();
@@ -90,15 +58,11 @@ export default function TokenInput(props: {
   const [isTokenSearch] = useRecoilState(IsSearchToken);
   const { connectedChainId } = useConnectedNetwork();
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
-  const switchable =
-    mode === "Wrap" ||
-    mode === "Unwrap" ||
-    mode === "ETH-Wrap" ||
-    mode === "ETH-Unwrap";
+  const switchable = mode === 'Wrap' || mode === 'Unwrap' || mode === 'ETH-Wrap' || mode === 'ETH-Unwrap';
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
-    const value: string = e.target.value === "." ? "0." : e.target.value;
+    const value: string = e.target.value === '.' ? '0.' : e.target.value;
 
     // if (isTokenSearch && connectedChainId) {
     //   setSearchValue(value);
@@ -111,7 +75,7 @@ export default function TokenInput(props: {
     //for wrap/unwrap switch
     if (inToken && switchable && !isTokenSearch) {
       if (selectedInToken && selectedOutToken) {
-        if (value === "") {
+        if (value === '') {
           setSelectedOutToken({
             ...selectedOutToken,
             amountBN: null,
@@ -124,14 +88,8 @@ export default function TokenInput(props: {
           });
         }
 
-        const parsedAmountOut = ethers.utils.parseUnits(
-          value,
-          selectedOutToken?.decimals
-        );
-        const parsedAmountIn = ethers.utils.parseUnits(
-          value,
-          selectedInToken?.decimals
-        );
+        const parsedAmountOut = ethers.utils.parseUnits(value, selectedOutToken?.decimals);
+        const parsedAmountIn = ethers.utils.parseUnits(value, selectedInToken?.decimals);
         setSelectedInToken({
           ...selectedInToken,
           amountBN: parsedAmountIn.toBigInt(),
@@ -147,17 +105,14 @@ export default function TokenInput(props: {
 
     //This token is inToken
     if (inToken && selectedInToken) {
-      if (value === "") {
+      if (value === '') {
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: null,
           parsedAmount: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedInToken.decimals
-      );
+      const parsedAmount = ethers.utils.parseUnits(value, selectedInToken.decimals);
 
       return setSelectedInToken({
         ...selectedInToken,
@@ -168,18 +123,15 @@ export default function TokenInput(props: {
 
     //On Pools page
     //This token is outToken
-    if (mode === "Pool" && !inToken && selectedOutToken) {
-      if (value === "" || value === null) {
+    if (mode === 'Pool' && !inToken && selectedOutToken) {
+      if (value === '' || value === null) {
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: null,
           parsedAmount: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
+      const parsedAmount = ethers.utils.parseUnits(value, selectedOutToken.decimals);
 
       return setSelectedOutToken({
         ...selectedOutToken,
@@ -190,17 +142,14 @@ export default function TokenInput(props: {
 
     if (!inToken && selectedOutToken && amountOut) {
       const value: string = amountOut;
-      if (value === "" || value === null) {
+      if (value === '' || value === null) {
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: null,
           parsedAmount: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
+      const parsedAmount = ethers.utils.parseUnits(value, selectedOutToken.decimals);
 
       return setSelectedOutToken({
         ...selectedOutToken,
@@ -211,10 +160,10 @@ export default function TokenInput(props: {
   };
 
   const onKeyDown = (e: any) => {
-    if (e.key === "Enter" && mobileView) {
+    if (e.key === 'Enter' && mobileView) {
       onClose?.();
-    };
-  }
+    }
+  };
 
   const { totalGasCost } = useGasFee();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -224,13 +173,13 @@ export default function TokenInput(props: {
     if (isDisabled) return null;
     if (tokenData) {
       if (inToken && selectedInToken) {
-        if (mode === "Pool") {
+        if (mode === 'Pool') {
           setSelectedInToken({
             ...selectedInToken,
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
-          setLastFocused("LeftInput");
+          setLastFocused('LeftInput');
           return setTimeout(() => {
             //@ts-ignore
             inputRef?.current?.focus();
@@ -240,26 +189,21 @@ export default function TokenInput(props: {
         }
         if (isETH(selectedInToken)) {
           const parsedAmount =
-            Number(
-              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
-            ) -
+            Number(tokenData.data.parsedBalanceWithoutCommafied.replaceAll(',', '')) -
             //deduct ETH for gasFee to swap on ETH pair
             Number(
-              mode === "Swap"
+              mode === 'Swap'
                 ? totalGasCost
                 : // ? layer === "L1"
                   //   ? 0.01
                   //   : 0.001 + Number(totalGasCost)
-                  totalGasCost ?? 0.001
+                  totalGasCost ?? 0.001,
             ) -
-            (mode === "Withdraw" ? 0.00025 : 0);
+            (mode === 'Withdraw' ? 0.00025 : 0);
 
           const isMinus = parsedAmount <= 0;
 
-          const amountBN = ethers.utils.parseUnits(
-            isMinus ? "0" : parsedAmount.toString(),
-            18
-          );
+          const amountBN = ethers.utils.parseUnits(isMinus ? '0' : parsedAmount.toString(), 18);
           // if (switchable && selectedOutToken) {
           //   setSelectedOutToken({
           //     ...selectedOutToken,
@@ -271,7 +215,7 @@ export default function TokenInput(props: {
           return setSelectedInToken({
             ...selectedInToken,
             amountBN: amountBN.toBigInt(),
-            parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+            parsedAmount: isMinus ? '0' : parsedAmount.toString(),
           });
         }
         return setSelectedInToken({
@@ -281,13 +225,13 @@ export default function TokenInput(props: {
         });
       }
       if (inToken === false && selectedOutToken) {
-        if (mode === "Pool") {
+        if (mode === 'Pool') {
           setSelectedOutToken({
             ...selectedOutToken,
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
-          setLastFocused("RightInput");
+          setLastFocused('RightInput');
           return setTimeout(() => {
             //@ts-ignore
             inputRef?.current?.focus();
@@ -301,29 +245,20 @@ export default function TokenInput(props: {
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
       }
-      return console.error("a input field not found");
+      return console.error('a input field not found');
     }
-  }, [
-    tokenData,
-    inToken,
-    selectedInToken,
-    selectedOutToken,
-    totalGasCost,
-    mode,
-    layer,
-    isDisabled,
-  ]);
+  }, [tokenData, inToken, selectedInToken, selectedOutToken, totalGasCost, mode, layer, isDisabled]);
 
   const handleFocus = () => {
     setIsFocused(true);
-    setLastFocused(inToken ? "LeftInput" : "RightInput");
+    setLastFocused(inToken ? 'LeftInput' : 'RightInput');
   };
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
     setIsInputAmount(false);
     //for pool's price and amount on liquidity
-    if (mode === "Pool") {
+    if (mode === 'Pool') {
       if (inToken && selectedOutToken) {
         if (!dependentAmount) {
           return setSelectedOutToken({
@@ -332,10 +267,7 @@ export default function TokenInput(props: {
             parsedAmount: null,
           });
         }
-        const parsedAmount = ethers.utils.parseUnits(
-          dependentAmount,
-          selectedOutToken.decimals
-        );
+        const parsedAmount = ethers.utils.parseUnits(dependentAmount, selectedOutToken.decimals);
 
         return setSelectedOutToken({
           ...selectedOutToken,
@@ -351,10 +283,7 @@ export default function TokenInput(props: {
             parsedAmount: null,
           });
         }
-        const parsedAmount = ethers.utils.parseUnits(
-          dependentAmount,
-          selectedInToken.decimals
-        );
+        const parsedAmount = ethers.utils.parseUnits(dependentAmount, selectedInToken.decimals);
 
         return setSelectedInToken({
           ...selectedInToken,
@@ -367,24 +296,21 @@ export default function TokenInput(props: {
 
   const valueProp = useMemo(() => {
     if (
-      (mode === "Wrap" ||
-        mode === "Unwrap" ||
-        mode === "ETH-Wrap" ||
-        mode === "ETH-Unwrap") &&
+      (mode === 'Wrap' || mode === 'Unwrap' || mode === 'ETH-Wrap' || mode === 'ETH-Unwrap') &&
       inTokenFromHook?.parsedAmount
     ) {
       return inTokenFromHook.parsedAmount;
     }
 
-    if (mode === "Swap" && inToken === false) {
-      return trimAmount(amountOut, 8) ?? "";
+    if (mode === 'Swap' && inToken === false) {
+      return trimAmount(amountOut, 8) ?? '';
     }
 
-    if (mode === "Pool" && dependentAmount) {
-      if (lastFocused === "LeftInput" && !inToken) {
+    if (mode === 'Pool' && dependentAmount) {
+      if (lastFocused === 'LeftInput' && !inToken) {
         return trimAmount(dependentAmount, 8);
       }
-      if (lastFocused === "RightInput" && inToken) {
+      if (lastFocused === 'RightInput' && inToken) {
         return trimAmount(dependentAmount, 8);
       }
     }
@@ -397,7 +323,7 @@ export default function TokenInput(props: {
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
         : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : defaultValue || "";
+      : defaultValue || '';
   }, [
     inToken,
     amountOut,
@@ -414,15 +340,12 @@ export default function TokenInput(props: {
 
   const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedInToken?.tokenName as string,
-    amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(selectedInToken?.parsedAmount?.replaceAll(',', '')),
   });
 
   const outAmount = useMemo(() => {
     if (
-      (mode === "Wrap" ||
-        mode === "Unwrap" ||
-        mode === "ETH-Wrap" ||
-        mode === "ETH-Unwrap") &&
+      (mode === 'Wrap' || mode === 'Unwrap' || mode === 'ETH-Wrap' || mode === 'ETH-Unwrap') &&
       inTokenInfo?.parsedAmount
     ) {
       return inTokenInfo.parsedAmount;
@@ -442,24 +365,21 @@ export default function TokenInput(props: {
     if (!inToken && token1PriceWithAmount) {
       return token1PriceWithAmount;
     }
-    return "0.00";
+    return '0.00';
   }, [token0PriceWithAmount, token1PriceWithAmount, inToken]);
 
   useEffect(() => {
-    if (mode === "Pool") return;
+    if (mode === 'Pool') return;
     if (!inToken && selectedOutToken && amountOut) {
       const value: string = amountOut;
-      if (value === "" || value === null) {
+      if (value === '' || value === null) {
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: null,
           parsedAmount: null,
         });
       }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
+      const parsedAmount = ethers.utils.parseUnits(value, selectedOutToken.decimals);
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -470,14 +390,50 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     if (inToken && selectedInToken && tokenData) {
-      return setIsMax(
-        tokenData.data.balanceBN.value === selectedInToken.amountBN
-      );
+      if (selectedInToken.tokenSymbol === 'ETH') {
+        const parsedAmount =
+          Number(tokenData.data.parsedBalanceWithoutCommafied.replaceAll(',', '')) -
+          //deduct ETH for gasFee to swap on ETH pair
+          Number(
+            mode === 'Swap'
+              ? totalGasCost
+              : // ? layer === "L1"
+                //   ? 0.01
+                //   : 0.001 + Number(totalGasCost)
+                totalGasCost ?? 0.001,
+          ) -
+          (mode === 'Withdraw' ? 0.00025 : 0);
+        const isMinus = parsedAmount <= 0;
+
+        const amountBN = ethers.utils.parseUnits(isMinus ? '0' : parsedAmount.toString(), 18);
+
+        return setIsMax(amountBN.toBigInt() === selectedInToken.amountBN);
+      }
+
+      return setIsMax(tokenData.data.balanceBN.value === selectedInToken.amountBN);
     }
     if (!inToken && selectedOutToken && tokenData) {
-      return setIsMax(
-        tokenData.data.balanceBN.value === selectedOutToken.amountBN
-      );
+      if (selectedOutToken.tokenSymbol === 'ETH') {
+        const parsedAmount =
+          Number(tokenData.data.parsedBalanceWithoutCommafied.replaceAll(',', '')) -
+          //deduct ETH for gasFee to swap on ETH pair
+          Number(
+            mode === 'Swap'
+              ? totalGasCost
+              : // ? layer === "L1"
+                //   ? 0.01
+                //   : 0.001 + Number(totalGasCost)
+                totalGasCost ?? 0.001,
+          ) -
+          (mode === 'Withdraw' ? 0.00025 : 0);
+        const isMinus = parsedAmount <= 0;
+
+        const amountBN = ethers.utils.parseUnits(isMinus ? '0' : parsedAmount.toString(), 18);
+
+        return setIsMax(amountBN.toBigInt() === selectedOutToken.amountBN);
+      }
+
+      return setIsMax(tokenData.data.balanceBN.value === selectedOutToken.amountBN);
     }
   }, [selectedInToken, selectedOutToken, inToken, tokenData]);
 
@@ -502,117 +458,104 @@ export default function TokenInput(props: {
   useEffect(() => {
     inputRef?.current?.focus();
     if (ref.current && inToken && mobileView) {
-      ref.current.style.borderColor = "#313442";
+      ref.current.style.borderColor = '#313442';
     }
   }, [inputRef, mobileView]);
 
   return (
-    <Flex
-      flexDir={"column"}
-      justifyContent={"space-between"}
-      pb={"16px"}
-      w={"100%"}
-      rowGap={"6px"}
-      {...style}
-    >
+    <Flex flexDir={'column'} justifyContent={'space-between'} pb={'16px'} w={'100%'} rowGap={'6px'} {...style}>
       {triggerForSpinner && subMode.add ? (
-        <Flex w={"100%"} h={"27px"}>
+        <Flex w={'100%'} h={'27px'}>
           <GradientSpinner />
         </Flex>
       ) : (
         <Flex flexDir={'column'}>
           {/* {mobileView && <Warning />} */}
           <Flex
-            py={{ base: "7px", lg: 0 }}
-            px={{ base: "10px", lg: 0 }}
-            bg={{ base: "#0F0F12", lg: "none" }}
-            rounded={{ base: "8px", lg: 0 }}
-            align={{ base: "center", lg: "start" }}
-            border={"1px solid transparent"}
-            _hover={{ border: mobileView ? "1px solid #313442" : "" }}
+            py={{ base: '7px', lg: 0 }}
+            px={{ base: '10px', lg: 0 }}
+            bg={{ base: '#0F0F12', lg: 'none' }}
+            rounded={{ base: '8px', lg: 0 }}
+            align={{ base: 'center', lg: 'start' }}
+            border={'1px solid transparent'}
+            _hover={{ border: mobileView ? '1px solid #313442' : '' }}
             ref={ref}
-            justify={"space-between"}
+            justify={'space-between'}
+            gap={0}
           >
-          
-          {mobileView && !valueProp && !inToken ? (
-            <Flex h={"27px"} w={"20px"} >
-              <GradientSpinner />
-            </Flex>
-            ) :
-            <Flex flexDir={'column'}>
-              {/* <Warning /> */}
-              <Input
-                id={inToken ? "LeftInput" : "RightInput"}
-                w={"100%"}
-                h={"27px"}
-                m={0}
-                p={0}
-                border={{}}
-                _active={{}}
-                _focus={{ boxShadow: "none !important" }}
-                placeholder={inToken ? placeholder || "0" : ""}
-                _placeholder={{
-                  color: mobileView ? "#A0A3AD !important" : "#C6C6D1 !important",
-                  fontSize: 14
-                }}
-                color={
-                  mobileView && isBalanceOver
-                    ? "#DD3A44"
-                    : mobileView && !inToken
-                    ? "#A0A3AD !important"
-                    : "#FFFFFF"
-                }
-                fontSize={{ base: 16, lg: 28 }}
-                fontWeight={{ base: 500, lg: 600 }}
-                isDisabled={isDisabled}
-                _disabled={{ color: "#A0A3AD" }}
-                value={valueProp}
-                ref={customRef ? customRef : inputRef}
-                onChange={onChange}
-                onKeyDown={onKeyDown}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
-                autoComplete="off"
-              ></Input>
-            </Flex>
-            }
-
-            {mobileView &&
-              (marketPrice === "0.00" && !inToken ? (
-                <Flex w={"20px"} h={"27px"} mr={"80px"}>
-                  <GradientSpinner />
-                </Flex>
-              ) : (
-                <Text
-                  mr={"12px"}
-                  fontSize={14}
-                  color={"#A0A3AD"}
-                >{`$${marketPrice}`}</Text>
-              ))}
-            {hasMaxButton && !isMax && (
-              <Button
-                w={"40px"}
-                h={"22px"}
-                bgColor={"#007AFF"}
-                fontSize={12}
-                fontWeight={700}
-                _hover={{}}
-                _active={{}}
-                color={"#fff"}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  onMax();
-                }}
-              >
-                Max
-              </Button>
+            {mobileView && !valueProp && !inToken ? (
+              <Flex h={'27px'} w={'20px'}>
+                <GradientSpinner />
+              </Flex>
+            ) : (
+              <Flex flexDir={'column'}>
+                {/* <Warning /> */}
+                <Input
+                  id={inToken ? 'LeftInput' : 'RightInput'}
+                  w={'100%'}
+                  h={'27px'}
+                  m={0}
+                  p={0}
+                  border={{}}
+                  _active={{}}
+                  _focus={{ boxShadow: 'none !important' }}
+                  placeholder={inToken ? placeholder || '0' : ''}
+                  _placeholder={{
+                    color: mobileView ? '#A0A3AD !important' : '#C6C6D1 !important',
+                    fontSize: 14,
+                  }}
+                  color={
+                    mobileView && isBalanceOver ? '#DD3A44' : mobileView && !inToken ? '#A0A3AD !important' : '#FFFFFF'
+                  }
+                  fontSize={{ base: 16, lg: 28 }}
+                  fontWeight={{ base: 500, lg: 600 }}
+                  isDisabled={isDisabled}
+                  _disabled={{ color: '#A0A3AD' }}
+                  value={valueProp}
+                  ref={customRef ? customRef : inputRef}
+                  onChange={onChange}
+                  onKeyDown={onKeyDown}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  style={{ caretColor: mobileView ? '#007AFF' : '#FFFFFF' }}
+                  autoComplete="off"
+                ></Input>
+              </Flex>
             )}
+
+            <HStack>
+              {mobileView &&
+                (marketPrice === '0.00' && !inToken ? (
+                  <Flex w={'20px'} h={'27px'} mr={'80px'}>
+                    <GradientSpinner />
+                  </Flex>
+                ) : (
+                  <Text mr={'12px'} fontSize={14} color={'#A0A3AD'}>{`$${marketPrice}`}</Text>
+                ))}
+              {hasMaxButton && !isMax && (
+                <Button
+                  w={'40px'}
+                  h={'22px'}
+                  bgColor={'#007AFF'}
+                  fontSize={12}
+                  fontWeight={700}
+                  _hover={{}}
+                  _active={{}}
+                  color={'#fff'}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    onMax();
+                  }}
+                >
+                  Max
+                </Button>
+              )}
+            </HStack>
           </Flex>
         </Flex>
       )}
 
-      <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
+      <Flex w={'100%'} justifyContent={'flex-start'} columnGap={'4px'}>
         {/* {mobileView && isBalanceOver ? (
           <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
             <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
@@ -631,7 +574,7 @@ export default function TokenInput(props: {
             <></>
           )
         ) : (
-          <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+          <Text fontSize={12} fontWeight={500} color={'#ffffff'} opacity={0.8}>
             {`$${marketPrice}`}
           </Text>
         )}

@@ -23,7 +23,7 @@ const MobileOutToken = () => {
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: outToken?.tokenName as string,
-    amount: Number(outToken?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(outToken?.parsedAmount?.replaceAll(',', '')),
   });
 
   const tokenColorCode = useMemo(() => {
@@ -125,11 +125,29 @@ const MobileOutToken = () => {
 
       {outToken?.tokenName && (
         <Box mt="12px">
-          <Text color="#A0A3AD" fontSize={22} fontWeight={700} lineHeight="normal">
+          <Text
+            color="#A0A3AD"
+            fontSize={22}
+            fontWeight={700}
+            lineHeight="normal"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            maxWidth="148px"
+          >
             {outToken?.parsedAmount || '0.0'}
           </Text>
 
-          <Text color="#A0A3AD" fontSize={14} fontWeight={500} lineHeight="18px">
+          <Text
+            color="#A0A3AD"
+            fontSize={14}
+            fontWeight={500}
+            lineHeight="18px"
+            textOverflow="ellipsis"
+            whiteSpace="nowrap"
+            overflow="hidden"
+            maxWidth="148px"
+          >
             ${tokenPriceWithAmount || '0.00'}
           </Text>
         </Box>

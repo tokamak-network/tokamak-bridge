@@ -242,20 +242,21 @@ export function SelectCardModal() {
 
   const handleClose = useCallback(() => {
     onCloseTokenModal();
-    if (mobileView && selectedInToken?.parsedAmount === null) setSelectedInToken(null);
+    // if (mobileView && selectedInToken?.parsedAmount === null) setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
 
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
       onClose={mobileView ? handleClose : onCloseTokenModal}
+      autoFocus={false}
     >
       <ModalOverlay bg="rgb(0 0 0 / 95%)" />
       <ModalContent
         minW={'100%'}
         maxW={'100%'}
         h={{
-          base: isTokenSearch ? "calc(100% - 60px)" : "fit-content",
+          base: isTokenSearch ? 'calc(100% - 60px)' : 'fit-content',
           lg: '100%',
         }}
         m={{ base: 'none', lg: 0 }}

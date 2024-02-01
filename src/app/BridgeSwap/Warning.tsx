@@ -1,23 +1,23 @@
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { Flex, Link, Text } from "@chakra-ui/react";
-import Image from "next/image";
-import WARNING_ICON from "assets/icons/warning.svg";
-import WARNING_RED_ICON from "assets/icons/warningRed.svg";
+import { useInOutTokens } from '@/hooks/token/useInOutTokens';
+import { Flex, Link, Text } from '@chakra-ui/react';
+import Image from 'next/image';
+import WARNING_ICON from 'assets/icons/warning.svg';
+import WARNING_RED_ICON from 'assets/icons/warningRed.svg';
 
-import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
-import useInputBalanceCheck from "@/hooks/token/useInputCheck";
-import { useGetMode } from "@/hooks/mode/useGetMode";
-import { WarningText } from "@/components/ui/WarningText";
-import useIsTon from "@/hooks/token/useIsTon";
-import {
-  GOERLI_CONTRACTS,
-  MAINNET_CONTRACTS,
-  TOKAMAK_CONTRACTS,
-} from "@/constant/contracts";
-import useConnectedNetwork from "@/hooks/network";
+import useBridgeSupport from '@/hooks/bridge/useBridgeSupport';
+import useInputBalanceCheck from '@/hooks/token/useInputCheck';
+import { useGetMode } from '@/hooks/mode/useGetMode';
+import { WarningText } from '@/components/ui/WarningText';
+import useIsTon from '@/hooks/token/useIsTon';
+import { GOERLI_CONTRACTS, MAINNET_CONTRACTS, TOKAMAK_CONTRACTS } from '@/constant/contracts';
+import useConnectedNetwork from '@/hooks/network';
 // import { isETH } from "@/utils/token/isETH";
 
-export default function Warning() {
+interface WarningProps {
+  fallbackComponent?: any;
+}
+
+export default function Warning({ fallbackComponent }: WarningProps) {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
   const { inToken, outToken } = useInOutTokens();
   const { isBalanceOver } = useInputBalanceCheck();
@@ -44,24 +44,14 @@ export default function Warning() {
   //   );
   // }
 
-  if (mode === "Swap" && isTONatPair) {
+  if (mode === 'Swap' && isTONatPair) {
     if (
       outToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS ||
       outToken?.tokenAddress === GOERLI_CONTRACTS.TON_ADDRESS
     ) {
-      return (
-        <WarningText
-          label={"TON is not supported to swap on L1. Please swap to WTON."}
-        />
-      );
+      return <WarningText label={'TON is not supported to swap on L1. Please swap to WTON.'} />;
     }
-    return (
-      <WarningText
-        label={
-          "TON is not supported to swap on L1. Please wrap to WTON and swap."
-        }
-      />
-    );
+    return <WarningText label={'TON is not supported to swap on L1. Please wrap to WTON and swap.'} />;
   }
 
   if (isNotSupportForBridge) {
@@ -72,7 +62,7 @@ export default function Warning() {
       return (
         <WarningText
           label={`Cannot deposit WETH to ${
-            isConnectedToMainNetwork ? "Titan" : "Titan Goerli"
+            isConnectedToMainNetwork ? 'Titan' : 'Titan Goerli'
           }. Unwrap to ETH and deposit.`}
         />
       );
@@ -80,26 +70,22 @@ export default function Warning() {
       inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS ||
       inToken?.tokenAddress === GOERLI_CONTRACTS.WTON_ADDRESS
     )
-      return (
-        <WarningText
-          label={`WTON is not supported on L2. Please unwrap to TON and deposit`}
-        />
-      );
+      return <WarningText label={`WTON is not supported on L2. Please unwrap to TON and deposit`} />;
 
     if (inToken?.tokenAddress === TOKAMAK_CONTRACTS.WETH_ADDRESS)
       return (
         <WarningText
           label={`Cannot withdraw WETH to ${
-            isConnectedToMainNetwork ? "Ethereum" : "Goerli"
+            isConnectedToMainNetwork ? 'Ethereum' : 'Goerli'
           }. Unwrap to ETH and withdraw.`}
         />
       );
   }
 
-  if (mode === "Swap" && isNotSupportForSwap) {
+  if (mode === 'Swap' && isNotSupportForSwap) {
     return (
-      <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-        <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+      <Flex color={'#DD3A44'} fontSize={12} columnGap={'10px'}>
+        <Image src={WARNING_RED_ICON} alt={'WARNING_ICON'} />
         <Text>Swap route not found on this network</Text>
       </Flex>
     );
@@ -107,12 +93,12 @@ export default function Warning() {
 
   if (isBalanceOver) {
     return (
-      <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-        <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+      <Flex color={'#DD3A44'} fontSize={12} columnGap={'10px'}>
+        <Image src={WARNING_RED_ICON} alt={'WARNING_ICON'} />
         <Text>Insufficient ({inToken?.tokenSymbol}) balance </Text>
       </Flex>
     );
   }
 
-  return null;
+  return fallbackComponent || null;
 }
