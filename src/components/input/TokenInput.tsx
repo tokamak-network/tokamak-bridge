@@ -46,7 +46,7 @@ export default function TokenInput(props: {
   style?: {};
   customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
-  onClose: () => void;
+  onClose?: () => void;
 }) {
   const {
     inToken,
