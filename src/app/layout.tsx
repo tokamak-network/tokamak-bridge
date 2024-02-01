@@ -13,7 +13,7 @@ import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
 import Script from "next/script";
 
-//Test Commit for Vercel
+//Test Commit for Vercel : test p2
 //Test build for new uniswap contracts
 //Oct 25, 2023
 
