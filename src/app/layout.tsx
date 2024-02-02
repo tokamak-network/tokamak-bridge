@@ -15,7 +15,6 @@ import Script from "next/script";
 
 //Test Commit for Vercel : test p2
 //Test build for new uniswap contracts
-//Oct 25, 2023
 
 export const GlobalComponents = () => {
   return (
