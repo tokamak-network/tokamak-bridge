@@ -246,7 +246,7 @@ export function SelectCardModal() {
             h={{ base: "100%", lg: "486px" }}
             bgColor={{ base: "#1F2128", lg: "transparent" }}
             rounded={"24px 24px 0px 0px"}
-            padding={{ base: "16px 10px", lg: 0 }}
+            padding={{ base: "16px 10px 0px 10px", lg: 0 }}
             // borderRadius={"150px 150px 0px 0px"}
             rowGap={"17.43px"}
             flexDir={"column"}
