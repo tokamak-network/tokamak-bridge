@@ -28,6 +28,7 @@ import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
 import SearchIcon from "assets/icons/search.svg";
 import CancelIcon from "assets/icons/close.svg";
+import { isIOS } from 'react-device-detect';
 
 enum CardOverlay {
   Middle = 100,
@@ -207,6 +208,7 @@ export function SelectCardModal() {
       setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
 
+  console.log(isIOS);
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
@@ -218,7 +220,7 @@ export function SelectCardModal() {
         minW={"100%"}
         maxW={"100%"}
         h={{
-          base: isInputAmount || isTokenSearch ? "calc(100% - 60px)" : "fit-content",
+          base: (isInputAmount && !isIOS || isTokenSearch && !isIOS) ? "calc(100% - 60px)" : "fit-content",
           lg: "100%",
         }}
         m={{ base: "none", lg: 0 }}
