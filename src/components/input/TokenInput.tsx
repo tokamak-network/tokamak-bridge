@@ -504,7 +504,7 @@ export default function TokenInput(props: {
     setTimeout(() => {
       customRef?.current?.focus();
       customRef?.current?.click();
-    }, 500);
+    }, 300);
   }, [customRef, isInputAmount]);
 
   useEffect(() => {
