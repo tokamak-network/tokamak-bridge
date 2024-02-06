@@ -140,19 +140,24 @@ export function CardCarouselMobile() {
 
   useEffect(() => {
     if (isOpen) {
-      const isSelectedToken = (el: TokenInfo) =>
-        el.tokenName ===
-        (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
+      
+      // move TON as the first item of token list
+      const defaultTON = (el: TokenInfo) => el.tokenSymbol === "TON";
       move(
         filteredTokenList,
-        filteredTokenList.findIndex(isSelectedToken)
+        filteredTokenList.findIndex(defaultTON)
       );
-
-      // const resultTokenList = resultTokenArr.filter((token) =>
-      //   isOpen === "INPUT"
-      //     ? token?.tokenName !== outToken?.tokenName
-      //     : token?.tokenName !== inToken?.tokenName
-      // );
+      
+      // set the default token as the one selected previous
+      if (inToken || outToken) {
+        const isSelectedToken = (el: TokenInfo) =>
+          el.tokenName ===
+          (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
+        move(
+          filteredTokenList,
+          filteredTokenList.findIndex(isSelectedToken)
+        );
+      }
       setResultTokenArr(filteredTokenList);
     }
   }, []);
