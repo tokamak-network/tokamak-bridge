@@ -30,12 +30,6 @@ import SearchIcon from "assets/icons/search.svg";
 import CancelIcon from "assets/icons/close.svg";
 import { isIOS } from 'react-device-detect';
 
-enum CardOverlay {
-  Middle = 100,
-  Seconds = 90,
-  Sides = 80,
-}
-
 export function SelectCardButton(props: { field: Field }) {
   const { field } = props;
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
@@ -208,7 +202,6 @@ export function SelectCardModal() {
       setSelectedInToken(null);
   }, [selectedInToken?.parsedAmount, mobileView]);
 
-  console.log(isIOS);
   return (
     <Modal
       isOpen={isInTokenOpen || isOutTokenOpen}
