@@ -225,7 +225,8 @@ export function SelectCardModal() {
         p={0}
         bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
-      >
+        borderRadius={"24px 24px 0px 0px"}
+        >
         <ModalBody
           minW={"100%"}
           maxW={"100%"}
@@ -236,12 +237,11 @@ export function SelectCardModal() {
           bg={"transparent"}
           id="out-area"
           zIndex={1}
-        >
+          >
           <Flex
             w={"1362px"}
             h={{ base: "100%", lg: "486px" }}
             bgColor={{ base: "#1F2128", lg: "transparent" }}
-            rounded={"24px 24px 0px 0px"}
             padding={{ base: "16px 10px 0px 10px", lg: 0 }}
             // borderRadius={"150px 150px 0px 0px"}
             rowGap={"17.43px"}
