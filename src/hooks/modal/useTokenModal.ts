@@ -3,8 +3,8 @@ import {
   selectedOutTokenStatus,
   tokenModalStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { searchTokenStatus, isInputTokenAmount } from "@/recoil/card/selectCard/searchToken";
-import { useCallback, useEffect } from "react";
+import { searchTokenStatus, isInputTokenAmount, isOutputTokenAmount } from "@/recoil/card/selectCard/searchToken";
+import { useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
@@ -12,9 +12,6 @@ import {
   bannerStatus,
 } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
-import { getWETHAddress, isETH } from "@/utils/token/isETH";
-import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
-import useMediaView from "../mediaView/useMediaView";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
@@ -22,10 +19,16 @@ export default function useTokenModal() {
   const [, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const status = useRecoilValue(bannerStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
-  const { mobileView } = useMediaView()
-  const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
-  const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
+  const [, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
 
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
+
+  const { chainName } = useConnectedNetwork();
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
 
@@ -43,17 +46,12 @@ export default function useTokenModal() {
   const onCloseTokenModal = () => {
     setSearchToken(null);
     setTokenModal({ isOpen: null, modalData: null });
-    // setIsInputAmount(false);
+    setIsOutputAmount(false);
+
+    if (!selectedInToken?.amountBN) {
+      setIsInputAmount(false);
+    }
   };
-
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
-
-  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
-  );
-  const { chainName } = useConnectedNetwork();
 
   const setSelectedToken = useCallback(
     (

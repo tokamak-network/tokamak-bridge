@@ -16,8 +16,8 @@ import {
   tokenModalStatus,
 } from "@/recoil/bridgeSwap/atom";
 import {
-  IsSearchToken,
   isInputTokenAmount,
+  isOutputTokenAmount
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 
@@ -29,8 +29,8 @@ const CarouselCard = React.memo((props) => {
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
 
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
-  const [isTokenSearch] = useRecoilState(IsSearchToken);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
+  const [isOutputAmount, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -40,22 +40,8 @@ const CarouselCard = React.memo((props) => {
   );
 
   useEffect(() => {
-    if (slideIndex === 0 && tokenData && isInputAmount) {
-      const inToken = selectedInToken;
-      isInTokenOpen && chainName
-        ? setSelectedInToken({
-          ...tokenData,
-          amountBN: inToken?.amountBN || null,
-          parsedAmount: inToken?.parsedAmount || null,
-          tokenAddress: inToken?.tokenAddress || null,
-        })
-        : chainName &&
-        setSelectedOutToken({
-          ...tokenData,
-          amountBN: null,
-          parsedAmount: null,
-          tokenAddress: tokenData.address[chainName],
-        });
+    if (slideIndex === 0 && tokenData && isOutputAmount && isOutTokenOpen) {
+      setIsOutputAmount(false);
     }
   }, [slideIndex]);
 
@@ -84,8 +70,14 @@ const CarouselCard = React.memo((props) => {
           //   onCloseTokenModal();
         }}
         onClick={(e: any) => {
+          console.log(isOutTokenOpen);
           if (slideIndex === 0) {
-            setIsInputAmount(true);
+            if (isInTokenOpen) {
+              setIsInputAmount(true);
+            }
+            if (isOutTokenOpen) {
+              setIsOutputAmount(true);
+            }
             const inToken = selectedInToken;
             setSelectedToken(tokenData, true)
             isInTokenOpen && chainName
@@ -105,7 +97,7 @@ const CarouselCard = React.memo((props) => {
 
             if (
               (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
-              (isOutTokenOpen && isInputAmount)
+              (isOutTokenOpen && isOutputAmount)
             ) {
               onCloseTokenModal();
             }
@@ -140,7 +132,6 @@ export function CardCarouselMobile() {
 
   useEffect(() => {
     if (isOpen) {
-      
       // move TON as the first item of token list
       const defaultTON = (el: TokenInfo) => el.tokenSymbol === "TON";
       move(

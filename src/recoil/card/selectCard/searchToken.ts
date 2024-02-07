@@ -91,3 +91,8 @@ export const isInputTokenAmount = atom<Boolean>({
   key: "isInputToken",
   default: false
 });
+
+export const isOutputTokenAmount = atom<Boolean>({
+  key: "isOutputToken",
+  default: false
+});

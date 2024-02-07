@@ -11,6 +11,7 @@ import {
   searchTokenStatus,
   IsSearchToken,
   isInputTokenAmount,
+  isOutputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 import { Overlay_Index } from "@/types/style/overlayIndex";
@@ -174,6 +175,8 @@ export function SelectCardModal() {
     selectedInTokenStatus
   );
   const [isInputAmount] = useRecoilState(isInputTokenAmount);
+  const [isOutputAmount] = useRecoilState(isOutputTokenAmount);
+
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
@@ -281,7 +284,7 @@ export function SelectCardModal() {
                 // onBlur={handleBlur}
                 // px={"10px"}
                 >
-                  {isInputAmount && (
+                  {((isInputAmount && isInTokenOpen) || (isOutputAmount && isOutTokenOpen)) && (
                     <TokenInput
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}

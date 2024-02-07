@@ -326,7 +326,7 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    setIsInputAmount(false);
+    // setIsInputAmount(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {
