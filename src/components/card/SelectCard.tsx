@@ -72,7 +72,8 @@ const SearchToken = () => {
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [, setIsInputAmount] = useRecoilState(isInputTokenAmount);
 
   useEffect(() => {
     setTimeout(() => {
@@ -88,6 +89,7 @@ const SearchToken = () => {
 
   const handleFocus = () => {
     setTokenSearch(true);
+    setIsInputAmount(false);
   }
 
   const handleBlur = () => {
@@ -223,7 +225,7 @@ export function SelectCardModal() {
         mt={"auto"}
         mb={0}
         p={0}
-        pb={{ base: isTokenSearch && isIOS ? "30px" : "0px" }}
+        pb={{ base: isTokenSearch && isIOS ? "40px" : "0px" }}
         bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
         borderRadius={"24px 24px 0px 0px"}

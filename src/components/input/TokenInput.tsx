@@ -29,12 +29,10 @@ import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
-import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import {
   IsSearchToken,
   isInputTokenAmount,
-  searchTokenStatus,
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
 
@@ -503,7 +501,6 @@ export default function TokenInput(props: {
   useEffect(() => {
     setTimeout(() => {
       customRef?.current?.focus();
-      customRef?.current?.click();
     }, 300);
   }, [customRef, isInputAmount]);
 

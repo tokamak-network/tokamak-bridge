@@ -70,7 +70,6 @@ const CarouselCard = React.memo((props) => {
           //   onCloseTokenModal();
         }}
         onClick={(e: any) => {
-          console.log(isOutTokenOpen);
           if (slideIndex === 0) {
             if (isInTokenOpen) {
               setIsInputAmount(true);
