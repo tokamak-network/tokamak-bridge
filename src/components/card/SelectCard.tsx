@@ -73,12 +73,16 @@ const SearchToken = () => {
   const ref = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState<string>("");
   const [, setTokenSearch] = useRecoilState(IsSearchToken);
-  const [, setIsInputAmount] = useRecoilState(isInputTokenAmount);
+  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
+  const [selectedInToken] = useRecoilState(selectedInTokenStatus);
 
   useEffect(() => {
     setTimeout(() => {
       ref.current?.blur();
-    }, 0);
+      if (selectedInToken?.amountBN) {
+        setIsInputAmount(true);
+      }
+    }, 20);
   }, []);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -89,6 +93,7 @@ const SearchToken = () => {
 
   const handleFocus = () => {
     setTokenSearch(true);
+    setIsInputAmount(false);
   }
 
   const handleBlur = () => {
