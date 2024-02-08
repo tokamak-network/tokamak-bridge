@@ -77,6 +77,9 @@ const CarouselCard = React.memo((props) => {
             if (isOutTokenOpen) {
               setIsOutputAmount(true);
             }
+
+            console.log({isOutTokenOpen})
+            console.log({isOutputAmount})
             const inToken = selectedInToken;
             setSelectedToken(tokenData, true)
             isInTokenOpen && chainName

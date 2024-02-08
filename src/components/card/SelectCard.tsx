@@ -287,19 +287,19 @@ export function SelectCardModal() {
                 // onBlur={handleBlur}
                 // px={"10px"}
                 >
-                  {((isInputAmount && isInTokenOpen) || (isOutputAmount && isOutTokenOpen)) && (
+                  {((isInputAmount && isInTokenOpen) || (isOutputAmount && isOutTokenOpen)) ? 
                     <TokenInput
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}
-                      style={isInputAmount ? "" : { display: "none" }}
+                      style={isInputAmount || isOutputAmount ? "" : { display: "none" }}
                       customRef={ref}
                       placeholder={"input amount"}
                       isDisabled={isOpen === "INPUT" ? false : true}
                       defaultValue={
                         isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""
                       }
-                    />
-                  )}
+                    /> : <></>
+                  }
                   {/* <Flex
                     minW={"40px"}
                     minH={"40px"}
