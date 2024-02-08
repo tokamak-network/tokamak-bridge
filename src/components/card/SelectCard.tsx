@@ -89,7 +89,6 @@ const SearchToken = () => {
 
   const handleFocus = () => {
     setTokenSearch(true);
-    setIsInputAmount(false);
   }
 
   const handleBlur = () => {
