@@ -175,7 +175,7 @@ export function SelectCardModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
   const { mobileView, pcView } = useMediaView();
   const { isOpen } = useRecoilValue(tokenModalStatus);
-  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
   const ref = useRef<HTMLInputElement>(null);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
@@ -229,7 +229,7 @@ export function SelectCardModal() {
         mt={"auto"}
         mb={0}
         p={0}
-        pb={{ base: isTokenSearch && isIOS ? "40px" : "0px" }}
+        pb={{ base: isTokenSearch && isIOS ? "100px" : "0px" }}
         bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
         borderRadius={"24px 24px 0px 0px"}
@@ -283,6 +283,7 @@ export function SelectCardModal() {
               <>
                 <SearchToken />
                 <CardCarouselMobile />
+                {isIOS && isTokenSearch && <Box h={"40px"}/>}
                 <Flex
                   w={"full"}
                   justify={"center"}

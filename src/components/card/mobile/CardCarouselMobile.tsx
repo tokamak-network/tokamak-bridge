@@ -16,12 +16,15 @@ import {
   tokenModalStatus,
 } from "@/recoil/bridgeSwap/atom";
 import {
+  IsSearchToken,
   isInputTokenAmount,
   isOutputTokenAmount
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 
 import "@/css/carousel.css";
+import { isIOS } from "react-device-detect";
+import { Box } from "@chakra-ui/react";
 
 const CarouselCard = React.memo((props) => {
   const { setSelectedToken, onCloseTokenModal, isInTokenOpen, isOutTokenOpen } =
@@ -118,7 +121,8 @@ export function CardCarouselMobile() {
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const [resultToken, setResultTokenArr] =
     useState<TokenInfo[]>(filteredTokenList);
-  
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
+
   const move = (input: TokenInfo[], from: number) => {
     let numberOfDeletedElm = 1;
 
@@ -138,7 +142,7 @@ export function CardCarouselMobile() {
         filteredTokenList,
         filteredTokenList.findIndex(defaultTON)
       );
-      
+
       // set the default token as the one selected previous
       if (inToken || outToken) {
         const isSelectedToken = (el: TokenInfo) =>
