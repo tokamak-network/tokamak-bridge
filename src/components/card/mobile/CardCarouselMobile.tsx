@@ -78,8 +78,6 @@ const CarouselCard = React.memo((props) => {
               setIsOutputAmount(true);
             }
 
-            console.log({isOutTokenOpen})
-            console.log({isOutputAmount})
             const inToken = selectedInToken;
             setSelectedToken(tokenData, true)
             isInTokenOpen && chainName
@@ -120,7 +118,7 @@ export function CardCarouselMobile() {
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const [resultToken, setResultTokenArr] =
     useState<TokenInfo[]>(filteredTokenList);
-
+  
   const move = (input: TokenInfo[], from: number) => {
     let numberOfDeletedElm = 1;
 
@@ -174,6 +172,7 @@ export function CardCarouselMobile() {
               fadeDistance={0}
               useGrabCursor
               transitionTime={800}
+              disableSwipe={filteredTokenList.length === 1 ? true : false}
             />
           </>
         );
