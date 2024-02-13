@@ -23,6 +23,7 @@ import {
 import useConnectedNetwork from "@/hooks/network";
 
 import "@/css/carousel.css";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const CarouselCard = React.memo((props) => {
   const { setSelectedToken, onCloseTokenModal, isInTokenOpen, isOutTokenOpen } =
@@ -30,6 +31,8 @@ const CarouselCard = React.memo((props) => {
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
 
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
+  const tokenData2: TokenInfo & { isNew?: boolean } = data[(dataIndex - 2 + data.length) % data.length];
+
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [isOutputAmount, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
@@ -44,7 +47,19 @@ const CarouselCard = React.memo((props) => {
     if (slideIndex === 0 && tokenData && isOutputAmount && isOutTokenOpen) {
       setIsOutputAmount(false);
     }
-  }, [slideIndex]);
+
+    if (isInTokenOpen) {
+      const inToken = selectedInToken;
+      setSelectedToken(tokenData2, true)
+      if (isInTokenOpen && chainName)
+        {setSelectedInToken({
+          ...tokenData2,
+          amountBN: inToken?.amountBN || null,
+          parsedAmount: inToken?.parsedAmount || null,
+          tokenAddress: inToken?.tokenAddress || null,
+        })}
+    }
+  }, [slideIndex, dataIndex]);
 
   return (
     tokenData && (
@@ -120,6 +135,7 @@ export function CardCarouselMobile() {
   const [resultToken, setResultTokenArr] =
     useState<TokenInfo[]>(filteredTokenList);
   const [isTokenSearch] = useRecoilState(IsSearchToken);
+  const {tabletView} = useMediaView();
 
   const move = (input: TokenInfo[], from: number) => {
     let numberOfDeletedElm = 1;
@@ -133,14 +149,12 @@ export function CardCarouselMobile() {
   };
 
   useEffect(() => {
-    if (isOpen) {
-      // move TON as the first item of token list
-      const defaultTON = (el: TokenInfo) => el.tokenSymbol === "TON";
-      move(
-        filteredTokenList,
-        filteredTokenList.findIndex(defaultTON)
-      );
+    const first = filteredTokenList.shift();
+    filteredTokenList.push(first!);
+    const second = filteredTokenList.shift();
+    filteredTokenList.push(second!);
 
+    if (isOpen) {
       // set the default token as the one selected previous
       if (inToken || outToken) {
         const isSelectedToken = (el: TokenInfo) =>
@@ -159,7 +173,7 @@ export function CardCarouselMobile() {
     <ResponsiveContainer
       carouselRef={ref}
       render={(parentWidth, carouselRef) => {
-        let currentVisibleSlide = 3;
+        let currentVisibleSlide = parentWidth < 768 ? 3 : 5;
         return (
           <>
             <StackedCarousel
@@ -169,8 +183,8 @@ export function CardCarouselMobile() {
               carouselWidth={parentWidth}
               data={filteredTokenList}
               currentVisibleSlide={currentVisibleSlide}
-              maxVisibleSlide={3}
-              customScales={[1, 0.85, 0.4]}
+              maxVisibleSlide={parentWidth < 768 ? 3 : 5}
+              customScales={parentWidth < 768 ? [1, 0.85, 0.4] : [1, 0.85, 0.7, 0.6] }
               fadeDistance={0}
               useGrabCursor
               transitionTime={800}

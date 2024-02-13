@@ -226,10 +226,11 @@ export function SelectCardModal() {
           lg: "100%",
         }}
         m={{ base: "none", lg: 0 }}
+        mb={0}
         mt={"auto"}
         // mb={0}
         p={0}
-        mb={{ base: isTokenSearch && isIOS ? "110px" : "0px" }}
+        pb={{ base: isTokenSearch && isIOS ? "110px" : "0px" }}
         bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
         borderRadius={"24px 24px 0px 0px"}

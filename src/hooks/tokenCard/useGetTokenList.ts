@@ -8,6 +8,7 @@ import { useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
 import useAddTokenToStorage from "../storage/useAddTokenToStorage";
+import useMediaView from "../mediaView/useMediaView";
 
 export function useGetTokenList() {
   const tokenList = useRecoilValue(searchTokenList);
@@ -15,6 +16,7 @@ export function useGetTokenList() {
   const tokenSelector = useRecoilValue(searchTokenSelector);
   const { chainName } = useConnectedNetwork();
   const { storedTokenList } = useAddTokenToStorage();
+  const { mobileView } = useMediaView();
 
   const tokenListForSelectedNetwork = useMemo(() => {
     const chainN = chainName ?? "MAINNET";
