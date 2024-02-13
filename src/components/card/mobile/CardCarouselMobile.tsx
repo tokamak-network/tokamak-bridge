@@ -49,7 +49,7 @@ const CarouselCard = React.memo((props) => {
   return (
     tokenData && (
       <TokenCard
-        w={"130px"}
+        w={"136px"}
         h={"160px"}
         tokenInfo={tokenData}
         inNetwork={true}
