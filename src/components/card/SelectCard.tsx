@@ -227,9 +227,9 @@ export function SelectCardModal() {
         }}
         m={{ base: "none", lg: 0 }}
         mt={"auto"}
-        mb={0}
+        // mb={0}
         p={0}
-        pb={{ base: isTokenSearch && isIOS ? "100px" : "0px" }}
+        mb={{ base: isTokenSearch && isIOS ? "130px" : "0px" }}
         bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
         borderRadius={"24px 24px 0px 0px"}
@@ -251,7 +251,7 @@ export function SelectCardModal() {
             bgColor={{ base: "#1F2128", lg: "transparent" }}
             padding={{ base: "16px 10px 0px 10px", lg: 0 }}
             // borderRadius={"150px 150px 0px 0px"}
-            rowGap={"17.43px"}
+            rowGap={"13px"}
             flexDir={"column"}
             alignItems={"center"}
             backgroundImage={BgImage}
@@ -283,7 +283,6 @@ export function SelectCardModal() {
               <>
                 <SearchToken />
                 <CardCarouselMobile />
-                {isIOS && isTokenSearch && <Box h={"40px"}/>}
                 <Flex
                   w={"full"}
                   justify={"center"}

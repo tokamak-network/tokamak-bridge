@@ -23,8 +23,6 @@ import {
 import useConnectedNetwork from "@/hooks/network";
 
 import "@/css/carousel.css";
-import { isIOS } from "react-device-detect";
-import { Box } from "@chakra-ui/react";
 
 const CarouselCard = React.memo((props) => {
   const { setSelectedToken, onCloseTokenModal, isInTokenOpen, isOutTokenOpen } =
@@ -51,15 +49,15 @@ const CarouselCard = React.memo((props) => {
   return (
     tokenData && (
       <TokenCard
-        w={"148px"}
-        h={"184px"}
+        w={"130px"}
+        h={"160px"}
         tokenInfo={tokenData}
         inNetwork={true}
         hasInput={true}
         isNew={tokenData?.isNew}
         symbolSize={{
-          w: 60,
-          h: 60,
+          w: 42,
+          h: 42,
         }}
         type={"small"}
         onMouseDown={(e: any) => {
