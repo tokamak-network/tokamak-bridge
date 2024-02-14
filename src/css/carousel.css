@@ -15,6 +15,16 @@
   transform-origin: bottom center!important;
 }
 
-.stacked-carousel-responsive-container {
-  min-width: 430px!important;
+@media (max-width: 768px) {
+  .stacked-carousel-responsive-container {
+    min-width: 430px!important;
+    max-width: 430px!important;
+  }
+}
+
+@media (min-width: 769px) {
+  .stacked-carousel-responsive-container {
+    min-width: 830px!important;
+    max-width: 830px!important;
+  }
 }

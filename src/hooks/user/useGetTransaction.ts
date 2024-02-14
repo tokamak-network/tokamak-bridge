@@ -54,7 +54,6 @@ export default function useGetTransaction() {
     "loading" | "present" | "absent"
   >("loading");
 
-  // const subgraphData = useMemo(() => {},[])
 
   //data from the subgraphs are re-fetched every time the user address, connected layer, or the network status changes
   useEffect(() => {

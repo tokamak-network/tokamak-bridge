@@ -12,6 +12,11 @@ export const transactionModalStatus = atom<
   default: null,
 });
 
+
+export const claimModalStatus = atom<boolean>({
+  key: 'claimModalStatus',
+  default:false
+})
 export const transactionModalOpenStatus = atom<boolean>({
   key: "transactionModalOpenStatus",
   default: false,

@@ -38,9 +38,9 @@ export default function ActionButton() {
   const needToOpenModal = mode === "Deposit" || mode === "Swap";
   const needToOpenWithdrawModal = mode === "Withdraw";
 
-  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
-  // const deactivateButton = isL2;
-  const deactivateButton = status === "Active" && isL2;
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2"; //checks if the action is L2
+ 
+  const deactivateButton = status === "Active" && isL2; //when the maintenance banner is active, this will disable the action button related to all L2 actions
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       const disabled =

@@ -22,6 +22,10 @@ import {
   supportedChain,
 } from "@/types/network/supportedNetwork";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import {
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 
 import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
 import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
@@ -51,6 +55,8 @@ const ActionMethodItem = ({
   const { isConnected } = useAccount();
   const theme = useTheme();
   const router = useRouter();
+  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
+  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   const handleMethodItem = async () => {
     try {
@@ -87,6 +93,8 @@ const ActionMethodItem = ({
         router.push("pools");
       }
       handleClose();
+      setSelectedInToken(null);
+      setSelectedOutToken(null);
       if (isError) {
         console.error(`Couldn't switch network`);
       }
@@ -176,11 +184,11 @@ const ActionOptionModal = () => {
   //       const selectedInNetwork = supportedChain.filter((supportedChain) => {
   //         return supportedChain.chainId === value;
   //       })[0];
-  
+
   //       const selectedOutNetwork = supportedChain.filter((supportedChain) => {
   //         return supportedChain.chainId === outValue;
   //       })[0];
-  
+
   //       if (selectedInNetwork.chainId !== connectedNetwork.connectedChainId) {
   //         return isConnected
   //           ? (await switchNetworkAsync?.(selectedInNetwork.chainId),

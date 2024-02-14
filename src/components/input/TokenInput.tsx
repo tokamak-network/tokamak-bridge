@@ -1,4 +1,3 @@
-import Image from "next/image";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -30,24 +29,31 @@ import GradientSpinner from "../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
-import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import {
   IsSearchToken,
-  searchTokenStatus,
+  isInputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
+import Warning from "@/app/BridgeSwap/Warning";
 
 export default function TokenInput(props: {
   inToken: boolean;
-  defaultValue?: string | number | null;
+  defaultValue?: any;
   isDisabled?: boolean;
   hasMaxButton?: boolean;
   style?: {};
-  customRef?: RefObject<HTMLInputElement>;
+  customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
 }) {
-  const { inToken, hasMaxButton, isDisabled, style, customRef, placeholder } =
-    props;
+  const {
+    inToken,
+    hasMaxButton,
+    isDisabled,
+    style,
+    customRef,
+    placeholder,
+    defaultValue,
+  } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -77,24 +83,28 @@ export default function TokenInput(props: {
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
-  const { onCloseTokenModal } = useTokenModal();
   const [isTokenSearch] = useRecoilState(IsSearchToken);
   const { connectedChainId } = useConnectedNetwork();
-  const [, setSearchToken] = useRecoilState(searchTokenStatus);
-  const [searchValue, setSearchValue] = useState("");
-
+  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const switchable =
     mode === "Wrap" ||
     mode === "Unwrap" ||
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
 
+  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
-    if (isTokenSearch) {
-      setSearchValue(value);
-    }
+
+    // if (isTokenSearch && connectedChainId) {
+    //   setSearchValue(value);
+    //   return setSearchToken({
+    //     nameOrAdd: value,
+    //     chainId: connectedChainId,
+    //   });
+    // }
 
     //for wrap/unwrap switch
     if (inToken && switchable && !isTokenSearch) {
@@ -131,16 +141,6 @@ export default function TokenInput(props: {
           parsedAmount: value,
         });
       }
-    }
-
-    if (searchValue === "" && isTokenSearch) {
-      return setSearchToken(null);
-    }
-    if (connectedChainId && isTokenSearch) {
-      return setSearchToken({
-        nameOrAdd: value,
-        chainId: connectedChainId,
-      });
     }
 
     //This token is inToken
@@ -208,8 +208,20 @@ export default function TokenInput(props: {
     }
   };
 
+  const onKeyDown = (e: any) => {
+    if (e.key === "Enter" && mobileView) {
+      if (
+        (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
+      ) {
+        onCloseTokenModal();
+      }
+      // customRef?.current?.blur();
+    }
+  }
+
   const { totalGasCost } = useGasFee();
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLInputElement>(null);
 
   const onMax = useCallback(() => {
     if (isDisabled) return null;
@@ -312,7 +324,7 @@ export default function TokenInput(props: {
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
-    // onCloseTokenModal();
+    // setIsInputAmount(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
       if (inToken && selectedOutToken) {
@@ -388,7 +400,7 @@ export default function TokenInput(props: {
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
         : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : "";
+      : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -399,6 +411,8 @@ export default function TokenInput(props: {
     isFocused,
     dependentAmount,
     lastFocused,
+    isTokenSearch,
+    defaultValue,
   ]);
 
   const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
@@ -406,9 +420,22 @@ export default function TokenInput(props: {
     amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
   });
 
+  const outAmount = useMemo(() => {
+    if (
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
+      inTokenInfo?.parsedAmount
+    ) {
+      return inTokenInfo.parsedAmount;
+    }
+    return amountOut;
+  }, [mode, inTokenInfo, amountOut]);
+
   const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedOutToken?.tokenName as string,
-    amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(outAmount),
   });
 
   const marketPrice = useMemo(() => {
@@ -472,8 +499,17 @@ export default function TokenInput(props: {
   }, [currentPrice]);
 
   useEffect(() => {
-    customRef?.current?.focus();
-  }, [customRef]);
+    setTimeout(() => {
+      customRef?.current?.focus();
+    }, 300);
+  }, [customRef, isInputAmount]);
+
+  useEffect(() => {
+    inputRef?.current?.focus();
+    if (ref.current && inToken && mobileView) {
+      ref.current.style.borderColor = "#313442";
+    }
+  }, [inputRef, mobileView]);
 
   return (
     <Flex
@@ -489,59 +525,94 @@ export default function TokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex
-          py={{ base: "7px", lg: 0 }}
-          px={{ base: "10px", lg: 0 }}
-          bg={{ base: "#0F0F12", lg: "none" }}
-          rounded={{ base: "8px", lg: 0 }}
-          align={{ base: "center", lg: "start" }}
-        >
-          <Input
-            id={inToken ? "LeftInput" : "RightInput"}
-            w={"100%"}
-            h={"27px"}
-            m={0}
-            p={0}
-            border={{}}
-            _active={{}}
-            _focus={{ boxShadow: "none !important" }}
-            placeholder={placeholder || "0"}
-            _placeholder={{
-              color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
-              // fontSize: mobileView ? 20 : 28
-            }}
-            color={mobileView && isBalanceOver ? "#DD3A44" : "#ffffff"}
-            fontSize={{ base: 22, lg: 28 }}
-            fontWeight={{ base: 500, lg: 600 }}
-            isDisabled={isDisabled}
-            _disabled={{ color: "#fff" }}
-            value={isTokenSearch ? searchValue : valueProp}
-            ref={customRef ? customRef : inputRef}
-            onChange={onChange}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
-            style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
-          ></Input>
-          {mobileView && !isTokenSearch && (
-            <Text mr={"12px"} fontSize={14} color={"#A0A3AD"}>{`$${
-              token0PriceWithAmount || "0.00"
-            }`}</Text>
-          )}
-          {hasMaxButton && !isMax && !(isTokenSearch && mobileView) && (
-            <Button
-              w={"40px"}
-              h={"22px"}
-              bgColor={"#007AFF"}
-              fontSize={12}
-              fontWeight={700}
-              _hover={{}}
-              _active={{}}
-              color={"#fff"}
-              onClick={() => onMax()}
-            >
-              Max
-            </Button>
-          )}
+        <Flex flexDir={'column'}>
+          {/* {mobileView && <Warning />} */}
+          <Flex
+            py={{ base: "7px", lg: 0 }}
+            px={{ base: "10px", lg: 0 }}
+            bg={{ base: "#0F0F12", lg: "none" }}
+            rounded={{ base: "8px", lg: 0 }}
+            align={{ base: "center", lg: "start" }}
+            border={"1px solid transparent"}
+            _hover={{ border: mobileView ? "1px solid #313442" : "" }}
+            ref={ref}
+            justify={"space-between"}
+          >
+          
+          {mobileView && !valueProp && !inToken ? (
+            <Flex h={"27px"} w={"20px"} >
+              <GradientSpinner />
+            </Flex>
+            ) :
+            <Flex flexDir={'column'}>
+              {/* <Warning /> */}
+              <Input
+                id={inToken ? "LeftInput" : "RightInput"}
+                w={"100%"}
+                h={"27px"}
+                m={0}
+                p={0}
+                border={{}}
+                _active={{}}
+                _focus={{ boxShadow: "none !important" }}
+                placeholder={inToken ? placeholder || "0" : "0"}
+                _placeholder={{
+                  color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+                  // fontSize: mobileView ? 20 : 28
+                }}
+                color={
+                  mobileView && isBalanceOver
+                    ? "#DD3A44"
+                    : mobileView && !inToken
+                    ? "#A0A3AD !important"
+                    : "#FFFFFF"
+                }
+                fontSize={{ base: 22, lg: 28 }}
+                fontWeight={{ base: 500, lg: 600 }}
+                isDisabled={isDisabled}
+                _disabled={{ color: "#A0A3AD" }}
+                value={valueProp}
+                ref={customRef ? customRef : inputRef}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+              ></Input>
+            </Flex>
+            }
+
+            {mobileView &&
+              (marketPrice === "0.00" && !inToken ? (
+                <Flex w={"20px"} h={"27px"} mr={"80px"}>
+                  <GradientSpinner />
+                </Flex>
+              ) : (
+                <Text
+                  mr={"12px"}
+                  fontSize={14}
+                  color={"#A0A3AD"}
+                >{`$${marketPrice}`}</Text>
+              ))}
+            {hasMaxButton && !isMax && (
+              <Button
+                w={"40px"}
+                h={"22px"}
+                bgColor={"#007AFF"}
+                fontSize={12}
+                fontWeight={700}
+                _hover={{}}
+                _active={{}}
+                color={"#fff"}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onMax();
+                }}
+              >
+                Max
+              </Button>
+            )}
+          </Flex>
         </Flex>
       )}
 
@@ -553,13 +624,14 @@ export default function TokenInput(props: {
           </Flex>
         )  */}
         {mobileView ? (
-          isBalanceOver && (
-            <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-              <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-              <Text>
-                Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
-              </Text>
-            </Flex>
+          inToken && (
+            // <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+            //   <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+            //   <Text>
+            //     Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
+            //   </Text>
+            // </Flex>
+            <Warning />
           )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>

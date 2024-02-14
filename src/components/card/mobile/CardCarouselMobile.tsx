@@ -3,47 +3,123 @@ import {
   ResponsiveContainer,
   StackedCarousel,
 } from "react-stacked-center-carousel";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import TokenCard from "../TokenCard";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import { TokenInfo } from "@/types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+  tokenModalStatus,
+} from "@/recoil/bridgeSwap/atom";
+import {
+  IsSearchToken,
+  isInputTokenAmount,
+  isOutputTokenAmount
+} from "@/recoil/card/selectCard/searchToken";
+import useConnectedNetwork from "@/hooks/network";
+
 import "@/css/carousel.css";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const CarouselCard = React.memo((props) => {
-  const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-  const { data, dataIndex, slideIndex }: any = props;
+  const { setSelectedToken, onCloseTokenModal, isInTokenOpen, isOutTokenOpen } =
+    useTokenModal();
+  const { data, dataIndex, slideIndex, swipeTo }: any = props;
+
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
+  const tokenData2: TokenInfo & { isNew?: boolean } = data[(dataIndex - 2 + data.length) % data.length];
+
+  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
+  const [isOutputAmount, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+  const { chainName } = useConnectedNetwork();
+  const [, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
 
   useEffect(() => {
-    if (slideIndex === 0) {
-      setSelectedToken(tokenData);
+    if (slideIndex === 0 && tokenData && isOutputAmount && isOutTokenOpen) {
+      setIsOutputAmount(false);
     }
-  }, [slideIndex]);
+
+    if (isInTokenOpen) {
+      const inToken = selectedInToken;
+      setSelectedToken(tokenData2, true)
+      if (isInTokenOpen && chainName)
+        {setSelectedInToken({
+          ...tokenData2,
+          amountBN: inToken?.amountBN || null,
+          parsedAmount: inToken?.parsedAmount || null,
+          tokenAddress: inToken?.tokenAddress || null,
+        })}
+    }
+  }, [slideIndex, dataIndex]);
 
   return (
     tokenData && (
       <TokenCard
-        w={"148px"}
-        h={"184px"}
+        w={"136px"}
+        h={"160px"}
         tokenInfo={tokenData}
         inNetwork={true}
         hasInput={true}
         isNew={tokenData?.isNew}
         symbolSize={{
-          w: 60,
-          h: 60,
+          w: 42,
+          h: 42,
         }}
         type={"small"}
-        onClick={() => {
-          try {
-          } catch (e) {
-          } finally {
-            onCloseTokenModal();
-          }
+        onMouseDown={(e: any) => {
+          e.preventDefault();
+          // if (slideIndex === 0 && isTokenSearch) setIsTokenSearch(false);
+          // if (
+          //   slideIndex === 0 &&
+          //   !isTokenSearch &&
+          //   selectedInToken?.parsedAmount
+          // )
+          //   onCloseTokenModal();
+        }}
+        onClick={(e: any) => {
+          if (slideIndex === 0) {
+            if (isInTokenOpen) {
+              setIsInputAmount(true);
+            }
+            if (isOutTokenOpen) {
+              setIsOutputAmount(true);
+            }
+
+            const inToken = selectedInToken;
+            setSelectedToken(tokenData, true)
+            isInTokenOpen && chainName
+              ? setSelectedInToken({
+                ...tokenData,
+                amountBN: inToken?.amountBN || null,
+                parsedAmount: inToken?.parsedAmount || null,
+                tokenAddress: inToken?.tokenAddress || null,
+              })
+              : chainName &&
+              setSelectedOutToken({
+                ...tokenData,
+                amountBN: null,
+                parsedAmount: null,
+                tokenAddress: tokenData.address[chainName],
+              });
+
+            if (
+              (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
+              (isOutTokenOpen && isOutputAmount)
+            ) {
+              onCloseTokenModal();
+            }
+          } else if (slideIndex === 1) swipeTo(1);
+          else if (slideIndex === -1) swipeTo(-1);
+
         }}
         isDark={slideIndex === 0 ? false : true}
       />
@@ -58,6 +134,8 @@ export function CardCarouselMobile() {
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const [resultToken, setResultTokenArr] =
     useState<TokenInfo[]>(filteredTokenList);
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
+  const {tabletView} = useMediaView();
 
   const move = (input: TokenInfo[], from: number) => {
     let numberOfDeletedElm = 1;
@@ -71,29 +149,31 @@ export function CardCarouselMobile() {
   };
 
   useEffect(() => {
-    if (isOpen && (inToken || outToken)) {
-      const isSelectedToken = (el: TokenInfo) =>
-        el.tokenName ===
-        (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
-      const resultTokenArr = move(
-        filteredTokenList,
-        filteredTokenList.findIndex(isSelectedToken)
-      );
+    const first = filteredTokenList.shift();
+    filteredTokenList.push(first!);
+    const second = filteredTokenList.shift();
+    filteredTokenList.push(second!);
 
-      const resultTokenList = resultTokenArr.filter((token) =>
-        isOpen === "INPUT"
-          ? token?.tokenName !== outToken?.tokenName
-          : token?.tokenName !== inToken?.tokenName
-      );
-      setResultTokenArr(resultTokenList);
+    if (isOpen) {
+      // set the default token as the one selected previous
+      if (inToken || outToken) {
+        const isSelectedToken = (el: TokenInfo) =>
+          el.tokenName ===
+          (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
+        move(
+          filteredTokenList,
+          filteredTokenList.findIndex(isSelectedToken)
+        );
+      }
+      setResultTokenArr(filteredTokenList);
     }
-  }, [filteredTokenList]);
+  }, []);
 
   return (
     <ResponsiveContainer
       carouselRef={ref}
       render={(parentWidth, carouselRef) => {
-        let currentVisibleSlide = 3;
+        let currentVisibleSlide = parentWidth < 768 ? 3 : 5;
         return (
           <>
             <StackedCarousel
@@ -101,13 +181,14 @@ export function CardCarouselMobile() {
               slideComponent={CarouselCard}
               slideWidth={150}
               carouselWidth={parentWidth}
-              data={resultToken}
+              data={filteredTokenList}
               currentVisibleSlide={currentVisibleSlide}
-              maxVisibleSlide={3}
-              customScales={[1, 0.85, 0.4]}
+              maxVisibleSlide={parentWidth < 768 ? 3 : 5}
+              customScales={parentWidth < 768 ? [1, 0.85, 0.4] : [1, 0.85, 0.7, 0.6] }
               fadeDistance={0}
               useGrabCursor
               transitionTime={800}
+              disableSwipe={filteredTokenList.length === 1 ? true : false}
             />
           </>
         );
