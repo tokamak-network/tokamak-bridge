@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import {
+  Box,
+  Button,
   Flex,
   Input,
   InputGroup,
@@ -9,13 +11,12 @@ import {
 } from "@chakra-ui/react";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  uniswapTxSetting,
-  uniswapTxSettingSelector,
-} from "@/recoil/uniswap/setting";
+import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { RedWarningText, WarningText } from "./ui/WarningText";
 import SettingIcon from "assets/icons/setting.svg";
-import { swapSettingStatus } from "@/recoil/modal/atom";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+
+import CancelIcon from "assets/icons/close.svg";
 
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
@@ -24,8 +25,6 @@ interface SettingProps {
 
 export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
-  const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
-  const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
   const slipRef = useRef(null);
   const deadlineRef = useRef(null);
 
@@ -235,8 +234,78 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
   );
 };
 
+export const CustomRecipient = () => {
+  const [recipientAddress, setRecipientAddress] = useState<string>("");
+  const [isRecipientInput, setRecipientInput] = useState<boolean>(false);
+
+  const handleChange = (e: any) => {
+    setRecipientAddress(e.target.value);
+  };
+
+  return (
+    <Box
+      pos={"absolute"}
+      w={{ base: "full", lg: "424px" }}
+      bgColor={"#15161D"}
+      border={"1px solid #313442"}
+      borderRadius={"8px"}
+      top={"30px"}
+      right={"0px"}
+      p={{ base: "12px", lg: "12px" }}
+      flexDir={"column"}
+      rowGap={"16px"}
+      zIndex={Overlay_Index.AlwaysTop}
+    >
+      <Flex w={"full"} justify={"space-between"} align={"center"} mb={"8px"}>
+        <Text fontWeight={500} fontSize={18}>
+          Custom recipient
+        </Text>
+
+        <Button
+          w={"82px"}
+          h={"33px"}
+          rounded={"6px"}
+          fontWeight={600}
+          fontSize={14}
+          bgColor={"#007AFF"}
+          onClick={() => setRecipientInput(true)}
+        >
+          Confirm
+        </Button>
+      </Flex>
+      {isRecipientInput ? (
+        <Flex pos={"relative"} w={"full"}>
+          <Input
+            h={"40px"}
+            pr={"34px"}
+            bgColor={"#0F0F12"}
+            border={"1px solid #313442"}
+            placeholder="Enter address"
+            fontSize={14}
+            _placeholder={{ color: "#A0A3AD" }}
+            onChange={handleChange}
+            value={recipientAddress}
+          />
+
+          {recipientAddress && (
+            <Box pos={"absolute"} top={"11px"} right={2} zIndex={1} onClick={() => setRecipientAddress("")} cursor={"pointer"}>
+              <Image width={16} height={16} alt="cancel" src={CancelIcon} />
+            </Box>
+          )}
+        </Flex>
+      ) : (
+        <Text fontSize={14} color={"#A0A3AD"}>
+          Do not send your funds to a custodial wallet or exchange address! It
+          may be impossible to recover your funds.
+        </Text>
+      )}
+    </Box>
+  );
+};
+
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const { mode } = useGetMode();
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -246,7 +315,13 @@ export default function Setting() {
         style={{ cursor: "pointer" }}
         onClick={() => setIsVisible(!isVisible)}
       />
-      {isVisible && <SettingContainer setIsVisible={setIsVisible} />}
+      {isVisible && mode === "Swap" ? (
+        <SettingContainer setIsVisible={setIsVisible} />
+      ) : isVisible && mode === "Deposit" ? (
+        <CustomRecipient />
+      ) : (
+        ""
+      )}
     </Flex>
   );
 }
