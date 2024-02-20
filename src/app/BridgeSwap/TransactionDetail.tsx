@@ -1,13 +1,11 @@
-import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
-import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
-import { Box, Checkbox, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import ArrowImg from "assets/icons/arrow.svg";
-import GasImg from "assets/icons/gasStation.svg";
-import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { Box, Checkbox, Flex, Text } from "@chakra-ui/react";
 import { motion, useAnimation } from "framer-motion";
+
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
+import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import CustomTooltip from "components/tooltip/CustomTooltip";
 import {
   DepositDetailProp,
@@ -31,13 +29,17 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
+import ArrowImg from "assets/icons/arrow.svg";
+import GasImg from "assets/icons/gasStation.svg";
+import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
+import ETH from "assets/tokens/eth.svg";
+
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
 };
 
 const DepositDetailRow = (props: DepositDetailProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
-  const { pcView } = useMediaView();
 
   return (
     <Flex flexDir={"column"}>
@@ -55,7 +57,11 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
+          {gasFee &&
+          <Flex columnGap={"6px"} align={"center"}>
+            <Image alt="eth" src={ETH} width={14} height={14}/>
+            <Text>${gasFee.l1GasUS}</Text>
+          </Flex>}
         </Flex>
       </Flex>
       {/* {gasFee && pcView && (
@@ -403,11 +409,11 @@ const Content = (props: {
     WrapUnwrapPropsData,
   ]);
 
-  if (isExpanded) {
+  // if (isExpanded) {
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
-          {!isMobile && <DivisionLine />}
+          {/* {!isMobile && <DivisionLine />} */}
           <Flex flexDir={"column"} rowGap={"10px"}>
             {detailRow}
           </Flex>
@@ -445,7 +451,7 @@ const Content = (props: {
         </Box>
       </Flex>
     );
-  }
+  // }
   return null;
 };
 
@@ -594,14 +600,8 @@ export default function TransactionDetail(props: {
 
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
-  const { isInputZero, isBalanceOver } = useInputBalanceCheck();
+  const { isInputZero } = useInputBalanceCheck();
   const { isConnected } = useAccount();
-
-  const isWrapUnwrap =
-    mode === "Wrap" ||
-    mode === "Unwrap" ||
-    mode === "ETH-Wrap" ||
-    mode === "ETH-Unwrap";
 
   if (
     !isReady ||
@@ -624,26 +624,28 @@ export default function TransactionDetail(props: {
       w={"100%"}
       // h={isExpanded ? "310px" : "48px"}
       minH={{ base: "40px", lg: "48px" }}
-      bg={"#1f2128"}
+      // bg={"#1f2128"}
       borderRadius={"8px"}
       px={!isMobile ? { base: "16px", lg: "20px" } : ""}
       flexDir={"column"}
-      pt={
-        !isMobile
-          ? {
-              base: isExpanded ? "11px" : "11px",
-              lg: isExpanded ? "20px" : "14px",
-            }
-          : ""
-      }
+      // pt={
+      //   !isMobile
+      //     ? {
+      //         base: isExpanded ? "11px" : "11px",
+      //         lg: isExpanded ? "20px" : "14px",
+      //       }
+      //     : ""
+      // }
       pb={{
         base: isExpanded  ? "12px" : "",
         lg: isExpanded ? "20px" : "",
       }}
     >
-      {!isMobile && (
+
+      {/* {!isMobile && (
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      )}
+      )} */}
+      
       <Content
         isExpanded={isExpanded}
         isOnConfirm={isOnConfirm}

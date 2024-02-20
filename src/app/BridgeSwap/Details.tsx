@@ -14,8 +14,8 @@ export function Details() {
       justify={{ base: "space-between", lg: "normal" }}
       h={{ base: "100%", lg: "fit-content" }}
       w={"100%"}
-      mt={"24px"}
-      rowGap={"10px"}
+      mt={"20px"}
+      rowGap={"20px"}
     >
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>

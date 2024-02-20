@@ -79,7 +79,7 @@ export function useTransactionDetail() {
   const { totalGasCost, gasCostUS } = useGasFee();
   const { mobileView } = useMediaView();
   const { isOpen } = useConfirm();
-  
+
   const totalGasFee = `${
     isBiggerThanMinimumNum(Number(totalGasCost))
       ? commafy(totalGasCost, 4)
@@ -93,50 +93,76 @@ export function useTransactionDetail() {
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
     if (mode === "Deposit" && inToken && totalGasCost) {
-      return isOpen && mobileView
-        ? [
-            {
-              title: "Estimated gas fees",
-              content: totalGasFee,
-              gasFee: {
-                l1Gas: totalGasFee,
-                l2Gas: "0 ETH",
-                l1GasUS: gasCostUS ?? "",
-                l2GasUS: "0",
-              },
-              tooltip: true,
-              tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
-            },
-            {
-              title: "Time to Deposit",
-              content: "~5 minutes",
-            },
-          ]
-        : [
-            {
-              title: "Amount to Deposit",
-              content: inputAmount,
-            },
-            {
-              title: "Estimated gas fees",
-              content: totalGasFee,
-              gasFee: {
-                l1Gas: totalGasFee,
-                l2Gas: "0 ETH",
-                l1GasUS: gasCostUS ?? "",
-                l2GasUS: "0",
-              },
-              tooltip: true,
-              tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
-            },
-            {
-              title: "Time to Deposit",
-              content: "~5 minutes",
-            },
-          ];
+      return [
+        {
+          title: "Estimated gas fees",
+          content: "",
+          gasFee: {
+            l1Gas: totalGasFee,
+            l2Gas: "0 ETH",
+            l1GasUS: gasCostUS ?? "",
+            l2GasUS: "0",
+          },
+          tooltip: true,
+          tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
+        },
+        {
+          title: "Time to Deposit",
+          content: "~1 minutes",
+        },
+      ];
+      // return isOpen && mobileView
+      //   ? [
+      //       {
+      //         title: "Estimated gas fees",
+      //         content: totalGasFee,
+      //         gasFee: {
+      //           l1Gas: totalGasFee,
+      //           l2Gas: "0 ETH",
+      //           l1GasUS: gasCostUS ?? "",
+      //           l2GasUS: "0",
+      //         },
+      //         tooltip: true,
+      //         tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
+      //       },
+      //       {
+      //         title: "Time to Deposit",
+      //         content: "~5 minutes",
+      //       },
+      //     ]
+      //   : [
+      //       {
+      //         title: "Amount to Deposit",
+      //         content: inputAmount,
+      //       },
+      //       {
+      //         title: "Estimated gas fees",
+      //         content: totalGasFee,
+      //         gasFee: {
+      //           l1Gas: totalGasFee,
+      //           l2Gas: "0 ETH",
+      //           l1GasUS: gasCostUS ?? "",
+      //           l2GasUS: "0",
+      //         },
+      //         tooltip: true,
+      //         tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
+      //       },
+      //       {
+      //         title: "Time to Deposit",
+      //         content: "~5 minutes",
+      //       },
+      //     ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost, mobileView, isOpen]);
+  }, [
+    mode,
+    inToken,
+    totalGasFee,
+    inputAmount,
+    totalGasCost,
+    mobileView,
+    isOpen,
+  ]);
 
   const totalGasFeeToWithdraw = Number(totalGasCost) + 0.00024511191632554;
 
