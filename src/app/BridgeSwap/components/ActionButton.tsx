@@ -9,7 +9,6 @@ import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
-import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
@@ -37,6 +36,8 @@ export default function ActionButton() {
 
   const needToOpenModal = mode === "Deposit" || mode === "Swap";
   const needToOpenWithdrawModal = mode === "Withdraw";
+  const needToOpenDepositModal = mode === "Deposit";
+  const needToOpenSwapModal = mode === "Swap";
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2"; //checks if the action is L2
  

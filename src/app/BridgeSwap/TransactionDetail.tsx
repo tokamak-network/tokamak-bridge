@@ -636,10 +636,10 @@ export default function TransactionDetail(props: {
       //       }
       //     : ""
       // }
-      pb={{
-        base: isExpanded  ? "12px" : "",
-        lg: isExpanded ? "20px" : "",
-      }}
+      // pb={{
+      //   base: isExpanded  ? "12px" : "",
+      //   lg: isExpanded ? "20px" : "",
+      // }}
     >
 
       {/* {!isMobile && (
