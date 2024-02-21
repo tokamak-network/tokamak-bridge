@@ -9,6 +9,8 @@ import {
   InputRightElement,
   Text,
 } from "@chakra-ui/react";
+import { isAddress } from "viem";
+
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
@@ -17,6 +19,7 @@ import SettingIcon from "assets/icons/setting.svg";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
 import CancelIcon from "assets/icons/close.svg";
+import WarningIcon from "assets/icons/warningRed.svg";
 
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
@@ -237,15 +240,23 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
 export const CustomRecipient = () => {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [isRecipientInput, setRecipientInput] = useState<boolean>(false);
+  const [isCorrectFormat, setCorrectFormat] = useState<boolean>(true);
 
   const handleChange = (e: any) => {
-    setRecipientAddress(e.target.value);
+    const val = e.target.value;
+    setRecipientAddress(val);
+
+    if (isAddress(val)) setCorrectFormat(true);
+    else setCorrectFormat(false);
   };
 
   return (
     <Box
       pos={"absolute"}
-      w={{ base: "full", lg: "424px" }}
+      w={{
+        base: "full",
+        lg: isCorrectFormat && recipientAddress ? "492px" : "424px",
+      }}
       bgColor={"#15161D"}
       border={"1px solid #313442"}
       borderRadius={"8px"}
@@ -261,24 +272,27 @@ export const CustomRecipient = () => {
           Custom recipient
         </Text>
 
-        <Button
-          w={"82px"}
-          h={"33px"}
-          rounded={"6px"}
-          fontWeight={600}
-          fontSize={14}
-          bgColor={"#007AFF"}
-          onClick={() => setRecipientInput(true)}
-        >
-          Confirm
-        </Button>
+        {!isRecipientInput && (
+          <Button
+            w={"82px"}
+            h={"33px"}
+            rounded={"6px"}
+            fontWeight={600}
+            fontSize={14}
+            bgColor={"#007AFF"}
+            onClick={() => setRecipientInput(true)}
+          >
+            Confirm
+          </Button>
+        )}
       </Flex>
       {isRecipientInput ? (
-        <Flex pos={"relative"} w={"full"}>
+        <Flex pos={"relative"} w={"full"} columnGap={2}>
           <Input
             h={"40px"}
             pr={"34px"}
             bgColor={"#0F0F12"}
+            color={isCorrectFormat ? "#FFFFFF" : "#DD3A44"}
             border={"1px solid #313442"}
             placeholder="Enter address"
             fontSize={14}
@@ -287,8 +301,29 @@ export const CustomRecipient = () => {
             value={recipientAddress}
           />
 
+          {isCorrectFormat && recipientAddress && (
+            <Button
+              w={"60px"}
+              h={"40px"}
+              rounded={"6px"}
+              fontWeight={600}
+              fontSize={14}
+              bgColor={"#007AFF"}
+              onClick={() => {}}
+            >
+              Save
+            </Button>
+          )}
+
           {recipientAddress && (
-            <Box pos={"absolute"} top={"11px"} right={2} zIndex={1} onClick={() => setRecipientAddress("")} cursor={"pointer"}>
+            <Box
+              pos={"absolute"}
+              top={"11px"}
+              right={isCorrectFormat && recipientAddress ? "72px" : "8px"}
+              zIndex={1}
+              onClick={() => setRecipientAddress("")}
+              cursor={"pointer"}
+            >
               <Image width={16} height={16} alt="cancel" src={CancelIcon} />
             </Box>
           )}
@@ -298,6 +333,15 @@ export const CustomRecipient = () => {
           Do not send your funds to a custodial wallet or exchange address! It
           may be impossible to recover your funds.
         </Text>
+      )}
+
+      {!isCorrectFormat && (
+        <Flex columnGap={2} align={"center"} mt={2}>
+          <Image alt="warning" src={WarningIcon} width={16} height={16} />
+          <Text fontSize={12} color={"#DD3A44"}>
+            Incorrect address format
+          </Text>
+        </Flex>
       )}
     </Box>
   );
