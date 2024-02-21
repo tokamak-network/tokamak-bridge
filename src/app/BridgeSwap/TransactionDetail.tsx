@@ -297,13 +297,16 @@ const SwapDetailRow = (props: SwapDetailProp) => {
             </Text>
           )}
           {gasFee && (
+            <Flex columnGap={"6px"} align={"center"}>
+            <Image alt="eth" src={ETH} width={14} height={14}/>
             <Text
-              ml={"27px"}
+              // ml={"27px"}
               fontWeight={500}
-              color={isOpen ? "#fff" : "#A0A3AD"}
+              // color={isOpen ? "#fff" : "#A0A3AD"}
             >
               {gasFee}
             </Text>
+            </Flex>
           )}
         </Flex>
       </Flex>

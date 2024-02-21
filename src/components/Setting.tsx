@@ -238,12 +238,30 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
   );
 };
 
-export const CustomRecipient = () => {
+export const CustomRecipient = ({
+  setIsVisible,
+}: {
+  setIsVisible: (vis: boolean) => void;
+}) => {
   const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [isRecipientInput, setRecipientInput] = useState<boolean>(false);
   const [isCorrectFormat, setCorrectFormat] = useState<boolean>(true);
-
   const [, setCustomRecipient] = useRecoilState(customRecipientAddress);
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      //@ts-ignore
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+        setIsVisible ? setIsVisible(false) : "";
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleChange = (e: any) => {
     const val = e.target.value;
@@ -269,6 +287,7 @@ export const CustomRecipient = () => {
       flexDir={"column"}
       rowGap={"16px"}
       zIndex={Overlay_Index.AlwaysTop}
+      ref={wrapperRef}
     >
       <Flex w={"full"} justify={"space-between"} align={"center"} mb={"8px"}>
         <Text fontWeight={500} fontSize={18}>
@@ -313,8 +332,8 @@ export const CustomRecipient = () => {
               fontSize={14}
               bgColor={"#007AFF"}
               onClick={() => {
-                setCustomRecipient(recipientAddress)
-                
+                setCustomRecipient(recipientAddress);
+                setIsVisible(false);
               }}
             >
               Save
@@ -356,7 +375,7 @@ export const CustomRecipient = () => {
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const { mode } = useGetMode();
-
+  
   return (
     <Flex flexDir={"column"} pos={"relative"}>
       <Image
@@ -368,7 +387,7 @@ export default function Setting() {
       {isVisible && mode === "Swap" ? (
         <SettingContainer setIsVisible={setIsVisible} />
       ) : isVisible && mode === "Deposit" ? (
-        <CustomRecipient />
+        <CustomRecipient setIsVisible={setIsVisible} />
       ) : (
         ""
       )}

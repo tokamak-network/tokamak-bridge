@@ -258,24 +258,41 @@ export function useTransactionDetail() {
           ]
         : [
             {
-              title: "Expected output",
-              content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
-            },
-            {
               title: isOpen
                 ? "Minimum received"
-                : "Minimum received after slippage",
+                : "Min receivable",
               content: `${commafy(minimumReceived, 4)} ${
                 outToken?.tokenSymbol
               }`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
             },
             {
-              title: "Estimated gas fees",
-              content: isOpen ? "" : `${totalGasFee} `,
+              title: "Estimated gas fee",
+              // content: isOpen ? "" : `${totalGasFee} `,
+              content: "",
               gasFee: `$${gasCostUS}`,
             },
           ];
+      // [
+      //     {
+      //       title: "Expected output",
+      //       content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
+      //     },
+      //     {
+      //       title: isOpen
+      //         ? "Minimum received"
+      //         : "Minimum received after slippage",
+      //       content: `${commafy(minimumReceived, 4)} ${
+      //         outToken?.tokenSymbol
+      //       }`,
+      //       slippage: `${uniswapTxSettingValueForUI.slippage}%`,
+      //     },
+      //     {
+      //       title: "Estimated gas fees",
+      //       content: isOpen ? "" : `${totalGasFee} `,
+      //       gasFee: `$${gasCostUS}`,
+      //     },
+      //   ];
     }
 
     return null;
