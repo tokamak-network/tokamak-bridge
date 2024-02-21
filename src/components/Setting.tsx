@@ -12,8 +12,9 @@ import {
 import { isAddress } from "viem";
 
 import { Overlay_Index } from "@/types/style/overlayIndex";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
+import { customRecipientAddress } from "@/recoil/bridgeSwap/atom";
 import { RedWarningText, WarningText } from "./ui/WarningText";
 import SettingIcon from "assets/icons/setting.svg";
 import { useGetMode } from "@/hooks/mode/useGetMode";
@@ -242,6 +243,8 @@ export const CustomRecipient = () => {
   const [isRecipientInput, setRecipientInput] = useState<boolean>(false);
   const [isCorrectFormat, setCorrectFormat] = useState<boolean>(true);
 
+  const [, setCustomRecipient] = useRecoilState(customRecipientAddress);
+
   const handleChange = (e: any) => {
     const val = e.target.value;
     setRecipientAddress(val);
@@ -309,7 +312,10 @@ export const CustomRecipient = () => {
               fontWeight={600}
               fontSize={14}
               bgColor={"#007AFF"}
-              onClick={() => {}}
+              onClick={() => {
+                setCustomRecipient(recipientAddress)
+                
+              }}
             >
               Save
             </Button>
