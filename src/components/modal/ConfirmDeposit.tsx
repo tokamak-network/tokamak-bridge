@@ -1,5 +1,5 @@
 import Image from "next/image";
-import TransactionDetail from "@/app/BridgeSwap/TransactionDetail";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import {
   Box,
@@ -11,23 +11,19 @@ import {
   ModalOverlay,
   CloseButton,
 } from "@chakra-ui/react";
-import { TokenSymbol } from "../image/TokenSymbol";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { trimAmount } from "@/utils/trim";
-import useConfirm from "@/hooks/modal/useConfirmModal";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
-import { useRecoilState, useRecoilValue } from "recoil";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
+import { confirmDepositStats } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
-import ArrowDown from "assets/icons/arrow_down.svg";
 import ARROW from "assets/icons/arrow.svg";
 import Titan from "assets/icons/network/Titan_no_border.svg";
 import ETH from "assets/tokens/eth.svg";
-import { confirmDepositStats, confirmWithdrawStats } from "@/recoil/modal/atom";
 
 const NewTokenContainer = () => {
   const { inToken, outToken } = useInOutTokens();
@@ -83,7 +79,6 @@ const NewTokenContainer = () => {
 
 export default function ConfirmDeposit() {
   const { mode } = useGetMode();
-  const { isOpen, onCloseConfirmModal } = useConfirm();
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
   const { mobileView } = useMediaView();
