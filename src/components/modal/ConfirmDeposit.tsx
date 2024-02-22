@@ -19,24 +19,22 @@ import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions"
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { confirmDepositStats } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import ARROW from "assets/icons/arrow.svg";
 import Titan from "assets/icons/network/Titan_no_border.svg";
 import ETH from "assets/tokens/eth.svg";
+import GasStation from "assets/icons/gasStation.svg";
+import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
+import commafy from "@/utils/trim/commafy";
 
 const NewTokenContainer = () => {
-  const { inToken, outToken } = useInOutTokens();
-  const { amountOut } = useSwapTokens();
+  const { inToken } = useInOutTokens();
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inToken?.tokenName as string,
     amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
-  });
-
-  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
-    tokenName: outToken?.tokenName as string,
-    amount: Number(amountOut),
   });
 
   return (
@@ -46,9 +44,8 @@ const NewTokenContainer = () => {
         align={"center"}
         p={"6px 12px"}
         border={"1px solid #313442"}
-        borderBottom={"none"}
         bgColor={"#0F0F12"}
-        rounded={"8px 8px 0px 0px"}
+        rounded={"8px"}
       >
         <Flex columnGap={2} align={"center"}>
           <Image alt="eth" src={ETH} width={24} height={24} />
@@ -69,7 +66,7 @@ const NewTokenContainer = () => {
 
         <Flex justify={"space-between"} align={"center"} columnGap={"6px"}>
           <Image alt="eth" src={Ethereum} width={24} height={24} />
-          <Image alt="eth" src={ARROW} width={24} height={24} />
+          <Image alt="eth" src={ARROW} width={16} height={16} />
           <Image alt="eth" src={Titan} width={24} height={24} />
         </Flex>
       </Flex>
@@ -84,6 +81,7 @@ export default function ConfirmDeposit() {
   const { mobileView } = useMediaView();
   const [withdrawStatus, setDepositStatus] =
     useRecoilState(confirmDepositStats);
+  const { totalGasCost, gasCostUS } = useGasFee();
 
   return (
     <Modal
@@ -127,6 +125,63 @@ export default function ConfirmDeposit() {
           {/* <Box pl={"7px"}>
             <TransactionDetail isOnConfirm={true} isMobile />
           </Box> */}
+
+          <Flex
+            pos={"relative"}
+            flexDir={"column"}
+            rounded={"16px"}
+            p={5}
+            bgColor={"#15161D"}
+            justify={"space-between"}
+            align={"center"}
+            rowGap={"32px"}
+          >
+            <Flex w={"full"} justify={"space-between"}>
+              <Flex align={"center"} columnGap={3}>
+                <Box w={"9px"} h={"9px"} rounded={"full"} bgColor={"#007AFF"} />
+                <Text fontWeight={500} fontSize={15}>
+                  Initiate
+                </Text>
+              </Flex>
+
+              <Flex align={"center"} columnGap={2}>
+                <Flex columnGap={1} align={"center"}>
+                  <Image
+                    alt="gas station"
+                    src={GasStation}
+                    width={14}
+                    height={14}
+                  />
+                  <Text fontSize={13}>
+                    ~
+                    {`${
+                      isBiggerThanMinimumNum(Number(totalGasCost))
+                        ? commafy(totalGasCost, 4)
+                        : "< 0.0001"
+                    } ETH`}{" "}
+                  </Text>
+                </Flex>
+
+                <Text fontSize={13} color={"#A0A3AD"}>${gasCostUS}</Text>
+              </Flex>
+            </Flex>
+
+            <Box pos={"absolute"} top={"36px"} left={"24px"} height={"44px"} w={"1px"} bgColor={"#313442"}/>
+
+            <Flex w={"full"} justify={"space-between"}>
+              <Flex align={"center"} columnGap={3}>
+                <Box w={"9px"} h={"9px"} rounded={"full"} bgColor={"#A0A3AD"} />
+                <Text fontWeight={500} fontSize={15}>
+                  Wait for L2
+                </Text>
+              </Flex>
+
+              <Flex align={"center"} columnGap={2}>
+                <Text fontSize={13} color={"#A0A3AD"}>~1 min</Text>
+              </Flex>
+            </Flex>
+          </Flex>
+
           <Button
             w={"100%"}
             h={"48px"}
