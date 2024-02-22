@@ -12,7 +12,7 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
-import { confirmWithdrawStats } from "@/recoil/modal/atom";
+import { confirmWithdrawStats, confirmDepositStats } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
@@ -40,7 +40,7 @@ export default function ActionButton() {
   const needToOpenSwapModal = mode === "Swap";
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2"; //checks if the action is L2
- 
+
   const deactivateButton = status === "Active" && isL2; //when the maintenance banner is active, this will disable the action button related to all L2 actions
   useEffect(() => {
     const timeoutId = setTimeout(() => {
@@ -79,7 +79,8 @@ export default function ActionButton() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [withdrawStatus, setWithdrawStatus] =
     useRecoilState(confirmWithdrawStats);
-
+  const [depositStatus, setDepositStatus] =
+    useRecoilState(confirmDepositStats);
   return (
     <Button
       w={"100%"}
@@ -97,6 +98,8 @@ export default function ActionButton() {
           ? () => connetAndDisconntWallet()
           : needToOpenWithdrawModal
           ? () => setWithdrawStatus({ isOpen: true })
+          : needToOpenDepositModal
+          ? () => setDepositStatus({ isOpen: true })
           : needToOpenModal
           ? onOpenConfirmModal
           : onClick
