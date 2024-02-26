@@ -287,7 +287,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
         </Flex>
         <Flex>
-          {isLoading ? (
+          {isLoading && content ? (
             <GradientSpinner />
           ) : (
             <Text 

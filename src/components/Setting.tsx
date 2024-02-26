@@ -302,6 +302,7 @@ export const CustomRecipient = ({
             fontWeight={600}
             fontSize={14}
             bgColor={"#007AFF"}
+            _hover={{ bgColor: "#007AFF" }}
             onClick={() => setRecipientInput(true)}
           >
             Confirm
@@ -314,13 +315,14 @@ export const CustomRecipient = ({
             h={"40px"}
             pr={"34px"}
             bgColor={"#0F0F12"}
-            color={isCorrectFormat ? "#FFFFFF" : "#DD3A44"}
+            errorBorderColor="#DD3A44"
             border={"1px solid #313442"}
             placeholder="Enter address"
             fontSize={14}
             _placeholder={{ color: "#A0A3AD" }}
             onChange={handleChange}
             value={recipientAddress}
+            isInvalid={!isCorrectFormat}
           />
 
           {isCorrectFormat && recipientAddress && (
@@ -331,6 +333,7 @@ export const CustomRecipient = ({
               fontWeight={600}
               fontSize={14}
               bgColor={"#007AFF"}
+              _hover={{ bgColor: "#007AFF" }}
               onClick={() => {
                 setCustomRecipient(recipientAddress);
                 setIsVisible(false);
@@ -375,7 +378,7 @@ export const CustomRecipient = ({
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const { mode } = useGetMode();
-  
+
   return (
     <Flex flexDir={"column"} pos={"relative"}>
       <Image
