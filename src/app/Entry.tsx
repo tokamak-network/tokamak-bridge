@@ -7,6 +7,7 @@ import { ApolloProvider } from "@apollo/client";
 import useConnectedNetwork from "@/hooks/network";
 import { apolloClient } from "@/apollo";
 import Drawers from "./Drawers";
+import Footer from "@/components/footer";
 export default function Entry({ children }: { children: React.ReactNode }) {
   const [isMobile] = useMediaQuery("(max-width: 1200px)");
 
@@ -31,6 +32,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
     <ApolloProvider client={apolloClient}>
       <Header />
       <Center h={"100vh"}>{children}</Center>
+      <Footer />
       <GlobalComponents />
       <Drawers/>
       <Modals />
