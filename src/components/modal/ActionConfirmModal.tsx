@@ -35,6 +35,8 @@ import Titan from "assets/icons/network/Titan_no_border.svg";
 import ETH from "assets/tokens/eth.svg";
 
 import "@/css/spinner.css";
+import commafy from "@/utils/trim/commafy";
+import usePriceImpact from "@/hooks/swap/usePriceImpact";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -216,6 +218,7 @@ const TokenContainer = () => {
 const NewTokenContainer = () => {
   const { inToken, outToken } = useInOutTokens();
   const { amountOut } = useSwapTokens();
+  const { inNetwork, outNetwork } = useInOutNetwork();
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inToken?.tokenName as string,
@@ -246,7 +249,7 @@ const NewTokenContainer = () => {
           />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              ETH
+              {inToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
@@ -260,7 +263,7 @@ const NewTokenContainer = () => {
         </Flex>
 
         <Flex justify={"space-between"} align={"center"} columnGap={"6px"}>
-          <Image alt="eth" src={Ethereum} width={24} height={24} />
+          <NetworkSymbol network={inNetwork?.chainId} w={24} h={24} />
         </Flex>
       </Flex>
 
@@ -296,7 +299,7 @@ const NewTokenContainer = () => {
           />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              ETH
+              {outToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
@@ -310,7 +313,7 @@ const NewTokenContainer = () => {
         </Flex>
 
         <Flex justify={"space-between"} align={"center"} columnGap={"6px"}>
-          <Image alt="eth" src={Ethereum} width={24} height={24} />
+          <NetworkSymbol network={outNetwork?.chainId} w={24} h={24} />
         </Flex>
       </Flex>
     </Box>
@@ -323,6 +326,14 @@ export default function ActionConfirmModal() {
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
   const { mobileView } = useMediaView();
+  const { inToken, outToken } = useInOutTokens();
+  const { outPrice } = usePriceImpact();
+
+  const isWrapUnwrap =
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    mode === "ETH-Wrap" ||
+    mode === "ETH-Unwrap";
 
   return (
     <Modal isOpen={isOpen} onClose={onCloseConfirmModal} size={"xl"} isCentered>
@@ -355,6 +366,11 @@ export default function ActionConfirmModal() {
           {/* <TokenContainer /> */}
           <NewTokenContainer />
           <Box pl={"7px"}>
+            <Text fontSize={14} fontWeight={400} mb={"5px"}>{`1 ${
+              inToken?.tokenSymbol
+            } = ${isWrapUnwrap ? 1 : commafy(outPrice, 4)} ${
+              outToken?.tokenSymbol
+            }`}</Text>
             <TransactionDetail isOnConfirm={true} isMobile />
           </Box>
           <Button

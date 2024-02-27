@@ -258,9 +258,7 @@ export function useTransactionDetail() {
           ]
         : [
             {
-              title: isOpen
-                ? "Minimum received"
-                : "Min receivable",
+              title: "Min receivable",
               content: `${commafy(minimumReceived, 4)} ${
                 outToken?.tokenSymbol
               }`,

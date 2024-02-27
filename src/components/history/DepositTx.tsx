@@ -13,11 +13,13 @@ import TxLink from "assets/icons/accountHistory/TxLink.svg";
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import Titan from "assets/icons/network/Titan_no_border.svg";
 import Arrow from "assets/icons/arrow.svg";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
 export default function DepositTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { layer } = useConnectedNetwork();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
+  const providers = useGetTxLayers();
 
   const ethToken = {
     decimals: supportedTokens[0].decimals,
@@ -59,7 +61,10 @@ export default function DepositTx(props: { tx: FullWithTx }) {
             <Image alt="titan" src={Titan} width={16} height={16} />
           </Flex>
         ) : (
-          <Link href="#">
+          <Link
+            target="_blank"
+            href={`${providers.l1BlockExplorer}/tx/${tx.l1txHash}`}
+          >
             <Image alt="tx" src={TxLink} width={14} height={14} />
           </Link>
         )}

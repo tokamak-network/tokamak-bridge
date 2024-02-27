@@ -32,7 +32,7 @@ export default function DepositStatusTx(props: {
         );
         const formattedTime = format(
           new Date(elapsedTimeInSeconds * 1000),
-          "mm:ss"
+          "mm : ss"
         );
         setDuration(formattedTime);
       }, 1000);
@@ -132,11 +132,11 @@ export default function DepositStatusTx(props: {
         ) : (
           <Flex fontSize={"11px"}>
             <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-              {format(fromUnixTime(date), "yyyy.MM.dd")}
+              {format(fromUnixTime(date), "yyyy.MM.dd hh:mm b")}
             </Text>
             {!mobileView && (
               <Text ml="3px" color={"#A0A3AD"}>
-                {format(fromUnixTime(date), "hh:mm b (z)")}
+                {format(fromUnixTime(date), "(z)")}
               </Text>
             )}
           </Flex>

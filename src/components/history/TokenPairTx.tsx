@@ -69,10 +69,10 @@ export default function TokenPairTx(props: {
         {tx?.l2txHash ? (
           <Flex fontSize={"11px"}>
             <Text color={"#FFFFFF"}>
-              {format(fromUnixTime(Number(tx?.l2timeStamp)), "yyyy.MM.dd")}
+              {format(fromUnixTime(Number(tx?.l2timeStamp)), "yyyy.MM.dd hh:mm b")}
             </Text>
             <Text ml="3px" color={"#A0A3AD"}>
-              {format(fromUnixTime(Number(tx?.l2timeStamp)), "hh:mm b (z)")}
+              {format(fromUnixTime(Number(tx?.l2timeStamp)), "(z)")}
             </Text>
           </Flex>
         ) : (
