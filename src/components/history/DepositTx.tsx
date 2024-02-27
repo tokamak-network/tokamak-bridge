@@ -8,18 +8,22 @@ import DepositStatusTx from "./DepositStatusTx";
 import { FullWithTx } from "@/types/activity/history";
 import { Hash } from "viem";
 import { supportedTokens } from "@/types/token/supportedToken";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import { confirmDepositStats, confirmDepositData } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
 
 import TxLink from "assets/icons/accountHistory/TxLink.svg";
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import Titan from "assets/icons/network/Titan_no_border.svg";
 import Arrow from "assets/icons/arrow.svg";
-import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 
 export default function DepositTx(props: { tx: FullWithTx }) {
   const { tx } = props;
   const { layer } = useConnectedNetwork();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
   const providers = useGetTxLayers();
+  const [, setConfirmDeposit] = useRecoilState(confirmDepositStats);
+  const [, setDepositData] = useRecoilState(confirmDepositData);
 
   const ethToken = {
     decimals: supportedTokens[0].decimals,
@@ -44,6 +48,10 @@ export default function DepositTx(props: { tx: FullWithTx }) {
       p="12px"
       flexDir={"column"}
       rowGap={"8px"}
+      onClick={() => {
+        setConfirmDeposit({ isOpen: true });
+        setDepositData({ modalData: tx });
+      }}
     >
       <Flex justifyContent={"space-between"} align={"center"} w="100%">
         <Text

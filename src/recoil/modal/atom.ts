@@ -66,6 +66,13 @@ export const confirmDepositStats = atom<withdrawModal>({
   },
 });
 
+export const confirmDepositData = atom<any>({
+  key: "confirmDepositData",
+  default: {
+    modalData: null,
+  },
+});
+
 export const poolModalProp = atom<PoolCardDetail | undefined>({
   key: "poolModalPropStatus",
   default: undefined,

@@ -10,31 +10,38 @@ import {
   ModalContent,
   ModalOverlay,
   CloseButton,
+  Link,
 } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { trimAmount } from "@/utils/trim";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
-import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
-import { confirmDepositStats } from "@/recoil/modal/atom";
+import { confirmDepositStats, confirmDepositData } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
+import commafy from "@/utils/trim/commafy";
+import { useToken } from "wagmi";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import { Hash } from "viem";
+import { supportedTokens } from "@/types/token/supportedToken";
 
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import ARROW from "assets/icons/arrow.svg";
 import Titan from "assets/icons/network/Titan_no_border.svg";
 import ETH from "assets/tokens/eth.svg";
 import GasStation from "assets/icons/gasStation.svg";
-import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
-import commafy from "@/utils/trim/commafy";
+import GuideLink from "assets/icons/link2.svg";
+import useConnectedNetwork from "@/hooks/network";
 
-const NewTokenContainer = () => {
+const NewTokenContainer = ({ tx, token }: any) => {
   const { inToken } = useInOutTokens();
-
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
-    tokenName: inToken?.tokenName as string,
-    amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
+    tokenName: tx ? (token?.name as string) : (inToken?.tokenName as string),
+    amount: Number(
+      tx ? tx._amount : inToken?.parsedAmount?.replaceAll(",", "")
+    ),
   });
 
   return (
@@ -49,13 +56,15 @@ const NewTokenContainer = () => {
       >
         <Flex columnGap={2} align={"center"}>
           <TokenSymbol
-            tokenType={inToken?.tokenSymbol as string}
+            tokenType={
+              tx ? (token?.symbol as string) : (inToken?.tokenSymbol as string)
+            }
             w={24}
             h={24}
           />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              {inToken?.tokenSymbol}
+              {tx ? token?.symbol : inToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
@@ -81,16 +90,37 @@ const NewTokenContainer = () => {
 export default function ConfirmDeposit() {
   const { mode } = useGetMode();
   const { onClick } = useCallBridgeSwapAction();
-  const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
   const { mobileView } = useMediaView();
-  const [withdrawStatus, setDepositStatus] =
-    useRecoilState(confirmDepositStats);
+  const [depositStatus, setDepositStatus] = useRecoilState(confirmDepositStats);
+  const [depositData, setDepositData] = useRecoilState(confirmDepositData);
   const { totalGasCost, gasCostUS } = useGasFee();
+  const providers = useGetTxLayers();
+  const { inToken } = useInOutTokens();
+  const tx = depositData.modalData;
+
+  const { layer } = useConnectedNetwork();
+  const zeroAddress = "0x0000000000000000000000000000000000000000";
+
+  const ethToken = {
+    decimals: supportedTokens[0].decimals,
+    symbol: supportedTokens[0].tokenSymbol,
+    name: supportedTokens[0].tokenName,
+  };
+
+  const { data } = useToken({
+    address: layer === "L1" ? (tx?._l1Token as Hash) : (tx?._l2Token as Hash),
+    enabled: tx?._l1Token === zeroAddress ? false : true,
+  });
+  const token =
+    layer === "L1" && tx?._l1Token === zeroAddress ? ethToken : data;
 
   return (
     <Modal
-      isOpen={withdrawStatus.isOpen}
-      onClose={() => setDepositStatus({ isOpen: false })}
+      isOpen={depositStatus.isOpen}
+      onClose={() => {
+        setDepositStatus({ isOpen: false });
+        setDepositData({ modalData: null });
+      }}
       size={"xl"}
       isCentered
     >
@@ -125,7 +155,7 @@ export default function ConfirmDeposit() {
             )}
           </Flex>
           {/* <TokenContainer /> */}
-          <NewTokenContainer />
+          <NewTokenContainer tx={tx} token={token} />
           {/* <Box pl={"7px"}>
             <TransactionDetail isOnConfirm={true} isMobile />
           </Box> */}
@@ -142,34 +172,54 @@ export default function ConfirmDeposit() {
           >
             <Flex w={"full"} justify={"space-between"}>
               <Flex align={"center"} columnGap={3}>
-                <Box w={"9px"} h={"9px"} rounded={"full"} bgColor={"#007AFF"} />
+                <Box
+                  w={"9px"}
+                  h={"9px"}
+                  rounded={"full"}
+                  bgColor={tx?.l1txHash ? "#03D187" : "#007AFF"}
+                />
                 <Text fontWeight={500} fontSize={15}>
                   Initiate
                 </Text>
               </Flex>
 
-              <Flex align={"center"} columnGap={2}>
-                <Flex columnGap={1} align={"center"}>
-                  <Image
-                    alt="gas station"
-                    src={GasStation}
-                    width={14}
-                    height={14}
-                  />
-                  <Text fontSize={13}>
-                    ~
-                    {`${
-                      isBiggerThanMinimumNum(Number(totalGasCost))
-                        ? commafy(totalGasCost, 4)
-                        : "< 0.0001"
-                    } ETH`}{" "}
+              {!tx ? (
+                <Flex align={"center"} columnGap={2}>
+                  <Flex columnGap={1} align={"center"}>
+                    <Image
+                      alt="gas station"
+                      src={GasStation}
+                      width={14}
+                      height={14}
+                    />
+                    <Text fontSize={13}>
+                      ~
+                      {`${
+                        isBiggerThanMinimumNum(Number(totalGasCost))
+                          ? commafy(totalGasCost, 4)
+                          : "< 0.0001"
+                      } ETH`}{" "}
+                    </Text>
+                  </Flex>
+
+                  <Text fontSize={13} color={"#A0A3AD"}>
+                    ${gasCostUS}
                   </Text>
                 </Flex>
-
-                <Text fontSize={13} color={"#A0A3AD"}>
-                  ${gasCostUS}
-                </Text>
-              </Flex>
+              ) : (
+                <Link
+                  target={"_blank"}
+                  href={`${providers.l1BlockExplorer}/tx/${tx.l1txHash}`}
+                  _hover={{}}
+                  >
+                  <Flex columnGap={1} align={"center"}>
+                    <Text fontSize={12} color={"#A0A3AD"}>
+                      Transaction
+                    </Text>
+                    <Image alt="link" src={GuideLink} width={14} height={14} />
+                  </Flex>
+                </Link>
+              )}
             </Flex>
 
             <Box
@@ -183,16 +233,45 @@ export default function ConfirmDeposit() {
 
             <Flex w={"full"} justify={"space-between"}>
               <Flex align={"center"} columnGap={3}>
-                <Box w={"9px"} h={"9px"} rounded={"full"} bgColor={"#A0A3AD"} />
+                <Box
+                  w={"9px"}
+                  h={"9px"}
+                  rounded={"full"}
+                  bgColor={tx?.l2txHash ? "#03D187" : "#A0A3AD"}
+                />
                 <Text fontWeight={500} fontSize={15}>
                   Wait for L2
                 </Text>
               </Flex>
 
               <Flex align={"center"} columnGap={2}>
-                <Text fontSize={13} color={"#A0A3AD"}>
-                  ~1 min
-                </Text>
+                {!tx ? (
+                  <Text fontSize={13} color={"#A0A3AD"}>
+                    ~1 min
+                  </Text>
+                ) : tx.l1txHash && !tx.l2txHash ? (
+                  <></>
+                ) : tx.l1txHash && tx.l2txHash ? (
+                  <Link
+                    target={"_blank"}
+                    href={`${providers.l2BlockExplorer}/tx/${tx.l2txHash}`}
+                    _hover={{}}
+                  >
+                    <Flex columnGap={1} align={"center"}>
+                      <Text fontSize={12} color={"#A0A3AD"}>
+                        Transaction
+                      </Text>
+                      <Image
+                        alt="link"
+                        src={GuideLink}
+                        width={14}
+                        height={14}
+                      />
+                    </Flex>
+                  </Link>
+                ) : (
+                  ""
+                )}
               </Flex>
             </Flex>
           </Flex>
@@ -207,7 +286,7 @@ export default function ConfirmDeposit() {
             bgColor={"#007AFF"}
             color={"#fff"}
             onClick={onClick}
-            isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
+            // isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
             _disabled={{
               color: "#8E8E92",
               bgColor: "#17181D",
