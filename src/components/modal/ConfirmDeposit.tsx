@@ -11,8 +11,8 @@ import {
   ModalOverlay,
   CloseButton,
 } from "@chakra-ui/react";
+import { TokenSymbol } from "../image/TokenSymbol";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { trimAmount } from "@/utils/trim";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
@@ -48,10 +48,14 @@ const NewTokenContainer = () => {
         rounded={"8px"}
       >
         <Flex columnGap={2} align={"center"}>
-          <Image alt="eth" src={ETH} width={24} height={24} />
+          <TokenSymbol
+            tokenType={inToken?.tokenSymbol as string}
+            w={24}
+            h={24}
+          />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              ETH
+              {inToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
@@ -162,11 +166,20 @@ export default function ConfirmDeposit() {
                   </Text>
                 </Flex>
 
-                <Text fontSize={13} color={"#A0A3AD"}>${gasCostUS}</Text>
+                <Text fontSize={13} color={"#A0A3AD"}>
+                  ${gasCostUS}
+                </Text>
               </Flex>
             </Flex>
 
-            <Box pos={"absolute"} top={"36px"} left={"24px"} height={"44px"} w={"1px"} bgColor={"#313442"}/>
+            <Box
+              pos={"absolute"}
+              top={"36px"}
+              left={"24px"}
+              height={"44px"}
+              w={"1px"}
+              bgColor={"#313442"}
+            />
 
             <Flex w={"full"} justify={"space-between"}>
               <Flex align={"center"} columnGap={3}>
@@ -177,7 +190,9 @@ export default function ConfirmDeposit() {
               </Flex>
 
               <Flex align={"center"} columnGap={2}>
-                <Text fontSize={13} color={"#A0A3AD"}>~1 min</Text>
+                <Text fontSize={13} color={"#A0A3AD"}>
+                  ~1 min
+                </Text>
               </Flex>
             </Flex>
           </Flex>
