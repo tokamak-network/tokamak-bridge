@@ -170,13 +170,14 @@ export function useTransactionDetail() {
     //need to put totalGasCost condition later
     if (mode === "Withdraw" && inToken) {
       return [
-        {
-          title: "Amount to Withdraw",
-          content: inputAmount,
-        },
+        // {
+        //   title: "Amount to Withdraw",
+        //   content: inputAmount,
+        // },
         {
           title: "Estimated gas fees",
-          content: `${commafy(totalGasFeeToWithdraw, 4)} ETH`,
+          // content: `${commafy(totalGasFeeToWithdraw, 4)} ETH`,
+          content: ``,
           gasFee: {
             //fixed l1 gasFee for a while
             //0.00024511191632554 ETH
@@ -190,7 +191,7 @@ export function useTransactionDetail() {
         },
         {
           title: "Time to Withdraw",
-          content: "approximately 7 days",
+          content: "~7 days",
         },
       ];
     }
