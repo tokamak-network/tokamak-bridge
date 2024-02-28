@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import Image from "next/image";
 import { useMemo } from "react";
 import { format, addHours } from "date-fns";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
@@ -21,13 +20,10 @@ import { txDataStatus } from "@/recoil/global/transaction";
 import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import TimelineComponent from "../history/modalComponents/TimelineComponent";
-import TitanContainer from "./TitanContainer";
-import EthereumContainer from "./EthereumContainer";
 import CalendarComponent from "../history/modalComponents/CalendarComponent";
 import CloseButton from "../button/CloseButton";
+import NewTokenContainer from "./NewTokenContainer";
 
-import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
-import ARROW from "assets/icons/arrow.svg";
 import "./CalendarButton.css";
 
 export default function ConfirmWithdraw() {
@@ -106,6 +102,8 @@ export default function ConfirmWithdraw() {
       </Flex>
     );
   };
+
+
 
   const ActionButton = () => {
     const isChecked = useRecoilValue(confirmWithdrawStatus);
@@ -194,7 +192,7 @@ export default function ConfirmWithdraw() {
               />
             </Flex>
           </Flex>
-          <Flex alignItems={"center"} columnGap={{ base: "8px", lg: "0px" }}>
+          {/* <Flex alignItems={"center"} columnGap={{ base: "8px", lg: "0px" }}>
             <TitanContainer tx={tx} />
 
             {mobileView ? (
@@ -217,7 +215,8 @@ export default function ConfirmWithdraw() {
             )}
 
             <EthereumContainer />
-          </Flex>
+          </Flex> */}
+          <NewTokenContainer />
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />

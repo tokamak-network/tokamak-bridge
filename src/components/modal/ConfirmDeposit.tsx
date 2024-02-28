@@ -26,6 +26,10 @@ import { useToken } from "wagmi";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { Hash } from "viem";
 import { supportedTokens } from "@/types/token/supportedToken";
+import useConnectedNetwork from "@/hooks/network";
+import { useEffect, useState } from "react";
+import { differenceInSeconds, format } from "date-fns";
+import { ethers } from "ethers";
 
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import ARROW from "assets/icons/arrow.svg";
@@ -33,10 +37,6 @@ import Titan from "assets/icons/network/Titan_no_border.svg";
 import ETH from "assets/tokens/eth.svg";
 import GasStation from "assets/icons/gasStation.svg";
 import GuideLink from "assets/icons/link2.svg";
-import useConnectedNetwork from "@/hooks/network";
-import { useEffect, useState } from "react";
-import { differenceInSeconds, format } from "date-fns";
-import { ethers } from "ethers";
 
 const NewTokenContainer = ({ tx, token }: any) => {
   const { inToken } = useInOutTokens();
