@@ -34,6 +34,9 @@ import ETH from "assets/tokens/eth.svg";
 import GasStation from "assets/icons/gasStation.svg";
 import GuideLink from "assets/icons/link2.svg";
 import useConnectedNetwork from "@/hooks/network";
+import { useEffect, useState } from "react";
+import { differenceInSeconds, format } from "date-fns";
+import { ethers } from "ethers";
 
 const NewTokenContainer = ({ tx, token }: any) => {
   const { inToken } = useInOutTokens();
@@ -68,7 +71,15 @@ const NewTokenContainer = ({ tx, token }: any) => {
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
-                {trimAmount(inToken?.parsedAmount, 8)}
+                {trimAmount(
+                  tx
+                    ? ethers.utils.formatUnits(
+                        tx._amount.toString(),
+                        token?.decimals
+                      )
+                    : inToken?.parsedAmount,
+                  8
+                )}
               </Text>
               <Text ml={"6px"} fontSize={12} fontWeight={400} color={"#A0A3AD"}>
                 ${inTokenWithPrice || "0"}
@@ -97,6 +108,7 @@ export default function ConfirmDeposit() {
   const providers = useGetTxLayers();
   const { inToken } = useInOutTokens();
   const tx = depositData.modalData;
+  const [duration, setDuration] = useState("0");
 
   const { layer } = useConnectedNetwork();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
@@ -113,6 +125,25 @@ export default function ConfirmDeposit() {
   });
   const token =
     layer === "L1" && tx?._l1Token === zeroAddress ? ethToken : data;
+
+  useEffect(() => {
+    if (tx?.l1timeStamp) {
+      const getDuration = setInterval(() => {
+        const startDate = new Date(Number(tx.l1timeStamp) * 1000);
+        const currentTime = new Date();
+        const elapsedTimeInSeconds = differenceInSeconds(
+          currentTime,
+          startDate
+        );
+        const formattedTime = format(
+          new Date(elapsedTimeInSeconds * 1000),
+          "mm : ss"
+        );
+        setDuration(formattedTime);
+      }, 1000);
+      return () => clearInterval(getDuration);
+    }
+  }, []);
 
   return (
     <Modal
@@ -149,6 +180,7 @@ export default function ConfirmDeposit() {
                 <CloseButton
                   onClick={() => {
                     setDepositStatus({ isOpen: false });
+                    setDepositData({ modalData: null });
                   }}
                 />
               </Box>
@@ -211,7 +243,7 @@ export default function ConfirmDeposit() {
                   target={"_blank"}
                   href={`${providers.l1BlockExplorer}/tx/${tx.l1txHash}`}
                   _hover={{}}
-                  >
+                >
                   <Flex columnGap={1} align={"center"}>
                     <Text fontSize={12} color={"#A0A3AD"}>
                       Transaction
@@ -237,7 +269,13 @@ export default function ConfirmDeposit() {
                   w={"9px"}
                   h={"9px"}
                   rounded={"full"}
-                  bgColor={tx?.l2txHash ? "#03D187" : "#A0A3AD"}
+                  bgColor={
+                    !tx
+                      ? "#A0A3AD"
+                      : tx?.l2txHash && tx?.l1txHash
+                      ? "#03D187"
+                      : "#007AFF"
+                  }
                 />
                 <Text fontWeight={500} fontSize={15}>
                   Wait for L2
@@ -249,12 +287,16 @@ export default function ConfirmDeposit() {
                   <Text fontSize={13} color={"#A0A3AD"}>
                     ~1 min
                   </Text>
-                ) : tx.l1txHash && !tx.l2txHash ? (
-                  <></>
-                ) : tx.l1txHash && tx.l2txHash ? (
+                ) : tx?.l1txHash && !tx?.l2txHash ? (
+                  <Flex>
+                    <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+                      {duration}
+                    </Text>
+                  </Flex>
+                ) : tx?.l1txHash && tx?.l2txHash ? (
                   <Link
                     target={"_blank"}
-                    href={`${providers.l2BlockExplorer}/tx/${tx.l2txHash}`}
+                    href={`${providers.l2BlockExplorer}/tx/${tx?.l2txHash}`}
                     _hover={{}}
                   >
                     <Flex columnGap={1} align={"center"}>
