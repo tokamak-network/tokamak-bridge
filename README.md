@@ -4,7 +4,7 @@ Welcome to the Tokamak Bridge, your gateway for seamless token transfers between
 
 ### Website
 
-Visit our website to explore the Tokamak Bridge and start transferring tokens and swapping assets: [Tokamak Bridge Website](https://bridge.tokamak.network/)
+Visit our website to explore the Tokamak Bridge and start transferring tokens and swapping assets:  [Tokamak Bridge Website](https://bridge.tokamak.network/)
 
 ### Features
 
