@@ -11,15 +11,6 @@ export function useProvier() {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
     useConnectedNetwork();
 
-  const provider = useMemo(() => {
-    if (!window.ethereum) {
-      return inNetwork?.layer === "L1" ? getL1Provider() : getL2Provider();
-    }
-    const { ethereum } = window;
-    const provider = new ethers.providers.Web3Provider(ethereum);
-    return provider;
-  }, [window, connectedChainId]);
-
   const L1Provider = useMemo(() => {
     if (isConnectedToMainNetwork) return getProvider(supportedChain[0]);
     return getProvider(supportedChain[1]);
@@ -40,6 +31,15 @@ export function useProvier() {
     if (layer === "L1") return getProvider(supportedChain[3]);
     return getProvider(supportedChain[1]);
   }, [isConnectedToMainNetwork, layer]);
+
+  const provider = useMemo(() => {
+    if (!window.ethereum) {
+      return inNetwork?.layer === "L1" ? L1Provider : L2Provider;
+    }
+    const { ethereum } = window;
+    const provider = new ethers.providers.Web3Provider(ethereum);
+    return provider;
+  }, [window, connectedChainId, L1Provider, L2Provider]);
 
   return { provider, L1Provider, L2Provider, otherLayerProvider };
 }
