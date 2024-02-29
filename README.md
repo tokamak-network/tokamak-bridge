@@ -9,7 +9,7 @@ Visit our website to explore the Tokamak Bridge and start transferring tokens an
 
 ### Features
 
-- Token Transfers: Move tokens between Titan and Ethereum networks \* effortlessly.
+- Token Transfers: Move tokens between Titan and Ethereum networks effortlessly.
 - Token Swaps: Utilize Uniswap contracts for secure and efficient token swaps.
 - Interoperability: Seamlessly interact with different blockchain networks.
 
