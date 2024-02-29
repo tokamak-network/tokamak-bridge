@@ -1,16 +1,19 @@
+import { Text } from "@chakra-ui/react";
 import { FullWithTx } from "@/types/activity/history";
 import { Flex } from "@chakra-ui/react";
 import Step2 from "./Step2";
 import Step1 from "./Step1";
 import Step3 from "./Step3";
 import Step4 from "./Step4";
-import Dots from "./Dots";
+import Line from "./Line";
 import checkDone from "assets/icons/check_done.svg";
 import checkProgress from "assets/icons/check_progress.svg";
 import checkTodo from "assets/icons/check_todo.svg";
 import GasImgTodo from "assets/icons/gasStation.svg";
 import GasImgDone from "assets/icons/gasStation_done.svg";
 import GasImgProgress from "assets/icons/gasStation_progress.svg";
+import ProvStep from "./ProvStep";
+import Dots from "./Dots";
 
 type TxType = FullWithTx & {
   inTokenAmount: string;
@@ -35,48 +38,77 @@ export default function TimelineComponent(props: { tx: TxType }) {
   };
 
   return (
-    <Flex
-      flexDir={"column"}
-      bg="#15161D"
-      borderRadius={"8px"}
-      w={{ base: "full", lg: "364px" }}
-      h="218px"
-      px="12px"
-      py="8px">
-      <Step1
-        progress={
-          props.tx === undefined || props.tx === null ? "inProgress" : "done"
-        }
-        check={check(
-          props.tx === undefined || props.tx === null ? "inProgress" : "done"
-        )}
-      />
-      <Dots
-        progress={!props.tx ? "inProgress" : "done"}
-        color={check(!props.tx ? "inProgress" : "done").color}
-      />
-      <Step2
-        progress={
-          !props.tx
-            ? "todo"
-            : props.tx.currentStatus === 2
-            ? "inProgress"
-            : props.tx.currentStatus > 2
-            ? "done"
-            : "todo"
-        }
-        check={check(
-          !props.tx
-            ? "todo"
-            : props.tx.currentStatus === 2
-            ? "inProgress"
-            : props.tx.currentStatus > 2
-            ? "done"
-            : "todo"
-        )}
-        timeStamp={tx ? Number(tx.l2timeStamp) : undefined}
-      />
-      <Dots
+    <Flex flexDir={"column"}>
+      <Text fontSize={12} mb={2}>
+        Step 1
+      </Text>
+      <Flex
+        flexDir={"column"}
+        bg="#15161D"
+        borderRadius={"8px"}
+        w={{ base: "full", lg: "364px" }}
+        h="fit-content"
+        px="12px"
+        py="8px"
+      >
+        <Step1
+          progress={
+            props.tx === undefined || props.tx === null ? "inProgress" : "done"
+          }
+          check={check(
+            props.tx === undefined || props.tx === null ? "inProgress" : "done"
+          )}
+        />
+        <Line
+          progress={!props.tx ? "inProgress" : "done"}
+          color={check(!props.tx ? "inProgress" : "done").color}
+        />
+        <Step2
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          }
+          check={check(
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          )}
+          timeStamp={tx ? Number(tx.l2timeStamp) : undefined}
+        />
+        <Line
+          progress={!props.tx ? "inProgress" : "done"}
+          color={check(!props.tx ? "inProgress" : "done").color}
+        />
+        <ProvStep
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          }
+          check={check(
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 2
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+              ? "done"
+              : "todo"
+          )}
+        />
+        {/* <Dots
         progress={
           !props.tx
             ? "todo"
@@ -160,7 +192,88 @@ export default function TimelineComponent(props: { tx: TxType }) {
             ? "done"
             : "todo"
         )}
-      />
+      /> */}
+      </Flex>
+
+      <Dots/>
+
+      <Text fontSize={12} mb={2} opacity={0.3}>
+        Step 2
+      </Text>
+      <Flex
+        flexDir={"column"}
+        bg="#15161D"
+        borderRadius={"8px"}
+        w={{ base: "full", lg: "364px" }}
+        h="fit-content"
+        px="12px"
+        py="8px"
+        opacity={0.3}
+      >
+        <Step3
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 4
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          }
+          timeStamp={tx ? Number(tx.timeReadyForRelay) : 0}
+          check={check(
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 4
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          )}
+        />
+        <Line
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 4
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          }
+          color={
+            check(
+              !props.tx
+                ? "todo"
+                : props.tx.currentStatus === 4
+                ? "inProgress"
+                : props.tx.currentStatus > 4
+                ? "done"
+                : "todo"
+            ).color
+          }
+        />
+        <Step4
+          progress={
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 5
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          }
+          check={check(
+            !props.tx
+              ? "todo"
+              : props.tx.currentStatus === 5
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+              ? "done"
+              : "todo"
+          )}
+        />
+      </Flex>
     </Flex>
   );
 }

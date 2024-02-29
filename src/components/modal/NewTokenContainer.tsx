@@ -10,7 +10,6 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { trimAmount } from "@/utils/trim";
 
-import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import ARROW from "assets/icons/arrow.svg";
 import Titan from "assets/icons/network/Titan_no_border.svg";
@@ -37,14 +36,14 @@ const NewTokenContainer = ({ tx, token }: any) => {
         <Flex columnGap={2} align={"center"}>
           <TokenSymbol
             tokenType={
-              tx ? (token?.symbol as string) : (inToken?.tokenSymbol as string)
+              tx ? (tx.inTokenSymbol) : (inToken?.tokenSymbol as string)
             }
             w={24}
             h={24}
           />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              {tx ? token?.symbol : inToken?.tokenSymbol}
+              {tx ? tx.inTokenSymbol : inToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>

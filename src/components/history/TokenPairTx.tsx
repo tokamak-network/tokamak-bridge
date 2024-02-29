@@ -1,6 +1,5 @@
 import { Flex, Text } from "@chakra-ui/react";
 import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
-import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
 import Image from "next/image";
 import commafy from "@/utils/trim/commafy";
 import { TokenSymbol } from "../image/TokenSymbol";

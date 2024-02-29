@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Modal,
   ModalOverlay,
@@ -25,6 +26,10 @@ import CloseButton from "../button/CloseButton";
 import NewTokenContainer from "./NewTokenContainer";
 
 import "./CalendarButton.css";
+import TitanContainer from "./TitanContainer";
+import EthereumContainer from "./EthereumContainer";
+import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
+import ARROW from "assets/icons/arrow.svg";
 
 export default function ConfirmWithdraw() {
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
@@ -102,8 +107,6 @@ export default function ConfirmWithdraw() {
       </Flex>
     );
   };
-
-
 
   const ActionButton = () => {
     const isChecked = useRecoilValue(confirmWithdrawStatus);
@@ -216,7 +219,7 @@ export default function ConfirmWithdraw() {
 
             <EthereumContainer />
           </Flex> */}
-          <NewTokenContainer />
+          <NewTokenContainer tx={tx} />
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />

@@ -1,18 +1,18 @@
-import { Flex } from "@chakra-ui/react";
+import { Flex, Box } from "@chakra-ui/react";
 
 
-const Dots = (props: { progress: string; color: string }) => {
+const Dots = (props: { progress?: string; color?: string }) => {
   const { progress, color } = props;
 
   return (
-    <Flex flexDir={"column"} rowGap={"6px"} pl="6px">
-      <Flex bg={color} height={"2px"} w="2px">
+    <Flex flexDir={"column"} rowGap={"6px"} w={"full"} justify={"center"} align={"center"} mt={3}>
+      <Flex bg={"#FFFFFF"} height={"2px"} w="2px">
         {" "}
       </Flex>
-      <Flex bg={color} height={"2px"} w="2px">
+      <Flex bg={"#FFFFFF"} height={"2px"} w="2px">
         {" "}
       </Flex>
-      <Flex bg={color} height={"2px"} w="2px">
+      <Flex bg={"#FFFFFF"} height={"2px"} w="2px">
         {" "}
       </Flex>
     </Flex>
