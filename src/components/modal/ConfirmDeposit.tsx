@@ -30,6 +30,8 @@ import useConnectedNetwork from "@/hooks/network";
 import { useEffect, useState } from "react";
 import { differenceInSeconds, format } from "date-fns";
 import { ethers } from "ethers";
+import { customRecipientAddress } from "@/recoil/bridgeSwap/atom";
+import { trimAddress } from "@/utils/trim";
 
 import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 import ARROW from "assets/icons/arrow.svg";
@@ -95,6 +97,26 @@ const NewTokenContainer = ({ tx, token }: any) => {
         </Flex>
       </Flex>
     </Box>
+  );
+};
+
+const CustomRecipContainer = () => {
+  const [customRecipient] = useRecoilState(customRecipientAddress);
+
+  return (
+    <Flex
+      justify={"space-between"}
+      align={"center"}
+      p={"12px 16px"}
+      border={"1px solid #313442"}
+      bgColor={"#0F0F12"}
+      rounded={"8px"}
+    >
+      <Text color={"#A0A3AD"} fontSize={12}>
+        Custom recipient
+      </Text>
+      <Text fontSize={13}>{trimAddress({ firstChar: 6, address: customRecipient })}</Text>
+    </Flex>
   );
 };
 
@@ -191,6 +213,8 @@ export default function ConfirmDeposit() {
           {/* <Box pl={"7px"}>
             <TransactionDetail isOnConfirm={true} isMobile />
           </Box> */}
+
+          {customRecipientAddress && <CustomRecipContainer />}
 
           <Flex
             pos={"relative"}

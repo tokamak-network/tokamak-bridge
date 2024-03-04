@@ -25,11 +25,14 @@ import CalendarComponent from "../history/modalComponents/CalendarComponent";
 import CloseButton from "../button/CloseButton";
 import NewTokenContainer from "./NewTokenContainer";
 
+import { customRecipientAddress } from "@/recoil/bridgeSwap/atom";
+import { trimAddress } from "@/utils/trim";
+
 import "./CalendarButton.css";
-import TitanContainer from "./TitanContainer";
-import EthereumContainer from "./EthereumContainer";
-import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
-import ARROW from "assets/icons/arrow.svg";
+// import TitanContainer from "./TitanContainer";
+// import EthereumContainer from "./EthereumContainer";
+// import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
+// import ARROW from "assets/icons/arrow.svg";
 
 export default function ConfirmWithdraw() {
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
@@ -147,6 +150,28 @@ export default function ConfirmWithdraw() {
     );
   };
 
+  const CustomRecipContainer = () => {
+    const [customRecipient] = useRecoilState(customRecipientAddress);
+
+    return (
+      <Flex
+        justify={"space-between"}
+        align={"center"}
+        p={"12px 16px"}
+        border={"1px solid #313442"}
+        bgColor={"#0F0F12"}
+        rounded={"8px"}
+      >
+        <Text color={"#A0A3AD"} fontSize={12}>
+          Custom recipient
+        </Text>
+        <Text fontSize={13}>
+          {trimAddress({ firstChar: 6, address: customRecipient })}
+        </Text>
+      </Flex>
+    );
+  };
+
   return (
     <Modal
       isOpen={withdrawStatus.isOpen}
@@ -220,6 +245,9 @@ export default function ConfirmWithdraw() {
             <EthereumContainer />
           </Flex> */}
           <NewTokenContainer tx={tx} />
+
+          <CustomRecipContainer />
+          
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />

@@ -99,7 +99,9 @@ export default function OutToken() {
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {mode === "Swap" ? "For" : "To"}
         </Text>
-        {(mode === "Swap" || mode === "Deposit") && <Setting />}
+        {(mode === "Swap" || mode === "Deposit" || mode === "Withdraw") && (
+          <Setting />
+        )}
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>
@@ -109,11 +111,23 @@ export default function OutToken() {
           <Box pos={"relative"}>
             <SelectedNetwork />
             {customRecipient && (
-              <Flex pos={"absolute"} flexDir={"column"} left={4} bottom={4} columnGap={"6px"}>
+              <Flex
+                pos={"absolute"}
+                flexDir={"column"}
+                left={4}
+                bottom={4}
+                columnGap={"6px"}
+              >
                 <Text color={"#A0A3AD"} fontSize={12}>
                   Address
                 </Text>
-                <CustomTooltip content={trimAddress({ address: customRecipient, firstChar: 6 })} tooltipLabel={customRecipient} />
+                <CustomTooltip
+                  content={trimAddress({
+                    address: customRecipient,
+                    firstChar: 6,
+                  })}
+                  tooltipLabel={customRecipient}
+                />
                 {/* <Text fontSize={16}>{trimAddress({ address: customRecipient, firstChar: 6 })}</Text> */}
               </Flex>
             )}

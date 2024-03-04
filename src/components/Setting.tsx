@@ -389,7 +389,7 @@ export default function Setting() {
       />
       {isVisible && mode === "Swap" ? (
         <SettingContainer setIsVisible={setIsVisible} />
-      ) : isVisible && mode === "Deposit" ? (
+      ) : (isVisible && (mode === "Deposit")) || (isVisible && (mode === "Withdraw")) ? (
         <CustomRecipient setIsVisible={setIsVisible} />
       ) : (
         ""
