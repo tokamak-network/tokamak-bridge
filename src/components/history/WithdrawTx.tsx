@@ -16,10 +16,14 @@ import { Hash } from "viem";
 import { supportedTokens } from "@/types/token/supportedToken";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import commafy from "@/utils/trim/commafy";
 
 import TitanRect from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
-import commafy from "@/utils/trim/commafy";
+import GuideLink from "@/assets/icons/guideLink.svg";
+import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
+import ARROW from "assets/icons/arrow.svg";
+import Titan from "assets/icons/network/Titan_no_border.svg";
 
 export default function WithdrawTx(props: { tx: FullWithTx }) {
   const { tx } = props;
@@ -47,7 +51,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
 
   const handleCheckWithdrawModal = () => {
     //when the general area of the withdraw tx is clicked, it should open the confirm withdraw modal.
-    //setting up the necessary data for the claim withdraw modal and set it to open 
+    //setting up the necessary data for the claim withdraw modal and set it to open
     if (tx !== undefined) {
       setClaimTx(tx);
       setWithdrawStatus({
@@ -89,29 +93,56 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         <Flex justifyContent={"space-between"} w="100%">
           {mobileView ? (
             <>
-                <Flex columnGap={"4px"} onClick={handleCheckWithdrawModal}>
-                  <Text fontSize={"14px"} fontWeight={600}>
-                    Withdraw from
-                  </Text>
-                  <Image alt="titan" width={18} height={18} src={TitanRect} />
-                </Flex>
-                <Flex columnGap={"4px"} align={"center"} onClick={handleCheckWithdrawModal}>
-                  <Text fontSize={12}>
-                    {commafy(ethers.utils.formatUnits(
+              <Flex columnGap={"4px"} onClick={handleCheckWithdrawModal}>
+                <Text fontSize={"14px"} fontWeight={600}>
+                  Withdraw from
+                </Text>
+                <Image alt="titan" width={18} height={18} src={TitanRect} />
+              </Flex>
+              <Flex
+                columnGap={"4px"}
+                align={"center"}
+                onClick={handleCheckWithdrawModal}
+              >
+                <Text fontSize={12}>
+                  {commafy(
+                    ethers.utils.formatUnits(
                       tx._amount.toString(),
                       token?.decimals
-                    ), 2)}{" "}
-                    {(token?.symbol as string) || "ETH"}
-                  </Text>
-                  <Image width={18} height={18} alt="link" src={LinkIcon} />
-                </Flex>
+                    ),
+                    2
+                  )}{" "}
+                  {(token?.symbol as string) || "ETH"}
+                </Text>
+                <Image width={18} height={18} alt="link" src={LinkIcon} />
+              </Flex>
             </>
           ) : (
             <>
-              <Text fontSize={"14px"} fontWeight={600}>
-                Withdraw
+              <Text
+                fontSize={tx.currentStatus > 5 ? 12 : 14}
+                fontWeight={tx.currentStatus > 5 ? 500 : 600}
+                color={tx.currentStatus > 5 ? "#A0A3AD" : "#FFFFFF"}
+              >
+                {tx.currentStatus > 5 ? "Withdraw Completed" : "Withdraw"}
               </Text>
-              <Button
+              {tx.currentStatus > 5 ? (
+                <Flex
+                  justify={"space-between"}
+                  align={"center"}
+                  columnGap={"6px"}
+                >
+                  <Image alt="eth" src={Ethereum} width={16} height={24} />
+                  <Image alt="eth" src={ARROW} width={12} height={16} />
+                  <Image alt="eth" src={Titan} width={16} height={24} />
+                </Flex>
+              ) : (
+                <Link href="" target="_blank">
+                  <Image alt="link" src={GuideLink} />
+                </Link>
+              )}
+              <></>
+              {/* <Button
                 w={tx?.currentStatus > 5 ? "72px" : "57px"}
                 h="24px"
                 bg="#007AFF"
@@ -145,7 +176,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                     });
                   } else {
                     // Prevent the click event from propagating to the parent Flex
-                    //when the status is 5, the user can claim. confirm withdraw modal opens 
+                    //when the status is 5, the user can claim. confirm withdraw modal opens
                     event.stopPropagation();
                     setClaimTx(tx);
                     claim(tx);
@@ -166,7 +197,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                   }
                 }}
               >
-                {/* depending on the currentStatus of the tx, show the name of the button */}
+                
                 {!tx
                   ? "Details"
                   : tx.currentStatus === 5
@@ -174,7 +205,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                   : tx.currentStatus > 5
                   ? "Claimed"
                   : "Details"}
-              </Button>
+              </Button> */}
             </>
           )}
         </Flex>
