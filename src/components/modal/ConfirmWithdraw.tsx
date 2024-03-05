@@ -45,6 +45,7 @@ export default function ConfirmWithdraw() {
   const { claim } = useCallClaim("relayMessage");
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [txData] = useRecoilState(txDataStatus);
+  const [customRecipient] = useRecoilState(customRecipientAddress);
 
   const { mobileView } = useMediaView();
 
@@ -151,8 +152,6 @@ export default function ConfirmWithdraw() {
   };
 
   const CustomRecipContainer = () => {
-    const [customRecipient] = useRecoilState(customRecipientAddress);
-
     return (
       <Flex
         justify={"space-between"}
@@ -246,8 +245,8 @@ export default function ConfirmWithdraw() {
           </Flex> */}
           <NewTokenContainer tx={tx} />
 
-          <CustomRecipContainer />
-          
+          {customRecipient && <CustomRecipContainer />}
+
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />

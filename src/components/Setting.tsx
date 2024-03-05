@@ -254,6 +254,7 @@ export const CustomRecipient = ({
       //@ts-ignore
       if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
+        setCustomRecipient("");
       }
     };
 
@@ -378,6 +379,7 @@ export const CustomRecipient = ({
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
   const { mode } = useGetMode();
+  const [, setCustomRecipient] = useRecoilState(customRecipientAddress);
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -385,11 +387,15 @@ export default function Setting() {
         src={SettingIcon}
         alt={"SettingIcon"}
         style={{ cursor: "pointer" }}
-        onClick={() => setIsVisible(!isVisible)}
+        onClick={() => {
+          setIsVisible(!isVisible);
+          isVisible && setCustomRecipient("");
+        }}
       />
       {isVisible && mode === "Swap" ? (
         <SettingContainer setIsVisible={setIsVisible} />
-      ) : (isVisible && (mode === "Deposit")) || (isVisible && (mode === "Withdraw")) ? (
+      ) : (isVisible && mode === "Deposit") ||
+        (isVisible && mode === "Withdraw") ? (
         <CustomRecipient setIsVisible={setIsVisible} />
       ) : (
         ""

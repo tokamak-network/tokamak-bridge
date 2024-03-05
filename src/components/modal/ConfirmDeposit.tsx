@@ -62,14 +62,14 @@ const NewTokenContainer = ({ tx, token }: any) => {
         <Flex columnGap={2} align={"center"}>
           <TokenSymbol
             tokenType={
-              tx ? (token?.symbol as string) : (inToken?.tokenSymbol as string)
+              tx ? (token?.symbol as string || "ETH") : (inToken?.tokenSymbol ?? "default")
             }
             w={24}
             h={24}
           />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              {tx ? token?.symbol : inToken?.tokenSymbol}
+              {tx ? token?.symbol || "ETH" : inToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
@@ -131,6 +131,7 @@ export default function ConfirmDeposit() {
   const { inToken } = useInOutTokens();
   const tx = depositData.modalData;
   const [duration, setDuration] = useState("0");
+  const [customRecipient] = useRecoilState(customRecipientAddress);
 
   const { layer } = useConnectedNetwork();
   const zeroAddress = "0x0000000000000000000000000000000000000000";
@@ -214,7 +215,7 @@ export default function ConfirmDeposit() {
             <TransactionDetail isOnConfirm={true} isMobile />
           </Box> */}
 
-          {customRecipientAddress && <CustomRecipContainer />}
+          {customRecipient && <CustomRecipContainer />}
 
           <Flex
             pos={"relative"}

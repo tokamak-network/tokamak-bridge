@@ -36,14 +36,14 @@ const NewTokenContainer = ({ tx, token }: any) => {
         <Flex columnGap={2} align={"center"}>
           <TokenSymbol
             tokenType={
-              tx ? (tx.inTokenSymbol) : (inToken?.tokenSymbol as string)
+              tx ? (tx.inTokenSymbol || "ETH") : (inToken?.tokenSymbol as string)
             }
             w={24}
             h={24}
           />
           <Flex flexDir={"column"} justify={"space-between"}>
             <Text textColor={"#A0A3AD"} fontSize={12}>
-              {tx ? tx.inTokenSymbol : inToken?.tokenSymbol}
+              {tx ? tx.inTokenSymbol || "ETH" : inToken?.tokenSymbol}
             </Text>
             <Flex align={"center"}>
               <Text fontSize={16} fontWeight={600}>
