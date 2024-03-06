@@ -138,7 +138,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                 </Flex>
               ) : (
                 <Link href="" target="_blank">
-                  <Image alt="link" src={GuideLink} />
+                  <Image width={18} height={18} alt="link" src={GuideLink} />
                 </Link>
               )}
               <></>
@@ -223,10 +223,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
             )}
             inTokenSymbol={(token?.symbol as string) || "ETH"}
             outTokenSymbol={(token?.symbol as string) || "ETH"}
+            tx={tx}
           />
         )}
       </Flex>
-      {!mobileView && (
+      {!mobileView && tx?.currentStatus <= 5 && (
         <StatusTx
           completed={true}
           date={Number(tx.l2timeStamp)}
@@ -244,22 +245,24 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         />
       )}
 
-      <StatusTx
-        completed={tx.timeReadyForRelay ? false : false}
-        date={Number(tx.l1timeStamp)}
-        timeStamp={Number(tx.timeReadyForRelay)}
-        txHash={tx.l1txHash}
-        layer={"L1"}
-        tx={{
-          ...tx,
-          inTokenSymbol: token?.symbol as string,
-          outTokenSymbol: token?.symbol as string,
-          inTokenAmount: ethers.utils.formatUnits(
-            tx._amount.toString(),
-            token?.decimals
-          ),
-        }}
-      />
+      {tx?.currentStatus <= 5 && (
+        <StatusTx
+          completed={tx.timeReadyForRelay ? false : false}
+          date={Number(tx.l1timeStamp)}
+          timeStamp={Number(tx.timeReadyForRelay)}
+          txHash={tx.l1txHash}
+          layer={"L1"}
+          tx={{
+            ...tx,
+            inTokenSymbol: token?.symbol as string,
+            outTokenSymbol: token?.symbol as string,
+            inTokenAmount: ethers.utils.formatUnits(
+              tx._amount.toString(),
+              token?.decimals
+            ),
+          }}
+        />
+      )}
     </Flex>
   );
 }
