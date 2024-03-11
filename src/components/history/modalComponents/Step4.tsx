@@ -64,7 +64,7 @@ const Step4 = (props: { progress: string; check: any }) => {
       <Flex>
         <Image src={check.check} alt="check" />
         <Text ml="8px" fontSize={"14px"} color={check.color}>
-          Claim withdraw
+          Claim
         </Text>
       </Flex>
       {props.progress !== "done" && (

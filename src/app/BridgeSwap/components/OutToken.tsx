@@ -11,7 +11,11 @@ import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import Setting from "@/components/Setting";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { trimAddress } from "@/utils/trim";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import { customRecipientAddress } from "@/recoil/bridgeSwap/atom";
+import { useRecoilState } from "recoil";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -24,7 +28,8 @@ export const SelectedNetwork = () => {
       rowGap={"16px"}
       justifyContent={"center"}
       alignItems={"center"}
-      mt={"15px"}>
+      mt={"15px"}
+    >
       <ImageSymbol
         ImgFile={outNetwork?.networkImage as ImageFileType}
         w={48}
@@ -35,7 +40,8 @@ export const SelectedNetwork = () => {
         maxH={"44px"}
         fontSize={18}
         fontWeight={500}
-        textAlign={"center"}>
+        textAlign={"center"}
+      >
         {convertNetworkName(outNetwork?.chainName)}
       </Text>
     </Box>
@@ -67,7 +73,8 @@ export const SearchTokenComponent = () => {
       display={"flex"}
       flexDir={"column"}
       rowGap={"70px"}
-      mt={"12px"}>
+      mt={"12px"}
+    >
       <SearchToken onClick={onOpenOutToken} />
     </Box>
   );
@@ -76,6 +83,7 @@ export const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode, swapSection } = useGetMode();
   const { outToken } = useInOutTokens();
+  const [customRecipient] = useRecoilState(customRecipientAddress);
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -91,13 +99,40 @@ export default function OutToken() {
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {mode === "Swap" ? "For" : "To"}
         </Text>
-        {mode === "Swap" && <Setting />}
+        {(mode === "Swap" || mode === "Deposit" || mode === "Withdraw") && (
+          <Setting />
+        )}
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>
         {NetworkSwitcher}
         {swapSection && <SearchTokenComponent />}
-        {(mode === "Deposit" || mode === "Withdraw") && <SelectedNetwork />}
+        {(mode === "Deposit" || mode === "Withdraw") && (
+          <Box pos={"relative"}>
+            <SelectedNetwork />
+            {customRecipient && (
+              <Flex
+                pos={"absolute"}
+                flexDir={"column"}
+                left={4}
+                bottom={4}
+                columnGap={"6px"}
+              >
+                <Text color={"#A0A3AD"} fontSize={12}>
+                  Address
+                </Text>
+                <CustomTooltip
+                  content={trimAddress({
+                    address: customRecipient,
+                    firstChar: 6,
+                  })}
+                  tooltipLabel={customRecipient}
+                />
+                {/* <Text fontSize={16}>{trimAddress({ address: customRecipient, firstChar: 6 })}</Text> */}
+              </Flex>
+            )}
+          </Box>
+        )}
         {outToken !== null && (
           <TokenInput
             inToken={false}

@@ -11,10 +11,6 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import CloseButton from "../button/CloseButton";
 import Image from "next/image";
-import ARROW_ICON from "assets/icons/confirm/arrow.svg";
-import ARROW from "assets/icons/arrow.svg";
-import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
-import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
@@ -29,7 +25,18 @@ import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
+import ARROW from "assets/icons/arrow.svg";
+import ARROW_ICON from "assets/icons/confirm/arrow.svg";
+import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
+import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
+import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
+import ArrowDown from "assets/icons/arrow_down.svg";
+import Titan from "assets/icons/network/Titan_no_border.svg";
+import ETH from "assets/tokens/eth.svg";
+
 import "@/css/spinner.css";
+import commafy from "@/utils/trim/commafy";
+import usePriceImpact from "@/hooks/swap/usePriceImpact";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -208,12 +215,125 @@ const TokenContainer = () => {
   );
 };
 
+const NewTokenContainer = () => {
+  const { inToken, outToken } = useInOutTokens();
+  const { amountOut } = useSwapTokens();
+  const { inNetwork, outNetwork } = useInOutNetwork();
+
+  const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
+    tokenName: inToken?.tokenName as string,
+    amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
+  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
+    tokenName: outToken?.tokenName as string,
+    amount: Number(amountOut),
+  });
+
+  return (
+    <Box pos={"relative"}>
+      <Flex
+        justify={"space-between"}
+        align={"center"}
+        p={"6px 12px"}
+        border={"1px solid #313442"}
+        borderBottom={"none"}
+        bgColor={"#0F0F12"}
+        rounded={"8px 8px 0px 0px"}
+      >
+        <Flex columnGap={2} align={"center"}>
+          <TokenSymbol
+            tokenType={inToken?.tokenSymbol ?? "default"}
+            w={24}
+            h={24}
+          />
+          <Flex flexDir={"column"} justify={"space-between"}>
+            <Text textColor={"#A0A3AD"} fontSize={12}>
+              {inToken?.tokenSymbol}
+            </Text>
+            <Flex align={"center"}>
+              <Text fontSize={16} fontWeight={600}>
+                {trimAmount(inToken?.parsedAmount, 8)}
+              </Text>
+              <Text ml={"6px"} fontSize={12} fontWeight={400} color={"#A0A3AD"}>
+                ${inTokenWithPrice || "0"}
+              </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+
+        <Flex justify={"space-between"} align={"center"} columnGap={"6px"}>
+          <NetworkSymbol network={inNetwork?.chainId} w={24} h={24} />
+        </Flex>
+      </Flex>
+
+      <Flex
+        bgColor={"#0F0F12"}
+        border={"1px solid #313442"}
+        pos={"absolute"}
+        w={6}
+        h={6}
+        left={"calc(50% - 12px)"}
+        top={"calc(50% - 12px)"}
+        justify={"center"}
+        align={"center"}
+        rounded={"4px"}
+        zIndex={1}
+      >
+        <Image alt="arrow down" src={ArrowDown} width={16} height={16} />
+      </Flex>
+
+      <Flex
+        justify={"space-between"}
+        align={"center"}
+        p={"6px 12px"}
+        border={"1px solid #313442"}
+        bgColor={"#0F0F12"}
+        rounded={"0px 0px 8px 8px"}
+      >
+        <Flex columnGap={2} align={"center"}>
+          <TokenSymbol
+            tokenType={outToken?.tokenSymbol ?? "default"}
+            w={24}
+            h={24}
+          />
+          <Flex flexDir={"column"} justify={"space-between"}>
+            <Text textColor={"#A0A3AD"} fontSize={12}>
+              {outToken?.tokenSymbol}
+            </Text>
+            <Flex align={"center"}>
+              <Text fontSize={16} fontWeight={600}>
+                {trimAmount(outToken?.parsedAmount, 8)}
+              </Text>
+              <Text ml={"6px"} fontSize={12} fontWeight={400} color={"#A0A3AD"}>
+                ${outTokenWithPrice || "0"}
+              </Text>
+            </Flex>
+          </Flex>
+        </Flex>
+
+        <Flex justify={"space-between"} align={"center"} columnGap={"6px"}>
+          <NetworkSymbol network={outNetwork?.chainId} w={24} h={24} />
+        </Flex>
+      </Flex>
+    </Box>
+  );
+};
+
 export default function ActionConfirmModal() {
   const { mode } = useGetMode();
   const { isOpen, onCloseConfirmModal } = useConfirm();
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
   const { mobileView } = useMediaView();
+  const { inToken, outToken } = useInOutTokens();
+  const { outPrice } = usePriceImpact();
+
+  const isWrapUnwrap =
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    mode === "ETH-Wrap" ||
+    mode === "ETH-Unwrap";
 
   return (
     <Modal isOpen={isOpen} onClose={onCloseConfirmModal} size={"xl"} isCentered>
@@ -243,8 +363,14 @@ export default function ActionConfirmModal() {
               </Box>
             )}
           </Flex>
-          <TokenContainer />
-          <Box mt={"16px"}>
+          {/* <TokenContainer /> */}
+          <NewTokenContainer />
+          <Box pl={"7px"}>
+            <Text fontSize={14} fontWeight={400} mb={"5px"}>{`1 ${
+              inToken?.tokenSymbol
+            } = ${isWrapUnwrap ? 1 : commafy(outPrice, 4)} ${
+              outToken?.tokenSymbol
+            }`}</Text>
             <TransactionDetail isOnConfirm={true} isMobile />
           </Box>
           <Button

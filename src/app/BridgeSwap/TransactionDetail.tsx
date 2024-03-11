@@ -1,13 +1,11 @@
-import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
-import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
-import { Box, Checkbox, Flex, Spinner, Text, Tooltip } from "@chakra-ui/react";
-import { useRecoilState, useRecoilValue } from "recoil";
-import ArrowImg from "assets/icons/arrow.svg";
-import GasImg from "assets/icons/gasStation.svg";
-import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { Box, Checkbox, Flex, Text } from "@chakra-ui/react";
 import { motion, useAnimation } from "framer-motion";
+
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
+import { actionMode, confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import CustomTooltip from "components/tooltip/CustomTooltip";
 import {
   DepositDetailProp,
@@ -31,13 +29,18 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
+import ArrowImg from "assets/icons/arrow.svg";
+import GasImg from "assets/icons/gasStation.svg";
+import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
+import ETH from "assets/tokens/eth.svg";
+import TON from "assets/tokens/ton.svg";
+
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
 };
 
 const DepositDetailRow = (props: DepositDetailProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
-  const { pcView } = useMediaView();
 
   return (
     <Flex flexDir={"column"}>
@@ -55,7 +58,12 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
+          {gasFee && (
+            <Flex columnGap={"6px"} align={"center"}>
+              <Image alt="eth" src={ETH} width={14} height={14} />
+              <Text>${gasFee.l1GasUS}</Text>
+            </Flex>
+          )}
         </Flex>
       </Flex>
       {/* {gasFee && pcView && (
@@ -109,7 +117,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
         h={"16px"}
-        color={isBalanceOver ? '#A0A3AD' : ''}
+        color={isBalanceOver ? "#A0A3AD" : ""}
       >
         <Text fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
@@ -120,7 +128,12 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l2GasUS}</Text>}
+          {gasFee && (
+            <Flex columnGap={"6px"} align={"center"}>
+              <Image alt="eth" src={TON} width={14} height={14} />
+              <Text color={"#FFFFFF"}>${gasFee.l2GasUS}</Text>
+            </Flex>
+          )}
         </Flex>
 
         {/* <Text fontWeight={500}>
@@ -263,14 +276,14 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const { isOpen } = useConfirm();
   const { layer } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
-  
+
   return (
     <Flex flexDir={"column"}>
       <Flex
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
         h={"16px"}
-        color={isBalanceOver ? '#A0A3AD' : '#fff'}
+        color={isBalanceOver ? "#A0A3AD" : "#fff"}
       >
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
@@ -281,23 +294,22 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           )}
         </Flex>
         <Flex>
-          {isLoading ? (
+          {isLoading && content ? (
             <GradientSpinner />
           ) : (
-            <Text 
-              fontWeight={500}
-            >
-              {content}
-            </Text>
+            <Text fontWeight={500}>{content}</Text>
           )}
           {gasFee && (
-            <Text
-              ml={"27px"}
-              fontWeight={500}
-              color={isOpen ? "#fff" : "#A0A3AD"}
-            >
-              {gasFee}
-            </Text>
+            <Flex columnGap={"6px"} align={"center"}>
+              <Image alt="eth" src={ETH} width={14} height={14} />
+              <Text
+                // ml={"27px"}
+                fontWeight={500}
+                // color={isOpen ? "#fff" : "#A0A3AD"}
+              >
+                {gasFee}
+              </Text>
+            </Flex>
           )}
         </Flex>
       </Flex>
@@ -312,7 +324,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
   const { isBalanceOver } = useInputBalanceCheck();
 
   return (
-    <Flex flexDir={"column"} color={isBalanceOver ? '#a0a3ad' : ''}>
+    <Flex flexDir={"column"} color={isBalanceOver ? "#a0a3ad" : ""}>
       <Flex
         height={"14px"}
         justifyContent={"space-between"}
@@ -324,7 +336,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
         <Flex>
           {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{}</Text>}
           {gasFee && (
-            <Text mr={"27px"} fontWeight={500} >
+            <Text mr={"27px"} fontWeight={500}>
               {gasFee}
             </Text>
           )}
@@ -403,49 +415,49 @@ const Content = (props: {
     WrapUnwrapPropsData,
   ]);
 
-  if (isExpanded) {
-    return (
-      <Flex>
-        <Box flex={1} flexDir={"column"}>
-          {!isMobile && <DivisionLine />}
-          <Flex flexDir={"column"} rowGap={"10px"}>
-            {detailRow}
-          </Flex>
-          {mode === "Withdraw" && isOnConfirm && isOpen && (
-            <Flex flexDir={"column"}>
-              <DivisionLine />
-              <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
-                <Checkbox
-                  w={"16px"}
-                  h={"16px"}
-                  mt={"5px"}
-                  mb={"auto"}
-                  isChecked={isConfirm}
-                  borderLeft={0}
-                  borderWidth={"1px"}
-                  borderColor={isConfirm ? "#fff" : "#A0A3AD"}
-                  colorScheme={"#fff"}
-                  onChange={(e) => {
-                    const checkValue = e.target.checked;
-                    setIsConfirm(checkValue);
-                  }}
-                ></Checkbox>
-                <Text
-                  lineHeight={"20px"}
-                  fontSize={{ base: 13, lg: 14 }}
-                  fontWeight={500}
-                  color={isConfirm ? "#fff" : "#A0A3AD"}
-                >
-                  I understand it will take approximately 7 days until my funds
-                  are claimable on Ethereum Mainnet.{" "}
-                </Text>
-              </Flex>
+  // if (isExpanded) {
+  return (
+    <Flex>
+      <Box flex={1} flexDir={"column"}>
+        {/* {!isMobile && <DivisionLine />} */}
+        <Flex flexDir={"column"} rowGap={"10px"}>
+          {detailRow}
+        </Flex>
+        {mode === "Withdraw" && isOnConfirm && isOpen && (
+          <Flex flexDir={"column"}>
+            <DivisionLine />
+            <Flex mt={"2px"} columnGap={"12px"} alignItems={"center"}>
+              <Checkbox
+                w={"16px"}
+                h={"16px"}
+                mt={"5px"}
+                mb={"auto"}
+                isChecked={isConfirm}
+                borderLeft={0}
+                borderWidth={"1px"}
+                borderColor={isConfirm ? "#fff" : "#A0A3AD"}
+                colorScheme={"#fff"}
+                onChange={(e) => {
+                  const checkValue = e.target.checked;
+                  setIsConfirm(checkValue);
+                }}
+              ></Checkbox>
+              <Text
+                lineHeight={"20px"}
+                fontSize={{ base: 13, lg: 14 }}
+                fontWeight={500}
+                color={isConfirm ? "#fff" : "#A0A3AD"}
+              >
+                I understand it will take approximately 7 days until my funds
+                are claimable on Ethereum Mainnet.{" "}
+              </Text>
             </Flex>
-          )}
-        </Box>
-      </Flex>
-    );
-  }
+          </Flex>
+        )}
+      </Box>
+    </Flex>
+  );
+  // }
   return null;
 };
 
@@ -462,7 +474,7 @@ const Title = (props: {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { gasCostUS } = useGasFee();
-  const { isBalanceOver } = useInputBalanceCheck()
+  const { isBalanceOver } = useInputBalanceCheck();
 
   useEffect(() => {
     if (isExpanded) {
@@ -486,7 +498,7 @@ const Title = (props: {
         cursor={isOpen ? "" : "pointer"}
         onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
-        color={isBalanceOver ? '#A0A3AD' : ''}
+        color={isBalanceOver ? "#A0A3AD" : ""}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
@@ -526,9 +538,7 @@ const Title = (props: {
         justifyContent={"space-between"}
         alignItems={"center"}
         cursor={isOpen ? "" : "pointer"}
-        onClick={() =>
-           isOpen === false && setIsExpended(!isExpanded)
-        }
+        onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
       >
         {isLoading ? (
@@ -536,9 +546,7 @@ const Title = (props: {
             <GradientSpinner />
           </Box>
         ) : (
-          <Flex
-            color={isBalanceOver ? '#A0A3AD' : ''}
-          >
+          <Flex color={isBalanceOver ? "#A0A3AD" : ""}>
             <Text>
               {1} {inToken?.tokenSymbol}
             </Text>
@@ -553,7 +561,7 @@ const Title = (props: {
             )} */}
           </Flex>
         )}
-        {isLoading 
+        {isLoading
           ? null
           : isOpen === false && (
               <Flex>
@@ -594,14 +602,8 @@ export default function TransactionDetail(props: {
 
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
-  const { isInputZero, isBalanceOver } = useInputBalanceCheck();
+  const { isInputZero } = useInputBalanceCheck();
   const { isConnected } = useAccount();
-
-  const isWrapUnwrap =
-    mode === "Wrap" ||
-    mode === "Unwrap" ||
-    mode === "ETH-Wrap" ||
-    mode === "ETH-Unwrap";
 
   if (
     !isReady ||
@@ -624,26 +626,27 @@ export default function TransactionDetail(props: {
       w={"100%"}
       // h={isExpanded ? "310px" : "48px"}
       minH={{ base: "40px", lg: "48px" }}
-      bg={"#1f2128"}
+      // bg={"#1f2128"}
       borderRadius={"8px"}
       px={!isMobile ? { base: "16px", lg: "20px" } : ""}
       flexDir={"column"}
-      pt={
-        !isMobile
-          ? {
-              base: isExpanded ? "11px" : "11px",
-              lg: isExpanded ? "20px" : "14px",
-            }
-          : ""
-      }
-      pb={{
-        base: isExpanded  ? "12px" : "",
-        lg: isExpanded ? "20px" : "",
-      }}
+      // pt={
+      //   !isMobile
+      //     ? {
+      //         base: isExpanded ? "11px" : "11px",
+      //         lg: isExpanded ? "20px" : "14px",
+      //       }
+      //     : ""
+      // }
+      // pb={{
+      //   base: isExpanded  ? "12px" : "",
+      //   lg: isExpanded ? "20px" : "",
+      // }}
     >
-      {!isMobile && (
+      {/* {!isMobile && (
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      )}
+      )} */}
+
       <Content
         isExpanded={isExpanded}
         isOnConfirm={isOnConfirm}

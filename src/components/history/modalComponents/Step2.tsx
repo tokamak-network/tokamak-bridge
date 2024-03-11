@@ -38,7 +38,7 @@ function Step2(props: { progress: string; timeStamp?: number , check:any}) {
 
   return (
     <Flex
-      h="36px"
+      h="24px"
       justifyContent={"space-between"}
       alignItems={"center"}
       // border={"1px solid red"}
@@ -47,7 +47,8 @@ function Step2(props: { progress: string; timeStamp?: number , check:any}) {
       <Flex>
         <Image src={check.check} alt="check" />
         <Text ml="8px" fontSize={"14px"} color={check.color}>
-          Wait {isConnectedToMainNetwork ? "~11" : "~2"} min for rollup
+          {/* Wait {isConnectedToMainNetwork ? "~11" : "~2"} min for rollup */}
+          Wait for rollup
         </Text>
       </Flex>
       {props.progress !== "done" && (
@@ -57,7 +58,6 @@ function Step2(props: { progress: string; timeStamp?: number , check:any}) {
             fontSize={"14px"}
             color={check.color}
           >
-           
             {tx ? duration : isConnectedToMainNetwork ? "11 min" : "2 min"}
           </Text>
         </Flex>

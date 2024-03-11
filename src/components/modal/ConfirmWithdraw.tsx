@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   Modal,
   ModalOverlay,
@@ -9,7 +10,6 @@ import {
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-import Image from "next/image";
 import { useMemo } from "react";
 import { format, addHours } from "date-fns";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
@@ -21,14 +21,18 @@ import { txDataStatus } from "@/recoil/global/transaction";
 import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import TimelineComponent from "../history/modalComponents/TimelineComponent";
-import TitanContainer from "./TitanContainer";
-import EthereumContainer from "./EthereumContainer";
 import CalendarComponent from "../history/modalComponents/CalendarComponent";
 import CloseButton from "../button/CloseButton";
+import NewTokenContainer from "./NewTokenContainer";
 
-import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
-import ARROW from "assets/icons/arrow.svg";
+import { customRecipientAddress } from "@/recoil/bridgeSwap/atom";
+import { trimAddress } from "@/utils/trim";
+
 import "./CalendarButton.css";
+// import TitanContainer from "./TitanContainer";
+// import EthereumContainer from "./EthereumContainer";
+// import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
+// import ARROW from "assets/icons/arrow.svg";
 
 export default function ConfirmWithdraw() {
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
@@ -41,6 +45,7 @@ export default function ConfirmWithdraw() {
   const { claim } = useCallClaim("relayMessage");
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [txData] = useRecoilState(txDataStatus);
+  const [customRecipient] = useRecoilState(customRecipientAddress);
 
   const { mobileView } = useMediaView();
 
@@ -146,6 +151,26 @@ export default function ConfirmWithdraw() {
     );
   };
 
+  const CustomRecipContainer = () => {
+    return (
+      <Flex
+        justify={"space-between"}
+        align={"center"}
+        p={"12px 16px"}
+        border={"1px solid #313442"}
+        bgColor={"#0F0F12"}
+        rounded={"8px"}
+      >
+        <Text color={"#A0A3AD"} fontSize={12}>
+          Custom recipient
+        </Text>
+        <Text fontSize={13}>
+          {trimAddress({ firstChar: 6, address: customRecipient })}
+        </Text>
+      </Flex>
+    );
+  };
+
   return (
     <Modal
       isOpen={withdrawStatus.isOpen}
@@ -194,7 +219,7 @@ export default function ConfirmWithdraw() {
               />
             </Flex>
           </Flex>
-          <Flex alignItems={"center"} columnGap={{ base: "8px", lg: "0px" }}>
+          {/* <Flex alignItems={"center"} columnGap={{ base: "8px", lg: "0px" }}>
             <TitanContainer tx={tx} />
 
             {mobileView ? (
@@ -217,7 +242,11 @@ export default function ConfirmWithdraw() {
             )}
 
             <EthereumContainer />
-          </Flex>
+          </Flex> */}
+          <NewTokenContainer tx={tx} />
+
+          {customRecipient && <CustomRecipContainer />}
+
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />

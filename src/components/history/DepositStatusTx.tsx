@@ -32,7 +32,7 @@ export default function DepositStatusTx(props: {
         );
         const formattedTime = format(
           new Date(elapsedTimeInSeconds * 1000),
-          "mm:ss"
+          "mm : ss"
         );
         setDuration(formattedTime);
       }, 1000);
@@ -74,7 +74,7 @@ export default function DepositStatusTx(props: {
           h="6px"
           w="6px"
           borderRadius={"50%"}
-          bg={completed ? "#03D187" : "#8497DB"}
+          bg={completed ? "#03D187" : "#007AFF"}
           mr="6px"
         ></Flex>
         {completed ? (
@@ -91,8 +91,9 @@ export default function DepositStatusTx(props: {
             _hover={{
               textDecoration: mobileView ? "none" : "underline"
             }}
+            color={"#A0A3AD"}
           >
-            {mobileView ? "Deposited" : `${layer}: Completed`}
+            {mobileView ? "Deposited" : `Initiate`}
           </Link>
         ) : mobileView ? (
           <Link
@@ -106,7 +107,7 @@ export default function DepositStatusTx(props: {
           </Link>
         ) : (
           <Text fontSize={"11px"} fontWeight={600}>
-            {`${layer}: Wait ~5 min for relay`}
+            {`Wait for L2`}
           </Text>
         )}
       </Flex>
@@ -131,11 +132,11 @@ export default function DepositStatusTx(props: {
         ) : (
           <Flex fontSize={"11px"}>
             <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-              {format(fromUnixTime(date), "yyyy.MM.dd")}
+              {format(fromUnixTime(date), "yyyy.MM.dd hh:mm b")}
             </Text>
             {!mobileView && (
               <Text ml="3px" color={"#A0A3AD"}>
-                {format(fromUnixTime(date), "hh:mm b (z)")}
+                {format(fromUnixTime(date), "(z)")}
               </Text>
             )}
           </Flex>

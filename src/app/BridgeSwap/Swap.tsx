@@ -25,7 +25,7 @@ export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
-  const { pcView, mobileView } = useMediaView();
+  const { pcView } = useMediaView();
 
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
     selectedInTokenStatus

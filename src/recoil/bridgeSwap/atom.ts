@@ -239,3 +239,8 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
     return { mode: null, isReady: false };
   },
 });
+
+export const customRecipientAddress = atom<string>({
+  key: "customRecipient",
+  default: ""
+});

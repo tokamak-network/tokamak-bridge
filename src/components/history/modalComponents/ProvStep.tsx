@@ -12,9 +12,9 @@ import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { checkDocument } from "@apollo/client/utilities";
-import Titan from "assets/icons/network/Titan_no_border.svg";
+import Ethereum from "assets/icons/network/Ethereum_no_border.svg";
 
-const Step1 = (props: { progress: string; check: any }) => {
+const ProvStep = (props: { progress: string; check: any }) => {
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdrawData);
   const tx = withdraw.modalData;
   const providers = useGetTxLayers();
@@ -30,9 +30,9 @@ const Step1 = (props: { progress: string; check: any }) => {
       <Flex>
         <Image src={check.check} alt="check" />
         <Text ml="8px" mr={"6px"} fontSize={"14px"} color={check.color}>
-          Initiate
+          Prove
         </Text>
-        <Image alt="titan" src={Titan}/>
+        <Image alt="titan" src={Ethereum} width={16} height={16}/>
       </Flex>
       {tx ? (
         <Flex>
@@ -68,4 +68,4 @@ const Step1 = (props: { progress: string; check: any }) => {
   );
 };
 
-export default Step1;
+export default ProvStep;

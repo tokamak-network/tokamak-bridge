@@ -5,6 +5,7 @@ type withdrawModal = {
   isOpen: boolean;
   modalData?: any;
 };
+
 export const transactionModalStatus = atom<
   "confirming" | "confirmed" | "error" | null
 >({
@@ -50,10 +51,25 @@ export const confirmWithdrawData = atom<any>({
     modalData: null,
   },
 });
+
 export const confirmWithdrawStats = atom<withdrawModal>({
   key: "confirmWithdrawStats",
   default: {
     isOpen: false,
+  },
+});
+
+export const confirmDepositStats = atom<withdrawModal>({
+  key: "confirmDepositStats",
+  default: {
+    isOpen: false,
+  },
+});
+
+export const confirmDepositData = atom<any>({
+  key: "confirmDepositData",
+  default: {
+    modalData: null,
   },
 });
 
