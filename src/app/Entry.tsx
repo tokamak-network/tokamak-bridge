@@ -11,10 +11,9 @@ import MobileView from "@/app/Mobile";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
-  const { minorView } = useMediaView();
+  const { mobileView } = useMediaView();
 
-
-  if (minorView) {
+  if (mobileView) {
     return (
       <Center h={"100vh"}>
         <MobileView />
