@@ -20,9 +20,10 @@ import { swapSettingStatus } from "@/recoil/modal/atom";
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
   isModal?: boolean;
+  settingRef: any;
 }
 
-export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
+export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
   const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
@@ -97,7 +98,7 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       //@ts-ignore
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !settingRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
       }
     };
@@ -237,6 +238,7 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
 
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const settingRef = useRef(null);
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -244,9 +246,10 @@ export default function Setting() {
         src={SettingIcon}
         alt={"SettingIcon"}
         style={{ cursor: "pointer" }}
-        onClick={() => setIsVisible(!isVisible)}
+        ref={settingRef}
+        onClick={() => setIsVisible(prev => !prev)}
       />
-      {isVisible && <SettingContainer setIsVisible={setIsVisible} />}
+      {isVisible && <SettingContainer settingRef={settingRef} setIsVisible={setIsVisible} />}
     </Flex>
   );
 }

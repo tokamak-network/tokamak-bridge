@@ -61,20 +61,28 @@ export default function Swap() {
   return (
     <>
       {pcView ? (
-        <Flex w={"100%"} justifyContent={"space-between"} columnGap={switchable?'6px':"5px"}>
+        <Flex
+          w={"100%"}
+          justifyContent={"space-between"}
+          columnGap={switchable ? "6px" : "5px"}
+        >
           <InToken />
           <Flex
-            onClick={invertTokenPair}
-            cursor={
-              mode === "Swap" || mode === "Unwrap" || mode === "Wrap"
-                ? "pointer"
-                : ""
-            }
             justifyContent={"center"}
             alignItems={"center"}
             pt={mode === null ? "65px" : "80px"}
           >
             <Flex
+              onClick={invertTokenPair}
+              cursor={
+                mode === "Swap" ||
+                mode === "Unwrap" ||
+                mode === "Wrap" ||
+                mode === "ETH-Unwrap" ||
+                mode === "ETH-Wrap"
+                  ? "pointer"
+                  : ""
+              }
               bg={switchable ? "#1F2128" : "transparent"}
               w={"36px"}
               h={"36px"}
@@ -112,7 +120,13 @@ export default function Swap() {
             )}
           </Flex>
 
-          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"} align={"center"}>
+          <Flex
+            w={"100%"}
+            mx={"auto"}
+            columnGap={"8px"}
+            justify={"center"}
+            align={"center"}
+          >
             <MobileInToken />
 
             <Flex

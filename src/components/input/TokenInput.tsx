@@ -107,7 +107,7 @@ export default function TokenInput(props: {
     // }
 
     //for wrap/unwrap switch
-    if (inToken && switchable && !isTokenSearch) {
+    if (inToken && switchable) {
       if (selectedInToken && selectedOutToken) {
         if (value === "") {
           setSelectedOutToken({
@@ -121,7 +121,6 @@ export default function TokenInput(props: {
             parsedAmount: null,
           });
         }
-
         const parsedAmountOut = ethers.utils.parseUnits(
           value,
           selectedOutToken?.decimals

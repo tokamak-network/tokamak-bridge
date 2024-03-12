@@ -270,7 +270,6 @@ const SwapDetailRow = (props: SwapDetailProp) => {
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
         h={"16px"}
-        color={isBalanceOver ? '#A0A3AD' : '#fff'}
       >
         <Flex columnGap={"4px"}>
           <Text fontWeight={300}>{title}</Text>
@@ -486,7 +485,6 @@ const Title = (props: {
         cursor={isOpen ? "" : "pointer"}
         onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
-        color={isBalanceOver ? '#A0A3AD' : ''}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
           {/* {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />} */}
@@ -536,9 +534,7 @@ const Title = (props: {
             <GradientSpinner />
           </Box>
         ) : (
-          <Flex
-            color={isBalanceOver ? '#A0A3AD' : ''}
-          >
+          <Flex>
             <Text>
               {1} {inToken?.tokenSymbol}
             </Text>
