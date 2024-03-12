@@ -20,7 +20,7 @@ import { swapSettingStatus } from "@/recoil/modal/atom";
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
   isModal?: boolean;
-  settingRef: any;
+  settingRef?: any;
 }
 
 export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingProps) => {
