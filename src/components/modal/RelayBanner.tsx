@@ -72,7 +72,7 @@ const RelayBanner = () => {
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [banner]);
   
-  return status !== "Hidden" && isConnectedToMainNetwork ? (
+  return status !== "Hidden" ? (
     <Flex
       h="76px"
       w="560px"
