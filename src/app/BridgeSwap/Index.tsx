@@ -17,7 +17,7 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         {/* <MaintenanceBanner/> */}
-        <RelayBanner />
+        {/* <RelayBanner /> */}
       
         <Swap />
         <Details />
