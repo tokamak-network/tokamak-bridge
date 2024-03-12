@@ -41,10 +41,10 @@ const RelayBanner = () => {
       const nowTime = getTime(today);
       // const showPrevTime = getTime(1693285339000);
       // const activeTimeStartThisWeek = 1693285339000;
-      const showPrevTime = getTime(1693386000000);
-      const activeTimeStartThisWeek = 1693386000000;
+      const showPrevTime = getTime(1710226800000);
+      const activeTimeStartThisWeek = 1710226800000;
 
-      const activeTimeEndThisWeek = 1693990800000;
+      const activeTimeEndThisWeek = 1710291660000;
       if (nowTime < getTime(banner)) {
         setIsBannerStatus("Hidden");
         setStatus("Hidden");
@@ -84,26 +84,26 @@ const RelayBanner = () => {
       p="16px"
       mb={"10px"}
     >
-      <Flex flexDir={"column"} w={status === "Pending" ? "380px" : "100%"}>
+      <Flex flexDir={"column"} w={status === "Pending" ? "400px" : "100%"}>
         {status === "Active" ? (
           <>
             {" "}
             <Text fontSize={"14px"}>
-              Titan Network's auto relay service has been shut down.
+            Swap on the Ethereum Network is under maintenance.
             </Text>
           </>
         ) : (
           <>
             {" "}
             <Text fontSize={"14px"}>
-              Titan Network's auto relay service will be discontinued.
+            Swap on Ethereum network maintenance is scheduled.
             </Text>
           </>
         )}
         {status === "Active" ? (
           <Text fontSize={"10px"}>
             {" "}
-            After the 7-day challenge period, any withdrawals initiated after
+            {/* After the 7-day challenge period, any withdrawals initiated after
             August 30th, 2023 at 18:00 GMT+9, will need to be manually relayed
             using a new interface (read more in{" "}
             <a
@@ -123,14 +123,20 @@ const RelayBanner = () => {
             >
               한국어
             </a>
-            ).
+            ). */}
+
+          Maintenance is scheduled from 16:00~16:30 GMT+9. *You can still wrap & deposit, and no functions on Titan are affected.
           </Text>
         ) : (
           <Text fontSize={"10px"}>
             {" "}
-            August 30th, 2023 at 18:00 GMT+9, any withdrawals will have to be
-            manually relayed using a new interface (read more in{" "}
-            <a
+
+            {/* August 30th, 2023 at 18:00 GMT+9, any withdrawals will have to be */}
+            {/* manually relayed using a new interface (read more in{" "} */}
+
+            March 12th 16:00~16:30 GMT+9, the swap router backend will be upgraded
+
+            {/* <a
               href={
                 "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
               }
@@ -147,7 +153,7 @@ const RelayBanner = () => {
             >
               한국어
             </a>
-            ).
+            ). */}
           </Text>
         )}
       </Flex>
