@@ -251,7 +251,7 @@ export default function TokenCard(props: TokenCardProps) {
       {pcView && (
         <Flex justifyContent={"space-between"} w={"100%"}>
           <TokenTitle
-            tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+            tokenName={thisTokenIsETH ? "Ethereum" : tokenInfo?.tokenSymbol === "WETH" ? "Wrapped Ethereum" : tokenInfo?.tokenName ?? "TOKEN"}
             isName={true}
             style={{
               fontSize:

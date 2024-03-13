@@ -201,7 +201,6 @@ export function useGasFee() {
       if (mode !== "Withdraw") {
         return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
       } else {
-        console.log(commafy(Number(totalGasCost) * Number(tokenMarketPrice), 5))
         return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 5);
       }
     }

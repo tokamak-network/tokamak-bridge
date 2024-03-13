@@ -633,7 +633,7 @@ export default function TokenInput(props: {
             <Warning />
           )
         ) : (
-          <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+          <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
             {`$${marketPrice}`}
           </Text>
         )}
