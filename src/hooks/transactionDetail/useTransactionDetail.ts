@@ -247,7 +247,7 @@ export function useTransactionDetail() {
             {
               title: "Estimated gas fees",
               content: isOpen ? "" : `${totalGasFee} `,
-              gasFee: `${gasCostUS ? `$${gasCostUS}` : ""}`,
+              gasFee: `${gasCostUS ? `$${gasCostUS}` : "NA"}`,
             },
           ];
     }
