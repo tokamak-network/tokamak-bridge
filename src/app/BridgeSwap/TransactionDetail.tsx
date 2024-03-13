@@ -553,10 +553,10 @@ const Title = (props: {
           ? null
           : isOpen === false && (
               <Flex>
-                {isExpanded === false && (
+                {isExpanded === false && gasCostUS &&  (
                   <Image src={GasImg} alt={"gasStation"} />
                 )}
-                {isOpen === isExpanded && (
+                {isOpen === isExpanded && gasCostUS && (
                   <Text
                     fontSize={{ base: 11, lg: 14 }}
                     fontWeight={400}

@@ -51,7 +51,7 @@ export default function Warning() {
     ) {
         return (
           <WarningText
-            label={"TON is not supported to swap on L1. Please wrap to WTON."}
+            label={"TON is not supported to swap on L1. Please swap to WTON."}
           />
         );
     }
