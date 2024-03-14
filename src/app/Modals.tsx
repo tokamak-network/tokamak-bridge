@@ -5,11 +5,18 @@ import TutorialModal from "@/components/modal/TutorialModal";
 import ConfirmWithdraw from "@/components/modal/ConfirmWithdraw";
 import ActionOptionModal from "@/components/modal/ActionOptionModal";
 import SwapSettingModal from "@/components/modal/SwapSettingModal";
+import SelectTokenMobileModal from "@/components/mobile/modal/SelectTokenMobile";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function Modals() {
+  const { mobileView } = useMediaView();
+  
   return (
     <>
-      <SelectCardModal />
+      {mobileView ? 
+        <SelectTokenMobileModal /> :
+        <SelectCardModal />
+      }
       <Confirmation />
       <ActionConfirmModal />
       <TutorialModal/>
