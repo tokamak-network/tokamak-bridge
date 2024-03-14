@@ -63,9 +63,9 @@ export default function useCallClaim(functionName: string) {
                 supportedChain.chainId
               );
             } else {
-              // return [SupportedChainId["GOERLI"]].includes(
-              //   supportedChain.chainId
-              // );
+              return [SupportedChainId["GOERLI"]].includes(
+                supportedChain.chainId
+              );
             }
           })[0];
 

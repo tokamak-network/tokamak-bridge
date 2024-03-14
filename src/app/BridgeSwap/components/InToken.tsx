@@ -51,6 +51,7 @@ export default function InToken() {
               hasInput={true}
               inNetwork={true}
               forBridge={true}
+              watch={true}
             />
           ) : (
             <Box
@@ -65,7 +66,7 @@ export default function InToken() {
             </Box>
           )}
         </Box>
-        <Flex px={"12px"}>
+        <Flex px={"12px"} mb={'-16px'}>
           {inToken !== null && (
             <TokenInput inToken={true} hasMaxButton={true} />
           )}

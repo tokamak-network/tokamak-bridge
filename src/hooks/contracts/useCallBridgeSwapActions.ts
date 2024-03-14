@@ -43,7 +43,7 @@ export default function useCallBridgeSwapAction() {
     }
     if (inToken && inToken.amountBN && inNetwork && outNetwork) {
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET
+        SupportedChainId.MAINNET || SupportedChainId.GOERLI
       );
       const parsedAmount = inToken.amountBN;
       setIsDrawerOpen(false);
@@ -71,6 +71,7 @@ export default function useCallBridgeSwapAction() {
               args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
+              gas: BigInt("142542"),
             });
           }
 

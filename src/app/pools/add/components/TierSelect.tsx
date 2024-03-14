@@ -1,9 +1,16 @@
-import { useState } from "react";
 import { Box, Button, Flex } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
-import { poolFeeStatus } from "@/recoil/pool/setPoolPosition";
+import {
+  atMaxTick,
+  atMinTick,
+  initialPrice,
+  maxPrice,
+  minPrice,
+  poolFeeStatus,
+} from "@/recoil/pool/setPoolPosition";
 import { FeeAmount } from "@uniswap/v3-sdk";
 import { useInitialize } from "@/hooks/pool/useInitialize";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const values: FeeAmount[] = [
   FeeAmount.LOWEST,
@@ -14,11 +21,26 @@ const values: FeeAmount[] = [
 
 export default function TierSelector() {
   const [poolFee, setPoolFee] = useRecoilState(poolFeeStatus);
-  const { initializePoolValuesForSelectingFee } = useInitialize();
+  const [, setInitialPrice] = useRecoilState(initialPrice);
+  const [, setMinPrice] = useRecoilState(minPrice);
+  const [, setMaxPrice] = useRecoilState(maxPrice);
+
+  const [, setAtMinTick] = useRecoilState(atMinTick);
+  const [, setAtMaxTick] = useRecoilState(atMaxTick);
+  const { initializeTokenPairAmount } = useInOutTokens();
 
   const handleClick = (value: FeeAmount) => {
-    initializePoolValuesForSelectingFee();
     setPoolFee(value);
+    setInitialPrice("0");
+    setAtMinTick(false);
+    setAtMaxTick(false);
+    initializeTokenPairAmount();
+    //set timeout to initialize tick data when it's changed
+    //without timeout, left&right input function on Chart makes a tick range based on old data
+    setTimeout(() => {
+      setMinPrice(undefined);
+      setMaxPrice(undefined);
+    }, 650);
   };
 
   return (
@@ -37,7 +59,9 @@ export default function TierSelector() {
             paddingBottom="6px"
             textAlign="center"
             marginRight={index !== values.length - 1 ? "8px" : "0"}
-            onClick={() => handleClick(value)}
+            onClick={() => {
+              handleClick(value);
+            }}
             variant={"outline"}
             _hover={{
               backgroundColor: "transparent",

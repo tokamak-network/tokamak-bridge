@@ -30,7 +30,10 @@ const RelayBanner = () => {
     years: 0,
   });
 
-  const isTestnet = !isConnectedToMainNetwork;
+  const isTestnet =
+    !isConnectedToMainNetwork ||
+    outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+    outNetwork?.chainId === SupportedChainId["DARIUS"];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -38,10 +41,10 @@ const RelayBanner = () => {
       const nowTime = getTime(today);
       // const showPrevTime = getTime(1693285339000);
       // const activeTimeStartThisWeek = 1693285339000;
-      const showPrevTime = getTime(1710226800000);
-      const activeTimeStartThisWeek = 1710226800000;
+      const showPrevTime = getTime(1693386000000);
+      const activeTimeStartThisWeek = 1693386000000;
 
-      const activeTimeEndThisWeek = 1710291660000;
+      const activeTimeEndThisWeek = 1693990800000;
       if (nowTime < getTime(banner)) {
         setIsBannerStatus("Hidden");
         setStatus("Hidden");
@@ -68,8 +71,8 @@ const RelayBanner = () => {
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [banner]);
-
-  return status !== "Hidden" ? (
+  
+  return status !== "Hidden" && isConnectedToMainNetwork ? (
     <Flex
       h="76px"
       w="560px"
@@ -81,26 +84,26 @@ const RelayBanner = () => {
       p="16px"
       mb={"10px"}
     >
-      <Flex flexDir={"column"} w={status === "Pending" ? "400px" : "100%"}>
+      <Flex flexDir={"column"} w={status === "Pending" ? "380px" : "100%"}>
         {status === "Active" ? (
           <>
             {" "}
             <Text fontSize={"14px"}>
-              Swap on the Ethereum Network is under maintenance.
+              Titan Network's auto relay service has been shut down.
             </Text>
           </>
         ) : (
           <>
             {" "}
             <Text fontSize={"14px"}>
-              Swap on Ethereum network maintenance is scheduled.
+              Titan Network's auto relay service will be discontinued.
             </Text>
           </>
         )}
         {status === "Active" ? (
           <Text fontSize={"10px"}>
             {" "}
-            {/* After the 7-day challenge period, any withdrawals initiated after
+            After the 7-day challenge period, any withdrawals initiated after
             August 30th, 2023 at 18:00 GMT+9, will need to be manually relayed
             using a new interface (read more in{" "}
             <a
@@ -120,18 +123,14 @@ const RelayBanner = () => {
             >
               한국어
             </a>
-            ). */}
-            Maintenance is scheduled from 16:00~16:30 GMT+9. *You can still wrap
-            & deposit, and no functions on Titan are affected.
+            ).
           </Text>
         ) : (
           <Text fontSize={"10px"}>
             {" "}
-            {/* August 30th, 2023 at 18:00 GMT+9, any withdrawals will have to be */}
-            {/* manually relayed using a new interface (read more in{" "} */}
-            March 12th 16:00~16:30 GMT+9, the swap router backend will be
-            upgraded
-            {/* <a
+            August 30th, 2023 at 18:00 GMT+9, any withdrawals will have to be
+            manually relayed using a new interface (read more in{" "}
+            <a
               href={
                 "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
               }
@@ -148,7 +147,7 @@ const RelayBanner = () => {
             >
               한국어
             </a>
-            ). */}
+            ).
           </Text>
         )}
       </Flex>
@@ -160,11 +159,9 @@ const RelayBanner = () => {
           duration.hours < 10
             ? "0"
             : ""}
-          {duration.days !== undefined &&
-          duration.hours !== undefined &&
-          duration.days > 0
+          {duration.days !== undefined && duration.hours !== undefined && duration.days > 0
             ? duration.hours + 24
-            : duration.hours}
+            :  duration.hours}
           :{duration.minutes !== undefined && duration.minutes < 10 ? "0" : ""}
           {duration.minutes}:
           {duration.seconds !== undefined && duration.seconds < 10 ? "0" : ""}

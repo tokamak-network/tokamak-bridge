@@ -1,23 +1,11 @@
 import { Flex, Text, Link } from "@chakra-ui/react";
 import { useEffect, useMemo, useRef, useState } from "react";
-import Image from "next/image";
-import Calendar from "assets/icons/Google_Calendar_icon.svg";
-import { useRecoilState } from "recoil";
-import { atcb_action } from "add-to-calendar-button";
 import { format, fromUnixTime } from "date-fns";
-import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { FullWithTx } from "@/types/activity/history";
 
-import {
-  add,
-  getTime,
-  getUnixTime,
-  intervalToDuration,
-  Duration,
-  subMinutes,
-  differenceInSeconds,
-} from "date-fns";
+import { differenceInSeconds } from "date-fns";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function DepositStatusTx(props: {
   completed: boolean;
@@ -30,12 +18,14 @@ export default function DepositStatusTx(props: {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
   const [duration, setDuration] = useState("0");
+  const { mobileView } = useMediaView();
 
+  //calculates the duration of the relay time
   useEffect(() => {
     if (tx.l1timeStamp) {
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l1timeStamp) * 1000);
-        const currentTime = new Date(Date.now());
+        const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
           startDate
@@ -98,27 +88,68 @@ export default function DepositStatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
-            style={{ textDecoration: "none" }}
+            _hover={{
+              textDecoration: mobileView ? "none" : "underline"
+            }}
           >
-            {`${layer}: Completed`}
+            {mobileView ? "Deposited" : `${layer}: Completed`}
           </Link>
-        ) : (
-          <Text
+        ) : mobileView ? (
+          <Link
+            target="_blank"
+            href={`${providers.l1BlockExplorer}/tx/${tx.l1txHash}`}
             fontSize={"11px"}
             fontWeight={600}
             style={{ textDecoration: "none" }}
           >
-            {`${layer}:`} {completed ? "Completed" : " Wait ~5 min for relay"}
+            {"Wait for L2"}
+          </Link>
+        ) : (
+          <Text fontSize={"11px"} fontWeight={600}>
+            {`${layer}: Wait ~5 min for relay`}
           </Text>
         )}
       </Flex>
       {completed ? (
-        <Flex fontSize={"11px"}>
-          <Text>{format(fromUnixTime(date), "yyyy.MM.dd")}</Text>
-          <Text ml="3px" color={"#A0A3AD"}>
-            {format(fromUnixTime(date), "hh:mm b (z)")}
+        mobileView ? (
+          <Link
+            target="_blank"
+            href={`${providers.l2BlockExplorer}/tx/${txHash}`}
+            style={{ textDecoration: "none" }}
+          >
+            <Flex fontSize={"11px"}>
+              <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
+                {format(fromUnixTime(date), "yyyy.MM.dd")}
+              </Text>
+              {!mobileView && (
+                <Text ml="3px" color={"#A0A3AD"}>
+                  {format(fromUnixTime(date), "hh:mm b (z)")}
+                </Text>
+              )}
+            </Flex>
+          </Link>
+        ) : (
+          <Flex fontSize={"11px"}>
+            <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
+              {format(fromUnixTime(date), "yyyy.MM.dd")}
+            </Text>
+            {!mobileView && (
+              <Text ml="3px" color={"#A0A3AD"}>
+                {format(fromUnixTime(date), "hh:mm b (z)")}
+              </Text>
+            )}
+          </Flex>
+        )
+      ) : mobileView ? (
+        <Link
+          target="_blank"
+          href={`${providers.l1BlockExplorer}/tx/${tx.l1txHash}`}
+          style={{ textDecoration: "none" }}
+        >
+          <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+            {duration}
           </Text>
-        </Flex>
+        </Link>
       ) : (
         <Flex>
           <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>

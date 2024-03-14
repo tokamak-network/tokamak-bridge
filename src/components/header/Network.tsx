@@ -1,5 +1,8 @@
+
 import ImageSymbol, { TokenSymbol } from "@/components/image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
+import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
+import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 import {
   SupportedChainId,
@@ -61,7 +64,7 @@ const ValueContainer = (props: {
 }) => {
   const { selectedOption, isOpen, setIsOpen, isPool } = props;
   const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
-
+  const { isConnected } = useAccount();
   if (selectedOption) {
     return (
       <Flex
@@ -72,8 +75,10 @@ const ValueContainer = (props: {
       >
         <Center
           className="header-right-common"
-          w={"48px"}
+          minW={"48px"}
           h={"48px"}
+          columnGap={"8px"}
+          px={isConnectedToMainNetwork ? "8px" : "12px"}
           _hover={{ bg: "#313442" }}
         >
           <Image
@@ -84,6 +89,9 @@ const ValueContainer = (props: {
               height: "24px",
             }}
           />
+            {isConnected && !isConnectedToMainNetwork && (
+        <Text>{capitalizeFirstChar(selectedOption.chainName)}</Text>
+      )}
         </Center>
       </Flex>
     );
@@ -115,10 +123,16 @@ const ValueContainer = (props: {
 export default function Network() {
   // const { inNetwork, height, width, isPool } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
-  const { connectedChainId, isConnectedToMainNetwork } = useConnectedNetwork();
   const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
-  const { isConnected } = useAccount();
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const {
+    connectedChainId,
+    isConnectedToMainNetwork,
+    chainName,
+    isSupportedChain,
+  } = useConnectedNetwork();
+  const { isConnected } = useAccount();
+  
   // const inNetwork = true;
   const onChange = async (data: SupportedChainProperties) => {
     try {
@@ -214,7 +228,7 @@ export default function Network() {
 
     if (data.layer === "L2") {
       return (
-        <Flex flexDir={"column"} rowGap={"12px"}>
+        <Flex flexDir={"column"} rowGap={"12px"}  >
           <Flex
             w={"100%"}
             h={"12px"}
@@ -301,18 +315,17 @@ export default function Network() {
   const optionsList = supportedChain
     .filter((chainInfo) => {
       if (
-        // isConnectedToMainNetwork === true ||
-        // isConnectedToMainNetwork === undefined
-        true
+        isConnectedToMainNetwork === true ||
+        isConnectedToMainNetwork === undefined
       ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-      //   chainInfo.chainId
-      // );
+      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+        chainInfo.chainId
+      );
     })
     .map((chainInfo) => {
       return {
@@ -321,6 +334,26 @@ export default function Network() {
         label: chainInfo.chainName,
       };
     });
+
+    if (isConnected && !isSupportedChain) {
+        return (
+          <Flex
+            bgColor={"#1F2128"}
+            w={"48px"}
+            h={"48px"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            px={"8px"}
+            borderRadius={"8px"}
+          >
+            <Image
+              src={WARNING_ICON}
+              alt={"WARNING_ICON"}
+              style={{ width: "34px", height: "34px" }}
+            />
+          </Flex>
+        );
+      }
   return (
     // <Center className="header-right-common" w={"48px"} h={"48px"} _hover={{bg:'#313442'}}>
     //   <NetworkSymbol
@@ -330,7 +363,7 @@ export default function Network() {
     //     isCircle={true}
     //   />
     // </Center>
-    <Box ref={wrapperRef}>
+    <Box ref={wrapperRef} >
       <Select
         options={optionsList}
         menuIsOpen={isOpen}

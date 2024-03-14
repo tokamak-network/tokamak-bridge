@@ -1,57 +1,146 @@
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
-import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { isETH } from "@/utils/token/isETH";
 import { trimAmount } from "@/utils/trim";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
-import JSBI from "jsbi";
-import { useCallback, useEffect, useMemo, useState ,useRef} from "react";
 import { useRecoilState } from "recoil";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import useConnectedNetwork from "@/hooks/network";
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { isETH } from "@/utils/token/isETH";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import GradientSpinner from "../ui/gradientSpinner";
+import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import "@fontsource/poppins/600.css";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import {
+  IsSearchToken,
+  isInputTokenAmount,
+} from "@/recoil/card/selectCard/searchToken";
+import Warning from "@/app/BridgeSwap/Warning";
 
 export default function TokenInput(props: {
   inToken: boolean;
-  defaultValue?: string | number | null;
+  defaultValue?: any;
   isDisabled?: boolean;
   hasMaxButton?: boolean;
   style?: {};
+  customRef?: RefObject<HTMLInputElement> | null;
+  placeholder?: string;
 }) {
-  const { inToken, defaultValue, hasMaxButton, isDisabled, style } = props;
+  const {
+    inToken,
+    hasMaxButton,
+    isDisabled,
+    style,
+    customRef,
+    placeholder,
+    defaultValue,
+  } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
   const {
     inToken: inTokenFromHook,
     inTokenInfo,
     outTokenInfo,
+    initializeTokenPairAmount,
   } = useInOutTokens();
-  const { priceImpact } = usePriceImpact();
   const [isFocused, setIsFocused] = useState<boolean>(false);
-  const [, setLastFocused] = useRecoilState(lastFocusedInput);
 
-  const { amountForToken0, amountForToken1 } = useGetAmountForLiquidity();
+  const { layer } = useConnectedNetwork();
+  const [isMax, setIsMax] = useState<boolean>(false);
+  const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
 
+  const { dependentAmount: _dependentAmount } = useV3MintInfo();
+  const dependentAmount = _dependentAmount?.toSignificant(
+    // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
+    18
+  );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
+  const { mobileView } = useMediaView();
+  const { isBalanceOver } = useInputBalanceCheck();
+  const [isTokenSearch] = useRecoilState(IsSearchToken);
+  const { connectedChainId } = useConnectedNetwork();
+  const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
+  const switchable =
+    mode === "Wrap" ||
+    mode === "Unwrap" ||
+    mode === "ETH-Wrap" ||
+    mode === "ETH-Unwrap";
+
+  const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
-    const value: string = e.target.value;
+    const value: string = e.target.value === "." ? "0." : e.target.value;
+
+    // if (isTokenSearch && connectedChainId) {
+    //   setSearchValue(value);
+    //   return setSearchToken({
+    //     nameOrAdd: value,
+    //     chainId: connectedChainId,
+    //   });
+    // }
+
+    //for wrap/unwrap switch
+    if (inToken && switchable) {
+      if (selectedInToken && selectedOutToken) {
+        if (value === "") {
+          setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
+        const parsedAmountOut = ethers.utils.parseUnits(
+          value,
+          selectedOutToken?.decimals
+        );
+        const parsedAmountIn = ethers.utils.parseUnits(
+          value,
+          selectedInToken?.decimals
+        );
+        setSelectedInToken({
+          ...selectedInToken,
+          amountBN: parsedAmountIn.toBigInt(),
+          parsedAmount: value,
+        });
+        return setSelectedOutToken({
+          ...selectedOutToken,
+          amountBN: parsedAmountOut.toBigInt(),
+          parsedAmount: value,
+        });
+      }
+    }
 
     //This token is inToken
     if (inToken && selectedInToken) {
@@ -66,6 +155,7 @@ export default function TokenInput(props: {
         value,
         selectedInToken.decimals
       );
+
       return setSelectedInToken({
         ...selectedInToken,
         amountBN: parsedAmount.toBigInt(),
@@ -73,8 +163,9 @@ export default function TokenInput(props: {
       });
     }
 
+    //On Pools page
     //This token is outToken
-    if (mode !== "Swap" && !inToken && selectedOutToken) {
+    if (mode === "Pool" && !inToken && selectedOutToken) {
       if (value === "" || value === null) {
         return setSelectedOutToken({
           ...selectedOutToken,
@@ -107,6 +198,7 @@ export default function TokenInput(props: {
         value,
         selectedOutToken.decimals
       );
+
       return setSelectedOutToken({
         ...selectedOutToken,
         amountBN: parsedAmount.toBigInt(),
@@ -115,20 +207,53 @@ export default function TokenInput(props: {
     }
   };
 
+  const onKeyDown = (e: any) => {
+    if (e.key === "Enter" && mobileView) {
+      if (
+        (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
+      ) {
+        onCloseTokenModal();
+      }
+      // customRef?.current?.blur();
+    }
+  }
+
   const { totalGasCost } = useGasFee();
-  const inputRef = useRef(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const ref = useRef<HTMLInputElement>(null);
 
   const onMax = useCallback(() => {
     if (isDisabled) return null;
     if (tokenData) {
       if (inToken && selectedInToken) {
+        if (mode === "Pool") {
+          setSelectedInToken({
+            ...selectedInToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+          setLastFocused("LeftInput");
+          return setTimeout(() => {
+            //@ts-ignore
+            inputRef?.current?.focus();
+            //@ts-ignore
+            inputRef?.current?.blur();
+          }, 100);
+        }
         if (isETH(selectedInToken)) {
-          // if (!totalGasCost) return;
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
             ) -
-            Number(totalGasCost ?? 0.001) -
+            //deduct ETH for gasFee to swap on ETH pair
+            Number(
+              mode === "Swap"
+                ? totalGasCost
+                : // ? layer === "L1"
+                  //   ? 0.01
+                  //   : 0.001 + Number(totalGasCost)
+                  totalGasCost ?? 0.001
+            ) -
             (mode === "Withdraw" ? 0.00025 : 0);
 
           const isMinus = parsedAmount <= 0;
@@ -137,6 +262,13 @@ export default function TokenInput(props: {
             isMinus ? "0" : parsedAmount.toString(),
             18
           );
+          // if (switchable && selectedOutToken) {
+          //   setSelectedOutToken({
+          //     ...selectedOutToken,
+          //     amountBN: amountBN.toBigInt(),
+          //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+          //   });
+          // }
 
           return setSelectedInToken({
             ...selectedInToken,
@@ -144,7 +276,6 @@ export default function TokenInput(props: {
             parsedAmount: isMinus ? "0" : parsedAmount.toString(),
           });
         }
-
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -158,6 +289,7 @@ export default function TokenInput(props: {
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
+          setLastFocused("RightInput");
           return setTimeout(() => {
             //@ts-ignore
             inputRef?.current?.focus();
@@ -180,61 +312,60 @@ export default function TokenInput(props: {
     selectedOutToken,
     totalGasCost,
     mode,
+    layer,
+    isDisabled,
   ]);
 
   const handleFocus = () => {
     setIsFocused(true);
+    setLastFocused(inToken ? "LeftInput" : "RightInput");
   };
 
   const handleBlur = useCallback(() => {
     setIsFocused(false);
+    // setIsInputAmount(false);
     //for pool's price and amount on liquidity
     if (mode === "Pool") {
-      setLastFocused(inToken ? "LeftInput" : "RightInput");
-
-      if (inToken && selectedOutToken && amountForToken1) {
-        const formattedAmount = ethers.utils.formatUnits(
-          amountForToken1.toString().replaceAll("-", ""),
-          selectedOutToken.decimals
-        );
-
+      if (inToken && selectedOutToken) {
+        if (!dependentAmount) {
+          return setSelectedOutToken({
+            ...selectedOutToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
         const parsedAmount = ethers.utils.parseUnits(
-          formattedAmount,
+          dependentAmount,
           selectedOutToken.decimals
         );
 
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: parsedAmount.toBigInt(),
-          parsedAmount: formattedAmount.toString(),
+          parsedAmount: dependentAmount,
         });
       }
-      if (!inToken && selectedInToken && amountForToken0) {
-        const formattedAmount = ethers.utils.formatUnits(
-          amountForToken0.toString().replaceAll("-", ""),
-          selectedInToken.decimals
-        );
-
+      if (!inToken && selectedInToken) {
+        if (!dependentAmount) {
+          return setSelectedInToken({
+            ...selectedInToken,
+            amountBN: null,
+            parsedAmount: null,
+          });
+        }
         const parsedAmount = ethers.utils.parseUnits(
-          formattedAmount,
+          dependentAmount,
           selectedInToken.decimals
         );
 
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: parsedAmount.toBigInt(),
-          parsedAmount: formattedAmount.toString(),
+          parsedAmount: dependentAmount,
         });
       }
     }
-  }, [
-    mode,
-    inToken,
-    selectedInToken,
-    selectedOutToken,
-    amountForToken0,
-    amountForToken1,
-  ]);
+  }, [mode, inToken, selectedInToken, selectedOutToken, dependentAmount]);
 
   const valueProp = useMemo(() => {
     if (
@@ -246,17 +377,29 @@ export default function TokenInput(props: {
     ) {
       return inTokenFromHook.parsedAmount;
     }
-    return mode === "Swap" && inToken === false
-      ? trimAmount(amountOut, 11) ?? ""
-      : inToken && selectedInToken && selectedInToken?.parsedAmount !== null
+
+    if (mode === "Swap" && inToken === false) {
+      return trimAmount(amountOut, 8) ?? "";
+    }
+
+    if (mode === "Pool" && dependentAmount) {
+      if (lastFocused === "LeftInput" && !inToken) {
+        return trimAmount(dependentAmount, 8);
+      }
+      if (lastFocused === "RightInput" && inToken) {
+        return trimAmount(dependentAmount, 8);
+      }
+    }
+
+    return inToken && selectedInToken && selectedInToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedInToken?.parsedAmount)
-        : trimAmount(selectedInToken?.parsedAmount, 11)
+        : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 11)
-      : "";
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
+      : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -265,27 +408,44 @@ export default function TokenInput(props: {
     mode,
     inTokenFromHook,
     isFocused,
+    dependentAmount,
+    lastFocused,
+    isTokenSearch,
+    defaultValue,
   ]);
 
-  const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({
+  const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedInToken?.tokenName as string,
     amount: Number(selectedInToken?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { tokenPriceWithAmount: token1PriceWiwhtAmount } = useGetMarketPrice({
+  const outAmount = useMemo(() => {
+    if (
+      (mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap") &&
+      inTokenInfo?.parsedAmount
+    ) {
+      return inTokenInfo.parsedAmount;
+    }
+    return amountOut;
+  }, [mode, inTokenInfo, amountOut]);
+
+  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedOutToken?.tokenName as string,
-    amount: Number(selectedOutToken?.parsedAmount?.replaceAll(",", "")),
+    amount: Number(outAmount),
   });
 
   const marketPrice = useMemo(() => {
-    if (inToken && token0PriceWiwhtAmount) {
-      return token0PriceWiwhtAmount;
+    if (inToken && token0PriceWithAmount) {
+      return token0PriceWithAmount;
     }
-    if (!inToken && token1PriceWiwhtAmount) {
-      return token1PriceWiwhtAmount;
+    if (!inToken && token1PriceWithAmount) {
+      return token1PriceWithAmount;
     }
     return "0.00";
-  }, [token0PriceWiwhtAmount, token1PriceWiwhtAmount, inToken]);
+  }, [token0PriceWithAmount, token1PriceWithAmount, inToken]);
 
   useEffect(() => {
     if (mode === "Pool") return;
@@ -310,6 +470,46 @@ export default function TokenInput(props: {
     }
   }, [amountOut, mode]);
 
+  useEffect(() => {
+    if (inToken && selectedInToken && tokenData) {
+      return setIsMax(
+        tokenData.data.balanceBN.value === selectedInToken.amountBN
+      );
+    }
+    if (!inToken && selectedOutToken && tokenData) {
+      return setIsMax(
+        tokenData.data.balanceBN.value === selectedOutToken.amountBN
+      );
+    }
+  }, [selectedInToken, selectedOutToken, inToken, tokenData]);
+
+  const { currentPrice } = usePriceTickConversion();
+  const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
+  const { subMode } = useGetMode();
+
+  useEffect(() => {
+    if (currentPrice) {
+      setTriggerForSpinner(true);
+      initializeTokenPairAmount();
+      setTimeout(() => {
+        setTriggerForSpinner(false);
+      }, 1000);
+    }
+  }, [currentPrice]);
+
+  useEffect(() => {
+    setTimeout(() => {
+      customRef?.current?.focus();
+    }, 300);
+  }, [customRef, isInputAmount]);
+
+  useEffect(() => {
+    inputRef?.current?.focus();
+    if (ref.current && inToken && mobileView) {
+      ref.current.style.borderColor = "#313442";
+    }
+  }, [inputRef, mobileView]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -319,55 +519,124 @@ export default function TokenInput(props: {
       rowGap={"6px"}
       {...style}
     >
-      <Flex>
-        <Input
-          id={inToken ? "LeftInput" : "RightInput"}
-          w={"100%"}
-          h={"27px"}
-          m={0}
-          p={0}
-          border={{}}
-          _active={{}}
-          _focus={{ boxShadow: "none !important" }}
-          placeholder="0"
-          _placeholder={{ color: "#C6C6D1 !important" }}
-          color={"#ffffff"}
-          fontSize={28}
-          fontWeight={700}
-          isDisabled={isDisabled}
-          _disabled={{ color: "#fff" }}
-          value={valueProp}
-          ref={inputRef}
-          onChange={onChange}
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-        ></Input>
-        {hasMaxButton && (
-          <Button
-            w={"40px"}
-            h={"22px"}
-            bgColor={"#6a00f1"}
-            fontSize={12}
-            fontWeight={700}
-            _hover={{}}
-            _active={{}}
-            color={'#fff'}
-            mt={"3px"}
-            onClick={() => onMax()}
+      {triggerForSpinner && subMode.add ? (
+        <Flex w={"100%"} h={"27px"}>
+          <GradientSpinner />
+        </Flex>
+      ) : (
+        <Flex flexDir={'column'}>
+          {/* {mobileView && <Warning />} */}
+          <Flex
+            py={{ base: "7px", lg: 0 }}
+            px={{ base: "10px", lg: 0 }}
+            bg={{ base: "#0F0F12", lg: "none" }}
+            rounded={{ base: "8px", lg: 0 }}
+            align={{ base: "center", lg: "start" }}
+            border={"1px solid transparent"}
+            _hover={{ border: mobileView ? "1px solid #313442" : "" }}
+            ref={ref}
+            justify={"space-between"}
           >
-            Max
-          </Button>
-        )}
-      </Flex>
+          
+          {mobileView && !valueProp && !inToken ? (
+            <Flex h={"27px"} w={"20px"} >
+              <GradientSpinner />
+            </Flex>
+            ) :
+            <Flex flexDir={'column'}>
+              {/* <Warning /> */}
+              <Input
+                id={inToken ? "LeftInput" : "RightInput"}
+                w={"100%"}
+                h={"27px"}
+                m={0}
+                p={0}
+                border={{}}
+                _active={{}}
+                _focus={{ boxShadow: "none !important" }}
+                placeholder={inToken ? placeholder || "0" : "0"}
+                _placeholder={{
+                  color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+                  // fontSize: mobileView ? 20 : 28
+                }}
+                color={
+                  mobileView && isBalanceOver
+                    ? "#DD3A44"
+                    : mobileView && !inToken
+                    ? "#A0A3AD !important"
+                    : "#FFFFFF"
+                }
+                fontSize={{ base: 22, lg: 28 }}
+                fontWeight={{ base: 500, lg: 600 }}
+                isDisabled={isDisabled}
+                _disabled={{ color: "#A0A3AD" }}
+                value={valueProp}
+                ref={customRef ? customRef : inputRef}
+                onChange={onChange}
+                onKeyDown={onKeyDown}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+              ></Input>
+            </Flex>
+            }
+
+            {mobileView &&
+              (marketPrice === "0.00" && !inToken ? (
+                <Flex w={"20px"} h={"27px"} mr={"80px"}>
+                  <GradientSpinner />
+                </Flex>
+              ) : (
+                <Text
+                  mr={"12px"}
+                  fontSize={14}
+                  color={"#A0A3AD"}
+                >{`$${marketPrice}`}</Text>
+              ))}
+            {hasMaxButton && !isMax && (
+              <Button
+                w={"40px"}
+                h={"22px"}
+                bgColor={"#007AFF"}
+                fontSize={12}
+                fontWeight={700}
+                _hover={{}}
+                _active={{}}
+                color={"#fff"}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  onMax();
+                }}
+              >
+                Max
+              </Button>
+            )}
+          </Flex>
+        </Flex>
+      )}
+
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
-          {`$${marketPrice}`}
-        </Text>
-        {/* {inToken === false && mode === "Swap" && (
-          <Text fontSize={13} fontWeight={400} color={"#DD3A44"}>
-            ({priceImpact ?? "-"}%)
+        {/* {mobileView && isBalanceOver ? (
+          <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+            <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+            <Text>Insufficient ({inTokenFromHook?.tokenSymbol}) balance </Text>
+          </Flex>
+        )  */}
+        {mobileView ? (
+          inToken && (
+            // <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
+            //   <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
+            //   <Text>
+            //     Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
+            //   </Text>
+            // </Flex>
+            <Warning />
+          )
+        ) : (
+          <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
+            {`$${marketPrice}`}
           </Text>
-        )}  */}
+        )}
       </Flex>
     </Flex>
   );

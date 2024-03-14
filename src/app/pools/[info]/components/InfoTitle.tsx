@@ -2,16 +2,15 @@ import { Flex, Text } from "@chakra-ui/react";
 import { RangeText } from "../../components/ui";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
-import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
+import { PoolCardDetail } from "../../components/PoolCard";
 
-export default function InfoTitle() {
-  const { info } = usePositionInfo();
-  const { inverted } = usePoolInfo();
+export default function InfoTitle(props: { info: PoolCardDetail | undefined }) {
+  const { info } = props;
 
   if (!info) return null;
-  const token0 = inverted ? info.token1 : info.token0;
-  const token1 = inverted ? info.token0 : info.token1;
+  const token0 = info.token0;
+  const token1 = info.token1;
   const { fee } = info;
 
   return (
@@ -50,7 +49,11 @@ export default function InfoTitle() {
           </Flex>
         </Flex>
       </Flex>
-      <RangeText inRange={info?.inRange ?? false} style={{ fontSize: 14 }} />
+      <RangeText
+        inRange={info?.inRange ?? false}
+        isClosed={info.isClosed}
+        style={{ fontSize: 14 }}
+      />
     </Flex>
   );
 }

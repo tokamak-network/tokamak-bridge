@@ -1,0 +1,30 @@
+.react-stacked-center-carousel-slide-0 {
+  transform-origin: bottom center!important;
+}
+.react-stacked-center-carousel-slide-1 {
+  transform-origin: bottom center!important;
+}
+.react-stacked-center-carousel-slide-2 {
+  transform-origin: bottom center!important;
+}
+.react-stacked-center-carousel-slide--1 {
+  transform-origin: bottom center!important;
+}
+
+.react-stacked-center-carousel-slide--2 {
+  transform-origin: bottom center!important;
+}
+
+@media (max-width: 768px) {
+  .stacked-carousel-responsive-container {
+    min-width: 430px!important;
+    max-width: 430px!important;
+  }
+}
+
+@media (min-width: 769px) {
+  .stacked-carousel-responsive-container {
+    min-width: 830px!important;
+    max-width: 830px!important;
+  }
+}

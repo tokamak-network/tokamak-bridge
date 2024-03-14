@@ -20,7 +20,8 @@ import {
 import { Bound } from "@/types/pool/pool";
 import { useRecoilValue } from "recoil";
 import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
-import { poolModalProp } from "@/recoil/modal/atom";
+import { useGetMode } from "../mode/useGetMode";
+import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 
 function getPriceOrderingFromPositionForUI(position?: Position): {
   priceLower?: Price<Token, Token>;
@@ -103,9 +104,10 @@ const useInverter = ({
 };
 
 export function usePoolInfo() {
+  const { subMode } = useGetMode();
   const { info } = usePositionInfo();
 
-  if (info === undefined) {
+  if (info === undefined || subMode.add === true) {
     return {
       priceLower: undefined,
       priceUpper: undefined,
@@ -116,11 +118,13 @@ export function usePoolInfo() {
 
   const { token0, token1, fee, liquidity, tickLower, tickUpper, tickCurrent } =
     info;
+
   // construct Position from details returned
   const [, pool] = usePool(token0, token1, fee);
 
   const position = useMemo(() => {
-    if (pool) {
+    if (pool && liquidity && tickLower && tickUpper) {
+      //trouble
       return new Position({
         pool,
         liquidity: liquidity.toString(),
@@ -144,17 +148,16 @@ export function usePoolInfo() {
   });
 
   const inverted = token1 ? base?.equals(token1) : undefined;
-  const mintPositionInfo = useRecoilValue(poolModalProp);
 
   const ratio = useMemo(() => {
-    return priceLower && pool && priceUpper && !mintPositionInfo
+    return priceLower && pool && priceUpper
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
           pool?.token0Price,
           inverted ? priceLower.invert() : priceUpper
         )
       : undefined;
-  }, [inverted, pool, priceLower, priceUpper, mintPositionInfo]);
+  }, [pool, priceLower, priceUpper, inverted]);
 
   const currentPrice = useMemo(() => {
     if (token0 && token1 && tickCurrent)
@@ -194,14 +197,14 @@ export function usePoolInfo() {
     priceLower,
     priceUpper,
     currentPrice: inverted
-      ? currentPrice?.invert().toSignificant(4)
-      : currentPrice?.toSignificant(4),
+      ? currentPrice?.invert().toSignificant(6)
+      : currentPrice?.toSignificant(6),
     inverted,
     ratio,
     tickSpaceLimits,
     ticksAtLimit,
     pool,
-    deposit0Disabled: inverted ? deposit1Disabled : deposit0Disabled,
-    deposit1Disabled: inverted ? deposit0Disabled : deposit1Disabled,
+    deposit0Disabled,
+    deposit1Disabled,
   };
 }

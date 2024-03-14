@@ -9,7 +9,7 @@ type L1_UniswapContracts = {
   UNIVERSIAL_ROUTER: "0x3fc91a3afd70395cd496c647d5a6cc9d4b2b7fad";
 };
 
-//contract addresses : https://www.notion.so/onther/Contract-uniswap-v3-4cefcf7a36714f8eac6a3f95b16687e5#fe0cfcc8c4b248099e8b833c0d5cd571
+//notion link : https://www.notion.so/onther/Contract-uniswap-v3-4cefcf7a36714f8eac6a3f95b16687e5#fe0cfcc8c4b248099e8b833c0d5cd571
 
 type L2_UniswapContracts = {
   POOL_FACTORY_CONTRACT_ADDRESS: "0x755Ba335013C07CE35C9A2dd5746617Ac4c6c799";
@@ -65,5 +65,8 @@ export const L2_initCodeHashManualOverride =
 
 export const V3_CORE_FACTORY_ADDRESSES: { [chainId: number]: string } = {
   [SupportedChainId.MAINNET]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.GOERLI]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
   [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.DARIUS]:
+    L2_TESTNET_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
 };

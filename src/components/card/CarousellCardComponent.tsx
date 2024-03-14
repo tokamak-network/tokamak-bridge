@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import { useRecoilState } from "recoil";
+import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
 
 const isSecondSideIndex = (
   index: number,
@@ -78,6 +80,14 @@ export default function CarousellCardComponent<T>(props: {
       ? "medium"
       : "small";
 
+  const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
+
+  const requireCall = useMemo(() => {
+    if (handUiOpened) return false;
+    setHandUiOpened(true);
+    return true;
+  }, [handUiOpened]);
+
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
@@ -142,8 +152,10 @@ export default function CarousellCardComponent<T>(props: {
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
         }}
         type={size}
+        requireCall={requireCall}
         onClick={() => {
           try {
+            console.log('mobile?')
             setSelectedToken(tokenData);
           } catch (e) {
           } finally {

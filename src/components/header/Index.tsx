@@ -5,26 +5,22 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
-  MenuItemOption,
-  MenuGroup,
-  MenuOptionGroup,
-  MenuDivider,
-  Button,
-  Link,
 } from "@chakra-ui/react";
 import Network from "./Network";
 import Account from "./Account";
-import UserMenu from "./UserMenu";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import {
+  mobileMenuStatus,
+  actionMethodStatus,
+} from "@/recoil/modal/atom";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
 import discord from "assets/icons/header/discord.svg";
-import kakao from "assets/icons/header/kakao.svg";
 import twitter from "assets/icons/header/Twitter.svg";
 import medium from "assets/icons/header/medium.svg";
 import userguide from "assets/icons/header/userGuide.svg";
@@ -34,12 +30,18 @@ import userGuideHover from "assets/icons/header/userGuideHover.svg";
 import lightbulbHover from "assets/icons/header/LightbulbHover.svg";
 import mediumHover from "assets/icons/header/mediumHover.svg";
 import twitterHover from "assets/icons/header/TwitterHover.svg";
-import kakaoHover from "assets/icons/header/kakaoHover.svg";
 import discordHover from "assets/icons/header/discordHover.svg";
 import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
-import AccountModal from "../modal/AccountModal";
+import hamburger from "assets/icons/header/hamburger.svg";
+import ETHCircle from "assets/icons/network/circle/Ethereum_circle.svg";
+import TitanCircle from "assets/icons/network/circle/Titan_circle.svg";
+import { useRecoilState } from "recoil";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import useConnectedNetwork from "@/hooks/network";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useAccount } from "wagmi";
 
 const menuList = [
   {
@@ -60,6 +62,7 @@ const HeaderMenu = (props: {
   const { title, link, menuState } = props;
   const pathname = usePathname();
   const router = useRouter();
+  const { initializeTokenPair } = useInOutTokens();
 
   return (
     <Center
@@ -70,7 +73,10 @@ const HeaderMenu = (props: {
           ? "3px solid #007AFF"
           : ""
       }
-      onClick={() => router.push(link)}
+      onClick={() => {
+        router.push(link);
+        initializeTokenPair();
+      }}
     >
       <Text>{title}</Text>
     </Center>
@@ -114,47 +120,53 @@ const CustomMenuItem = (props: {
   );
 };
 
+export const menuLinks = [
+  {
+    title: "Medium",
+    link: "https://medium.com/onther-tech",
+    icon: medium,
+    hoverIcon: mediumHover,
+  },
+  {
+    title: "Twitter",
+    link: "https://twitter.com/tokamak_network",
+    icon: twitter,
+    hoverIcon: twitterHover,
+  },
+  {
+    title: "Discord",
+    link: "https://discord.com/invite/J4chV2zuAK",
+    icon: discord,
+    hoverIcon: discordHover,
+  },
+  {
+    title: "Telegram",
+    link: "https://t.me/tokamak_network",
+    icon: telegram,
+    hoverIcon: telegramHover,
+  },
+  {
+    title: "LinkedIn",
+    link: "https://www.linkedin.com/company/tokamaknetwork/",
+    icon: linkedIn,
+    hoverIcon: linkedInHover,
+  },
+  {
+    title: "Github",
+    link: "https://github.com/tokamak-network",
+    icon: github,
+    hoverIcon: githubHover,
+  },
+];
+
 export default function Header() {
   const [menuState, setMenuState] = useState(false);
-  const [hoverOn, setHoverOn] = useState(false);
-  const menuLinks = [
-    {
-      title: "Medium",
-      link: "https://medium.com/onther-tech",
-      icon: medium,
-      hoverIcon: mediumHover,
-    },
-    {
-      title: "Twitter",
-      link: "https://twitter.com/tokamak_network",
-      icon: twitter,
-      hoverIcon: twitterHover,
-    },
-    {
-      title: "Discord",
-      link: "https://discord.com/invite/J4chV2zuAK",
-      icon: discord,
-      hoverIcon: discordHover,
-    },
-    {
-      title: "Telegram",
-      link: "https://t.me/tokamak_network",
-      icon: telegram,
-      hoverIcon: telegramHover,
-    },
-    {
-      title: "LinkedIn",
-      link: "https://www.linkedin.com/company/tokamaknetwork/",
-      icon: linkedIn,
-      hoverIcon: linkedInHover,
-    },
-    {
-      title: "Github",
-      link: "https://github.com/tokamak-network",
-      icon: github,
-      hoverIcon: githubHover,
-    },
-  ];
+  const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
+  const [actionModalStatus, setActionMethod] =
+    useRecoilState(actionMethodStatus);
+  const { mobileView } = useMediaView();
+  const { isConnected } = useAccount();
+  const network = useConnectedNetwork();
 
   const handleMenuButtonhover = (event: any) => {
     event.preventDefault();
@@ -168,22 +180,35 @@ export default function Header() {
   };
 
   const router = useRouter();
-
   return (
     <Flex
       minW={"100%"}
-      zIndex={Overlay_Index.Header}
+      zIndex={
+        actionModalStatus && mobileView && !isMobileMenu
+          ? Overlay_Index.AlwaysTop
+          : Overlay_Index.Header
+      }
       justifyContent={"space-between"}
-      alignItems={"flex-start"}
-      mt={"22px"}
-      px={"40px"}
+      alignItems={{ base: "center", lg: "flex-start" }}
+      mt={{ base: "16px", lg: "22px" }}
+      px={{ base: "12px", lg: "40px" }}
       pos={"absolute"}
     >
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
-        <Box onClick={() => router.push("/")} cursor={"pointer"}>
-          <Image src={LOGO_IMAGE} alt={"LOGO_IMAGE"} />
+        <Box
+          onClick={() => {
+            router.push("/");
+            mobileView ? setActionMethod(true) : "";
+          }}
+          cursor={"pointer"}
+        >
+          <Image
+            width={mobileView ? 28 : 36}
+            src={LOGO_IMAGE}
+            alt={"LOGO_IMAGE"}
+          />
         </Box>
-        <Flex columnGap={"30px"}>
+        <Flex columnGap={"30px"} display={{ base: "none", lg: "flex" }}>
           {menuList.map((menuInfo) => (
             <HeaderMenu
               key={menuInfo.title}
@@ -269,12 +294,55 @@ export default function Header() {
           </Menu>
         </Flex>
       </Flex>
-      <Flex columnGap={"6px"}>
-        <Network />
+      <Flex columnGap={{ base: "8px", lg: "6px" }}>
+        {!mobileView && <Network />}
+        {mobileView &&
+          ((network.connectedChainId === 5 ||
+            network.connectedChainId === 5050) && isConnected ) && (
+            <Flex columnGap={"10px"} align={"center"} px={"8px"}>
+              <Image
+                width={16}
+                height={16}
+                alt={network.chainName!}
+                src={
+                  network.connectedChainId === 5
+                    ? ETHCircle
+                    : network.connectedChainId === 5050
+                    ? TitanCircle
+                    : ""
+                }
+              />
+              <Text fontSize={13}>
+                {network.connectedChainId === 5
+                  ? "Goerli"
+                  : network.connectedChainId === 5050
+                  ? "Titan Goerli"
+                  : ""}
+              </Text>
+            </Flex>
+          )}
         <Flex flexDir={"column"} alignItems={"flex-end"}>
           <Account />
           {/* <AccountModal /> */}
         </Flex>
+
+        {mobileView && (
+          <Flex
+            w={"32px"}
+            h={"32px"}
+            justify={"center"}
+            align={"center"}
+            borderRadius={8}
+            border={"1px solid #313442"}
+            cursor={"pointer"}
+            onClick={() => {
+              // setActionMethod(false);
+              setMobileMenuOpen(true);
+            }}
+          >
+            <Image alt="hamburger" src={hamburger} />
+          </Flex>
+        )}
 
         {/* <UserMenu /> */}
       </Flex>

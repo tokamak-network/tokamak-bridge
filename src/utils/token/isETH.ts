@@ -12,7 +12,9 @@ import { TokenInfo } from "@/types/token/supportedToken";
 
 export function isETH(token: TokenInfo | null) {
   if (token === null) return false;
-  return token?.isNativeCurrency?.includes(SupportedChainId.MAINNET);
+  return token?.isNativeCurrency?.includes(
+    SupportedChainId.MAINNET || SupportedChainId.GOERLI
+  );
 }
 
 export function getWETHAddress(
@@ -21,8 +23,21 @@ export function getWETHAddress(
   const wethAddress: { [K in SupportedChainProperties["chainName"]]: string } =
     {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
+      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
     };
 
   return wethAddress[chainName];
+}
+
+export function getWETHAddressByChainId(chainId: number) {
+  const wethAddress: Record<number, string> = {
+    [1]: MAINNET_CONTRACTS.WETH_ADDRESS,
+    [5]: GOERLI_CONTRACTS.WETH_ADDRESS,
+    [55004]: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+    [5050]: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
+  };
+
+  return wethAddress[chainId];
 }

@@ -14,25 +14,32 @@ import { OutRangeWarning } from "../../add/components/InputContainer";
 
 export default function AddMoreLiquidity() {
   const { info } = usePositionInfo();
-  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { deposit0Disabled, deposit1Disabled } = usePoolInfo();
 
   const { chainName } = useConnectedNetwork();
 
   if (!info || !chainName) return null;
 
-  const token0 = inverted ? info.token1 : info.token0;
-  const token1 = inverted ? info.token0 : info.token1;
+  const token0 = info.token0;
+  const token1 = info.token1;
 
   const token0Info: TokenInfo = {
     tokenName: token0.name ?? "",
     tokenSymbol: token0.symbol ?? "",
     address: {
       MAINNET: token0.address,
+      GOERLI: token0.address,
       TITAN: token0.address,
+      DARIUS: token0.address,
     },
     isNativeCurrency:
-      token0.address === getWETHAddress(chainName)
-        ? [SupportedChainId.MAINNET, SupportedChainId.TITAN]
+      token0.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
+        ? [
+            SupportedChainId.MAINNET,
+            SupportedChainId.GOERLI,
+            SupportedChainId.TITAN,
+            SupportedChainId.DARIUS,
+          ]
         : null,
     decimals: token0.decimals,
   };
@@ -42,11 +49,19 @@ export default function AddMoreLiquidity() {
     tokenSymbol: token1.symbol ?? "",
     address: {
       MAINNET: token1.address,
+      GOERLI: token1.address,
       TITAN: token1.address,
+      DARIUS: token1.address,
     },
     isNativeCurrency:
-      token1.address === getWETHAddress(chainName)
-        ? [SupportedChainId.MAINNET, SupportedChainId.TITAN]
+      token1.address.toLowerCase() ===
+      getWETHAddress(chainName).toLocaleLowerCase()
+        ? [
+            SupportedChainId.MAINNET,
+            SupportedChainId.GOERLI,
+            SupportedChainId.TITAN,
+            SupportedChainId.DARIUS,
+          ]
         : null,
     decimals: token1.decimals,
   };
@@ -74,9 +89,10 @@ export default function AddMoreLiquidity() {
               <OutRangeWarning />
             ) : (
               <TokenInputForLiquidity
-                inToken={inverted ? true : false}
+                inToken={false}
                 tokenInfo={token1Info}
                 otherTokenInfo={token0Info}
+                tickCurrent={info?.tickCurrent}
               />
             )}
           </Flex>
@@ -98,9 +114,10 @@ export default function AddMoreLiquidity() {
           <Flex w={"186px"} mt="16px">
             {!deposit0Disabled && (
               <TokenInputForLiquidity
-                inToken={inverted ? false : true}
+                inToken={true}
                 tokenInfo={token0Info}
                 otherTokenInfo={token1Info}
+                tickCurrent={info?.tickCurrent}
               />
             )}
             {deposit0Disabled && <OutRangeWarning />}

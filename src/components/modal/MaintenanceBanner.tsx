@@ -25,7 +25,10 @@ const MaintenanceBanner = () => {
     years: 0,
   });
 
-  const isTestnet = !isConnectedToMainNetwork;
+  const isTestnet =
+    !isConnectedToMainNetwork ||
+    outNetwork?.chainId === SupportedChainId["GOERLI"] ||
+    outNetwork?.chainId === SupportedChainId["DARIUS"];
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -43,8 +46,7 @@ const MaintenanceBanner = () => {
         seconds: 0,
       }); //the duration when the red banner is visible and L2 actions are disabled
 
-      if (nowTime < getTime(banner)) {
-        //if the current time is smaller than the banner show time, hide the banner
+      if (nowTime < getTime(banner)) {  //if the current time is smaller than the banner show time, hide the banner
         setIsBannerStatus("Hidden");
         setStatus("Hidden");
       } else if (
@@ -61,7 +63,7 @@ const MaintenanceBanner = () => {
       ) {
         const duration2 = getTime(activeTimeEndThisWeek) - nowTime;
         setDuration(intervalToDuration({ start: 0, end: duration2 }));
-        setStatus("Active"); //when the status is active, red banner will show
+        setStatus("Active");  //when the status is active, red banner will show
         setIsBannerStatus("Active");
       } else {
         setStatus("Hidden");

@@ -21,6 +21,10 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 //     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3",
 //   [SupportedChainId.GOERLI]:
 //     "https://api.thegraph.com/subgraphs/name/cd4761/uniswap-v3-goerli",
+//   [SupportedChainId.TITAN]:
+//     "https://thegraph.titan.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak",
+//   [SupportedChainId.DARIUS]:
+//     "https://goerli.thegraph.tokamak.network/subgraphs/name/cd4761/uniswapv3-tokamak-goerli",
 // };
 
 // const httpLink = new HttpLink({
@@ -53,12 +57,11 @@ export const apolloClient = new ApolloClient({
         price: process.env.NEXT_PUBLIC_PRICE_API as string,
         l1BridgeGoerli: process.env.NEXT_PUBLIC_L1BRIDGE_GOERLI as string,
         l1BridgeMainnet: process.env.NEXT_PUBLIC_L1BRIDGE_MAINNET as string,
-        l2BridgeTitanGoerli: process.env
-          .NEXT_PUBLIC_L2MESSENGER_TITAN_GOERLI as string,
+        l2BridgeTitanGoerli: process.env.NEXT_PUBLIC_L2MESSENGER_TITAN_GOERLI as string,
         l2BridgeTitan: process.env.NEXT_PUBLIC_L2MESSENGER_TITAN as string,
         titanSubGraph: process.env.NEXT_PUBLIC_SUBGRAPH_TITAN as string,
-        titanGoerliSubGraph: process.env
-          .NEXT_PUBLIC_SUBGRAPH_TITAN_GOERLI as string,
+        titanGoerliSubGraph: process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_GOERLI as string,
+
       },
       //@ts-ignore
       createHttpLink: () => createHttpLink(),

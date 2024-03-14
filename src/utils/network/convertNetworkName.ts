@@ -6,8 +6,12 @@ export function convertNetworkName(
   switch (params) {
     case "MAINNET":
       return "Ethereum";
+    case "GOERLI":
+      return "Goerli";
     case "TITAN":
       return "Titan";
+    case "DARIUS":
+      return "Titan Goerli";
     default:
       return null;
   }

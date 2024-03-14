@@ -173,7 +173,6 @@ export function useGasFee() {
     outNetwork,
     _depositETH_contract,
     _depositERC20_contract,
-    _withdraw_contract,
     provider,
     feeData,
     l2Prov,

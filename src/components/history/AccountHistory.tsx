@@ -4,6 +4,7 @@ import {
   DrawerOverlay,
   Flex,
   Text,
+  Box,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useAccount } from "wagmi";
@@ -15,8 +16,10 @@ import ActivityContainer from "./ActivityContainer";
 import NetworkSelector from "./NetworkSelector";
 import SearchComponent from "./SearchComponent";
 import AccountContainer from "./AccountContainer";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import Account from "../header/Account";
 
-type ChainName = "MAINNET" | "TITAN" | undefined;
+type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -33,6 +36,7 @@ export default function AccountHistory() {
     chainName: undefined,
     networkImage: undefined,
   });
+  const { mobileView } = useMediaView();
 
   useEffect(() => {
     if (address === undefined) {
@@ -87,24 +91,45 @@ export default function AccountHistory() {
       trapFocus={false}
       useInert={true}
     >
-      <DrawerOverlay bg={"none"} />
+      <DrawerOverlay
+        bg={{ base: "#000000F0", lg: "none" }}
+        pointerEvents={"auto"}
+        onClick={() => setIsOpen(false)}
+      />
+
+      {mobileView && (
+        <Box
+          zIndex={10000}
+          w={"fit-content"}
+          h={"fit-content"}
+          pos={"fixed"}
+          right={"52px"}
+          top={"24px"}
+        >
+          <Account />
+        </Box>
+      )}
+
       <DrawerContent
         px="12px"
         pb="0px"
-        minW={"360px"}
-        maxW={"360px"}
+        mt={{ base: "64px", lg: "0px" }}
+        minW={{ base: "100%", lg: "360px" }}
+        maxW={{ base: "100%", lg: "360px" }}
         bgColor={"#1F2128"}
-
+        rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
         // pos={"relative"}
       >
-        <AccountContainer />
+        {!mobileView && <AccountContainer />}
         <TabContainer setTab={setTab} tab={tab} />
-        <Flex>
-          {Network}
-          {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
-          <SearchComponent tab={tab} />
-        </Flex>
-        <Flex mt="12px" height={"80%"}>
+        {!mobileView && (
+          <Flex>
+            {Network}
+            {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
+            <SearchComponent tab={tab} />
+          </Flex>
+        )}
+        <Flex mt={{ base: "0px", lg: "12px" }} height={"100%"}>
           {/* {tab === "Balance" ? (
             <BalanceContainer network={selectedNetwork} />
           ) : (

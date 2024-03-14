@@ -4,7 +4,8 @@ import { supportedChain } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { useNetwork } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
+import { useGetPositionIdFromPath } from "../pool/useGetPositionIds";
 
 export function useInOutNetwork() {
   const { inNetwork, outNetwork } = useRecoilValue(networkStatus);
@@ -16,10 +17,15 @@ export function useInOutNetwork() {
 }
 
 export default function useConnectedNetwork() {
-  // const network = useRecoilValue(networkStatus);
-  const { chain } = useNetwork();
+  const { inNetwork } = useInOutNetwork();
+  const { chain: _chain } = useNetwork();
 
-  const { inNetwork, outNetwork } = useInOutNetwork();
+  const chain = useMemo(() => {
+    return _chain;
+  }, [_chain]);
+
+  //to optimize rpc calls
+  //if it's enabled always, then useNetwork would make so many calls to check connectecd network datas when it's not connected
 
   const chainInfo = useMemo(() => {
     //connected wallet
@@ -59,9 +65,6 @@ export default function useConnectedNetwork() {
     return { chainName: "MAINNET" as keyof typeof SupportedChainId };
   }, [chain, inNetwork]);
 
-  // console.log("inNetwork");
-  // console.log(inNetwork);
-
   const otherLayerChainInfo = useMemo(() => {
     if (chainInfo) {
       if (chainInfo.layer === "L1" && chainInfo.isConnectedToMainNetwork)
@@ -70,7 +73,6 @@ export default function useConnectedNetwork() {
         return supportedChain[3];
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
-
       if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
         return supportedChain[1];
     }

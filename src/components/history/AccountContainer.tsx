@@ -1,16 +1,4 @@
-import {
-  Box,
-  Drawer,
-  DrawerContent,
-  DrawerOverlay,
-  Flex,
-  useToast,
-  Input,
-  Text,
-  Link,
-  InputRightElement,
-  InputGroup,
-} from "@chakra-ui/react";
+import { Box, Flex, useToast, Text, Link } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import Image from "next/image";
 import { trimAddress } from "@/utils/trim";
@@ -26,9 +14,9 @@ import { accountDrawerStatus } from "@/recoil/modal/atom";
 export default function AccountContainer() {
   const toast = useToast();
   const { connetAndDisconntWallet } = useConnectWallet();
-  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
-
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
+
   const TopLine = () => {
     return (
       <>
@@ -84,12 +72,13 @@ export default function AccountContainer() {
         }}
         pos={"relative"}
         overflow={"hidden"}
+        w={"100%"}
       >
         <Flex
           borderRadius={"16px"}
           border={"3px solid #007AFF"}
           h="64px"
-          w="336px"
+          w={{ base: "100%", lg: "336px" }}
           flexDir={"column"}
         >
           <TopLine />
@@ -97,6 +86,7 @@ export default function AccountContainer() {
             p="13px 16px 16px 13px"
             justifyContent={"space-between"}
             zIndex={1001}
+            w={"100%"}
           >
             <Flex alignItems={"center"}>
               <Image
