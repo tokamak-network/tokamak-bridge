@@ -7,7 +7,6 @@ import {
   toReadableAmount,
 } from "@/utils/uniswap/libs/converstion";
 import { ethers } from "ethers";
-import { useSwapTokens } from "./useSwapTokens";
 import JSBI from "jsbi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMode } from "@/hooks/mode/useGetMode";
@@ -53,7 +52,6 @@ export default function usePriceImpact() {
 
   const { inToken, outToken } = useInOutTokens();
   const { QUOTER_CONTRACT } = useUniswapContracts();
-  const { amountOut } = useSwapTokens();
   const { mode } = useGetMode();
   const [, setIsLoading] = useIsLoading();
 
