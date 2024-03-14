@@ -8,6 +8,12 @@ import useConnectedNetwork from "@/hooks/network";
 import { apolloClient } from "@/apollo";
 import Drawers from "./Drawers";
 import Footer from "@/components/footer";
+
+/**
+ *
+ * Temporary Main for the merge issue on the production
+ */
+
 export default function Entry({ children }: { children: React.ReactNode }) {
   const [isMobile] = useMediaQuery("(max-width: 1200px)");
 
@@ -34,7 +40,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <Center h={"100vh"}>{children}</Center>
       <Footer />
       <GlobalComponents />
-      <Drawers/>
+      <Drawers />
       <Modals />
     </ApolloProvider>
   );
