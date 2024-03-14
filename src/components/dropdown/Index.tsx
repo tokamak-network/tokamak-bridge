@@ -145,7 +145,6 @@ export default function NetworkDropdown(props: {
         return setNetwork({ ...network, outNetwork: selectedWork });
       }
       if (selectedWork.chainId !== connectedChainId) {
-        
         return isConnected
           ? switchNetwork?.(selectedWork.chainId)
           : setNetwork({ ...network, inNetwork: selectedWork });
@@ -324,17 +323,18 @@ export default function NetworkDropdown(props: {
   const optionsList = supportedChain
     .filter((chainInfo) => {
       if (
-        isConnectedToMainNetwork === true ||
-        isConnectedToMainNetwork === undefined
+        // isConnectedToMainNetwork === true ||
+        // isConnectedToMainNetwork === undefined
+        true
       ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-        chainInfo.chainId
-      );
+      // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+      //   chainInfo.chainId
+      // );
     })
     .map((chainInfo) => {
       return {

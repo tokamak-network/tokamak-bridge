@@ -1,15 +1,13 @@
 import { Box, Flex, Text } from "@chakra-ui/react";
 import "@/css/bridgeSwap/selectNetwork.css";
 import NetworkDropdown from "@/components/dropdown/Index";
-import { useMemo,useState } from "react";
+import { useMemo, useState } from "react";
 
 export default function SelectNetwork() {
-
   const NetworkSwitcher = useMemo(() => {
-    
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={false} height="32px" width={"200px"}/>
+        <NetworkDropdown inNetwork={false} height="32px" width={"200px"} />
       </Box>
     );
   }, []);
@@ -30,10 +28,10 @@ export default function SelectNetwork() {
             display={"flex"}
             flexDir={"column"}
             rowGap={"70px"}
-            onClick={()=>{
+            onClick={() => {
               //add the click function here
             }}
-            cursor={'pointer'}
+            cursor={"pointer"}
           >
             <Flex
               w={"100%"}

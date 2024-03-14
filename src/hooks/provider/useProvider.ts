@@ -13,22 +13,22 @@ export function useProvier() {
 
   const L1Provider = useMemo(() => {
     if (isConnectedToMainNetwork) return getProvider(supportedChain[0]);
-    return getProvider(supportedChain[1]);
+    return getProvider(supportedChain[0]);
   }, [isConnectedToMainNetwork]);
 
   const L2Provider = useMemo(() => {
-    if (isConnectedToMainNetwork) return getProvider(supportedChain[2]);
-    return getProvider(supportedChain[3]);
+    if (isConnectedToMainNetwork) return getProvider(supportedChain[1]);
+    return getProvider(supportedChain[1]);
   }, [isConnectedToMainNetwork]);
 
   const otherLayerProvider = useMemo(() => {
     //Ethereum or Titan
     if (isConnectedToMainNetwork) {
-      if (layer === "L1") return getProvider(supportedChain[2]);
+      if (layer === "L1") return getProvider(supportedChain[0]);
       return getProvider(supportedChain[0]);
     }
     //Testnet
-    if (layer === "L1") return getProvider(supportedChain[3]);
+    if (layer === "L1") return getProvider(supportedChain[0]);
     return getProvider(supportedChain[1]);
   }, [isConnectedToMainNetwork, layer]);
 
