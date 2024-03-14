@@ -34,20 +34,19 @@ export default function useCallBridgeSwapAction() {
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
-  
+
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   const onClick = useCallback(async () => {
-    
     if (!isConnected) {
       return connectToWallet();
     }
     if (inToken && inToken.amountBN && inNetwork && outNetwork) {
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET || SupportedChainId.GOERLI
+        SupportedChainId.MAINNET
       );
       const parsedAmount = inToken.amountBN;
-      setIsDrawerOpen(false)
+      setIsDrawerOpen(false);
       if (
         mode === "Wrap" ||
         mode === "Unwrap" ||

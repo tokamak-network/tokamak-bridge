@@ -11,9 +11,7 @@ export default function useTokenBalance(tokenInfo: TokenInfo | null) {
 
   const isETH =
     layer === "L1" &&
-    tokenInfo?.isNativeCurrency?.includes(
-      SupportedChainId.MAINNET || SupportedChainId.GOERLI
-    );
+    tokenInfo?.isNativeCurrency?.includes(SupportedChainId.MAINNET);
   const tokenAddress = chainName && tokenInfo?.address[chainName];
 
   const { address: accountAddress } = useAccount();

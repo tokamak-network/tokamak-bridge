@@ -73,11 +73,7 @@ export function useAllowance() {
         provider &&
         chainName
       ) {
-        if (
-          inToken.isNativeCurrency?.includes(
-            SupportedChainId.MAINNET || SupportedChainId.GOERLI
-          )
-        ) {
+        if (inToken.isNativeCurrency?.includes(SupportedChainId.MAINNET)) {
           return setApproved({
             l1birdge: true,
             swapRouter: true,

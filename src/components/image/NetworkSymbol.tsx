@@ -45,21 +45,7 @@ export function NetworkSymbol(props: {
           {...props}
         />
       );
-    case 5:
-      return (
-        <ImageSymbol
-          ImgFile={isCircle ? SYMBOL_ETHEREUM_CIRCLE : SYMBOL_ETHEREUM}
-          {...props}
-        />
-      );
     case 55004:
-      return (
-        <ImageSymbol
-          ImgFile={isCircle ? SYMBOL_TITAN_CIRCLE : SYMBOL_TITAN}
-          {...props}
-        />
-      );
-    case 5050:
       return (
         <ImageSymbol
           ImgFile={isCircle ? SYMBOL_TITAN_CIRCLE : SYMBOL_TITAN}

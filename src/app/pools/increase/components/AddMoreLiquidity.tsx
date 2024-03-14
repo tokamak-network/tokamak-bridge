@@ -28,18 +28,11 @@ export default function AddMoreLiquidity() {
     tokenSymbol: token0.symbol ?? "",
     address: {
       MAINNET: token0.address,
-      GOERLI: token0.address,
       TITAN: token0.address,
-      DARIUS: token0.address,
     },
     isNativeCurrency:
       token0.address === getWETHAddress(chainName)
-        ? [
-            SupportedChainId.MAINNET,
-            SupportedChainId.GOERLI,
-            SupportedChainId.TITAN,
-            SupportedChainId.DARIUS,
-          ]
+        ? [SupportedChainId.MAINNET, SupportedChainId.TITAN]
         : null,
     decimals: token0.decimals,
   };
@@ -49,18 +42,11 @@ export default function AddMoreLiquidity() {
     tokenSymbol: token1.symbol ?? "",
     address: {
       MAINNET: token1.address,
-      GOERLI: token1.address,
       TITAN: token1.address,
-      DARIUS: token1.address,
     },
     isNativeCurrency:
       token1.address === getWETHAddress(chainName)
-        ? [
-            SupportedChainId.MAINNET,
-            SupportedChainId.GOERLI,
-            SupportedChainId.TITAN,
-            SupportedChainId.DARIUS,
-          ]
+        ? [SupportedChainId.MAINNET, SupportedChainId.TITAN]
         : null,
     decimals: token1.decimals,
   };

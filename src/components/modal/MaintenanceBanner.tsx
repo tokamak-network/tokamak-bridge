@@ -25,10 +25,7 @@ const MaintenanceBanner = () => {
     years: 0,
   });
 
-  const isTestnet =
-    !isConnectedToMainNetwork ||
-    outNetwork?.chainId === SupportedChainId["GOERLI"] ||
-    outNetwork?.chainId === SupportedChainId["DARIUS"];
+  const isTestnet = !isConnectedToMainNetwork;
 
   useEffect(() => {
     const intervalId = setInterval(() => {

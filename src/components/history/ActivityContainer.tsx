@@ -17,7 +17,7 @@ import HalfLoadingTx from "./HalfLoadingTx";
 import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useRef } from "react";
 
-type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+type ChainName = "MAINNET" | "TITAN" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -33,7 +33,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
   const tData = useGetTransaction();
-  const ref = useRef<HTMLDivElement| null>(null);
+  const ref = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const updateNumData = () => {
@@ -100,19 +100,17 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       if (tData.depositTxs.length > 0) {
         const filteredTx = tData.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
-            
             if (tx !== undefined) {
               if (tx.l1txHash && tx.l2txHash === undefined)
-              return tx.l1txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash === undefined)
-              return tx.l2txHash.includes(searchTxString.id);
-            if (tx.l2txHash && tx.l1txHash)
-              return (
-                tx.l1txHash.includes(searchTxString.id) ||
-                tx.l2txHash.includes(searchTxString.id)
-              );
+                return tx.l1txHash.includes(searchTxString.id);
+              if (tx.l2txHash && tx.l1txHash === undefined)
+                return tx.l2txHash.includes(searchTxString.id);
+              if (tx.l2txHash && tx.l1txHash)
+                return (
+                  tx.l1txHash.includes(searchTxString.id) ||
+                  tx.l2txHash.includes(searchTxString.id)
+                );
             }
-          
           }
         );
 
@@ -129,13 +127,9 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     tData.loadingState,
   ]);
 
-  const getLayerFiltered = useMemo(() => {    
-    const depSelected =
-      network.chainId === SupportedChainId["MAINNET"] ||
-      network.chainId === SupportedChainId["GOERLI"];
-    const withSelected =
-      network.chainId === SupportedChainId["DARIUS"] ||
-      network.chainId === SupportedChainId["TITAN"];
+  const getLayerFiltered = useMemo(() => {
+    const depSelected = network.chainId === SupportedChainId["MAINNET"];
+    const withSelected = network.chainId === SupportedChainId["TITAN"];
 
     const allSelected = network.chainId === undefined;
     if (depSelected === true) {
@@ -146,7 +140,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     }
     if (withSelected === true) {
       const txs = filteredTx.filter(
-        (tx: FullWithTx) => tx !== undefined  && tx.event === "withdraw"
+        (tx: FullWithTx) => tx !== undefined && tx.event === "withdraw"
       );
       return txs;
     } else {

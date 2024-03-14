@@ -23,7 +23,7 @@ import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
-type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+type ChainName = "MAINNET" | "TITAN" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -50,8 +50,12 @@ const customStyles = (maxHeight: string) => {
       margin: "0px",
       marginTop: "4px",
       background: "#1F2128",
-      minWidth: isConnectedToMainNetwork?  "136px !important": "156px !important",
-      maxWidth: isConnectedToMainNetwork?  "136px !important": "156px !important",
+      minWidth: isConnectedToMainNetwork
+        ? "136px !important"
+        : "156px !important",
+      maxWidth: isConnectedToMainNetwork
+        ? "136px !important"
+        : "156px !important",
       borderRadius: "6px",
       position: "absolute",
       border: "1px solid #313442",
@@ -131,7 +135,7 @@ export default function NetworkSelector(props: {
   const onChange = async (data: SelectOption) => {
     try {
       setSelectedOption(data);
-      setNetwork(data)
+      setNetwork(data);
       //   const value: SupportedChainProperties["chainId"] = Number(data.chainId);
       //   const selectedWork = supportedChain.filter((supportedChain) => {
       //     return supportedChain.chainId === value;
@@ -166,7 +170,7 @@ export default function NetworkSelector(props: {
 
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
-    
+
     if (data.chainId === 0) {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
@@ -222,17 +226,18 @@ export default function NetworkSelector(props: {
   const optionsList = supportedChain
     .filter((chainInfo) => {
       if (
-        isConnectedToMainNetwork === true ||
-        isConnectedToMainNetwork === undefined
+        // isConnectedToMainNetwork === true ||
+        // isConnectedToMainNetwork === undefined
+        true
       ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-        chainInfo.chainId
-      );
+      // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+      //   chainInfo.chainId
+      // );
     })
     .map((chainInfo) => {
       return {
@@ -272,7 +277,7 @@ export default function NetworkSelector(props: {
           IndicatorsContainer: () => null,
         }}
         //@ts-ignore
-        styles={customStyles('40px')}
+        styles={customStyles("40px")}
         value={selectedOption}
       ></Select>
     </Box>

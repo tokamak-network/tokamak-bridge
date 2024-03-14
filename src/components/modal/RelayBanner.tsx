@@ -30,10 +30,7 @@ const RelayBanner = () => {
     years: 0,
   });
 
-  const isTestnet =
-    !isConnectedToMainNetwork ||
-    outNetwork?.chainId === SupportedChainId["GOERLI"] ||
-    outNetwork?.chainId === SupportedChainId["DARIUS"];
+  const isTestnet = !isConnectedToMainNetwork;
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -71,7 +68,7 @@ const RelayBanner = () => {
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
   }, [banner]);
-  
+
   return status !== "Hidden" ? (
     <Flex
       h="76px"
@@ -89,14 +86,14 @@ const RelayBanner = () => {
           <>
             {" "}
             <Text fontSize={"14px"}>
-            Swap on the Ethereum Network is under maintenance.
+              Swap on the Ethereum Network is under maintenance.
             </Text>
           </>
         ) : (
           <>
             {" "}
             <Text fontSize={"14px"}>
-            Swap on Ethereum network maintenance is scheduled.
+              Swap on Ethereum network maintenance is scheduled.
             </Text>
           </>
         )}
@@ -124,18 +121,16 @@ const RelayBanner = () => {
               한국어
             </a>
             ). */}
-
-          Maintenance is scheduled from 16:00~16:30 GMT+9. *You can still wrap & deposit, and no functions on Titan are affected.
+            Maintenance is scheduled from 16:00~16:30 GMT+9. *You can still wrap
+            & deposit, and no functions on Titan are affected.
           </Text>
         ) : (
           <Text fontSize={"10px"}>
             {" "}
-
             {/* August 30th, 2023 at 18:00 GMT+9, any withdrawals will have to be */}
             {/* manually relayed using a new interface (read more in{" "} */}
-
-            March 12th 16:00~16:30 GMT+9, the swap router backend will be upgraded
-
+            March 12th 16:00~16:30 GMT+9, the swap router backend will be
+            upgraded
             {/* <a
               href={
                 "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
@@ -165,9 +160,11 @@ const RelayBanner = () => {
           duration.hours < 10
             ? "0"
             : ""}
-          {duration.days !== undefined && duration.hours !== undefined && duration.days > 0
+          {duration.days !== undefined &&
+          duration.hours !== undefined &&
+          duration.days > 0
             ? duration.hours + 24
-            :  duration.hours}
+            : duration.hours}
           :{duration.minutes !== undefined && duration.minutes < 10 ? "0" : ""}
           {duration.minutes}:
           {duration.seconds !== undefined && duration.seconds < 10 ? "0" : ""}

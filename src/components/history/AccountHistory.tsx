@@ -1,44 +1,22 @@
 import {
-  Box,
   Drawer,
   DrawerContent,
   DrawerOverlay,
   Flex,
-  useToast,
-  Input,
   Text,
-  Link,
-  InputRightElement,
-  InputGroup,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { useAccount } from "wagmi";
-import {
-  CSSProperties,
-  useCallback,
-  useMemo,
-  useState,
-  SetStateAction,
-  Dispatch,
-  useEffect,
-} from "react";
+import { useMemo, useState, SetStateAction, Dispatch, useEffect } from "react";
 import DrawerCloseIcon from "assets/icons/accountHistory/drawerClose.svg";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
-import { trimAddress } from "@/utils/trim";
-import copy from "copy-to-clipboard";
-import userguide from "assets/icons/header/userGuide.svg";
-import off from "assets/icons/header/off.svg";
-import useConnectWallet from "@/hooks/account/useConnectWallet";
 import ActivityContainer from "./ActivityContainer";
-import BalanceContainer from "./BalanceContainer";
 import NetworkSelector from "./NetworkSelector";
-import { tData } from "@/types/activity/history";
 import SearchComponent from "./SearchComponent";
 import AccountContainer from "./AccountContainer";
-import { Overlay_Index } from "@/types/style/overlayIndex";
 
-type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+type ChainName = "MAINNET" | "TITAN" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -49,8 +27,6 @@ type SelectOption = {
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { address } = useAccount();
-  const toast = useToast();
-  const { connetAndDisconntWallet } = useConnectWallet();
   const [tab, setTab] = useState("Activity");
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
     chainId: 0,
@@ -109,7 +85,8 @@ export default function AccountHistory() {
       }}
       variant="clickThrough"
       trapFocus={false}
-      useInert={true}>
+      useInert={true}
+    >
       <DrawerOverlay bg={"none"} />
       <DrawerContent
         px="12px"
@@ -159,7 +136,8 @@ export default function AccountHistory() {
           }}
           cursor={"pointer"}
           // transform={"translate(-7px)"}
-          transition={"background 250ms ease 0s, transform 250ms ease 0s"}>
+          transition={"background 250ms ease 0s, transform 250ms ease 0s"}
+        >
           <Flex
             m={"16px 20px 16px 12px"}
             w={"40px"}
@@ -167,7 +145,8 @@ export default function AccountHistory() {
             border={"1px solid #313442"}
             borderRadius={"8px"}
             bgColor={"transparent"}
-            justifyContent={"center"}>
+            justifyContent={"center"}
+          >
             <Image src={DrawerCloseIcon} alt={"DrawerCloseIcon"}></Image>
           </Flex>
         </Flex>

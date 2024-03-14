@@ -236,14 +236,10 @@ export function useAmountOut() {
       const weiAmount = ethers.BigNumber.from(wei);
       const hexAmount = ethers.utils.hexlify(weiAmount);
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET ||
-          SupportedChainId.GOERLI ||
-          SupportedChainId.TITAN
+        SupportedChainId.MAINNET || SupportedChainId.TITAN
       );
       const isOutETH = outToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET ||
-          SupportedChainId.GOERLI ||
-          SupportedChainId.TITAN
+        SupportedChainId.MAINNET || SupportedChainId.TITAN
       );
 
       if (isOutETH) {

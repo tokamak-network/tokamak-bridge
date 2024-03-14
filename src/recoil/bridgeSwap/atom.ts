@@ -100,11 +100,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const status = get(bannerStatus);
     const dayINeed = 4; // Thursday (ISO weekday 4)
     const network = get(networkStatus);
-    const isTestnet =
-      network.inNetwork?.chainId === SupportedChainId["GOERLI"] ||
-      network.inNetwork?.chainId === SupportedChainId["DARIUS"] ||
-      network.outNetwork?.chainId === SupportedChainId["GOERLI"] ||
-      network.outNetwork?.chainId === SupportedChainId["DARIUS"];
+    const isTestnet = false;
     const today = new Date();
     const currentISODay = getISODay(today);
     const nowTime = getTime(today);
@@ -114,18 +110,17 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     // const desiredDateThisWeek = addDays(weekStart, isTestnet ? 5 : 6); //to show the banner
     // const desiredDateThisWeek = addWeeks(addDays(weekStart, isTestnet? 4:5), 1); // to hide the banner
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const previewTimeStartThisWeek =
-      isTestnet === true
-        ? add(desiredDateThisWeek, {
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
-          })
-        : add(desiredDateThisWeek, {
-            hours: 0,
-            minutes: 0,
-            seconds: 0,
-          });
+    const previewTimeStartThisWeek = isTestnet
+      ? add(desiredDateThisWeek, {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        })
+      : add(desiredDateThisWeek, {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        });
 
     const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
     const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);

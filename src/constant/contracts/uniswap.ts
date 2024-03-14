@@ -65,8 +65,5 @@ export const L2_initCodeHashManualOverride =
 
 export const V3_CORE_FACTORY_ADDRESSES: { [chainId: number]: string } = {
   [SupportedChainId.MAINNET]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
-  [SupportedChainId.GOERLI]: L1_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
   [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
-  [SupportedChainId.DARIUS]:
-    L2_TESTNET_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
 };

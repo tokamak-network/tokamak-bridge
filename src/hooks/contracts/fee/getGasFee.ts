@@ -61,7 +61,7 @@ export function useGasFee() {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
         const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET || SupportedChainId.GOERLI
+          SupportedChainId.MAINNET
         );
         const parsedAmount = inToken.amountBN;
         switch (mode) {
@@ -76,7 +76,7 @@ export function useGasFee() {
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
-                  //@ts-ignore
+                //@ts-ignore
                 account: address,
                 //@ts-ignore
                 args: [200000, "0x"],
@@ -86,7 +86,7 @@ export function useGasFee() {
             }
 
             return _depositERC20_contract.estimateGas.depositERC20({
-                //@ts-ignore
+              //@ts-ignore
               account: address,
               //@ts-ignore
               args: [
