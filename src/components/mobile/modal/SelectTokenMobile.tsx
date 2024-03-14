@@ -22,7 +22,10 @@ import { SearchIcon, StarIcon, SunIcon } from '@chakra-ui/icons';
 import { useRecoilState } from "recoil";
 import { useCallback, useEffect, useRef, useState } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-
+import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
+import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import { TokenInfo } from "types/token/supportedToken";
+import { TokenSymbol } from "@/componenets/image/TokenSymbol";
 
 import {
   selectedInTokenStatus,
@@ -35,15 +38,24 @@ import Image from "next/image";
 export default function SelectTokenMobileModal() {
   const { isInTokenOpen, isOutTokenOpen, onCloseTokenModal } = useTokenModal();
   const { isOpen } = useRecoilValue(tokenModalStatus);
+  const { filteredTokenList } = useGetTokenList();
+  
+  type TokenButtonProps = {
+    tokenLabel: string;
+  };
 
-  const TokenButton = ({ tokenLabel }) => {
+  const TokenButton = ({ tokenLabel }: TokenButtonProps) => {
       return (
         <Button
-          size="md" // 버튼 크기 설정
-          bg="blackAlpha.500" // 버튼 배경색 설정
+          size="md"
+          bg="blackAlpha.500"
           fontWeight="normal"
-          _hover={{ bg: "blackAlpha.600" }} // 호버 상태의 배경색 설정
-          leftIcon={<Icon as={SunIcon} />} // 이미지 아이콘
+          _hover={{ bg: "blackAlpha.600" }}
+          leftIcon={<TokenSymbol
+            w={20}
+            h={20}
+            tokenType={tokenLabel}
+          />}
           borderRadius="full" 
         >
           {tokenLabel}
@@ -51,20 +63,39 @@ export default function SelectTokenMobileModal() {
       );
     }
 
-    const TokenListItem = ({ icon, mainLabel, subLabel, amount }) => (
-      <HStack spacing={4} justifyContent="space-between" w="full" alignItems="center">
+    type TokenListItemProps = {
+      mainLabel: string | String;
+      subLabel: string | String;
+      amount: string;
+    };
+
+    const TokenListItem = ({ mainLabel, subLabel, amount } : TokenListItemProps) => (
+      <HStack 
+        spacing={4}
+        justifyContent="space-between" 
+        w="full" 
+        alignItems="center" 
+        px={4} 
+        _hover={{ bg: "#313442", px: 4 }} 
+        cursor="pointer"
+      >
         <HStack spacing={2}>
-          <Icon as={icon} /> // Use the icon component
+          <TokenSymbol
+            w={36}
+            h={36}
+            tokenType={mainLabel}
+          />
           <VStack alignItems="flex-start" spacing={0}>
             <Text fontSize="lg" fontWeight="bold" noOfLines={1}>{mainLabel}</Text>
             <Text fontSize="sm" color="gray.500" noOfLines={1}>{subLabel}</Text>
           </VStack>
         </HStack>
-        <Text fontSize="md">{amount}</Text>
-        <Icon as={StarIcon} />
+        <HStack justifyContent="flex-end">
+          <Text fontSize="lg" textAlign="right" pr="2">{Number(amount).toFixed(5)}</Text>
+          <Icon as={StarIcon} />
+        </HStack>
       </HStack>
     );
-
   return (
       <Modal
           isOpen={isInTokenOpen || isOutTokenOpen}
@@ -88,7 +119,7 @@ export default function SelectTokenMobileModal() {
               display="flex"
               justifyContent="space-between"
               alignItems="center"
-              fontSize="md" // 글자 크기를 조정합니다.
+              fontSize="md"
               pl={1}
           >
               Select token
@@ -99,10 +130,10 @@ export default function SelectTokenMobileModal() {
               <Input 
                   type="text"
                   placeholder="Search token name or address"
-                  border="none" // 테두리를 없앱니다.
-                  _focus={{ borderColor: 'none' }} // 포커스 시 테두리를 없앱니다.
-                  bg="blackAlpha.500" // 버튼과 동일한 배경색을 적용합니다.
-                  color="white" // 입력 텍스트 색상을 설정합니다.
+                  border="none"
+                  _focus={{ borderColor: 'none' }}
+                  bg="blackAlpha.500"
+                  color="white"
               />
           </InputGroup>
           <HStack mt={4} spacing={2} justifyContent="center">
@@ -112,30 +143,38 @@ export default function SelectTokenMobileModal() {
               <TokenButton tokenLabel="USDT" />
           </HStack>
 
-          <ModalBody p={4}
+          <ModalBody py={4} px={0}
               sx={{
                   overflowY: 'auto',
                   '&::-webkit-scrollbar': {
-                  display: 'none' // 스크롤바를 숨깁니다.
+                  display: 'none'
                   }
               }}
               maxHeight="calc(70vh - 4rem)"
           >
-              <VStack spacing={4}>
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TON" subLabel="Tokamak Network" amount="0.000003" />
-                  <TokenListItem icon={SunIcon} mainLabel="TONed" subLabel="Tokamak Network" amount="0.000003" />
+              <VStack spacing={2}>
+                {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
+                      const tokeninfo = useTokenBalance(tokenData);
+                      let displayTokenName = tokenData.tokenName;
+                        console.log(tokenData)
+                        console.log(tokeninfo?.data)
+
+                      if (tokenData.tokenName === "ETH") {
+                          displayTokenName = "Ethereum";
+                      }
+                      if (tokenData.tokenName === "WETH") {
+                        displayTokenName = "Wrapped Ethereum";
+                      }
+
+                      return (
+                          <TokenListItem
+                              key={index}
+                              mainLabel={tokenData.tokenSymbol}
+                              subLabel={displayTokenName}
+                              amount={tokeninfo?.data.balanceBN.formatted || "0.0"}
+                          />
+                      );
+                  })}
               </VStack>
           </ModalBody>
           </ModalContent>
