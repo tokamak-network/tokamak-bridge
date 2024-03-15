@@ -1,21 +1,28 @@
-This is a [Next.js](https://nextjs.org) + [wagmi](https://wagmi.sh) + [@wagmi/cli](https://wagmi.sh/cli) project bootstrapped with [`create-wagmi`](https://github.com/wagmi-dev/wagmi/tree/main/packages/create-wagmi).
+# Tokamak Bridge
 
-This template demonstrates usage of the [`@wagmi/cli` ERC Plugin](https://wagmi.sh/cli/plugins/erc).
+Welcome to the Tokamak Bridge, your gateway for seamless token transfers between the Titan and Ethereum networks. Our platform also provides support for token swaps using Uniswap contracts, enabling you to efficiently manage your assets across different blockchain ecosystems.
 
-# Getting Started
+### Website
 
-Run `npm run dev` in your terminal, and then open [localhost:3000](http://localhost:3000) in your browser.
+Visit our website to explore the Tokamak Bridge and start transferring tokens and swapping assets:  
+[Tokamak Bridge Website](https://bridge.tokamak.network/)
 
-This command will also generate ERC20 + ERC721 React Hooks (via `npm run wagmi`) for you to use in your project.
+### Features
 
-Once the webpage has loaded, changes made to files inside the `src/` directory (e.g. `src/pages/index.tsx`) will automatically update the webpage.
+- Token Transfers: Move tokens between Titan and Ethereum networks effortlessly.
+- Token Swaps: Utilize Uniswap contracts for secure and efficient token swaps.
+- Interoperability: Seamlessly interact with different blockchain networks.
 
-# Learn more
+### Getting Started
 
-To learn more about [Next.js](https://nextjs.org) or [wagmi](https://wagmi.sh), check out the following resources:
+Visit the Tokamak Bridge website: Tokamak Bridge Website
+Connect your wallet to access token transfer and swap functionalities.
+Follow the on-screen instructions to initiate transfers or swaps.
 
-- [wagmi Documentation](https://wagmi.sh) – learn about wagmi Hooks and API.
-- [wagmi Examples](https://wagmi.sh/examples/connect-wallet) – a suite of simple examples using wagmi.
-- [@wagmi/cli Documentation](https://wagmi.sh/cli) – learn more about the wagmi CLI.
-- [Next.js Documentation](https://nextjs.org/docs) learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Support
+
+If you encounter any issues or have questions about the Tokamak Bridge, please reach out to our support team via [Help & Support Form](https://docs.google.com/forms/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/viewform).
+
+### License
+
+This project is licensed under the MIT License.

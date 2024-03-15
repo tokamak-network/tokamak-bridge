@@ -13,13 +13,9 @@ export default function useTokenBalance(
   watch?: boolean
 ) {
   const { chainName } = useConnectedNetwork();
-
-  const isETH = tokenInfo?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET ||
-      SupportedChainId.GOERLI ||
-      SupportedChainId.TITAN ||
-      SupportedChainId.DARIUS
-  );
+  const isETH =
+    layer === "L1" &&
+    tokenInfo?.isNativeCurrency?.includes(SupportedChainId.MAINNET);
   const tokenAddress = chainName && tokenInfo?.address[chainName];
   const { address: accountAddress } = useAccount();
   const { isInTokenOpen, isOutTokenOpen } = useTokenModal();

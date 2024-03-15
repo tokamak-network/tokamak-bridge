@@ -67,7 +67,7 @@ export function useGasFee() {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
         const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET || SupportedChainId.GOERLI
+          SupportedChainId.MAINNET
         );
         const parsedAmount = inToken.amountBN;
         switch (mode) {
