@@ -2,7 +2,7 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   selectedInTokenStatus,
@@ -61,7 +61,7 @@ export default function TokenInput(props: {
     selectedOutTokenStatus
   );
 
-  const { amountOut } = useSwapTokens();
+  const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
   const {
     inToken: inTokenFromHook,

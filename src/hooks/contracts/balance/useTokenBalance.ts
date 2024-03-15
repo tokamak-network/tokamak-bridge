@@ -12,7 +12,7 @@ export default function useTokenBalance(
   requireCall?: boolean,
   watch?: boolean
 ) {
-  const { chainName } = useConnectedNetwork();
+  const { chainName, layer } = useConnectedNetwork();
   const isETH =
     layer === "L1" &&
     tokenInfo?.isNativeCurrency?.includes(SupportedChainId.MAINNET);

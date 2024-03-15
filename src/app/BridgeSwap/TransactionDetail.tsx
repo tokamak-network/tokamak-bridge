@@ -601,10 +601,7 @@ export default function TransactionDetail(props: {
 
   if (
     !isReady ||
-    // mode === "Wrap" ||
-    // mode === "Unwrap" ||
-    // mode === "ETH-Wrap" ||
-    // mode === "ETH-Unwrap" ||
+    isWrapUnwrap ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
     isApproved === false ||

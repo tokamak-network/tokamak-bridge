@@ -11,9 +11,6 @@ import MobileView from "@/app/Mobile";
 import Footer from "@/components/footer";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
-  const [isMobile] = useMediaQuery("(max-width: 1200px)");
-
-export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
   const { mobileView } = useMediaView();
 

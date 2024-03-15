@@ -99,7 +99,7 @@ export default function useWrap() {
         try {
           tonWton({
             args: [inToken.amountBN],
-            gas: calculateGasMargin(estimateGas).toBigInt(),
+            // gas: calculateGasMargin(estimateGas).toBigInt(),
           });
         } catch (e) {
           console.log("**wrapTON err**");
@@ -120,7 +120,7 @@ export default function useWrap() {
         try {
           wtonTon({
             args: [inToken.amountBN],
-            gas: calculateGasMargin(estimateGas).toBigInt(),
+            // gas: calculateGasMargin(estimateGas).toBigInt(),
           });
         } catch (e) {
           console.log("**unwrapWTON err**");
@@ -138,7 +138,7 @@ export default function useWrap() {
         if (estimateGasUsage) return estimateGas;
         try {
           deposit({
-            gas: calculateGasMargin(estimateGas).toBigInt(),
+            // gas: calculateGasMargin(estimateGas).toBigInt(),
           });
         } catch (e) {
           console.log("**wrapTON err**");
@@ -157,7 +157,7 @@ export default function useWrap() {
         try {
           withdraw({
             args: [inToken.amountBN],
-            gas: calculateGasMargin(estimateGas).toBigInt(),
+            // gas: calculateGasMargin(estimateGas).toBigInt(),
           });
         } catch (e) {
           console.log("**unwrapWTON err**");

@@ -30,7 +30,5 @@ export const providerByChainId: Record<
   ethers.providers.JsonRpcProvider
 > = {
   [SupportedChainId.MAINNET]: EthereumProvider,
-  [SupportedChainId.GOERLI]: GoerliProvider,
   [SupportedChainId.TITAN]: TitanProvider,
-  [SupportedChainId.DARIUS]: TitanGoerliProvider,
 };
