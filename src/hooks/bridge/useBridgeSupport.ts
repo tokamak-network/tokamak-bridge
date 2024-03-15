@@ -2,7 +2,6 @@ import { supportedTokens } from "@/types/token/supportedToken";
 import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetMode } from "../mode/useGetMode";
-import { useAmountOut } from "../swap/useSwapTokens";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 
 export default function useBridgeSupport() {

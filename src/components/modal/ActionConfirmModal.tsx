@@ -7,12 +7,14 @@ import {
   Box,
   Button,
 } from "@chakra-ui/react";
-import "@/css/spinner.css";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import CloseButton from "../button/CloseButton";
 import Image from "next/image";
 import ARROW_ICON from "assets/icons/confirm/arrow.svg";
+import ARROW from "assets/icons/arrow.svg";
+import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
+import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
@@ -21,19 +23,30 @@ import TransactionDetail from "@/app/BridgeSwap/TransactionDetail";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue } from "recoil";
-import { useAmountOut } from "@/hooks/swap/useSwapTokens";
+import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+
+import "@/css/spinner.css";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
-  const { amountOut } = useAmountOut();
+  const { amountOut } = useSwapTokens();
+  const { mobileView } = useMediaView();
+
+  const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
+    tokenName: outToken?.tokenName as string,
+    amount: Number(amountOut),
+  });
+
   return (
     <>
       <TokenSymbol
         tokenType={outToken?.tokenSymbol ?? "default"}
-        w={56}
-        h={56}
+        w={mobileView ? 48 : 56}
+        h={mobileView ? 48 : 56}
       />
       <Flex
         fontSize={18}
@@ -43,18 +56,24 @@ const OutTokenContainer = () => {
         mt={"14px"}
         mb={"3px"}
       >
-        <Text>{trimAmount(amountOut)}</Text>
-        <Text fontWeight={400}>{outToken?.tokenSymbol}</Text>
+        <Text fontSize={{ base: 17, lg: 18 }}>
+          {trimAmount(amountOut, mobileView ? 6 : 8)}
+        </Text>
+        <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
+          {outToken?.tokenSymbol}
+        </Text>
       </Flex>
-      {/* <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
-        $0.22
-      </Text> */}
+
+      <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+        ${outTokenWithPrice || "0"}
+      </Text>
     </>
   );
 };
 
 const OutNetworkContrainer = () => {
   const { outNetwork } = useInOutNetwork();
+  const { mobileView } = useMediaView();
 
   if (outNetwork) {
     return (
@@ -69,12 +88,21 @@ const OutNetworkContrainer = () => {
         pt={"10px"}
         borderRadius={"12px"}
       >
-        <NetworkSymbol
-          network={outNetwork.chainId}
-          w={40}
-          h={40}
-          isCircle={true}
-        />
+        {mobileView ? (
+          <Image
+            alt="titan rounded"
+            src={TitanHalfRounded}
+            width={40}
+            height={40}
+          />
+        ) : (
+          <NetworkSymbol
+            network={outNetwork.chainId}
+            w={40}
+            h={40}
+            isCircle={true}
+          />
+        )}
         <Text fontSize={16} fontWeight={400}>
           {convertNetworkName(outNetwork.chainName)}
         </Text>
@@ -87,22 +115,51 @@ const OutNetworkContrainer = () => {
 const TokenContainer = () => {
   const { mode } = useGetMode();
   const { inToken } = useInOutTokens();
+  const { mobileView } = useMediaView();
+  const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
+    tokenName: inToken?.tokenName as string,
+    amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
+  });
 
   return (
-    <Flex pos={"relative"} columnGap={"12px"}>
+    <Flex
+      pos={"relative"}
+      justify={"center"}
+      columnGap={{ base: "8px", lg: "12px" }}
+    >
       <Flex
-        w={"176px"}
-        h={"168px"}
+        pos={"relative"}
+        w={{ base: "148px", lg: "176px" }}
+        h={{ base: "148px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
         justifyContent={"center"}
         flexDir={"column"}
       >
+        {mobileView && mode === "Deposit" && (
+          <Flex
+            pos={"absolute"}
+            top={"0px"}
+            right={"0px"}
+            w={"34px"}
+            h={"34px"}
+            borderRadius={"0px 9px 0px 9px"}
+            bg={"#2E3140"}
+            justify={"center"}
+            align={"center"}
+            zIndex={100}
+          >
+            <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
+              <Image alt="eth" src={mode === "Deposit" ? ETHHalfRounded : ""} />
+            </Flex>
+          </Flex>
+        )}
+
         <TokenSymbol
           tokenType={inToken?.tokenSymbol ?? "default"}
-          w={56}
-          h={56}
+          w={mobileView ? 48 : 56}
+          h={mobileView ? 48 : 56}
         />
         <Flex
           fontSize={18}
@@ -112,19 +169,30 @@ const TokenContainer = () => {
           mt={"14px"}
           mb={"3px"}
         >
-          <Text>{trimAmount(inToken?.parsedAmount)}</Text>
-          <Text fontWeight={400}>{inToken?.tokenSymbol}</Text>
+          <Text fontSize={{ base: 17, lg: 18 }}>
+            {trimAmount(inToken?.parsedAmount, mobileView ? 6 : 8)}
+          </Text>
+          <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
+            {inToken?.tokenSymbol}
+          </Text>
         </Flex>
-        {/* <Text fontSize={14} fontWeight={400} color={"#A0A3AD"}>
-          $0.22
-        </Text> */}
+
+        <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+          ${inTokenWithPrice || "0"}
+        </Text>
       </Flex>
-      <Box pos={"absolute"} left={"45.5%"} top={"40%"}>
-        <Image src={ARROW_ICON} alt={"ARROW_ICON"} />
-      </Box>
+
+      {!mobileView && (
+        <Box pos={"absolute"} left={"45.5%"} top={"40%"}>
+          <Image src={ARROW_ICON} alt={"ARROW_ICON"} />
+        </Box>
+      )}
+
+      {mobileView && <Image width={24} height={24} src={ARROW} alt={"ARROW"} />}
+
       <Flex
-        w={"176px"}
-        h={"168px"}
+        w={{ base: "148px", lg: "176px" }}
+        h={{ base: "148px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
@@ -145,37 +213,39 @@ export default function ActionConfirmModal() {
   const { isOpen, onCloseConfirmModal } = useConfirm();
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
+  const { mobileView } = useMediaView();
 
   return (
-    <Modal isOpen={isOpen} onClose={onCloseConfirmModal}>
+    <Modal isOpen={isOpen} onClose={onCloseConfirmModal} size={"xl"} isCentered>
       <ModalOverlay opacity={0.1} />
       <ModalContent
-        h={"100%"}
         bg={"transparent"}
         justifyContent={"center"}
         alignItems={"center"}
-        m={0}
+        mb={{ base: 0, lg: "auto" }}
       >
         <Flex
-          w={"404px"}
-          p={"20px"}
+          w={{ base: "full", lg: "404px" }}
+          p={{ base: "16px 12px", lg: "20px" }}
           bgColor={"#1f2128"}
-          borderRadius={"16px"}
+          borderRadius={{ base: "16px 16px 0px 0px", lg: "16px" }}
           flexDir={"column"}
           flexDirection={"column"}
           rowGap={"16px"}
         >
           <Flex justifyContent={"space-between"} pos={"relative"}>
-            <Text fontSize={20} fontWeight={500}>
+            <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
               Confirm {mode}
             </Text>
-            <Box pos={"absolute"} right={0} top={"-6px"}>
-              <CloseButton onClick={onCloseConfirmModal} />
-            </Box>
+            {!mobileView && (
+              <Box pos={"absolute"} right={0} top={"-6px"}>
+                <CloseButton onClick={onCloseConfirmModal} />
+              </Box>
+            )}
           </Flex>
           <TokenContainer />
           <Box mt={"16px"}>
-            <TransactionDetail isOnConfirm={true} />
+            <TransactionDetail isOnConfirm={true} isMobile />
           </Box>
           <Button
             w={"100%"}

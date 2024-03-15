@@ -9,10 +9,13 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import "css/pool/switch.css";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
-import { useSwitchNetwork } from "wagmi";
+import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
+import JSBI from "jsbi";
+import { PoolCardDetail } from "../../components/PoolCard";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
-const CollectFeeAsWETH = () => {
+export const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
     ATOM_collectWethOption
   );
@@ -33,27 +36,36 @@ const CollectFeeAsWETH = () => {
         size={"lg"}
         className="switch_info"
         isChecked={collectAsWETH}
+        w={"58px"}
+        height={"28px"}
         onChange={() => setCollectAsWETH(!collectAsWETH)}
       />
     </Flex>
   );
 };
 
-export default function UnclaimedEarnings() {
-  const { info } = usePositionInfo();
+export default function UnclaimedEarnings(props: {
+  info: PoolCardDetail | undefined;
+}) {
+  const { info } = props;
   const { onOpenClaimEarning } = usePoolModals();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
-  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
-  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+  const token0Amount = Number(info?.token0CollectedFee);
+  const token1Amount = Number(info?.token1CollectedFee);
 
-  const { totalMarketPrice, hasTokenPrice } = usePricePair({
+  const totalMarketPrice =
+    Number(info?.token0FeeValue) + Number(info?.token1FeeValue);
+
+  const { hasTokenPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
     token1Amount,
   });
+  const { address } = useAccount();
 
   const btnIsDisabled = useMemo(() => {
+    if (info?.owner !== address) return true;
     if (info?.token0CollectedFee && info?.token1CollectedFee) {
       return (
         Number(info?.token0CollectedFee.replaceAll(",", "")) +
@@ -61,7 +73,7 @@ export default function UnclaimedEarnings() {
         0
       );
     }
-  }, [info?.token0CollectedFee, info?.token1CollectedFee]);
+  }, [info?.token0CollectedFee, info?.token1CollectedFee, address]);
 
   const token0Symbol = useMemo(() => {
     if (collectAsWETH === true && info?.token0.symbol === "ETH") {
@@ -79,6 +91,7 @@ export default function UnclaimedEarnings() {
 
   const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
+  const { subMode } = useGetMode();
 
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
@@ -110,19 +123,17 @@ export default function UnclaimedEarnings() {
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
-              {`$${totalMarketPrice}`}
+              {`$${commafy(totalMarketPrice, 2, undefined, "0.00")}`}
             </Text>
             <Flex alignItems={"center"} color="#A0A3AD">
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-                {token0Symbol}
+                {smallNumberFormmater(token0Amount)} {token0Symbol}
               </Text>
               <Text w={"10px"} mx={"2px"}>
                 +
               </Text>
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-                {token1Symbol}
+                {smallNumberFormmater(token1Amount)} {token1Symbol}
               </Text>
             </Flex>
           </Flex>
@@ -131,33 +142,33 @@ export default function UnclaimedEarnings() {
             <Text>Unclaimed fee</Text>
             <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(commafy(token0Amount, 8) ?? "-")}{" "}
-                {token0Symbol} +
+                {smallNumberFormmater(token0Amount)} {token0Symbol} +
               </Text>
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(commafy(token1Amount, 8) ?? "-")}{" "}
-                {info?.token1.symbol}
+                {smallNumberFormmater(token1Amount)} {info?.token1.symbol}
               </Text>
             </Flex>
           </Flex>
         )}
-        <Flex alignItems={"flex-end"} pb={"13px"}>
-          <Button
-            bgColor={"#007AFF"}
-            _hover={{ bgColor: "#007AFF" }}
-            _active={{}}
-            onClick={() => onClickToRoute()}
-            isDisabled={btnIsDisabled}
-            _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
-            fontSize={14}
-            w={"76px"}
-            h={"35px"}
-          >
-            Claim
-          </Button>
-        </Flex>
+        {!subMode.remove && (
+          <Flex alignItems={"flex-end"} pb={"13px"}>
+            <Button
+              bgColor={"#007AFF"}
+              _hover={{ bgColor: "#007AFF" }}
+              _active={{}}
+              onClick={() => onClickToRoute()}
+              isDisabled={btnIsDisabled}
+              _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
+              fontSize={14}
+              w={"76px"}
+              h={"35px"}
+            >
+              Claim
+            </Button>
+          </Flex>
+        )}
       </Flex>
-      <CollectFeeAsWETH />
+      {!subMode.remove && <CollectFeeAsWETH />}
     </Flex>
   );
 }

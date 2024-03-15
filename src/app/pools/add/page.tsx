@@ -10,8 +10,22 @@ import SetPriceRange from "./SetPriceRange";
 import ActionButton from "./ActionButton";
 import { WarningPool } from "./WarningPool";
 import IncreaseModal from "../components/IncreaseModal";
+import useConnectedNetwork from "@/hooks/network";
+import { useInitialize } from "@/hooks/pool/useInitialize";
+import { useEffect, useState } from "react";
 
 export default function AddLiquidity() {
+  const { initialzePoolValues } = useInitialize();
+  const { connectedChainId } = useConnectedNetwork();
+  const [exChainId, setExChainId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (connectedChainId && exChainId !== connectedChainId) {
+      initialzePoolValues();
+      setExChainId(connectedChainId);
+    }
+  }, [connectedChainId]);
+
   return (
     <Flex flexDir={"column"} w={"872px"} rowGap={"16px"}>
       <TopLine title={"Add Liquidity"} clear={true} switcher={true} />

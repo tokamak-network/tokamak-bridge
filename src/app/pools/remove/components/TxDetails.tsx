@@ -5,12 +5,15 @@ import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import GasImg from "assets/icons/gasStation.svg";
 import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import commafy from "@/utils/trim/commafy";
 import { usePricePair } from "@/hooks/price/usePricePair";
+import { usePoolContract } from "@/hooks/pool/usePoolContract";
+import { estimatedGasFee } from "@/recoil/global/transaction";
+import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
 
 const Title = (props: {
   isExpanded: boolean;
@@ -31,6 +34,29 @@ const Title = (props: {
     }
   }, [isExpanded]);
 
+  const { estimateGasToRemove } = usePoolContract();
+  const [estimatedGasUsageValue, setEstimatedGasUsage] =
+    useRecoilState(estimatedGasFee);
+  const removeLiquidityPercentage = useRecoilValue(removeAmount);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (removeLiquidityPercentage === 0 || info === undefined) return;
+      const gasData = await estimateGasToRemove(
+        info?.id,
+        removeLiquidityPercentage
+      );
+      setEstimatedGasUsage(gasData);
+    };
+    fetchData();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [removeLiquidityPercentage, info]);
+
+  const { token0Symbol, token1Symbol } = useConvertWETH();
+
   return (
     <Flex
       w={"100%"}
@@ -48,11 +74,11 @@ const Title = (props: {
       >
         <Flex maxH={"16px"} alignItems={"center"}>
           <Text>
-            {commafy(amount0Removed, 4)} {info?.token0.symbol}
+            {commafy(amount0Removed, 4, undefined, "0")} {token0Symbol}
           </Text>
           <Text mx={"6px"}>+</Text>
           <Text>
-            {commafy(amount1Removed, 4)} {info?.token1.symbol}
+            {commafy(amount1Removed, 4, undefined, "0")} {token1Symbol}
           </Text>
         </Flex>
         <Flex alignItems={"center"}>
@@ -64,7 +90,7 @@ const Title = (props: {
             ml={"6px"}
             mr={"13px"}
           >
-            ${"122"}
+            ${commafy(estimatedGasUsageValue?.toString(), 2)}
           </Text>
           <motion.div animate={arrowControl}>
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -125,6 +151,7 @@ const Content = (props: {
   const { info } = usePositionInfo();
   const { amount0Removed, amount1Removed, totalRemovedMarketPrice } =
     useRemoveLiquidity();
+  const { token0Symbol, token1Symbol } = useConvertWETH();
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
 
@@ -136,8 +163,6 @@ const Content = (props: {
   });
 
   if (isExpanded && info) {
-    const token0Symbol = info.token0.symbol ?? "-";
-    const token1Symbol = info.token1.symbol ?? "-";
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
@@ -148,23 +173,23 @@ const Content = (props: {
               amount={`$${totalRemovedMarketPrice}`}
             />
             <ContentSub
-              title={token0Symbol}
+              title={token0Symbol ?? "-"}
               amount={commafy(amount0Removed, 4)}
             />
             <ContentSub
-              title={token1Symbol}
+              title={token1Symbol ?? "-"}
               amount={commafy(amount1Removed, 4)}
             />
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Fees earned" amount={`$${totalMarketPrice}`} />
+            <ContentTitle title="Fees" amount={`$${totalMarketPrice}`} />
             <ContentSub
-              title={token0Symbol}
+              title={token0Symbol ?? "-"}
               amount={commafy(info.token0CollectedFee, 4)}
             />
             <ContentSub
-              title={token1Symbol}
+              title={token1Symbol ?? "-"}
               amount={commafy(info.token1CollectedFee, 4)}
             />
           </Flex>

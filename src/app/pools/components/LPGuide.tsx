@@ -19,6 +19,11 @@ export default function LPGuide() {
         border: "1px solid #007AFF",
       }}
       cursor={"pointer"}
+      onClick={() =>
+        window.open(
+          "https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge/pools"
+        )
+      }
     >
       <Text fontWeight="semibold" marginBottom={"61px"} fontSize={"16px"}>
         Read your LP Guide

@@ -1,5 +1,4 @@
-import { Flex, Box, useToast, Text } from "@chakra-ui/react";
-import { useDisclosure } from "@chakra-ui/react";
+import { Flex, useToast, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
@@ -11,13 +10,13 @@ import offHover from "assets/icons/header/offHover.svg";
 import { useState,useEffect,useRef  } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import copy from "copy-to-clipboard";
+
 export default function AccountModal() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const { isConnected, address } = useAccount();
   const [ishover, setIshover] = useState(false);
   const { connetAndDisconntWallet } = useConnectWallet();
   const toast = useToast();
-  const [isVisible, setIsVisible] = useState<boolean>(false);
 
   const wrapperRef = useRef(null);
 
@@ -60,7 +59,6 @@ export default function AccountModal() {
       px="12px"
       py="16px"
       ref={wrapperRef}
-      // alignItems={"center"}
     >
       <Flex
         w="141px"

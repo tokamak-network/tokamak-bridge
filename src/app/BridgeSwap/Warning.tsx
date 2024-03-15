@@ -44,21 +44,21 @@ export default function Warning() {
   //   );
   // }
 
-  if (mode === "Swap" && isTONatPair) {
+  if (mode === "Swap" && inToken && outToken && isTONatPair) {
     if (
       outToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS ||
       outToken?.tokenAddress === GOERLI_CONTRACTS.TON_ADDRESS
     ) {
-      return (
-        <WarningText
-          label={"TON is not supported to swap on L1. Please swap to WTON."}
-        />
-      );
+        return (
+          <WarningText
+            label={"TON is not supported to swap on L1. Please swap to WTON."}
+          />
+        );
     }
     return (
       <WarningText
         label={
-          "TON is not supported to swap on L1. Please wrap to WTON and swap."
+          "TON is not supported to swap on L1. Please wrap to WTON."
         }
       />
     );

@@ -19,6 +19,7 @@ import step3 from "assets/image/tutorial/step3.svg";
 import step4 from "assets/image/tutorial/step4.svg";
 import step5 from "assets/image/tutorial/step5.svg";
 import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const steps = [
   {
@@ -75,6 +76,7 @@ const bgs = [
 export default function TutorialModal() {
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [, setModalOpen] = useState(true);
+  const {mobileView} = useMediaView();
 
   const [storedValue, setValue] = useLocalStorage("tutorial", false);
   const closeModal = useCallback(() => {
@@ -82,7 +84,7 @@ export default function TutorialModal() {
     setModalOpen(false);
   }, []);
 
-  const isOpen = storedValue === false;
+  const isOpen = storedValue === false && !mobileView;
 
   return (
     <Modal onClose={() => {}} isOpen={isOpen} isCentered>

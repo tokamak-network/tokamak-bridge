@@ -2,18 +2,12 @@ import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
 import { Field } from "@/types/swap/swap";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { atom, selector } from "recoil";
-import { ethers } from "ethers";
-import ERC20_ABI from "@/constant/abis/erc20.json";
-import { useProvier } from "@/hooks/provider/useProvider";
-import { loadingStatus } from "./isLoading";
-import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 import {
   addWeeks,
   getISODay,
-  format,
   startOfWeek,
   addDays,
   add,
@@ -77,6 +71,11 @@ export const relayBannerStatus = atom<Banner>({
   default: "Hidden",
 }); //for relay banner or any other banner that needs to show
 
+export const welcomeMsgStatus = atom<Boolean>({
+  key: "welcomeMsgStatus",
+  default: true
+})
+
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
 }>({
@@ -137,7 +136,10 @@ export const inTokenSelector = selector<{ inTokenHasAmount: boolean }>({
   get: ({ get }) => {
     const inTokenStatus = get(selectedInTokenStatus);
     const inTokenHasAmount =
-      inTokenStatus === null ? false : inTokenStatus?.amountBN !== null;
+      inTokenStatus === null
+        ? false
+        : inTokenStatus?.amountBN !== null &&
+          Number(inTokenStatus?.amountBN) > 0;
     return { inTokenHasAmount };
   },
 });
@@ -147,7 +149,10 @@ export const outTokenSelector = selector<{ outTokenHasAmount: boolean }>({
   get: ({ get }) => {
     const outTokenStatus = get(selectedOutTokenStatus);
     const outTokenHasAmount =
-      outTokenStatus === null ? false : outTokenStatus?.amountBN !== null;
+      outTokenStatus === null
+        ? false
+        : outTokenStatus?.amountBN !== null &&
+          Number(outTokenStatus?.amountBN) > 0;
     return { outTokenHasAmount };
   },
 });

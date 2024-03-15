@@ -22,23 +22,24 @@ export default function HalfLoadingTx(props: { tx: any }) {
     decimals: supportedTokens[0].decimals,
     symbol: supportedTokens[0].tokenSymbol,
   };
-  const { data, isError, isLoading } = useToken({
+  const { data } = useToken({
     address: layer === "L1" ? (tx._l1Token as Hash) : (tx._l2Token as Hash),
-    enabled:tx._l1Token ===  zeroAddress? false :true,
+    enabled: tx._l1Token === zeroAddress ? false : true,
   });
 
   const token = layer === "L1" && tx._l1Token === zeroAddress ? ethToken : data;
 
   return (
     <Flex
-      h={"160px"}
-      w="336px"
+      h={{ base: "73px", lg: "160px" }}
+      w={{ baes: "100%", lg: "336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}
       bg={"#15161D"}
       p="12px"
       flexDir={"column"}
-      rowGap={"8px"}>
+      rowGap={"8px"}
+    >
       <Flex flexDir={"column"} rowGap={"8px"} cursor={"pointer"}>
         <Flex justifyContent={"space-between"} w="100%">
           <Text fontSize={"14px"} fontWeight={600}>
@@ -56,7 +57,8 @@ export default function HalfLoadingTx(props: { tx: any }) {
             zIndex={1000}
             bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
             bgSize="200% 100%"
-            animation={`${gradientAnimation} 10s linear infinite`}></Button>
+            animation={`${gradientAnimation} 10s linear infinite`}
+          ></Button>
         </Flex>
         <TokenPairTx
           inAmount={ethers.utils.formatUnits(

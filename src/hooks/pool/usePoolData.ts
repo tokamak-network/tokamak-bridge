@@ -6,7 +6,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { tickToPrice } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
-import { Token } from "@uniswap/sdk-core";
+import { Price, Token } from "@uniswap/sdk-core";
 import { useNetwork } from "wagmi";
 import { useRecoilState } from "recoil";
 import {
@@ -22,6 +22,7 @@ import {
   minPrice as minPriceStatus,
 } from "@/recoil/pool/setPoolPosition";
 import { useRangeHopCallbacks } from "./useV3Hooks";
+import { useTicks } from "./useTicks";
 
 // const existPool = (poolData: PoolData_Subgraph) => {
 //   if (poolData === undefined) return false;
@@ -130,16 +131,17 @@ export function usePriceTickConversion() {
   // const { tickToPriceParams } = usePoolToken();
   //using contract call
   const [, pool] = usePool();
-  const { ticksAtLimit, tickSpaceLimits, deposit0Disabled, deposit1Disabled } =
-    useV3MintInfo();
+  // const { ticksAtLimit, tickSpaceLimits, deposit0Disabled, deposit1Disabled } =
+  //   useV3MintInfo();
 
-  const [, setMinPrice] = useRecoilState(minPriceStatus);
-  const [, setMaxPrice] = useRecoilState(maxPriceStatus);
+  // const [, setMinPrice] = useRecoilState(minPriceStatus);
+  // const [, setMaxPrice] = useRecoilState(maxPriceStatus);
   const { inToken } = useInOutTokens();
+
+  const { currentTick } = useTicks();
 
   const baseToken = pool?.token0;
   const quoteToken = pool?.token1;
-  const currentTick = pool?.tickCurrent;
 
   const invertPrice = Boolean(
     inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
@@ -150,58 +152,53 @@ export function usePriceTickConversion() {
       return tickToPrice(baseToken, quoteToken, currentTick);
   }, [baseToken, quoteToken, currentTick]);
 
-  const minPrice = useMemo(() => {
-    if (baseToken && quoteToken && currentTick && ticksAtLimit)
-      return tickToPrice(
-        baseToken,
-        quoteToken,
-        Boolean(ticksAtLimit[Bound.LOWER]) &&
-          tickSpaceLimits?.LOWER !== undefined
-          ? tickSpaceLimits.LOWER
-          : currentTick - 6932
-      );
-  }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
-
-  const maxPrice = useMemo(() => {
-    if (baseToken && quoteToken && currentTick && ticksAtLimit)
-      return tickToPrice(
-        baseToken,
-        quoteToken,
-        Boolean(ticksAtLimit[Bound.UPPER]) &&
-          tickSpaceLimits?.UPPER !== undefined
-          ? tickSpaceLimits.UPPER
-          : currentTick + 6932
-      );
-  }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
-
-  const [initialized, setInitialized] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   if (minPrice && maxPrice & initialized === false) {
-  //     setMinPrice(
-  //       invertPrice
-  //         ? maxPrice.invert().toSignificant(10)
-  //         : minPrice.toSignificant(10)
-  //     );
-  //     return setInitialized(true);
+  // const priceIsUpdated = useMemo(() => {
+  //   if (
+  //     currentTick !== undefined &&
+  //     oldCurrentTick !== undefined &&
+  //     currentTick !== oldCurrentTick
+  //   ) {
+  //     setOldCurrentTick(currentTick);
+  //     return true;
   //   }
-  // }, [minPrice, maxPrice, invertPrice, initialized]);
+  //   setOldCurrentTick(currentTick);
+  //   return false;
+  // }, [currentTick]);
 
-  // useEffect(() => {
-  //   if (minPrice && maxPrice && initialized === false) {
-  //     setMaxPrice(
-  //       invertPrice
-  //         ? minPrice?.invert().toSignificant(10)
-  //         : maxPrice.toSignificant(10)
+  // const minPrice = useMemo(() => {
+  //   if (baseToken && quoteToken && currentTick !== undefined && ticksAtLimit)
+  //     return tickToPrice(
+  //       baseToken,
+  //       quoteToken,
+  //       Boolean(ticksAtLimit[Bound.LOWER]) &&
+  //         tickSpaceLimits?.LOWER !== undefined
+  //         ? tickSpaceLimits.LOWER
+  //         : currentTick && currentTick - 6932 < -887272
+  //         ? currentTick
+  //         : currentTick && currentTick - 6932
   //     );
-  //     return setInitialized(true);
-  //   }
-  // }, [minPrice, maxPrice, invertPrice]);
+  // }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
+
+  // const maxPrice = useMemo(() => {
+  //   if (baseToken && quoteToken && currentTick && ticksAtLimit)
+  //     return tickToPrice(
+  //       baseToken,
+  //       quoteToken,
+  //       Boolean(ticksAtLimit[Bound.UPPER]) &&
+  //         tickSpaceLimits?.UPPER !== undefined
+  //         ? tickSpaceLimits.UPPER
+  //         : currentTick + 6932
+  //     );
+  // }, [baseToken, quoteToken, currentTick, ticksAtLimit, tickSpaceLimits]);
+
+  // const [initialized, setInitialized] = useState<boolean>(false);
 
   return {
     currentPrice: invertPrice
       ? currentPrice?.invert().toSignificant(10)
       : currentPrice?.toSignificant(10),
+    invertPrice,
+    // priceIsUpdated,
   };
 }
 

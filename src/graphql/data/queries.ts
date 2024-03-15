@@ -4,21 +4,41 @@ export const GET_POSITIONS = gql`
   query Positions($account: String!) {
    positions(where: {owner: $account}){
     id
+    owner
+    liquidity
+    feeGrowthInside0LastX128
+    feeGrowthInside1LastX128
+    tickLower {
+        tickIdx
+        feeGrowthOutside0X128
+        feeGrowthOutside1X128
+      }
+    tickUpper {
+        tickIdx
+        feeGrowthOutside0X128
+        feeGrowthOutside1X128
+    }
     pool {
       id
       feeTier
+      sqrtPrice
       tick
       liquidity
+      feeGrowthGlobal0X128
+      feeGrowthGlobal1X128
       token0 {
         id
         symbol
+        name
+        decimals
       }
       token1 {
         id
         symbol
+        name
+        decimals
       }
     }
-    owner
   }  
 }
 `;

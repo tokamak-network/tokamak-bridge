@@ -4,6 +4,7 @@ import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import { useMemo } from "react";
 import LOCK_ICON from "assets/icons/pool/lock.svg";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export const OutRangeWarning = () => {
   const { invalidRange } = useV3MintInfo();
@@ -25,12 +26,15 @@ export function InputContainer(props: {
 }) {
   const { inToken } = props;
   const { deposit0Disabled, deposit1Disabled, invalidRange } = useV3MintInfo();
-
+  const { initializeInTokenAmount, initializeOutTokenAmount } =
+    useInOutTokens();
   const isDisabled = useMemo(() => {
     if (invalidRange) return true;
     if (inToken) {
+      initializeInTokenAmount();
       return deposit0Disabled;
     }
+    initializeOutTokenAmount();
     return deposit1Disabled;
   }, [invalidRange, deposit0Disabled, deposit1Disabled, props.isDisabled]);
 

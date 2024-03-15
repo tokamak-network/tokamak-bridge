@@ -8,7 +8,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
 import useCallDeposit from "../bridge/actions/useCallDeposit";
 import useCallWithdraw from "../bridge/actions/useCallWithdraw";
-import { useAmountOut } from "../swap/useSwapTokens";
+import { useSwapTokens } from "../swap/useSwapTokens";
 import useWrap from "../swap/useTonWrap";
 import { predeploys } from "@eth-optimism/contracts";
 import { transactionModalStatus } from "@/recoil/modal/atom";
@@ -30,7 +30,7 @@ export default function useCallBridgeSwapAction() {
   const { write: _withdraw, isError: _withdrawError } =
     useCallWithdraw("withdraw");
 
-  const { callTokenSwap, isError: _swapError } = useAmountOut();
+  const { callTokenSwap, isError: _swapError } = useSwapTokens();
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -71,6 +71,7 @@ export default function useCallBridgeSwapAction() {
               args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
+              gas: BigInt("142542"),
             });
           }
 
