@@ -27,13 +27,6 @@ const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   //   "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc",
   // [ChainId.AVALANCHE]:
   //   "https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax",
-  [SupportedChainId.GOERLI]:
-    "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-gorli ",
-  // "https://api.thegraph.com/subgraphs/name/liqwiz/uniswap-v3-goerli",
-  [SupportedChainId.TITAN]:
-    "https://thegraph.titan.tokamak.network/subgraphs/name/tokamak/titan-uniswap-subgraph",
-  [SupportedChainId.DARIUS]:
-    "https://thegraph.titan-goerli.tokamak.network/subgraphs/name/tokamak/titan-uniswap-subgraph",
 };
 
 const httpLink = new HttpLink({ uri: CHAIN_SUBGRAPH_URL[ChainId.MAINNET] });
@@ -54,19 +47,9 @@ const apolloClient_ethereum = new ApolloClient({
   link: concat(authMiddleware(SupportedChainId.MAINNET), httpLink),
 });
 
-const apolloClient_Goerli = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: concat(authMiddleware(SupportedChainId.GOERLI), httpLink),
-});
-
 const apolloClient_Titan = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(authMiddleware(SupportedChainId.TITAN), httpLink),
-});
-
-const apolloClient_TitanGoerli = new ApolloClient({
-  cache: new InMemoryCache(),
-  link: concat(authMiddleware(SupportedChainId.DARIUS), httpLink),
 });
 
 export const subgraphApolloClients: Record<
@@ -74,7 +57,5 @@ export const subgraphApolloClients: Record<
   ApolloClient<NormalizedCacheObject>
 > = {
   [SupportedChainId.MAINNET]: apolloClient_ethereum,
-  [SupportedChainId.GOERLI]: apolloClient_Goerli,
   [SupportedChainId.TITAN]: apolloClient_Titan,
-  [SupportedChainId.DARIUS]: apolloClient_TitanGoerli,
 };

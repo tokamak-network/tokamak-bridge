@@ -419,9 +419,9 @@ export function usePoolContract() {
 
           const gasLimit =
             multicallParam.length === 1
-              ? await getSingleCalldataGasLimit(provider, txData, calldata)
+              ? await getSingleCalldataGasLimit(provider!, txData, calldata)
               : await calculateGasLimit(
-                  provider,
+                  provider!,
                   transactionRequest,
                   isLayer2,
                   isConnectedToMainNetwork
@@ -431,12 +431,12 @@ export function usePoolContract() {
 
           try {
             if (multicallParam.length === 1 && gasLimit) {
-              const tx = await provider.getSigner().sendTransaction({
+              const tx = await provider?.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
                 gasLimit,
               });
-              if (tx.hash) return setTxHash(tx.hash as Hash);
+              if (tx?.hash) return setTxHash(tx?.hash as Hash);
               return;
             }
 
@@ -585,12 +585,12 @@ export function usePoolContract() {
 
             const gasLimit = info.hasETH
               ? await calculateGasLimit(
-                  provider,
+                  provider!,
                   transactionRequest,
                   layer === "L2",
                   false
                 )
-              : await provider.estimateGas(txn);
+              : await provider?.estimateGas(txn);
 
             if (estimateGas) return gasLimit;
 
@@ -606,11 +606,11 @@ export function usePoolContract() {
                 return;
               }
               if (gasLimit) {
-                const tx = await provider.getSigner().sendTransaction({
+                const tx = await provider?.getSigner().sendTransaction({
                   ...txn,
                   gasLimit: calculateGasMargin(gasLimit),
                 });
-                if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                if (tx?.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
                 return;
               }
             } catch (e) {
