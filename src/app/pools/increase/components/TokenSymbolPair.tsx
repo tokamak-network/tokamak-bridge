@@ -1,8 +1,10 @@
 import { NetworkSymbol } from "@/components/image/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
+import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { Box, Flex } from "@chakra-ui/react";
 import { Token } from "@uniswap/sdk-core";
 import { CSSProperties } from "react";
+import { useRecoilValue } from "recoil";
 
 export default function TokenSymbolPair(props: {
   token0: Token;
@@ -21,6 +23,8 @@ export default function TokenSymbolPair(props: {
     networkSymbolStyle,
   } = props;
 
+  const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
+
   return (
     <Flex
       position="relative"
@@ -31,7 +35,13 @@ export default function TokenSymbolPair(props: {
     >
       <Box pos={"absolute"} left={"105px"} zIndex={100} height={"100%"}>
         <TokenSymbol
-          tokenType={token1?.symbol as string}
+          tokenType={
+            token1?.symbol === "ETH"
+              ? collectAsWETH
+                ? "WETH"
+                : "ETH"
+              : (token1?.symbol as string)
+          }
           w={symbolSize ?? 64}
           h={symbolSize ?? 64}
         />
@@ -55,7 +65,13 @@ export default function TokenSymbolPair(props: {
       </Box>
       <Box pos={"absolute"} left={"155px"}>
         <TokenSymbol
-          tokenType={token0?.symbol as string}
+          tokenType={
+            token0?.symbol === "ETH"
+              ? collectAsWETH
+                ? "WETH"
+                : "ETH"
+              : (token0?.symbol as string)
+          }
           w={symbolSize ?? 64}
           h={symbolSize ?? 64}
         />

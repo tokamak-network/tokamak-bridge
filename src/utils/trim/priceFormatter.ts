@@ -11,7 +11,7 @@ export function priceFormmater(
     priceValue = Number(price);
   }
 
-  if (priceValue === 0 || isNaN(Number(priceValue))) return "NA";
+  if (priceValue === 0 || isNaN(Number(priceValue))) return "0";
 
   const result = commafy(priceValue, 2);
 

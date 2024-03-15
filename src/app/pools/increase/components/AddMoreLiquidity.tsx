@@ -14,14 +14,14 @@ import { OutRangeWarning } from "../../add/components/InputContainer";
 
 export default function AddMoreLiquidity() {
   const { info } = usePositionInfo();
-  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { deposit0Disabled, deposit1Disabled } = usePoolInfo();
 
   const { chainName } = useConnectedNetwork();
 
   if (!info || !chainName) return null;
 
-  const token0 = inverted ? info.token1 : info.token0;
-  const token1 = inverted ? info.token0 : info.token1;
+  const token0 = info.token0;
+  const token1 = info.token1;
 
   const token0Info: TokenInfo = {
     tokenName: token0.name ?? "",
@@ -74,9 +74,10 @@ export default function AddMoreLiquidity() {
               <OutRangeWarning />
             ) : (
               <TokenInputForLiquidity
-                inToken={inverted ? true : false}
+                inToken={false}
                 tokenInfo={token1Info}
                 otherTokenInfo={token0Info}
+                tickCurrent={info?.tickCurrent}
               />
             )}
           </Flex>
@@ -98,9 +99,10 @@ export default function AddMoreLiquidity() {
           <Flex w={"186px"} mt="16px">
             {!deposit0Disabled && (
               <TokenInputForLiquidity
-                inToken={inverted ? false : true}
+                inToken={true}
                 tokenInfo={token0Info}
                 otherTokenInfo={token1Info}
+                tickCurrent={info?.tickCurrent}
               />
             )}
             {deposit0Disabled && <OutRangeWarning />}

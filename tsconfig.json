@@ -30,7 +30,8 @@
       "@/css/*": ["css/*"],
       "@/contracts/*": ["constant/contracts/*"],
       "@/bridgeComponent/*": ["app/BridgeSwap/components/*"],
-      "@/pools/*": ["app/pools/*"]
+      "@/pools/*": ["app/pools/*"],
+      "@/constnat/": ["constant"]
     },
     "plugins": [
       {

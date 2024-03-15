@@ -1,6 +1,4 @@
-import { Interface } from "@ethersproject/abi";
 import { BigintIsh, Currency, Token } from "@uniswap/sdk-core";
-import IUniswapV3PoolStateJSON from "@uniswap/v3-core/artifacts/contracts/interfaces/pool/IUniswapV3PoolState.sol/IUniswapV3PoolState.json";
 import { computePoolAddress } from "@uniswap/v3-sdk";
 import { FeeAmount, Pool } from "@uniswap/v3-sdk";
 import JSBI from "jsbi";
@@ -11,25 +9,28 @@ import {
   V3_CORE_FACTORY_ADDRESSES,
 } from "@/constant/contracts/uniswap";
 import useConnectedNetwork from "../network";
-import { useAccount, useContractRead } from "wagmi";
-import useBlockNum from "../network/useBlockNumber";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { ethers } from "ethers";
 import { useProvier } from "../provider/useProvider";
-import { FACTORY_ADDRESS } from "@uniswap/v3-sdk";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetFeeTier } from "./useGetFeeTier";
 import { PoolState } from "@/types/pool/pool";
+import { useGetPositionIdFromPath } from "./useGetPositionIds";
+import { useGetMode } from "../mode/useGetMode";
+import { checkLayer } from "@/utils/network/checkLayer";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
-  const { provider } = useProvier();
+  const { provider, L1Provider, L2Provider } = useProvier();
+  const { chainIdParam } = useGetPositionIdFromPath();
+  const { connectedChainId } = useConnectedNetwork();
+  const { subMode } = useGetMode();
 
   useEffect(() => {
     const fetchPoolData = async () => {
-      if (poolAddress) {
+      if (poolAddress && provider) {
         const poolContract = new ethers.Contract(
-          poolAddress ?? "0x",
+          poolAddress,
           IUniswapV3PoolABI.abi,
           provider
         );
@@ -45,14 +46,22 @@ export function usePoolData(poolAddress: string | undefined) {
         };
         return setPoolData(result);
       }
-      return setPoolData(undefined);
     };
-
     fetchPoolData().catch((e) => {
       console.log("**fetchPoolData err**");
-      setPoolData(undefined);
       // console.log(e);
+      setPoolData(undefined);
     });
+    // const interval = setInterval(
+    //   () =>
+    //     fetchPoolData().catch((e) => {
+    //       console.log("**fetchPoolData err**");
+    //       setPoolData(undefined);
+    //       // console.log(e);
+    //     }),
+    //   1000
+    // );
+    // return () => clearInterval(interval);
   }, [poolAddress, provider]);
 
   return poolData;
@@ -138,10 +147,14 @@ export function usePools(
   ][]
 ) {
   // : [PoolState, Pool | null][]
-  const { connectedChainId, layer } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
+  const { chainIdParam } = useGetPositionIdFromPath();
+  const { subMode } = useGetMode();
+  const chainId = subMode.add ? connectedChainId : Number(chainIdParam);
+  const layer = checkLayer(chainId);
 
   const poolTokens: ([Token, Token, FeeAmount] | undefined)[] = useMemo(() => {
-    if (!connectedChainId) return new Array(poolKeys.length);
+    // if (!connectedChainId) return new Array(poolKeys.length);
 
     return poolKeys.map(([currencyA, currencyB, feeAmount]) => {
       if (currencyA && currencyB && feeAmount) {
@@ -155,18 +168,17 @@ export function usePools(
       }
       return undefined;
     });
-  }, [connectedChainId, poolKeys]);
+  }, [poolKeys]);
 
   const poolAddresses: (string | undefined)[] = useMemo(() => {
-    const v3CoreFactoryAddress =
-      connectedChainId && V3_CORE_FACTORY_ADDRESSES[connectedChainId];
+    const v3CoreFactoryAddress = chainId && V3_CORE_FACTORY_ADDRESSES[chainId];
     if (!v3CoreFactoryAddress) return new Array(poolTokens.length);
 
     return poolTokens.map(
       (value) =>
         value && PoolCache.getPoolAddress(v3CoreFactoryAddress, ...value, layer)
     );
-  }, [connectedChainId, poolTokens, layer]);
+  }, [chainId, poolTokens, layer, connectedChainId]);
 
   const pooldata = usePoolData(poolAddresses[0]);
 
@@ -181,6 +193,7 @@ export function usePools(
       const slot0 = pooldata?.slot0;
 
       if (poolTokens === undefined) return [PoolState.INVALID, null];
+      //not initialized
       if (!slot0 || !liquidity) return [PoolState.NOT_EXISTS, null];
       if (!slot0.sqrtPriceX96 || slot0.sqrtPriceX96.eq(0))
         return [PoolState.NOT_EXISTS, null];
@@ -200,12 +213,12 @@ export function usePools(
         return [PoolState.NOT_EXISTS, null];
       }
     });
-  }, [pooldata?.liquidity, poolKeys, pooldata?.slot0, poolTokens]);
+  }, [pooldata?.liquidity, poolKeys, pooldata?.slot0, poolKeys]);
 }
 
 export function usePool(
-  token0?: Token,
-  token1?: Token,
+  token0?: Currency | Token,
+  token1?: Currency | Token,
   fee?: FeeAmount
 ): [PoolState, Pool | null] {
   const { inToken, outToken } = useInOutTokens();
@@ -219,7 +232,7 @@ export function usePool(
     () => [
       [token0 ?? inToken?.token, token1 ?? outToken?.token, fee ?? feeTier],
     ],
-    [inToken, outToken, feeTier]
+    [token0, token1, fee, inToken, outToken, feeTier]
   );
 
   //@ts-ignore

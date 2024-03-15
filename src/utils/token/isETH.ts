@@ -26,3 +26,14 @@ export function getWETHAddress(
 
   return wethAddress[chainName];
 }
+
+export function getWETHAddressByChainId(chainId: number) {
+  const wethAddress: Record<number, string> = {
+    [1]: MAINNET_CONTRACTS.WETH_ADDRESS,
+    [5]: GOERLI_CONTRACTS.WETH_ADDRESS,
+    [55004]: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+    [5050]: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
+  };
+
+  return wethAddress[chainId];
+}

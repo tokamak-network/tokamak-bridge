@@ -3,18 +3,18 @@
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import { WagmiProviders } from "@/providers/wagmiProvider";
 import { RecoilRoot } from "recoil";
-import Header from "@/components/header/Index";
 
 import "css/scrollbar.css";
-import Modals from "./Modals";
+import { ApolloProvider } from "@apollo/client";
+import { apolloClient } from "@/apollo";
 import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
 import Script from "next/script";
 
-//New build
-//Sep 5, 2023
+//Test build for new uniswap contracts
+//Oct 25, 2023
 
 export const GlobalComponents = () => {
   return (
@@ -80,17 +80,17 @@ export default function RootLayout({
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRoot>
           <QueryClientProvider client={queryClient}>
-            <ChakraProvidersForNextJs>
-              <WagmiProviders>
-                <Entry children={children} />
-                {/* <AccountHistory /> */}
-                {/* <Header />
+            <ApolloProvider client={apolloClient}>
+              <ChakraProvidersForNextJs>
+                <WagmiProviders>
+                  <Entry children={children} />
+                  {/* <Header />
                   <Center h={"100vh"}>{children}</Center>
                   <GlobalComponents />
                   <Modals /> */}
-                  {/* <Drawers/> */}
-              </WagmiProviders>
-            </ChakraProvidersForNextJs>
+                </WagmiProviders>
+              </ChakraProvidersForNextJs>
+            </ApolloProvider>
           </QueryClientProvider>
         </RecoilRoot>
       </body>

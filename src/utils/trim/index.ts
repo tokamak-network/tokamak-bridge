@@ -21,8 +21,8 @@ export function trimAmount(
     return "";
   }
   const decimals = decimalPlaces ?? 9;
-  if (amount?.length < decimals) {
+  if (amount.length < decimals) {
     return amount;
   }
-  return `${amount?.slice(0, decimals - 1)}...`;
+  return `${amount.slice(0, decimals - 1)}...`;
 }

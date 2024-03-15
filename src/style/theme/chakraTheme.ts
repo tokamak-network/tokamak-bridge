@@ -13,6 +13,14 @@ const theme = extendTheme({
     body: fonts.Poppins,
     Quicksand: fonts.Quicksand,
   },
+
+  breakpoints: {
+    base: "0px",
+    sm: "360px",
+    md: "799px",
+    lg: "1200px",
+  },
+
   components: {
     Slider: {
       baseStyle: {

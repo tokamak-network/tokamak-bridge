@@ -3,7 +3,7 @@ import { PoolCardDetail } from "@/app/pools/components/PoolCard";
 export function sortPositions(positions: PoolCardDetail[]) {
   const sortedResult = positions.sort(
     (a: PoolCardDetail, b: PoolCardDetail) => {
-      // Custom order for status: Closed < Active < Inactive
+      // Custom order for status: Closed  < Inactive < Active
       const closedStatusOrder: { [key: string]: number } = {
         false: 0,
         true: 1,
@@ -18,8 +18,8 @@ export function sortPositions(positions: PoolCardDetail[]) {
       }
 
       const rangeStatusOrder: { [key: string]: number } = {
-        false: 0,
-        true: 1,
+        false: 1,
+        true: 0,
       };
       const rangeStatusA = a.inRange.toString();
       const rangeStatusB = b.inRange.toString();

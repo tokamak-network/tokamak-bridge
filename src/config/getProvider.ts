@@ -24,3 +24,11 @@ export function getProvider(inNetwork: SupportedChainProperties | null) {
   }
   return providers[inNetwork.chainName];
 }
+
+export const providerByChainId: Record<
+  number,
+  ethers.providers.JsonRpcProvider
+> = {
+  [SupportedChainId.MAINNET]: EthereumProvider,
+  [SupportedChainId.TITAN]: TitanProvider,
+};

@@ -96,3 +96,8 @@ export const lastFocusedInput = atom<"LeftInput" | "RightInput" | undefined>({
   key: "lastFocusedInput",
   default: undefined,
 });
+
+export const chartIsOnLoading = atom<boolean>({
+  key: "chartIsOnLoading",
+  default: true,
+});
