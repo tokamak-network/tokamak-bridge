@@ -36,6 +36,13 @@ export const tokenModalStatus = atom<SelectTokenModal>({
   },
 });
 
+export const tokenAmountModalStatus = atom<SelectTokenModal>({
+  key: "tokenAmountModalStatus",
+  default: {
+    isOpen: null,
+  },
+});
+
 type ConfirmWithdraw = boolean;
 
 export const confirmWithdrawStatus = atom<ConfirmWithdraw>({

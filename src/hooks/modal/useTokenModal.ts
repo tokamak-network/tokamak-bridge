@@ -67,6 +67,8 @@ export default function useTokenModal() {
           : selectedInToken?.address[chainName] ===
             tokenData.address[chainName];
 
+        console.log("isDuplicated===", isDuplicated)
+
         //remove if same token is selected at other side
         if (isDuplicated) {
           if (isMobile) {
@@ -79,6 +81,8 @@ export default function useTokenModal() {
             setSelectedInToken(null);
           }
         }
+        console.log("isInTokenOpen=====", isInTokenOpen)
+
         isInTokenOpen && chainName
           ? setSelectedInToken({
               ...tokenData,
@@ -95,7 +99,7 @@ export default function useTokenModal() {
             });
       }
     },
-    [chainName, selectedInToken, selectedOutToken]
+    [chainName, selectedInToken, selectedOutToken, tokenModal]
   );
 
   return {

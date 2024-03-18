@@ -5,7 +5,7 @@ import TutorialModal from "@/components/modal/TutorialModal";
 import ConfirmWithdraw from "@/components/modal/ConfirmWithdraw";
 import ActionOptionModal from "@/components/modal/ActionOptionModal";
 import SwapSettingModal from "@/components/modal/SwapSettingModal";
-import SelectTokenMobileModal from "@/components/mobile/modal/SelectTokenMobile";
+import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function Modals() {
@@ -14,7 +14,8 @@ export default function Modals() {
   return (
     <>
       {mobileView ? 
-        <SelectTokenMobileModal /> :
+        <SelectTokenModal />
+        : 
         <SelectCardModal />
       }
       <Confirmation />
