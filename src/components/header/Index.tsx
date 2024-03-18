@@ -197,7 +197,8 @@ export default function Header() {
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
         <Box
           onClick={() => {
-            router.push("/");
+            // router.push("/");
+            window.open("https://bridge.tokamak.network", "_self")
             mobileView ? setActionMethod(true) : "";
           }}
           cursor={"pointer"}
