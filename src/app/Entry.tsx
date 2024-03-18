@@ -8,13 +8,13 @@ import Drawers from "./Drawers";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import MobileView from "@/app/Mobile";
+import Footer from "@/components/footer";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
-  const { minorView } = useMediaView();
+  const { mobileView } = useMediaView();
 
-
-  if (minorView) {
+  if (mobileView) {
     return (
       <Center h={"100vh"}>
         <MobileView />
@@ -36,6 +36,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
           {children}
         </Flex>
       )}
+      <Footer />
       <GlobalComponents />
       <Drawers />
       <Modals />

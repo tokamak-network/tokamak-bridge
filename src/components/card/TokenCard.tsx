@@ -15,7 +15,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import "@fontsource/quicksand/500.css";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -175,7 +175,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(selectedOutTokenStatus);
-  const { amountOut } = useSwapTokens();
+  const { amountOut } = useAmountOut();
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
@@ -251,7 +251,7 @@ export default function TokenCard(props: TokenCardProps) {
       {pcView && (
         <Flex justifyContent={"space-between"} w={"100%"}>
           <TokenTitle
-            tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+            tokenName={thisTokenIsETH ? "Ethereum" : tokenInfo?.tokenSymbol === "WETH" ? "Wrapped Ethereum" : tokenInfo?.tokenName ?? "TOKEN"}
             isName={true}
             style={{
               fontSize:

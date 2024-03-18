@@ -5,7 +5,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "../token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
 import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
-import { useSwapTokens } from "../swap/useSwapTokens";
+import { useAmountOut, useSwapTokens } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
 import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
@@ -79,7 +79,7 @@ export function useTransactionDetail() {
   const { totalGasCost, gasCostUS } = useGasFee();
   const { mobileView } = useMediaView();
   const { isOpen } = useConfirm();
-  
+
   const totalGasFee = `${
     isBiggerThanMinimumNum(Number(totalGasCost))
       ? commafy(totalGasCost, 4)
@@ -136,7 +136,15 @@ export function useTransactionDetail() {
           ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost, mobileView, isOpen]);
+  }, [
+    mode,
+    inToken,
+    totalGasFee,
+    inputAmount,
+    totalGasCost,
+    mobileView,
+    isOpen,
+  ]);
 
   const totalGasFeeToWithdraw = Number(totalGasCost) + 0.00024511191632554;
 
@@ -196,7 +204,7 @@ export function useTransactionDetail() {
     return null;
   }, [mode, inToken, totalGasFee, inputAmount]);
 
-  const { amountOut, minimumReceived } = useSwapTokens();
+  const { amountOut } = useAmountOut();
   const { priceImpact } = usePriceImpact();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
   const { layer } = useConnectedNetwork();
@@ -224,9 +232,7 @@ export function useTransactionDetail() {
             },
             {
               title: "Minimum after slippage",
-              content: `${commafy(minimumReceived, 4)} ${
-                outToken?.tokenSymbol
-              }`,
+              content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
             },
           ]
@@ -239,15 +245,13 @@ export function useTransactionDetail() {
               title: isOpen
                 ? "Minimum received"
                 : "Minimum received after slippage",
-              content: `${commafy(minimumReceived, 4)} ${
-                outToken?.tokenSymbol
-              }`,
+              content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
             },
             {
               title: "Estimated gas fees",
               content: isOpen ? "" : `${totalGasFee} `,
-              gasFee: `$${gasCostUS}`,
+              gasFee: `${gasCostUS ? `$${gasCostUS}` : "NA"}`,
             },
           ];
     }
