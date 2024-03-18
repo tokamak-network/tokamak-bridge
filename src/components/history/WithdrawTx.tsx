@@ -122,6 +122,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                   (txData?.hash?.transactionHash !== undefined &&
                     txData?.hash.txSort === "Claim")
                 }
+                _hover={{}}
                 zIndex={10000}
                 _disabled={{ bg: "#1F2128" }}
                 onClick={(event) => {
