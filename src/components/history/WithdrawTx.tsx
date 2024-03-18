@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Flex, Text, Button, Link } from "@chakra-ui/react";
+import { Flex, Text, Button } from "@chakra-ui/react";
 import TokenPairTx from "./TokenPairTx";
 import StatusTx from "./StatusTx";
 import { ethers } from "ethers";
