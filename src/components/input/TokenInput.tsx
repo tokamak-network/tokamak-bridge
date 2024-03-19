@@ -43,6 +43,7 @@ export default function TokenInput(props: {
   defaultValue?: any;
   isDisabled?: boolean;
   hasMaxButton?: boolean;
+  mobileInput?: boolean;
   style?: {};
   customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
@@ -62,6 +63,8 @@ export default function TokenInput(props: {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
+
+  console.log("inToken================", inToken);
 
   const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
@@ -95,7 +98,7 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
-  const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
+  const { onOpenInAmount, onOpenOutAmount, onCloseAmountModal } = useAmountModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -188,6 +191,8 @@ export default function TokenInput(props: {
       });
     }
 
+
+    console.log(selectedOutToken)
     if (!inToken && selectedOutToken && amountOut) {
       const value: string = amountOut;
       if (value === "" || value === null) {
@@ -216,7 +221,7 @@ export default function TokenInput(props: {
         (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
       ) {
         onCloseTokenModal();
-        onOpenOutAmount();
+        onCloseAmountModal();
       }
       // customRef?.current?.blur();
     }

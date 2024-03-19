@@ -34,6 +34,7 @@ import {
 selectedInTokenStatus,
 selectedOutTokenStatus,
 tokenModalStatus,
+selectedTokenAmountStatus
 } from "@/recoil/bridgeSwap/atom";
 
 import useConnectedNetwork from "@/hooks/network";
@@ -47,10 +48,12 @@ export default function SelectTokenModal() {
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [isOutputAmount, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
   
+  const [, setTokenAmountStatus] = useRecoilState(selectedTokenAmountStatus);
+  
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
-  const [, setSelectedOutToken] = useRecoilState(
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
 
@@ -85,6 +88,7 @@ export default function SelectTokenModal() {
 
     const TokenListItem = ({ tokenData } : TokenListItemProps) => { 
       const tokeninfo = useTokenBalance(tokenData);
+      console.log(tokeninfo)
       let displayTokenName = tokenData.tokenName;
       if (tokenData.tokenName === "ETH") {
           displayTokenName = "Ethereum";
@@ -109,6 +113,12 @@ export default function SelectTokenModal() {
             try {
               const inToken = selectedInToken;
               setSelectedToken(tokenData, true)
+              
+              //추가된 사항
+              setTokenAmountStatus({
+                ...tokenData,
+                amount
+              })
 
               if (isInTokenOpen) {
                 setIsInputAmount(true);
@@ -119,6 +129,7 @@ export default function SelectTokenModal() {
                   tokenAddress: inToken?.tokenAddress || null,
                 })
                 onOpenInAmount();
+                console.log(selectedInToken)
               }
 
               if (isOutTokenOpen && chainName) {
@@ -130,8 +141,7 @@ export default function SelectTokenModal() {
                   tokenAddress: tokenData.address[chainName],
                   
                 })
-                onOpenOutAmount();
-
+                console.log(selectedOutToken)
               }
 
             } catch (e) {

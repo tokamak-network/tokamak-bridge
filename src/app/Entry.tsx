@@ -12,9 +12,9 @@ import Footer from "@/components/footer";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
-  const { mobileView } = useMediaView();
+  const { minorView } = useMediaView();
 
-  if (mobileView) {
+  if (minorView) {
     return (
       <Center h={"100vh"}>
         <MobileView />

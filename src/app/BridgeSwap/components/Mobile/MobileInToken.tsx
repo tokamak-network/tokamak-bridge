@@ -7,6 +7,7 @@ import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import TokenCard from "@/components/card/TokenCard";
 import useConnectedNetwork from "@/hooks/network";
+import TokenInput from "@/components/input/TokenInput";
 
 import ETHIcon from "@/assets/tokens/eth_half_rounded.svg";
 import TitanIcon from "@/assets/tokens/titan_half_rounded.svg";
@@ -45,9 +46,9 @@ const MobileInToken = () => {
   }, [inToken]);
   
   return (
+    <Flex flexDir={"column"} w={"148px"} rowGap={"28px"}>
     <Box
       pos="relative"
-      w={"148px"}
       h={"184px"}
       cursor={"pointer"}
       onClick={() => setTokenModal({ ...tokenModal, isOpen: "INPUT" })}
@@ -99,6 +100,13 @@ const MobileInToken = () => {
         </Flex>
       </Flex>
     </Box>
+      {/* <Flex px={"12px"} mb={'-16px'}>
+        {inToken !== null && (
+          <TokenInput inToken={true} mobileInput={true} />
+        )}
+      </Flex> */}
+    </Flex>
+    
   );
 };
 

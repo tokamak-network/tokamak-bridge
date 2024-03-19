@@ -56,6 +56,15 @@ export type SelectedToken = TokenInfo & {
   tokenAddress: string | null;
 };
 
+export type SelectedTokenAmount = TokenInfo & {
+  amount: string | null;
+};
+
+export const selectedTokenAmountStatus = atom<SelectedTokenAmount | null>({
+  key: "selectedTokenAmountStatus",
+  default: null,
+})
+
 export const selectedInTokenStatus = atom<SelectedToken | null>({
   key: "selectedInTokenStatus",
   default: null,

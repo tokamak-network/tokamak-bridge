@@ -17,6 +17,7 @@ import { useRecoilValue, useRecoilState } from "recoil";
 import {
   selectedInTokenStatus,
   tokenModalStatus,
+  selectedTokenAmountStatus
 } from "@/recoil/bridgeSwap/atom";
 import TokenInput from "@/componenets/input/TokenInput";
 import useAmountModal from "@/hooks/modal/useAmountModal";
@@ -27,6 +28,7 @@ export default function AmountInputModal() {
     const { isInAmountOpen, isOutAmountOpen, onCloseAmountModal } = useAmountModal();
     const ref = useRef<HTMLInputElement>(null);
     const [selectedInToken] = useRecoilState(selectedInTokenStatus);
+    const [tokenAmountStatus, ] = useRecoilState(selectedTokenAmountStatus);
 
     return (
         <>
@@ -42,7 +44,7 @@ export default function AmountInputModal() {
                   Balance:{' '}
                 </Text>
                 <Text as="span">
-                  2000.00 TON
+                  {tokenAmountStatus && `${tokenAmountStatus.amount} ${tokenAmountStatus.tokenSymbol}`}
                 </Text>
               </ModalHeader>
               <ModalCloseButton />
