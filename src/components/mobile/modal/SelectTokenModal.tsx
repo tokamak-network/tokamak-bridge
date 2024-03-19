@@ -41,7 +41,7 @@ import useConnectedNetwork from "@/hooks/network";
 
 
 export default function SelectTokenModal() {
-  const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
+  const { isInTokenOpen, isOutTokenOpen, simpleCloseCheck } = useTokenModal();
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
   const { filteredTokenList } = useGetTokenList();
   const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
@@ -67,28 +67,27 @@ export default function SelectTokenModal() {
     tokenData: TokenInfo;
   };
 
-  const TokenButton = ({ tokenLabel }: TokenButtonProps) => {
-      return (
-        <Button
-          size="md"
-          bg="blackAlpha.500"
-          fontWeight="normal"
-          _hover={{ bg: "blackAlpha.600" }}
-          leftIcon={<TokenSymbol
-            w={20}
-            h={20}
-            tokenType={tokenLabel}
-          />}
-          borderRadius="full" 
-        >
-          {tokenLabel}
-        </Button>
-      );
-    }
+  // const TokenButton = ({ tokenLabel }: TokenButtonProps) => {
+  //     return (
+  //       <Button
+  //         size="md"
+  //         bg="blackAlpha.500"
+  //         fontWeight="normal"
+  //         _hover={{ bg: "blackAlpha.600" }}
+  //         leftIcon={<TokenSymbol
+  //           w={20}
+  //           h={20}
+  //           tokenType={tokenLabel}
+  //         />}
+  //         borderRadius="full" 
+  //       >
+  //         {tokenLabel}
+  //       </Button>
+  //     );
+  //   }
 
     const TokenListItem = ({ tokenData } : TokenListItemProps) => { 
       const tokeninfo = useTokenBalance(tokenData);
-      console.log(tokeninfo)
       let displayTokenName = tokenData.tokenName;
       if (tokenData.tokenName === "ETH") {
           displayTokenName = "Ethereum";
@@ -103,9 +102,9 @@ export default function SelectTokenModal() {
       return (
         <HStack
           spacing={4}
-          justifyContent="space-between" 
-          w="full" 
-          alignItems="center" 
+          justifyContent="space-between"
+          w="full"
+          alignItems="center"
           px={4} 
           _hover={{ bg: "#313442", px: 4 }} 
           cursor="pointer"
@@ -129,7 +128,6 @@ export default function SelectTokenModal() {
                   tokenAddress: inToken?.tokenAddress || null,
                 })
                 onOpenInAmount();
-                console.log(selectedInToken)
               }
 
               if (isOutTokenOpen && chainName) {
@@ -141,7 +139,6 @@ export default function SelectTokenModal() {
                   tokenAddress: tokenData.address[chainName],
                   
                 })
-                console.log(selectedOutToken)
               }
 
             } catch (e) {
@@ -172,7 +169,7 @@ export default function SelectTokenModal() {
   return (
       <>
         <Modal
-            isOpen={isInTokenOpen || isOutTokenOpen}
+            isOpen={(isInTokenOpen || isOutTokenOpen) && simpleCloseCheck}
             onClose={onCloseTokenModal}
             motionPreset="slideInBottom"
         >
@@ -210,12 +207,12 @@ export default function SelectTokenModal() {
                     color="white"
                 />
             </InputGroup>
-            <HStack mt={4} spacing={2} justifyContent="center">
+            {/* <HStack mt={4} spacing={2} justifyContent="center">
                 <TokenButton tokenLabel="TON" />
                 <TokenButton tokenLabel="ETH" />
                 <TokenButton tokenLabel="USDC" />
                 <TokenButton tokenLabel="USDT" />
-            </HStack>
+            </HStack> */}
 
             <ModalBody py={4} px={0}
                 sx={{

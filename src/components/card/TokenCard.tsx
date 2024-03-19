@@ -203,28 +203,6 @@ export default function TokenCard(props: TokenCardProps) {
     amount: Number(outAmount),
   });
 
-  useEffect(() => {
-    if (mode === "Pool") return;
-    if (!isInput && outTokenInfo && amountOut && mobileView) {
-      const value: string = amountOut;
-      if (value === "" || value === null) {
-        return setOutTokenInfo({
-          ...outTokenInfo,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        outTokenInfo.decimals
-      );
-      return setOutTokenInfo({
-        ...outTokenInfo,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: value,
-      });
-    }
-  }, [amountOut, mode]);
 
   return (
     <Flex

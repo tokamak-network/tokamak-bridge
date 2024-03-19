@@ -12,7 +12,7 @@ import Footer from "@/components/footer";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
-  const { minorView } = useMediaView();
+  const { pcView, minorView } = useMediaView();
 
   if (minorView) {
     return (
@@ -36,7 +36,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
           {children}
         </Flex>
       )}
-      <Footer />
+      {pcView && <Footer />}
       <GlobalComponents />
       <Drawers />
       <Modals />

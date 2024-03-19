@@ -45,10 +45,9 @@ const MobileInToken = () => {
   }, [outToken]);
 
   return (
-    <Stack spacing="4">
+    <Flex flexDir={"column"} w={"148px"} rowGap={"28px"}>
       <Box
         pos="relative"
-        w={"148px"}
         h={"184px"}
         cursor={"pointer"}
         onClick={() =>
@@ -56,6 +55,7 @@ const MobileInToken = () => {
         }
       >
         {outToken?.tokenName ? (
+          <>
           <TokenCard
             w={"100%"}
             h={"100%"}
@@ -63,8 +63,10 @@ const MobileInToken = () => {
             hasInput={true}
             inNetwork={true}
             symbolSize={{ w: 64, h: 64 }}
+            forBridge={true}
             isPrice
           />
+          </>
         ) : (
           <Flex
             pos={"relative"}
@@ -118,12 +120,7 @@ const MobileInToken = () => {
           </Flex>
         )}
       </Box>
-      {/* <Box>
-        {outToken !== null && (
-          <TokenInput inToken={false} mobileInput={true} />
-        )}
-      </Box> */}
-    </Stack>
+    </Flex>
   );
 };
 

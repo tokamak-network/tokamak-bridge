@@ -26,6 +26,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import Footer from "@/components/footer";
 
 import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
 import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
@@ -231,6 +232,7 @@ const ActionOptionModal = () => {
         mb={0}
         p={"16px 12px"}
         roundedTop={"2xl"}
+        pos={"relative"}
       >
         <Box pos={"relative"}>
           <Box w={"100%"} pos={"absolute"} top={"-45px"}>
@@ -303,6 +305,9 @@ const ActionOptionModal = () => {
               handleClose={closeModal}
             />
           </Flex>
+        </Box>
+        <Box>
+          <Footer />
         </Box>
       </ModalContent>
     </Modal>

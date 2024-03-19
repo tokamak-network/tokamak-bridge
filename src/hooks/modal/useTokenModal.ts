@@ -31,6 +31,7 @@ export default function useTokenModal() {
   const { chainName } = useConnectedNetwork();
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
+  const simpleCloseCheck = true
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
@@ -109,5 +110,6 @@ export default function useTokenModal() {
     onOpenOutToken,
     onCloseTokenModal,
     setSelectedToken,
+    simpleCloseCheck
   };
 }

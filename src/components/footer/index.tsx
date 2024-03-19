@@ -1,14 +1,18 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 import dayjs from "dayjs";
 
 const Footer = () => {
+  const { pcView } = useMediaView();
+  
   return (
     <Flex
-      pos={"absolute"}
-      bottom={6}
+      pt={pcView ? 0 : 5}
+      bottom={pcView ? 6 : 0}
       w={"full"}
       justify={"center"}
       alignItems={"center"}
+      position={pcView ? "absolute" : "initial"}
     >
         <Text fontSize={14} color={"#A0A3AD"}>
           Copyright © {dayjs().year()}{" "}

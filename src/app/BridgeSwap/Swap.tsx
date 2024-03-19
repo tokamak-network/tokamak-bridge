@@ -16,12 +16,15 @@ import OutToken from "./components/OutToken";
 import SelectNetwork from "./components/SelectNetwork";
 import MobileInToken from "./components/Mobile/MobileInToken";
 import MobileOutToken from "./components/Mobile/MobileOutToken";
+import MobileTokenBox from "@/componenets/mobile/input/mobileTokenBox"
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
 import { useCallback } from "react";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function Swap() {
+  const { inToken, outToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
@@ -144,6 +147,17 @@ export default function Swap() {
 
             <MobileOutToken />
           </Flex>
+          <Flex direction="row" justify="center" w="full">
+            {/** swap을 제외하고는 안보이게 한다.? */}
+            <MobileTokenBox inToken={true} visibilityType={false}/>
+            <MobileTokenBox inToken={false} visibilityType={false}/>
+              {/* {inToken !== null && (
+                <MobileTokenBox inToken={true} />
+              )}
+              {outToken !== null && (
+                <MobileTokenBox inToken={true} />
+              )} */}
+            </Flex>
         </Box>
       )}
     </>

@@ -25,7 +25,7 @@ import {
 } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import GradientSpinner from "../ui/gradientSpinner";
+import GradientSpinner from "../../ui/gradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
@@ -43,6 +43,7 @@ export default function TokenInput(props: {
   defaultValue?: any;
   isDisabled?: boolean;
   hasMaxButton?: boolean;
+  mobileInput?: boolean;
   style?: {};
   customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
