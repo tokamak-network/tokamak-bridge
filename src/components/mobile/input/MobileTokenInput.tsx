@@ -37,13 +37,15 @@ import {
 import Warning from "@/app/BridgeSwap/Warning";
 
 import useAmountModal from "@/hooks/modal/useAmountModal"
+import {
+  mobileTokenModalStatus,
+} from "@/recoil/mobile/atom";
 
 export default function TokenInput(props: {
   inToken: boolean;
   defaultValue?: any;
   isDisabled?: boolean;
   hasMaxButton?: boolean;
-  mobileInput?: boolean;
   style?: {};
   customRef?: RefObject<HTMLInputElement> | null;
   placeholder?: string;
@@ -97,18 +99,11 @@ export default function TokenInput(props: {
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
   const { onOpenInAmount, onOpenOutAmount, onCloseAmountModal } = useAmountModal();
+  const [, setMobileTokenModal] = useRecoilState(mobileTokenModalStatus);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
-
-    // if (isTokenSearch && connectedChainId) {
-    //   setSearchValue(value);
-    //   return setSearchToken({
-    //     nameOrAdd: value,
-    //     chainId: connectedChainId,
-    //   });
-    // }
 
     //for wrap/unwrap switch
     if (inToken && switchable) {
@@ -218,6 +213,7 @@ export default function TokenInput(props: {
       ) {
         onCloseTokenModal();
         onCloseAmountModal();
+        setMobileTokenModal(true)
       }
       // customRef?.current?.blur();
     }
@@ -551,6 +547,8 @@ export default function TokenInput(props: {
             <Flex flexDir={'column'}>
               {/* <Warning /> */}
               <Input
+                autoFocus
+                type="number"
                 id={inToken ? "LeftInput" : "RightInput"}
                 w={"100%"}
                 h={"27px"}

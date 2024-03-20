@@ -14,7 +14,7 @@ import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
-export default function mobileTokenBox(props: {
+export default function MobileTokenBox(props: {
   inToken: boolean;
   visibilityType: boolean;
 }) {
@@ -104,7 +104,7 @@ export default function mobileTokenBox(props: {
       ? isFocused
         ? String(selectedOutToken?.parsedAmount)
         : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : "";
+      : 0;
   }, [
     inToken,
     amountOut,
@@ -143,14 +143,14 @@ export default function mobileTokenBox(props: {
 
   return(
     <Flex
-      visibility={visibilityTypeState && valueProp ? "visible" : "hidden"}
+      visibility={visibilityTypeState? "visible" : "hidden"}
       direction="column"
       mx="5"
       mt="2"
       w="148px"
       h="84px"
     >
-      {visibilityTypeState ? 
+      {visibilityTypeState && valueProp ? 
         (
           <>
             <Box
@@ -169,7 +169,7 @@ export default function mobileTokenBox(props: {
           <>
             <Box
               bg="#1F2128"
-              p="3"
+              p="5"
               rounded="md"
               w="full"
               mb="1"

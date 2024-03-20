@@ -17,14 +17,17 @@ import { useRecoilValue, useRecoilState } from "recoil";
 import {
   selectedInTokenStatus,
   tokenModalStatus,
-  selectedTokenAmountStatus
 } from "@/recoil/bridgeSwap/atom";
-import TokenInput from "@/componenets/input/TokenInput";
+
+import {
+  selectedTokenAmountStatus
+} from "@/recoil/mobile/atom"
+
+import TokenInput from "@/components/mobile/input/mobileTokenInput";
 import useAmountModal from "@/hooks/modal/useAmountModal";
 
 export default function AmountInputModal() {
     const { isOpen } = useRecoilValue(tokenModalStatus);
-    console.log("isOpen=====", isOpen)
     const { isInAmountOpen, isOutAmountOpen, onCloseAmountModal } = useAmountModal();
     const ref = useRef<HTMLInputElement>(null);
     const [selectedInToken] = useRecoilState(selectedInTokenStatus);
@@ -54,7 +57,6 @@ export default function AmountInputModal() {
                 hasMaxButton={isOpen === "INPUT" ? true : false}
                 customRef={ref}
                 placeholder={"input amount"}
-                isDisabled={isOpen === "INPUT" ? false : true}
                 defaultValue={
                   isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""
                 }

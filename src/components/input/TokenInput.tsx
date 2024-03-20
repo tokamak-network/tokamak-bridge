@@ -95,7 +95,7 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
-  const { onOpenInAmount, onOpenOutAmount, onCloseAmountModal } = useAmountModal();
+  const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -216,7 +216,7 @@ export default function TokenInput(props: {
         (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
       ) {
         onCloseTokenModal();
-        onCloseAmountModal();
+        onOpenOutAmount();
       }
       // customRef?.current?.blur();
     }

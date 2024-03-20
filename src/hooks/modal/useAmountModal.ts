@@ -1,21 +1,25 @@
 import { useRecoilState } from "recoil";
 import {
-    tokenAmountModalStatus,
-} from "@/recoil/bridgeSwap/atom";
+    mobileTokenAmountModalStatus,
+    mobileTokenModalStatus,
+} from "@/recoil/mobile/atom";
+
 import { useInOutNetwork } from "@/hooks/network";
 import {
     selectedInTokenStatus,
     selectedOutTokenStatus,
     tokenModalStatus,
-  } from "@/recoil/bridgeSwap/atom";
-  import { searchTokenStatus, isInputTokenAmount, isOutputTokenAmount } from "@/recoil/card/selectCard/searchToken";
+} from "@/recoil/bridgeSwap/atom";
+import { searchTokenStatus, isInputTokenAmount, isOutputTokenAmount } from "@/recoil/card/selectCard/searchToken";
 
 
 export default function useAmountModal() {
-    const [tokenAmountModal, setTokenAmountModal] = useRecoilState(tokenAmountModalStatus)
+    const [tokenAmountModal, setTokenAmountModal] = useRecoilState(mobileTokenAmountModalStatus)
     const isInAmountOpen = tokenAmountModal?.isOpen === "INPUT";
     const isOutAmountOpen = tokenAmountModal?.isOpen === "OUTPUT";
     const { inNetwork, outNetwork } = useInOutNetwork();
+    const [, setMobileTokenModal] = useRecoilState(mobileTokenModalStatus);
+    
     const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
 
@@ -39,6 +43,7 @@ export default function useAmountModal() {
     const onCloseAmountModal = () => {
         setTokenAmountModal({ isOpen: null });
         setIsOutputAmount(false);
+        setMobileTokenModal(true)
 
         if (!selectedInToken?.amountBN) {
             setIsInputAmount(false);

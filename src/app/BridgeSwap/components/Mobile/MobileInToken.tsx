@@ -11,8 +11,13 @@ import useConnectedNetwork from "@/hooks/network";
 import ETHIcon from "@/assets/tokens/eth_half_rounded.svg";
 import TitanIcon from "@/assets/tokens/titan_half_rounded.svg";
 
+import {
+  mobileTokenModalStatus
+} from "@/recoil/mobile/atom";
+
 const MobileInToken = () => {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
+  const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(mobileTokenModalStatus);
   const { inToken } = useInOutTokens();
 
   const network = useConnectedNetwork();
@@ -50,7 +55,10 @@ const MobileInToken = () => {
       pos="relative"
       h={"184px"}
       cursor={"pointer"}
-      onClick={() => setTokenModal({ ...tokenModal, isOpen: "INPUT" })}
+      onClick={() =>{
+        setTokenModal({ ...tokenModal, isOpen: "INPUT" })
+        setMobileTokenOpen(true)
+      }}
     >
       {inToken?.tokenName ? (
         <>

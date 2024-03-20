@@ -9,13 +9,17 @@ import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import TokenCard from "@/components/card/TokenCard";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import TokenInput from "@/components/input/TokenInput";
+
+import {
+  mobileTokenModalStatus
+} from "@/recoil/mobile/atom";
 
 const MobileInToken = () => {
   const { outNetwork } = useRecoilValue(networkStatus);
   const { mode, swapSection } = useGetMode();
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { outToken } = useInOutTokens();
+  const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(mobileTokenModalStatus);
 
   const tokenColorCode = useMemo(() => {
     switch (outToken?.tokenSymbol) {
@@ -50,8 +54,10 @@ const MobileInToken = () => {
         pos="relative"
         h={"184px"}
         cursor={"pointer"}
-        onClick={() =>
+        onClick={() => {
           swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })
+          setMobileTokenOpen(true)  
+        }
         }
       >
         {outToken?.tokenName ? (
