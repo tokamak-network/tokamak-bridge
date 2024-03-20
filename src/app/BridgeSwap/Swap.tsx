@@ -16,7 +16,7 @@ import OutToken from "./components/OutToken";
 import SelectNetwork from "./components/SelectNetwork";
 import MobileInToken from "./components/Mobile/MobileInToken";
 import MobileOutToken from "./components/Mobile/MobileOutToken";
-import MobileTokenBox from "@/components/mobile/input/mobileTokenBox"
+import MobileTokenBox from "@/components/mobile/input/MobileTokenBox"
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";

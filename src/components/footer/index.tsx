@@ -14,7 +14,7 @@ const Footer = () => {
       alignItems={"center"}
       position={pcView ? "absolute" : "initial"}
     >
-        <Text fontSize={14} color={"#A0A3AD"}>
+        <Text fontSize={pcView ? 14 : 12} color={"#A0A3AD"}>
           Copyright © {dayjs().year()}{" "}
           <span style={{ color: "#007AFF" }}>Tokamak Network</span> All Rights
           Reserved.

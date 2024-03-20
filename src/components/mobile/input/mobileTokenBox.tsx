@@ -80,7 +80,7 @@ export default function MobileTokenBox(props: {
         mode === "ETH-Unwrap") &&
       inTokenFromHook?.parsedAmount
     ) {
-      return inTokenFromHook.parsedAmount;
+      return trimAmount(inTokenFromHook.parsedAmount, 8);
     }
 
     if (mode === "Swap" && inToken === false) {

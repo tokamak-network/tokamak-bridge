@@ -23,7 +23,7 @@ import {
   selectedTokenAmountStatus
 } from "@/recoil/mobile/atom"
 
-import TokenInput from "@/components/mobile/input/mobileTokenInput";
+import TokenInput from "@/components/mobile/input/MobileTokenInput";
 import useAmountModal from "@/hooks/modal/useAmountModal";
 
 export default function AmountInputModal() {

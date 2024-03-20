@@ -242,10 +242,10 @@ const ActionOptionModal = () => {
           </Box>
 
           {isWelcomeMsg && (
-            <Box pos={"fixed"} w={"100%"} top={"100px"} left={0}>
+            <Box pos={"fixed"} w={"100%"} top={"147px"} left={0}>
               <Text
                 fontWeight={300}
-                fontSize={24}
+                fontSize={30}
                 lineHeight={"36px"}
                 textAlign={"center"}
               >
@@ -253,7 +253,7 @@ const ActionOptionModal = () => {
               </Text>
               <Text
                 fontWeight={700}
-                fontSize={32}
+                fontSize={34}
                 letterSpacing={"2px"}
                 textAlign={"center"}
               >
@@ -301,7 +301,7 @@ const ActionOptionModal = () => {
             <ActionMethodItem
               from={ethChainId}
               to={titanChainId}
-              title="Pool"
+              title="Pools"
               handleClose={closeModal}
             />
           </Flex>

@@ -17,7 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { SearchIcon, StarIcon } from '@chakra-ui/icons';
 
-import MobileSearchInput from "@/components/mobile/input/mobileSearchInput"
+import MobileSearchInput from "@/components/mobile/input/MobileSearchInput"
 import { useCallback, useEffect, useRef, useState } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import useAmountModal from "@/hooks/modal/useAmountModal"
