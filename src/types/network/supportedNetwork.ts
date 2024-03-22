@@ -19,6 +19,7 @@ export enum SupportedChainId {
   TITAN = 55004,
   DARIUS = 5050,
   SEPOLIA = 11155111,
+  THANOS_SEPOLIA = 111551118080,
 }
 
 export interface SupportedChainProperties {
@@ -55,6 +56,14 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L1",
+  },
+  {
+    chainId: SupportedChainId.THANOS_SEPOLIA,
+    chainName: "THANOS_SEPOLIA",
+    networkImage: SYMBOL_TITAN,
+    rpcAddress: "",
+    nativeToken: "ETH",
+    layer: "L2",
   },
   {
     chainId: SupportedChainId.TITAN,

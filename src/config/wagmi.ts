@@ -5,10 +5,10 @@ import { InjectedConnector } from "wagmi/connectors/injected";
 import { MetaMaskConnector } from "wagmi/connectors/metaMask";
 import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
 import { publicProvider } from "wagmi/providers/public";
-import { titan, titan_goerli, Mainnet } from "./tokamakProvider";
+import { titan, titan_goerli, thanos_sepolia, Mainnet } from "./tokamakProvider";
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
-  [mainnet, goerli, titan, titan_goerli, sepolia],
+  [mainnet, goerli, titan, titan_goerli, sepolia, thanos_sepolia],
   [publicProvider()]
 );
 

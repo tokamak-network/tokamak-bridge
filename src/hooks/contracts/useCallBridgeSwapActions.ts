@@ -71,7 +71,7 @@ export default function useCallBridgeSwapAction() {
               args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
-              gas: BigInt("142542"),
+              gas: BigInt("1425420"),
             });
           }
 

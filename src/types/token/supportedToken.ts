@@ -5,6 +5,7 @@ import {
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
   SEPOLIA_CONTRACTS,
+  THANOS_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
 
 type SupportedMainTokenNames =
@@ -51,7 +52,8 @@ export const supportedTokens: SupportedTokens_T = [
       GOERLI: "",
       TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.OVM_ETH,
-      SEPOLIA: "",
+      SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: [
@@ -59,6 +61,7 @@ export const supportedTokens: SupportedTokens_T = [
       SupportedChainId.GOERLI,
       SupportedChainId.TITAN,
       SupportedChainId.DARIUS,
+      SupportedChainId.THANOS_SEPOLIA,
     ],
     availableForBirdge: true,
   },
@@ -71,6 +74,7 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
       SEPOLIA: SEPOLIA_CONTRACTS.WETH_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.WTON_ADDRESS
       // TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       // DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
     },
@@ -86,6 +90,8 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN: TOKAMAK_CONTRACTS.TON_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
       SEPOLIA: SEPOLIA_CONTRACTS.TON_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS
+      
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -104,6 +110,7 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN: null,
       DARIUS: null,
       SEPOLIA: SEPOLIA_CONTRACTS.WTON_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.WTON_ADDRESS
     },
     decimals: 27,
     isNativeCurrency: null,
@@ -117,7 +124,8 @@ export const supportedTokens: SupportedTokens_T = [
       GOERLI: GOERLI_CONTRACTS.TOS_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
-      SEPOLIA: "",
+      SEPOLIA: SEPOLIA_CONTRACTS.TOS_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -131,7 +139,8 @@ export const supportedTokens: SupportedTokens_T = [
       GOERLI: GOERLI_CONTRACTS.DOC_ADDRESS,
       TITAN: null,
       DARIUS: null,
-      SEPOLIA: "",
+      SEPOLIA: SEPOLIA_CONTRACTS.DOC_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.DOC_ADDRESS
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -144,7 +153,8 @@ export const supportedTokens: SupportedTokens_T = [
       GOERLI: GOERLI_CONTRACTS.AURA_ADDRESS,
       TITAN: null,
       DARIUS: null,
-      SEPOLIA: "",
+      SEPOLIA: SEPOLIA_CONTRACTS.AURA_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.AURA_ADDRESS
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -157,7 +167,8 @@ export const supportedTokens: SupportedTokens_T = [
       GOERLI: GOERLI_CONTRACTS.LYDA_ADDRESS,
       TITAN: null,
       DARIUS: null,
-      SEPOLIA: "",
+      SEPOLIA: SEPOLIA_CONTRACTS.LYDA_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.LYDA_ADDRESS
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -171,6 +182,7 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN: TOKAMAK_CONTRACTS.USDC_ADDRESS,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
       SEPOLIA: SEPOLIA_CONTRACTS.USDC_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.USDC_ADDRESS
     },
     decimals: 6,
     isNativeCurrency: null,
@@ -185,6 +197,7 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN: TOKAMAK_CONTRACTS.USDT_ADDRES,
       DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDT_ADDRES,
       SEPOLIA: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.USDT_ADDRESS
     },
     decimals: 6,
     isNativeCurrency: null,

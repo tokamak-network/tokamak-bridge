@@ -19,6 +19,9 @@ const TitanGoerliProvider = new ethers.providers.JsonRpcProvider(
 const SepoliaProvider = new ethers.providers.JsonRpcProvider(
   process.env.NEXT_PUBLIC_SEPOLIA_RPC
 );
+const ThanosSepoliaProvider = new ethers.providers.JsonRpcProvider(
+  process.env.NEXT_PUBLIC_THANOS_SEPOLIA_RPC
+);
 
 const providers: {
   [K in keyof typeof SupportedChainId]: ethers.providers.JsonRpcProvider;
@@ -28,6 +31,7 @@ const providers: {
   TITAN: TitanProvider,
   DARIUS: TitanGoerliProvider,
   SEPOLIA: SepoliaProvider,
+  THANOS_SEPOLIA: ThanosSepoliaProvider,
 };
 
 export function getProvider(inNetwork: SupportedChainProperties | null) {

@@ -50,6 +50,31 @@ export const titan_goerli = {
   },
 } as const satisfies Chain;
 
+export const thanos_sepolia = {
+  id: 111551118080,
+  name: "Thanos Sepolia",
+  network: "Thanos Sepolia",
+  nativeCurrency: {
+    decimals: 18,
+    name: "TON",
+    symbol: "TON",
+  },
+  rpcUrls: {
+    public: { http: [process.env.NEXT_PUBLIC_THANOS_SEPOLIA_RPC as string] },
+    default: { http: [process.env.NEXT_PUBLIC_THANOS_SEPOLIA_RPC as string] },
+  },
+  blockExplorers: {
+    etherscan: {
+      name: "BlockScout",
+      url: "https://explorer.thanos-sepolia-test.tokamak.network",
+    },
+    default: {
+      name: "BlockScout",
+      url: "https://explorer.thanos-sepolia-test.tokamak.network",
+    },
+  },
+} as const satisfies Chain;
+
 export const Mainnet = {
   id: 1,
   name: "Ethereum",
