@@ -32,6 +32,7 @@ export default function AddMoreLiquidity() {
       TITAN: token0.address,
       DARIUS: token0.address,
       SEPOLIA: token0.address,
+      THANOS_SEPOLIA: token0.address,
     },
     isNativeCurrency:
       token0.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
@@ -55,6 +56,7 @@ export default function AddMoreLiquidity() {
       TITAN: token1.address,
       DARIUS: token1.address,
       SEPOLIA: token1.address,
+      THANOS_SEPOLIA: token1.address,
     },
     isNativeCurrency:
       token1.address.toLowerCase() ===
