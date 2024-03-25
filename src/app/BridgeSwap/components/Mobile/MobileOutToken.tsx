@@ -117,7 +117,7 @@ const MobileInToken = () => {
               <Image
                 alt="eth"
                 src={
-                  outNetwork?.chainId === 5050 || outNetwork?.chainId === 55004
+                  outNetwork?.chainId === 55004
                     ? TitanIcon
                     : ETHIcon
                 }

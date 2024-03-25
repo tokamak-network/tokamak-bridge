@@ -100,8 +100,10 @@ export default function TokenInput(props: {
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
   const { onOpenInAmount, onOpenOutAmount, onCloseAmountModal } = useAmountModal();
   const [, setMobileTokenModal] = useRecoilState(mobileTokenModalStatus);
+  const [preventBlur, setPreventBlur] = useState(false);
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsMax(false);
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
 
@@ -114,6 +116,7 @@ export default function TokenInput(props: {
             amountBN: null,
             parsedAmount: null,
           });
+
           return setSelectedInToken({
             ...selectedInToken,
             amountBN: null,
@@ -162,28 +165,6 @@ export default function TokenInput(props: {
       });
     }
 
-    //On Pools page
-    //This token is outToken
-    if (mode === "Pool" && !inToken && selectedOutToken) {
-      if (value === "" || value === null) {
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
-
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: value,
-      });
-    }
-
     if (!inToken && selectedOutToken && amountOut) {
       const value: string = amountOut;
       if (value === "" || value === null) {
@@ -206,103 +187,49 @@ export default function TokenInput(props: {
     }
   };
 
-  const onKeyDown = (e: any) => {
-    if (e.key === "Enter" && mobileView) {
-      if (
-        (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
-      ) {
-        onCloseTokenModal();
-        onCloseAmountModal();
-        setMobileTokenModal(true)
-      }
-      // customRef?.current?.blur();
-    }
-  }
-
   const { totalGasCost } = useGasFee();
   const inputRef = useRef<HTMLInputElement>(null);
   const ref = useRef<HTMLInputElement>(null);
 
   const onMax = useCallback(() => {
     if (isDisabled) return null;
+    setIsMax(true);
     if (tokenData) {
       if (inToken && selectedInToken) {
-        if (mode === "Pool") {
-          setSelectedInToken({
-            ...selectedInToken,
-            amountBN: tokenData.data.balanceBN.value,
-            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-          });
-          setLastFocused("LeftInput");
-          return setTimeout(() => {
-            //@ts-ignore
-            inputRef?.current?.focus();
-            //@ts-ignore
-            inputRef?.current?.blur();
-          }, 100);
-        }
-        if (isETH(selectedInToken)) {
-          const parsedAmount =
-            Number(
-              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
-            ) -
-            //deduct ETH for gasFee to swap on ETH pair
-            Number(
-              mode === "Swap"
-                ? totalGasCost
-                : // ? layer === "L1"
-                  //   ? 0.01
-                  //   : 0.001 + Number(totalGasCost)
-                  totalGasCost ?? 0.001
-            ) -
-            (mode === "Withdraw" ? 0.00025 : 0);
 
-          const isMinus = parsedAmount <= 0;
-
-          const amountBN = ethers.utils.parseUnits(
-            isMinus ? "0" : parsedAmount.toString(),
-            18
-          );
-          // if (switchable && selectedOutToken) {
-          //   setSelectedOutToken({
-          //     ...selectedOutToken,
-          //     amountBN: amountBN.toBigInt(),
-          //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
-          //   });
-          // }
-
-          return setSelectedInToken({
-            ...selectedInToken,
-            amountBN: amountBN.toBigInt(),
-            parsedAmount: isMinus ? "0" : parsedAmount.toString(),
-          });
-        }
-        return setSelectedInToken({
-          ...selectedInToken,
-          amountBN: tokenData.data.balanceBN.value,
-          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
-        });
-      }
-      if (inToken === false && selectedOutToken) {
-        if (mode === "Pool") {
+       //  wrap일때, max시  값을 넣어줘야 함
+        if(switchable && selectedOutToken){
           setSelectedOutToken({
             ...selectedOutToken,
             amountBN: tokenData.data.balanceBN.value,
             parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
           });
-          setLastFocused("RightInput");
-          return setTimeout(() => {
-            //@ts-ignore
-            inputRef?.current?.focus();
-            //@ts-ignore
-            inputRef?.current?.blur();
-          }, 100);
         }
+
+        return setSelectedInToken({
+          ...selectedInToken,
+          amountBN: tokenData.data.balanceBN.value,
+          parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+        });
+
+      }
+      if (inToken === false && selectedOutToken) {
+
+        //  wrap일때, max시  값을 넣어줘야 함
+        if(switchable && selectedInToken){
+          setSelectedInToken({
+            ...selectedInToken,
+            amountBN: tokenData.data.balanceBN.value,
+            parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
+          });
+        }
+
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: tokenData.data.balanceBN.value,
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
+        
       }
       return console.error("a input field not found");
     }
@@ -317,56 +244,54 @@ export default function TokenInput(props: {
     isDisabled,
   ]);
 
+  //Max 값 관련 로직
+  useEffect(() => {
+    const maxValue = tokenData?.data.balanceBN.value 
+      ? ethers.BigNumber.from(tokenData.data.balanceBN.value) 
+      : ethers.constants.Zero;
+  
+    const inputValue = selectedInToken?.amountBN 
+      ? ethers.BigNumber.from(selectedInToken.amountBN.toString()) 
+      : ethers.constants.Zero;
+  
+    setIsMax(maxValue.eq(inputValue));
+  }, [selectedInToken?.amountBN, tokenData?.data.balanceBN.value]);
+
+
   const handleFocus = () => {
     setIsFocused(true);
     setLastFocused(inToken ? "LeftInput" : "RightInput");
   };
 
-  const handleBlur = useCallback(() => {
-    setIsFocused(false);
-    // setIsInputAmount(false);
-    //for pool's price and amount on liquidity
-    if (mode === "Pool") {
-      if (inToken && selectedOutToken) {
-        if (!dependentAmount) {
-          return setSelectedOutToken({
-            ...selectedOutToken,
-            amountBN: null,
-            parsedAmount: null,
-          });
-        }
-        const parsedAmount = ethers.utils.parseUnits(
-          dependentAmount,
-          selectedOutToken.decimals
-        );
-
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: parsedAmount.toBigInt(),
-          parsedAmount: dependentAmount,
-        });
-      }
-      if (!inToken && selectedInToken) {
-        if (!dependentAmount) {
-          return setSelectedInToken({
-            ...selectedInToken,
-            amountBN: null,
-            parsedAmount: null,
-          });
-        }
-        const parsedAmount = ethers.utils.parseUnits(
-          dependentAmount,
-          selectedInToken.decimals
-        );
-
-        return setSelectedInToken({
-          ...selectedInToken,
-          amountBN: parsedAmount.toBigInt(),
-          parsedAmount: dependentAmount,
-        });
-      }
+  const handleCommonLogic = () => {
+    setMobileTokenModal(true);
+    if (selectedInToken && !(selectedInToken?.parsedAmount && isInTokenOpen)) {
+      setSelectedInToken({
+        ...selectedInToken,
+        amountBN: null,
+        parsedAmount: "0",
+      });
     }
-  }, [mode, inToken, selectedInToken, selectedOutToken, dependentAmount]);
+    onCloseTokenModal();
+    onCloseAmountModal();
+  };
+
+  const handleBlur = (e: any) => {
+    if (preventBlur) {
+      setPreventBlur(false);
+      return;
+    }
+    handleCommonLogic();
+  };
+  
+  const onKeyDown = (e: any) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      setPreventBlur(true);
+      handleCommonLogic();
+    }
+  };
+
 
   const valueProp = useMemo(() => {
     if (
@@ -378,7 +303,6 @@ export default function TokenInput(props: {
     ) {
       return inTokenFromHook.parsedAmount;
     }
-
     if (mode === "Swap" && inToken === false) {
       return trimAmount(amountOut, 8) ?? "";
     }
@@ -471,18 +395,6 @@ export default function TokenInput(props: {
     }
   }, [amountOut, mode]);
 
-  useEffect(() => {
-    if (inToken && selectedInToken && tokenData) {
-      return setIsMax(
-        tokenData.data.balanceBN.value === selectedInToken.amountBN
-      );
-    }
-    if (!inToken && selectedOutToken && tokenData) {
-      return setIsMax(
-        tokenData.data.balanceBN.value === selectedOutToken.amountBN
-      );
-    }
-  }, [selectedInToken, selectedOutToken, inToken, tokenData]);
 
   const { currentPrice } = usePriceTickConversion();
   const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
@@ -515,7 +427,7 @@ export default function TokenInput(props: {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      pb={"16px"}
+      pb={"4px"}
       w={"100%"}
       rowGap={"6px"}
       {...style}
@@ -525,7 +437,11 @@ export default function TokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex flexDir={'column'}>
+        <Flex flexDir={'column'}
+        border="1px solid"
+        borderColor="#59628d" // Border color 설정
+        borderRadius="8px" // Border radius 설정
+        >
           {/* {mobileView && <Warning />} */}
           <Flex
             py={{ base: "7px", lg: 0 }}
@@ -548,10 +464,14 @@ export default function TokenInput(props: {
               {/* <Warning /> */}
               <Input
                 autoFocus
+                autoComplete="off"
                 type="number"
+                pattern="[0-9]*"
+                flexGrow={1}
+                inputMode="decimal"
                 id={inToken ? "LeftInput" : "RightInput"}
                 w={"100%"}
-                h={"27px"}
+                h={"24px"}
                 m={0}
                 p={0}
                 border={{}}
@@ -559,8 +479,10 @@ export default function TokenInput(props: {
                 _focus={{ boxShadow: "none !important" }}
                 placeholder={inToken ? placeholder || "0" : "0"}
                 _placeholder={{
-                  color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
+                  color: "A0A3AD !important",
                   // fontSize: mobileView ? 20 : 28
+                  fontWeight: "400 !important",
+                  fontSize: "16px !important",
                 }}
                 color={
                   mobileView && isBalanceOver
@@ -569,8 +491,8 @@ export default function TokenInput(props: {
                     ? "#A0A3AD !important"
                     : "#FFFFFF"
                 }
-                fontSize={{ base: 22, lg: 28 }}
-                fontWeight={{ base: 500, lg: 600 }}
+                fontSize={"16px"}
+                fontWeight={600}
                 isDisabled={isDisabled}
                 _disabled={{ color: "#A0A3AD" }}
                 value={valueProp}
@@ -579,11 +501,10 @@ export default function TokenInput(props: {
                 onKeyDown={onKeyDown}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
-                style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+                style={{ caretColor: "#FFFFFF" }}
               ></Input>
             </Flex>
             }
-
             {mobileView &&
               (marketPrice === "0.00" && !inToken ? (
                 <Flex w={"20px"} h={"27px"} mr={"80px"}>
@@ -591,7 +512,7 @@ export default function TokenInput(props: {
                 </Flex>
               ) : (
                 <Text
-                  mr={"12px"}
+                  ml={"70px"}
                   fontSize={14}
                   color={"#A0A3AD"}
                 >{`$${marketPrice}`}</Text>
@@ -600,6 +521,7 @@ export default function TokenInput(props: {
               <Button
                 w={"40px"}
                 h={"22px"}
+                ml={"5px"}
                 bgColor={"#007AFF"}
                 fontSize={12}
                 fontWeight={700}
@@ -625,7 +547,7 @@ export default function TokenInput(props: {
             <Text>Insufficient ({inTokenFromHook?.tokenSymbol}) balance </Text>
           </Flex>
         )  */}
-        {mobileView ? (
+        {/* {mobileView ? (
           inToken && (
             // <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
             //   <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
@@ -639,7 +561,7 @@ export default function TokenInput(props: {
           <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
             {`$${marketPrice}`}
           </Text>
-        )}
+        )} */}
       </Flex>
     </Flex>
   );

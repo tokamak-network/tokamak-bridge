@@ -6,7 +6,6 @@ import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
 export enum SupportedChainId {
   MAINNET = 1,
-  GOERLI = 5,
   //   ARBITRUM_ONE = 42161,
   //   ARBITRUM_GOERLI = 421613,
   //   OPTIMISM = 10,
@@ -17,7 +16,6 @@ export enum SupportedChainId {
   //   CELO_ALFAJORES = 44787,
   //   BNB = 56,
   TITAN = 55004,
-  DARIUS = 5050,
 }
 
 export interface SupportedChainProperties {
@@ -40,25 +38,8 @@ export const supportedChain: SupportedChainProperties[] = [
     layer: "L1",
   },
   {
-    chainId: SupportedChainId.GOERLI,
-    chainName: "GOERLI",
-    networkImage: NETWORK_ETHEREUM,
-    rpcAddress: "",
-    nativeToken: "ETH",
-    layer: "L1",
-  },
-  {
     chainId: SupportedChainId.TITAN,
     chainName: "TITAN",
-    networkImage: SYMBOL_TITAN,
-    rpcAddress: "",
-    nativeToken: "TON",
-    isTokamak: true,
-    layer: "L2",
-  },
-  {
-    chainId: SupportedChainId.DARIUS,
-    chainName: "DARIUS",
     networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "TON",

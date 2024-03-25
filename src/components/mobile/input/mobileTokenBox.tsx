@@ -13,6 +13,15 @@ import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { useIsMoibleLoading} from '@/hooks/ui/useMobileLoading'; 
+import useAmountModal from "@/hooks/modal/useAmountModal"
+import useTokenModal from "@/hooks/modal/useTokenModal";
+
+import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  MAINNET_CONTRACTS,
+} from "@/constant/contracts";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export default function MobileTokenBox(props: {
   inToken: boolean;
@@ -32,6 +41,9 @@ export default function MobileTokenBox(props: {
     selectedOutTokenStatus
   );
 
+  const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
+  const { onCloseTokenModal, setSelectedToken, simpleCloseTokenModal } = useTokenModal();
+
   const { mode } = useGetMode();
   const { amountOut } = useAmountOut();
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
@@ -48,6 +60,7 @@ export default function MobileTokenBox(props: {
   } = useInOutTokens();
 
   const [visibilityTypeState, setVisibilityTypeState] = useState<boolean>(visibilityType);
+  const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
 
   const outAmount = useMemo(() => {
     if (
@@ -72,7 +85,10 @@ export default function MobileTokenBox(props: {
     amount: Number(outAmount),
   });
 
+  const { isTONatPair } = useIsTon();
+
   const valueProp = useMemo(() => {
+    
     if (
       (mode === "Wrap" ||
         mode === "Unwrap" ||
@@ -82,11 +98,25 @@ export default function MobileTokenBox(props: {
     ) {
       return trimAmount(inTokenFromHook.parsedAmount, 8);
     }
-
-    if (mode === "Swap" && inToken === false) {
-      return trimAmount(amountOut, 8) ?? "";
+    
+    // ton이 하나라도 있을 때, 0으로 만들기
+    // ton -> wton wton->ton은 위에서 다 걸림
+    if (mode === "Swap" && isTONatPair) {
+      if(inToken && selectedInToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS){
+        return trimAmount("0", 8) ?? 0; 
+      }
+      else if(!inToken) {
+        return trimAmount("0", 8) ?? 0; 
+      }
     }
 
+    if (mode === "Swap" && inToken === false) {
+      if(!inToken && !selectedInToken?.amountBN) {
+        return trimAmount("0", 8) ?? 0;
+      }
+      return trimAmount(amountOut, 8) ?? "";
+    }
+    
     if (mode === "Pool" && dependentAmount) {
       if (lastFocused === "LeftInput" && !inToken) {
         return trimAmount(dependentAmount, 8);
@@ -141,6 +171,13 @@ export default function MobileTokenBox(props: {
     }
   }, [inToken, selectedInToken, selectedOutToken]);
 
+  const handleClick = () => {
+    simpleCloseTokenModal();
+    setTokenModal({ ...tokenModal, isOpen: "INPUT" })
+    onOpenInAmount();
+
+  };
+
   return(
     <Flex
       visibility={visibilityTypeState? "visible" : "hidden"}
@@ -149,8 +186,10 @@ export default function MobileTokenBox(props: {
       mt="2"
       w="148px"
       h="84px"
+      cursor={inToken ? "pointer" : "default"} // 조건에 따른 cursor 스타일 설정
+      onClick={inToken ? handleClick : undefined} // 조건에 따라 onClick 핸들러 설정
     >
-      {visibilityTypeState && valueProp ? 
+      {visibilityTypeState && valueProp ?
         (
           <>
             <Box
@@ -168,23 +207,26 @@ export default function MobileTokenBox(props: {
         (
           <>
             <Box
-              bg="#1F2128"
               p="5"
               rounded="md"
               w="full"
+              bgSize="200% 100%"
               mb="1"
-            >
-              <GradientSpinner/>
-            </Box>
+              bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
+              borderRadius={"8px"}
+              animation={`${useIsMoibleLoading} 10s linear infinite`}
+            />
             <Box
               bg="#1F2128"
               p="2"
               rounded="md"
               w="full"
+              bgSize="200% 100%"
               mb="1"
-            >
-              <GradientSpinner/>
-            </Box>
+              bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
+              borderRadius={"8px"}
+              animation={`${useIsMoibleLoading} 10s linear infinite`}
+            />
           </>
         )
         }

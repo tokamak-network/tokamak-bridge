@@ -204,9 +204,34 @@ export default function TokenCard(props: TokenCardProps) {
   });
 
   useEffect(() => {
-    console.log(tokenData?.data)
-  }, [tokenData]);
+    if (mode === "Pool") return;
+    if (!isInput && outTokenInfo && amountOut && mobileView) {
+      const value: string = amountOut;
+      if (value === "" || value === null) {
+        return setOutTokenInfo({
+          ...outTokenInfo,
+          amountBN: null,
+          parsedAmount: null,
+        });
+      }
+      
+      
+      // 데시말 초과 버그 수정
+      const roundedValue = Number(value).toFixed(outTokenInfo.decimals);
+      const parsedAmount = ethers.utils.parseUnits(
+        roundedValue,
+        outTokenInfo.decimals
+      );
+      ////////////////////
 
+
+      return setOutTokenInfo({
+        ...outTokenInfo,
+        amountBN: parsedAmount.toBigInt(),
+        parsedAmount: value,
+      });
+    }
+  }, [amountOut, mode]);
 
   return (
     <Flex

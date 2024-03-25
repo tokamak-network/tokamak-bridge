@@ -8,6 +8,7 @@ import { useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
 import useAddTokenToStorage from "../storage/useAddTokenToStorage";
+import useMediaView from "../mediaView/useMediaView";
 
 export function useGetTokenList() {
   const tokenList = useRecoilValue(searchTokenList);
@@ -15,6 +16,7 @@ export function useGetTokenList() {
   const tokenSelector = useRecoilValue(searchTokenSelector);
   const { chainName } = useConnectedNetwork();
   const { storedTokenList } = useAddTokenToStorage();
+  const { mobileView } = useMediaView();
 
   const tokenListForSelectedNetwork = useMemo(() => {
     const chainN = chainName ?? "MAINNET";
@@ -38,6 +40,7 @@ export function useGetTokenList() {
     }
     //in case searching token with symbol name
     if (searchedTokenName?.nameOrAdd && tokenListForSelectedNetwork) {``
+
       const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
       //remove duplicated value when a user search it with an address
       return tokenListAll.filter((token) => {
@@ -65,7 +68,9 @@ export function useGetTokenList() {
   if (
     filteredTokenList &&
     filteredTokenList.length < 8 &&
-    filteredTokenList.length > 5
+    filteredTokenList.length > 5 &&
+     // mobileView를 사용하는 로직 추가
+    !mobileView
   ) {
     trimedTokenList = [...filteredTokenList, ...filteredTokenList];
   } else {

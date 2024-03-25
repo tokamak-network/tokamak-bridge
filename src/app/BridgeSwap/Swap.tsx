@@ -38,20 +38,34 @@ export default function Swap() {
   );
 
   const invertTokenPair = useCallback(() => {
-    
     if (inTokenRecoilValue && outTokenRecoilValue) {
-      setInTokenRecoilValue(outTokenRecoilValue);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
+      const tempValue = inTokenRecoilValue;
+      
+      if(
+        mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Unwrap" ||
+        mode === "ETH-Wrap"
+      ){
+        //해당 조건일 때는 amount 적용이 안된다.
+        //어디에 엮어 있는지 찾는중.. 임시
+        setInTokenRecoilValue({
+          ...outTokenRecoilValue,
+          amountBN: tempValue.amountBN,
+          parsedAmount: tempValue.parsedAmount
+        });  
+      } else {
+        setInTokenRecoilValue(outTokenRecoilValue);
+      }
+      
+      setOutTokenRecoilValue(tempValue);
 
-    if (inTokenRecoilValue && !outTokenRecoilValue) {
+    } else if (inTokenRecoilValue && !outTokenRecoilValue) {
+      setOutTokenRecoilValue(inTokenRecoilValue);
       setInTokenRecoilValue(null);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
-
-    if (!inTokenRecoilValue && outTokenRecoilValue) {
+    } else if (!inTokenRecoilValue && outTokenRecoilValue) {
+      setInTokenRecoilValue(outTokenRecoilValue);
       setOutTokenRecoilValue(null);
-      return setInTokenRecoilValue(outTokenRecoilValue);
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 

@@ -30,3 +30,12 @@ export const mobileTokenAmountModalStatus = atom<SelectTokenModal>({
     },
 });
 
+export const mobileLocalStoredTokenList = atom<TokenInfo[]>({
+    key: 'mobileLocalStoredTokenList', // 고유한 키
+    default: [], // 초기값
+});
+
+export const mobileLocalStoredLikeList = atom<TokenInfo[]>({
+    key: 'mobileLocalStoredLikeList', // 고유한 키
+    default: [], // 초기값
+});

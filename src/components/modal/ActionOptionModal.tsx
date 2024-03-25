@@ -36,6 +36,8 @@ import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/700.css";
 import "@fontsource/poppins/400.css";
 
+import useMobileChainIds from "@/hooks/mobile/useMobileChainIds"
+
 interface MethodItemProps {
   from?: Number;
   to?: Number;
@@ -90,10 +92,11 @@ const ActionMethodItem = ({
         });
       }
     } finally {
-      if (title === "Pool") {
+      if (title === "Pools") {
         router.push("pools");
       }
       handleClose();
+      // 메뉴 다시 선택 시, 둘다 초기화
       setSelectedInToken(null);
       setSelectedOutToken(null);
       if (isError) {
@@ -152,23 +155,11 @@ const ActionOptionModal = () => {
 
   const { mobileView } = useMediaView();
 
-  const ethChainId = useMemo(
-    () =>
-      connectedNetwork.connectedChainId === 1 ||
-      connectedNetwork.connectedChainId === 55004
-        ? 1
-        : 5,
-    [connectedNetwork]
-  );
 
-  const titanChainId = useMemo(
-    () =>
-      connectedNetwork.connectedChainId === 1 ||
-      connectedNetwork.connectedChainId === 55004
-        ? 55004
-        : 5050,
-    [connectedNetwork]
-  );
+  ////////////////////////
+  const { ethChainId, titanChainId } = useMobileChainIds(connectedNetwork);
+/////////////////////////
+
   const isWelcomeMsg = welcomeMsg && mobileView;
 
   const closeModal = useCallback(() => {

@@ -22,9 +22,14 @@ import {
 import {
   selectedTokenAmountStatus
 } from "@/recoil/mobile/atom"
+import Image from "next/image";
 
 import TokenInput from "@/components/mobile/input/MobileTokenInput";
 import useAmountModal from "@/hooks/modal/useAmountModal";
+import { useMediaQuery } from "@chakra-ui/react";
+import { useWarning } from '@/hooks/mobile/useMobileWarning';
+import WARNING_ICON from "assets/icons/warning.svg";
+import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 
 export default function AmountInputModal() {
     const { isOpen } = useRecoilValue(tokenModalStatus);
@@ -32,7 +37,40 @@ export default function AmountInputModal() {
     const ref = useRef<HTMLInputElement>(null);
     const [selectedInToken] = useRecoilState(selectedInTokenStatus);
     const [tokenAmountStatus, ] = useRecoilState(selectedTokenAmountStatus);
+    // 키보드 높이와 측정 여부를 상태로 관리합니다.
+    const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
+    const [isKeyboardHeightMeasured, setIsKeyboardHeightMeasured] = useState(false);
+    const warning = useWarning();
 
+    useEffect(() => {
+
+      if(isLargerThan768) return;
+
+      const handleResize = () => {
+        if (isKeyboardHeightMeasured) return;
+  
+        if (window.visualViewport) {
+          const newKeyboardHeight = Math.max(window.innerHeight - window.visualViewport.height, 0);
+          if(newKeyboardHeight == 0){
+            setKeyboardHeight(600);
+          } else {
+            setKeyboardHeight(newKeyboardHeight);
+          }
+          setIsKeyboardHeightMeasured(true);
+        }
+      };
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', handleResize);
+      }
+  
+      return () => {
+        if (window.visualViewport) {
+          window.visualViewport.removeEventListener('resize', handleResize);
+        }
+      };
+    }, [isKeyboardHeightMeasured]);
+    
     return (
         <>
         <Modal 
@@ -41,16 +79,26 @@ export default function AmountInputModal() {
             motionPreset="slideInBottom"
         >
             <ModalOverlay />
-            <ModalContent mt="30vh" mb="auto" mx="auto" bg="#222225">
-              <ModalHeader fontSize="md" py={2}>
-                <Text as="span" color="#a0a3ad">
-                  Balance:{' '}
-                </Text>
-                <Text as="span">
-                  {tokenAmountStatus && `${tokenAmountStatus.amount} ${tokenAmountStatus.tokenSymbol}`}
-                </Text>
-              </ModalHeader>
-              <ModalCloseButton />
+            <ModalContent
+              mt="auto" 
+              mb={!isLargerThan768 ? `${keyboardHeight}px` : "550px"}
+              mx="auto" 
+              bg="#222225" 
+              borderRadius="24px 24px 0 0"
+            >
+          <ModalHeader fontSize="md" pt={2} pb={0}>
+            {warning ? (
+              <Flex color={warning.type === "error" ? "#DD3A44" : "#F9C03E"} fontWeight={400} fontSize={12} columnGap={"10px"}>
+                <Text>{warning.message}</Text>
+              </Flex>
+            ) : (
+              <>
+                <Text as="span" fontWeight={500} fontSize={15} color="#a0a3ad">Balance:{' '}</Text>
+                <Text as="span" fontWeight={500} fontSize={15} color="#FFFFFF">{`${tokenAmountStatus?.amount} ${tokenAmountStatus?.tokenSymbol}`}</Text>
+              </>
+            )}
+          </ModalHeader>
+              <ModalCloseButton pb={"2"}/>
               <ModalBody>
               <TokenInput
                 inToken={isOpen === "INPUT" ? true : false}
@@ -61,22 +109,6 @@ export default function AmountInputModal() {
                   isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""
                 }
               />
-                {/* <Flex justifyContent="space-between" align="center">
-                <InputGroup>
-              <Input
-                placeholder="Input amount"
-                _placeholder={{ color: 'gray.500' }}
-                borderColor="#59628d"
-                _hover={{ borderColor: "#59628d" }}
-                _focus={{ borderColor: "#59628d", boxShadow: "none" }}
-              />
-              <InputRightElement width="4.5rem">
-                <Button h="1.75rem" size="sm" colorScheme="blue">
-                  Max
-                </Button>
-                </InputRightElement>
-              </InputGroup>
-                </Flex> */}
               </ModalBody>
             </ModalContent>
         </Modal>

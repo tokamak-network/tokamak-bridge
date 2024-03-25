@@ -30,7 +30,7 @@ export default function MobileSearchInput(
             <Input 
                 type="text"
                 value={searchValue}
-                placeholder="Search token name or address11"
+                placeholder="Search token name or address"
                 border="none"
                 _focus={{ borderColor: 'none' }}
                 bg="blackAlpha.500"
