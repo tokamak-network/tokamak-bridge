@@ -16,12 +16,12 @@ export function useGetTokenList() {
   const tokenSelector = useRecoilValue(searchTokenSelector);
   const { chainName } = useConnectedNetwork();
   const { storedTokenList } = useAddTokenToStorage();
-  const { mobileView } = useMediaView();
 
   const tokenListForSelectedNetwork = useMemo(() => {
+    const tokenListAll = [...tokenList, ...storedTokenList];
     const chainN = chainName ?? "MAINNET";
     if (chainN) {
-      return tokenList.filter((token) => {
+      return tokenListAll.filter((token) => {
         return token.address[chainN] !== null;
       });
     }
