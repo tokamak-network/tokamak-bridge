@@ -76,7 +76,7 @@ const TitanContainer = (props: { tx: TxType }) => {
             tokenSymbol={
               tx ? tx.inTokenSymbol : (inToken?.tokenSymbol as string)
             }
-            chainId={5050}
+            chainId={55004}
             symbolW={56}
             symbolH={56}
             networkSymbolH={20}
