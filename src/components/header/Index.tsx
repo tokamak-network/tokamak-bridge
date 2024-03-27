@@ -42,6 +42,8 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useAccount } from "wagmi";
+import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 const menuList = [
   {
@@ -166,6 +168,9 @@ export default function Header() {
     useRecoilState(actionMethodStatus);
   const { mobileView } = useMediaView();
   const { isConnected } = useAccount();
+  const {
+    isSupportedChain,
+  } = useConnectedNetwork();
   const network = useConnectedNetwork();
 
   const handleMenuButtonhover = (event: any) => {
@@ -180,6 +185,8 @@ export default function Header() {
   };
 
   const router = useRouter();
+  const { mode } = useGetMode();
+
   return (
     <Flex
       minW={"100%"}
@@ -197,8 +204,11 @@ export default function Header() {
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
         <Box
           onClick={() => {
-            // router.push("/");
-            window.open("https://bridge.tokamak.network", "_self")
+            if(mode == "Pool") {
+              router.push("/");
+            
+            }
+            
             mobileView ? setActionMethod(true) : "";
           }}
           cursor={"pointer"}
@@ -297,29 +307,23 @@ export default function Header() {
       </Flex>
       <Flex columnGap={{ base: "8px", lg: "6px" }}>
         {!mobileView && <Network />}
-        {mobileView &&
-          ((network.connectedChainId === 5 ||
-            network.connectedChainId === 5050) && isConnected ) && (
-            <Flex columnGap={"10px"} align={"center"} px={"8px"}>
+        {/** 네트워크가 연결되었지만 지원되지 않았을 때  */}
+        {mobileView && (isConnected && !isSupportedChain) &&
+          (
+            <Flex
+              bgColor={"#1F2128"}
+              w={"32px"}
+              h={"32px"}
+              alignItems={"center"}
+              justifyContent={"space-between"}
+              px={"4px"}
+              borderRadius={"8px"}
+            >
               <Image
-                width={16}
-                height={16}
-                alt={network.chainName!}
-                src={
-                  network.connectedChainId === 5
-                    ? ETHCircle
-                    : network.connectedChainId === 5050
-                    ? TitanCircle
-                    : ""
-                }
+                src={WARNING_ICON}
+                alt={"WARNING_ICON"}
+                style={{ width: "34px", height: "34px" }}
               />
-              <Text fontSize={13}>
-                {network.connectedChainId === 5
-                  ? "Goerli"
-                  : network.connectedChainId === 5050
-                  ? "Titan Goerli"
-                  : ""}
-              </Text>
             </Flex>
           )}
         <Flex flexDir={"column"} alignItems={"flex-end"}>

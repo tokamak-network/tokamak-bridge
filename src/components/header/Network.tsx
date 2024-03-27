@@ -228,7 +228,7 @@ export default function Network() {
 
     if (data.layer === "L2") {
       return (
-        <Flex flexDir={"column"} rowGap={"12px"}>
+        <Flex flexDir={"column"} rowGap={"12px"}  >
           <Flex
             w={"100%"}
             h={"12px"}
@@ -317,7 +317,7 @@ export default function Network() {
       if (
         // isConnectedToMainNetwork === true ||
         // isConnectedToMainNetwork === undefined
-        true
+true
       ) {
         return [
           SupportedChainId["MAINNET"],
@@ -325,7 +325,7 @@ export default function Network() {
         ].includes(chainInfo.chainId);
       }
       // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-      //   chainInfo.chainId
+        //   chainInfo.chainId
       // );
     })
     .map((chainInfo) => {
@@ -364,7 +364,7 @@ export default function Network() {
     //     isCircle={true}
     //   />
     // </Center>
-    <Box ref={wrapperRef}>
+    <Box ref={wrapperRef} >
       <Select
         options={optionsList}
         menuIsOpen={isOpen}

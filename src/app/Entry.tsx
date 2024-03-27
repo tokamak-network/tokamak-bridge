@@ -12,9 +12,9 @@ import Footer from "@/components/footer";
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const { mode } = useGetMode();
-  const { mobileView } = useMediaView();
+  const { pcView, minorView } = useMediaView();
 
-  if (mobileView) {
+  if (minorView) {
     return (
       <Center h={"100vh"}>
         <MobileView />
@@ -25,7 +25,6 @@ export default function Entry({ children }: { children: React.ReactNode }) {
   return (
     <ApolloProvider client={apolloClient}>
       <Header />
-
       {mode !== "Pool" ? (
         <Center h={window.innerHeight}>{children}</Center>
       ) : (
@@ -37,8 +36,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
           {children}
         </Flex>
       )}
-
-      <Footer />
+      {pcView && <Footer />}
       <GlobalComponents />
       <Drawers />
       <Modals />

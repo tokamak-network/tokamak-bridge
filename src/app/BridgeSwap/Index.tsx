@@ -4,6 +4,7 @@ import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
 import RelayBanner from "@/components/modal/RelayBanner";
 import ServiceSuspensionBanner from "@/components/modal/ServiceSuspensionBanner";
+import MaintenanceMobileModal from "@/components/mobile/modal/MaintenanceMobileModal";
 
 export default function BridgeSwap() {
   return (
@@ -24,7 +25,7 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
-
+        {/* <MaintenanceMobileModal /> */}
         <Swap />
         <Details />
       </Flex>

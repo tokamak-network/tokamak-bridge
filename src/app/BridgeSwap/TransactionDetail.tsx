@@ -30,6 +30,7 @@ import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import useIsTon from "@/hooks/token/useIsTon";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -589,16 +590,18 @@ export default function TransactionDetail(props: {
   const { isApproved } = useApprove();
 
   const { mode, isReady } = useGetMode();
-  const { outToken } = useInOutTokens();
+  const { inToken, outToken } = useInOutTokens();
   const { isInputZero, isBalanceOver } = useInputBalanceCheck();
   const { isConnected } = useAccount();
+  const { isTONatPair } = useIsTon();
 
   const isWrapUnwrap =
     mode === "Wrap" ||
     mode === "Unwrap" ||
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
-
+  
+  //layer1 ton 일때, detail 안나오게 수정
   if (
     !isReady ||
     isWrapUnwrap ||
@@ -607,7 +610,8 @@ export default function TransactionDetail(props: {
     isApproved === false ||
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
-    !isConnected
+    !isConnected ||
+    (mode === "Swap" && isTONatPair)
   ) {
     return null;
   }
