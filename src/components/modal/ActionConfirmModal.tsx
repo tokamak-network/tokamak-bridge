@@ -30,6 +30,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 import "@/css/spinner.css";
+import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -156,10 +157,18 @@ const TokenContainer = () => {
           </Flex>
         )}
 
-        <TokenSymbol
+        {/* <TokenSymbol
           tokenType={inToken?.tokenSymbol ?? "default"}
           w={mobileView ? 48 : 56}
           h={mobileView ? 48 : 56}
+        /> */}
+        <TokenSymbolWithNetwork
+          tokenSymbol={inToken?.tokenSymbol as string ?? "default"}
+          chainId={1}
+          symbolW={56}
+          symbolH={56}
+          networkSymbolH={20}
+          networkSymbolW={20}
         />
         <Flex
           fontSize={18}
