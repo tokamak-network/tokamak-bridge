@@ -61,7 +61,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           tokenSymbol={"ETH"}
           chainId={
             txSort === "Deposit" && isToken0 === false
-              ? 5050
+              ? 55004
               : txSort === "Withdraw" && isToken0 === false
               ? 1
               : network
@@ -89,7 +89,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           tokenSymbol={symbol}
           chainId={
             txSort === "Deposit" && isToken0 === false
-              ? 5050
+              ? 55004
               : txSort === "Withdraw" && isToken0 === false
               ? 1
               : network
