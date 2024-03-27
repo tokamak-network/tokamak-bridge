@@ -65,6 +65,7 @@ const ActionMethodItem = ({
     try {
       const value: SupportedChainProperties["chainId"] = Number(from);
       const outValue: SupportedChainProperties["chainId"] = Number(to);
+
       const selectedInNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === value;
       })[0];
@@ -73,7 +74,7 @@ const ActionMethodItem = ({
         return supportedChain.chainId === outValue;
       })[0];
 
-      if (selectedInNetwork.chainId !== connectedChainId) {
+      if (selectedInNetwork.chainId !== connectedChainId && !(title === "Pools")) {
         return isConnected
           ? (await switchNetworkAsync?.(selectedInNetwork.chainId),
             setNetwork({
@@ -85,8 +86,8 @@ const ActionMethodItem = ({
               inNetwork: selectedInNetwork,
               outNetwork: selectedOutNetwork,
             });
-      } else if (selectedInNetwork.chainId === connectedChainId) {
-        setNetwork({
+      } else if (selectedInNetwork.chainId === connectedChainId && !(title === "Pools")) {
+        return setNetwork({
           inNetwork: selectedInNetwork,
           outNetwork: selectedOutNetwork,
         });
@@ -132,7 +133,7 @@ const ActionMethodItem = ({
       {from && to && (
         <Flex columnGap={"6px"} align={"center"} mb={"8px"}>
           <Image width={20} height={20} alt="from_network" src={fromIcon} />
-          {title !== "Pool" && <Image width={16} alt="arrow" src={Arrow} />}
+          {title !== "Pools" && <Image width={16} alt="arrow" src={Arrow} />}
           <Image width={20} height={20} alt="to_network" src={toIcon} />
         </Flex>
       )}
@@ -213,7 +214,7 @@ const ActionOptionModal = () => {
   return (
     <Modal
       size={"xl"}
-      isOpen={methodStatus && mobileView}
+      isOpen={methodStatus && mobileView && !(mode == "Pool")}
       onClose={() => closeModal()}
     >
       <ModalOverlay bg={isWelcomeMsg ? "#0F0F12" : "#0F0F12F0"} />

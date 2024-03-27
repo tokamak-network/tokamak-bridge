@@ -22,6 +22,7 @@ import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
 import { useCallback } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function Swap() {
   const { inToken, outToken } = useInOutTokens();
@@ -36,6 +37,8 @@ export default function Swap() {
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
     selectedOutTokenStatus
   );
+
+  const network = useConnectedNetwork();
 
   const invertTokenPair = useCallback(() => {
     if (inTokenRecoilValue && outTokenRecoilValue) {
@@ -162,16 +165,17 @@ export default function Swap() {
 
             <MobileOutToken />
           </Flex>
+
           <Flex direction="row" justify="center" w="full">
-            {/** swap을 제외하고는 안보이게 한다.? */}
-            <MobileTokenBox inToken={true} visibilityType={false}/>
-            <MobileTokenBox inToken={false} visibilityType={false}/>
-              {/* {inToken !== null && (
-                <MobileTokenBox inToken={true} />
-              )}
-              {outToken !== null && (
-                <MobileTokenBox inToken={true} />
-              )} */}
+            {
+              (network.isSupportedChain) && (
+                <>
+                  <MobileTokenBox inToken={true} visibilityType={false}/>
+                  <MobileTokenBox inToken={false} visibilityType={false}/>
+                </>
+              )
+            
+            }
             </Flex>
         </Box>
       )}

@@ -9,10 +9,21 @@ import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import TokenCard from "@/components/card/TokenCard";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import useConnectedNetwork from "@/hooks/network";
+import { useAccount, useSwitchNetwork } from "wagmi";
 
 import {
   mobileTokenModalStatus
 } from "@/recoil/mobile/atom";
+import useMobileChainIds from "@/hooks/mobile/useMobileChainIds"
+import {
+  SupportedChainProperties,
+  supportedChain,
+} from "@/types/network/supportedNetwork";
+import {
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 
 const MobileInToken = () => {
   const { outNetwork } = useRecoilValue(networkStatus);
@@ -20,6 +31,13 @@ const MobileInToken = () => {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { outToken } = useInOutTokens();
   const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(mobileTokenModalStatus);
+  const network = useConnectedNetwork();
+  const { isConnected } = useAccount();
+  const { ethChainId, titanChainId } = useMobileChainIds(network);
+  const { switchNetworkAsync, isError } = useSwitchNetwork();
+  const [networkStatusValue, setNetworkStatusValue] = useRecoilState(networkStatus);
+  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
+  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   const tokenColorCode = useMemo(() => {
     switch (outToken?.tokenSymbol) {
@@ -48,6 +66,36 @@ const MobileInToken = () => {
     }
   }, [outToken]);
 
+  const selectTokenClick = async () => {
+    if(isConnected && !network.isSupportedChain){
+      const inValue: SupportedChainProperties["chainId"] = Number(ethChainId); // 'from' 값을 숫자로 변환
+      const outValue: SupportedChainProperties["chainId"] = Number(ethChainId); // 'to' 값을 숫자로 변환
+      
+      const selectedInNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === inValue;
+      })[0];
+
+      const selectedOutNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === outValue;
+      })[0];
+
+      await switchNetworkAsync?.(inValue)
+      
+      // mode에 따라 다르게 한다.
+      setNetworkStatusValue({
+        inNetwork: selectedInNetwork,
+        outNetwork: selectedOutNetwork,
+      })
+
+      setSelectedInToken(null);
+      setSelectedOutToken(null);
+      return
+
+    }
+    swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })
+    setMobileTokenOpen(true)  
+  }
+
   return (
     <Flex flexDir={"column"} w={"148px"} rowGap={"28px"}>
       <Box
@@ -55,10 +103,8 @@ const MobileInToken = () => {
         h={"184px"}
         cursor={"pointer"}
         onClick={() => {
-          swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })
-          setMobileTokenOpen(true)  
-        }
-        }
+          selectTokenClick()
+        }}
       >
         {outToken?.tokenName ? (
           <>
