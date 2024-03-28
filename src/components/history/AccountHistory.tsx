@@ -93,7 +93,6 @@ export default function AccountHistory() {
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}
-        pointerEvents={"auto"}
         onClick={() => mobileView ? setIsOpen(false) : ""}
       />
 
