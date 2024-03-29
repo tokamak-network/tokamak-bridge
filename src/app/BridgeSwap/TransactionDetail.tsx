@@ -31,6 +31,7 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useIsTon from "@/hooks/token/useIsTon";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -262,6 +263,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const { title, content, gasFee, slippage } = props;
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
+  const { mobileView } = useMediaView();
   const { layer } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
   
@@ -273,7 +275,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
         h={"16px"}
       >
         <Flex columnGap={"4px"}>
-          <Text fontWeight={300}>{title}</Text>
+          <Text fontWeight={300} color={mobileView ? "#A0A3AD" : "inherit"}>{title}</Text>
           {slippage && (
             <Text fontWeight={300} color={"#A0A3AD"}>
               {`(${slippage})`}
@@ -342,6 +344,22 @@ const Content = (props: {
   const { isExpanded, isOnConfirm, isMobile } = props;
   const { mode } = useRecoilValue(actionMode);
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
+  const { mobileView } = useMediaView();
+
+
+  type SwapDetailMobileProp = {
+    // title?:
+    //   | "Expected output"
+    //   | "Minimum received"
+    //   | "Minimum received after slippage"
+    //   | "Price impact"
+    //   | "Estimated gas fees"
+    //   | "Estimated L2 execution fee (sans L1 fee)";
+    title?: string;
+    content?: string | undefined;
+    gasFee?: string;
+    slippage?: string;
+  };
 
   const {
     depositPropsData,
@@ -351,6 +369,17 @@ const Content = (props: {
     WrapUnwrapPropsData,
   } = useTransactionDetail();
   const { isOpen } = useConfirm();
+
+  let updatedSwapPropsData: SwapDetailMobileProp[] = [];
+  if(swapPropsData && swapPropsData[1]){
+    const updatedElement = {
+      ...swapPropsData[1],
+      title: "Min receive"
+    };
+    updatedSwapPropsData = [updatedElement];
+  }
+  
+
 
   const detailRow = useMemo(() => {
     switch (mode) {
@@ -372,9 +401,15 @@ const Content = (props: {
           ></WithdrawDetailRowNew>
         ));
       case "Swap":
+        if (mobileView && updatedSwapPropsData) {
+          return updatedSwapPropsData.map((data) => (
+            <SwapDetailRow key={data.title} {...data} />
+          ));
+        }   
         return swapPropsData?.map((data) => (
           <SwapDetailRow key={data.title} {...data} />
         ));
+
       case "Wrap":
         return WrapUnwrapPropsData?.map((data) => (
           <WrapDetailRow key={data.title} {...data} />
@@ -402,6 +437,7 @@ const Content = (props: {
     withdrawNewPropsData,
     WrapUnwrapPropsData,
   ]);
+
 
   if (isExpanded) {
     return (
@@ -456,13 +492,20 @@ const Title = (props: {
   const { isExpanded, setIsExpended } = props;
   const { mode, swapSection } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
-  const { inToken, outToken } = useInOutTokens();
+  const { inToken, outToken, tokensPairHasAmount } = useInOutTokens();
   const arrowControl = useAnimation();
   const { outPrice } = usePriceImpact();
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { gasCostUS } = useGasFee();
   const { isBalanceOver } = useInputBalanceCheck()
+  const { mobileView } = useMediaView();
+
+  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
+    tokenName: outToken?.tokenName as string,
+    amount: Number(outToken?.parsedAmount?.replaceAll(",", "")),
+  });
+
 
   useEffect(() => {
     if (isExpanded) {
@@ -484,7 +527,7 @@ const Title = (props: {
         w={"100%"}
         justifyContent={"space-between"}
         cursor={isOpen ? "" : "pointer"}
-        onClick={() => isOpen === false && setIsExpended(!isExpanded)}
+        onClick={() => !isOpen && !mobileView && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
       >
         <Flex alignItems={"center"} columnGap={"7.5px"}>
@@ -495,10 +538,10 @@ const Title = (props: {
           </Box>
           <Text>{convertNetworkName(outNetwork?.chainName)}</Text>
         </Flex>
-        {isOpen === false && (
+        {(mobileView || !isOpen) && (
           <Flex alignItems={"center"}>
-            {isOpen === isExpanded && <Image src={GasImg} alt={"gasStation"} />}
-            {isOpen === isExpanded && (
+            {(isOpen === isExpanded) || mobileView && <Image src={GasImg} alt={"gasStation"} />}
+            {(isOpen === isExpanded) || mobileView && (
               <Text
                 fontSize={{ base: 12, lg: 14 }}
                 fontWeight={400}
@@ -509,9 +552,11 @@ const Title = (props: {
                 ${gasCostUS}
               </Text>
             )}
-            <motion.div animate={arrowControl}>
-              <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-            </motion.div>
+            {!mobileView && 
+              <motion.div animate={arrowControl}>
+                {<Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />}
+              </motion.div>
+            }
           </Flex>
         )}
       </Flex>
@@ -526,7 +571,7 @@ const Title = (props: {
         alignItems={"center"}
         cursor={isOpen ? "" : "pointer"}
         onClick={() =>
-           isOpen === false && setIsExpended(!isExpanded)
+          !isOpen && !mobileView && setIsExpended(!isExpanded)
         }
         fontSize={{ base: 12, lg: 14 }}
       >
@@ -541,7 +586,10 @@ const Title = (props: {
             </Text>
             <Text mx={"9px"}>=</Text>
             <Text>
-              {isWrapUnwrap ? 1 : outPrice} {outToken?.tokenSymbol}
+              {isWrapUnwrap ? 1 : outPrice} {outToken?.tokenSymbol} 
+              {
+                mobileView && <Text as="span" color="#A0A3AD"> (${token1PriceWithAmount})</Text>
+              }
             </Text>
             {/* {isOpen === false && (
               <Text color={"#A0A3AD"} ml={"4px"}>
@@ -554,23 +602,25 @@ const Title = (props: {
           ? null
           : isOpen === false && (
               <Flex>
-                {isExpanded === false && gasCostUS &&  (
+                {!isExpanded || mobileView && gasCostUS &&  (
                   <Image src={GasImg} alt={"gasStation"} />
                 )}
-                {isOpen === isExpanded && gasCostUS && (
+                {!isExpanded || mobileView && gasCostUS && (
                   <Text
                     fontSize={{ base: 11, lg: 14 }}
                     fontWeight={400}
                     color={"#A0A3AD"}
                     ml={"6px"}
-                    mr={"13px"}
+                    sx={{ mr: mobileView ? 0 : '13px' }} 
                   >
                     ${gasCostUS}
                   </Text>
                 )}
-                <motion.div animate={arrowControl}>
-                  <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-                </motion.div>
+                {!mobileView && 
+                  <motion.div animate={arrowControl}>
+                    <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+                  </motion.div>
+                }
               </Flex>
             )}
       </Flex>
@@ -585,7 +635,14 @@ export default function TransactionDetail(props: {
 }) {
   const { isOnConfirm, isMobile } = props;
   const { isOpen } = useConfirm();
-  const [isExpanded, setIsExpended] = useState<boolean>(isOpen);
+  
+  // 해당 코드를 통해 모바일에서는 무조건 detail을 확장합니다.
+  const { mobileView } = useMediaView();
+  useEffect(() => {
+    setIsExpended(isOpen || mobileView);
+  }, [isOpen, mobileView]);
+
+  const [isExpanded, setIsExpended] = useState<boolean>(isOpen || mobileView);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
   const { isApproved } = useApprove();
 
@@ -594,6 +651,7 @@ export default function TransactionDetail(props: {
   const { isInputZero, isBalanceOver } = useInputBalanceCheck();
   const { isConnected } = useAccount();
   const { isTONatPair } = useIsTon();
+  
 
   const isWrapUnwrap =
     mode === "Wrap" ||
@@ -604,7 +662,7 @@ export default function TransactionDetail(props: {
   //layer1 ton 일때, detail 안나오게 수정
   if (
     !isReady ||
-    isWrapUnwrap ||
+    (isWrapUnwrap && !mobileView) ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
     isApproved === false ||
@@ -641,11 +699,15 @@ export default function TransactionDetail(props: {
       {!isMobile && (
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       )}
-      <Content
-        isExpanded={isExpanded}
-        isOnConfirm={isOnConfirm}
-        isMobile={isMobile}
-      ></Content>
+      {
+        (mode !== "Deposit" && mode !== "Withdraw" && !(isWrapUnwrap && mobileView)) && (
+          <Content
+          isExpanded={isExpanded}
+          isOnConfirm={isOnConfirm}
+          isMobile={isMobile}
+          ></Content>
+        )
+      }
     </Flex>
   );
 }
