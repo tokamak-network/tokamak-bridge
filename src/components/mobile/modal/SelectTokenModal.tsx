@@ -88,13 +88,10 @@ export default function SelectTokenModal() {
   const { isInTokenOpen, isOutTokenOpen, simpleCloseCheck } = useTokenModal();
   const { onCloseTokenModal, setSelectedToken, simpleCloseTokenModal } = useTokenModal();
   
-  // add토큰을 추가할 때, 리랜더링 도와주는 state
   const [hasTokenBeenAdded, setHasTokenBeenAdded] = useState(false);
 
-  // 좋아요 로컬스토리지
   const { likeList, toggleLike } = useAddLikeStorage();
 
-  // 모바일 재정렬 완료
   const { filteredTokenList } = useGetTokenList();
   
   const sortedAndLikedTokenList = useMemo(() => {
@@ -169,8 +166,8 @@ export default function SelectTokenModal() {
 
 
   const calculateChainValues = async (from: Number|undefined, to: Number|undefined) => {
-    const inValue: SupportedChainProperties["chainId"] = Number(from); // 'from' 값을 숫자로 변환
-    const outValue: SupportedChainProperties["chainId"] = Number(to); // 'to' 값을 숫자로 변환
+    const inValue: SupportedChainProperties["chainId"] = Number(from);
+    const outValue: SupportedChainProperties["chainId"] = Number(to);
     
     const selectedInNetwork = supportedChain.filter((supportedChain) => {
       return supportedChain.chainId === inValue;
@@ -210,11 +207,9 @@ export default function SelectTokenModal() {
       mode === "ETH-Unwrap" ||
       mode === "ETH-Wrap"
     ){
-      // 반전한다.
       await calculateChainValues(network.otherLayerChainInfo?.chainId, network.otherLayerChainInfo?.chainId);
 
     } else if(mode === "Withdraw" || mode === "Deposit"){        
-      //from to 바꿔준다.
       await calculateChainValues(networkStatusValue.outNetwork?.chainId, networkStatusValue.inNetwork?.chainId);
     }
 
@@ -398,7 +393,7 @@ export default function SelectTokenModal() {
                   <Flex
                     w={"32px"}
                     h={"32px"}
-                    borderRadius={"0px 6px 0px 6px"}
+                    borderRadius={"6px"}
                     justify={"center"}
                     align={"center"}
                     bg={"#17181D"}
@@ -416,7 +411,7 @@ export default function SelectTokenModal() {
                   <Flex
                     w={"32px"}
                     h={"32px"}
-                    borderRadius={"0px 6px 0px 6px"}
+                    borderRadius={"6px"}
                     justify={"center"}
                     align={"center"}
                     bg={"#17181D"}
