@@ -24,24 +24,22 @@ export default function Entry({ children }: { children: React.ReactNode }) {
 
   return (
     <ApolloProvider client={apolloClient}>
-      <Header />
+      <Flex flexDir={"column"} h={"100vh"}>
+        <Header />
 
-      {mode !== "Pool" ? (
-        <Center h={window.innerHeight}>{children}</Center>
-      ) : (
-        <Flex
-          h={"100vh"}
-          pt={{ base: "32px", lg: "140px" }}
-          justifyContent={"center"}
-        >
-          {children}
-        </Flex>
-      )}
+        {mode !== "Pool" ? (
+          <Center h={window.innerHeight}>{children}</Center>
+        ) : (
+          <Flex pt={{ base: "32px", lg: "140px" }} justifyContent={"center"}>
+            {children}
+          </Flex>
+        )}
 
-      <Footer />
-      <GlobalComponents />
-      <Drawers />
-      <Modals />
+        <Footer />
+        <GlobalComponents />
+        <Drawers />
+        <Modals />
+      </Flex>
     </ApolloProvider>
   );
 }
