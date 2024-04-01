@@ -3,7 +3,6 @@ import { computePoolAddress } from "@uniswap/v3-sdk";
 import { FeeAmount, Pool } from "@uniswap/v3-sdk";
 import JSBI from "jsbi";
 import { useEffect, useMemo, useState } from "react";
-
 import {
   L2_initCodeHashManualOverride,
   V3_CORE_FACTORY_ADDRESSES,
@@ -21,10 +20,7 @@ import { checkLayer } from "@/utils/network/checkLayer";
 
 export function usePoolData(poolAddress: string | undefined) {
   const [poolData, setPoolData] = useState<any | undefined>(undefined);
-  const { provider, L1Provider, L2Provider } = useProvier();
-  const { chainIdParam } = useGetPositionIdFromPath();
-  const { connectedChainId } = useConnectedNetwork();
-  const { subMode } = useGetMode();
+  const { provider } = useProvier();
 
   useEffect(() => {
     const fetchPoolData = async () => {

@@ -330,18 +330,18 @@ export default function NetworkDropdown(props: {
   const optionsList = supportedChain
     .filter((chainInfo) => {
       if (
-        // isConnectedToMainNetwork === true ||
-        // isConnectedToMainNetwork === undefined
-        true
+        isConnectedToMainNetwork === true ||
+        isConnectedToMainNetwork === undefined
       ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-      //   chainInfo.chainId
-      // );
+      return [
+        SupportedChainId["SEPOLIA"],
+        SupportedChainId["THANOS_SEPOLIA"],
+      ].includes(chainInfo.chainId);
     })
     .map((chainInfo) => {
       return {

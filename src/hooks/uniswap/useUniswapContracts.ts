@@ -1,5 +1,6 @@
 import {
   L1_UniswapContracts,
+  L1_SEPOLIA_UniswapContracts,
   L2_UniswapContracts,
   L2_TESTNET_UniswapContracts,
 } from "@/constant/contracts/uniswap";
@@ -13,29 +14,45 @@ export function useUniswapContracts() {
   const { provider } = useProvier();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
-  const UNISWAP_CONTRACT =
-    layer === "L1"
-      ? L1_UniswapContracts
-      : isConnectedToMainNetwork
-      ? L2_UniswapContracts
-      : L2_TESTNET_UniswapContracts;
+  let selectedUniswapContracts;
 
-  const QUOTER_CONTRACT = new ethers.Contract(
-    UNISWAP_CONTRACT.QUOTER_CONTRACT_ADDRESS,
-    Quoter.abi,
-    provider
-  );
+  switch (true) {
+    case layer === "L1" && isConnectedToMainNetwork:
+      selectedUniswapContracts = L1_UniswapContracts;
+      break;
+    case layer === "L1" && !isConnectedToMainNetwork:
+      selectedUniswapContracts = L1_SEPOLIA_UniswapContracts;
+      break;
+    case layer === "L2" && isConnectedToMainNetwork:
+      selectedUniswapContracts = L2_UniswapContracts;
+      break;
+    default:
+      selectedUniswapContracts = L2_TESTNET_UniswapContracts;
+      break;
+  }
 
-  const UNISWAP_CONTRACT_OTHER_LAYER =
-    layer === "L1" && isConnectedToMainNetwork
-      ? L2_UniswapContracts
-      : layer === "L1" && !isConnectedToMainNetwork
-      ? L2_TESTNET_UniswapContracts
-      : L1_UniswapContracts;
+  const UNISWAP_CONTRACT = selectedUniswapContracts;
+
+  let selectedContracts;
+
+  switch (true) {
+    case layer === "L1" && isConnectedToMainNetwork:
+      selectedContracts = L2_UniswapContracts;
+      break;
+    case layer === "L1" && !isConnectedToMainNetwork:
+      selectedContracts = L2_TESTNET_UniswapContracts;
+      break;
+    case layer === "L2" && isConnectedToMainNetwork:
+      selectedContracts = L1_UniswapContracts;
+      break;
+    default:
+      selectedContracts = L1_SEPOLIA_UniswapContracts;
+  }
+
+  const UNISWAP_CONTRACT_OTHER_LAYER = selectedContracts;
 
   return {
     UNISWAP_CONTRACT,
-    QUOTER_CONTRACT,
     UNISWAP_CONTRACT_OTHER_LAYER,
     L1_UniswapContracts,
     L2_UniswapContracts,

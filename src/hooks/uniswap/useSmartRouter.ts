@@ -9,6 +9,7 @@ import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import {
   GOERLI_CONTRACTS,
   MAINNET_CONTRACTS,
+  SEPOLIA_CONTRACTS,
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts";
@@ -61,7 +62,7 @@ export function useSmartRouter() {
         layer === "L1"
           ? isConnectedToMainNetwork
             ? MAINNET_CONTRACTS.WETH_ADDRESS
-            : GOERLI_CONTRACTS.WETH_ADDRESS
+            : SEPOLIA_CONTRACTS.WETH_ADDRESS
           : layer === "L2"
           ? isConnectedToMainNetwork
             ? TOKAMAK_CONTRACTS.WETH_ADDRESS

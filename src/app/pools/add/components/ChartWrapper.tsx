@@ -154,8 +154,6 @@ export default function ChartWrapper({
     [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit, poolState]
   );
 
-  console.log("notExistPool", notExistPool);
-
   interactive = interactive && Boolean(formattedData?.length);
 
   const brushDomain: [number, number] | undefined = useMemo(() => {

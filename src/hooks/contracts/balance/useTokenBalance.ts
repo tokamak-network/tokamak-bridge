@@ -12,16 +12,23 @@ export default function useTokenBalance(
   requireCall?: boolean,
   watch?: boolean
 ) {
-  const { chainName, layer } = useConnectedNetwork();
-  const isETH =
-    layer === "L1" &&
-    tokenInfo?.isNativeCurrency?.includes(SupportedChainId.MAINNET);
+  const { chainName } = useConnectedNetwork();
+
+  const isETH = tokenInfo?.isNativeCurrency?.includes(
+    SupportedChainId.MAINNET ||
+      SupportedChainId.TITAN ||
+      SupportedChainId.SEPOLIA
+  );
   const tokenAddress = chainName && tokenInfo?.address[chainName];
   const { address: accountAddress } = useAccount();
   const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
-    token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
+    token:
+      (isETH && chainName !== "THANOS_SEPOLIA") ||
+      (chainName === "THANOS_SEPOLIA" && tokenInfo?.tokenSymbol === "TON")
+        ? undefined
+        : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
     enabled: requireCall,
   });

@@ -4,6 +4,7 @@ import {
   GOERLI_CONTRACTS,
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
+  SEPOLIA_CONTRACTS,
 } from "@/constant/contracts";
 import { useUniswapContracts } from "@/hooks/uniswap/useUniswapContracts";
 
@@ -13,23 +14,23 @@ export default function useContract() {
 
   const L1BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
-    : GOERLI_CONTRACTS.L1Bridge;
+    : SEPOLIA_CONTRACTS.L1Bridge;
   const L2BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? TOKAMAK_CONTRACTS.L2Bridge
     : TOKAMAK_GOERLI_CONTRACTS.L2Bridge;
 
   const SWAPPER_V2_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.SwapperV2Proxy
-    : GOERLI_CONTRACTS.SwapperV2Proxy;
+    : SEPOLIA_CONTRACTS.SwapperV2Proxy;
 
   const L1MESSENGER_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Messenger
-    : GOERLI_CONTRACTS.L1Messenger;
+    : SEPOLIA_CONTRACTS.L1Messenger;
   return {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
     SWAPPER_V2_CONTRACT,
-    L1MESSENGER_CONTRACT
+    L1MESSENGER_CONTRACT,
   };
 }

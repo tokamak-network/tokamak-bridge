@@ -32,7 +32,11 @@ export default function AddMoreLiquidity() {
     },
     isNativeCurrency:
       token0.address === getWETHAddress(chainName)
-        ? [SupportedChainId.MAINNET, SupportedChainId.TITAN]
+        ? [
+            SupportedChainId.MAINNET,
+            SupportedChainId.TITAN,
+            SupportedChainId.SEPOLIA,
+          ]
         : null,
     decimals: token0.decimals,
   };
@@ -46,7 +50,11 @@ export default function AddMoreLiquidity() {
     },
     isNativeCurrency:
       token1.address === getWETHAddress(chainName)
-        ? [SupportedChainId.MAINNET, SupportedChainId.TITAN]
+        ? [
+            SupportedChainId.MAINNET,
+            SupportedChainId.TITAN,
+            SupportedChainId.SEPOLIA,
+          ]
         : null,
     decimals: token1.decimals,
   };

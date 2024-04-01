@@ -26,6 +26,7 @@ import { usePool } from "./usePool";
 import { PoolState } from "@/types/pool/pool";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
+  L1_SEPOLIA_UniswapContracts,
   L2_TESTNET_UniswapContracts,
   L2_UniswapContracts,
   L2_initCodeHashManualOverride,
@@ -33,7 +34,9 @@ import {
 
 const V3_CORE_FACTORY_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
   ...V3_CORE_FACTORY_ADDRESSES,
-  [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS
+  [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.SEPOLIA]:
+    L1_SEPOLIA_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
 };
 
 const PRICE_FIXED_DIGITS = 8;

@@ -16,6 +16,8 @@ export enum SupportedChainId {
   //   CELO_ALFAJORES = 44787,
   //   BNB = 56,
   TITAN = 55004,
+  SEPOLIA = 11155111,
+  THANOS_SEPOLIA = 111551118080,
 }
 
 export interface SupportedChainProperties {
@@ -36,6 +38,22 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L1",
+  },
+  {
+    chainId: SupportedChainId.SEPOLIA,
+    chainName: "SEPOLIA",
+    networkImage: NETWORK_ETHEREUM,
+    rpcAddress: "",
+    nativeToken: "ETH",
+    layer: "L1",
+  },
+  {
+    chainId: SupportedChainId.THANOS_SEPOLIA,
+    chainName: "THANOS_SEPOLIA",
+    networkImage: SYMBOL_TITAN,
+    rpcAddress: "",
+    nativeToken: "ETH",
+    layer: "L2",
   },
   {
     chainId: SupportedChainId.TITAN,

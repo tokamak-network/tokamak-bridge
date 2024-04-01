@@ -1,9 +1,9 @@
 import { SupportedChainId } from "../network/supportedNetwork";
 import {
   MAINNET_CONTRACTS,
-  GOERLI_CONTRACTS,
   TOKAMAK_CONTRACTS,
-  TOKAMAK_GOERLI_CONTRACTS,
+  SEPOLIA_CONTRACTS,
+  THANOS_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
 
 type SupportedMainTokenNames =
@@ -48,9 +48,15 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: "",
       TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
+      SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
     },
     decimals: 18,
-    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.TITAN],
+    isNativeCurrency: [
+      SupportedChainId.MAINNET,
+      SupportedChainId.TITAN,
+      SupportedChainId.THANOS_SEPOLIA,
+    ],
     availableForBirdge: true,
   },
   {
@@ -59,8 +65,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
-      // TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
-      // DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
+      SEPOLIA: SEPOLIA_CONTRACTS.WETH_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.WTON_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -71,6 +77,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TON_ADDRESS,
+      SEPOLIA: SEPOLIA_CONTRACTS.TON_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -86,6 +94,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
       TITAN: null,
+      SEPOLIA: SEPOLIA_CONTRACTS.WTON_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.WTON_ADDRESS,
     },
     decimals: 27,
     isNativeCurrency: null,
@@ -97,6 +107,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
+      SEPOLIA: SEPOLIA_CONTRACTS.TOS_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -108,6 +120,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
       TITAN: null,
+      SEPOLIA: SEPOLIA_CONTRACTS.DOC_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.DOC_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -118,6 +132,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
       TITAN: null,
+      SEPOLIA: SEPOLIA_CONTRACTS.AURA_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.AURA_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -128,6 +144,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
       TITAN: null,
+      SEPOLIA: SEPOLIA_CONTRACTS.LYDA_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.LYDA_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -138,6 +156,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.USDC_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.USDC_ADDRESS,
+      SEPOLIA: SEPOLIA_CONTRACTS.USDC_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.USDC_ADDRESS,
     },
     decimals: 6,
     isNativeCurrency: null,
@@ -149,6 +169,8 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: MAINNET_CONTRACTS.USDT_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.USDT_ADDRES,
+      SEPOLIA: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.USDT_ADDRESS,
     },
     decimals: 6,
     isNativeCurrency: null,

@@ -283,24 +283,11 @@ export function useGetPositionIds(): {
 //logic through contract calls
 export function useGetPositionById(positionId: number, chainId: number) {
   const { provider: _provider } = useProvier();
-  const {
-    L1_UniswapContracts,
-    L2_UniswapContracts,
-    L2_TESTNET_UniswapContracts,
-  } = useUniswapContracts();
+  const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { blockNumber } = useBlockNum();
   const { connectedChainId, layer, isConnectedToMainNetwork } =
     useConnectedNetwork();
   const pathName = usePathname();
-
-  const isL1 =
-    chainId === SupportedChainId["MAINNET"];
-  const isL2 = chainId === SupportedChainId["TITAN"];
-  const UNISWAP_CONTRACT = isL1
-    ? L1_UniswapContracts
-    : isL2
-    ? L2_UniswapContracts
-    : L2_TESTNET_UniswapContracts;
 
   const [positions, setPositions] = useRecoilState<
     PoolCardDetail[] | undefined

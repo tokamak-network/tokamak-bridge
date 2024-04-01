@@ -43,13 +43,11 @@ export function useAmountOut() {
   const { mode } = useGetMode();
 
   const { inToken, outToken } = useInOutTokens();
-  const { UNISWAP_CONTRACT, QUOTER_CONTRACT } = useUniswapContracts();
-  const { layer } = useConnectedNetwork();
+  const { UNISWAP_CONTRACT } = useUniswapContracts();
 
   const [amountOut, setAmountOut] = useState<string | null>(null);
   const [trade, setTrade] = useState<TokenTrade | null>(null);
   const { routingPath } = useSmartRouter();
-  // console.log(routingPath);
 
   useEffect(() => {
     const getAmountOut = async () => {
@@ -236,10 +234,14 @@ export function useAmountOut() {
       const weiAmount = ethers.BigNumber.from(wei);
       const hexAmount = ethers.utils.hexlify(weiAmount);
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET || SupportedChainId.TITAN
+        SupportedChainId.MAINNET ||
+          SupportedChainId.TITAN ||
+          SupportedChainId.SEPOLIA
       );
       const isOutETH = outToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET || SupportedChainId.TITAN
+        SupportedChainId.MAINNET ||
+          SupportedChainId.TITAN ||
+          SupportedChainId.SEPOLIA
       );
 
       if (isOutETH) {

@@ -27,6 +27,11 @@ const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   //   "https://api.thegraph.com/subgraphs/name/ianlapham/uniswap-v3-bsc",
   // [ChainId.AVALANCHE]:
   //   "https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax",
+  // "https://api.thegraph.com/subgraphs/name/liqwiz/uniswap-v3-goerli",
+  [SupportedChainId.TITAN]:
+    "https://thegraph.titan.tokamak.network/subgraphs/name/tokamak/titan-uniswap-subgraph",
+  [SupportedChainId.SEPOLIA]:
+    "https://api.studio.thegraph.com/query/60295/tokamak-uniswapv3/v0.0.3",
 };
 
 const httpLink = new HttpLink({ uri: CHAIN_SUBGRAPH_URL[ChainId.MAINNET] });
@@ -52,10 +57,16 @@ const apolloClient_Titan = new ApolloClient({
   link: concat(authMiddleware(SupportedChainId.TITAN), httpLink),
 });
 
+const apolloClient_Sepolia = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: concat(authMiddleware(SupportedChainId.SEPOLIA), httpLink),
+});
+
 export const subgraphApolloClients: Record<
   number,
   ApolloClient<NormalizedCacheObject>
 > = {
   [SupportedChainId.MAINNET]: apolloClient_ethereum,
   [SupportedChainId.TITAN]: apolloClient_Titan,
+  [SupportedChainId.SEPOLIA]: apolloClient_Sepolia,
 };
