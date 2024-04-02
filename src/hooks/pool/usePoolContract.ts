@@ -610,11 +610,13 @@ export function usePoolContract() {
                   ...txn,
                   gasLimit: calculateGasMargin(gasLimit),
                 });
-                if (tx?.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                if (tx?.hash)
+                  return setTxHashToRemoveLiquidity(tx.hash as Hash);
                 return;
               }
             } catch (e) {
               console.log(e);
+              setModalOpen("error");
             }
           }
         }

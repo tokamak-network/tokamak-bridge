@@ -55,20 +55,23 @@ export default function Confirmation() {
         bg={"transparent"}
         justifyContent={"center"}
         alignItems={"center"}
-        m={0}>
+        m={0}
+      >
         <Flex
           w={"254px"}
           h={"350px"}
           bgColor={"#1f2128"}
           borderRadius={"16px"}
           flexDir={"column"}
-          alignItems={"center"}>
+          alignItems={"center"}
+        >
           {!isClaimWaiting ? (
             <Flex
               w={"100%"}
               justifyContent={"flex-end"}
               pt={"14px"}
-              pr={"14px"}>
+              pr={"14px"}
+            >
               <CloseButton onClick={closeModal} />
             </Flex>
           ) : (
@@ -112,7 +115,8 @@ export default function Confirmation() {
             px={isClaimWaiting ? "" : isConfirming ? "32px" : ""}
             textAlign={"center"}
             fontSize={14}
-            fontWeight={500}>
+            fontWeight={500}
+          >
             {isClaimWaiting ? (
               "Please wait a few seconds for MetaMask popup to appear."
             ) : isConfirming ? (
@@ -122,7 +126,8 @@ export default function Confirmation() {
                 href={`${blockExplorer}/tx/${txHash}`}
                 isExternal={true}
                 textDecoration={"underline"}
-                w={"100%"}>
+                w={"100%"}
+              >
                 See your transaction history
               </Link>
             ) : isError ? (

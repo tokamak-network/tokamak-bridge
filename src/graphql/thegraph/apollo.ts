@@ -31,7 +31,7 @@ const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [SupportedChainId.TITAN]:
     "https://thegraph.titan.tokamak.network/subgraphs/name/tokamak/titan-uniswap-subgraph",
   [SupportedChainId.SEPOLIA]:
-    "https://api.studio.thegraph.com/query/60295/tokamak-uniswapv3/v0.0.3",
+    "https://api.studio.thegraph.com/query/49678/tokamak-uniswapv3/version/latest",
 };
 
 const httpLink = new HttpLink({ uri: CHAIN_SUBGRAPH_URL[ChainId.MAINNET] });
