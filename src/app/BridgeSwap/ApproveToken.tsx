@@ -1,6 +1,5 @@
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import useConnectedNetwork from "@/hooks/network";
 import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
@@ -10,6 +9,8 @@ import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
+import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+
 export default function ApproveToken() {
   const { inToken, outToken } = useInOutTokens();
   const { isApproved, callApprove } = useApprove();
@@ -19,6 +20,20 @@ export default function ApproveToken() {
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
+
+  const tokenBalance = useTokenBalance(inToken);
+
+  if (tokenBalance?.data.parsedBalance && inToken?.parsedAmount) {
+    console.log(tokenBalance?.data.parsedBalance)
+    console.log(inToken?.parsedAmount)
+  }
+
+  const isExceedMaximum = useMemo(() => {
+    if (tokenBalance?.data.parsedBalance && inToken?.parsedAmount) {
+      return Number(tokenBalance?.data.parsedBalance) >= Number(inToken?.parsedAmount)
+    }
+    return false;
+  }, [tokenBalance, inToken])
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -31,7 +46,8 @@ export default function ApproveToken() {
     isNotSupportForBridge ||
     !(inToken && outToken) ||
     (mode == "Swap" && isTONatPair) ||
-    !isConnected
+    !isConnected ||
+    !isExceedMaximum
   ) {
     return null;
   }
@@ -53,14 +69,14 @@ export default function ApproveToken() {
         {approveBtnDisabled && (
           <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
         )}
-        <Text fontSize={{base: 12, lg: 14}}>
+        <Text fontSize={{ base: 12, lg: 14 }}>
           Tokamak Bridge wants to use your {inToken?.tokenSymbol}
         </Text>
       </Flex>
       <Button
-        w={{ base:"64px", lg:"92px" }}
+        w={{ base: "64px", lg: "92px" }}
         h={"28px"}
-        fontSize={{base: 12, lg: 14}}
+        fontSize={{ base: 12, lg: 14 }}
         fontWeight={500}
         bgColor={"#007AFF"}
         color={"#fff"}
