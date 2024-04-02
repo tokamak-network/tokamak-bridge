@@ -23,7 +23,7 @@ export default function useTokenBalance(
     address: accountAddress,
     token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
-    enabled: requireCall,
+    // enabled: requireCall,
   });
 
   const tokenBalance = useMemo(() => {

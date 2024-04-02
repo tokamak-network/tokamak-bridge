@@ -173,7 +173,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
         {Number(txSetting.slippage) >= 10 &&
           Number(txSetting.slippage) < 50 && (
             <WarningText
-              label="Slippage below 10% may result in an unfavorable swap"
+              label="Slippage above 10% may result in an unfavorable swap"
               style={{ fontWeight: 400 }}
             />
           )}
