@@ -48,20 +48,20 @@ export const supportedChain: SupportedChainProperties[] = [
     layer: "L1",
   },
   {
-    chainId: SupportedChainId.THANOS_SEPOLIA,
-    chainName: "THANOS_SEPOLIA",
-    networkImage: SYMBOL_TITAN,
-    rpcAddress: "",
-    nativeToken: "ETH",
-    layer: "L2",
-  },
-  {
     chainId: SupportedChainId.TITAN,
     chainName: "TITAN",
     networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,
+    layer: "L2",
+  },
+  {
+    chainId: SupportedChainId.THANOS_SEPOLIA,
+    chainName: "THANOS_SEPOLIA",
+    networkImage: SYMBOL_TITAN,
+    rpcAddress: "",
+    nativeToken: "ETH",
     layer: "L2",
   },
 ];

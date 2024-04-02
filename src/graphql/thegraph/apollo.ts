@@ -69,4 +69,5 @@ export const subgraphApolloClients: Record<
   [SupportedChainId.MAINNET]: apolloClient_ethereum,
   [SupportedChainId.TITAN]: apolloClient_Titan,
   [SupportedChainId.SEPOLIA]: apolloClient_Sepolia,
+  [SupportedChainId.THANOS_SEPOLIA]: apolloClient_Sepolia,
 };
