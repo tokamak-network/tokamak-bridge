@@ -601,7 +601,6 @@ export default function TransactionDetail(props: {
 
   if (
     !isReady ||
-    // isWrapUnwrap ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
     isApproved === false ||

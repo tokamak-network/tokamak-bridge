@@ -11,7 +11,7 @@ import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 export default function ApproveToken() {
-  const { inToken } = useInOutTokens();
+  const { inToken, outToken } = useInOutTokens();
   const { isApproved, callApprove } = useApprove();
   const { isNotSupportForBridge } = useBridgeSupport();
   const { pendingTransactionToApprove } = useTransaction();
@@ -29,7 +29,7 @@ export default function ApproveToken() {
   if (
     isApproved ||
     isNotSupportForBridge ||
-    !inToken ||
+    !(inToken && outToken) ||
     (mode == "Swap" && isTONatPair) ||
     !isConnected
   ) {
