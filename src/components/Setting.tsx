@@ -43,12 +43,12 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
       ) {
         return;
       }
-      // if (Number(value) > 20) {
-      //   return setTxSetting({
-      //     ...txSetting,
-      //     [id]: "20",
-      //   });
-      // }
+      if (Number(value) > 50) {
+        return setTxSetting({
+          ...txSetting,
+          [id]: "50",
+        });
+      }
       return setTxSetting({
         ...txSetting,
         [id]: value,
@@ -179,7 +179,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
           )}
         {Number(txSetting.slippage) >= 50 && (
           <RedWarningText
-            label="Slippage above 50% may result in an unfavorable swap"
+            label="Slippage tolerance can not exceed 50%"
             style={{ fontWeight: 400 }}
           />
         )}
