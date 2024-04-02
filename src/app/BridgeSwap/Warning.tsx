@@ -44,21 +44,21 @@ export default function Warning() {
   //   );
   // }
 
-  if (mode === "Swap" && isTONatPair) {
+  if (mode === "Swap" && inToken && outToken && isTONatPair) {
     if (
       outToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS ||
       outToken?.tokenAddress === GOERLI_CONTRACTS.TON_ADDRESS
     ) {
-      return (
-        <WarningText
-          label={"TON is not supported to swap on L1. Please swap to WTON."}
-        />
-      );
+        return (
+          <WarningText
+            label={"TON is not supported to swap on L1. Please swap to WTON."}
+          />
+        );
     }
     return (
       <WarningText
         label={
-          "TON is not supported to swap on L1. Please wrap to WTON and swap."
+          "TON is not supported to swap on L1. Please wrap to WTON."
         }
       />
     );
@@ -66,8 +66,7 @@ export default function Warning() {
 
   if (isNotSupportForBridge) {
     if (
-      inToken?.tokenAddress === MAINNET_CONTRACTS.WETH_ADDRESS ||
-      inToken?.tokenAddress === GOERLI_CONTRACTS.WETH_ADDRESS
+      inToken?.tokenAddress === MAINNET_CONTRACTS.WETH_ADDRESS
     )
       return (
         <WarningText
@@ -77,8 +76,7 @@ export default function Warning() {
         />
       );
     if (
-      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS ||
-      inToken?.tokenAddress === GOERLI_CONTRACTS.WTON_ADDRESS
+      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS
     )
       return (
         <WarningText

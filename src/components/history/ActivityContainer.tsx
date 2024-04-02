@@ -19,7 +19,7 @@ import useGetTransaction from "@/hooks/user/useGetTransaction";
 import { useRef } from "react";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
-type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+type ChainName = "MAINNET" | "TITAN" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -134,12 +134,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   ]);
 
   const getLayerFiltered = useMemo(() => {
-    const depSelected =
-      network.chainId === SupportedChainId["MAINNET"] ||
-      network.chainId === SupportedChainId["GOERLI"];
-    const withSelected =
-      network.chainId === SupportedChainId["DARIUS"] ||
-      network.chainId === SupportedChainId["TITAN"];
+    const depSelected = network.chainId === SupportedChainId["MAINNET"];
+    const withSelected = network.chainId === SupportedChainId["TITAN"];
 
     const allSelected = network.chainId === undefined;
     if (depSelected === true) {
@@ -245,11 +241,9 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      h={"100%"}
+      h={"calc(100% - 50px)"}
       bg={"transparent"}
       w="100%"
-
-      // height={'110%'}
     >
       <Flex
         ref={ref}

@@ -14,7 +14,7 @@ import { useRecoilState } from "recoil";
 import { useAccount, useSwitchNetwork } from "wagmi";
 
 import { actionMethodStatus } from "@/recoil/modal/atom";
-import { networkStatus, welcomeMsgStatus } from "@/recoil/bridgeSwap/atom";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import {
@@ -26,6 +26,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import Footer from "@/components/footer";
 
 import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
 import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
@@ -34,6 +35,8 @@ import Arrow from "@/assets/icons/arrow.svg";
 import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/700.css";
 import "@fontsource/poppins/400.css";
+
+import useMobileChainIds from "@/hooks/mobile/useMobileChainIds"
 
 interface MethodItemProps {
   from?: Number;
@@ -62,6 +65,7 @@ const ActionMethodItem = ({
     try {
       const value: SupportedChainProperties["chainId"] = Number(from);
       const outValue: SupportedChainProperties["chainId"] = Number(to);
+
       const selectedInNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === value;
       })[0];
@@ -70,7 +74,7 @@ const ActionMethodItem = ({
         return supportedChain.chainId === outValue;
       })[0];
 
-      if (selectedInNetwork.chainId !== connectedChainId) {
+      if (selectedInNetwork.chainId !== connectedChainId && !(title === "Pools")) {
         return isConnected
           ? (await switchNetworkAsync?.(selectedInNetwork.chainId),
             setNetwork({
@@ -82,17 +86,18 @@ const ActionMethodItem = ({
               inNetwork: selectedInNetwork,
               outNetwork: selectedOutNetwork,
             });
-      } else if (selectedInNetwork.chainId === connectedChainId) {
-        setNetwork({
+      } else if (selectedInNetwork.chainId === connectedChainId && !(title === "Pools")) {
+        return setNetwork({
           inNetwork: selectedInNetwork,
           outNetwork: selectedOutNetwork,
         });
       }
     } finally {
-      if (title === "Pool") {
+      if (title === "Pools") {
         router.push("pools");
       }
       handleClose();
+      // 메뉴 다시 선택 시, 둘다 초기화
       setSelectedInToken(null);
       setSelectedOutToken(null);
       if (isError) {
@@ -128,7 +133,7 @@ const ActionMethodItem = ({
       {from && to && (
         <Flex columnGap={"6px"} align={"center"} mb={"8px"}>
           <Image width={20} height={20} alt="from_network" src={fromIcon} />
-          {title !== "Pool" && <Image width={16} alt="arrow" src={Arrow} />}
+          {title !== "Pools" && <Image width={16} alt="arrow" src={Arrow} />}
           <Image width={20} height={20} alt="to_network" src={toIcon} />
         </Flex>
       )}
@@ -143,7 +148,6 @@ const ActionOptionModal = () => {
   const [methodStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
   const connectedNetwork = useConnectedNetwork();
-  const [welcomeMsg, setWelcomeMsgStatus] = useRecoilState(welcomeMsgStatus);
   const { isConnected } = useAccount();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const [, setNetwork] = useRecoilState(networkStatus);
@@ -151,28 +155,13 @@ const ActionOptionModal = () => {
 
   const { mobileView } = useMediaView();
 
-  const ethChainId = useMemo(
-    () =>
-      connectedNetwork.connectedChainId === 1 ||
-      connectedNetwork.connectedChainId === 55004
-        ? 1
-        : 5,
-    [connectedNetwork]
-  );
 
-  const titanChainId = useMemo(
-    () =>
-      connectedNetwork.connectedChainId === 1 ||
-      connectedNetwork.connectedChainId === 55004
-        ? 55004
-        : 5050,
-    [connectedNetwork]
-  );
-  const isWelcomeMsg = welcomeMsg && mobileView;
+  ////////////////////////
+  const { ethChainId, titanChainId } = useMobileChainIds(connectedNetwork);
+/////////////////////////
 
   const closeModal = useCallback(() => {
     setActionMethodStatus(false);
-    setWelcomeMsgStatus(false);
   }, []);
 
   // useEffect(() => {
@@ -221,16 +210,18 @@ const ActionOptionModal = () => {
   return (
     <Modal
       size={"xl"}
-      isOpen={methodStatus && mobileView}
+      isOpen={methodStatus && mobileView && !(mode == "Pool")}
       onClose={() => closeModal()}
+      closeOnOverlayClick={false} 
     >
-      <ModalOverlay bg={isWelcomeMsg ? "#0F0F12" : "#0F0F12F0"} />
+      <ModalOverlay bg={"#0F0F12"} />
       <ModalContent
         bg={"#1F2128"}
         mt={"auto"}
         mb={0}
         p={"16px 12px"}
         roundedTop={"2xl"}
+        pos={"relative"}
       >
         <Box pos={"relative"}>
           <Box w={"100%"} pos={"absolute"} top={"-45px"}>
@@ -239,26 +230,24 @@ const ActionOptionModal = () => {
             </Text>
           </Box>
 
-          {isWelcomeMsg && (
-            <Box pos={"fixed"} w={"100%"} top={"100px"} left={0}>
-              <Text
-                fontWeight={300}
-                fontSize={24}
-                lineHeight={"36px"}
-                textAlign={"center"}
-              >
-                Welcome to
-              </Text>
-              <Text
-                fontWeight={700}
-                fontSize={32}
-                letterSpacing={"2px"}
-                textAlign={"center"}
-              >
-                TOKAMAK BRIDGE
-              </Text>
-            </Box>
-          )}
+          <Box pos={"fixed"} w={"100%"} top={"147px"} left={0}>
+            <Text
+              fontWeight={300}
+              fontSize={30}
+              lineHeight={"36px"}
+              textAlign={"center"}
+            >
+              Welcome to
+            </Text>
+            <Text
+              fontWeight={700}
+              fontSize={34}
+              letterSpacing={"2px"}
+              textAlign={"center"}
+            >
+              TOKAMAK BRIDGE
+            </Text>
+          </Box>
 
           <Text fontWeight={500} fontSize={16}>
             Bridge
@@ -299,10 +288,13 @@ const ActionOptionModal = () => {
             <ActionMethodItem
               from={ethChainId}
               to={titanChainId}
-              title="Pool"
+              title="Pools"
               handleClose={closeModal}
             />
           </Flex>
+        </Box>
+        <Box>
+          <Footer />
         </Box>
       </ModalContent>
     </Modal>

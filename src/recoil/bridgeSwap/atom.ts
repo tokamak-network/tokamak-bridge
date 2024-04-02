@@ -69,12 +69,8 @@ export const bannerStatus = atom<Banner>({
 export const relayBannerStatus = atom<Banner>({
   key: "relayBannerStatus",
   default: "Hidden",
-}); //for relay banner or any other banner that needs to show 
+}); //for relay banner or any other banner that needs to show
 
-export const welcomeMsgStatus = atom<Boolean>({
-  key: "welcomeMsgStatus",
-  default: true
-})
 
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
@@ -99,31 +95,27 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     const status = get(bannerStatus);
     const dayINeed = 4; // Thursday (ISO weekday 4)
     const network = get(networkStatus);
-    const isTestnet =
-      network.inNetwork?.chainId === SupportedChainId["GOERLI"] ||
-      network.inNetwork?.chainId === SupportedChainId["DARIUS"] ||
-      network.outNetwork?.chainId === SupportedChainId["GOERLI"] ||
-      network.outNetwork?.chainId === SupportedChainId["DARIUS"];
+    const isTestnet = false;
     const today = new Date();
     const currentISODay = getISODay(today);
     const nowTime = getTime(today);
     // Calculate the start of the week (Monday) and add the desired ISO weekday to get this Wednesday
     const weekStart = startOfWeek(today);
-    // const desiredDateThisWeek = addDays(weekStart, isTestnet? 4:5);  //to show the banner
-    const desiredDateThisWeek = addWeeks(addDays(weekStart, isTestnet? 4:5), 1); // to hide the banner
+    const desiredDateThisWeek = isTestnet ? 1706774400000 : 1706832000000;
+    // const desiredDateThisWeek = addDays(weekStart, isTestnet ? 5 : 6); //to show the banner
+    // const desiredDateThisWeek = addWeeks(addDays(weekStart, isTestnet? 4:5), 1); // to hide the banner
     const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const previewTimeStartThisWeek =
-      isTestnet === true
-        ? add(desiredDateThisWeek, {
-            hours: 16,
-            minutes: 0,
-            seconds: 0,
-          })
-        : add(desiredDateThisWeek, {
-            hours: 8,
-            minutes: 0,
-            seconds: 0,
-          });
+    const previewTimeStartThisWeek = isTestnet
+      ? add(desiredDateThisWeek, {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        })
+      : add(desiredDateThisWeek, {
+          hours: 0,
+          minutes: 0,
+          seconds: 0,
+        });
 
     const uTCTime = zonedTimeToUtc(previewTimeStartThisWeek, "Asia/Seoul");
     const zoneTime = utcToZonedTime(uTCTime, currentTimeZone);

@@ -8,7 +8,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
 import useCallDeposit from "../bridge/actions/useCallDeposit";
 import useCallWithdraw from "../bridge/actions/useCallWithdraw";
-import { useSwapTokens } from "../swap/useSwapTokens";
+import { useAmountOut } from "../swap/useSwapTokens";
 import useWrap from "../swap/useTonWrap";
 import { predeploys } from "@eth-optimism/contracts";
 import { transactionModalStatus } from "@/recoil/modal/atom";
@@ -30,7 +30,7 @@ export default function useCallBridgeSwapAction() {
   const { write: _withdraw, isError: _withdrawError } =
     useCallWithdraw("withdraw");
 
-  const { callTokenSwap, isError: _swapError } = useSwapTokens();
+  const { callTokenSwap, isError: _swapError } = useAmountOut();
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -43,7 +43,7 @@ export default function useCallBridgeSwapAction() {
     }
     if (inToken && inToken.amountBN && inNetwork && outNetwork) {
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET || SupportedChainId.GOERLI
+        SupportedChainId.MAINNET
       );
       const parsedAmount = inToken.amountBN;
       setIsDrawerOpen(false);

@@ -16,12 +16,16 @@ import OutToken from "./components/OutToken";
 import SelectNetwork from "./components/SelectNetwork";
 import MobileInToken from "./components/Mobile/MobileInToken";
 import MobileOutToken from "./components/Mobile/MobileOutToken";
+import MobileTokenBox from "@/components/mobile/input/MobileTokenBox"
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
 import { useCallback } from "react";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function Swap() {
+  const { inToken, outToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
@@ -34,20 +38,37 @@ export default function Swap() {
     selectedOutTokenStatus
   );
 
+  const network = useConnectedNetwork();
+
   const invertTokenPair = useCallback(() => {
     if (inTokenRecoilValue && outTokenRecoilValue) {
-      setInTokenRecoilValue(outTokenRecoilValue);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
+      const tempValue = inTokenRecoilValue;
+      
+      if(
+        mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Unwrap" ||
+        mode === "ETH-Wrap"
+      ){
+        //해당 조건일 때는 amount 적용이 안된다.
+        //어디에 엮어 있는지 찾는중.. 임시
+        setInTokenRecoilValue({
+          ...outTokenRecoilValue,
+          amountBN: tempValue.amountBN,
+          parsedAmount: tempValue.parsedAmount
+        });  
+      } else {
+        setInTokenRecoilValue(outTokenRecoilValue);
+      }
+      
+      setOutTokenRecoilValue(tempValue);
 
-    if (inTokenRecoilValue && !outTokenRecoilValue) {
+    } else if (inTokenRecoilValue && !outTokenRecoilValue) {
+      setOutTokenRecoilValue(inTokenRecoilValue);
       setInTokenRecoilValue(null);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
-
-    if (!inTokenRecoilValue && outTokenRecoilValue) {
+    } else if (!inTokenRecoilValue && outTokenRecoilValue) {
+      setInTokenRecoilValue(outTokenRecoilValue);
       setOutTokenRecoilValue(null);
-      return setInTokenRecoilValue(outTokenRecoilValue);
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
@@ -61,20 +82,28 @@ export default function Swap() {
   return (
     <>
       {pcView ? (
-        <Flex w={"100%"} justifyContent={"space-between"} columnGap={switchable?'6px':"5px"}>
+        <Flex
+          w={"100%"}
+          justifyContent={"space-between"}
+          columnGap={switchable ? "6px" : "5px"}
+        >
           <InToken />
           <Flex
-            onClick={invertTokenPair}
-            cursor={
-              mode === "Swap" || mode === "Unwrap" || mode === "Wrap"
-                ? "pointer"
-                : ""
-            }
             justifyContent={"center"}
             alignItems={"center"}
             pt={mode === null ? "65px" : "80px"}
           >
             <Flex
+              onClick={invertTokenPair}
+              cursor={
+                mode === "Swap" ||
+                mode === "Unwrap" ||
+                mode === "Wrap" ||
+                mode === "ETH-Unwrap" ||
+                mode === "ETH-Wrap"
+                  ? "pointer"
+                  : ""
+              }
               bg={switchable ? "#1F2128" : "transparent"}
               w={"36px"}
               h={"36px"}
@@ -112,7 +141,13 @@ export default function Swap() {
             )}
           </Flex>
 
-          <Flex w={"100%"} mx={"auto"} columnGap={"8px"} justify={"center"} align={"center"}>
+          <Flex
+            w={"100%"}
+            mx={"auto"}
+            columnGap={"8px"}
+            justify={"center"}
+            align={"center"}
+          >
             <MobileInToken />
 
             <Flex
@@ -130,6 +165,18 @@ export default function Swap() {
 
             <MobileOutToken />
           </Flex>
+
+          <Flex direction="row" justify="center" w="full">
+            {
+              (network.isSupportedChain) && (
+                <>
+                  <MobileTokenBox inToken={true} visibilityType={false}/>
+                  <MobileTokenBox inToken={false} visibilityType={false}/>
+                </>
+              )
+            
+            }
+            </Flex>
         </Box>
       )}
     </>

@@ -15,7 +15,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import "@fontsource/quicksand/500.css";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import GradientSpinner from "../ui/gradientSpinner";
@@ -175,7 +175,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(selectedOutTokenStatus);
-  const { amountOut } = useSwapTokens();
+  const { amountOut } = useAmountOut();
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
     tokenName: inTokenInfo?.tokenName as string,
@@ -214,10 +214,17 @@ export default function TokenCard(props: TokenCardProps) {
           parsedAmount: null,
         });
       }
+      
+      
+      // 데시말 초과 버그 수정
+      const roundedValue = Number(value).toFixed(outTokenInfo.decimals);
       const parsedAmount = ethers.utils.parseUnits(
-        value,
+        roundedValue,
         outTokenInfo.decimals
       );
+      ////////////////////
+
+
       return setOutTokenInfo({
         ...outTokenInfo,
         amountBN: parsedAmount.toBigInt(),
@@ -251,7 +258,7 @@ export default function TokenCard(props: TokenCardProps) {
       {pcView && (
         <Flex justifyContent={"space-between"} w={"100%"}>
           <TokenTitle
-            tokenName={thisTokenIsETH ? "ETH" : tokenInfo?.tokenName ?? "TOKEN"}
+            tokenName={thisTokenIsETH ? "Ethereum" : tokenInfo?.tokenSymbol === "WETH" ? "Wrapped Ethereum" : tokenInfo?.tokenName ?? "TOKEN"}
             isName={true}
             style={{
               fontSize:
@@ -323,13 +330,23 @@ export default function TokenCard(props: TokenCardProps) {
           </Text>
         </Flex>
       ) : forBridge ? (
-        <Flex flexDir={"column"} rowGap={"13px"}>
-          <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-            <Text fontWeight={500}>Balance: </Text>
-            <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
+        pcView ? (
+          <Flex flexDir={"column"} rowGap={"13px"}>
+            <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
+              <Text fontWeight={500}>Balance: </Text>
+              <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
+            </Flex>
           </Flex>
+        ) : (
+          <Flex flexDir={"column"} rowGap={"7px"}>
+          <Flex fontSize={12} h={"8px"} color={"#222222"}>
+            <Text fontWeight={500}>Balance </Text>
+          </Flex>
+          <Text fontWeight={700} fontSize={18} color={"#222222"}>
+            {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 12)}
+          </Text>
         </Flex>
-      ) : (
+        )) : (
         <Flex
           flexDir={"column"}
           mt={"auto"}
@@ -338,28 +355,29 @@ export default function TokenCard(props: TokenCardProps) {
         >
           {!isPrice && (
             <>
-              <Text
-                fontWeight={400}
-                fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
-                h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
-              >
-                balance:{" "}
-              </Text>
-
               {pcView ? (
-                <Text
-                  fontWeight={700}
-                  fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
-                  h={
-                    type === "small"
-                      ? "33px"
-                      : type === "medium"
-                        ? "40px"
-                        : "40px"
-                  }
-                >
-                  {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
-                </Text>
+                <>
+                  <Text
+                      fontWeight={400}
+                      fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
+                      h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
+                    >
+                      balance:{" "}
+                    </Text>
+                  <Text
+                    fontWeight={700}
+                    fontSize={type === "small" ? 24 : type === "medium" ? 30 : 36}
+                    h={
+                      type === "small"
+                        ? "33px"
+                        : type === "medium"
+                          ? "40px"
+                          : "40px"
+                    }
+                  >
+                    {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                  </Text>
+                </>
               ) : (
                 <Text fontWeight={700} fontSize={18}>
                   {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}

@@ -2,7 +2,7 @@ import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   selectedInTokenStatus,
@@ -36,6 +36,8 @@ import {
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
 
+import useAmountModal from "@/hooks/modal/useAmountModal"
+
 export default function TokenInput(props: {
   inToken: boolean;
   defaultValue?: any;
@@ -61,7 +63,7 @@ export default function TokenInput(props: {
     selectedOutTokenStatus
   );
 
-  const { amountOut } = useSwapTokens();
+  const { amountOut } = useAmountOut();
   const { mode } = useGetMode();
   const {
     inToken: inTokenFromHook,
@@ -93,6 +95,7 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
+  const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -107,7 +110,7 @@ export default function TokenInput(props: {
     // }
 
     //for wrap/unwrap switch
-    if (inToken && switchable && !isTokenSearch) {
+    if (inToken && switchable) {
       if (selectedInToken && selectedOutToken) {
         if (value === "") {
           setSelectedOutToken({
@@ -121,7 +124,6 @@ export default function TokenInput(props: {
             parsedAmount: null,
           });
         }
-
         const parsedAmountOut = ethers.utils.parseUnits(
           value,
           selectedOutToken?.decimals
@@ -214,6 +216,7 @@ export default function TokenInput(props: {
         (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
       ) {
         onCloseTokenModal();
+        onOpenOutAmount();
       }
       // customRef?.current?.blur();
     }
@@ -634,7 +637,7 @@ export default function TokenInput(props: {
             <Warning />
           )
         ) : (
-          <Text fontSize={12} fontWeight={500} color={"#ffffff"} opacity={0.8}>
+          <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
             {`$${marketPrice}`}
           </Text>
         )}

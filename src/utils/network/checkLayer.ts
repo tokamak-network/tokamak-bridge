@@ -2,13 +2,11 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export function checkLayer(chainId: number | undefined) {
   if (
-    chainId === SupportedChainId["MAINNET"] ||
-    chainId === SupportedChainId["GOERLI"]
+    chainId === SupportedChainId["MAINNET"]
   )
     return "L1";
   if (
-    chainId === SupportedChainId["TITAN"] ||
-    chainId === SupportedChainId["DARIUS"]
+    chainId === SupportedChainId["TITAN"]
   )
     return "L2";
   return undefined;

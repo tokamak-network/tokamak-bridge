@@ -5,7 +5,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "../token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
 import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
-import { useSwapTokens } from "../swap/useSwapTokens";
+import { useAmountOut } from "../swap/useSwapTokens";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
 import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
@@ -15,7 +15,7 @@ import { useGetMarketPrice } from "../price/useGetMarketPrice";
 
 export type DepositDetailProp = {
   title: string;
-  content: string;
+  content?: string;
   tooltip?: boolean;
   tooltipLabel?: string;
   dollorPrice?: string;
@@ -92,24 +92,24 @@ export function useTransactionDetail() {
   )} ${inToken?.tokenSymbol}`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
+    console.log(mode)
+    console.log(inToken)
+    console.log(totalGasCost)
     if (mode === "Deposit" && inToken && totalGasCost) {
       return isOpen && mobileView
         ? [
             {
-              title: "Estimated gas fees",
-              content: totalGasFee,
+              title: "Time to Deposit",
+              content: "~5 minutes",
+            },
+            {
+              title: "Network fee",
               gasFee: {
                 l1Gas: totalGasFee,
                 l2Gas: "0 ETH",
                 l1GasUS: gasCostUS ?? "",
                 l2GasUS: "0",
-              },
-              tooltip: true,
-              tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
-            },
-            {
-              title: "Time to Deposit",
-              content: "~5 minutes",
+              }
             },
           ]
         : [
@@ -196,7 +196,7 @@ export function useTransactionDetail() {
     return null;
   }, [mode, inToken, totalGasFee, inputAmount]);
 
-  const { amountOut, minimumReceived } = useSwapTokens();
+  const { amountOut } = useAmountOut();
   const { priceImpact } = usePriceImpact();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
   const { layer } = useConnectedNetwork();
@@ -223,11 +223,16 @@ export function useTransactionDetail() {
               content: "",
             },
             {
-              title: "Minimum after slippage",
-              content: `${commafy(minimumReceived, 4)} ${
+              title: "Min receive",
+              content: `${commafy(amountOut, 4)} ${
                 outToken?.tokenSymbol
               }`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
+            },
+            {
+              title: "Network fee",
+              content: isOpen ? "" : `${totalGasFee} `,
+              gasFee: `${gasCostUS ? `$${gasCostUS}` : "NA"}`,
             },
           ]
         : [
@@ -239,7 +244,7 @@ export function useTransactionDetail() {
               title: isOpen
                 ? "Minimum received"
                 : "Minimum received after slippage",
-              content: `${commafy(minimumReceived, 4)} ${
+              content: `${commafy(amountOut, 4)} ${
                 outToken?.tokenSymbol
               }`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
@@ -247,7 +252,7 @@ export function useTransactionDetail() {
             {
               title: "Estimated gas fees",
               content: isOpen ? "" : `${totalGasFee} `,
-              gasFee: `$${gasCostUS}`,
+              gasFee: `${gasCostUS ? `$${gasCostUS}` : "NA"}`,
             },
           ];
     }

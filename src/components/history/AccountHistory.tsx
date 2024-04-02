@@ -19,7 +19,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 
-type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+type ChainName = "MAINNET" | "TITAN" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -93,8 +93,7 @@ export default function AccountHistory() {
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}
-        pointerEvents={"auto"}
-        onClick={() => setIsOpen(false)}
+        onClick={() => mobileView ? setIsOpen(false) : ""}
       />
 
       {mobileView && (
@@ -109,7 +108,6 @@ export default function AccountHistory() {
           <Account />
         </Box>
       )}
-
       <DrawerContent
         px="12px"
         pb="0px"

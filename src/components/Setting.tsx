@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  Box
 } from "@chakra-ui/react";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -16,18 +17,22 @@ import {
 import { RedWarningText, WarningText } from "./ui/WarningText";
 import SettingIcon from "assets/icons/setting.svg";
 import { swapSettingStatus } from "@/recoil/modal/atom";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import CloseButton from "./button/CloseButton";
 
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
   isModal?: boolean;
+  settingRef?: any;
 }
 
-export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
+export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
   const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
   const slipRef = useRef(null);
   const deadlineRef = useRef(null);
+  const { mobileView } = useMediaView();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = e.target.id;
@@ -97,7 +102,7 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
   useEffect(() => {
     const handleClickOutside = (event: any) => {
       //@ts-ignore
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !settingRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
       }
     };
@@ -124,6 +129,14 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
       <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
         Transaction Settings
       </Text>
+      {
+        mobileView &&
+        /** 여기에 close를 추가한다. */
+        <Box pos={"absolute"} right={4} top={"15px"}>
+          <CloseButton onClick={() => {setSettingStatus(false);}} />
+        </Box>
+      }
+
       <Flex
         p={"16px"}
         bgColor={"#0F0F12"}
@@ -172,7 +185,7 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
         {Number(txSetting.slippage) >= 10 &&
           Number(txSetting.slippage) < 50 && (
             <WarningText
-              label="Slippage below 10% may result in an unfavorable swap"
+              label="Slippage above 10% may result in an unfavorable swap"
               style={{ fontWeight: 400 }}
             />
           )}
@@ -237,6 +250,7 @@ export const SettingContainer = ({ setIsVisible, isModal }: SettingProps) => {
 
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const settingRef = useRef(null);
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -244,9 +258,10 @@ export default function Setting() {
         src={SettingIcon}
         alt={"SettingIcon"}
         style={{ cursor: "pointer" }}
-        onClick={() => setIsVisible(!isVisible)}
+        ref={settingRef}
+        onClick={() => setIsVisible(prev => !prev)}
       />
-      {isVisible && <SettingContainer setIsVisible={setIsVisible} />}
+      {isVisible && <SettingContainer settingRef={settingRef} setIsVisible={setIsVisible} />}
     </Flex>
   );
 }

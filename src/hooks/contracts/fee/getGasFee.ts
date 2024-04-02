@@ -42,20 +42,13 @@ export function useGasFee() {
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
-  const { estimatedGasUsage } = useSwapTokens();
-  const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
 
   const swapGasUseEstimate = useMemo(() => {
-    if (estimatedGasUsage) {
-      return estimatedGasUsage;
+    if (routingPath && tokenMarketPrice) {
+      const { gasUseEstimate } = routingPath;
+      return gasUseEstimate;
     }
-  }, [estimatedGasUsage]);
-
-  const wrapUnwrapGasEstimate = useMemo(() => {
-    if (wrapUnwrapGasUsage) {
-      return wrapUnwrapGasUsage;
-    }
-  }, [wrapUnwrapGasUsage]);
+  }, [routingPath]);
 
   const withdrawContract = new ethers.Contract(
     TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
@@ -67,22 +60,12 @@ export function useGasFee() {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
         const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET || SupportedChainId.GOERLI
+          SupportedChainId.MAINNET
         );
         const parsedAmount = inToken.amountBN;
         switch (mode) {
           case "Swap":
             return swapGasUseEstimate;
-          case "ETH-Unwrap":
-            return wrapUnwrapGasEstimate;
-
-          case "ETH-Wrap":
-            return wrapUnwrapGasEstimate;
-
-          case "Unwrap":
-            return wrapUnwrapGasEstimate;
-          case "Wrap":
-            return wrapUnwrapGasEstimate;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
@@ -204,7 +187,7 @@ export function useGasFee() {
         return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 5);
       }
     }
-  }, [totalGasCost, tokenMarketPrice]);
+  }, [totalGasCost, tokenMarketPrice, mode]);
 
   return { totalGasCost, gasCostUS };
 }

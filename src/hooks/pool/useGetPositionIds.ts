@@ -294,8 +294,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
   const pathName = usePathname();
 
   const isL1 =
-    chainId === SupportedChainId["MAINNET"] ||
-    chainId === SupportedChainId["GOERLI"];
+    chainId === SupportedChainId["MAINNET"];
   const isL2 = chainId === SupportedChainId["TITAN"];
   const UNISWAP_CONTRACT = isL1
     ? L1_UniswapContracts
