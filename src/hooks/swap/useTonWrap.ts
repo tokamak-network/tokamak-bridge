@@ -177,7 +177,8 @@ export default function useWrap() {
           ? await unwrapWTON(true)
           : mode === "ETH-Wrap"
           ? await wrapETH(true)
-          : await unwrapWETH(true);
+          : mode === "ETH-Unwrap"
+          ? await unwrapWETH(true) : "";
       if (estimatedGas) setEstimatedGasUsage(estimatedGas);
     };
 
