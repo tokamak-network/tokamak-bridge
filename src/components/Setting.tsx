@@ -43,12 +43,12 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
       ) {
         return;
       }
-      if (Number(value) > 20) {
-        return setTxSetting({
-          ...txSetting,
-          [id]: "20",
-        });
-      }
+      // if (Number(value) > 20) {
+      //   return setTxSetting({
+      //     ...txSetting,
+      //     [id]: "20",
+      //   });
+      // }
       return setTxSetting({
         ...txSetting,
         [id]: value,
