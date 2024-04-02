@@ -23,11 +23,6 @@ export default function ApproveToken() {
 
   const tokenBalance = useTokenBalance(inToken);
 
-  if (tokenBalance?.data.parsedBalance && inToken?.parsedAmount) {
-    console.log(tokenBalance?.data.parsedBalance)
-    console.log(inToken?.parsedAmount)
-  }
-
   const isExceedMaximum = useMemo(() => {
     if (tokenBalance?.data.parsedBalance && inToken?.parsedAmount) {
       return Number(tokenBalance?.data.parsedBalance) >= Number(inToken?.parsedAmount)
