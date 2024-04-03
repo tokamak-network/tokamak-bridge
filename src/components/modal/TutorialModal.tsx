@@ -144,7 +144,7 @@ export default function TutorialModal() {
                   can find a link to our{" "}
                   <Link
                     style={{ color: "#007AFF", textDecoration: "underline" }}
-                    href="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+                    href="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge"
                     isExternal
                   >
                     user guide
