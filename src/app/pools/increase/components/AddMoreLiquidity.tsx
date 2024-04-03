@@ -29,6 +29,9 @@ export default function AddMoreLiquidity() {
     address: {
       MAINNET: token0.address,
       TITAN: token0.address,
+      SEPOLIA: token0.address,
+      THANOS_SEPOLIA: token0.address,
+      TITAN_SEPOLIA: token0.address,
     },
     isNativeCurrency:
       token0.address === getWETHAddress(chainName)
@@ -36,6 +39,7 @@ export default function AddMoreLiquidity() {
             SupportedChainId.MAINNET,
             SupportedChainId.TITAN,
             SupportedChainId.SEPOLIA,
+            SupportedChainId.TITAN_SEPOLIA,
           ]
         : null,
     decimals: token0.decimals,
@@ -47,6 +51,9 @@ export default function AddMoreLiquidity() {
     address: {
       MAINNET: token1.address,
       TITAN: token1.address,
+      SEPOLIA: token1.address,
+      THANOS_SEPOLIA: token1.address,
+      TITAN_SEPOLIA: token1.address,
     },
     isNativeCurrency:
       token1.address === getWETHAddress(chainName)

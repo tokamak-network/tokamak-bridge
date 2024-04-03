@@ -37,7 +37,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
             ERC20_ABI.abi,
             getProvider(inNetwork)
           );
-          const [tokenName,  tokenSymbol, decimals] = await Promise.all([
+          const [tokenName, tokenSymbol, decimals] = await Promise.all([
             tokenContract.name(),
             tokenContract.symbol(),
             tokenContract.decimals(),
@@ -53,6 +53,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
               DARIUS: nameOrAdd,
               SEPOLIA: nameOrAdd,
               THANOS_SEPOLIA: nameOrAdd,
+              TITAN_SEPOLIA: nameOrAdd,
             },
             decimals,
             isNativeCurrency: null,
@@ -86,15 +87,15 @@ export const searchTokenList = selector<SupportedTokens_T>({
 
 export const IsSearchToken = atom<Boolean>({
   key: "isSearchToken",
-  default: false
+  default: false,
 });
 
 export const isInputTokenAmount = atom<Boolean>({
   key: "isInputToken",
-  default: false
+  default: false,
 });
 
 export const isOutputTokenAmount = atom<Boolean>({
   key: "isOutputToken",
-  default: false
+  default: false,
 });
