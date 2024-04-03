@@ -13,8 +13,8 @@ import { getQueryClient } from "@/client/queryClient";
 import Entry from "./Entry";
 import Script from "next/script";
 
-//Test build for new uniswap contracts
-//Oct 25, 2023
+//Test build for Pools and Titan Sepolia
+//Apr 3, 2024
 
 export const GlobalComponents = () => {
   return (
