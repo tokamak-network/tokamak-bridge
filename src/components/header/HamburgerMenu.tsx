@@ -78,7 +78,7 @@ const HamburgerMenu = () => {
           <Image src={LOGO} alt="Logo"/>
           <Box padding={"8px"} marginTop={"32px"}>
             <CustomMenuItem
-              link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+              link="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge"
               title="User Guide"
               icon={userguide}
               hoverIcon={userGuideHover}

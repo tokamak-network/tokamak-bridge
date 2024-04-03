@@ -261,7 +261,7 @@ export default function Header() {
               }}
             >
               <CustomMenuItem
-                link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+                link="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge"
                 title="User Guide"
                 icon={userguide}
                 hoverIcon={userGuideHover}
