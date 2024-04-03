@@ -16,12 +16,12 @@ export function useGetTokenList() {
   const tokenSelector = useRecoilValue(searchTokenSelector);
   const { chainName } = useConnectedNetwork();
   const { storedTokenList } = useAddTokenToStorage();
-  const { mobileView } = useMediaView();
 
   const tokenListForSelectedNetwork = useMemo(() => {
+    const tokenListAll = [...tokenList, ...storedTokenList];
     const chainN = chainName ?? "MAINNET";
     if (chainN) {
-      return tokenList.filter((token) => {
+      return tokenListAll.filter((token) => {
         return token.address[chainN] !== null;
       });
     }
@@ -30,9 +30,9 @@ export function useGetTokenList() {
   const filteredTokenList = useMemo(() => {
     //in case searching token with an address
     if (tokenSelector && chainName && tokenListForSelectedNetwork) {
-      const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
+      // const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
 
-      const result = tokenListAll.filter(
+      const result = tokenListForSelectedNetwork.filter(
         (token) => token.address[chainName] === tokenSelector.address[chainName]
       );
       //remove duplicated value when a user search it with an address
@@ -40,9 +40,9 @@ export function useGetTokenList() {
     }
     //in case searching token with symbol name
     if (searchedTokenName?.nameOrAdd && tokenListForSelectedNetwork) {``
-      const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
+      // const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
       //remove duplicated value when a user search it with an address
-      return tokenListAll.filter((token) => {
+      return tokenListForSelectedNetwork.filter((token) => {
         return (
           token.tokenName
             .toLocaleLowerCase()
