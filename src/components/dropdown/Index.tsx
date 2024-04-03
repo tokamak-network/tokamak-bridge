@@ -240,24 +240,26 @@ export default function NetworkDropdown(props: {
     if (data.layer === "L2") {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
-          <Flex
-            w={"100%"}
-            h={isPool ? "16px" : "12px"}
-            alignItems={"center"}
-            justifyContent={"space-around"}
-            color={"#757893"}
-          >
-            <Box w={isPool ? "100%" : "45px"} h={"1px"} bgColor={"#757893"} />
-            <Text
-              minW={isPool ? "60px" : "76px"}
-              fontSize={isPool ? 16 : 12}
-              mx={isPool ? "40px" : 0}
-              textAlign={"center"}
+          {data.isTOP && (
+            <Flex
+              w={"100%"}
+              h={isPool ? "16px" : "12px"}
+              alignItems={"center"}
+              justifyContent={"space-around"}
+              color={"#757893"}
             >
-              Layer 2
-            </Text>
-            <Box w={isPool ? "100%" : "45px"} h={"1px"} bgColor={"#757893"} />
-          </Flex>
+              <Box w={isPool ? "100%" : "45px"} h={"1px"} bgColor={"#757893"} />
+              <Text
+                minW={isPool ? "60px" : "76px"}
+                fontSize={isPool ? 16 : 12}
+                mx={isPool ? "40px" : 0}
+                textAlign={"center"}
+              >
+                Layer 2
+              </Text>
+              <Box w={isPool ? "100%" : "45px"} h={"1px"} bgColor={"#757893"} />
+            </Flex>
+          )}
           <Flex
             w={"100%"}
             h={isPool ? "48px" : "100%"}
@@ -341,6 +343,7 @@ export default function NetworkDropdown(props: {
       return [
         SupportedChainId["SEPOLIA"],
         SupportedChainId["THANOS_SEPOLIA"],
+        SupportedChainId["TITAN_SEPOLIA"],
       ].includes(chainInfo.chainId);
     })
     .map((chainInfo) => {

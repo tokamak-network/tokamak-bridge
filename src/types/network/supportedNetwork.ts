@@ -18,6 +18,7 @@ export enum SupportedChainId {
   TITAN = 55004,
   SEPOLIA = 11155111,
   THANOS_SEPOLIA = 111551118080,
+  TITAN_SEPOLIA = 55007,
 }
 
 export interface SupportedChainProperties {
@@ -28,6 +29,7 @@ export interface SupportedChainProperties {
   nativeToken: SupportedTokenSymbol;
   isTokamak?: boolean;
   layer: "L1" | "L2";
+  isTOP?: boolean;
 }
 
 export const supportedChain: SupportedChainProperties[] = [
@@ -55,10 +57,20 @@ export const supportedChain: SupportedChainProperties[] = [
     nativeToken: "TON",
     isTokamak: true,
     layer: "L2",
+    isTOP: true,
   },
   {
     chainId: SupportedChainId.THANOS_SEPOLIA,
     chainName: "THANOS_SEPOLIA",
+    networkImage: SYMBOL_TITAN,
+    rpcAddress: "",
+    nativeToken: "ETH",
+    layer: "L2",
+    isTOP: true,
+  },
+  {
+    chainId: SupportedChainId.TITAN_SEPOLIA,
+    chainName: "TITAN_SEPOLIA",
     networkImage: SYMBOL_TITAN,
     rpcAddress: "",
     nativeToken: "ETH",

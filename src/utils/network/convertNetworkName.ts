@@ -12,6 +12,8 @@ export function convertNetworkName(
       return "Titan";
     case "THANOS_SEPOLIA":
       return "Thanos Sepolia";
+    case "TITAN_SEPOLIA":
+      return "Titan Sepolia";
     default:
       return null;
   }

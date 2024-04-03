@@ -59,12 +59,17 @@ export default function useWrap() {
   });
 
   const ETHWrapContract = useMemo(() => {
-    if (isSupportedChain) {
-      return new Contract(
-        WETH_CONTRACT as string,
-        WethABi,
-        getProviderOrSigner(provider, address)
-      );
+    try {
+      if (isSupportedChain) {
+        return new Contract(
+          WETH_CONTRACT as string,
+          WethABi,
+          getProviderOrSigner(provider, address)
+        );
+      }
+    } catch (e) {
+      console.log("**ETHWrapContract err**");
+      console.log(e);
     }
   }, [isSupportedChain, WETH_CONTRACT, WethABi, provider, address]);
 
@@ -99,7 +104,7 @@ export default function useWrap() {
         try {
           tonWton({
             args: [inToken.amountBN],
-            // gas: calculateGasMargin(estimateGas).toBigInt(), 
+            // gas: calculateGasMargin(estimateGas).toBigInt(),
           });
         } catch (e) {
           console.log("**wrapTON err**");
@@ -152,7 +157,9 @@ export default function useWrap() {
   const unwrapWETH = useCallback(
     async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract) {
-        const estimateGas = await ETHWrapContract.estimateGas.withdraw(inToken.amountBN);
+        const estimateGas = await ETHWrapContract.estimateGas.withdraw(
+          inToken.amountBN
+        );
         if (estimateGasUsage) return estimateGas;
         try {
           withdraw({

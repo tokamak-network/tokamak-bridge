@@ -1,4 +1,3 @@
-
 import ImageSymbol, { TokenSymbol } from "@/components/image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
 import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
@@ -89,9 +88,9 @@ const ValueContainer = (props: {
               height: "24px",
             }}
           />
-            {isConnected && !isConnectedToMainNetwork && (
-        <Text>{capitalizeFirstChar(selectedOption.chainName)}</Text>
-      )}
+          {isConnected && !isConnectedToMainNetwork && (
+            <Text>{capitalizeFirstChar(selectedOption.chainName)}</Text>
+          )}
         </Center>
       </Flex>
     );
@@ -132,7 +131,7 @@ export default function Network() {
     isSupportedChain,
   } = useConnectedNetwork();
   const { isConnected } = useAccount();
-  
+
   // const inNetwork = true;
   const onChange = async (data: SupportedChainProperties) => {
     try {
@@ -229,19 +228,21 @@ export default function Network() {
     if (data.layer === "L2") {
       return (
         <Flex flexDir={"column"} rowGap={"12px"}>
-          <Flex
-            w={"100%"}
-            h={"12px"}
-            alignItems={"center"}
-            justifyContent={"space-around"}
-            color={"#757893"}
-          >
-            <Box w={"45px"} h={"1px"} bgColor={"#757893"} />
-            <Text minW={"76px"} fontSize={12} mx={0} textAlign={"center"}>
-              Layer 2
-            </Text>
-            <Box w={"45px"} h={"1px"} bgColor={"#757893"} />
-          </Flex>
+          {data.isTOP && (
+            <Flex
+              w={"100%"}
+              h={"12px"}
+              alignItems={"center"}
+              justifyContent={"space-around"}
+              color={"#757893"}
+            >
+              <Box w={"45px"} h={"1px"} bgColor={"#757893"} />
+              <Text minW={"76px"} fontSize={12} mx={0} textAlign={"center"}>
+                Layer 2
+              </Text>
+              <Box w={"45px"} h={"1px"} bgColor={"#757893"} />
+            </Flex>
+          )}
           <Flex
             w={"100%"}
             h={"32px"}
@@ -315,18 +316,19 @@ export default function Network() {
   const optionsList = supportedChain
     .filter((chainInfo) => {
       if (
-        // isConnectedToMainNetwork === true ||
-        // isConnectedToMainNetwork === undefined
-        true
+        isConnectedToMainNetwork === true ||
+        isConnectedToMainNetwork === undefined
       ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-      //   chainInfo.chainId
-      // );
+      return [
+        SupportedChainId["SEPOLIA"],
+        SupportedChainId["THANOS_SEPOLIA"],
+        SupportedChainId["TITAN_SEPOLIA"],
+      ].includes(chainInfo.chainId);
     })
     .map((chainInfo) => {
       return {
@@ -336,25 +338,26 @@ export default function Network() {
       };
     });
 
-    if (isConnected && !isSupportedChain) {
-        return (
-          <Flex
-            bgColor={"#1F2128"}
-            w={"48px"}
-            h={"48px"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            px={"8px"}
-            borderRadius={"8px"}
-          >
-            <Image
-              src={WARNING_ICON}
-              alt={"WARNING_ICON"}
-              style={{ width: "34px", height: "34px" }}
-            />
-          </Flex>
-        );
-      }
+  if (isConnected && !isSupportedChain) {
+    return (
+      <Flex
+        bgColor={"#1F2128"}
+        w={"48px"}
+        h={"48px"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
+        px={"8px"}
+        borderRadius={"8px"}
+      >
+        <Image
+          src={WARNING_ICON}
+          alt={"WARNING_ICON"}
+          style={{ width: "34px", height: "34px" }}
+        />
+      </Flex>
+    );
+  }
+
   return (
     // <Center className="header-right-common" w={"48px"} h={"48px"} _hover={{bg:'#313442'}}>
     //   <NetworkSymbol

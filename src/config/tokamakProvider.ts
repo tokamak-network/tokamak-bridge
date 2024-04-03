@@ -25,27 +25,27 @@ export const titan = {
   },
 } as const satisfies Chain;
 
-export const titan_goerli = {
-  id: 5050,
-  name: "Titan Goerli",
-  network: "Titan Goerli",
+export const titan_sepolia = {
+  id: 55007,
+  name: "Titan Sepolia",
+  network: "Titan Sepolia",
   nativeCurrency: {
     decimals: 18,
     name: "ETH",
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC as string] },
-    default: { http: [process.env.NEXT_PUBLIC_TITAN_GOERLI_RPC as string] },
+    public: { http: [process.env.NEXT_PUBLIC_TITAN_SEPOLIA_RPC as string] },
+    default: { http: [process.env.NEXT_PUBLIC_TITAN_SEPOLIA_RPC as string] },
   },
   blockExplorers: {
     etherscan: {
       name: "BlockScout",
-      url: "https://explorer.titan-goerli.tokamak.network",
+      url: "https://explorer.titan-sepolia.tokamak.network",
     },
     default: {
       name: "BlockScout",
-      url: "https://explorer.titan-goerli.tokamak.network",
+      url: "https://explorer.titan-sepolia.tokamak.network",
     },
   },
 } as const satisfies Chain;
