@@ -35,19 +35,25 @@ export default function Swap() {
   );
 
   const invertTokenPair = useCallback(() => {
-    if (inTokenRecoilValue && outTokenRecoilValue) {
-      setInTokenRecoilValue(outTokenRecoilValue);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
+    if (mode === "Swap" ||
+      mode === "Unwrap" ||
+      mode === "Wrap" ||
+      mode === "ETH-Unwrap" ||
+      mode === "ETH-Wrap") {
+      if (inTokenRecoilValue && outTokenRecoilValue) {
+        setInTokenRecoilValue(outTokenRecoilValue);
+        return setOutTokenRecoilValue(inTokenRecoilValue);
+      }
 
-    if (inTokenRecoilValue && !outTokenRecoilValue) {
-      setInTokenRecoilValue(null);
-      return setOutTokenRecoilValue(inTokenRecoilValue);
-    }
+      if (inTokenRecoilValue && !outTokenRecoilValue) {
+        setInTokenRecoilValue(null);
+        return setOutTokenRecoilValue(inTokenRecoilValue);
+      }
 
-    if (!inTokenRecoilValue && outTokenRecoilValue) {
-      setOutTokenRecoilValue(null);
-      return setInTokenRecoilValue(outTokenRecoilValue);
+      if (!inTokenRecoilValue && outTokenRecoilValue) {
+        setOutTokenRecoilValue(null);
+        return setInTokenRecoilValue(outTokenRecoilValue);
+      }
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
@@ -76,10 +82,10 @@ export default function Swap() {
               onClick={invertTokenPair}
               cursor={
                 mode === "Swap" ||
-                mode === "Unwrap" ||
-                mode === "Wrap" ||
-                mode === "ETH-Unwrap" ||
-                mode === "ETH-Wrap"
+                  mode === "Unwrap" ||
+                  mode === "Wrap" ||
+                  mode === "ETH-Unwrap" ||
+                  mode === "ETH-Wrap"
                   ? "pointer"
                   : ""
               }

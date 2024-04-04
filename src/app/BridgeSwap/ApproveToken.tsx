@@ -9,7 +9,7 @@ import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
-import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export default function ApproveToken() {
   const { inToken, outToken } = useInOutTokens();
@@ -20,15 +20,7 @@ export default function ApproveToken() {
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
-
-  const tokenBalance = useTokenBalance(inToken);
-
-  const isExceedMaximum = useMemo(() => {
-    if (tokenBalance?.data.parsedBalance && inToken?.parsedAmount) {
-      return Number(tokenBalance?.data.parsedBalance) >= Number(inToken?.parsedAmount)
-    }
-    return false;
-  }, [tokenBalance, inToken])
+  const { isBalanceOver } = useInputBalanceCheck();
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -39,10 +31,11 @@ export default function ApproveToken() {
   if (
     isApproved ||
     isNotSupportForBridge ||
-    !(inToken && outToken) ||
+    !(inToken && outToken) && mode ==="Swap" ||
+    !inToken && mode !== "Swap" ||
     (mode == "Swap" && isTONatPair) ||
     !isConnected ||
-    !isExceedMaximum
+    isBalanceOver
   ) {
     return null;
   }
