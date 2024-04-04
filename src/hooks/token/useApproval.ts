@@ -38,7 +38,7 @@ export function useApprove() {
     useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
 
-  const { isApproved: approved } = useAllowance({
+  const { isApproved: approved, allowance } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress: inToken?.token.address as Hash | undefined,
     token: inToken,
@@ -127,5 +127,5 @@ export function useApprove() {
     }
   }, [mode, totalSupply, chainName]);
 
-  return { isApproved, callApprove, isLoading };
+  return { isApproved, callApprove, isLoading, allowance };
 }

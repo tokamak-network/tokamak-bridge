@@ -30,6 +30,7 @@ import { useMediaQuery } from "@chakra-ui/react";
 import { useWarning } from '@/hooks/mobile/useMobileWarning';
 import WARNING_ICON from "assets/icons/warning.svg";
 import WARNING_RED_ICON from "assets/icons/warningRed.svg";
+import { isDesktop, isAndroid, isIOS } from 'react-device-detect';
 
 export default function AmountInputModal() {
   const { isOpen } = useRecoilValue(tokenModalStatus);
@@ -43,17 +44,29 @@ export default function AmountInputModal() {
   const warning = useWarning();
 
   useEffect(() => {
-
+    
     if(isLargerThan768) return;
 
     const handleResize = () => {
 
       if (window.visualViewport) {
         const newKeyboardHeight = Math.max(window.innerHeight - window.visualViewport.height, 0);
-        if(newKeyboardHeight == 0){
-          setKeyboardHeight(600);
-        } else {
+        // AND
+        if(isAndroid){
+          setKeyboardHeight(0);
+        }
+        //Desktop
+        else if(isDesktop || newKeyboardHeight == 0){
+          setKeyboardHeight(550);
+        
+        // IOS
+        } 
+        else if(isIOS) {
           setKeyboardHeight(newKeyboardHeight);
+        }
+
+        else {
+          setKeyboardHeight(550);
         }
       }
     };

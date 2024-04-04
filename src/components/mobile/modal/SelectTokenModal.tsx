@@ -262,6 +262,18 @@ export default function SelectTokenModal() {
 
     };
 
+    const formatAmount = (amount: string) => {
+      const numericAmount = parseFloat(amount);
+      if (isNaN(numericAmount)) {
+        return "0";
+      }
+      if (numericAmount === 0) {
+        return "0";
+      } else {
+        return numericAmount.toFixed(5);
+      }
+    };
+
 
     return (
       <HStack
@@ -359,7 +371,7 @@ export default function SelectTokenModal() {
           </VStack>
         </HStack>
         <HStack justifyContent="flex-end">
-          <Text fontSize={"16px"} fontWeight={600} textAlign="right" pr="2">{Number(amount).toFixed(5)}</Text>
+          <Text fontSize={"16px"} fontWeight={600} textAlign="right" pr="2">{formatAmount(amount)}</Text>
           {tokenData.isLiked !== 'none' && (
             <Box onClick={handleStarClick} >
               <Icon as={StarIcon} color={tokenData.isLiked === 'true' ? '#007AFF' : '#A0A3AD'}/>

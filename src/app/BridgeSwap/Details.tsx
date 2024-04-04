@@ -4,9 +4,11 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import TransactionDetail from "./TransactionDetail";
 import ActionButton from "./components/ActionButton";
 import ApproveToken from "@/app/BridgeSwap/ApproveToken";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export function Details() {
   const { mode } = useGetMode();
+  const { mobileView } = useMediaView();
 
   return (
     <Flex
@@ -19,14 +21,25 @@ export function Details() {
     >
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
-          <Warning />
-          <TransactionDetail />
+          {
+            !mobileView && <Warning />
+          }
           <ApproveToken />
+          <TransactionDetail />
         </Flex>
       ) : (
         <Box />
       )}
-      <ActionButton />
+      {
+        !mobileView
+        ? 
+        <ActionButton /> 
+        :
+        <Flex direction="column" alignItems="center" rowGap={"12px"}>
+          <Warning />
+          <ActionButton />
+        </Flex>
+      }
     </Flex>
   );
 }
