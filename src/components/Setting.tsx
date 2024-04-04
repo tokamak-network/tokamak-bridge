@@ -6,6 +6,7 @@ import {
   InputGroup,
   InputRightElement,
   Text,
+  Box
 } from "@chakra-ui/react";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -16,6 +17,8 @@ import {
 import { RedWarningText, WarningText } from "./ui/WarningText";
 import SettingIcon from "assets/icons/setting.svg";
 import { swapSettingStatus } from "@/recoil/modal/atom";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import CloseButton from "./button/CloseButton";
 
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
@@ -29,6 +32,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
   const slipRef = useRef(null);
   const deadlineRef = useRef(null);
+  const { mobileView } = useMediaView();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const id = e.target.id;
@@ -125,6 +129,14 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
       <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
         Transaction Settings
       </Text>
+      {
+        mobileView &&
+        /** 여기에 close를 추가한다. */
+        <Box pos={"absolute"} right={4} top={"15px"}>
+          <CloseButton onClick={() => {setSettingStatus(false);}} />
+        </Box>
+      }
+
       <Flex
         p={"16px"}
         bgColor={"#0F0F12"}
@@ -173,7 +185,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
         {Number(txSetting.slippage) >= 10 &&
           Number(txSetting.slippage) < 50 && (
             <WarningText
-              label="Slippage below 10% may result in an unfavorable swap"
+              label="Slippage above 10% may result in an unfavorable swap"
               style={{ fontWeight: 400 }}
             />
           )}

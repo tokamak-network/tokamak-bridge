@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Flex, Text, Button, Link } from "@chakra-ui/react";
+import { Flex, Text, Button } from "@chakra-ui/react";
 import TokenPairTx from "./TokenPairTx";
 import StatusTx from "./StatusTx";
 import { ethers } from "ethers";
@@ -122,6 +122,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                   (txData?.hash?.transactionHash !== undefined &&
                     txData?.hash.txSort === "Claim")
                 }
+                _hover={{}}
                 zIndex={10000}
                 _disabled={{ bg: "#1F2128" }}
                 onClick={(event) => {

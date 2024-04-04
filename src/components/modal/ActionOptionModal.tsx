@@ -14,7 +14,7 @@ import { useRecoilState } from "recoil";
 import { useAccount, useSwitchNetwork } from "wagmi";
 
 import { actionMethodStatus } from "@/recoil/modal/atom";
-import { networkStatus, welcomeMsgStatus } from "@/recoil/bridgeSwap/atom";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import {
@@ -148,7 +148,6 @@ const ActionOptionModal = () => {
   const [methodStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
   const connectedNetwork = useConnectedNetwork();
-  const [welcomeMsg, setWelcomeMsgStatus] = useRecoilState(welcomeMsgStatus);
   const { isConnected } = useAccount();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const [, setNetwork] = useRecoilState(networkStatus);
@@ -161,11 +160,8 @@ const ActionOptionModal = () => {
   const { ethChainId, titanChainId } = useMobileChainIds(connectedNetwork);
 /////////////////////////
 
-  const isWelcomeMsg = welcomeMsg && mobileView;
-
   const closeModal = useCallback(() => {
     setActionMethodStatus(false);
-    setWelcomeMsgStatus(false);
   }, []);
 
   // useEffect(() => {
@@ -216,8 +212,9 @@ const ActionOptionModal = () => {
       size={"xl"}
       isOpen={methodStatus && mobileView && !(mode == "Pool")}
       onClose={() => closeModal()}
+      closeOnOverlayClick={false} 
     >
-      <ModalOverlay bg={isWelcomeMsg ? "#0F0F12" : "#0F0F12F0"} />
+      <ModalOverlay bg={"#0F0F12"} />
       <ModalContent
         bg={"#1F2128"}
         mt={"auto"}
@@ -233,26 +230,24 @@ const ActionOptionModal = () => {
             </Text>
           </Box>
 
-          {isWelcomeMsg && (
-            <Box pos={"fixed"} w={"100%"} top={"147px"} left={0}>
-              <Text
-                fontWeight={300}
-                fontSize={30}
-                lineHeight={"36px"}
-                textAlign={"center"}
-              >
-                Welcome to
-              </Text>
-              <Text
-                fontWeight={700}
-                fontSize={34}
-                letterSpacing={"2px"}
-                textAlign={"center"}
-              >
-                TOKAMAK BRIDGE
-              </Text>
-            </Box>
-          )}
+          <Box pos={"fixed"} w={"100%"} top={"147px"} left={0}>
+            <Text
+              fontWeight={300}
+              fontSize={30}
+              lineHeight={"36px"}
+              textAlign={"center"}
+            >
+              Welcome to
+            </Text>
+            <Text
+              fontWeight={700}
+              fontSize={34}
+              letterSpacing={"2px"}
+              textAlign={"center"}
+            >
+              TOKAMAK BRIDGE
+            </Text>
+          </Box>
 
           <Text fontWeight={500} fontSize={16}>
             Bridge

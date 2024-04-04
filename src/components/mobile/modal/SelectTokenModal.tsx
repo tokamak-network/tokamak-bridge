@@ -88,13 +88,10 @@ export default function SelectTokenModal() {
   const { isInTokenOpen, isOutTokenOpen, simpleCloseCheck } = useTokenModal();
   const { onCloseTokenModal, setSelectedToken, simpleCloseTokenModal } = useTokenModal();
   
-  // add토큰을 추가할 때, 리랜더링 도와주는 state
   const [hasTokenBeenAdded, setHasTokenBeenAdded] = useState(false);
 
-  // 좋아요 로컬스토리지
   const { likeList, toggleLike } = useAddLikeStorage();
 
-  // 모바일 재정렬 완료
   const { filteredTokenList } = useGetTokenList();
   
   const sortedAndLikedTokenList = useMemo(() => {
@@ -169,8 +166,8 @@ export default function SelectTokenModal() {
 
 
   const calculateChainValues = async (from: Number|undefined, to: Number|undefined) => {
-    const inValue: SupportedChainProperties["chainId"] = Number(from); // 'from' 값을 숫자로 변환
-    const outValue: SupportedChainProperties["chainId"] = Number(to); // 'to' 값을 숫자로 변환
+    const inValue: SupportedChainProperties["chainId"] = Number(from);
+    const outValue: SupportedChainProperties["chainId"] = Number(to);
     
     const selectedInNetwork = supportedChain.filter((supportedChain) => {
       return supportedChain.chainId === inValue;
@@ -210,11 +207,9 @@ export default function SelectTokenModal() {
       mode === "ETH-Unwrap" ||
       mode === "ETH-Wrap"
     ){
-      // 반전한다.
       await calculateChainValues(network.otherLayerChainInfo?.chainId, network.otherLayerChainInfo?.chainId);
 
     } else if(mode === "Withdraw" || mode === "Deposit"){        
-      //from to 바꿔준다.
       await calculateChainValues(networkStatusValue.outNetwork?.chainId, networkStatusValue.inNetwork?.chainId);
     }
 
@@ -287,11 +282,24 @@ export default function SelectTokenModal() {
             
             if (isInTokenOpen) {
               setIsInputAmount(true);
+              
               //추가된 사항
+              //소수점 4자리
+              const formatNumber = (number: string) => {
+                const numericValue = Number(number);
+                if (!isNaN(numericValue)) {
+                  const factor = Math.pow(10, 4); // 4자리 버림을 위한 계수 10000
+                  return (Math.floor(numericValue * factor) / factor).toString();
+                } else {
+                  console.error("Provided value cannot be converted to a number:", number);
+                  return "0";
+                }
+              };
+              
               //modal이 떨어져서 있어 현재 임시로 해놈
               setTokenAmountStatus({
                 ...tokenData,
-                amount
+                amount: formatNumber(amount)
               })
 
               if(tokenData.tokenName != selectedOutToken?.tokenName){
@@ -331,6 +339,7 @@ export default function SelectTokenModal() {
 
           } catch (e) {
             console.log("Open Input")
+            console.log(e)
 
           } finally {
           
@@ -398,7 +407,7 @@ export default function SelectTokenModal() {
                   <Flex
                     w={"32px"}
                     h={"32px"}
-                    borderRadius={"0px 6px 0px 6px"}
+                    borderRadius={"6px"}
                     justify={"center"}
                     align={"center"}
                     bg={"#17181D"}
@@ -416,7 +425,7 @@ export default function SelectTokenModal() {
                   <Flex
                     w={"32px"}
                     h={"32px"}
-                    borderRadius={"0px 6px 0px 6px"}
+                    borderRadius={"6px"}
                     justify={"center"}
                     align={"center"}
                     bg={"#17181D"}

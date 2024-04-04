@@ -55,7 +55,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-DVJG6CWTNM"
+        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];

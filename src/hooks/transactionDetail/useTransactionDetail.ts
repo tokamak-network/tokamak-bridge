@@ -15,7 +15,7 @@ import { useGetMarketPrice } from "../price/useGetMarketPrice";
 
 export type DepositDetailProp = {
   title: string;
-  content: string;
+  content?: string;
   tooltip?: boolean;
   tooltipLabel?: string;
   dollorPrice?: string;
@@ -92,24 +92,24 @@ export function useTransactionDetail() {
   )} ${inToken?.tokenSymbol}`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {
+    console.log(mode)
+    console.log(inToken)
+    console.log(totalGasCost)
     if (mode === "Deposit" && inToken && totalGasCost) {
       return isOpen && mobileView
         ? [
             {
-              title: "Estimated gas fees",
-              content: totalGasFee,
+              title: "Time to Deposit",
+              content: "~5 minutes",
+            },
+            {
+              title: "Network fee",
               gasFee: {
                 l1Gas: totalGasFee,
                 l2Gas: "0 ETH",
                 l1GasUS: gasCostUS ?? "",
                 l2GasUS: "0",
-              },
-              tooltip: true,
-              tooltipLabel: `${commafy(totalGasCost, 18)} ETH`,
-            },
-            {
-              title: "Time to Deposit",
-              content: "~5 minutes",
+              }
             },
           ]
         : [
@@ -223,11 +223,16 @@ export function useTransactionDetail() {
               content: "",
             },
             {
-              title: "Minimum after slippage",
+              title: "Min receive",
               content: `${commafy(amountOut, 4)} ${
                 outToken?.tokenSymbol
               }`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
+            },
+            {
+              title: "Network fee",
+              content: isOpen ? "" : `${totalGasFee} `,
+              gasFee: `${gasCostUS ? `$${gasCostUS}` : "NA"}`,
             },
           ]
         : [

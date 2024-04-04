@@ -182,7 +182,8 @@ export default function MobileTokenBox(props: {
     <Flex
       visibility={visibilityTypeState? "visible" : "hidden"}
       direction="column"
-      mx="5"
+      ml={inToken? "" : "5"}
+      mr={inToken? "5" : ""}
       mt="2"
       w="148px"
       h="84px"

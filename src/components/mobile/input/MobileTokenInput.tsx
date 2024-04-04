@@ -78,6 +78,7 @@ export default function TokenInput(props: {
 
   const { layer } = useConnectedNetwork();
   const [isMax, setIsMax] = useState<boolean>(false);
+  const [isCursorBol, setIsCursorBol] = useState<boolean>(false);
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
 
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
@@ -194,6 +195,7 @@ export default function TokenInput(props: {
   const onMax = useCallback(() => {
     if (isDisabled) return null;
     setIsMax(true);
+
     if (tokenData) {
       if (inToken && selectedInToken) {
 
@@ -206,6 +208,7 @@ export default function TokenInput(props: {
           });
         }
 
+        setIsCursorBol(true);
         return setSelectedInToken({
           ...selectedInToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -224,6 +227,7 @@ export default function TokenInput(props: {
           });
         }
 
+        setIsCursorBol(true);
         return setSelectedOutToken({
           ...selectedOutToken,
           amountBN: tokenData.data.balanceBN.value,
@@ -233,7 +237,10 @@ export default function TokenInput(props: {
       }
       return console.error("a input field not found");
     }
+    
   }, [
+    customRef,
+    inputRef,
     tokenData,
     inToken,
     selectedInToken,
@@ -255,6 +262,20 @@ export default function TokenInput(props: {
       : ethers.constants.Zero;
   
     setIsMax(maxValue.eq(inputValue));
+
+    if(isCursorBol) {
+      const inputElement = customRef ? customRef.current : inputRef.current;
+      if (inputElement) {
+        const originalType = inputElement.type;
+        inputElement.type = 'text';
+        inputElement.focus();
+        inputElement.setSelectionRange(0, 0);
+        inputElement.type = originalType;
+      }
+      setIsCursorBol(false);
+    }
+
+
   }, [selectedInToken?.amountBN, tokenData?.data.balanceBN.value]);
 
 
@@ -278,8 +299,8 @@ export default function TokenInput(props: {
 
   const handleBlur = (e: any) => {
     if (preventBlur) {
-      setPreventBlur(false);
-      return;
+    setPreventBlur(false);
+    return;
     }
     handleCommonLogic();
   };
@@ -338,6 +359,7 @@ export default function TokenInput(props: {
     isTokenSearch,
     defaultValue,
   ]);
+
 
   const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedInToken?.tokenName as string,
@@ -460,7 +482,7 @@ export default function TokenInput(props: {
               <GradientSpinner />
             </Flex>
             ) :
-            <Flex flexDir={'column'}>
+            <Flex align={"center"} justify={"space-between"} w={"100%"}>
               {/* <Warning /> */}
               <Input
                 autoFocus
@@ -512,7 +534,7 @@ export default function TokenInput(props: {
                 </Flex>
               ) : (
                 <Text
-                  ml={"70px"}
+                  ml={"5px"}
                   fontSize={14}
                   color={"#A0A3AD"}
                 >{`$${marketPrice}`}</Text>
