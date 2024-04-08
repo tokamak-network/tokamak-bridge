@@ -332,7 +332,7 @@ export default function NetworkDropdown(props: {
       if (
         // isConnectedToMainNetwork === true ||
         // isConnectedToMainNetwork === undefined
-        true
+true
       ) {
         return [
           SupportedChainId["MAINNET"],
@@ -340,7 +340,7 @@ export default function NetworkDropdown(props: {
         ].includes(chainInfo.chainId);
       }
       // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-      //   chainInfo.chainId
+        //   chainInfo.chainId
       // );
     })
     .map((chainInfo) => {

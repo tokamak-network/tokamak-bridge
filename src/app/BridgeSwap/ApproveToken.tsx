@@ -9,11 +9,18 @@ import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
+
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import checkGreen from "assets/icons/mobile/check_green.svg";
+import Image from "next/image";
+import { convertNumber } from "@/utils/trim/convertNumber";
+import commafy from "@/utils/trim/commafy";
+
 
 export default function ApproveToken() {
   const { inToken, outToken } = useInOutTokens();
-  const { isApproved, callApprove } = useApprove();
+  const { isApproved, callApprove, allowance } = useApprove();
   const { isNotSupportForBridge } = useBridgeSupport();
   const { pendingTransactionToApprove } = useTransaction();
   const { isTONatPair } = useIsTon();
@@ -21,6 +28,7 @@ export default function ApproveToken() {
   const { isConnected } = useAccount();
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
   const { isBalanceOver } = useInputBalanceCheck();
+  const { mobileView } = useMediaView();
 
   const approveBtnDisabled = useMemo(() => {
     return (
@@ -31,6 +39,7 @@ export default function ApproveToken() {
   if (
     isApproved ||
     isNotSupportForBridge ||
+    !inToken ||
     !(inToken && outToken) && mode ==="Swap" ||
     !inToken && mode !== "Swap" ||
     (mode == "Swap" && isTONatPair) ||
@@ -40,27 +49,62 @@ export default function ApproveToken() {
     return null;
   }
 
-  return (
-    <Flex
-      w={"100%"}
-      // h={isExpanded ? "310px" : "48px"}
-      maxH={"48px"}
-      bg={"#1f2128"}
-      borderRadius={"8px"}
-      px={"20px"}
-      py={"19px"}
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      color={approveBtnDisabled ? "#8E8E92" : ""}
-    >
-      <Flex columnGap={"12px"}>
-        {approveBtnDisabled && (
-          <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
-        )}
-        <Text fontSize={{ base: 12, lg: 14 }}>
-          Tokamak Bridge wants to use your {inToken?.tokenSymbol}
-        </Text>
-      </Flex>
+  let mode_name
+
+  if(mode === "ETH-Wrap")
+    mode_name = "Wrap"
+
+  else if(mode === "ETH-Unwrap")
+    mode_name = "Unwrap"
+  
+  else
+    mode_name = mode
+
+let view_value
+if (allowance != BigInt(0) && typeof allowance != 'undefined') {
+  view_value = commafy(convertNumber(allowance, inToken.decimals),2)
+}
+
+return (
+  <Flex
+    w={"100%"}
+    // h={isExpanded ? "310px" : "48px"}
+    maxH={"48px"}
+    bg={"#1f2128"}
+    borderRadius={"8px"}
+    px={"20px"}
+    py={"19px"}
+    justifyContent={"space-between"}
+    alignItems={"center"}
+    color={approveBtnDisabled ? "#8E8E92" : ""}
+  >
+    <Flex columnGap={"12px"}>
+      {approveBtnDisabled && (
+        <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+      )}
+      {
+        isApproved ? (
+          <Text fontSize={{base: 12, lg: 14}} color={"#A0A3AD"}>
+            {view_value} {inToken?.tokenSymbol} has been approved ({mode_name})
+          </Text>
+        ) : (
+          mobileView ? (
+            <>
+              <Text fontSize={{base: 12, lg: 14}}>
+                Approve {inToken?.tokenSymbol} for Swap
+              </Text>
+            </>
+          ) : (
+            <Text fontSize={{ base: 12, lg: 14 }}>
+              Tokamak Bridge wants to use your {inToken?.tokenSymbol}
+            </Text>
+          )
+        )
+      }
+    </Flex>
+    {isApproved ? (
+      <Image src={checkGreen}  alt={"check"} color='#18d08e' style={{ width: "20px", height: "20px" }} />
+    ): (
       <Button
         w={{ base: "64px", lg: "92px" }}
         h={"28px"}
@@ -79,6 +123,7 @@ export default function ApproveToken() {
       >
         Approve
       </Button>
-    </Flex>
-  );
+    )}
+  </Flex>
+);
 }

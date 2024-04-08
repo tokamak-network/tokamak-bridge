@@ -5,6 +5,7 @@ import {
   SupportedTokens_T,
   TokenInfo,
   supportedTokens,
+  supportedMobileTokens,
 } from "@/types/token/supportedToken";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
@@ -69,7 +70,7 @@ export const searchTokenList = selector<SupportedTokens_T>({
   key: "searchTokenListSelector",
   get: ({ get }) => {
     const searchedToken = get(searchTokenSelector);
-
+    
     if (searchedToken) {
       // const { matchedKey } = getKeyByValue(
       //   SupportedChainId,
@@ -79,6 +80,23 @@ export const searchTokenList = selector<SupportedTokens_T>({
       return [...supportedTokens, searchedToken];
     }
     return supportedTokens;
+  },
+});
+
+export const searchTokenMoibleList = selector<SupportedTokens_T>({
+  key: "searchTokenMobileListSelector",
+  get: ({ get }) => {
+    const searchedToken = get(searchTokenSelector);
+    
+    if (searchedToken) {
+      // const { matchedKey } = getKeyByValue(
+      //   SupportedChainId,
+      //   searchedToken.chainId
+      // );
+
+      return [...supportedMobileTokens, searchedToken];
+    }
+    return supportedMobileTokens;
   },
 });
 

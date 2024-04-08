@@ -64,8 +64,7 @@ const HamburgerMenu = () => {
       trapFocus={false}
       useInert={true}
     >
-      <DrawerOverlay bg={"#000000CC"} onClick={() => setHamburgerOpen(false)} />
-      <Box zIndex={1400} pos={"fixed"} w={"full"} h={"full"} left={0} top={0} bg={'#000000B0'}/>
+      <DrawerOverlay bg="transparent" onClick={() => setHamburgerOpen(false)} />
 
       <DrawerContent maxW={"248px"}>
         <Flex
