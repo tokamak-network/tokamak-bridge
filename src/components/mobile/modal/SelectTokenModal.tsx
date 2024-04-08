@@ -22,7 +22,6 @@ import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { TokenInfo } from "types/token/supportedToken";
 import { TokenSymbol } from "@/componenets/image/TokenSymbol";
-import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
 import { useRecoilState } from "recoil";
 import {
 isInputTokenAmount,
@@ -62,7 +61,6 @@ import {
 import { useAccount, useSwitchNetwork } from "wagmi";
 import { actionMethodStatus } from "@/recoil/modal/atom";
 import useAddLikeStorage from "@/hooks/mobile/useAddLikeStorage";
-
 
 
 // 컴포넌트 외부에 sortTokens 함수를 정의
@@ -230,9 +228,6 @@ export default function SelectTokenModal() {
     setSearchValue('');
   };
   
-/////////////////////////////////////////////////////////////////////
-
-
 
   type TokenButtonProps = {
     tokenLabel: string;
@@ -262,6 +257,18 @@ export default function SelectTokenModal() {
 
     };
 
+    const formatAmount = (amount: string) => {
+      const numericAmount = parseFloat(amount);
+      if (isNaN(numericAmount)) {
+        return "0";
+      }
+      if (numericAmount === 0) {
+        return "0";
+      } else {
+        return numericAmount.toFixed(5);
+      }
+    };
+
 
     return (
       <HStack
@@ -282,11 +289,24 @@ export default function SelectTokenModal() {
             
             if (isInTokenOpen) {
               setIsInputAmount(true);
+              
               //추가된 사항
+              //소수점 4자리
+              const formatNumber = (number: string) => {
+                const numericValue = Number(number);
+                if (!isNaN(numericValue)) {
+                  const factor = Math.pow(10, 4); // 4자리 버림을 위한 계수 10000
+                  return (Math.floor(numericValue * factor) / factor).toString();
+                } else {
+                  console.error("Provided value cannot be converted to a number:", number);
+                  return "0";
+                }
+              };
+              
               //modal이 떨어져서 있어 현재 임시로 해놈
               setTokenAmountStatus({
                 ...tokenData,
-                amount
+                amount: formatNumber(amount)
               })
 
               if(tokenData.tokenName != selectedOutToken?.tokenName){
@@ -326,6 +346,7 @@ export default function SelectTokenModal() {
 
           } catch (e) {
             console.log("Open Input")
+            console.log(e)
 
           } finally {
           
@@ -345,7 +366,7 @@ export default function SelectTokenModal() {
           </VStack>
         </HStack>
         <HStack justifyContent="flex-end">
-          <Text fontSize={"16px"} fontWeight={600} textAlign="right" pr="2">{Number(amount).toFixed(5)}</Text>
+          <Text fontSize={"16px"} fontWeight={600} textAlign="right" pr="2">{formatAmount(amount)}</Text>
           {tokenData.isLiked !== 'none' && (
             <Box onClick={handleStarClick} >
               <Icon as={StarIcon} color={tokenData.isLiked === 'true' ? '#007AFF' : '#A0A3AD'}/>
@@ -355,24 +376,20 @@ export default function SelectTokenModal() {
       </HStack>
     )};
   return (
-      <>
         <Modal
             isOpen={(isInTokenOpen || isOutTokenOpen) && mobileTokenOpen}
             onClose={handleClose}
             motionPreset="slideInBottom"
         >
-            <ModalOverlay />
+          <ModalOverlay />
             <ModalContent
-                position="absolute"
-                bottom="0"
+                alignSelf="flex-end"
+                mb={"0px"}
                 bg="#222225"
-                height="70vh"
+                height="85vh"
                 overflow="hidden" 
-                px={{ base: "16px", md: "24px" }}
+                px={"16px"}
                 borderRadius={"24px 24px 0px 0px"}
-                sx={{
-                    marginBottom: '0',
-                  }}
             >
             <ModalHeader 
                 display="flex"
@@ -384,9 +401,10 @@ export default function SelectTokenModal() {
                 Select token
               <ModalCloseButton />
               </ModalHeader>
-            <MobileSearchInput
-              searchValue={searchValue} onChange={onChange}            
-            />
+              <MobileSearchInput
+              searchValue={searchValue}
+              onChange={onChange}
+            />           
               <HStack justifyContent="space-between" px={2} pt={3}>
                 <Text fontSize="12" fontWeight="500" color="#A0A3AD">Token</Text>
                 <HStack spacing="2">
@@ -430,6 +448,7 @@ export default function SelectTokenModal() {
               </HStack>
 
             <ModalBody 
+                overflowY="auto"
                 py={4} 
                 px={0}
                 sx={{
@@ -478,7 +497,5 @@ export default function SelectTokenModal() {
             </ModalBody>
             </ModalContent>
         </Modal>
-        <AmountInputModal />
-      </>
   );
 }

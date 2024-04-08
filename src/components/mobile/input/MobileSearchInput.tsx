@@ -4,15 +4,7 @@ import {
     InputLeftElement,
 } from '@chakra-ui/react';
 
-import { useRecoilState } from "recoil";
 import { SearchIcon } from '@chakra-ui/icons';
-import {
-    searchTokenStatus,
-    IsSearchToken,
-} from "@/recoil/card/selectCard/searchToken";
-import useConnectedNetwork from "@/hooks/network";
-
-import { useState, useEffect } from "react";
 
 interface MobileSearchInputProps {
     searchValue: string;
@@ -36,6 +28,7 @@ export default function MobileSearchInput(
                 bg="blackAlpha.500"
                 color="white"
                 onChange={onChange}
+
             />
         </InputGroup>
     )

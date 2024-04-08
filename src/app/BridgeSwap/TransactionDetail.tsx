@@ -39,7 +39,7 @@ const DivisionLine = () => {
 
 const DepositDetailRow = (props: DepositDetailProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
-  const { pcView } = useMediaView();
+  const { mobileView } = useMediaView();
 
   return (
     <Flex flexDir={"column"}>
@@ -50,6 +50,9 @@ const DepositDetailRow = (props: DepositDetailProp) => {
       >
         <Text fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
+          
+ 
+
           <Text fontWeight={500}>
             {tooltip ? (
               <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
@@ -57,7 +60,7 @@ const DepositDetailRow = (props: DepositDetailProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l1GasUS}</Text>}
+          {gasFee && <Text color={mobileView? "#FFFFFF" : "#A0A3AD"}>${gasFee.l1GasUS}</Text>}
         </Flex>
       </Flex>
       {/* {gasFee && pcView && (
@@ -275,9 +278,9 @@ const SwapDetailRow = (props: SwapDetailProp) => {
         h={"16px"}
       >
         <Flex columnGap={"4px"}>
-          <Text fontWeight={300} color={mobileView ? "#A0A3AD" : "inherit"}>{title}</Text>
+          <Text fontWeight={mobileView && isOpen? 500 : 300} color={mobileView && !isOpen ? "#A0A3AD" : "inherit"}>{title}</Text>
           {slippage && (
-            <Text fontWeight={300} color={"#A0A3AD"}>
+            <Text fontWeight={mobileView && isOpen? 500 : 300} color={"#A0A3AD"}>
               {`(${slippage})`}
             </Text>
           )}
@@ -346,7 +349,6 @@ const Content = (props: {
   const [isConfirm, setIsConfirm] = useRecoilState(confirmWithdrawStatus);
   const { mobileView } = useMediaView();
 
-
   type SwapDetailMobileProp = {
     // title?:
     //   | "Expected output"
@@ -360,7 +362,6 @@ const Content = (props: {
     gasFee?: string;
     slippage?: string;
   };
-
   const {
     depositPropsData,
     withdrawPropsData,
@@ -368,6 +369,7 @@ const Content = (props: {
     withdrawNewPropsData,
     WrapUnwrapPropsData,
   } = useTransactionDetail();
+  
   const { isOpen } = useConfirm();
 
   let updatedSwapPropsData: SwapDetailMobileProp[] = [];
@@ -401,7 +403,7 @@ const Content = (props: {
           ></WithdrawDetailRowNew>
         ));
       case "Swap":
-        if (mobileView && updatedSwapPropsData) {
+        if (mobileView && updatedSwapPropsData && !isOnConfirm) {
           return updatedSwapPropsData.map((data) => (
             <SwapDetailRow key={data.title} {...data} />
           ));
@@ -526,7 +528,7 @@ const Title = (props: {
       <Flex
         w={"100%"}
         justifyContent={"space-between"}
-        cursor={isOpen ? "" : "pointer"}
+        cursor={isOpen || mobileView ? "" : "pointer"}
         onClick={() => !isOpen && !mobileView && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
       >
@@ -569,7 +571,7 @@ const Title = (props: {
         w={"100%"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        cursor={isOpen ? "" : "pointer"}
+        cursor={isOpen || mobileView ? "" : "pointer"}
         onClick={() =>
           !isOpen && !mobileView && setIsExpended(!isExpanded)
         }
@@ -640,7 +642,7 @@ export default function TransactionDetail(props: {
   const { mobileView } = useMediaView();
   useEffect(() => {
     setIsExpended(isOpen || mobileView);
-  }, [isOpen, mobileView]);
+  }, [mobileView]);
 
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen || mobileView);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
@@ -700,7 +702,7 @@ export default function TransactionDetail(props: {
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       )}
       {
-        (mode !== "Deposit" && mode !== "Withdraw" && !(isWrapUnwrap && mobileView)) && (
+        ((!mobileView || isOnConfirm) || mode !== "Deposit" && mode !== "Withdraw" && !(isWrapUnwrap && mobileView)) && (
           <Content
           isExpanded={isExpanded}
           isOnConfirm={isOnConfirm}

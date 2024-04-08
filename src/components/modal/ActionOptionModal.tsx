@@ -7,6 +7,7 @@ import {
   Text,
   Flex,
   useTheme,
+  Spacer,
   Box,
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
@@ -14,7 +15,7 @@ import { useRecoilState } from "recoil";
 import { useAccount, useSwitchNetwork } from "wagmi";
 
 import { actionMethodStatus } from "@/recoil/modal/atom";
-import { networkStatus, welcomeMsgStatus } from "@/recoil/bridgeSwap/atom";
+import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
 import {
@@ -148,7 +149,6 @@ const ActionOptionModal = () => {
   const [methodStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
   const connectedNetwork = useConnectedNetwork();
-  const [welcomeMsg, setWelcomeMsgStatus] = useRecoilState(welcomeMsgStatus);
   const { isConnected } = useAccount();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const [, setNetwork] = useRecoilState(networkStatus);
@@ -161,11 +161,8 @@ const ActionOptionModal = () => {
   const { ethChainId, titanChainId } = useMobileChainIds(connectedNetwork);
 /////////////////////////
 
-  const isWelcomeMsg = welcomeMsg && mobileView;
-
   const closeModal = useCallback(() => {
     setActionMethodStatus(false);
-    setWelcomeMsgStatus(false);
   }, []);
 
   // useEffect(() => {
@@ -213,94 +210,77 @@ const ActionOptionModal = () => {
 
   return (
     <Modal
-      size={"xl"}
       isOpen={methodStatus && mobileView && !(mode == "Pool")}
       onClose={() => closeModal()}
+      closeOnOverlayClick={false} 
     >
-      <ModalOverlay bg={isWelcomeMsg ? "#0F0F12" : "#0F0F12F0"} />
+      <ModalOverlay bg={"#0F0F12"} />
       <ModalContent
-        bg={"#1F2128"}
-        mt={"auto"}
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        h="calc(100vh - 64px)"
+        bg={"transparent"}
         mb={0}
-        p={"16px 12px"}
-        roundedTop={"2xl"}
-        pos={"relative"}
       >
-        <Box pos={"relative"}>
-          <Box w={"100%"} pos={"absolute"} top={"-45px"}>
-            <Text textAlign={"center"} fontWeight={300} fontSize={14}>
-              Please select a transaction
-            </Text>
-          </Box>
-
-          {isWelcomeMsg && (
-            <Box pos={"fixed"} w={"100%"} top={"147px"} left={0}>
-              <Text
-                fontWeight={300}
-                fontSize={30}
-                lineHeight={"36px"}
-                textAlign={"center"}
-              >
-                Welcome to
+            <Box />
+            <Flex
+              flexDir={"column"} bg={"#0F0F12"} textAlign={"center"} my={"20px"}
+            >
+              <Flex flexDir={"column"} textAlign={"center"} my={"20px"}>
+                <Text fontWeight={300} fontSize={30} lineHeight={"36px"}>
+                  Welcome to
+                </Text>
+                <Text fontWeight={700} fontSize={34} letterSpacing={"2px"}>
+                  TOKAMAK BRIDGE
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex direction="column" bg={"#1F2128"} px={4} pt={2} pb={4} roundedTop={"2xl"}>
+              <Text fontWeight={500} fontSize={16}>
+                Bridge
               </Text>
-              <Text
-                fontWeight={700}
-                fontSize={34}
-                letterSpacing={"2px"}
-                textAlign={"center"}
-              >
-                TOKAMAK BRIDGE
+              <Flex columnGap={"8px"}>
+                <ActionMethodItem
+                  from={ethChainId}
+                  to={titanChainId}
+                  title="Deposit"
+                  handleClose={closeModal}
+                />
+                <ActionMethodItem
+                  from={titanChainId}
+                  to={ethChainId}
+                  title="Withdraw"
+                  handleClose={closeModal}
+                />
+              </Flex>
+
+              <Text fontWeight={500} fontSize={16} mt={"20px"}>
+                Swap
               </Text>
-            </Box>
-          )}
 
-          <Text fontWeight={500} fontSize={16}>
-            Bridge
-          </Text>
-
-          <Flex columnGap={"8px"}>
-            <ActionMethodItem
-              from={ethChainId}
-              to={titanChainId}
-              title="Deposit"
-              handleClose={closeModal}
-            />
-            <ActionMethodItem
-              from={titanChainId}
-              to={ethChainId}
-              title="Withdraw"
-              handleClose={closeModal}
-            />
-          </Flex>
-
-          <Text fontWeight={500} fontSize={16} mt={"20px"}>
-            Swap
-          </Text>
-
-          <Flex columnGap={"8px"}>
-            <ActionMethodItem
-              from={ethChainId}
-              to={ethChainId}
-              title="Swap"
-              handleClose={closeModal}
-            />
-            <ActionMethodItem
-              from={titanChainId}
-              to={titanChainId}
-              title="Swap"
-              handleClose={closeModal}
-            />
-            <ActionMethodItem
-              from={ethChainId}
-              to={titanChainId}
-              title="Pools"
-              handleClose={closeModal}
-            />
-          </Flex>
-        </Box>
-        <Box>
-          <Footer />
-        </Box>
+              <Flex columnGap={"8px"}>
+                <ActionMethodItem
+                  from={ethChainId}
+                  to={ethChainId}
+                  title="Swap"
+                  handleClose={closeModal}
+                />
+                <ActionMethodItem
+                  from={titanChainId}
+                  to={titanChainId}
+                  title="Swap"
+                  handleClose={closeModal}
+                />
+                <ActionMethodItem
+                  from={ethChainId}
+                  to={titanChainId}
+                  title="Pools"
+                  handleClose={closeModal}
+                />
+              </Flex>
+              <Footer />
+              </Flex>
       </ModalContent>
     </Modal>
   );

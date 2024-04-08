@@ -7,6 +7,7 @@ import ActionOptionModal from "@/components/modal/ActionOptionModal";
 import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -14,9 +15,12 @@ export default function Modals() {
   return (
     <>
       {mobileView ? 
-        <SelectTokenModal />
+        <>
+          <SelectTokenModal />
+          <AmountInputModal />
+        </>
         : 
-        <SelectCardModal />
+          <SelectCardModal />
       }
       <Confirmation />
       <ActionConfirmModal />

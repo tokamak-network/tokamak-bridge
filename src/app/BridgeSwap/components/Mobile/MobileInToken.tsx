@@ -84,7 +84,8 @@ const MobileInToken = () => {
         inNetwork: selectedInNetwork,
         outNetwork: selectedOutNetwork,
       })
-
+      
+      //여기에서 null이 발생하는구나.
       setSelectedInToken(null);
       setSelectedOutToken(null);
       return
