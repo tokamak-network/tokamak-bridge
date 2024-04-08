@@ -35,7 +35,7 @@ export function Details() {
         ? 
         <ActionButton /> 
         :
-        <Flex direction="column" alignItems="center" rowGap={"12px"}>
+        <Flex direction="column" rowGap={"12px"}>
           <Warning />
           <ActionButton />
         </Flex>

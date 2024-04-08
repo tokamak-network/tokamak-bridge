@@ -149,6 +149,8 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
           <Input
             w={"100%"}
             h={"40px"}
+            type="number"
+            pattern="[0-9]*"
             border={"1px solid #313442"}
             borderRadius={"8px"}
             _hover={{}}
@@ -217,6 +219,8 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
           <Input
             w={"100%"}
             h={"40px"}
+            type="number"
+            pattern="[0-9]*"
             border={"1px solid #313442"}
             borderRadius={"8px"}
             _hover={{}}

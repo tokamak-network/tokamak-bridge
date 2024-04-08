@@ -12,7 +12,7 @@ import {
   InputRightElement,
   Text
 } from '@chakra-ui/react';
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRecoilValue, useRecoilState } from "recoil";
 import {
 selectedInTokenStatus,
@@ -28,14 +28,11 @@ import TokenInput from "@/components/mobile/input/MobileTokenInput";
 import useAmountModal from "@/hooks/modal/useAmountModal";
 import { useMediaQuery } from "@chakra-ui/react";
 import { useWarning } from '@/hooks/mobile/useMobileWarning';
-import WARNING_ICON from "assets/icons/warning.svg";
-import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 import { isDesktop, isAndroid, isIOS } from 'react-device-detect';
 
 export default function AmountInputModal() {
   const { isOpen } = useRecoilValue(tokenModalStatus);
   const { isInAmountOpen, isOutAmountOpen, onCloseAmountModal } = useAmountModal();
-  const ref = useRef<HTMLInputElement>(null);
   const [selectedInToken] = useRecoilState(selectedInTokenStatus);
   const [tokenAmountStatus, ] = useRecoilState(selectedTokenAmountStatus);
   // 키보드 높이와 측정 여부를 상태로 관리합니다.
@@ -44,13 +41,13 @@ export default function AmountInputModal() {
   const warning = useWarning();
 
   useEffect(() => {
-    
     if(isLargerThan768) return;
 
     const handleResize = () => {
 
       if (window.visualViewport) {
         const newKeyboardHeight = Math.max(window.innerHeight - window.visualViewport.height, 0);
+
         // AND
         if(isAndroid){
           setKeyboardHeight(0);
@@ -69,6 +66,7 @@ export default function AmountInputModal() {
           setKeyboardHeight(550);
         }
       }
+
     };
     if (window.visualViewport) {
       window.visualViewport.addEventListener('resize', handleResize);
@@ -79,6 +77,7 @@ export default function AmountInputModal() {
         window.visualViewport.removeEventListener('resize', handleResize);
       }
     };
+
   }, []);
   
   return (
@@ -113,7 +112,6 @@ export default function AmountInputModal() {
             <TokenInput
               inToken={isOpen === "INPUT" ? true : false}
               hasMaxButton={isOpen === "INPUT" ? true : false}
-              customRef={ref}
               placeholder={"input amount"}
               defaultValue={
                 isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""

@@ -41,6 +41,8 @@ export default function Swap() {
   const network = useConnectedNetwork();
 
   const invertTokenPair = useCallback(() => {
+    if(mode =="Deposit" || mode == "Withdraw" || !mode) return
+    
     if (inTokenRecoilValue && outTokenRecoilValue) {
       const tempValue = inTokenRecoilValue;
       

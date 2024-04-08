@@ -22,7 +22,6 @@ import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import { TokenInfo } from "types/token/supportedToken";
 import { TokenSymbol } from "@/componenets/image/TokenSymbol";
-import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
 import { useRecoilState } from "recoil";
 import {
 isInputTokenAmount,
@@ -62,7 +61,6 @@ import {
 import { useAccount, useSwitchNetwork } from "wagmi";
 import { actionMethodStatus } from "@/recoil/modal/atom";
 import useAddLikeStorage from "@/hooks/mobile/useAddLikeStorage";
-
 
 
 // 컴포넌트 외부에 sortTokens 함수를 정의
@@ -230,9 +228,6 @@ export default function SelectTokenModal() {
     setSearchValue('');
   };
   
-/////////////////////////////////////////////////////////////////////
-
-
 
   type TokenButtonProps = {
     tokenLabel: string;
@@ -381,24 +376,20 @@ export default function SelectTokenModal() {
       </HStack>
     )};
   return (
-      <>
         <Modal
             isOpen={(isInTokenOpen || isOutTokenOpen) && mobileTokenOpen}
             onClose={handleClose}
             motionPreset="slideInBottom"
         >
-            <ModalOverlay />
+          <ModalOverlay />
             <ModalContent
-                position="absolute"
-                bottom="0"
+                alignSelf="flex-end"
+                mb={"0px"}
                 bg="#222225"
-                height="70vh"
+                height="85vh"
                 overflow="hidden" 
-                px={{ base: "16px", md: "24px" }}
+                px={"16px"}
                 borderRadius={"24px 24px 0px 0px"}
-                sx={{
-                    marginBottom: '0',
-                  }}
             >
             <ModalHeader 
                 display="flex"
@@ -410,9 +401,10 @@ export default function SelectTokenModal() {
                 Select token
               <ModalCloseButton />
               </ModalHeader>
-            <MobileSearchInput
-              searchValue={searchValue} onChange={onChange}            
-            />
+              <MobileSearchInput
+              searchValue={searchValue}
+              onChange={onChange}
+            />           
               <HStack justifyContent="space-between" px={2} pt={3}>
                 <Text fontSize="12" fontWeight="500" color="#A0A3AD">Token</Text>
                 <HStack spacing="2">
@@ -456,6 +448,7 @@ export default function SelectTokenModal() {
               </HStack>
 
             <ModalBody 
+                overflowY="auto"
                 py={4} 
                 px={0}
                 sx={{
@@ -504,7 +497,5 @@ export default function SelectTokenModal() {
             </ModalBody>
             </ModalContent>
         </Modal>
-        <AmountInputModal />
-      </>
   );
 }

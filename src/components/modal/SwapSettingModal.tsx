@@ -20,6 +20,7 @@ const SwapSettingModal = () => {
         setSettingStatus(false);
       }}
       motionPreset="slideInBottom"
+      autoFocus={mobileView && false}
     >
       <ModalOverlay opacity={0.1} />
       <ModalContent

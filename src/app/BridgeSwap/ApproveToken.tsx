@@ -36,7 +36,7 @@ export default function ApproveToken() {
   }, [pendingTransactionToApprove]);
 
   if (
-    (isApproved && !mobileView) ||
+    isApproved ||
     isNotSupportForBridge ||
     !inToken ||
     (mode == "Swap" && isTONatPair) ||
@@ -91,8 +91,6 @@ if (allowance != BigInt(0) && typeof allowance != 'undefined') {
           )
         }
 
-      
-      
       </Flex>
         {isApproved && mobileView ? (
           <Image src={checkGreen}  alt={"check"} color='#18d08e' style={{ width: "20px", height: "20px" }} />

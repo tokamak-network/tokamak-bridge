@@ -40,7 +40,6 @@ const DivisionLine = () => {
 const DepositDetailRow = (props: DepositDetailProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
   const { mobileView } = useMediaView();
-  console.log(content)
 
   return (
     <Flex flexDir={"column"}>
