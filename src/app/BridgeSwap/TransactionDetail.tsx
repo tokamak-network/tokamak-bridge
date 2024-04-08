@@ -502,12 +502,6 @@ const Title = (props: {
   const { isBalanceOver } = useInputBalanceCheck()
   const { mobileView } = useMediaView();
 
-  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
-    tokenName: outToken?.tokenName as string,
-    amount: Number(outToken?.parsedAmount?.replaceAll(",", "")),
-  });
-
-
   useEffect(() => {
     if (isExpanded) {
       arrowControl.start({ rotate: 180 });
@@ -521,6 +515,11 @@ const Title = (props: {
     mode === "Unwrap" ||
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
+
+  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
+    tokenName: outToken?.tokenName as string,
+    amount: Number(isWrapUnwrap ? 1 : outPrice),
+  });
 
   if (mode === "Deposit" || mode === "Withdraw") {
     return (
@@ -541,8 +540,8 @@ const Title = (props: {
         </Flex>
         {(mobileView || !isOpen) && (
           <Flex alignItems={"center"}>
-            {(isOpen === isExpanded) || mobileView && <Image src={GasImg} alt={"gasStation"} />}
-            {(isOpen === isExpanded) || mobileView && (
+            {((isOpen === isExpanded) || mobileView) && <Image src={GasImg} alt={"gasStation"} />}
+            {((isOpen === isExpanded) || mobileView) && (
               <Text
                 fontSize={{ base: 12, lg: 14 }}
                 fontWeight={400}
@@ -603,10 +602,10 @@ const Title = (props: {
           ? null
           : isOpen === false && (
               <Flex>
-                {!isExpanded && gasCostUS &&  (
+                {(!isExpanded || mobileView) && gasCostUS &&  (
                   <Image src={GasImg} alt={"gasStation"} />
                 )}
-                {!isExpanded && gasCostUS && (
+                {(!isExpanded || mobileView) && gasCostUS && (
                   <Text
                     fontSize={{ base: 11, lg: 14 }}
                     fontWeight={400}
