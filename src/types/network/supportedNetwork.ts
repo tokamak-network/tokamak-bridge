@@ -64,7 +64,7 @@ export const supportedChain: SupportedChainProperties[] = [
     chainName: "THANOS_SEPOLIA",
     networkImage: SYMBOL_TITAN,
     rpcAddress: "",
-    nativeToken: "ETH",
+    nativeToken: "TON",
     layer: "L2",
     isTOP: true,
   },

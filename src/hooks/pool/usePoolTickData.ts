@@ -30,6 +30,7 @@ import {
   L2_TESTNET_UniswapContracts,
   L2_UniswapContracts,
   L2_initCodeHashManualOverride,
+  L2_TITAN_SEPOLIA_UniswapContracts,
 } from "@/constant/contracts/uniswap";
 
 const V3_CORE_FACTORY_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
@@ -37,6 +38,8 @@ const V3_CORE_FACTORY_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
   [SupportedChainId.TITAN]: L2_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
   [SupportedChainId.SEPOLIA]:
     L1_SEPOLIA_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
+  [SupportedChainId.TITAN_SEPOLIA]:
+    L2_TITAN_SEPOLIA_UniswapContracts.POOL_FACTORY_CONTRACT_ADDRESS,
 };
 
 const PRICE_FIXED_DIGITS = 8;

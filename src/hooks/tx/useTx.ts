@@ -213,25 +213,31 @@ export function useTx(params: {
   }, [hash]);
 
   useEffect(() => {
-    if (isError) {
-      return;
-    }
-    if (
-      data &&
-      (txSort === "Add Liquidity" ||
-        txSort === "Increase Liquidity" ||
-        txSort === "Remove Liquidity")
-    ) {
-      const { logs, transactionHash } = data;
-      const { nonFungiblePositionManagerI } = getInterface();
-      const result = nonFungiblePositionManagerI.parseLog(
-        logs[logs.length - 1]
-      );
-      const { args } = result;
-      setTxLog({
-        txSort,
-        logs: args,
-      });
+    try {
+      if (isError) {
+        return;
+      }
+      if (
+        data &&
+        (txSort === "Add Liquidity" ||
+          txSort === "Increase Liquidity" ||
+          txSort === "Remove Liquidity")
+      ) {
+        const { logs, transactionHash } = data;
+        const { nonFungiblePositionManagerI } = getInterface();
+
+        const result = nonFungiblePositionManagerI.parseLog(
+          logs[logs.length - 1]
+        );
+        const { args } = result;
+        setTxLog({
+          txSort,
+          logs: args,
+        });
+      }
+    } catch (e) {
+      console.log("**nonFungiblePositionManagerI.parseLog**");
+      console.log(e);
     }
   }, [isSuccess, isError, txSort, data, hash]);
 
