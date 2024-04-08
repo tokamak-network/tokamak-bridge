@@ -2,7 +2,7 @@ import {
   L1_UniswapContracts,
   L1_SEPOLIA_UniswapContracts,
   L2_UniswapContracts,
-  L2_TESTNET_UniswapContracts,
+  L2_THANOS_SEPOLIA_UniswapContracts,
   L2_TITAN_SEPOLIA_UniswapContracts,
 } from "@/constant/contracts/uniswap";
 import useConnectedNetwork, { useInOutNetwork } from "../network";
@@ -30,7 +30,7 @@ export function useUniswapContracts() {
     case layer === "L2" &&
       !isConnectedToMainNetwork &&
       connectedChainId === SupportedChainId["THANOS_SEPOLIA"]:
-      L2_TESTNET_UniswapContracts;
+      L2_THANOS_SEPOLIA_UniswapContracts;
     default:
       selectedUniswapContracts = L2_TITAN_SEPOLIA_UniswapContracts;
       break;
@@ -45,7 +45,7 @@ export function useUniswapContracts() {
       selectedContracts = L2_UniswapContracts;
       break;
     case layer === "L1" && !isConnectedToMainNetwork:
-      selectedContracts = L2_TESTNET_UniswapContracts;
+      selectedContracts = L2_THANOS_SEPOLIA_UniswapContracts;
       break;
     case layer === "L2" && isConnectedToMainNetwork:
       selectedContracts = L1_UniswapContracts;
@@ -61,6 +61,6 @@ export function useUniswapContracts() {
     UNISWAP_CONTRACT_OTHER_LAYER,
     L1_UniswapContracts,
     L2_UniswapContracts,
-    L2_TESTNET_UniswapContracts,
+    L2_THANOS_SEPOLIA_UniswapContracts,
   };
 }

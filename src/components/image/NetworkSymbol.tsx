@@ -46,6 +46,7 @@ export function NetworkSymbol(props: {
         />
       );
     case 55004:
+    case 55007:
       return (
         <ImageSymbol
           ImgFile={isCircle ? SYMBOL_TITAN_CIRCLE : SYMBOL_TITAN}

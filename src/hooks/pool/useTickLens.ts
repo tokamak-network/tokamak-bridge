@@ -12,7 +12,7 @@ import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import TickLensJson from "@uniswap/v3-periphery/artifacts/contracts/lens/TickLens.sol/TickLens.json";
 import {
   L1_SEPOLIA_UniswapContracts,
-  L2_TESTNET_UniswapContracts,
+  L2_THANOS_SEPOLIA_UniswapContracts,
   L2_UniswapContracts,
 } from "@/constant/contracts/uniswap";
 
@@ -73,7 +73,7 @@ function useContract<T extends Contract = Contract>(
 const TICK_LENS_ADDRESSES_WITH_TITAN: { [chainId: number]: string } = {
   ...TICK_LENS_ADDRESSES,
   [55004]: L2_UniswapContracts.TICK_LENS,
-  [5050]: L2_TESTNET_UniswapContracts.TICK_LENS,
+  [5050]: L2_THANOS_SEPOLIA_UniswapContracts.TICK_LENS,
   [11155111]: L1_SEPOLIA_UniswapContracts.TICK_LENS,
 };
 

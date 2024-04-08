@@ -9,7 +9,7 @@ import useBlockNum from "../network/useBlockNumber";
 import { SqrtPriceMath, TickMath, computePoolAddress } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
 import {
-  L2_TESTNET_UniswapContracts,
+  L2_THANOS_SEPOLIA_UniswapContracts,
   L2_initCodeHashManualOverride,
 } from "@/constant/contracts/uniswap";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";

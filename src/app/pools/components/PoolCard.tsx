@@ -21,6 +21,11 @@ import { BigNumber, Contract, ethers } from "ethers";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { calculateFeeToCollect } from "@/utils/pool/calculateFeeToCollect";
 import { l2Provider } from "@/config/l2Provider";
+import {
+  L1_SEPOLIA_UniswapContracts,
+  UniswapContractByChainId,
+} from "@/constant/contracts/uniswap";
+import { providerByChainId } from "@/config/getProvider";
 
 export type PoolCardDetail = {
   id: number;
@@ -100,7 +105,7 @@ export default function PoolCard(props: PoolCardDetail) {
     L1_UniswapContracts,
     L2_UniswapContracts,
     UNISWAP_CONTRACT,
-    L2_TESTNET_UniswapContracts,
+    L2_THANOS_SEPOLIA_UniswapContracts,
   } = useUniswapContracts();
   const [token0FeeAmount, setToken0FeeAmount] = useState<string | undefined>(
     undefined
@@ -119,33 +124,24 @@ export default function PoolCard(props: PoolCardDetail) {
       );
     }
 
-    //for the network which is not connectd by a wallet
     if (
-      chainId === SupportedChainId["MAINNET"]
+      UniswapContractByChainId[chainId].NONFUNGIBLE_POSITION_MANAGER &&
+      providerByChainId[chainId]
     ) {
       return new Contract(
-        L1_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
+        UniswapContractByChainId[chainId].NONFUNGIBLE_POSITION_MANAGER,
         NONFUNGIBLE_POSITION_MANAGER_ABI,
-        L1Provider
+        providerByChainId[chainId]
       );
     }
-    if (chainId === SupportedChainId["TITAN"]) {
-      return new Contract(
-        L2_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
-        NONFUNGIBLE_POSITION_MANAGER_ABI,
-        L2Provider
-      );
-    }
-    L2_TESTNET_UniswapContracts;
+
+    return undefined;
   }, [
     chainId,
     provider,
-    L1Provider,
-    l2Provider,
-    L1_UniswapContracts,
-    L2_UniswapContracts,
+    providerByChainId,
     UNISWAP_CONTRACT,
-    L2_TESTNET_UniswapContracts,
+    UniswapContractByChainId,
     NONFUNGIBLE_POSITION_MANAGER_ABI,
   ]);
 

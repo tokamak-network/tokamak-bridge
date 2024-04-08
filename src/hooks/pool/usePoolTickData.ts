@@ -27,7 +27,7 @@ import { PoolState } from "@/types/pool/pool";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
   L1_SEPOLIA_UniswapContracts,
-  L2_TESTNET_UniswapContracts,
+  L2_THANOS_SEPOLIA_UniswapContracts,
   L2_UniswapContracts,
   L2_initCodeHashManualOverride,
   L2_TITAN_SEPOLIA_UniswapContracts,
