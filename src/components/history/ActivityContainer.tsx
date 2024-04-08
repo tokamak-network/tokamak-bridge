@@ -34,7 +34,23 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [preLoadData, setPreLoadData] = useState<L1TxType[]>([]);
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
-  const tData = useGetTransaction();
+  const data = useGetTransaction();
+
+  const [tData, setTData] = useState<any>({depositTxs: [], loadingState : "loading"});
+  const storedValue = window.localStorage.getItem("txHistoryData");
+  const storedTData = JSON.parse(storedValue!);
+
+  useEffect(() => {
+    setTData(storedTData);
+  }, [])
+
+  useEffect(() => {
+    if (!storedTData || (storedTData && data.loadingState !== "loading")) {
+      window.localStorage.setItem("txHistoryData", JSON.stringify(data));
+      setTData(data);
+    }
+  }, [data])
+  
   const ref = useRef<HTMLDivElement | null>(null);
   const { mobileView } = useMediaView();
 
@@ -101,10 +117,10 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   //used to filter the data for the search string
   const filteredTx = useMemo(() => {
     if (searchTxString?.id === "" || searchTxString === null) {
-      return tData.depositTxs.length > 0 ? tData.depositTxs : preLoadData;
+      return tData?.depositTxs.length > 0 ? tData?.depositTxs : preLoadData;
     } else {
-      if (tData.depositTxs.length > 0) {
-        const filteredTx = tData.depositTxs.filter(
+      if (tData?.depositTxs.length > 0) {
+        const filteredTx = tData?.depositTxs.filter(
           (tx: FullDepTx | FullWithTx) => {
             if (tx !== undefined) {
               if (tx.l1txHash && tx.l2txHash === undefined)
@@ -129,8 +145,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     address,
     searchTxString,
     preLoadData,
-    tData.depositTxs,
-    tData.loadingState,
+    tData?.depositTxs,
+    tData?.loadingState,
   ]);
 
   const getLayerFiltered = useMemo(() => {
@@ -164,7 +180,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
 
   //returns the appropriate component depending on the loading status of the data from the hook
   const txes = useMemo(() => {
-    switch (tData.loadingState) {
+    switch (tData?.loadingState) {
       case "absent":
         return (
           <Flex
@@ -203,7 +219,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       case "present":
         return (
           // getPaginatedData.length !== 0 &&
-          tData.depositTxs.map((tx: any, index: number) => {
+          tData?.depositTxs.map((tx: any, index: number) => {
             if (tx.event === "deposit") {
               return mobileView ? (
                 <DepositTxMobile tx={tx} key={tx.transactionHash} />
@@ -217,10 +233,10 @@ export default function ActivityContainer(props: { network: SelectOption }) {
         );
 
       case "loading":
-        if (tData.depositTxs.length > 0) {
+        if (tData?.depositTxs.length > 0) {
           return (
             // getPaginatedData.length !== 0 &&
-            tData.depositTxs.map((tx: any) => {
+            tData?.depositTxs.map((tx: any) => {
               return <HalfLoadingTx tx={tx} key={tx.transactionHash} />;
             })
           );
