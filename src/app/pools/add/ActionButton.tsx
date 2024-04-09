@@ -30,7 +30,7 @@ const ApproveButton = (props: { isInToken: boolean }) => {
     ? (inToken?.tokenAddress as Hash)
     : (outToken?.tokenAddress as Hash);
   const { UNISWAP_CONTRACT } = useContract();
-  const contractAddress = UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER;
+  const contractAddress = UNISWAP_CONTRACT?.NONFUNGIBLE_POSITION_MANAGER;
 
   const { data: totalSupply } = useErc20TotalSupply({
     address: tokenAddress,
@@ -39,7 +39,7 @@ const ApproveButton = (props: { isInToken: boolean }) => {
     address: tokenAddress,
     args:
       contractAddress && totalSupply
-        ? [UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER, totalSupply]
+        ? [contractAddress, totalSupply]
         : undefined,
     enabled: Boolean(contractAddress && totalSupply),
   });

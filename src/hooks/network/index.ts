@@ -26,7 +26,6 @@ export default function useConnectedNetwork() {
 
   //to optimize rpc calls
   //if it's enabled always, then useNetwork would make so many calls to check connectecd network datas when it's not connected
-
   const chainInfo = useMemo(() => {
     //connected wallet
     if (chain?.id) {

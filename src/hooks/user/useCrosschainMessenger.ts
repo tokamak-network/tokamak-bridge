@@ -52,7 +52,7 @@ export default function useCrosschainMessenger() {
             : new ethers.providers.JsonRpcProvider(
                 isConnectedToMainNetwork
                   ? process.env.NEXT_PUBLIC_ETHEREUM_RPC
-                  : process.env.NEXT_PUBLIC_GOERLI_RPC
+                  : process.env.NEXT_PUBLIC_SEPOLIA_RPC
               ).getSigner(address),
         l2SignerOrProvider: l2Pro.getSigner(address),
       });

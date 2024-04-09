@@ -1,4 +1,4 @@
-import { Button, Center, Text, Flex, Link, Box } from "@chakra-ui/react";
+import { Button, Text, Flex, Link, Box } from "@chakra-ui/react";
 
 export function NoPosition() {
   return (

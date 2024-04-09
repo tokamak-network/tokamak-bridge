@@ -9,8 +9,8 @@ import useBlockNum from "../network/useBlockNumber";
 import { SqrtPriceMath, TickMath, computePoolAddress } from "@uniswap/v3-sdk";
 import useConnectedNetwork from "../network";
 import {
-  L2_THANOS_SEPOLIA_UniswapContracts,
   L2_initCodeHashManualOverride,
+  UniswapContractByChainId,
 } from "@/constant/contracts/uniswap";
 import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { Token } from "@uniswap/sdk-core";
@@ -283,7 +283,6 @@ export function useGetPositionIds(): {
 //logic through contract calls
 export function useGetPositionById(positionId: number, chainId: number) {
   const { provider: _provider } = useProvier();
-  const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { blockNumber } = useBlockNum();
   const { connectedChainId, layer, isConnectedToMainNetwork } =
     useConnectedNetwork();
@@ -305,7 +304,9 @@ export function useGetPositionById(positionId: number, chainId: number) {
 
   const callPositionIds = useCallback(
     async (positionTokenId: number) => {
-      if (provider && chainId && positionTokenId) {
+      const UNISWAP_CONTRACT = UniswapContractByChainId[chainId];
+
+      if (provider && chainId && positionTokenId && UNISWAP_CONTRACT) {
         const NonfungiblePositionManagerContract = new ethers.Contract(
           UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
           NONFUNGIBLE_POSITION_MANAGER_ABI,
@@ -490,7 +491,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
       }
       return undefined;
     },
-    [UNISWAP_CONTRACT, layer, provider, chainId, blockNumber]
+    [layer, provider, chainId, blockNumber]
   );
 
   const txPending = useRecoilValue(txPendingStatus);

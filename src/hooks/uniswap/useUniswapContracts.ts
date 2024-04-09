@@ -31,6 +31,7 @@ export function useUniswapContracts() {
       !isConnectedToMainNetwork &&
       connectedChainId === SupportedChainId["THANOS_SEPOLIA"]:
       L2_THANOS_SEPOLIA_UniswapContracts;
+      break;
     default:
       selectedUniswapContracts = L2_TITAN_SEPOLIA_UniswapContracts;
       break;
