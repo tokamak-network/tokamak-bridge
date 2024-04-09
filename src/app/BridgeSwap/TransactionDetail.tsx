@@ -663,7 +663,8 @@ export default function TransactionDetail(props: {
     !isReady ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
-    isApproved === false ||
+    // mobile view에서는 approve전에도 detail이 보여야 함
+    (isApproved === false && !mobileView) ||
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
     !isConnected ||

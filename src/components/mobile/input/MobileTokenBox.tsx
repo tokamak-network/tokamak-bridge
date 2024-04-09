@@ -16,12 +16,15 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useIsMoibleLoading} from '@/hooks/ui/useMobileLoading'; 
 import useAmountModal from "@/hooks/modal/useAmountModal"
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 
 import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import {
   MAINNET_CONTRACTS,
 } from "@/constant/contracts";
 import useIsTon from "@/hooks/token/useIsTon";
+import { useAccount } from "wagmi";
+
 
 export default function MobileTokenBox(props: {
   inToken: boolean;
@@ -86,9 +89,11 @@ export default function MobileTokenBox(props: {
   });
 
   const { isTONatPair } = useIsTon();
+  const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
+  const { isConnected } = useAccount();
 
   const valueProp = useMemo(() => {
-    
+
     if (
       (mode === "Wrap" ||
         mode === "Unwrap" ||
@@ -111,30 +116,27 @@ export default function MobileTokenBox(props: {
     }
 
     if (mode === "Swap" && inToken === false) {
+      console.log("여기타쥬??")
+      if(isNotSupportForSwap || isNotSupportForSwap || !isConnected) {
+        return "0"
+      }
+
       if(!inToken && !selectedInToken?.amountBN) {
         return trimAmount("0", 8) ?? 0;
       }
       return trimAmount(amountOut, 8) ?? "";
     }
-    
-    if (mode === "Pool" && dependentAmount) {
-      if (lastFocused === "LeftInput" && !inToken) {
-        return trimAmount(dependentAmount, 8);
-      }
-      if (lastFocused === "RightInput" && inToken) {
-        return trimAmount(dependentAmount, 8);
-      }
+
+    if (inToken && selectedInToken?.parsedAmount !== null) {
+      return isFocused ? String(selectedInToken?.parsedAmount) : trimAmount(selectedInToken?.parsedAmount, 8);
+    }
+  
+    if (!inToken && selectedOutToken?.parsedAmount !== null) {
+      return isFocused ? String(selectedOutToken?.parsedAmount) : trimAmount(selectedOutToken?.parsedAmount, 8);
     }
 
-    return inToken && selectedInToken && selectedInToken?.parsedAmount !== null
-      ? isFocused
-        ? String(selectedInToken?.parsedAmount)
-        : trimAmount(selectedInToken?.parsedAmount, 8)
-      : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-      ? isFocused
-        ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : 0;
+    return "0"
+
   }, [
     inToken,
     amountOut,
@@ -145,6 +147,8 @@ export default function MobileTokenBox(props: {
     isFocused,
     dependentAmount,
     lastFocused,
+    isNotSupportForBridge,
+    isNotSupportForSwap
   ]);
 
   const marketPrice = useMemo(() => {
@@ -159,7 +163,7 @@ export default function MobileTokenBox(props: {
 
 
   useEffect(() => {
-    if (inToken && selectedInToken) {
+        if (inToken && selectedInToken) {
       setVisibilityTypeState(true);
 
     } else if (!inToken && selectedOutToken) {

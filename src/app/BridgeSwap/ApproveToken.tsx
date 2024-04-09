@@ -80,7 +80,7 @@ return (
     color={approveBtnDisabled ? "#8E8E92" : ""}
   >
     <Flex columnGap={"12px"}>
-      {approveBtnDisabled && (
+      {(!mobileView && approveBtnDisabled) && (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
       )}
       {
@@ -106,6 +106,7 @@ return (
     {isApproved ? (
       <Image src={checkGreen}  alt={"check"} color='#18d08e' style={{ width: "20px", height: "20px" }} />
     ): (
+      !mobileView ? (
       <Button
         w={{ base: "64px", lg: "92px" }}
         h={"28px"}
@@ -124,6 +125,30 @@ return (
       >
         Approve
       </Button>
+      ) : (
+        //mobile view
+        !approveBtnDisabled ? (
+        <Button
+          w={{ base: "64px", lg: "92px" }}
+          h={"28px"}
+          fontSize={{ base: 12, lg: 14 }}
+          fontWeight={500}
+          bgColor={"#007AFF"}
+          color={"#fff"}
+          _active={{}}
+          _hover={{}}
+          onClick={() => {
+            callApprove();
+            setIsDrawerOpen(false);
+          }}
+          isDisabled={approveBtnDisabled}
+          _disabled={{ bg: "#15161D", color: "#8E8E92" }}
+        >
+          Approve
+        </Button>) : (
+          <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+        )
+      )
     )}
   </Flex>
 );

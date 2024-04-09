@@ -155,7 +155,7 @@ const MobileInToken = () => {
         <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
           <Image
             alt="eth"
-            src={network?.connectedChainId === 5050 || network?.connectedChainId === 55004 ? TitanIcon : ETHIcon}
+            src={network?.connectedChainId === 55007 || network?.connectedChainId === 55004 ? TitanIcon : ETHIcon}
           />
         </Flex>
       </Flex>
