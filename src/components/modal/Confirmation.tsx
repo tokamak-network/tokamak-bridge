@@ -1,4 +1,3 @@
-import { transactionModalStatus } from "@/recoil/modal/atom";
 import {
   Modal,
   ModalOverlay,
@@ -9,29 +8,23 @@ import {
   Link,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import "@/css/spinner.css";
 import ConfirmedImage from "assets/image/modal/confirmed.svg";
 import ErrorImage from "assets/image/modal/error.svg";
-
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";
 import { useTransaction } from "@/hooks/tx/useTx";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { txHashStatus } from "@/recoil/global/transaction";
-import { Overlay_Index } from "@/types/style/overlayIndex";
-import { claimModalStatus } from "@/recoil/modal/atom";
+import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
+import { useRouter } from "next/navigation";
+import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 export default function Confirmation() {
-  // const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
-  // const isConfirming = modalOpen === "confirming";
-  // const isConfirmed = modalOpen === "confirmed";
-  // const isError = modalOpen === "error";
-
-  const { blockExplorer } = useConnectedNetwork();
+  const { blockExplorer, connectedChainId } = useConnectedNetwork();
   const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
@@ -40,15 +33,42 @@ export default function Confirmation() {
     isConfirming,
     isError,
     isOpen,
+    isClaimWaiting,
     setIsOpen,
     closeModal,
-    isClaiming,
-    isClaimWaiting,
   } = useTxConfirmModal();
+  const { mode, subMode } = useGetMode();
+  const txLog = useRecoilValue(txHashLog);
 
-  const { mode } = useGetMode();
+  const router = useRouter();
+  const closeThisModal = useCallback(() => {
+    if (
+      (subMode.add || subMode.increase || subMode.remove) &&
+      txLog.logs &&
+      isConfirmed &&
+      connectedChainId
+    ) {
+      router.push(
+        `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`
+      );
+    }
+    closeModal();
+  }, [
+    subMode,
+    isConfirmed,
+    isConfirming,
+    isError,
+    closeModal,
+    txLog,
+    connectedChainId,
+  ]);
+
+  const subModeValue = Object.keys(subMode).filter(
+    (key) => subMode[key as keyof typeof subMode] === true
+  );
+
   return (
-    <Modal isOpen={isOpen} onClose={closeModal}>
+    <Modal isOpen={isOpen} onClose={closeThisModal}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}
@@ -65,23 +85,18 @@ export default function Confirmation() {
           flexDir={"column"}
           alignItems={"center"}
         >
-          {!isClaimWaiting ? (
-            <Flex
-              w={"100%"}
-              justifyContent={"flex-end"}
-              pt={"14px"}
-              pr={"14px"}
-            >
-              <CloseButton onClick={closeModal} />
-            </Flex>
-          ) : (
-            <Flex h={"38px"} pt={"14px"} pr={"14px"}></Flex>
-          )}
+          <Flex w={"100%"} justifyContent={"flex-end"} pt={"14px"} pr={"14px"}>
+            <CloseButton onClick={closeThisModal} />
+          </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
-            {isClaiming
-              ? "Confirming Claim"
-              : isConfirming
-              ? `Confirming ${mode}`
+            {isConfirming
+              ? `Confirming ${
+                  subModeValue.length === 1
+                    ? capitalizeFirstChar(subModeValue[0])
+                    : mode === "Pool"
+                    ? "Claim"
+                    : mode
+                }`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError
@@ -108,11 +123,10 @@ export default function Confirmation() {
               <Image src={ErrorImage} alt={"ErrorImage"} />
             ) : null}
           </Flex>
-
           <Text
             w={"254px"}
             mt={"46px"}
-            px={isClaimWaiting ? "" : isConfirming ? "32px" : ""}
+            px={isConfirming ? "32px" : ""}
             textAlign={"center"}
             fontSize={14}
             fontWeight={500}
