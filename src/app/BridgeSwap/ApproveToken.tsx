@@ -44,7 +44,8 @@ export default function ApproveToken() {
     !inToken && mode !== "Swap" ||
     (mode == "Swap" && isTONatPair) ||
     !isConnected ||
-    isBalanceOver
+    isBalanceOver ||
+    Number(inToken?.parsedAmount) === 0
   ) {
     return null;
   }
