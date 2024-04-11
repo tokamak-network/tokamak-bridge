@@ -1,4 +1,4 @@
-import { Flex, Text, Button, Spinner } from "@chakra-ui/react";
+import { Flex, Text } from "@chakra-ui/react";
 import WithdrawTx from "./WithdrawTx";
 import DepositTx from "./DepositTx";
 import DepositTxMobile from "./DepositTxMobile";
@@ -34,23 +34,33 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   const [preLoadData, setPreLoadData] = useState<L1TxType[]>([]);
   const [numData, setNumData] = useState(2);
   const searchTxString = useRecoilValue(searchTxStatus);
-  const data = useGetTransaction();
+  const tData = useGetTransaction();
+  // const [tData, setTData] = useState<any>({ depositTxs: [], loadingState: "loading" })
 
-  const [tData, setTData] = useState<any>({depositTxs: [], loadingState : "loading"});
-  const storedValue = window.localStorage.getItem("txHistoryData");
-  const storedTData = JSON.parse(storedValue!);
+  // useEffect(() => {
+  //   const storedValue = window.localStorage.getItem("txHistoryData");
+  //   const storedTx = JSON.parse(storedValue! === "undefined" ? "{}" : storedValue!);
+  //   if (data.loadingState !== "loading") {
+  //     console.log(tData)
+  //     let newTxData: any = { depositTxs: [], loadingState: "" };
+  //     if (storedTx?.depositTxs.length > 0) {
+  //       console.log("cache exists");
+  //       newTxData.depositTxs = storedTx?.depositTxs?.map((item: any) => {
+  //         const matchingItem = data?.depositTxs?.find((item2: any) => item.l2txHash === item2.l2txHash);
+  //         return matchingItem ? { ...item, matchingItem } : item;
+  //       })
+  //     }
+  //     else {
+  //       console.log("assign new tData");
+  //       newTxData = { ...data };
+  //     }
+  //     console.log(newTxData)
+  //     newTxData.loadingState = "present";
+  //     window.localStorage.setItem("txHistoryData", JSON.stringify(newTxData));
+  //     setTData(newTxData);
+  //   }
+  // }, [data])
 
-  useEffect(() => {
-    setTData(storedTData);
-  }, [])
-
-  useEffect(() => {
-    if (!storedTData || (storedTData && data.loadingState !== "loading")) {
-      window.localStorage.setItem("txHistoryData", JSON.stringify(data));
-      setTData(data);
-    }
-  }, [data])
-  
   const ref = useRef<HTMLDivElement | null>(null);
   const { mobileView } = useMediaView();
 
@@ -74,10 +84,10 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     return () => {
       window.removeEventListener("resize", handleResize);
     };
-  }, [ref?.current]);
+  }, []);
 
   //get the data from the subgraphs to show as initial data until the proper data is loaded in the useGetTransactions hook
- //sets the preloaded data
+  //sets the preloaded data
   useEffect(() => {
     const getTxs = async () => {
       if (isConnectedToMainNetwork !== undefined) {
@@ -219,7 +229,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       case "present":
         return (
           // getPaginatedData.length !== 0 &&
-          tData?.depositTxs.map((tx: any, index: number) => {
+          tData?.depositTxs?.map((tx: any, index: number) => {
             if (tx.event === "deposit") {
               return mobileView ? (
                 <DepositTxMobile tx={tx} key={tx.transactionHash} />
@@ -250,6 +260,15 @@ export default function ActivityContainer(props: { network: SelectOption }) {
             </Flex>
           );
         }
+      default:
+        return (
+          <Flex flexDir={"column"} rowGap={"8px"}>
+            <LoadingTx />
+            <LoadingTx />
+            <LoadingTx />
+            <LoadingTx />
+          </Flex>
+        );
     }
   }, [getPaginatedData, tData]);
 

@@ -26,6 +26,8 @@ export default function useGetTransaction() {
   const { address } = useAccount();
   const { layer } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
+  const storedData = window.localStorage.getItem("txHistoryData");
+  const storedTxData = JSON.parse(storedData! === "undefined" ? "{}" : storedData!)
 
   //titanSDK as an L2 provider for certain functions
   const l2ProSDK = titanSDK.asL2Provider(
@@ -90,10 +92,23 @@ export default function useGetTransaction() {
               ? "loading"
               : "absent"
           );
+          let filteredUserTx;
+          if (storedTxData !== "undefined" && storedTxData.length > 0) {
+            const completedTx = storedTxData?.filter((item: any) => item.currentStatus > 5 && item.event=== "withdraw")
+  
+            filteredUserTx = userTxfromSubgraph.formattedWithdraw.filter((item: L1TxType) => {
+              return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
+            })            
+          }
+          
+          else {
+            filteredUserTx = userTxfromSubgraph.formattedWithdraw;
+          }
 
         //creates an array for all the txs in the userTxfromSubgraph.formattedWithdraw data with additional information
         const l2WithdrawTxs = await Promise.all(
-          userTxfromSubgraph.formattedWithdraw.map(
+          // userTxfromSubgraph.formattedWithdraw.map(
+          filteredUserTx.map(
             async (tx: L1TxType, index: number) => {
               // the resolved object from the crossChain messenger sdk is needed for the other SDK calls
               const resolved = await crossMessengerTokamak.toCrossChainMessage(
@@ -300,7 +315,7 @@ export default function useGetTransaction() {
         setWithdrawLoading(
           userTxfromSubgraph.formattedWithdraw.length > 0 && allTxs.length > 0
             ? "present"
-            : userTxfromSubgraph.formattedWithdraw.length === 0 //if there are no txs from subgraph set the loading status to absent
+            : userTxfromSubgraph.formattedWithdraw.length === 0 || allTxs.length === 0 //if there are no txs from subgraph set the loading status to absent
             ? "absent"
             : "loading"
         );
@@ -487,5 +502,18 @@ export default function useGetTransaction() {
           )
       : [];
 
-  return { depositTxs: allTxs, loadingState: stat };
+      let newTxData;
+
+      if (storedTxData?.length > 0) {
+        newTxData = storedTxData?.map((item: any) => {
+          const matchingItem = allTxs?.find((item2: any) => item.l2txHash === item2.l2txHash);
+          return matchingItem ? { ...item, matchingItem } : item;
+        })
+      }
+      else {
+        newTxData = allTxs;
+      }
+      window.localStorage.setItem("txHistoryData", JSON.stringify(newTxData));
+
+  return { depositTxs: newTxData, loadingState: stat };
 }
