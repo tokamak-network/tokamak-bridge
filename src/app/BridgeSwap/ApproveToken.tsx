@@ -8,7 +8,7 @@ import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useMemo } from "react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import useMediaView from "@/hooks/mediaView/useMediaView";
@@ -16,6 +16,7 @@ import checkGreen from "assets/icons/mobile/check_green.svg";
 import Image from "next/image";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import commafy from "@/utils/trim/commafy";
+import { txPendingStatus } from "@/recoil/global/transaction";
 
 
 export default function ApproveToken() {
@@ -29,7 +30,9 @@ export default function ApproveToken() {
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
   const { isBalanceOver } = useInputBalanceCheck();
   const { mobileView } = useMediaView();
+  const txPending = useRecoilValue(txPendingStatus);
 
+  
   const approveBtnDisabled = useMemo(() => {
     return (
       pendingTransactionToApprove && pendingTransactionToApprove.length > 0
@@ -37,7 +40,6 @@ export default function ApproveToken() {
   }, [pendingTransactionToApprove]);
 
   if (
-    isApproved ||
     isNotSupportForBridge ||
     !inToken ||
     !(inToken && outToken) && mode ==="Swap" ||
@@ -45,7 +47,7 @@ export default function ApproveToken() {
     (mode == "Swap" && isTONatPair) ||
     !isConnected ||
     isBalanceOver ||
-    Number(inToken?.parsedAmount) === 0
+    (Number(inToken?.parsedAmount) === 0 && !mobileView)
   ) {
     return null;
   }
@@ -64,6 +66,9 @@ export default function ApproveToken() {
 let view_value
 if (allowance != BigInt(0) && typeof allowance != 'undefined') {
   view_value = commafy(convertNumber(allowance, inToken.decimals),2)
+  if (view_value.length > 30) {
+    view_value = view_value.substring(0, 30) + '...';
+  }
 }
 
 return (
@@ -127,26 +132,26 @@ return (
       </Button>
       ) : (
         //mobile view
-        !approveBtnDisabled ? (
-        <Button
-          w={{ base: "64px", lg: "92px" }}
-          h={"28px"}
-          fontSize={{ base: 12, lg: 14 }}
-          fontWeight={500}
-          bgColor={"#007AFF"}
-          color={"#fff"}
-          _active={{}}
-          _hover={{}}
-          onClick={() => {
-            callApprove();
-            setIsDrawerOpen(false);
-          }}
-          isDisabled={approveBtnDisabled}
-          _disabled={{ bg: "#15161D", color: "#8E8E92" }}
-        >
-          Approve
-        </Button>) : (
+        isConnected && txPending ? (
           <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+        )
+        : (
+          <Button
+            w={{ base: "64px", lg: "92px" }}
+            h={"28px"}
+            fontSize={{ base: 12, lg: 14 }}
+            fontWeight={500}
+            bgColor={"#007AFF"}
+            color={"#fff"}
+            _active={{}}
+            _hover={{}}
+            onClick={() => {
+              callApprove();
+              setIsDrawerOpen(false);
+            }}
+          >
+            Approve
+          </Button>
         )
       )
     )}

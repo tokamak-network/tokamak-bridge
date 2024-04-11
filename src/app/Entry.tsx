@@ -68,18 +68,18 @@ export default function Entry({ children }: { children: React.ReactNode }) {
                     }}>
                     {children}
                 </Center>
-            {pcView ? <Footer /> : 
-                <Box
-                    position="fixed"
-                    top="0"
-                    right="0"
-                    bottom="0"
-                    left="0"
-                    zIndex={-1}
-                    bg={"#0F0F12"}
-                >
-                </Box>
-            }
+                {pcView ? <Footer /> : 
+                    <Box
+                        position="fixed"
+                        top="0"
+                        right="0"
+                        bottom="0"
+                        left="0"
+                        zIndex={-1}
+                        bg={"#0F0F12"}
+                    >
+                    </Box>
+                }
             <GlobalComponents />
             <Drawers />
             <Modals />
