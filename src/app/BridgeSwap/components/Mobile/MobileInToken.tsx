@@ -79,13 +79,11 @@ const MobileInToken = () => {
 
       await switchNetworkAsync?.(inValue)
       
-      // mode에 따라 다르게 한다.
       setNetworkStatusValue({
         inNetwork: selectedInNetwork,
         outNetwork: selectedOutNetwork,
       })
       
-      //여기에서 null이 발생하는구나.
       setSelectedInToken(null);
       setSelectedOutToken(null);
       return

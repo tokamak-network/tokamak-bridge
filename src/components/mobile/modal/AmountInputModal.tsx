@@ -35,7 +35,6 @@ export default function AmountInputModal() {
   const { isInAmountOpen, isOutAmountOpen, onCloseAmountModal } = useAmountModal();
   const [selectedInToken] = useRecoilState(selectedInTokenStatus);
   const [tokenAmountStatus, ] = useRecoilState(selectedTokenAmountStatus);
-  // 키보드 높이와 측정 여부를 상태로 관리합니다.
   const [isLargerThan768] = useMediaQuery("(min-width: 768px)");
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const warning = useWarning();

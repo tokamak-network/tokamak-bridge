@@ -116,7 +116,6 @@ export default function MobileTokenBox(props: {
     }
 
     if (mode === "Swap" && inToken === false) {
-      console.log("여기타쥬??")
       if(isNotSupportForSwap || isNotSupportForSwap || !isConnected) {
         return "0"
       }

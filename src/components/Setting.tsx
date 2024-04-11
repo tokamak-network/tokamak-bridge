@@ -131,7 +131,6 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
       </Text>
       {
         mobileView &&
-        /** 여기에 close를 추가한다. */
         <Box pos={"absolute"} right={4} top={"15px"}>
           <CloseButton onClick={() => {setSettingStatus(false);}} />
         </Box>
