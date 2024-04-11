@@ -341,10 +341,24 @@ export default function useGetTransaction() {
           ? setDepositLoading("loading")
           : setDepositLoading("absent");
 
+          let filteredDepositTxs;
+          if (storedTxData !== "undefined" && storedTxData.length > 0) {
+            const completedTx = storedTxData?.filter((item: any) => item.event=== "deposit" && item.l2txHash)
+  
+            filteredDepositTxs = userTxfromSubgraph.formattedDeposit.filter((item: L1TxType) => {
+              return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
+            })            
+          }
+          
+          else {
+            filteredDepositTxs = userTxfromSubgraph.formattedDeposit;
+          }
+
         //creates an array for all the txs in the userTxfromSubgraph.formattedDeposit data with additional information
         // these are the deposit txs that are already appeared on L2
         const l2DepTxs = await Promise.all(
-          userTxfromSubgraph.formattedDeposit
+          // userTxfromSubgraph.formattedDeposit
+          filteredDepositTxs
             .map(async (tx: UserL2Transaction) => {
               //gets the l1 deposit tx data from the titan sdk
               const l1Tx = await l2ProSDK.getTransaction(tx.transactionHash);
