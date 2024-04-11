@@ -1,6 +1,6 @@
 "use client";
 
-import { BigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -26,19 +26,14 @@ import {
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
 import { getWETHAddressByChainId } from "@/utils/token/isETH";
-import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import { sortPositions } from "@/utils/pool/sortPositions";
 import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { GET_POSITIONS } from "@/graphql/data/queries";
-import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
-import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
 import { providerByChainId } from "@/config/getProvider";
-import { useApolloClients, useGetPosition } from "./useApolloClient";
+import { useGetPositionByClients } from "./useApolloClient";
 
 const makePositionDatas = async (positionData: any[], chainId: number) => {
   const positions: PoolCardDetail[] = [];
@@ -183,40 +178,10 @@ export function useGetPositionIds(): {
   positions: PoolCardDetail[] | undefined;
 } {
   const { address } = useAccount();
-  const { connectedChainId, otherLayerChainInfo, isSupportedChain } =
+  const { connectedChainId, isSupportedChain, chainGroup } =
     useConnectedNetwork();
 
-  const client = connectedChainId
-    ? subgraphApolloClients[connectedChainId]
-    : undefined;
-  const otherLayerClient = otherLayerChainInfo?.chainId
-    ? subgraphApolloClients[otherLayerChainInfo?.chainId]
-    : undefined;
-
-  const clients = useApolloClients();
-  const result = clients?.map((client) => {
-    useGetPosition(client);
-  });
-
-  const { data, error, loading } = useQuery(GET_POSITIONS, {
-    variables: {
-      account: address,
-    },
-    pollInterval: 10000,
-    client,
-  });
-
-  const {
-    data: otherLayerData,
-    error: otherLayerError,
-    loading: otherLayerLoading,
-  } = useQuery(GET_POSITIONS, {
-    variables: {
-      account: address,
-    },
-    pollInterval: 10000,
-    client: otherLayerClient,
-  });
+  const positionDatas = useGetPositionByClients();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
   // const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
@@ -226,7 +191,7 @@ export function useGetPositionIds(): {
 
   useEffect(() => {
     const fetchPositionData = async () => {
-      if (data && connectedChainId && otherLayerData && otherLayerChainInfo) {
+      if (positionDatas && connectedChainId && chainGroup) {
         if (
           (address && account !== address) ||
           (connectedChainId && chainId !== connectedChainId)
@@ -240,25 +205,17 @@ export function useGetPositionIds(): {
         if (!isSupportedChain) return setPositions([]);
 
         try {
-          const result = await Promise.all([
-            makePositionDatas(data.positions, connectedChainId),
-            makePositionDatas(
-              otherLayerData.positions,
-              otherLayerChainInfo.chainId
-            ),
-          ]);
+          const result = await Promise.all(
+            positionDatas.map((positiondata, index) =>
+              makePositionDatas(
+                positiondata.data.positions,
+                chainGroup[index].chainId ?? 0
+              )
+            )
+          );
 
-          if (result[0] && result[1]) {
-            const positions = [...result[0], ...result[1]];
-            const sortedPositions = sortPositions(positions);
-            return setPositions(sortedPositions);
-          }
-          if (result[0]) {
-            const sortedPositions = sortPositions(result[0]);
-            return setPositions(sortedPositions);
-          }
-          if (result[1]) {
-            const sortedPositions = sortPositions(result[1]);
+          if (result) {
+            const sortedPositions = sortPositions(result.flat());
             return setPositions(sortedPositions);
           }
           return setPositions([]);
@@ -270,14 +227,7 @@ export function useGetPositionIds(): {
       }
     };
     fetchPositionData();
-  }, [
-    data,
-    connectedChainId,
-    otherLayerData,
-    otherLayerChainInfo,
-    txLog,
-    address,
-  ]);
+  }, [connectedChainId, positionDatas, txLog, address]);
 
   // useEffect(() => {
   //   if (positions === undefined) return setPositionsLoading(true);
@@ -291,8 +241,7 @@ export function useGetPositionIds(): {
 export function useGetPositionById(positionId: number, chainId: number) {
   const { provider: _provider } = useProvier();
   const { blockNumber } = useBlockNum();
-  const { connectedChainId, layer, isConnectedToMainNetwork } =
-    useConnectedNetwork();
+  const { connectedChainId, layer, chainGroup } = useConnectedNetwork();
   const pathName = usePathname();
 
   const [positions, setPositions] = useRecoilState<

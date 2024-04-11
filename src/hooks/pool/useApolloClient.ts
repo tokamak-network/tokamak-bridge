@@ -1,7 +1,11 @@
 import { supportedChain } from "@/types/network/supportedNetwork";
 import useConnectedNetwork from "../network";
 import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
-import { ApolloClient, NormalizedCacheObject } from "@apollo/client";
+import {
+  ApolloClient,
+  ApolloError,
+  NormalizedCacheObject,
+} from "@apollo/client";
 import { GET_POSITIONS } from "@/graphql/data/queries";
 import { useQuery } from "@apollo/client";
 import { useAccount } from "wagmi";
@@ -9,8 +13,7 @@ import { useAccount } from "wagmi";
 export function useApolloClients():
   | ApolloClient<NormalizedCacheObject>[]
   | undefined {
-  const { connectedChainId, otherLayerChainInfo, chainGroup } =
-    useConnectedNetwork();
+  const { chainGroup } = useConnectedNetwork();
 
   const clients = chainGroup?.map(
     (chain) => subgraphApolloClients[chain.chainId]
@@ -19,7 +22,9 @@ export function useApolloClients():
   return clients;
 }
 
-export function useGetPosition(client: ApolloClient<NormalizedCacheObject>) {
+export async function useGetPositionByClient(
+  client: ApolloClient<NormalizedCacheObject>
+) {
   const { address } = useAccount();
   const { data, error, loading } = useQuery(GET_POSITIONS, {
     variables: {
@@ -31,3 +36,18 @@ export function useGetPosition(client: ApolloClient<NormalizedCacheObject>) {
 
   return { data, error, loading };
 }
+
+export const useGetPositionByClients = () => {
+  const clients = useApolloClients();
+  const { address } = useAccount();
+
+  return clients?.map((client) =>
+    useQuery(GET_POSITIONS, {
+      variables: {
+        account: address,
+      },
+      pollInterval: 10000,
+      client,
+    })
+  );
+};
