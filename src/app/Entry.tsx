@@ -64,7 +64,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
                     h={"100vh"}
                     bg={"#0F0F12"}
                     sx={{
-                        overflow: pcView ? "initial" : "hidden", // pcView가 아닐 때만 overflow를 hidden으로 설정
+                        overflow: pcView ? "initial" : "hidden",
                     }}>
                     {children}
                 </Center>

@@ -64,51 +64,56 @@ const HamburgerMenu = () => {
       trapFocus={false}
       useInert={true}
     >
-      <DrawerOverlay bg="transparent" onClick={() => setHamburgerOpen(false)} />
-
-      <DrawerContent maxW={"248px"}>
-        <Flex
-          w={"100%"}
-          h={"100%"}
-          bg={"#1F2128"}
-          flexDir={"column"}
-          padding={"32px 21px"}
-        >
-          <Image src={LOGO} alt="Logo"/>
-          <Box padding={"8px"} marginTop={"32px"}>
-            <CustomMenuItem
-              link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
-              title="User Guide"
-              icon={userguide}
-              hoverIcon={userGuideHover}
-            />
-            <CustomMenuItem
-              link="https://forms.gle/GLY1PZq4BH4RqZY79"
-              title="Get Help"
-              icon={lightbulb}
-              hoverIcon={lightbulbHover}
-            />
-            <Flex w="100%" alignItems={"center"} mt={"8px"} mb={"8px"}>
-              <Flex w="52px" h="1px" bg={"#757893"} mr="10px"></Flex>
-              <Text color={"#757893"} fontSize={"12px"}>
-                COMMUNITY
-              </Text>
-              <Flex w="52px" h="1px" bg={"#757893"} ml="10px"></Flex>
-            </Flex>
-            {menuLinks.map((link: any) => {
-              return (
-                <CustomMenuItem
-                  link={link.link}
-                  title={link.title}
-                  icon={link.icon}
-                  hoverIcon={link.hoverIcon}
-                  key={link.title}
-                />
-              );
-            })}
-          </Box>
-        </Flex>
-      </DrawerContent>
+      <DrawerOverlay onClick={() => setHamburgerOpen(false)}
+          sx={{
+            bg: "rgba(0, 0, 0, 0.5)"
+          }}
+      />
+      <Box zIndex={1400} pos={"fixed"} w={"full"} h={"full"} left={0} top={0} bg={'#000000B0'}>
+        <DrawerContent maxW={"248px"}>
+          <Flex
+            w={"100%"}
+            h={"100%"}
+            bg={"#1F2128"}
+            flexDir={"column"}
+            padding={"32px 21px"}
+          >
+            <Image src={LOGO} alt="Logo"/>
+            <Box padding={"8px"} marginTop={"32px"}>
+              <CustomMenuItem
+                link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+                title="User Guide"
+                icon={userguide}
+                hoverIcon={userGuideHover}
+              />
+              <CustomMenuItem
+                link="https://forms.gle/GLY1PZq4BH4RqZY79"
+                title="Get Help"
+                icon={lightbulb}
+                hoverIcon={lightbulbHover}
+              />
+              <Flex w="100%" alignItems={"center"} mt={"8px"} mb={"8px"}>
+                <Flex w="52px" h="1px" bg={"#757893"} mr="10px"></Flex>
+                <Text color={"#757893"} fontSize={"12px"}>
+                  COMMUNITY
+                </Text>
+                <Flex w="52px" h="1px" bg={"#757893"} ml="10px"></Flex>
+              </Flex>
+              {menuLinks.map((link: any) => {
+                return (
+                  <CustomMenuItem
+                    link={link.link}
+                    title={link.title}
+                    icon={link.icon}
+                    hoverIcon={link.hoverIcon}
+                    key={link.title}
+                  />
+                );
+              })}
+            </Box>
+          </Flex>
+        </DrawerContent>
+      </Box>
     </Drawer>
   );
 };

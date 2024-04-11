@@ -24,7 +24,7 @@ export function Details() {
       mt={ { sm: "0px", lg: "24px" }}
       rowGap={"10px"}
       sx={{
-        overflowY: mobileView ? "auto" : "initial", // mobileView일 때만 overflowY를 auto로 설정
+        overflowY: mobileView ? "auto" : "initial",
       }}
     >
       {mode !== null ? (
