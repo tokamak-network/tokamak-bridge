@@ -1,39 +1,39 @@
 import { useQuery } from "@tanstack/react-query";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import useConnectedNetwork from "../network";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useIsLoading from "../ui/useIsLoading";
 import { useAccount } from "wagmi";
 import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
-import {
-  GOERLI_CONTRACTS,
-  MAINNET_CONTRACTS,
-  SEPOLIA_CONTRACTS,
-  TOKAMAK_CONTRACTS,
-  TOKAMAK_GOERLI_CONTRACTS,
-} from "@/constant/contracts";
+import { WETH_ADDRESS_BY_CHAINID } from "@/constant/contracts/tokens";
 import { isETH } from "@/utils/token/isETH";
 import { useGetMode } from "../mode/useGetMode";
 import { useDebounce } from "../network/useDebounce";
 
 const getPath = async (queryParmam: string | undefined | null) => {
-  if (queryParmam === undefined || queryParmam === null) {
-    return null;
-  }
-  const res = await fetch(queryParmam, {
-    method: "GET",
-  });
+  try {
+    if (queryParmam === undefined || queryParmam === null) {
+      return null;
+    }
+    const res = await fetch(queryParmam, {
+      method: "GET",
+    });
 
-  if (res.status !== 200) {
-    throw new Error("no route founded");
-  }
+    if (res.status !== 200) {
+      throw new Error("no route founded");
+    }
 
-  if (res.ok) {
-    return res.json();
-  }
+    if (res.ok) {
+      return res.json();
+    }
 
-  return undefined;
+    return undefined;
+  } catch (e: any) {
+    console.log("**getPath error**");
+    console.error(e);
+    throw new Error(e);
+  }
 };
 
 export function useSmartRouter() {
@@ -58,16 +58,9 @@ export function useSmartRouter() {
       const isEther = isETH(inToken);
       const isOutEther = isETH(outToken);
 
-      const WETHAddress =
-        layer === "L1"
-          ? isConnectedToMainNetwork
-            ? MAINNET_CONTRACTS.WETH_ADDRESS
-            : SEPOLIA_CONTRACTS.WETH_ADDRESS
-          : layer === "L2"
-          ? isConnectedToMainNetwork
-            ? TOKAMAK_CONTRACTS.WETH_ADDRESS
-            : TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS
-          : "";
+      const WETHAddress = WETH_ADDRESS_BY_CHAINID[connectedChainId];
+
+      if ((isEther || isOutEther) && !WETHAddress) return undefined;
 
       const param = `${
         process.env.NEXT_PUBLIC_ROUTING_API
@@ -99,12 +92,11 @@ export function useSmartRouter() {
 
   const debouncedQueryParam = useDebounce(queryParam, 1000);
 
-  const { isLoading, error, data, isError, isLoadingError } = useQuery({
+  const { isLoading, error, data } = useQuery({
     queryKey: [debouncedQueryParam],
     queryFn: () => getPath(queryParam),
     refetchInterval: 99999999,
     cacheTime: 10000,
-    // refetchOnMount: false,
   });
 
   useEffect(() => {

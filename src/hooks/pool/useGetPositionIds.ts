@@ -38,6 +38,7 @@ import { subgraphApolloClients } from "@/graphql/thegraph/apollo";
 import { useQuery } from "@apollo/client";
 import JSBI from "jsbi";
 import { providerByChainId } from "@/config/getProvider";
+import { useApolloClients, useGetPosition } from "./useApolloClient";
 
 const makePositionDatas = async (positionData: any[], chainId: number) => {
   const positions: PoolCardDetail[] = [];
@@ -192,6 +193,11 @@ export function useGetPositionIds(): {
     ? subgraphApolloClients[otherLayerChainInfo?.chainId]
     : undefined;
 
+  const clients = useApolloClients();
+  const result = clients?.map((client) => {
+    useGetPosition(client);
+  });
+
   const { data, error, loading } = useQuery(GET_POSITIONS, {
     variables: {
       account: address,
@@ -199,6 +205,7 @@ export function useGetPositionIds(): {
     pollInterval: 10000,
     client,
   });
+
   const {
     data: otherLayerData,
     error: otherLayerError,

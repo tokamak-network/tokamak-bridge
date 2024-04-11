@@ -30,6 +30,7 @@ export interface SupportedChainProperties {
   isTokamak?: boolean;
   layer: "L1" | "L2";
   isTOP?: boolean;
+  isTestnet?: boolean;
 }
 
 export const supportedChain: SupportedChainProperties[] = [
@@ -48,6 +49,7 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L1",
+    isTestnet: true,
   },
   {
     chainId: SupportedChainId.TITAN,
@@ -67,6 +69,7 @@ export const supportedChain: SupportedChainProperties[] = [
     nativeToken: "TON",
     layer: "L2",
     isTOP: true,
+    isTestnet: true,
   },
   {
     chainId: SupportedChainId.TITAN_SEPOLIA,
@@ -75,5 +78,6 @@ export const supportedChain: SupportedChainProperties[] = [
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L2",
+    isTestnet: true,
   },
 ];

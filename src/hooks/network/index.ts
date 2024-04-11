@@ -77,5 +77,15 @@ export default function useConnectedNetwork() {
     }
   }, [chainInfo]);
 
-  return { ...chainInfo, otherLayerChainInfo };
+  const chainGroup = useMemo(() => {
+    if (chainInfo) {
+      if (chainInfo.isConnectedToMainNetwork) {
+        return supportedChain.filter((chain) => !chain.isTestnet);
+      }
+
+      return supportedChain.filter((chain) => chain.isTestnet);
+    }
+  }, [chainInfo]);
+
+  return { ...chainInfo, otherLayerChainInfo, chainGroup };
 }
