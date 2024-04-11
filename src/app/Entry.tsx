@@ -60,7 +60,12 @@ export default function Entry({ children }: { children: React.ReactNode }) {
         <ChakraProvidersForNextJs>        
         <>
             <Header />
-                <Center h={"100vh"} bg={"#0F0F12"}>
+                <Center 
+                    h={"100vh"}
+                    bg={"#0F0F12"}
+                    sx={{
+                        overflow: pcView ? "initial" : "hidden", // pcView가 아닐 때만 overflow를 hidden으로 설정
+                    }}>
                     {children}
                 </Center>
             {pcView ? <Footer /> : 
