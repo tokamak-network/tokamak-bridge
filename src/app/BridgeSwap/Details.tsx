@@ -13,7 +13,7 @@ export function Details() {
   const { mobileView } = useMediaView();
   const { inToken, outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
-  const showWarningAboveApprove = mobileView && mode === "Swap" && inToken && outToken && isTONatPair;
+  const showWarning = mobileView && mode === "Swap" && inToken && outToken && isTONatPair;
 
   return (
     <Flex
@@ -21,7 +21,7 @@ export function Details() {
       justify={{ base: "space-between", lg: "normal" }}
       h={{ base: "100%", lg: "fit-content" }}
       w={"100%"}
-      mt={{base : "24px", sm: "3px"}}
+      mt={ { sm: "0px", lg: "24px" }}
       rowGap={"10px"}
     >
       {mode !== null ? (
@@ -30,7 +30,7 @@ export function Details() {
             !mobileView && <Warning />
           }
           {
-            !showWarningAboveApprove && <Warning />
+            !showWarning && <Warning />
           }
           <ApproveToken />
           <TransactionDetail />
@@ -45,7 +45,7 @@ export function Details() {
         :
         <Flex direction="column" rowGap={"12px"}>
           {
-            showWarningAboveApprove && <Warning />
+            showWarning && <Warning />
           }
           <ActionButton />
         </Flex>
