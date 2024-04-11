@@ -1,3 +1,4 @@
+import { USDT } from "./../uniswap/tokens";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
   MAINNET_CONTRACTS,
@@ -12,4 +13,12 @@ export const WETH_ADDRESS_BY_CHAINID: Record<number, string> = {
   [SupportedChainId.SEPOLIA]: SEPOLIA_CONTRACTS.WETH_ADDRESS,
   [SupportedChainId.TITAN]: TOKAMAK_CONTRACTS.WETH_ADDRESS,
   [SupportedChainId.TITAN_SEPOLIA]: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
+};
+
+export const USDT_ADDRESS_BY_CHAINID: Record<number, string> = {
+  [SupportedChainId.MAINNET]: MAINNET_CONTRACTS.USDT_ADDRESS,
+  [SupportedChainId.SEPOLIA]: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+  [SupportedChainId.TITAN]: TOKAMAK_CONTRACTS.USDT_ADDRESS,
+  [SupportedChainId.TITAN_SEPOLIA]: TITAN_SEPOLIA_CONTRACTS.USDT_ADDRES,
+  [SupportedChainId.THANOS_SEPOLIA]: THANOS_SEPOLIA_CONTRACTS.USDT_ADDRESS,
 };

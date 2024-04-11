@@ -17,18 +17,10 @@ import {
   TOKAMAK_CONTRACTS,
   TOKAMAK_GOERLI_CONTRACTS,
 } from "@/constant/contracts";
-import { useAllowance } from "../pool/useApproveToken";
+import { USDT_ADDRESS_BY_CHAINID } from "@/constant/contracts/tokens";
+import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
-
-const getAllowance = async (
-  ERC20_contract: Contract,
-  account: string,
-  contractAddress: string
-) => {
-  const allowance = await ERC20_contract.allowance(account, contractAddress);
-  return allowance;
-};
 
 export function useApprove() {
   const { mode } = useGetMode();
@@ -37,6 +29,7 @@ export function useApprove() {
   const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, SWAPPER_V2_CONTRACT } =
     useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
+  const { connectedChainId } = useConnectedNetwork();
 
   const { isApproved: approved } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
@@ -46,7 +39,7 @@ export function useApprove() {
       mode === "Deposit"
         ? (L1BRIDGE_CONTRACT as Hash)
         : mode === "Swap"
-        ? (UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2 as Hash)
+        ? (UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2 as Hash)
         : mode === "Wrap" || mode === "Unwrap"
         ? (SWAPPER_V2_CONTRACT as Hash)
         : undefined,
@@ -71,11 +64,9 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  const isUSDT =
-    inToken?.tokenAddress === MAINNET_CONTRACTS.USDT_ADDRESS ||
-    inToken?.tokenAddress === GOERLI_CONTRACTS.USDT_ADDRESS ||
-    inToken?.tokenAddress === TOKAMAK_CONTRACTS.USDT_ADDRES ||
-    inToken?.tokenAddress === TOKAMAK_GOERLI_CONTRACTS.USDT_ADDRES;
+  const isUSDT = connectedChainId
+    ? inToken?.tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
+    : undefined;
 
   const { write, data, isLoading } = useContractWrite({
     address: inToken?.tokenAddress as `0x${string}`,
@@ -94,7 +85,6 @@ export function useApprove() {
     txSort: "Approve",
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
-  const { chainName } = useConnectedNetwork();
 
   const callApprove = useCallback(async () => {
     try {
@@ -110,7 +100,7 @@ export function useApprove() {
             });
           case "Swap":
             return write({
-              args: [UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2, totalSupply],
+              args: [UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2, totalSupply],
             });
           case "Wrap":
           case "Unwrap":
@@ -125,7 +115,7 @@ export function useApprove() {
       console.log("**callApprove err*");
       console.log(e);
     }
-  }, [mode, totalSupply, chainName]);
+  }, [mode, totalSupply, connectedChainId]);
 
   return { isApproved, callApprove, isLoading };
 }

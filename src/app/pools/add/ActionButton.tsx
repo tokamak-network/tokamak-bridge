@@ -6,7 +6,7 @@ import {
 import useContract from "@/hooks/contracts/useContract";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useApproveToken } from "@/hooks/pool/useApproveToken";
+import { useApproveTokenForPools } from "@/hooks/token/useApproveToken";
 import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
@@ -87,7 +87,7 @@ const ApproveButton = (props: { isInToken: boolean }) => {
 };
 
 export const ApproveButtonsContrainer = () => {
-  const { inTokenApproved, outTokenApproved } = useApproveToken();
+  const { inTokenApproved, outTokenApproved } = useApproveTokenForPools();
   const { inToken, outToken, inTokenHasAmount, outTokenHasAmount } =
     useInOutTokens();
   const [poolState] = usePool();
@@ -113,7 +113,7 @@ export const ApproveButtonsContrainer = () => {
 export default function ActionButton() {
   const [poolState] = usePool();
   const { tokensPairHasAmount } = useInOutTokens();
-  const { inTokenApproved, outTokenApproved } = useApproveToken();
+  const { inTokenApproved, outTokenApproved } = useApproveTokenForPools();
   const { isBalanceOver, isOutTokenBalanceOver, isInputZero, isOutInputZero } =
     useInputBalanceCheck();
   const { inToken, outToken } = useInOutTokens();

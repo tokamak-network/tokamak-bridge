@@ -1,13 +1,13 @@
 import { useErc20Allowance } from "@/generated";
-import { useInOutTokens } from "../token/useInOutTokens";
+import { useInOutTokens } from "./useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useAccount } from "wagmi";
 import { Hash } from "viem";
 import { useMemo } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { TokenInfo } from "@/types/token/supportedToken";
-import { useIncreaseAmount } from "./useIncreaseAmount";
-import { useV3MintInfo } from "./useV3MintInfo";
+import { useIncreaseAmount } from "../pool/useIncreaseAmount";
+import { useV3MintInfo } from "../pool/useV3MintInfo";
 import { ethers } from "ethers";
 import { useGetMode } from "../mode/useGetMode";
 
@@ -50,14 +50,34 @@ export function useAllowance(params: {
   return { isApproved };
 }
 
-export function useApproveToken() {
+export function useApproveToeken({
+  contractAddress,
+}: {
+  contractAddress: Hash;
+}) {
+  const { inToken } = useInOutTokens();
+  const inputTokenAmount =
+    inToken?.amountBN &&
+    ethers.utils.parseUnits(inToken?.amountBN.toString()).toBigInt();
+
+  const tokenApproved = useAllowance({
+    tokenAddress: inToken?.tokenAddress as Hash | undefined,
+    contractAddress,
+    inputTokenAmount,
+    token: inToken,
+  });
+
+  return { tokenApproved };
+}
+
+export function useApproveTokenForPools() {
   const { inToken, outToken } = useInOutTokens();
   const { UNISWAP_CONTRACT } = useContract();
   const { invertPrice } = useV3MintInfo();
   const { token0Input, token1Input } = useIncreaseAmount();
   const { subMode } = useGetMode();
 
-  const contractAddress = UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER;
+  const contractAddress = UNISWAP_CONTRACT?.NONFUNGIBLE_POSITION_MANAGER;
 
   const inTokenAmount = invertPrice
     ? token1Input &&

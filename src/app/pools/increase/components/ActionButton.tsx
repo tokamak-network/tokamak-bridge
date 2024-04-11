@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { ApproveButtonsContrainer } from "../../add/ActionButton";
-import { useApproveToken } from "@/hooks/pool/useApproveToken";
+import { useApproveTokenForPools } from "@/hooks/token/useApproveToken";
 
 const ActionButton = () => {
   const [, setPoolModal] = useRecoilState(poolModalStatus);
@@ -17,7 +17,7 @@ const ActionButton = () => {
   const { deposit0Disabled, deposit1Disabled, pool } = usePoolInfo();
   const { isBalanceOver, isInputZero, isOutInputZero, isOutTokenBalanceOver } =
     useInputBalanceCheck();
-  const { inTokenApproved, outTokenApproved } = useApproveToken();
+  const { inTokenApproved, outTokenApproved } = useApproveTokenForPools();
 
   const btnIsDisabled = useMemo(() => {
     if (deposit1Disabled) {

@@ -126,3 +126,8 @@ export const UniswapContractByChainId: Record<
   [SupportedChainId.THANOS_SEPOLIA]: L2_THANOS_SEPOLIA_UniswapContracts,
   [SupportedChainId.TITAN_SEPOLIA]: L2_TITAN_SEPOLIA_UniswapContracts,
 };
+
+export function getUniswapByChainId(chainId: number | undefined) {
+  if (!chainId) return undefined;
+  return UniswapContractByChainId[chainId];
+}
