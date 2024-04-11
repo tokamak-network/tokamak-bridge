@@ -5,10 +5,15 @@ import TransactionDetail from "./TransactionDetail";
 import ActionButton from "./components/ActionButton";
 import ApproveToken from "@/app/BridgeSwap/ApproveToken";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export function Details() {
   const { mode } = useGetMode();
   const { mobileView } = useMediaView();
+  const { inToken, outToken } = useInOutTokens();
+  const { isTONatPair } = useIsTon();
+  const showWarningAboveApprove = mobileView && mode === "Swap" && inToken && outToken && isTONatPair;
 
   return (
     <Flex
@@ -16,13 +21,16 @@ export function Details() {
       justify={{ base: "space-between", lg: "normal" }}
       h={{ base: "100%", lg: "fit-content" }}
       w={"100%"}
-      mt={"24px"}
+      mt={{base : "24px", sm: "3px"}}
       rowGap={"10px"}
     >
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
           {
             !mobileView && <Warning />
+          }
+          {
+            !showWarningAboveApprove && <Warning />
           }
           <ApproveToken />
           <TransactionDetail />
@@ -36,7 +44,9 @@ export function Details() {
         <ActionButton /> 
         :
         <Flex direction="column" rowGap={"12px"}>
-          <Warning />
+          {
+            showWarningAboveApprove && <Warning />
+          }
           <ActionButton />
         </Flex>
       }
