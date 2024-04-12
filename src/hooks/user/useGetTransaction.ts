@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useConnectedNetwork from "../network";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
-import {  ethers } from "ethers";
+import { ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import {
   L1TxType,
@@ -53,7 +53,6 @@ export default function useGetTransaction() {
   const [depositLoading, setDepositLoading] = useState<
     "loading" | "present" | "absent"
   >("loading");
-
 
   //data from the subgraphs are re-fetched every time the user address, connected layer, or the network status changes
   useEffect(() => {
@@ -277,7 +276,7 @@ export default function useGetTransaction() {
             }
           )
         );
-        
+
         // remove undefined fields of old Tx using old smart contract schema
         const filteredl2WithdrawTxs = l2WithdrawTxs.filter(
           (tx: FullWithTx) => tx !== undefined
@@ -377,7 +376,6 @@ export default function useGetTransaction() {
         //all the deposit txs in l1 including txs with corresponding l2 txs and txs without l2 txs
         const l1DepTxs = await Promise.all(
           userTxfromSubgraph.formattedL1DepositResults.map(async (tx: any) => {
-
             //filter the txs with a corresponding l2 tx using the message nonce
             const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
               return (
@@ -385,7 +383,7 @@ export default function useGetTransaction() {
               );
             });
 
-              //if there is a corresponding l2 tx return the following data
+            //if there is a corresponding l2 tx return the following data
             if (l2tx.length > 0) {
               const l2BlockNum = l2tx[0].blockNumber;
               const l1Block = l2tx[0].l1Block;
@@ -402,7 +400,7 @@ export default function useGetTransaction() {
                 _l2Token: tx._l2Token,
               };
               return txCopy;
-            } 
+            }
             //if there is no l2 tx, return this information
             else {
               const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
@@ -440,7 +438,6 @@ export default function useGetTransaction() {
     fetchDepositTransactions(true);
   }, [userTxfromSubgraph, layer, isConnectedToMainNetwork]);
 
-
   //if none of the queries in the fetchUserTransactions returns any txs, set the loading status to absent
   const stat = useMemo(() => {
     if (
@@ -452,7 +449,7 @@ export default function useGetTransaction() {
     ) {
       return "absent";
     }
-//set the overa;; loading state according to the loading state of each deposit & withdraw
+    //set the overa;; loading state according to the loading state of each deposit & withdraw
     return withdrawLoading === "loading" || depositLoading === "loading"
       ? "loading"
       : withdrawLoading === "absent" && depositLoading === "absent"
@@ -462,7 +459,6 @@ export default function useGetTransaction() {
       : "loading";
   }, [address, withdrawLoading, depositLoading]);
 
-
   //if there is not subgraph data for any of the tx types, return empty arrow
   const allTxs =
     userTxfromSubgraph !== undefined &&
@@ -471,7 +467,7 @@ export default function useGetTransaction() {
     userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
     userTxfromSubgraph.formattedWithdraw.length === 0
       ? []
-      : stat === "present" //if there are tx data, sort them according to the following criteria 
+      : stat === "present" //if there are tx data, sort them according to the following criteria
       ? tDataWithdraw
           .concat(tDataDeposit)
           .sort((tx1: FullDepTx, tx2: FullDepTx) =>

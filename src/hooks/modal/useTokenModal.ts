@@ -3,14 +3,16 @@ import {
   selectedOutTokenStatus,
   tokenModalStatus,
 } from "@/recoil/bridgeSwap/atom";
-import { searchTokenStatus, isInputTokenAmount, isOutputTokenAmount } from "@/recoil/card/selectCard/searchToken";
+import {
+  searchTokenStatus,
+  isInputTokenAmount,
+  isOutputTokenAmount,
+} from "@/recoil/card/selectCard/searchToken";
 import { useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
-import {
-  bannerStatus,
-} from "@/recoil/bridgeSwap/atom";
+import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 
 export default function useTokenModal() {
@@ -35,11 +37,11 @@ export default function useTokenModal() {
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
   const onOpenInToken = () => {
-      !(status === "Active" && isL2) && //disable inToken select UI when the maintenance banner is active
+    !(status === "Active" && isL2) && //disable inToken select UI when the maintenance banner is active
       setTokenModal({ isOpen: "INPUT", modalData: null });
   };
   const onOpenOutToken = () => {
-     !(status === "Active" && isL2) && //disable outToken select UI when the maintenance banner is active
+    !(status === "Active" && isL2) && //disable outToken select UI when the maintenance banner is active
       setTokenModal({ isOpen: "OUTPUT", modalData: null });
   };
 
@@ -70,9 +72,9 @@ export default function useTokenModal() {
         //remove if same token is selected at other side
         if (isDuplicated) {
           if (isMobile) {
-            onCloseTokenModal()
-            setIsInputAmount(false)
-          } 
+            onCloseTokenModal();
+            setIsInputAmount(false);
+          }
           if (isInTokenOpen) {
             setSelectedOutToken(null);
           } else {

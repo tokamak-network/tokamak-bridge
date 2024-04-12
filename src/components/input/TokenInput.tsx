@@ -209,14 +209,12 @@ export default function TokenInput(props: {
 
   const onKeyDown = (e: any) => {
     if (e.key === "Enter" && mobileView) {
-      if (
-        (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
-      ) {
+      if (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) {
         onCloseTokenModal();
       }
       // customRef?.current?.blur();
     }
-  }
+  };
 
   const { totalGasCost } = useGasFee();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -524,7 +522,7 @@ export default function TokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex flexDir={'column'}>
+        <Flex flexDir={"column"}>
           {/* {mobileView && <Warning />} */}
           <Flex
             py={{ base: "7px", lg: 0 }}
@@ -537,49 +535,50 @@ export default function TokenInput(props: {
             ref={ref}
             justify={"space-between"}
           >
-          
-          {mobileView && !valueProp && !inToken ? (
-            <Flex h={"27px"} w={"20px"} >
-              <GradientSpinner />
-            </Flex>
-            ) :
-            <Flex flexDir={'column'}>
-              {/* <Warning /> */}
-              <Input
-                id={inToken ? "LeftInput" : "RightInput"}
-                w={"100%"}
-                h={"27px"}
-                m={0}
-                p={0}
-                border={{}}
-                _active={{}}
-                _focus={{ boxShadow: "none !important" }}
-                placeholder={inToken ? placeholder || "0" : "0"}
-                _placeholder={{
-                  color: mobileView ? "#FFFFFF20 !important" : "#C6C6D1 !important",
-                  // fontSize: mobileView ? 20 : 28
-                }}
-                color={
-                  mobileView && isBalanceOver
-                    ? "#DD3A44"
-                    : mobileView && !inToken
-                    ? "#A0A3AD !important"
-                    : "#FFFFFF"
-                }
-                fontSize={{ base: 22, lg: 28 }}
-                fontWeight={{ base: 500, lg: 600 }}
-                isDisabled={isDisabled}
-                _disabled={{ color: "#A0A3AD" }}
-                value={valueProp}
-                ref={customRef ? customRef : inputRef}
-                onChange={onChange}
-                onKeyDown={onKeyDown}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
-              ></Input>
-            </Flex>
-            }
+            {mobileView && !valueProp && !inToken ? (
+              <Flex h={"27px"} w={"20px"}>
+                <GradientSpinner />
+              </Flex>
+            ) : (
+              <Flex flexDir={"column"}>
+                {/* <Warning /> */}
+                <Input
+                  id={inToken ? "LeftInput" : "RightInput"}
+                  w={"100%"}
+                  h={"27px"}
+                  m={0}
+                  p={0}
+                  border={{}}
+                  _active={{}}
+                  _focus={{ boxShadow: "none !important" }}
+                  placeholder={inToken ? placeholder || "0" : "0"}
+                  _placeholder={{
+                    color: mobileView
+                      ? "#FFFFFF20 !important"
+                      : "#C6C6D1 !important",
+                    // fontSize: mobileView ? 20 : 28
+                  }}
+                  color={
+                    mobileView && isBalanceOver
+                      ? "#DD3A44"
+                      : mobileView && !inToken
+                      ? "#A0A3AD !important"
+                      : "#FFFFFF"
+                  }
+                  fontSize={{ base: 22, lg: 28 }}
+                  fontWeight={{ base: 500, lg: 600 }}
+                  isDisabled={isDisabled}
+                  _disabled={{ color: "#A0A3AD" }}
+                  value={valueProp}
+                  ref={customRef ? customRef : inputRef}
+                  onChange={onChange}
+                  onKeyDown={onKeyDown}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+                ></Input>
+              </Flex>
+            )}
 
             {mobileView &&
               (marketPrice === "0.00" && !inToken ? (

@@ -1,22 +1,18 @@
-import { useRecoilValue } from "recoil";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useProvier } from "@/hooks/provider/useProvider";
-import { ethers, Contract } from "ethers";
 import ERC20_ABI from "@/constant/abis/erc20.json";
 import USDT_ABI from "@/constant/abis/USDT.json";
+import {
+  useErc20Approve,
+  useErc20TotalSupply,
+  usePrepareErc20Approve,
+} from "@/generated";
+import { useWaitForTransaction } from "wagmi";
 
-import { useContractRead, useContractWrite } from "wagmi";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import useConnectedNetwork from "../network";
 import { useTx } from "../tx/useTx";
-import {
-  GOERLI_CONTRACTS,
-  MAINNET_CONTRACTS,
-  TOKAMAK_CONTRACTS,
-  TOKAMAK_GOERLI_CONTRACTS,
-} from "@/constant/contracts";
 import { USDT_ADDRESS_BY_CHAINID } from "@/constant/contracts/tokens";
 import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
@@ -25,15 +21,29 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 export function useApprove() {
   const { mode } = useGetMode();
   const { inToken } = useInOutTokens();
+  const tokenAddress = inToken?.token.address as Hash | undefined;
 
-  const { L1BRIDGE_CONTRACT, L2BRIDGE_CONTRACT, SWAPPER_V2_CONTRACT } =
-    useContract();
+  const { L1BRIDGE_CONTRACT, SWAPPER_V2_CONTRACT } = useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { connectedChainId } = useConnectedNetwork();
 
+  const contractAddress = useMemo(() => {
+    switch (mode) {
+      case "Deposit":
+        return L1BRIDGE_CONTRACT as Hash;
+      case "Swap":
+        return UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2 as Hash;
+      case "Wrap":
+      case "Unwrap":
+        return SWAPPER_V2_CONTRACT as Hash;
+      default:
+        return undefined;
+    }
+  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT]);
+
   const { isApproved: approved } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
-    tokenAddress: inToken?.token.address as Hash | undefined,
+    tokenAddress,
     token: inToken,
     contractAddress:
       mode === "Deposit"
@@ -65,57 +75,35 @@ export function useApprove() {
   }, [mode, approved]);
 
   const isUSDT = connectedChainId
-    ? inToken?.tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
+    ? tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
     : undefined;
 
-  const { write, data, isLoading } = useContractWrite({
-    address: inToken?.tokenAddress as `0x${string}`,
-    //@ts-ignore
-    abi: isUSDT ? USDT_ABI : ERC20_ABI.abi,
-    functionName: "approve",
+  const { data: totalSupply } = useErc20TotalSupply({
+    address: tokenAddress,
   });
-  const { data: totalSupply } = useContractRead({
-    address: inToken?.tokenAddress as `0x${string}`,
-    abi: ERC20_ABI.abi,
-    functionName: "totalSupply",
+  const { config, error, isError } = usePrepareErc20Approve({
+    address: tokenAddress,
+    args:
+      contractAddress && totalSupply
+        ? [contractAddress, totalSupply]
+        : undefined,
+    enabled: Boolean(contractAddress && totalSupply),
   });
 
-  const tx = useTx({
+  const { data, write } = useErc20Approve(config);
+
+  // const { write, data } = useContractWrite({
+  //   address: tokenAddress,
+  //   abi: USDT_ABI,
+  //   functionName: "approve",
+  // });
+
+  const {} = useTx({ hash: data?.hash, txSort: "Approve" });
+  const { isLoading, isSuccess } = useWaitForTransaction({
     hash: data?.hash,
-    txSort: "Approve",
-    tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
 
-  const callApprove = useCallback(async () => {
-    try {
-      if (totalSupply) {
-        switch (mode) {
-          case "Deposit":
-            return write({
-              args: [L1BRIDGE_CONTRACT, totalSupply],
-            });
-          case "Withdraw":
-            return write({
-              args: [L2BRIDGE_CONTRACT, totalSupply],
-            });
-          case "Swap":
-            return write({
-              args: [UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2, totalSupply],
-            });
-          case "Wrap":
-          case "Unwrap":
-            return write({
-              args: [SWAPPER_V2_CONTRACT, totalSupply],
-            });
-          default:
-            break;
-        }
-      }
-    } catch (e) {
-      console.log("**callApprove err*");
-      console.log(e);
-    }
-  }, [mode, totalSupply, connectedChainId]);
+  const callApprove = useCallback(() => {}, [write]);
 
-  return { isApproved, callApprove, isLoading };
+  return { isApproved, callApprove: () => write?.(), isLoading };
 }

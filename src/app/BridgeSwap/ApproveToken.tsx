@@ -10,29 +10,29 @@ import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
-  const { isApproved, callApprove } = useApprove();
+  const { isApproved, callApprove, isLoading } = useApprove();
   const { isNotSupportForBridge } = useBridgeSupport();
-  const { pendingTransactionToApprove } = useTransaction();
   const { isTONatPair } = useIsTon();
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
+  const { isBalanceOver, isInputZero } = useInputBalanceCheck();
+
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
-  const approveBtnDisabled = useMemo(() => {
-    return (
-      pendingTransactionToApprove && pendingTransactionToApprove.length > 0
-    );
-  }, [pendingTransactionToApprove]);
+  const approveBtnDisabled = isLoading;
 
   if (
     isApproved ||
     isNotSupportForBridge ||
     !inToken ||
     (mode == "Swap" && isTONatPair) ||
-    !isConnected
+    !isConnected ||
+    isBalanceOver ||
+    isInputZero
   ) {
     return null;
   }

@@ -89,7 +89,7 @@ export function useTransaction() {
 
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
-      return Object.entries(txData).filter(([key, value]) => {
+      return Object.entries(txData).filter(([, value]) => {
         return (
           value.txSort === "Approve" && value.transactionHash === undefined
         );
@@ -243,7 +243,7 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
-      if (selectedInToken) {
+      if (selectedInToken && txSort !== "Approve") {
         setSelectedInToken({
           ...selectedInToken,
           amountBN: null,
@@ -263,7 +263,7 @@ export function useTx(params: {
         },
       });
     }
-  }, [isLoading, hash, connectedChainId]);
+  }, [isLoading, hash, connectedChainId, txSort]);
 
   // useEffect(() => {
   //   if (isSuccess && data && connectedChainId && hash) {
