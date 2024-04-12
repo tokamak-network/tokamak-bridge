@@ -40,6 +40,7 @@ export default function ApproveToken() {
   }, [pendingTransactionToApprove]);
 
   if (
+    isApproved ||
     isNotSupportForBridge ||
     !inToken ||
     !(inToken && outToken) && mode ==="Swap" ||
@@ -47,7 +48,7 @@ export default function ApproveToken() {
     (mode == "Swap" && isTONatPair) ||
     !isConnected ||
     isBalanceOver ||
-    (Number(inToken?.parsedAmount) === 0 && !mobileView)
+    Number(inToken?.parsedAmount) === 0
   ) {
     return null;
   }
@@ -91,7 +92,7 @@ return (
       {
         isApproved ? (
           <Text fontSize={{base: 12, lg: 14}} color={"#A0A3AD"}>
-            {view_value} {inToken?.tokenSymbol} has been approved ({mode_name})
+            {view_value} {inToken?.tokenSymbol} has been approved ({mode_name}) {/**여기 value 흘러 내리는거 & value check */}
           </Text>
         ) : (
           mobileView ? (
