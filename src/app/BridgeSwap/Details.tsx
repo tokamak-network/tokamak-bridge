@@ -23,9 +23,6 @@ export function Details() {
       w={"100%"}
       mt={ { sm: "0px", lg: "24px" }}
       rowGap={"10px"}
-      sx={{
-        overflowY: mobileView ? "auto" : "initial",
-      }}
     >
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>

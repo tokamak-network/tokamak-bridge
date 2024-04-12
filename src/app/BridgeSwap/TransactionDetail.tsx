@@ -521,6 +521,17 @@ const Title = (props: {
     amount: Number(isWrapUnwrap ? 1 : outPrice),
   });
 
+  const formatPrice = (price: number | undefined) => {
+    if(price === undefined){
+      return 0
+    }
+    
+    const priceStr = price.toString();
+    return priceStr.length > 15 ? `${priceStr.slice(0, 15)}...` : priceStr;
+  };
+
+
+
   if (mode === "Deposit" || mode === "Withdraw") {
     return (
       <Flex
@@ -586,7 +597,7 @@ const Title = (props: {
             </Text>
             <Text mx={"9px"}>=</Text>
             <Text>
-              {isWrapUnwrap ? 1 : outPrice} {outToken?.tokenSymbol} 
+              {isWrapUnwrap ? 1 : formatPrice(outPrice)} {outToken?.tokenSymbol}
               {
                 mobileView && <Text as="span" color="#A0A3AD"> (${token1PriceWithAmount})</Text>
               }

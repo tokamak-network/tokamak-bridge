@@ -63,9 +63,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
                 <Center 
                     h={"100vh"}
                     bg={"#0F0F12"}
-                    sx={{
-                        overflow: pcView ? "initial" : "hidden",
-                    }}>
+                    >
                     {children}
                 </Center>
                 {pcView ? <Footer /> : 
