@@ -9,12 +9,14 @@ type SwapperTxSort = "Wrap" | "Unwrap";
 type EtcTxSort = "Approve";
 type UserHistorySort = "Claim";
 
+type ActionSort = "Swap" | "Approve";
+
 export type TxSort =
   | UniswapTxSort
   | BridgeTxSort
   | SwapperTxSort
   | EtcTxSort
-  | UserHistorySort
+  | UserHistorySort;
 
 export type TokenTxData = {
   tokenAddress: string;

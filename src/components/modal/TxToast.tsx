@@ -21,6 +21,8 @@ type TransactionToastProp = TxInterface;
 function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   const { tokenData, isToken0, network, txSort } = props;
 
+  console.log("props", props);
+
   if (
     tokenData === undefined ||
     (isToken0 === false &&
@@ -143,7 +145,18 @@ function TransactionToast(props: TransactionToastProp) {
         pos={"relative"}
         justifyContent={"space-between"}
       >
-        <Text>{txSort}</Text>
+        <Flex
+          w={"92px"}
+          h={"44px"}
+          flexDir={"column"}
+          justifyContent={"space-between"}
+        >
+          <Text>{txSort}</Text>
+          <Text fontSize={12} color={"#A0A3AD"}>
+            {}
+          </Text>
+        </Flex>
+
         <Flex w={"208px"}>
           <TxTokenInfo isToken0={true} {...props} />
           <ToastIcon {...props} />
@@ -167,6 +180,8 @@ function TxToast() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const { confirmedTransaction } = useTransaction();
+
+  console.log("confirmedTransaction", confirmedTransaction);
 
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {

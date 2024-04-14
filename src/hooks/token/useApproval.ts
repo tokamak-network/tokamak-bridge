@@ -97,11 +97,10 @@ export function useApprove() {
   //   functionName: "approve",
   // });
 
-  const {} = useTx({ hash: data?.hash, txSort: "Approve" });
-  const { isLoading, isSuccess, isFetchedAfterMount } = useWaitForTransaction({
-    chainId: connectedChainId,
+  const { isLoading } = useTx({
     hash: data?.hash,
-    staleTime: 2_000,
+    txSort: "Approve",
+    tokenAddress,
   });
 
   return {

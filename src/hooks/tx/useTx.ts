@@ -87,6 +87,8 @@ export function useTransaction() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
 
+  console.log("txData", txData);
+
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([, value]) => {
@@ -253,7 +255,6 @@ export function useTx(params: {
       }
 
       return setTxData({
-        ...txData,
         [hash]: {
           transactionHash: undefined,
           txSort,
@@ -266,214 +267,216 @@ export function useTx(params: {
     }
   }, [isLoading, hash, connectedChainId, txSort]);
 
-  // useEffect(() => {
-  //   if (isSuccess && data && connectedChainId && hash) {
-  //     const { logs, transactionHash } = data;
-  //     const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
-  //       getInterface();
-  //     setModalOpen("confirmed");
-  //     switch (txSort) {
-  //       //Uniswap
-  //       case "Add Liquidity":
-  //         return;
-  //       case "Remove Liquidity":
-  //         return;
-  //       case "Swap": {
-  //         try {
-  //           const result = swapRouterI.parseLog(logs[logs.length - 1]);
-  //           let trasferedOutResult;
-  //           try {
-  //             trasferedOutResult = erc20I.parseLog(logs[1]);
-  //           } catch (e) {
-  //             trasferedOutResult = erc20I.parseLog(logs[2]);
-  //           }
-  //           // const transferedInResult = erc20I.parseLog(logs[4]);
+  useEffect(() => {
+    if (isSuccess && data && connectedChainId && hash) {
+      const { logs, transactionHash } = data;
+      const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
+        getInterface();
+      setModalOpen("confirmed");
+      console.log("txSort", txSort);
+      switch (txSort) {
+        //Uniswap
+        case "Add Liquidity":
+          return;
+        case "Remove Liquidity":
+          return;
+        case "Swap": {
+          try {
+            const result = swapRouterI.parseLog(logs[logs.length - 1]);
+            let trasferedOutResult;
+            try {
+              trasferedOutResult = erc20I.parseLog(logs[1]);
+            } catch (e) {
+              trasferedOutResult = erc20I.parseLog(logs[2]);
+            }
+            // const transferedInResult = erc20I.parseLog(logs[4]);
 
-  //           const { args } = result;
-  //           const { amount0, amount1 } = args;
-  //           const transferedValue = trasferedOutResult.args.value;
-  //           // const transferedInValue = transferedInResult.args.value;
+            const { args } = result;
+            const { amount0, amount1 } = args;
+            const transferedValue = trasferedOutResult.args.value;
+            // const transferedInValue = transferedInResult.args.value;
 
-  //           setTxData({
-  //             ...txData,
-  //             [hash]: {
-  //               transactionHash,
-  //               txSort,
-  //               transactionState: "success",
-  //               tokenData: [
-  //                 {
-  //                   tokenAddress: tokenAddress ?? "0x",
-  //                   amount: transferedValue.toBigInt(),
-  //                 },
-  //                 {
-  //                   tokenAddress: tokenOutAddress ?? "0x",
-  //                   amount: amount1.toBigInt(),
-  //                 },
-  //               ],
-  //               network: connectedChainId,
-  //               isToasted: false,
-  //             },
-  //           });
-  //         } catch (e) {}
-  //       }
+            setTxData({
+              ...txData,
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: transferedValue.toBigInt(),
+                  },
+                  {
+                    tokenAddress: tokenOutAddress ?? "0x",
+                    amount: amount1.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            });
+          } catch (e) {}
+        }
 
-  //       case "Collect Fee":
-  //         return;
-  //       //bridge
-  //       case "Deposit": {
-  //         const result = l1BridgeI.parseLog(logs[logs.length - 1]);
-  //         const { args } = result;
-  //         const { _l1Token, _l2Token, _amount } = args;
+        case "Collect Fee":
+          return;
+        //bridge
+        case "Deposit": {
+          const result = l1BridgeI.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          const { _l1Token, _l2Token, _amount } = args;
 
-  //         if (_l1Token === undefined) {
-  //           return setTxData({
-  //             ...txData,
-  //             [hash]: {
-  //               transactionHash,
-  //               txSort,
-  //               transactionState: "success",
-  //               tokenData: [
-  //                 {
-  //                   tokenAddress: "ETH",
-  //                   amount: _amount,
-  //                 },
-  //                 {
-  //                   tokenAddress: "ETH",
-  //                   amount: _amount,
-  //                 },
-  //               ],
-  //               network: connectedChainId,
-  //               isToasted: false,
-  //             },
-  //           });
-  //         }
+          if (_l1Token === undefined) {
+            return setTxData({
+              ...txData,
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: "ETH",
+                    amount: _amount,
+                  },
+                  {
+                    tokenAddress: "ETH",
+                    amount: _amount,
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            });
+          }
 
-  //         return setTxData({
-  //           ...txData,
-  //           [hash]: {
-  //             transactionHash,
-  //             txSort,
-  //             transactionState: "success",
-  //             tokenData: [
-  //               {
-  //                 tokenAddress: _l1Token,
-  //                 amount: _amount,
-  //               },
-  //               {
-  //                 tokenAddress: _l1Token,
-  //                 amount: _amount,
-  //               },
-  //             ],
-  //             network: connectedChainId,
-  //             isToasted: false,
-  //           },
-  //         });
-  //       }
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l1Token,
+                  amount: _amount,
+                },
+                {
+                  tokenAddress: _l1Token,
+                  amount: _amount,
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        }
 
-  //       case "Withdraw": {
-  //         const result = l2BridgeI.parseLog(logs[logs.length - 1]);
-  //         const { args } = result;
-  //         const { _l1Token, _l2Token, _amount } = args;
+        case "Withdraw": {
+          const result = l2BridgeI.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          const { _l1Token, _l2Token, _amount } = args;
 
-  //         return setTxData({
-  //           ...txData,
-  //           [hash]: {
-  //             transactionHash,
-  //             txSort,
-  //             transactionState: "success",
-  //             tokenData: [
-  //               {
-  //                 tokenAddress: _l2Token,
-  //                 amount: _amount,
-  //               },
-  //               {
-  //                 tokenAddress: _l2Token,
-  //                 amount: _amount,
-  //               },
-  //             ],
-  //             network: connectedChainId,
-  //             isToasted: false,
-  //           },
-  //         });
-  //       }
-  //       //wrap
-  //       case "Wrap": {
-  //         const result = swapperI.parseLog(logs[logs.length - 1]);
-  //         const { args } = result;
-  //         return setTxData({
-  //           ...txData,
-  //           [hash]: {
-  //             transactionHash,
-  //             txSort,
-  //             transactionState: "success",
-  //             tokenData: [
-  //               {
-  //                 tokenAddress: tokenAddress ?? "0x",
-  //                 amount: args.amount.toBigInt(),
-  //               },
-  //               {
-  //                 tokenAddress: WTON_ADDRESS ?? "0x",
-  //                 amount: args.amount.toBigInt(),
-  //               },
-  //             ],
-  //             network: connectedChainId,
-  //             isToasted: false,
-  //           },
-  //         });
-  //       }
-  //       case "Unwrap": {
-  //         const result = swapperI.parseLog(logs[logs.length - 1]);
-  //         const { args } = result;
-  //         return setTxData({
-  //           ...txData,
-  //           [hash]: {
-  //             transactionHash,
-  //             txSort,
-  //             transactionState: "success",
-  //             tokenData: [
-  //               {
-  //                 tokenAddress: tokenAddress ?? "0x",
-  //                 amount: args.amount.toBigInt(),
-  //               },
-  //               {
-  //                 tokenAddress: TON_ADDRESS,
-  //                 amount: args.amount.toBigInt(),
-  //               },
-  //             ],
-  //             network: connectedChainId,
-  //             isToasted: false,
-  //           },
-  //         });
-  //       }
-  //       //etc
-  //       case "Approve":
-  //         const result = erc20I.parseLog(logs[logs.length - 1]);
-  //         const { args } = result;
-  //         return setTxData({
-  //           ...txData,
-  //           [hash]: {
-  //             transactionHash,
-  //             txSort,
-  //             transactionState: "success",
-  //             tokenData: [
-  //               {
-  //                 tokenAddress: tokenAddress ?? "0x",
-  //                 amount: args.value.toBigInt(),
-  //               },
-  //             ],
-  //             network: connectedChainId,
-  //             isToasted: false,
-  //           },
-  //         });
-  //       default:
-  //         break;
-  //     }
-  //   }
-  //   if (isError && data && connectedChainId && hash) {
-  //     console.log(isError, hash);
-  //     setModalOpen("error");
-  //   }
-  // }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l2Token,
+                  amount: _amount,
+                },
+                {
+                  tokenAddress: _l2Token,
+                  amount: _amount,
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        }
+        //wrap
+        case "Wrap": {
+          const result = swapperI.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: args.amount.toBigInt(),
+                },
+                {
+                  tokenAddress: WTON_ADDRESS ?? "0x",
+                  amount: args.amount.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        }
+        case "Unwrap": {
+          const result = swapperI.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: args.amount.toBigInt(),
+                },
+                {
+                  tokenAddress: TON_ADDRESS,
+                  amount: args.amount.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        }
+        //etc
+        case "Approve":
+          console.log("gogo");
+          const result = erc20I.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          return setTxData({
+            ...txData,
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: args.value.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        default:
+          break;
+      }
+    }
+    if (isError && data && connectedChainId && hash) {
+      console.log(isError, hash);
+      setModalOpen("error");
+    }
+  }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
 
-  return {};
+  return { isLoading };
 }

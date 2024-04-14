@@ -73,8 +73,8 @@ export const relayBannerStatus = atom<Banner>({
 
 export const welcomeMsgStatus = atom<Boolean>({
   key: "welcomeMsgStatus",
-  default: true
-})
+  default: true,
+});
 
 export const relayBannerSelector = selector<{
   previewTimeStartThisWeek: number;
@@ -161,6 +161,7 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
   key: "actionMode",
   get: ({ get }) => {
     const network = get(networkStatus);
+    console.log("network", network);
     const { inTokenHasAmount } = get(inTokenSelector);
     const { outTokenHasAmount } = get(outTokenSelector);
 
@@ -218,7 +219,10 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
         }
       }
 
-      if (network.inNetwork.isTokamak && !network.outNetwork.isTokamak) {
+      if (
+        network.inNetwork.layer === "L2" &&
+        network.outNetwork.layer === "L1"
+      ) {
         return {
           mode: "Withdraw",
           isReady: isInTokenReady,
@@ -230,7 +234,12 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
           isReady: isInTokenReady,
         };
       }
-      return { mode: "Deposit", isReady: isInTokenReady };
+      if (
+        network.inNetwork.layer === "L1" &&
+        network.outNetwork.layer === "L2"
+      ) {
+        return { mode: "Deposit", isReady: isInTokenReady };
+      }
     }
     return { mode: null, isReady: false };
   },
