@@ -109,7 +109,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
         justifyContent={"space-between"}
         fontSize={{ base: 11, lg: 14 }}
         h={"16px"}
-        color={isBalanceOver ? '#A0A3AD' : ''}
+        color={isBalanceOver ? "#A0A3AD" : ""}
       >
         <Text fontWeight={300}>{title}</Text>
         <Flex columnGap={"35px"}>
@@ -263,7 +263,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const { isOpen } = useConfirm();
   const { layer } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
-  
+
   return (
     <Flex flexDir={"column"}>
       <Flex
@@ -283,11 +283,7 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           {isLoading ? (
             <GradientSpinner />
           ) : (
-            <Text 
-              fontWeight={500}
-            >
-              {content}
-            </Text>
+            <Text fontWeight={500}>{content}</Text>
           )}
           {gasFee && (
             <Text
@@ -311,7 +307,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
   const { isBalanceOver } = useInputBalanceCheck();
 
   return (
-    <Flex flexDir={"column"} color={isBalanceOver ? '#a0a3ad' : ''}>
+    <Flex flexDir={"column"} color={isBalanceOver ? "#a0a3ad" : ""}>
       <Flex
         height={"14px"}
         justifyContent={"space-between"}
@@ -323,7 +319,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
         <Flex>
           {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{}</Text>}
           {gasFee && (
-            <Text mr={"27px"} fontWeight={500} >
+            <Text mr={"27px"} fontWeight={500}>
               {gasFee}
             </Text>
           )}
@@ -461,7 +457,7 @@ const Title = (props: {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { gasCostUS } = useGasFee();
-  const { isBalanceOver } = useInputBalanceCheck()
+  const { isBalanceOver } = useInputBalanceCheck();
 
   useEffect(() => {
     if (isExpanded) {
@@ -524,9 +520,7 @@ const Title = (props: {
         justifyContent={"space-between"}
         alignItems={"center"}
         cursor={isOpen ? "" : "pointer"}
-        onClick={() =>
-           isOpen === false && setIsExpended(!isExpanded)
-        }
+        onClick={() => isOpen === false && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
       >
         {isLoading ? (
@@ -549,11 +543,11 @@ const Title = (props: {
             )} */}
           </Flex>
         )}
-        {isLoading 
+        {isLoading
           ? null
           : isOpen === false && (
               <Flex>
-                {isExpanded === false && gasCostUS &&  (
+                {isExpanded === false && gasCostUS && (
                   <Image src={GasImg} alt={"gasStation"} />
                 )}
                 {isOpen === isExpanded && gasCostUS && (
@@ -604,7 +598,7 @@ export default function TransactionDetail(props: {
     isWrapUnwrap ||
     isNotSupportForSwap ||
     isNotSupportForBridge ||
-    isApproved === false ||
+    // isApproved === false ||
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
     !isConnected
@@ -630,7 +624,7 @@ export default function TransactionDetail(props: {
           : ""
       }
       pb={{
-        base: isExpanded  ? "12px" : "",
+        base: isExpanded ? "12px" : "",
         lg: isExpanded ? "20px" : "",
       }}
     >

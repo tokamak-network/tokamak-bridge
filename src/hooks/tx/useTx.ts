@@ -158,8 +158,10 @@ export function useTx(params: {
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress } = params;
   const { mode } = useGetMode();
+  const { connectedChainId } = useConnectedNetwork();
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
+    chainId: connectedChainId,
   });
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
@@ -172,7 +174,6 @@ export function useTx(params: {
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
 
-  const { connectedChainId } = useConnectedNetwork();
   const [exChainId, setExChainId] = useState<number | undefined>(undefined);
 
   const { mobileView } = useMediaView();

@@ -1,6 +1,4 @@
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import ERC20_ABI from "@/constant/abis/erc20.json";
-import USDT_ABI from "@/constant/abis/USDT.json";
 import {
   useErc20Approve,
   useErc20TotalSupply,
@@ -8,7 +6,7 @@ import {
 } from "@/generated";
 import { useWaitForTransaction } from "wagmi";
 
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import useConnectedNetwork from "../network";
@@ -88,6 +86,7 @@ export function useApprove() {
         ? [contractAddress, totalSupply]
         : undefined,
     enabled: Boolean(contractAddress && totalSupply),
+    chainId: connectedChainId,
   });
 
   const { data, write } = useErc20Approve(config);
@@ -99,11 +98,16 @@ export function useApprove() {
   // });
 
   const {} = useTx({ hash: data?.hash, txSort: "Approve" });
-  const { isLoading, isSuccess } = useWaitForTransaction({
+  const { isLoading, isSuccess, isFetchedAfterMount } = useWaitForTransaction({
+    chainId: connectedChainId,
     hash: data?.hash,
+    staleTime: 2_000,
   });
 
-  const callApprove = useCallback(() => {}, [write]);
-
-  return { isApproved, callApprove: () => write?.(), isLoading };
+  return {
+    isApproved,
+    callApprove: () => write?.(),
+    isLoading,
+    hash: data?.hash,
+  };
 }

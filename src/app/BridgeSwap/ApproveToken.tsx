@@ -3,14 +3,16 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
-import { useTransaction } from "@/hooks/tx/useTx";
+// import { useTransaction } from "@/hooks/tx/useTx";
 import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { useEffect } from "react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { useWaitForTransaction, useTransaction } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
@@ -20,10 +22,9 @@ export default function ApproveToken() {
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
+  const { connectedChainId } = useConnectedNetwork();
 
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
-
-  const approveBtnDisabled = isLoading;
 
   if (
     isApproved ||
@@ -48,18 +49,18 @@ export default function ApproveToken() {
       py={"19px"}
       justifyContent={"space-between"}
       alignItems={"center"}
-      color={approveBtnDisabled ? "#8E8E92" : ""}
+      color={isLoading ? "#8E8E92" : ""}
     >
       <Flex columnGap={"12px"}>
         <Text
           fontSize={{ base: 12, lg: 14 }}
-          color={approveBtnDisabled ? "#A0A3AD" : "#fff"}
+          color={isLoading ? "#A0A3AD" : "#fff"}
         >
           Approve {inToken?.tokenSymbol} for
           {capitalizeFirstChar(mode ?? undefined)}
         </Text>
       </Flex>
-      {approveBtnDisabled ? (
+      {isLoading ? (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
       ) : (
         <Button
@@ -75,7 +76,7 @@ export default function ApproveToken() {
             callApprove();
             setIsDrawerOpen(false);
           }}
-          isDisabled={approveBtnDisabled}
+          isDisabled={isLoading}
           _disabled={{ bg: "#15161D", color: "#8E8E92" }}
         >
           Approve

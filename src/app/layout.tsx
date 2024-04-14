@@ -83,6 +83,7 @@ export default function RootLayout({
             <ApolloProvider client={apolloClient}>
               <ChakraProvidersForNextJs>
                 <WagmiProviders>
+                  <GlobalComponents />
                   <Entry children={children} />
                   {/* <Header />
                   <Center h={"100vh"}>{children}</Center>
