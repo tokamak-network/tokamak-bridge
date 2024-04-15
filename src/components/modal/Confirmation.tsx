@@ -68,7 +68,7 @@ export default function Confirmation() {
   );
 
   return (
-    <Modal isOpen={isOpen} onClose={closeThisModal}>
+    <Modal isOpen={isOpen} onClose={closeThisModal} closeOnOverlayClick={false}>
       <ModalOverlay />
       <ModalContent
         h={"100%"}

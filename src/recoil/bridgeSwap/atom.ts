@@ -161,7 +161,6 @@ export const actionMode = selector<{ mode: ActionMode; isReady: boolean }>({
   key: "actionMode",
   get: ({ get }) => {
     const network = get(networkStatus);
-    console.log("network", network);
     const { inTokenHasAmount } = get(inTokenSelector);
     const { outTokenHasAmount } = get(outTokenSelector);
 

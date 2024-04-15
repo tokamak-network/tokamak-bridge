@@ -116,7 +116,7 @@ export default function PoolCard(props: PoolCardDetail) {
 
   const NonfungiblePositionManagerContract = useMemo(() => {
     //for the network which is connected by a wallet
-    if (connectedChainId === chainId) {
+    if (connectedChainId === chainId && UNISWAP_CONTRACT) {
       return new Contract(
         UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
         NONFUNGIBLE_POSITION_MANAGER_ABI,

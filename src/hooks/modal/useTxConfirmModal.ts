@@ -7,6 +7,7 @@ import {
 import { useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { accountDrawerStatus, claimModalStatus } from "@/recoil/modal/atom";
+import { useToast } from "@chakra-ui/react";
 
 export default function useTxConfirmModal() {
   const [modalOpen, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -15,6 +16,7 @@ export default function useTxConfirmModal() {
   const [claimModalState, setClaimModalState] =
     useRecoilState(claimModalStatus);
   const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const { closeAll } = useToast();
 
   const isConfirming = modalOpen === "confirming";
   const isConfirmed = modalOpen === "confirmed";
@@ -30,9 +32,10 @@ export default function useTxConfirmModal() {
       setWithdrawData({
         modalData: null,
       });
+      //close toast for transaction
+      closeAll();
     }
-   
-  }, [setModalOpen, setIsOpen,isClaimWaiting]);
+  }, [setModalOpen, setIsOpen, isClaimWaiting, closeAll]);
 
   return {
     isOpen,

@@ -1,4 +1,4 @@
-import { TxSort } from "@/types/tx/txType";
+import { TxSort, ActionSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
@@ -22,11 +22,9 @@ import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
-import useTxConfirmModal from "../modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { accountDrawerStatus } from "@/recoil/modal/atom";
-import { useProvier } from "../provider/useProvider";
 import useMediaView from "../mediaView/useMediaView";
+
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
@@ -87,8 +85,6 @@ export function useTransaction() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const { connectedChainId } = useConnectedNetwork();
 
-  console.log("txData", txData);
-
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([, value]) => {
@@ -139,6 +135,20 @@ export function useTransaction() {
       });
   }, [txData]);
 
+  const confirmedApproveTransaction = useMemo(() => {
+    if (txData) {
+      const filteredTransactions = Object.entries(txData).filter(
+        ([, value]) => {
+          return (
+            value.txSort === "Approve" && value.transactionState === "success"
+          );
+        }
+      );
+      return filteredTransactions ? filteredTransactions[0] : undefined;
+    }
+    return [];
+  }, [txData]);
+
   useEffect(() => {
     setTxData(undefined);
   }, [connectedChainId]);
@@ -149,6 +159,9 @@ export function useTransaction() {
     isPending,
     pendingTransactionToApprove,
     confirmedTransaction,
+    confirmedApproveTransaction: confirmedApproveTransaction
+      ? confirmedApproveTransaction[0]
+      : undefined,
   };
 }
 
@@ -157,8 +170,9 @@ export function useTx(params: {
   txSort: TxSort;
   tokenAddress?: `0x${string}`;
   tokenOutAddress?: `0x${string}`;
+  actionSort?: ActionSort;
 }) {
-  const { hash, txSort, tokenAddress, tokenOutAddress } = params;
+  const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
   const { mode } = useGetMode();
   const { connectedChainId } = useConnectedNetwork();
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
@@ -170,21 +184,14 @@ export function useTx(params: {
     selectedInTokenStatus
   );
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
-  const [, setIsAccountDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
 
-  const [exChainId, setExChainId] = useState<number | undefined>(undefined);
-
   const { mobileView } = useMediaView();
 
   useEffect(() => {
-    if (connectedChainId !== exChainId) {
-      setTxPending(false);
-      return setExChainId(connectedChainId);
-    }
     if (isLoading) {
       return setTxPending(true);
     }
@@ -193,9 +200,6 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess) {
-      if ((mode === "Deposit" || mode === "Withdraw") && !mobileView) {
-        setIsAccountDrawerOpen(true);
-      }
       return setModalOpen("confirmed");
     }
   }, [isSuccess]);
@@ -214,6 +218,11 @@ export function useTx(params: {
   useEffect(() => {
     if (hash === undefined) return setTxPending(false);
   }, [hash]);
+
+  //initialize txData when chainId is changed
+  useEffect(() => {
+    setTxData(undefined);
+  }, [connectedChainId]);
 
   useEffect(() => {
     try {
@@ -262,10 +271,11 @@ export function useTx(params: {
           tokenData: undefined,
           network: connectedChainId,
           isToasted: false,
+          actionSort,
         },
       });
     }
-  }, [isLoading, hash, connectedChainId, txSort]);
+  }, [isLoading, hash, connectedChainId, txSort, actionSort]);
 
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
@@ -273,7 +283,6 @@ export function useTx(params: {
       const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
         getInterface();
       setModalOpen("confirmed");
-      console.log("txSort", txSort);
       switch (txSort) {
         //Uniswap
         case "Add Liquidity":
@@ -297,7 +306,6 @@ export function useTx(params: {
             // const transferedInValue = transferedInResult.args.value;
 
             setTxData({
-              ...txData,
               [hash]: {
                 transactionHash,
                 txSort,
@@ -314,6 +322,7 @@ export function useTx(params: {
                 ],
                 network: connectedChainId,
                 isToasted: false,
+                actionSort,
               },
             });
           } catch (e) {}
@@ -329,7 +338,6 @@ export function useTx(params: {
 
           if (_l1Token === undefined) {
             return setTxData({
-              ...txData,
               [hash]: {
                 transactionHash,
                 txSort,
@@ -346,12 +354,12 @@ export function useTx(params: {
                 ],
                 network: connectedChainId,
                 isToasted: false,
+                actionSort,
               },
             });
           }
 
           return setTxData({
-            ...txData,
             [hash]: {
               transactionHash,
               txSort,
@@ -368,6 +376,7 @@ export function useTx(params: {
               ],
               network: connectedChainId,
               isToasted: false,
+              actionSort,
             },
           });
         }
@@ -378,7 +387,6 @@ export function useTx(params: {
           const { _l1Token, _l2Token, _amount } = args;
 
           return setTxData({
-            ...txData,
             [hash]: {
               transactionHash,
               txSort,
@@ -403,7 +411,6 @@ export function useTx(params: {
           const result = swapperI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           return setTxData({
-            ...txData,
             [hash]: {
               transactionHash,
               txSort,
@@ -427,7 +434,6 @@ export function useTx(params: {
           const result = swapperI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           return setTxData({
-            ...txData,
             [hash]: {
               transactionHash,
               txSort,
@@ -449,11 +455,9 @@ export function useTx(params: {
         }
         //etc
         case "Approve":
-          console.log("gogo");
           const result = erc20I.parseLog(logs[logs.length - 1]);
           const { args } = result;
           return setTxData({
-            ...txData,
             [hash]: {
               transactionHash,
               txSort,
@@ -466,6 +470,7 @@ export function useTx(params: {
               ],
               network: connectedChainId,
               isToasted: false,
+              actionSort,
             },
           });
         default:

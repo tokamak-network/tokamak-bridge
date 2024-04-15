@@ -4,15 +4,14 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
 // import { useTransaction } from "@/hooks/tx/useTx";
-import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import { useEffect } from "react";
+import { Button, Flex, Spinner, Text, Image } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
-import { useWaitForTransaction, useTransaction } from "wagmi";
-import useConnectedNetwork from "@/hooks/network";
+import { useTransaction } from "@/hooks/tx/useTx";
+import ConfirmedImage from "assets/image/modal/confirmed.svg";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
@@ -22,7 +21,8 @@ export default function ApproveToken() {
   const { mode } = useGetMode();
   const { isConnected } = useAccount();
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
-  const { connectedChainId } = useConnectedNetwork();
+  const { confirmedApproveTransaction } = useTransaction();
+  console.log("confirmedApproveTransaction", confirmedApproveTransaction);
 
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
@@ -37,6 +37,12 @@ export default function ApproveToken() {
   ) {
     return null;
   }
+
+  const text = confirmedApproveTransaction
+    ? `100,000 TON has been approved`
+    : `Approve ${inToken?.tokenSymbol} for ${capitalizeFirstChar(
+        mode ?? undefined
+      )}`;
 
   return (
     <Flex
@@ -56,12 +62,15 @@ export default function ApproveToken() {
           fontSize={{ base: 12, lg: 14 }}
           color={isLoading ? "#A0A3AD" : "#fff"}
         >
-          Approve {inToken?.tokenSymbol} for
-          {capitalizeFirstChar(mode ?? undefined)}
+          {text}
         </Text>
       </Flex>
       {isLoading ? (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+      ) : confirmedApproveTransaction ? (
+        <Flex>
+          <Image src={ConfirmedImage} alt={"ConfirmedImage"} />
+        </Flex>
       ) : (
         <Button
           w={{ base: "64px", lg: "92px" }}

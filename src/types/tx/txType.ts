@@ -1,3 +1,5 @@
+import { ActionMode } from "@/types/bridgeSwap";
+
 type UniswapTxSort =
   | "Add Liquidity"
   | "Increase Liquidity"
@@ -9,14 +11,14 @@ type SwapperTxSort = "Wrap" | "Unwrap";
 type EtcTxSort = "Approve";
 type UserHistorySort = "Claim";
 
-type ActionSort = "Swap" | "Approve";
-
 export type TxSort =
   | UniswapTxSort
   | BridgeTxSort
   | SwapperTxSort
   | EtcTxSort
   | UserHistorySort;
+
+export type ActionSort = ActionMode;
 
 export type TokenTxData = {
   tokenAddress: string;
@@ -30,4 +32,5 @@ export interface TxInterface {
   tokenData: TokenTxData[] | undefined;
   network: number;
   isToasted: boolean;
+  actionSort?: ActionSort;
 }

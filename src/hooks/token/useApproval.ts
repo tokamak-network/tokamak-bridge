@@ -101,6 +101,7 @@ export function useApprove() {
     hash: data?.hash,
     txSort: "Approve",
     tokenAddress,
+    actionSort: mode,
   });
 
   return {

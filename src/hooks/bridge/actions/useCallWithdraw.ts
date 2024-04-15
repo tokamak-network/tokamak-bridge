@@ -14,8 +14,6 @@ export default function useCallWithdraw(functionName: string) {
     functionName,
   });
 
-  console.log("L2BRIDGE_CONTRACT", L2BRIDGE_CONTRACT);
-
   const {} = useTx({ hash: data?.hash, txSort: "Withdraw" });
 
   const provider = usePublicClient();

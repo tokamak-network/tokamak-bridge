@@ -1,5 +1,5 @@
-import { Box, Flex, Text, useToast } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { Box, Flex, Text, useToast, Link } from "@chakra-ui/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTransaction } from "@/hooks/tx/useTx";
 import "@/css/toast.css";
 import { TxInterface } from "@/types/tx/txType";
@@ -11,7 +11,8 @@ import { trimAmount } from "@/utils/trim";
 import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
 import PLUS_ICON from "assets/icons/toast/toastPlus.svg";
 import CLOSE_ICON from "assets/icons/toast/close.svg";
-
+import useConnectedNetwork from "@/hooks/network";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
 import { txDataStatus } from "@/recoil/global/transaction";
@@ -19,9 +20,7 @@ import { txDataStatus } from "@/recoil/global/transaction";
 type TransactionToastProp = TxInterface;
 
 function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
-  const { tokenData, isToken0, network, txSort } = props;
-
-  console.log("props", props);
+  const { tokenData, isToken0, network, txSort, actionSort } = props;
 
   if (
     tokenData === undefined ||
@@ -126,9 +125,24 @@ function ToastIcon(props: TransactionToastProp) {
 }
 
 function TransactionToast(props: TransactionToastProp) {
-  const { txSort, transactionHash } = props;
+  const { txSort, transactionHash, actionSort } = props;
 
   const toast = useToast();
+  const { blockExplorer } = useConnectedNetwork();
+  const [historyTabOpen, setHistoryTabOpen] =
+    useRecoilState(accountDrawerStatus);
+
+  const needToOpenHistoryTab = txSort === "Deposit" || txSort === "Withdraw";
+
+  const clickTitle = useCallback(() => {
+    needToOpenHistoryTab
+      ? setHistoryTabOpen(true)
+      : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+  }, [props, blockExplorer, needToOpenHistoryTab]);
+
+  useEffect(() => {
+    if (historyTabOpen) toast.closeAll();
+  }, [historyTabOpen]);
 
   return (
     <WagmiProviders>
@@ -149,12 +163,16 @@ function TransactionToast(props: TransactionToastProp) {
           w={"92px"}
           h={"44px"}
           flexDir={"column"}
-          justifyContent={"space-between"}
+          justifyContent={"center"}
         >
-          <Text>{txSort}</Text>
-          <Text fontSize={12} color={"#A0A3AD"}>
-            {}
+          <Text cursor={"pointer"} onClick={clickTitle}>
+            {txSort}
           </Text>
+          {actionSort && (
+            <Text fontSize={12} color={"#A0A3AD"}>
+              ({actionSort})
+            </Text>
+          )}
         </Flex>
 
         <Flex w={"208px"}>
@@ -180,8 +198,6 @@ function TxToast() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
 
   const { confirmedTransaction } = useTransaction();
-
-  console.log("confirmedTransaction", confirmedTransaction);
 
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {
