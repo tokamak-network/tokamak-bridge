@@ -93,7 +93,7 @@ export default function useGetTransaction() {
               : "absent"
           );
           let filteredUserTx;
-          if (storedTxData !== "undefined" && storedTxData.length > 0) {
+          if (storedTxData !== "undefined" && storedTxData?.length > 0) {
             const completedTx = storedTxData?.filter((item: any) => item.currentStatus > 5 && item.event=== "withdraw")
   
             filteredUserTx = userTxfromSubgraph.formattedWithdraw.filter((item: L1TxType) => {
