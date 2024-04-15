@@ -73,7 +73,6 @@ export default function useTokenModal() {
       },
       isMobile?: boolean
     ) => {
-      console.log(chainName)
       if (chainName) {
         const isDuplicated = isInTokenOpen
           ? selectedOutToken?.address[chainName] ===
@@ -94,7 +93,6 @@ export default function useTokenModal() {
             setSelectedInToken(null);
           }
         }
-        console.log("isInTokenOpen", isInTokenOpen)
 
         isInTokenOpen && chainName
           ? setSelectedInToken({
