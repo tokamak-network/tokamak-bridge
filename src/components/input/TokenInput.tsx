@@ -36,6 +36,8 @@ import {
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
 
+import useAmountModal from "@/hooks/modal/useAmountModal"
+
 export default function TokenInput(props: {
   inToken: boolean;
   defaultValue?: any;
@@ -93,6 +95,7 @@ export default function TokenInput(props: {
     mode === "ETH-Unwrap";
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
+  const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
@@ -213,6 +216,7 @@ export default function TokenInput(props: {
         (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount)
       ) {
         onCloseTokenModal();
+        onOpenOutAmount();
       }
       // customRef?.current?.blur();
     }

@@ -141,7 +141,7 @@ export default function ConfirmWithdraw() {
               }
         }
       >
-        {tx ? "Claim Withdraw" : "Initiate Withdraw"}
+        {tx ? "Claim" : "Initiate"}
       </Button>
     );
   };

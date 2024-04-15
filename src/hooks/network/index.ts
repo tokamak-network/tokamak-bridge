@@ -29,9 +29,10 @@ export default function useConnectedNetwork() {
 
   const chainInfo = useMemo(() => {
     //connected wallet
+
     if (chain?.id) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
-
+      
       return {
         connectedChainId: chain.id,
         isSupportedChain: Object.values(SupportedChainId).includes(chain.id),
@@ -66,15 +67,17 @@ export default function useConnectedNetwork() {
   }, [chain, inNetwork]);
 
   const otherLayerChainInfo = useMemo(() => {
+    // Corrected the network sequence due to the removal of the Goerli network. 
+    // Appropriate adjustments will be made upon the introduction of the Sepolia network. -@Robert
     if (chainInfo) {
       if (chainInfo.layer === "L1" && chainInfo.isConnectedToMainNetwork)
-        return supportedChain[2];
-      if (chainInfo.layer === "L1" && !chainInfo.isConnectedToMainNetwork)
-        return supportedChain[3];
+        return supportedChain[1];
+      // if (chainInfo.layer === "L1" && !chainInfo.isConnectedToMainNetwork)
+      //   return supportedChain[3];
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
-      if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
-        return supportedChain[1];
+      // if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
+      //   return supportedChain[1];
     }
   }, [chainInfo]);
 

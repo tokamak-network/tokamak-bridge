@@ -16,6 +16,7 @@ export function useGetTokenList() {
   const tokenSelector = useRecoilValue(searchTokenSelector);
   const { chainName } = useConnectedNetwork();
   const { storedTokenList } = useAddTokenToStorage();
+  const { mobileView } = useMediaView();
 
   const tokenListForSelectedNetwork = useMemo(() => {
     const tokenListAll = [...tokenList, ...storedTokenList];
@@ -25,7 +26,7 @@ export function useGetTokenList() {
         return token.address[chainN] !== null;
       });
     }
-  }, [chainName, tokenList]);
+  }, [chainName, tokenList, storedTokenList]);
 
   const filteredTokenList = useMemo(() => {
     //in case searching token with an address
@@ -67,7 +68,8 @@ export function useGetTokenList() {
   if (
     filteredTokenList &&
     filteredTokenList.length < 8 &&
-    filteredTokenList.length > 5
+    filteredTokenList.length > 5 &&
+    !mobileView
   ) {
     trimedTokenList = [...filteredTokenList, ...filteredTokenList];
   } else {

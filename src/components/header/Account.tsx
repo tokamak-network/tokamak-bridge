@@ -48,7 +48,13 @@ export default function Account() {
        */
       onClick={() => {
         isConnected ? setIsOpen((prev) => !prev) : connetAndDisconntWallet();
-        actionOptionStatus ? setActionMethodStatus(false) : "";
+        if(mobileView && !isConnected){
+          setActionMethodStatus(true)
+
+        }else {
+          actionOptionStatus ? setActionMethodStatus(false) : "";
+        }
+        
       }}
     >
       {isConnected && txPending ? (

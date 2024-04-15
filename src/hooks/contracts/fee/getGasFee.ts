@@ -42,6 +42,7 @@ export function useGasFee() {
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
+  const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
 
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && tokenMarketPrice) {
@@ -49,6 +50,12 @@ export function useGasFee() {
       return gasUseEstimate;
     }
   }, [routingPath]);
+
+  const wrapUnwrapGasEstimate = useMemo(() => {
+    if (wrapUnwrapGasUsage) {
+      return wrapUnwrapGasUsage;
+    }
+  }, [wrapUnwrapGasUsage]);
 
   const withdrawContract = new ethers.Contract(
     TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
@@ -66,6 +73,16 @@ export function useGasFee() {
         switch (mode) {
           case "Swap":
             return swapGasUseEstimate;
+          case "ETH-Unwrap":
+            return wrapUnwrapGasEstimate;
+
+          case "ETH-Wrap":
+            return wrapUnwrapGasEstimate;
+
+          case "Unwrap":
+            return wrapUnwrapGasEstimate;
+          case "Wrap":
+            return wrapUnwrapGasEstimate;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
@@ -130,7 +147,6 @@ export function useGasFee() {
 
             const estimateProvider = signer?.provider;
             return estimateProvider?.estimateTotalGasCost(tx);
-
           default:
             return;
         }
