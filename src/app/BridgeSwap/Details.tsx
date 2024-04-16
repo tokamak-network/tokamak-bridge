@@ -10,10 +10,10 @@ import useIsTon from "@/hooks/token/useIsTon";
 
 export function Details() {
   const { mode } = useGetMode();
-  const { mobileView } = useMediaView();
+  const { pcView, mobileView } = useMediaView();
   const { inToken, outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
-  const showWarning = mobileView && mode === "Swap" && inToken && outToken && isTONatPair;
+  const showWarning = !pcView && mode === "Swap" && inToken && outToken && isTONatPair;
 
   return (
     <Flex
@@ -27,10 +27,7 @@ export function Details() {
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
           {
-            !mobileView && <Warning />
-          }
-          {
-            !showWarning && <Warning />
+            pcView ? <Warning /> : !showWarning && <Warning />
           }
           <ApproveToken />
           <TransactionDetail />
