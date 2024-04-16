@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
+import { txDataStatus } from "@/recoil/global/transaction";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -22,6 +23,7 @@ export function useInOutTokens() {
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
   const { mode } = useGetMode();
+  const [, setTxData] = useRecoilState(txDataStatus);
 
   const inToken = useMemo(() => {
     return inTokenRecoilValue && connectedChainId && chainName
@@ -165,6 +167,11 @@ export function useInOutTokens() {
       });
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
+
+  //fix a issue toast shows up when a token is changed
+  useEffect(() => {
+    setTxData(undefined);
+  }, [inToken?.address]);
 
   return {
     inToken,

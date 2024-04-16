@@ -22,7 +22,6 @@ export default function useCallBridgeSwapAction() {
   const { inToken, outToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
-  const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   const { write: _depositETH, isError } = useCallDeposit("depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
@@ -45,7 +44,6 @@ export default function useCallBridgeSwapAction() {
         SupportedChainId.MAINNET
       );
       const parsedAmount = inToken.amountBN;
-      setIsDrawerOpen(false);
       if (
         mode === "Wrap" ||
         mode === "Unwrap" ||
@@ -64,7 +62,7 @@ export default function useCallBridgeSwapAction() {
           )[0];
           const outTokenAddress =
             supportedOutToken.address[outNetwork.chainName];
-            
+
           if (isETH) {
             return _depositETH({
               args: [200000, "0x"],

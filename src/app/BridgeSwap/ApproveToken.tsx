@@ -4,14 +4,17 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
 // import { useTransaction } from "@/hooks/tx/useTx";
-import { Button, Flex, Spinner, Text, Image } from "@chakra-ui/react";
+import Image from "next/image";
+import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useTransaction } from "@/hooks/tx/useTx";
-import ConfirmedImage from "assets/image/modal/confirmed.svg";
+import ConfirmedImage from "assets/icons/confirm/success.svg";
+import commafy from "@/utils/trim/commafy";
+import { ethers } from "ethers";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
@@ -22,24 +25,32 @@ export default function ApproveToken() {
   const { isConnected } = useAccount();
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const { confirmedApproveTransaction } = useTransaction();
-  console.log("confirmedApproveTransaction", confirmedApproveTransaction);
 
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
   if (
-    isApproved ||
-    isNotSupportForBridge ||
-    !inToken ||
-    (mode == "Swap" && isTONatPair) ||
-    !isConnected ||
-    isBalanceOver ||
-    isInputZero
+    (isApproved ||
+      isNotSupportForBridge ||
+      !inToken ||
+      (mode == "Swap" && isTONatPair) ||
+      !isConnected ||
+      isBalanceOver ||
+      isInputZero) &&
+    !confirmedApproveTransaction
   ) {
     return null;
   }
 
+  const parsedAmount =
+    confirmedApproveTransaction?.tokenData?.[0]?.amount?.toString()
+      ? ethers.utils.formatUnits(
+          confirmedApproveTransaction.tokenData[0].amount.toString(),
+          inToken?.token.decimals
+        )
+      : "-";
+
   const text = confirmedApproveTransaction
-    ? `100,000 TON has been approved`
+    ? `${commafy(parsedAmount)} ${"TON"} has been approved`
     : `Approve ${inToken?.tokenSymbol} for ${capitalizeFirstChar(
         mode ?? undefined
       )}`;
@@ -67,7 +78,7 @@ export default function ApproveToken() {
       </Flex>
       {isLoading ? (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
-      ) : confirmedApproveTransaction ? (
+      ) : isApproved && confirmedApproveTransaction ? (
         <Flex>
           <Image src={ConfirmedImage} alt={"ConfirmedImage"} />
         </Flex>

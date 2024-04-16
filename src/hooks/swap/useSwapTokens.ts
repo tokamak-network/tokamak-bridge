@@ -227,7 +227,7 @@ export function useAmountOut() {
   const txSettingValue = useRecoilValue(uniswapTxSetting);
 
   useEffect(() => {
-    if (routingPath && inToken?.amountBN && outToken) {
+    if (routingPath && inToken?.amountBN && outToken && UNISWAP_CONTRACT) {
       // console.log(routingPath);
 
       const wei = ethers.utils.formatUnits(inToken.amountBN.toString(), "wei");
@@ -290,6 +290,7 @@ export function useAmountOut() {
     outToken,
     provider,
     txSettingValue,
+    UNISWAP_CONTRACT,
   ]);
 
   const {

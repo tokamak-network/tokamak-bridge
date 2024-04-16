@@ -6,13 +6,15 @@ export function useGetMode() {
   const { mode, isReady } = useRecoilValue(actionMode);
 
   const swapSection = useMemo(() => {
-    return (
-      mode === "Swap" ||
-      mode === "Wrap" ||
-      mode === "Unwrap" ||
-      mode === "ETH-Wrap" ||
-      mode === "ETH-Unwrap"
-    );
+    if (mode) {
+      return (
+        mode === "Swap" ||
+        mode === "Wrap" ||
+        mode === "Unwrap" ||
+        mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap"
+      );
+    }
   }, [mode]);
 
   const pathname = usePathname();

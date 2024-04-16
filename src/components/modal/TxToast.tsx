@@ -199,6 +199,8 @@ function TxToast() {
 
   const { confirmedTransaction } = useTransaction();
 
+  console.log("confirmedTransaction", confirmedTransaction);
+
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {
       const txHash = transaction[0];

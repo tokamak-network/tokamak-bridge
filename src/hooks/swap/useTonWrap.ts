@@ -85,12 +85,12 @@ export default function useWrap() {
   });
   const {} = useTx({
     hash: wrapETHData?.hash,
-    txSort: "Wrap",
+    txSort: "ETH-Wrap",
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
   const {} = useTx({
     hash: unwrapETHData?.hash,
-    txSort: "Unwrap",
+    txSort: "ETH-Unwrap",
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
 

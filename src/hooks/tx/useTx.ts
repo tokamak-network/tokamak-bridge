@@ -22,8 +22,11 @@ import useConnectedNetwork from "../network";
 import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 import useMediaView from "../mediaView/useMediaView";
+import {
+  TON_ADDRESS_BY_CHAINID,
+  WTON_ADDRESS_BY_CHAINID,
+} from "@/constant/contracts/tokens";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -137,16 +140,15 @@ export function useTransaction() {
 
   const confirmedApproveTransaction = useMemo(() => {
     if (txData) {
-      const filteredTransactions = Object.entries(txData).filter(
-        ([, value]) => {
-          return (
-            value.txSort === "Approve" && value.transactionState === "success"
-          );
-        }
-      );
-      return filteredTransactions ? filteredTransactions[0] : undefined;
+      const filteredData = Object.entries(txData).filter(([, value]) => {
+        return (
+          value.txSort === "Approve" && value.transactionState === "success"
+        );
+      })[0];
+      if (filteredData && filteredData[1]) {
+        return filteredData[1];
+      }
     }
-    return [];
   }, [txData]);
 
   useEffect(() => {
@@ -159,9 +161,7 @@ export function useTransaction() {
     isPending,
     pendingTransactionToApprove,
     confirmedTransaction,
-    confirmedApproveTransaction: confirmedApproveTransaction
-      ? confirmedApproveTransaction[0]
-      : undefined,
+    confirmedApproveTransaction,
   };
 }
 
@@ -173,12 +173,14 @@ export function useTx(params: {
   actionSort?: ActionSort;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
-  const { mode } = useGetMode();
+
   const { connectedChainId } = useConnectedNetwork();
+
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
     chainId: connectedChainId,
   });
+
   const [txData, setTxData] = useRecoilState(txDataStatus);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
@@ -192,11 +194,11 @@ export function useTx(params: {
   const { mobileView } = useMediaView();
 
   useEffect(() => {
-    if (isLoading) {
+    if (isLoading && !isError) {
       return setTxPending(true);
     }
     return setTxPending(false);
-  }, [isLoading, connectedChainId]);
+  }, [isLoading, connectedChainId, isError]);
 
   useEffect(() => {
     if (isSuccess) {
@@ -410,6 +412,7 @@ export function useTx(params: {
         case "Wrap": {
           const result = swapperI.parseLog(logs[logs.length - 1]);
           const { args } = result;
+          const WTON_ADDRESS = WTON_ADDRESS_BY_CHAINID[connectedChainId];
           return setTxData({
             [hash]: {
               transactionHash,
@@ -433,6 +436,7 @@ export function useTx(params: {
         case "Unwrap": {
           const result = swapperI.parseLog(logs[logs.length - 1]);
           const { args } = result;
+          const TON_ADDRESS = TON_ADDRESS_BY_CHAINID[connectedChainId];
           return setTxData({
             [hash]: {
               transactionHash,

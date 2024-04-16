@@ -1,3 +1,4 @@
+import { ETH } from "assets/tokens/ETH2.svg";
 import { ActionMode } from "@/types/bridgeSwap";
 
 type UniswapTxSort =
@@ -8,6 +9,7 @@ type UniswapTxSort =
   | "Collect Fee";
 type BridgeTxSort = "Deposit" | "Withdraw";
 type SwapperTxSort = "Wrap" | "Unwrap";
+type ETHWrapTxSort = "ETH-Wrap" | "ETH-Unwrap";
 type EtcTxSort = "Approve";
 type UserHistorySort = "Claim";
 
@@ -15,6 +17,7 @@ export type TxSort =
   | UniswapTxSort
   | BridgeTxSort
   | SwapperTxSort
+  | ETHWrapTxSort
   | EtcTxSort
   | UserHistorySort;
 
