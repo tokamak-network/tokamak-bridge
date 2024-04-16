@@ -675,7 +675,7 @@ export default function TransactionDetail(props: {
     isNotSupportForSwap ||
     isNotSupportForBridge ||
     // details should be shown even before approved on mobile view
-    (isApproved === false && !mobileView) ||
+    // (isApproved === false && !mobileView) ||
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
     !isConnected ||
