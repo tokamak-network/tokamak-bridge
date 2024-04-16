@@ -58,8 +58,12 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         justifyContent={"center"}
         alignItems={"center"}
       >
+        {/**
+         * need to change with chainId
+         * support for multi chain
+         */}
         <TokenSymbolWithNetwork
-          tokenSymbol={"ETH"}
+          tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
           chainId={
             txSort === "Deposit" && isToken0 === false
               ? 55004
@@ -110,7 +114,9 @@ function ToastIcon(props: TransactionToastProp) {
     props.txSort === "Wrap" ||
     props.txSort === "Unwrap" ||
     props.txSort === "Deposit" ||
-    props.txSort === "Withdraw"
+    props.txSort === "Withdraw" ||
+    props.txSort === "ETH-Wrap" ||
+    props.txSort === "ETH-Unwrap"
   ) {
     return <Image src={ARROW_ICON} alt={"ARROW_ICON"} />;
   }
@@ -166,9 +172,13 @@ function TransactionToast(props: TransactionToastProp) {
           justifyContent={"center"}
         >
           <Text cursor={"pointer"} onClick={clickTitle}>
-            {txSort}
+            {txSort === "ETH-Wrap"
+              ? "Wrap"
+              : txSort === "ETH-Unwrap"
+              ? "Unwrap"
+              : txSort}
           </Text>
-          {actionSort && (
+          {txSort !== "Approve" && actionSort && (
             <Text fontSize={12} color={"#A0A3AD"}>
               ({actionSort})
             </Text>

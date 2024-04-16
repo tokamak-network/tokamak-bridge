@@ -9,6 +9,7 @@ import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
+import WethABi from "@/abis/WETH.json";
 
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
@@ -25,6 +26,7 @@ import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import useMediaView from "../mediaView/useMediaView";
 import {
   TON_ADDRESS_BY_CHAINID,
+  WETH_ADDRESS_BY_CHAINID,
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 
@@ -37,10 +39,10 @@ const getInterface = () => {
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
-
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
     L1CrossDomainMessengerAbi
   );
+  const ETHSwapperI = new ethers.utils.Interface(WethABi);
 
   return {
     l1BridgeI,
@@ -50,6 +52,7 @@ const getInterface = () => {
     swapperI,
     nonFungiblePositionManagerI,
     L1CrossDomainMessengerI,
+    ETHSwapperI,
   };
 };
 
@@ -191,8 +194,6 @@ export function useTx(params: {
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
 
-  const { mobileView } = useMediaView();
-
   useEffect(() => {
     if (isLoading && !isError) {
       return setTxPending(true);
@@ -282,8 +283,14 @@ export function useTx(params: {
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
-      const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
-        getInterface();
+      const {
+        l1BridgeI,
+        l2BridgeI,
+        swapRouterI,
+        erc20I,
+        swapperI,
+        ETHSwapperI,
+      } = getInterface();
       setModalOpen("confirmed");
       switch (txSort) {
         //Uniswap
@@ -457,6 +464,57 @@ export function useTx(params: {
             },
           });
         }
+
+        case "ETH-Wrap": {
+          const result = ETHSwapperI.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          const WETH_ADDRESS = WETH_ADDRESS_BY_CHAINID[connectedChainId];
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: "ETH",
+                  amount: args.wad.toBigInt(),
+                },
+                {
+                  tokenAddress: WETH_ADDRESS,
+                  amount: args.wad.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        }
+
+        case "ETH-Unwrap": {
+          const result = ETHSwapperI.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          const WETH_ADDRESS = WETH_ADDRESS_BY_CHAINID[connectedChainId];
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: WETH_ADDRESS,
+                  amount: args.wad.toBigInt(),
+                },
+                {
+                  tokenAddress: "ETH",
+                  amount: args.wad.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+            },
+          });
+        }
+
         //etc
         case "Approve":
           const result = erc20I.parseLog(logs[logs.length - 1]);

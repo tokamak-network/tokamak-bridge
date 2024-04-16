@@ -83,7 +83,8 @@ export function usePoolMint() {
         ticks.LOWER &&
         ticks.UPPER &&
         feeAmount &&
-        provider
+        provider &&
+        UNISWAP_CONTRACT
       ) {
         const configuredPool = new Pool(
           pool.token0,
@@ -319,7 +320,7 @@ export function usePoolContract() {
 
   const increaseLiquidity = useCallback(
     async (estimatedGas?: boolean) => {
-      if (address && info && (inToken || outToken)) {
+      if (address && info && (inToken || outToken) && UNISWAP_CONTRACT) {
         const {
           token0,
           token1,

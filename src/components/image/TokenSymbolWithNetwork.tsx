@@ -29,6 +29,7 @@ export default function TokenSymbolWithNetwork(
     right,
     style,
   } = props;
+
   return (
     <Flex position={"relative"} {...style}>
       <TokenSymbol
