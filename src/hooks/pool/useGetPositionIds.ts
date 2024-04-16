@@ -181,7 +181,7 @@ export function useGetPositionIds(): {
   const { connectedChainId, isSupportedChain, chainGroup } =
     useConnectedNetwork();
 
-  const positionDatas = useGetPositionByClients();
+  const { datas: positionDatas } = useGetPositionByClients();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
   // const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
@@ -189,45 +189,68 @@ export function useGetPositionIds(): {
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const txLog = useRecoilValue(txHashLog);
 
+  const [positionData, setPositionData] = useState<any>(null);
+
   useEffect(() => {
     const fetchPositionData = async () => {
-      if (positionDatas && connectedChainId && chainGroup) {
-        if (
-          (address && account !== address) ||
-          (connectedChainId && chainId !== connectedChainId)
-        ) {
-          setAccount(address);
-          setChainId(connectedChainId);
-          // setPositionsLoading(true);
-          setPositions(undefined);
-        }
+      if (positionDatas && positionDatas[0].data && chainGroup) {
+        const result = await Promise.all(
+          positionDatas.map((positiondata, index) => {
+            return makePositionDatas(
+              positiondata.data.positions,
+              chainGroup[index].chainId ?? 0
+            );
+          })
+        );
+        setPositionData(result);
+      }
+    };
 
-        if (!isSupportedChain) return setPositions([]);
+    fetchPositionData();
+  }, [positionDatas, chainGroup]);
 
-        try {
-          const result = await Promise.all(
-            positionDatas.map((positiondata, index) =>
-              makePositionDatas(
-                positiondata.data.positions,
-                chainGroup[index].chainId ?? 0
-              )
-            )
-          );
+  useEffect(() => {
+    const fetchPositionData = async () => {
+      try {
+        if (positionDatas && connectedChainId && chainGroup) {
+          if (
+            (address && account !== address) ||
+            (connectedChainId && chainId !== connectedChainId)
+          ) {
+            console.log(connectedChainId);
 
-          if (result) {
-            const sortedPositions = sortPositions(result.flat());
+            setAccount(address);
+            setChainId(connectedChainId);
+            // setPositionsLoading(true);
+            setPositions(undefined);
+          }
+
+          if (!isSupportedChain) return setPositions([]);
+
+          if (positionData) {
+            const sortedPositions = sortPositions(positionData.flat());
             return setPositions(sortedPositions);
           }
+
           return setPositions([]);
-        } catch (e) {
-          console.log(e);
-        } finally {
-          // setPositionsLoading(false);
         }
+      } catch (e) {
+        console.log("**fetchPositionData err**");
+        console.log("positionData", positionDatas);
+        console.log(e);
+      } finally {
+        // setPositionsLoading(false);
       }
     };
     fetchPositionData();
-  }, [connectedChainId, positionDatas, txLog, address]);
+  }, [
+    connectedChainId,
+    txLog,
+    address,
+    chainGroup,
+    setPositions,
+    positionData,
+  ]);
 
   // useEffect(() => {
   //   if (positions === undefined) return setPositionsLoading(true);
@@ -241,7 +264,7 @@ export function useGetPositionIds(): {
 export function useGetPositionById(positionId: number, chainId: number) {
   const { provider: _provider } = useProvier();
   const { blockNumber } = useBlockNum();
-  const { connectedChainId, layer, chainGroup } = useConnectedNetwork();
+  const { connectedChainId, layer } = useConnectedNetwork();
   const pathName = usePathname();
 
   const [positions, setPositions] = useRecoilState<
