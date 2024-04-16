@@ -72,7 +72,7 @@ export default function Swap() {
       setInTokenRecoilValue(outTokenRecoilValue);
       setOutTokenRecoilValue(null);
     }
-  }, [inTokenRecoilValue, outTokenRecoilValue]);
+  }, [inTokenRecoilValue, outTokenRecoilValue, mode]);
 
   const switchable =
     mode === "Swap" ||
