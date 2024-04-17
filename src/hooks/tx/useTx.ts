@@ -9,6 +9,7 @@ import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
+import UniswapV3Pool from "constant/abis/IUniswapV3Pool.json";
 
 import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
@@ -37,6 +38,7 @@ const getInterface = () => {
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
+  const UniswapV3PoolI = new ethers.utils.Interface(UniswapV3Pool);
 
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
     L1CrossDomainMessengerAbi
@@ -49,6 +51,7 @@ const getInterface = () => {
     erc20I,
     swapperI,
     nonFungiblePositionManagerI,
+    UniswapV3PoolI,
     L1CrossDomainMessengerI,
   };
 };
@@ -282,14 +285,110 @@ export function useTx(params: {
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
-      const { l1BridgeI, l2BridgeI, swapRouterI, erc20I, swapperI } =
-        getInterface();
+      const {
+        l1BridgeI,
+        l2BridgeI,
+        swapRouterI,
+        erc20I,
+        swapperI,
+        nonFungiblePositionManagerI,
+        UniswapV3PoolI,
+      } = getInterface();
       setModalOpen("confirmed");
+      console.log("data", data);
+
       switch (txSort) {
         //Uniswap
         case "Add Liquidity":
+          {
+            const result = nonFungiblePositionManagerI.parseLog(
+              logs[logs.length - 1]
+            );
+            const { args } = result;
+
+            const { amount0, amount1 } = args;
+
+            setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: amount0.toBigInt(),
+                  },
+                  {
+                    tokenAddress: tokenOutAddress ?? "0x",
+                    amount: amount1.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+                actionSort,
+              },
+            });
+          }
           return;
+        case "Increase Liquidity": {
+          {
+            const result = nonFungiblePositionManagerI.parseLog(
+              logs[logs.length - 1]
+            );
+            const { args } = result;
+            const { amount0, amount1 } = args;
+
+            setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: amount0.toBigInt(),
+                  },
+                  {
+                    tokenAddress: tokenOutAddress ?? "0x",
+                    amount: amount1.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+                actionSort,
+              },
+            });
+          }
+          return;
+        }
         case "Remove Liquidity":
+          {
+            const result = UniswapV3PoolI.parseLog(logs[5]);
+            const { args } = result;
+            const { amount0, amount1 } = args;
+
+            setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: amount0.toBigInt(),
+                  },
+                  {
+                    tokenAddress: tokenOutAddress ?? "0x",
+                    amount: amount1.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+                actionSort,
+              },
+            });
+          }
+
           return;
         case "Swap": {
           try {
@@ -331,6 +430,13 @@ export function useTx(params: {
         }
 
         case "Collect Fee":
+          {
+            const result = nonFungiblePositionManagerI.parseLog(
+              logs[logs.length - 1]
+            );
+            const { args } = result;
+            console.log(args);
+          }
           return;
         //bridge
         case "Deposit": {

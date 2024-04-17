@@ -36,7 +36,12 @@ export default function PoolList() {
         ))}
       {isSupportedChain &&
         positions?.map((position) => {
-          return <PoolCard key={position.id} {...position} />;
+          return (
+            <PoolCard
+              key={`${position.chainId}__${position.id}`}
+              {...position}
+            />
+          );
         })}
       {positions &&
         Array.from(

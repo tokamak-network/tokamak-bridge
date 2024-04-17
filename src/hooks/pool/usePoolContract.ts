@@ -67,7 +67,16 @@ export function usePoolMint() {
   const lastFocused = useRecoilValue(lastFocusedInput);
 
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
-  const {} = useTx({ hash: txHash, txSort: "Add Liquidity" });
+  const {} = useTx({
+    hash: txHash,
+    txSort: "Add Liquidity",
+    tokenAddress: invertPrice
+      ? (outToken?.token.address as Hash | undefined)
+      : (inToken?.token.address as Hash | undefined),
+    tokenOutAddress: invertPrice
+      ? (inToken?.token.address as Hash | undefined)
+      : (outToken?.token.address as Hash | undefined),
+  });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { layer, isConnectedToMainNetwork } = useConnectedNetwork();
   const { token0Input, token1Input } = useIncreaseAmount();
@@ -83,7 +92,8 @@ export function usePoolMint() {
         ticks.LOWER &&
         ticks.UPPER &&
         feeAmount &&
-        provider
+        provider &&
+        UNISWAP_CONTRACT
       ) {
         const configuredPool = new Pool(
           pool.token0,
@@ -311,7 +321,12 @@ export function usePoolContract() {
   const { address } = useAccount();
   const [txHash, setTxHash] = useState<Hash | undefined>(undefined);
 
-  const {} = useTx({ hash: txHash, txSort: "Increase Liquidity" });
+  const {} = useTx({
+    hash: txHash,
+    txSort: "Increase Liquidity",
+    tokenAddress: inToken?.token.address as Hash | undefined,
+    tokenOutAddress: outToken?.token.address as Hash | undefined,
+  });
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
   const { info } = usePositionInfo();
@@ -319,7 +334,7 @@ export function usePoolContract() {
 
   const increaseLiquidity = useCallback(
     async (estimatedGas?: boolean) => {
-      if (address && info && (inToken || outToken)) {
+      if (address && info && (inToken || outToken) && UNISWAP_CONTRACT) {
         const {
           token0,
           token1,
@@ -481,6 +496,8 @@ export function usePoolContract() {
   const {} = useTx({
     hash: txHashToRemoveLiquidity,
     txSort: "Remove Liquidity",
+    tokenAddress: info?.token0.address as Hash | undefined,
+    tokenOutAddress: info?.token1.address as Hash | undefined,
   });
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
@@ -491,7 +508,13 @@ export function usePoolContract() {
       estimateGas?: boolean
     ) => {
       try {
-        if (info && address && positionId && removeLiquidityPercentage) {
+        if (
+          info &&
+          address &&
+          positionId &&
+          removeLiquidityPercentage &&
+          UNISWAP_CONTRACT
+        ) {
           const {
             token0,
             token1,
@@ -645,13 +668,15 @@ export function usePoolContract() {
   const {} = useTx({
     hash: txHashToCollect,
     txSort: "Collect Fee",
+    tokenAddress: info?.token0.address as Hash | undefined,
+    tokenOutAddress: info?.token1.address as Hash | undefined,
   });
 
   const collectFees = useCallback(
     async (estimateGas?: boolean) => {
       // console.log("--collectFees--");
       // console.log(info, address);
-      if (info && address && provider && chainName) {
+      if (info && address && provider && chainName && UNISWAP_CONTRACT) {
         const token0 = info.token0;
         const token1 = info.token1;
 

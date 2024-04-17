@@ -181,15 +181,18 @@ export function useGetPositionIds(): {
   const { connectedChainId, isSupportedChain, chainGroup } =
     useConnectedNetwork();
 
-  const { datas: positionDatas } = useGetPositionByClients();
-
   const [positions, setPositions] = useRecoilState(ATOM_positions);
   // const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
   const [account, setAccount] = useState<string | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const txLog = useRecoilValue(txHashLog);
 
-  const [positionData, setPositionData] = useState<any>(null);
+  /**
+   * need to define types
+   */
+  const [positionData, setPositionData] = useState<any>(undefined);
+
+  const { datas: positionDatas } = useGetPositionByClients();
 
   useEffect(() => {
     const fetchPositionData = async () => {
