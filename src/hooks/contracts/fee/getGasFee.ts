@@ -40,7 +40,7 @@ export function useGasFee() {
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
-  const { layer, connectedChainId } = useConnectedNetwork();
+  const { layer } = useConnectedNetwork();
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
@@ -123,6 +123,11 @@ export function useGasFee() {
               ],
             });
           case "Withdraw":
+            // Set the gas limit as default value when insufficient balance or non-approval
+            if (isBalanceOver || !isApproved) {
+              return 1400000;
+            }
+
             if (isETH) {
               const tx = await withdrawContract.populateTransaction.withdraw(
                 predeploys.OVM_ETH,
