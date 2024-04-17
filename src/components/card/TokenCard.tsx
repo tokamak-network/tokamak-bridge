@@ -334,7 +334,7 @@ export default function TokenCard(props: TokenCardProps) {
           <Flex flexDir={"column"} rowGap={"13px"}>
             <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
               <Text fontWeight={500}>Balance: </Text>
-              <Text fontWeight={700}>{tokenData?.data.parsedBalance}</Text>
+              <Text fontWeight={700}>{trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}</Text>
             </Flex>
           </Flex>
         ) : (

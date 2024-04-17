@@ -4,7 +4,7 @@ function commafy(
   removeComma?: boolean,
   defaultValue?: string
 ) {
-  const defaultDecilamPoint = decilamPoint ?? 2;
+  const defaultDecilamPoint = decilamPoint ?? 100;
   if (num === undefined || num === null) {
     // if (defaultValueIsUndefined) return undefined;
     return defaultValue ?? "-";
