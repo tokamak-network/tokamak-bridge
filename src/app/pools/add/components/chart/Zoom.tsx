@@ -6,7 +6,13 @@ import {
   zoomIdentity,
   ZoomTransform,
 } from "d3";
-import React, { useEffect, useMemo, useRef } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 // import { RefreshCcw, ZoomIn, ZoomOut } from "react-feather";
 import styled from "styled-components";
 import { ZoomLevels } from "types/pool/chart";
@@ -22,6 +28,7 @@ import {
   atMinTick,
   chartIsOnLoading,
 } from "@/recoil/pool/setPoolPosition";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const Wrapper = styled.div<{ count: number }>`
   display: grid;
@@ -48,6 +55,7 @@ export default function Zoom({
   resetBrush,
   showResetButton,
   zoomLevels,
+  isLoading,
 }: {
   svg: SVGElement | null;
   xScale: ScaleLinear<number, number>;
@@ -57,10 +65,12 @@ export default function Zoom({
   resetBrush: () => void;
   showResetButton: boolean;
   zoomLevels: ZoomLevels;
+  isLoading: boolean;
 }) {
   const { getSetFullRange } = useRangeHopCallbacks();
   const zoomBehavior = useRef<ZoomBehavior<Element, unknown>>();
   const { invertPrice, pool, notExistPool } = useV3MintInfo();
+  const { inTokenInfo, outTokenInfo } = useInOutTokens();
 
   const [zoomIn, zoomOut, zoomInitial, zoomReset] = useMemo(
     () => [
@@ -131,34 +141,53 @@ export default function Zoom({
   //invert price changes twice, it makes a flicker with this hook
   useEffect(() => {
     setTimeout(() => {
-      zoomInitial();
+      initializeTicks();
     }, 50);
   }, [invertPrice]);
 
+  // useEffect(() => {
+  //   console.log(inToken, outToken);
+  //   console.log("go1");
+  //   setTimeout(() => {
+  //     console.log("togogo");
+  //     initializeTicks();
+  //   }, 750);
+  // }, [inToken?.address, outToken?.address, initializeTicks]);
+
   const [, setAtMinTick] = useRecoilState(atMinTick);
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
-  const [isLoading, setIsLoading] = useRecoilState(chartIsOnLoading);
+
+  // const initializeTicks = () => {
+  //   resetBrush();
+  //   // zoomInitial();
+  //   setAtMinTick(false);
+  //   setAtMaxTick(false);
+  // };
 
   const initializeTicks = () => {
-    resetBrush();
-    // zoomInitial();
     setAtMinTick(false);
     setAtMaxTick(false);
+    resetBrush();
+    // zoomInitial();
   };
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     initializeTicks();
-  //   }, 100);
-  // }, [inToken?.address, outToken?.address]);
+  // const [test, setTest] = useState<any>(undefined);
 
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      initializeTicks();
-    }, 350);
-  }, [pool]);
+  // useEffect(() => {
+  //   if (
+  //     !isLoading &&
+  //     (!test?.includes(inTokenInfo?.tokenAddress) ||
+  //       !test?.includes(outTokenInfo?.tokenAddress))
+  //   ) {
+  //     initializeTicks();
+  //     // setIsLoading(true);
+  //     // setTimeout(() => {
+  //     //   console.log("go?");
+  //     //   console.log(inTokenInfo?.tokenAddress);
+  //     //   initializeTicks();
+  //     // }, 350);
+  //   }
+  // }, [isLoading, test]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>

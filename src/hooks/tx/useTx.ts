@@ -28,6 +28,7 @@ import {
   TON_ADDRESS_BY_CHAINID,
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
+import { Log } from "viem";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -54,6 +55,49 @@ const getInterface = () => {
     UniswapV3PoolI,
     L1CrossDomainMessengerI,
   };
+};
+
+const getEventSignature = () => {
+  return {
+    deposit: ethers.utils.id("Deposit(address,address,uint256)"),
+    withdraw: ethers.utils.id("Withdraw(address,address,uint256)"),
+    wrap: ethers.utils.id("Wrap(address,uint256)"),
+    unwrap: ethers.utils.id("Unwrap(address,uint256)"),
+    approve: ethers.utils.id("Approval(address,address,uint256)"),
+    addLiquidity: ethers.utils.id(
+      "IncreaseLiquidity(uint256,uint128,uint256,uint256)"
+    ),
+    increaseLiquidity: ethers.utils.id(
+      "IncreaseLiquidity(uint256,uint128,uint256,uint256)"
+    ),
+    removeLiquidity: ethers.utils.id(
+      "Collect(uint256,address,uint256,uint256)"
+    ),
+  };
+};
+
+const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
+  const eventSignature = getEventSignature();
+  switch (txSort) {
+    case "Add Liquidity":
+      return logs.filter((log) => {
+        return log.topics[0] === eventSignature.addLiquidity;
+      });
+    case "Increase Liquidity":
+      return logs.filter((log) => {
+        return log.topics[0] === eventSignature.increaseLiquidity;
+      });
+    case "Remove Liquidity":
+      return logs.filter((log) => {
+        return log.topics[0] === eventSignature.removeLiquidity;
+      });
+    case "Collect Fee":
+      return logs.filter((log) => {
+        return log.topics[0] === eventSignature.removeLiquidity;
+      });
+    default:
+      return undefined;
+  }
 };
 
 // const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
@@ -301,11 +345,12 @@ export function useTx(params: {
         //Uniswap
         case "Add Liquidity":
           {
-            const result = nonFungiblePositionManagerI.parseLog(
-              logs[logs.length - 1]
-            );
+            const event = getEvent(logs, txSort);
+            if (event === undefined || event.length === 0) {
+              return;
+            }
+            const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
-
             const { amount0, amount1 } = args;
 
             setTxData({
@@ -332,9 +377,11 @@ export function useTx(params: {
           return;
         case "Increase Liquidity": {
           {
-            const result = nonFungiblePositionManagerI.parseLog(
-              logs[logs.length - 1]
-            );
+            const event = getEvent(logs, txSort);
+            if (event === undefined || event.length === 0) {
+              return;
+            }
+            const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
             const { amount0, amount1 } = args;
 
@@ -363,7 +410,12 @@ export function useTx(params: {
         }
         case "Remove Liquidity":
           {
-            const result = UniswapV3PoolI.parseLog(logs[5]);
+            const event = getEvent(logs, txSort);
+            if (event === undefined || event.length === 0) {
+              return;
+            }
+
+            const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
             const { amount0, amount1 } = args;
 
@@ -431,11 +483,34 @@ export function useTx(params: {
 
         case "Collect Fee":
           {
-            const result = nonFungiblePositionManagerI.parseLog(
-              logs[logs.length - 1]
-            );
+            const event = getEvent(logs, txSort);
+            if (event === undefined || event.length === 0) {
+              return;
+            }
+            const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
-            console.log(args);
+            const { amount0, amount1 } = args;
+
+            setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: tokenAddress ?? "0x",
+                    amount: amount0.toBigInt(),
+                  },
+                  {
+                    tokenAddress: tokenOutAddress ?? "0x",
+                    amount: amount1.toBigInt(),
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+                actionSort,
+              },
+            });
           }
           return;
         //bridge

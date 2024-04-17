@@ -16,7 +16,7 @@ import UninitializedPoolImage from "assets/image/uninitializedPool.svg";
 
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { atMinTick, chartIsOnLoading } from "@/recoil/pool/setPoolPosition";
+import { atMinTick } from "@/recoil/pool/setPoolPosition";
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -219,6 +219,7 @@ export default function ChartWrapper({
       zoomLevels={ZOOM_LEVELS[feeAmount ?? FeeAmount.MEDIUM]}
       ticksAtLimit={ticksAtLimit}
       disabled={disabled}
+      isLoading={isLoading}
     />
   );
 }

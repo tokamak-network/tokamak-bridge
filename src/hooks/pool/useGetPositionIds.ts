@@ -220,8 +220,6 @@ export function useGetPositionIds(): {
             (address && account !== address) ||
             (connectedChainId && chainId !== connectedChainId)
           ) {
-            console.log(connectedChainId);
-
             setAccount(address);
             setChainId(connectedChainId);
             // setPositionsLoading(true);

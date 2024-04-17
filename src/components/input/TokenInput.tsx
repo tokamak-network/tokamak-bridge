@@ -485,15 +485,15 @@ export default function TokenInput(props: {
   const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
   const { subMode } = useGetMode();
 
-  useEffect(() => {
-    if (currentPrice) {
-      setTriggerForSpinner(true);
-      initializeTokenPairAmount();
-      setTimeout(() => {
-        setTriggerForSpinner(false);
-      }, 1000);
-    }
-  }, [currentPrice]);
+  // useEffect(() => {
+  //   if (currentPrice && mode === "Pool") {
+  //     setTriggerForSpinner(true);
+  //     initializeTokenPairAmount();
+  //     setTimeout(() => {
+  //       setTriggerForSpinner(false);
+  //     }, 1000);
+  //   }
+  // }, [currentPrice, mode]);
 
   useEffect(() => {
     setTimeout(() => {
