@@ -21,6 +21,8 @@ import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
 import useWrap from "@/hooks/swap/useTonWrap";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -43,6 +45,8 @@ export function useGasFee() {
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
+  const { isBalanceOver } = useInputBalanceCheck();
+  const { isApproved } = useApprove();
 
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && tokenMarketPrice) {
@@ -89,6 +93,11 @@ export function useGasFee() {
             )[0];
             const outTokenAddress =
               supportedOutToken.address[outNetwork.chainName];
+
+            // Set the gas limit as default value when can't fetch from contract function due to insufficient balance or non-approval
+            if (isBalanceOver || !isApproved) {
+              return 200000;
+            }
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
