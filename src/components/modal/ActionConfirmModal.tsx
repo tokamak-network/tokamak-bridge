@@ -248,28 +248,30 @@ export default function ActionConfirmModal() {
               <CloseButton onClick={onCloseConfirmModal} />
             </Box>
           </Flex>
-          <TokenContainer />
-          <Box mt={"16px"}>
-            <TransactionDetail isOnConfirm={true} isMobile />
+          <Box>
+            <TokenContainer />
+            <Box pt={"16px"} pb={"4px"}>
+              <TransactionDetail isOnConfirm={true} isMobile />
+            </Box>
+            <Button
+              w={"100%"}
+              h={"48px"}
+              fontSize={16}
+              fontWeight={600}
+              _active={{}}
+              _hover={{}}
+              bgColor={"#007AFF"}
+              color={"#fff"}
+              onClick={onClick}
+              isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
+              _disabled={{
+                color: "#8E8E92",
+                bgColor: "#17181D",
+              }}
+            >
+              Confirm {mode}
+            </Button>
           </Box>
-          <Button
-            w={"100%"}
-            h={"48px"}
-            fontSize={16}
-            fontWeight={600}
-            _active={{}}
-            _hover={{}}
-            bgColor={"#007AFF"}
-            color={"#fff"}
-            onClick={onClick}
-            isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
-            _disabled={{
-              color: "#8E8E92",
-              bgColor: "#17181D",
-            }}
-          >
-            Confirm {mode}
-          </Button>
         </Flex>
       </ModalContent>
     </Modal>
