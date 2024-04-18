@@ -48,9 +48,9 @@ export default function Confirmation() {
       isConfirmed &&
       connectedChainId
     ) {
-      // router.push(
-      //   `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`
-      // );
+      router.push(
+        `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`
+      );
     }
     closeModal();
   }, [

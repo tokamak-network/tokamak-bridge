@@ -22,6 +22,7 @@ export default function PoolList() {
       rowGap={"16px"}
       columnGap={"16px"}
       overflow={"hidden"}
+      scrollBehavior={"initial"}
     >
       <LPGuide />
       <AddLiquidity />
