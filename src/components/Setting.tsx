@@ -28,71 +28,67 @@ interface SettingProps {
 
 export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
+  const [displayValues, setDisplayValues] = useState({ slippage: txSetting.slippage, deadline: txSetting.deadline });
+
   const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
-  const slipRef = useRef(null);
-  const deadlineRef = useRef(null);
   const { mobileView } = useMediaView();
 
+  const MAX_SLIPPAGE = 100;
+  const MAX_SLIPPAGE_TOLERANCE = 50;
+  const MAX_DEADLINE = 180;
+  const MIN_DEADLINE = 1;
+  const DEFAULT_SLIPPAGE = 0.5;
+  const DEFAULT_DEADLINE = 20;
+  
+  const validateSlippage = (value: string) => {
+    const numValue = Number(value);
+    if (numValue > MAX_SLIPPAGE || numValue < 0 || (value.includes('.') && value.split('.')[1].length > 2)) {
+      return false;
+    }
+    return numValue > MAX_SLIPPAGE_TOLERANCE ? MAX_SLIPPAGE_TOLERANCE.toString() : value;
+  }
+  
+  const validateDeadline = (value: string) => {
+    const numValue = Number(value);
+    if (isNaN(numValue) || value.length > 4) {
+      return false;
+    }
+    return numValue > MAX_DEADLINE ? MAX_DEADLINE : (numValue < MIN_DEADLINE ? MIN_DEADLINE : numValue);
+  }
+  
+  const onBlurSlippage = (value: string) => {
+    const numValue = Number(value);
+    if (numValue > MAX_SLIPPAGE || numValue < 0 || (value.includes('.') && value.split('.')[1].length > 2) || isNaN(numValue) || value === "") {
+      return DEFAULT_SLIPPAGE.toString();
+    }
+    return value;
+  }
+  
+  const onBlurDeadline = (value: string) => {
+    const numValue = Number(value);
+    if (value.length > 4 || isNaN(numValue) || numValue < MIN_DEADLINE) {
+      return DEFAULT_DEADLINE.toString();
+    }
+    return value;
+  }
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const id = e.target.id;
-    const value = e.target.value;
-
-    if (id === "slippage") {
-      if (
-        Number(value) > 100 ||
-        Number(value) < 0 ||
-        value.split(".")[1]?.length > 2 ||
-        isNaN(Number(value))
-      ) {
-        return;
-      }
-      if (Number(value) > 50) {
-        return setTxSetting({
-          ...txSetting,
-          [id]: "50",
-        });
-      }
-      return setTxSetting({
-        ...txSetting,
-        [id]: value,
-      });
-    }
-
-    if (id === "deadline") {
-      if (value.length > 4 || isNaN(Number(value))) {
-        return;
-      }
-      if (Number(value) > 180) {
-        return setTxSetting({ ...txSetting, [id]: 180 });
-      }
-      return setTxSetting({ ...txSetting, [id]: Number(value) });
-    }
+    const { id, value } = e.target
+    const newValue = (id === "slippage") ? validateSlippage(value) : validateDeadline(value);
+    // If the value is empty, display an empty input field. If newValue has a value, display newValue; otherwise, display the previous value (e.g., 50 -> prev 50).
+    setDisplayValues((prev) => ({ ...prev, [id]: (value === "") ? "" : (newValue) ? newValue : (id === "slippage" ? prev.slippage : prev.deadline.toString()) }));
   };
 
+  // Update the value only when in a blur state.
   const onBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const id = e.target.id;
-    const value = e.target.value;
-
-    if (id === "slippage") {
-      if (
-        Number(value) > 100 ||
-        Number(value) < 0 ||
-        value.split(".")[1]?.length > 2 ||
-        isNaN(Number(value)) ||
-        value === ""
-      ) {
-        return setTxSetting({
-          ...txSetting,
-          [id]: "0.5",
-        });
-      }
-    }
-
-    if (id === "deadline") {
-      if (value.length > 4 || isNaN(Number(value)) || Number(value) < 1) {
-        return setTxSetting({ ...txSetting, [id]: 1 });
-      }
+    const { id, value } = e.target;
+    const newValue = (id === "slippage") ? onBlurSlippage(value) : onBlurDeadline(value);
+    if(newValue) {
+      setTxSetting(prevSettings => ({
+        ...prevSettings,
+        [id]: newValue
+      }));
     }
   };
 
@@ -101,15 +97,16 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
+      
       //@ts-ignore
       if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !settingRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mouseup", handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("mouseup", handleClickOutside);
     };
   }, []);
   return (
@@ -150,13 +147,14 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
             h={"40px"}
             type="number"
             pattern="[0-9]*"
+            inputMode="decimal"
             border={"1px solid #313442"}
             borderRadius={"8px"}
             _hover={{}}
             _active={{}}
             onChange={onChange}
             onBlur={onBlur}
-            value={txSetting.slippage}
+            value={displayValues.slippage}
             id="slippage"
             fontSize={{ base: 14, lg: 16 }}
             fontWeight={{ base: 400, lg: 600 }}
@@ -164,7 +162,6 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
               boxShadow: "none !important",
               border: "1px solid #313442 !important",
             }}
-            ref={slipRef}
           />
           <InputRightElement pr={"5px"}>
             <Text
@@ -176,21 +173,21 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
             </Text>
           </InputRightElement>
         </InputGroup>
-        {Number(txSetting.slippage) >= 0 &&
-          Number(txSetting.slippage) < 0.05 && (
+        {Number(displayValues.slippage) >= 0 &&
+          Number(displayValues.slippage) < 0.05 && (
             <WarningText
               label="Slippage below 0.05% may result in a failed transaction"
               style={{ fontWeight: 400 }}
             />
           )}
-        {Number(txSetting.slippage) >= 10 &&
-          Number(txSetting.slippage) < 50 && (
+        {Number(displayValues.slippage) >= 10 &&
+          Number(displayValues.slippage) < 50 && (
             <WarningText
               label="Slippage above 10% may result in an unfavorable swap"
               style={{ fontWeight: 400 }}
             />
           )}
-        {Number(txSetting.slippage) >= 50 && (
+        {Number(displayValues.slippage) >= 50 && (
           <RedWarningText
             label="Slippage tolerance can not exceed 50%"
             style={{ fontWeight: 400 }}
@@ -226,7 +223,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
             _active={{}}
             onChange={onChange}
             onBlur={onBlur}
-            value={txSetting.deadline}
+            value={displayValues.deadline}
             id="deadline"
             fontSize={{ base: 14, lg: 16 }}
             fontWeight={{ base: 400, lg: 600 }}
@@ -234,7 +231,6 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
               boxShadow: "none !important",
               border: "1px solid #313442 !important",
             }}
-            ref={deadlineRef}
           />
           <InputRightElement mr={"25px"} pr={"10px"}>
             <Text

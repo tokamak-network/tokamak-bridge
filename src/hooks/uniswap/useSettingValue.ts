@@ -7,7 +7,9 @@ export function useSettingValue() {
   const txSettingValue = useRecoilValue(uniswapTxSetting);
 
   const slippage = useMemo(() => {
-    return new Percent(Number(txSettingValue.slippage) * 100, 10_000);
+    const slippageValue = Number(txSettingValue.slippage);
+    const roundedSlippage = (slippageValue * 100).toFixed(2);
+    return new Percent(Number(roundedSlippage), 10_000);
   }, [txSettingValue.slippage]);
 
   const initialDeadline = txSettingValue.deadline * 60;
