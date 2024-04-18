@@ -6,6 +6,7 @@ import {
   TOKAMAK_GOERLI_CONTRACTS,
   SEPOLIA_CONTRACTS,
   TITAN_SEPOLIA_CONTRACTS,
+  THANOS_SEPOLIA_CONTRACTS,
 } from "@/constant/contracts";
 import { useUniswapContracts } from "@/hooks/uniswap/useUniswapContracts";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -23,7 +24,7 @@ export default function useContract() {
   const L2BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? TOKAMAK_CONTRACTS.L2Bridge
     : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
-    ? TOKAMAK_GOERLI_CONTRACTS.L2Bridge
+    ? THANOS_SEPOLIA_CONTRACTS.L2Bridge
     : TITAN_SEPOLIA_CONTRACTS.L2Bridge;
 
   const SWAPPER_V2_CONTRACT = isConnectedToMainNetwork

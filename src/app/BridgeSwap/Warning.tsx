@@ -14,7 +14,12 @@ import {
   MAINNET_CONTRACTS,
   TOKAMAK_CONTRACTS,
 } from "@/constant/contracts";
-import useConnectedNetwork from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
+import {
+  WETH_ADDRESS_BY_CHAINID,
+  WTON_ADDRESS_BY_CHAINID,
+} from "@/constant/contracts/tokens";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 // import { isETH } from "@/utils/token/isETH";
 
 export default function Warning() {
@@ -24,6 +29,7 @@ export default function Warning() {
   const { mode } = useGetMode();
   const { isTONatPair } = useIsTon();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { inNetwork, outNetwork } = useInOutNetwork();
   // const outTokenIsETH = isETH(outTokenInfo);
 
   // if (mode === "Swap" && outTokenIsETH !== undefined && outTokenIsETH) {
@@ -49,34 +55,35 @@ export default function Warning() {
       outToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS ||
       outToken?.tokenAddress === GOERLI_CONTRACTS.TON_ADDRESS
     ) {
-        return (
-          <WarningText
-            label={"TON is not supported to swap on L1. Please swap to WTON."}
-          />
-        );
+      return (
+        <WarningText
+          label={"TON is not supported to swap on L1. Please swap to WTON."}
+        />
+      );
     }
     return (
       <WarningText
-        label={
-          "TON is not supported to swap on L1. Please wrap to WTON."
-        }
+        label={"TON is not supported to swap on L1. Please wrap to WTON."}
       />
     );
   }
 
   if (isNotSupportForBridge) {
     if (
-      inToken?.tokenAddress === MAINNET_CONTRACTS.WETH_ADDRESS
+      inNetwork?.chainId &&
+      inToken?.tokenAddress === WETH_ADDRESS_BY_CHAINID[inNetwork?.chainId]
     )
       return (
         <WarningText
-          label={`Cannot deposit WETH to ${
-            isConnectedToMainNetwork ? "Titan" : "Titan Goerli"
-          }. Unwrap to ETH and deposit.`}
+          label={`Cannot deposit WETH to ${convertNetworkName(
+            outNetwork?.chainName
+          )}. Unwrap to ETH and deposit.`}
         />
       );
+
     if (
-      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS
+      inNetwork?.chainId &&
+      inToken?.tokenAddress === WTON_ADDRESS_BY_CHAINID[inNetwork?.chainId]
     )
       return (
         <WarningText

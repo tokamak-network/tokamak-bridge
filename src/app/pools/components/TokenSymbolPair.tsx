@@ -30,6 +30,7 @@ export default function TokenSymbolPair(props: {
               position: "absolute",
               right: 0,
             }}
+            isCircle={false}
           />
         </Box>
       </Box>
@@ -49,6 +50,7 @@ export default function TokenSymbolPair(props: {
               position: "absolute",
               right: 0,
             }}
+            isCircle={false}
           />
         </Box>
       </Box>
