@@ -41,7 +41,7 @@ export const useGetPositionByClients = () => {
   const clients = useApolloClients();
   const { address } = useAccount();
 
-  return clients?.map((client) =>
+  const datas = clients?.map((client) =>
     useQuery(GET_POSITIONS, {
       variables: {
         account: address,
@@ -50,4 +50,5 @@ export const useGetPositionByClients = () => {
       client,
     })
   );
+  return { datas };
 };

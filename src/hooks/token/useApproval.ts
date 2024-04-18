@@ -4,7 +4,7 @@ import {
   useErc20TotalSupply,
   usePrepareErc20Approve,
 } from "@/generated";
-import { useWaitForTransaction } from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
 
 import { useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
@@ -15,6 +15,7 @@ import { USDT_ADDRESS_BY_CHAINID } from "@/constant/contracts/tokens";
 import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
+import USDT_ABI from "@/constant/abis/USDT.json";
 
 export function useApprove() {
   const { mode } = useGetMode();
@@ -91,11 +92,11 @@ export function useApprove() {
 
   const { data, write } = useErc20Approve(config);
 
-  // const { write, data } = useContractWrite({
-  //   address: tokenAddress,
-  //   abi: USDT_ABI,
-  //   functionName: "approve",
-  // });
+  const { write: USDT_APPROVE } = useContractWrite({
+    address: tokenAddress,
+    abi: USDT_ABI,
+    functionName: "approve",
+  });
 
   const { isLoading } = useTx({
     hash: data?.hash,
@@ -106,7 +107,12 @@ export function useApprove() {
 
   return {
     isApproved,
-    callApprove: () => write?.(),
+    callApprove: () =>
+      isUSDT
+        ? USDT_APPROVE({
+            args: [contractAddress, totalSupply?.toString()],
+          })
+        : write?.(),
     isLoading,
     hash: data?.hash,
   };

@@ -1,4 +1,3 @@
-import { ETH } from "assets/tokens/ETH2.svg";
 import { ActionMode } from "@/types/bridgeSwap";
 
 type UniswapTxSort =

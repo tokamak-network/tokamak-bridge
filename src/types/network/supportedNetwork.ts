@@ -1,6 +1,7 @@
 import { ImageFileType } from "../style/imageFileType";
 import NETWORK_ETHEREUM from "assets/icons/network/circle/Ethereum_circle.svg";
 import SYMBOL_TITAN from "assets/icons/network/darius.svg";
+import SYMBOL_THANOS from "assets/icons/network/Thanos.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
@@ -64,7 +65,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.THANOS_SEPOLIA,
     chainName: "THANOS_SEPOLIA",
-    networkImage: SYMBOL_TITAN,
+    networkImage: SYMBOL_THANOS,
     rpcAddress: "",
     nativeToken: "TON",
     layer: "L2",

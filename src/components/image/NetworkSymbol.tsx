@@ -4,9 +4,9 @@ import { Box, Flex } from "@chakra-ui/layout";
 import Image from "next/image";
 import SYMBOL_ETHEREUM from "assets/icons/network/Ethereum_regt.svg";
 import SYMBOL_TITAN from "assets/icons/network/Titan_rect.svg";
-
 import SYMBOL_ETHEREUM_CIRCLE from "assets/icons/network/circle/Ethereum_circle.svg";
 import SYMBOL_TITAN_CIRCLE from "assets/icons/network/circle/Titan_circle.svg";
+import SYMBOL_THANOS from "assets/icons/network/Thanos.svg";
 
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { CSSProperties } from "react";
@@ -37,19 +37,28 @@ export function NetworkSymbol(props: {
   isCircle?: boolean;
 }) {
   const { network, isCircle } = props;
+
   switch (network) {
-    case 1:
+    case SupportedChainId.MAINNET:
+    case SupportedChainId.SEPOLIA:
       return (
         <ImageSymbol
           ImgFile={isCircle ? SYMBOL_ETHEREUM_CIRCLE : SYMBOL_ETHEREUM}
           {...props}
         />
       );
-    case 55004:
-    case 55007:
+    case SupportedChainId.TITAN:
+    case SupportedChainId.TITAN_SEPOLIA:
       return (
         <ImageSymbol
           ImgFile={isCircle ? SYMBOL_TITAN_CIRCLE : SYMBOL_TITAN}
+          {...props}
+        />
+      );
+    case SupportedChainId.THANOS_SEPOLIA:
+      return (
+        <ImageSymbol
+          ImgFile={isCircle ? SYMBOL_THANOS : SYMBOL_TITAN}
           {...props}
         />
       );

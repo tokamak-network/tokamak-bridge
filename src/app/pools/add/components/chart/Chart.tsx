@@ -24,7 +24,8 @@ export function Chart({
   onBrushDomainChange,
   zoomLevels,
   disabled,
-}: LiquidityChartRangeInputProps) {
+  isLoading,
+}: LiquidityChartRangeInputProps & { isLoading: boolean }) {
   const zoomRef = useRef<SVGRectElement | null>(null);
 
   const [zoom, setZoom] = useState<ZoomTransform | null>(null);
@@ -104,6 +105,7 @@ export function Chart({
           true
         }
         zoomLevels={zoomLevels}
+        isLoading={isLoading}
       />
       <svg
         width="100%"
