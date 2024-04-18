@@ -1,4 +1,3 @@
-import { transactionModalStatus } from "@/recoil/modal/atom";
 import {
   Modal,
   ModalOverlay,
@@ -6,24 +5,11 @@ import {
   Flex,
   Text,
   Box,
-  Link,
 } from "@chakra-ui/react";
-import Image from "next/image";
 import { useRecoilValue } from "recoil";
 import "@/css/spinner.css";
-import ConfirmedImage from "assets/image/modal/confirmed.svg";
-import ErrorImage from "assets/image/modal/error.svg";
-
-import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
-import useConnectedNetwork from "@/hooks/network";
-import { useTransaction } from "@/hooks/tx/useTx";
-import { useCallback, useEffect, useState } from "react";
-import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import { useGetMode } from "@/hooks/mode/useGetMode";
-import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
-import { useRouter } from "next/navigation";
-import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
+import { useEffect, useState } from "react";
 import { ATOM_positions_loading } from "@/recoil/pool/positions";
 
 export default function LoadingModal() {

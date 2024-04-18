@@ -338,10 +338,9 @@ export function useTx(params: {
         erc20I,
         swapperI,
         nonFungiblePositionManagerI,
-        UniswapV3PoolI,
+        ETHSwapperI,
       } = getInterface();
       setModalOpen("confirmed");
-      console.log("data", data);
 
       switch (txSort) {
         //Uniswap

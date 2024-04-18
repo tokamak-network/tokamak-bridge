@@ -23,6 +23,7 @@ import {
   ATOM_positionForInfo,
   ATOM_positions_loading,
   ATOM_positionForInfo_loading,
+  ATOM_TEST,
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
 import { getWETHAddressByChainId } from "@/utils/token/isETH";
@@ -35,7 +36,10 @@ import JSBI from "jsbi";
 import { providerByChainId } from "@/config/getProvider";
 import { useGetPositionByClients } from "./useApolloClient";
 
-const makePositionDatas = async (positionData: any[], chainId: number) => {
+export const makePositionDatas = async (
+  positionData: any[],
+  chainId: number
+) => {
   const positions: PoolCardDetail[] = [];
   const batchSize = positionData.length;
   const promises: any[] = [];
@@ -182,54 +186,43 @@ export function useGetPositionIds(): {
     useConnectedNetwork();
 
   const [positions, setPositions] = useRecoilState(ATOM_positions);
-  // const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
+  const [, setPositionsLoading] = useRecoilState(ATOM_positions_loading);
   const [account, setAccount] = useState<string | undefined>(undefined);
   const [chainId, setChainId] = useState<number | undefined>(undefined);
   const txLog = useRecoilValue(txHashLog);
-
-  /**
-   * need to define types
-   */
-  const [positionData, setPositionData] = useState<any>(undefined);
 
   const { datas: positionDatas } = useGetPositionByClients();
 
   useEffect(() => {
     const fetchPositionData = async () => {
-      if (positionDatas && positionDatas[0].data && chainGroup) {
-        const result = await Promise.all(
-          positionDatas.map((positiondata, index) => {
-            return makePositionDatas(
-              positiondata.data.positions,
-              chainGroup[index].chainId ?? 0
-            );
-          })
-        );
-        setPositionData(result);
-      }
-    };
-
-    fetchPositionData();
-  }, [positionDatas, chainGroup]);
-
-  useEffect(() => {
-    const fetchPositionData = async () => {
       try {
-        if (positionDatas && connectedChainId && chainGroup) {
+        if (connectedChainId && chainGroup) {
           if (
             (address && account !== address) ||
             (connectedChainId && chainId !== connectedChainId)
           ) {
             setAccount(address);
             setChainId(connectedChainId);
-            // setPositionsLoading(true);
+            setPositionsLoading(true);
             setPositions(undefined);
           }
 
           if (!isSupportedChain) return setPositions([]);
 
-          if (positionData) {
-            const sortedPositions = sortPositions(positionData.flat());
+          if (positionDatas && chainGroup) {
+            const positions = await Promise.all(
+              positionDatas.map((position, index) => {
+                if (position?.data?.positions) {
+                  return makePositionDatas(
+                    position.data.positions,
+                    chainGroup[index].chainId ?? 0
+                  );
+                }
+              })
+            );
+            const sortedPositions = sortPositions(
+              positions.filter((position) => position !== undefined).flat()
+            );
             return setPositions(sortedPositions);
           }
 
@@ -240,7 +233,7 @@ export function useGetPositionIds(): {
         console.log("positionData", positionDatas);
         console.log(e);
       } finally {
-        // setPositionsLoading(false);
+        setPositionsLoading(false);
       }
     };
     fetchPositionData();
@@ -248,9 +241,13 @@ export function useGetPositionIds(): {
     connectedChainId,
     txLog,
     address,
+    //need to change a logic to put dymamically each property of this array
+    //if this array is just put as a denpendency, it will cause so much re-rendering
+    //becase there is a issue to track changes with array on useEffect
+    positionDatas?.[0],
+    positionDatas?.[1],
     chainGroup,
     setPositions,
-    positionData,
   ]);
 
   // useEffect(() => {
