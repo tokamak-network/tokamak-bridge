@@ -23,7 +23,6 @@ import {
   ATOM_positionForInfo,
   ATOM_positions_loading,
   ATOM_positionForInfo_loading,
-  ATOM_TEST,
 } from "@/recoil/pool/positions";
 import { poolModalProp } from "@/recoil/modal/atom";
 import { getWETHAddressByChainId } from "@/utils/token/isETH";

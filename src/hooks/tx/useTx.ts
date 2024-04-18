@@ -9,7 +9,7 @@ import SwapperAbi from "@/abis/SwapperV2.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
-import WethABi from "@/constant/abis/Weth.json";
+import WethABi from "constant/abis/WETH.json";
 import UniswapV3Pool from "constant/abis/IUniswapV3Pool.json";
 
 import { useTransaction as useTrasactionW } from "wagmi";

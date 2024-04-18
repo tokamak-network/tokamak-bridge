@@ -139,30 +139,14 @@ export default function Zoom({
 
   //disable to trigger before it's initialized
   //invert price changes twice, it makes a flicker with this hook
-  useEffect(() => {
-    setTimeout(() => {
-      initializeTicks();
-    }, 50);
-  }, [invertPrice]);
-
   // useEffect(() => {
-  //   console.log(inToken, outToken);
-  //   console.log("go1");
   //   setTimeout(() => {
-  //     console.log("togogo");
   //     initializeTicks();
-  //   }, 750);
-  // }, [inToken?.address, outToken?.address, initializeTicks]);
+  //   }, 50);
+  // }, [invertPrice]);
 
   const [, setAtMinTick] = useRecoilState(atMinTick);
   const [, setAtMaxTick] = useRecoilState(atMaxTick);
-
-  // const initializeTicks = () => {
-  //   resetBrush();
-  //   // zoomInitial();
-  //   setAtMinTick(false);
-  //   setAtMaxTick(false);
-  // };
 
   const initializeTicks = () => {
     setAtMinTick(false);
@@ -171,23 +155,16 @@ export default function Zoom({
     // zoomInitial();
   };
 
-  // const [test, setTest] = useState<any>(undefined);
-
-  // useEffect(() => {
-  //   if (
-  //     !isLoading &&
-  //     (!test?.includes(inTokenInfo?.tokenAddress) ||
-  //       !test?.includes(outTokenInfo?.tokenAddress))
-  //   ) {
-  //     initializeTicks();
-  //     // setIsLoading(true);
-  //     // setTimeout(() => {
-  //     //   console.log("go?");
-  //     //   console.log(inTokenInfo?.tokenAddress);
-  //     //   initializeTicks();
-  //     // }, 350);
-  //   }
-  // }, [isLoading, test]);
+  useEffect(() => {
+    if (!isLoading) {
+      console.log("gogo?");
+      initializeTicks();
+      // setIsLoading(true);
+      setTimeout(() => {
+        initializeTicks();
+      }, 100);
+    }
+  }, [isLoading, pool?.token0.address, pool?.token1.address, invertPrice]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"flex-start"}>
