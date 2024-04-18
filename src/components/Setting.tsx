@@ -6,13 +6,15 @@ import {
   InputGroup,
   InputRightElement,
   Text,
-  Box
+  Box,
+  Button,
+  Icon
 } from "@chakra-ui/react";
+import { CheckIcon } from '@chakra-ui/icons';
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   uniswapTxSetting,
-  uniswapTxSettingSelector,
 } from "@/recoil/uniswap/setting";
 import { RedWarningText, WarningText } from "./ui/WarningText";
 import SettingIcon from "assets/icons/setting.svg";
@@ -23,56 +25,99 @@ import CloseButton from "./button/CloseButton";
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
   isModal?: boolean;
-  settingRef?: any;
+  isVisible: boolean;
 }
 
-export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingProps) => {
+export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
   const [displayValues, setDisplayValues] = useState({ slippage: txSetting.slippage, deadline: txSetting.deadline });
+  
+  useEffect(() => {
+    if (!isVisible) {
+        setDisplayValues({
+            slippage: txSetting.slippage,
+            deadline: txSetting.deadline
+        });
+    }
+  }, [isVisible, txSetting]);
 
-  const txSettingValue = useRecoilValue(uniswapTxSettingSelector);
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
   const { mobileView } = useMediaView();
 
-  const MAX_SLIPPAGE = 100;
   const MAX_SLIPPAGE_TOLERANCE = 50;
-  const MAX_DEADLINE = 180;
-  const MIN_DEADLINE = 1;
-  const DEFAULT_SLIPPAGE = 0.5;
-  const DEFAULT_DEADLINE = 20;
+  const MAX_DEADLINE = 4320;
+
+  interface Effect {
+    warnings: string;
+    color: string | null;
+    buttonDisabled: boolean;
+  }
+
+  const checkSlippageEffects = (slippage: string): Effect  => {
+    const numSlippage = Number(slippage);
+    let effects: Effect = {
+        warnings: "",
+        color: null,
+        buttonDisabled: numSlippage == Number(txSetting.slippage)  
+    };
+
+    if (numSlippage == 0) {
+        effects.warnings = "Slippage tolerance has to be greater than 0%";
+        effects.color = "#DD3A44";
+        effects.buttonDisabled = true;
+    } else if (numSlippage > 0 && numSlippage < 0.05) {
+        effects.warnings = "Slippage below 0.05% may result in a failed transaction";
+    } else if (numSlippage >= 10 && numSlippage < MAX_SLIPPAGE_TOLERANCE) {
+        effects.warnings = "Slippage above 10% may result in an unfavorable swap";
+    } else if (numSlippage >= 50) {
+        effects.warnings = `Slippage tolerance cannot exceed ${MAX_SLIPPAGE_TOLERANCE}`;
+        effects.color = "#DD3A44";
+        effects.buttonDisabled = true;
+    }
+
+    return effects;
+}
+
+  const checkDeadLineEffects = (deadline: number) => {
+    let effects: Effect = {
+      warnings: "",
+      color: null,
+      buttonDisabled: deadline == txSetting.deadline
+    };
+  
+    if (deadline == 0) {
+      effects.warnings = "Deadline has to be greater than 0 minutes";
+      effects.color = "#DD3A44";
+      effects.buttonDisabled = true;
+    } else if (deadline >= MAX_DEADLINE) {
+      effects.warnings = `Deadline cannot exceed ${MAX_DEADLINE} minutes`;
+      effects.color = "#DD3A44";
+      effects.buttonDisabled = true;
+    }
+    
+    return effects;
+  }
+
   
   const validateSlippage = (value: string) => {
+    if (!value) return false;
     const numValue = Number(value);
-    if (numValue > MAX_SLIPPAGE || numValue < 0 || (value.includes('.') && value.split('.')[1].length > 2)) {
+    if (isNaN(Number(value)) || value.length > 15 || numValue < 0 || (value.includes('.') && value.split('.')[1].length > 2)) {
       return false;
     }
-    return numValue > MAX_SLIPPAGE_TOLERANCE ? MAX_SLIPPAGE_TOLERANCE.toString() : value;
+    return numValue.toString();
   }
   
   const validateDeadline = (value: string) => {
+    if (isNaN(Number(value)) || value.includes('.')) return false;
     const numValue = Number(value);
-    if (isNaN(numValue) || value.length > 4) {
+
+    if (isNaN(numValue) || value.length > 15) {
       return false;
     }
-    return numValue > MAX_DEADLINE ? MAX_DEADLINE : (numValue < MIN_DEADLINE ? MIN_DEADLINE : numValue);
+    return numValue.toString();
   }
   
-  const onBlurSlippage = (value: string) => {
-    const numValue = Number(value);
-    if (numValue > MAX_SLIPPAGE || numValue < 0 || (value.includes('.') && value.split('.')[1].length > 2) || isNaN(numValue) || value === "") {
-      return DEFAULT_SLIPPAGE.toString();
-    }
-    return value;
-  }
-  
-  const onBlurDeadline = (value: string) => {
-    const numValue = Number(value);
-    if (value.length > 4 || isNaN(numValue) || numValue < MIN_DEADLINE) {
-      return DEFAULT_DEADLINE.toString();
-    }
-    return value;
-  }
-
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
     const newValue = (id === "slippage") ? validateSlippage(value) : validateDeadline(value);
@@ -80,16 +125,19 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
     setDisplayValues((prev) => ({ ...prev, [id]: (value === "") ? "" : (newValue) ? newValue : (id === "slippage" ? prev.slippage : prev.deadline.toString()) }));
   };
 
-  // Update the value only when in a blur state.
-  const onBlur = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    const newValue = (id === "slippage") ? onBlurSlippage(value) : onBlurDeadline(value);
-    if(newValue) {
-      setTxSetting(prevSettings => ({
-        ...prevSettings,
-        [id]: newValue
-      }));
-    }
+
+  const saveSlippageSetting = () => {
+    setTxSetting(prevSettings => ({
+      ...prevSettings,
+      slippage: displayValues.slippage
+    }));
+  };
+
+  const saveDeadlineSetting = () => {
+    setTxSetting(prevSettings => ({
+      ...prevSettings,
+      deadline: displayValues.deadline
+    }));
   };
 
   const wrapperRef = useRef(null);
@@ -99,16 +147,26 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
     const handleClickOutside = (event: any) => {
       
       //@ts-ignore
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !settingRef.current.contains(event.target)) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
       }
     };
 
-    document.addEventListener("mouseup", handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener("mouseup", handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
+
+  const slippageEffects = checkSlippageEffects(displayValues.slippage);
+  const deadlineEffects = checkDeadLineEffects(displayValues.deadline);
+
+  const preventMinus = (e: any) => {
+    if (e.code === 'Minus') {
+        e.preventDefault();
+    }
+};
+
   return (
     <Flex
       pos={isModal ? "relative" : "absolute"}
@@ -141,19 +199,20 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
         flexDir={"column"}
       >
         <Text fontSize={{ base: "14px", lg: "16px" }}>Slippage tolerance</Text>
+        <Flex>
         <InputGroup>
           <Input
             w={"100%"}
             h={"40px"}
             type="number"
-            pattern="[0-9]*"
+            pattern="\d*"
             inputMode="decimal"
             border={"1px solid #313442"}
             borderRadius={"8px"}
             _hover={{}}
             _active={{}}
             onChange={onChange}
-            onBlur={onBlur}
+            onKeyDown={preventMinus}
             value={displayValues.slippage}
             id="slippage"
             fontSize={{ base: 14, lg: 16 }}
@@ -162,6 +221,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
               boxShadow: "none !important",
               border: "1px solid #313442 !important",
             }}
+            color={slippageEffects.color || undefined}
           />
           <InputRightElement pr={"5px"}>
             <Text
@@ -173,26 +233,27 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
             </Text>
           </InputRightElement>
         </InputGroup>
-        {Number(displayValues.slippage) >= 0 &&
-          Number(displayValues.slippage) < 0.05 && (
-            <WarningText
-              label="Slippage below 0.05% may result in a failed transaction"
-              style={{ fontWeight: 400 }}
-            />
-          )}
-        {Number(displayValues.slippage) >= 10 &&
-          Number(displayValues.slippage) < 50 && (
-            <WarningText
-              label="Slippage above 10% may result in an unfavorable swap"
-              style={{ fontWeight: 400 }}
-            />
-          )}
-        {Number(displayValues.slippage) >= 50 && (
-          <RedWarningText
-            label="Slippage tolerance can not exceed 50%"
-            style={{ fontWeight: 400 }}
-          />
-        )}
+        <Button
+          ml={2} 
+          h="40px"
+          p="8px"
+          borderRadius="6px"
+          width="40px"
+          height="40px"
+          bg={slippageEffects.buttonDisabled ? "#373944" : "#007AFF"}
+          isDisabled={slippageEffects.buttonDisabled}
+          onClick={saveSlippageSetting}
+        >
+          <Icon as={CheckIcon} color={slippageEffects.buttonDisabled ? "#A0A3AD" : "#FFFFFF"} boxSize={6}/>
+        </Button>
+        </Flex>
+        {
+          slippageEffects.warnings && (
+            slippageEffects.color === "#DD3A44" ?
+              <RedWarningText label={slippageEffects.warnings} style={{ fontWeight: 400 }} /> :
+              <WarningText label={slippageEffects.warnings} style={{ fontWeight: 400 }} />
+          )
+        }
       </Flex>
 
       <Flex
@@ -211,37 +272,58 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
           tooltipLabel="testtesttest"
         /> */}
         </Flex>
-        <InputGroup>
-          <Input
-            w={"100%"}
-            h={"40px"}
-            type="number"
-            pattern="[0-9]*"
-            border={"1px solid #313442"}
-            borderRadius={"8px"}
-            _hover={{}}
-            _active={{}}
-            onChange={onChange}
-            onBlur={onBlur}
-            value={displayValues.deadline}
-            id="deadline"
-            fontSize={{ base: 14, lg: 16 }}
-            fontWeight={{ base: 400, lg: 600 }}
-            _focus={{
-              boxShadow: "none !important",
-              border: "1px solid #313442 !important",
-            }}
-          />
-          <InputRightElement mr={"25px"} pr={"10px"}>
-            <Text
+        <Flex>
+          <InputGroup>
+            <Input
+              w={"100%"}
+              h={"40px"}
+              type="number"
+              pattern="\d*"
+              border={"1px solid #313442"}
+              borderRadius={"8px"}
+              _hover={{}}
+              _active={{}}
+              onChange={onChange}
+              onKeyDown={preventMinus}
+              color={deadlineEffects.color || undefined}
+              value={displayValues.deadline}
+              id="deadline"
               fontSize={{ base: 14, lg: 16 }}
-              fontWeight={400}
-              color={"#A0A3AD"}
-            >
-              minutes
-            </Text>
-          </InputRightElement>
-        </InputGroup>
+              fontWeight={{ base: 400, lg: 600 }}
+              _focus={{
+                boxShadow: "none !important",
+                border: "1px solid #313442 !important",
+              }}
+            />
+            <InputRightElement mr={"25px"} pr={"10px"}>
+              <Text
+                fontSize={{ base: 14, lg: 16 }}
+                fontWeight={400}
+                color={"#A0A3AD"}
+              >
+                minutes
+              </Text>
+            </InputRightElement>
+          </InputGroup>
+          <Button 
+            ml={2} 
+            h="40px"
+            p="8px"
+            borderRadius="6px"
+            width="40px"
+            height="40px"
+            bg={deadlineEffects.buttonDisabled ? "#373944" : "#007AFF"}
+            isDisabled={deadlineEffects.buttonDisabled}
+            onClick={saveDeadlineSetting}
+          >
+            <Icon as={CheckIcon} color={deadlineEffects.buttonDisabled ? "#A0A3AD" : "#FFFFFF"} boxSize={6}/>
+          </Button>
+        </Flex>
+        {
+          deadlineEffects.color == "#DD3A44" && deadlineEffects.warnings && (
+            <RedWarningText label={deadlineEffects.warnings} style={{ fontWeight: 400 }} />
+          )
+        }
       </Flex>
     </Flex>
   );
@@ -249,7 +331,6 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef }: SettingP
 
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
-  const settingRef = useRef(null);
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -257,10 +338,9 @@ export default function Setting() {
         src={SettingIcon}
         alt={"SettingIcon"}
         style={{ cursor: "pointer" }}
-        ref={settingRef}
-        onClick={() => setIsVisible(prev => !prev)}
+        onClick={() => setIsVisible(!isVisible)}
       />
-      {isVisible && <SettingContainer settingRef={settingRef} setIsVisible={setIsVisible} />}
+      {isVisible && <SettingContainer isVisible={isVisible} setIsVisible={setIsVisible} />}
     </Flex>
   );
 }
