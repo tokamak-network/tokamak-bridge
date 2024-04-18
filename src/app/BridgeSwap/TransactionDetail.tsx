@@ -521,6 +521,8 @@ const Title = (props: {
     amount: Number(isWrapUnwrap ? 1 : outPrice),
   });
 
+  const formattedTokenPriceWithAmount = token1PriceWithAmount === undefined ? " (N/A)" : ` ($${token1PriceWithAmount})`;
+
   const formatPrice = (price: number | undefined) => {
     if(price === undefined){
       return 0
@@ -599,7 +601,10 @@ const Title = (props: {
             <Text>
               {isWrapUnwrap ? 1 : formatPrice(outPrice)} {outToken?.tokenSymbol}
               {
-                mobileView && <Text as="span" color="#A0A3AD"> (${token1PriceWithAmount})</Text>
+                mobileView && 
+                <Text as="span" color="#A0A3AD"> 
+                  {formattedTokenPriceWithAmount}
+                </Text>
               }
             </Text>
             {/* {isOpen === false && (
