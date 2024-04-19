@@ -22,6 +22,7 @@ import {
 
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import txMove from "@/assets/icons/txmove.svg";
 
 // type TokenData = {
 //   token0Symbol: string;
@@ -199,7 +200,7 @@ export default function StatusTx(props: {
               ? "#03D187"
               : tx.currentStatus === 5
               ? "#007AFF"
-              : "#8497DB"
+              : "#007AFF"
           }
           mr="6px"
         ></Flex>
@@ -232,8 +233,9 @@ export default function StatusTx(props: {
                   }
                 : undefined
             }
+            color={mobileView ? "#A0A3AD" : ""}
           >
-            {mobileView ? "Claimed" : `${layer}: Completed`}
+            {mobileView ? "Claim" : `${layer}: Completed`}
           </Link>
         ) : tx.currentStatus === 5 ? (
           <Text
@@ -301,26 +303,25 @@ export default function StatusTx(props: {
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
         <Flex
           fontSize={"11px"}
-          onClick={(event) => {
-            if (mobileView) {
-              event.stopPropagation();
-              setClaimTx(tx);
-              setWithdrawStatus({
-                isOpen: true,
-              });
-              setWithdrawData({
-                modalData: {
-                  ...tx,
-                  inTokenSymbol: tx.inTokenSymbol,
-                  outTokenSymbol: tx.outTokenSymbol,
-                  inTokenAmount: tx.inTokenAmount,
-                },
-              });
-            }
-          }}
         >
           <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-            {format(fromUnixTime(date), "yyyy.MM.dd")}
+            
+            {!mobileView ? format(fromUnixTime(date), "yyyy.MM.dd") : (
+              <Link
+                target="_blank"
+                style={{ textDecoration: "none" }}
+                href={
+                  `${
+                      layer === "L1"
+                        ? providers.l1BlockExplorer
+                        : providers.l2BlockExplorer
+                    }/tx/${txHash}`
+                }
+              >
+                  <Flex gap="4px" >Transaction<Image alt="txmove" src={txMove} /></Flex>
+              </Link>
+            )}
+          
           </Text>
           {!mobileView && (
             <Text ml="3px" color={"#A0A3AD"}>

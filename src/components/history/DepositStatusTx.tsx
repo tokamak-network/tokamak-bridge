@@ -6,6 +6,8 @@ import { FullWithTx } from "@/types/activity/history";
 
 import { differenceInSeconds } from "date-fns";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import Image from "next/image";
+import txMove from "@/assets/icons/txmove.svg";
 
 export default function DepositStatusTx(props: {
   completed: boolean;
@@ -88,11 +90,12 @@ export default function DepositStatusTx(props: {
             fontSize={"11px"}
             fontWeight={600}
             cursor={"pointer"}
+            color={mobileView ? "#A0A3AD" : ""}
             _hover={{
               textDecoration: mobileView ? "none" : "underline"
             }}
           >
-            {mobileView ? "Deposited" : `${layer}: Completed`}
+            {mobileView ? "Deposit" : `${layer}: Completed`}
           </Link>
         ) : mobileView ? (
           <Link
@@ -119,7 +122,7 @@ export default function DepositStatusTx(props: {
           >
             <Flex fontSize={"11px"}>
               <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-                {format(fromUnixTime(date), "yyyy.MM.dd")}
+                <Flex gap="4px" >Transaction<Image alt="txmove" src={txMove} /></Flex>
               </Text>
               {!mobileView && (
                 <Text ml="3px" color={"#A0A3AD"}>

@@ -69,11 +69,10 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
 
   return (
     <Flex
-      h={"160px"}
       w={{ baes: "100%", lg: "336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}
-      bg={"#15161D"}
+      bg={!mobileView ? "#15161D" : tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? "" : "#15161D"}
       p="12px"
       flexDir={"column"}
       rowGap={"8px"}
@@ -90,10 +89,11 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
           {mobileView ? (
             <>
                 <Flex columnGap={"4px"} onClick={handleCheckWithdrawModal}>
-                  <Text fontSize={"14px"} fontWeight={600}>
-                    Withdraw from
+                  <Text fontSize={"14px"} fontWeight={600} color={tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? "#A0A3AD" : ""}>
+                    {
+                      tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? "Withdraw Completed" : "Withdraw"
+                    }
                   </Text>
-                  <Image alt="titan" width={18} height={18} src={TitanRect} />
                 </Flex>
                 <Flex columnGap={"4px"} align={"center"} onClick={handleCheckWithdrawModal}>
                   <Text fontSize={12}>

@@ -9,7 +9,6 @@ import { FullWithTx } from "@/types/activity/history";
 import { Hash } from "viem";
 import { supportedTokens } from "@/types/token/supportedToken";
 
-import TitanIcon from "@/assets/icons/network/Titan_no_border.svg";
 import LinkIcon from "@/assets/icons/link.svg";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import commafy from "@/utils/trim/commafy";
@@ -38,11 +37,10 @@ export default function DepositTx(props: { tx: FullWithTx }) {
 
   return (
     <Flex
-      h={"160px"}
       w={{ baes: "100%", lg: "336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}
-      bg={"#15161D"}
+      bg={tx.l2txHash ? "" : "#15161D"}
       p="12px"
       flexDir={"column"}
       rowGap={"8px"}
@@ -54,10 +52,11 @@ export default function DepositTx(props: { tx: FullWithTx }) {
           style={{ textDecoration: "none" }}
         >
           <Flex columnGap={"4px"} align={"center"}>
-            <Text fontSize={"14px"} fontWeight={600}>
-              Deposit to
+            <Text fontSize={"14px"} fontWeight={600} color={tx.l2txHash ? "#A0A3AD" : ""}>
+              {
+                tx.l2txHash ? "Deposit Completed" : "Deposit"
+              }
             </Text>
-            <Image alt="titan" src={TitanIcon} width={18} height={18} />
           </Flex>
         </Link>
 
