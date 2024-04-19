@@ -44,8 +44,8 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
   const { mobileView } = useMediaView();
 
-  const MAX_SLIPPAGE_TOLERANCE = 50;
-  const MAX_DEADLINE = 4320;
+  const MAX_SLIPPAGE_TOLERANCE = 20;
+  const MAX_DEADLINE = 180;
 
   interface Effect {
     warnings: string;
@@ -69,7 +69,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
         effects.warnings = "Slippage below 0.05% may result in a failed transaction";
     } else if (numSlippage >= 10 && numSlippage < MAX_SLIPPAGE_TOLERANCE) {
         effects.warnings = "Slippage above 10% may result in an unfavorable swap";
-    } else if (numSlippage >= 50) {
+    } else if (numSlippage >= MAX_SLIPPAGE_TOLERANCE) {
         effects.warnings = `Slippage tolerance cannot exceed ${MAX_SLIPPAGE_TOLERANCE}`;
         effects.color = "#DD3A44";
         effects.buttonDisabled = true;
@@ -131,6 +131,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
       ...prevSettings,
       slippage: displayValues.slippage
     }));
+    setSettingStatus(false)
   };
 
   const saveDeadlineSetting = () => {
@@ -138,6 +139,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
       ...prevSettings,
       deadline: displayValues.deadline
     }));
+    setSettingStatus(false)
   };
 
   const wrapperRef = useRef(null);
@@ -187,7 +189,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
       {
         mobileView &&
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={() => {setSettingStatus(false);}} />
+          <CloseButton onClick={() => {setSettingStatus(false)}} />
         </Box>
       }
 
