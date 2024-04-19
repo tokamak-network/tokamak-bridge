@@ -123,6 +123,7 @@ function ToastIcon(props: TransactionToastProp) {
   if (
     props.txSort === "Add Liquidity" ||
     props.txSort === "Collect Fee" ||
+    props.txSort === "Increase Liquidity" ||
     props.txSort === "Remove Liquidity"
   ) {
     return <Image src={PLUS_ICON} alt={"PLUS_ICON"} />;
@@ -150,6 +151,25 @@ function TransactionToast(props: TransactionToastProp) {
     if (historyTabOpen) toast.closeAll();
   }, [historyTabOpen]);
 
+  const txSortMessage = useMemo(() => {
+    switch (txSort) {
+      case "ETH-Wrap":
+        return "Wrap";
+      case "ETH-Unwrap":
+        return "Unwrap";
+      case "Add Liquidity":
+        return "Add";
+      case "Increase Liquidity":
+        return "Add";
+      case "Collect Fee":
+        return "Claim";
+      case "Remove Liquidity":
+        return "Remove";
+      default:
+        return txSort;
+    }
+  }, [txSort]);
+
   return (
     <WagmiProviders>
       <Flex
@@ -172,11 +192,7 @@ function TransactionToast(props: TransactionToastProp) {
           justifyContent={"center"}
         >
           <Text cursor={"pointer"} onClick={clickTitle}>
-            {txSort === "ETH-Wrap"
-              ? "Wrap"
-              : txSort === "ETH-Unwrap"
-              ? "Unwrap"
-              : txSort}
+            {txSortMessage}
           </Text>
           {txSort !== "Approve" && actionSort && (
             <Text fontSize={12} color={"#A0A3AD"}>

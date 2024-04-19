@@ -21,6 +21,7 @@ import { BigNumber, Contract, ethers } from "ethers";
 import { calculateFeeToCollect } from "@/utils/pool/calculateFeeToCollect";
 import { UniswapContractByChainId } from "@/constant/contracts/uniswap";
 import { providerByChainId } from "@/config/getProvider";
+import { isLayer2Chain } from "@/types/network/supportedNetwork";
 
 export type PoolCardDetail = {
   id: number;
@@ -219,9 +220,7 @@ export default function PoolCard(props: PoolCardDetail) {
       <Flex
         flexDir="column"
         borderWidth={"3px"}
-        borderColor={
-          chainId === 55004 || chainId === 5050 ? "#05274C" : "#383736"
-        }
+        borderColor={isLayer2Chain(chainId) ? "#05274C" : "#383736"}
         bgColor={!props.id ? "#15161D" : ""}
         w="200px"
         h="248px"

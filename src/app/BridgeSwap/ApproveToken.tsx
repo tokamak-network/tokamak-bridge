@@ -49,11 +49,12 @@ export default function ApproveToken() {
         )
       : "-";
 
-  const text = confirmedApproveTransaction
-    ? `${commafy(parsedAmount)} ${"TON"} has been approved`
-    : `Approve ${inToken?.tokenSymbol} for ${capitalizeFirstChar(
-        mode ?? undefined
-      )}`;
+  const text =
+    confirmedApproveTransaction && isApproved
+      ? `${commafy(parsedAmount)} ${"TON"} has been approved`
+      : `Approve ${inToken?.tokenSymbol} for ${capitalizeFirstChar(
+          mode ?? undefined
+        )}`;
 
   return (
     <Flex

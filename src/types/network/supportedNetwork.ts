@@ -82,3 +82,15 @@ export const supportedChain: SupportedChainProperties[] = [
     isTestnet: true,
   },
 ];
+
+export const isLayer1Chain = (chainId: SupportedChainId): boolean => {
+  return (
+    supportedChain.find((chain) => chain.chainId === chainId)?.layer === "L1"
+  );
+};
+
+export const isLayer2Chain = (chainId: SupportedChainId): boolean => {
+  return (
+    supportedChain.find((chain) => chain.chainId === chainId)?.layer === "L2"
+  );
+};
