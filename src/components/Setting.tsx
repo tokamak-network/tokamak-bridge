@@ -25,7 +25,7 @@ import CloseButton from "./button/CloseButton";
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
   isModal?: boolean;
-  isVisible: boolean;
+  isVisible?: boolean;
 }
 
 export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingProps) => {
