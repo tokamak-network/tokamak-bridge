@@ -93,16 +93,15 @@ export default function useGetTransaction() {
               : "absent"
           );
           let filteredUserTx;
-          if (storedTxData !== "undefined" && storedTxData?.length > 0) {
-            const completedTx = storedTxData?.filter((item: any) => item.currentStatus > 5 && item.event=== "withdraw")
-  
-            filteredUserTx = userTxfromSubgraph.formattedWithdraw.filter((item: L1TxType) => {
-              return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
-            })            
+          if (!storedTxData || storedTxData[address as any] === "undefined") {
+            filteredUserTx = userTxfromSubgraph.formattedWithdraw;
           }
           
           else {
-            filteredUserTx = userTxfromSubgraph.formattedWithdraw;
+            const completedTx = storedTxData[address as any]?.filter((item: any) => item.currentStatus > 5 && item.event=== "withdraw")
+            filteredUserTx = userTxfromSubgraph.formattedWithdraw.filter((item: L1TxType) => {
+              return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
+            })      
           }
 
         //creates an array for all the txs in the userTxfromSubgraph.formattedWithdraw data with additional information
@@ -342,8 +341,8 @@ export default function useGetTransaction() {
           : setDepositLoading("absent");
 
           let filteredDepositTxs;
-          if (storedTxData !== "undefined" && storedTxData.length > 0) {
-            const completedTx = storedTxData?.filter((item: any) => item.event=== "deposit" && item.l2txHash)
+          if (storedTxData && storedTxData[address as any] !== "undefined" && storedTxData[address as any]?.length > 0) {
+            const completedTx = storedTxData?.address?.filter((item: any) => item.event=== "deposit" && item.l2txHash)
   
             filteredDepositTxs = userTxfromSubgraph.formattedDeposit.filter((item: L1TxType) => {
               return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
@@ -516,18 +515,18 @@ export default function useGetTransaction() {
           )
       : [];
 
-      let newTxData;
-
-      if (storedTxData?.length > 0) {
-        newTxData = storedTxData?.map((item: any) => {
+      let newTxData: any = {};
+      
+      if (storedTxData && storedTxData[address as any] && storedTxData[address as any]?.length > 0) {
+        newTxData[address as any] = storedTxData[address as any]?.map((item: any) => {
           const matchingItem = allTxs?.find((item2: any) => item.l2txHash === item2.l2txHash);
           return matchingItem ? { ...item, matchingItem } : item;
         })
       }
       else {
-        newTxData = allTxs;
+        newTxData[address as any] = allTxs;
       }
       window.localStorage.setItem("txHistoryData", JSON.stringify(newTxData));
 
-  return { depositTxs: newTxData, loadingState: stat };
+  return { depositTxs: newTxData[address as any], loadingState: stat };
 }
