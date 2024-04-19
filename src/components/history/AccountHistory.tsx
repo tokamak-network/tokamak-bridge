@@ -18,6 +18,7 @@ import SearchComponent from "./SearchComponent";
 import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
+import { confirmWithdrawStats } from "@/recoil/modal/atom";
 
 type ChainName = "MAINNET" | "TITAN" | undefined;
 
@@ -29,6 +30,7 @@ type SelectOption = {
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
+  const [ withdrawStatus ] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const [tab, setTab] = useState("Activity");
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
@@ -96,7 +98,7 @@ export default function AccountHistory() {
         onClick={() => mobileView ? setIsOpen(false) : ""}
       />
 
-      {mobileView && (
+      {mobileView && !withdrawStatus.isOpen && (
         <Box
           zIndex={10000}
           w={"fit-content"}
