@@ -24,7 +24,7 @@ selectedTokenAmountStatus
 } from "@/recoil/mobile/atom"
 import Image from "next/image";
 
-import TokenInput from "@/components/mobile/input/MobileTokenInput";
+import MobileTokenInput from "@/components/mobile/input/MobileTokenInput";
 import useAmountModal from "@/hooks/modal/useAmountModal";
 import { useMediaQuery } from "@chakra-ui/react";
 import { useWarning } from '@/hooks/mobile/useMobileWarning';
@@ -108,7 +108,7 @@ export default function AmountInputModal() {
         </ModalHeader>
             <ModalCloseButton pb={"2"}/>
             <ModalBody>
-            <TokenInput
+            <MobileTokenInput
               inToken={isOpen === "INPUT" ? true : false}
               hasMaxButton={isOpen === "INPUT" ? true : false}
               placeholder={"input amount"}

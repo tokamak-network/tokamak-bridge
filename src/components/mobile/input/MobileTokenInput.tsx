@@ -41,7 +41,7 @@ import {
   mobileTokenModalStatus,
 } from "@/recoil/mobile/atom";
 
-export default function TokenInput(props: {
+export default function MobileTokenInput(props: {
   inToken: boolean;
   defaultValue?: any;
   isDisabled?: boolean;
@@ -199,7 +199,7 @@ export default function TokenInput(props: {
     if (tokenData) {
       if (inToken && selectedInToken) {
 
-       //  wrap일때, max시  값을 넣어줘야 함
+        // Value must be set when wrapping and using Max
         if(switchable && selectedOutToken){
           setSelectedOutToken({
             ...selectedOutToken,
@@ -218,7 +218,7 @@ export default function TokenInput(props: {
       }
       if (inToken === false && selectedOutToken) {
 
-        //  wrap일때, max시  값을 넣어줘야 함
+        // Value must be set when wrapping and using Max
         if(switchable && selectedInToken){
           setSelectedInToken({
             ...selectedInToken,
@@ -251,7 +251,7 @@ export default function TokenInput(props: {
     isDisabled,
   ]);
 
-  //Max 값 관련 로직
+  // Logic related to the Max value
   useEffect(() => {
     const maxValue = tokenData?.data.balanceBN.value 
       ? ethers.BigNumber.from(tokenData.data.balanceBN.value) 
@@ -276,7 +276,7 @@ export default function TokenInput(props: {
     }
 
 
-  }, [selectedInToken?.amountBN, tokenData?.data.balanceBN.value]);
+  }, [selectedInToken?.amountBN, tokenData?.data.balanceBN.value, isMax]);
 
 
   const handleFocus = () => {
@@ -461,8 +461,8 @@ export default function TokenInput(props: {
       ) : (
         <Flex flexDir={'column'}
         border="1px solid"
-        borderColor="#59628d" // Border color 설정
-        borderRadius="8px" // Border radius 설정
+        borderColor="#59628d"
+        borderRadius="8px"
         >
           {/* {mobileView && <Warning />} */}
           <Flex
@@ -561,30 +561,6 @@ export default function TokenInput(props: {
           </Flex>
         </Flex>
       )}
-
-      <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
-        {/* {mobileView && isBalanceOver ? (
-          <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-            <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-            <Text>Insufficient ({inTokenFromHook?.tokenSymbol}) balance </Text>
-          </Flex>
-        )  */}
-        {/* {mobileView ? (
-          inToken && (
-            // <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-            //   <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-            //   <Text>
-            //     Insufficient ({inTokenFromHook?.tokenSymbol}) balance{" "}
-            //   </Text>
-            // </Flex>
-            <Warning />
-          )
-        ) : (
-          <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
-            {`$${marketPrice}`}
-          </Text>
-        )} */}
-      </Flex>
     </Flex>
   );
 }
