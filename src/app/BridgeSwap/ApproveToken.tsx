@@ -28,6 +28,18 @@ export default function ApproveToken() {
 
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
+  console.log(
+    isApproved,
+    isNotSupportForBridge,
+    !inToken,
+    mode == "Swap" && isTONatPair,
+    !isConnected,
+    isBalanceOver,
+    isInputZero,
+    !confirmedApproveTransaction
+  );
+  console.log("confirmedApproveTransaction", confirmedApproveTransaction);
+
   if (
     (isApproved ||
       isNotSupportForBridge ||
@@ -36,7 +48,7 @@ export default function ApproveToken() {
       !isConnected ||
       isBalanceOver ||
       isInputZero) &&
-    !confirmedApproveTransaction
+    confirmedApproveTransaction === undefined
   ) {
     return null;
   }
@@ -55,6 +67,13 @@ export default function ApproveToken() {
       : `Approve ${inToken?.tokenSymbol} for ${capitalizeFirstChar(
           mode ?? undefined
         )}`;
+
+  console.log(
+    "confirmedApproveTransaction",
+    confirmedApproveTransaction,
+    "isApproved",
+    isApproved
+  );
 
   return (
     <Flex

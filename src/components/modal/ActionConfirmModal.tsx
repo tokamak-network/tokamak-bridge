@@ -44,10 +44,13 @@ const OutTokenContainer = () => {
 
   return (
     <>
-      <TokenSymbol
-        tokenType={outToken?.tokenSymbol ?? "default"}
-        w={mobileView ? 48 : 56}
-        h={mobileView ? 48 : 56}
+      <TokenSymbolWithNetwork
+        tokenSymbol={(outToken?.tokenSymbol as string) ?? "default"}
+        chainId={outToken?.token.chainId}
+        symbolW={56}
+        symbolH={56}
+        networkSymbolH={20}
+        networkSymbolW={20}
       />
       <Flex
         fontSize={18}
@@ -163,8 +166,8 @@ const TokenContainer = () => {
           h={mobileView ? 48 : 56}
         /> */}
         <TokenSymbolWithNetwork
-          tokenSymbol={inToken?.tokenSymbol as string ?? "default"}
-          chainId={1}
+          tokenSymbol={(inToken?.tokenSymbol as string) ?? "default"}
+          chainId={inToken?.token.chainId}
           symbolW={56}
           symbolH={56}
           networkSymbolH={20}

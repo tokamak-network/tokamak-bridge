@@ -13,14 +13,14 @@ export function encodeMulticall(params: {
   const functionParams = [multicallParam]; // Add your multicallParam here
 
   // Encode the function call data
-  const functionData = contract.interface.encodeFunctionData(
+  const encodedCallData = contract.interface.encodeFunctionData(
     functionName,
     functionParams
   );
 
   return {
     to, // contract address
-    data: functionData, // Encoded function call data
+    data: encodedCallData, // Encoded function call data
     from,
     value,
   };

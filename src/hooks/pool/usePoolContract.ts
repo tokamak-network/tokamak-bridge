@@ -179,17 +179,6 @@ export function usePoolMint() {
               ? [calldata, refundETHData]
               : [calldata];
 
-          // // Specify the function and parameters you want to call
-          // const functionName = "multicall"; // The function you want to call on the NFT Position Manager contract
-          // const functionParams = [multicallParam]; // Add your multicallParam here
-
-          // // Encode the function call data
-          // const functionData =
-          //   NonfungiblePositionManagerContract.interface.encodeFunctionData(
-          //     functionName,
-          //     functionParams
-          //   );
-
           // Calculate the total value based on your conditions
           const totalValue = inIsEth
             ? inHexAmount
@@ -207,7 +196,7 @@ export function usePoolMint() {
           const transactionRequest = encodeMulticall({
             ...txData,
             contract: NonfungiblePositionManagerContract,
-            multicallParam: multicallParam,
+            multicallParam,
           });
 
           const isLayer2 = Boolean(layer === "L2");
@@ -566,12 +555,21 @@ export function usePoolContract() {
                 currentPosition,
                 removeLiquidityOptions
               );
-
             const NonfungiblePositionManagerContract = new Contract(
               UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
               NONFUNGIBLE_POSITION_MANAGER_ABI,
               getProviderOrSigner(provider, address)
             );
+            const multicallFunction =
+              NonfungiblePositionManagerContract.interface.getFunction(
+                "multicall"
+              );
+            const decodedMulticallData =
+              NonfungiblePositionManagerContract.interface.decodeFunctionData(
+                multicallFunction,
+                calldata
+              );
+
             const amountMinimum = 0;
             const unwrapWETH9 =
               NonfungiblePositionManagerContract.interface.encodeFunctionData(
@@ -590,7 +588,14 @@ export function usePoolContract() {
                 "sweepToken",
                 [sweepTokenAddress, amountMinimum, address]
               );
-            const multicallParam = [calldata, unwrapWETH9, sweepToken];
+            const multicallParam = [
+              //dcreaseLquidity call
+              decodedMulticallData[0][0],
+              //collect call
+              decodedMulticallData[0][1],
+              unwrapWETH9,
+              sweepToken,
+            ];
             const transactionRequest = encodeMulticall({
               contract: NonfungiblePositionManagerContract,
               to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
@@ -625,7 +630,8 @@ export function usePoolContract() {
                     gasLimit,
                   }
                 );
-                if (tx.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                if (tx?.hash)
+                  return setTxHashToRemoveLiquidity(tx.hash as Hash);
                 return;
               }
               if (gasLimit) {
