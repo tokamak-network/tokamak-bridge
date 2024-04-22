@@ -51,15 +51,16 @@ const OutTokenContainer = () => {
       />
       <Flex
         fontSize={18}
-        columnGap={"8px"}
-        h={"24px"}
+        columnGap={"4px"}
+        h={"auto"}
         mt={"14px"}
         mb={"3px"}
+        flexWrap="wrap"
       >
         <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 700 : 600}>
           {trimAmount(amountOut, mobileView ? 8 : 8)}
         </Text>
-        <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 500 : 400}>
+        <Text fontSize={{ base: 16, lg: 18 }} fontWeight={mobileView ? 500 : 400}>
           {outToken?.tokenSymbol}
         </Text>
       </Flex>
@@ -129,8 +130,8 @@ const TokenContainer = () => {
     >
       <Flex
         pos={"relative"}
-        w={{ base: "148px", lg: "176px" }}
-        h={{ base: "148px", lg: "168px" }}
+        w={{ base: "150px", lg: "176px" }}
+        h={{ base: "150px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
@@ -155,31 +156,36 @@ const TokenContainer = () => {
             </Flex>
           </Flex>
         )}
-
-        {/* <TokenSymbol
-          tokenType={inToken?.tokenSymbol ?? "default"}
-          w={mobileView ? 48 : 56}
-          h={mobileView ? 48 : 56}
-        /> */}
-        <TokenSymbolWithNetwork
-          tokenSymbol={inToken?.tokenSymbol as string ?? "default"}
-          chainId={1}
-          symbolW={56}
-          symbolH={56}
-          networkSymbolH={20}
-          networkSymbolW={20}
-        />
+        {
+          mobileView ? (
+            <TokenSymbol
+              tokenType={inToken?.tokenSymbol ?? "default"}
+              w={mobileView ? 48 : 56}
+              h={mobileView ? 48 : 56}
+            />
+          ) : (
+            <TokenSymbolWithNetwork
+              tokenSymbol={inToken?.tokenSymbol as string ?? "default"}
+              chainId={1}
+              symbolW={mobileView ? 48 : 56}
+              symbolH={mobileView ? 48 : 56}
+              networkSymbolH={20}
+              networkSymbolW={20}
+            />
+          )
+        }
         <Flex
           fontSize={18}
-          columnGap={"8px"}
+          columnGap={"4px"}
           h={"24px"}
           mt={"14px"}
           mb={"3px"}
+          flexWrap="wrap"
         >
           <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 700 : 600}>
             {trimAmount(inToken?.parsedAmount, mobileView ? 8 : 8)}
           </Text>
-          <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 500 : 400}>
+          <Text fontSize={{ base: 16, lg: 18 }} fontWeight={mobileView ? 500 : 400}>
             {inToken?.tokenSymbol}
           </Text>
         </Flex>
@@ -195,11 +201,11 @@ const TokenContainer = () => {
         </Box>
       )}
 
-      {mobileView && <Image width={24} height={24} src={ARROW} alt={"ARROW"} />}
+      {mobileView && <Image width={24} src={ARROW} alt={"ARROW"} />}
 
       <Flex
-        w={{ base: "148px", lg: "176px" }}
-        h={{ base: "148px", lg: "168px" }}
+        w={{ base: "150px", lg: "176px" }}
+        h={{ base: "150px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
