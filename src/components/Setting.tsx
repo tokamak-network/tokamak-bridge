@@ -25,10 +25,11 @@ import CloseButton from "./button/CloseButton";
 interface SettingProps {
   setIsVisible?: (vis: boolean) => void;
   isModal?: boolean;
+  settingRef?: any;
   isVisible?: boolean;
 }
 
-export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingProps) => {
+export const SettingContainer = ({ setIsVisible, isModal, settingRef, isVisible }: SettingProps) => {
   const [txSetting, setTxSetting] = useRecoilState(uniswapTxSetting);
   const [displayValues, setDisplayValues] = useState({ slippage: txSetting.slippage, deadline: txSetting.deadline });
   
@@ -67,9 +68,9 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
         effects.buttonDisabled = true;
     } else if (numSlippage > 0 && numSlippage < 0.05) {
         effects.warnings = "Slippage below 0.05% may result in a failed transaction";
-    } else if (numSlippage >= 10 && numSlippage < MAX_SLIPPAGE_TOLERANCE) {
+    } else if (numSlippage >= 10 && numSlippage <= MAX_SLIPPAGE_TOLERANCE) {
         effects.warnings = "Slippage above 10% may result in an unfavorable swap";
-    } else if (numSlippage >= MAX_SLIPPAGE_TOLERANCE) {
+    } else if (numSlippage > MAX_SLIPPAGE_TOLERANCE) {
         effects.warnings = `Slippage tolerance cannot exceed ${MAX_SLIPPAGE_TOLERANCE}`;
         effects.color = "#DD3A44";
         effects.buttonDisabled = true;
@@ -89,7 +90,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
       effects.warnings = "Deadline has to be greater than 0 minutes";
       effects.color = "#DD3A44";
       effects.buttonDisabled = true;
-    } else if (deadline >= MAX_DEADLINE) {
+    } else if (deadline > MAX_DEADLINE) {
       effects.warnings = `Deadline cannot exceed ${MAX_DEADLINE} minutes`;
       effects.color = "#DD3A44";
       effects.buttonDisabled = true;
@@ -132,6 +133,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
       slippage: displayValues.slippage
     }));
     setSettingStatus(false)
+    setIsVisible ? setIsVisible(false) : "";
   };
 
   const saveDeadlineSetting = () => {
@@ -140,6 +142,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
       deadline: displayValues.deadline
     }));
     setSettingStatus(false)
+    setIsVisible ? setIsVisible(false) : "";
   };
 
   const wrapperRef = useRef(null);
@@ -147,9 +150,9 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      
+      console.log("hoi")
       //@ts-ignore
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+      if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !settingRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
       }
     };
@@ -333,6 +336,7 @@ export const SettingContainer = ({ setIsVisible, isModal, isVisible }: SettingPr
 
 export default function Setting() {
   const [isVisible, setIsVisible] = useState<boolean>(false);
+  const settingRef = useRef(null);
 
   return (
     <Flex flexDir={"column"} pos={"relative"}>
@@ -340,9 +344,10 @@ export default function Setting() {
         src={SettingIcon}
         alt={"SettingIcon"}
         style={{ cursor: "pointer" }}
-        onClick={() => setIsVisible(!isVisible)}
+        ref={settingRef}
+        onClick={() => setIsVisible(prev => !prev)}
       />
-      {isVisible && <SettingContainer isVisible={isVisible} setIsVisible={setIsVisible} />}
+      {isVisible && <SettingContainer settingRef={settingRef} isVisible={isVisible} setIsVisible={setIsVisible} />}
     </Flex>
   );
 }
