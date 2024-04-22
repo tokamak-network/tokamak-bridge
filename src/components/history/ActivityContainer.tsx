@@ -241,7 +241,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      h={"calc(100% - 50px)"}
+      h={"calc(100% - 20px)"}
       bg={"transparent"}
       w="100%"
     >

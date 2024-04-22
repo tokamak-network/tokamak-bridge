@@ -150,7 +150,6 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef, isVisible 
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      console.log("hoi")
       //@ts-ignore
       if (wrapperRef.current && !wrapperRef.current.contains(event.target) && !settingRef.current.contains(event.target)) {
         setIsVisible ? setIsVisible(false) : "";
