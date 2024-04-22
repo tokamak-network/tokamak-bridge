@@ -103,19 +103,20 @@ const sortTokens = (tokenList: TokenInfo[], order: string[]) => {
       return [{ ...filteredTokenList[0], isLiked: 'none' }];
     }
   
-    let orderedTokens = sortTokens(filteredTokenList, customOrder);
+    const orderedTokens = sortTokens(filteredTokenList, customOrder);
   
     if (likeList.length > 0) {
-      const likedTokens = likeList.filter(token => 
-        filteredTokenList.some(like => like.tokenName === token.tokenName && like.tokenSymbol === token.tokenSymbol)
-      ).map(token => ({ ...token, isLiked: 'true'}));
-
+      const likedTokens = likeList.map(like => {
+        const token = orderedTokens.find(token => 
+          token.tokenName === like.tokenName && token.tokenSymbol === like.tokenSymbol
+        );
+        return token ? { ...token, isLiked: 'true' } : null;
+      }).filter(token => token !== null);
   
       const unlikedTokens = orderedTokens.filter(token => 
         !likeList.some(like => like.tokenName === token.tokenName && like.tokenSymbol === token.tokenSymbol)
       ).map(token => ({ ...token, isLiked: 'false'}));
-  
-      orderedTokens = [...likedTokens, ...unlikedTokens];
+      return [...likedTokens as TokenInfo[], ...unlikedTokens];
     }
 
     return orderedTokens;
@@ -239,16 +240,10 @@ const sortTokens = (tokenList: TokenInfo[], order: string[]) => {
 
   const TokenListItem = ({ tokenData } : TokenListItemProps) => { 
     const tokeninfo = useTokenBalance(tokenData);
-    let displayTokenName = tokenData.tokenName;
-    if (tokenData.tokenName === "ETH") {
-        displayTokenName = "Ethereum";
-    }
-    if (tokenData.tokenName === "WETH") {
-      displayTokenName = "Wrapped Ethereum";
-    }
-    let mainLabel = tokenData.tokenSymbol
-    let subLabel = displayTokenName
-    let amount = tokeninfo?.data.balanceBN.formatted || "0.0";
+    const displayTokenName = tokenData.tokenName === "ETH" ? "Ethereum" : tokenData.tokenName === "WETH" ? "Wrapped Ethereum" : tokenData.tokenName;
+    const mainLabel = tokenData.tokenSymbol
+    const subLabel = displayTokenName
+    const amount = tokeninfo?.data.balanceBN.formatted || "0.0";
 
     //like handler
     const handleStarClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
