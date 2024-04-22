@@ -157,7 +157,6 @@ export default function Zoom({
 
   useEffect(() => {
     if (!isLoading) {
-      console.log("gogo?");
       initializeTicks();
       // setIsLoading(true);
       setTimeout(() => {

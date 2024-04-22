@@ -18,7 +18,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import GradientSpinner from "../ui/gradientSpinner";
+import GradientSpinner from "../ui/GradientSpinner";
 import { ethers } from "ethers";
 
 type TokenCardSizeType = "small" | "medium" | "large";
@@ -131,7 +131,7 @@ export default function TokenCard(props: TokenCardProps) {
     isInput,
     requireCall,
     watch,
-    isDark
+    isDark,
   } = props;
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
 
@@ -174,7 +174,9 @@ export default function TokenCard(props: TokenCardProps) {
   }, [agreeToAdd]);
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
-  const [outTokenInfo, setOutTokenInfo] = useRecoilState(selectedOutTokenStatus);
+  const [outTokenInfo, setOutTokenInfo] = useRecoilState(
+    selectedOutTokenStatus
+  );
   const { amountOut } = useAmountOut();
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
@@ -251,7 +253,13 @@ export default function TokenCard(props: TokenCardProps) {
       {pcView && (
         <Flex justifyContent={"space-between"} w={"100%"}>
           <TokenTitle
-            tokenName={thisTokenIsETH ? "Ethereum" : tokenInfo?.tokenSymbol === "WETH" ? "Wrapped Ethereum" : tokenInfo?.tokenName ?? "TOKEN"}
+            tokenName={
+              thisTokenIsETH
+                ? "Ethereum"
+                : tokenInfo?.tokenSymbol === "WETH"
+                ? "Wrapped Ethereum"
+                : tokenInfo?.tokenName ?? "TOKEN"
+            }
             isName={true}
             style={{
               fontSize:
@@ -279,7 +287,11 @@ export default function TokenCard(props: TokenCardProps) {
             {tokenInfo?.tokenSymbol ?? "TOK"}
           </Text>
           <Text fontWeight={700} fontSize={10} zIndex={100}>
-            {thisTokenIsETH ? "Ethereum" : tokenInfo?.tokenSymbol === "WETH" ? "Wrapped Ethereum" : tokenInfo?.tokenName ?? "TOKEN"}
+            {thisTokenIsETH
+              ? "Ethereum"
+              : tokenInfo?.tokenSymbol === "WETH"
+              ? "Wrapped Ethereum"
+              : tokenInfo?.tokenName ?? "TOKEN"}
           </Text>
         </Flex>
       )}
@@ -341,7 +353,9 @@ export default function TokenCard(props: TokenCardProps) {
               <Text
                 fontWeight={400}
                 fontSize={type === "small" ? 12 : type === "medium" ? 13 : 14}
-                h={type === "small" ? "8px" : type === "medium" ? "9px" : "10px"}
+                h={
+                  type === "small" ? "8px" : type === "medium" ? "9px" : "10px"
+                }
               >
                 balance:{" "}
               </Text>
@@ -354,8 +368,8 @@ export default function TokenCard(props: TokenCardProps) {
                     type === "small"
                       ? "33px"
                       : type === "medium"
-                        ? "40px"
-                        : "40px"
+                      ? "40px"
+                      : "40px"
                   }
                 >
                   {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}

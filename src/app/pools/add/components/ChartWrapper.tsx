@@ -1,6 +1,4 @@
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Chart } from "./chart/Chart";
-import { saturate } from "polished";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useDensityChartData } from "@/hooks/pool/useDensityChartData";
 import { useCallback, useMemo } from "react";
@@ -17,6 +15,7 @@ import UninitializedPoolImage from "assets/image/uninitializedPool.svg";
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { atMinTick } from "@/recoil/pool/setPoolPosition";
+import { LoadingCircleSpinner } from "@/components/ui/CircleSpinner";
 
 const ZOOM_LEVELS: Record<FeeAmount, ZoomLevels> = {
   [FeeAmount.LOWEST]: {
@@ -55,28 +54,6 @@ const UninitializedPool = () => {
       pos={"relative"}
     >
       <Image src={UninitializedPoolImage} alt={"UninitializedPoolImage"} />
-    </Box>
-  );
-};
-
-const LoadingSpinner = () => {
-  return (
-    <Box
-      w={"100%"}
-      h={"180px"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      pos={"relative"}
-    >
-      <Box
-        animation={"spinner 1.2s linear infinite"}
-        w={"40px"}
-        pos={"absolute"}
-        top={"80px"}
-        left={"165px"}
-      >
-        <Image src={SpinnerImage} alt={"SpinnerImage"} />
-      </Box>
     </Box>
   );
 };
@@ -194,7 +171,7 @@ export default function ChartWrapper({
 
   if (isUninitialized) return null;
   if (error) return <UninitializedPool />;
-  if (isLoading) return <LoadingSpinner />;
+  if (isLoading) return <LoadingCircleSpinner />;
   if (!formattedData || formattedData.length === 0 || !price) return null;
   return (
     <Chart

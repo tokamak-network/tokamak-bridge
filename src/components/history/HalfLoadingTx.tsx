@@ -4,7 +4,7 @@ import TokenPairTx from "./TokenPairTx";
 import { ethers } from "ethers";
 import { useToken } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
-import GradientSpinner from "@/components/ui/gradientSpinner";
+import GradientSpinner from "@/components/ui/GradientSpinner";
 import { Hash } from "viem";
 import { supportedTokens } from "types/token/supportedToken";
 

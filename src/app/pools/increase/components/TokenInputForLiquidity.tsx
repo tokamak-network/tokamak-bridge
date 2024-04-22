@@ -1,4 +1,4 @@
-import GradientSpinner from "@/components/ui/gradientSpinner";
+import GradientSpinner from "@/components/ui/GradientSpinner";
 import useTokenBalance from "@/hooks/contracts/balance/useTokenBalance";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { useGetAmountForLiquidity } from "@/hooks/pool/useGetAmountForLiquidity";

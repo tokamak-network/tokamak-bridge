@@ -21,7 +21,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useIsLoading from "@/hooks/ui/useIsLoading";
-import GradientSpinner from "@/components/ui/gradientSpinner";
+import GradientSpinner from "@/components/ui/GradientSpinner";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
