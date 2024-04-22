@@ -63,23 +63,6 @@ import { actionMethodStatus } from "@/recoil/modal/atom";
 import useAddLikeStorage from "@/hooks/mobile/useAddLikeStorage";
 
 
-// 컴포넌트 외부에 sortTokens 함수를 정의
-function sortTokens(tokenList: TokenInfo[], order: string[]) {
-  const orderedTokens: TokenInfo[] = [];
-  const remainingTokens = [...tokenList]; // 원본 목록의 복사본을 생성
-
-  // customOrder에 정의된 순서대로 토큰을 배열
-  order.forEach(symbol => {
-    const index = remainingTokens.findIndex(token => token.tokenSymbol === symbol);
-    if (index > -1) {
-      orderedTokens.push(remainingTokens[index]);
-      remainingTokens.splice(index, 1); // 배열된 토큰은 제거
-    }
-  });
-
-  // 남은 토큰들을 원래 순서대로 뒤에 추가
-  return orderedTokens.concat(remainingTokens);
-}
 
 export default function SelectTokenModal() {
   
@@ -92,6 +75,23 @@ export default function SelectTokenModal() {
 
   const { filteredTokenList } = useGetTokenList();
   
+
+// Mobile token reordering function
+const sortTokens = (tokenList: TokenInfo[], order: string[]) => {
+  const orderedTokens: TokenInfo[] = [];
+  const remainingTokens = [...tokenList];
+
+  order.forEach(symbol => {
+    const index = remainingTokens.findIndex(token => token.tokenSymbol === symbol);
+    if (index > -1) {
+      orderedTokens.push(remainingTokens[index]);
+      remainingTokens.splice(index, 1);
+    }
+  });
+
+  return orderedTokens.concat(remainingTokens);
+}
+
   const sortedAndLikedTokenList = useMemo(() => {
     if (filteredTokenList.length === 1 && filteredTokenList[0].isNew) {
       return filteredTokenList;
@@ -106,9 +106,10 @@ export default function SelectTokenModal() {
     let orderedTokens = sortTokens(filteredTokenList, customOrder);
   
     if (likeList.length > 0) {
-      const likedTokens = orderedTokens.filter(token => 
-        likeList.some(like => like.tokenName === token.tokenName && like.tokenSymbol === token.tokenSymbol)
+      const likedTokens = likeList.filter(token => 
+        filteredTokenList.some(like => like.tokenName === token.tokenName && like.tokenSymbol === token.tokenSymbol)
       ).map(token => ({ ...token, isLiked: 'true'}));
+
   
       const unlikedTokens = orderedTokens.filter(token => 
         !likeList.some(like => like.tokenName === token.tokenName && like.tokenSymbol === token.tokenSymbol)
@@ -122,7 +123,7 @@ export default function SelectTokenModal() {
 
 
 
-  //토큰 추가 리랜더링 
+  // Add new token re-rendering function
   const addNewTokenToList = useCallback(() => {
     setHasTokenBeenAdded(true);
   }, []);
@@ -141,7 +142,6 @@ export default function SelectTokenModal() {
 
   const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(mobileTokenModalStatus);
 
-  /////////////// 검색관련
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const [searchValue, setSearchValue] = useState<string>("");
 
@@ -250,7 +250,7 @@ export default function SelectTokenModal() {
     let subLabel = displayTokenName
     let amount = tokeninfo?.data.balanceBN.formatted || "0.0";
 
-    //좋아요
+    //like handler
     const handleStarClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       event.stopPropagation();
       toggleLike(tokenData)
@@ -276,12 +276,13 @@ export default function SelectTokenModal() {
         justifyContent="space-between"
         w="full"
         alignItems="center"
-        px={4} 
+        px={4}
+        py={"6px"}
         _hover={{ bg: "#313442", px: 4, borderRadius: '8px' }} 
         cursor="pointer"
         onClick={() => {
           try {
-            //기존 토큰에서 변경이 이루어 졌다면, 0으로 바꿔야함
+            // If a change has occurred in the existing token, reset it to zero
             const inToken = selectedInToken;
             setSelectedToken(tokenData, true)
             setSearchValue("")
@@ -290,12 +291,11 @@ export default function SelectTokenModal() {
             if (isInTokenOpen) {
               setIsInputAmount(true);
               
-              //추가된 사항
-              //소수점 4자리
+              //Four decimal places
               const formatNumber = (number: string) => {
                 const numericValue = Number(number);
                 if (!isNaN(numericValue)) {
-                  const factor = Math.pow(10, 4); // 4자리 버림을 위한 계수 10000
+                  const factor = Math.pow(10, 4); // Coefficient of 10000 for rounding down to four decimal place
                   return (Math.floor(numericValue * factor) / factor).toString();
                 } else {
                   console.error("Provided value cannot be converted to a number:", number);
@@ -303,14 +303,14 @@ export default function SelectTokenModal() {
                 }
               };
               
-              //modal이 떨어져서 있어 현재 임시로 해놈
+              // The modal is temporarily placed because it is detached
               setTokenAmountStatus({
                 ...tokenData,
                 amount: formatNumber(amount)
               })
 
               if(tokenData.tokenName != selectedOutToken?.tokenName){
-                //만약, 토큰 값이 같은거면, 기존에 입력한 값을 넣는다면, 같지 않다면, 다시 입력하게 한다.
+                // If the token value is the same, insert the previously entered value; otherwise, prompt for re-entry
                 const isSameToken = tokenData.tokenName === inToken?.tokenName;
                 setSelectedInToken({
                   ...tokenData,
@@ -354,7 +354,7 @@ export default function SelectTokenModal() {
           
         }}
       >
-        <HStack spacing={2}>
+        <HStack spacing={3}>
           <TokenSymbol
             w={36}
             h={36}
