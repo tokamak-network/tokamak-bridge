@@ -118,7 +118,7 @@ export default function ActionButton() {
     useInputBalanceCheck();
   const { inToken, outToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
-  const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
+  const { deposit0Disabled, deposit1Disabled, invalidRange } = useV3MintInfo();
 
   const [, setPoolModal] = useRecoilState(poolModalStatus);
   const [, setPollModalProp] = useRecoilState(poolModalProp);
@@ -131,7 +131,8 @@ export default function ActionButton() {
     (!deposit1Disabled && isOutTokenBalanceOver) ||
     isTONatPair ||
     (!deposit0Disabled && isInputZero) ||
-    (!deposit1Disabled && isOutInputZero);
+    (!deposit1Disabled && isOutInputZero) ||
+    invalidRange;
 
   const { mintPositionInfo } = useMintPositionInfo();
 
