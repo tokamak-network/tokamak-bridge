@@ -22,7 +22,7 @@ export function useInOutTokens() {
   );
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
-  const { mode } = useGetMode();
+  const { mode, subMode } = useGetMode();
   const [, setTxData] = useRecoilState(txDataStatus);
 
   const inToken = useMemo(() => {
@@ -87,30 +87,6 @@ export function useInOutTokens() {
   //   return setChainId(undefined);
   // }, [connectedChainId]);
 
-  useEffect(() => {
-    const thisTokenExist = async () => {
-      if (connectedChainId && provider && inToken?.tokenAddress) {
-        const code = await provider.getCode(inToken?.tokenAddress);
-
-        //"0x" means this token address doesn't exsit on this chain
-        if (code.length <= 2) {
-          setInTokenRecoilValue(null);
-        }
-      }
-      if (connectedChainId && provider && outToken?.tokenAddress) {
-        const code = await provider.getCode(outToken?.tokenAddress);
-
-        //"0x" means this token address doesn't exsit on this chain
-        if (code.length <= 2) {
-          setOutTokenRecoilValue(null);
-        }
-      }
-    };
-    thisTokenExist().catch((e) => {
-      console.log("**thisTokenExist err**");
-    });
-  }, [connectedChainId, provider, inToken?.tokenAddress]);
-
   const { inTokenHasAmount } = useRecoilValue(inTokenSelector);
   const { outTokenHasAmount } = useRecoilValue(outTokenSelector);
 
@@ -168,10 +144,47 @@ export function useInOutTokens() {
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
+  useEffect(() => {
+    const thisTokenExist = async () => {
+      if (connectedChainId && provider && inToken?.tokenAddress) {
+        const code = await provider.getCode(inToken?.tokenAddress);
+
+        //"0x" means this token address doesn't exsit on this chain
+        if (code.length <= 2) {
+          setInTokenRecoilValue(null);
+        }
+      }
+      if (connectedChainId && provider && outToken?.tokenAddress) {
+        const code = await provider.getCode(outToken?.tokenAddress);
+
+        //"0x" means this token address doesn't exsit on this chain
+        if (code.length <= 2) {
+          setOutTokenRecoilValue(null);
+        }
+      }
+    };
+    thisTokenExist().catch((e) => {
+      console.log("**thisTokenExist err**");
+    });
+  }, [connectedChainId, provider, inToken?.tokenAddress]);
+
+  //initialize other token when it's ETH&WETH pair on AddLiquidity, Pools
+  // useEffect(() => {
+  //   if (mode === 'Pool' && subMode.add) {
+  //     if (inToken?.tokenAddress === getWETHAddress(connectedChainId)) {
+  //       setOutTokenRecoilValue(null);
+  //     }
+  //     if (outToken?.tokenAddress === getWETHAddress(chainName)) {
+  //       setInTokenRecoilValue(null);
+  //   }
+  // }, [inToken, outToken, mode, connectedChainId])
+
   //fix a issue toast shows up when a token is changed
   useEffect(() => {
     setTxData(undefined);
   }, [inToken?.address]);
+
+  // console.log(inToken, outToken);
 
   return {
     inToken,

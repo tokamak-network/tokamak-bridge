@@ -68,12 +68,8 @@ export default function ApproveToken() {
           mode ?? undefined
         )}`;
 
-  console.log(
-    "confirmedApproveTransaction",
-    confirmedApproveTransaction,
-    "isApproved",
-    isApproved
-  );
+  const afterApproved = isApproved && confirmedApproveTransaction;
+  const beforeApproved = !isLoading && !afterApproved;
 
   return (
     <Flex
@@ -82,6 +78,8 @@ export default function ApproveToken() {
       maxH={"48px"}
       bg={"#1f2128"}
       borderRadius={"8px"}
+      borderWidth={beforeApproved ? "1px" : ""}
+      borderColor={"#59628D"}
       px={"20px"}
       py={"19px"}
       justifyContent={"space-between"}
@@ -98,7 +96,7 @@ export default function ApproveToken() {
       </Flex>
       {isLoading ? (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
-      ) : isApproved && confirmedApproveTransaction ? (
+      ) : afterApproved ? (
         <Flex>
           <Image src={ConfirmedImage} alt={"ConfirmedImage"} />
         </Flex>

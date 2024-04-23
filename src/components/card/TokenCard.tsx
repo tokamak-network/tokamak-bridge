@@ -2,9 +2,8 @@ import { TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Text, TextProps, useTheme } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
-  networkStatus,
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
@@ -14,11 +13,9 @@ import { isETH } from "@/utils/token/isETH";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import "@fontsource/quicksand/500.css";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import GradientSpinner from "../ui/GradientSpinner";
 import { ethers } from "ethers";
 
 type TokenCardSizeType = "small" | "medium" | "large";
