@@ -79,8 +79,9 @@ return (
     maxH={"48px"}
     bg={"#1f2128"}
     borderRadius={"8px"}
-    px={"20px"}
-    py={"19px"}
+    px={mobileView? "16px" : "20px"}
+    pt={mobileView? "11px" : "19px"}
+    pb={mobileView? "12px" : "19px"}
     justifyContent={"space-between"}
     alignItems={"center"}
     color={approveBtnDisabled ? "#8E8E92" : ""}
@@ -138,9 +139,9 @@ return (
         )
         : (
           <Button
-            w={{ base: "64px", lg: "92px" }}
-            h={"28px"}
-            fontSize={{ base: 12, lg: 14 }}
+            w={"60px"}
+            h={"22px"}
+            fontSize={"10px"}
             fontWeight={500}
             bgColor={"#007AFF"}
             color={"#fff"}

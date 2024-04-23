@@ -13,6 +13,7 @@ import CloseButton from "../button/CloseButton";
 import Image from "next/image";
 import ARROW_ICON from "assets/icons/confirm/arrow.svg";
 import ARROW from "assets/icons/arrow.svg";
+import MobileConfirmArrow from "assets/icons/confirmArrow.svg"
 import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
 import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -201,7 +202,7 @@ const TokenContainer = () => {
         </Box>
       )}
 
-      {mobileView && <Image width={24} src={ARROW} alt={"ARROW"} />}
+      {mobileView && <Image width={16} src={MobileConfirmArrow} alt={"MobileConfirmArrow"} />}
 
       <Flex
         w={{ base: "150px", lg: "176px" }}

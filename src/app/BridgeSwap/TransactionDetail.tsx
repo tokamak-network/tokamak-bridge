@@ -521,15 +521,13 @@ const Title = (props: {
     amount: Number(isWrapUnwrap ? 1 : outPrice),
   });
 
-  const formattedTokenPriceWithAmount = token1PriceWithAmount === undefined ? " (N/A)" : ` ($${token1PriceWithAmount})`;
-
   const formatPrice = (price: number | undefined) => {
     if(price === undefined){
       return 0
     }
     
     const priceStr = price.toString();
-    return priceStr.length > 15 ? `${priceStr.slice(0, 15)}...` : priceStr;
+    return priceStr.length > 10 ? `${priceStr.slice(0, 10)}...` : priceStr;
   };
 
 
@@ -597,13 +595,13 @@ const Title = (props: {
             <Text>
               {1} {inToken?.tokenSymbol}
             </Text>
-            <Text mx={"9px"}>=</Text>
+            <Text mx={mobileView ? "4px" : "9px"}>=</Text>
             <Text>
               {isWrapUnwrap ? 1 : formatPrice(outPrice)} {outToken?.tokenSymbol}
               {
                 mobileView && 
                 <Text as="span" color="#A0A3AD"> 
-                  {formattedTokenPriceWithAmount}
+                  (${token1PriceWithAmount})
                 </Text>
               }
             </Text>

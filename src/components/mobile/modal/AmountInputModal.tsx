@@ -94,18 +94,18 @@ export default function AmountInputModal() {
             bg="#222225" 
             borderRadius="24px 24px 0 0"
           >
-        <ModalHeader fontSize="md" pt={2} pb={0}>
-          {warning ? (
-            <Flex color={warning.type === "error" ? "#DD3A44" : "#F9C03E"} fontWeight={400} fontSize={12} columnGap={"10px"}>
-              <Text>{warning.message}</Text>
-            </Flex>
-          ) : (
-            <>
-              <Text as="span" fontWeight={500} fontSize={15} color="#a0a3ad">Balance:{' '}</Text>
-              <Text as="span" fontWeight={500} fontSize={15} color="#FFFFFF">{`${tokenAmountStatus?.amount} ${tokenAmountStatus?.tokenSymbol}`}</Text>
-            </>
-          )}
-        </ModalHeader>
+            <ModalHeader fontSize="md" pt={2} pb={0} h={"23px"}>
+              {warning ? (
+                <Flex color={warning.type === "error" ? "#DD3A44" : "#F9C03E"} fontWeight={warning.type === "error" ? 500 : 400} fontSize={warning.type === "error" ? 15 : 12}>
+                  <Text>{warning.message}</Text>
+                </Flex>
+              ) : (
+                <Flex fontWeight={500} fontSize={15}>
+                  <Text as="span" color="#a0a3ad">Balance:{' '}</Text>
+                  <Text as="span" color="#FFFFFF">{`${tokenAmountStatus?.amount} ${tokenAmountStatus?.tokenSymbol}`}</Text>
+                </Flex>
+              )}
+            </ModalHeader>
             <ModalCloseButton pb={"2"}/>
             <ModalBody>
             <MobileTokenInput
