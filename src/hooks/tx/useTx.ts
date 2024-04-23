@@ -12,7 +12,6 @@ import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json
 import WethABi from "constant/abis/WETH.json";
 import UniswapV3Pool from "constant/abis/IUniswapV3Pool.json";
 
-import { useTransaction as useTrasactionW } from "wagmi";
 import { useRecoilState } from "recoil";
 import {
   txDataStatus,
@@ -156,19 +155,6 @@ export function useTransaction() {
     return undefined;
   }, [txData]);
 
-  const {
-    data: txCheckData,
-    isError: txCheckError,
-    error,
-  } = useTrasactionW({
-    hash:
-      pendingTransaction !== undefined &&
-      pendingTransaction !== null &&
-      pendingTransaction.length === 1
-        ? (pendingTransaction[0][0] as `0x${string}`)
-        : "0x",
-  });
-
   // useEffect(() => {
   //   if (pendingTransaction?.length === 1) {
   //     if (txCheckError && error) return setTxData(undefined);
@@ -232,7 +218,7 @@ export function useTx(params: {
     chainId: connectedChainId,
   });
 
-  const [txData, setTxData] = useRecoilState(txDataStatus);
+  const [, setTxData] = useRecoilState(txDataStatus);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );

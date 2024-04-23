@@ -457,7 +457,6 @@ const Title = (props: {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { gasCostUS } = useGasFee();
-  const { isBalanceOver } = useInputBalanceCheck();
 
   useEffect(() => {
     if (isExpanded) {

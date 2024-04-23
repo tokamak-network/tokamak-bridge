@@ -19,7 +19,7 @@ export default function InitializeInfo() {
 
   const valueProp = useMemo(() => {
     if (Number(inputIntialPrice) === 0) return undefined;
-    return isFocused ? inputIntialPrice : trimAmount(inputIntialPrice, 20);
+    return isFocused ? inputIntialPrice : trimAmount(inputIntialPrice, 21);
   }, [isFocused, inputIntialPrice]);
 
   if (poolStatus === PoolState.NOT_EXISTS && !isTONatPair)
@@ -48,7 +48,7 @@ export default function InitializeInfo() {
           borderRadius={"8px"}
           border={"1px solid #313442"}
           alignItems={"center"}
-          pr={"16px"}
+          px={"16px"}
         >
           <Input
             _hover={{}}
@@ -56,17 +56,17 @@ export default function InitializeInfo() {
               boxShadow: "none !important",
               border: "none !important",
             }}
+            minW={"202px"}
+            maxW={"202px"}
             border={"none"}
             onChange={(e) => {
               setInitialPrice(e.target.value);
             }}
+            p={0}
             value={valueProp === undefined ? "" : valueProp}
             boxShadow={"none !important"}
             fontSize={18}
             fontWeight={500}
-            pl={"16px"}
-            pr={"18px"}
-            py={"10px"}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="0"
@@ -74,11 +74,13 @@ export default function InitializeInfo() {
             defaultValue={undefined}
           />
           <Text
-            minW={"100px"}
+            minW={"150px"}
+            maxW={"150px"}
             color={"#A0A3AD"}
             fontSize={14}
             verticalAlign={"center"}
             fontWeight={400}
+            textAlign={"right"}
           >
             {outToken?.tokenSymbol} per {inToken?.tokenSymbol}
           </Text>
