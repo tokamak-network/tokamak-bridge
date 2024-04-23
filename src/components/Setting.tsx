@@ -166,10 +166,17 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef, isVisible 
   const deadlineEffects = checkDeadLineEffects(displayValues.deadline);
 
   const preventMinus = (e: any) => {
-    if (e.code === 'Minus') {
+    console.log(e.code)
+    if (e.code === 'Minus' || e.code == 'Equal' || e.code == 'KeyE') {
         e.preventDefault();
     }
-};
+  };
+
+  const preventNonNumeric = (e: any) => {
+    if (e.code === 'Minus' || e.code == 'Equal' || e.code == 'Period' || e.code == 'KeyE') {
+        e.preventDefault();
+    }
+  };
 
   return (
     <Flex
@@ -288,7 +295,7 @@ export const SettingContainer = ({ setIsVisible, isModal, settingRef, isVisible 
               _hover={{}}
               _active={{}}
               onChange={onChange}
-              onKeyDown={preventMinus}
+              onKeyDown={preventNonNumeric}
               color={deadlineEffects.color || undefined}
               value={displayValues.deadline}
               id="deadline"
