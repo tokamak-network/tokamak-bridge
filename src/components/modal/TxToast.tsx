@@ -30,6 +30,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
     return <Box w={"136px"}></Box>;
   }
 
+  const { otherLayerChainInfo } = useConnectedNetwork();
   const tokenIndex = isToken0 ? 0 : 1;
   const { data: symbol } = useErc20Symbol({
     address: tokenData[tokenIndex].tokenAddress as `0x${string}`,
@@ -66,9 +67,9 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
           chainId={
             txSort === "Deposit" && isToken0 === false
-              ? 55004
+              ? otherLayerChainInfo?.chainId
               : txSort === "Withdraw" && isToken0 === false
-              ? 1
+              ? otherLayerChainInfo?.chainId
               : network
           }
         />

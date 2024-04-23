@@ -18,23 +18,29 @@ export function useUniswapContracts() {
 
   const UNISWAP_CONTRACT = getUniswapByChainId(connectedChainId);
 
-  let selectedContracts;
+  let selectedUniswapContracts;
 
   switch (true) {
     case layer === "L1" && isConnectedToMainNetwork:
-      selectedContracts = L2_UniswapContracts;
+      selectedUniswapContracts = L1_UniswapContracts;
       break;
     case layer === "L1" && !isConnectedToMainNetwork:
-      selectedContracts = L2_THANOS_SEPOLIA_UniswapContracts;
+      selectedUniswapContracts = L1_SEPOLIA_UniswapContracts;
       break;
     case layer === "L2" && isConnectedToMainNetwork:
-      selectedContracts = L1_UniswapContracts;
+      selectedUniswapContracts = L2_UniswapContracts;
+      break;
+    case layer === "L2" &&
+      !isConnectedToMainNetwork &&
+      connectedChainId === SupportedChainId["THANOS_SEPOLIA"]:
+      L2_THANOS_SEPOLIA_UniswapContracts;
       break;
     default:
-      selectedContracts = L1_SEPOLIA_UniswapContracts;
+      selectedUniswapContracts = L2_TITAN_SEPOLIA_UniswapContracts;
+      break;
   }
 
-  const UNISWAP_CONTRACT_OTHER_LAYER = selectedContracts;
+  const UNISWAP_CONTRACT_OTHER_LAYER = selectedUniswapContracts;
 
   return {
     UNISWAP_CONTRACT,

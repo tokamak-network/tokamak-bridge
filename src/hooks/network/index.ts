@@ -69,7 +69,8 @@ export default function useConnectedNetwork() {
       if (chainInfo.layer === "L1" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[2];
       if (chainInfo.layer === "L1" && !chainInfo.isConnectedToMainNetwork)
-        return supportedChain[3];
+        // connect to Titan Sepolia for now
+        return supportedChain[4];
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
       if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)

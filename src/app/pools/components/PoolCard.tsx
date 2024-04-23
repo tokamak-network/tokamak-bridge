@@ -97,12 +97,7 @@ export default function PoolCard(props: PoolCardDetail) {
   const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
   const { provider, L1Provider, L2Provider } = useProvier();
-  const {
-    L1_UniswapContracts,
-    L2_UniswapContracts,
-    UNISWAP_CONTRACT,
-    L2_THANOS_SEPOLIA_UniswapContracts,
-  } = useUniswapContracts();
+  const { UNISWAP_CONTRACT } = useUniswapContracts();
   const [token0FeeAmount, setToken0FeeAmount] = useState<string | undefined>(
     undefined
   );
@@ -174,7 +169,7 @@ export default function PoolCard(props: PoolCardDetail) {
 
   const onClickToRoute = useCallback(async () => {
     if (chainId !== connectedChainId && otherLayerChainInfo) {
-      const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+      const res = await switchNetworkAsync?.(chainId);
       if (res && res.id === otherLayerChainInfo.chainId) {
         return router.push(`/pools/${id}?chainId=${chainId}`);
       }
