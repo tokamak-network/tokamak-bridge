@@ -101,7 +101,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
               : network
           }
         />
-        <Text fontSize={11} fontWeight={400} textAlign={"center"}>
+        <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
           {trimAmount(convertParsedAmount)} {symbol}
         </Text>
       </Flex>
@@ -239,7 +239,7 @@ function TxToast() {
           variant: "solid",
           isClosable: true,
           id: txHash,
-          duration: 5000,
+          duration: 5000000000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);
