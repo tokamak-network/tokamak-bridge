@@ -41,7 +41,7 @@ export function TokenInputForLiquidity(props: {
     amountForToken1,
     dependentAmount: _dependentAmount,
   } = useGetAmountForLiquidity();
-  const { inverted, deposit0Disabled, deposit1Disabled } = usePoolInfo();
+  const { deposit0Disabled, deposit1Disabled } = usePoolInfo();
   const dependentAmount = _dependentAmount?.toSignificant(18);
 
   const tokenData = useTokenBalance(tokenInfo);
@@ -92,6 +92,7 @@ export function TokenInputForLiquidity(props: {
 
   const onMax = useCallback(() => {
     try {
+      setLastFocused(inToken ? "LeftInput" : "RightInput");
       if (tokenData) {
         if (inToken && (selectedInToken || tokenInfo)) {
           return setSelectedInToken({
@@ -117,7 +118,14 @@ export function TokenInputForLiquidity(props: {
         inputRef?.current?.blur();
       }, 100);
     }
-  }, [tokenData, inToken, selectedInToken, selectedOutToken, tokenInfo]);
+  }, [
+    tokenData,
+    inToken,
+    selectedInToken,
+    selectedOutToken,
+    tokenInfo,
+    lastFocused,
+  ]);
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -126,6 +134,7 @@ export function TokenInputForLiquidity(props: {
 
   const handleBlur = () => {
     setIsFocused(false);
+
     //for pool's price and amount on liquidity
     if (inToken && selectedOutToken) {
       if (!dependentAmount) {
