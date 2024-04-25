@@ -1,3 +1,4 @@
+import { is } from "date-fns/locale";
 import { TxSort, ActionSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
@@ -11,7 +12,7 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
 import WethABi from "constant/abis/WETH.json";
 import UniswapV3Pool from "constant/abis/IUniswapV3Pool.json";
-
+import { getWETHAddressByChainId } from "@/utils/token/isETH";
 import { useRecoilState } from "recoil";
 import {
   txDataStatus,
@@ -79,6 +80,13 @@ const getEventSignature = () => {
   };
 };
 
+const getETHWrapEventSignature = () => {
+  return ethers.utils.id("Deposit(address,uint256)");
+};
+const getWETHUnwrapEventSignature = () => {
+  return ethers.utils.id("Withdrawal(address,uint256)");
+};
+
 const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
   const eventSignature = getEventSignature();
   switch (txSort) {
@@ -101,6 +109,33 @@ const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
     default:
       return undefined;
   }
+};
+
+const getETHWrapEvent = (logs: Log<bigint, number>[]) => {
+  const eventSignature = getETHWrapEventSignature();
+  return (
+    logs.filter((log) => {
+      return log.topics[0] === eventSignature;
+    }).length > 0
+  );
+};
+
+const getWETHUnwrapEvent = (logs: Log<bigint, number>[]) => {
+  const eventSignature = getWETHUnwrapEventSignature();
+  return (
+    logs.filter((log) => {
+      return log.topics[0] === eventSignature;
+    }).length > 0
+  );
+};
+
+const getTokenAddress = (
+  tokenAddress: `0x${string}` | undefined,
+  chainId: number,
+  isETH: boolean
+) => {
+  const WETHAddress = getWETHAddressByChainId(chainId);
+  return isETH && WETHAddress === tokenAddress ? "ETH" : tokenAddress ?? "0x";
 };
 
 // const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
@@ -272,7 +307,7 @@ export function useTx(params: {
           txSort === "Increase Liquidity" ||
           txSort === "Remove Liquidity")
       ) {
-        const { logs, transactionHash } = data;
+        const { logs } = data;
         const { nonFungiblePositionManagerI } = getInterface();
 
         const result = nonFungiblePositionManagerI.parseLog(
@@ -339,6 +374,7 @@ export function useTx(params: {
             const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
             const { amount0, amount1 } = args;
+            const isETH = getETHWrapEvent(logs);
 
             setTxData({
               [hash]: {
@@ -347,11 +383,19 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: tokenAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount0.toBigInt(),
                   },
                   {
-                    tokenAddress: tokenOutAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenOutAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount1.toBigInt(),
                   },
                 ],
@@ -371,6 +415,7 @@ export function useTx(params: {
             const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
             const { amount0, amount1 } = args;
+            const isETH = getETHWrapEvent(logs);
 
             setTxData({
               [hash]: {
@@ -379,11 +424,19 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: tokenAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount0.toBigInt(),
                   },
                   {
-                    tokenAddress: tokenOutAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenOutAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount1.toBigInt(),
                   },
                 ],
@@ -405,6 +458,7 @@ export function useTx(params: {
             const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
             const { amount0, amount1 } = args;
+            const isETH = getWETHUnwrapEvent(logs);
 
             setTxData({
               [hash]: {
@@ -413,11 +467,19 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: tokenAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount0.toBigInt(),
                   },
                   {
-                    tokenAddress: tokenOutAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenOutAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount1.toBigInt(),
                   },
                 ],
@@ -427,7 +489,6 @@ export function useTx(params: {
               },
             });
           }
-
           return;
         case "Swap": {
           try {
@@ -444,6 +505,8 @@ export function useTx(params: {
             const { amount0, amount1 } = args;
             const transferedValue = trasferedOutResult.args.value;
             // const transferedInValue = transferedInResult.args.value;
+            const isETH = getETHWrapEvent(logs);
+            const isWETH = getWETHUnwrapEvent(logs);
 
             setTxData({
               [hash]: {
@@ -452,11 +515,19 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: tokenAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenAddress,
+                      connectedChainId,
+                      isETH || isWETH
+                    ),
                     amount: transferedValue.toBigInt(),
                   },
                   {
-                    tokenAddress: tokenOutAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenOutAddress,
+                      connectedChainId,
+                      isETH || isWETH
+                    ),
                     amount: amount1.toBigInt(),
                   },
                 ],
@@ -477,6 +548,7 @@ export function useTx(params: {
             const result = nonFungiblePositionManagerI.parseLog(event[0]);
             const { args } = result;
             const { amount0, amount1 } = args;
+            const isETH = getWETHUnwrapEvent(logs);
 
             setTxData({
               [hash]: {
@@ -485,11 +557,19 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: tokenAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount0.toBigInt(),
                   },
                   {
-                    tokenAddress: tokenOutAddress ?? "0x",
+                    tokenAddress: getTokenAddress(
+                      tokenOutAddress,
+                      connectedChainId,
+                      isETH
+                    ),
                     amount: amount1.toBigInt(),
                   },
                 ],

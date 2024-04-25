@@ -150,40 +150,29 @@ export function useInOutTokens() {
     }
   }, [inTokenRecoilValue, outTokenRecoilValue]);
 
-  // useEffect(() => {
-  //   const thisTokenExist = async () => {
-  //     if (connectedChainId && provider && inToken?.tokenAddress) {
-  //       const code = await provider.getCode(inToken?.tokenAddress);
+  useEffect(() => {
+    const thisTokenExist = async () => {
+      if (connectedChainId && provider && inToken?.tokenAddress) {
+        const code = await provider.getCode(inToken?.tokenAddress);
 
-  //       //"0x" means this token address doesn't exsit on this chain
-  //       if (code.length <= 2) {
-  //         setInTokenRecoilValue(null);
-  //       }
-  //     }
-  //     if (connectedChainId && provider && outToken?.tokenAddress) {
-  //       const code = await provider.getCode(outToken?.tokenAddress);
+        //"0x" means this token address doesn't exsit on this chain
+        if (code.length <= 2) {
+          setInTokenRecoilValue(null);
+        }
+      }
+      if (connectedChainId && provider && outToken?.tokenAddress) {
+        const code = await provider.getCode(outToken?.tokenAddress);
 
-  //       //"0x" means this token address doesn't exsit on this chain
-  //       if (code.length <= 2) {
-  //         setOutTokenRecoilValue(null);
-  //       }
-  //     }
-  //   };
-  //   thisTokenExist().catch((e) => {
-  //     console.log("**thisTokenExist err**");
-  //   });
-  // }, [connectedChainId, provider, inToken?.tokenAddress]);
-
-  //initialize other token when it's ETH&WETH pair on AddLiquidity, Pools
-  // useEffect(() => {
-  //   if (mode === 'Pool' && subMode.add) {
-  //     if (inToken?.tokenAddress === getWETHAddress(connectedChainId)) {
-  //       setOutTokenRecoilValue(null);
-  //     }
-  //     if (outToken?.tokenAddress === getWETHAddress(chainName)) {
-  //       setInTokenRecoilValue(null);
-  //   }
-  // }, [inToken, outToken, mode, connectedChainId])
+        //"0x" means this token address doesn't exsit on this chain
+        if (code.length <= 2) {
+          setOutTokenRecoilValue(null);
+        }
+      }
+    };
+    thisTokenExist().catch((e) => {
+      console.log("**thisTokenExist err**");
+    });
+  }, [connectedChainId, provider, inToken?.tokenAddress]);
 
   //fix a issue toast shows up when a token is changed
   useEffect(() => {
