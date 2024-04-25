@@ -553,18 +553,18 @@ const Title = (props: {
         {(mobileView || !isOpen) && (
           <Flex alignItems={"center"}>
             {(isOpen === isExpanded || mobileView) && (
-              <Image src={GasImg} alt={"gasStation"} />
-            )}
-            {(isOpen === isExpanded || mobileView) && (
-              <Text
-                fontSize={{ base: 12, lg: 14 }}
-                fontWeight={400}
-                color={"#A0A3AD"}
-                ml={"6px"}
-                mr={"13px"}
-              >
-                ${gasCostUS}
-              </Text>
+              <>
+                <Image src={GasImg} alt={"gasStation"} />
+                <Text
+                  fontSize={{ base: 12, lg: 14 }}
+                  fontWeight={400}
+                  color={"#A0A3AD"}
+                  ml={"6px"}
+                  mr={"13px"}
+                >
+                  {gasCostUS ? `${gasCostUS}` : `NA`}
+                </Text>
+              </>
             )}
             {!mobileView && (
               <motion.div animate={arrowControl}>
@@ -616,19 +616,19 @@ const Title = (props: {
           ? null
           : isOpen === false && (
               <Flex>
-                {(!isExpanded || mobileView) && gasCostUS && (
-                  <Image src={GasImg} alt={"gasStation"} />
-                )}
-                {(!isExpanded || mobileView) && gasCostUS && (
-                  <Text
-                    fontSize={{ base: 11, lg: 14 }}
-                    fontWeight={400}
-                    color={"#A0A3AD"}
-                    ml={"6px"}
-                    sx={{ mr: mobileView ? 0 : "13px" }}
-                  >
-                    ${gasCostUS}
-                  </Text>
+                {(!isExpanded || mobileView) && (
+                  <>
+                    <Image src={GasImg} alt={"gasStation"} />
+                    <Text
+                      fontSize={{ base: 11, lg: 14 }}
+                      fontWeight={400}
+                      color={"#A0A3AD"}
+                      ml={"6px"}
+                      sx={{ mr: mobileView ? 0 : "13px" }}
+                    >
+                      {gasCostUS ? `${gasCostUS}` : `NA`}
+                    </Text>
+                  </>
                 )}
                 {!mobileView && (
                   <motion.div animate={arrowControl}>

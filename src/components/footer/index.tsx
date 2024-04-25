@@ -13,8 +13,8 @@ const Footer = () => {
       pt={pcView ? 0 : 5}
       bottom={pcView ? 6 : 0}
       w={"full"}
-      minH={"77px"}
-      maxH={"77px"}
+      minH={pcView ? "77px" : ""}
+      maxH={pcView ? "77px" : ""}
       justify={"center"}
       alignItems={"center"}
       position={pcView ? "absolute" : "initial"}

@@ -158,7 +158,7 @@ const sortTokens = (tokenList: TokenInfo[], order: string[]) => {
   const { ethChainId, titanChainId } = useMobileChainIds(network);
   const [networkStatusValue, setNetworkStatusValue] = useRecoilState(networkStatus);
 
-  const isActiveChain = (chainId:any) => [5050, 55004].includes(chainId);
+  const isActiveChain = (chainId:any) => [55007, 55004].includes(chainId);
   const { isConnected } = useAccount();
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const [, setActionMethodStatus] = useRecoilState(actionMethodStatus);
