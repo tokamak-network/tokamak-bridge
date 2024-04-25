@@ -30,7 +30,7 @@ export default function useTokenBalance(
         ? undefined
         : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
-    enabled: requireCall,
+    // enabled: requireCall,
   });
 
   const tokenBalance = useMemo(() => {

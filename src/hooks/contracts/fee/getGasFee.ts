@@ -21,6 +21,8 @@ import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
 import useWrap from "@/hooks/swap/useTonWrap";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -38,10 +40,13 @@ export function useGasFee() {
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
-  const { layer, connectedChainId } = useConnectedNetwork();
+  const { layer } = useConnectedNetwork();
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
   const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
+  const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
+  const { isBalanceOver } = useInputBalanceCheck();
+  const { isApproved } = useApprove();
 
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && tokenMarketPrice) {
@@ -49,6 +54,12 @@ export function useGasFee() {
       return gasUseEstimate;
     }
   }, [routingPath]);
+
+  const wrapUnwrapGasEstimate = useMemo(() => {
+    if (wrapUnwrapGasUsage) {
+      return wrapUnwrapGasUsage;
+    }
+  }, [wrapUnwrapGasUsage]);
 
   const withdrawContract = new ethers.Contract(
     TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
@@ -66,12 +77,27 @@ export function useGasFee() {
         switch (mode) {
           case "Swap":
             return swapGasUseEstimate;
+          case "ETH-Unwrap":
+            return wrapUnwrapGasEstimate;
+
+          case "ETH-Wrap":
+            return wrapUnwrapGasEstimate;
+
+          case "Unwrap":
+            return wrapUnwrapGasEstimate;
+          case "Wrap":
+            return wrapUnwrapGasEstimate;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
               (token) => token.address === inToken.address
             )[0];
             const outTokenAddress =
               supportedOutToken.address[outNetwork.chainName];
+
+            // Set the gas limit as default value when can't fetch from contract function due to insufficient balance or non-approval
+            if (isBalanceOver || !isApproved) {
+              return 200000;
+            }
 
             if (isETH) {
               return _depositETH_contract.estimateGas.depositETH({
@@ -97,6 +123,11 @@ export function useGasFee() {
               ],
             });
           case "Withdraw":
+            // Set the gas limit as default value when insufficient balance or non-approval
+            if (isBalanceOver || !isApproved) {
+              return 1400000;
+            }
+
             if (isETH) {
               const tx = await withdrawContract.populateTransaction.withdraw(
                 predeploys.OVM_ETH,
@@ -130,7 +161,6 @@ export function useGasFee() {
 
             const estimateProvider = signer?.provider;
             return estimateProvider?.estimateTotalGasCost(tx);
-
           default:
             return;
         }

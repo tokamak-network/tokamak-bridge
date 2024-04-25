@@ -19,7 +19,8 @@ const SwapSettingModal = () => {
       onClose={() => {
         setSettingStatus(false);
       }}
-      size={"xl"}
+      motionPreset="slideInBottom"
+      autoFocus={mobileView && false}
     >
       <ModalOverlay opacity={0.1} />
       <ModalContent
@@ -28,7 +29,7 @@ const SwapSettingModal = () => {
         mt={"auto"}
         mb={0}
         roundedTop={"2xl"}
-        
+        height="auto"
       >
         <SettingContainer isModal />
       </ModalContent>

@@ -121,7 +121,7 @@ export default function AccountContainer() {
             <Flex columnGap={"8px"}>
               <Flex
                 as={Link}
-                href="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge/wallet"
+                href="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge/wallet"
                 target="_blank"
                 cursor={"pointer"}
                 w="32px"

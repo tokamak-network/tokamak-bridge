@@ -28,6 +28,7 @@ export default function useConnectedNetwork() {
   //if it's enabled always, then useNetwork would make so many calls to check connectecd network datas when it's not connected
   const chainInfo = useMemo(() => {
     //connected wallet
+
     if (chain?.id) {
       const chainName = getKeyByValue(SupportedChainId, chain.id);
 
@@ -65,6 +66,8 @@ export default function useConnectedNetwork() {
   }, [chain, inNetwork]);
 
   const otherLayerChainInfo = useMemo(() => {
+    // Corrected the network sequence due to the removal of the Goerli network.
+    // Appropriate adjustments will be made upon the introduction of the Sepolia network. -@Robert
     if (chainInfo) {
       if (chainInfo.layer === "L1" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[2];
@@ -73,8 +76,8 @@ export default function useConnectedNetwork() {
         return supportedChain[4];
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
-      if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
-        return supportedChain[1];
+      // if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
+      //   return supportedChain[1];
     }
   }, [chainInfo]);
 

@@ -25,8 +25,9 @@ export function useInOutTokens() {
   const { mode, subMode } = useGetMode();
   const [, setTxData] = useRecoilState(txDataStatus);
 
+
   const inToken = useMemo(() => {
-    return inTokenRecoilValue && connectedChainId && chainName
+    const tokenValue = inTokenRecoilValue && connectedChainId && chainName
       ? inTokenRecoilValue.address[chainName] === null ||
         inTokenRecoilValue.address[chainName] === undefined
         ? null
@@ -46,6 +47,8 @@ export function useInOutTokens() {
             ),
           }
       : null;
+  
+    return tokenValue;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
 
   const outToken = useMemo(() => {
@@ -53,7 +56,7 @@ export function useInOutTokens() {
       return null;
     }
 
-    return outTokenRecoilValue && connectedChainId && chainName
+    const tokenValue =  outTokenRecoilValue && connectedChainId && chainName
       ? outTokenRecoilValue.address[chainName] === null ||
         outTokenRecoilValue.address[chainName] === undefined
         ? null
@@ -73,6 +76,8 @@ export function useInOutTokens() {
             ),
           }
       : null;
+
+      return tokenValue;
   }, [outTokenRecoilValue, connectedChainId, chainName, mode]);
 
   //initialize selectedTokens when a network is changed

@@ -29,6 +29,7 @@ export function useAllowance(params: {
     args: address && contractAddress ? [address, contractAddress] : undefined,
     watch: true,
   });
+
   const inputTokenAmount = inputTokenParam ?? 0;
 
   const isApproved = useMemo(() => {
@@ -47,7 +48,7 @@ export function useAllowance(params: {
     return false;
   }, [allowance, token, inputTokenAmount]);
 
-  return { isApproved };
+  return { isApproved, allowance };
 }
 
 export function useApproveToeken({

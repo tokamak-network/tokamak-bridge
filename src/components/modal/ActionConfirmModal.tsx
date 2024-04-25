@@ -13,6 +13,7 @@ import CloseButton from "../button/CloseButton";
 import Image from "next/image";
 import ARROW_ICON from "assets/icons/confirm/arrow.svg";
 import ARROW from "assets/icons/arrow.svg";
+import MobileConfirmArrow from "assets/icons/confirmArrow.svg";
 import TitanHalfRounded from "assets/tokens/titan_half_rounded.svg";
 import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -54,21 +55,32 @@ const OutTokenContainer = () => {
       />
       <Flex
         fontSize={18}
-        fontWeight={600}
-        columnGap={"8px"}
-        h={"24px"}
+        columnGap={"4px"}
+        h={"auto"}
         mt={"14px"}
         mb={"3px"}
+        flexWrap="wrap"
       >
-        <Text fontSize={{ base: 17, lg: 18 }}>
-          {trimAmount(amountOut, mobileView ? 6 : 8)}
+        <Text
+          fontSize={{ base: 17, lg: 18 }}
+          fontWeight={mobileView ? 700 : 600}
+        >
+          {trimAmount(amountOut, mobileView ? 8 : 8)}
         </Text>
-        <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
+        <Text
+          fontSize={{ base: 16, lg: 18 }}
+          fontWeight={mobileView ? 500 : 400}
+        >
           {outToken?.tokenSymbol}
         </Text>
       </Flex>
 
-      <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+      <Text
+        mt={"4px"}
+        fontSize={14}
+        fontWeight={mobileView ? 500 : 400}
+        color={"#A0A3AD"}
+      >
         ${outTokenWithPrice || "0"}
       </Text>
     </>
@@ -133,8 +145,8 @@ const TokenContainer = () => {
     >
       <Flex
         pos={"relative"}
-        w={{ base: "148px", lg: "176px" }}
-        h={{ base: "148px", lg: "168px" }}
+        w={{ base: "150px", lg: "176px" }}
+        h={{ base: "150px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
@@ -159,37 +171,50 @@ const TokenContainer = () => {
             </Flex>
           </Flex>
         )}
-
-        {/* <TokenSymbol
-          tokenType={inToken?.tokenSymbol ?? "default"}
-          w={mobileView ? 48 : 56}
-          h={mobileView ? 48 : 56}
-        /> */}
-        <TokenSymbolWithNetwork
-          tokenSymbol={(inToken?.tokenSymbol as string) ?? "default"}
-          chainId={inToken?.token.chainId}
-          symbolW={56}
-          symbolH={56}
-          networkSymbolH={20}
-          networkSymbolW={20}
-        />
+        {mobileView ? (
+          <TokenSymbol
+            tokenType={inToken?.tokenSymbol ?? "default"}
+            w={48}
+            h={48}
+          />
+        ) : (
+          <TokenSymbolWithNetwork
+            tokenSymbol={(inToken?.tokenSymbol as string) ?? "default"}
+            chainId={1}
+            symbolW={56}
+            symbolH={56}
+            networkSymbolH={20}
+            networkSymbolW={20}
+          />
+        )}
         <Flex
           fontSize={18}
-          fontWeight={600}
-          columnGap={"8px"}
+          columnGap={"4px"}
           h={"24px"}
           mt={"14px"}
           mb={"3px"}
+          flexWrap="wrap"
         >
-          <Text fontSize={{ base: 17, lg: 18 }}>
-            {trimAmount(inToken?.parsedAmount, mobileView ? 6 : 8)}
+          <Text
+            fontSize={{ base: 17, lg: 18 }}
+            fontWeight={mobileView ? 700 : 600}
+          >
+            {trimAmount(inToken?.parsedAmount, mobileView ? 8 : 8)}
           </Text>
-          <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
+          <Text
+            fontSize={{ base: 16, lg: 18 }}
+            fontWeight={mobileView ? 500 : 400}
+          >
             {inToken?.tokenSymbol}
           </Text>
         </Flex>
 
-        <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+        <Text
+          mt={"4px"}
+          fontSize={14}
+          fontWeight={mobileView ? 500 : 400}
+          color={"#A0A3AD"}
+        >
           ${inTokenWithPrice || "0"}
         </Text>
       </Flex>
@@ -200,11 +225,13 @@ const TokenContainer = () => {
         </Box>
       )}
 
-      {mobileView && <Image width={24} height={24} src={ARROW} alt={"ARROW"} />}
+      {mobileView && (
+        <Image width={16} src={MobileConfirmArrow} alt={"MobileConfirmArrow"} />
+      )}
 
       <Flex
-        w={{ base: "148px", lg: "176px" }}
-        h={{ base: "148px", lg: "168px" }}
+        w={{ base: "150px", lg: "176px" }}
+        h={{ base: "150px", lg: "168px" }}
         border={"1px solid #313442"}
         borderRadius={"12px"}
         alignItems={"center"}
@@ -249,34 +276,34 @@ export default function ActionConfirmModal() {
             <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
               Confirm {mode}
             </Text>
-            {!mobileView && (
-              <Box pos={"absolute"} right={0} top={"-6px"}>
-                <CloseButton onClick={onCloseConfirmModal} />
-              </Box>
-            )}
+            <Box pos={"absolute"} right={0} top={"-6px"}>
+              <CloseButton onClick={onCloseConfirmModal} />
+            </Box>
           </Flex>
-          <TokenContainer />
-          <Box mt={"16px"}>
-            <TransactionDetail isOnConfirm={true} isMobile />
+          <Box>
+            <TokenContainer />
+            <Box pt={"16px"} pb={"4px"}>
+              <TransactionDetail isOnConfirm={true} isMobile />
+            </Box>
+            <Button
+              w={"100%"}
+              h={"48px"}
+              fontSize={16}
+              fontWeight={600}
+              _active={{}}
+              _hover={{}}
+              bgColor={"#007AFF"}
+              color={"#fff"}
+              onClick={onClick}
+              isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
+              _disabled={{
+                color: "#8E8E92",
+                bgColor: "#17181D",
+              }}
+            >
+              Confirm {mode}
+            </Button>
           </Box>
-          <Button
-            w={"100%"}
-            h={"48px"}
-            fontSize={16}
-            fontWeight={600}
-            _active={{}}
-            _hover={{}}
-            bgColor={"#007AFF"}
-            color={"#fff"}
-            onClick={onClick}
-            isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
-            _disabled={{
-              color: "#8E8E92",
-              bgColor: "#17181D",
-            }}
-          >
-            Confirm {mode}
-          </Button>
         </Flex>
       </ModalContent>
     </Modal>

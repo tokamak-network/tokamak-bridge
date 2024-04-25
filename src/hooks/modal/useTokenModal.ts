@@ -8,15 +8,22 @@ import {
   isInputTokenAmount,
   isOutputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
+import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
+
 import { useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
+import useAmountModal from "@/hooks/modal/useAmountModal";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
+  const [mobileTokenModal, setMobileTokenModal] = useRecoilState(
+    mobileTokenModalStatus
+  );
+
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
   const [, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const status = useRecoilValue(bannerStatus);
@@ -29,10 +36,12 @@ export default function useTokenModal() {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-
   const { chainName } = useConnectedNetwork();
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
+
+  const simpleCloseCheck = mobileTokenModal;
+  const { onCloseAmountModal } = useAmountModal();
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
@@ -43,6 +52,9 @@ export default function useTokenModal() {
   const onOpenOutToken = () => {
     !(status === "Active" && isL2) && //disable outToken select UI when the maintenance banner is active
       setTokenModal({ isOpen: "OUTPUT", modalData: null });
+  };
+  const simpleCloseTokenModal = () => {
+    setMobileTokenModal(false);
   };
 
   const onCloseTokenModal = () => {
@@ -71,6 +83,7 @@ export default function useTokenModal() {
 
         //remove if same token is selected at other side
         if (isDuplicated) {
+          onCloseAmountModal();
           if (isMobile) {
             onCloseTokenModal();
             setIsInputAmount(false);
@@ -81,6 +94,7 @@ export default function useTokenModal() {
             setSelectedInToken(null);
           }
         }
+
         isInTokenOpen && chainName
           ? setSelectedInToken({
               ...tokenData,
@@ -97,7 +111,7 @@ export default function useTokenModal() {
             });
       }
     },
-    [chainName, selectedInToken, selectedOutToken]
+    [chainName, selectedInToken, selectedOutToken, tokenModal]
   );
 
   return {
@@ -107,5 +121,7 @@ export default function useTokenModal() {
     onOpenOutToken,
     onCloseTokenModal,
     setSelectedToken,
+    simpleCloseTokenModal,
+    simpleCloseCheck,
   };
 }

@@ -68,8 +68,19 @@ export function getEncodedPath(params: {
         SwapRouterContract.interface.encodeFunctionData("exactInput", [params])
       );
     } else {
+      //해당 로직 추가 (임시)
+      const amountOutBigInt = BigInt(routePath[0]["amountOut"]);
+      const scaleFactor = BigInt(1e18);
+      const slippageBigInt = BigInt(Math.floor(slippage * 1e18));
+      const denominator = (scaleFactor + slippageBigInt);
+      const scaledAmountOut = (amountOutBigInt * scaleFactor) / denominator;
+      //입력단에서 제한해야 할듯.
+      ////
+
       let amountOutMinimum = ethers.BigNumber.from(
-        Math.floor(routePath[0]["amountOut"] / (1 + slippage)).toString()
+        //복원시 위 임시 지우고 아래 주석 풀고 그 아래 지우기
+        //Math.floor(routePath[0]["amountOut"] / (1 + slippage)).toString()
+        scaledAmountOut.toString()
       );
       let SwapParams = {
         tokenIn: routePath[0]["tokenIn"]["address"],

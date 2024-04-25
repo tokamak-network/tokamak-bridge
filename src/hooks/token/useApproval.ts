@@ -40,7 +40,7 @@ export function useApprove() {
     }
   }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT]);
 
-  const { isApproved: approved } = useAllowance({
+  const { isApproved: approved, allowance } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress,
     token: inToken,
