@@ -8,12 +8,13 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Script from "next/script";
 import Header from "@/components/header/Index";
-import { Center, Box } from "@chakra-ui/react";
+import { Center, Box, Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import MobileView from "@/app/Mobile";
 import Footer from "@/components/footer";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 const GlobalComponents = () => {
   return (
@@ -44,6 +45,8 @@ const GoogleAnalyticsScript = () => {
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
   const { pcView, minorView } = useMediaView();
+  const { mode } = useGetMode();
+
   if (minorView) {
     return (
       <Center h={"100vh"} bg={"#0F0F12"} color={"#FFFFFF"}>
@@ -51,6 +54,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       </Center>
     );
   }
+
   return (
     <>
       <GoogleAnalyticsScript />
@@ -59,9 +63,18 @@ export default function Entry({ children }: { children: React.ReactNode }) {
           <ChakraProvidersForNextJs>
             <>
               <Header />
-              <Center h={"100vh"} bg={"#0F0F12"}>
-                {children}
-              </Center>
+              {mode !== "Pool" ? (
+                <Center h={"100vh"} bg={"#0F0F12"}>
+                  {children}
+                </Center>
+              ) : (
+                <Flex
+                  pt={{ base: "32px", lg: "140px" }}
+                  justifyContent={"center"}
+                >
+                  {children}
+                </Flex>
+              )}
               {pcView ? (
                 <Footer />
               ) : (

@@ -11,7 +11,6 @@ const Footer = () => {
       // bottom={6}
       mt={"auto"}
       pt={pcView ? 0 : 5}
-      bottom={pcView ? 6 : 0}
       w={"full"}
       minH={"77px"}
       maxH={"77px"}
