@@ -25,7 +25,7 @@ import {
 } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import GradientSpinner from "../../ui/gradientSpinner";
+import GradientSpinner from "../../ui/GradientSpinner";
 import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
@@ -36,10 +36,8 @@ import {
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
 
-import useAmountModal from "@/hooks/modal/useAmountModal"
-import {
-  mobileTokenModalStatus,
-} from "@/recoil/mobile/atom";
+import useAmountModal from "@/hooks/modal/useAmountModal";
+import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
 
 export default function MobileTokenInput(props: {
   inToken: boolean;
@@ -99,7 +97,8 @@ export default function MobileTokenInput(props: {
     mode === "ETH-Unwrap";
 
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
-  const { onOpenInAmount, onOpenOutAmount, onCloseAmountModal } = useAmountModal();
+  const { onOpenInAmount, onOpenOutAmount, onCloseAmountModal } =
+    useAmountModal();
   const [, setMobileTokenModal] = useRecoilState(mobileTokenModalStatus);
   const [preventBlur, setPreventBlur] = useState(false);
 
@@ -198,9 +197,8 @@ export default function MobileTokenInput(props: {
 
     if (tokenData) {
       if (inToken && selectedInToken) {
-
         // Value must be set when wrapping and using Max
-        if(switchable && selectedOutToken){
+        if (switchable && selectedOutToken) {
           setSelectedOutToken({
             ...selectedOutToken,
             amountBN: tokenData.data.balanceBN.value,
@@ -214,12 +212,10 @@ export default function MobileTokenInput(props: {
           amountBN: tokenData.data.balanceBN.value,
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
-
       }
       if (inToken === false && selectedOutToken) {
-
         // Value must be set when wrapping and using Max
-        if(switchable && selectedInToken){
+        if (switchable && selectedInToken) {
           setSelectedInToken({
             ...selectedInToken,
             amountBN: tokenData.data.balanceBN.value,
@@ -233,11 +229,9 @@ export default function MobileTokenInput(props: {
           amountBN: tokenData.data.balanceBN.value,
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
-        
       }
       return console.error("a input field not found");
     }
-    
   }, [
     customRef,
     inputRef,
@@ -253,31 +247,28 @@ export default function MobileTokenInput(props: {
 
   // Logic related to the Max value
   useEffect(() => {
-    const maxValue = tokenData?.data.balanceBN.value 
-      ? ethers.BigNumber.from(tokenData.data.balanceBN.value) 
+    const maxValue = tokenData?.data.balanceBN.value
+      ? ethers.BigNumber.from(tokenData.data.balanceBN.value)
       : ethers.constants.Zero;
-  
-    const inputValue = selectedInToken?.amountBN 
-      ? ethers.BigNumber.from(selectedInToken.amountBN.toString()) 
+
+    const inputValue = selectedInToken?.amountBN
+      ? ethers.BigNumber.from(selectedInToken.amountBN.toString())
       : ethers.constants.Zero;
-  
+
     setIsMax(maxValue.eq(inputValue));
 
-    if(isCursorBol) {
+    if (isCursorBol) {
       const inputElement = customRef ? customRef.current : inputRef.current;
       if (inputElement) {
         const originalType = inputElement.type;
-        inputElement.type = 'text';
+        inputElement.type = "text";
         inputElement.focus();
         inputElement.setSelectionRange(0, 0);
         inputElement.type = originalType;
       }
       setIsCursorBol(false);
     }
-
-
   }, [selectedInToken?.amountBN, tokenData?.data.balanceBN.value, isMax]);
-
 
   const handleFocus = () => {
     setIsFocused(true);
@@ -299,12 +290,12 @@ export default function MobileTokenInput(props: {
 
   const handleBlur = (e: any) => {
     if (preventBlur) {
-    setPreventBlur(false);
-    return;
+      setPreventBlur(false);
+      return;
     }
     handleCommonLogic();
   };
-  
+
   const onKeyDown = (e: any) => {
     if (e.key === "Enter") {
       e.preventDefault();
@@ -312,7 +303,6 @@ export default function MobileTokenInput(props: {
       handleCommonLogic();
     }
   };
-
 
   const valueProp = useMemo(() => {
     if (
@@ -359,7 +349,6 @@ export default function MobileTokenInput(props: {
     isTokenSearch,
     defaultValue,
   ]);
-
 
   const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: selectedInToken?.tokenName as string,
@@ -417,7 +406,6 @@ export default function MobileTokenInput(props: {
     }
   }, [amountOut, mode]);
 
-
   const { currentPrice } = usePriceTickConversion();
   const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
   const { subMode } = useGetMode();
@@ -459,10 +447,11 @@ export default function MobileTokenInput(props: {
           <GradientSpinner />
         </Flex>
       ) : (
-        <Flex flexDir={'column'}
-        border="1px solid"
-        borderColor="#59628d"
-        borderRadius="8px"
+        <Flex
+          flexDir={"column"}
+          border="1px solid"
+          borderColor="#59628d"
+          borderRadius="8px"
         >
           {/* {mobileView && <Warning />} */}
           <Flex
@@ -476,57 +465,56 @@ export default function MobileTokenInput(props: {
             ref={ref}
             justify={"space-between"}
           >
-          
-          {mobileView && !valueProp && !inToken ? (
-            <Flex h={"27px"} w={"20px"} >
-              <GradientSpinner />
-            </Flex>
-            ) :
-            <Flex align={"center"} justify={"space-between"} w={"100%"}>
-              {/* <Warning /> */}
-              <Input
-                autoFocus
-                autoComplete="off"
-                type="number"
-                pattern="[0-9]*"
-                flexGrow={1}
-                inputMode="decimal"
-                id={inToken ? "LeftInput" : "RightInput"}
-                w={"100%"}
-                h={"24px"}
-                m={0}
-                p={0}
-                border={{}}
-                _active={{}}
-                _focus={{ boxShadow: "none !important" }}
-                placeholder={inToken ? placeholder || "0" : "0"}
-                _placeholder={{
-                  color: "A0A3AD !important",
-                  // fontSize: mobileView ? 20 : 28
-                  fontWeight: "400 !important",
-                  fontSize: "16px !important",
-                }}
-                color={
-                  mobileView && isBalanceOver
-                    ? "#DD3A44"
-                    : mobileView && !inToken
-                    ? "#A0A3AD !important"
-                    : "#FFFFFF"
-                }
-                fontSize={"16px"}
-                fontWeight={600}
-                isDisabled={isDisabled}
-                _disabled={{ color: "#A0A3AD" }}
-                value={valueProp}
-                ref={customRef ? customRef : inputRef}
-                onChange={onChange}
-                onKeyDown={onKeyDown}
-                onFocus={handleFocus}
-                onBlur={handleBlur}
-                style={{ caretColor: "#FFFFFF" }}
-              ></Input>
-            </Flex>
-            }
+            {mobileView && !valueProp && !inToken ? (
+              <Flex h={"27px"} w={"20px"}>
+                <GradientSpinner />
+              </Flex>
+            ) : (
+              <Flex align={"center"} justify={"space-between"} w={"100%"}>
+                {/* <Warning /> */}
+                <Input
+                  autoFocus
+                  autoComplete="off"
+                  type="number"
+                  pattern="[0-9]*"
+                  flexGrow={1}
+                  inputMode="decimal"
+                  id={inToken ? "LeftInput" : "RightInput"}
+                  w={"100%"}
+                  h={"24px"}
+                  m={0}
+                  p={0}
+                  border={{}}
+                  _active={{}}
+                  _focus={{ boxShadow: "none !important" }}
+                  placeholder={inToken ? placeholder || "0" : "0"}
+                  _placeholder={{
+                    color: "A0A3AD !important",
+                    // fontSize: mobileView ? 20 : 28
+                    fontWeight: "400 !important",
+                    fontSize: "16px !important",
+                  }}
+                  color={
+                    mobileView && isBalanceOver
+                      ? "#DD3A44"
+                      : mobileView && !inToken
+                      ? "#A0A3AD !important"
+                      : "#FFFFFF"
+                  }
+                  fontSize={"16px"}
+                  fontWeight={600}
+                  isDisabled={isDisabled}
+                  _disabled={{ color: "#A0A3AD" }}
+                  value={valueProp}
+                  ref={customRef ? customRef : inputRef}
+                  onChange={onChange}
+                  onKeyDown={onKeyDown}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
+                  style={{ caretColor: "#FFFFFF" }}
+                ></Input>
+              </Flex>
+            )}
             {mobileView &&
               (marketPrice === "0.00" && !inToken ? (
                 <Flex w={"20px"} h={"27px"} mr={"80px"}>
