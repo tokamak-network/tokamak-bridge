@@ -230,6 +230,7 @@ export default function TokenCard(props: TokenCardProps) {
     }
   }, [amountOut, mode]);
 
+  console.log("tokenInfo?.tokenSymbol", tokenInfo?.tokenSymbol);
   return (
     <Flex
       w={typeof w === "string" ? w : `${w ?? 200}px`}
@@ -260,6 +261,8 @@ export default function TokenCard(props: TokenCardProps) {
                 ? "Ethereum"
                 : tokenInfo?.tokenSymbol === "WETH"
                 ? "Wrapped Ethereum"
+                : tokenInfo?.tokenName === "Tokamak Network Token"
+                ? "Tokamak Network"
                 : tokenInfo?.tokenName ?? "TOKEN"
             }
             isName={true}
