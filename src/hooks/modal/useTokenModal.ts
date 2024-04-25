@@ -9,7 +9,6 @@ import {
   isOutputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
-
 import { useCallback } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
@@ -17,6 +16,7 @@ import { TokenInfo } from "@/types/token/supportedToken";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import useAmountModal from "@/hooks/modal/useAmountModal";
+import { isETH, isWETH } from "@/utils/token/isETH";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
@@ -36,7 +36,7 @@ export default function useTokenModal() {
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
     selectedOutTokenStatus
   );
-  const { chainName } = useConnectedNetwork();
+  const { chainName, connectedChainId } = useConnectedNetwork();
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
   const isOutTokenOpen = tokenModal?.isOpen === "OUTPUT";
 
@@ -74,15 +74,26 @@ export default function useTokenModal() {
       },
       isMobile?: boolean
     ) => {
-      if (chainName) {
+      if (chainName && connectedChainId) {
         const isDuplicated = isInTokenOpen
           ? selectedOutToken?.address[chainName] ===
             tokenData.address[chainName]
           : selectedInToken?.address[chainName] ===
             tokenData.address[chainName];
+        //need to refact later to make it more readable
+        const isETHPair =
+          isInTokenOpen && isETH(tokenData)
+            ? isWETH(selectedOutToken, chainName)
+            : isInTokenOpen && isWETH(tokenData, chainName)
+            ? isETH(selectedOutToken)
+            : !isInTokenOpen && isETH(tokenData)
+            ? isWETH(selectedInToken, chainName)
+            : !isInTokenOpen && isWETH(tokenData, chainName)
+            ? isETH(selectedInToken)
+            : false;
 
         //remove if same token is selected at other side
-        if (isDuplicated) {
+        if (isDuplicated || isETHPair) {
           onCloseAmountModal();
           if (isMobile) {
             onCloseTokenModal();
@@ -111,7 +122,7 @@ export default function useTokenModal() {
             });
       }
     },
-    [chainName, selectedInToken, selectedOutToken, tokenModal]
+    [chainName, selectedInToken, selectedOutToken, tokenModal, connectedChainId]
   );
 
   return {

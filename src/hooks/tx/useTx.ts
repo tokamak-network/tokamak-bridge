@@ -219,9 +219,9 @@ export function useTx(params: {
   });
 
   const [, setTxData] = useRecoilState(txDataStatus);
-  const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
-  );
+  // const [selectedInToken, setSelectedInToken] = useRecoilState(
+  //   selectedInTokenStatus
+  // );
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
 
   const [, setTxPending] = useRecoilState(txPendingStatus);
@@ -292,13 +292,13 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
-      if (selectedInToken && txSort !== "Approve") {
-        setSelectedInToken({
-          ...selectedInToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
+      // if (selectedInToken && txSort !== "Approve") {
+      //   setSelectedInToken({
+      //     ...selectedInToken,
+      //     amountBN: null,
+      //     parsedAmount: null,
+      //   });
+      // }
 
       return setTxData({
         [hash]: {
