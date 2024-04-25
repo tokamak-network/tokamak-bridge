@@ -3,7 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useConnectedNetwork from "../network";
 import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
-import {  ethers } from "ethers";
+import { ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import {
   L1TxType,
@@ -27,7 +27,12 @@ export default function useGetTransaction() {
   const { layer } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
   const storedData = window.localStorage.getItem("txHistoryData");
-  const storedTxData = JSON.parse(storedData! === "undefined" ? "{}" : storedData!)
+  const storedTxData = JSON.parse(
+    storedData! === "undefined" ? "{}" : storedData!
+  );
+
+  const [depositTxs, setDepositTxs] = useState<any[]>([]);
+  const [withdrawTxs, setWithdrawTxs] = useState<any[]>([]);
 
   //titanSDK as an L2 provider for certain functions
   const l2ProSDK = titanSDK.asL2Provider(
@@ -55,7 +60,6 @@ export default function useGetTransaction() {
   const [depositLoading, setDepositLoading] = useState<
     "loading" | "present" | "absent"
   >("loading");
-
 
   //data from the subgraphs are re-fetched every time the user address, connected layer, or the network status changes
   useEffect(() => {
@@ -92,70 +96,75 @@ export default function useGetTransaction() {
               ? "loading"
               : "absent"
           );
-          let filteredUserTx;
-          if (!storedTxData || storedTxData[address as any] === "undefined") {
-            filteredUserTx = userTxfromSubgraph.formattedWithdraw;
-          }
-          
-          else {
-            const completedTx = storedTxData[address as any]?.filter((item: any) => item.currentStatus > 5 && item.event=== "withdraw")
-            filteredUserTx = userTxfromSubgraph.formattedWithdraw.filter((item: L1TxType) => {
-              return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
-            })      
-          }
+        let filteredUserTx;
+        if (!storedTxData || storedTxData[address as any] === "undefined") {
+          filteredUserTx = userTxfromSubgraph.formattedWithdraw;
+        } else {
+          const completedTx = storedTxData[address as any]?.filter(
+            (item: any) => item.currentStatus > 5 && item.event === "withdraw"
+          );
+          filteredUserTx = userTxfromSubgraph.formattedWithdraw.filter(
+            (item: L1TxType) => {
+              return !completedTx?.some(
+                (item2: any) => item.transactionHash === item2.l2txHash
+              );
+            }
+          );
+        }
 
         //creates an array for all the txs in the userTxfromSubgraph.formattedWithdraw data with additional information
         const l2WithdrawTxs = await Promise.all(
           // userTxfromSubgraph.formattedWithdraw.map(
-          filteredUserTx.map(
-            async (tx: L1TxType, index: number) => {
-              // the resolved object from the crossChain messenger sdk is needed for the other SDK calls
-              const resolved = await crossMessengerTokamak.toCrossChainMessage(
-                tx.transactionHash
-              ); //  office node ok
+            userTxfromSubgraph.formattedWithdraw.map(async (tx: L1TxType, index: number) => {
+            // the resolved object from the crossChain messenger sdk is needed for the other SDK calls
+            const resolved = await crossMessengerTokamak.toCrossChainMessage(
+              tx.transactionHash
+            ); //  office node ok
 
-              //returns the current status of the transaction.
-              const currentStatus = await crossMessenger.getMessageStatus(
-                resolved
-              ); //no office node
+            //returns the current status of the transaction.
+            const currentStatus = await crossMessenger.getMessageStatus(
+              resolved
+            ); //no office node
 
-              //the meaning of each status can be found here
-              //https://www.notion.so/onther/Lakmi-s-Handover-Tasks-74f3fe996632480bb827148b3488e382?pvs=4#c74175edb844412b8f20f920fca76e19
+            //the meaning of each status can be found here
+            //https://www.notion.so/onther/Lakmi-s-Handover-Tasks-74f3fe996632480bb827148b3488e382?pvs=4#c74175edb844412b8f20f920fca76e19
 
-              // returns l2 tx receipt
-              const l2TxReceipt = await l2Pro.getTransactionReceipt(
-                tx.transactionHash
+            // returns l2 tx receipt
+            const l2TxReceipt = await l2Pro.getTransactionReceipt(
+              tx.transactionHash
+            );
+
+            //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
+            if (l2TxReceipt.logs[3] !== undefined) {
+              const logs = ethers.utils.defaultAbiCoder.decode(
+                ["address", "uint256", "bytes"],
+                l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
               );
 
-              //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-              if (l2TxReceipt.logs[3] !== undefined) {
-                const logs = ethers.utils.defaultAbiCoder.decode(
-                  ["address", "uint256", "bytes"],
-                  l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
-                );
+              const l1Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
+              )[0];
 
-                const l1Token = ethers.utils.defaultAbiCoder.decode(
-                  ["address"],
-                  l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
-                )[0];
+              const l2Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
+              )[0];
 
-                const l2Token = ethers.utils.defaultAbiCoder.decode(
-                  ["address"],
-                  l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
-                )[0];
+              // if currentStatus is 2 or 3 then the tx is still in rollup period ( wait 5 mins for rollup).
+              //if status is 4, rollup is finish and tx ready for challenge period
 
-                // if currentStatus is 2 or 3 then the tx is still in rollup period ( wait 5 mins for rollup).
-                //if status is 4, rollup is finish and tx ready for challenge period
+              //if the l2txReceipt is not undefined, and rollup is not finished, return the withdraw tx object with the following data
+              if (
+                (currentStatus === 2 || currentStatus === 3) &&
+                l2TxReceipt !== undefined
+              ) {
+                //withdraw token amount can be found using the receipt logs
+                const amnt = BigInt(logs[1]).toString();
 
-                //if the l2txReceipt is not undefined, and rollup is not finished, return the withdraw tx object with the following data
-                if (
-                  (currentStatus === 2 || currentStatus === 3) &&
-                  l2TxReceipt !== undefined
-                ) {
-                  //withdraw token amount can be found using the receipt logs
-                  const amnt = BigInt(logs[1]).toString();
-
-                  return {
+                setWithdrawTxs((prev) => [
+                  ...prev,
+                  {
                     ...tx,
                     l2timeStamp: tx.blockTimestamp,
                     l2txHash: tx.transactionHash,
@@ -165,52 +174,67 @@ export default function useGetTransaction() {
                     l2TxReceipt: l2TxReceipt,
                     currentStatus: currentStatus,
                     resolved: resolved,
-                  };
-                }
+                  },
+                ]);
+                return;
 
-                // if the current status is 4 rollup has finished and is on l1 waiting for challenge period
-                else if (
-                  currentStatus === 4 &&
-                  l2TxReceipt.blockNumber !== undefined
-                ) {
-                  //the l2 block number is useful when calculating the time take for the rollup and challenge period to finish
-                  const l2BlockNum = await l2Pro.getBlock(
-                    l2TxReceipt.blockNumber
-                  );
+                // return {
+                //   ...tx,
+                //   l2timeStamp: tx.blockTimestamp,
+                //   l2txHash: tx.transactionHash,
+                //   _l1Token: l1Token,
+                //   _l2Token: l2Token,
+                //   _amount: amnt,
+                //   l2TxReceipt: l2TxReceipt,
+                //   currentStatus: currentStatus,
+                //   resolved: resolved,
+                // };
+              }
 
-                  // const messageTxIndex = l2TxReceipt.blockNumber - 1;
+              // if the current status is 4 rollup has finished and is on l1 waiting for challenge period
+              else if (
+                currentStatus === 4 &&
+                l2TxReceipt.blockNumber !== undefined
+              ) {
+                //the l2 block number is useful when calculating the time take for the rollup and challenge period to finish
+                const l2BlockNum = await l2Pro.getBlock(
+                  l2TxReceipt.blockNumber
+                );
 
-                  // const stateBatchAppendedEvent =
-                  //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
-                  //     messageTxIndex
-                  //   ); // no office node
+                // const messageTxIndex = l2TxReceipt.blockNumber - 1;
 
-                  // const bn = stateBatchAppendedEvent.blockNumber;
+                // const stateBatchAppendedEvent =
+                //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
+                //     messageTxIndex
+                //   ); // no office node
 
-                  // const block = await l1Pro.getBlock(bn);
+                // const bn = stateBatchAppendedEvent.blockNumber;
 
-                  // const challengePeriod =
-                  //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
-                  // const timeReadyForRelay = block.timestamp + challengePeriod;
+                // const block = await l1Pro.getBlock(bn);
 
-                  //in mainnet it takes 11 minutes for rollup to finish and 7 days for the challenge period. These two times are converted to seconds
-                  // in testnet it takes 2 minutes for rollup to finish and 10 seconds for the challenge period. Additional buffer of 150 seconds is given. These 3 times are converted to seconds
-                  const calculatedTimePeriod = isConnectedToMainNetwork
-                    ? 11 * 60 + 7 * 24 * 60 * 60
-                    : 2 * 60 + 10 + 150;
+                // const challengePeriod =
+                //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
+                // const timeReadyForRelay = block.timestamp + challengePeriod;
 
-                  //this is the unix timestamp when the tx is ready to be relayed (rollup & challenge is finished)
-                  const testPeriod =
-                    l2BlockNum.timestamp + calculatedTimePeriod;
+                //in mainnet it takes 11 minutes for rollup to finish and 7 days for the challenge period. These two times are converted to seconds
+                // in testnet it takes 2 minutes for rollup to finish and 10 seconds for the challenge period. Additional buffer of 150 seconds is given. These 3 times are converted to seconds
+                const calculatedTimePeriod = isConnectedToMainNetwork
+                  ? 11 * 60 + 7 * 24 * 60 * 60
+                  : 2 * 60 + 10 + 150;
 
-                  // const challengePeriod =
-                  //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
-                  const timeReadyForRelay = testPeriod;
+                //this is the unix timestamp when the tx is ready to be relayed (rollup & challenge is finished)
+                const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
 
-                  const amnt = BigInt(logs[1]).toString();
+                // const challengePeriod =
+                //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
+                const timeReadyForRelay = testPeriod;
 
-                  //if the tx is ready to be relayed, return the following information
-                  return {
+                const amnt = BigInt(logs[1]).toString();
+
+                //if the tx is ready to be relayed, return the following information
+                setWithdrawTxs((prev) => [
+                  ...prev,
+                  {
                     ...tx,
                     l2TxReceipt: l2TxReceipt,
                     l2timeStamp: tx.blockTimestamp,
@@ -222,107 +246,149 @@ export default function useGetTransaction() {
                     timeReadyForRelay: Number(timeReadyForRelay),
                     currentStatus: currentStatus,
                     resolved: resolved,
-                  };
-                }
-                //if the status is 5 or 6, check if the message receipt exists. returns the tx receipt of the corresponding l1 withdraw tx
-                //If the receipt is not null, then the tx has been relayed to l1 and an L1 tx exists.
-                //If the receipt is null, L1 tx does not exist yet.
-                else {
-                  const receipt = await crossMessenger.getMessageReceipt(
-                    resolved
-                  ); //  no office node
+                  },
+                ]);
+                return;
 
-                  if (
-                    l2TxReceipt.blockNumber !== undefined &&
-                    receipt != null &&
-                    receipt.transactionReceipt != null
-                  ) {
-                    //l1 tx transaction hash
-                    const matchTx = receipt.transactionReceipt.transactionHash;
+                // return {
+                //   ...tx,
+                //   l2TxReceipt: l2TxReceipt,
+                //   l2timeStamp: tx.blockTimestamp,
+                //   l2txHash: tx.transactionHash,
+                //   event: "withdraw",
+                //   _l1Token: l1Token,
+                //   _l2Token: l2Token,
+                //   _amount: amnt,
+                //   timeReadyForRelay: Number(timeReadyForRelay),
+                //   currentStatus: currentStatus,
+                //   resolved: resolved,
+                // };
+              }
+              //if the status is 5 or 6, check if the message receipt exists. returns the tx receipt of the corresponding l1 withdraw tx
+              //If the receipt is not null, then the tx has been relayed to l1 and an L1 tx exists.
+              //If the receipt is null, L1 tx does not exist yet.
+              else {
+                const receipt = await crossMessenger.getMessageReceipt(
+                  resolved
+                ); //  no office node
 
-                    //finds the corresponding data object of the l1 tx from the subgraph data
-                    const l1tx =
-                      userTxfromSubgraph.formattedL1WithdrawResults.filter(
-                        (tx: EthType | Erc20Type) => {
-                          return tx.transactionHash === matchTx;
-                        }
-                      )[0];
+                if (
+                  l2TxReceipt.blockNumber !== undefined &&
+                  receipt != null &&
+                  receipt.transactionReceipt != null
+                ) {
+                  //l1 tx transaction hash
+                  const matchTx = receipt.transactionReceipt.transactionHash;
 
-                    //if subgraph data exists for the l1 tx, then return the following data
-                    if (l1tx) {
-                      let copy = {
-                        ...tx,
-                        ...l1tx,
-                        l2TxReceipt: l2TxReceipt,
-                        l2timeStamp: tx.blockTimestamp,
-                        l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
-                        l1Block: l1tx.blockNumber,
-                        l2txHash: tx.transactionHash,
-                        l1txHash: l1tx.transactionHash,
-                        event: "withdraw",
-                        _amount: l1tx._amount,
-                        _l1Token: l1tx._l1Token,
-                        _l2Token: l1tx._l2Token,
-                        currentStatus: currentStatus,
-                        resolved: resolved,
-                      };
-                      return copy;
-                    }
-                  }
-                  //if there is no l1 receipt, then return the following data
-                  else {
-                    const amnt = BigInt(logs[1]).toString();
+                  //finds the corresponding data object of the l1 tx from the subgraph data
+                  const l1tx =
+                    userTxfromSubgraph.formattedL1WithdrawResults.filter(
+                      (tx: EthType | Erc20Type) => {
+                        return tx.transactionHash === matchTx;
+                      }
+                    )[0];
+
+                  //if subgraph data exists for the l1 tx, then return the following data
+                  if (l1tx) {
                     let copy = {
                       ...tx,
+                      ...l1tx,
                       l2TxReceipt: l2TxReceipt,
                       l2timeStamp: tx.blockTimestamp,
+                      l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
+                      l1Block: l1tx.blockNumber,
                       l2txHash: tx.transactionHash,
+                      l1txHash: l1tx.transactionHash,
                       event: "withdraw",
-                      _l1Token: l1Token,
-                      _l2Token: l2Token,
-                      _amount: amnt,
+                      _amount: l1tx._amount,
+                      _l1Token: l1tx._l1Token,
+                      _l2Token: l1tx._l2Token,
                       currentStatus: currentStatus,
                       resolved: resolved,
                     };
-                    return copy;
+
+                    setWithdrawTxs((prev) => [...prev, copy]);
+                    return;
+                    // return copy;
                   }
+                }
+                //if there is no l1 receipt, then return the following data
+                else {
+                  const amnt = BigInt(logs[1]).toString();
+                  let copy = {
+                    ...tx,
+                    l2TxReceipt: l2TxReceipt,
+                    l2timeStamp: tx.blockTimestamp,
+                    l2txHash: tx.transactionHash,
+                    event: "withdraw",
+                    _l1Token: l1Token,
+                    _l2Token: l2Token,
+                    _amount: amnt,
+                    currentStatus: currentStatus,
+                    resolved: resolved,
+                  };
+
+                  setWithdrawTxs((prev) => [...prev, copy]);
+                  return;
+                  // return copy;
                 }
               }
             }
-          )
+          })
         );
-        
+
         // remove undefined fields of old Tx using old smart contract schema
-        const filteredl2WithdrawTxs = l2WithdrawTxs.filter(
-          (tx: FullWithTx) => tx !== undefined
-        );
+        // const filteredl2WithdrawTxs = l2WithdrawTxs.filter(
+        //   (tx: FullWithTx) => tx !== undefined
+        // );
 
         //l2WithdrawTxs returns all the withdraw txs that belong to the user.
         //sort the txs by the descending order of the l2 timestamp
-        const allTxs =
-          layer == "L1"
-            ? filteredl2WithdrawTxs.sort(
-                (tx1: FullWithTx, tx2: FullWithTx) =>
-                  Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-              )
-            : filteredl2WithdrawTxs.sort(
-                (tx1: FullWithTx, tx2: FullWithTx) =>
-                  Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-              );
+        // const allTxs =
+        //   layer == "L1"
+        //     ? filteredl2WithdrawTxs.sort(
+        //         (tx1: FullWithTx, tx2: FullWithTx) =>
+        //           Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+        //       )
+        //     : filteredl2WithdrawTxs.sort(
+        //         (tx1: FullWithTx, tx2: FullWithTx) =>
+        //           Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+        //       );
 
         //if the length of the above sorted array > 0 and if the userTxfromSubgraph.formattedWithdraw.length > 0 set the loading status to present
-        setWithdrawLoading(
-          userTxfromSubgraph.formattedWithdraw.length > 0 && allTxs.length > 0
-            ? "present"
-            : userTxfromSubgraph.formattedWithdraw.length === 0 || allTxs.length === 0 //if there are no txs from subgraph set the loading status to absent
-            ? "absent"
-            : "loading"
-        );
-        return setTDataWithdraw(allTxs);
+        // setWithdrawLoading(
+        //   userTxfromSubgraph.formattedWithdraw.length > 0 && allTxs.length > 0
+        //     ? "present"
+        //     : userTxfromSubgraph.formattedWithdraw.length === 0 ||
+        //       allTxs.length === 0 //if there are no txs from subgraph set the loading status to absent
+        //     ? "absent"
+        //     : "loading"
+        // );
+        // return setTDataWithdraw(allTxs);
       }
     },
     [userTxfromSubgraph]
   );
+
+  useEffect(() => {
+    const allTxs = [...withdrawTxs];
+
+    layer == "L1"
+      ? allTxs.sort(
+          (tx1: FullWithTx, tx2: FullWithTx) =>
+            Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+        )
+      : allTxs.sort(
+          (tx1: FullWithTx, tx2: FullWithTx) =>
+            Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+        );
+
+    setTDataWithdraw(allTxs);
+  }, [withdrawTxs, layer]);
+
+  useEffect(() => {
+    console.log(tDataWithdraw);
+  }, [tDataWithdraw]);
 
   //this function fetches the deposit txs and their data and reformats the data
   //takes the input boolean parameter 'set' to check if the loading status of the txs should be set or not
@@ -340,80 +406,161 @@ export default function useGetTransaction() {
           ? setDepositLoading("loading")
           : setDepositLoading("absent");
 
-          let filteredDepositTxs;
-          if (storedTxData && storedTxData[address as any] !== "undefined" && storedTxData[address as any]?.length > 0) {
-            const completedTx = storedTxData?.address?.filter((item: any) => item.event=== "deposit" && item.l2txHash)
-  
-            filteredDepositTxs = userTxfromSubgraph.formattedDeposit.filter((item: L1TxType) => {
-              return !completedTx?.some((item2: any) => item.transactionHash === item2.l2txHash );
-            })            
-          }
-          
-          else {
-            filteredDepositTxs = userTxfromSubgraph.formattedDeposit;
-          }
+        let filteredDepositTxs;
+        if (
+          storedTxData &&
+          storedTxData[address as any] !== "undefined" &&
+          storedTxData[address as any]?.length > 0
+        ) {
+          const completedTx = storedTxData?.address?.filter(
+            (item: any) => item.event === "deposit" && item.l2txHash
+          );
+
+          filteredDepositTxs = userTxfromSubgraph.formattedDeposit.filter(
+            (item: L1TxType) => {
+              return !completedTx?.some(
+                (item2: any) => item.transactionHash === item2.l2txHash
+              );
+            }
+          );
+        } else {
+          filteredDepositTxs = userTxfromSubgraph.formattedDeposit;
+        }
 
         //creates an array for all the txs in the userTxfromSubgraph.formattedDeposit data with additional information
         // these are the deposit txs that are already appeared on L2
         const l2DepTxs = await Promise.all(
           // userTxfromSubgraph.formattedDeposit
-          filteredDepositTxs
-            .map(async (tx: UserL2Transaction) => {
-              //gets the l1 deposit tx data from the titan sdk
-              const l1Tx = await l2ProSDK.getTransaction(tx.transactionHash);
+          userTxfromSubgraph.formattedWithdraw.map(async (tx: UserL2Transaction) => {
+            //gets the l1 deposit tx data from the titan sdk
+            const l1Tx = await l2ProSDK.getTransaction(tx.transactionHash);
 
-              //gets the l2 block from the titan sdk
-              const l2block = await l2ProSDK.getBlock(Number(tx.blockNumber));
+            //gets the l2 block from the titan sdk
+            const l2block = await l2ProSDK.getBlock(Number(tx.blockNumber));
 
-              //gets the l1 block from the titan sdk using the l2 deposit tx data fetched form the SDK
-              const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak provider
+            //gets the l1 block from the titan sdk using the l2 deposit tx data fetched form the SDK
+            const l1Block = await l1Pro.getBlock(Number(l1Tx.l1BlockNumber)); ///take a look to use proviver instead of tokamak provider
 
-              // filter the corresponding subgraph tx for this tx using the message Nonce
-              const l1tx = userTxfromSubgraph.formattedL1DepositResults?.filter(
-                (l1tx: SentMessages) => {
-                  return Number(l1tx.messageNonce) === l1Tx.nonce;
-                }
-              );
-
-              //if there is a corresponding tx from the subgraph exists return the following data
-              if (l1tx.length > 0) {
-                const l1TxHash = l1tx[0].transactionHash;
-                const l1timeStamp = Number(l1tx[0].blockTimestamp);
-                let txCopy = {
-                  ...tx,
-                  ...l1Tx,
-                  l2block: l2block,
-                  l2timeStamp: l2block.timestamp,
-                  l1timeStamp: l1timeStamp,
-                  l1Block: l1Block,
-                  l2txHash: tx.transactionHash,
-                  l1txHash: l1TxHash,
-                  event: "deposit",
-                  _amount: l1tx[0]._amount,
-                  _l1Token: l1tx[0]._l1Token,
-                  _l2Token: l1tx[0]._l2Token,
-                };
-                return txCopy;
+            // filter the corresponding subgraph tx for this tx using the message Nonce
+            const l1tx = userTxfromSubgraph.formattedL1DepositResults?.filter(
+              (l1tx: SentMessages) => {
+                return Number(l1tx.messageNonce) === l1Tx.nonce;
               }
-            })
-            .sort(
-              (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
-                tx1.blockNumber - tx2.blockNumber
-            ) //sort the txs by the block number in ascending order
+            );
+
+            //if there is a corresponding tx from the subgraph exists return the following data
+            if (l1tx.length > 0) {
+              const l1TxHash = l1tx[0].transactionHash;
+              const l1timeStamp = Number(l1tx[0].blockTimestamp);
+
+              let txCopy = {
+                ...tx,
+                ...l1Tx,
+                l2block: l2block,
+                l2timeStamp: l2block.timestamp,
+                l1timeStamp: l1timeStamp,
+                l1Block: l1Block,
+                l2txHash: tx.transactionHash,
+                l1txHash: l1TxHash,
+                event: "deposit",
+                _amount: l1tx[0]._amount,
+                _l1Token: l1tx[0]._l1Token,
+                _l2Token: l1tx[0]._l2Token,
+              };
+
+              setDepositTxs((prev) => [...prev, txCopy]);
+              return;
+
+              // return txCopy;
+            }
+          })
+          // .sort(
+          //   (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
+          //     tx1.blockNumber - tx2.blockNumber
+          // ) //sort the txs by the block number in ascending order
         );
 
         //all the deposit txs in l1 including txs with corresponding l2 txs and txs without l2 txs
+        // const l1DepTxs = await Promise.all(
+        //   userTxfromSubgraph.formattedL1DepositResults.map(async (tx: any) => {
+        //     //filter the txs with a corresponding l2 tx using the message nonce
+        //     const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
+        //       return (
+        //         l2tx !== undefined && l2tx.nonce === Number(tx.messageNonce)
+        //       );
+        //     });
+
+        //     //if there is a corresponding l2 tx return the following data
+        //     if (l2tx.length > 0) {
+        //       const l2BlockNum = l2tx[0].blockNumber;
+        //       const l1Block = l2tx[0].l1Block;
+        //       const l1timeStamp = l1Block.timestamp;
+        //       let txCopy = {
+        //         ...tx,
+        //         l2timeStamp: l2tx[0].l2timeStamp,
+        //         l1timeStamp: l1timeStamp,
+        //         l1Block: l1Block,
+        //         l2txHash: l2tx[0].transactionHash,
+        //         l1txHash: tx.transactionHash,
+        //         _amount: tx._amount,
+        //         _l1Token: tx._l1Token,
+        //         _l2Token: tx._l2Token,
+        //       };
+        //       return txCopy;
+        //     }
+        //     //if there is no l2 tx, return this information
+        //     else {
+        //       const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
+        //       const l1timeStamp = l1Block.timestamp;
+        //       let txCopy = {
+        //         ...tx,
+        //         l1timeStamp: l1timeStamp,
+        //         l1txHash: tx.transactionHash,
+        //       };
+
+        //       console.log("This is called");
+        //       return txCopy;
+        //     }
+        //   })
+        // );
+
+        // const txLogs = l1DepTxs;
+
+        // //if the length of the above l1DepTxs array > 0 and if the userTxfromSubgraph.formattedL1DepositResults.length > 0 set the loading status to present
+        // const status =
+        //   txLogs.length > 0
+        //     ? "present"
+        //     : userTxfromSubgraph?.formattedL1DepositResults.length === 0 //if there are no txs from subgraph set the loading status to absent
+        //     ? "absent"
+        //     : "loading";
+        // setDepositLoading(status);
+
+        // return setTDataDeposit(txLogs);
+      }
+    },
+    [userTxfromSubgraph, address]
+  );
+
+  useEffect(() => {
+    if (l1Pro) {
+      const f = async () => {
+        const temp = [...depositTxs];
+
+        temp.sort(
+          (tx1: UserL2Transaction, tx2: UserL2Transaction) =>
+            tx1.blockNumber - tx2.blockNumber
+        );
+
         const l1DepTxs = await Promise.all(
           userTxfromSubgraph.formattedL1DepositResults.map(async (tx: any) => {
-
             //filter the txs with a corresponding l2 tx using the message nonce
-            const l2tx = l2DepTxs.filter((l2tx: FullDepTx) => {
+            const l2tx = temp.filter((l2tx: FullDepTx) => {
               return (
                 l2tx !== undefined && l2tx.nonce === Number(tx.messageNonce)
               );
             });
 
-              //if there is a corresponding l2 tx return the following data
+            //if there is a corresponding l2 tx return the following data
             if (l2tx.length > 0) {
               const l2BlockNum = l2tx[0].blockNumber;
               const l1Block = l2tx[0].l1Block;
@@ -430,7 +577,7 @@ export default function useGetTransaction() {
                 _l2Token: tx._l2Token,
               };
               return txCopy;
-            } 
+            }
             //if there is no l2 tx, return this information
             else {
               const l1Block = await l1Pro.getBlock(Number(tx.blockNumber));
@@ -440,27 +587,19 @@ export default function useGetTransaction() {
                 l1timeStamp: l1timeStamp,
                 l1txHash: tx.transactionHash,
               };
+
+              console.log("This is called");
               return txCopy;
             }
           })
         );
 
-        const txLogs = l1DepTxs;
+        setTDataDeposit(l1DepTxs);
+      };
 
-        //if the length of the above l1DepTxs array > 0 and if the userTxfromSubgraph.formattedL1DepositResults.length > 0 set the loading status to present
-        const status =
-          txLogs.length > 0
-            ? "present"
-            : userTxfromSubgraph?.formattedL1DepositResults.length === 0 //if there are no txs from subgraph set the loading status to absent
-            ? "absent"
-            : "loading";
-        setDepositLoading(status);
-
-        return setTDataDeposit(txLogs);
-      }
-    },
-    [userTxfromSubgraph, address]
-  );
+      f();
+    }
+  }, [depositTxs, userTxfromSubgraph, l1Pro]);
 
   //when the subgraph data, the connected layer or the network changes, refetch both withdraw and deposit txs
   useEffect(() => {
@@ -468,65 +607,91 @@ export default function useGetTransaction() {
     fetchDepositTransactions(true);
   }, [userTxfromSubgraph, layer, isConnectedToMainNetwork]);
 
-
   //if none of the queries in the fetchUserTransactions returns any txs, set the loading status to absent
-  const stat = useMemo(() => {
-    if (
-      userTxfromSubgraph !== undefined &&
-      userTxfromSubgraph.formattedDeposit.length === 0 &&
-      userTxfromSubgraph.formattedL1DepositResults.length === 0 &&
-      userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
-      userTxfromSubgraph.formattedWithdraw.length === 0
-    ) {
-      return "absent";
-    }
-//set the overa;; loading state according to the loading state of each deposit & withdraw
-    return withdrawLoading === "loading" || depositLoading === "loading"
-      ? "loading"
-      : withdrawLoading === "absent" && depositLoading === "absent"
-      ? "absent"
-      : withdrawLoading === "present" || depositLoading === "present"
-      ? "present"
-      : "loading";
-  }, [address, withdrawLoading, depositLoading]);
-
+  // const stat = useMemo(() => {
+  //   if (
+  //     userTxfromSubgraph !== undefined &&
+  //     userTxfromSubgraph.formattedDeposit.length === 0 &&
+  //     userTxfromSubgraph.formattedL1DepositResults.length === 0 &&
+  //     userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
+  //     userTxfromSubgraph.formattedWithdraw.length === 0
+  //   ) {
+  //     return "absent";
+  //   }
+  //   //set the overa;; loading state according to the loading state of each deposit & withdraw
+  //   return withdrawLoading === "loading" || depositLoading === "loading"
+  //     ? "loading"
+  //     : withdrawLoading === "absent" && depositLoading === "absent"
+  //     ? "absent"
+  //     : withdrawLoading === "present" || depositLoading === "present"
+  //     ? "present"
+  //     : "loading";
+  // }, [address, withdrawLoading, depositLoading]);
 
   //if there is not subgraph data for any of the tx types, return empty arrow
-  const allTxs =
-    userTxfromSubgraph !== undefined &&
-    userTxfromSubgraph.formattedDeposit.length === 0 &&
-    userTxfromSubgraph.formattedL1DepositResults.length === 0 &&
-    userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
-    userTxfromSubgraph.formattedWithdraw.length === 0
-      ? []
-      : stat === "present" //if there are tx data, sort them according to the following criteria 
-      ? tDataWithdraw
-          .concat(tDataDeposit)
-          .sort((tx1: FullDepTx, tx2: FullDepTx) =>
-            // Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp) ||
-            // Number(tx1.l2timeStamp) - Number(tx2.l2timeStamp)
-            tx2.l1timeStamp && tx1.l1timeStamp
-              ? Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
-              : tx2.l1timeStamp && tx1.l1timeStamp === undefined
-              ? Number(tx2.l1timeStamp) - Number(tx1.l2timeStamp)
-              : tx2.l1timeStamp === undefined && tx1.l1timeStamp
-              ? Number(tx2.l2timeStamp) - Number(tx1.l1timeStamp)
-              : Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
-          )
-      : [];
+  // const allTxs =
+  //   userTxfromSubgraph !== undefined &&
+  //   userTxfromSubgraph.formattedDeposit.length === 0 &&
+  //   userTxfromSubgraph.formattedL1DepositResults.length === 0 &&
+  //   userTxfromSubgraph.formattedL1WithdrawResults.length === 0 &&
+  //   userTxfromSubgraph.formattedWithdraw.length === 0
+  //     ? []
+  //     : stat === "present" //if there are tx data, sort them according to the following criteria
+  //     ? tDataWithdraw
+  //         .concat(tDataDeposit)
+  //         .sort((tx1: FullDepTx, tx2: FullDepTx) =>
+  //           // Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp) ||
+  //           // Number(tx1.l2timeStamp) - Number(tx2.l2timeStamp)
+  //           tx2.l1timeStamp && tx1.l1timeStamp
+  //             ? Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+  //             : tx2.l1timeStamp && tx1.l1timeStamp === undefined
+  //             ? Number(tx2.l1timeStamp) - Number(tx1.l2timeStamp)
+  //             : tx2.l1timeStamp === undefined && tx1.l1timeStamp
+  //             ? Number(tx2.l2timeStamp) - Number(tx1.l1timeStamp)
+  //             : Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+  //         )
+  //     : [];
 
-      let newTxData: any = {};
-      
-      if (storedTxData && storedTxData[address as any] && storedTxData[address as any]?.length > 0) {
-        newTxData[address as any] = storedTxData[address as any]?.map((item: any) => {
-          const matchingItem = allTxs?.find((item2: any) => item.l2txHash === item2.l2txHash);
-          return matchingItem ? { ...item, matchingItem } : item;
-        })
-      }
-      else {
-        newTxData[address as any] = allTxs;
-      }
-      window.localStorage.setItem("txHistoryData", JSON.stringify(newTxData));
+  const allTxs = useMemo(() => {
+    const temp = [...tDataWithdraw, ...tDataDeposit];
 
-  return { depositTxs: newTxData[address as any], loadingState: stat };
+    temp.sort((tx1: FullDepTx, tx2: FullDepTx) =>
+      // Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp) ||
+      // Number(tx1.l2timeStamp) - Number(tx2.l2timeStamp)
+      tx2.l1timeStamp && tx1.l1timeStamp
+        ? Number(tx2.l1timeStamp) - Number(tx1.l1timeStamp)
+        : tx2.l1timeStamp && tx1.l1timeStamp === undefined
+        ? Number(tx2.l1timeStamp) - Number(tx1.l2timeStamp)
+        : tx2.l1timeStamp === undefined && tx1.l1timeStamp
+        ? Number(tx2.l2timeStamp) - Number(tx1.l1timeStamp)
+        : Number(tx2.l2timeStamp) - Number(tx1.l2timeStamp)
+    );
+
+    return temp;
+  }, [tDataWithdraw, tDataDeposit]);
+
+  console.log(allTxs);
+
+  // let newTxData: any = {};
+
+  // if (
+  //   storedTxData &&
+  //   storedTxData[address as any] &&
+  //   storedTxData[address as any]?.length > 0
+  // ) {
+  //   newTxData[address as any] = storedTxData[address as any]?.map(
+  //     (item: any) => {
+  //       const matchingItem = allTxs?.find(
+  //         (item2: any) => item.l2txHash === item2.l2txHash
+  //       );
+  //       return matchingItem ? { ...item, matchingItem } : item;
+  //     }
+  //   );
+  // } else {
+  //   newTxData[address as any] = allTxs;
+  // }
+  // window.localStorage.setItem("txHistoryData", JSON.stringify(newTxData));
+
+  // return { depositTxs: newTxData[address as any], loadingState: stat };
+  return { depositTxs: allTxs, loadingState: "present" };
 }
