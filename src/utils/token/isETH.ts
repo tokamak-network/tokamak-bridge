@@ -13,16 +13,6 @@ import {
 } from "@/types/network/supportedNetwork";
 import { TokenInfo } from "@/types/token/supportedToken";
 
-export function isETH(token: TokenInfo | null) {
-  if (token === null) return false;
-  return token?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET ||
-      SupportedChainId.SEPOLIA ||
-      SupportedChainId.TITAN ||
-      SupportedChainId.TITAN_SEPOLIA
-  );
-}
-
 export function getWETHAddress(
   chainName: SupportedChainProperties["chainName"]
 ) {
@@ -40,13 +30,29 @@ export function getWETHAddress(
 
 export function getWETHAddressByChainId(chainId: number) {
   const wethAddress: Record<number, string> = {
-    [1]: MAINNET_CONTRACTS.WETH_ADDRESS,
-    [5]: GOERLI_CONTRACTS.WETH_ADDRESS,
-    [55004]: TOKAMAK_CONTRACTS.WETH_ADDRESS,
-    [5050]: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
-    [11155111]: SEPOLIA_CONTRACTS.WETH_ADDRESS,
-    [55007]: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
+    [SupportedChainId.MAINNET]: MAINNET_CONTRACTS.WETH_ADDRESS,
+    [SupportedChainId.TITAN]: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+    [SupportedChainId.SEPOLIA]: SEPOLIA_CONTRACTS.WETH_ADDRESS,
+    [SupportedChainId.TITAN_SEPOLIA]: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
   };
 
   return wethAddress[chainId];
+}
+
+export function isETH(token: TokenInfo | null) {
+  if (token === null) return false;
+  return token?.isNativeCurrency?.includes(
+    SupportedChainId.MAINNET ||
+      SupportedChainId.SEPOLIA ||
+      SupportedChainId.TITAN ||
+      SupportedChainId.TITAN_SEPOLIA
+  );
+}
+
+export function isWETH(
+  token: TokenInfo | null,
+  chainName: SupportedChainProperties["chainName"]
+) {
+  if (token === null) return false;
+  return token?.address[chainName] === getWETHAddress(chainName);
 }

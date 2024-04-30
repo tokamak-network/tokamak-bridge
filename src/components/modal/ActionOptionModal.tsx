@@ -59,8 +59,6 @@ const ActionMethodItem = ({
   const { isConnected } = useAccount();
   const theme = useTheme();
   const router = useRouter();
-  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
-  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   const handleMethodItem = async () => {
     try {
@@ -82,25 +80,26 @@ const ActionMethodItem = ({
               inNetwork: selectedInNetwork,
               outNetwork: selectedOutNetwork,
             }),
-            setActionMethodStatus(false))
-          : setNetwork({
+            handleClose()
+          )
+          : (setNetwork({
               inNetwork: selectedInNetwork,
               outNetwork: selectedOutNetwork,
-            });
+            }),
+            handleClose()
+          );
       } else if (selectedInNetwork.chainId === connectedChainId && !(title === "Pools")) {
-        return setNetwork({
+        return (setNetwork({
           inNetwork: selectedInNetwork,
           outNetwork: selectedOutNetwork,
-        });
+          }),
+          handleClose()
+        );
       }
     } finally {
       if (title === "Pools") {
         router.push("pools");
       }
-      handleClose();
-      // 메뉴 다시 선택 시, 둘다 초기화
-      setSelectedInToken(null);
-      setSelectedOutToken(null);
       if (isError) {
         console.error(`Couldn't switch network`);
       }
@@ -108,12 +107,12 @@ const ActionMethodItem = ({
   };
 
   const fromIcon = useMemo(
-    () => (from === 1 || from === 5 ? ETH_CIRCLE : TITAN_CIRCLE),
+    () => (from === 1 || from === 11155111 ? ETH_CIRCLE : TITAN_CIRCLE),
     [from]
   );
 
   const toIcon = useMemo(
-    () => (to === 55004 || to === 5050 ? TITAN_CIRCLE : ETH_CIRCLE),
+    () => (to === 55004 || to === 55007 ? TITAN_CIRCLE : ETH_CIRCLE),
     [to]
   );
 
@@ -153,9 +152,9 @@ const ActionOptionModal = () => {
   const { switchNetworkAsync, isError } = useSwitchNetwork();
   const [, setNetwork] = useRecoilState(networkStatus);
   const { mode } = useGetMode();
-
   const { mobileView } = useMediaView();
-
+  const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
+  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   ////////////////////////
   const { ethChainId, titanChainId } = useMobileChainIds(connectedNetwork);
@@ -163,6 +162,8 @@ const ActionOptionModal = () => {
 
   const closeModal = useCallback(() => {
     setActionMethodStatus(false);
+    setSelectedInToken(null);
+    setSelectedOutToken(null);
   }, []);
 
   // useEffect(() => {

@@ -25,29 +25,29 @@ export function useInOutTokens() {
   const { mode, subMode } = useGetMode();
   const [, setTxData] = useRecoilState(txDataStatus);
 
-
   const inToken = useMemo(() => {
-    const tokenValue = inTokenRecoilValue && connectedChainId && chainName
-      ? inTokenRecoilValue.address[chainName] === null ||
-        inTokenRecoilValue.address[chainName] === undefined
-        ? null
-        : {
-            ...inTokenRecoilValue,
-            tokenAddress: isETH(inTokenRecoilValue)
-              ? getWETHAddress(chainName)
-              : (inTokenRecoilValue.address[chainName] as string),
-            token: new Token(
-              connectedChainId,
-              isETH(inTokenRecoilValue)
+    const tokenValue =
+      inTokenRecoilValue && connectedChainId && chainName
+        ? inTokenRecoilValue.address[chainName] === null ||
+          inTokenRecoilValue.address[chainName] === undefined
+          ? null
+          : {
+              ...inTokenRecoilValue,
+              tokenAddress: isETH(inTokenRecoilValue)
                 ? getWETHAddress(chainName)
                 : (inTokenRecoilValue.address[chainName] as string),
-              inTokenRecoilValue.decimals,
-              inTokenRecoilValue.tokenSymbol as string,
-              inTokenRecoilValue.tokenName as string
-            ),
-          }
-      : null;
-  
+              token: new Token(
+                connectedChainId,
+                isETH(inTokenRecoilValue)
+                  ? getWETHAddress(chainName)
+                  : (inTokenRecoilValue.address[chainName] as string),
+                inTokenRecoilValue.decimals,
+                inTokenRecoilValue.tokenSymbol as string,
+                inTokenRecoilValue.tokenName as string
+              ),
+            }
+        : null;
+
     return tokenValue;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
 
@@ -56,28 +56,29 @@ export function useInOutTokens() {
       return null;
     }
 
-    const tokenValue =  outTokenRecoilValue && connectedChainId && chainName
-      ? outTokenRecoilValue.address[chainName] === null ||
-        outTokenRecoilValue.address[chainName] === undefined
-        ? null
-        : {
-            ...outTokenRecoilValue,
-            tokenAddress: isETH(outTokenRecoilValue)
-              ? getWETHAddress(chainName)
-              : (outTokenRecoilValue.address[chainName] as string),
-            token: new Token(
-              connectedChainId,
-              isETH(outTokenRecoilValue)
+    const tokenValue =
+      outTokenRecoilValue && connectedChainId && chainName
+        ? outTokenRecoilValue.address[chainName] === null ||
+          outTokenRecoilValue.address[chainName] === undefined
+          ? null
+          : {
+              ...outTokenRecoilValue,
+              tokenAddress: isETH(outTokenRecoilValue)
                 ? getWETHAddress(chainName)
                 : (outTokenRecoilValue.address[chainName] as string),
-              outTokenRecoilValue.decimals,
-              outTokenRecoilValue.tokenSymbol as string,
-              outTokenRecoilValue.tokenName as string
-            ),
-          }
-      : null;
+              token: new Token(
+                connectedChainId,
+                isETH(outTokenRecoilValue)
+                  ? getWETHAddress(chainName)
+                  : (outTokenRecoilValue.address[chainName] as string),
+                outTokenRecoilValue.decimals,
+                outTokenRecoilValue.tokenSymbol as string,
+                outTokenRecoilValue.tokenName as string
+              ),
+            }
+        : null;
 
-      return tokenValue;
+    return tokenValue;
   }, [outTokenRecoilValue, connectedChainId, chainName, mode]);
 
   //initialize selectedTokens when a network is changed
@@ -173,23 +174,10 @@ export function useInOutTokens() {
     });
   }, [connectedChainId, provider, inToken?.tokenAddress]);
 
-  //initialize other token when it's ETH&WETH pair on AddLiquidity, Pools
-  // useEffect(() => {
-  //   if (mode === 'Pool' && subMode.add) {
-  //     if (inToken?.tokenAddress === getWETHAddress(connectedChainId)) {
-  //       setOutTokenRecoilValue(null);
-  //     }
-  //     if (outToken?.tokenAddress === getWETHAddress(chainName)) {
-  //       setInTokenRecoilValue(null);
-  //   }
-  // }, [inToken, outToken, mode, connectedChainId])
-
   //fix a issue toast shows up when a token is changed
   useEffect(() => {
     setTxData(undefined);
   }, [inToken?.address]);
-
-  // console.log(inToken, outToken);
 
   return {
     inToken,

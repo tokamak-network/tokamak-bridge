@@ -51,7 +51,7 @@ const TokenLiquidityData = (props: {
             py={"4px"}
             fontSize={"14px"}
             fontWeight={600}
-            w={"53px"}
+            w={"55px"}
             textAlign={"right"}
           >
             {liquidityPercent} {"%"}
@@ -61,6 +61,7 @@ const TokenLiquidityData = (props: {
     </Flex>
   );
 };
+
 export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const { info } = props;
   const { address } = useAccount();

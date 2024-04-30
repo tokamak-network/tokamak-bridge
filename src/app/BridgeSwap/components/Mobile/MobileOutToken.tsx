@@ -163,9 +163,7 @@ const MobileInToken = () => {
               <Image
                 alt="eth"
                 src={
-                  outNetwork?.chainId === 55004 
-                  //sepolia 추가시 주석 제거
-                  // || outNetwork?.chainId === 55007
+                  outNetwork?.chainId === 55004 || outNetwork?.chainId === 55007
                     ? TitanIcon
                     : ETHIcon
                 }

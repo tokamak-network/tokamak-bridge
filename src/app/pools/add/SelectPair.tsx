@@ -18,7 +18,7 @@ export default function SelectPair() {
   const { onOpenInToken, onOpenOutToken } = useTokenModal();
   const { secondStepPassed } = useAddLiquidityCondition();
   const { initialzePoolValues } = useInitialize();
-  const [inverted, setInvert] = useRecoilState(ATOM_addInverted);
+  const [, setInvert] = useRecoilState(ATOM_addInverted);
 
   useEffect(() => {
     initialzePoolValues();
