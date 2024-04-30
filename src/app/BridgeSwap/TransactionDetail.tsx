@@ -59,7 +59,8 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           </Text>
           {gasFee && (
             <Text color={mobileView ? "#FFFFFF" : "#A0A3AD"}>
-              ${gasFee.l1GasUS}
+              {gasFee.l1GasUS != "NA" && "$"}
+              {gasFee.l1GasUS}
             </Text>
           )}
         </Flex>
@@ -562,7 +563,7 @@ const Title = (props: {
                   ml={"6px"}
                   mr={"13px"}
                 >
-                  {gasCostUS ? `${gasCostUS}` : `NA`}
+                  {gasCostUS ? `$${gasCostUS}` : `NA`}
                 </Text>
               </>
             )}

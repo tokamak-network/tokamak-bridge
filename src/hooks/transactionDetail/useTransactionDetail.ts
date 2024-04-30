@@ -131,6 +131,23 @@ export function useTransactionDetail() {
               content: "~5 minutes",
             },
           ];
+    // Fixed an issue where details were not displayed when the gas cost could not be retrieved in mobile view. @Robert
+    }else if (mobileView) {
+      return [
+        {
+          title: "Time to Deposit",
+          content: "~5 minutes",
+        },
+        {
+          title: "Network fee",
+          gasFee: {
+            l1Gas: "NA",
+            l2Gas: "0 ETH",
+            l1GasUS: "NA",
+            l2GasUS: "0",
+          },
+        },
+      ]
     }
     return null;
   }, [mode, inToken, totalGasFee, inputAmount, totalGasCost, mobileView, isOpen]);
