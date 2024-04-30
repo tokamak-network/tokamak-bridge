@@ -2,12 +2,12 @@
 
 import YourPools from "@/pools/YourPools";
 import PoolsMessage from "@/pools/PoolsMessage";
-import useMediaView from "@/hooks/mediaView/useMediaView";
+import { Flex } from "@chakra-ui/react";
 
 export default function Page() {
-  const { pcView } = useMediaView();
-
   return (
-    pcView ? <YourPools /> : <PoolsMessage/>
-  )
+    <Flex pt={{ base: "32px", lg: "140px" }} justifyContent={"center"}>
+      <YourPools />
+    </Flex>
+  );
 }

@@ -44,6 +44,7 @@ const GoogleAnalyticsScript = () => {
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
   const { pcView, minorView } = useMediaView();
+
   if (minorView) {
     return (
       <Center h={"100vh"} bg={"#0F0F12"} color={"#FFFFFF"}>

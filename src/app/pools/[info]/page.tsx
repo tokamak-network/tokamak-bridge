@@ -8,14 +8,13 @@ import PriceRange from "./components/PriceRange";
 import InfoTitle from "./components/InfoTitle";
 import InfoHeader from "./components/InfoHeader";
 import ClaimEarningsModal from "./components/ClaimEarningsModal";
-import GradientSpinner from "@/components/ui/GradientSpinner";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_positionForInfo_loading } from "@/recoil/pool/positions";
 import { NoPosition } from "./components/NoPosition";
 import { useEffect } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
-// import { LoadingCircleSpinner } from "@/components/ui/CircleSpinner";
+import { LoadingCircleSpinner } from "@/components/ui/CircleSpinner";
 
 export default function Page() {
   const { info } = usePositionInfo();
@@ -45,12 +44,12 @@ export default function Page() {
           height={"712px"}
           maxH={"712px"}
         >
-          {/* <LoadingCircleSpinner
+          <LoadingCircleSpinner
             width={88}
             height={88}
             containerHeight={"100%"}
             isSlim={true}
-          /> */}
+          />
         </Flex>
       </Flex>
     );

@@ -5,14 +5,7 @@ import { atom, selector } from "recoil";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
-import {
-  addWeeks,
-  getISODay,
-  startOfWeek,
-  addDays,
-  add,
-  getTime,
-} from "date-fns";
+import { getISODay, startOfWeek, add, getTime } from "date-fns";
 import { isETH } from "@/utils/token/isETH";
 
 export const networkStatus = atom<InOutNetworks>({
