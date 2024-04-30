@@ -627,7 +627,7 @@ const Title = (props: {
                       ml={"6px"}
                       sx={{ mr: mobileView ? 0 : "13px" }}
                     >
-                      {gasCostUS ? `${gasCostUS}` : `NA`}
+                      {gasCostUS ? `$${gasCostUS}` : `NA`}
                     </Text>
                   </>
                 )}
