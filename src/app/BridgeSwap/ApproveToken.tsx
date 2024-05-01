@@ -28,18 +28,6 @@ export default function ApproveToken() {
 
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
 
-  console.log(
-    isApproved,
-    isNotSupportForBridge,
-    !inToken,
-    mode == "Swap" && isTONatPair,
-    !isConnected,
-    isBalanceOver,
-    isInputZero,
-    !confirmedApproveTransaction
-  );
-  console.log("confirmedApproveTransaction", confirmedApproveTransaction);
-
   if (
     (isApproved ||
       isNotSupportForBridge ||
