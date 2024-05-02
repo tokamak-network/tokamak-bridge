@@ -29,9 +29,8 @@ export default function useTokenBalance(
       (chainName === "THANOS_SEPOLIA" && tokenInfo?.tokenSymbol === "TON")
         ? undefined
         : (tokenAddress as "0x${string}") ?? null,
-    // watch: isInTokenOpen || isOutTokenOpen ? true : watch,
-    // enabled: requireCall,
-    enabled: false,
+    watch: isInTokenOpen || isOutTokenOpen ? true : watch,
+    enabled: requireCall,
   });
 
   const tokenBalance = useMemo(() => {
