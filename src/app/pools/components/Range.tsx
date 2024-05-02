@@ -53,7 +53,6 @@ export default function Range(props: {
   style?: {};
 }) {
   const { page, estimatedGas, style } = props;
-
   const { info } = usePositionInfo();
 
   if (!info) return null;
@@ -104,26 +103,56 @@ export default function Range(props: {
       </Flex>
       <RangeToken
         token={token1}
-        amount={page === "addLiquidity" ? undefined : commafy(token1Amount, 6)}
+        amount={
+          page === "addLiquidity"
+            ? undefined
+            : smallNumberFormmater(
+                token1Amount.toString(),
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )
+        }
         page={page}
         alterAmount={
           page === "addLiquidity"
             ? token1ParsedAmount ?? "0.00"
             : page === "increaseLiquidity"
-            ? smallNumberFormmater(outToken?.parsedAmount, 6, false, true)
+            ? smallNumberFormmater(
+                outToken?.parsedAmount?.toString(),
+                6,
+                false,
+                true
+              )
             : commafy(amount1Removed, 6)
         }
         style={{ marginBottom: "9px" }}
       />
       <RangeToken
         token={token0}
-        amount={page === "addLiquidity" ? undefined : commafy(token0Amount, 6)}
+        amount={
+          page === "addLiquidity"
+            ? undefined
+            : smallNumberFormmater(
+                token0Amount.toString(),
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )
+        }
         page={page}
         alterAmount={
           page === "addLiquidity"
             ? token0ParsedAmount ?? "0.00"
             : page === "increaseLiquidity"
-            ? smallNumberFormmater(inToken?.parsedAmount, 6, false, true)
+            ? smallNumberFormmater(
+                inToken?.parsedAmount?.toString(),
+                6,
+                false,
+                true
+              )
             : commafy(amount0Removed, 6)
         }
       />

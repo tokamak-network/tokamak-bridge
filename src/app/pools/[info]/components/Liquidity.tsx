@@ -116,10 +116,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   );
 
   const actionDisabled = info?.owner !== address;
-
-  const { ratio, inverted } = usePoolInfo();
-  // const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
-  // const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
+  const { ratio } = usePoolInfo();
 
   const token0Ratio = useMemo(() => {
     if (info?.isClosed) return undefined;
