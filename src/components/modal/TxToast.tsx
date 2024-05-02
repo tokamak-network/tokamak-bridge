@@ -239,7 +239,7 @@ function TxToast() {
           variant: "solid",
           isClosable: true,
           id: txHash,
-          duration: 5000000000,
+          duration: 5000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);
