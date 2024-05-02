@@ -223,9 +223,9 @@ export function useTransaction() {
     }
   }, [txData]);
 
-  useEffect(() => {
-    setTxData(undefined);
-  }, [connectedChainId]);
+  // useEffect(() => {
+  //   setTxData(undefined);
+  // }, [connectedChainId]);
 
   return {
     allTransaction: txData,
@@ -451,6 +451,7 @@ export function useTx(params: {
         case "Remove Liquidity":
           {
             const event = getEvent(logs, txSort);
+
             if (event === undefined || event.length === 0) {
               return;
             }

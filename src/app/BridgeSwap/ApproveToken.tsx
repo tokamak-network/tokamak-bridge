@@ -36,7 +36,10 @@ export default function ApproveToken() {
       !isConnected ||
       isBalanceOver ||
       isInputZero) &&
-    confirmedApproveTransaction === undefined
+    (confirmedApproveTransaction === undefined ||
+      confirmedApproveTransaction?.tokenData?.[0]?.tokenAddress.toLowerCase() !==
+        inToken?.tokenAddress.toLowerCase() ||
+      isInputZero)
   ) {
     return null;
   }
@@ -51,7 +54,7 @@ export default function ApproveToken() {
 
   const text =
     confirmedApproveTransaction && isApproved
-      ? `${commafy(parsedAmount)} ${"TON"} has been approved`
+      ? `${commafy(parsedAmount)} ${inToken?.tokenSymbol} has been approved`
       : `Approve ${inToken?.tokenSymbol} for ${capitalizeFirstChar(
           mode ?? undefined
         )}`;

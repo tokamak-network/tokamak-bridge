@@ -1,32 +1,14 @@
 import { ethers, Contract } from "ethers";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
-import Quoter from "@uniswap/v3-periphery/artifacts/contracts/lens/Quoter.sol/Quoter.json";
-import Swap from "@uniswap/v3-periphery/artifacts/contracts/interfaces/ISwapRouter.sol/ISwapRouter.json";
 import SwapRouterAbi from "@/abis/SwapRouter.json";
 import { useProvier } from "../provider/useProvider";
-import { useCallback, useEffect, useState, useMemo } from "react";
-import {
-  computePoolAddress,
-  FeeAmount,
-  Pool,
-  Trade,
-  Route,
-  SwapOptions,
-  SwapRouter,
-} from "@uniswap/v3-sdk";
-import { CurrencyAmount, TradeType, Token, Percent } from "@uniswap/sdk-core";
-import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
-import {
-  fromReadableAmount,
-  toReadableAmount,
-} from "@/utils/uniswap/libs/converstion";
+import { useEffect, useState, useMemo } from "react";
+import { Trade } from "@uniswap/v3-sdk";
+import { TradeType, Token } from "@uniswap/sdk-core";
 import { useInOutTokens } from "../token/useInOutTokens";
-import useConnectedNetwork from "../network";
 import { useGetMode } from "../mode/useGetMode";
-
-import { useAccount, useContractWrite, useSendTransaction } from "wagmi";
+import { useAccount, useSendTransaction } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import useIsLoading from "@/hooks/ui/useIsLoading";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 import { useTx } from "../tx/useTx";
 import { getEncodedPath } from "@/utils/swap/encodePath";
