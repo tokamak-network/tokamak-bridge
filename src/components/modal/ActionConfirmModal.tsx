@@ -30,6 +30,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 import "@/css/spinner.css";
+import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -50,21 +51,20 @@ const OutTokenContainer = () => {
       />
       <Flex
         fontSize={18}
-        fontWeight={600}
         columnGap={"8px"}
         h={"24px"}
         mt={"14px"}
         mb={"3px"}
       >
-        <Text fontSize={{ base: 17, lg: 18 }}>
-          {trimAmount(amountOut, mobileView ? 6 : 8)}
+        <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 700 : 600}>
+          {trimAmount(amountOut, mobileView ? 8 : 8)}
         </Text>
-        <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
+        <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 500 : 400}>
           {outToken?.tokenSymbol}
         </Text>
       </Flex>
 
-      <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+      <Text mt={"4px"} fontSize={14} fontWeight={mobileView ? 500 : 400} color={"#A0A3AD"}>
         ${outTokenWithPrice || "0"}
       </Text>
     </>
@@ -156,28 +156,35 @@ const TokenContainer = () => {
           </Flex>
         )}
 
-        <TokenSymbol
+        {/* <TokenSymbol
           tokenType={inToken?.tokenSymbol ?? "default"}
           w={mobileView ? 48 : 56}
           h={mobileView ? 48 : 56}
+        /> */}
+        <TokenSymbolWithNetwork
+          tokenSymbol={inToken?.tokenSymbol as string ?? "default"}
+          chainId={1}
+          symbolW={56}
+          symbolH={56}
+          networkSymbolH={20}
+          networkSymbolW={20}
         />
         <Flex
           fontSize={18}
-          fontWeight={600}
           columnGap={"8px"}
           h={"24px"}
           mt={"14px"}
           mb={"3px"}
         >
-          <Text fontSize={{ base: 17, lg: 18 }}>
-            {trimAmount(inToken?.parsedAmount, mobileView ? 6 : 8)}
+          <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 700 : 600}>
+            {trimAmount(inToken?.parsedAmount, mobileView ? 8 : 8)}
           </Text>
-          <Text fontSize={{ base: 17, lg: 18 }} fontWeight={400}>
+          <Text fontSize={{ base: 17, lg: 18 }} fontWeight={mobileView ? 500 : 400}>
             {inToken?.tokenSymbol}
           </Text>
         </Flex>
 
-        <Text mt={"4px"} fontSize={14} fontWeight={400} color={"#A0A3AD"}>
+        <Text mt={"4px"} fontSize={14} fontWeight={mobileView ? 500 : 400} color={"#A0A3AD"}>
           ${inTokenWithPrice || "0"}
         </Text>
       </Flex>
@@ -237,11 +244,9 @@ export default function ActionConfirmModal() {
             <Text fontSize={{ base: 16, lg: 20 }} fontWeight={500}>
               Confirm {mode}
             </Text>
-            {!mobileView && (
-              <Box pos={"absolute"} right={0} top={"-6px"}>
-                <CloseButton onClick={onCloseConfirmModal} />
-              </Box>
-            )}
+            <Box pos={"absolute"} right={0} top={"-6px"}>
+              <CloseButton onClick={onCloseConfirmModal} />
+            </Box>
           </Flex>
           <TokenContainer />
           <Box mt={"16px"}>

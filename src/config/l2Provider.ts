@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 const optimismSDK = require("@eth-optimism/sdk");
 
-const endpoint = "https://rpc.titan-goerli.tokamak.network";
+const endpoint = process.env.NEXT_PUBLIC_GOERLI_RPC;
 const l2Provider = new ethers.providers.JsonRpcProvider(endpoint);
 // const l2Provider = new ethers.providers.JsonRpcProvider(
 //   process.env.NEXT_PUBLIC_TITAN_RPC

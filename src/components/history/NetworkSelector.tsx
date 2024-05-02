@@ -23,7 +23,7 @@ import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
-type ChainName = "MAINNET" | "GOERLI" | "TITAN" | "DARIUS" | undefined;
+type ChainName = "MAINNET" | "TITAN" | undefined;
 
 type SelectOption = {
   chainId: number;
@@ -131,7 +131,7 @@ export default function NetworkSelector(props: {
   const onChange = async (data: SelectOption) => {
     try {
       setSelectedOption(data);
-      setNetwork(data)
+      setNetwork(data);
       //   const value: SupportedChainProperties["chainId"] = Number(data.chainId);
       //   const selectedWork = supportedChain.filter((supportedChain) => {
       //     return supportedChain.chainId === value;
@@ -222,17 +222,18 @@ export default function NetworkSelector(props: {
   const optionsList = supportedChain
     .filter((chainInfo) => {
       if (
-        isConnectedToMainNetwork === true ||
-        isConnectedToMainNetwork === undefined
+        // isConnectedToMainNetwork === true ||
+        // isConnectedToMainNetwork === undefined
+true
       ) {
         return [
           SupportedChainId["MAINNET"],
           SupportedChainId["TITAN"],
         ].includes(chainInfo.chainId);
       }
-      return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-        chainInfo.chainId
-      );
+      // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
+        //   chainInfo.chainId
+      // );
     })
     .map((chainInfo) => {
       return {

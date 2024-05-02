@@ -32,6 +32,7 @@ import { useTx } from "../tx/useTx";
 import { getEncodedPath } from "@/utils/swap/encodePath";
 import { useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
+import { useSettingValue } from "../uniswap/useSettingValue";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 
@@ -304,5 +305,14 @@ export function useAmountOut() {
     tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
   });
 
-  return { amountOut, callTokenSwap: sendTransaction, isError };
+  const { slippage } = useSettingValue();
+  const minimumReceived = useMemo(() => {
+    if (amountOut && slippage) {
+      const slippagePercent = Number(slippage.toSignificant(5)) / 100;
+      return Number(amountOut) * (1 / (1 + slippagePercent));
+    }
+    return undefined;
+  }, [slippage, amountOut]);
+
+  return { amountOut, minimumReceived, callTokenSwap: sendTransaction, isError };
 }

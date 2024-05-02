@@ -155,7 +155,6 @@ export default function CarousellCardComponent<T>(props: {
         requireCall={requireCall}
         onClick={() => {
           try {
-            console.log('mobile?')
             setSelectedToken(tokenData);
           } catch (e) {
           } finally {

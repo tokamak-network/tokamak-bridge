@@ -121,8 +121,7 @@ export default function PoolCard(props: PoolCardDetail) {
 
     //for the network which is not connectd by a wallet
     if (
-      chainId === SupportedChainId["MAINNET"] ||
-      chainId === SupportedChainId["GOERLI"]
+      chainId === SupportedChainId["MAINNET"]
     ) {
       return new Contract(
         L1_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
@@ -137,14 +136,6 @@ export default function PoolCard(props: PoolCardDetail) {
         L2Provider
       );
     }
-    if (chainId === SupportedChainId["DARIUS"]) {
-      return new Contract(
-        L2_TESTNET_UniswapContracts.NONFUNGIBLE_POSITION_MANAGER,
-        NONFUNGIBLE_POSITION_MANAGER_ABI,
-        L2Provider
-      );
-    }
-
     L2_TESTNET_UniswapContracts;
   }, [
     chainId,

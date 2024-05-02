@@ -26,12 +26,12 @@ export default function TokenPairTx(props: {
       <Flex columnGap={"8px"}>
         <TokenSymbolWithNetwork
           tokenSymbol={inTokenSymbol}
-          chainId={action === "withdraw" ? 5050 : 1}
+          chainId={action === "withdraw" ? 55004 : 1}
         />
         <Image src={ARROW_ICON} alt={"ARROW_ICON"} />
         <TokenSymbolWithNetwork
           tokenSymbol={outTokenSymbol}
-          chainId={action === "withdraw" ? 1 : 5050}
+          chainId={action === "withdraw" ? 1 : 55004}
         />
       </Flex>
 

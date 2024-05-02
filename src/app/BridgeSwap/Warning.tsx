@@ -66,8 +66,7 @@ export default function Warning() {
 
   if (isNotSupportForBridge) {
     if (
-      inToken?.tokenAddress === MAINNET_CONTRACTS.WETH_ADDRESS ||
-      inToken?.tokenAddress === GOERLI_CONTRACTS.WETH_ADDRESS
+      inToken?.tokenAddress === MAINNET_CONTRACTS.WETH_ADDRESS
     )
       return (
         <WarningText
@@ -77,8 +76,7 @@ export default function Warning() {
         />
       );
     if (
-      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS ||
-      inToken?.tokenAddress === GOERLI_CONTRACTS.WTON_ADDRESS
+      inToken?.tokenAddress === MAINNET_CONTRACTS.WTON_ADDRESS
     )
       return (
         <WarningText

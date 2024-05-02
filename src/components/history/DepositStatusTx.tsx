@@ -25,7 +25,7 @@ export default function DepositStatusTx(props: {
     if (tx.l1timeStamp) {
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l1timeStamp) * 1000);
-        const currentTime = new Date();
+        const currentTime = new Date(Date.now());
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
           startDate

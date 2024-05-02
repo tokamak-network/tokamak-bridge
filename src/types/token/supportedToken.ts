@@ -37,6 +37,8 @@ export type TokenInfo = {
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
   availableForBirdge?: boolean;
+  isNew?: boolean
+  isLiked?: 'true' | 'false' | 'none' | String | string;
 };
 
 export type SupportedTokens_T = TokenInfo[];
@@ -47,17 +49,10 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "ETH",
     address: {
       MAINNET: "",
-      GOERLI: "",
       TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.OVM_ETH,
     },
     decimals: 18,
-    isNativeCurrency: [
-      SupportedChainId.MAINNET,
-      SupportedChainId.GOERLI,
-      SupportedChainId.TITAN,
-      SupportedChainId.DARIUS,
-    ],
+    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.TITAN],
     availableForBirdge: true,
   },
   {
@@ -65,9 +60,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "WETH",
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.WETH_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
       // TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       // DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
     },
@@ -79,9 +72,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "TON",
     address: {
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.TON_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TON_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -96,9 +87,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "WTON",
     address: {
       MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.WTON_ADDRESS,
       TITAN: null,
-      DARIUS: null,
     },
     decimals: 27,
     isNativeCurrency: null,
@@ -109,9 +98,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "TOS",
     address: {
       MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.TOS_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -122,9 +109,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "DOC",
     address: {
       MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.DOC_ADDRESS,
       TITAN: null,
-      DARIUS: null,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -134,9 +119,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "AURA",
     address: {
       MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.AURA_ADDRESS,
       TITAN: null,
-      DARIUS: null,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -146,9 +129,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "LYDA",
     address: {
       MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.LYDA_ADDRESS,
       TITAN: null,
-      DARIUS: null,
     },
     decimals: 18,
     isNativeCurrency: null,
@@ -158,9 +139,7 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "USDC",
     address: {
       MAINNET: MAINNET_CONTRACTS.USDC_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.USDC_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.USDC_ADDRESS,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDC_ADDRESS,
     },
     decimals: 6,
     isNativeCurrency: null,
@@ -171,12 +150,124 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "USDT",
     address: {
       MAINNET: MAINNET_CONTRACTS.USDT_ADDRESS,
-      GOERLI: GOERLI_CONTRACTS.USDT_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.USDT_ADDRES,
-      DARIUS: TOKAMAK_GOERLI_CONTRACTS.USDT_ADDRES,
     },
     decimals: 6,
     isNativeCurrency: null,
     availableForBirdge: true,
+  },
+];
+
+export const supportedMobileTokens: SupportedTokens_T = [
+  {
+    tokenName: "Tokamak Network",
+    tokenSymbol: "TON",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.TON_ADDRESS,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
+    availableForBirdge: true,
+    // isNativeCurrency: [
+    //   SupportedChainId.TITAN,
+    //   SupportedChainId.DARIUS,
+    // ],
+  },
+  {
+    tokenName: "Wrapped TON",
+    tokenSymbol: "WTON",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.WTON_ADDRESS,
+      TITAN: null,
+    },
+    decimals: 27,
+    isNativeCurrency: null,
+  },
+  {
+    tokenName: "ETH",
+    tokenSymbol: "ETH",
+    address: {
+      MAINNET: "",
+      TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
+    },
+    decimals: 18,
+    isNativeCurrency: [SupportedChainId.MAINNET, SupportedChainId.TITAN],
+    availableForBirdge: true,
+  },
+  {
+    tokenName: "WETH",
+    tokenSymbol: "WETH",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      // TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      // DARIUS: TOKAMAK_GOERLI_CONTRACTS.WETH_ADDRESS,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
+  },
+  {
+    tokenName: "USD Coin",
+    tokenSymbol: "USDC",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.USDC_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.USDC_ADDRESS,
+    },
+    decimals: 6,
+    isNativeCurrency: null,
+    availableForBirdge: true,
+  },
+  {
+    tokenName: "Tether USD",
+    tokenSymbol: "USDT",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.USDT_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.USDT_ADDRES,
+    },
+    decimals: 6,
+    isNativeCurrency: null,
+    availableForBirdge: true,
+  },
+  {
+    tokenName: "TONStarter",
+    tokenSymbol: "TOS",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
+    availableForBirdge: true,
+  },
+  {
+    tokenName: "Dooropen",
+    tokenSymbol: "DOC",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
+      TITAN: null,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
+  },
+  {
+    tokenName: "Dragons of Midgard",
+    tokenSymbol: "AURA",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
+      TITAN: null,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
+  },
+  {
+    tokenName: "LYDA",
+    tokenSymbol: "LYDA",
+    address: {
+      MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
+      TITAN: null,
+    },
+    decimals: 18,
+    isNativeCurrency: null,
   },
 ];
