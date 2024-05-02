@@ -92,14 +92,14 @@ export function useApprove() {
 
   const { data, write } = useErc20Approve(config);
 
-  const { write: USDT_APPROVE } = useContractWrite({
+  const { data: usdtApproveData, write: USDT_APPROVE } = useContractWrite({
     address: tokenAddress,
     abi: USDT_ABI,
     functionName: "approve",
   });
 
   const { isLoading } = useTx({
-    hash: data?.hash,
+    hash: isUSDT ? usdtApproveData?.hash : data?.hash,
     txSort: "Approve",
     tokenAddress,
     actionSort: mode,

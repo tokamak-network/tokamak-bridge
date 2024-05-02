@@ -1,4 +1,3 @@
-import { is } from "date-fns/locale";
 import { TxSort, ActionSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
@@ -12,6 +11,7 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
 import WethABi from "constant/abis/WETH.json";
 import UniswapV3Pool from "constant/abis/IUniswapV3Pool.json";
+import USDTAbi from "constant/abis/USDT.json";
 import { getWETHAddressByChainId } from "@/utils/token/isETH";
 import { useRecoilState } from "recoil";
 import {
@@ -21,28 +21,26 @@ import {
   txPendingStatus,
 } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
-import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
-import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
-import useMediaView from "../mediaView/useMediaView";
 import {
   TON_ADDRESS_BY_CHAINID,
   WETH_ADDRESS_BY_CHAINID,
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 import { Log } from "viem";
+import { isUSDT } from "@/utils/token/stableCoin";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
+  const USDT_I = new ethers.utils.Interface(USDTAbi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
   const UniswapV3PoolI = new ethers.utils.Interface(UniswapV3Pool);
-
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
     L1CrossDomainMessengerAbi
   );
@@ -58,6 +56,7 @@ const getInterface = () => {
     UniswapV3PoolI,
     L1CrossDomainMessengerI,
     ETHSwapperI,
+    USDT_I,
   };
 };
 
@@ -105,6 +104,10 @@ const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
     case "Collect Fee":
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.removeLiquidity;
+      });
+    case "Approve":
+      return logs.filter((log) => {
+        return log.topics[0] === eventSignature.approve;
       });
     default:
       return undefined;
@@ -357,6 +360,7 @@ export function useTx(params: {
         l2BridgeI,
         swapRouterI,
         erc20I,
+        USDT_I,
         swapperI,
         nonFungiblePositionManagerI,
         ETHSwapperI,
