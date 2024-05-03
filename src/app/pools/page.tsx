@@ -6,7 +6,7 @@ import { Flex } from "@chakra-ui/react";
 
 export default function Page() {
   return (
-    <Flex pt={{ base: "32px", lg: "140px" }} justifyContent={"center"}>
+    <Flex pt={"64px"} justifyContent={"center"}>
       <YourPools />
     </Flex>
   );

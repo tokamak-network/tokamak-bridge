@@ -95,7 +95,7 @@ export default function PoolCard(props: PoolCardDetail) {
   const { connectedChainId } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
-  const { provider, L1Provider, L2Provider } = useProvier();
+  const { provider } = useProvier();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const [token0FeeAmount, setToken0FeeAmount] = useState<string | undefined>(
     undefined

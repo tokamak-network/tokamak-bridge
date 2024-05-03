@@ -58,8 +58,12 @@ const DepositDetailRow = (props: DepositDetailProp) => {
             )}
           </Text>
           {gasFee && (
-            <Text color={mobileView ? "#FFFFFF" : "#A0A3AD"}>
-              ${gasFee.l1GasUS}
+            <Text
+              color={
+                gasFee.l1GasUS === "NA" || !mobileView ? "#A0A3AD" : "#FFFFFF"
+              }
+            >
+              {gasFee.l1GasUS}
             </Text>
           )}
         </Flex>
@@ -106,7 +110,6 @@ const DepositDetailRow = (props: DepositDetailProp) => {
 
 const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
-  const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
 
   return (
@@ -126,7 +129,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l2GasUS}</Text>}
+          {gasFee && <Text color={"#A0A3AD"}>{gasFee.l2GasUS}</Text>}
         </Flex>
 
         {/* <Text fontWeight={500}>
@@ -247,6 +250,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
       </Flex>
     );
   }
+
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
@@ -268,8 +272,6 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { mobileView } = useMediaView();
-  const { layer } = useConnectedNetwork();
-  const { isBalanceOver } = useInputBalanceCheck();
 
   return (
     <Flex flexDir={"column"}>
@@ -298,7 +300,14 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           {isLoading ? (
             <GradientSpinner />
           ) : (
-            <Text fontWeight={500}>{content}</Text>
+            content !== "undefined" && (
+              <Text
+                fontWeight={500}
+                color={content === "NA" ? "#A0A3AD" : "#fff"}
+              >
+                {content}
+              </Text>
+            )
           )}
           {gasFee && (
             <Text
@@ -318,7 +327,6 @@ const SwapDetailRow = (props: SwapDetailProp) => {
 const WrapDetailRow = (props: WrapDetailProp) => {
   const { title, gasFee, gasFeeUS } = props;
   const [isLoading] = useIsLoading();
-  const { layer } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
 
   return (
@@ -338,12 +346,13 @@ const WrapDetailRow = (props: WrapDetailProp) => {
               {gasFee}
             </Text>
           )}
-          {gasFee && <Text color={"#A0A3AD"}>{gasFeeUS}</Text>}
+          {gasFeeUS && <Text color={"#A0A3AD"}>{gasFeeUS}</Text>}
         </Flex>
       </Flex>
     </Flex>
   );
 };
+
 const Content = (props: {
   isExpanded: boolean;
   isOnConfirm?: boolean;
@@ -393,11 +402,6 @@ const Content = (props: {
           <DepositDetailRow key={data.title} {...data}></DepositDetailRow>
         ));
 
-      // case "Withdraw":
-      //   return withdrawPropsData?.map((data) => (
-      //     <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
-      //   ));
-
       case "Withdraw":
         return withdrawNewPropsData?.map((data) => (
           <WithdrawDetailRowNew
@@ -405,6 +409,7 @@ const Content = (props: {
             {...data}
           ></WithdrawDetailRowNew>
         ));
+
       case "Swap":
         if (mobileView && updatedSwapPropsData && !isOnConfirm) {
           return updatedSwapPropsData.map((data) => (

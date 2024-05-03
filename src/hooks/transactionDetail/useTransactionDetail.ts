@@ -4,14 +4,14 @@ import { useRecoilValue } from "recoil";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "../token/useInOutTokens";
 import commafy from "@/utils/trim/commafy";
-import { isBiggerThanMinimumNum } from "@/utils/number/compareNumbers";
-import { useAmountOut } from "../swap/useSwapTokens";
+import { getGasCostText } from "@/utils/number/compareNumbers";
 import usePriceImpact from "../swap/usePriceImpact";
 import useConfirm from "../modal/useConfirmModal";
 import useUniswapTxSetting from "../uniswap/useUniswapTxSetting";
 import useConnectedNetwork from "../network";
 import useMediaView from "../mediaView/useMediaView";
 import { useGetMarketPrice } from "../price/useGetMarketPrice";
+import { useAmountOut } from "../swap/useSwapTokens";
 
 export type DepositDetailProp = {
   title: string;
@@ -79,12 +79,8 @@ export function useTransactionDetail() {
   const { totalGasCost, gasCostUS } = useGasFee();
   const { mobileView } = useMediaView();
   const { isOpen } = useConfirm();
-  
-  const totalGasFee = `${
-    isBiggerThanMinimumNum(Number(totalGasCost))
-      ? commafy(totalGasCost, 4)
-      : "< 0.0001"
-  } ETH`;
+
+  const totalGasFee = getGasCostText(totalGasCost);
 
   const inputAmount = `${commafy(
     inToken?.parsedAmount?.replaceAll(",", ""),
@@ -102,11 +98,11 @@ export function useTransactionDetail() {
             {
               title: "Network fee",
               gasFee: {
-                l1Gas: totalGasFee,
+                l1Gas: totalGasFee ?? "NA",
                 l2Gas: "0 ETH",
-                l1GasUS: gasCostUS ?? "",
+                l1GasUS: gasCostUS ?? "NA",
                 l2GasUS: "0",
-              }
+              },
             },
           ]
         : [
@@ -118,9 +114,9 @@ export function useTransactionDetail() {
               title: "Estimated gas fees",
               content: totalGasFee,
               gasFee: {
-                l1Gas: totalGasFee,
+                l1Gas: `$${totalGasFee}` ?? "NA",
                 l2Gas: "0 ETH",
-                l1GasUS: gasCostUS ?? "",
+                l1GasUS: gasCostUS ?? "NA",
                 l2GasUS: "0",
               },
               tooltip: true,
@@ -133,7 +129,15 @@ export function useTransactionDetail() {
           ];
     }
     return null;
-  }, [mode, inToken, totalGasFee, inputAmount, totalGasCost, mobileView, isOpen]);
+  }, [
+    mode,
+    inToken,
+    totalGasFee,
+    inputAmount,
+    totalGasCost,
+    mobileView,
+    isOpen,
+  ]);
 
   const totalGasFeeToWithdraw = Number(totalGasCost) + 0.00024511191632554;
 
@@ -152,9 +156,9 @@ export function useTransactionDetail() {
             //fixed l1 gasFee for a while
             //0.00024511191632554 ETH
             l1Gas: "0.0002 ETH",
-            l2Gas: `${totalGasFee}`,
+            l2Gas: totalGasFee ? `$${totalGasFee}` : "NA",
             l1GasUS: "",
-            l2GasUS: `${gasCostUS}`,
+            l2GasUS: gasCostUS ? `$${gasCostUS}` : "NA",
           },
           tooltip: true,
           tooltipLabel: `${commafy(totalGasFeeToWithdraw, 18)} ETH`,
@@ -221,9 +225,7 @@ export function useTransactionDetail() {
             },
             {
               title: "Min receive",
-              content: `${commafy(amountOut, 4)} ${
-                outToken?.tokenSymbol
-              }`,
+              content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
             },
             {
@@ -235,20 +237,24 @@ export function useTransactionDetail() {
         : [
             {
               title: "Expected output",
-              content: `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`,
+              content:
+                amountOut !== null
+                  ? `${commafy(amountOut, 4)} ${outToken?.tokenSymbol}`
+                  : "NA",
             },
             {
               title: isOpen
                 ? "Minimum received"
                 : "Minimum received after slippage",
-              content: `${commafy(minimumReceived, 4)} ${
-                outToken?.tokenSymbol
-              }`,
+              content:
+                minimumReceived !== undefined
+                  ? `${commafy(minimumReceived, 4)} ${outToken?.tokenSymbol}`
+                  : "NA",
               slippage: `${uniswapTxSettingValueForUI.slippage}%`,
             },
             {
               title: "Estimated gas fees",
-              content: isOpen ? "" : `${totalGasFee} `,
+              content: isOpen ? "" : totalGasFee,
               gasFee: `${gasCostUS ? `$${gasCostUS}` : "NA"}`,
             },
           ];
@@ -273,8 +279,8 @@ export function useTransactionDetail() {
     return [
       {
         title: "Estimated gas fees",
-        gasFee: `${totalGasFee} `,
-        gasFeeUS: `$${gasCostUS}`,
+        gasFee: totalGasFee,
+        gasFeeUS: gasCostUS ? `$${gasCostUS}` : "NA",
       },
     ];
   }, [
@@ -287,6 +293,7 @@ export function useTransactionDetail() {
     gasCostUS,
     layer,
   ]);
+
   return {
     depositPropsData,
     withdrawPropsData,
