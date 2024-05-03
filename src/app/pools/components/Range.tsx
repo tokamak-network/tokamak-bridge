@@ -156,8 +156,7 @@ export default function Range(props: {
             : commafy(amount0Removed, 6)
         }
       />
-      {(page === "addLiquidity" ||
-        (page === "increaseLiquidity" && estimatedGas)) && (
+      {(page === "addLiquidity" || page === "increaseLiquidity") && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
@@ -167,8 +166,12 @@ export default function Range(props: {
                   ? "Estimated gas fee "
                   : "Estimated L2 execution fee"}
               </Text>
-              <Text fontSize={"16px"} fontWeight={500}>
-                {`$${estimatedGas}`}
+              <Text
+                fontSize={"16px"}
+                fontWeight={500}
+                color={estimatedGas ? "#fff" : "#A0A3AD"}
+              >
+                {estimatedGas ? `$${estimatedGas}` : "NA"}
               </Text>
             </Flex>
           </Flex>

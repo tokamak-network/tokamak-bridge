@@ -90,7 +90,12 @@ const Title = (props: {
             ml={"6px"}
             mr={"13px"}
           >
-            ${commafy(estimatedGasUsageValue?.toString(), 2)}
+            {estimatedGasUsageValue
+              ? `$commafy(
+              estimatedGasUsageValue?.toString(),
+              2
+            )`
+              : "NA"}
           </Text>
           <motion.div animate={arrowControl}>
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -107,7 +112,7 @@ const DivisionLine = () => {
   );
 };
 
-const ContentTitle = (props: { title: string; amount: string }) => {
+const ContentTitle = (props: { title: string; amount: string | undefined }) => {
   const { title, amount } = props;
 
   return (
@@ -119,7 +124,7 @@ const ContentTitle = (props: { title: string; amount: string }) => {
       h={"14px"}
     >
       <Text>{title}</Text>
-      <Text>{amount}</Text>
+      <Text color={amount ? "#fff" : "#A0A3AD"}>{amount ?? "NA"}</Text>
     </Flex>
   );
 };
@@ -155,7 +160,7 @@ const Content = (props: {
   const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
   const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
 
-  const { totalMarketPrice, hasTokenPrice } = usePricePair({
+  const { totalMarketPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
@@ -170,7 +175,7 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
-              amount={`$${totalRemovedMarketPrice}`}
+              amount={totalRemovedMarketPrice}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
@@ -183,7 +188,7 @@ const Content = (props: {
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Fees" amount={`$${totalMarketPrice}`} />
+            <ContentTitle title="Fees" amount={totalMarketPrice} />
             <ContentSub
               title={token0Symbol ?? "-"}
               amount={commafy(info.token0CollectedFee, 4)}
@@ -202,7 +207,7 @@ const Content = (props: {
 
 export default function TxDetails() {
   const [isExpanded, setIsExpended] = useState<boolean>(false);
-  const [amountPercentage, setAmountPercentage] = useRecoilState(removeAmount);
+  const amountPercentage = useRecoilValue(removeAmount);
 
   if (amountPercentage) {
     return (
@@ -226,5 +231,6 @@ export default function TxDetails() {
       </Flex>
     );
   }
+
   return null;
 }

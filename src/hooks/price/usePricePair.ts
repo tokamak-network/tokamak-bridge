@@ -25,10 +25,13 @@ export function usePricePair(params: {
   });
 
   const totalMarketPrice = useMemo(() => {
-    return commafy(
-      Number(token0Price?.replaceAll(",", "") ?? 0) +
-        Number(token1Price?.replaceAll(",", "") ?? 0)
-    );
+    if (token0Price && token0Price) {
+      return commafy(
+        Number(token0Price?.replaceAll(",", "") ?? 0) +
+          Number(token1Price?.replaceAll(",", "") ?? 0)
+      );
+    }
+    return undefined;
   }, [token0Price, token1Price]);
 
   const hasTokenPrice = useMemo(() => {

@@ -83,7 +83,7 @@ export default function IncreaseModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={poolModal}
-          estimatedGas={commafy(gasToAdd)}
+          estimatedGas={gasToAdd ? commafy(gasToAdd) : (gasToAdd as undefined)}
         />
         <PriceRange info={info} />
         <Flex w={"100%"}>

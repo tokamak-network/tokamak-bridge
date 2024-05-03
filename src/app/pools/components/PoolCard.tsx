@@ -167,12 +167,12 @@ export default function PoolCard(props: PoolCardDetail) {
   ]);
 
   const onClickToRoute = useCallback(async () => {
-    console.log(chainId, connectedChainId);
-    if (chainId !== connectedChainId) {
-      const res = await switchNetworkAsync?.(chainId);
-      if (res && res.id === chainId) {
-        return router.push(`/pools/${id}?chainId=${chainId}`);
-      }
+    if (chainId === connectedChainId) {
+      return router.push(`/pools/${id}?chainId=${chainId}`);
+    }
+    const res = await switchNetworkAsync?.(chainId);
+    if (res && res.id === chainId) {
+      return router.push(`/pools/${id}?chainId=${chainId}`);
     }
   }, [id, chainId, connectedChainId, switchNetworkAsync]);
 

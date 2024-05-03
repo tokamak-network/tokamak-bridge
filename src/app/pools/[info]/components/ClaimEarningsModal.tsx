@@ -188,8 +188,12 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   </Text>
                 </Flex>
                 <Flex justifyContent="end">
-                  <Text fontSize={16} fontWeight="semibold">
-                    {`$${estimatedGasUsageValue ?? "-"}`}
+                  <Text
+                    fontSize={16}
+                    fontWeight="semibold"
+                    color={estimatedGasUsageValue ? "#fff" : "#A0A3AD"}
+                  >
+                    {`$${estimatedGasUsageValue ?? "NA"}`}
                   </Text>
                 </Flex>
               </Flex>
