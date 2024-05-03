@@ -92,8 +92,7 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [fee]);
 
-  const { connectedChainId, otherLayerChainInfo, layer } =
-    useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
   const { provider, L1Provider, L2Provider } = useProvier();
@@ -168,14 +167,14 @@ export default function PoolCard(props: PoolCardDetail) {
   ]);
 
   const onClickToRoute = useCallback(async () => {
-    if (chainId !== connectedChainId && otherLayerChainInfo) {
+    console.log(chainId, connectedChainId);
+    if (chainId !== connectedChainId) {
       const res = await switchNetworkAsync?.(chainId);
-      if (res && res.id === otherLayerChainInfo.chainId) {
+      if (res && res.id === chainId) {
         return router.push(`/pools/${id}?chainId=${chainId}`);
       }
     }
-    return router.push(`/pools/${id}?chainId=${chainId}`);
-  }, [id, chainId, connectedChainId, otherLayerChainInfo, switchNetworkAsync]);
+  }, [id, chainId, connectedChainId, switchNetworkAsync]);
 
   const token0HasMarketPrice = Number(token0MarketPrice) > 0;
   const token1HasMarketPrice = Number(token1MarketPrice) > 0;
