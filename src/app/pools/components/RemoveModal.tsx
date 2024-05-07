@@ -56,7 +56,7 @@ export default function RemoveModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={"removeLiquidity"}
-          estimatedGas={commafy(estimatedGasUsageValue, 2)}
+          estimatedGas={estimatedGasUsageValue}
         />
         <Text
           fontSize={"12px"}
