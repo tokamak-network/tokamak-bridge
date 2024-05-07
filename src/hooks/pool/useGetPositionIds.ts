@@ -436,13 +436,24 @@ export function useGetPositionById(positionId: number, chainId: number) {
 
           const token0MarketPrice = await fetchMarketPrice(token0Name);
           const token1MarketPrice = await fetchMarketPrice(token1Name);
-          const token0Value = token0MarketPrice * Number(token0Amount);
-          const token1Value = token1MarketPrice * Number(token1Amount);
+          const token0Value = token0MarketPrice
+            ? token0MarketPrice * Number(token0Amount)
+            : undefined;
+          const token1Value = token1MarketPrice
+            ? token1MarketPrice * Number(token1Amount)
+            : undefined;
           const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
           const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-          const token0FeeValue = token0MarketPrice * token0FeeAmount;
-          const token1FeeValue = token1MarketPrice * token1FeeAmount;
-          const feeValue = token0FeeValue + token1FeeValue;
+          const token0FeeValue = token0MarketPrice
+            ? token0MarketPrice * token0FeeAmount
+            : undefined;
+          const token1FeeValue = token1MarketPrice
+            ? token1MarketPrice * token1FeeAmount
+            : undefined;
+          const feeValue =
+            token0FeeValue && token1FeeValue
+              ? token0FeeValue + token1FeeValue
+              : undefined;
 
           positions.push({
             id: positionId,
@@ -455,8 +466,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
             token1CollectedFee,
             token0CollectedFeeBN: earningFee.amount0,
             token1CollectedFeeBN: earningFee.amount1,
-            token0MarketPrice,
-            token1MarketPrice,
+            token0MarketPrice: String(token0MarketPrice) ?? "0",
+            token1MarketPrice: String(token1MarketPrice) ?? "0",
             inRange,
             liquidity: liquidity.toString(),
             sqrtPriceX96: sqrtPriceX96.toString(),
@@ -466,11 +477,13 @@ export function useGetPositionById(positionId: number, chainId: number) {
             rawPositionInfo: { ...positionInfo, sqrtPriceX96 },
             hasETH: token0IsNative || token1IsNative,
             isClosed,
-            token0Value: isNaN(token0Value) ? 0 : token0Value,
-            token1Value: isNaN(token1Value) ? 0 : token1Value,
-            token0FeeValue,
-            token1FeeValue,
-            feeValue: isNaN(feeValue) ? 0 : feeValue,
+            token0Value:
+              token0Value && isNaN(token0Value) ? 0 : token0Value ?? 0,
+            token1Value:
+              token1Value && isNaN(token1Value) ? 0 : token1Value ?? 0,
+            token0FeeValue: token0FeeValue ?? 0,
+            token1FeeValue: token1FeeValue ?? 0,
+            feeValue: feeValue && isNaN(feeValue) ? 0 : feeValue ?? 0,
             chainId,
             owner,
             rawData: positionInfo,
