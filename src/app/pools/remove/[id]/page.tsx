@@ -45,7 +45,7 @@ export default function RemoveLiquidity() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"} maxW={"364px"}>
-          <Range page="removeLiquidity" />
+          <Range page="removeLiquidity" estimatedGas={null} />
           <UnclaimedEarnings info={info} />
           <SelectPercentage />
           <TxDetails />

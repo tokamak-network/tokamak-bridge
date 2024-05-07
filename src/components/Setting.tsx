@@ -171,9 +171,9 @@ export const SettingContainer = ({
   //close when click at outside
   useEffect(() => {
     const handleClickOutside = (event: any) => {
-      //@ts-ignore
       if (
         wrapperRef.current &&
+        //@ts-ignore
         !wrapperRef.current.contains(event.target) &&
         !settingRef.current.contains(event.target)
       ) {
