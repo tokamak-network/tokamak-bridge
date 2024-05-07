@@ -5,7 +5,9 @@ import {
   trimTokenName,
 } from "@/hooks/price/useGetMarketPrice";
 
-export async function fetchMarketPrice(tokenId: string) {
+export async function fetchMarketPrice(
+  tokenId: string
+): Promise<number | undefined> {
   try {
     const tokenName = changeTokenNameForAPI(tokenId);
     const result = await apolloClient.query({

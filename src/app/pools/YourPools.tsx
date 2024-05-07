@@ -7,17 +7,17 @@ export default function YourPools() {
   const { isConnected } = useAccount();
   const { positions } = useGetPositionIds();
 
-  const isReducedHeight = !isConnected || positions?.length === 0;
+  // const isReducedHeight = !isConnected || positions?.length === 0;
+  const isReducedHeight = true;
 
   return (
-    <Flex flexDir="column" alignSelf={"baseline"}>
+    <Flex flexDir="column" alignSelf={"baseline"} h={"100%"}>
       <Text fontSize={36} fontWeight="medium" marginBottom="24px">
         Your Pools
       </Text>
       <Flex
         w="672px"
         h={isReducedHeight ? "440px" : "600px"}
-        alignItems="flex-start"
         p={"20px"}
         pr={"0px"}
         border="1px solid #313442"

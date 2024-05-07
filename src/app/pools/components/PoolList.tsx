@@ -13,8 +13,9 @@ export default function PoolList() {
   const { positions } = useGetPositionIds();
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
-
   const isLoading = useRecoilValue(ATOM_positions_loading);
+
+  console.log(positions, isLoading, isConnected, isSupportedChain);
 
   return (
     <Grid
@@ -26,12 +27,11 @@ export default function PoolList() {
     >
       <LPGuide />
       <AddLiquidity />
-      {isSupportedChain &&
-        positions === undefined &&
+      {true &&
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} noSpinner={!isLoading} />
         ))}
-      {(!isSupportedChain || !isConnected) &&
+      {/* {(!isSupportedChain || !isConnected) &&
         Array.from({ length: 7 }, (_, index) => (
           <EmptyCard key={index} noSpinner={true} />
         ))}
@@ -56,8 +56,8 @@ export default function PoolList() {
                 ? 2
                 : 0,
           },
-          (_, index) => <EmptyCard key={index} noSpinner={true} />
-        )}
+          (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />
+        )} */}
     </Grid>
   );
 }

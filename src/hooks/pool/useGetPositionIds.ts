@@ -117,13 +117,24 @@ export const makePositionDatas = async (
 
       const token0MarketPrice = await fetchMarketPrice(token0.name);
       const token1MarketPrice = await fetchMarketPrice(token1.name);
-      const token0Value = token0MarketPrice * Number(token0Amount);
-      const token1Value = token1MarketPrice * Number(token1Amount);
+      const token0Value = token0MarketPrice
+        ? token0MarketPrice * Number(token0Amount)
+        : undefined;
+      const token1Value = token1MarketPrice
+        ? token1MarketPrice * Number(token1Amount)
+        : undefined;
       const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
       const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-      const token0FeeValue = token0MarketPrice * token0FeeAmount;
-      const token1FeeValue = token1MarketPrice * token1FeeAmount;
-      const feeValue = token0FeeValue + token1FeeValue;
+      const token0FeeValue = token0MarketPrice
+        ? token0MarketPrice * token0FeeAmount
+        : undefined;
+      const token1FeeValue = token1MarketPrice
+        ? token1MarketPrice * token1FeeAmount
+        : undefined;
+      const feeValue =
+        token0FeeValue && token1FeeValue
+          ? token0FeeValue + token1FeeValue
+          : undefined;
       const inRange =
         tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
 
@@ -140,11 +151,13 @@ export const makePositionDatas = async (
         token1MarketPrice,
         inRange,
         isClosed,
-        token0Value: isNaN(token0Value) ? 0 : token0Value,
-        token1Value: isNaN(token1Value) ? 0 : token1Value,
+        token0Value:
+          token0Value && isNaN(token0Value) ? undefined : token0Value,
+        token1Value:
+          token1Value && isNaN(token1Value) ? undefined : token1Value,
         token0FeeValue,
         token1FeeValue,
-        feeValue: isNaN(feeValue) ? 0 : feeValue,
+        feeValue: feeValue && isNaN(feeValue) ? undefined : feeValue,
         chainId,
         owner,
         hasETH: false,
@@ -195,6 +208,7 @@ export function useGetPositionIds(): {
   useEffect(() => {
     const fetchPositionData = async () => {
       try {
+        setPositionsLoading(true);
         if (connectedChainId && chainGroup) {
           if (
             (address && account !== address) ||
@@ -202,7 +216,6 @@ export function useGetPositionIds(): {
           ) {
             setAccount(address);
             setChainId(connectedChainId);
-            setPositionsLoading(true);
             setPositions(undefined);
           }
 
@@ -215,7 +228,7 @@ export function useGetPositionIds(): {
                 if (position?.data?.positions) {
                   return makePositionDatas(
                     position.data.positions,
-                    chainGroup[index === 1 ? index + 1 : index].chainId ?? 0
+                    chainGroup[index].chainId ?? 0
                   );
                 }
               })
