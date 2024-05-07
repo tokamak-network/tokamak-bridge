@@ -23,21 +23,24 @@ import { redirect } from "next/navigation";
 
 export default function IncreaseLiquidity() {
   const { info } = usePositionInfo();
-  const { positionId, chainIdParam, backwardLink } = useGetPositionIdFromPath();
+  const { backwardLink } = useGetPositionIdFromPath();
   const { estimateGasToIncrease } = usePoolContract();
   const { blockNumber } = useBlockNum();
-  const [estimatedGasUsageValue, setEstimatedGasUsage] =
-    useRecoilState(estimatedGasFee);
-  const { inToken, outToken } = useInOutTokens();
+  const [estimatedGasUsageValue, setEstimatedGasUsage] = useRecoilState<
+    number | undefined | null
+  >(estimatedGasFee);
+  const { inToken, outToken, tokensPairHasAmount } = useInOutTokens();
   const { needToRedirect } = useIsOwner(info);
 
   useEffect(() => {
     const fetchData = async () => {
-      const gasData = await estimateGasToIncrease();
-      setEstimatedGasUsage(gasData);
+      if (tokensPairHasAmount) {
+        const gasData = await estimateGasToIncrease();
+        setEstimatedGasUsage(gasData);
+      }
     };
     fetchData();
-  }, [blockNumber, inToken?.amountBN, outToken?.amountBN]);
+  }, [blockNumber, inToken?.amountBN, outToken?.amountBN, tokensPairHasAmount]);
 
   if (needToRedirect) {
     redirect(backwardLink);
@@ -60,11 +63,7 @@ export default function IncreaseLiquidity() {
         <Flex flexDirection={"column"} rowGap={"16px"} w={"364px"}>
           <Range
             page="increaseLiquidity"
-            estimatedGas={
-              estimatedGasUsageValue
-                ? commafy(estimatedGasUsageValue, 2)
-                : undefined
-            }
+            estimatedGas={estimatedGasUsageValue}
           />
           <PriceRange info={info} />
         </Flex>
