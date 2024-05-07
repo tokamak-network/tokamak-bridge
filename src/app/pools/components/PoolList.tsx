@@ -15,23 +15,37 @@ export default function PoolList() {
   const { isSupportedChain } = useConnectedNetwork();
   const isLoading = useRecoilValue(ATOM_positions_loading);
 
-  console.log(positions, isLoading, isConnected, isSupportedChain);
-
   return (
     <Grid
       templateColumns="repeat(3, 1fr)"
       rowGap={"16px"}
       columnGap={"16px"}
-      overflow={"hidden"}
+      overflow={"auto"}
       scrollBehavior={"initial"}
+      //for scrollbar styles
+      pr={"8px"}
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "::-webkit-scrollbar-track": {
+          background: "transparent",
+          borderRadius: "4px",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#343741",
+          borderRadius: "3px",
+        },
+      }}
     >
       <LPGuide />
       <AddLiquidity />
-      {true &&
+      {isSupportedChain &&
+        positions === undefined &&
         Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
           <EmptyCard key={index} noSpinner={!isLoading} />
         ))}
-      {/* {(!isSupportedChain || !isConnected) &&
+      {(!isSupportedChain || !isConnected) &&
         Array.from({ length: 7 }, (_, index) => (
           <EmptyCard key={index} noSpinner={true} />
         ))}
@@ -57,7 +71,7 @@ export default function PoolList() {
                 : 0,
           },
           (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />
-        )} */}
+        )}
     </Grid>
   );
 }

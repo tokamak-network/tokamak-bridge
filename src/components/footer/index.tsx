@@ -7,9 +7,8 @@ const Footer = () => {
 
   return (
     <Flex
-      // pos={"absolute"}
-      // bottom={6}
-      mt={"auto"}
+      pos={"sticky"}
+      bottom={0}
       pt={pcView ? 0 : 5}
       w={"full"}
       minH={pcView ? "77px" : ""}
