@@ -104,7 +104,7 @@ const MaintenanceBanner = () => {
         <Text fontSize={"10px"}>
           Maintenance scheduled from{" "}
           <span style={{ fontWeight: "bold" }}>
-            {isTestnet ? "13:00 - 17:00 UTC" : "13:00 - 17:00 UTC"}
+            {isTestnet ? "13:00 - 17:00 UTC+0" : "13:00 - 17:00 UTC+0"}
           </span>{" "}
           *You may still swap on {isTestnet ? "Goerli" : "Ethereum"} Network{" "}
         </Text>
