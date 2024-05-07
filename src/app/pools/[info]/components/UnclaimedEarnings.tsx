@@ -111,8 +111,8 @@ export default function UnclaimedEarnings(props: {
     <Flex
       bgColor="#1F2128"
       w="100%"
-      minH={info?.hasETH ? "163px" : "115px"}
-      maxH={info?.hasETH ? "163px" : "115px"}
+      minH={info?.hasETH && !subMode.remove ? "163px" : "115px"}
+      maxH={info?.hasETH && !subMode.remove ? "163px" : "115px"}
       py={"14px"}
       px="20px"
       borderRadius={"12px"}

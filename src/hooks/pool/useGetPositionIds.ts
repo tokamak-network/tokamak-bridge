@@ -221,6 +221,8 @@ export function useGetPositionIds(): {
 
           if (!isSupportedChain) return setPositions([]);
 
+          console.log("chainGroup", chainGroup);
+
           //need to apply additional logic for chainGroup to support multi chain more than 2
           if (positionDatas && chainGroup) {
             const positions = await Promise.all(
@@ -466,8 +468,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
             token1CollectedFee,
             token0CollectedFeeBN: earningFee.amount0,
             token1CollectedFeeBN: earningFee.amount1,
-            token0MarketPrice: String(token0MarketPrice) ?? "0",
-            token1MarketPrice: String(token1MarketPrice) ?? "0",
+            token0MarketPrice,
+            token1MarketPrice,
             inRange,
             liquidity: liquidity.toString(),
             sqrtPriceX96: sqrtPriceX96.toString(),
@@ -478,12 +480,12 @@ export function useGetPositionById(positionId: number, chainId: number) {
             hasETH: token0IsNative || token1IsNative,
             isClosed,
             token0Value:
-              token0Value && isNaN(token0Value) ? 0 : token0Value ?? 0,
+              token0Value && isNaN(token0Value) ? undefined : token0Value,
             token1Value:
-              token1Value && isNaN(token1Value) ? 0 : token1Value ?? 0,
-            token0FeeValue: token0FeeValue ?? 0,
-            token1FeeValue: token1FeeValue ?? 0,
-            feeValue: feeValue && isNaN(feeValue) ? 0 : feeValue ?? 0,
+              token1Value && isNaN(token1Value) ? undefined : token1Value,
+            token0FeeValue,
+            token1FeeValue,
+            feeValue: feeValue && isNaN(feeValue) ? undefined : feeValue,
             chainId,
             owner,
             rawData: positionInfo,

@@ -82,8 +82,8 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const { switchNetworkAsync } = useSwitchNetwork();
 
   const noMarketPrices =
-    (info?.token0MarketPrice === undefined &&
-      info?.token1MarketPrice === undefined) ||
+    info?.token0MarketPrice === undefined ||
+    info?.token1MarketPrice === undefined ||
     Number(info.token0MarketPrice) + Number(info.token1MarketPrice) === 0;
 
   const onClickToRoute = useCallback(
