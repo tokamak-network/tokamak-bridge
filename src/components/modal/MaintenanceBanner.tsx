@@ -3,17 +3,14 @@ import { bannerSelector, bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { useState, useEffect } from "react";
 import { add, getTime, intervalToDuration, Duration } from "date-fns";
-import { useInOutNetwork } from "@/hooks/network";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useConnectedNetwork from "@/hooks/network";
 
 type Banner = "Pending" | "Active" | "Hidden";
 
 const MaintenanceBanner = () => {
   const [status, setStatus] = useState<Banner>("Hidden");
-  const [isBannerStatus, setIsBannerStatus] = useRecoilState(bannerStatus);
+  const [, setIsBannerStatus] = useRecoilState(bannerStatus);
   const banner = useRecoilValue(bannerSelector).previewTimeStartThisWeek;
-  const { outNetwork } = useInOutNetwork();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const [duration, setDuration] = useState<Duration>({
@@ -90,7 +87,7 @@ const MaintenanceBanner = () => {
             {" "}
             <Text fontSize={"14px"}>
               {isTestnet
-                ? "Titan Goerli Network under maintenance."
+                ? "Titan Sepolia Network under maintenance."
                 : "Titan Network under maintenance."}
             </Text>
           </>
@@ -99,7 +96,7 @@ const MaintenanceBanner = () => {
             {" "}
             <Text fontSize={"14px"}>
               {isTestnet
-                ? "Titan Goerli Network scheduled maintenance commencing in:"
+                ? "Titan Sepolia Network scheduled maintenance commencing in:"
                 : "Titan Network scheduled maintenance commencing in:"}
             </Text>
           </>
@@ -110,7 +107,7 @@ const MaintenanceBanner = () => {
           <span style={{ fontWeight: "bold" }}>
             {isTestnet ? "17:00 - 18:00 GMT +9" : "9:00 - 10:00 GMT +9"}
           </span>{" "}
-          *You may still swap on {isTestnet ? "Goerli" : "Ethereum"} Network{" "}
+          *You may still swap on {isTestnet ? "Sepolia" : "Ethereum"} Network{" "}
         </Text>
       </Flex>
 
