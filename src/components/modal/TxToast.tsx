@@ -195,8 +195,8 @@ function TransactionToast(props: TransactionToastProp) {
           <Text cursor={"pointer"} onClick={clickTitle}>
             {txSortMessage}
           </Text>
-          {txSort !== "Approve" && actionSort && (
-            <Text fontSize={12} color={"#A0A3AD"}>
+          {txSort === "Approve" && actionSort && (
+            <Text fontSize={12} color={"#A0A3AD"} lineHeight={"26px"}>
               ({actionSort})
             </Text>
           )}
