@@ -7,7 +7,6 @@ const Footer = () => {
 
   return (
     <Flex
-      pos={"sticky"}
       bottom={0}
       pt={pcView ? 0 : 5}
       w={"full"}
@@ -15,7 +14,7 @@ const Footer = () => {
       maxH={pcView ? "77px" : ""}
       justify={"center"}
       alignItems={"center"}
-      position={pcView ? "absolute" : "initial"}
+      position={pcView ? "sticky" : "initial"}
     >
       <Text fontSize={pcView ? 14 : 12} color={"#A0A3AD"}>
         Copyright © {dayjs().year()}{" "}

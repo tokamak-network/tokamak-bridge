@@ -33,10 +33,10 @@ export function useAllowance(params: {
   const inputTokenAmount = inputTokenParam ?? 0;
 
   const isApproved = useMemo(() => {
+    if (isETH(token)) {
+      return true;
+    }
     if (allowance !== undefined && inputTokenAmount !== undefined) {
-      if (isETH(token)) {
-        return true;
-      }
       if (Number(allowance) === 0) {
         return false;
       }

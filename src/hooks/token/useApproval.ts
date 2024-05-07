@@ -6,7 +6,7 @@ import {
 } from "@/generated";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
 
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import useConnectedNetwork from "../network";
@@ -40,18 +40,11 @@ export function useApprove() {
     }
   }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT]);
 
-  const { isApproved: approved, allowance } = useAllowance({
+  const { isApproved: approved } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress,
     token: inToken,
-    contractAddress:
-      mode === "Deposit"
-        ? (L1BRIDGE_CONTRACT as Hash)
-        : mode === "Swap"
-        ? (UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2 as Hash)
-        : mode === "Wrap" || mode === "Unwrap"
-        ? (SWAPPER_V2_CONTRACT as Hash)
-        : undefined,
+    contractAddress,
   });
 
   const isApproved = useMemo(() => {
@@ -73,9 +66,11 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  const isUSDT = connectedChainId
-    ? tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
-    : undefined;
+  const isUSDT = useMemo(() => {
+    return connectedChainId
+      ? tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
+      : undefined;
+  }, [connectedChainId, tokenAddress, USDT_ADDRESS_BY_CHAINID]);
 
   const { data: totalSupply } = useErc20TotalSupply({
     address: tokenAddress,
@@ -105,14 +100,17 @@ export function useApprove() {
     actionSort: mode,
   });
 
+  const callApprove = useCallback(() => {
+    isUSDT
+      ? USDT_APPROVE({
+          args: [contractAddress, totalSupply?.toString()],
+        })
+      : write?.();
+  }, [contractAddress, totalSupply, isUSDT, USDT_APPROVE, write]);
+
   return {
     isApproved,
-    callApprove: () =>
-      isUSDT
-        ? USDT_APPROVE({
-            args: [contractAddress, totalSupply?.toString()],
-          })
-        : write?.(),
+    callApprove,
     isLoading,
     hash: data?.hash,
   };
