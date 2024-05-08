@@ -93,19 +93,20 @@ export const ApproveButtonsContrainer = () => {
   const [poolState] = usePool();
   const { subMode } = useGetMode();
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+  const { invertPrice } = useV3MintInfo();
 
   if (subMode.add && poolState === PoolState.INVALID) return null;
   if (isBalanceOver || isOutTokenBalanceOver) return null;
 
   return (
-    <Flex columnGap={"12px"}>
+    <Flex columnGap={"12px"} justifyContent={"flex-end"}>
       {inToken && inTokenHasAmount && !inTokenApproved && !isBalanceOver && (
-        <ApproveButton isInToken={false} />
+        <ApproveButton isInToken={true} />
       )}
       {outToken &&
         outTokenHasAmount &&
         !outTokenApproved &&
-        !isOutTokenBalanceOver && <ApproveButton isInToken={true} />}
+        !isOutTokenBalanceOver && <ApproveButton isInToken={false} />}
     </Flex>
   );
 };
