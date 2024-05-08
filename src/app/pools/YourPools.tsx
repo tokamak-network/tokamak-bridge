@@ -11,9 +11,15 @@ export default function YourPools() {
 
   return (
     <Flex flexDir="column" alignSelf={"baseline"} h={"100%"}>
-      <Text fontSize={36} fontWeight="medium" marginBottom="24px">
-        Your Pools
-      </Text>
+      <Flex flexDir={"column"} mb={"32px"}>
+        <Text fontSize={36} fontWeight="medium" h={"54px"}>
+          Your Uniswap Poolsh
+        </Text>
+        <Text fontSize={14} h={"21px"} color={"#A0A3AD"}>
+          Add liquidity to a pool, and earn a swap fee based on the trading
+          volume.
+        </Text>
+      </Flex>
       <Flex
         w="672px"
         h={isReducedHeight ? "440px" : "600px"}
