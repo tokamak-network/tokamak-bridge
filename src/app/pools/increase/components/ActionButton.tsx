@@ -25,14 +25,10 @@ const ApproveButtonsContrainer = () => {
   if (subMode.add && poolState === PoolState.INVALID) return null;
   if (isBalanceOver || isOutTokenBalanceOver) return null;
 
-  const inTokenApprvedOnIncrease = useMemo(() => {
-    if (isWETH(inToken, chainName) && subMode.increase) return true;
-    return inTokenApproved;
-  }, [inTokenApproved, inToken, subMode, chainName]);
-  const outTokenApprvedOnIncrease = useMemo(() => {
-    if (isWETH(outToken, chainName) && subMode.increase) return true;
-    return outTokenApproved;
-  }, [outTokenApproved, outToken, subMode, chainName]);
+  const inTokenApprvedOnIncrease =
+    isWETH(inToken, chainName) && subMode.increase ? true : inTokenApproved;
+  const outTokenApprvedOnIncrease =
+    isWETH(outToken, chainName) && subMode.increase ? true : outTokenApproved;
 
   return (
     <Flex columnGap={"12px"} justifyContent={"flex-end"}>
@@ -117,7 +113,7 @@ const ActionButton = () => {
         _active={{}}
         _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
         onClick={handleAction}
-        // isDisabled={btnIsDisabled}
+        isDisabled={btnIsDisabled}
       >
         <Text>{buttonName}</Text>
       </Button>
