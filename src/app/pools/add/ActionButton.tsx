@@ -4,10 +4,8 @@ import {
   usePrepareErc20Approve,
 } from "@/generated";
 import useContract from "@/hooks/contracts/useContract";
-import usePreview from "@/hooks/modal/usePreviewModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useApproveTokenForPools } from "@/hooks/token/useApproveToken";
-import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -23,7 +21,7 @@ import { useRecoilState } from "recoil";
 import { Hash } from "viem";
 import { useWaitForTransaction } from "wagmi";
 
-const ApproveButton = (props: { isInToken: boolean }) => {
+export const ApproveButton = (props: { isInToken: boolean }) => {
   const { isInToken } = props;
   const { inToken, outToken } = useInOutTokens();
   const tokenAddress = isInToken
@@ -93,7 +91,6 @@ export const ApproveButtonsContrainer = () => {
   const [poolState] = usePool();
   const { subMode } = useGetMode();
   const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
-  const { invertPrice } = useV3MintInfo();
 
   if (subMode.add && poolState === PoolState.INVALID) return null;
   if (isBalanceOver || isOutTokenBalanceOver) return null;

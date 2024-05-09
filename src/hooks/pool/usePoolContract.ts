@@ -24,7 +24,7 @@ import { lastFocusedInput, poolFeeStatus } from "@/recoil/pool/setPoolPosition";
 import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
-import { getWETHAddress, isETH } from "@/utils/token/isETH";
+import { getWETHAddress, isETH, isWETH } from "@/utils/token/isETH";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import { Contract } from "ethers";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
@@ -376,8 +376,9 @@ export function usePoolContract() {
             );
 
           //for ETH value
-          const inIsEth = isETH(inToken);
-          const outIsETH = isETH(outToken);
+          const inIsEth = isETH(inToken) || isWETH(inToken, chainName);
+          const outIsETH = isETH(outToken) || isWETH(outToken, chainName);
+
           const inWeiAmount = ethers.BigNumber.from(
             token0Amount.quotient.toString()
           );

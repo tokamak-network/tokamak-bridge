@@ -49,8 +49,11 @@ export function isETH(token: TokenInfo | null) {
 
 export function isWETH(
   token: TokenInfo | null,
-  chainName: SupportedChainProperties["chainName"]
+  chainName: SupportedChainProperties["chainName"] | undefined
 ) {
-  if (token === null) return false;
-  return token?.address[chainName] === getWETHAddress(chainName);
+  if (token === null || chainName === undefined) return false;
+  return (
+    token?.address[chainName]?.toLowerCase() ===
+    getWETHAddress(chainName).toLowerCase()
+  );
 }
