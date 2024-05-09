@@ -186,7 +186,7 @@ const Content = (props: {
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
-              title="Fees"
+              title="Earned fees"
               amount={`$${commafy(totalMarketPrice, 2)}`}
             />
             <ContentSub
