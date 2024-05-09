@@ -19,7 +19,7 @@ import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
-import { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import TransactionDetail from "@/app/BridgeSwap/TransactionDetail";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
@@ -136,6 +136,7 @@ const TokenContainer = () => {
     tokenName: inToken?.tokenName as string,
     amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
   });
+  const { connectedChainId } = useConnectedNetwork();
 
   return (
     <Flex
@@ -180,7 +181,7 @@ const TokenContainer = () => {
         ) : (
           <TokenSymbolWithNetwork
             tokenSymbol={(inToken?.tokenSymbol as string) ?? "default"}
-            chainId={1}
+            chainId={connectedChainId}
             symbolW={56}
             symbolH={56}
             networkSymbolH={20}
