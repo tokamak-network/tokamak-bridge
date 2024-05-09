@@ -1,5 +1,5 @@
 import { TxSort, ActionSort } from "@/types/tx/txType";
-import { ethers } from "ethers";
+import { ethers, providers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
@@ -29,6 +29,7 @@ import {
 } from "@/constant/contracts/tokens";
 import { Log } from "viem";
 import { isUSDT } from "@/utils/token/stableCoin";
+import { useProvier } from "../provider/useProvider";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -248,13 +249,49 @@ export function useTx(params: {
   actionSort?: ActionSort;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
-
   const { connectedChainId } = useConnectedNetwork();
-
   const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
     hash,
     chainId: connectedChainId,
   });
+
+  /**
+   * Test code with using Ethers Provider
+   */
+  // const { provider } = useProvier();
+  // useEffect(() => {
+  //   async function getTransactionWithRetry(
+  //     hash: string,
+  //     provider: providers.Provider,
+  //     retries = 5
+  //   ) {
+  //     for (let i = 0; i < retries; i++) {
+  //       try {
+  //         const transaction = await provider.getTransaction(hash);
+  //         console.log("****ethers provider****");
+  //         console.log(transaction);
+  //         return transaction;
+  //       } catch (error) {
+  //         if (error) {
+  //           console.log(
+  //             `Transaction with hash ${hash} could not be found. Retry ${
+  //               i + 1
+  //             }/${retries}`
+  //           );
+  //           await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
+  //         } else {
+  //           throw error;
+  //         }
+  //       }
+  //     }
+  //     throw new Error(
+  //       `Transaction with hash ${hash} could not be found after ${retries} retries.`
+  //     );
+  //   }
+  //   if (hash && provider) {
+  //     getTransactionWithRetry(hash, provider);
+  //   }
+  // }, [hash, provider]);
 
   const [, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(

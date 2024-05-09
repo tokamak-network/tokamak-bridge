@@ -94,8 +94,14 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                     <Text fontSize={14}>Total fees</Text>
                   </Flex>
                   <Flex justifyContent="end">
-                    <Text fontSize={16} fontWeight="semibold">
-                      {`$${totalMarketPrice}`}
+                    <Text
+                      fontSize={16}
+                      fontWeight="semibold"
+                      color={totalMarketPrice ? "#fff" : "#A0A3AD"}
+                    >
+                      {totalMarketPrice
+                        ? `$${commafy(totalMarketPrice, 2)}`
+                        : "NA"}
                     </Text>
                   </Flex>
                 </Flex>
