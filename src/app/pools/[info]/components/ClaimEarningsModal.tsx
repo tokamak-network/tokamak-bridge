@@ -182,9 +182,7 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
               <Flex justifyContent="space-between" pt="8px">
                 <Flex justifyContent="start" alignItems="center">
                   <Text fontSize={14} color="#A0A3AD">
-                    {layer === "L1"
-                      ? "Estimated gas fee "
-                      : "Estimated L2 execution fee"}
+                    {"Estimated gas fee"}
                   </Text>
                 </Flex>
                 <Flex justifyContent="end">

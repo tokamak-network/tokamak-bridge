@@ -162,11 +162,7 @@ export default function Range(props: {
             <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
             <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
               <Flex justifyContent={"space-between"}>
-                <Text fontSize={"14px"}>
-                  {layer === "L1"
-                    ? "Estimated gas fee "
-                    : "Estimated L2 execution fee"}
-                </Text>
+                <Text fontSize={"14px"}>{"Estimated gas fee"}</Text>
                 <Text
                   fontSize={"16px"}
                   fontWeight={500}
