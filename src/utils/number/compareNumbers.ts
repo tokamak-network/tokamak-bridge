@@ -25,7 +25,8 @@ export function smallNumberFormmater(
   deciplaPoints?: number,
   trimed?: boolean,
   removeComma?: boolean,
-  minimumValue?: number
+  minimumValue?: number,
+  trimedDecimals?: number
 ) {
   if (param === undefined || param === null) {
     return "-";
@@ -43,7 +44,7 @@ export function smallNumberFormmater(
 
   return isBiggerThanMinimum
     ? trimed
-      ? trimAmount(param.toString(), 8)
+      ? trimAmount(param.toString(), trimedDecimals ?? 8)
       : commafy(param, deciplaPoints ?? 6, removeComma, "0.00")
     : "<0.000001";
 }

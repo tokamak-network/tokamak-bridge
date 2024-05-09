@@ -191,7 +191,16 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               height={"57px"}
               color={noMarketPrices ? "#A0A3AD" : ""}
             >
-              {noMarketPrices ? "-" : `$${splitNumber(totalMarketPrice)}`}
+              {noMarketPrices
+                ? "-"
+                : `$${smallNumberFormmater(
+                    splitNumber(totalMarketPrice),
+                    undefined,
+                    true,
+                    undefined,
+                    undefined,
+                    7
+                  )}`}
             </Text>
           </Flex>
           {!actionDisabled && (

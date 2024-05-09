@@ -221,8 +221,6 @@ export function useGetPositionIds(): {
 
           if (!isSupportedChain) return setPositions([]);
 
-          console.log("chainGroup", chainGroup);
-
           //need to apply additional logic for chainGroup to support multi chain more than 2
           if (positionDatas && chainGroup) {
             const positions = await Promise.all(
