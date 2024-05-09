@@ -91,7 +91,7 @@ const Title = (props: {
             mr={"13px"}
           >
             {estimatedGasUsageValue
-              ? `${commafy(estimatedGasUsageValue?.toString(), 2)}`
+              ? `$${commafy(estimatedGasUsageValue?.toString(), 2)}`
               : "NA"}
           </Text>
           <motion.div animate={arrowControl}>
