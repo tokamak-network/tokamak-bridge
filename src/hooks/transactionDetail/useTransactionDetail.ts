@@ -114,7 +114,7 @@ export function useTransactionDetail() {
               title: "Estimated gas fees",
               content: totalGasFee,
               gasFee: {
-                // l1Gas: `$${totalGasFee}` ?? "NA",
+                l1Gas: totalGasFee ? `$${totalGasFee}` : "NA",
                 l2Gas: "0 ETH",
                 l1GasUS: gasCostUS ? `$${gasCostUS}` : "NA",
                 l2GasUS: "0",
