@@ -172,7 +172,11 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
-              amount={`$${commafy(totalRemovedMarketPrice, 4)}`}
+              amount={
+                totalRemovedMarketPrice
+                  ? `$${commafy(totalRemovedMarketPrice, 4)}`
+                  : undefined
+              }
             />
             <ContentSub
               title={token0Symbol ?? "-"}
@@ -187,7 +191,11 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Earned fees"
-              amount={`$${commafy(totalMarketPrice, 2)}`}
+              amount={
+                totalMarketPrice
+                  ? `$${commafy(totalMarketPrice, 2)}`
+                  : undefined
+              }
             />
             <ContentSub
               title={token0Symbol ?? "-"}

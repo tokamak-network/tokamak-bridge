@@ -1,8 +1,6 @@
 import { ethers } from "ethers";
 import {
-  computePoolAddress,
   MintOptions,
-  nearestUsableTick,
   NonfungiblePositionManager,
   Pool,
   Position,
@@ -10,18 +8,15 @@ import {
   CollectOptions,
   RemoveLiquidityOptions,
 } from "@uniswap/v3-sdk";
-import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useContract from "@/hooks/contracts/useContract";
 import { useCallback, useState } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { useProvier } from "@/hooks/provider/useProvider";
-import IUniswapV3PoolABI from "@uniswap/v3-core/artifacts/contracts/interfaces/IUniswapV3Pool.sol/IUniswapV3Pool.json";
 import { BigintIsh, CurrencyAmount, Percent, Token } from "@uniswap/sdk-core";
 import { useAccount, useFeeData } from "wagmi";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { lastFocusedInput, poolFeeStatus } from "@/recoil/pool/setPoolPosition";
-import { L2_initCodeHashManualOverride } from "@/constant/contracts/uniswap";
 import { usePool } from "./usePool";
 import { useV3MintInfo } from "./useV3MintInfo";
 import { getWETHAddress, isETH, isWETH } from "@/utils/token/isETH";
@@ -37,7 +32,6 @@ import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
 import JSBI from "jsbi";
 import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
-import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { encodeMulticall } from "@/utils/contract/encodeMulticall";
 import { useIncreaseAmount } from "./useIncreaseAmount";
 import {

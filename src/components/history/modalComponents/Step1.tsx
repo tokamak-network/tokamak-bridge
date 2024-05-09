@@ -25,7 +25,8 @@ const Step1 = (props: { progress: string; check: any }) => {
       justifyContent={"space-between"}
       alignItems={"center"}
       // border={"1px solid red"}
-      w="100%">
+      w="100%"
+    >
       <Flex>
         <Image src={check.check} alt="check" />
         <Text ml="8px" fontSize={"14px"} color={check.color}>
@@ -39,7 +40,8 @@ const Step1 = (props: { progress: string; check: any }) => {
             href={`${providers.l2BlockExplorer}/tx/${tx.l2txHash}`}
             textDecor={"none"}
             _hover={{ textDecor: "none" }}
-            display={"flex"}>
+            display={"flex"}
+          >
             <Text mr="6px" fontSize={"14px"} color={"#FFFFFF"}>
               Transaction
             </Text>
@@ -48,11 +50,18 @@ const Step1 = (props: { progress: string; check: any }) => {
         </Flex>
       ) : (
         <Flex>
-          <Text mr="6px" fontSize={"14px"} color={check.color}>
-            {Number(gasCostUS) < 0.01 ? `< $0.01` : `~ $ ${gasCostUS}`}
+          <Text
+            mr="6px"
+            fontSize={"14px"}
+            color={gasCostUS ? check.color : "#A0A3AD"}
+          >
+            {gasCostUS
+              ? Number(gasCostUS) < 0.01
+                ? `< $0.01`
+                : `~ $ ${gasCostUS}`
+              : "NA"}
           </Text>
-
-          <Image src={check.gas} alt="gas station" />
+          {gasCostUS && <Image src={check.gas} alt="gas station" />}
         </Flex>
       )}
       {/* <Flex>
