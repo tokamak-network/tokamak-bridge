@@ -13,7 +13,7 @@ export default function YourPools() {
     <Flex flexDir="column" alignSelf={"baseline"} h={"100%"}>
       <Flex flexDir={"column"} mb={"32px"}>
         <Text fontSize={36} fontWeight="medium" h={"54px"}>
-          Your Uniswap Poolsh
+          Your Uniswap Pool
         </Text>
         <Text fontSize={14} h={"21px"} color={"#A0A3AD"}>
           Add liquidity to a pool, and earn a swap fee based on the trading
