@@ -20,6 +20,9 @@ import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
 
+// FW UI test @Robert
+import useFxConfirmModal from "@/hooks/modal/useFxConfirmModal";
+
 export default function ActionButton() {
   const { isConnected } = useAccount();
   const { mode, isReady } = useRecoilValue(actionMode);
@@ -72,6 +75,8 @@ export default function ActionButton() {
     mode,
     outToken,
   ]);
+  // FW UI test @Robert
+  const { onOpenFwConfirmModal } = useFxConfirmModal();
 
   const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();
@@ -91,16 +96,37 @@ export default function ActionButton() {
       color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
       isDisabled={!isConnected ? false : isDisabled}
       onClick={
-        isConnected === false
+        /** FW UI test @Robert */
+        !isConnected && mode == "Withdraw"
+          ? onOpenFwConfirmModal
+          : isConnected === false
           ? () => connetAndDisconntWallet()
           : needToOpenWithdrawModal
           ? () => setWithdrawStatus({ isOpen: true })
           : needToOpenModal
           ? onOpenConfirmModal
           : onClick
+
+        /**
+         * Original Code
+         * isConnected === false
+          ? () => connetAndDisconntWallet()
+          : needToOpenWithdrawModal
+          ? () => setWithdrawStatus({ isOpen: true })
+          : needToOpenModal
+          ? onOpenConfirmModal
+          : onClick
+         * 
+         */
       }
     >
+      {/** Test UI FW - @Robert */}
+      {!isConnected && mode == "Withdraw"
+        ? "Test Confirm"
+        : !isConnected && "Connect Wallet"}
+      {/** Original Code
       {!isConnected && "Connect Wallet"}
+      */}
       {!isConnected
         ? null
         : isConnected && mode === null
