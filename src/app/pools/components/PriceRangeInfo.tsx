@@ -171,7 +171,14 @@ export const CurrentPriceInfo = () => {
             verticalAlign={"center"}
           >
             {poolModal === "addLiquidity"
-              ? currentPriceToAdd
+              ? smallNumberFormmater(
+                  Number(currentPriceToAdd ?? 0),
+                  undefined,
+                  true,
+                  undefined,
+                  undefined,
+                  13
+                )
               : smallNumberFormmater(
                   Number(currentPrice ?? 0),
                   undefined,
