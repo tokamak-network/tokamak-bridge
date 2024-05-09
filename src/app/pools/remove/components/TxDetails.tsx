@@ -91,10 +91,7 @@ const Title = (props: {
             mr={"13px"}
           >
             {estimatedGasUsageValue
-              ? `$commafy(
-              estimatedGasUsageValue?.toString(),
-              2
-            )`
+              ? `${commafy(estimatedGasUsageValue?.toString(), 2)}`
               : "NA"}
           </Text>
           <motion.div animate={arrowControl}>
@@ -175,7 +172,7 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
-              amount={totalRemovedMarketPrice}
+              amount={`$${commafy(totalRemovedMarketPrice, 4)}`}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
@@ -188,7 +185,10 @@ const Content = (props: {
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Fees" amount={totalMarketPrice} />
+            <ContentTitle
+              title="Fees"
+              amount={`$${commafy(totalMarketPrice, 2)}`}
+            />
             <ContentSub
               title={token0Symbol ?? "-"}
               amount={commafy(info.token0CollectedFee, 4)}
