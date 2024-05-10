@@ -250,48 +250,55 @@ export function useTx(params: {
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
   const { connectedChainId } = useConnectedNetwork();
-  const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
+  const { isError, data } = useWaitForTransaction({
     hash,
     chainId: connectedChainId,
   });
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isSuccess, setIsSuccess] = useState<boolean>(false);
+
   /**
-   * Test code with using Ethers Provider
+   * using Ethers Provider
+   * to fix a bug to track transactions
    */
-  // const { provider } = useProvier();
-  // useEffect(() => {
-  //   async function getTransactionWithRetry(
-  //     hash: string,
-  //     provider: providers.Provider,
-  //     retries = 5
-  //   ) {
-  //     for (let i = 0; i < retries; i++) {
-  //       try {
-  //         const transaction = await provider.getTransaction(hash);
-  //         console.log("****ethers provider****");
-  //         console.log(transaction);
-  //         return transaction;
-  //       } catch (error) {
-  //         if (error) {
-  //           console.log(
-  //             `Transaction with hash ${hash} could not be found. Retry ${
-  //               i + 1
-  //             }/${retries}`
-  //           );
-  //           await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
-  //         } else {
-  //           throw error;
-  //         }
-  //       }
-  //     }
-  //     throw new Error(
-  //       `Transaction with hash ${hash} could not be found after ${retries} retries.`
-  //     );
-  //   }
-  //   if (hash && provider) {
-  //     getTransactionWithRetry(hash, provider);
-  //   }
-  // }, [hash, provider]);
+  const { provider } = useProvier();
+  useEffect(() => {
+    async function getTransactionWithRetry(
+      hash: string,
+      provider: providers.Provider,
+      retries = 5
+    ) {
+      setIsLoading(true);
+      setIsSuccess(false);
+      for (let i = 0; i < retries; i++) {
+        try {
+          const transaction = await provider.getTransaction(hash);
+          const result = await transaction.wait();
+          if (result.status === 1) {
+            return setIsSuccess(true);
+          }
+          return setIsSuccess(false);
+        } catch (error) {
+          console.log(
+            `Transaction with hash ${hash} could not be found. Retry ${
+              i + 1
+            }/${retries}`
+          );
+          setIsSuccess(false);
+          await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
+        } finally {
+          setIsLoading(false);
+        }
+      }
+      throw new Error(
+        `Transaction with hash ${hash} could not be found after ${retries} retries.`
+      );
+    }
+    if (hash && provider) {
+      getTransactionWithRetry(hash, provider);
+    }
+  }, [hash, provider]);
 
   const [, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(
@@ -397,7 +404,6 @@ export function useTx(params: {
         l2BridgeI,
         swapRouterI,
         erc20I,
-        USDT_I,
         swapperI,
         nonFungiblePositionManagerI,
         ETHSwapperI,

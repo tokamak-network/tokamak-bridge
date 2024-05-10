@@ -433,7 +433,6 @@ export function useGetPositionById(positionId: number, chainId: number) {
             WETH_ADDRESS.toLowerCase() === token1.toLowerCase();
 
           const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
-
           const token0MarketPrice = await fetchMarketPrice(token0Name);
           const token1MarketPrice = await fetchMarketPrice(token1Name);
           const token0Value = token0MarketPrice
@@ -501,31 +500,37 @@ export function useGetPositionById(positionId: number, chainId: number) {
 
   useEffect(() => {
     const fetchPositionIds = async () => {
-      if (positions === undefined) {
-        setIsLoading(true);
-      }
       try {
-        // setIsLoading(true);
         const result = await callPositionIds(positionId);
         if (result) {
           return setPositions(result);
         }
         return setPositions(undefined);
       } finally {
-        // setIsLoading(false);
         setIsLoading(false);
       }
     };
-    fetchPositionIds().catch((e) => {
-      console.log("**fetchPositionIds err**");
-      console.log(e);
-      if (e.toString().includes("nonexistent")) {
-        // setIsLoading(false);
-        return setPositions(undefined);
-      }
-    });
+
+    /**
+     * display spinner while delaying to query
+     * it's needed because creating a new block is way more faster than data updates on the L2 chain
+     */
+    if (positions === undefined) {
+      setIsLoading(true);
+    }
+    setTimeout(() => {
+      fetchPositionIds().catch((e) => {
+        console.log("**fetchPositionIds err**");
+        console.log(e);
+        if (e.toString().includes("nonexistent")) {
+          // setIsLoading(false);
+          return setPositions(undefined);
+        }
+      });
+    }, 2000);
+
     //add pathName to fetch new data when it's back from increase / decrease liquidity page
-  }, [blockNumber, txPending, positionId, pathName]);
+  }, [blockNumber, positionId]);
 
   return { positions };
 }
@@ -547,8 +552,6 @@ export function useGetPositionIdFromPath() {
 
   return { positionId, chainIdParam, backwardLink };
 }
-
-let count = 0;
 
 export function usePositionInfo() {
   const { positionId, chainIdParam } = useGetPositionIdFromPath();

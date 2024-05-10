@@ -25,7 +25,6 @@ import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 export default function Confirmation() {
   const { blockExplorer, connectedChainId } = useConnectedNetwork();
-  const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
   const {
@@ -34,7 +33,6 @@ export default function Confirmation() {
     isError,
     isOpen,
     isClaimWaiting,
-    setIsOpen,
     closeModal,
   } = useTxConfirmModal();
   const { mode, subMode } = useGetMode();

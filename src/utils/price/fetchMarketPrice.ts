@@ -17,6 +17,7 @@ export async function fetchMarketPrice(
         apiName: "price",
       },
       fetchPolicy: "cache-first",
+      pollInterval: 30000,
     });
     if (result.data.getTokenMarketData.current_price)
       return result.data.getTokenMarketData.current_price;
