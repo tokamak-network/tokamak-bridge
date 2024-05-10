@@ -1,6 +1,6 @@
 import { TxSort, ActionSort } from "@/types/tx/txType";
 import { ethers, providers } from "ethers";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
@@ -30,6 +30,8 @@ import {
 import { Log } from "viem";
 import { isUSDT } from "@/utils/token/stableCoin";
 import { useProvier } from "../provider/useProvider";
+import useBlockNum from "../network/useBlockNumber";
+import { useGetMode } from "../mode/useGetMode";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -249,14 +251,16 @@ export function useTx(params: {
   actionSort?: ActionSort;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
-  const { connectedChainId } = useConnectedNetwork();
-  const { isError, data } = useWaitForTransaction({
+  const { connectedChainId, layer } = useConnectedNetwork();
+  const { data } = useWaitForTransaction({
     hash,
     chainId: connectedChainId,
   });
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
+  const { mode, subMode } = useGetMode();
 
   /**
    * using Ethers Provider
@@ -271,41 +275,48 @@ export function useTx(params: {
     ) {
       setIsLoading(true);
       setIsSuccess(false);
-      for (let i = 0; i < retries; i++) {
-        try {
-          const transaction = await provider.getTransaction(hash);
-          const result = await transaction.wait();
-          if (result.status === 1) {
-            return setIsSuccess(true);
-          }
-          return setIsSuccess(false);
-        } catch (error) {
-          console.log(
-            `Transaction with hash ${hash} could not be found. Retry ${
-              i + 1
-            }/${retries}`
-          );
-          setIsSuccess(false);
-          await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
-        } finally {
-          setIsLoading(false);
+      setIsError(false);
+      // for (let i = 0; i < retries; i++) {
+      try {
+        const transaction = await provider.getTransaction(hash);
+
+        //put some delay to wait for the transaction to be updated on L2
+        const delayTime =
+          mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
+        await new Promise((resolve) => setTimeout(resolve, delayTime));
+
+        const result = await transaction.wait();
+        if (result.status === 1) {
+          return setIsSuccess(true);
         }
+        return setIsSuccess(false);
+      } catch (error) {
+        // console.log(
+        //   `Transaction with hash ${hash} could not be found. Retry ${
+        //     i + 1
+        //   }/${retries}`
+        // );
+        setIsSuccess(false);
+        setIsError(true);
+        // await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
+      } finally {
+        setIsLoading(false);
       }
       throw new Error(
         `Transaction with hash ${hash} could not be found after ${retries} retries.`
       );
     }
+
     if (hash && provider) {
       getTransactionWithRetry(hash, provider);
     }
-  }, [hash, provider]);
+  }, [hash, provider, mode, subMode, layer]);
 
   const [, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(
   //   selectedInTokenStatus
   // );
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
@@ -829,7 +840,6 @@ export function useTx(params: {
       }
     }
     if (isError && data && connectedChainId && hash) {
-      console.log(isError, hash);
       setModalOpen("error");
     }
   }, [isSuccess, isError, txSort, data, tokenAddress, hash]);

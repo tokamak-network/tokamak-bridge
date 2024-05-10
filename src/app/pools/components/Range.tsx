@@ -201,7 +201,7 @@ export default function Range(props: {
             <Flex justifyContent={"space-between"}>
               <Text fontSize={"14px"}>Estimated gas fee</Text>
               <Text fontSize={"16px"} fontWeight={500}>
-                {`$${estimatedGas}`}
+                {`$${commafy(estimatedGas, 2)}`}
               </Text>
             </Flex>
           </Flex>
