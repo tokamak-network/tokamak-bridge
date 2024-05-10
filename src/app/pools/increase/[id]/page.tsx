@@ -16,7 +16,6 @@ import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { estimatedGasFee } from "@/recoil/global/transaction";
-import commafy from "@/utils/trim/commafy";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useIsOwner } from "@/hooks/pool/useIsOwner";
 import { redirect } from "next/navigation";

@@ -23,6 +23,7 @@ export function useInitialize() {
   const [, setInitialPrice] = useRecoilState(initialPrice);
   const [, setAmountPercentage] = useRecoilState(removeAmount);
   const [, setEstimatedGasFee] = useRecoilState(estimatedGasFee);
+
   const initialzePoolValues = useCallback(() => {
     setAtMinTick(false);
     setAtMaxTick(false);

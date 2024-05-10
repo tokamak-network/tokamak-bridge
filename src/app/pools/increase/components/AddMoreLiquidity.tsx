@@ -34,7 +34,7 @@ export default function AddMoreLiquidity() {
       TITAN_SEPOLIA: token0.address,
     },
     isNativeCurrency:
-      token0.address === getWETHAddress(chainName)
+      token0.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
         ? [
             SupportedChainId.MAINNET,
             SupportedChainId.TITAN,
@@ -56,11 +56,12 @@ export default function AddMoreLiquidity() {
       TITAN_SEPOLIA: token1.address,
     },
     isNativeCurrency:
-      token1.address === getWETHAddress(chainName)
+      token1.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
         ? [
             SupportedChainId.MAINNET,
             SupportedChainId.TITAN,
             SupportedChainId.SEPOLIA,
+            SupportedChainId.TITAN_SEPOLIA,
           ]
         : null,
     decimals: token1.decimals,
