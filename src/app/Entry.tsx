@@ -62,9 +62,9 @@ export default function Entry({ children }: { children: React.ReactNode }) {
             <>
               <Header />
               <Flex flexDir={"column"}>
-                <Center bg={"#0F0F12"} h={"100vh"}>
+                <Flex justifyContent={"center"} bg={"#0F0F12"} minH={"90vh"}>
                   {children}
-                </Center>
+                </Flex>
                 {pcView ? (
                   <Footer />
                 ) : (

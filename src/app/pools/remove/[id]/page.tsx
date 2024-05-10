@@ -31,7 +31,7 @@ export default function RemoveLiquidity() {
   if (info === undefined) return null;
 
   return (
-    <Flex flexDir={"column"} rowGap={"8px"}>
+    <Flex flexDir={"column"} rowGap={"8px"} pt={"134px"}>
       <TopLine
         title="Remove Liquidity"
         clear={false}

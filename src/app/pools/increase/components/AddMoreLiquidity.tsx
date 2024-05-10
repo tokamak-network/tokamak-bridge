@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Title from "../../add/components/Title";
 import TokenCard from "@/components/card/TokenCard";
 import add from "assets/icons/addIcon.svg";
@@ -99,7 +99,7 @@ export default function AddMoreLiquidity() {
           </Flex>
         </Flex>
         <Flex h={"242px"} justifyContent={"center"} pos={"absolute"}>
-          <Flex mx="6px" h={"100%"} w="24px">
+          <Flex mx="6px" h={"100%"} w="24px" justifyContent={"center"}>
             <Image src={add} alt="add" />
           </Flex>
         </Flex>

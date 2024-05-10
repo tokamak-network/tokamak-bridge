@@ -18,7 +18,7 @@ import { LoadingCircleSpinner } from "@/components/ui/CircleSpinner";
 
 const LoadingContainer = () => {
   return (
-    <Flex w={"424px"} flexDir="column">
+    <Flex w={"424px"} flexDir="column" pt={"134px"}>
       <InfoHeader />
       <Flex
         flexDir="column"
@@ -58,7 +58,7 @@ export default function Page() {
   if (info === undefined) return <NoPosition />;
 
   return (
-    <Flex w={"424px"} flexDir="column">
+    <Flex w={"424px"} flexDir="column" pt={"134px"}>
       <InfoHeader />
       <Flex
         flexDir="column"

@@ -46,7 +46,7 @@ export default function IncreaseLiquidity() {
   }
 
   return (
-    <Flex flexDir={"column"} w={"852px"} rowGap={"8px"}>
+    <Flex flexDir={"column"} w={"852px"} rowGap={"8px"} pt={"134px"}>
       <TopLine
         title="Increase Liquidity"
         clear={false}

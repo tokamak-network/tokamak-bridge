@@ -192,7 +192,7 @@ const Content = (props: {
             <ContentTitle
               title="Earned fees"
               amount={
-                totalMarketPrice
+                totalMarketPrice || totalMarketPrice !== "-"
                   ? `$${commafy(totalMarketPrice, 2)}`
                   : undefined
               }
