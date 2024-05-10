@@ -18,6 +18,7 @@ import {
 } from "@chakra-ui/react";
 import useFxConfirmModal from "@/hooks/modal/useFxConfirmModal";
 import Image from "next/image";
+import CloseButton from "@/componenets/button/CloseButton";
 import EthSymbol from "assets/icons/fw/eth_fw.svg";
 import ThanosSymbol from "assets/icons/fw/thanos_fw.svg";
 import TipSymbol from "assets/icons/fw/tip_fw.svg";
@@ -46,7 +47,9 @@ export default function ConfirmFwModal() {
           >
             Confirm Cross Trade
           </ModalHeader>
-          <ModalCloseButton />
+          <Box pos={"absolute"} right={4} top={"15px"}>
+            <CloseButton onClick={onCloseFwConfirmModal} />
+          </Box>{" "}
           <ModalBody p={0}>
             <Box
               bg='#15161D'
