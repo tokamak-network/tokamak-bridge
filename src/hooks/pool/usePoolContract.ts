@@ -39,6 +39,7 @@ import {
   getSingleCalldataGasLimit,
 } from "@/utils/txn/calculateGasMargin";
 import { useSettingValue } from "../uniswap/useSettingValue";
+import { getTotalGasCostUSD } from "@/utils/gas/calculateGasFee";
 
 export function usePoolMint() {
   const { inToken, outToken } = useInOutTokens();
@@ -197,7 +198,12 @@ export function usePoolMint() {
 
           const gasLimit =
             multicallParam.length === 1
-              ? await getSingleCalldataGasLimit(provider, txData, calldata)
+              ? await getSingleCalldataGasLimit(
+                  provider,
+                  txData,
+                  calldata,
+                  isLayer2
+                )
               : await calculateGasLimit(
                   provider,
                   transactionRequest,
@@ -274,7 +280,7 @@ export function usePoolMint() {
 
   const estimateGasToMint = useCallback(async () => {
     if (feeData && ethPrice) {
-      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const { gasPrice } = feeData;
       const estimatedGasUsage = await mintPosition(true);
 
       if (estimatedGasUsage === undefined) return undefined;
@@ -282,7 +288,7 @@ export function usePoolMint() {
       const totalGasCost =
         Number(gasPrice) * Number(estimatedGasUsage.toString());
       const parsedTotalGasCost = ethers.utils.formatUnits(
-        totalGasCost.toString(),
+        estimatedGasUsage.toString(),
         "ether"
       );
 
@@ -418,7 +424,12 @@ export function usePoolContract() {
 
           const gasLimit =
             multicallParam.length === 1
-              ? await getSingleCalldataGasLimit(provider!, txData, calldata)
+              ? await getSingleCalldataGasLimit(
+                  provider!,
+                  txData,
+                  calldata,
+                  layer === "L2"
+                )
               : await calculateGasLimit(
                   provider!,
                   transactionRequest,
@@ -636,7 +647,7 @@ export function usePoolContract() {
                 });
                 if (tx?.hash)
                   return setTxHashToRemoveLiquidity(tx.hash as Hash);
-                return;
+                // return
               }
             } catch (e) {
               console.log(e);
@@ -675,8 +686,6 @@ export function usePoolContract() {
 
   const collectFees = useCallback(
     async (estimateGas?: boolean) => {
-      // console.log("--collectFees--");
-      // console.log(info, address);
       if (info && address && provider && chainName && UNISWAP_CONTRACT) {
         const token0 = info.token0;
         const token1 = info.token1;
@@ -814,45 +823,38 @@ export function usePoolContract() {
 
   const estimateGasToIncrease = useCallback(async () => {
     if (feeData && ethPrice) {
-      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const { gasPrice } = feeData;
       const estimatedGasUsage = await increaseLiquidity(true);
 
       if (estimatedGasUsage) {
-        const totalGasCost =
-          Number(gasPrice) * Number(estimatedGasUsage.toString());
-
-        const parsedTotalGasCost = ethers.utils.formatUnits(
-          totalGasCost.toString(),
-          "ether"
+        const totalGasCostUSD = getTotalGasCostUSD(
+          estimatedGasUsage,
+          gasPrice,
+          ethPrice,
+          layer
         );
-
-        const totalGasCostUSD =
-          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
         return totalGasCostUSD;
       }
     }
-  }, [feeData, ethPrice]);
+  }, [feeData, ethPrice, layer]);
 
   const estimateGasToCollect = useCallback(async () => {
     if (feeData && ethPrice) {
-      const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+      const { gasPrice } = feeData;
       const estimatedGasUsage = await collectFees(true);
       if (estimatedGasUsage) {
-        const totalGasCost =
-          Number(gasPrice) * Number(estimatedGasUsage.toString());
-        const parsedTotalGasCost = ethers.utils.formatUnits(
-          totalGasCost.toString(),
-          "ether"
+        const totalGasCostUSD = getTotalGasCostUSD(
+          estimatedGasUsage,
+          gasPrice,
+          ethPrice,
+          layer
         );
-
-        const totalGasCostUSD =
-          Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
         return totalGasCostUSD;
       }
     }
-  }, [feeData, ethPrice]);
+  }, [feeData, ethPrice, layer]);
 
   const estimateGasToRemove = useCallback(
     async (
@@ -860,28 +862,25 @@ export function usePoolContract() {
       removeLiquidityPercentage: number | undefined
     ) => {
       if (feeData && ethPrice) {
-        const { gasPrice, maxFeePerGas, maxPriorityFeePerGas } = feeData;
+        const { gasPrice } = feeData;
         const estimatedGasUsage = await removeLiquidity(
           positionId,
           removeLiquidityPercentage,
           true
         );
         if (estimatedGasUsage) {
-          const totalGasCost =
-            Number(gasPrice) * Number(estimatedGasUsage.toString());
-          const parsedTotalGasCost = ethers.utils.formatUnits(
-            totalGasCost.toString(),
-            "ether"
+          const totalGasCostUSD = getTotalGasCostUSD(
+            estimatedGasUsage,
+            gasPrice,
+            ethPrice,
+            layer
           );
-
-          const totalGasCostUSD =
-            Number(parsedTotalGasCost.replaceAll(",", "")) * ethPrice;
 
           return totalGasCostUSD;
         }
       }
     },
-    [feeData, ethPrice]
+    [feeData, ethPrice, layer]
   );
 
   return {

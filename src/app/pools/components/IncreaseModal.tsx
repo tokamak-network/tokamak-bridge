@@ -59,6 +59,7 @@ export default function IncreaseModal() {
       <ModalOverlay opacity={0.1} bg="blackAlpha.900" />
       <ModalContent
         // h={"100%"}
+
         w="404px"
         bg={"#1F2128"}
         p="20px"

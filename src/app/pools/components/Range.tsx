@@ -63,7 +63,6 @@ export default function Range(props: {
   const { poolModal } = usePreview();
   const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
   const { inToken, outToken } = useInOutTokens();
-  const { layer } = useConnectedNetwork();
 
   return (
     <Flex

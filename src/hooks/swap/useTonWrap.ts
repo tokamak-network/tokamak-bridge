@@ -8,11 +8,12 @@ import { useTx } from "../tx/useTx";
 import { getWETHAddress } from "@/utils/token/isETH";
 import useConnectedNetwork from "../network";
 import { useProvier } from "../provider/useProvider";
-import { BigNumber, Contract } from "ethers";
+import { BigNumber, Contract, ethers } from "ethers";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { useGetMode } from "../mode/useGetMode";
 import OutToken from "@/app/BridgeSwap/components/OutToken";
+import { asL2Provider } from "@tokamak-network/titan-sdk";
 // import { useRecoilState } from "recoil";
 // import { transactionModalStatus } from "@/recoil/modal/atom";
 
@@ -140,6 +141,20 @@ export default function useWrap() {
     async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract) {
         const estimateGas = await ETHWrapContract.estimateGas.deposit();
+        const calldata =
+          ETHWrapContract.interface.encodeFunctionData("deposit");
+
+        const TitanProvider = asL2Provider(
+          new ethers.providers.JsonRpcProvider(
+            "https://rpc.titan.tokamak.network"
+          )
+        );
+
+        const gasLimit = await TitanProvider.estimateTotalGasCost({
+          to: ETHWrapContract.address,
+          data: calldata,
+        });
+
         if (estimateGasUsage) return estimateGas;
         try {
           deposit({
@@ -185,7 +200,8 @@ export default function useWrap() {
           : mode === "ETH-Wrap"
           ? await wrapETH(true)
           : mode === "ETH-Unwrap"
-          ? await unwrapWETH(true) : "";
+          ? await unwrapWETH(true)
+          : "";
       if (estimatedGas) setEstimatedGasUsage(estimatedGas);
     };
 

@@ -37,7 +37,6 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   >(undefined);
 
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
-  const { layer } = useConnectedNetwork();
   useEffect(() => {
     const fetchData = async () => {
       if (isOpen === "collectFee") {
