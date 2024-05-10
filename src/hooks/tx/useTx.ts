@@ -28,9 +28,6 @@ import {
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 import { Log } from "viem";
-import { isUSDT } from "@/utils/token/stableCoin";
-import { useProvier } from "../provider/useProvider";
-import useBlockNum from "../network/useBlockNumber";
 import { useGetMode } from "../mode/useGetMode";
 
 const getInterface = () => {
@@ -144,40 +141,8 @@ const getTokenAddress = (
   return isETH && WETHAddress === tokenAddress ? "ETH" : tokenAddress ?? "0x";
 };
 
-// const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
-//   const { l1BridgeI, l2BridgeI, routerI, erc20I, swapperI } = getInterface();
-//   const args = () => {
-//     switch (txSort) {
-//       //uniswap
-//       case "Add Liquidity":
-//         return;
-//       case "Remove Liquidity":
-//         return;
-//       case "Swap":
-//         return;
-//       case "Collect Fee":
-//         return;
-//       //bridge
-//       case "Deposit":
-//         return;
-//       case "Withdraw":
-//         return;
-//       case "Wrap":
-//         const result = swapperI.parseLog(logs[logs.length - 1]);
-//         const { args } = result;
-//         return args;
-//       case "Unwrap":
-//         return;
-//       case "Approve":
-//         return;
-//     }
-//   };
-//   return args;
-// };
-
 export function useTransaction() {
   const [txData, setTxData] = useRecoilState(txDataStatus);
-  const { connectedChainId } = useConnectedNetwork();
 
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
@@ -252,65 +217,65 @@ export function useTx(params: {
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
   const { connectedChainId, layer } = useConnectedNetwork();
-  const { data } = useWaitForTransaction({
+  const { data, isLoading, isSuccess, isError } = useWaitForTransaction({
     hash,
     chainId: connectedChainId,
   });
 
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  const [isError, setIsError] = useState<boolean>(false);
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  // const [isError, setIsError] = useState<boolean>(false);
   const { mode, subMode } = useGetMode();
 
   /**
    * using Ethers Provider
-   * to fix a bug to track transactions
+   * to fix a bug to track transactions for the test purpose
    */
-  const { provider } = useProvier();
-  useEffect(() => {
-    async function getTransactionWithRetry(
-      hash: string,
-      provider: providers.Provider,
-      retries = 5
-    ) {
-      setIsLoading(true);
-      setIsSuccess(false);
-      setIsError(false);
-      // for (let i = 0; i < retries; i++) {
-      try {
-        const transaction = await provider.getTransaction(hash);
+  // const { provider } = useProvier();
+  // useEffect(() => {
+  //   async function getTransactionWithRetry(
+  //     hash: string,
+  //     provider: providers.Provider,
+  //     retries = 5
+  //   ) {
+  //     setIsLoading(true);
+  //     setIsSuccess(false);
+  //     setIsError(false);
+  //     // for (let i = 0; i < retries; i++) {
+  //     try {
+  //       const transaction = await provider.getTransaction(hash);
 
-        //put some delay to wait for the transaction to be updated on L2
-        const delayTime =
-          mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
-        await new Promise((resolve) => setTimeout(resolve, delayTime));
+  //       //put some delay to wait for the transaction to be updated on L2
+  //       const delayTime =
+  //         mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
+  //       await new Promise((resolve) => setTimeout(resolve, delayTime));
 
-        const result = await transaction.wait();
-        if (result.status === 1) {
-          return setIsSuccess(true);
-        }
-        return setIsSuccess(false);
-      } catch (error) {
-        // console.log(
-        //   `Transaction with hash ${hash} could not be found. Retry ${
-        //     i + 1
-        //   }/${retries}`
-        // );
-        setIsSuccess(false);
-        setIsError(true);
-        // await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
-      } finally {
-        setIsLoading(false);
-      }
-      throw new Error(
-        `Transaction with hash ${hash} could not be found after ${retries} retries.`
-      );
-    }
+  //       const result = await transaction.wait();
+  //       if (result.status === 1) {
+  //         return setIsSuccess(true);
+  //       }
+  //       return setIsSuccess(false);
+  //     } catch (error) {
+  //       // console.log(
+  //       //   `Transaction with hash ${hash} could not be found. Retry ${
+  //       //     i + 1
+  //       //   }/${retries}`
+  //       // );
+  //       setIsSuccess(false);
+  //       setIsError(true);
+  //       // await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //     throw new Error(
+  //       `Transaction with hash ${hash} could not be found after ${retries} retries.`
+  //     );
+  //   }
 
-    if (hash && provider) {
-      getTransactionWithRetry(hash, provider);
-    }
-  }, [hash, provider, mode, subMode, layer]);
+  //   if (hash && provider) {
+  //     getTransactionWithRetry(hash, provider);
+  //   }
+  // }, [hash, provider, mode, subMode, layer]);
 
   const [, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(
@@ -330,9 +295,13 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess) {
-      return setModalOpen("confirmed");
+      const delayTime =
+        mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
+      setTimeout(() => {
+        return setModalOpen("confirmed");
+      }, delayTime);
     }
-  }, [isSuccess]);
+  }, [isSuccess, layer, mode, subMode]);
 
   useEffect(() => {
     if (isError) {

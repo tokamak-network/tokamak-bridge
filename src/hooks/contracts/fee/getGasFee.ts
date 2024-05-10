@@ -3,7 +3,7 @@ import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { useAmountOut, useSwapTokens } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
@@ -40,6 +40,7 @@ export function useGasFee() {
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
+  const { estimatedGasUsageGwei } = useAmountOut();
   const { layer } = useConnectedNetwork();
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
@@ -51,9 +52,9 @@ export function useGasFee() {
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && tokenMarketPrice) {
       const { gasUseEstimate } = routingPath;
-      return gasUseEstimate;
+      return layer === "L2" ? estimatedGasUsageGwei : gasUseEstimate;
     }
-  }, [routingPath]);
+  }, [routingPath, layer, estimatedGasUsageGwei]);
 
   const wrapUnwrapGasEstimate = useMemo(() => {
     if (wrapUnwrapGasUsage) {
@@ -79,10 +80,8 @@ export function useGasFee() {
             return swapGasUseEstimate;
           case "ETH-Unwrap":
             return wrapUnwrapGasEstimate;
-
           case "ETH-Wrap":
             return wrapUnwrapGasEstimate;
-
           case "Unwrap":
             return wrapUnwrapGasEstimate;
           case "Wrap":
@@ -175,7 +174,7 @@ export function useGasFee() {
             if (mode !== "Withdraw") {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
               const parsedTotalGasCost = ethers.utils.formatUnits(
-                totalGasCost.toString(),
+                layer === "L2" ? estimatedGasUsage : totalGasCost.toString(),
                 "ether"
               );
 
@@ -207,6 +206,7 @@ export function useGasFee() {
     provider,
     feeData,
     swapGasUseEstimate,
+    layer,
   ]);
 
   const gasCostUS = useMemo(() => {

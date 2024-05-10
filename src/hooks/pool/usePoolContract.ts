@@ -196,7 +196,7 @@ export function usePoolMint() {
 
           const isLayer2 = Boolean(layer === "L2");
 
-          const gasLimit =
+          const calculatedGasUsage =
             multicallParam.length === 1
               ? await getSingleCalldataGasLimit(
                   provider,
@@ -211,7 +211,11 @@ export function usePoolMint() {
                   isConnectedToMainNetwork
                 );
 
-          if (estimateGas) return gasLimit;
+          if (estimateGas) return calculatedGasUsage;
+
+          const gasLimit = ethers.BigNumber.from(
+            ethers.utils.formatUnits(calculatedGasUsage, "ether")
+          ).toBigInt();
 
           try {
             if (multicallParam.length === 1 && gasLimit) {

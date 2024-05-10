@@ -25,6 +25,7 @@ export default function useWrap() {
     BigNumber | undefined
   >(undefined);
   const { mode } = useGetMode();
+  const { layer } = useConnectedNetwork();
 
   const { inToken, outToken } = useInOutTokens();
   const { data, write: tonWton } = useContractWrite({
@@ -58,6 +59,8 @@ export default function useWrap() {
     abi: WethABi,
     functionName: "withdraw",
   });
+
+  const isLayer2 = useMemo(() => layer === "L2", [layer]);
 
   const ETHWrapContract = useMemo(() => {
     try {
@@ -139,42 +142,49 @@ export default function useWrap() {
 
   const wrapETH = useCallback(
     async (estimateGasUsage?: boolean) => {
-      if (inToken && inToken.amountBN && ETHWrapContract) {
-        const estimateGas = await ETHWrapContract.estimateGas.deposit();
-        const calldata =
-          ETHWrapContract.interface.encodeFunctionData("deposit");
-
-        const TitanProvider = asL2Provider(
-          new ethers.providers.JsonRpcProvider(
-            "https://rpc.titan.tokamak.network"
-          )
-        );
-
-        const gasLimit = await TitanProvider.estimateTotalGasCost({
-          to: ETHWrapContract.address,
-          data: calldata,
-        });
-
+      if (inToken && inToken.amountBN && ETHWrapContract && provider) {
+        let estimateGas;
+        if (layer === "L2") {
+          const calldata =
+            ETHWrapContract.interface.encodeFunctionData("deposit");
+          const l2Provider = asL2Provider(provider);
+          estimateGas = await l2Provider.estimateTotalGasCost({
+            to: ETHWrapContract.address,
+            data: calldata,
+          });
+        }
+        if (layer === "L1") {
+          estimateGas = await ETHWrapContract.estimateGas.deposit();
+        }
         if (estimateGasUsage) return estimateGas;
         try {
-          deposit({
-            // gas: calculateGasMargin(estimateGas).toBigInt(),
-          });
+          deposit({});
         } catch (e) {
           console.log("**wrapTON err**");
           console.log(e);
         }
       }
     },
-    [inToken, ETHWrapContract]
+    [inToken, ETHWrapContract, provider, isLayer2]
   );
 
   const unwrapWETH = useCallback(
     async (estimateGasUsage?: boolean) => {
-      if (inToken && inToken.amountBN && ETHWrapContract) {
-        const estimateGas = await ETHWrapContract.estimateGas.withdraw(
-          inToken.amountBN
-        );
+      if (inToken && inToken.amountBN && ETHWrapContract && provider) {
+        let estimateGas;
+        if (layer === "L2") {
+          const calldata =
+            ETHWrapContract.interface.encodeFunctionData("withdraw");
+          const l2Provider = asL2Provider(provider);
+          estimateGas = await l2Provider.estimateTotalGasCost({
+            to: ETHWrapContract.address,
+            data: calldata,
+          });
+        }
+        if (layer === "L1") {
+          estimateGas = await ETHWrapContract.estimateGas.withdraw();
+        }
+
         if (estimateGasUsage) return estimateGas;
         try {
           withdraw({
@@ -187,7 +197,7 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, ETHWrapContract]
+    [inToken, ETHWrapContract, provider]
   );
 
   useEffect(() => {
