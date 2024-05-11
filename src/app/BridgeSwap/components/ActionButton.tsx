@@ -22,6 +22,7 @@ import { txPendingStatus } from "@/recoil/global/transaction";
 
 // FW UI test @Robert
 import useFxConfirmModal from "@/hooks/modal/useFxConfirmModal";
+import { ModalType } from "@/types/fw";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -98,7 +99,7 @@ export default function ActionButton() {
       onClick={
         /** FW UI test @Robert */
         !isConnected && mode == "Withdraw"
-          ? onOpenFwConfirmModal
+          ? () => onOpenFwConfirmModal(ModalType.Trade)
           : isConnected === false
           ? () => connetAndDisconntWallet()
           : needToOpenWithdrawModal

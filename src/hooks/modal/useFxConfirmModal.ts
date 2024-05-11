@@ -1,22 +1,22 @@
 import { fwConfirmModalStatus } from "@/recoil/modal/atom";
+import { FwConfirmModalType } from "@/types/fw";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
 
 export default function useFwConfirm() {
-  const [isOpen, setFwConfirmModal] = useRecoilState(fwConfirmModalStatus);
+  const [fwConfirmModal, setFwConfirmModal] =
+    useRecoilState(fwConfirmModalStatus);
 
-  const onOpenFwConfirmModal = () => {
-    console.log("타쥬?");
-    setFwConfirmModal(true);
-    console.log(isOpen);
+  const onOpenFwConfirmModal = (type: FwConfirmModalType["type"]) => {
+    setFwConfirmModal({ isOpen: true, type: type });
   };
 
   const onCloseFwConfirmModal = useCallback(() => {
-    setFwConfirmModal(false);
+    setFwConfirmModal((prev) => ({ ...prev, isOpen: false }));
   }, []);
 
   return {
-    isOpen,
+    fwConfirmModal,
     onOpenFwConfirmModal,
     onCloseFwConfirmModal,
   };

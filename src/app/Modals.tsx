@@ -8,7 +8,7 @@ import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
-import ConfirmFwModal from "@/components/modal/ConfirmFwModal";
+import FwModal from "@/components/fw/modal/comfirm";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -31,7 +31,7 @@ export default function Modals() {
       <SwapSettingModal />
 
       {/**FW UI test code @Robert */}
-      <ConfirmFwModal />
+      <FwModal />
     </>
   );
 }
