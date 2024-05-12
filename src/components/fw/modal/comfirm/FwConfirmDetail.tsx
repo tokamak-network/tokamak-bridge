@@ -1,8 +1,10 @@
 import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
+import { ModalType } from "@/types/fw";
 import TipSymbol from "assets/icons/fw/tip_fw.svg";
 import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
+import Pencil from "assets/icons/fw/pencil.svg";
 import EthSymbol from "assets/icons/fw/eth_fw.svg";
-import ThanosSymbol from "assets/icons/fw/thanos_fw.svg";
+import ThanosSymbol from "assets/icons/fw/thanos_symbol.svg";
 import Image from "next/image";
 
 interface TransactionDetailProps {
@@ -39,7 +41,10 @@ const FwTransactionDetail: React.FC<TransactionDetailProps> = ({
             bg={title != "Send" ? "#383736" : "#FFFFFF"}
             borderRadius='2px'
           >
-            <Image src={iconSrc} alt={"ThanosSymbol"} />
+            <Image
+              src={iconSrc}
+              alt={title !== "Send" ? "ThanosSymbol" : "EthSymbol"}
+            />
           </Center>
         </Flex>
       </Box>
@@ -61,12 +66,18 @@ interface FeeDetailProps {
   title: string;
   mainAmount: string;
   subAmount: string;
+  modalType?: ModalType; // ModalType을 직접 사용
+}
+
+interface FwConfirmDetailProps {
+  modalType: ModalType;
 }
 
 const FeeDetail: React.FC<FeeDetailProps> = ({
   title,
   mainAmount,
   subAmount,
+  modalType,
 }) => {
   return (
     <HStack
@@ -85,7 +96,10 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
         )}
       </Flex>
       <Flex>
-        {title != "Service fee" && (
+        {title == "Service fee" && modalType === ModalType.History && (
+          <Image src={Pencil} alt={"Pencil"} />
+        )}
+        {title == "Network fee" && (
           <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
         )}
         <Text fontWeight={600} fontSize={"12px"} mx={"4px"}>
@@ -101,7 +115,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   );
 };
 
-export default function FwConfirmDetail() {
+export default function FwConfirmDetail({ modalType }: FwConfirmDetailProps) {
   return (
     <Box
       bg='#15161D'
@@ -128,6 +142,7 @@ export default function FwConfirmDetail() {
           title='Service fee'
           mainAmount='0.012 USDC'
           subAmount='$0.43'
+          modalType={modalType}
         />
         <FeeDetail
           title='Network fee'

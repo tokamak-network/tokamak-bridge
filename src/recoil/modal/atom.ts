@@ -84,3 +84,8 @@ export const fwConfirmModalStatus = atom<FwConfirmModalType>({
     type: ModalType.Trade,
   },
 });
+
+export const fwOptionModalStatus = atom<boolean>({
+  key: "fwOptionModalStatus",
+  default: false,
+});
