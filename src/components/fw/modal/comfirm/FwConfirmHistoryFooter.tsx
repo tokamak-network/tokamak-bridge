@@ -1,4 +1,4 @@
-import { Box, Checkbox, Button, Text, Flex, Center } from "@chakra-ui/react";
+import { Box, Text, Flex, Center } from "@chakra-ui/react";
 import ThanosSymbol_bg from "assets/icons/fw/thanos_symbol_bg_white.svg";
 import txlink from "@/assets/icons/fw/txlink.svg";
 import Image from "next/image";

@@ -6,6 +6,7 @@ import Pencil from "assets/icons/fw/pencil.svg";
 import EthSymbol from "assets/icons/fw/eth_fw.svg";
 import ThanosSymbol from "assets/icons/fw/thanos_symbol.svg";
 import Image from "next/image";
+import { FwTooltip } from "@/componenets/fw/components/FwTooltip";
 
 interface TransactionDetailProps {
   title: string;
@@ -90,9 +91,13 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           {title}
         </Text>
         {title == "Service fee" && (
-          <Box ml={"2px"}>
-            <Image src={TipSymbol} alt={"TipSymbol"} />
-          </Box>
+          // <Box ml={"2px"}>
+          //   <Image src={TipSymbol} alt={"TipSymbol"} />
+          // </Box>
+          <FwTooltip
+            tooltipLabel={"text will be changed"}
+            style={{ marginLeft: "2px" }}
+          />
         )}
       </Flex>
       <Flex>
