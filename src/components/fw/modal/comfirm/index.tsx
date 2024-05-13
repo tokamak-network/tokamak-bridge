@@ -24,7 +24,9 @@ export default function FwModal() {
     setIsChecked(e.target.checked);
 
   const handleConfirm = () => {
-    console.log("Confirmed!");
+    alert("Cross Confirmed!");
+    setIsChecked(false);
+    onCloseFwConfirmModal();
   };
 
   const modalTitles = {
@@ -39,7 +41,12 @@ export default function FwModal() {
       isCentered
     >
       <ModalOverlay />
-      <ModalContent bg='#1F2128' p={"20px"} borderRadius={"16px"}>
+      <ModalContent
+        width={"404px"}
+        bg='#1F2128'
+        p={"20px"}
+        borderRadius={"16px"}
+      >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
             {modalTitles[fwConfirmModal.type]}

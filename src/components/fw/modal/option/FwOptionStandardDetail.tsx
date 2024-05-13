@@ -80,6 +80,7 @@ export default function FwOptionStandardDetail(props: AdditionalStandardProps) {
           <Text
             fontWeight={600}
             fontSize={"22px"}
+            height={"29px"}
             lineHeight={"33px"}
             letterSpacing={"-0.05em"}
             color={"#007AFF"}

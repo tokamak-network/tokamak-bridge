@@ -73,6 +73,7 @@ export default function FwComingOptionDetail() {
           <Text
             fontWeight={600}
             fontSize={"22px"}
+            height={"29px"}
             lineHeight={"33px"}
             letterSpacing={"-0.05em"}
             color={"#DB00FF"}

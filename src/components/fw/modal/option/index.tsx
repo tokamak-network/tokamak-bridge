@@ -28,21 +28,9 @@ export default function FwOptionModal() {
   const { onOpenFwConfirmModal } = useFxConfirmModal();
   const [nextStep, setNextStep] = useState<boolean>(false);
 
-  const handleConfirm = () => {
-    console.log("next");
-    if (!nextStep) {
-      setNextStep(true);
-      return;
-    }
-
-    //통과되면 해당 로직으로 이동
-    onCloseFwOptionModal();
-    onOpenFwConfirmModal(ModalType.Trade);
-  };
-
   // FwConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
-    useState<ButtonTypeMain>(ButtonTypeMain.Cross);
+    useState<ButtonTypeMain>(ButtonTypeMain.Standard);
 
   const [activeSubButtonValue, setActiveSubButtonValue] =
     useState<ButtonTypeSub>(ButtonTypeSub.Recommend);
@@ -55,8 +43,6 @@ export default function FwOptionModal() {
     setActiveSubButtonValue(value);
   };
 
-  // FwConfirmDetail button 관련 state 및 function End
-
   // FwOptionInput 관련 state 및 function Start @Robert
   const [inputValue, setInputValue] = useState("");
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
@@ -65,7 +51,7 @@ export default function FwOptionModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (/^[012\s]*$/.test(value)) {
+    if (/^[123\s]*$/.test(value)) {
       setInputValue(value);
     }
   };
@@ -84,26 +70,42 @@ export default function FwOptionModal() {
         setInputWarningCheck("");
     }
   }, [inputValue]);
-  //input 관련 state 및 function End
 
-  //임시 체크 로직
-  useEffect(() => {
-    console.log(activeMainButtonValue);
-  }, [activeMainButtonValue]);
+  const shouldShowEnterAmount =
+    activeMainButtonValue === ButtonTypeMain.Cross &&
+    activeSubButtonValue === ButtonTypeSub.Advanced &&
+    (inputValue === "" || inputWarningCheck === WarningType.Critical);
 
-  useEffect(() => {
-    console.log(activeSubButtonValue);
-  }, [activeSubButtonValue]);
-  //////////////
+  const handleConfirm = () => {
+    if (!nextStep) {
+      setActiveMainButtonValue(ButtonTypeMain.Cross);
+      setNextStep(true);
+      return;
+    }
+    //초기화
+    onCloseFwOptionModal();
+    setNextStep(false);
+    setInputValue("");
+    setActiveMainButtonValue(ButtonTypeMain.Standard);
+    setActiveSubButtonValue(ButtonTypeSub.Recommend);
+    setInputWarningCheck("");
+
+    if (activeMainButtonValue === ButtonTypeMain.Standard) {
+      alert("Official Standard Confirmed!");
+      return;
+    }
+
+    onOpenFwConfirmModal(ModalType.Trade);
+  };
 
   return (
     <Modal isOpen={fwOptionModal} onClose={onCloseFwOptionModal} isCentered>
       <ModalOverlay />
       <ModalContent
+        width={"404px"}
         bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
-        width={"404px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
@@ -140,18 +142,19 @@ export default function FwOptionModal() {
         <ModalFooter p={0} display='block'>
           <Button
             mt={"12px"}
-            onClick={handleConfirm}
-            sx={{
-              backgroundColor: "#007AFF",
-              color: "#FFFFFF",
-            }}
             width='full'
             height={"48px"}
             borderRadius={"8px"}
+            sx={{
+              backgroundColor: shouldShowEnterAmount ? "#17181D" : "#007AFF",
+              color: shouldShowEnterAmount ? "#8E8E92" : "#FFFFFF",
+            }}
             _hover={{}}
+            onClick={handleConfirm}
+            isDisabled={shouldShowEnterAmount}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              Next
+              {shouldShowEnterAmount ? "Enter amount" : "Next"}
             </Text>
           </Button>
         </ModalFooter>

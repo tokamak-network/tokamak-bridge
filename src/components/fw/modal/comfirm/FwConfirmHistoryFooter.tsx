@@ -60,7 +60,9 @@ export default function FwConfirmHistoryFooter() {
             >
               Transaction
             </Text>
-            <Image src={txlink} alt={"txlink"} />
+            <Flex cursor='pointer'>
+              <Image src={txlink} alt={"txlink"} />
+            </Flex>
           </Flex>
         </Flex>
         <Flex
@@ -83,11 +85,11 @@ export default function FwConfirmHistoryFooter() {
               my={"8px"}
               ml={"12px"}
               fontWeight={500}
-              fontSize={"15px"}
+              fontSize={"14px"}
               lineHeight={"24px"}
               color={"#FFFFFF"}
             >
-              Wait
+              Wait for receive
             </Text>
           </Flex>
           <Flex my={"13px"}>
@@ -103,7 +105,7 @@ export default function FwConfirmHistoryFooter() {
           </Flex>
         </Flex>
       </Box>
-      <Box height={"15px"} mt={"12px"} textAlign={"right"}>
+      {/* <Box height={"15px"} mt={"12px"} textAlign={"right"}>
         <Text
           fontWeight={400}
           fontSize={"10px"}
@@ -112,7 +114,7 @@ export default function FwConfirmHistoryFooter() {
         >
           Cancel Cross Trade
         </Text>
-      </Box>
+      </Box> */}
     </>
   );
 }

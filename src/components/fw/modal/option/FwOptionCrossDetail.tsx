@@ -85,11 +85,11 @@ export default function FwOptionCrossDetail(
                   cursor: "auto",
                 },
               }}
-              isDisabled={isRecommendActive}
               _hover={{}}
               onClick={() =>
                 props.handleButtonSubClick(ButtonTypeSub.Recommend)
               }
+              isDisabled={isRecommendActive}
             >
               <Text
                 fontSize={"12px"}
@@ -116,9 +116,9 @@ export default function FwOptionCrossDetail(
                   cursor: "auto",
                 },
               }}
-              isDisabled={isAdvancedActive}
               _hover={{}}
               onClick={() => props.handleButtonSubClick(ButtonTypeSub.Advanced)}
+              isDisabled={isAdvancedActive}
             >
               <Text
                 fontSize={"12px"}
@@ -185,6 +185,7 @@ export default function FwOptionCrossDetail(
           <Text
             fontWeight={600}
             fontSize={"22px"}
+            height={"29px"}
             lineHeight={"33px"}
             letterSpacing={"-0.05em"}
             color={"#DB00FF"}

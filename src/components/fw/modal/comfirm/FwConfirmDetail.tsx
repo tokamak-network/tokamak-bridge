@@ -102,7 +102,9 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
       </Flex>
       <Flex>
         {title == "Service fee" && modalType === ModalType.History && (
-          <Image src={Pencil} alt={"Pencil"} />
+          <Flex cursor='pointer'>
+            <Image src={Pencil} alt={"Pencil"} />
+          </Flex>
         )}
         {title == "Network fee" && (
           <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
