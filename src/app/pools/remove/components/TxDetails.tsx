@@ -173,8 +173,12 @@ const Content = (props: {
             <ContentTitle
               title="Liquidity to be removed"
               amount={
-                totalRemovedMarketPrice
-                  ? `$${commafy(totalRemovedMarketPrice, 4)}`
+                (totalRemovedMarketPrice || totalRemovedMarketPrice !== "-") &&
+                totalRemovedMarketPrice !== undefined
+                  ? `$${commafy(
+                      totalRemovedMarketPrice.replaceAll(",", ""),
+                      4
+                    )}`
                   : undefined
               }
             />

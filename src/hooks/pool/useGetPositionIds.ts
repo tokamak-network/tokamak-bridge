@@ -276,7 +276,6 @@ export function useGetPositionById(positionId: number, chainId: number) {
   const { provider: _provider } = useProvier();
   const { blockNumber } = useBlockNum();
   const { connectedChainId, layer } = useConnectedNetwork();
-  const pathName = usePathname();
 
   const [positions, setPositions] = useRecoilState<
     PoolCardDetail[] | undefined

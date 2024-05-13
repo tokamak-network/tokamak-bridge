@@ -152,7 +152,13 @@ export default function Range(props: {
                 false,
                 true
               )
-            : commafy(amount0Removed, 6)
+            : smallNumberFormmater(
+                amount0Removed?.toString(),
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )
         }
       />
       {(page === "addLiquidity" || page === "increaseLiquidity") &&

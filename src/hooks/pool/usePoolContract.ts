@@ -228,7 +228,6 @@ export function usePoolMint() {
               {
                 value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
                 from: address,
-                // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
               }
             );
             if (tx.hash) return setTxHash(tx.hash);
