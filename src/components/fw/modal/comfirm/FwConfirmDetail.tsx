@@ -1,5 +1,5 @@
 import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
-import { ModalType } from "@/types/fw";
+import { ModalType } from "@/componenets/fw/types";
 import TipSymbol from "assets/icons/fw/tip_fw.svg";
 import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
 import Pencil from "assets/icons/fw/pencil.svg";

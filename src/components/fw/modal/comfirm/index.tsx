@@ -8,7 +8,7 @@ import {
   Box,
   Text,
 } from "@chakra-ui/react";
-import { ModalType } from "@/types/fw";
+import { ModalType } from "@/componenets/fw/types";
 import { useState } from "react";
 import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
 import CloseButton from "@/componenets/button/CloseButton";

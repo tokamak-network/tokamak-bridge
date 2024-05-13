@@ -9,11 +9,11 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
 import CloseButton from "@/componenets/button/CloseButton";
 import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
-import { ModalType } from "@/types/fw";
+import { ModalType, WarningType, ButtonType } from "@/componenets/fw/types";
 import FwComingOptionDetail from "./FwComingOptionDetail";
 import FwOptionCrossDetail from "./FwOptionCrossDetail";
 import FwOptionStandardDetail from "./FwOptionStandardDetail";
@@ -33,6 +33,50 @@ export default function FwOptionModal() {
     onOpenFwConfirmModal(ModalType.Trade);
   };
 
+  // FwOptionInput 관련 state 및 function Start @Robert
+  const [inputValue, setInputValue] = useState("");
+  const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
+    ""
+  );
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    if (/^[012\s]*$/.test(value)) {
+      setInputValue(value);
+    }
+  };
+
+  // input이 변경될 때, 값이 있으면 rightElement를 보여준다.
+  // 현재 1일때 red warning, 2일때, yellow warning
+  useEffect(() => {
+    switch (inputValue) {
+      case "1":
+        setInputWarningCheck(WarningType.Critical);
+        break;
+      case "2":
+        setInputWarningCheck(WarningType.Normal);
+        break;
+      default:
+        setInputWarningCheck("");
+    }
+  }, [inputValue]);
+  //input 관련 state 및 function End
+
+  // FwConfirmDetail button 관련 state 및 function Start @Robert
+  const [activeButtonValue, setActiveButtonValue] = useState<ButtonType>(
+    ButtonType.Recommend
+  );
+
+  const handleButtonClick = (value: ButtonType) => {
+    setActiveButtonValue(value);
+  };
+
+  //임시 체크 로직
+  useEffect(() => {
+    console.log(activeButtonValue);
+  }, [activeButtonValue]);
+  // FwConfirmDetail button 관련 state 및 function End
+
   return (
     <Modal isOpen={fwOptionModal} onClose={onCloseFwOptionModal} isCentered>
       <ModalOverlay />
@@ -51,7 +95,19 @@ export default function FwOptionModal() {
           <CloseButton onClick={onCloseFwOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {!nextStep ? <FwComingOptionDetail /> : <FwOptionCrossDetail />}
+          {!nextStep ? (
+            <FwComingOptionDetail />
+          ) : (
+            <FwOptionCrossDetail
+              // button 관련 props
+              activeButtonValue={activeButtonValue}
+              handleButtonClick={handleButtonClick}
+              // input 관련 props
+              inputValue={inputValue}
+              inputWarningCheck={inputWarningCheck}
+              onInputChange={handleInputChange}
+            />
+          )}
 
           <FwOptionStandardDetail />
         </ModalBody>

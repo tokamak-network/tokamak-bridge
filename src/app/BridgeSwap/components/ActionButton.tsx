@@ -23,7 +23,7 @@ import { txPendingStatus } from "@/recoil/global/transaction";
 // FW UI test @Robert
 import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
-import { ModalType } from "@/types/fw";
+import { ModalType } from "@/componenets/fw/types";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();

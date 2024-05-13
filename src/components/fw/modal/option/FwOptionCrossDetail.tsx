@@ -8,24 +8,20 @@ import {
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import FwOptionInput from "@/componenets/fw/modal/option/FwOptionInput";
 import { FwTooltip } from "@/componenets/fw/components/FwTooltip";
+import { FwOptionCrossDetailProps } from "@/components/fw/types";
+import { ButtonType } from "@/componenets/fw/types";
+interface AdditionalProps {
+  activeButtonValue: ButtonType;
+  handleButtonClick: (value: ButtonType) => void;
+}
 
-export default function FwOptionCrossDetail() {
-  const [inputValueCheck, setInputValueCheck] = useState<boolean>(false);
-
-  interface Effect {
-    warnings: string;
-    color: string | null;
-  }
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = e.target;
-    const shouldShowRightElement = value !== "";
-    if (inputValueCheck !== shouldShowRightElement) {
-      setInputValueCheck(shouldShowRightElement);
-    }
-  };
+export default function FwOptionCrossDetail(
+  props: AdditionalProps & FwOptionCrossDetailProps
+) {
+  const isRecommendActive = props.activeButtonValue === ButtonType.Recommend;
+  const isAdvancedActive = props.activeButtonValue === ButtonType.Advanced;
 
   return (
     <Flex
@@ -68,97 +64,87 @@ export default function FwOptionCrossDetail() {
         <Box mt={"12px"}>
           <Flex>
             <Button
-              width='99px'
+              width={isRecommendActive ? "99px" : "98px"}
               height='26px'
               padding='4px 10px'
               gap='8px'
               borderRadius='4px'
               sx={{
-                backgroundColor: "#15161D",
-                color: "#A0A3AD",
-                border: "1px solid #313442",
+                backgroundColor: isRecommendActive ? "#DB00FF" : "#15161D",
+                border: isRecommendActive ? "" : "1px solid #313442",
+                //disabled 상태에서 버튼 비활성화 css default 값
+                _disabled: {
+                  border: "1px solid #313442",
+                  cursor: "auto",
+                },
               }}
+              isDisabled={isRecommendActive}
+              _hover={{}}
+              onClick={() => props.handleButtonClick(ButtonType.Recommend)}
             >
-              <Text fontSize={"12px"} fontWeight={"400"} lineHeight={"18px"}>
+              <Text
+                fontSize={"12px"}
+                color={isRecommendActive ? "#FFFFFF" : "#A0A3AD"}
+                fontWeight={isRecommendActive ? "600" : "400"}
+                lineHeight={"18px"}
+              >
                 Recommend
               </Text>
             </Button>
             <Button
-              width='82px'
+              width={isAdvancedActive ? "83px" : "82px"}
               height='26px'
               padding='4px 10px'
               ml={"8px"}
               gap='8px'
               borderRadius='4px'
               sx={{
-                backgroundColor: "#DB00FF",
-                color: "#FFFFFF",
+                backgroundColor: isAdvancedActive ? "#DB00FF" : "#15161D",
+                border: isAdvancedActive ? "" : "1px solid #313442",
+                //disabled 상태에서 버튼 비활성화 css default 값
+                _disabled: {
+                  border: "1px solid #313442",
+                  cursor: "auto",
+                },
               }}
+              isDisabled={isAdvancedActive}
+              _hover={{}}
+              onClick={() => props.handleButtonClick(ButtonType.Advanced)}
             >
-              <Text fontSize={"12px"} fontWeight={"600"} lineHeight={"18px"}>
+              <Text
+                fontSize={"12px"}
+                color={isAdvancedActive ? "#FFFFFF" : "#A0A3AD"}
+                fontWeight={isAdvancedActive ? "600" : "400"}
+                lineHeight={"18px"}
+              >
                 Advanced
               </Text>
             </Button>
           </Flex>
         </Box>
-        <Box mt={"12px"}>
-          <Flex>
-            <Text
-              fontWeight={400}
-              fontSize={"10px"}
-              lineHeight={"20px"}
-              color={"#A0A3AD"}
-            >
-              Service fee
-            </Text>
-            <FwTooltip
-              tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px", marginTop: "1px" }}
+        {isAdvancedActive && (
+          <Box mt={"12px"}>
+            <Flex>
+              <Text
+                fontWeight={400}
+                fontSize={"10px"}
+                lineHeight={"20px"}
+                color={"#A0A3AD"}
+              >
+                Service fee
+              </Text>
+              <FwTooltip
+                tooltipLabel={"text will be changed"}
+                style={{ marginLeft: "2px", marginTop: "1px" }}
+              />
+            </Flex>
+            <FwOptionInput
+              inputValue={props.inputValue}
+              inputWarningCheck={props.inputWarningCheck}
+              onInputChange={props.onInputChange}
             />
-          </Flex>
-          <InputGroup my={"4px"}>
-            <Input
-              w={"189px"}
-              h={"34px"}
-              px='12px'
-              py='4px'
-              type='number'
-              pattern='\d*'
-              inputMode='decimal'
-              border={"1px solid #313442"}
-              borderRadius={"4px"}
-              fontSize={"16px"}
-              fontWeight={600}
-              lineHeight={"26px"}
-              placeholder='Enter amount'
-              onChange={onChange}
-              _hover={{}}
-              _placeholder={{
-                fontSize: "12px",
-                fontWeight: "400",
-                lineHeight: "26px",
-                color: "#A0A3AD",
-              }}
-              _focus={{
-                borderColor: "#59628D",
-                boxShadow: "0 0 0 0.1px #59628D",
-              }}
-            />
-            {inputValueCheck && (
-              <InputRightElement height={"34px"}>
-                <Text
-                  pr={"12px"}
-                  fontSize={"12px"}
-                  fontWeight={400}
-                  color={"#A0A3AD"}
-                  lineHeight={"26px"}
-                >
-                  USDC
-                </Text>
-              </InputRightElement>
-            )}
-          </InputGroup>
-        </Box>
+          </Box>
+        )}
 
         <Box mt={"12px"}>
           <Text
