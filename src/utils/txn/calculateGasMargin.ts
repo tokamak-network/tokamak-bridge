@@ -19,9 +19,10 @@ export async function getSingleCalldataGasLimit(
 ) {
   if (isLayer2) {
     const l2Provider = asL2Provider(provider);
-    const estimatedGas = await l2Provider.estimateTotalGasCost(
-      txData as TransactionRequest
-    );
+    const estimatedGas = await l2Provider.estimateTotalGasCost({
+      ...(txData as TransactionRequest),
+      data: callData,
+    });
     return calculateGasMargin(estimatedGas);
   }
   const estimatedGasUsage = await provider.estimateGas({
