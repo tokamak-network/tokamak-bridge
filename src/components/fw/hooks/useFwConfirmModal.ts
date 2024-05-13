@@ -1,5 +1,5 @@
 import { fwConfirmModalStatus } from "@/recoil/modal/atom";
-import { FwConfirmModalType } from "@/componenets/fw/types";
+import { FwConfirmModalType } from "@/components/fw/types";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
 

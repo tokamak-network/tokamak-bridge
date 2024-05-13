@@ -1,11 +1,10 @@
 import { TokenInfo } from "types/token/supportedToken";
 import { Box, Button, Flex, Text, useTheme, HStack } from "@chakra-ui/react";
-import { TokenSymbol } from "@/componenets/image/TokenSymbol";
+import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { useCallback, useMemo, useState } from "react";
 import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 import { isETH } from "@/utils/token/isETH";
 import "@fontsource/quicksand/500.css";
-
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -64,12 +63,7 @@ const TopLine = (props: { mainSchemCol: string }) => {
 };
 
 export default function TokenMobileCard(props: TokenCardProps) {
-  const {
-    tokenInfo,
-    isNew,
-    symbolSize,
-    onAddToken
-  } = props;
+  const { tokenInfo, isNew, symbolSize, onAddToken } = props;
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
 
   const tokenColorCode = useMemo(() => {
@@ -114,9 +108,9 @@ export default function TokenMobileCard(props: TokenCardProps) {
 
   return (
     <Flex
-      width="auto"
+      width='auto'
       maxWidth={"250px"}
-      height="auto"
+      height='auto'
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
       border={`3px solid ${tokenColorCode} `}
       borderRadius={"16px"}
@@ -130,21 +124,31 @@ export default function TokenMobileCard(props: TokenCardProps) {
       fontFamily={theme.fonts.Quicksand}
     >
       <TopLine mainSchemCol={tokenColorCode} />
-      <HStack justifyContent="space-between" width="100%" px={4} py={2}>
-        <Box width="50%">
-          <Text 
+      <HStack justifyContent='space-between' width='100%' px={4} py={2}>
+        <Box width='50%'>
+          <Text
             fontWeight={700}
-            fontSize={20} 
-            zIndex={100} 
-            color={"#222222"} 
-            isTruncated={false} 
-            lineHeight={"tight"} 
-            textAlign="left"
+            fontSize={20}
+            zIndex={100}
+            color={"#222222"}
+            isTruncated={false}
+            lineHeight={"tight"}
+            textAlign='left'
           >
-            {thisTokenIsETH ? "Ethereum" : tokenInfo?.tokenSymbol === "WETH" ? "Wrapped Ethereum" : tokenInfo?.tokenName ?? "TOKEN"}
+            {thisTokenIsETH
+              ? "Ethereum"
+              : tokenInfo?.tokenSymbol === "WETH"
+              ? "Wrapped Ethereum"
+              : tokenInfo?.tokenName ?? "TOKEN"}
           </Text>
         </Box>
-        <Text fontWeight={400} fontSize={16} zIndex={100} color={"#222222"} textAlign="right">
+        <Text
+          fontWeight={400}
+          fontSize={16}
+          zIndex={100}
+          color={"#222222"}
+          textAlign='right'
+        >
           {tokenInfo?.tokenSymbol ?? "TOK"}
         </Text>
       </HStack>
@@ -163,8 +167,8 @@ export default function TokenMobileCard(props: TokenCardProps) {
       <Flex flexDir={"column"} alignItems={"center"}>
         <Text fontSize={12} fontWeight={400} color={"#222222"} w={"206px"}>
           This token isn’t traded on leading U.S. centralized exchanges or
-          frequently swapped on Tokamak Bridge. Always conduct your own
-          research before trading.
+          frequently swapped on Tokamak Bridge. Always conduct your own research
+          before trading.
         </Text>
         <Button
           w={"136px"}

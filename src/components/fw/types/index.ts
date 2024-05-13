@@ -21,7 +21,12 @@ export interface FwOptionCrossDetailProps {
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-export enum ButtonType {
+export enum ButtonTypeMain {
+  Cross = "cross",
+  Standard = "standard",
+}
+
+export enum ButtonTypeSub {
   Recommend = "recommend",
   Advanced = "advanced",
 }

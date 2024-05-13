@@ -8,30 +8,37 @@ import {
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
-import FwOptionInput from "@/componenets/fw/modal/option/FwOptionInput";
-import { FwTooltip } from "@/componenets/fw/components/FwTooltip";
+import FwOptionInput from "@/components/fw/modal/option/FwOptionInput";
+import { FwTooltip } from "@/components/fw/components/FwTooltip";
 import { FwOptionCrossDetailProps } from "@/components/fw/types";
-import { ButtonType } from "@/componenets/fw/types";
-interface AdditionalProps {
-  activeButtonValue: ButtonType;
-  handleButtonClick: (value: ButtonType) => void;
+import { ButtonTypeMain, ButtonTypeSub } from "@/components/fw/types";
+interface AdditionalCrossProps {
+  activeMainButtonValue: ButtonTypeMain;
+  handleButtonMainClick: (value: ButtonTypeMain) => void;
+  activeSubButtonValue: ButtonTypeSub;
+  handleButtonSubClick: (value: ButtonTypeSub) => void;
 }
 
 export default function FwOptionCrossDetail(
-  props: AdditionalProps & FwOptionCrossDetailProps
+  props: AdditionalCrossProps & FwOptionCrossDetailProps
 ) {
-  const isRecommendActive = props.activeButtonValue === ButtonType.Recommend;
-  const isAdvancedActive = props.activeButtonValue === ButtonType.Advanced;
+  const isCrossActive = props.activeMainButtonValue === ButtonTypeMain.Cross;
+
+  const isRecommendActive =
+    props.activeSubButtonValue === ButtonTypeSub.Recommend;
+  const isAdvancedActive =
+    props.activeSubButtonValue === ButtonTypeSub.Advanced;
 
   return (
     <Flex
       alignItems='center'
       justifyContent='space-between'
-      border='1px solid #DB00FF'
+      border={isCrossActive ? "1px solid #DB00FF" : "1px solid #313442"}
       py={"16px"}
       px={"20px"}
       borderRadius={"8px"}
-      cursor='pointer'
+      onClick={() => props.handleButtonMainClick(ButtonTypeMain.Cross)}
+      cursor={isCrossActive ? "auto" : "pointer"}
     >
       <Box>
         <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
@@ -80,7 +87,9 @@ export default function FwOptionCrossDetail(
               }}
               isDisabled={isRecommendActive}
               _hover={{}}
-              onClick={() => props.handleButtonClick(ButtonType.Recommend)}
+              onClick={() =>
+                props.handleButtonSubClick(ButtonTypeSub.Recommend)
+              }
             >
               <Text
                 fontSize={"12px"}
@@ -109,7 +118,7 @@ export default function FwOptionCrossDetail(
               }}
               isDisabled={isAdvancedActive}
               _hover={{}}
-              onClick={() => props.handleButtonClick(ButtonType.Advanced)}
+              onClick={() => props.handleButtonSubClick(ButtonTypeSub.Advanced)}
             >
               <Text
                 fontSize={"12px"}

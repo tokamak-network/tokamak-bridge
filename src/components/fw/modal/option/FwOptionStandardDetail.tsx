@@ -1,17 +1,26 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
-import { FwTooltip } from "@/componenets/fw/components/FwTooltip";
+import { FwTooltip } from "@/components/fw/components/FwTooltip";
+import { ButtonTypeMain } from "@/components/fw/types";
+interface AdditionalStandardProps {
+  activeMainButtonValue: ButtonTypeMain;
+  handleButtonMainClick: (value: ButtonTypeMain) => void;
+}
 
-export default function FwOptionStandardDetail() {
+export default function FwOptionStandardDetail(props: AdditionalStandardProps) {
+  const isStandardActive =
+    props.activeMainButtonValue === ButtonTypeMain.Standard;
+
   return (
     <Flex
       alignItems='center'
       justifyContent='space-between'
       mt={"12px"}
-      border='1px solid #007AFF'
+      border={isStandardActive ? "1px solid #007AFF" : "1px solid #313442"}
       py={"16px"}
       px={"20px"}
       borderRadius={"8px"}
-      cursor='pointer'
+      onClick={() => props.handleButtonMainClick(ButtonTypeMain.Standard)}
+      cursor={isStandardActive ? "auto" : "pointer"}
     >
       <Box>
         <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>

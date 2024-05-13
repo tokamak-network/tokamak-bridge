@@ -1,5 +1,5 @@
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
-import { FwConfirmModalType, ModalType } from "@/componenets/fw/types";
+import { FwConfirmModalType, ModalType } from "@/components/fw/types";
 import { atom } from "recoil";
 
 type withdrawModal = {

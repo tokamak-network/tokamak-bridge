@@ -11,9 +11,14 @@ import {
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
-import CloseButton from "@/componenets/button/CloseButton";
+import CloseButton from "@/components/button/CloseButton";
 import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
-import { ModalType, WarningType, ButtonType } from "@/componenets/fw/types";
+import {
+  ModalType,
+  WarningType,
+  ButtonTypeMain,
+  ButtonTypeSub,
+} from "@/components/fw/types";
 import FwComingOptionDetail from "./FwComingOptionDetail";
 import FwOptionCrossDetail from "./FwOptionCrossDetail";
 import FwOptionStandardDetail from "./FwOptionStandardDetail";
@@ -29,9 +34,28 @@ export default function FwOptionModal() {
       setNextStep(true);
       return;
     }
+
+    //통과되면 해당 로직으로 이동
     onCloseFwOptionModal();
     onOpenFwConfirmModal(ModalType.Trade);
   };
+
+  // FwConfirmDetail button 관련 state 및 function Start @Robert
+  const [activeMainButtonValue, setActiveMainButtonValue] =
+    useState<ButtonTypeMain>(ButtonTypeMain.Cross);
+
+  const [activeSubButtonValue, setActiveSubButtonValue] =
+    useState<ButtonTypeSub>(ButtonTypeSub.Recommend);
+
+  const handleButtonMainClick = (value: ButtonTypeMain) => {
+    setActiveMainButtonValue(value);
+  };
+
+  const handleButtonSubClick = (value: ButtonTypeSub) => {
+    setActiveSubButtonValue(value);
+  };
+
+  // FwConfirmDetail button 관련 state 및 function End
 
   // FwOptionInput 관련 state 및 function Start @Robert
   const [inputValue, setInputValue] = useState("");
@@ -62,20 +86,15 @@ export default function FwOptionModal() {
   }, [inputValue]);
   //input 관련 state 및 function End
 
-  // FwConfirmDetail button 관련 state 및 function Start @Robert
-  const [activeButtonValue, setActiveButtonValue] = useState<ButtonType>(
-    ButtonType.Recommend
-  );
-
-  const handleButtonClick = (value: ButtonType) => {
-    setActiveButtonValue(value);
-  };
-
   //임시 체크 로직
   useEffect(() => {
-    console.log(activeButtonValue);
-  }, [activeButtonValue]);
-  // FwConfirmDetail button 관련 state 및 function End
+    console.log(activeMainButtonValue);
+  }, [activeMainButtonValue]);
+
+  useEffect(() => {
+    console.log(activeSubButtonValue);
+  }, [activeSubButtonValue]);
+  //////////////
 
   return (
     <Modal isOpen={fwOptionModal} onClose={onCloseFwOptionModal} isCentered>
@@ -99,9 +118,12 @@ export default function FwOptionModal() {
             <FwComingOptionDetail />
           ) : (
             <FwOptionCrossDetail
-              // button 관련 props
-              activeButtonValue={activeButtonValue}
-              handleButtonClick={handleButtonClick}
+              // cross, official 관련 props
+              activeMainButtonValue={activeMainButtonValue}
+              handleButtonMainClick={handleButtonMainClick}
+              // recommend, Advanced button 관련 props
+              activeSubButtonValue={activeSubButtonValue}
+              handleButtonSubClick={handleButtonSubClick}
               // input 관련 props
               inputValue={inputValue}
               inputWarningCheck={inputWarningCheck}
@@ -109,7 +131,11 @@ export default function FwOptionModal() {
             />
           )}
 
-          <FwOptionStandardDetail />
+          <FwOptionStandardDetail
+            // cross, official 관련 props
+            activeMainButtonValue={activeMainButtonValue}
+            handleButtonMainClick={handleButtonMainClick}
+          />
         </ModalBody>
         <ModalFooter p={0} display='block'>
           <Button
