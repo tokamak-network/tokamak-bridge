@@ -58,11 +58,13 @@ export function useAmountOut() {
       const isETH = inToken.isNativeCurrency?.includes(
         SupportedChainId.MAINNET ||
           SupportedChainId.TITAN ||
+          SupportedChainId.TITAN_SEPOLIA ||
           SupportedChainId.SEPOLIA
       );
       const isOutETH = outToken.isNativeCurrency?.includes(
         SupportedChainId.MAINNET ||
           SupportedChainId.TITAN ||
+          SupportedChainId.TITAN_SEPOLIA ||
           SupportedChainId.SEPOLIA
       );
 
@@ -128,8 +130,6 @@ export function useAmountOut() {
           const gas = await l2Provider.estimateTotalGasCost(txData);
           return setEstimatedGasUsageGwei(gas);
         }
-        const gas = await provider.estimateGas(txData);
-        return setEstimatedGasUsageGwei(gas);
       }
     }
     getEstimatedGas();
