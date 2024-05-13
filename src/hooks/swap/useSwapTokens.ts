@@ -17,6 +17,7 @@ import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { useSettingValue } from "../uniswap/useSettingValue";
 import useConnectedNetwork from "../network";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
 

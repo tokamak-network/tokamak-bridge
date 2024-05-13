@@ -1,3 +1,4 @@
+import { useGetMode } from "@/hooks/mode/useGetMode";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import { CSSProperties } from "react";
 
@@ -6,6 +7,12 @@ export function RangeText(props: {
   isClosed?: boolean;
   style?: CSSProperties;
 }) {
+  const { subMode } = useGetMode();
+
+  if (subMode.add) {
+    return null;
+  }
+
   if (props.isClosed) {
     return (
       <Flex alignItems="center">

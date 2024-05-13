@@ -213,38 +213,30 @@ export function usePoolMint() {
 
           if (estimateGas) return calculatedGasUsage;
 
-          const gasLimit = isLayer2
-            ? calculatedGasUsage.div(ethers.BigNumber.from("1000000000"))
-            : calculatedGasUsage;
+          // const gasLimit = isLayer2
+          //   ? calculatedGasUsage.div(ethers.BigNumber.from("1000000000"))
+          //   : calculatedGasUsage;
 
           try {
-            if (multicallParam.length === 1 && gasLimit) {
+            if (multicallParam.length === 1) {
               const tx = await provider.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
-                gasLimit,
               });
               if (tx.hash) return setTxHash(tx.hash as Hash);
               return;
             }
 
-            if (gasLimit) {
-              const tx = await NonfungiblePositionManagerContract.multicall(
-                multicallParam,
-                {
-                  gasLimit,
-                  value: inIsEth
-                    ? inHexAmount
-                    : outIsETH
-                    ? outHexAmount
-                    : value,
-                  from: address,
-                  // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
-                }
-              );
-              if (tx.hash) return setTxHash(tx.hash);
-              return;
-            }
+            const tx = await NonfungiblePositionManagerContract.multicall(
+              multicallParam,
+              {
+                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+                from: address,
+                // gasPrice: isLayer2 ? BigNumber.from("1000000000") : null,
+              }
+            );
+            if (tx.hash) return setTxHash(tx.hash);
+            return;
           } catch (e) {
             console.log(e);
             if (!estimateGas) {
