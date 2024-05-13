@@ -33,13 +33,11 @@ export default function IncreaseLiquidity() {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (tokensPairHasAmount) {
-        const gasData = await estimateGasToIncrease();
-        setEstimatedGasUsage(gasData);
-      }
+      const gasData = await estimateGasToIncrease();
+      setEstimatedGasUsage(gasData);
     };
     fetchData();
-  }, [blockNumber, inToken?.amountBN, outToken?.amountBN, tokensPairHasAmount]);
+  }, [blockNumber, inToken?.amountBN, outToken?.amountBN]);
 
   if (needToRedirect) {
     redirect(backwardLink);

@@ -372,6 +372,7 @@ export function usePoolContract() {
           slippageTolerance: settingValues.slippage,
           tokenId: id,
         };
+
         if (positionToIncreaseBy) {
           const { calldata, value } =
             NonfungiblePositionManager.addCallParameters(
@@ -826,7 +827,7 @@ export function usePoolContract() {
   });
 
   const estimateGasToIncrease = useCallback(async () => {
-    if (feeData && ethPrice) {
+    if (feeData?.gasPrice && ethPrice) {
       const { gasPrice } = feeData;
       const estimatedGasUsage = await increaseLiquidity(true);
 
@@ -841,7 +842,7 @@ export function usePoolContract() {
         return totalGasCostUSD;
       }
     }
-  }, [feeData, ethPrice, layer]);
+  }, [feeData?.gasPrice, ethPrice, layer, inToken, outToken]);
 
   const estimateGasToCollect = useCallback(async () => {
     if (feeData && ethPrice) {

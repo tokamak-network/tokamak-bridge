@@ -22,7 +22,7 @@ export default function InfoHeader() {
         //not to display no liquidity component while routing
         setTimeout(() => {
           setPositions(undefined);
-        }, 1500);
+        }, 1000);
       }}
     >
       <Flex mb={"10px"} w="100%">
