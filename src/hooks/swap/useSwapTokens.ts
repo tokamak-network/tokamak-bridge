@@ -88,26 +88,19 @@ export function useAmountOut() {
           to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
           value: routingPath.methodParameters.value,
           from: address,
-          // maxFeePerGas: "250000",
-          // maxPriorityFeePerGas: "250000",
-          // gasLimit: "21000",
-          // gasPrice: gasPrice.toString(),
         };
         return setTxData(tx);
       }
+      /**
+       * gasLimit not set because Metamask always sets the higher gasLimit in a case * it's failed with a optimized route
+       */
       const tx = {
         data: routingPath.methodParameters.calldata,
         to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
         value: isETH ? hexAmount : routingPath.methodParameters.value,
         from: address,
-        // maxFeePerGas: "250000",
-        // maxPriorityFeePerGas: "250000",
-        // gasLimit: "21000",
-        // gasPrice: gasPrice.toString(),
       };
       return setTxData(tx);
-      // const res = await sendTransaction(tx);
-      // console.log(res);
     }
   }, [
     routingPath?.methodParameters,

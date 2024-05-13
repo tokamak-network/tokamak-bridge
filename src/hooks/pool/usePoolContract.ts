@@ -213,10 +213,6 @@ export function usePoolMint() {
 
           if (estimateGas) return calculatedGasUsage;
 
-          // const gasLimit = isLayer2
-          //   ? calculatedGasUsage.div(ethers.BigNumber.from("1000000000"))
-          //   : calculatedGasUsage;
-
           try {
             if (multicallParam.length === 1) {
               const tx = await provider.getSigner().sendTransaction({
@@ -437,32 +433,24 @@ export function usePoolContract() {
           if (estimatedGas) return gasLimit;
 
           try {
-            if (multicallParam.length === 1 && gasLimit) {
+            if (multicallParam.length === 1) {
               const tx = await provider?.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
-                gasLimit,
               });
               if (tx?.hash) return setTxHash(tx?.hash as Hash);
               return;
             }
 
-            if (gasLimit) {
-              const tx = await NonfungiblePositionManagerContract.multicall(
-                multicallParam,
-                {
-                  gasLimit,
-                  value: inIsEth
-                    ? inHexAmount
-                    : outIsETH
-                    ? outHexAmount
-                    : value,
-                  from: address,
-                }
-              );
-              if (tx.hash) return setTxHash(tx.hash);
-              return;
-            }
+            const tx = await NonfungiblePositionManagerContract.multicall(
+              multicallParam,
+              {
+                value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
+                from: address,
+              }
+            );
+            if (tx.hash) return setTxHash(tx.hash);
+            return;
           } catch (e) {
             console.log(e);
             setModalOpen("error");
@@ -626,26 +614,19 @@ export function usePoolContract() {
             if (estimateGas) return gasLimit;
 
             try {
-              if (info.hasETH && collectAsWETH === false && gasLimit) {
+              if (info.hasETH && collectAsWETH === false) {
                 const tx = await NonfungiblePositionManagerContract.multicall(
-                  multicallParam,
-                  {
-                    gasLimit,
-                  }
+                  multicallParam
                 );
                 if (tx?.hash)
                   return setTxHashToRemoveLiquidity(tx.hash as Hash);
                 return;
               }
-              if (gasLimit) {
-                const tx = await provider?.getSigner().sendTransaction({
-                  ...txn,
-                  gasLimit: calculateGasMargin(gasLimit),
-                });
-                if (tx?.hash)
-                  return setTxHashToRemoveLiquidity(tx.hash as Hash);
-                // return
-              }
+              const tx = await provider?.getSigner().sendTransaction({
+                ...txn,
+              });
+              if (tx?.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
+              // return
             } catch (e) {
               console.log(e);
               setModalOpen("error");
@@ -761,10 +742,7 @@ export function usePoolContract() {
 
           try {
             const tx = await NonfungiblePositionManagerContract.multicall(
-              multicallParam,
-              {
-                gasLimit,
-              }
+              multicallParam
             );
             if (tx.hash) return setTxHashToCollect(tx.hash);
           } catch (e) {
@@ -790,9 +768,9 @@ export function usePoolContract() {
           const gasLimit = await provider.estimateGas(txn);
 
           if (estimateGas) return calculateGasMargin(gasLimit);
+
           const tx = await provider.getSigner().sendTransaction({
             ...txn,
-            gasLimit: calculateGasMargin(gasLimit),
           });
           if (tx.hash) return setTxHashToCollect(tx.hash as Hash);
         } catch (e) {
