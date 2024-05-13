@@ -213,9 +213,9 @@ export function usePoolMint() {
 
           if (estimateGas) return calculatedGasUsage;
 
-          const gasLimit = ethers.BigNumber.from(
-            ethers.utils.formatUnits(calculatedGasUsage, "ether")
-          ).toBigInt();
+          const gasLimit = isLayer2
+            ? calculatedGasUsage.div(ethers.BigNumber.from("1000000000"))
+            : calculatedGasUsage;
 
           try {
             if (multicallParam.length === 1 && gasLimit) {
