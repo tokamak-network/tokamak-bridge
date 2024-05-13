@@ -12,10 +12,7 @@ import { BigNumber, Contract, ethers } from "ethers";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { useGetMode } from "../mode/useGetMode";
-import OutToken from "@/app/BridgeSwap/components/OutToken";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
-// import { useRecoilState } from "recoil";
-// import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();

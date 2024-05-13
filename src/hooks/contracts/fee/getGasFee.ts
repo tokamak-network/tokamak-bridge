@@ -206,6 +206,7 @@ export function useGasFee() {
     provider,
     feeData,
     swapGasUseEstimate,
+    wrapUnwrapGasEstimate,
     layer,
   ]);
 
