@@ -190,7 +190,7 @@ export function usePoolInfo() {
     typeof tickUpper === "number" && info && tickCurrent >= tickUpper
   );
   const deposit1Disabled = Boolean(
-    typeof tickLower === "number" && info && tickCurrent <= tickLower
+    typeof tickLower === "number" && info && tickCurrent < tickLower
   );
 
   return {
