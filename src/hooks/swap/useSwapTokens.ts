@@ -52,8 +52,6 @@ export function useAmountOut() {
 
   useEffect(() => {
     if (routingPath && inToken?.amountBN && outToken && UNISWAP_CONTRACT) {
-      // console.log(routingPath);
-
       const wei = ethers.utils.formatUnits(inToken.amountBN.toString(), "wei");
       const weiAmount = ethers.BigNumber.from(wei);
       const hexAmount = ethers.utils.hexlify(weiAmount);
@@ -128,8 +126,10 @@ export function useAmountOut() {
         if (layer === "L2") {
           const l2Provider = asL2Provider(provider);
           const gas = await l2Provider.estimateTotalGasCost(txData);
-          setEstimatedGasUsageGwei(gas);
+          return setEstimatedGasUsageGwei(gas);
         }
+        const gas = await provider.estimateGas(txData);
+        return setEstimatedGasUsageGwei(gas);
       }
     }
     getEstimatedGas();
