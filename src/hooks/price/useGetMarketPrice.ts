@@ -45,13 +45,18 @@ export function useGetMarketPrice(params: {
 
   const tokenPriceWithAmount = useMemo(() => {
     if (tokenMarketPrice && params.amount) {
-      return commafy(
-        data.getTokenMarketData.current_price * Number(params.amount),
-        2
+      return (
+        Number(data.getTokenMarketData.current_price) * Number(params.amount)
       );
+    }
+    if (tokenMarketPrice && params.amount === 0) {
+      return 0;
     }
     return undefined;
   }, [tokenMarketPrice, params.amount]);
+
+  // console.log("*8");
+  // console.log(tokenName, tokenPriceWithAmount, params.amount);
 
   return { tokenMarketPrice, tokenPriceWithAmount };
 }

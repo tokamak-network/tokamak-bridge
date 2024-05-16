@@ -20,13 +20,22 @@ export function getGasCostText(totalGasCost: string | null | undefined) {
   } ETH`;
 }
 
+export function gasUsdFormatter(price: number | undefined) {
+  return price !== undefined
+    ? price < 0.01
+      ? `$ <0.01`
+      : `$${commafy(price, 2)}`
+    : undefined;
+}
+
 export function smallNumberFormmater(
   param: number | string | undefined | null,
   deciplaPoints?: number,
   trimed?: boolean,
   removeComma?: boolean,
   minimumValue?: number,
-  trimedDecimals?: number
+  trimedDecimals?: number,
+  showUnderMinimumValue?: number | string
 ) {
   if (param === undefined || param === null) {
     return "-";
@@ -46,5 +55,5 @@ export function smallNumberFormmater(
     ? trimed
       ? trimAmount(param.toString(), trimedDecimals ?? 8)
       : commafy(param, deciplaPoints ?? 6, removeComma, "0.00")
-    : "<0.000001";
+    : showUnderMinimumValue ?? "0.000000...";
 }

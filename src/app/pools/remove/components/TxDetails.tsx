@@ -14,7 +14,10 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { estimatedGasFee } from "@/recoil/global/transaction";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 
 const Title = (props: {
   isExpanded: boolean;
@@ -141,7 +144,7 @@ const ContentTitle = (props: { title: string; amount: string | undefined }) => {
   );
 };
 
-const ContentSub = (props: { title: string; amount: string }) => {
+const ContentSub = (props: { title: string; amount: string | number }) => {
   const { title, amount } = props;
 
   return (
@@ -169,8 +172,8 @@ const Content = (props: {
   const { amount0Removed, amount1Removed, totalRemovedMarketPrice } =
     useRemoveLiquidity();
   const { token0Symbol, token1Symbol } = useConvertWETH();
-  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
-  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+  const token0Amount = info?.token0CollectedFee;
+  const token1Amount = info?.token1CollectedFee;
 
   const { totalMarketPrice } = usePricePair({
     token0Name: info?.token0.name,
@@ -187,43 +190,54 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
-              amount={
-                (totalRemovedMarketPrice || totalRemovedMarketPrice !== "-") &&
-                totalRemovedMarketPrice !== undefined
-                  ? `$${commafy(
-                      totalRemovedMarketPrice.replaceAll(",", ""),
-                      4
-                    )}`
-                  : undefined
-              }
+              amount={gasUsdFormatter(Number(totalRemovedMarketPrice))}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
-              amount={commafy(amount0Removed, 4)}
+              amount={smallNumberFormmater(
+                amount0Removed,
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )}
             />
             <ContentSub
               title={token1Symbol ?? "-"}
-              amount={commafy(amount1Removed, 4)}
+              amount={smallNumberFormmater(
+                amount1Removed,
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )}
             />
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Earned fees"
-              amount={
-                (totalMarketPrice || totalMarketPrice !== "-") &&
-                totalMarketPrice !== undefined
-                  ? `$${commafy(totalMarketPrice, 2)}`
-                  : undefined
-              }
+              amount={gasUsdFormatter(Number(totalMarketPrice))}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
-              amount={commafy(info.token0CollectedFee, 4)}
+              amount={smallNumberFormmater(
+                info.token0CollectedFee,
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )}
             />
             <ContentSub
               title={token1Symbol ?? "-"}
-              amount={commafy(info.token1CollectedFee, 4)}
+              amount={smallNumberFormmater(
+                info.token1CollectedFee,
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )}
             />
           </Flex>
         </Box>

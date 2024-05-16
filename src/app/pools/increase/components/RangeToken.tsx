@@ -43,7 +43,7 @@ export default function RangeToken(props: {
         </Text>
       </Flex>
       <Flex>
-        <Text color={"#A0A3AD"}>{amount}</Text>
+        <Text color={"#fff"}>{amount}</Text>
         <Text ml={"6px"}>
           {!alterAmount || page === "addLiquidity" || alterAmount === "-"
             ? ""

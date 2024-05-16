@@ -11,7 +11,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
-import JSBI from "jsbi";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 

@@ -26,9 +26,6 @@ const TokenPairTitle = (props: {
   const { info } = usePositionInfo();
 
   if (!info) return null;
-  const token0 = info.token0;
-  const token1 = info.token1;
-
   const { token0Symbol, token1Symbol } = useConvertWETH();
 
   const isBigFont = page === "increaseLiquidity" || page === "removeLiquidity";
