@@ -20,10 +20,9 @@ import { asL2Provider } from "@tokamak-network/titan-sdk";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
+import { calculateGasLimit } from "../contracts/fee/calculateGasLimit";
 
 export type TokenTrade = Trade<Token, Token, TradeType>;
-
-export function useSwapTokens() {}
 
 export function useAmountOut() {
   const { provider } = useProvier();
@@ -52,95 +51,141 @@ export function useAmountOut() {
 
   const [txData, setTxData] = useState<any>(undefined);
   const txSettingValue = useRecoilValue(uniswapTxSetting);
+  const [transactionHash, setTransactionHash] = useState<Hash | undefined>(
+    undefined
+  );
+  const [, setModalOpen] = useRecoilState(transactionModalStatus);
+  const { slippage } = useSettingValue();
 
-  useEffect(() => {
-    const getSwapTxData = async () => {
-      if (
-        routingPath &&
-        inToken?.amountBN &&
-        outToken &&
-        UNISWAP_CONTRACT &&
-        provider
-      ) {
-        const wei = ethers.utils.formatUnits(
-          inToken.amountBN.toString(),
-          "wei"
-        );
-        const weiAmount = ethers.BigNumber.from(wei);
-        const hexAmount = ethers.utils.hexlify(weiAmount);
-        const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET ||
-            SupportedChainId.TITAN ||
-            SupportedChainId.TITAN_SEPOLIA ||
-            SupportedChainId.SEPOLIA
-        );
-        const isOutETH = outToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET ||
-            SupportedChainId.TITAN ||
-            SupportedChainId.TITAN_SEPOLIA ||
-            SupportedChainId.SEPOLIA
-        );
-
-        if (isOutETH) {
-          const SwapRouterContract = new Contract(
-            UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-            SwapRouterAbi,
-            provider
+  const sendTransaction = useCallback(
+    async (estimateGasForL2?: boolean) => {
+      try {
+        if (
+          routingPath &&
+          inToken?.amountBN &&
+          outToken &&
+          UNISWAP_CONTRACT &&
+          provider &&
+          mode === "Swap"
+        ) {
+          const wei = ethers.utils.formatUnits(
+            inToken.amountBN.toString(),
+            "wei"
+          );
+          const weiAmount = ethers.BigNumber.from(wei);
+          const hexAmount = ethers.utils.hexlify(weiAmount);
+          const isETH = inToken.isNativeCurrency?.includes(
+            SupportedChainId.MAINNET ||
+              SupportedChainId.TITAN ||
+              SupportedChainId.TITAN_SEPOLIA ||
+              SupportedChainId.SEPOLIA
+          );
+          const isOutETH = outToken.isNativeCurrency?.includes(
+            SupportedChainId.MAINNET ||
+              SupportedChainId.TITAN ||
+              SupportedChainId.TITAN_SEPOLIA ||
+              SupportedChainId.SEPOLIA
           );
 
-          const callData = getEncodedPath({
-            route: routingPath.route,
-            swapRouterAddress: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-            SwapRouterContract,
-            slippage: Number(txSettingValue.slippage) / 100,
-            deadlineMin: txSettingValue.deadline,
-          });
-          const tx = {
-            data: callData,
+          if (isOutETH) {
+            const SwapRouterContract = new Contract(
+              UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+              SwapRouterAbi,
+              provider
+            );
+
+            const callData = getEncodedPath({
+              route: routingPath.route,
+              swapRouterAddress: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+              SwapRouterContract,
+              slippage: Number(txSettingValue.slippage) / 100,
+              deadlineMin: txSettingValue.deadline,
+            });
+            const txData = {
+              data: callData,
+              to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
+              value: routingPath.methodParameters.value,
+              from: address,
+            };
+            const estimatedGas = await provider.estimateGas(txData);
+
+            if (estimateGasForL2) {
+              const result = await calculateGasLimit(
+                provider,
+                txData,
+                true,
+                true
+              );
+              return result;
+            }
+
+            const tx = await provider?.getSigner().sendTransaction({
+              ...txData,
+              gasLimit: calculateGasMargin(estimatedGas),
+            });
+            if (tx?.hash) return setTransactionHash(tx.hash as Hash);
+            return;
+          }
+
+          const txData = {
+            data: routingPath.methodParameters.calldata,
             to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-            value: routingPath.methodParameters.value,
+            value: isETH ? hexAmount : routingPath.methodParameters.value,
             from: address,
           };
+          const estimatedGas = await provider.estimateGas(txData);
 
-          return setTxData(tx);
+          if (estimateGasForL2) {
+            const result = await calculateGasLimit(
+              provider,
+              txData,
+              true,
+              true
+            );
+            return result;
+          }
+
+          const tx = await provider?.getSigner().sendTransaction({
+            ...txData,
+            gasLimit: calculateGasMargin(estimatedGas),
+          });
+
+          if (tx?.hash) return setTransactionHash(tx.hash as Hash);
+          return;
         }
-        const tx = {
-          data: routingPath.methodParameters.calldata,
-          to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-          value: isETH ? hexAmount : routingPath.methodParameters.value,
-          from: address,
-        };
-
-        return setTxData(tx);
+      } catch (e) {
+        console.log("**sendTransaction err**");
+        console.log(e);
+        setModalOpen("error");
+      } finally {
+        setTimeout(() => {
+          setTransactionHash(undefined);
+        }, 5000);
       }
-    };
-    getSwapTxData();
-  }, [
-    routingPath?.methodParameters,
-    inToken?.amountBN,
-    outToken,
-    provider,
-    txSettingValue,
-    UNISWAP_CONTRACT,
-  ]);
+    },
+    [
+      routingPath,
+      inToken?.amountBN,
+      outToken,
+      provider,
+      txSettingValue,
+      UNISWAP_CONTRACT,
+    ]
+  );
 
   const [estimatedGasUsageGwei, setEstimatedGasUsageGwei] = useState<
     BigNumber | undefined
   >(undefined);
-  const { layer } = useConnectedNetwork();
 
   useEffect(() => {
     async function getEstimatedGas() {
-      if (txData && provider && layer) {
-        if (layer === "L2") {
-          const l2Provider = asL2Provider(provider);
-          const gas = await l2Provider.estimateGas(txData);
-          return setEstimatedGasUsageGwei(gas);
-        }
-      }
+      // const result = await sendTransaction(true);
+      // if (result) {
+      //   setEstimatedGasUsageGwei(result);
+      // }
     }
     getEstimatedGas();
-  }, [txData, provider, layer]);
+  }, [routingPath]);
 
   // const {
   //   data: _swapData,
@@ -151,106 +196,6 @@ export function useAmountOut() {
   //   gasLimit: ethers.utils.hexlify(1000000),
   // });
 
-  const [transactionHash, setTransactionHash] = useState<Hash | undefined>(
-    undefined
-  );
-  const [isError, setIsError] = useState<boolean>(false);
-  const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
-  const sendTransaction = useCallback(async () => {
-    try {
-      // setTransactionHash(undefined);
-      // setModalOpen(null);
-      // if (
-      //   window.ethereum &&
-      //   routingPath &&
-      //   inToken?.amountBN &&
-      //   outToken &&
-      //   UNISWAP_CONTRACT &&
-      //   provider
-      // ) {
-      //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-      //   const wei = ethers.utils.formatUnits(
-      //     inToken.amountBN.toString(),
-      //     "wei"
-      //   );
-      //   const weiAmount = ethers.BigNumber.from(wei);
-      //   const hexAmount = ethers.utils.hexlify(weiAmount);
-      //   const isETH = inToken.isNativeCurrency?.includes(
-      //     SupportedChainId.MAINNET ||
-      //       SupportedChainId.TITAN ||
-      //       SupportedChainId.TITAN_SEPOLIA ||
-      //       SupportedChainId.SEPOLIA
-      //   );
-      //   const isOutETH = outToken.isNativeCurrency?.includes(
-      //     SupportedChainId.MAINNET ||
-      //       SupportedChainId.TITAN ||
-      //       SupportedChainId.TITAN_SEPOLIA ||
-      //       SupportedChainId.SEPOLIA
-      //   );
-      //   let txData = undefined;
-      //   if (isOutETH) {
-      //     const SwapRouterContract = new Contract(
-      //       UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-      //       SwapRouterAbi,
-      //       provider
-      //     );
-      //     const callData = getEncodedPath({
-      //       route: routingPath.route,
-      //       swapRouterAddress: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-      //       SwapRouterContract,
-      //       slippage: Number(txSettingValue.slippage) / 100,
-      //       deadlineMin: txSettingValue.deadline,
-      //     });
-      //     txData = {
-      //       data: callData,
-      //       to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-      //       value: routingPath.methodParameters.value,
-      //       from: address,
-      //     };
-      //   } else {
-      //     txData = {
-      //       data: routingPath.methodParameters.calldata,
-      //       to: UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
-      //       value: isETH ? hexAmount : routingPath.methodParameters.value,
-      //       from: address,
-      //     };
-      //   }
-      //   if (!txData) {
-      //     return setModalOpen("error");
-      //   }
-      //   setModalOpen("confirming");
-      //   const signer = provider.getSigner();
-      //   const estimatedGas = await provider.estimateGas(txData);
-      //   const gasLimit = calculateGasMargin(estimatedGas);
-      //   const transaction = {
-      //     ...txData,
-      //     gasLimit,
-      //   };
-      //   const transactionResponse = await signer.sendTransaction(transaction);
-      //   // Listen for the transactionHash event
-      //   const receipt = await transactionResponse.wait();
-      //   if (receipt) {
-      //     return setTransactionHash(receipt.transactionHash as Hash);
-      //   }
-      // }
-      // return setModalOpen("error");
-    } catch (e) {
-      console.log("**send Swap Transaction err**");
-      console.log(e);
-      setIsError(true);
-      setModalOpen("error");
-    }
-  }, [
-    window.ethereum,
-    routingPath?.methodParameters,
-    inToken?.amountBN,
-    outToken,
-    provider,
-    txSettingValue,
-    UNISWAP_CONTRACT,
-  ]);
-
   const {} = useTx({
     hash: transactionHash,
     txSort: "Swap",
@@ -258,7 +203,6 @@ export function useAmountOut() {
     tokenOutAddress: outToken?.tokenAddress as `0x${string}`,
   });
 
-  const { slippage } = useSettingValue();
   const minimumReceived = useMemo(() => {
     if (amountOut && slippage) {
       const slippagePercent = Number(slippage.toSignificant(5)) / 100;
@@ -271,7 +215,6 @@ export function useAmountOut() {
     amountOut,
     minimumReceived,
     callTokenSwap: sendTransaction,
-    isError,
     estimatedGasUsageGwei,
   };
 }

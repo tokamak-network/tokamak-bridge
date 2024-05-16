@@ -32,6 +32,8 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 import "@/css/spinner.css";
 import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
+import useIsLoading from "@/hooks/ui/useIsLoading";
+import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -253,7 +255,8 @@ export default function ActionConfirmModal() {
   const { isOpen, onCloseConfirmModal } = useConfirm();
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
-  const { mobileView } = useMediaView();
+  const [isLoading] = useIsLoading();
+  const { routingPath } = useSmartRouter();
 
   return (
     <Modal isOpen={isOpen} onClose={onCloseConfirmModal} size={"xl"} isCentered>
@@ -296,7 +299,16 @@ export default function ActionConfirmModal() {
               bgColor={"#007AFF"}
               color={"#fff"}
               onClick={onClick}
-              isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
+              isDisabled={
+                mode === "Withdraw"
+                  ? !isWithdrawConfirmed
+                  : mode === "Swap" &&
+                    (isLoading ||
+                      routingPath === null ||
+                      routingPath === undefined)
+                  ? true
+                  : false
+              }
               _disabled={{
                 color: "#8E8E92",
                 bgColor: "#17181D",

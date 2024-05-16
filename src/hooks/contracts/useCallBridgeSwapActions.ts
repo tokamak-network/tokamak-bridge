@@ -29,7 +29,7 @@ export default function useCallBridgeSwapAction() {
   const { write: _withdraw, isError: _withdrawError } =
     useCallWithdraw("withdraw");
 
-  const { callTokenSwap, isError: _swapError } = useAmountOut();
+  const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
@@ -108,10 +108,10 @@ export default function useCallBridgeSwapAction() {
   }, [isConnected, connectToWallet, mode, inToken, address]);
 
   useEffect(() => {
-    if (isError || _depositERC20Error || _withdrawError || _swapError) {
+    if (isError || _depositERC20Error || _withdrawError) {
       setModalOpen("error");
     }
-  }, [isError, _depositERC20Error, _withdrawError, _swapError]);
+  }, [isError, _depositERC20Error, _withdrawError]);
 
   return { onClick };
 }
