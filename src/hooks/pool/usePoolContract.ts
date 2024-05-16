@@ -196,28 +196,30 @@ export function usePoolMint() {
 
           const isLayer2 = Boolean(layer === "L2");
 
-          const calculatedGasUsage =
+          const gasLimit =
             multicallParam.length === 1
               ? await getSingleCalldataGasLimit(
                   provider,
                   txData,
                   calldata,
-                  isLayer2
+                  isLayer2,
+                  estimateGas
                 )
               : await calculateGasLimit(
                   provider,
                   transactionRequest,
                   isLayer2,
-                  isConnectedToMainNetwork
+                  estimateGas
                 );
 
-          if (estimateGas) return calculatedGasUsage;
+          if (estimateGas) return gasLimit;
 
           try {
             if (multicallParam.length === 1) {
               const tx = await provider.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
+                gasLimit,
               });
               if (tx.hash) return setTxHash(tx.hash as Hash);
               return;
@@ -228,6 +230,7 @@ export function usePoolMint() {
               {
                 value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
                 from: address,
+                gasLimit,
               }
             );
             if (tx.hash) return setTxHash(tx.hash);
@@ -420,13 +423,14 @@ export function usePoolContract() {
                   provider!,
                   txData,
                   calldata,
-                  layer === "L2"
+                  layer === "L2",
+                  estimatedGas
                 )
               : await calculateGasLimit(
                   provider!,
                   transactionRequest,
                   isLayer2,
-                  isConnectedToMainNetwork
+                  estimatedGas
                 );
 
           if (estimatedGas) return gasLimit;
@@ -436,6 +440,7 @@ export function usePoolContract() {
               const tx = await provider?.getSigner().sendTransaction({
                 ...txData,
                 data: calldata,
+                gasLimit,
               });
               if (tx?.hash) return setTxHash(tx?.hash as Hash);
               return;
@@ -446,6 +451,7 @@ export function usePoolContract() {
               {
                 value: inIsEth ? inHexAmount : outIsETH ? outHexAmount : value,
                 from: address,
+                gasLimit,
               }
             );
             if (tx.hash) return setTxHash(tx.hash);
@@ -606,7 +612,7 @@ export function usePoolContract() {
                   provider!,
                   transactionRequest,
                   layer === "L2",
-                  false
+                  estimateGas
                 )
               : await provider?.estimateGas(txn);
 
@@ -615,14 +621,17 @@ export function usePoolContract() {
             try {
               if (info.hasETH && collectAsWETH === false) {
                 const tx = await NonfungiblePositionManagerContract.multicall(
-                  multicallParam
+                  multicallParam,
+                  { gasLimit }
                 );
-                if (tx?.hash)
+                if (tx?.hash) {
                   return setTxHashToRemoveLiquidity(tx.hash as Hash);
+                }
                 return;
               }
               const tx = await provider?.getSigner().sendTransaction({
                 ...txn,
+                gasLimit,
               });
               if (tx?.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
               // return
@@ -734,14 +743,17 @@ export function usePoolContract() {
             provider,
             transactionRequest,
             isLayer2,
-            isConnectedToMainNetwork
+            estimateGas
           );
 
           if (estimateGas) return gasLimit;
 
           try {
             const tx = await NonfungiblePositionManagerContract.multicall(
-              multicallParam
+              multicallParam,
+              {
+                gasLimit,
+              }
             );
             if (tx.hash) return setTxHashToCollect(tx.hash);
           } catch (e) {
@@ -770,6 +782,7 @@ export function usePoolContract() {
 
           const tx = await provider.getSigner().sendTransaction({
             ...txn,
+            gasLimit,
           });
           if (tx.hash) return setTxHashToCollect(tx.hash as Hash);
         } catch (e) {

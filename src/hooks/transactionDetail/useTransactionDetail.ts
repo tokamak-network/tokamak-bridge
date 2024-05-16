@@ -198,7 +198,6 @@ export function useTransactionDetail() {
   }, [mode, inToken, totalGasFee, inputAmount]);
 
   const { amountOut, minimumReceived } = useAmountOut();
-  const { priceImpact } = usePriceImpact();
   const { uniswapTxSettingValueForUI } = useUniswapTxSetting();
   const { layer } = useConnectedNetwork();
   const isWrapUnwrap =
@@ -267,7 +266,6 @@ export function useTransactionDetail() {
     outToken,
     inputAmount,
     amountOut,
-    priceImpact,
     uniswapTxSettingValueForUI,
     totalGasFee,
     layer,

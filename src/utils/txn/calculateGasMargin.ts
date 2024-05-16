@@ -15,9 +15,10 @@ export async function getSingleCalldataGasLimit(
   provider: ethers.providers.JsonRpcProvider,
   txData: ethers.utils.Deferrable<ethers.providers.TransactionRequest>,
   callData: string,
-  isLayer2: boolean
+  isLayer2: boolean,
+  uiValue?: boolean
 ) {
-  if (isLayer2) {
+  if (isLayer2 && uiValue) {
     const l2Provider = asL2Provider(provider);
     const estimatedGas = await l2Provider.estimateTotalGasCost({
       ...(txData as TransactionRequest),
