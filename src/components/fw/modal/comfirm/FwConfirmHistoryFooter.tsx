@@ -16,7 +16,9 @@ export default function FwConfirmHistoryFooter() {
         <Flex
           justifyContent={"space-between"}
           alignItems={"center"}
+          height={"40px"}
           px={"12px"}
+          py={"8px"}
         >
           <Flex>
             <Box
@@ -68,7 +70,9 @@ export default function FwConfirmHistoryFooter() {
         <Flex
           justifyContent={"space-between"}
           alignItems={"center"}
+          height={"40px"}
           px={"12px"}
+          py={"8px"}
           mt={"16px"}
         >
           <Flex>

@@ -56,7 +56,7 @@ export default function FwOptionCrossDetail(
             </Text>
             <FwTooltip
               tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px", marginTop: "1px" }}
+              style={{ marginLeft: "2px", marginTop: "2px" }}
             />
           </Flex>
           <Text
@@ -144,7 +144,7 @@ export default function FwOptionCrossDetail(
               </Text>
               <FwTooltip
                 tooltipLabel={"text will be changed"}
-                style={{ marginLeft: "2px", marginTop: "1px" }}
+                style={{ marginLeft: "2px", marginTop: "2px" }}
               />
             </Flex>
             <FwOptionInput

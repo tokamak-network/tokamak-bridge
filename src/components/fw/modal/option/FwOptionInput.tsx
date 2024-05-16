@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { FwWarning } from "@/components/fw/components/FwWarning";
 import { FwOptionCrossDetailProps } from "@/components/fw/types";
+import { WarningType } from "@/components/fw/types";
 
 export default function FwOptionInput(props: FwOptionCrossDetailProps) {
   const { inputValue, inputWarningCheck, onInputChange } = props;
@@ -21,6 +22,7 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           h={"34px"}
           px='12px'
           py='4px'
+          bg='#15161D'
           type='text'
           maxLength={1}
           pattern='[012]'
@@ -33,6 +35,9 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           placeholder='Enter amount'
           onChange={onInputChange}
           value={inputValue}
+          color={
+            inputWarningCheck == WarningType.Critical ? "#DD3A44" : "#FFFFFF"
+          }
           _hover={{}}
           _placeholder={{
             fontSize: "12px",
@@ -46,9 +51,8 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           }}
         />
         {inputValue && (
-          <InputRightElement height={"34px"}>
+          <InputRightElement height={"34px"} mr={"12px"}>
             <Text
-              pr={"12px"}
               fontSize={"12px"}
               fontWeight={400}
               color={"#A0A3AD"}
@@ -59,7 +63,7 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           </InputRightElement>
         )}
       </InputGroup>
-      {inputWarningCheck == "critical" ? (
+      {inputWarningCheck == WarningType.Critical ? (
         <FwWarning
           label={"text will be changed"}
           type={inputWarningCheck}
@@ -70,7 +74,7 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
             marginLeft: "6px",
           }}
         />
-      ) : inputWarningCheck == "normal" ? (
+      ) : inputWarningCheck == WarningType.Normal ? (
         <FwWarning
           label={"text will be changed"}
           type={inputWarningCheck}

@@ -53,6 +53,7 @@ const FwTransactionDetail: React.FC<TransactionDetailProps> = ({
         fontWeight={400}
         fontSize={"14px"}
         lineHeight={"21px"}
+        py={"1px"}
         color={"#E3E4C0"}
       >
         <span style={{ fontSize: "11px", lineHeight: "16.5px" }}>(</span>
@@ -96,7 +97,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           // </Box>
           <FwTooltip
             tooltipLabel={"text will be changed"}
-            style={{ marginLeft: "2px" }}
+            style={{ marginLeft: "2px", marginTop: "2px" }}
           />
         )}
       </Flex>
