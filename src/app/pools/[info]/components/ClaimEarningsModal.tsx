@@ -9,7 +9,10 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import { useEffect, useState } from "react";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
@@ -99,7 +102,7 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                       color={totalMarketPrice ? "#fff" : "#A0A3AD"}
                     >
                       {totalMarketPrice
-                        ? `$${commafy(totalMarketPrice, 2)}`
+                        ? gasUsdFormatter(Number(totalMarketPrice))
                         : "NA"}
                     </Text>
                   </Flex>
@@ -136,12 +139,17 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater(info?.token0CollectedFee, 6)}
+                    {smallNumberFormmater(
+                      info?.token0CollectedFee,
+                      6,
+                      undefined,
+                      undefined,
+                      0.000001
+                    )}
                   </Text>
-                  <Text
-                    minW={"60px"}
-                    color={"#A0A3AD"}
-                  >{`$${token0Price}`}</Text>
+                  <Text minW={"60px"} color={"#A0A3AD"}>
+                    {gasUsdFormatter(Number(token0Price))}
+                  </Text>
                 </Flex>
               </Flex>
               <Flex justifyContent="space-between" mb="8px">
@@ -175,12 +183,17 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater(info?.token1CollectedFee, 6)}
+                    {smallNumberFormmater(
+                      info?.token1CollectedFee,
+                      6,
+                      undefined,
+                      undefined,
+                      0.000001
+                    )}
                   </Text>
-                  <Text
-                    minW={"60px"}
-                    color={"#A0A3AD"}
-                  >{`$${token1Price}`}</Text>
+                  <Text minW={"60px"} color={"#A0A3AD"}>
+                    {gasUsdFormatter(Number(token1Price))}
+                  </Text>
                 </Flex>
               </Flex>
               <Box w={"100%"} h={"1px "} bgColor={"#313442"} />

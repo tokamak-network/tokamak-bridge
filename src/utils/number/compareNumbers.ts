@@ -22,7 +22,9 @@ export function getGasCostText(totalGasCost: string | null | undefined) {
 
 export function gasUsdFormatter(price: number | undefined) {
   return price !== undefined
-    ? price < 0.01
+    ? price === 0
+      ? `$0.00`
+      : price < 0.01
       ? `$ <0.01`
       : `$${commafy(price, 2)}`
     : undefined;
