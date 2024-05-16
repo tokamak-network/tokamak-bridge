@@ -78,7 +78,7 @@ export default function FwConfirmHistoryFooter() {
               mb={"15px"}
               width='9px'
               height='9px'
-              bgColor='#007AFF'
+              bgColor='#DB00FF'
               borderRadius='full'
             />
             <Text
@@ -100,7 +100,7 @@ export default function FwConfirmHistoryFooter() {
               color={"#FFFFFF"}
               mr={"4px"}
             >
-              ~ 3 min
+              03: 00
             </Text>
           </Flex>
         </Flex>
