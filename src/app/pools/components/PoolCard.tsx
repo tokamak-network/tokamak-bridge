@@ -5,7 +5,10 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { RangeText } from "./ui";
 import TokenSymbolPair from "./TokenSymbolPair";
 import commafy from "@/utils/trim/commafy";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { priceFormmater } from "@/utils/trim/priceFormatter";
 import { useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
@@ -22,6 +25,7 @@ import { calculateFeeToCollect } from "@/utils/pool/calculateFeeToCollect";
 import { UniswapContractByChainId } from "@/constant/contracts/uniswap";
 import { providerByChainId } from "@/config/getProvider";
 import { isLayer2Chain } from "@/types/network/supportedNetwork";
+import { usePricePair } from "@/hooks/price/usePricePair";
 
 export type PoolCardDetail = {
   id: number;
@@ -77,6 +81,12 @@ export default function PoolCard(props: PoolCardDetail) {
     rawData,
   } = props;
 
+  console.log(
+    "token0MarketPrice,token1MarketPrice",
+    token0MarketPrice,
+    token1MarketPrice
+  );
+
   const feePercent = useMemo(() => {
     switch (fee) {
       case 100:
@@ -95,76 +105,6 @@ export default function PoolCard(props: PoolCardDetail) {
   const { connectedChainId } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
   const router = useRouter();
-  const { provider } = useProvier();
-  const { UNISWAP_CONTRACT } = useUniswapContracts();
-  const [token0FeeAmount, setToken0FeeAmount] = useState<string | undefined>(
-    undefined
-  );
-  const [token1FeeAmount, setToken1FeeAmount] = useState<string | undefined>(
-    undefined
-  );
-
-  const NonfungiblePositionManagerContract = useMemo(() => {
-    //for the network which is connected by a wallet
-    if (connectedChainId === chainId && UNISWAP_CONTRACT) {
-      return new Contract(
-        UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
-        NONFUNGIBLE_POSITION_MANAGER_ABI,
-        provider
-      );
-    }
-
-    if (
-      UniswapContractByChainId[chainId].NONFUNGIBLE_POSITION_MANAGER &&
-      providerByChainId[chainId]
-    ) {
-      return new Contract(
-        UniswapContractByChainId[chainId].NONFUNGIBLE_POSITION_MANAGER,
-        NONFUNGIBLE_POSITION_MANAGER_ABI,
-        providerByChainId[chainId]
-      );
-    }
-
-    return undefined;
-  }, [
-    chainId,
-    provider,
-    providerByChainId,
-    UNISWAP_CONTRACT,
-    UniswapContractByChainId,
-    NONFUNGIBLE_POSITION_MANAGER_ABI,
-  ]);
-
-  useEffect(() => {
-    const fetchFeeData = async () => {
-      if (rawData && NonfungiblePositionManagerContract) {
-        const feeData = await calculateFeeToCollect({
-          position: rawData,
-          NonfungiblePositionManagerContract,
-        });
-        const token0FeeAmount =
-          Number(feeData.token0Fee) === 0
-            ? "0"
-            : ethers.utils.formatUnits(feeData.token0Fee, token0.decimals);
-        const token1FeeAmount =
-          Number(feeData.token1Fee) === 0
-            ? "0"
-            : ethers.utils.formatUnits(feeData.token1Fee, token1.decimals);
-
-        setToken0FeeAmount(token0FeeAmount);
-        setToken1FeeAmount(token1FeeAmount);
-      }
-    };
-    fetchFeeData().catch((e) => {
-      console.log("**fetchFeeData err**");
-      console.log(e);
-    });
-  }, [
-    rawData,
-    NonfungiblePositionManagerContract,
-    token0.decimals,
-    token1.decimals,
-  ]);
 
   const onClickToRoute = useCallback(async () => {
     if (chainId === connectedChainId) {
@@ -176,38 +116,41 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [id, chainId, connectedChainId, switchNetworkAsync]);
 
-  const token0HasMarketPrice = Number(token0MarketPrice) > 0;
-  const token1HasMarketPrice = Number(token1MarketPrice) > 0;
-  const bothHaveMarketData = token0HasMarketPrice && token1HasMarketPrice;
+  const {
+    hasTokenPrice,
+    totalMarketPrice: totalFeeValue,
+    token0Price: token0FeeMarketValue,
+    token1Price: token1FeeMarketValue,
+  } = usePricePair({
+    token0Name: token0.name,
+    token0Amount: token0CollectedFee,
+    token1Name: token1.name,
+    token1Amount: token1CollectedFee,
+  });
 
-  const token0FeeMarketValue = useMemo(() => {
-    return Number(token0FeeAmount) * Number(token0MarketPrice);
-  }, [token0FeeAmount, token0MarketPrice]);
-  const token1FeeMarketValue = useMemo(() => {
-    return Number(token1FeeAmount) * Number(token1MarketPrice);
-  }, [token1FeeAmount, token1MarketPrice]);
+  const token0FeeValueForTooltip = `($${commafy(
+    token0FeeMarketValue,
+    2,
+    undefined,
+    "0.00"
+  )})`;
 
-  const token0FeeValueForTooltip = token0HasMarketPrice
-    ? `($${commafy(token0FeeMarketValue, 2, undefined, "0.00")})`
-    : "";
+  const token1FeeValueForTooltip = `($${commafy(
+    token1FeeMarketValue,
+    2,
+    undefined,
+    "0.00"
+  )})`;
 
-  const token1FeeValueForTooltip = token1HasMarketPrice
-    ? `($${commafy(token1FeeMarketValue, 2, undefined, "0.00")})`
-    : "";
   const feeValue = useMemo(() => {
-    if (!bothHaveMarketData) return undefined;
+    if (!hasTokenPrice) return undefined;
     try {
-      return commafy(
-        token0FeeMarketValue + token1FeeMarketValue,
-        2,
-        undefined,
-        ""
-      );
+      return commafy(totalFeeValue, 2, undefined, "");
     } catch (e) {
       console.log("feevalue error");
       console.log(e);
     }
-  }, [token0FeeMarketValue, token1FeeMarketValue, bothHaveMarketData]);
+  }, [totalFeeValue]);
 
   return (
     <Box onClick={() => onClickToRoute()}>
@@ -271,15 +214,16 @@ export default function PoolCard(props: PoolCardDetail) {
                 {token1MarketPrice === undefined || token1Value === 0
                   ? undefined
                   : `($${priceFormmater(token1Value)})`}
+                $ {priceFormmater(10000)}
               </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems={"center"} h={"20px"}>
             <Text>Fees</Text>
             <Flex columnGap={"5px"}>
-              {bothHaveMarketData ? (
+              {hasTokenPrice ? (
                 <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
-                  ${commafy(feeValue, 2)}
+                  {gasUsdFormatter(Number(feeValue))}
                 </Text>
               ) : (
                 <Text color={"#A0A3AD"}>No market data</Text>
@@ -289,11 +233,7 @@ export default function PoolCard(props: PoolCardDetail) {
                   content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
                   tooltipLabel={
                     <Flex
-                      w={
-                        token0HasMarketPrice && token1HasMarketPrice
-                          ? "300px"
-                          : "260px"
-                      }
+                      w={hasTokenPrice ? "300px" : "260px"}
                       px={"10px"}
                       pos={"absolute"}
                       zIndex={500}
@@ -306,7 +246,7 @@ export default function PoolCard(props: PoolCardDetail) {
                     >
                       <Text w={"100%"} pos={"relative"}>
                         FEES :{" "}
-                        {`${trimAmount(token0FeeAmount, 7)} ${
+                        {`${trimAmount(token0CollectedFee, 7)} ${
                           token0.symbol
                         } ${token0FeeValueForTooltip}`}{" "}
                         <span
@@ -318,7 +258,7 @@ export default function PoolCard(props: PoolCardDetail) {
                         >
                           +
                         </span>{" "}
-                        {`${trimAmount(token1FeeAmount, 7)} ${
+                        {`${trimAmount(token1CollectedFee, 7)} ${
                           token1.symbol
                         } ${token1FeeValueForTooltip}`}{" "}
                       </Text>

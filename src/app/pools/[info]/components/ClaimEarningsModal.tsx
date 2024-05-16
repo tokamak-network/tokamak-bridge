@@ -44,9 +44,8 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
     const fetchData = async () => {
       if (isOpen === "collectFee") {
         const estimatedGas = await estimateGasToCollect();
-        return setEstimatedGasUsage(
-          smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
-        );
+        const result = commafy(estimatedGas?.toString(), 2);
+        return setEstimatedGasUsage(result);
       }
     };
     fetchData();

@@ -36,7 +36,8 @@ import {
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
 
-import useAmountModal from "@/hooks/modal/useAmountModal"
+import useAmountModal from "@/hooks/modal/useAmountModal";
+import commafy from "@/utils/trim/commafy";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -637,7 +638,7 @@ export default function TokenInput(props: {
           )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
-            {`$${marketPrice}`}
+            {`$${commafy(marketPrice, 2)}`}
           </Text>
         )}
       </Flex>
