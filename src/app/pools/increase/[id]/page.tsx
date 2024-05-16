@@ -11,33 +11,13 @@ import {
   useGetPositionIdFromPath,
   usePositionInfo,
 } from "@/hooks/pool/useGetPositionIds";
-import useBlockNum from "@/hooks/network/useBlockNumber";
-import { usePoolContract } from "@/hooks/pool/usePoolContract";
-import { useEffect } from "react";
-import { useRecoilState } from "recoil";
-import { estimatedGasFee } from "@/recoil/global/transaction";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useIsOwner } from "@/hooks/pool/useIsOwner";
 import { redirect } from "next/navigation";
 
 export default function IncreaseLiquidity() {
   const { info } = usePositionInfo();
   const { backwardLink } = useGetPositionIdFromPath();
-  const { estimateGasToIncrease } = usePoolContract();
-  const { blockNumber } = useBlockNum();
-  const [estimatedGasUsageValue, setEstimatedGasUsage] = useRecoilState<
-    number | undefined | null
-  >(estimatedGasFee);
-  const { inToken, outToken, tokensPairHasAmount } = useInOutTokens();
   const { needToRedirect } = useIsOwner(info);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const gasData = await estimateGasToIncrease();
-      setEstimatedGasUsage(gasData);
-    };
-    fetchData();
-  }, [blockNumber, inToken?.amountBN, outToken?.amountBN]);
 
   if (needToRedirect) {
     redirect(backwardLink);
@@ -58,10 +38,7 @@ export default function IncreaseLiquidity() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"} w={"364px"}>
-          <Range
-            page="increaseLiquidity"
-            estimatedGas={estimatedGasUsageValue}
-          />
+          <Range page="increaseLiquidity" estimatedGas={undefined} />
           <PriceRange info={info} />
         </Flex>
         <Flex flexDirection={"column"} justifyContent={"space-between"}>

@@ -179,13 +179,11 @@ const Content = (props: {
     token1Amount,
   });
 
-  console.log("totalMarketPrice", totalMarketPrice);
-
   if (isExpanded && info) {
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
-          <DivisionLine></DivisionLine>
+          {/* <DivisionLine></DivisionLine> */}
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
@@ -236,7 +234,7 @@ const Content = (props: {
 };
 
 export default function TxDetails() {
-  const [isExpanded, setIsExpended] = useState<boolean>(false);
+  const [isExpanded, setIsExpended] = useState<boolean>(true);
   const amountPercentage = useRecoilValue(removeAmount);
 
   if (amountPercentage) {
@@ -253,11 +251,8 @@ export default function TxDetails() {
         pb={isExpanded ? "20px" : ""}
         zIndex={0}
       >
-        <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-        <Content
-          isExpanded={isExpanded}
-          setIsExpended={setIsExpended}
-        ></Content>
+        {/* <Title isExpanded={isExpanded} setIsExpended={setIsExpended} /> */}
+        <Content isExpanded={true} setIsExpended={setIsExpended}></Content>
       </Flex>
     );
   }

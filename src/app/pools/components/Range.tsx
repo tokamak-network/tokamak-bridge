@@ -6,7 +6,7 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy, { commafyWithUndefined } from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
-import { T_PoolModal } from "@/recoil/modal/atom";
+import { T_PoolModal, poolModalStatus } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
@@ -15,6 +15,8 @@ import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import useConnectedNetwork from "@/hooks/network";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
+import { useRecoilValue } from "recoil";
+import { useMemo } from "react";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -63,6 +65,64 @@ export default function Range(props: {
   const { poolModal } = usePreview();
   const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
   const { inToken, outToken } = useInOutTokens();
+  const modalStatus = useRecoilValue(poolModalStatus);
+
+  const token0CurrentAmount = useMemo(() => {
+    return page === "addLiquidity" ||
+      modalStatus === "increaseLiquidity" ||
+      modalStatus === "removeLiquidity"
+      ? undefined
+      : smallNumberFormmater(
+          token0Amount.toString(),
+          6,
+          undefined,
+          undefined,
+          0.000001
+        );
+  }, [page, modalStatus, token0Amount]);
+  const alter0Amount = useMemo(() => {
+    return page === "addLiquidity"
+      ? token0ParsedAmount ?? "0.00"
+      : modalStatus === "increaseLiquidity"
+      ? smallNumberFormmater(inToken?.parsedAmount?.toString(), 6, false, true)
+      : modalStatus === "removeLiquidity"
+      ? smallNumberFormmater(
+          amount0Removed?.toString(),
+          6,
+          undefined,
+          undefined,
+          0.000001
+        )
+      : undefined;
+  }, [page, modalStatus, token0ParsedAmount, amount0Removed]);
+  const token1CurrentAmount = useMemo(() => {
+    return page === "addLiquidity" ||
+      modalStatus === "increaseLiquidity" ||
+      modalStatus === "removeLiquidity"
+      ? undefined
+      : smallNumberFormmater(
+          token1Amount.toString(),
+          6,
+          undefined,
+          undefined,
+          0.000001
+        );
+  }, [page, modalStatus, token1Amount]);
+  const alter1Amount = useMemo(() => {
+    return page === "addLiquidity"
+      ? token1ParsedAmount ?? "0.00"
+      : modalStatus === "increaseLiquidity"
+      ? smallNumberFormmater(outToken?.parsedAmount?.toString(), 6, false, true)
+      : modalStatus === "removeLiquidity"
+      ? smallNumberFormmater(
+          amount1Removed?.toString(),
+          6,
+          undefined,
+          undefined,
+          0.000001
+        )
+      : undefined;
+  }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   return (
     <Flex
@@ -102,89 +162,34 @@ export default function Range(props: {
       </Flex>
       <RangeToken
         token={token1}
-        amount={
-          page === "addLiquidity"
-            ? undefined
-            : smallNumberFormmater(
-                token1Amount.toString(),
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )
-        }
+        amount={token1CurrentAmount}
         page={page}
-        alterAmount={
-          page === "addLiquidity"
-            ? token1ParsedAmount ?? "0.00"
-            : page === "increaseLiquidity"
-            ? smallNumberFormmater(
-                outToken?.parsedAmount?.toString(),
-                6,
-                false,
-                true
-              )
-            : smallNumberFormmater(
-                amount1Removed?.toString(),
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )
-        }
+        alterAmount={alter1Amount}
         style={{ marginBottom: "9px" }}
       />
       <RangeToken
         token={token0}
-        amount={
-          page === "addLiquidity"
-            ? undefined
-            : smallNumberFormmater(
-                token0Amount.toString(),
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )
-        }
+        amount={token0CurrentAmount}
         page={page}
-        alterAmount={
-          page === "addLiquidity"
-            ? token0ParsedAmount ?? "0.00"
-            : page === "increaseLiquidity"
-            ? smallNumberFormmater(
-                inToken?.parsedAmount?.toString(),
-                6,
-                false,
-                true
-              )
-            : smallNumberFormmater(
-                amount0Removed?.toString(),
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )
-        }
+        alterAmount={alter0Amount}
       />
-      {(page === "addLiquidity" || page === "increaseLiquidity") &&
-        estimatedGas !== null && (
-          <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
-            <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
-            <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
-              <Flex justifyContent={"space-between"}>
-                <Text fontSize={"14px"}>{"Estimated gas fee"}</Text>
-                <Text
-                  fontSize={"16px"}
-                  fontWeight={500}
-                  color={estimatedGas ? "#fff" : "#A0A3AD"}
-                >
-                  {estimatedGas ? `$${commafy(estimatedGas, 2)}` : "NA"}
-                </Text>
-              </Flex>
+      {page === "addLiquidity" || modalStatus === "increaseLiquidity" ? (
+        <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
+          <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
+          <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
+            <Flex justifyContent={"space-between"}>
+              <Text fontSize={"14px"}>{"Estimated gas fee"}</Text>
+              <Text
+                fontSize={"16px"}
+                fontWeight={500}
+                color={estimatedGas ? "#fff" : "#A0A3AD"}
+              >
+                {estimatedGas ? `$${commafy(estimatedGas, 2)}` : "NA"}
+              </Text>
             </Flex>
           </Flex>
-        )}
+        </Flex>
+      ) : undefined}
       {(page === "collectFee" || poolModal === "removeLiquidity") && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
@@ -211,8 +216,12 @@ export default function Range(props: {
             </Flex>
             <Flex justifyContent={"space-between"}>
               <Text fontSize={"14px"}>Estimated gas fee</Text>
-              <Text fontSize={"16px"} fontWeight={500}>
-                {`$${commafy(estimatedGas, 2)}`}
+              <Text
+                fontSize={"16px"}
+                fontWeight={500}
+                color={estimatedGas ? "#fff" : "#A0A3AD"}
+              >
+                {estimatedGas ? `$${commafy(estimatedGas, 2)}` : "NA"}
               </Text>
             </Flex>
           </Flex>

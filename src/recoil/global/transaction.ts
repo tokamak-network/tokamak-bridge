@@ -73,9 +73,9 @@ export const estimatedGasUsage = atom<number | undefined>({
 //   mapResponse: (data) => data.getTokenMarketData?.current_price,
 // });
 
-export const estimatedGasFee = atom<number | undefined | null>({
+export const estimatedGasFee = atom<number | undefined>({
   key: "estimatedGasFee",
-  default: null,
+  default: undefined,
 });
 
 export const transactionData = atom<any[]>({
