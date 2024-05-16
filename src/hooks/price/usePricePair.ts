@@ -4,9 +4,9 @@ import { useMemo } from "react";
 
 export function usePricePair(params: {
   token0Name: string | undefined;
-  token0Amount: number;
+  token0Amount: number | string;
   token1Name: string | undefined;
-  token1Amount: number;
+  token1Amount: number | string;
 }) {
   const { token0Name, token0Amount, token1Name, token1Amount } = params;
   const {
@@ -14,7 +14,7 @@ export function usePricePair(params: {
     tokenMarketPrice: token0MarketPrice,
   } = useGetMarketPrice({
     tokenName: token0Name,
-    amount: Number(commafy(token0Amount, 8).replaceAll(",", "")),
+    amount: token0Amount,
   });
   const {
     tokenPriceWithAmount: token1Price,

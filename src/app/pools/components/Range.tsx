@@ -124,7 +124,13 @@ export default function Range(props: {
                 false,
                 true
               )
-            : commafy(amount1Removed, 6)
+            : smallNumberFormmater(
+                amount1Removed?.toString(),
+                6,
+                undefined,
+                undefined,
+                0.000001
+              )
         }
         style={{ marginBottom: "9px" }}
       />

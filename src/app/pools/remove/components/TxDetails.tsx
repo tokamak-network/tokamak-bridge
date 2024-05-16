@@ -14,6 +14,7 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { estimatedGasFee } from "@/recoil/global/transaction";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
+import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 
 const Title = (props: {
   isExpanded: boolean;
@@ -74,11 +75,25 @@ const Title = (props: {
       >
         <Flex maxH={"16px"} alignItems={"center"}>
           <Text>
-            {commafy(amount0Removed, 4, undefined, "0")} {token0Symbol}
+            {smallNumberFormmater(
+              amount0Removed?.toString(),
+              6,
+              undefined,
+              undefined,
+              0.000001
+            )}{" "}
+            {token0Symbol}
           </Text>
           <Text mx={"6px"}>+</Text>
           <Text>
-            {commafy(amount1Removed, 4, undefined, "0")} {token1Symbol}
+            {smallNumberFormmater(
+              amount1Removed?.toString(),
+              6,
+              undefined,
+              undefined,
+              0.000001
+            )}{" "}
+            {token1Symbol}
           </Text>
         </Flex>
         <Flex alignItems={"center"}>
@@ -163,6 +178,8 @@ const Content = (props: {
     token1Name: info?.token1.name,
     token1Amount,
   });
+
+  console.log("totalMarketPrice", totalMarketPrice);
 
   if (isExpanded && info) {
     return (

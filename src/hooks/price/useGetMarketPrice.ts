@@ -20,7 +20,7 @@ export const changeTokenNameForAPI = (tokenName: string | undefined) => {
 
 export function useGetMarketPrice(params: {
   tokenName: SupportedTokenNames | string | undefined;
-  amount?: number;
+  amount?: number | string;
 }) {
   const tokenName = changeTokenNameForAPI(params.tokenName);
 
@@ -45,7 +45,10 @@ export function useGetMarketPrice(params: {
 
   const tokenPriceWithAmount = useMemo(() => {
     if (tokenMarketPrice && params.amount) {
-      return commafy(data.getTokenMarketData.current_price * params.amount, 2);
+      return commafy(
+        data.getTokenMarketData.current_price * Number(params.amount),
+        2
+      );
     }
     return undefined;
   }, [tokenMarketPrice, params.amount]);

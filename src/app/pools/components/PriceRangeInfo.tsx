@@ -210,8 +210,6 @@ export const CurrentPriceInfo = () => {
 };
 
 export function PriceRangeInfo() {
-  //   const { isMinPrice } = props;
-
   const [manuallyInverted, setManuallyInverted] = useRecoilState(
     ATOM_manuallyInverted
   );

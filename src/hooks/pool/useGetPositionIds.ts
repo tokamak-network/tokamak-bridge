@@ -472,7 +472,12 @@ export function useGetPositionById(positionId: number, chainId: number) {
             tickLower,
             tickCurrent: tick,
             tickUpper,
-            rawPositionInfo: { ...positionInfo, sqrtPriceX96 },
+            rawPositionInfo: {
+              ...positionInfo,
+              sqrtPriceX96,
+              token0RemainedAmount: remainedTokens.amount0,
+              token1remainedAmount: remainedTokens.amount1,
+            },
             hasETH: token0IsNative || token1IsNative,
             isClosed,
             token0Value:
