@@ -89,3 +89,8 @@ export const fwOptionModalStatus = atom<boolean>({
   key: "fwOptionModalStatus",
   default: false,
 });
+
+export const fwUpdateFeeModalStatus = atom<boolean>({
+  key: "fwUpdateFeeModalStatus",
+  default: false,
+});

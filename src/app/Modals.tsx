@@ -10,6 +10,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
 import FwModal from "@/components/fw/modal/comfirm";
 import FwOptionModal from "@/components/fw/modal/option";
+import FwFeeUpdateModal from "@/components/fw/modal/updateFee";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -34,6 +35,7 @@ export default function Modals() {
       {/**FW UI test code @Robert */}
       <FwOptionModal />
       <FwModal />
+      <FwFeeUpdateModal />
     </>
   );
 }
