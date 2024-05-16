@@ -15,7 +15,7 @@ export enum WarningType {
   Normal = "normal",
 }
 
-export interface FwOptionCrossDetailProps {
+export interface FwInputProps {
   inputValue: string;
   inputWarningCheck: WarningType | "";
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;

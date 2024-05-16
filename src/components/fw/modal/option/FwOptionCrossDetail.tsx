@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import FwOptionInput from "@/components/fw/modal/option/FwOptionInput";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
-import { FwOptionCrossDetailProps } from "@/components/fw/types";
+import { FwInputProps } from "@/components/fw/types";
 import { ButtonTypeMain, ButtonTypeSub } from "@/components/fw/types";
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -20,7 +20,7 @@ interface AdditionalCrossProps {
 }
 
 export default function FwOptionCrossDetail(
-  props: AdditionalCrossProps & FwOptionCrossDetailProps
+  props: AdditionalCrossProps & FwInputProps
 ) {
   const isCrossActive = props.activeMainButtonValue === ButtonTypeMain.Cross;
 

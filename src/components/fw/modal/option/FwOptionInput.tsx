@@ -9,10 +9,10 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import { FwWarning } from "@/components/fw/components/FwWarning";
-import { FwOptionCrossDetailProps } from "@/components/fw/types";
+import { FwInputProps } from "@/components/fw/types";
 import { WarningType } from "@/components/fw/types";
 
-export default function FwOptionInput(props: FwOptionCrossDetailProps) {
+export default function FwOptionInput(props: FwInputProps) {
   const { inputValue, inputWarningCheck, onInputChange } = props;
   return (
     <>

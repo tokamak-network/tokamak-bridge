@@ -1,19 +1,111 @@
-import {
-  Box,
-  Text,
-  Flex,
-  InputGroup,
-  Input,
-  InputRightElement,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import Image from "next/image";
+import FwUpdateInput from "./FwUpdateInput";
 import FwDownArrow from "assets/icons/fw/fwDownArrow.svg";
-import FwReCircle from "assets/icons/fw/fwReCircle.svg";
 import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
 import FwUsdcSymbol from "assets/icons/fw/fwUsdcSymbol.svg";
+import { FwInputProps } from "@/components/fw/types";
 
-export default function FwUpdateFeeDetail() {
+enum FeeDetailType {
+  Receive,
+  Time,
+  Network,
+}
+
+interface FeeDetailProps {
+  type: FeeDetailType;
+  title: string;
+  inputValue: boolean;
+}
+
+const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
+  return (
+    <Flex
+      justifyContent='space-between'
+      my={type == FeeDetailType.Time ? "6px" : ""}
+    >
+      <Text
+        color={"#A0A3AD"}
+        fontSize={"12px"}
+        fontWeight={400}
+        lineHeight={"normal"}
+      >
+        {title}
+      </Text>
+      {type == FeeDetailType.Receive && (
+        <Flex>
+          <Text
+            color={"#FFFFFF"}
+            fontSize={"12px"}
+            fontWeight={600}
+            lineHeight={"normal"}
+          >
+            {inputValue ? "9.998" : "-"} USDC
+          </Text>
+          <Flex
+            ml={"6px"}
+            px={"4px"}
+            borderRadius={"4px"}
+            alignItems={"center"}
+            bg={"#DB00FF"}
+          >
+            <Text
+              color={"#FFFFFF"}
+              fontSize={"10px"}
+              fontWeight={500}
+              lineHeight={"normal"}
+              letterSpacing={"1px"}
+            >
+              {inputValue ? "98.31" : "-"}
+            </Text>
+            <Text
+              color={"#FFFFFF"}
+              fontSize={"10px"}
+              fontWeight={400}
+              lineHeight={"normal"}
+              letterSpacing={"1px"}
+            >
+              %
+            </Text>
+          </Flex>
+        </Flex>
+      )}
+      {type == FeeDetailType.Time && (
+        <Text
+          color={"#DB00FF"}
+          fontSize={"12px"}
+          fontWeight={600}
+          lineHeight={"normal"}
+        >
+          {inputValue ? "~ 1 day" : "-"}
+        </Text>
+      )}
+      {type == FeeDetailType.Network && (
+        <Flex>
+          <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
+          <Text
+            color={"#FFFFFF"}
+            fontSize={"12px"}
+            fontWeight={600}
+            lineHeight={"normal"}
+            mx={"4px"}
+          >
+            {inputValue ? "0.16" : "- "}
+            ETH
+          </Text>
+          <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"}>
+            <span style={{ fontSize: "10px", lineHeight: "15px" }}>(</span>$
+            {inputValue ? "0.43" : "-"}
+            <span style={{ fontSize: "10px", lineHeight: "15px" }}>)</span>
+          </Text>
+        </Flex>
+      )}
+    </Flex>
+  );
+};
+
+export default function FwUpdateFeeDetail(props: FwInputProps) {
+  const inputValueCheck = props.inputValue != "";
   return (
     <Box
       width={"364px"}
@@ -66,6 +158,7 @@ export default function FwUpdateFeeDetail() {
           </Text>
         </Button>
       </Flex>
+
       <Box
         mt={"16px"}
         p={"6px 16px"}
@@ -100,143 +193,27 @@ export default function FwUpdateFeeDetail() {
       <Flex justifyContent={"center"} alignItems={"center"} my={"8px"}>
         <Image src={FwDownArrow} alt={"FwDownArrow"} />
       </Flex>
-      <Box
-        px={"16px"}
-        py={"8px"}
-        bg={"#1F2128"}
-        borderRadius={"8px"}
-        border={"1px solid #313442"}
-      >
-        <Flex justifyContent='space-between'>
-          <Text
-            lineHeight={"normal"}
-            fontWeight={500}
-            fontSize={"12px"}
-            color={"#A0A3AD"}
-          >
-            New fee
-          </Text>
-          <Image src={FwReCircle} alt={"FwReCircle"} />
-        </Flex>
-        <InputGroup mt={"4px"}>
-          <Input
-            width={"260px"}
-            pl={0}
-            fontWeight={600}
-            fontSize={"24px"}
-            lineHeight={"38px"}
-            border={"none"}
-            _hover={{ border: "none" }}
-            _focus={{ boxShadow: "none", border: "none" }}
-          />
-          <InputRightElement mr={"24px"}>
-            <Flex>
-              <Image src={FwUsdcSymbol} alt={"FwUsdcSymbol"} />
-              <Text
-                ml={"4px"}
-                fontSize={"16px"}
-                fontWeight={400}
-                color={"#FFFFFF"}
-                lineHeight={"24px"}
-              >
-                USDC
-              </Text>
-            </Flex>
-          </InputRightElement>
-        </InputGroup>
-      </Box>
+      <FwUpdateInput
+        inputValue={props.inputValue}
+        inputWarningCheck={props.inputWarningCheck}
+        onInputChange={props.onInputChange}
+      />
       <Box mt={"16px"}>
-        <Flex justifyContent='space-between'>
-          <Text
-            color={"#A0A3AD"}
-            fontSize={"12px"}
-            fontWeight={400}
-            lineHeight={"normal"}
-          >
-            Receive
-          </Text>
-          <Flex>
-            <Text
-              color={"#FFFFFF"}
-              fontSize={"12px"}
-              fontWeight={600}
-              lineHeight={"normal"}
-            >
-              9.998 USDC
-            </Text>
-            <Flex
-              ml={"6px"}
-              px={"4px"}
-              borderRadius={"4px"}
-              alignItems={"center"}
-              bg={"#DB00FF"}
-            >
-              <Text
-                color={"#FFFFFF"}
-                fontSize={"10px"}
-                fontWeight={500}
-                lineHeight={"normal"}
-                letterSpacing={"1px"}
-              >
-                98.31
-              </Text>
-              <Text
-                color={"#FFFFFF"}
-                fontSize={"10px"}
-                fontWeight={400}
-                lineHeight={"normal"}
-                letterSpacing={"1px"}
-              >
-                %
-              </Text>
-            </Flex>
-          </Flex>
-        </Flex>
-        <Flex justifyContent='space-between' my={"6px"}>
-          <Text
-            color={"#A0A3AD"}
-            fontSize={"12px"}
-            fontWeight={400}
-            lineHeight={"normal"}
-          >
-            Estimated Time of Arrival
-          </Text>
-          <Text
-            color={"#DB00FF"}
-            fontSize={"12px"}
-            fontWeight={600}
-            lineHeight={"normal"}
-          >
-            ~ 1 day
-          </Text>
-        </Flex>
-        <Flex justifyContent='space-between'>
-          <Text
-            color={"#A0A3AD"}
-            fontSize={"12px"}
-            fontWeight={400}
-            lineHeight={"normal"}
-          >
-            Network fee
-          </Text>
-          <Flex>
-            <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
-            <Text
-              color={"#FFFFFF"}
-              fontSize={"12px"}
-              fontWeight={600}
-              lineHeight={"normal"}
-              mx={"4px"}
-            >
-              0.16 ETH
-            </Text>
-            <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"}>
-              <span style={{ fontSize: "10px", lineHeight: "15px" }}>(</span>
-              $0.43
-              <span style={{ fontSize: "10px", lineHeight: "15px" }}>)</span>
-            </Text>
-          </Flex>
-        </Flex>
+        <FeeDetail
+          type={FeeDetailType.Receive}
+          title={"Receive"}
+          inputValue={inputValueCheck}
+        />
+        <FeeDetail
+          type={FeeDetailType.Time}
+          title={"Estimated Time of Arrival"}
+          inputValue={inputValueCheck}
+        />
+        <FeeDetail
+          type={FeeDetailType.Network}
+          title={"Network fee"}
+          inputValue={inputValueCheck}
+        />
       </Box>
     </Box>
   );
