@@ -28,7 +28,7 @@ export function gasUsdFormatter(
     ? price === 0
       ? displayMinimumValue ?? `$0.00`
       : price < 0.01
-      ? `$ <0.01`
+      ? `< $0.01`
       : `$${commafy(price, 2)}`
     : undefined;
 }
