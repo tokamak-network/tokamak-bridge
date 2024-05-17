@@ -34,6 +34,7 @@ import "@/css/spinner.css";
 import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
+import { gasUsdFormatter } from "@/utils/number/compareNumbers";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -83,7 +84,7 @@ const OutTokenContainer = () => {
         fontWeight={mobileView ? 500 : 400}
         color={"#A0A3AD"}
       >
-        ${outTokenWithPrice || "0"}
+        {gasUsdFormatter(outTokenWithPrice) ?? "NA"}
       </Text>
     </>
   );
@@ -218,7 +219,7 @@ const TokenContainer = () => {
           fontWeight={mobileView ? 500 : 400}
           color={"#A0A3AD"}
         >
-          ${inTokenWithPrice || "0"}
+          {gasUsdFormatter(inTokenWithPrice) ?? "NA"}
         </Text>
       </Flex>
 
