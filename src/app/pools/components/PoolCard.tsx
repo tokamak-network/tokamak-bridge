@@ -197,27 +197,22 @@ export default function PoolCard(props: PoolCardDetail) {
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token0.symbol}</Text>
             <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
-              {token0Amount < 0.001
-                ? smallNumberFormmater({
-                    amount: token0Amount,
-                    decimals: 12,
-                    minimumValue: 0.0000000000001,
-                    displayMinimumValue: "0.000000000000...",
-                  })
-                : commafy(token0Amount, 4)}{" "}
+              {smallNumberFormmater({
+                amount: token0Amount,
+                trimed: true,
+                trimedDecimals: 13,
+              })}
             </Text>
           </Flex>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token1.symbol}</Text>
             <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
-              {token1Amount < 0.001
-                ? smallNumberFormmater({
-                    amount: token1Amount,
-                    decimals: 12,
-                    minimumValue: 0.0000000000001,
-                    displayMinimumValue: "0.000000000000...",
-                  })
-                : commafy(token1Amount, 4)}{" "}
+              {smallNumberFormmater({
+                amount: token1Amount,
+                decimals: 12,
+                minimumValue: 0.0000000000001,
+                displayMinimumValue: "0.000000000000...",
+              })}
             </Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems={"center"} h={"20px"}>
