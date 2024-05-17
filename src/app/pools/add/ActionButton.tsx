@@ -42,7 +42,11 @@ export const ApproveButton = (props: { isInToken: boolean }) => {
     enabled: Boolean(contractAddress && totalSupply),
   });
   const { data, write } = useErc20Approve(config);
-  const {} = useTx({ hash: data?.hash, txSort: "Approve" });
+  const {} = useTx({
+    hash: data?.hash,
+    txSort: "Approve",
+    tokenAddress: tokenAddress,
+  });
   const { isLoading } = useWaitForTransaction({
     hash: data?.hash,
   });
