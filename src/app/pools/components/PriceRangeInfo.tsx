@@ -175,14 +175,12 @@ export const CurrentPriceInfo = () => {
           >
             {poolModal === "addLiquidity"
               ? smallNumberFormmater({
-                  amount: Number(currentPriceToAdd ?? 0),
+                  amount: currentPriceToAdd,
                   trimed: true,
-                  trimedDecimals: 13,
                 })
               : smallNumberFormmater({
-                  amount: Number(currentPrice ?? 0),
+                  amount: currentPrice,
                   trimed: true,
-                  trimedDecimals: 13,
                 })}
           </Text>
         }

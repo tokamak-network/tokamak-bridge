@@ -28,9 +28,9 @@ export function trimAmountForFormatter(
 
   const decimals = decimalPlaces ?? lowerThanMinimum ? 6 : 9;
 
-  if (amount.length < decimals) {
-    return commafy(amount, 2);
-  }
+  // if (amount.length < decimals) {
+  //   return commafy(amount, 2);
+  // }
   if (!lowerThanInteger) {
     return `${commafy(amount.slice(0, decimals - 1))}...`;
   }
