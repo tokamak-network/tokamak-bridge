@@ -118,7 +118,8 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
     ]
   );
 
-  const actionDisabled = info?.owner !== address;
+  // const actionDisabled = info?.owner !== address;
+  const actionDisabled = false;
   const { ratio } = usePoolInfo();
 
   const token0Ratio = useMemo(() => {

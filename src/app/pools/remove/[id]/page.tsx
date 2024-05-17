@@ -24,9 +24,9 @@ export default function RemoveLiquidity() {
   const { info } = usePositionInfo();
   const { needToRedirect } = useIsOwner(info);
 
-  if (needToRedirect) {
-    redirect(backwardLink);
-  }
+  // if (needToRedirect) {
+  //   redirect(backwardLink);
+  // }
 
   if (info === undefined) return null;
 

@@ -204,7 +204,10 @@ export default function PoolCard(props: PoolCardDetail) {
             <Flex columnGap={"5px"}>
               {hasTokenPrice && hasFee ? (
                 <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
-                  {gasUsdFormatter(Number(feeValue), "< $0.01")}
+                  {gasUsdFormatter(
+                    Number(feeValue?.replaceAll(",", "")),
+                    "< $0.01"
+                  )}
                 </Text>
               ) : hasFee ? (
                 <Text color={"#fff"}>Claimable</Text>

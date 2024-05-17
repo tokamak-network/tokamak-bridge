@@ -189,7 +189,9 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
-              amount={gasUsdFormatter(Number(totalRemovedMarketPrice))}
+              amount={gasUsdFormatter(
+                Number(totalRemovedMarketPrice?.replaceAll(",", ""))
+              )}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
@@ -212,7 +214,9 @@ const Content = (props: {
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Earned fees"
-              amount={gasUsdFormatter(Number(totalMarketPrice))}
+              amount={gasUsdFormatter(
+                Number(totalMarketPrice?.replaceAll(",", ""))
+              )}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
