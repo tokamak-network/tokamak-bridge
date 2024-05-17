@@ -28,11 +28,13 @@ export function trimAmountForFormatter(
 
   const decimals = decimalPlaces ?? lowerThanMinimum ? 6 : 9;
 
-  // if (amount.length < decimals) {
-  //   return commafy(amount, 2);
-  // }
+  if (amount.length < decimals) {
+    return commafy(amount, 2);
+  }
   if (!lowerThanInteger) {
-    return `${commafy(amount.slice(0, decimals - 1))}...`;
+    const result = commafy(amount, 9);
+    const numberOfCommas = result.split(",").length - 1;
+    return `${result.slice(0, decimals - 1 + numberOfCommas)}...`;
   }
   return `${amount.slice(0, decimals - 1)}...`;
 }
