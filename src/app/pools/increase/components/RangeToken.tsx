@@ -7,10 +7,10 @@ import { useRecoilValue } from "recoil";
 
 export default function RangeToken(props: {
   token: Token;
-  amount: string | undefined;
+  amount: string | number | undefined;
   style?: {};
   page: T_PoolModal;
-  alterAmount: string | undefined;
+  alterAmount: string | number | undefined;
 }) {
   const { token, amount, style, page, alterAmount } = props;
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
