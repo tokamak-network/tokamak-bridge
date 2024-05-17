@@ -30,7 +30,7 @@ const MaintenanceBanner = () => {
       const today = new Date();
       const nowTime = getTime(today);
       const activeTimeStartThisWeek = add(banner, {
-        hours: 1,
+        hours: 2,
         minutes: 0,
         seconds: 0,
       }); //the duration when the warning banner (yellow) is visible
