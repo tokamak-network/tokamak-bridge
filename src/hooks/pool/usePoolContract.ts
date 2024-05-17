@@ -855,6 +855,7 @@ export function usePoolContract() {
           removeLiquidityPercentage,
           true
         );
+
         if (estimatedGasUsage) {
           const totalGasCostUSD = getTotalGasCostUSD(
             estimatedGasUsage,

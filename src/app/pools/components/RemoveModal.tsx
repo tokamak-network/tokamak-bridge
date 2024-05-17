@@ -18,14 +18,35 @@ import { useRecoilValue } from "recoil";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import commafy from "@/utils/trim/commafy";
 import { estimatedGasFee } from "@/recoil/global/transaction";
+import { useEffect, useState } from "react";
+import { BigNumber } from "ethers";
+import useBlockNum from "@/hooks/network/useBlockNumber";
 
 export default function RemoveModal() {
   const { onClosePreviewModal, poolModal } = usePreview();
-  const { removeLiquidity } = usePoolContract();
+  const { removeLiquidity, estimateGasToRemove } = usePoolContract();
   const { info } = usePositionInfo();
   const removeLiquidityPercentage = useRecoilValue(removeAmount);
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
-  const estimatedGasUsageValue = useRecoilValue(estimatedGasFee);
+  const { blockNumber } = useBlockNum();
+  const [estimatedGasUsageValue, setEstimatedGasUsageValue] = useState<
+    number | undefined
+  >(undefined);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const gasData = await estimateGasToRemove(
+        info?.id,
+        removeLiquidityPercentage
+      );
+      return setEstimatedGasUsageValue(gasData);
+    };
+    fetchData();
+    const interval = setInterval(() => {
+      fetchData();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [poolModal, blockNumber]);
 
   return (
     <Modal

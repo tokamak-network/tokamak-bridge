@@ -21,7 +21,7 @@ export function usePricePair(params: {
     tokenMarketPrice: token1MarketPrice,
   } = useGetMarketPrice({
     tokenName: token1Name,
-    amount: Number(commafy(token1Amount, 8).replaceAll(",", "")),
+    amount: token1Amount,
   });
 
   const totalMarketPrice = useMemo(() => {

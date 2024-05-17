@@ -55,8 +55,5 @@ export function useGetMarketPrice(params: {
     return undefined;
   }, [tokenMarketPrice, params.amount]);
 
-  // console.log("*8");
-  // console.log(tokenName, tokenPriceWithAmount, params.amount);
-
   return { tokenMarketPrice, tokenPriceWithAmount };
 }
