@@ -110,7 +110,7 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Price: token1FeeMarketValue,
   } = usePricePair({
     token0Name: token0.name,
-    token0Amount: token0CollectedFee,
+    token0Amount: token0Amount,
     token1Name: token1.name,
     token1Amount: token1CollectedFee,
   });
@@ -211,45 +211,6 @@ export default function PoolCard(props: PoolCardDetail) {
               ) : (
                 <Text color={"#A0A3AD"}>No fees</Text>
               )}
-              <Flex w={"14px"} h={"18px"} alignItems={"center"}>
-                <CustomTooltip
-                  content={<Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />}
-                  tooltipLabel={
-                    <Flex
-                      w={hasTokenPrice ? "300px" : "260px"}
-                      px={"10px"}
-                      pos={"absolute"}
-                      zIndex={500}
-                      h={"28px"}
-                      bg={"#383A49"}
-                      textAlign={"center"}
-                      right={"-125px"}
-                      borderRadius={"4px"}
-                      justifyContent={"center"}
-                    >
-                      <Text w={"100%"} pos={"relative"}>
-                        FEES :{" "}
-                        {`${trimAmount(token0CollectedFee, 7)} ${
-                          token0.symbol
-                        } ${token0FeeValueForTooltip}`}{" "}
-                        <span
-                          style={{
-                            width: "7px",
-                            height: "7px",
-                            color: "##A0A3AD",
-                          }}
-                        >
-                          +
-                        </span>{" "}
-                        {`${trimAmount(token1CollectedFee, 7)} ${
-                          token1.symbol
-                        } ${token1FeeValueForTooltip}`}{" "}
-                      </Text>
-                    </Flex>
-                  }
-                  style={{ width: "10px" }}
-                />
-              </Flex>
             </Flex>
           </Flex>
         </Flex>
