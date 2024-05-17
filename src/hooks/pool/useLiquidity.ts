@@ -2,10 +2,8 @@ import { useRecoilValue } from "recoil";
 import { usePositionInfo } from "./useGetPositionIds";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useMemo } from "react";
-import commafy from "@/utils/trim/commafy";
 import { usePricePair } from "../price/usePricePair";
 import { ethers } from "ethers";
-import { trimAmount } from "@/utils/trim";
 
 export function useRemoveLiquidity() {
   const { info } = usePositionInfo();
@@ -22,15 +20,21 @@ export function useRemoveLiquidity() {
       const token0AmountBigNumber = ethers.BigNumber.from(
         rawPositionInfo.token0RemainedAmount
       );
+
       const removePercentBigNumber = ethers.BigNumber.from(removePercent * 100);
 
       const result = token0AmountBigNumber
         .mul(removePercentBigNumber)
         .div(10000);
 
-      return ethers.utils.formatUnits(result, 18);
+      return ethers.utils.formatUnits(result, token0.decimals);
     }
-  }, [rawPositionInfo.token0RemainedAmount, token0Amount, removePercent]);
+  }, [
+    rawPositionInfo.token0RemainedAmount,
+    token0Amount,
+    removePercent,
+    token0.decimals,
+  ]);
 
   const amount1Removed = useMemo(() => {
     if (rawPositionInfo.token1remainedAmount && removePercent) {
@@ -43,9 +47,14 @@ export function useRemoveLiquidity() {
         .mul(removePercentBigNumber)
         .div(10000);
 
-      return ethers.utils.formatUnits(result, 18);
+      return ethers.utils.formatUnits(result, token1.decimals);
     }
-  }, [rawPositionInfo.token1RemainedAmount, token1Amount, removePercent]);
+  }, [
+    rawPositionInfo.token1RemainedAmount,
+    token1Amount,
+    removePercent,
+    token1.decimals,
+  ]);
 
   const { totalMarketPrice: totalRemovedMarketPrice } = usePricePair({
     token0Name: token0.name,
