@@ -29,11 +29,10 @@ export function trimAmountForFormatter(
   const decimals = decimalPlaces ?? lowerThanMinimum ? 6 : 9;
 
   if (amount.length < decimals) {
-    return amount;
+    return commafy(amount, 2);
   }
   if (!lowerThanInteger) {
-    const result = commafy(amount, 0);
-    return `${result.slice(0, decimals - 1)}...`;
+    return `${commafy(amount.slice(0, decimals - 1))}...`;
   }
   return `${amount.slice(0, decimals - 1)}...`;
 }

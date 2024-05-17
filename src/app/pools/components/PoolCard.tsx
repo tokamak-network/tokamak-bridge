@@ -187,7 +187,6 @@ export default function PoolCard(props: PoolCardDetail) {
               {smallNumberFormmater({
                 amount: token0Amount,
                 trimed: true,
-                trimedDecimals: 13,
               })}
             </Text>
           </Flex>
@@ -197,7 +196,6 @@ export default function PoolCard(props: PoolCardDetail) {
               {smallNumberFormmater({
                 amount: token1Amount,
                 trimed: true,
-                trimedDecimals: 13,
               })}
             </Text>
           </Flex>
