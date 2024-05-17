@@ -414,14 +414,14 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const token0Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
-                remainedTokens.amount0.toString(),
+                remainedTokens?.amount0.toString(),
                 token0Decimals
               );
 
           const token1Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
-                remainedTokens.amount1.toString(),
+                remainedTokens?.amount1.toString(),
                 token1Decimals
               );
 
@@ -477,8 +477,8 @@ export function useGetPositionById(positionId: number, chainId: number) {
             rawPositionInfo: {
               ...positionInfo,
               sqrtPriceX96,
-              token0RemainedAmount: remainedTokens.amount0,
-              token1remainedAmount: remainedTokens.amount1,
+              token0RemainedAmount: remainedTokens?.amount0,
+              token1remainedAmount: remainedTokens?.amount1,
             },
             hasETH: token0IsNative || token1IsNative,
             isClosed,
