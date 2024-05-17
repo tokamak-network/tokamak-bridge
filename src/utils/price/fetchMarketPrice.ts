@@ -17,12 +17,13 @@ export async function fetchMarketPrice(
         apiName: "price",
       },
       fetchPolicy: "cache-first",
-      pollInterval: 30000,
     });
     if (result.data.getTokenMarketData.current_price)
       return result.data.getTokenMarketData.current_price;
     return undefined;
   } catch (e) {
+    console.log("fetchMarketPrice error");
+    console.log(e);
     return undefined;
   }
 }

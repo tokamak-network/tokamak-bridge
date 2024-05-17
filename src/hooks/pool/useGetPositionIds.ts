@@ -434,6 +434,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
           const token0MarketPrice = await fetchMarketPrice(token0Name);
           const token1MarketPrice = await fetchMarketPrice(token1Name);
+
           const token0Value = token0MarketPrice
             ? token0MarketPrice * Number(token0Amount)
             : undefined;
@@ -442,6 +443,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
             : undefined;
           const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
           const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
+
           const token0FeeValue = token0MarketPrice
             ? token0MarketPrice * token0FeeAmount
             : undefined;

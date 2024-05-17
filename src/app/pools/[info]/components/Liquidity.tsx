@@ -9,7 +9,10 @@ import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
@@ -191,13 +194,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               height={"57px"}
               color={noMarketPrices ? "#A0A3AD" : ""}
             >
-              {noMarketPrices
-                ? "-"
-                : `$${smallNumberFormmater({
-                    amount: splitNumber(totalMarketPrice),
-                    removeComma: true,
-                    trimedDecimals: 7,
-                  })}`}
+              {noMarketPrices ? "-" : gasUsdFormatter(Number(totalMarketPrice))}
             </Text>
           </Flex>
           {!actionDisabled && (

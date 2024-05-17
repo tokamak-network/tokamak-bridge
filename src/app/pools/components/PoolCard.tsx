@@ -70,22 +70,9 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Amount,
     token0CollectedFee,
     token1CollectedFee,
-    token0Value,
-    token1Value,
-    token0MarketPrice,
-    token1MarketPrice,
     isClosed,
-    token0FeeValue,
-    token1FeeValue,
     chainId,
-    rawData,
   } = props;
-
-  console.log(
-    "token0MarketPrice,token1MarketPrice",
-    token0MarketPrice,
-    token1MarketPrice
-  );
 
   const feePercent = useMemo(() => {
     switch (fee) {
