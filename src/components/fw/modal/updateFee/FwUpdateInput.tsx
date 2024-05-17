@@ -1,3 +1,4 @@
+import React, { useRef, useState } from "react";
 import {
   Box,
   Text,
@@ -9,12 +10,44 @@ import {
 import Image from "next/image";
 import { FwInputProps } from "@/components/fw/types";
 import FwReCircle from "assets/icons/fw/fwReCircle.svg";
+import FwReCirclePurple from "assets/icons/fw/fwReCircle_purple.svg";
 import FwUsdcSymbol from "assets/icons/fw/fwUsdcSymbol.svg";
 import { FwWarning } from "@/components/fw/components/FwWarning";
 import { WarningType } from "@/components/fw/types";
 
-export default function FwUpdateInput(props: FwInputProps) {
-  const { inputValue, inputWarningCheck, onInputChange } = props;
+interface AdditionalDetailProps {
+  recommendCheck: boolean;
+  recommendValue: string;
+  onRecommendRefresh: () => void;
+}
+
+export default function FwUpdateInput(
+  props: FwInputProps & AdditionalDetailProps
+) {
+  const {
+    inputValue,
+    inputWarningCheck,
+    onInputChange,
+    onInputFocus,
+    recommendCheck,
+    recommendValue,
+    onRecommendRefresh,
+  } = props;
+
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const handleBoxClick = () => {
+    if (inputRef.current) {
+      // onfocus 트리거
+      inputRef.current.focus();
+      setIsFocused(true);
+    }
+  };
+  const handleBlur = () => {
+    setIsFocused(false);
+  };
+
   return (
     <>
       <Box
@@ -22,7 +55,9 @@ export default function FwUpdateInput(props: FwInputProps) {
         py={"8px"}
         bg={"#1F2128"}
         borderRadius={"8px"}
-        border={"1px solid #313442"}
+        border={isFocused ? "1px solid #59628D" : "1px solid #313442"}
+        onClick={handleBoxClick}
+        cursor='pointer'
       >
         <Flex justifyContent='space-between'>
           <Text
@@ -33,10 +68,24 @@ export default function FwUpdateInput(props: FwInputProps) {
           >
             New fee
           </Text>
-          <Image src={FwReCircle} alt={"FwReCircle"} />
+          <Box
+            onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+              onRecommendRefresh();
+              //상위 onclick에 이벤트 버블링 안되게 막음
+              event.stopPropagation();
+            }}
+            cursor='pointer'
+          >
+            {recommendCheck ? (
+              <Image src={FwReCircle} alt={"FwReCircle"} />
+            ) : (
+              <Image src={FwReCirclePurple} alt={"FwReCirclePurple"} />
+            )}
+          </Box>
         </Flex>
         <InputGroup mt={"4px"}>
           <Input
+            ref={inputRef}
             type='text'
             maxLength={1}
             pattern='[012]'
@@ -47,7 +96,10 @@ export default function FwUpdateInput(props: FwInputProps) {
             lineHeight={"38px"}
             border={"none"}
             onChange={onInputChange}
+            onFocus={onInputFocus}
+            onBlur={handleBlur}
             value={inputValue}
+            placeholder={recommendCheck ? recommendValue : ""}
             color={
               inputWarningCheck == WarningType.Critical ? "#DD3A44" : "#FFFFFF"
             }

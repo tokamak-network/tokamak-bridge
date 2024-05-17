@@ -104,61 +104,21 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
   );
 };
 
-export default function FwUpdateFeeDetail(props: FwInputProps) {
-  const inputValueCheck = props.inputValue != "";
-  return (
-    <Box
-      width={"364px"}
-      bg='#15161D'
-      px={"16px"}
-      py={"16px"}
-      borderRadius={"8px"}
-    >
-      {/** 상위 버튼 */}
-      <Flex
-        width={"332px"}
-        bg={"#1F2128"}
-        border={"1px solid #DB00FF"}
-        borderRadius={"32px"}
-      >
-        <Button
-          width={"162px"}
-          height={"32px"}
-          bg='#DB00FF'
-          borderRadius='16px'
-          p={"6px 56.5px"}
-          _active={{}}
-          _hover={{}}
-        >
-          <Text
-            color='#FFFFFF'
-            fontSize={"12px"}
-            lineHeight={"normal"}
-            fontWeight={400}
-          >
-            Update Fee
-          </Text>
-        </Button>
-        <Button
-          width={"162px"}
-          height={"32px"}
-          borderRadius={"16px"}
-          bg={"#transparent"}
-          p={"6px 69.5px"}
-          _active={{}}
-          _hover={{}}
-        >
-          <Text
-            color='#A0A3AD'
-            fontSize={"12px"}
-            lineHeight={"normal"}
-            fontWeight={400}
-          >
-            Refund
-          </Text>
-        </Button>
-      </Flex>
+interface AdditionalDetailProps {
+  recommendCheck: boolean;
+  recommendValue: string;
+  onRecommendRefresh: () => void;
+}
 
+export default function FwUpdateFeeDetail(
+  props: FwInputProps & AdditionalDetailProps
+) {
+  // update fee 상세
+  // 공백일때는 값이 들어가면 안된다.
+  // 하지만, recommendCheck가 true이면 값이 들어가야 한다.
+  const inputValueCheck = props.inputValue != "" || props.recommendCheck;
+  return (
+    <>
       <Box
         mt={"16px"}
         p={"6px 16px"}
@@ -194,9 +154,15 @@ export default function FwUpdateFeeDetail(props: FwInputProps) {
         <Image src={FwDownArrow} alt={"FwDownArrow"} />
       </Flex>
       <FwUpdateInput
+        // input 관련 props
         inputValue={props.inputValue}
         inputWarningCheck={props.inputWarningCheck}
         onInputChange={props.onInputChange}
+        onInputFocus={props.onInputFocus}
+        // input 관련 recommend 관련 props
+        recommendCheck={props.recommendCheck}
+        recommendValue={props.recommendValue}
+        onRecommendRefresh={props.onRecommendRefresh}
       />
       <Box mt={"16px"}>
         <FeeDetail
@@ -215,6 +181,6 @@ export default function FwUpdateFeeDetail(props: FwInputProps) {
           inputValue={inputValueCheck}
         />
       </Box>
-    </Box>
+    </>
   );
 }

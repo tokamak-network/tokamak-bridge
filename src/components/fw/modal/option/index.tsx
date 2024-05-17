@@ -76,6 +76,15 @@ export default function FwOptionModal() {
     activeSubButtonValue === ButtonTypeSub.Advanced &&
     (inputValue === "" || inputWarningCheck === WarningType.Critical);
 
+  const resetAllStates = () => {
+    onCloseFwOptionModal();
+    setNextStep(false);
+    setInputValue("");
+    setActiveMainButtonValue(ButtonTypeMain.Standard);
+    setActiveSubButtonValue(ButtonTypeSub.Recommend);
+    setInputWarningCheck("");
+  };
+
   const handleConfirm = () => {
     if (!nextStep) {
       setActiveMainButtonValue(ButtonTypeMain.Cross);
@@ -83,18 +92,14 @@ export default function FwOptionModal() {
       return;
     }
     //초기화
-    onCloseFwOptionModal();
-    setNextStep(false);
-    setInputValue("");
-    setActiveMainButtonValue(ButtonTypeMain.Standard);
-    setActiveSubButtonValue(ButtonTypeSub.Recommend);
-    setInputWarningCheck("");
+    resetAllStates();
 
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       alert("Official Standard Confirmed!");
       return;
     }
 
+    // 스탠다드가 아닐때는 Trade
     onOpenFwConfirmModal(ModalType.Trade);
   };
 

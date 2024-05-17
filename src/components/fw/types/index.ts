@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, FocusEvent } from "react";
 
 export enum ModalType {
   Trade = "trade",
@@ -19,6 +19,7 @@ export interface FwInputProps {
   inputValue: string;
   inputWarningCheck: WarningType | "";
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onInputFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 }
 
 export enum ButtonTypeMain {
@@ -29,4 +30,9 @@ export enum ButtonTypeMain {
 export enum ButtonTypeSub {
   Recommend = "recommend",
   Advanced = "advanced",
+}
+
+export enum UpdateFeeButtonType {
+  Update = "Update Fee",
+  Refund = "Refund",
 }
