@@ -20,42 +20,54 @@ export function getGasCostText(totalGasCost: string | null | undefined) {
   } ETH`;
 }
 
-export function gasUsdFormatter(price: number | undefined) {
+export function gasUsdFormatter(
+  price: number | undefined,
+  displayMinimumValue?: number | string
+) {
   return price !== undefined
     ? price === 0
-      ? `$0.00`
+      ? displayMinimumValue ?? `$0.00`
       : price < 0.01
       ? `$ <0.01`
       : `$${commafy(price, 2)}`
     : undefined;
 }
 
-export function smallNumberFormmater(
-  param: number | string | undefined | null,
-  deciplaPoints?: number,
-  trimed?: boolean,
-  removeComma?: boolean,
-  minimumValue?: number,
-  trimedDecimals?: number,
-  showUnderMinimumValue?: number | string
-) {
-  if (param === undefined || param === null) {
+export function smallNumberFormmater(params: {
+  amount: number | string | undefined | null;
+  decimals?: number;
+  trimed?: boolean;
+  removeComma?: boolean;
+  minimumValue?: number;
+  trimedDecimals?: number;
+  displayMinimumValue?: number | string;
+}) {
+  const {
+    amount,
+    decimals,
+    trimed,
+    removeComma,
+    minimumValue,
+    trimedDecimals,
+    displayMinimumValue,
+  } = params;
+  if (amount === undefined || amount === null) {
     return "-";
   }
-  if (Number(param) === 0) {
+  if (Number(amount) === 0) {
     return "0";
   }
 
   const isBiggerThanMinimum = isBiggerThanMinimumNum(
-    typeof param === "string"
-      ? Number(param.replaceAll(",", ""))
-      : Number(param),
+    typeof amount === "string"
+      ? Number(amount.replaceAll(",", ""))
+      : Number(amount),
     minimumValue
   );
 
   return isBiggerThanMinimum
     ? trimed
-      ? trimAmount(param.toString(), trimedDecimals ?? 8)
-      : commafy(param, deciplaPoints ?? 6, removeComma, "0.00")
-    : showUnderMinimumValue ?? "0.000000...";
+      ? trimAmount(amount.toString(), trimedDecimals ?? 8)
+      : commafy(amount, decimals ?? 6, removeComma, "0.00")
+    : displayMinimumValue ?? "0.000000...";
 }

@@ -78,24 +78,20 @@ const Title = (props: {
       >
         <Flex maxH={"16px"} alignItems={"center"}>
           <Text>
-            {smallNumberFormmater(
-              amount0Removed?.toString(),
-              6,
-              undefined,
-              undefined,
-              0.000001
-            )}{" "}
+            {smallNumberFormmater({
+              amount: amount0Removed?.toString(),
+              decimals: 6,
+              minimumValue: 0.000001,
+            })}{" "}
             {token0Symbol}
           </Text>
           <Text mx={"6px"}>+</Text>
           <Text>
-            {smallNumberFormmater(
-              amount1Removed?.toString(),
-              6,
-              undefined,
-              undefined,
-              0.000001
-            )}{" "}
+            {smallNumberFormmater({
+              amount: amount1Removed?.toString(),
+              decimals: 6,
+              minimumValue: 0.000001,
+            })}{" "}
             {token1Symbol}
           </Text>
         </Flex>
@@ -127,7 +123,10 @@ const DivisionLine = () => {
   );
 };
 
-const ContentTitle = (props: { title: string; amount: string | undefined }) => {
+const ContentTitle = (props: {
+  title: string;
+  amount: string | number | undefined;
+}) => {
   const { title, amount } = props;
 
   return (
@@ -194,23 +193,19 @@ const Content = (props: {
             />
             <ContentSub
               title={token0Symbol ?? "-"}
-              amount={smallNumberFormmater(
-                amount0Removed,
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )}
+              amount={smallNumberFormmater({
+                amount: amount0Removed,
+                decimals: 6,
+                minimumValue: 0.000001,
+              })}
             />
             <ContentSub
               title={token1Symbol ?? "-"}
-              amount={smallNumberFormmater(
-                amount1Removed,
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )}
+              amount={smallNumberFormmater({
+                amount: amount1Removed,
+                decimals: 6,
+                minimumValue: 0.000001,
+              })}
             />
           </Flex>
           <DivisionLine></DivisionLine>
@@ -221,23 +216,19 @@ const Content = (props: {
             />
             <ContentSub
               title={token0Symbol ?? "-"}
-              amount={smallNumberFormmater(
-                info.token0CollectedFee,
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )}
+              amount={smallNumberFormmater({
+                amount: info.token0CollectedFee,
+                decimals: 6,
+                minimumValue: 0.000001,
+              })}
             />
             <ContentSub
               title={token1Symbol ?? "-"}
-              amount={smallNumberFormmater(
-                info.token1CollectedFee,
-                6,
-                undefined,
-                undefined,
-                0.000001
-              )}
+              amount={smallNumberFormmater({
+                amount: info.token1CollectedFee,
+                decimals: 6,
+                minimumValue: 0.000001,
+              })}
             />
           </Flex>
         </Box>

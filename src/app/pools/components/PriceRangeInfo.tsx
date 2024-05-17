@@ -108,7 +108,10 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
           >
             {priceData === "0" || priceData === "∞"
               ? priceData
-              : smallNumberFormmater(priceData?.toString(), undefined, true)}
+              : smallNumberFormmater({
+                  amount: priceData?.toString(),
+                  trimed: true,
+                })}
           </Text>
         }
         tooltipLabel={priceData?.toString()}
@@ -171,28 +174,22 @@ export const CurrentPriceInfo = () => {
             verticalAlign={"center"}
           >
             {poolModal === "addLiquidity"
-              ? smallNumberFormmater(
-                  Number(currentPriceToAdd ?? 0),
-                  undefined,
-                  true,
-                  undefined,
-                  undefined,
-                  13
-                )
-              : smallNumberFormmater(
-                  Number(currentPrice ?? 0),
-                  undefined,
-                  true,
-                  undefined,
-                  undefined,
-                  13
-                )}
+              ? smallNumberFormmater({
+                  amount: Number(currentPriceToAdd ?? 0),
+                  trimed: true,
+                  trimedDecimals: 13,
+                })
+              : smallNumberFormmater({
+                  amount: Number(currentPrice ?? 0),
+                  trimed: true,
+                  trimedDecimals: 13,
+                })}
           </Text>
         }
         tooltipLabel={
           poolModal === "addLiquidity"
             ? currentPriceToAdd
-            : smallNumberFormmater(Number(currentPrice ?? 0))
+            : smallNumberFormmater({ amount: Number(currentPrice ?? 0) })
         }
       ></CustomTooltip>
 

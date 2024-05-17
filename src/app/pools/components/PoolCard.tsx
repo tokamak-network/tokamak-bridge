@@ -152,6 +152,10 @@ export default function PoolCard(props: PoolCardDetail) {
     }
   }, [totalFeeValue]);
 
+  const hasFee = useMemo(() => {
+    return Number(token0CollectedFee) + Number(token1CollectedFee) > 0;
+  }, [token0CollectedFee, token1CollectedFee]);
+
   return (
     <Box onClick={() => onClickToRoute()}>
       <Flex
@@ -194,39 +198,39 @@ export default function PoolCard(props: PoolCardDetail) {
             <Text>{token0.symbol}</Text>
             <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
               {token0Amount < 0.001
-                ? smallNumberFormmater(token0Amount)
+                ? smallNumberFormmater({
+                    amount: token0Amount,
+                    decimals: 12,
+                    minimumValue: 0.0000000000001,
+                    displayMinimumValue: "0.000000000000...",
+                  })
                 : commafy(token0Amount, 4)}{" "}
-              <span style={{ color: "#A0A3AD" }}>
-                {token0MarketPrice === undefined || token0Value === 0
-                  ? undefined
-                  : `($${priceFormmater(token0Value)})`}
-              </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between" h={"20px"}>
             <Text>{token1.symbol}</Text>
             <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
               {token1Amount < 0.001
-                ? smallNumberFormmater(token1Amount)
+                ? smallNumberFormmater({
+                    amount: token1Amount,
+                    decimals: 12,
+                    minimumValue: 0.0000000000001,
+                    displayMinimumValue: "0.000000000000...",
+                  })
                 : commafy(token1Amount, 4)}{" "}
-              <span style={{ color: "#A0A3AD" }}>
-                {" "}
-                {token1MarketPrice === undefined || token1Value === 0
-                  ? undefined
-                  : `($${priceFormmater(token1Value)})`}
-                $ {priceFormmater(10000)}
-              </span>
             </Text>
           </Flex>
           <Flex justifyContent="space-between" alignItems={"center"} h={"20px"}>
             <Text>Fees</Text>
             <Flex columnGap={"5px"}>
-              {hasTokenPrice ? (
+              {hasTokenPrice && hasFee ? (
                 <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
-                  {gasUsdFormatter(Number(feeValue))}
+                  {gasUsdFormatter(Number(feeValue), "< $0.01")}
                 </Text>
+              ) : hasFee ? (
+                <Text color={"#fff"}>Claimable</Text>
               ) : (
-                <Text color={"#A0A3AD"}>No market data</Text>
+                <Text color={"#A0A3AD"}>No fees</Text>
               )}
               <Flex w={"14px"} h={"18px"} alignItems={"center"}>
                 <CustomTooltip

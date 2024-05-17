@@ -63,7 +63,12 @@ export function useIncreaseAmount() {
           invertPrice ? outToken?.decimals : inToken?.decimals
         )
         .toString();
-      return smallNumberFormmater(result, 6, false, true);
+      return smallNumberFormmater({
+        amount: result,
+        decimals: 6,
+        trimed: false,
+        removeComma: true,
+      });
     }
   }, [token0Input, inToken, outToken, invertPrice]);
 
@@ -75,7 +80,12 @@ export function useIncreaseAmount() {
           invertPrice ? inToken?.decimals : outToken?.decimals
         )
         .toString();
-      return smallNumberFormmater(result, 6, false, true);
+      return smallNumberFormmater({
+        amount: result,
+        decimals: 6,
+        trimed: false,
+        removeComma: true,
+      });
     }
   }, [token1Input, inToken, outToken, invertPrice]);
 

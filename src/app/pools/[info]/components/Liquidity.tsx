@@ -193,14 +193,11 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
             >
               {noMarketPrices
                 ? "-"
-                : `$${smallNumberFormmater(
-                    splitNumber(totalMarketPrice),
-                    undefined,
-                    true,
-                    undefined,
-                    undefined,
-                    7
-                  )}`}
+                : `$${smallNumberFormmater({
+                    amount: splitNumber(totalMarketPrice),
+                    removeComma: true,
+                    trimedDecimals: 7,
+                  })}`}
             </Text>
           </Flex>
           {!actionDisabled && (
@@ -240,25 +237,20 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
         >
           <TokenLiquidityData
             token={info.token1}
-            liquidityAmount={smallNumberFormmater(
-              Number(info.token1Amount.toString()),
-              undefined,
-              true,
-              undefined,
-              undefined,
-              13
-            )}
+            liquidityAmount={smallNumberFormmater({
+              amount: Number(info.token1Amount.toString()),
+              trimed: true,
+              trimedDecimals: 13,
+            })}
             liquidityPercent={token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
-            liquidityAmount={smallNumberFormmater(
-              info.token0Amount.toString(),
-              6,
-              undefined,
-              undefined,
-              0.000001
-            )}
+            liquidityAmount={smallNumberFormmater({
+              amount: info.token0Amount.toString(),
+              trimed: true,
+              trimedDecimals: 13,
+            })}
             liquidityPercent={token0Ratio}
           />
         </Flex>

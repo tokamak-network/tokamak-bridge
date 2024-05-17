@@ -134,13 +134,16 @@ export default function UnclaimedEarnings(props: {
               mt={"auto"}
             >
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(token0Amount)} {token0Symbol}
+                {smallNumberFormmater({
+                  amount: token0Amount,
+                })}{" "}
+                {token0Symbol}
               </Text>
               <Text w={"10px"} mx={"2px"}>
                 +
               </Text>
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(token1Amount)} {token1Symbol}
+                {smallNumberFormmater({ amount: token1Amount })} {token1Symbol}
               </Text>
             </Flex>
           </Flex>
@@ -155,10 +158,12 @@ export default function UnclaimedEarnings(props: {
               mt={"auto"}
             >
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(token0Amount)} {token0Symbol} +
+                {smallNumberFormmater({ amount: token0Amount })} {token0Symbol}{" "}
+                +
               </Text>
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(token1Amount)} {info?.token1.symbol}
+                {smallNumberFormmater({ amount: token1Amount })}{" "}
+                {info?.token1.symbol}
               </Text>
             </Flex>
           </Flex>

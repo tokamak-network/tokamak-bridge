@@ -138,13 +138,11 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater(
-                      info?.token0CollectedFee,
-                      6,
-                      undefined,
-                      undefined,
-                      0.000001
-                    )}
+                    {smallNumberFormmater({
+                      amount: info?.token0CollectedFee,
+                      decimals: 6,
+                      minimumValue: 0.000001,
+                    })}
                   </Text>
                   <Text minW={"60px"} color={"#A0A3AD"}>
                     {gasUsdFormatter(Number(token0Price))}
@@ -182,13 +180,11 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater(
-                      info?.token1CollectedFee,
-                      6,
-                      undefined,
-                      undefined,
-                      0.000001
-                    )}
+                    {smallNumberFormmater({
+                      amount: info?.token1CollectedFee,
+                      decimals: 6,
+                      minimumValue: 0.000001,
+                    })}
                   </Text>
                   <Text minW={"60px"} color={"#A0A3AD"}>
                     {gasUsdFormatter(Number(token1Price))}

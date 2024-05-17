@@ -7,7 +7,7 @@ import { Trade } from "@uniswap/v3-sdk";
 import { TradeType, Token } from "@uniswap/sdk-core";
 import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetMode } from "../mode/useGetMode";
-import { useAccount, useSendTransaction } from "wagmi";
+import { useAccount } from "wagmi";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 import { useTx } from "../tx/useTx";
@@ -15,8 +15,6 @@ import { getEncodedPath } from "@/utils/swap/encodePath";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { uniswapTxSetting } from "@/recoil/uniswap/setting";
 import { useSettingValue } from "../uniswap/useSettingValue";
-import useConnectedNetwork from "../network";
-import { asL2Provider } from "@tokamak-network/titan-sdk";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { Hash } from "viem";
 import { transactionModalStatus } from "@/recoil/modal/atom";
@@ -49,7 +47,6 @@ export function useAmountOut() {
     });
   }, [mode, routingPath]);
 
-  const [txData, setTxData] = useState<any>(undefined);
   const txSettingValue = useRecoilValue(uniswapTxSetting);
   const [transactionHash, setTransactionHash] = useState<Hash | undefined>(
     undefined
@@ -179,10 +176,10 @@ export function useAmountOut() {
 
   useEffect(() => {
     async function getEstimatedGas() {
-      // const result = await sendTransaction(true);
-      // if (result) {
-      //   setEstimatedGasUsageGwei(result);
-      // }
+      const result = await sendTransaction(true);
+      if (result) {
+        setEstimatedGasUsageGwei(result);
+      }
     }
     getEstimatedGas();
   }, [routingPath]);
