@@ -23,7 +23,6 @@ import { txPendingStatus } from "@/recoil/global/transaction";
 // FW UI test @Robert
 import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
-import useFwUpdateFeeModal from "@/components/fw/hooks/useFwUpdateFeeModal";
 import { ModalType } from "@/components/fw/types";
 
 export default function ActionButton() {
@@ -86,7 +85,7 @@ export default function ActionButton() {
   // FW UI test @Robert
   const { onOpenFwConfirmModal } = useFxConfirmModal();
   const { onOpenFwOptionModal } = useFxOptionModal();
-  const { onOpenFwUpdateFeeModal } = useFwUpdateFeeModal();
+
   return (
     <>
       {/** FW UI test Start @Robert*/}
@@ -106,9 +105,6 @@ export default function ActionButton() {
             }
           >
             <Text>Trade button</Text>
-          </Button>
-          <Button color={"#8E8E92"} onClick={() => onOpenFwUpdateFeeModal()}>
-            <Text>Update Fee button</Text>
           </Button>
         </>
       )}

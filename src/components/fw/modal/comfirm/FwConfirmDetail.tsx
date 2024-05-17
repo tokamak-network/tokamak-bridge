@@ -67,11 +67,13 @@ interface FeeDetailProps {
   title: string;
   mainAmount: string;
   subAmount: string;
-  modalType?: ModalType; // ModalType을 직접 사용
+  modalType?: ModalType;
+  onPencilClick?: () => void;
 }
 
 interface FwConfirmDetailProps {
   modalType: ModalType;
+  onPencilClick: () => void;
 }
 
 const FeeDetail: React.FC<FeeDetailProps> = ({
@@ -79,6 +81,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   mainAmount,
   subAmount,
   modalType,
+  onPencilClick,
 }) => {
   return (
     <HStack
@@ -102,7 +105,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
       </Flex>
       <Flex>
         {title == "Service fee" && modalType === ModalType.History && (
-          <Flex cursor='pointer'>
+          <Flex cursor='pointer' onClick={onPencilClick}>
             <Image src={Pencil} alt={"Pencil"} />
           </Flex>
         )}
@@ -122,7 +125,10 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   );
 };
 
-export default function FwConfirmDetail({ modalType }: FwConfirmDetailProps) {
+export default function FwConfirmDetail({
+  modalType,
+  onPencilClick,
+}: FwConfirmDetailProps) {
   return (
     <Box
       bg='#15161D'
@@ -150,6 +156,7 @@ export default function FwConfirmDetail({ modalType }: FwConfirmDetailProps) {
           mainAmount='0.012 USDC'
           subAmount='$0.43'
           modalType={modalType}
+          onPencilClick={onPencilClick}
         />
         <FeeDetail
           title='Network fee'

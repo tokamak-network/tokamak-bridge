@@ -91,12 +91,23 @@ export default function FwFeeUpdateModal() {
       ? recommendCheck ||
         !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
+
+  const resetAllStates = () => {
+    setRecommendCheck(true);
+    setActiveButton(UpdateFeeButtonType.Update);
+    setInputValue("");
+    setInputWarningCheck("");
+    setIsChecked(false);
+    onCloseFwUpdateFeeModal();
+  };
+
+  const handleConfirm = () => {
+    alert("Confirm");
+    resetAllStates();
+  };
+
   return (
-    <Modal
-      isOpen={fwUpdateFeeModal}
-      onClose={onCloseFwUpdateFeeModal}
-      isCentered
-    >
+    <Modal isOpen={fwUpdateFeeModal} onClose={resetAllStates} isCentered>
       <ModalOverlay />
       <ModalContent
         bg='#1F2128'
@@ -110,7 +121,7 @@ export default function FwFeeUpdateModal() {
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={onCloseFwUpdateFeeModal} />
+          <CloseButton onClick={resetAllStates} />
         </Box>
         <ModalBody p={0}>
           <Box
@@ -184,6 +195,7 @@ export default function FwFeeUpdateModal() {
               color: activeConfirmButton ? "#FFFFFF" : "#8E8E92",
             }}
             _hover={{}}
+            onClick={handleConfirm}
             isDisabled={!activeConfirmButton}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
