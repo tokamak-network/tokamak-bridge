@@ -140,7 +140,6 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   <Text fontWeight="semibold">
                     {smallNumberFormmater({
                       amount: info?.token0CollectedFee,
-                      decimals: 6,
                       minimumValue: 0.000001,
                     })}
                   </Text>
@@ -182,7 +181,6 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   <Text fontWeight="semibold">
                     {smallNumberFormmater({
                       amount: info?.token1CollectedFee,
-                      decimals: 6,
                       minimumValue: 0.000001,
                     })}
                   </Text>

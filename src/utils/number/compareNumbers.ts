@@ -1,4 +1,4 @@
-import { trimAmount } from "../trim";
+import { trimAmount, trimAmountForFormatter } from "../trim";
 import commafy from "../trim/commafy";
 
 export function isBiggerThanMinimumNum(param: number, minimumValue?: number) {
@@ -67,7 +67,7 @@ export function smallNumberFormmater(params: {
 
   return isBiggerThanMinimum
     ? trimed
-      ? trimAmount(amount.toString(), trimedDecimals ?? 8)
+      ? trimAmountForFormatter(amount.toString())
       : commafy(amount, decimals ?? 6, removeComma, "0.00")
     : displayMinimumValue ?? "0.000000...";
 }

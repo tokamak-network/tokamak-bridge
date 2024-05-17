@@ -196,9 +196,8 @@ export default function PoolCard(props: PoolCardDetail) {
             <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
               {smallNumberFormmater({
                 amount: token1Amount,
-                decimals: 12,
-                minimumValue: 0.0000000000001,
-                displayMinimumValue: "0.000000000000...",
+                trimed: true,
+                trimedDecimals: 13,
               })}
             </Text>
           </Flex>

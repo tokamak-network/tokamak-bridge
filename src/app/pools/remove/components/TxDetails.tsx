@@ -218,7 +218,6 @@ const Content = (props: {
               title={token0Symbol ?? "-"}
               amount={smallNumberFormmater({
                 amount: info.token0CollectedFee,
-                decimals: 6,
                 minimumValue: 0.000001,
               })}
             />
@@ -226,7 +225,6 @@ const Content = (props: {
               title={token1Symbol ?? "-"}
               amount={smallNumberFormmater({
                 amount: info.token1CollectedFee,
-                decimals: 6,
                 minimumValue: 0.000001,
               })}
             />

@@ -198,7 +198,8 @@ export default function Range(props: {
               <Flex alignItems={"center"}>
                 <Text>
                   {smallNumberFormmater({
-                    amount: commafy(info?.token0CollectedFee, 8) ?? "-",
+                    amount: info.token0CollectedFee,
+                    minimumValue: 0.000001,
                   })}{" "}
                   {info?.token0.symbol}
                 </Text>
@@ -207,7 +208,8 @@ export default function Range(props: {
                 </Text>
                 <Text>
                   {smallNumberFormmater({
-                    amount: commafy(info?.token1CollectedFee, 8) ?? "-",
+                    amount: info.token1CollectedFee,
+                    minimumValue: 0.000001,
                   })}{" "}
                   {info?.token1.symbol}
                 </Text>
