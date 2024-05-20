@@ -39,11 +39,13 @@ export function getWETHAddressByChainId(chainId: number) {
 
 export function isETH(token: TokenInfo | null) {
   if (token === null) return false;
-  return token?.isNativeCurrency?.includes(
-    SupportedChainId.MAINNET ||
-      SupportedChainId.SEPOLIA ||
-      SupportedChainId.TITAN ||
-      SupportedChainId.TITAN_SEPOLIA
+  return (
+    token?.isNativeCurrency?.includes(
+      SupportedChainId.MAINNET ||
+        SupportedChainId.SEPOLIA ||
+        SupportedChainId.TITAN ||
+        SupportedChainId.TITAN_SEPOLIA
+    ) ?? false
   );
 }
 

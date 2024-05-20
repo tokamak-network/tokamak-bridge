@@ -486,19 +486,13 @@ export default function TokenInput(props: {
     }
   }, [selectedInToken, selectedOutToken, inToken, tokenData]);
 
-  const { currentPrice } = usePriceTickConversion();
-  const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
+  const [triggerForSpinner] = useState<boolean>(false);
   const { subMode } = useGetMode();
-
-  // useEffect(() => {
-  //   if (currentPrice && mode === "Pool") {
-  //     setTriggerForSpinner(true);
-  //     initializeTokenPairAmount();
-  //     setTimeout(() => {
-  //       setTriggerForSpinner(false);
-  //     }, 1000);
-  //   }
-  // }, [currentPrice, mode]);
+  const isPoolWithETH = useMemo(() => {
+    return mode === "Pool" && inToken
+      ? isETH(selectedInToken)
+      : isETH(selectedOutToken);
+  }, [mode, inToken, selectedInToken, selectedOutToken]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -597,7 +591,7 @@ export default function TokenInput(props: {
                   color={"#A0A3AD"}
                 >{`$${marketPrice}`}</Text>
               ))}
-            {hasMaxButton && !isMax && (
+            {hasMaxButton && !isMax && !isPoolWithETH && (
               <Button
                 w={"40px"}
                 h={"22px"}

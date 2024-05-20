@@ -8,7 +8,7 @@ import { TransactionRequest } from "viem";
  * @param value the gas value to pad
  */
 export function calculateGasMargin(value: BigNumber): BigNumber {
-  return value.mul(120).div(100);
+  return value.mul(125).div(100);
 }
 
 export async function getSingleCalldataGasLimit(

@@ -11,7 +11,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
 import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
 import { useAccount, useFeeData, usePublicClient } from "wagmi";
@@ -23,13 +23,17 @@ import useConnectedNetwork from "@/hooks/network";
 import useWrap from "@/hooks/swap/useTonWrap";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useApprove } from "@/hooks/token/useApproval";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import { usePoolMint } from "@/hooks/pool/usePoolContract";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { isETH as checkIsETH } from "@/utils/token/isETH";
 
 export function useGasFee() {
   const { address } = useAccount();
   const [gasLimit, setGasLimit] = useState<BigInt | undefined>(undefined);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
-  const { mode } = useRecoilValue(actionMode);
+  const { mode, subMode } = useGetMode();
 
   const { contract: _depositETH_contract } = useCallDeposit("depositETH");
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
@@ -52,7 +56,9 @@ export function useGasFee() {
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && tokenMarketPrice) {
       const { gasUseEstimate } = routingPath;
-      return layer === "L2" ? estimatedGasUsageGwei : gasUseEstimate;
+      return layer === "L2"
+        ? estimatedGasUsageGwei
+        : calculateGasMargin(BigNumber.from(gasUseEstimate));
     }
   }, [routingPath, layer, estimatedGasUsageGwei]);
 
@@ -68,12 +74,12 @@ export function useGasFee() {
     l2Pro
   );
 
+  const { estimateGasToMint } = usePoolMint();
+
   useEffect(() => {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
-        const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET
-        );
+        const isETH = checkIsETH(inToken);
         const parsedAmount = inToken.amountBN;
         switch (mode) {
           case "Swap":
@@ -208,6 +214,7 @@ export function useGasFee() {
     swapGasUseEstimate,
     wrapUnwrapGasEstimate,
     layer,
+    subMode,
   ]);
 
   const gasCostUS = useMemo(() => {

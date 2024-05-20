@@ -93,5 +93,9 @@ export default function useConnectedNetwork() {
     }
   }, [chainInfo]);
 
-  return { ...chainInfo, otherLayerChainInfo, chainGroup };
+  const isLayer2 = useMemo(() => {
+    return chainInfo.layer === "L2";
+  }, [chainInfo.layer]);
+
+  return { ...chainInfo, otherLayerChainInfo, chainGroup, isLayer2 };
 }

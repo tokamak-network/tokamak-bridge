@@ -271,6 +271,7 @@ export function usePoolMint() {
   const { tokenMarketPrice: ethPrice } = useGetMarketPrice({
     tokenName: "ethereum",
   });
+  const { isLayer2 } = useConnectedNetwork();
 
   const estimateGasToMint = useCallback(async () => {
     if (feeData && ethPrice) {
@@ -282,7 +283,7 @@ export function usePoolMint() {
       const totalGasCost =
         Number(gasPrice) * Number(estimatedGasUsage.toString());
       const parsedTotalGasCost = ethers.utils.formatUnits(
-        estimatedGasUsage.toString(),
+        isLayer2 ? estimatedGasUsage.toString() : totalGasCost,
         "ether"
       );
 
@@ -291,7 +292,7 @@ export function usePoolMint() {
 
       return totalGasCostUSD;
     }
-  }, [feeData, ethPrice, mintPosition]);
+  }, [feeData, ethPrice, mintPosition, isLayer2]);
 
   return { mintPosition, estimateGasToMint };
 }
