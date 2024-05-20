@@ -49,8 +49,7 @@ export const titan_goerli = {
     },
   },
 } as const satisfies Chain;
-
-export const Mainnet = {
+export const mainnet = {
   id: 1,
   name: "Ethereum",
   network: "Ethereum",
