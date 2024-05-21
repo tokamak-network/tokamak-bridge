@@ -121,7 +121,7 @@ export default function FwUpdateFeeDetail(
     <>
       <Box
         mt={"16px"}
-        p={"6px 16px"}
+        p={"8px 16px"}
         border={"1px solid #313442"}
         borderRadius={"8px"}
       >
@@ -129,7 +129,7 @@ export default function FwUpdateFeeDetail(
           color={"#A0A3AD"}
           fontSize={"12px"}
           fontWeight={500}
-          lineHeight={"normal"}
+          lineHeight={"18px"}
         >
           Current fee
         </Text>
@@ -143,14 +143,19 @@ export default function FwUpdateFeeDetail(
               ml={"4px"}
               fontSize={"16px"}
               fontWeight={400}
-              lineHeight={"normal"}
+              lineHeight={"24px"}
             >
               USDC
             </Text>
           </Flex>
         </Flex>
       </Box>
-      <Flex justifyContent={"center"} alignItems={"center"} my={"8px"}>
+      <Flex
+        justifyContent={"center"}
+        alignItems={"center"}
+        p={"4px"}
+        my={"6px"}
+      >
         <Image src={FwDownArrow} alt={"FwDownArrow"} />
       </Flex>
       <FwUpdateInput

@@ -45,7 +45,7 @@ export default function FwOptionCrossDetail(
           Cross Trade Bridge
         </Text>
         <Box mt={"12px"}>
-          <Flex>
+          <Flex alignItems='center'>
             <Text
               fontWeight={400}
               fontSize={"10px"}
@@ -56,7 +56,7 @@ export default function FwOptionCrossDetail(
             </Text>
             <FwTooltip
               tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px", marginTop: "2px" }}
+              style={{ marginLeft: "2px" }}
             />
           </Flex>
           <Text
@@ -109,7 +109,9 @@ export default function FwOptionCrossDetail(
               borderRadius='4px'
               sx={{
                 backgroundColor: isAdvancedActive ? "#DB00FF" : "#15161D",
-                border: isAdvancedActive ? "" : "1px solid #313442",
+                border: isAdvancedActive
+                  ? "none !important"
+                  : "1px solid #313442",
                 //disabled 상태에서 버튼 비활성화 css default 값
                 _disabled: {
                   border: "1px solid #313442",
@@ -133,7 +135,7 @@ export default function FwOptionCrossDetail(
         </Box>
         {isAdvancedActive && (
           <Box mt={"12px"}>
-            <Flex>
+            <Flex alignItems='center'>
               <Text
                 fontWeight={400}
                 fontSize={"10px"}
@@ -144,7 +146,7 @@ export default function FwOptionCrossDetail(
               </Text>
               <FwTooltip
                 tooltipLabel={"text will be changed"}
-                style={{ marginLeft: "2px", marginTop: "2px" }}
+                style={{ marginLeft: "2px" }}
               />
             </Flex>
             <FwOptionInput

@@ -19,6 +19,7 @@ import { useFwRecommend } from "@/components/fw/hooks/useFwRecommend";
 import FwUpdateButton from "./FwUpdateButton";
 import FwUpdateFeeDetail from "./FwUpdateFeeDetail";
 import FwRefundDetail from "./FwRefundDetail";
+import FwCheckCustomIcon from "@/componenets/fw/components/FwCheckCustomIcon";
 
 export default function FwFeeUpdateModal() {
   const { fwUpdateFeeModal, onCloseFwUpdateFeeModal } = useFwUpdateFee();
@@ -160,6 +161,7 @@ export default function FwFeeUpdateModal() {
               <Checkbox
                 isChecked={isChecked}
                 onChange={handleCheckboxChange}
+                icon={<FwCheckCustomIcon />}
                 sx={{
                   ".chakra-checkbox__control": {
                     borderWidth: "1px",

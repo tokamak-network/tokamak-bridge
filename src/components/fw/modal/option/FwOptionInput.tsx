@@ -44,6 +44,7 @@ export default function FwOptionInput(props: FwInputProps) {
             fontWeight: "400",
             lineHeight: "26px",
             color: "#A0A3AD",
+            transform: "translateY(-1.5px)",
           }}
           _focus={{
             borderColor: "#59628D",
@@ -51,7 +52,7 @@ export default function FwOptionInput(props: FwInputProps) {
           }}
         />
         {inputValue && (
-          <InputRightElement height={"34px"} mr={"12px"}>
+          <InputRightElement height={"34px"} mr={"13px"}>
             <Text
               fontSize={"12px"}
               fontWeight={400}
@@ -67,6 +68,9 @@ export default function FwOptionInput(props: FwInputProps) {
         <FwWarning
           label={"text will be changed"}
           type={inputWarningCheck}
+          groupStyle={{
+            height: "14px",
+          }}
           style={{
             fontWeight: 400,
             fontSize: "11px",
@@ -78,6 +82,9 @@ export default function FwOptionInput(props: FwInputProps) {
         <FwWarning
           label={"text will be changed"}
           type={inputWarningCheck}
+          groupStyle={{
+            height: "14px",
+          }}
           style={{
             fontWeight: 400,
             fontSize: "11px",

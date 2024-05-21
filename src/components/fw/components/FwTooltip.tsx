@@ -1,4 +1,4 @@
-import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import FwCustomTooltip from "@/componenets/fw/components/FwCustomTooltip";
 import { Flex } from "@chakra-ui/react";
 import Image from "next/image";
 import { CSSProperties } from "react";
@@ -9,7 +9,7 @@ export function FwTooltip(props: {
   style?: CSSProperties;
 }) {
   return (
-    <CustomTooltip
+    <FwCustomTooltip
       content={
         <Flex style={props.style} ml={"2px"}>
           <Image src={QUESTION_ICON} alt={"QUESTION_ICON"} />
@@ -18,10 +18,9 @@ export function FwTooltip(props: {
       tooltipLabel={props.tooltipLabel}
       style={{
         maxW: "245px",
-        height: "34px",
         px: "8px",
         py: "10px",
-        tooltipLineHeight: "14px",
+        tooltipLineHeight: "16.5px",
       }}
     />
   );

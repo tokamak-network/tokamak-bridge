@@ -8,15 +8,16 @@ type WarningTextProps = {
   label: string;
   type: "normal" | "critical";
   style: CSSProperties;
+  groupStyle: CSSProperties;
 };
 
 export function FwWarning(props: WarningTextProps) {
-  const { label, type, style } = props;
+  const { label, type, style, groupStyle } = props;
   const iconSrc = type === "critical" ? WARNING_RED_ICON : WARNING_ICON;
   const color = type === "critical" ? "#DD3A44" : "#F9C03E";
 
   return (
-    <Flex>
+    <Flex style={groupStyle}>
       <Image src={iconSrc} alt={"WARNING_ICON"} />
       <Text color={color} style={style}>
         {label}

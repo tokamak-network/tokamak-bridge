@@ -61,7 +61,7 @@ export default function FwUpdateInput(
       >
         <Flex justifyContent='space-between'>
           <Text
-            lineHeight={"normal"}
+            lineHeight={"18px"}
             fontWeight={500}
             fontSize={"12px"}
             color={"#A0A3AD"}
@@ -83,7 +83,7 @@ export default function FwUpdateInput(
             )}
           </Box>
         </Flex>
-        <InputGroup mt={"4px"}>
+        <InputGroup mt={"4px"} height={"38px"}>
           <Input
             ref={inputRef}
             type='text'
@@ -93,6 +93,7 @@ export default function FwUpdateInput(
             pl={0}
             fontWeight={600}
             fontSize={"24px"}
+            height={"38px"}
             lineHeight={"38px"}
             border={"none"}
             onChange={onInputChange}
@@ -127,6 +128,9 @@ export default function FwUpdateInput(
           <FwWarning
             label={"text will be changed"}
             type={inputWarningCheck}
+            groupStyle={{
+              height: "16px",
+            }}
             style={{
               fontWeight: 400,
               fontSize: "12px",
@@ -138,6 +142,9 @@ export default function FwUpdateInput(
           <FwWarning
             label={"text will be changed"}
             type={inputWarningCheck}
+            groupStyle={{
+              height: "16px",
+            }}
             style={{
               fontWeight: 400,
               fontSize: "12px",

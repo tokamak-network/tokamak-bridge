@@ -89,7 +89,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
       lineHeight={"18px"}
       mt={title !== "Service fee" ? "6px" : "0"}
     >
-      <Flex>
+      <Flex alignItems='center'>
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
           {title}
         </Text>
@@ -99,7 +99,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           // </Box>
           <FwTooltip
             tooltipLabel={"text will be changed"}
-            style={{ marginLeft: "2px", marginTop: "2px" }}
+            style={{ marginLeft: "2px" }}
           />
         )}
       </Flex>

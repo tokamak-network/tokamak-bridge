@@ -1,4 +1,5 @@
 import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
+import FwCheckCustomIcon from "@/componenets/fw/components/FwCheckCustomIcon";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -18,6 +19,7 @@ export default function FwConfirmCrossTradeFooter(
         <Checkbox
           isChecked={isChecked}
           onChange={onCheckboxChange}
+          icon={<FwCheckCustomIcon />}
           sx={{
             ".chakra-checkbox__control": {
               borderWidth: "1px",
