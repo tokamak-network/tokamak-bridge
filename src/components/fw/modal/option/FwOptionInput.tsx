@@ -1,13 +1,4 @@
-import {
-  Box,
-  Text,
-  Flex,
-  Circle,
-  Button,
-  InputGroup,
-  Input,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { Text, InputGroup, Input, InputRightElement } from "@chakra-ui/react";
 import { FwWarning } from "@/components/fw/components/FwWarning";
 import { FwInputProps } from "@/components/fw/types";
 import { WarningType } from "@/components/fw/types";
@@ -18,6 +9,7 @@ export default function FwOptionInput(props: FwInputProps) {
     <>
       <InputGroup my={"4px"}>
         <Input
+          autoFocus
           w={"189px"}
           h={"34px"}
           px='12px'

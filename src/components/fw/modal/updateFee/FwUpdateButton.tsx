@@ -31,6 +31,7 @@ function ToggleButton({
         color={isActive ? "#FFFFFF" : "#A0A3AD"}
         fontSize='12px'
         fontWeight={400}
+        lineHeight={"18px"}
       >
         {label}
       </Text>

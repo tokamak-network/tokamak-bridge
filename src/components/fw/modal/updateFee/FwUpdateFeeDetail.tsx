@@ -28,7 +28,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
         color={"#A0A3AD"}
         fontSize={"12px"}
         fontWeight={400}
-        lineHeight={"normal"}
+        lineHeight={"18px"}
       >
         {title}
       </Text>
@@ -38,7 +38,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
             color={"#FFFFFF"}
             fontSize={"12px"}
             fontWeight={600}
-            lineHeight={"normal"}
+            lineHeight={"18px"}
           >
             {inputValue ? "9.998" : "-"} USDC
           </Text>
@@ -53,8 +53,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
               color={"#FFFFFF"}
               fontSize={"10px"}
               fontWeight={500}
-              lineHeight={"normal"}
-              letterSpacing={"1px"}
+              lineHeight={"18px"}
             >
               {inputValue ? "98.31" : "-"}
             </Text>
@@ -62,8 +61,8 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
               color={"#FFFFFF"}
               fontSize={"10px"}
               fontWeight={400}
-              lineHeight={"normal"}
-              letterSpacing={"1px"}
+              lineHeight={"18px"}
+              mx='1px'
             >
               %
             </Text>
@@ -75,7 +74,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
           color={"#DB00FF"}
           fontSize={"12px"}
           fontWeight={600}
-          lineHeight={"normal"}
+          lineHeight={"18px"}
         >
           {inputValue ? "~ 1 day" : "-"}
         </Text>
@@ -87,7 +86,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
             color={"#FFFFFF"}
             fontSize={"12px"}
             fontWeight={600}
-            lineHeight={"normal"}
+            lineHeight={"18px"}
             mx={"4px"}
           >
             {inputValue ? "0.16" : "- "}
@@ -134,7 +133,7 @@ export default function FwUpdateFeeDetail(
           Current fee
         </Text>
         <Flex mt={"4px"} justifyContent='space-between'>
-          <Text fontSize={"16px"} fontWeight={400} lineHeight={"normal"}>
+          <Text fontSize={"16px"} fontWeight={400} lineHeight={"24px"}>
             0.012
           </Text>
           <Flex>

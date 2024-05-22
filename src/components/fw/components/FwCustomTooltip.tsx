@@ -19,6 +19,7 @@ export default function FwCustomTooltip(props: {
   return (
     <Tooltip
       p={0}
+      placement='top'
       defaultIsOpen={false}
       isOpen={isOpen}
       zIndex={10000}
@@ -33,7 +34,7 @@ export default function FwCustomTooltip(props: {
           pos={"relative"}
           {...props.style}
         >
-          <Text fontWeight={400} fontSize={"11px"} lineHeight={"16.5px"}>
+          <Text fontWeight={400} fontSize={"12px"} lineHeight={"18px"}>
             {props.tooltipLabel}
           </Text>
           <Box
@@ -41,13 +42,12 @@ export default function FwCustomTooltip(props: {
             left={"50%"}
             w={"5px"}
             h={"5px"}
-            top={"34px"}
+            top={"27.5px"}
             bgColor={"#383a49"}
-            transform={"matrix(0.71, -0.71, -0.71, -0.71, 0, 0)"}
+            transform={"translateX(-50%) translateY(-50%) rotate(45deg)"}
           ></Box>
         </Box>
       }
-      placement='top'
     >
       <Box
         onMouseEnter={() => setIsOpen(true)}

@@ -24,6 +24,9 @@ export default function FwConfirmCrossTradeFooter(
             ".chakra-checkbox__control": {
               borderWidth: "1px",
               borderColor: "#A0A3AD",
+              _focus: {
+                boxShadow: "none",
+              },
             },
             _checked: {
               "& .chakra-checkbox__control": {

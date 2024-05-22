@@ -81,7 +81,9 @@ export default function FwOptionCrossDetail(
                 border: isRecommendActive ? "" : "1px solid #313442",
                 //disabled 상태에서 버튼 비활성화 css default 값
                 _disabled: {
-                  border: "1px solid #313442",
+                  border: isRecommendActive
+                    ? "none !important"
+                    : "1px solid #313442",
                   cursor: "auto",
                 },
               }}

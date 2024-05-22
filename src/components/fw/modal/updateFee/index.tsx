@@ -21,6 +21,10 @@ import FwUpdateFeeDetail from "./FwUpdateFeeDetail";
 import FwRefundDetail from "./FwRefundDetail";
 import FwCheckCustomIcon from "@/componenets/fw/components/FwCheckCustomIcon";
 
+// 데이터 셋을 선언만 하면, 참고 해서 서버 작업
+// 데이터 셋 타입파일을 만든다.
+// 타입을 맞추고, 타입에 맞게 데이터셋을 뽑는다.
+
 export default function FwFeeUpdateModal() {
   const { fwUpdateFeeModal, onCloseFwUpdateFeeModal } = useFwUpdateFee();
   //Button props
@@ -31,7 +35,14 @@ export default function FwFeeUpdateModal() {
   // Update Fee Recommend 값 사용할지, 그냥 사용할지 확인하는 state
   // false 일때는 사용자 입력 값
   const [recommendCheck, setRecommendCheck] = useState<boolean>(true);
-  const [recommendValue, setRecommendValue] = useState<string>("");
+  const [recommendValue, setRecommendValue] = useState<string>(""); // ""가 아니라 undefined(선호) 나 null(메모리 관련 이슈가 생길때가 종종 있음)로 표현하는게 좋다.
+  // FwInput 관련 state 및 function Start @Robert
+  const [inputValue, setInputValue] = useState("");
+  const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
+    ""
+  );
+  // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
+  // usehook안에서 hook은 돌리면 안된다. //메모리 문재
   useEffect(() => {
     if (recommendCheck) {
       useFwRecommend().then((value) => {
@@ -46,12 +57,6 @@ export default function FwFeeUpdateModal() {
     setInputValue("");
     setRecommendCheck(true);
   };
-
-  // FwInput 관련 state 및 function Start @Robert
-  const [inputValue, setInputValue] = useState("");
-  const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
-    ""
-  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -166,6 +171,9 @@ export default function FwFeeUpdateModal() {
                   ".chakra-checkbox__control": {
                     borderWidth: "1px",
                     borderColor: "#A0A3AD",
+                    _focus: {
+                      boxShadow: "none",
+                    },
                   },
                   _checked: {
                     "& .chakra-checkbox__control": {

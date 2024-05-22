@@ -101,6 +101,9 @@ export default function FwUpdateInput(
             onBlur={handleBlur}
             value={inputValue}
             placeholder={recommendCheck ? recommendValue : ""}
+            _placeholder={{
+              color: "#A0A3AD",
+            }}
             color={
               inputWarningCheck == WarningType.Critical ? "#DD3A44" : "#FFFFFF"
             }
