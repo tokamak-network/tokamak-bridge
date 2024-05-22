@@ -28,12 +28,13 @@ export function useGetMarketPrice(params: {
     variables: {
       tokenName: trimTokenName(tokenName),
     },
-    pollInterval: 13000,
+    pollInterval: 20000,
     fetchPolicy: "cache-and-network",
     nextFetchPolicy: "cache-first",
     context: {
       apiName: "price",
     },
+    skip: !tokenName,
   });
 
   const tokenMarketPrice: number = useMemo(() => {

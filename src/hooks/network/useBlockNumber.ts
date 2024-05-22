@@ -4,7 +4,6 @@ import useConnectedNetwork from ".";
 import { useProvier } from "../provider/useProvider";
 
 export default function useBlockNum() {
-  const { layer } = useConnectedNetwork();
   /**
    * Wagmi Provider has a issue to track block number and state changes on L2
    */

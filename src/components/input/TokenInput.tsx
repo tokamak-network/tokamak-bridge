@@ -26,7 +26,6 @@ import {
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "@/components/ui/GradientSpinner";
-import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
 import useTokenModal from "@/hooks/modal/useTokenModal";
@@ -35,7 +34,6 @@ import {
   isInputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
-
 import useAmountModal from "@/hooks/modal/useAmountModal";
 import commafy from "@/utils/trim/commafy";
 
@@ -70,14 +68,11 @@ export default function TokenInput(props: {
     inToken: inTokenFromHook,
     inTokenInfo,
     outTokenInfo,
-    initializeTokenPairAmount,
   } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);
-
   const { layer } = useConnectedNetwork();
   const [isMax, setIsMax] = useState<boolean>(false);
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
-
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
@@ -244,21 +239,11 @@ export default function TokenInput(props: {
           }, 100);
         }
         if (isETH(selectedInToken)) {
+          const buffer = Number(totalGasCost) * 2;
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
-            ) -
-            //deduct ETH for gasFee to swap on ETH pair
-            Number(
-              mode === "Swap"
-                ? totalGasCost
-                : // ? layer === "L1"
-                  //   ? 0.01
-                  //   : 0.001 + Number(totalGasCost)
-                  totalGasCost ?? 0.001
-            ) -
-            (mode === "Withdraw" ? 0.00025 : 0);
-
+            ) - buffer;
           const isMinus = parsedAmount <= 0;
 
           const amountBN = ethers.utils.parseUnits(

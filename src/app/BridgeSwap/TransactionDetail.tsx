@@ -68,42 +68,6 @@ const DepositDetailRow = (props: DepositDetailProp) => {
           )}
         </Flex>
       </Flex>
-      {/* {gasFee && pcView && (
-        <Flex
-          w={"100%"}
-          h={"54px"}
-          bgColor={"#15161D"}
-          flexDir={"column"}
-          fontSize={14}
-          justifyContent={"center"}
-          mt={"9px"}
-          px={"16px"}
-          borderRadius={"8px"}
-        >
-          <Flex justifyContent={"space-between"} textAlign={"end"}>
-            <Text>L1 gas fee</Text>
-            <Flex columnGap={"13px"}>
-              <Text w={"90px"} textAlign={"end"}>
-                {gasFee.l1Gas}
-              </Text>
-              <Text color={"#A0A3AD"} w={"45px"} textAlign={"end"}>
-                ${gasFee.l1GasUS}
-              </Text>
-            </Flex>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text>L2 gas fee</Text>
-            <Flex columnGap={"13px"}>
-              <Text w={"90px "} textAlign={"end"}>
-                {gasFee.l2Gas}
-              </Text>
-              <Text color={"#A0A3AD"} w={"45px"} textAlign={"end"}>
-                ${gasFee.l2GasUS}
-              </Text>
-            </Flex>
-          </Flex>
-        </Flex>
-      )}  */}
     </Flex>
   );
 };
@@ -131,39 +95,7 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
           </Text>
           {gasFee && <Text color={"#A0A3AD"}>{gasFee.l2GasUS}</Text>}
         </Flex>
-
-        {/* <Text fontWeight={500}>
-          {tooltip ? (
-            <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
-          ) : (
-            content
-          )}
-        </Text> */}
       </Flex>
-
-      {/* {gasFee && (
-
-        <Flex
-          w={"100%"}
-          h={"54px"}
-          bgColor={"#15161D"}
-          flexDir={"column"}
-          fontSize={14}
-          justifyContent={"center"}
-          mt={"9px"}
-          px={"16px"}
-          borderRadius={"8px"}
-        >
-          <Flex justifyContent={"space-between"}>
-            <Text>L1 gas fee</Text>
-            <Text>{gasFee.l1Gas}</Text>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text>L2 gas fee</Text>
-            <Text>{gasFee.l2Gas}</Text>
-          </Flex>
-        </Flex>
-      )} */}
     </Flex>
   );
 };

@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import WethABi from "@/abis/WETH.json";
-import { useAccount, useContractWrite, usePublicClient } from "wagmi";
+import {
+  useAccount,
+  useContractWrite,
+  usePrepareContractWrite,
+  usePublicClient,
+} from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useTx } from "../tx/useTx";
@@ -13,6 +18,7 @@ import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { useGetMode } from "../mode/useGetMode";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
+import { l2Provider } from "@/config/l2Provider";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
@@ -50,7 +56,6 @@ export default function useWrap() {
     functionName: "deposit",
     value: inToken?.amountBN as any,
   });
-
   const { data: unwrapETHData, write: withdraw } = useContractWrite({
     address: WETH_CONTRACT as `0x${string}`,
     abi: WethABi,
@@ -101,10 +106,12 @@ export default function useWrap() {
         const estimateGas = await WrapContract.estimateGas.tonToWton(
           inToken.amountBN
         );
-        if (estimateGasUsage) return estimateGas;
+        const estimateGasWithBuffer = calculateGasMargin(estimateGas);
+        if (estimateGasUsage) return estimateGasWithBuffer;
         try {
           tonWton({
             args: [inToken.amountBN],
+            gas: estimateGasWithBuffer.toBigInt(),
           });
         } catch (e) {
           console.log("**wrapTON err**");
@@ -121,10 +128,12 @@ export default function useWrap() {
         const estimateGas = await WrapContract.estimateGas.wtonToTon(
           inToken.amountBN
         );
-        if (estimateGasUsage) return estimateGas;
+        const estimateGasWithBuffer = calculateGasMargin(estimateGas);
+        if (estimateGasUsage) return estimateGasWithBuffer;
         try {
           wtonTon({
             args: [inToken.amountBN],
+            gas: estimateGasWithBuffer.toBigInt(),
           });
         } catch (e) {
           console.log("**unwrapWTON err**");
@@ -138,23 +147,43 @@ export default function useWrap() {
   const wrapETH = useCallback(
     async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract && provider) {
-        let estimateGas;
-        if (layer === "L2") {
-          const calldata =
-            ETHWrapContract.interface.encodeFunctionData("deposit");
-          const l2Provider = asL2Provider(provider);
-
-          estimateGas = await l2Provider.estimateTotalGasCost({
-            to: ETHWrapContract.address,
-            data: calldata,
-          });
-        }
-        if (layer === "L1") {
-          estimateGas = await ETHWrapContract.estimateGas.deposit();
-        }
-        if (estimateGasUsage) return estimateGas;
         try {
-          deposit({});
+          let estimateGas;
+          let estimatedGasForL2 = undefined;
+          if (isLayer2) {
+            const calldata =
+              ETHWrapContract.interface.encodeFunctionData("deposit");
+            const l2Provider = asL2Provider(provider);
+            const txData = {
+              to: ETHWrapContract.address,
+              data: calldata,
+            };
+
+            estimateGas = await l2Provider.estimateTotalGasCost(txData);
+            estimatedGasForL2 = await provider.estimateGas(txData);
+            estimatedGasForL2 = calculateGasMargin(estimatedGasForL2);
+          } else {
+            const calldata =
+              ETHWrapContract.interface.encodeFunctionData("deposit");
+            estimateGas = await provider.estimateGas({
+              to: ETHWrapContract.address,
+              data: calldata,
+            });
+          }
+          const estimateGasWithBuffer = calculateGasMargin(estimateGas);
+
+          if (estimateGasUsage) return estimateGas;
+
+          if (
+            (isLayer2 && estimatedGasForL2) ||
+            (!isLayer2 && estimateGasWithBuffer)
+          )
+            deposit({
+              gas:
+                layer === "L2"
+                  ? estimatedGasForL2?.toBigInt()
+                  : estimateGasWithBuffer.toBigInt(),
+            });
         } catch (e) {
           console.log("**wrapTON err**");
           console.log(e);
@@ -167,32 +196,48 @@ export default function useWrap() {
   const unwrapWETH = useCallback(
     async (estimateGasUsage?: boolean) => {
       if (inToken && inToken.amountBN && ETHWrapContract && provider) {
-        let estimateGas;
-        if (layer === "L2") {
-          // const calldata = ETHWrapContract.interface.encodeFunctionData(
-          //   "withdraw",
-          //   [inToken.amountBN]
-          // );
-          // const l2Provider = asL2Provider(provider);
-          // estimateGas = await l2Provider.estimateTotalGasCost({
-          //   to: ETHWrapContract.address,
-          //   data: calldata,
-          // });
-          estimateGas = BigNumber.from(132479910557548);
+        let estimateGas = undefined;
+        let estimatedGasForL2 = undefined;
+
+        if (isLayer2) {
+          const calldata = ETHWrapContract.interface.encodeFunctionData(
+            "withdraw",
+            [inToken.amountBN]
+          );
+          const l2Provider = asL2Provider(provider);
+          const txData = {
+            to: ETHWrapContract.address,
+            data: calldata,
+            from: address,
+          };
+
+          estimateGas = await l2Provider.estimateTotalGasCost(txData);
+          estimatedGasForL2 = await provider.estimateGas(txData);
+          estimatedGasForL2 = calculateGasMargin(estimatedGasForL2);
         } else {
           estimateGas = await ETHWrapContract.estimateGas.withdraw(
             inToken.amountBN
           );
         }
+        const estimateGasWithBuffer = calculateGasMargin(estimateGas);
 
-        if (estimateGasUsage) return estimateGas;
-        withdraw({
-          args: [inToken.amountBN],
-          // gas: calculateGasMargin(estimateGas).toBigInt(),
-        });
+        if (estimateGasUsage) return estimateGasWithBuffer;
+
+        if (
+          (isLayer2 && estimatedGasForL2) ||
+          (!isLayer2 && estimateGasWithBuffer)
+        ) {
+          withdraw({
+            args: [inToken.amountBN],
+            gas:
+              layer === "L2"
+                ? estimatedGasForL2?.toBigInt()
+                : estimateGasWithBuffer.toBigInt(),
+          });
+        }
       }
     },
-    [inToken, ETHWrapContract, provider]
+    [inToken, ETHWrapContract, provider, isLayer2]
   );
 
   useEffect(() => {
@@ -206,7 +251,7 @@ export default function useWrap() {
           ? await wrapETH(true)
           : mode === "ETH-Unwrap"
           ? await unwrapWETH(true)
-          : "";
+          : undefined;
       if (estimatedGas) setEstimatedGasUsage(estimatedGas);
     };
 

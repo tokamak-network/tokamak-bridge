@@ -141,7 +141,6 @@ export function useAmountOut() {
             );
             return result;
           }
-
           const tx = await provider?.getSigner().sendTransaction({
             ...txData,
             gasLimit: calculateGasMargin(estimatedGas),

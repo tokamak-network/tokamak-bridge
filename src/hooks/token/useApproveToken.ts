@@ -28,6 +28,7 @@ export function useAllowance(params: {
     address: tokenAddress,
     args: address && contractAddress ? [address, contractAddress] : undefined,
     watch: true,
+    cacheOnBlock: true,
   });
 
   const inputTokenAmount = inputTokenParam ?? 0;

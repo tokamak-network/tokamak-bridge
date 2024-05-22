@@ -6,6 +6,7 @@ import { useMemo } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function useTokenBalance(
   tokenInfo: TokenInfo | null,
@@ -22,6 +23,10 @@ export default function useTokenBalance(
   const tokenAddress = chainName && tokenInfo?.address[chainName];
   const { address: accountAddress } = useAccount();
   const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
+  const { inToken, outToken } = useInOutTokens();
+  const isOnUI =
+    inToken?.address === tokenAddress || outToken?.address === tokenAddress;
+  const { isLayer2 } = useConnectedNetwork();
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
     token:
@@ -30,6 +35,7 @@ export default function useTokenBalance(
         ? undefined
         : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
+    staleTime: isLayer2 ? 2000 : 5000,
     // enabled: requireCall,
   });
 

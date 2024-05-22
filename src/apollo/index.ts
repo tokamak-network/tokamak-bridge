@@ -57,8 +57,6 @@ export const apolloClient = new ApolloClient({
           .NEXT_PUBLIC_L2MESSENGER_TITAN_GOERLI as string,
         l2BridgeTitan: process.env.NEXT_PUBLIC_L2MESSENGER_TITAN as string,
         titanSubGraph: process.env.NEXT_PUBLIC_SUBGRAPH_TITAN as string,
-        titanGoerliSubGraph: process.env
-          .NEXT_PUBLIC_SUBGRAPH_TITAN_GOERLI as string,
       },
       //@ts-ignore
       createHttpLink: () => createHttpLink(),

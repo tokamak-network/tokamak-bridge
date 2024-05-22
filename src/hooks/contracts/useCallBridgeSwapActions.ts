@@ -15,6 +15,8 @@ import { transactionModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { useGasFee } from "./fee/getGasFee";
+import { Hash } from "viem";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -23,17 +25,25 @@ export default function useCallBridgeSwapAction() {
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
 
-  const { write: _depositETH, isError } = useCallDeposit("depositETH");
+  const {
+    write: _depositETH,
+    contract: _depositETH_contract,
+    isError,
+  } = useCallDeposit("depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
     useCallDeposit("depositERC20");
-  const { write: _withdraw, isError: _withdrawError } =
-    useCallWithdraw("withdraw");
+  const {
+    write: _withdraw,
+    isError: _withdrawError,
+    contract: _withdrawContract,
+  } = useCallWithdraw("withdraw");
 
   const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
 
   // const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { gasLimit } = useGasFee();
 
   const onClick = useCallback(async () => {
     if (!isConnected) {
@@ -68,6 +78,7 @@ export default function useCallBridgeSwapAction() {
               args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
+              gas: gasLimit,
             });
           }
 
@@ -79,6 +90,7 @@ export default function useCallBridgeSwapAction() {
               200000,
               "0x",
             ],
+            gas: gasLimit,
           });
         case "Withdraw":
           if (isETH) {
@@ -104,7 +116,7 @@ export default function useCallBridgeSwapAction() {
           return console.error("action mode is not found");
       }
     }
-  }, [isConnected, connectToWallet, mode, inToken, address]);
+  }, [isConnected, connectToWallet, mode, inToken, address, gasLimit]);
 
   useEffect(() => {
     if (isError || _depositERC20Error || _withdrawError) {
