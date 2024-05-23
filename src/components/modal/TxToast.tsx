@@ -15,7 +15,6 @@ import useConnectedNetwork from "@/hooks/network";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
-import { txDataStatus } from "@/recoil/global/transaction";
 
 type TransactionToastProp = TxInterface;
 
@@ -102,7 +101,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
-          {trimAmount(convertParsedAmount)} {symbol}
+          {txSort !== "Revoke" ? trimAmount(convertParsedAmount) : ""} {symbol}
         </Text>
       </Flex>
     );
@@ -166,6 +165,8 @@ function TransactionToast(props: TransactionToastProp) {
         return "Claim";
       case "Remove Liquidity":
         return "Remove";
+      case "Revoke":
+        return "Revoke";
       default:
         return txSort;
     }
@@ -222,8 +223,6 @@ function TransactionToast(props: TransactionToastProp) {
 function TxToast() {
   const toast = useToast();
   const [isToasted, setIsToasted] = useState<string[]>([]);
-  const [txData, setTxData] = useRecoilState(txDataStatus);
-
   const { confirmedTransaction } = useTransaction();
 
   const makeToast = useMemo(() => {

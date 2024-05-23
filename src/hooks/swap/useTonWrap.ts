@@ -169,10 +169,21 @@ export default function useWrap() {
               to: ETHWrapContract.address,
               data: calldata,
             });
+            console.log("estimateGas", estimateGas?.toString());
           }
           const estimateGasWithBuffer = calculateGasMargin(estimateGas);
+          console.log(
+            "estimateGasWithBuffer",
+            estimateGasWithBuffer.toString()
+          );
 
           if (estimateGasUsage) return estimateGas;
+
+          console.log(
+            "estimatedGasForL2?.toBigInt()",
+            estimatedGasForL2?.toBigInt()
+          );
+          console.log("cost", estimateGasUsage);
 
           if (
             (isLayer2 && estimatedGasForL2) ||

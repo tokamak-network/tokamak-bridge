@@ -23,18 +23,12 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import { isETH as checkIsETH } from "@/utils/token/isETH";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
 
-//test
-import L1BridgeAbi from "@/abis/L1StandardBridge.json";
-import useContract from "../useContract";
-
 export function useGasFee() {
   const { address } = useAccount();
   const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
   const { mode } = useGetMode();
-  const { L1BRIDGE_CONTRACT } = useContract();
-
   const { contract: _depositETH_contract } = useCallDeposit("depositETH");
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
   const { contract: _withdraw_contract } = useCallWithdraw("withdraw");

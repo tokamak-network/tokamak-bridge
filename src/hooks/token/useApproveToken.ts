@@ -49,7 +49,14 @@ export function useAllowance(params: {
     return false;
   }, [allowance, token, inputTokenAmount]);
 
-  return { isApproved, allowance };
+  const allowanceIsBiggerThanZero = useMemo(() => {
+    if (allowance !== undefined) {
+      return Number(allowance) > 0;
+    }
+    return false;
+  }, [allowance]);
+
+  return { isApproved, allowance, allowanceIsBiggerThanZero };
 }
 
 export function useApproveToeken({

@@ -105,7 +105,7 @@ const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.removeLiquidity;
       });
-    case "Approve":
+    case "Approve" || "Revoke":
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.approve;
       });
@@ -142,13 +142,14 @@ const getTokenAddress = (
 };
 
 export function useTransaction() {
-  const [txData, setTxData] = useRecoilState(txDataStatus);
+  const [txData] = useRecoilState(txDataStatus);
 
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([, value]) => {
         return (
-          value.txSort === "Approve" && value.transactionHash === undefined
+          (value.txSort === "Approve" || value.txSort === "Revoke") &&
+          value.transactionHash === undefined
         );
       });
   }, [txData]);
@@ -160,12 +161,6 @@ export function useTransaction() {
       });
     return undefined;
   }, [txData]);
-
-  // useEffect(() => {
-  //   if (pendingTransaction?.length === 1) {
-  //     if (txCheckError && error) return setTxData(undefined);
-  //   }
-  // }, [txCheckData, txCheckError, error, pendingTransaction]);
 
   const isPending = useMemo(() => {
     if (pendingTransaction && pendingTransaction.length > 0) {
@@ -194,6 +189,19 @@ export function useTransaction() {
     }
   }, [txData]);
 
+  const confirmedRevokeTransaction = useMemo(() => {
+    if (txData) {
+      const filteredData = Object.entries(txData).filter(([, value]) => {
+        return (
+          value.txSort === "Revoke" && value.transactionState === "success"
+        );
+      })[0];
+      if (filteredData && filteredData[1]) {
+        return filteredData[1];
+      }
+    }
+  }, [txData]);
+
   // useEffect(() => {
   //   setTxData(undefined);
   // }, [connectedChainId]);
@@ -205,6 +213,7 @@ export function useTransaction() {
     pendingTransactionToApprove,
     confirmedTransaction,
     confirmedApproveTransaction,
+    confirmedRevokeTransaction,
   };
 }
 
@@ -354,14 +363,6 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
-      // if (selectedInToken && txSort !== "Approve") {
-      //   setSelectedInToken({
-      //     ...selectedInToken,
-      //     amountBN: null,
-      //     parsedAmount: null,
-      //   });
-      // }
-
       return setTxData({
         [hash]: {
           transactionHash: undefined,
@@ -378,6 +379,9 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
+      console.log("****");
+      console.log(data, txSort);
+
       const { logs, transactionHash } = data;
       const {
         l1BridgeI,
@@ -391,7 +395,6 @@ export function useTx(params: {
       setModalOpen("confirmed");
 
       switch (txSort) {
-        //Uniswap
         case "Add Liquidity":
           {
             const event = getEvent(logs, txSort);
@@ -785,7 +788,7 @@ export function useTx(params: {
         }
 
         //etc
-        case "Approve":
+        case "Approve": {
           const result = erc20I.parseLog(logs[logs.length - 1]);
           const { args } = result;
           return setTxData({
@@ -804,6 +807,28 @@ export function useTx(params: {
               actionSort,
             },
           });
+        }
+        case "Revoke": {
+          const result = erc20I.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          console.log("go?");
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: args.value.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+              actionSort,
+            },
+          });
+        }
         default:
           break;
       }
@@ -811,7 +836,7 @@ export function useTx(params: {
     if (isError && data && connectedChainId && hash) {
       setModalOpen("error");
     }
-  }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
+  }, [isSuccess, isError, data, tokenAddress, hash]);
 
   return { isLoading };
 }

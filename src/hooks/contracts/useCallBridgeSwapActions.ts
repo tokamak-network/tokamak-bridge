@@ -17,11 +17,13 @@ import useTxConfirmModal from "../modal/useTxConfirmModal";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useGasFee } from "./fee/getGasFee";
 import { Hash } from "viem";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import { BigNumber } from "ethers";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
   const { connectToWallet } = useConnectWallet();
-  const { inToken, outToken } = useInOutTokens();
+  const { inToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
 
@@ -37,11 +39,8 @@ export default function useCallBridgeSwapAction() {
     isError: _withdrawError,
     contract: _withdrawContract,
   } = useCallWithdraw("withdraw");
-
   const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
-
-  // const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { gasLimit } = useGasFee();
 
@@ -94,13 +93,31 @@ export default function useCallBridgeSwapAction() {
           });
         case "Withdraw":
           if (isETH) {
+            const txData = [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"];
+            const gasLimitForL2 = await _withdrawContract.estimateGas.withdraw({
+              //@ts-ignore
+              account: address as Hash,
+              args: txData,
+            });
             return _withdraw({
-              args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
+              args: txData,
+              gas: calculateGasMargin(BigNumber.from(gasLimitForL2)).toBigInt(),
             });
           }
-
+          const txData = [
+            inToken.address[inNetwork.chainName],
+            parsedAmount,
+            0,
+            "0x",
+          ];
+          const gasLimitForL2 = await _withdrawContract.estimateGas.withdraw({
+            //@ts-ignore
+            account: address as Hash,
+            args: txData,
+          });
           return _withdraw({
-            args: [inToken.address[inNetwork.chainName], parsedAmount, 0, "0x"],
+            args: txData,
+            gas: calculateGasMargin(BigNumber.from(gasLimitForL2)).toBigInt(),
           });
         case "Swap":
           return callTokenSwap();
