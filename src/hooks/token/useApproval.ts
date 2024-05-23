@@ -5,7 +5,6 @@ import {
   usePrepareErc20Approve,
 } from "@/generated";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
-
 import { useCallback, useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";

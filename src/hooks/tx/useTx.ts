@@ -379,9 +379,6 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
-      console.log("****");
-      console.log(data, txSort);
-
       const { logs, transactionHash } = data;
       const {
         l1BridgeI,
@@ -811,7 +808,6 @@ export function useTx(params: {
         case "Revoke": {
           const result = erc20I.parseLog(logs[logs.length - 1]);
           const { args } = result;
-          console.log("go?");
           return setTxData({
             [hash]: {
               transactionHash,

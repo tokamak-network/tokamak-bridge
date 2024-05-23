@@ -12,6 +12,7 @@ import { PoolState } from "@/types/pool/pool";
 import useConnectedNetwork from "@/hooks/network";
 import { isWETH } from "@/utils/token/isETH";
 import { ApproveButton } from "../../add/ActionButton";
+import { sub } from "date-fns";
 
 const ApproveButtonsContrainer = () => {
   const { inTokenApproved, outTokenApproved } = useApproveTokenForPools();
@@ -31,7 +32,7 @@ const ApproveButtonsContrainer = () => {
     isWETH(outToken, chainName) && subMode.increase ? true : outTokenApproved;
 
   return (
-    <Flex columnGap={"12px"} justifyContent={"flex-end"}>
+    <Flex columnGap={"12px"} flexDir={subMode.add ? "row" : "row-reverse"}>
       {inToken &&
         inTokenHasAmount &&
         !inTokenApprvedOnIncrease &&

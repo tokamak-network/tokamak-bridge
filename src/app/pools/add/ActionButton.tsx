@@ -5,7 +5,10 @@ import {
 } from "@/generated";
 import useContract from "@/hooks/contracts/useContract";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import { useApproveTokenForPools } from "@/hooks/token/useApproveToken";
+import {
+  useAllowance,
+  useApproveTokenForPools,
+} from "@/hooks/token/useApproveToken";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -16,10 +19,13 @@ import { useTx } from "@/hooks/tx/useTx";
 import { poolModalProp, poolModalStatus } from "@/recoil/modal/atom";
 import { PoolState } from "@/types/pool/pool";
 import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 import { Hash } from "viem";
-import { useWaitForTransaction } from "wagmi";
+import { useContractWrite, useWaitForTransaction } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
+import { USDT_ADDRESS_BY_CHAINID } from "@/constant/contracts/tokens";
+import USDT_ABI from "@/constant/abis/USDT.json";
 
 export const ApproveButton = (props: { isInToken: boolean }) => {
   const { isInToken } = props;
@@ -27,6 +33,7 @@ export const ApproveButton = (props: { isInToken: boolean }) => {
   const tokenAddress = isInToken
     ? (inToken?.tokenAddress as Hash)
     : (outToken?.tokenAddress as Hash);
+  const { isLayer2, connectedChainId } = useConnectedNetwork();
   const { UNISWAP_CONTRACT } = useContract();
   const contractAddress = UNISWAP_CONTRACT?.NONFUNGIBLE_POSITION_MANAGER;
 
@@ -42,17 +49,85 @@ export const ApproveButton = (props: { isInToken: boolean }) => {
     enabled: Boolean(contractAddress && totalSupply),
   });
   const { data, write } = useErc20Approve(config);
-  const {} = useTx({
-    hash: data?.hash,
+  const { data: usdtRevokeData, write: USDT_APPROVE_REVOKE } = useContractWrite(
+    {
+      address: tokenAddress,
+      abi: USDT_ABI,
+      functionName: "approve",
+    }
+  );
+  const { data: usdtApproveData, write: USDT_APPROVE } = useContractWrite({
+    address: tokenAddress,
+    abi: USDT_ABI,
+    functionName: "approve",
+  });
+
+  const { allowanceIsBiggerThanZero, allowance } = useAllowance({
+    inputTokenAmount: isInToken ? inToken?.amountBN : outToken?.amountBN,
+    tokenAddress,
+    token: inToken,
+    contractAddress,
+  });
+  const isUSDT = useMemo(() => {
+    return connectedChainId
+      ? tokenAddress.toLowerCase() ===
+          USDT_ADDRESS_BY_CHAINID[connectedChainId].toLowerCase()
+      : undefined;
+  }, [connectedChainId, tokenAddress, USDT_ADDRESS_BY_CHAINID]);
+
+  const isRevokeForUSDT = useMemo(() => {
+    if (isUSDT && allowanceIsBiggerThanZero && !isLayer2) {
+      return true;
+    }
+    return false;
+  }, [isUSDT, allowanceIsBiggerThanZero, isLayer2]);
+
+  const approveForUSDT = useCallback(() => {
+    if (isRevokeForUSDT) {
+      return USDT_APPROVE_REVOKE({
+        args: [contractAddress, 0],
+      });
+    }
+    return USDT_APPROVE({
+      args: [contractAddress, totalSupply?.toString()],
+    });
+  }, [
+    contractAddress,
+    totalSupply,
+    USDT_APPROVE,
+    USDT_APPROVE_REVOKE,
+    isRevokeForUSDT,
+  ]);
+
+  const { isLoading } = useTx({
+    hash: isUSDT ? usdtApproveData?.hash : data?.hash,
     txSort: "Approve",
     tokenAddress: tokenAddress,
   });
-  const { isLoading } = useWaitForTransaction({
-    hash: data?.hash,
+  const { isLoading: usdtRevokeIsLoading } = useTx({
+    hash: usdtRevokeData?.hash,
+    txSort: "Revoke",
+    tokenAddress,
+    actionSort: "Pool",
   });
 
   const { deposit0Disabled, deposit1Disabled } = useV3MintInfo();
   const { isTONatPair } = useIsTon();
+
+  const callApprove = useCallback(() => {
+    isUSDT ? approveForUSDT() : write?.();
+  }, [
+    contractAddress,
+    totalSupply,
+    isUSDT,
+    USDT_APPROVE,
+    write,
+    approveForUSDT,
+  ]);
+
+  const loadingStatus = useMemo(() => {
+    return isLoading || usdtRevokeIsLoading;
+  }, [isLoading, usdtRevokeIsLoading]);
 
   if (
     (isInToken && deposit0Disabled) ||
@@ -67,18 +142,21 @@ export const ApproveButton = (props: { isInToken: boolean }) => {
         w={"100%"}
         h={"48px"}
         borderRadius={"8px"}
-        bg={isLoading ? "#17181D" : "#007AFF"}
+        bg={isLoading || isRevokeForUSDT ? "#17181D" : "#007AFF"}
+        borderWidth={isRevokeForUSDT ? "1px" : undefined}
+        borderColor={isRevokeForUSDT ? "#007AFF" : undefined}
         fontSize={16}
         fontWeight={600}
         _hover={{}}
         _active={{}}
         _disabled={{}}
         color={"#fff"}
-        onClick={() => write?.()}
+        onClick={callApprove}
         isDisabled={isLoading}
       >
-        {isLoading && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />}
-        {!isLoading && (
+        {loadingStatus && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />}
+        {!loadingStatus && isRevokeForUSDT && <Text>Revoke USDT</Text>}{" "}
+        {!loadingStatus && !isRevokeForUSDT && (
           <Text>
             Approve {isInToken ? inToken?.tokenSymbol : outToken?.tokenSymbol}
           </Text>
