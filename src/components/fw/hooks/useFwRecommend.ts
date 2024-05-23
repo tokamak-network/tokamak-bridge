@@ -1,9 +1,20 @@
-export function useFwRecommend(): Promise<string> {
-  // 값을 받아오는 로직을 짠다
-  // 현재는 비동기 함수 라고 가정
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve("0.078");
-    }, 1000);
-  });
+import { useState, useEffect } from "react";
+
+export default function useFwRecommend(recommendCheck: boolean): string {
+  const [recommendValue, setRecommendValue] = useState<string>("0.99");
+
+  useEffect(() => {
+    if (recommendCheck) {
+      const fetchRecommend = async () => {
+        const response = await new Promise<string>((resolve) => {
+          setTimeout(() => resolve(recommendValue + "9"), 1000);
+        });
+        setRecommendValue(response);
+      };
+
+      fetchRecommend();
+    }
+  }, [recommendCheck]);
+
+  return recommendValue;
 }

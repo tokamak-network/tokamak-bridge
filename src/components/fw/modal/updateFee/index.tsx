@@ -15,7 +15,7 @@ import { useState, useEffect } from "react";
 import { WarningType, UpdateFeeButtonType } from "@/components/fw/types";
 import CloseButton from "@/components/button/CloseButton";
 import useFwUpdateFee from "@/components/fw/hooks/useFwUpdateFeeModal";
-import { useFwRecommend } from "@/components/fw/hooks/useFwRecommend";
+import useFwRecommend from "@/components/fw/hooks/useFwRecommend";
 import FwUpdateButton from "./FwUpdateButton";
 import FwUpdateFeeDetail from "./FwUpdateFeeDetail";
 import FwRefundDetail from "./FwRefundDetail";
@@ -35,7 +35,7 @@ export default function FwFeeUpdateModal() {
   // Update Fee Recommend 값 사용할지, 그냥 사용할지 확인하는 state
   // false 일때는 사용자 입력 값
   const [recommendCheck, setRecommendCheck] = useState<boolean>(true);
-  const [recommendValue, setRecommendValue] = useState<string>(""); // ""가 아니라 undefined(선호) 나 null(메모리 관련 이슈가 생길때가 종종 있음)로 표현하는게 좋다.
+
   // FwInput 관련 state 및 function Start @Robert
   const [inputValue, setInputValue] = useState("");
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
@@ -43,13 +43,7 @@ export default function FwFeeUpdateModal() {
   );
   // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
   // usehook안에서 hook은 돌리면 안된다. //메모리 문재
-  useEffect(() => {
-    if (recommendCheck) {
-      useFwRecommend().then((value) => {
-        setRecommendValue(value);
-      });
-    }
-  }, [recommendCheck]);
+  const recommendValue = useFwRecommend(recommendCheck);
 
   // 리프래시 버튼 누를 때, recommend 값 초기화
   const handleRefreshRecommend = () => {

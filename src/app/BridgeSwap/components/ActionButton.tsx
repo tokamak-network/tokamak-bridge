@@ -20,11 +20,6 @@ import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
 
-// FW UI test @Robert
-import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
-import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
-import { ModalType } from "@/components/fw/types";
-
 export default function ActionButton() {
   const { isConnected } = useAccount();
   const { mode, isReady } = useRecoilValue(actionMode);
@@ -82,34 +77,8 @@ export default function ActionButton() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
 
-  // FW UI test @Robert
-  const { onOpenFwConfirmModal } = useFxConfirmModal();
-  const { onOpenFwOptionModal } = useFxOptionModal();
-
   return (
     <>
-      {/** FW UI test Start @Robert*/}
-      {!isConnected && mode == "Withdraw" && (
-        <>
-          <Button
-            color={"#8E8E92"}
-            onClick={() => onOpenFwConfirmModal(ModalType.History)}
-          >
-            <Text>History button</Text>
-          </Button>
-          <Button
-            color={"#8E8E92"}
-            onClick={
-              () => onOpenFwOptionModal()
-              // () => onOpenFwConfirmModal(ModalType.Trade)
-            }
-          >
-            <Text>Trade button</Text>
-          </Button>
-        </>
-      )}
-      {/** FW UI test End @Robert*/}
-
       <Button
         w={"100%"}
         h={"48px"}
