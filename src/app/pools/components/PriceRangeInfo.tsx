@@ -27,11 +27,7 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
   const { tokenPairForInfo, info } = usePositionInfo();
   const { priceLower, priceUpper, inverted, ticksAtLimit } = usePoolInfo();
   const { poolModal } = usePreview();
-
-  const minPrice = useRecoilValue(minPriceForAddModal);
-  const maxPrice = useRecoilValue(maxPriceForAddModal);
   const manuallyInverted = useRecoilValue(ATOM_manuallyInverted);
-
   const { subMode } = useGetMode();
   const { ticksAtLimit: _ticksAtLimit, pricesAtTicks } = useV3MintInfo();
 
@@ -112,7 +108,10 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
           >
             {priceData === "0" || priceData === "∞"
               ? priceData
-              : smallNumberFormmater(priceData?.toString(), undefined, true)}
+              : smallNumberFormmater({
+                  amount: priceData?.toString(),
+                  trimed: true,
+                })}
           </Text>
         }
         tooltipLabel={priceData?.toString()}
@@ -132,12 +131,8 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
 
 export const CurrentPriceInfo = () => {
   const { tokenPairForInfo, info } = usePositionInfo();
-  const { currentPrice, inverted } = usePoolInfo();
-  const { invertPrice } = useV3MintInfo();
-
+  const { currentPrice } = usePoolInfo();
   const { poolModal } = usePreview();
-  const startingPrice = useRecoilState(initialPrice);
-
   const manuallyInverted = useRecoilValue(ATOM_manuallyInverted);
 
   const currentPriceToAdd = useMemo(() => {
@@ -179,14 +174,20 @@ export const CurrentPriceInfo = () => {
             verticalAlign={"center"}
           >
             {poolModal === "addLiquidity"
-              ? currentPriceToAdd
-              : smallNumberFormmater(Number(currentPrice ?? 0))}
+              ? smallNumberFormmater({
+                  amount: currentPriceToAdd,
+                  trimed: true,
+                })
+              : smallNumberFormmater({
+                  amount: currentPrice,
+                  trimed: true,
+                })}
           </Text>
         }
         tooltipLabel={
           poolModal === "addLiquidity"
             ? currentPriceToAdd
-            : smallNumberFormmater(Number(currentPrice ?? 0))
+            : smallNumberFormmater({ amount: Number(currentPrice ?? 0) })
         }
       ></CustomTooltip>
 
@@ -204,8 +205,6 @@ export const CurrentPriceInfo = () => {
 };
 
 export function PriceRangeInfo() {
-  //   const { isMinPrice } = props;
-
   const [manuallyInverted, setManuallyInverted] = useRecoilState(
     ATOM_manuallyInverted
   );

@@ -13,6 +13,7 @@ import {
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { trimAmount } from "@/utils/trim";
+import commafy from "@/utils/trim/commafy";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -297,7 +298,7 @@ export function TokenInputForLiquidity(props: {
 
       <Flex w={"100%"} justifyContent={"flex-start"} columnGap={"4px"}>
         <Text fontSize={13} fontWeight={500} color={"#ffffff"} opacity={0.8}>
-          {`$${marketPrice}`}
+          {`$${commafy(marketPrice, 2)}`}
         </Text>
       </Flex>
     </Flex>

@@ -8,7 +8,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Script from "next/script";
 import Header from "@/components/header/Index";
-import { Center, Box } from "@chakra-ui/react";
+import { Center, Box, Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
 import useMediaView from "@/hooks/mediaView/useMediaView";
@@ -52,6 +52,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       </Center>
     );
   }
+
   return (
     <>
       <GoogleAnalyticsScript />
@@ -60,22 +61,25 @@ export default function Entry({ children }: { children: React.ReactNode }) {
           <ChakraProvidersForNextJs>
             <>
               <Header />
-              <Center h={"100vh"} bg={"#0F0F12"}>
-                {children}
-              </Center>
-              {pcView ? (
-                <Footer />
-              ) : (
-                <Box
-                  position="fixed"
-                  top="0"
-                  right="0"
-                  bottom="0"
-                  left="0"
-                  zIndex={-1}
-                  bg={"#0F0F12"}
-                ></Box>
-              )}
+              <Flex flexDir={"column"}>
+                <Flex justifyContent={"center"} bg={"#0F0F12"} minH={"90vh"}>
+                  {children}
+                </Flex>
+                {pcView ? (
+                  <Footer />
+                ) : (
+                  <Box
+                    position="fixed"
+                    top="0"
+                    right="0"
+                    bottom="0"
+                    left="0"
+                    zIndex={-1}
+                    bg={"#0F0F12"}
+                  ></Box>
+                )}
+              </Flex>
+
               <GlobalComponents />
               <Drawers />
               <Modals />

@@ -31,8 +31,10 @@ export function sortPositions(positions: PoolCardDetail[]) {
       }
 
       // Custom order for status: Amount + Fee market value
-      const valueStatusA = a.token0Value + a.token1Value + a.feeValue;
-      const valueStatusB = b.token0Value + b.token1Value + b.feeValue;
+      const valueStatusA =
+        (a.token0Value ?? 0) + (a.token1Value ?? 0) + (a.feeValue ?? 0);
+      const valueStatusB =
+        (b.token0Value ?? 0) + (b.token1Value ?? 0) + (b.feeValue ?? 0);
       const valueStatusComparison = valueStatusB - valueStatusA;
 
       if (valueStatusComparison !== 0) {

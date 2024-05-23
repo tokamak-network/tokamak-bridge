@@ -1,6 +1,7 @@
 import axios from "axios";
 import useConnectedNetwork from "@/hooks/network";
 import { L1TxType, SentMessages } from "@/types/activity/history";
+import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 
 const formatAddress = (address: string) => {
   const formattedAddress = address.substring(2);
@@ -14,10 +15,10 @@ export const fetchUserTransactions = async (
   if (account) {
     const formattedAddress = formatAddress(account);
     const L1Bridge = isConnectedToMainnet
-      ? "0x59aa194798Ba87D26Ba6bEF80B85ec465F4bbcfD"
-      : "0x7377F3D0F64d7a54Cf367193eb74a052ff8578FD";
+      ? MAINNET_CONTRACTS.L1Bridge
+      : SEPOLIA_CONTRACTS.L1Bridge;
 
-      //gets transactions on L1
+    //gets transactions on L1
     const resTxs = await axios.post(
       `${
         isConnectedToMainnet
@@ -98,7 +99,7 @@ export const fetchUserTransactions = async (
       }
     );
 
-    //gets transactions on L2 
+    //gets transactions on L2
     const withdrawTx = await axios.post(
       `${
         isConnectedToMainnet
@@ -138,10 +139,10 @@ export const fetchUserTransactions = async (
       }
     );
 
-    const withdrawTxsL2 = withdrawTx.data.data.sentMessages; //filter the withdraw txs on L2 
+    const withdrawTxsL2 = withdrawTx.data.data.sentMessages; //filter the withdraw txs on L2
     const depositTxsL2 = withdrawTx.data.data.depositFinalizeds; //filter the deposit finalized txs on L2
 
-    //add the event name to the withdraw txs 
+    //add the event name to the withdraw txs
     const formattedWithdraw = withdrawTxsL2.map((tx: SentMessages) => {
       let copy = {
         ...tx,
@@ -172,8 +173,7 @@ export const fetchUserTransactions = async (
     ];
 
     const formattedL1DepositResultsUnfiltered =
-
-    //combine the txs in sent messages and l1 deposit txs and add event name 
+      //combine the txs in sent messages and l1 deposit txs and add event name
       resTxs.data.data.sentMessages.map((result: SentMessages) => {
         //filter txs from all the l1 deposit txs where the user address occurs twice and the tx hash has a match in the sentMessages on L1
         const tx = allDepL1Txs.filter((tx: L1TxType) => {
@@ -198,13 +198,11 @@ export const fetchUserTransactions = async (
         }
       });
 
-
-      //filter out any undefined txs from the array of results from the above array
+    //filter out any undefined txs from the array of results from the above array
     const formattedL1DepositResults =
       formattedL1DepositResultsUnfiltered.filter((tx: any) => tx !== undefined);
     const formattedL1WithdrawResults = allWithL1Txs;
 
-    
     return {
       formattedL1DepositResults: formattedL1DepositResults,
       formattedL1WithdrawResults: formattedL1WithdrawResults,

@@ -4,10 +4,8 @@ import {
   usePrepareErc20Approve,
 } from "@/generated";
 import useContract from "@/hooks/contracts/useContract";
-import usePreview from "@/hooks/modal/usePreviewModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useApproveTokenForPools } from "@/hooks/token/useApproveToken";
-import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import { useMintPositionInfo } from "@/hooks/pool/useMintPositionInfo";
 import { usePool } from "@/hooks/pool/usePool";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
@@ -23,7 +21,7 @@ import { useRecoilState } from "recoil";
 import { Hash } from "viem";
 import { useWaitForTransaction } from "wagmi";
 
-const ApproveButton = (props: { isInToken: boolean }) => {
+export const ApproveButton = (props: { isInToken: boolean }) => {
   const { isInToken } = props;
   const { inToken, outToken } = useInOutTokens();
   const tokenAddress = isInToken
@@ -44,7 +42,11 @@ const ApproveButton = (props: { isInToken: boolean }) => {
     enabled: Boolean(contractAddress && totalSupply),
   });
   const { data, write } = useErc20Approve(config);
-  const {} = useTx({ hash: data?.hash, txSort: "Approve" });
+  const {} = useTx({
+    hash: data?.hash,
+    txSort: "Approve",
+    tokenAddress: tokenAddress,
+  });
   const { isLoading } = useWaitForTransaction({
     hash: data?.hash,
   });
@@ -98,7 +100,7 @@ export const ApproveButtonsContrainer = () => {
   if (isBalanceOver || isOutTokenBalanceOver) return null;
 
   return (
-    <Flex columnGap={"12px"}>
+    <Flex columnGap={"12px"} justifyContent={"flex-end"}>
       {inToken && inTokenHasAmount && !inTokenApproved && !isBalanceOver && (
         <ApproveButton isInToken={true} />
       )}

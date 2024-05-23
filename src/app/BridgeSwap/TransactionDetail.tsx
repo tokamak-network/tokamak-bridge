@@ -58,55 +58,22 @@ const DepositDetailRow = (props: DepositDetailProp) => {
             )}
           </Text>
           {gasFee && (
-            <Text color={mobileView ? "#FFFFFF" : "#A0A3AD"}>
-              ${gasFee.l1GasUS}
+            <Text
+              color={
+                gasFee.l1GasUS === "NA" || !mobileView ? "#A0A3AD" : "#FFFFFF"
+              }
+            >
+              {gasFee.l1GasUS}
             </Text>
           )}
         </Flex>
       </Flex>
-      {/* {gasFee && pcView && (
-        <Flex
-          w={"100%"}
-          h={"54px"}
-          bgColor={"#15161D"}
-          flexDir={"column"}
-          fontSize={14}
-          justifyContent={"center"}
-          mt={"9px"}
-          px={"16px"}
-          borderRadius={"8px"}
-        >
-          <Flex justifyContent={"space-between"} textAlign={"end"}>
-            <Text>L1 gas fee</Text>
-            <Flex columnGap={"13px"}>
-              <Text w={"90px"} textAlign={"end"}>
-                {gasFee.l1Gas}
-              </Text>
-              <Text color={"#A0A3AD"} w={"45px"} textAlign={"end"}>
-                ${gasFee.l1GasUS}
-              </Text>
-            </Flex>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text>L2 gas fee</Text>
-            <Flex columnGap={"13px"}>
-              <Text w={"90px "} textAlign={"end"}>
-                {gasFee.l2Gas}
-              </Text>
-              <Text color={"#A0A3AD"} w={"45px"} textAlign={"end"}>
-                ${gasFee.l2GasUS}
-              </Text>
-            </Flex>
-          </Flex>
-        </Flex>
-      )}  */}
     </Flex>
   );
 };
 
 const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
   const { gasFee, tooltip, tooltipLabel, title, content } = props;
-  const { mobileView } = useMediaView();
   const { isBalanceOver } = useInputBalanceCheck();
 
   return (
@@ -126,41 +93,9 @@ const WithdrawDetailRowNew = (props: WithdrawDetailNewProp) => {
               content
             )}
           </Text>
-          {gasFee && <Text color={"#A0A3AD"}>${gasFee.l2GasUS}</Text>}
+          {gasFee && <Text color={"#A0A3AD"}>{gasFee.l2GasUS}</Text>}
         </Flex>
-
-        {/* <Text fontWeight={500}>
-          {tooltip ? (
-            <CustomTooltip content={content} tooltipLabel={tooltipLabel} />
-          ) : (
-            content
-          )}
-        </Text> */}
       </Flex>
-
-      {/* {gasFee && (
-
-        <Flex
-          w={"100%"}
-          h={"54px"}
-          bgColor={"#15161D"}
-          flexDir={"column"}
-          fontSize={14}
-          justifyContent={"center"}
-          mt={"9px"}
-          px={"16px"}
-          borderRadius={"8px"}
-        >
-          <Flex justifyContent={"space-between"}>
-            <Text>L1 gas fee</Text>
-            <Text>{gasFee.l1Gas}</Text>
-          </Flex>
-          <Flex justifyContent={"space-between"}>
-            <Text>L2 gas fee</Text>
-            <Text>{gasFee.l2Gas}</Text>
-          </Flex>
-        </Flex>
-      )} */}
     </Flex>
   );
 };
@@ -247,6 +182,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
       </Flex>
     );
   }
+
   return (
     <Flex flexDir={"column"}>
       <Flex justifyContent={"space-between"} fontSize={14} h={"16px"}>
@@ -268,8 +204,6 @@ const SwapDetailRow = (props: SwapDetailProp) => {
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
   const { mobileView } = useMediaView();
-  const { layer } = useConnectedNetwork();
-  const { isBalanceOver } = useInputBalanceCheck();
 
   return (
     <Flex flexDir={"column"}>
@@ -298,7 +232,14 @@ const SwapDetailRow = (props: SwapDetailProp) => {
           {isLoading ? (
             <GradientSpinner />
           ) : (
-            <Text fontWeight={500}>{content}</Text>
+            content !== "undefined" && (
+              <Text
+                fontWeight={500}
+                color={content === "NA" ? "#A0A3AD" : "#fff"}
+              >
+                {content}
+              </Text>
+            )
           )}
           {gasFee && (
             <Text
@@ -318,7 +259,6 @@ const SwapDetailRow = (props: SwapDetailProp) => {
 const WrapDetailRow = (props: WrapDetailProp) => {
   const { title, gasFee, gasFeeUS } = props;
   const [isLoading] = useIsLoading();
-  const { layer } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
 
   return (
@@ -338,12 +278,13 @@ const WrapDetailRow = (props: WrapDetailProp) => {
               {gasFee}
             </Text>
           )}
-          {gasFee && <Text color={"#A0A3AD"}>{gasFeeUS}</Text>}
+          {gasFeeUS && <Text color={"#A0A3AD"}>{gasFeeUS}</Text>}
         </Flex>
       </Flex>
     </Flex>
   );
 };
+
 const Content = (props: {
   isExpanded: boolean;
   isOnConfirm?: boolean;
@@ -393,11 +334,6 @@ const Content = (props: {
           <DepositDetailRow key={data.title} {...data}></DepositDetailRow>
         ));
 
-      // case "Withdraw":
-      //   return withdrawPropsData?.map((data) => (
-      //     <WithdrawDetailRow key={data.title} {...data}></WithdrawDetailRow>
-      //   ));
-
       case "Withdraw":
         return withdrawNewPropsData?.map((data) => (
           <WithdrawDetailRowNew
@@ -405,6 +341,7 @@ const Content = (props: {
             {...data}
           ></WithdrawDetailRowNew>
         ));
+
       case "Swap":
         if (mobileView && updatedSwapPropsData && !isOnConfirm) {
           return updatedSwapPropsData.map((data) => (
@@ -562,7 +499,7 @@ const Title = (props: {
                   ml={"6px"}
                   mr={"13px"}
                 >
-                  {gasCostUS ? `${gasCostUS}` : `NA`}
+                  {gasCostUS ? `$${gasCostUS}` : `NA`}
                 </Text>
               </>
             )}
@@ -626,7 +563,7 @@ const Title = (props: {
                       ml={"6px"}
                       sx={{ mr: mobileView ? 0 : "13px" }}
                     >
-                      {gasCostUS ? `${gasCostUS}` : `NA`}
+                      {gasCostUS ? `$${gasCostUS}` : `NA`}
                     </Text>
                   </>
                 )}

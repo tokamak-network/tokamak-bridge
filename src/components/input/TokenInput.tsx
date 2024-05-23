@@ -26,7 +26,6 @@ import {
 import { isETH } from "@/utils/token/isETH";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import GradientSpinner from "@/components/ui/GradientSpinner";
-import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import "@fontsource/poppins/600.css";
 import useTokenModal from "@/hooks/modal/useTokenModal";
@@ -35,8 +34,8 @@ import {
   isInputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import Warning from "@/app/BridgeSwap/Warning";
-
-import useAmountModal from "@/hooks/modal/useAmountModal"
+import useAmountModal from "@/hooks/modal/useAmountModal";
+import commafy from "@/utils/trim/commafy";
 
 export default function TokenInput(props: {
   inToken: boolean;
@@ -69,14 +68,11 @@ export default function TokenInput(props: {
     inToken: inTokenFromHook,
     inTokenInfo,
     outTokenInfo,
-    initializeTokenPairAmount,
   } = useInOutTokens();
   const [isFocused, setIsFocused] = useState<boolean>(false);
-
   const { layer } = useConnectedNetwork();
   const [isMax, setIsMax] = useState<boolean>(false);
   const [lastFocused, setLastFocused] = useRecoilState(lastFocusedInput);
-
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
@@ -243,21 +239,11 @@ export default function TokenInput(props: {
           }, 100);
         }
         if (isETH(selectedInToken)) {
+          const buffer = Number(totalGasCost) * 2;
           const parsedAmount =
             Number(
               tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
-            ) -
-            //deduct ETH for gasFee to swap on ETH pair
-            Number(
-              mode === "Swap"
-                ? totalGasCost
-                : // ? layer === "L1"
-                  //   ? 0.01
-                  //   : 0.001 + Number(totalGasCost)
-                  totalGasCost ?? 0.001
-            ) -
-            (mode === "Withdraw" ? 0.00025 : 0);
-
+            ) - buffer;
           const isMinus = parsedAmount <= 0;
 
           const amountBN = ethers.utils.parseUnits(
@@ -485,19 +471,13 @@ export default function TokenInput(props: {
     }
   }, [selectedInToken, selectedOutToken, inToken, tokenData]);
 
-  const { currentPrice } = usePriceTickConversion();
-  const [triggerForSpinner, setTriggerForSpinner] = useState<boolean>(false);
+  const [triggerForSpinner] = useState<boolean>(false);
   const { subMode } = useGetMode();
-
-  // useEffect(() => {
-  //   if (currentPrice && mode === "Pool") {
-  //     setTriggerForSpinner(true);
-  //     initializeTokenPairAmount();
-  //     setTimeout(() => {
-  //       setTriggerForSpinner(false);
-  //     }, 1000);
-  //   }
-  // }, [currentPrice, mode]);
+  const isPoolWithETH = useMemo(() => {
+    return mode === "Pool" && inToken
+      ? isETH(selectedInToken)
+      : isETH(selectedOutToken);
+  }, [mode, inToken, selectedInToken, selectedOutToken]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -596,7 +576,7 @@ export default function TokenInput(props: {
                   color={"#A0A3AD"}
                 >{`$${marketPrice}`}</Text>
               ))}
-            {hasMaxButton && !isMax && (
+            {hasMaxButton && !isMax && !isPoolWithETH && (
               <Button
                 w={"40px"}
                 h={"22px"}
@@ -637,7 +617,7 @@ export default function TokenInput(props: {
           )
         ) : (
           <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
-            {`$${marketPrice}`}
+            {`$${commafy(marketPrice, 2)}`}
           </Text>
         )}
       </Flex>

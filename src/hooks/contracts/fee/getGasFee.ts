@@ -3,86 +3,81 @@ import useCallWithdraw from "@/hooks/bridge/actions/useCallWithdraw";
 import { useInOutNetwork } from "@/hooks/network";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { useSwapTokens } from "@/hooks/swap/useSwapTokens";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
-import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedTokens } from "@/types/token/supportedToken";
 import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
-import { useAccount, useFeeData, usePublicClient } from "wagmi";
-import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
+import { useAccount, useFeeData } from "wagmi";
+import { TOKAMAK_CONTRACTS } from "@/constant/contracts";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
-import useGetTxLayers from "@/hooks/user/useGetTxLayers";
-import { getProvider } from "@/config/getProvider";
 import useConnectedNetwork from "@/hooks/network";
 import useWrap from "@/hooks/swap/useTonWrap";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useApprove } from "@/hooks/token/useApproval";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { isETH as checkIsETH } from "@/utils/token/isETH";
+import { asL2Provider } from "@tokamak-network/titan-sdk";
 
 export function useGasFee() {
   const { address } = useAccount();
-  const [gasLimit, setGasLimit] = useState<BigInt | undefined>(undefined);
+  const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
-  const { mode } = useRecoilValue(actionMode);
-
+  const { mode } = useGetMode();
   const { contract: _depositETH_contract } = useCallDeposit("depositETH");
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
   const { contract: _withdraw_contract } = useCallWithdraw("withdraw");
-  const providers = useGetTxLayers();
-  const titanSDK = require("@tokamak-network/tokamak-layer2-sdk");
-
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
   const { routingPath } = useSmartRouter();
-  const { layer } = useConnectedNetwork();
+  const { estimatedGasUsageGwei } = useAmountOut();
+  const { layer, isLayer2 } = useConnectedNetwork();
   const { provider } = useProvier();
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
-  const l2Pro = layer === "L2" ? provider : getProvider(providers.l2Provider);
   const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
   const { isBalanceOver } = useInputBalanceCheck();
   const { isApproved } = useApprove();
 
   const swapGasUseEstimate = useMemo(() => {
-    if (routingPath && tokenMarketPrice) {
+    if (routingPath && mode === "Swap") {
       const { gasUseEstimate } = routingPath;
-      return gasUseEstimate;
+      if (gasUseEstimate) {
+        return isLayer2
+          ? estimatedGasUsageGwei
+          : calculateGasMargin(BigNumber.from(gasUseEstimate));
+      }
     }
-  }, [routingPath]);
+  }, [routingPath, isLayer2, estimatedGasUsageGwei, mode]);
 
   const wrapUnwrapGasEstimate = useMemo(() => {
-    if (wrapUnwrapGasUsage) {
+    if (
+      wrapUnwrapGasUsage &&
+      (mode === "ETH-Wrap" ||
+        mode === "ETH-Unwrap" ||
+        mode === "Wrap" ||
+        mode === "Unwrap")
+    ) {
       return wrapUnwrapGasUsage;
     }
-  }, [wrapUnwrapGasUsage]);
-
-  const withdrawContract = new ethers.Contract(
-    TOKAMAK_GOERLI_CONTRACTS.L2Bridge,
-    L2BridgeAbi,
-    l2Pro
-  );
+  }, [wrapUnwrapGasUsage, mode]);
 
   useEffect(() => {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
-        const isETH = inToken.isNativeCurrency?.includes(
-          SupportedChainId.MAINNET
-        );
+        const isETH = checkIsETH(inToken);
         const parsedAmount = inToken.amountBN;
         switch (mode) {
           case "Swap":
             return swapGasUseEstimate;
           case "ETH-Unwrap":
             return wrapUnwrapGasEstimate;
-
           case "ETH-Wrap":
             return wrapUnwrapGasEstimate;
-
           case "Unwrap":
             return wrapUnwrapGasEstimate;
           case "Wrap":
@@ -100,52 +95,63 @@ export function useGasFee() {
             }
 
             if (isETH) {
-              return _depositETH_contract.estimateGas.depositETH({
+              const estimatedGasUsage =
+                await _depositETH_contract.estimateGas.depositETH({
+                  //@ts-ignore
+                  account: address,
+                  args: [200000, "0x"],
+                  //need to put gasAmount with gasOrcale later
+                  value: parsedAmount as bigint,
+                });
+
+              return calculateGasMargin(
+                BigNumber.from(estimatedGasUsage)
+              ).toBigInt();
+            }
+
+            const estimatedGasUsage =
+              await _depositERC20_contract.estimateGas.depositERC20({
                 //@ts-ignore
                 account: address,
                 //@ts-ignore
-                args: [200000, "0x"],
-                //need to put gasAmount with gasOrcale later
-                value: parsedAmount as bigint,
+                args: [
+                  inToken.address[inNetwork.chainName],
+                  outTokenAddress,
+                  parsedAmount,
+                  200000,
+                  "0x",
+                ],
               });
-            }
-
-            return _depositERC20_contract.estimateGas.depositERC20({
-              //@ts-ignore
-              account: address,
-              //@ts-ignore
-              args: [
-                inToken.address[inNetwork.chainName],
-                outTokenAddress,
-                parsedAmount,
-                200000,
-                "0x",
-              ],
-            });
+            return calculateGasMargin(
+              BigNumber.from(estimatedGasUsage)
+            ).toBigInt();
           case "Withdraw":
             // Set the gas limit as default value when insufficient balance or non-approval
-            if (isBalanceOver || !isApproved) {
+            if (isBalanceOver || !isApproved || !provider) {
               return 1400000;
             }
+
+            const withdrawContract = new ethers.Contract(
+              TOKAMAK_CONTRACTS.L2Bridge,
+              L2BridgeAbi,
+              provider
+            );
+            const l2Provider = asL2Provider(provider);
 
             if (isETH) {
               const tx = await withdrawContract.populateTransaction.withdraw(
                 predeploys.OVM_ETH,
                 parsedAmount,
-                0,
+                1_300_000,
                 "0x"
               );
-
-              tx.from = address;
-
-              const l2ProSDK = titanSDK.asL2Provider(
-                getProvider(providers.l2Provider)
+              const estimateTotalGasCost =
+                await l2Provider.estimateTotalGasCost({ ...tx, from: address });
+              console.log(
+                "estimateTotalGasCost",
+                estimateTotalGasCost.toString()
               );
-              const signer = l2ProSDK?.getSigner(address);
-
-              const estimateProvider = signer?.provider;
-
-              return estimateProvider?.estimateTotalGasCost(tx);
+              return estimateTotalGasCost;
             }
             const tx = await withdrawContract.populateTransaction.withdraw(
               inToken.address[inNetwork.chainName],
@@ -153,14 +159,10 @@ export function useGasFee() {
               0,
               "0x"
             );
-            tx.from = address;
-            const l2ProSDK = titanSDK.asL2Provider(
-              getProvider(providers.l2Provider)
+            const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
+              { ...tx, from: address }
             );
-            const signer = l2ProSDK?.getSigner(address);
-
-            const estimateProvider = signer?.provider;
-            return estimateProvider?.estimateTotalGasCost(tx);
+            return estimateTotalGasCost;
           default:
             return;
         }
@@ -175,7 +177,7 @@ export function useGasFee() {
             if (mode !== "Withdraw") {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
               const parsedTotalGasCost = ethers.utils.formatUnits(
-                totalGasCost.toString(),
+                layer === "L2" ? estimatedGasUsage : totalGasCost.toString(),
                 "ether"
               );
 
@@ -201,23 +203,18 @@ export function useGasFee() {
     outToken,
     inNetwork,
     outNetwork,
-    // _depositETH_contract,
-    // _depositERC20_contract,
-    // _withdraw_contract,
     provider,
     feeData,
     swapGasUseEstimate,
+    wrapUnwrapGasEstimate,
+    layer,
   ]);
 
   const gasCostUS = useMemo(() => {
     if (totalGasCost && tokenMarketPrice) {
-      if (mode !== "Withdraw") {
-        return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
-      } else {
-        return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 5);
-      }
+      return commafy(Number(totalGasCost) * Number(tokenMarketPrice), 2);
     }
   }, [totalGasCost, tokenMarketPrice, mode]);
 
-  return { totalGasCost, gasCostUS };
+  return { totalGasCost, gasCostUS, gasLimit };
 }

@@ -6,7 +6,7 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import commafy, { commafyWithUndefined } from "@/utils/trim/commafy";
 import { useRemoveLiquidity } from "@/hooks/pool/useLiquidity";
 import { convertFeeToPercent } from "@/utils/pool/convertFeeToPercent";
-import { T_PoolModal } from "@/recoil/modal/atom";
+import { T_PoolModal, poolModalStatus } from "@/recoil/modal/atom";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import usePreview from "@/hooks/modal/usePreviewModal";
@@ -15,6 +15,8 @@ import { usePriceTickConversion } from "@/hooks/pool/usePoolData";
 import { useIncreaseAmount } from "@/hooks/pool/useIncreaseAmount";
 import useConnectedNetwork from "@/hooks/network";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
+import { useRecoilValue } from "recoil";
+import { useMemo } from "react";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -24,9 +26,6 @@ const TokenPairTitle = (props: {
   const { info } = usePositionInfo();
 
   if (!info) return null;
-  const token0 = info.token0;
-  const token1 = info.token1;
-
   const { token0Symbol, token1Symbol } = useConvertWETH();
 
   const isBigFont = page === "increaseLiquidity" || page === "removeLiquidity";
@@ -49,11 +48,10 @@ const TokenPairTitle = (props: {
 
 export default function Range(props: {
   page: T_PoolModal;
-  estimatedGas?: string;
+  estimatedGas: number | undefined | null;
   style?: {};
 }) {
   const { page, estimatedGas, style } = props;
-
   const { info } = usePositionInfo();
 
   if (!info) return null;
@@ -64,7 +62,66 @@ export default function Range(props: {
   const { poolModal } = usePreview();
   const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
   const { inToken, outToken } = useInOutTokens();
-  const { layer } = useConnectedNetwork();
+  const modalStatus = useRecoilValue(poolModalStatus);
+
+  const token0CurrentAmount = useMemo(() => {
+    return page === "addLiquidity" ||
+      modalStatus === "increaseLiquidity" ||
+      modalStatus === "removeLiquidity"
+      ? undefined
+      : smallNumberFormmater({
+          amount: token0Amount.toString(),
+          decimals: 6,
+          minimumValue: 0.000001,
+        });
+  }, [page, modalStatus, token0Amount]);
+  const alter0Amount = useMemo(() => {
+    return page === "addLiquidity"
+      ? token0ParsedAmount ?? "0.00"
+      : modalStatus === "increaseLiquidity"
+      ? smallNumberFormmater({
+          amount: inToken?.parsedAmount?.toString(),
+          decimals: 6,
+          trimed: false,
+          removeComma: true,
+        })
+      : modalStatus === "removeLiquidity"
+      ? smallNumberFormmater({
+          amount: amount0Removed?.toString(),
+          decimals: 6,
+          minimumValue: 0.000001,
+        })
+      : undefined;
+  }, [page, modalStatus, token0ParsedAmount, amount0Removed]);
+  const token1CurrentAmount = useMemo(() => {
+    return page === "addLiquidity" ||
+      modalStatus === "increaseLiquidity" ||
+      modalStatus === "removeLiquidity"
+      ? undefined
+      : smallNumberFormmater({
+          amount: token1Amount.toString(),
+          decimals: 6,
+          minimumValue: 0.000001,
+        });
+  }, [page, modalStatus, token1Amount]);
+  const alter1Amount = useMemo(() => {
+    return page === "addLiquidity"
+      ? token1ParsedAmount ?? "0.00"
+      : modalStatus === "increaseLiquidity"
+      ? smallNumberFormmater({
+          amount: outToken?.parsedAmount?.toString(),
+          decimals: 6,
+          trimed: false,
+          removeComma: true,
+        })
+      : modalStatus === "removeLiquidity"
+      ? smallNumberFormmater({
+          amount: amount1Removed?.toString(),
+          decimals: 6,
+          minimumValue: 0.000001,
+        })
+      : undefined;
+  }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   return (
     <Flex
@@ -104,47 +161,34 @@ export default function Range(props: {
       </Flex>
       <RangeToken
         token={token1}
-        amount={page === "addLiquidity" ? undefined : commafy(token1Amount, 6)}
+        amount={token1CurrentAmount}
         page={page}
-        alterAmount={
-          page === "addLiquidity"
-            ? token1ParsedAmount ?? "0.00"
-            : page === "increaseLiquidity"
-            ? smallNumberFormmater(outToken?.parsedAmount, 6, false, true)
-            : commafy(amount1Removed, 6)
-        }
+        alterAmount={alter1Amount}
         style={{ marginBottom: "9px" }}
       />
       <RangeToken
         token={token0}
-        amount={page === "addLiquidity" ? undefined : commafy(token0Amount, 6)}
+        amount={token0CurrentAmount}
         page={page}
-        alterAmount={
-          page === "addLiquidity"
-            ? token0ParsedAmount ?? "0.00"
-            : page === "increaseLiquidity"
-            ? smallNumberFormmater(inToken?.parsedAmount, 6, false, true)
-            : commafy(amount0Removed, 6)
-        }
+        alterAmount={alter0Amount}
       />
-      {(page === "addLiquidity" ||
-        (page === "increaseLiquidity" && estimatedGas)) && (
+      {page === "addLiquidity" || modalStatus === "increaseLiquidity" ? (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
           <Flex flexDir={"column"} pt={"8px"} rowGap={"6px"}>
             <Flex justifyContent={"space-between"}>
-              <Text fontSize={"14px"}>
-                {layer === "L1"
-                  ? "Estimated gas fee "
-                  : "Estimated L2 execution fee"}
-              </Text>
-              <Text fontSize={"16px"} fontWeight={500}>
-                {`$${estimatedGas}`}
+              <Text fontSize={"14px"}>{"Estimated gas fee"}</Text>
+              <Text
+                fontSize={"16px"}
+                fontWeight={500}
+                color={estimatedGas ? "#fff" : "#A0A3AD"}
+              >
+                {estimatedGas ? `$${commafy(estimatedGas, 2)}` : "NA"}
               </Text>
             </Flex>
           </Flex>
         </Flex>
-      )}
+      ) : undefined}
       {(page === "collectFee" || poolModal === "removeLiquidity") && (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
           <Flex h="1px" borderBottom={"1px solid #2E313A"}></Flex>
@@ -153,26 +197,32 @@ export default function Range(props: {
               <Text fontSize={"14px"}>Fee</Text>
               <Flex alignItems={"center"}>
                 <Text>
-                  {smallNumberFormmater(
-                    commafy(info?.token0CollectedFee, 8) ?? "-"
-                  )}{" "}
+                  {smallNumberFormmater({
+                    amount: info.token0CollectedFee,
+                    minimumValue: 0.000001,
+                  })}{" "}
                   {info?.token0.symbol}
                 </Text>
                 <Text w={"10px"} mx={"2px"}>
                   +
                 </Text>
                 <Text>
-                  {smallNumberFormmater(
-                    commafy(info?.token1CollectedFee, 8) ?? "-"
-                  )}{" "}
+                  {smallNumberFormmater({
+                    amount: info.token1CollectedFee,
+                    minimumValue: 0.000001,
+                  })}{" "}
                   {info?.token1.symbol}
                 </Text>
               </Flex>
             </Flex>
             <Flex justifyContent={"space-between"}>
               <Text fontSize={"14px"}>Estimated gas fee</Text>
-              <Text fontSize={"16px"} fontWeight={500}>
-                {`$${estimatedGas}`}
+              <Text
+                fontSize={"16px"}
+                fontWeight={500}
+                color={estimatedGas ? "#fff" : "#A0A3AD"}
+              >
+                {estimatedGas ? `$${commafy(estimatedGas, 2)}` : "NA"}
               </Text>
             </Flex>
           </Flex>

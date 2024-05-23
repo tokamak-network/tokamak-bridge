@@ -17,6 +17,7 @@ import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import useAmountModal from "@/hooks/modal/useAmountModal";
 import { isETH, isWETH } from "@/utils/token/isETH";
+import { useGetMode } from "../mode/useGetMode";
 
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
@@ -42,6 +43,7 @@ export default function useTokenModal() {
 
   const simpleCloseCheck = mobileTokenModal;
   const { onCloseAmountModal } = useAmountModal();
+  const { mode } = useGetMode();
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
 
@@ -93,7 +95,7 @@ export default function useTokenModal() {
             : false;
 
         //remove if same token is selected at other side
-        if (isDuplicated || isETHPair) {
+        if (isDuplicated || (isETHPair && mode === "Pool")) {
           onCloseAmountModal();
           if (isMobile) {
             onCloseTokenModal();
@@ -122,7 +124,14 @@ export default function useTokenModal() {
             });
       }
     },
-    [chainName, selectedInToken, selectedOutToken, tokenModal, connectedChainId]
+    [
+      chainName,
+      selectedInToken,
+      selectedOutToken,
+      tokenModal,
+      connectedChainId,
+      mode,
+    ]
   );
 
   return {

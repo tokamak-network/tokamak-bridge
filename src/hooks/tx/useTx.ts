@@ -1,7 +1,6 @@
-import { is } from "date-fns/locale";
 import { TxSort, ActionSort } from "@/types/tx/txType";
-import { ethers } from "ethers";
-import { useEffect, useMemo, useState } from "react";
+import { ethers, providers } from "ethers";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
@@ -12,6 +11,7 @@ import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGE
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
 import WethABi from "constant/abis/WETH.json";
 import UniswapV3Pool from "constant/abis/IUniswapV3Pool.json";
+import USDTAbi from "constant/abis/USDT.json";
 import { getWETHAddressByChainId } from "@/utils/token/isETH";
 import { useRecoilState } from "recoil";
 import {
@@ -21,28 +21,26 @@ import {
   txPendingStatus,
 } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
-import { useTONAddress } from "../token/useTonConctrac";
 import { transactionModalStatus } from "@/recoil/modal/atom";
-import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
-import useMediaView from "../mediaView/useMediaView";
 import {
   TON_ADDRESS_BY_CHAINID,
   WETH_ADDRESS_BY_CHAINID,
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 import { Log } from "viem";
+import { useGetMode } from "../mode/useGetMode";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
+  const USDT_I = new ethers.utils.Interface(USDTAbi);
   const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
   const UniswapV3PoolI = new ethers.utils.Interface(UniswapV3Pool);
-
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
     L1CrossDomainMessengerAbi
   );
@@ -58,6 +56,7 @@ const getInterface = () => {
     UniswapV3PoolI,
     L1CrossDomainMessengerI,
     ETHSwapperI,
+    USDT_I,
   };
 };
 
@@ -106,6 +105,10 @@ const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.removeLiquidity;
       });
+    case "Approve" || "Revoke":
+      return logs.filter((log) => {
+        return log.topics[0] === eventSignature.approve;
+      });
     default:
       return undefined;
   }
@@ -138,46 +141,15 @@ const getTokenAddress = (
   return isETH && WETHAddress === tokenAddress ? "ETH" : tokenAddress ?? "0x";
 };
 
-// const getArgs = (txSort: TxSort, logs: Log<bigint, number>[]) => {
-//   const { l1BridgeI, l2BridgeI, routerI, erc20I, swapperI } = getInterface();
-//   const args = () => {
-//     switch (txSort) {
-//       //uniswap
-//       case "Add Liquidity":
-//         return;
-//       case "Remove Liquidity":
-//         return;
-//       case "Swap":
-//         return;
-//       case "Collect Fee":
-//         return;
-//       //bridge
-//       case "Deposit":
-//         return;
-//       case "Withdraw":
-//         return;
-//       case "Wrap":
-//         const result = swapperI.parseLog(logs[logs.length - 1]);
-//         const { args } = result;
-//         return args;
-//       case "Unwrap":
-//         return;
-//       case "Approve":
-//         return;
-//     }
-//   };
-//   return args;
-// };
-
 export function useTransaction() {
-  const [txData, setTxData] = useRecoilState(txDataStatus);
-  const { connectedChainId } = useConnectedNetwork();
+  const [txData] = useRecoilState(txDataStatus);
 
   const pendingTransactionToApprove = useMemo(() => {
     if (txData)
       return Object.entries(txData).filter(([, value]) => {
         return (
-          value.txSort === "Approve" && value.transactionHash === undefined
+          (value.txSort === "Approve" || value.txSort === "Revoke") &&
+          value.transactionHash === undefined
         );
       });
   }, [txData]);
@@ -189,12 +161,6 @@ export function useTransaction() {
       });
     return undefined;
   }, [txData]);
-
-  // useEffect(() => {
-  //   if (pendingTransaction?.length === 1) {
-  //     if (txCheckError && error) return setTxData(undefined);
-  //   }
-  // }, [txCheckData, txCheckError, error, pendingTransaction]);
 
   const isPending = useMemo(() => {
     if (pendingTransaction && pendingTransaction.length > 0) {
@@ -223,9 +189,22 @@ export function useTransaction() {
     }
   }, [txData]);
 
-  useEffect(() => {
-    setTxData(undefined);
-  }, [connectedChainId]);
+  const confirmedRevokeTransaction = useMemo(() => {
+    if (txData) {
+      const filteredData = Object.entries(txData).filter(([, value]) => {
+        return (
+          value.txSort === "Revoke" && value.transactionState === "success"
+        );
+      })[0];
+      if (filteredData && filteredData[1]) {
+        return filteredData[1];
+      }
+    }
+  }, [txData]);
+
+  // useEffect(() => {
+  //   setTxData(undefined);
+  // }, [connectedChainId]);
 
   return {
     allTransaction: txData,
@@ -234,6 +213,7 @@ export function useTransaction() {
     pendingTransactionToApprove,
     confirmedTransaction,
     confirmedApproveTransaction,
+    confirmedRevokeTransaction,
   };
 }
 
@@ -245,20 +225,72 @@ export function useTx(params: {
   actionSort?: ActionSort;
 }) {
   const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
-
-  const { connectedChainId } = useConnectedNetwork();
-
-  const { isLoading, isSuccess, isError, data } = useWaitForTransaction({
+  const { connectedChainId, layer } = useConnectedNetwork();
+  const { data, isLoading, isSuccess, isError } = useWaitForTransaction({
     hash,
     chainId: connectedChainId,
   });
+
+  // const [isLoading, setIsLoading] = useState<boolean>(false);
+  // const [isSuccess, setIsSuccess] = useState<boolean>(false);
+  // const [isError, setIsError] = useState<boolean>(false);
+  const { mode, subMode } = useGetMode();
+
+  /**
+   * using Ethers Provider
+   * to fix a bug to track transactions for the test purpose
+   */
+  // const { provider } = useProvier();
+  // useEffect(() => {
+  //   async function getTransactionWithRetry(
+  //     hash: string,
+  //     provider: providers.Provider,
+  //     retries = 5
+  //   ) {
+  //     setIsLoading(true);
+  //     setIsSuccess(false);
+  //     setIsError(false);
+  //     // for (let i = 0; i < retries; i++) {
+  //     try {
+  //       const transaction = await provider.getTransaction(hash);
+
+  //       //put some delay to wait for the transaction to be updated on L2
+  //       const delayTime =
+  //         mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
+  //       await new Promise((resolve) => setTimeout(resolve, delayTime));
+
+  //       const result = await transaction.wait();
+  //       if (result.status === 1) {
+  //         return setIsSuccess(true);
+  //       }
+  //       return setIsSuccess(false);
+  //     } catch (error) {
+  //       // console.log(
+  //       //   `Transaction with hash ${hash} could not be found. Retry ${
+  //       //     i + 1
+  //       //   }/${retries}`
+  //       // );
+  //       setIsSuccess(false);
+  //       setIsError(true);
+  //       // await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //     throw new Error(
+  //       `Transaction with hash ${hash} could not be found after ${retries} retries.`
+  //     );
+  //   }
+
+  //   if (hash && provider) {
+  //     getTransactionWithRetry(hash, provider);
+  //   }
+  // }, [hash, provider, mode, subMode, layer]);
 
   const [, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(
   //   selectedInTokenStatus
   // );
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
-
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
@@ -272,9 +304,13 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess) {
-      return setModalOpen("confirmed");
+      const delayTime =
+        mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
+      setTimeout(() => {
+        return setModalOpen("confirmed");
+      }, delayTime);
     }
-  }, [isSuccess]);
+  }, [isSuccess, layer, mode, subMode]);
 
   useEffect(() => {
     if (isError) {
@@ -327,14 +363,6 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isLoading && connectedChainId && hash) {
-      // if (selectedInToken && txSort !== "Approve") {
-      //   setSelectedInToken({
-      //     ...selectedInToken,
-      //     amountBN: null,
-      //     parsedAmount: null,
-      //   });
-      // }
-
       return setTxData({
         [hash]: {
           transactionHash: undefined,
@@ -351,6 +379,9 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
+      console.log("****");
+      console.log(data, txSort);
+
       const { logs, transactionHash } = data;
       const {
         l1BridgeI,
@@ -364,7 +395,6 @@ export function useTx(params: {
       setModalOpen("confirmed");
 
       switch (txSort) {
-        //Uniswap
         case "Add Liquidity":
           {
             const event = getEvent(logs, txSort);
@@ -451,6 +481,7 @@ export function useTx(params: {
         case "Remove Liquidity":
           {
             const event = getEvent(logs, txSort);
+
             if (event === undefined || event.length === 0) {
               return;
             }
@@ -757,7 +788,7 @@ export function useTx(params: {
         }
 
         //etc
-        case "Approve":
+        case "Approve": {
           const result = erc20I.parseLog(logs[logs.length - 1]);
           const { args } = result;
           return setTxData({
@@ -776,15 +807,36 @@ export function useTx(params: {
               actionSort,
             },
           });
+        }
+        case "Revoke": {
+          const result = erc20I.parseLog(logs[logs.length - 1]);
+          const { args } = result;
+          console.log("go?");
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: tokenAddress ?? "0x",
+                  amount: args.value.toBigInt(),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+              actionSort,
+            },
+          });
+        }
         default:
           break;
       }
     }
     if (isError && data && connectedChainId && hash) {
-      console.log(isError, hash);
       setModalOpen("error");
     }
-  }, [isSuccess, isError, txSort, data, tokenAddress, hash]);
+  }, [isSuccess, isError, data, tokenAddress, hash]);
 
   return { isLoading };
 }

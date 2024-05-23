@@ -9,7 +9,10 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import { useEffect, useState } from "react";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
@@ -37,14 +40,12 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   >(undefined);
 
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
-  const { layer } = useConnectedNetwork();
   useEffect(() => {
     const fetchData = async () => {
       if (isOpen === "collectFee") {
         const estimatedGas = await estimateGasToCollect();
-        return setEstimatedGasUsage(
-          smallNumberFormmater(commafy(estimatedGas?.toString(), 2))
-        );
+        const result = commafy(estimatedGas?.toString(), 2);
+        return setEstimatedGasUsage(result);
       }
     };
     fetchData();
@@ -94,8 +95,14 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                     <Text fontSize={14}>Total fees</Text>
                   </Flex>
                   <Flex justifyContent="end">
-                    <Text fontSize={16} fontWeight="semibold">
-                      {`$${totalMarketPrice}`}
+                    <Text
+                      fontSize={16}
+                      fontWeight="semibold"
+                      color={totalMarketPrice ? "#fff" : "#A0A3AD"}
+                    >
+                      {totalMarketPrice
+                        ? gasUsdFormatter(Number(totalMarketPrice))
+                        : "NA"}
                     </Text>
                   </Flex>
                 </Flex>
@@ -131,12 +138,14 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater(info?.token0CollectedFee, 6)}
+                    {smallNumberFormmater({
+                      amount: info?.token0CollectedFee,
+                      minimumValue: 0.000001,
+                    })}
                   </Text>
-                  <Text
-                    minW={"60px"}
-                    color={"#A0A3AD"}
-                  >{`$${token0Price}`}</Text>
+                  <Text minW={"60px"} color={"#A0A3AD"}>
+                    {gasUsdFormatter(Number(token0Price))}
+                  </Text>
                 </Flex>
               </Flex>
               <Flex justifyContent="space-between" mb="8px">
@@ -170,26 +179,30 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater(info?.token1CollectedFee, 6)}
+                    {smallNumberFormmater({
+                      amount: info?.token1CollectedFee,
+                      minimumValue: 0.000001,
+                    })}
                   </Text>
-                  <Text
-                    minW={"60px"}
-                    color={"#A0A3AD"}
-                  >{`$${token1Price}`}</Text>
+                  <Text minW={"60px"} color={"#A0A3AD"}>
+                    {gasUsdFormatter(Number(token1Price))}
+                  </Text>
                 </Flex>
               </Flex>
               <Box w={"100%"} h={"1px "} bgColor={"#313442"} />
               <Flex justifyContent="space-between" pt="8px">
                 <Flex justifyContent="start" alignItems="center">
                   <Text fontSize={14} color="#A0A3AD">
-                    {layer === "L1"
-                      ? "Estimated gas fee "
-                      : "Estimated L2 execution fee"}
+                    {"Estimated gas fee"}
                   </Text>
                 </Flex>
                 <Flex justifyContent="end">
-                  <Text fontSize={16} fontWeight="semibold">
-                    {`$${estimatedGasUsageValue ?? "-"}`}
+                  <Text
+                    fontSize={16}
+                    fontWeight="semibold"
+                    color={estimatedGasUsageValue ? "#fff" : "#A0A3AD"}
+                  >
+                    {`$${estimatedGasUsageValue ?? "NA"}`}
                   </Text>
                 </Flex>
               </Flex>

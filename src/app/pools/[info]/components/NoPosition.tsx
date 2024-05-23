@@ -2,7 +2,12 @@ import { Button, Text, Flex, Link, Box } from "@chakra-ui/react";
 
 export function NoPosition() {
   return (
-    <Flex flexDir={"column"} mt={"280px"} alignItems={"center"}>
+    <Flex
+      flexDir={"column"}
+      alignItems={"center"}
+      h={"100vh"}
+      justifyContent={"center"}
+    >
       <Text fontWeight={500} fontSize={28} h={"42px"} mb={"16px"}>
         Liquidity Unavailable Right Now
       </Text>

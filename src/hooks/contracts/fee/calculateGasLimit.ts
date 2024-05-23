@@ -1,51 +1,24 @@
-import { providerByChainId } from "@/config/getProvider";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { calculateGasMargin } from "@/utils/gas/calculateGasMargin";
-//@ts-ignore
-import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
-import { BigNumber, Contract, ethers } from "ethers";
+import { L2Provider, asL2Provider } from "@tokamak-network/titan-sdk";
+import { ethers } from "ethers";
+import { TransactionRequest } from "viem";
 
 export async function calculateGasLimit(
-  provider: ethers.providers.JsonRpcProvider,
+  provider:
+    | ethers.providers.JsonRpcProvider
+    | L2Provider<ethers.providers.JsonRpcProvider>,
   tx: ethers.utils.Deferrable<ethers.providers.TransactionRequest>,
   isLayer2: boolean,
-  isConnectedToMainNetwork: boolean | undefined
+  uiValue?: boolean
 ) {
-  if (!isLayer2) {
-    const estimatedGas = await provider.estimateGas(tx);
+  if (isLayer2 && uiValue) {
+    const l2Provider = asL2Provider(provider);
+    const estimatedGas = await l2Provider.estimateTotalGasCost(
+      tx as TransactionRequest
+    );
     return calculateGasMargin(estimatedGas);
   }
 
-  // if (isLayer2 && !isConnectedToMainNetwork) {
-  //   const gasPrice = await provider.getGasPrice();
-  //   const l2ProSDK = titanSDK.asL2Provider(
-  //     providerByChainId[
-  //       isConnectedToMainNetwork
-  //         ? SupportedChainId.TITAN
-  //         : SupportedChainId.DARIUS
-  //     ]
-  //   );
-  //   const totalGasCost = await l2ProSDK.estimateTotalGasCost(tx);
-  //   const estimatedGas = BigNumber.from(totalGasCost).div(gasPrice);
-  //   return calculateGasMargin(estimatedGas);
-  // }
-
-  try {
-    const estimatedGas = await provider.estimateGas(tx);
-    return calculateGasMargin(estimatedGas);
-  } catch (e) {
-    console.log(e);
-  }
-
-  // const gasPrice = await provider.getGasPrice();
-  // const l2ProSDK = titanSDK.asL2Provider(
-  //   providerByChainId[
-  //     isConnectedToMainNetwork
-  //       ? SupportedChainId.TITAN
-  //       : SupportedChainId.DARIUS
-  //   ]
-  // );
-  // const totalGasCost = await l2ProSDK.estimateTotalGasCost(tx);
-  // const estimatedGas = BigNumber.from(totalGasCost).div(gasPrice);
-  // return calculateGasMargin(estimatedGas);
+  const estimatedGas = await provider.estimateGas(tx);
+  return calculateGasMargin(estimatedGas);
 }

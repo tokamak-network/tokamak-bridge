@@ -16,10 +16,35 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { LoadingCircleSpinner } from "@/components/ui/CircleSpinner";
 
+const LoadingContainer = () => {
+  return (
+    <Flex w={"424px"} flexDir="column" pt={"134px"}>
+      <InfoHeader />
+      <Flex
+        flexDir="column"
+        border="1px solid #383736"
+        w="424px"
+        p={"20px"}
+        borderRadius={"16px"}
+        flexGrow={1}
+        rowGap={"16px"}
+        height={"712px"}
+        maxH={"712px"}
+      >
+        <LoadingCircleSpinner
+          width={88}
+          height={88}
+          containerHeight={"100%"}
+          isSlim={true}
+        />
+      </Flex>
+    </Flex>
+  );
+};
+
 export default function Page() {
   const { info } = usePositionInfo();
   const isLoading = useRecoilValue(ATOM_positionForInfo_loading);
-
   const { initializeTokenPairAmount } = useInOutTokens();
   const [, setAmountPercentage] = useRecoilState(removeAmount);
 
@@ -29,38 +54,11 @@ export default function Page() {
     setAmountPercentage(0);
   }, []);
 
-  if (isLoading) {
-    return (
-      <Flex w={"424px"} flexDir="column">
-        <InfoHeader />
-        <Flex
-          flexDir="column"
-          border="1px solid #383736"
-          w="424px"
-          p={"20px"}
-          borderRadius={"16px"}
-          flexGrow={1}
-          rowGap={"16px"}
-          height={"712px"}
-          maxH={"712px"}
-        >
-          <LoadingCircleSpinner
-            width={88}
-            height={88}
-            containerHeight={"100%"}
-            isSlim={true}
-          />
-        </Flex>
-      </Flex>
-    );
-  }
-
-  if (info === undefined) {
-    return <NoPosition />;
-  }
+  if (isLoading) return <LoadingContainer />;
+  if (info === undefined) return <NoPosition />;
 
   return (
-    <Flex w={"424px"} flexDir="column">
+    <Flex w={"424px"} flexDir="column" pt={"134px"}>
       <InfoHeader />
       <Flex
         flexDir="column"

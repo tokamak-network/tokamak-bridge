@@ -11,7 +11,6 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
-import JSBI from "jsbi";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
@@ -27,11 +26,12 @@ export const CollectFeeAsWETH = () => {
     <Flex
       w={"100%"}
       justifyContent={"space-between"}
-      alignItems={"center"}
       borderTop={"1px solid #313442"}
-      pt={"12px"}
+      pt={"15px"}
     >
-      <Text fontSize={15}>Collect as WETH</Text>
+      <Text fontSize={15} pb={"2px"}>
+        Collect as WETH
+      </Text>
       <Switch
         size={"lg"}
         className="switch_info"
@@ -110,42 +110,60 @@ export default function UnclaimedEarnings(props: {
     <Flex
       bgColor="#1F2128"
       w="100%"
-      // h={wethCollecting ? "121" : "117px"}
+      minH={info?.hasETH && !subMode.remove ? "163px" : "115px"}
+      maxH={info?.hasETH && !subMode.remove ? "163px" : "115px"}
       py={"14px"}
       px="20px"
       borderRadius={"12px"}
       // alignItems={"space-between"}
       rowGap={"8px"}
       flexDir={"column"}
+      justifyContent={"space-between"}
     >
-      <Flex justifyContent={"space-between"}>
+      <Flex justifyContent={"space-between"} h={"100%"}>
         {hasTokenPrice ? (
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
               {`$${commafy(totalMarketPrice, 2, undefined, "0.00")}`}
             </Text>
-            <Flex alignItems={"center"} color="#A0A3AD">
+            <Flex
+              alignItems={"center"}
+              color="#A0A3AD"
+              lineHeight={"24px"}
+              mt={"auto"}
+            >
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(token0Amount)} {token0Symbol}
+                {smallNumberFormmater({
+                  amount: token0Amount,
+                })}{" "}
+                {token0Symbol}
               </Text>
               <Text w={"10px"} mx={"2px"}>
                 +
               </Text>
               <Text fontSize={"12px"}>
-                {smallNumberFormmater(token1Amount)} {token1Symbol}
+                {smallNumberFormmater({ amount: token1Amount })} {token1Symbol}
               </Text>
             </Flex>
           </Flex>
         ) : (
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text>Unclaimed fee</Text>
-            <Flex flexDir={"column"} alignItems={"flex-start"} color="#fff">
+            <Flex
+              flexDir={"column"}
+              alignItems={"flex-start"}
+              color="#fff"
+              lineHeight={"24px"}
+              mt={"auto"}
+            >
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(token0Amount)} {token0Symbol} +
+                {smallNumberFormmater({ amount: token0Amount })} {token0Symbol}{" "}
+                +
               </Text>
               <Text fontSize={"18px"}>
-                {smallNumberFormmater(token1Amount)} {info?.token1.symbol}
+                {smallNumberFormmater({ amount: token1Amount })}{" "}
+                {info?.token1.symbol}
               </Text>
             </Flex>
           </Flex>

@@ -27,7 +27,7 @@ export default function AddLiquidity() {
   }, [connectedChainId]);
 
   return (
-    <Flex flexDir={"column"} w={"872px"} rowGap={"16px"}>
+    <Flex flexDir={"column"} w={"872px"} rowGap={"16px"} pt={"134px"}>
       <TopLine title={"Add Liquidity"} clear={true} switcher={true} />
       <Flex
         border="1px solid #20212B"

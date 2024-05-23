@@ -12,18 +12,18 @@ export function useSettingValue() {
     return new Percent(Number(roundedSlippage), 10_000);
   }, [txSettingValue.slippage]);
 
-  const initialDeadline = txSettingValue.deadline * 60;
+  const initialDeadline = Number(txSettingValue.deadline) * 60;
   const [deadlineBySeconds, setDeadlineInSeconds] = useState(
     Math.floor(Date.now() / 1000) + initialDeadline
   );
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setDeadlineInSeconds((prevDeadline) => prevDeadline + 1);
-    }, 1000); //update every second
+      setDeadlineInSeconds(Math.floor(Date.now() / 1000) + initialDeadline);
+    }, 1000); // update every second
 
     return () => clearInterval(interval);
-  }, [txSettingValue.deadline]);
+  }, [initialDeadline]);
 
   const deadlineByMins = useMemo(() => {
     return txSettingValue.deadline;

@@ -14,6 +14,10 @@ import { usePricePair } from "@/hooks/price/usePricePair";
 import { usePoolContract } from "@/hooks/pool/usePoolContract";
 import { estimatedGasFee } from "@/recoil/global/transaction";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 
 const Title = (props: {
   isExpanded: boolean;
@@ -74,11 +78,21 @@ const Title = (props: {
       >
         <Flex maxH={"16px"} alignItems={"center"}>
           <Text>
-            {commafy(amount0Removed, 4, undefined, "0")} {token0Symbol}
+            {smallNumberFormmater({
+              amount: amount0Removed?.toString(),
+              decimals: 6,
+              minimumValue: 0.000001,
+            })}{" "}
+            {token0Symbol}
           </Text>
           <Text mx={"6px"}>+</Text>
           <Text>
-            {commafy(amount1Removed, 4, undefined, "0")} {token1Symbol}
+            {smallNumberFormmater({
+              amount: amount1Removed?.toString(),
+              decimals: 6,
+              minimumValue: 0.000001,
+            })}{" "}
+            {token1Symbol}
           </Text>
         </Flex>
         <Flex alignItems={"center"}>
@@ -90,7 +104,9 @@ const Title = (props: {
             ml={"6px"}
             mr={"13px"}
           >
-            ${commafy(estimatedGasUsageValue?.toString(), 2)}
+            {estimatedGasUsageValue
+              ? `$${commafy(estimatedGasUsageValue?.toString(), 2)}`
+              : "NA"}
           </Text>
           <motion.div animate={arrowControl}>
             <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
@@ -107,7 +123,10 @@ const DivisionLine = () => {
   );
 };
 
-const ContentTitle = (props: { title: string; amount: string }) => {
+const ContentTitle = (props: {
+  title: string;
+  amount: string | number | undefined;
+}) => {
   const { title, amount } = props;
 
   return (
@@ -119,12 +138,12 @@ const ContentTitle = (props: { title: string; amount: string }) => {
       h={"14px"}
     >
       <Text>{title}</Text>
-      <Text>{amount}</Text>
+      <Text color={amount ? "#fff" : "#A0A3AD"}>{amount ?? "NA"}</Text>
     </Flex>
   );
 };
 
-const ContentSub = (props: { title: string; amount: string }) => {
+const ContentSub = (props: { title: string; amount: string | number }) => {
   const { title, amount } = props;
 
   return (
@@ -152,10 +171,10 @@ const Content = (props: {
   const { amount0Removed, amount1Removed, totalRemovedMarketPrice } =
     useRemoveLiquidity();
   const { token0Symbol, token1Symbol } = useConvertWETH();
-  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
-  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+  const token0Amount = info?.token0CollectedFee;
+  const token1Amount = info?.token1CollectedFee;
 
-  const { totalMarketPrice, hasTokenPrice } = usePricePair({
+  const { totalMarketPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
@@ -166,31 +185,52 @@ const Content = (props: {
     return (
       <Flex>
         <Box flex={1} flexDir={"column"}>
-          <DivisionLine></DivisionLine>
+          {/* <DivisionLine></DivisionLine> */}
           <Flex flexDir={"column"} rowGap={"16px"}>
             <ContentTitle
               title="Liquidity to be removed"
-              amount={`$${totalRemovedMarketPrice}`}
+              amount={gasUsdFormatter(
+                Number(totalRemovedMarketPrice?.replaceAll(",", ""))
+              )}
             />
             <ContentSub
               title={token0Symbol ?? "-"}
-              amount={commafy(amount0Removed, 4)}
+              amount={smallNumberFormmater({
+                amount: amount0Removed,
+                decimals: 6,
+                minimumValue: 0.000001,
+              })}
             />
             <ContentSub
               title={token1Symbol ?? "-"}
-              amount={commafy(amount1Removed, 4)}
+              amount={smallNumberFormmater({
+                amount: amount1Removed,
+                decimals: 6,
+                minimumValue: 0.000001,
+              })}
             />
           </Flex>
           <DivisionLine></DivisionLine>
           <Flex flexDir={"column"} rowGap={"16px"}>
-            <ContentTitle title="Fees" amount={`$${totalMarketPrice}`} />
+            <ContentTitle
+              title="Earned fees"
+              amount={gasUsdFormatter(
+                Number(totalMarketPrice?.replaceAll(",", ""))
+              )}
+            />
             <ContentSub
               title={token0Symbol ?? "-"}
-              amount={commafy(info.token0CollectedFee, 4)}
+              amount={smallNumberFormmater({
+                amount: info.token0CollectedFee,
+                minimumValue: 0.000001,
+              })}
             />
             <ContentSub
               title={token1Symbol ?? "-"}
-              amount={commafy(info.token1CollectedFee, 4)}
+              amount={smallNumberFormmater({
+                amount: info.token1CollectedFee,
+                minimumValue: 0.000001,
+              })}
             />
           </Flex>
         </Box>
@@ -201,8 +241,8 @@ const Content = (props: {
 };
 
 export default function TxDetails() {
-  const [isExpanded, setIsExpended] = useState<boolean>(false);
-  const [amountPercentage, setAmountPercentage] = useRecoilState(removeAmount);
+  const [isExpanded, setIsExpended] = useState<boolean>(true);
+  const amountPercentage = useRecoilValue(removeAmount);
 
   if (amountPercentage) {
     return (
@@ -218,13 +258,11 @@ export default function TxDetails() {
         pb={isExpanded ? "20px" : ""}
         zIndex={0}
       >
-        <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-        <Content
-          isExpanded={isExpanded}
-          setIsExpended={setIsExpended}
-        ></Content>
+        {/* <Title isExpanded={isExpanded} setIsExpended={setIsExpended} /> */}
+        <Content isExpanded={true} setIsExpended={setIsExpended}></Content>
       </Flex>
     );
   }
+
   return null;
 }

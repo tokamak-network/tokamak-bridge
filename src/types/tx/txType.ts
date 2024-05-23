@@ -9,7 +9,7 @@ type UniswapTxSort =
 type BridgeTxSort = "Deposit" | "Withdraw";
 type SwapperTxSort = "Wrap" | "Unwrap";
 type ETHWrapTxSort = "ETH-Wrap" | "ETH-Unwrap";
-type EtcTxSort = "Approve";
+type EtcTxSort = "Approve" | "Revoke";
 type UserHistorySort = "Claim";
 
 export type TxSort =

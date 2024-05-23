@@ -175,9 +175,9 @@ export function useInOutTokens() {
   }, [connectedChainId, provider, inToken?.tokenAddress]);
 
   //fix a issue toast shows up when a token is changed
-  useEffect(() => {
-    setTxData(undefined);
-  }, [inToken?.address]);
+  // useEffect(() => {
+  //   setTxData(undefined);
+  // }, [inToken?.address]);
 
   return {
     inToken,

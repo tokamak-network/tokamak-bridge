@@ -59,6 +59,7 @@ export default function IncreaseModal() {
       <ModalOverlay opacity={0.1} bg="blackAlpha.900" />
       <ModalContent
         // h={"100%"}
+
         w="404px"
         bg={"#1F2128"}
         p="20px"
@@ -83,7 +84,7 @@ export default function IncreaseModal() {
         <Range
           style={{ background: "#0F0F12" }}
           page={poolModal}
-          estimatedGas={commafy(gasToAdd)}
+          estimatedGas={gasToAdd}
         />
         <PriceRange info={info} />
         <Flex w={"100%"}>

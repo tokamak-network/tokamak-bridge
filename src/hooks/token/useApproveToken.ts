@@ -28,15 +28,16 @@ export function useAllowance(params: {
     address: tokenAddress,
     args: address && contractAddress ? [address, contractAddress] : undefined,
     watch: true,
+    cacheOnBlock: true,
   });
 
   const inputTokenAmount = inputTokenParam ?? 0;
 
   const isApproved = useMemo(() => {
+    if (isETH(token)) {
+      return true;
+    }
     if (allowance !== undefined && inputTokenAmount !== undefined) {
-      if (isETH(token)) {
-        return true;
-      }
       if (Number(allowance) === 0) {
         return false;
       }
@@ -48,7 +49,14 @@ export function useAllowance(params: {
     return false;
   }, [allowance, token, inputTokenAmount]);
 
-  return { isApproved, allowance };
+  const allowanceIsBiggerThanZero = useMemo(() => {
+    if (allowance !== undefined) {
+      return Number(allowance) > 0;
+    }
+    return false;
+  }, [allowance]);
+
+  return { isApproved, allowance, allowanceIsBiggerThanZero };
 }
 
 export function useApproveToeken({

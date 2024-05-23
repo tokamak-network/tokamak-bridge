@@ -9,7 +9,10 @@ import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { usePricePair } from "@/hooks/price/usePricePair";
 import { useRouter } from "next/navigation";
 import { useCallback, useMemo, useEffect, useState } from "react";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
@@ -82,8 +85,8 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const { switchNetworkAsync } = useSwitchNetwork();
 
   const noMarketPrices =
-    (info?.token0MarketPrice === undefined &&
-      info?.token1MarketPrice === undefined) ||
+    info?.token0MarketPrice === undefined ||
+    info?.token1MarketPrice === undefined ||
     Number(info.token0MarketPrice) + Number(info.token1MarketPrice) === 0;
 
   const onClickToRoute = useCallback(
@@ -115,11 +118,9 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
     ]
   );
 
-  const actionDisabled = info?.owner !== address;
-
-  const { ratio, inverted } = usePoolInfo();
-  // const [token0Ratio, setToken0Ratio] = useState<number | undefined>(undefined);
-  // const [token1Ratio, setToken1Ratio] = useState<number | undefined>(undefined);
+  // const actionDisabled = info?.owner !== address;
+  const actionDisabled = false;
+  const { ratio } = usePoolInfo();
 
   const token0Ratio = useMemo(() => {
     if (info?.isClosed) return undefined;
@@ -194,7 +195,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               height={"57px"}
               color={noMarketPrices ? "#A0A3AD" : ""}
             >
-              {noMarketPrices ? "-" : `$${splitNumber(totalMarketPrice)}`}
+              {noMarketPrices ? "-" : gasUsdFormatter(Number(totalMarketPrice))}
             </Text>
           </Flex>
           {!actionDisabled && (
@@ -234,24 +235,20 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
         >
           <TokenLiquidityData
             token={info.token1}
-            liquidityAmount={smallNumberFormmater(
-              info.token1Amount.toString(),
-              6,
-              undefined,
-              undefined,
-              0.000001
-            )}
+            liquidityAmount={smallNumberFormmater({
+              amount: Number(info.token1Amount.toString()),
+              trimed: true,
+              trimedDecimals: 13,
+            })}
             liquidityPercent={token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
-            liquidityAmount={smallNumberFormmater(
-              info.token0Amount.toString(),
-              6,
-              undefined,
-              undefined,
-              0.000001
-            )}
+            liquidityAmount={smallNumberFormmater({
+              amount: info.token0Amount.toString(),
+              trimed: true,
+              trimedDecimals: 13,
+            })}
             liquidityPercent={token0Ratio}
           />
         </Flex>
