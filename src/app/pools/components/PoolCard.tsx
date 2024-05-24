@@ -74,6 +74,8 @@ export default function PoolCard(props: PoolCardDetail) {
     token1FeeValue,
     isClosed,
     chainId,
+    token0CollectedFeeBN,
+    token1CollectedFeeBN,
   } = props;
 
   const feePercent = useMemo(() => {
