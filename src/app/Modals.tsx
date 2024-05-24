@@ -8,7 +8,7 @@ import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
-import FwComingModal from "@/components/fw/modal/coming";
+import FwComingModal from "@/components/fw/coming/swap";
 
 export default function Modals() {
   const { mobileView } = useMediaView();

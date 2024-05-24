@@ -13,24 +13,40 @@ import {
 } from "@chakra-ui/react";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
 import CloseButton from "@/components/button/CloseButton";
-import FwComingOptionDetail from "../option/FwComingOptionDetail";
+import FwComingOptionDetail from "../../modal/option/FwComingOptionDetail";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
+import { useRecoilState } from "recoil";
+import { confirmWithdrawStats } from "@/recoil/modal/atom";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import commafy from "@/utils/trim/commafy";
 
 export default function FwComingModal() {
+  const { mobileView } = useMediaView();
   const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+  const { inToken } = useInOutTokens();
 
   const handleConfirm = () => {
-    alert("confirm");
+    setWithdrawStatus({ isOpen: true });
+    onCloseFwOptionModal();
   };
 
   return (
-    <Modal isOpen={fwOptionModal} onClose={onCloseFwOptionModal} isCentered>
+    <Modal
+      isOpen={fwOptionModal}
+      onClose={onCloseFwOptionModal}
+      motionPreset={mobileView ? "slideInBottom" : "none"}
+      isCentered={mobileView ? false : true}
+    >
       <ModalOverlay />
       <ModalContent
         width={"404px"}
         bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
+        marginTop={mobileView ? "auto" : undefined}
+        marginBottom={mobileView ? "0" : undefined}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
@@ -77,7 +93,7 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   color={"#007AFF"}
                 >
-                  10.00 USDC
+                  {inToken?.parsedAmount} {inToken?.tokenSymbol}
                 </Text>
               </Box>
               <Box mt={"12px"}>

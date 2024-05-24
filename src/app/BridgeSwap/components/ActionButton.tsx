@@ -20,6 +20,8 @@ import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
 
+import useFxOptionModal from "@/componenets/fw/hooks/useFwOptionModal";
+
 export default function ActionButton() {
   const { isConnected } = useAccount();
   const { mode, isReady } = useRecoilValue(actionMode);
@@ -77,6 +79,11 @@ export default function ActionButton() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
 
+  {
+    /** add coming code  @Robert */
+  }
+  const { onOpenFwOptionModal } = useFxOptionModal();
+
   return (
     <>
       <Button
@@ -94,7 +101,8 @@ export default function ActionButton() {
           isConnected === false
             ? () => connetAndDisconntWallet()
             : needToOpenWithdrawModal
-            ? () => setWithdrawStatus({ isOpen: true })
+            ? // ? () => setWithdrawStatus({ isOpen: true })
+              () => onOpenFwOptionModal()
             : needToOpenModal
             ? onOpenConfirmModal
             : onClick
