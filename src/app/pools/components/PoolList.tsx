@@ -38,7 +38,7 @@ export default function PoolList() {
         },
       }}
     >
-      <LPGuide />
+      {/* <LPGuide /> */}
       <AddLiquidity />
       {isSupportedChain &&
         positions === undefined &&
