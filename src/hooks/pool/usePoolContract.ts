@@ -499,7 +499,8 @@ export function usePoolContract() {
           address &&
           positionId &&
           removeLiquidityPercentage &&
-          UNISWAP_CONTRACT
+          UNISWAP_CONTRACT &&
+          provider
         ) {
           const {
             token0,
@@ -601,7 +602,7 @@ export function usePoolContract() {
               multicallParam,
             });
 
-            const txn = {
+            const txData = {
               data: calldata,
               to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
               from: address,
@@ -615,7 +616,13 @@ export function usePoolContract() {
                   layer === "L2",
                   estimateGas
                 )
-              : await provider?.estimateGas(txn);
+              : await getSingleCalldataGasLimit(
+                  provider,
+                  txData,
+                  calldata,
+                  layer === "L2",
+                  estimateGas
+                );
 
             if (estimateGas) return gasLimit;
 
@@ -631,7 +638,7 @@ export function usePoolContract() {
                 return;
               }
               const tx = await provider?.getSigner().sendTransaction({
-                ...txn,
+                ...txData,
                 gasLimit,
               });
               if (tx?.hash) return setTxHashToRemoveLiquidity(tx.hash as Hash);
