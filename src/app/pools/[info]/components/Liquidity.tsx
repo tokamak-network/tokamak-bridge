@@ -191,11 +191,13 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               Liquidity
             </Text>
             <Text
-              fontSize={"38px"}
+              fontSize={noMarketPrices ? "28px" : "38px"}
               height={"57px"}
               color={noMarketPrices ? "#A0A3AD" : ""}
             >
-              {noMarketPrices ? "-" : gasUsdFormatter(Number(totalMarketPrice))}
+              {noMarketPrices
+                ? "$NA"
+                : gasUsdFormatter(Number(totalMarketPrice))}
             </Text>
           </Flex>
           {!actionDisabled && (
