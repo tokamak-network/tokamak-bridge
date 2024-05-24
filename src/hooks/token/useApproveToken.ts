@@ -3,7 +3,7 @@ import { useInOutTokens } from "./useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useAccount } from "wagmi";
 import { Hash } from "viem";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { useIncreaseAmount } from "../pool/useIncreaseAmount";
@@ -29,7 +29,14 @@ export function useAllowance(params: {
     args: address && contractAddress ? [address, contractAddress] : undefined,
     watch: true,
     cacheOnBlock: true,
+    cacheTime: 10000,
   });
+  const [lastAllowance, setLastAllowance] = useState(allowance);
+  useEffect(() => {
+    if (allowance !== undefined) {
+      setLastAllowance(allowance);
+    }
+  }, [allowance]);
 
   const inputTokenAmount = inputTokenParam ?? 0;
 
@@ -50,11 +57,11 @@ export function useAllowance(params: {
   }, [allowance, token, inputTokenAmount]);
 
   const allowanceIsBiggerThanZero = useMemo(() => {
-    if (allowance !== undefined) {
+    if (lastAllowance !== undefined) {
       return Number(allowance) > 0;
     }
     return false;
-  }, [allowance]);
+  }, [lastAllowance]);
 
   return { isApproved, allowance, allowanceIsBiggerThanZero };
 }

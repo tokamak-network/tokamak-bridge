@@ -87,29 +87,31 @@ export default function ApproveToken() {
         >
           {text}
         </Text>
-        <Flex ml={"-5px"}>
-          <CustomTooltip
-            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
-            tooltipLabel={
-              <Flex
-                w={"240px"}
-                h={"45px"}
-                fontSize={11}
-                textAlign={"center"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                {
-                  <span>
-                    Approval for USDT must be revoked first <br />
-                    before a new amount is approved.
-                  </span>
-                }
-              </Flex>
-            }
-            style={{ px: "-5px", tooltipLineHeight: "15x", height: "45px" }}
-          ></CustomTooltip>
-        </Flex>
+        {isRevokeForUSDT && (
+          <Flex ml={"-5px"}>
+            <CustomTooltip
+              content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+              tooltipLabel={
+                <Flex
+                  w={"240px"}
+                  h={"45px"}
+                  fontSize={11}
+                  textAlign={"center"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  {
+                    <span>
+                      Approval for USDT must be revoked first <br />
+                      before a new amount is approved.
+                    </span>
+                  }
+                </Flex>
+              }
+              style={{ px: "-5px", tooltipLineHeight: "15x", height: "45px" }}
+            ></CustomTooltip>
+          </Flex>
+        )}
       </Flex>
       {isLoading && !isRevokeForUSDT ? (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
