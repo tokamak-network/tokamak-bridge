@@ -31,7 +31,11 @@ export function useAllowance(params: {
     cacheOnBlock: true,
     cacheTime: 10000,
   });
+
   const [lastAllowance, setLastAllowance] = useState(allowance);
+
+  //to remove flicker effect
+  //when the allowance is updated, we set the lastAllowance to the new allowance because it's undefined while it's fetching
   useEffect(() => {
     if (allowance !== undefined) {
       setLastAllowance(allowance);
@@ -44,17 +48,17 @@ export function useAllowance(params: {
     if (isETH(token)) {
       return true;
     }
-    if (allowance !== undefined && inputTokenAmount !== undefined) {
+    if (lastAllowance !== undefined && inputTokenAmount !== undefined) {
       if (Number(allowance) === 0) {
         return false;
       }
-      if ((allowance as BigInt) >= inputTokenAmount) {
+      if ((lastAllowance as BigInt) >= inputTokenAmount) {
         return true;
       }
       return false;
     }
     return false;
-  }, [allowance, token, inputTokenAmount]);
+  }, [lastAllowance, token, inputTokenAmount]);
 
   const allowanceIsBiggerThanZero = useMemo(() => {
     if (lastAllowance !== undefined) {
