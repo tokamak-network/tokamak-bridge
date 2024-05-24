@@ -473,11 +473,9 @@ export default function TokenInput(props: {
 
   const [triggerForSpinner] = useState<boolean>(false);
   const { subMode } = useGetMode();
-  const isPoolWithETH = useMemo(() => {
-    return mode === "Pool" && inToken
-      ? isETH(selectedInToken)
-      : isETH(selectedOutToken);
-  }, [mode, inToken, selectedInToken, selectedOutToken]);
+  const isNativeToken = useMemo(() => {
+    return inToken ? isETH(selectedInToken) : isETH(selectedOutToken);
+  }, [inToken, selectedInToken, selectedOutToken]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -576,7 +574,7 @@ export default function TokenInput(props: {
                   color={"#A0A3AD"}
                 >{`$${marketPrice}`}</Text>
               ))}
-            {hasMaxButton && !isMax && !isPoolWithETH && (
+            {hasMaxButton && !isMax && !isNativeToken && (
               <Button
                 w={"40px"}
                 h={"22px"}
