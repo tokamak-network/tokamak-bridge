@@ -84,7 +84,8 @@ export default function TutorialModal() {
     setModalOpen(false);
   }, []);
 
-  const isOpen = storedValue === false && !mobileView && mode !== "Pool";
+  // const isOpen = storedValue === false && !mobileView && mode !== "Pool";
+  const isOpen = false;
 
   return (
     <Modal onClose={() => {}} isOpen={isOpen} isCentered>
