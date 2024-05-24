@@ -17,6 +17,7 @@ import { useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
+import { BigNumber, ethers } from "ethers";
 
 export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const { info } = props;
@@ -24,8 +25,12 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const { collectFees, estimateGasToCollect } = usePoolContract();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
-  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
-  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+  const token0Amount = Number(
+    ethers.utils.formatEther(info?.token0CollectedFeeBN ?? BigNumber.from(0))
+  );
+  const token1Amount = Number(
+    ethers.utils.formatEther(info?.token1CollectedFeeBN ?? BigNumber.from(0))
+  );
 
   const { hasTokenPrice, totalMarketPrice, token0Price, token1Price } =
     usePricePair({
@@ -139,7 +144,9 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                 >
                   <Text fontWeight="semibold">
                     {smallNumberFormmater({
-                      amount: info?.token0CollectedFee,
+                      amount: ethers.utils.formatEther(
+                        info?.token0CollectedFeeBN
+                      ),
                       minimumValue: 0.000001,
                     })}
                   </Text>
@@ -180,7 +187,9 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                 >
                   <Text fontWeight="semibold">
                     {smallNumberFormmater({
-                      amount: info?.token1CollectedFee,
+                      amount: ethers.utils.formatEther(
+                        info?.token1CollectedFeeBN
+                      ),
                       minimumValue: 0.000001,
                     })}
                   </Text>

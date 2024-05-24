@@ -57,9 +57,8 @@ export function useApprove() {
       case "Swap":
         return approved;
       case "Wrap":
-        return approved;
       case "Unwrap":
-        return true;
+        return approved;
       case "ETH-Wrap":
       case "ETH-Unwrap":
         return true;

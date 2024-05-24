@@ -13,6 +13,7 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { ethers } from "ethers";
 
 export const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
@@ -50,8 +51,12 @@ export default function UnclaimedEarnings(props: {
   const { info } = props;
   const { onOpenClaimEarning } = usePoolModals();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
-  const token0Amount = Number(info?.token0CollectedFee);
-  const token1Amount = Number(info?.token1CollectedFee);
+  const token0Amount = Number(
+    ethers.utils.formatEther(info?.token0CollectedFeeBN ?? "0")
+  );
+  const token1Amount = Number(
+    ethers.utils.formatEther(info?.token1CollectedFeeBN ?? "0")
+  );
 
   const totalMarketPrice =
     Number(info?.token0FeeValue) + Number(info?.token1FeeValue);
@@ -96,7 +101,7 @@ export default function UnclaimedEarnings(props: {
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
       if (info?.chainId !== connectedChainId && otherLayerChainInfo) {
-        const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+        const res = await switchNetworkAsync?.(info?.chainId);
         if (res) {
           return onOpenClaimEarning();
         }
@@ -175,7 +180,7 @@ export default function UnclaimedEarnings(props: {
               _hover={{ bgColor: "#007AFF" }}
               _active={{}}
               onClick={() => onClickToRoute()}
-              isDisabled={btnIsDisabled}
+              // isDisabled={btnIsDisabled}
               _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
               fontSize={14}
               w={"76px"}

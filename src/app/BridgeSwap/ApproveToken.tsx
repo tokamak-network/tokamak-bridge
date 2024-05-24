@@ -87,7 +87,7 @@ export default function ApproveToken() {
         >
           {text}
         </Text>
-        {isRevokeForUSDT && (
+        {isRevokeForUSDT && !isApproved && (
           <Flex ml={"-5px"}>
             <CustomTooltip
               content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}

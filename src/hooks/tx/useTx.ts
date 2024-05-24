@@ -304,12 +304,15 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess) {
-      const delayTime =
-        mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
-      setTimeout(() => {
-        return setModalOpen("confirmed");
-      }, delayTime);
+      if (mode === "Pool" && layer === "L2") {
+        const delayTime = subMode.add ? 4000 : 2000;
+        setTimeout(() => {
+          return setModalOpen("confirmed");
+        }, delayTime);
+      }
+      return;
     }
+    return setModalOpen("confirmed");
   }, [isSuccess, layer, mode, subMode]);
 
   useEffect(() => {
