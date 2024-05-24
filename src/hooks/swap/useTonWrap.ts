@@ -1,12 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import SwapperV2ABI from "@/abis/SwapperV2.json";
 import WethABi from "@/abis/WETH.json";
-import {
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  usePublicClient,
-} from "wagmi";
+import { useAccount, useContractWrite } from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useTx } from "../tx/useTx";
@@ -18,7 +13,6 @@ import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { useGetMode } from "../mode/useGetMode";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
-import { l2Provider } from "@/config/l2Provider";
 
 export default function useWrap() {
   const { SWAPPER_V2_CONTRACT } = useContract();
@@ -157,6 +151,8 @@ export default function useWrap() {
             const txData = {
               to: ETHWrapContract.address,
               data: calldata,
+              from: address,
+              value: BigNumber.from(inToken.amountBN),
             };
 
             estimateGas = await l2Provider.estimateTotalGasCost(txData);
@@ -165,36 +161,31 @@ export default function useWrap() {
           } else {
             const calldata =
               ETHWrapContract.interface.encodeFunctionData("deposit");
+            console.log({
+              to: ETHWrapContract.address,
+              data: calldata,
+              from: address,
+            });
             estimateGas = await provider.estimateGas({
               to: ETHWrapContract.address,
               data: calldata,
+              from: address,
+              value: BigNumber.from(inToken.amountBN),
             });
-            console.log("estimateGas", estimateGas?.toString());
           }
           const estimateGasWithBuffer = calculateGasMargin(estimateGas);
-          console.log(
-            "estimateGasWithBuffer",
-            estimateGasWithBuffer.toString()
-          );
 
           if (estimateGasUsage) return estimateGas;
-
-          console.log(
-            "estimatedGasForL2?.toBigInt()",
-            estimatedGasForL2?.toBigInt()
-          );
-          console.log("cost", estimateGasUsage);
-
           if (
             (isLayer2 && estimatedGasForL2) ||
             (!isLayer2 && estimateGasWithBuffer)
-          )
+          ) {
             deposit({
-              gas:
-                layer === "L2"
-                  ? estimatedGasForL2?.toBigInt()
-                  : estimateGasWithBuffer.toBigInt(),
+              gas: isLayer2
+                ? estimatedGasForL2?.toBigInt()
+                : estimateGasWithBuffer.toBigInt(),
             });
+          }
         } catch (e) {
           console.log("**wrapTON err**");
           console.log(e);
