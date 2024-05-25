@@ -29,7 +29,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
+        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];
@@ -65,19 +65,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
                 <Flex justifyContent={"center"} bg={"#0F0F12"} minH={"90vh"}>
                   {children}
                 </Flex>
-                {pcView ? (
-                  <Footer />
-                ) : (
-                  <Box
-                    position="fixed"
-                    top="0"
-                    right="0"
-                    bottom="0"
-                    left="0"
-                    zIndex={-1}
-                    bg={"#0F0F12"}
-                  ></Box>
-                )}
+                <Footer />
               </Flex>
 
               <GlobalComponents />

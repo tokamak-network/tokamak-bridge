@@ -112,7 +112,7 @@ export default function ComingPool() {
         </Flex>
         <Flex
           bg={"#17181D"}
-          pt={"32px"}
+          py={"32px"}
           mt={"16px"}
           w={"100%"}
           flexDirection='column'
