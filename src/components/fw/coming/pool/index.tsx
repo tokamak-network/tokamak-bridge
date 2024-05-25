@@ -112,19 +112,19 @@ export default function ComingPool() {
         </Flex>
         <Flex
           bg={"#17181D"}
-          py={"32px"}
-          mt={"16px"}
+          py={mobileView ? "24px" : "32px"}
+          mt={mobileView ? "14px" : "16px"}
           w={"100%"}
           flexDirection='column'
           justifyContent={"center"}
           alignItems='center'
         >
           <Box width={dynamicWidth}>
-            <Box pb={"24px"}>
+            <Box pb={mobileView ? "16px" : "24px"}>
               <Text
                 fontWeight={500}
-                fontSize={"30px"}
-                lineHeight={"45px"}
+                fontSize={mobileView ? "20px" : "30px"}
+                lineHeight={mobileView ? "30px" : "45px"}
                 color={"#FFFFFF"}
                 textAlign={mobileView ? "center" : undefined}
               >
@@ -134,8 +134,8 @@ export default function ComingPool() {
               </Text>
               <Text
                 fontWeight={400}
-                fontSize={"14px"}
-                lineHeight={"21px"}
+                fontSize={mobileView ? "12px" : "14px"}
+                lineHeight={mobileView ? "18px" : "21px"}
                 color={"#A0A3AD"}
                 mt={"6px"}
                 textAlign={mobileView ? "center" : undefined}
