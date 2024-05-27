@@ -1,11 +1,6 @@
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { Box, Center, Flex, Text } from "@chakra-ui/layout";
-import {
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-} from "@chakra-ui/react";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import Network from "./Network";
 import Account from "./Account";
 import { usePathname } from "next/navigation";
@@ -13,10 +8,7 @@ import Image from "next/image";
 import LOGO_IMAGE from "assets/icons/serviceLogo.svg";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import {
-  mobileMenuStatus,
-  actionMethodStatus,
-} from "@/recoil/modal/atom";
+import { mobileMenuStatus, actionMethodStatus } from "@/recoil/modal/atom";
 import github from "assets/icons/header/github.svg";
 import linkedIn from "assets/icons/header/linkedin.svg";
 import telegram from "assets/icons/header/telegram.svg";
@@ -125,7 +117,7 @@ const CustomMenuItem = (props: {
 export const menuLinks = [
   {
     title: "Medium",
-    link: "https://medium.com/onther-tech",
+    link: "https://medium.com/tokamak-network",
     icon: medium,
     hoverIcon: mediumHover,
   },
@@ -168,9 +160,7 @@ export default function Header() {
     useRecoilState(actionMethodStatus);
   const { mobileView } = useMediaView();
   const { isConnected } = useAccount();
-  const {
-    isSupportedChain,
-  } = useConnectedNetwork();
+  const { isSupportedChain } = useConnectedNetwork();
   const network = useConnectedNetwork();
 
   const handleMenuButtonhover = (event: any) => {
@@ -204,11 +194,10 @@ export default function Header() {
       <Flex columnGap={"35px"} height={"48px"} alignItems={"center"}>
         <Box
           onClick={() => {
-            if(mode == "Pool") {
+            if (mode == "Pool") {
               router.push("/");
-            
             }
-            
+
             mobileView ? setActionMethod(true) : "";
           }}
           cursor={"pointer"}
@@ -308,24 +297,23 @@ export default function Header() {
       <Flex columnGap={{ base: "8px", lg: "6px" }}>
         {!mobileView && <Network />}
         {/** 네트워크가 연결되었지만 지원되지 않았을 때  */}
-        {mobileView && (isConnected && !isSupportedChain) &&
-          (
-            <Flex
-              bgColor={"#1F2128"}
-              w={"32px"}
-              h={"32px"}
-              alignItems={"center"}
-              justifyContent={"space-between"}
-              px={"4px"}
-              borderRadius={"8px"}
-            >
-              <Image
-                src={WARNING_ICON}
-                alt={"WARNING_ICON"}
-                style={{ width: "34px", height: "34px" }}
-              />
-            </Flex>
-          )}
+        {mobileView && isConnected && !isSupportedChain && (
+          <Flex
+            bgColor={"#1F2128"}
+            w={"32px"}
+            h={"32px"}
+            alignItems={"center"}
+            justifyContent={"space-between"}
+            px={"4px"}
+            borderRadius={"8px"}
+          >
+            <Image
+              src={WARNING_ICON}
+              alt={"WARNING_ICON"}
+              style={{ width: "34px", height: "34px" }}
+            />
+          </Flex>
+        )}
         <Flex flexDir={"column"} alignItems={"flex-end"}>
           <Account />
           {/* <AccountModal /> */}
