@@ -13,11 +13,12 @@ import {
   gasUsdFormatter,
   smallNumberFormmater,
 } from "@/utils/number/compareNumbers";
-import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount, useSwitchNetwork } from "wagmi";
-import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -43,9 +44,18 @@ const TokenLiquidityData = (props: {
         </Text>
       </Flex>
       <Flex justifyContent="end" columnGap={"12px"}>
-        <Text color="#A0A3AD" fontSize="18px" fontWeight={500}>
-          {liquidityAmount}
-        </Text>
+        <CustomTooltip
+          content={
+            <Text color="#A0A3AD" fontSize="18px" fontWeight={500}>
+              {smallNumberFormmater({
+                amount: Number(liquidityAmount.toString()),
+                trimed: true,
+                trimedDecimals: 13,
+              })}
+            </Text>
+          }
+          tooltipLabel={liquidityAmount}
+        />
         {liquidityPercent !== undefined && (
           <Text
             bgColor={"#15161D"}
@@ -69,25 +79,25 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const { info } = props;
   const { address } = useAccount();
 
-  // const { totalMarketPrice } = usePricePair({
-  //   token0Name: info?.token0.name,
-  //   token0Amount: Number(commafy(info?.token0Amount, 4).replaceAll(",", "")),
-  //   token1Name: info?.token1.name,
-  //   token1Amount: Number(commafy(info?.token1Amount, 4).replaceAll(",", "")),
-  // });
-  const totalMarketPrice = commafy(
-    Number(info?.token0Value) + Number(info?.token1Value),
-    2
-  );
+  const { tokenPriceWithAmount: token0MarketPriceWithAmount } =
+    useGetMarketPrice({
+      tokenName: info?.token0.name,
+      amount: info?.token0Amount,
+    });
+  const { tokenPriceWithAmount: token1MarketPriceWithAmount } =
+    useGetMarketPrice({
+      tokenName: info?.token1.name,
+      amount: info?.token1Amount,
+    });
+  const totalMarketPrice =
+    token0MarketPriceWithAmount !== undefined &&
+    token1MarketPriceWithAmount !== undefined
+      ? token0MarketPriceWithAmount + token1MarketPriceWithAmount
+      : undefined;
 
   const router = useRouter();
   const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
-
-  const noMarketPrices =
-    info?.token0MarketPrice === undefined ||
-    info?.token1MarketPrice === undefined ||
-    Number(info.token0MarketPrice) + Number(info.token1MarketPrice) === 0;
 
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
@@ -191,11 +201,13 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               Liquidity
             </Text>
             <Text
-              fontSize={"38px"}
+              fontSize={totalMarketPrice ? "38px" : "28px"}
               height={"57px"}
-              color={noMarketPrices ? "#A0A3AD" : ""}
+              color={totalMarketPrice ? "" : "#A0A3AD"}
             >
-              {noMarketPrices ? "-" : gasUsdFormatter(Number(totalMarketPrice))}
+              {totalMarketPrice
+                ? gasUsdFormatter(Number(totalMarketPrice))
+                : "$NA"}
             </Text>
           </Flex>
           {!actionDisabled && (
@@ -235,20 +247,12 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
         >
           <TokenLiquidityData
             token={info.token1}
-            liquidityAmount={smallNumberFormmater({
-              amount: Number(info.token1Amount.toString()),
-              trimed: true,
-              trimedDecimals: 13,
-            })}
+            liquidityAmount={info.token1Amount.toString()}
             liquidityPercent={token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
-            liquidityAmount={smallNumberFormmater({
-              amount: info.token0Amount.toString(),
-              trimed: true,
-              trimedDecimals: 13,
-            })}
+            liquidityAmount={info.token0Amount.toString()}
             liquidityPercent={token0Ratio}
           />
         </Flex>

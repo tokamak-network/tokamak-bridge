@@ -1,27 +1,20 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import SwapperV2ABI from "@/abis/SwapperV2.json";
-import WethABi from "@/abis/WETH.json";
-import {
-  useAccount,
-  useContractWrite,
-  usePrepareContractWrite,
-  usePublicClient,
-} from "wagmi";
+import WETH_ABI from "@/abis/WETH.json";
+import WTON_ABI from "@/abis/WTON.json";
+import { useAccount, useContractWrite } from "wagmi";
 import { useInOutTokens } from "../token/useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useTx } from "../tx/useTx";
 import { getWETHAddress } from "@/utils/token/isETH";
 import useConnectedNetwork from "../network";
 import { useProvier } from "../provider/useProvider";
-import { BigNumber, Contract, ethers } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
-import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { useGetMode } from "../mode/useGetMode";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
-import { l2Provider } from "@/config/l2Provider";
 
 export default function useWrap() {
-  const { SWAPPER_V2_CONTRACT } = useContract();
+  const { WTON_CONTRACT } = useContract();
   const { provider } = useProvier();
   const { address } = useAccount();
   const [estimatedGasUsage, setEstimatedGasUsage] = useState<
@@ -31,34 +24,31 @@ export default function useWrap() {
   const { layer } = useConnectedNetwork();
 
   const { inToken, outToken } = useInOutTokens();
-  const { data, write: tonWton } = useContractWrite({
-    address: SWAPPER_V2_CONTRACT as `0x${string}`,
-    abi: SwapperV2ABI.abi,
-    functionName: "tonToWton",
+  const { data, write: swapFromTON } = useContractWrite({
+    address: WTON_CONTRACT as `0x${string}`,
+    abi: WTON_ABI.abi,
+    functionName: "swapFromTON",
   });
-  const WrapContract = new Contract(
-    SWAPPER_V2_CONTRACT,
-    SwapperV2ABI.abi,
-    getProviderOrSigner(provider, address)
-  );
-
-  const { data: unswrapData, write: wtonTon } = useContractWrite({
-    address: SWAPPER_V2_CONTRACT as `0x${string}`,
-    abi: SwapperV2ABI.abi,
-    functionName: "wtonToTon",
+  const { data: unwrapData, write: swapToTON } = useContractWrite({
+    address: WTON_CONTRACT as `0x${string}`,
+    abi: WTON_ABI.abi,
+    functionName: "swapToTON",
   });
+  const WrapContract = useMemo(() => {
+    return new Contract(WTON_CONTRACT, WTON_ABI.abi, provider);
+  }, [WTON_CONTRACT, WTON_ABI, provider]);
 
   const { chainName, isSupportedChain } = useConnectedNetwork();
   const WETH_CONTRACT = chainName && getWETHAddress(chainName);
   const { data: wrapETHData, write: deposit } = useContractWrite({
     address: WETH_CONTRACT as `0x${string}`,
-    abi: WethABi,
+    abi: WETH_ABI,
     functionName: "deposit",
     value: inToken?.amountBN as any,
   });
   const { data: unwrapETHData, write: withdraw } = useContractWrite({
     address: WETH_CONTRACT as `0x${string}`,
-    abi: WethABi,
+    abi: WETH_ABI,
     functionName: "withdraw",
   });
 
@@ -67,17 +57,13 @@ export default function useWrap() {
   const ETHWrapContract = useMemo(() => {
     try {
       if (isSupportedChain) {
-        return new Contract(
-          WETH_CONTRACT as string,
-          WethABi,
-          getProviderOrSigner(provider, address)
-        );
+        return new Contract(WETH_CONTRACT as string, WETH_ABI, provider);
       }
     } catch (e) {
       console.log("**ETHWrapContract err**");
       console.log(e);
     }
-  }, [isSupportedChain, WETH_CONTRACT, WethABi, provider, address]);
+  }, [isSupportedChain, WETH_CONTRACT, WETH_ABI, provider, address]);
 
   const {} = useTx({
     hash: data?.hash,
@@ -85,7 +71,7 @@ export default function useWrap() {
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
   const {} = useTx({
-    hash: unswrapData?.hash,
+    hash: unwrapData?.hash,
     txSort: "Unwrap",
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
@@ -102,14 +88,20 @@ export default function useWrap() {
 
   const wrapTON = useCallback(
     async (estimateGasUsage?: boolean) => {
-      if (inToken && inToken.amountBN) {
-        const estimateGas = await WrapContract.estimateGas.tonToWton(
-          inToken.amountBN
+      if (inToken && inToken.amountBN && provider) {
+        const calldata = WrapContract.interface.encodeFunctionData(
+          "swapFromTON",
+          [inToken.amountBN]
         );
+        const estimateGas = await provider.estimateGas({
+          to: WrapContract.address,
+          data: calldata,
+          from: address,
+        });
         const estimateGasWithBuffer = calculateGasMargin(estimateGas);
         if (estimateGasUsage) return estimateGasWithBuffer;
         try {
-          tonWton({
+          swapFromTON({
             args: [inToken.amountBN],
             gas: estimateGasWithBuffer.toBigInt(),
           });
@@ -119,19 +111,26 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, WrapContract]
+    [inToken, WrapContract, provider]
   );
 
   const unwrapWTON = useCallback(
     async (estimateGasUsage?: boolean) => {
-      if (inToken && inToken.amountBN) {
-        const estimateGas = await WrapContract.estimateGas.wtonToTon(
-          inToken.amountBN
+      if (inToken && inToken.amountBN && provider) {
+        const calldata = WrapContract.interface.encodeFunctionData(
+          "swapToTON",
+          [inToken.amountBN]
         );
+
+        const estimateGas = await provider.estimateGas({
+          to: WrapContract.address,
+          data: calldata,
+          from: address,
+        });
         const estimateGasWithBuffer = calculateGasMargin(estimateGas);
         if (estimateGasUsage) return estimateGasWithBuffer;
         try {
-          wtonTon({
+          swapToTON({
             args: [inToken.amountBN],
             gas: estimateGasWithBuffer.toBigInt(),
           });
@@ -141,7 +140,7 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, WrapContract]
+    [inToken, WrapContract, provider]
   );
 
   const wrapETH = useCallback(
@@ -157,6 +156,8 @@ export default function useWrap() {
             const txData = {
               to: ETHWrapContract.address,
               data: calldata,
+              from: address,
+              value: BigNumber.from(inToken.amountBN),
             };
 
             estimateGas = await l2Provider.estimateTotalGasCost(txData);
@@ -168,33 +169,23 @@ export default function useWrap() {
             estimateGas = await provider.estimateGas({
               to: ETHWrapContract.address,
               data: calldata,
+              from: address,
+              value: BigNumber.from(inToken.amountBN),
             });
-            console.log("estimateGas", estimateGas?.toString());
           }
           const estimateGasWithBuffer = calculateGasMargin(estimateGas);
-          console.log(
-            "estimateGasWithBuffer",
-            estimateGasWithBuffer.toString()
-          );
 
           if (estimateGasUsage) return estimateGas;
-
-          console.log(
-            "estimatedGasForL2?.toBigInt()",
-            estimatedGasForL2?.toBigInt()
-          );
-          console.log("cost", estimateGasUsage);
-
           if (
             (isLayer2 && estimatedGasForL2) ||
             (!isLayer2 && estimateGasWithBuffer)
-          )
+          ) {
             deposit({
-              gas:
-                layer === "L2"
-                  ? estimatedGasForL2?.toBigInt()
-                  : estimateGasWithBuffer.toBigInt(),
+              gas: isLayer2
+                ? estimatedGasForL2?.toBigInt()
+                : estimateGasWithBuffer.toBigInt(),
             });
+          }
         } catch (e) {
           console.log("**wrapTON err**");
           console.log(e);

@@ -4,15 +4,18 @@ import { Token } from "@uniswap/sdk-core";
 import { T_PoolModal } from "@/recoil/modal/atom";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import { useRecoilValue } from "recoil";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 export default function RangeToken(props: {
   token: Token;
-  amount: string | number | undefined;
+  amount?: string | number;
   style?: {};
   page: T_PoolModal;
-  alterAmount: string | number | undefined;
+  alterAmount?: string | number;
+  alterAmountForTooltip?: string | number;
 }) {
-  const { token, amount, style, page, alterAmount } = props;
+  const { token, amount, style, page, alterAmount, alterAmountForTooltip } =
+    props;
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   return (
@@ -51,7 +54,16 @@ export default function RangeToken(props: {
             ? "-"
             : "+"}
         </Text>
-        <Text>{alterAmount === "-" ? undefined : alterAmount}</Text>
+        {alterAmountForTooltip ? (
+          <CustomTooltip
+            content={
+              <Text>{alterAmount === "-" ? undefined : alterAmount}</Text>
+            }
+            tooltipLabel={alterAmountForTooltip}
+          />
+        ) : (
+          <Text>{alterAmount === "-" ? undefined : alterAmount}</Text>
+        )}
       </Flex>
     </Flex>
   );

@@ -27,9 +27,9 @@ export default function useContract() {
     ? THANOS_SEPOLIA_CONTRACTS.L2Bridge
     : TITAN_SEPOLIA_CONTRACTS.L2Bridge;
 
-  const SWAPPER_V2_CONTRACT = isConnectedToMainNetwork
-    ? MAINNET_CONTRACTS.SwapperV2Proxy
-    : SEPOLIA_CONTRACTS.SwapperV2Proxy;
+  const WTON_CONTRACT = isConnectedToMainNetwork
+    ? MAINNET_CONTRACTS.WTON_ADDRESS
+    : SEPOLIA_CONTRACTS.WTON_ADDRESS;
 
   const L1MESSENGER_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Messenger
@@ -41,7 +41,7 @@ export default function useContract() {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
-    SWAPPER_V2_CONTRACT,
+    WTON_CONTRACT,
     L1MESSENGER_CONTRACT,
   };
 }

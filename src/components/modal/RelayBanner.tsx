@@ -105,7 +105,7 @@ const RelayBanner = () => {
             using a new interface (read more in{" "}
             <a
               href={
-                "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
+                "https://medium.com/tokamak-network/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
               }
               target="_blank"
               style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
@@ -116,7 +116,7 @@ const RelayBanner = () => {
             <a
               style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
               target="_blank"
-              href="https://medium.com/onther-tech/titan-network-auto-relay-service-%EC%A4%91%EB%8B%A8-%EC%95%88%EB%82%B4-80d6a37c5ca0"
+              href="https://medium.com/tokamak-network/titan-network-auto-relay-service-%EC%A4%91%EB%8B%A8-%EC%95%88%EB%82%B4-80d6a37c5ca0"
             >
               한국어
             </a>
@@ -133,7 +133,7 @@ const RelayBanner = () => {
             upgraded
             {/* <a
               href={
-                "https://medium.com/onther-tech/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
+                "https://medium.com/tokamak-network/titan-network-shutdown-notice-for-auto-relay-service-5f9b8616e20a"
               }
               target="_blank"
               style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
@@ -144,7 +144,7 @@ const RelayBanner = () => {
             <a
               style={{ fontWeight: "bold", textDecoration: "underline", cursor:'pointer' }}
               target="_blank"
-              href="https://medium.com/onther-tech/titan-network-auto-relay-service-%EC%A4%91%EB%8B%A8-%EC%95%88%EB%82%B4-80d6a37c5ca0"
+              href="https://medium.com/tokamak-network/titan-network-auto-relay-service-%EC%A4%91%EB%8B%A8-%EC%95%88%EB%82%B4-80d6a37c5ca0"
             >
               한국어
             </a>

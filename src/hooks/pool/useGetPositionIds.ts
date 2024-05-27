@@ -32,7 +32,7 @@ import { sortPositions } from "@/utils/pool/sortPositions";
 import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import JSBI from "jsbi";
-import { providerByChainId } from "@/config/getProvider";
+import { getProvider, providerByChainId } from "@/config/getProvider";
 import { useGetPositionByClients } from "./useApolloClient";
 
 export const makePositionDatas = async (
@@ -42,6 +42,17 @@ export const makePositionDatas = async (
   const positions: PoolCardDetail[] = [];
   const batchSize = positionData.length;
   const promises: any[] = [];
+
+  const UNISWAP_CONTRACT = UniswapContractByChainId[chainId];
+  const provider = providerByChainId[chainId];
+
+  if (!UNISWAP_CONTRACT || !provider) return null;
+
+  const NonfungiblePositionManagerContract = new ethers.Contract(
+    UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+    NONFUNGIBLE_POSITION_MANAGER_ABI,
+    provider
+  );
 
   for (let i = 0; i < batchSize; i++) {
     promises.push(async () => {
@@ -93,6 +104,7 @@ export const makePositionDatas = async (
         JSBI.add(amount0 as JSBI, amount1 as JSBI),
         JSBI.BigInt(0)
       );
+
       const token0Amount =
         amount0 &&
         ethers.utils
@@ -104,16 +116,21 @@ export const makePositionDatas = async (
           .formatUnits(amount1.toString(), token1.decimals)
           .slice(0, 10);
 
-      const token0CollectedFee =
-        amount0 &&
-        ethers.utils
-          .formatUnits(amount0.toString(), token0.decimals)
-          .slice(0, 10);
-      const token1CollectedFee =
-        amount0 &&
-        ethers.utils
-          .formatUnits(amount0.toString(), token1.decimals)
-          .slice(0, 10);
+      //calculate earning fees
+      const earningFee =
+        await NonfungiblePositionManagerContract.callStatic.collect({
+          tokenId: id,
+          recipient: owner,
+          amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
+          amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
+        });
+
+      const token0CollectedFee = ethers.utils
+        .formatUnits(earningFee.amount0, token0.decimals)
+        .slice(0, 10);
+      const token1CollectedFee = ethers.utils
+        .formatUnits(earningFee.amount1, token1.decimals)
+        .slice(0, 10);
 
       const token0MarketPrice = await fetchMarketPrice(token0.name);
       const token1MarketPrice = await fetchMarketPrice(token1.name);
@@ -432,8 +449,11 @@ export function useGetPositionById(positionId: number, chainId: number) {
             WETH_ADDRESS.toLowerCase() === token1.toLowerCase();
 
           const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
-          const token0MarketPrice = await fetchMarketPrice(token0Name);
-          const token1MarketPrice = await fetchMarketPrice(token1Name);
+
+          //to save calls
+          //it will be fetched from the Liquidity component
+          const token0MarketPrice = undefined;
+          const token1MarketPrice = undefined;
 
           const token0Value = token0MarketPrice
             ? token0MarketPrice * Number(token0Amount)

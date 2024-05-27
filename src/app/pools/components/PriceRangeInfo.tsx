@@ -5,17 +5,11 @@ import { ATOM_manuallyInverted } from "@/recoil/pool/positions";
 import { Box, Flex, Text } from "@chakra-ui/react";
 import SWITCHBUTTON_IMAGE from "assets/icons/pool/switch.svg";
 import SWITCHBUTTON_INFO_IMAGE from "assets/icons/pool/switch_info.svg";
-
 import Image from "next/image";
 import { useRecoilState, useRecoilValue } from "recoil";
 import QUESTION_ICON from "assets/icons/questionGray.svg";
 import usePreview from "@/hooks/modal/usePreviewModal";
 import { smallNumberFormmater } from "@/utils/number/compareNumbers";
-import {
-  initialPrice,
-  maxPriceForAddModal,
-  minPriceForAddModal,
-} from "@/recoil/pool/setPoolPosition";
 import { useV3MintInfo } from "@/hooks/pool/useV3MintInfo";
 import { useMemo } from "react";
 import { tickToPrice } from "@uniswap/v3-sdk";

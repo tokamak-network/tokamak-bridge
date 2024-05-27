@@ -3,7 +3,10 @@ import commafy from "@/utils/trim/commafy";
 import { Flex, Text, Button, Switch } from "@chakra-ui/react";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
 import { useCallback, useMemo } from "react";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { usePricePair } from "@/hooks/price/usePricePair";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 import "css/pool/switch.css";
@@ -13,6 +16,7 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { ethers } from "ethers";
 
 export const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
@@ -50,13 +54,20 @@ export default function UnclaimedEarnings(props: {
   const { info } = props;
   const { onOpenClaimEarning } = usePoolModals();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
-  const token0Amount = Number(info?.token0CollectedFee);
-  const token1Amount = Number(info?.token1CollectedFee);
+  const token0Amount = Number(
+    ethers.utils.formatUnits(
+      info?.token0CollectedFeeBN ?? "0",
+      info?.token0.decimals
+    )
+  );
+  const token1Amount = Number(
+    ethers.utils.formatUnits(
+      info?.token1CollectedFeeBN ?? "0",
+      info?.token1.decimals
+    )
+  );
 
-  const totalMarketPrice =
-    Number(info?.token0FeeValue) + Number(info?.token1FeeValue);
-
-  const { hasTokenPrice } = usePricePair({
+  const { hasTokenPrice, totalMarketPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
@@ -96,7 +107,7 @@ export default function UnclaimedEarnings(props: {
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
       if (info?.chainId !== connectedChainId && otherLayerChainInfo) {
-        const res = await switchNetworkAsync?.(otherLayerChainInfo.chainId);
+        const res = await switchNetworkAsync?.(info?.chainId);
         if (res) {
           return onOpenClaimEarning();
         }
@@ -125,7 +136,9 @@ export default function UnclaimedEarnings(props: {
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
-              {`$${commafy(totalMarketPrice, 2, undefined, "0.00")}`}
+              {totalMarketPrice
+                ? `${gasUsdFormatter(Number(totalMarketPrice))}`
+                : "NA"}
             </Text>
             <Flex
               alignItems={"center"}

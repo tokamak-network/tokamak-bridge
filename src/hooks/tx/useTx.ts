@@ -5,7 +5,7 @@ import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
-import SwapperAbi from "@/abis/SwapperV2.json";
+import WTON_ABI from "@/abis/WTON.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
@@ -36,7 +36,7 @@ const getInterface = () => {
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const USDT_I = new ethers.utils.Interface(USDTAbi);
-  const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
+  const WTON_I = new ethers.utils.Interface(WTON_ABI.abi);
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
@@ -51,7 +51,7 @@ const getInterface = () => {
     l2BridgeI,
     swapRouterI,
     erc20I,
-    swapperI,
+    WTON_I,
     nonFungiblePositionManagerI,
     UniswapV3PoolI,
     L1CrossDomainMessengerI,
@@ -236,57 +236,7 @@ export function useTx(params: {
   // const [isError, setIsError] = useState<boolean>(false);
   const { mode, subMode } = useGetMode();
 
-  /**
-   * using Ethers Provider
-   * to fix a bug to track transactions for the test purpose
-   */
-  // const { provider } = useProvier();
-  // useEffect(() => {
-  //   async function getTransactionWithRetry(
-  //     hash: string,
-  //     provider: providers.Provider,
-  //     retries = 5
-  //   ) {
-  //     setIsLoading(true);
-  //     setIsSuccess(false);
-  //     setIsError(false);
-  //     // for (let i = 0; i < retries; i++) {
-  //     try {
-  //       const transaction = await provider.getTransaction(hash);
-
-  //       //put some delay to wait for the transaction to be updated on L2
-  //       const delayTime =
-  //         mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
-  //       await new Promise((resolve) => setTimeout(resolve, delayTime));
-
-  //       const result = await transaction.wait();
-  //       if (result.status === 1) {
-  //         return setIsSuccess(true);
-  //       }
-  //       return setIsSuccess(false);
-  //     } catch (error) {
-  //       // console.log(
-  //       //   `Transaction with hash ${hash} could not be found. Retry ${
-  //       //     i + 1
-  //       //   }/${retries}`
-  //       // );
-  //       setIsSuccess(false);
-  //       setIsError(true);
-  //       // await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //     throw new Error(
-  //       `Transaction with hash ${hash} could not be found after ${retries} retries.`
-  //     );
-  //   }
-
-  //   if (hash && provider) {
-  //     getTransactionWithRetry(hash, provider);
-  //   }
-  // }, [hash, provider, mode, subMode, layer]);
-
-  const [, setTxData] = useRecoilState(txDataStatus);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(
   //   selectedInTokenStatus
   // );
@@ -302,15 +252,20 @@ export function useTx(params: {
     return setTxPending(false);
   }, [isLoading, connectedChainId, isError]);
 
+  const { confirmedTransaction } = useTransaction();
+
   useEffect(() => {
-    if (isSuccess) {
-      const delayTime =
-        mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
-      setTimeout(() => {
-        return setModalOpen("confirmed");
-      }, delayTime);
+    //@ts-ignore
+    if (isSuccess && confirmedTransaction?.includes(hash as string)) {
+      if (mode === "Pool" && layer === "L2") {
+        const delayTime = subMode.add ? 4000 : 2000;
+        setTimeout(() => {
+          return setModalOpen("confirmed");
+        }, delayTime);
+      }
+      return setModalOpen("confirmed");
     }
-  }, [isSuccess, layer, mode, subMode]);
+  }, [isSuccess, layer, mode, subMode, confirmedTransaction, hash]);
 
   useEffect(() => {
     if (isError) {
@@ -379,16 +334,13 @@ export function useTx(params: {
 
   useEffect(() => {
     if (isSuccess && data && connectedChainId && hash) {
-      console.log("****");
-      console.log(data, txSort);
-
       const { logs, transactionHash } = data;
       const {
         l1BridgeI,
         l2BridgeI,
         swapRouterI,
         erc20I,
-        swapperI,
+        WTON_I,
         nonFungiblePositionManagerI,
         ETHSwapperI,
       } = getInterface();
@@ -689,7 +641,7 @@ export function useTx(params: {
         }
         //wrap
         case "Wrap": {
-          const result = swapperI.parseLog(logs[logs.length - 1]);
+          const result = WTON_I.parseLog(logs[logs.length - 2]);
           const { args } = result;
           const WTON_ADDRESS = WTON_ADDRESS_BY_CHAINID[connectedChainId];
           return setTxData({
@@ -700,11 +652,11 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: tokenAddress ?? "0x",
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
                 {
                   tokenAddress: WTON_ADDRESS ?? "0x",
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
               ],
               network: connectedChainId,
@@ -713,7 +665,7 @@ export function useTx(params: {
           });
         }
         case "Unwrap": {
-          const result = swapperI.parseLog(logs[logs.length - 1]);
+          const result = WTON_I.parseLog(logs[logs.length - 2]);
           const { args } = result;
           const TON_ADDRESS = TON_ADDRESS_BY_CHAINID[connectedChainId];
           return setTxData({
@@ -724,11 +676,11 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: tokenAddress ?? "0x",
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
                 {
                   tokenAddress: TON_ADDRESS,
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
               ],
               network: connectedChainId,
@@ -811,7 +763,6 @@ export function useTx(params: {
         case "Revoke": {
           const result = erc20I.parseLog(logs[logs.length - 1]);
           const { args } = result;
-          console.log("go?");
           return setTxData({
             [hash]: {
               transactionHash,

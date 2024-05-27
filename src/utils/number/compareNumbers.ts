@@ -2,7 +2,7 @@ import { trimAmount, trimAmountForFormatter } from "../trim";
 import commafy from "../trim/commafy";
 
 export function isBiggerThanMinimumNum(param: number, minimumValue?: number) {
-  const minimumNum = minimumValue ?? 0.0001;
+  const minimumNum = minimumValue ?? 0.000001;
   if (param > minimumNum) {
     return true;
   }

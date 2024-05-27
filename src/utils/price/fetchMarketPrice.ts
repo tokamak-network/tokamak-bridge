@@ -25,8 +25,8 @@ export async function fetchMarketPrice(
       return result.data.getTokenMarketData.current_price;
     return undefined;
   } catch (e) {
-    console.log("fetchMarketPrice error");
-    console.log(e);
+    // console.log("fetchMarketPrice error");
+    // console.log(e);
     return undefined;
   }
 }

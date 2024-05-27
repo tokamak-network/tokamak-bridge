@@ -17,6 +17,8 @@ import useConnectedNetwork from "@/hooks/network";
 import { useConvertWETH } from "@/hooks/pool/useConvertWETH";
 import { useRecoilValue } from "recoil";
 import { useMemo } from "react";
+import { utils } from "ethers";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 const TokenPairTitle = (props: {
   page: T_PoolModal;
@@ -70,9 +72,9 @@ export default function Range(props: {
       modalStatus === "removeLiquidity"
       ? undefined
       : smallNumberFormmater({
-          amount: token0Amount.toString(),
-          decimals: 6,
-          minimumValue: 0.000001,
+          amount: Number(token0Amount.toString()),
+          trimed: true,
+          trimedDecimals: 13,
         });
   }, [page, modalStatus, token0Amount]);
   const alter0Amount = useMemo(() => {
@@ -99,9 +101,9 @@ export default function Range(props: {
       modalStatus === "removeLiquidity"
       ? undefined
       : smallNumberFormmater({
-          amount: token1Amount.toString(),
-          decimals: 6,
-          minimumValue: 0.000001,
+          amount: Number(token1Amount.toString()),
+          trimed: true,
+          trimedDecimals: 13,
         });
   }, [page, modalStatus, token1Amount]);
   const alter1Amount = useMemo(() => {
@@ -120,6 +122,22 @@ export default function Range(props: {
           decimals: 6,
           minimumValue: 0.000001,
         })
+      : undefined;
+  }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
+
+  const alter0AmountForTooltip = useMemo(() => {
+    return page === "addLiquidity" || page === "increaseLiquidity"
+      ? inToken?.parsedAmount?.toString()
+      : page === "removeLiquidity"
+      ? amount0Removed?.toString()
+      : undefined;
+  }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
+
+  const alter1AmountForTooltip = useMemo(() => {
+    return page === "addLiquidity" || page === "increaseLiquidity"
+      ? outToken?.parsedAmount?.toString()
+      : page === "removeLiquidity"
+      ? amount1Removed?.toString()
       : undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
@@ -164,6 +182,7 @@ export default function Range(props: {
         amount={token1CurrentAmount}
         page={page}
         alterAmount={alter1Amount}
+        alterAmountForTooltip={alter1AmountForTooltip}
         style={{ marginBottom: "9px" }}
       />
       <RangeToken
@@ -171,6 +190,7 @@ export default function Range(props: {
         amount={token0CurrentAmount}
         page={page}
         alterAmount={alter0Amount}
+        alterAmountForTooltip={alter0AmountForTooltip}
       />
       {page === "addLiquidity" || modalStatus === "increaseLiquidity" ? (
         <Flex flexDir={"column"} mt="10px" columnGap={"20px"}>
@@ -196,23 +216,25 @@ export default function Range(props: {
             <Flex justifyContent={"space-between"}>
               <Text fontSize={"14px"}>Fee</Text>
               <Flex alignItems={"center"}>
-                <Text>
-                  {smallNumberFormmater({
+                <CustomTooltip
+                  content={smallNumberFormmater({
                     amount: info.token0CollectedFee,
                     minimumValue: 0.000001,
-                  })}{" "}
-                  {info?.token0.symbol}
-                </Text>
+                  })}
+                  tooltipLabel={info.token0CollectedFee}
+                />
+                <Text> {info?.token0.symbol}</Text>
                 <Text w={"10px"} mx={"2px"}>
                   +
                 </Text>
-                <Text>
-                  {smallNumberFormmater({
+                <CustomTooltip
+                  content={smallNumberFormmater({
                     amount: info.token1CollectedFee,
                     minimumValue: 0.000001,
-                  })}{" "}
-                  {info?.token1.symbol}
-                </Text>
+                  })}
+                  tooltipLabel={info.token1CollectedFee}
+                />
+                <Text>{info?.token1.symbol}</Text>
               </Flex>
             </Flex>
             <Flex justifyContent={"space-between"}>

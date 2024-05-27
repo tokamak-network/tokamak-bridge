@@ -57,7 +57,7 @@ export default function ApproveToken() {
 
   const text =
     confirmedApproveTransaction && isApproved
-      ? `${commafy(parsedAmount)} ${inToken?.tokenSymbol} has been approved`
+      ? `${commafy(parsedAmount, 4)} ${inToken?.tokenSymbol} has been approved`
       : `${isRevokeForUSDT ? "Revoke" : "Approve"} ${
           inToken?.tokenSymbol
         } for ${capitalizeFirstChar(mode ?? undefined)}`;
@@ -87,29 +87,31 @@ export default function ApproveToken() {
         >
           {text}
         </Text>
-        <Flex ml={"-5px"}>
-          <CustomTooltip
-            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
-            tooltipLabel={
-              <Flex
-                w={"240px"}
-                h={"45px"}
-                fontSize={11}
-                textAlign={"center"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                {
-                  <span>
-                    Approval for USDT must be revoked first <br />
-                    before a new amount is approved.
-                  </span>
-                }
-              </Flex>
-            }
-            style={{ px: "-5px", tooltipLineHeight: "15x", height: "45px" }}
-          ></CustomTooltip>
-        </Flex>
+        {isRevokeForUSDT && !isApproved && (
+          <Flex ml={"-5px"}>
+            <CustomTooltip
+              content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+              tooltipLabel={
+                <Flex
+                  w={"240px"}
+                  h={"45px"}
+                  fontSize={11}
+                  textAlign={"center"}
+                  alignItems={"center"}
+                  justifyContent={"center"}
+                >
+                  {
+                    <span>
+                      Approval for USDT must be revoked first <br />
+                      before a new amount is approved.
+                    </span>
+                  }
+                </Flex>
+              }
+              style={{ px: "-5px", tooltipLineHeight: "15x", height: "45px" }}
+            ></CustomTooltip>
+          </Flex>
+        )}
       </Flex>
       {isLoading && !isRevokeForUSDT ? (
         <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />

@@ -70,8 +70,12 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Amount,
     token0CollectedFee,
     token1CollectedFee,
+    token0FeeValue,
+    token1FeeValue,
     isClosed,
     chainId,
+    token0CollectedFeeBN,
+    token1CollectedFeeBN,
   } = props;
 
   const feePercent = useMemo(() => {
@@ -110,7 +114,7 @@ export default function PoolCard(props: PoolCardDetail) {
     token1Price: token1FeeMarketValue,
   } = usePricePair({
     token0Name: token0.name,
-    token0Amount: token0Amount,
+    token0Amount: token0CollectedFee,
     token1Name: token1.name,
     token1Amount: token1CollectedFee,
   });

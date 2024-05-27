@@ -17,6 +17,8 @@ import { useRecoilValue } from "recoil";
 import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
+import { BigNumber, ethers } from "ethers";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const { info } = props;
@@ -24,8 +26,18 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const { collectFees, estimateGasToCollect } = usePoolContract();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
-  const token0Amount = Number(commafy(info?.token0CollectedFee, 8, true));
-  const token1Amount = Number(commafy(info?.token1CollectedFee, 8, true));
+  const token0Amount = Number(
+    ethers.utils.formatUnits(
+      info?.token0CollectedFeeBN ?? BigNumber.from(0),
+      info?.token0.decimals
+    )
+  );
+  const token1Amount = Number(
+    ethers.utils.formatUnits(
+      info?.token1CollectedFeeBN ?? BigNumber.from(0),
+      info?.token1.decimals
+    )
+  );
 
   const { hasTokenPrice, totalMarketPrice, token0Price, token1Price } =
     usePricePair({
@@ -89,24 +101,22 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
               bgColor="#0F0F12"
               borderRadius="16px"
             >
-              {hasTokenPrice && (
-                <Flex justifyContent="space-between" mb="9px">
-                  <Flex justifyContent="start">
-                    <Text fontSize={14}>Total fees</Text>
-                  </Flex>
-                  <Flex justifyContent="end">
-                    <Text
-                      fontSize={16}
-                      fontWeight="semibold"
-                      color={totalMarketPrice ? "#fff" : "#A0A3AD"}
-                    >
-                      {totalMarketPrice
-                        ? gasUsdFormatter(Number(totalMarketPrice))
-                        : "NA"}
-                    </Text>
-                  </Flex>
+              <Flex justifyContent="space-between" mb="9px">
+                <Flex justifyContent="start">
+                  <Text fontSize={14}>Total fees</Text>
                 </Flex>
-              )}
+                <Flex justifyContent="end">
+                  <Text
+                    fontSize={16}
+                    fontWeight="semibold"
+                    color={totalMarketPrice ? "#fff" : "#A0A3AD"}
+                  >
+                    {totalMarketPrice
+                      ? gasUsdFormatter(Number(totalMarketPrice))
+                      : "NA"}
+                  </Text>
+                </Flex>
+              </Flex>
               <Flex justifyContent="space-between" mb="8px">
                 <Flex
                   justifyContent="start"
@@ -138,10 +148,19 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater({
-                      amount: info?.token0CollectedFee,
-                      minimumValue: 0.000001,
-                    })}
+                    <CustomTooltip
+                      content={smallNumberFormmater({
+                        amount: ethers.utils.formatUnits(
+                          info?.token0CollectedFeeBN,
+                          info?.token0.decimals
+                        ),
+                        minimumValue: 0.000001,
+                      })}
+                      tooltipLabel={ethers.utils.formatUnits(
+                        info?.token0CollectedFeeBN,
+                        info?.token0.decimals
+                      )}
+                    />
                   </Text>
                   <Text minW={"60px"} color={"#A0A3AD"}>
                     {gasUsdFormatter(Number(token0Price))}
@@ -179,10 +198,19 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater({
-                      amount: info?.token1CollectedFee,
-                      minimumValue: 0.000001,
-                    })}
+                    <CustomTooltip
+                      content={smallNumberFormmater({
+                        amount: ethers.utils.formatUnits(
+                          info?.token1CollectedFeeBN,
+                          info?.token1.decimals
+                        ),
+                        minimumValue: 0.000001,
+                      })}
+                      tooltipLabel={ethers.utils.formatUnits(
+                        info?.token1CollectedFeeBN,
+                        info?.token1.decimals
+                      )}
+                    />
                   </Text>
                   <Text minW={"60px"} color={"#A0A3AD"}>
                     {gasUsdFormatter(Number(token1Price))}

@@ -3,7 +3,7 @@ import { useInOutTokens } from "./useInOutTokens";
 import useContract from "../contracts/useContract";
 import { useAccount } from "wagmi";
 import { Hash } from "viem";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isETH } from "@/utils/token/isETH";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { useIncreaseAmount } from "../pool/useIncreaseAmount";
@@ -29,7 +29,18 @@ export function useAllowance(params: {
     args: address && contractAddress ? [address, contractAddress] : undefined,
     watch: true,
     cacheOnBlock: true,
+    cacheTime: 10000,
   });
+
+  const [lastAllowance, setLastAllowance] = useState(allowance);
+
+  //to remove flicker effect
+  //when the allowance is updated, we set the lastAllowance to the new allowance because it's undefined while it's fetching
+  useEffect(() => {
+    if (allowance !== undefined) {
+      setLastAllowance(allowance);
+    }
+  }, [allowance]);
 
   const inputTokenAmount = inputTokenParam ?? 0;
 
@@ -37,24 +48,24 @@ export function useAllowance(params: {
     if (isETH(token)) {
       return true;
     }
-    if (allowance !== undefined && inputTokenAmount !== undefined) {
+    if (lastAllowance !== undefined && inputTokenAmount !== undefined) {
       if (Number(allowance) === 0) {
         return false;
       }
-      if ((allowance as BigInt) >= inputTokenAmount) {
+      if ((lastAllowance as BigInt) >= inputTokenAmount) {
         return true;
       }
       return false;
     }
     return false;
-  }, [allowance, token, inputTokenAmount]);
+  }, [lastAllowance, token, inputTokenAmount]);
 
   const allowanceIsBiggerThanZero = useMemo(() => {
-    if (allowance !== undefined) {
+    if (lastAllowance !== undefined) {
       return Number(allowance) > 0;
     }
     return false;
-  }, [allowance]);
+  }, [lastAllowance]);
 
   return { isApproved, allowance, allowanceIsBiggerThanZero };
 }
