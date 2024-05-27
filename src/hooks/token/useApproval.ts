@@ -23,7 +23,7 @@ export function useApprove() {
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
 
-  const { L1BRIDGE_CONTRACT, SWAPPER_V2_CONTRACT } = useContract();
+  const { L1BRIDGE_CONTRACT, WTON_CONTRACT } = useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { connectedChainId, isLayer2 } = useConnectedNetwork();
 
@@ -35,11 +35,11 @@ export function useApprove() {
         return UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2 as Hash;
       case "Wrap":
       case "Unwrap":
-        return SWAPPER_V2_CONTRACT as Hash;
+        return WTON_CONTRACT as Hash;
       default:
         return undefined;
     }
-  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT]);
+  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, WTON_CONTRACT]);
 
   const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
@@ -57,8 +57,9 @@ export function useApprove() {
       case "Swap":
         return approved;
       case "Wrap":
-      case "Unwrap":
         return approved;
+      case "Unwrap":
+        return true;
       case "ETH-Wrap":
       case "ETH-Unwrap":
         return true;

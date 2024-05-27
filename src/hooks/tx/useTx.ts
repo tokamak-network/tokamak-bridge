@@ -5,7 +5,7 @@ import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
-import SwapperAbi from "@/abis/SwapperV2.json";
+import WTON_ABI from "@/abis/WTON.json";
 import UniswapV3PoolAbi from "@/abis/IUniswapV3Pool.json";
 import NONFUNGIBLE_POSITION_MANAGER_ABI from "@/abis/NONFUNGIBLE_POSITION_MANAGER_ABI.json";
 import L1CrossDomainMessengerAbi from "constant/abis/L1CrossDomainMessenger.json";
@@ -36,7 +36,7 @@ const getInterface = () => {
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const USDT_I = new ethers.utils.Interface(USDTAbi);
-  const swapperI = new ethers.utils.Interface(SwapperAbi.abi);
+  const WTON_I = new ethers.utils.Interface(WTON_ABI.abi);
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
     NONFUNGIBLE_POSITION_MANAGER_ABI
   );
@@ -51,7 +51,7 @@ const getInterface = () => {
     l2BridgeI,
     swapRouterI,
     erc20I,
-    swapperI,
+    WTON_I,
     nonFungiblePositionManagerI,
     UniswapV3PoolI,
     L1CrossDomainMessengerI,
@@ -388,7 +388,7 @@ export function useTx(params: {
         l2BridgeI,
         swapRouterI,
         erc20I,
-        swapperI,
+        WTON_I,
         nonFungiblePositionManagerI,
         ETHSwapperI,
       } = getInterface();
@@ -689,7 +689,7 @@ export function useTx(params: {
         }
         //wrap
         case "Wrap": {
-          const result = swapperI.parseLog(logs[logs.length - 1]);
+          const result = WTON_I.parseLog(logs[logs.length - 2]);
           const { args } = result;
           const WTON_ADDRESS = WTON_ADDRESS_BY_CHAINID[connectedChainId];
           return setTxData({
@@ -700,11 +700,11 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: tokenAddress ?? "0x",
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
                 {
                   tokenAddress: WTON_ADDRESS ?? "0x",
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
               ],
               network: connectedChainId,
@@ -713,7 +713,7 @@ export function useTx(params: {
           });
         }
         case "Unwrap": {
-          const result = swapperI.parseLog(logs[logs.length - 1]);
+          const result = WTON_I.parseLog(logs[logs.length - 2]);
           const { args } = result;
           const TON_ADDRESS = TON_ADDRESS_BY_CHAINID[connectedChainId];
           return setTxData({
@@ -724,11 +724,11 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: tokenAddress ?? "0x",
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
                 {
                   tokenAddress: TON_ADDRESS,
-                  amount: args.amount.toBigInt(),
+                  amount: args.value.toBigInt(),
                 },
               ],
               network: connectedChainId,
