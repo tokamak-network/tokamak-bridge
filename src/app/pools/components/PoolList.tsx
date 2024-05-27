@@ -42,7 +42,7 @@ export default function PoolList() {
       <AddLiquidity />
       {isSupportedChain &&
         positions === undefined &&
-        Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
+        Array.from({ length: isConnected ? 8 : 4 }, (_, index) => (
           <EmptyCard key={index} noSpinner={!isLoading} />
         ))}
       {(!isSupportedChain || !isConnected) &&
@@ -67,8 +67,8 @@ export default function PoolList() {
                 : positions.length % 3 === 1
                 ? 1
                 : positions.length % 3 === 2
-                ? 3
-                : 0,
+                ? 0
+                : 2,
           },
           (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />
         )}

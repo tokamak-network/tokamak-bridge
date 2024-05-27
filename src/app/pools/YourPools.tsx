@@ -2,12 +2,21 @@ import { Flex, Text } from "@chakra-ui/react";
 import PoolList from "./components/PoolList";
 import { useAccount } from "wagmi";
 import { useGetPositionIds } from "@/hooks/pool/useGetPositionIds";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { ATOM_positionForInfo } from "@/recoil/pool/positions";
 
 export default function YourPools() {
   const { isConnected } = useAccount();
   const { positions } = useGetPositionIds();
 
   const isReducedHeight = !isConnected || positions?.length === 0;
+
+  //initialize positionInfo to make sure info page would be able to start from zero base
+  const [, setPositions] = useRecoilState(ATOM_positionForInfo);
+  useEffect(() => {
+    setPositions(undefined);
+  }, []);
 
   return (
     <Flex flexDir="column" alignSelf={"baseline"} h={"100%"}>
