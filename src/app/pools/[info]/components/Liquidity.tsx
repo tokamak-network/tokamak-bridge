@@ -19,6 +19,7 @@ import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -85,19 +86,26 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   //   token1Name: info?.token1.name,
   //   token1Amount: Number(commafy(info?.token1Amount, 4).replaceAll(",", "")),
   // });
-  const totalMarketPrice = commafy(
-    Number(info?.token0Value) + Number(info?.token1Value),
-    2
-  );
+
+  const { tokenPriceWithAmount: token0MarketPriceWithAmount } =
+    useGetMarketPrice({
+      tokenName: info?.token0.name,
+      amount: info?.token0Amount,
+    });
+  const { tokenPriceWithAmount: token1MarketPriceWithAmount } =
+    useGetMarketPrice({
+      tokenName: info?.token1.name,
+      amount: info?.token1Amount,
+    });
+  const totalMarketPrice =
+    token0MarketPriceWithAmount !== undefined &&
+    token1MarketPriceWithAmount !== undefined
+      ? token0MarketPriceWithAmount + token1MarketPriceWithAmount
+      : undefined;
 
   const router = useRouter();
   const { connectedChainId, otherLayerChainInfo } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
-
-  const noMarketPrices =
-    info?.token0MarketPrice === undefined ||
-    info?.token1MarketPrice === undefined ||
-    Number(info.token0MarketPrice) + Number(info.token1MarketPrice) === 0;
 
   const onClickToRoute = useCallback(
     async (remove?: boolean) => {
@@ -201,13 +209,13 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
               Liquidity
             </Text>
             <Text
-              fontSize={noMarketPrices ? "28px" : "38px"}
+              fontSize={totalMarketPrice ? "38px" : "28px"}
               height={"57px"}
-              color={noMarketPrices ? "#A0A3AD" : ""}
+              color={totalMarketPrice ? "" : "#A0A3AD"}
             >
-              {noMarketPrices
-                ? "$NA"
-                : gasUsdFormatter(Number(totalMarketPrice))}
+              {totalMarketPrice
+                ? gasUsdFormatter(Number(totalMarketPrice))
+                : "$NA"}
             </Text>
           </Flex>
           {!actionDisabled && (

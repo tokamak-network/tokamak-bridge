@@ -449,8 +449,11 @@ export function useGetPositionById(positionId: number, chainId: number) {
             WETH_ADDRESS.toLowerCase() === token1.toLowerCase();
 
           const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
-          const token0MarketPrice = await fetchMarketPrice(token0Name);
-          const token1MarketPrice = await fetchMarketPrice(token1Name);
+
+          //to save calls
+          //it will be fetched from the Liquidity component
+          const token0MarketPrice = undefined;
+          const token1MarketPrice = undefined;
 
           const token0Value = token0MarketPrice
             ? token0MarketPrice * Number(token0Amount)
