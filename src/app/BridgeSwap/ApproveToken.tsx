@@ -57,7 +57,7 @@ export default function ApproveToken() {
 
   const text =
     confirmedApproveTransaction && isApproved
-      ? `${commafy(parsedAmount)} ${inToken?.tokenSymbol} has been approved`
+      ? `${commafy(parsedAmount, 4)} ${inToken?.tokenSymbol} has been approved`
       : `${isRevokeForUSDT ? "Revoke" : "Approve"} ${
           inToken?.tokenSymbol
         } for ${capitalizeFirstChar(mode ?? undefined)}`;

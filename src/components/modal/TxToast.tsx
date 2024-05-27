@@ -73,7 +73,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
-          {trimAmount(convertParsedAmount)} {symbol}
+          {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
         </Text>
       </Flex>
     );
