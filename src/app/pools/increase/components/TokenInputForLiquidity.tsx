@@ -12,6 +12,7 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { lastFocusedInput } from "@/recoil/pool/setPoolPosition";
 import { TokenInfo } from "@/types/token/supportedToken";
+import { isETH } from "@/utils/token/isETH";
 import { trimAmount } from "@/utils/trim";
 import commafy from "@/utils/trim/commafy";
 import { Button, Flex, Input, Text } from "@chakra-ui/react";
@@ -244,6 +245,10 @@ export function TokenInputForLiquidity(props: {
     }, 1000);
   }, [tickCurrent]);
 
+  const isNativeToken = useMemo(() => {
+    return inToken ? isETH(selectedInToken) : isETH(selectedOutToken);
+  }, [inToken, selectedInToken, selectedOutToken]);
+
   return (
     <Flex
       flexDir={"column"}
@@ -280,19 +285,21 @@ export function TokenInputForLiquidity(props: {
             onFocus={handleFocus}
             onBlur={handleBlur}
           ></Input>
-          <Button
-            w={"40px"}
-            h={"22px"}
-            bgColor={"#6a00f1"}
-            fontSize={12}
-            fontWeight={700}
-            _hover={{}}
-            _active={{}}
-            mt={"3px"}
-            onClick={() => onMax()}
-          >
-            Max
-          </Button>
+          {!isNativeToken && (
+            <Button
+              w={"40px"}
+              h={"22px"}
+              bgColor={"#6a00f1"}
+              fontSize={12}
+              fontWeight={700}
+              _hover={{}}
+              _active={{}}
+              mt={"3px"}
+              onClick={() => onMax()}
+            >
+              Max
+            </Button>
+          )}
         </Flex>
       )}
 

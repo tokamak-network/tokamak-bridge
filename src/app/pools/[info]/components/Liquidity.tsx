@@ -79,13 +79,6 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
   const { info } = props;
   const { address } = useAccount();
 
-  // const { totalMarketPrice } = usePricePair({
-  //   token0Name: info?.token0.name,
-  //   token0Amount: Number(commafy(info?.token0Amount, 4).replaceAll(",", "")),
-  //   token1Name: info?.token1.name,
-  //   token1Amount: Number(commafy(info?.token1Amount, 4).replaceAll(",", "")),
-  // });
-
   const { tokenPriceWithAmount: token0MarketPriceWithAmount } =
     useGetMarketPrice({
       tokenName: info?.token0.name,
