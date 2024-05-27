@@ -15,8 +15,6 @@ import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import USDT_ABI from "@/constant/abis/USDT.json";
-import { is } from "date-fns/locale";
-import { all } from "axios";
 
 export function useApprove() {
   const { mode } = useGetMode();

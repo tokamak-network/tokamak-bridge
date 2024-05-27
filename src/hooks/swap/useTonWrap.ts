@@ -8,9 +8,8 @@ import { useTx } from "../tx/useTx";
 import { getWETHAddress } from "@/utils/token/isETH";
 import useConnectedNetwork from "../network";
 import { useProvier } from "../provider/useProvider";
-import { BigNumber, Contract, ethers } from "ethers";
+import { BigNumber, Contract } from "ethers";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
-import { getProviderOrSigner } from "@/utils/web3/getEthersProviderOrSinger";
 import { useGetMode } from "../mode/useGetMode";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
 
@@ -30,7 +29,7 @@ export default function useWrap() {
     abi: WTON_ABI.abi,
     functionName: "swapFromTON",
   });
-  const { data: unswrapData, write: swapToTON } = useContractWrite({
+  const { data: unwrapData, write: swapToTON } = useContractWrite({
     address: WTON_CONTRACT as `0x${string}`,
     abi: WTON_ABI.abi,
     functionName: "swapToTON",
@@ -72,7 +71,7 @@ export default function useWrap() {
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });
   const {} = useTx({
-    hash: unswrapData?.hash,
+    hash: unwrapData?.hash,
     txSort: "Unwrap",
     tokenAddress: inToken?.tokenAddress as `0x${string}`,
   });

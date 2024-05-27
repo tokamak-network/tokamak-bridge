@@ -236,57 +236,7 @@ export function useTx(params: {
   // const [isError, setIsError] = useState<boolean>(false);
   const { mode, subMode } = useGetMode();
 
-  /**
-   * using Ethers Provider
-   * to fix a bug to track transactions for the test purpose
-   */
-  // const { provider } = useProvier();
-  // useEffect(() => {
-  //   async function getTransactionWithRetry(
-  //     hash: string,
-  //     provider: providers.Provider,
-  //     retries = 5
-  //   ) {
-  //     setIsLoading(true);
-  //     setIsSuccess(false);
-  //     setIsError(false);
-  //     // for (let i = 0; i < retries; i++) {
-  //     try {
-  //       const transaction = await provider.getTransaction(hash);
-
-  //       //put some delay to wait for the transaction to be updated on L2
-  //       const delayTime =
-  //         mode === "Pool" && layer === "L2" ? (subMode.add ? 4000 : 2000) : 0;
-  //       await new Promise((resolve) => setTimeout(resolve, delayTime));
-
-  //       const result = await transaction.wait();
-  //       if (result.status === 1) {
-  //         return setIsSuccess(true);
-  //       }
-  //       return setIsSuccess(false);
-  //     } catch (error) {
-  //       // console.log(
-  //       //   `Transaction with hash ${hash} could not be found. Retry ${
-  //       //     i + 1
-  //       //   }/${retries}`
-  //       // );
-  //       setIsSuccess(false);
-  //       setIsError(true);
-  //       // await new Promise((resolve) => setTimeout(resolve, 2000)); // wait for 2 seconds before retrying
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //     throw new Error(
-  //       `Transaction with hash ${hash} could not be found after ${retries} retries.`
-  //     );
-  //   }
-
-  //   if (hash && provider) {
-  //     getTransactionWithRetry(hash, provider);
-  //   }
-  // }, [hash, provider, mode, subMode, layer]);
-
-  const [, setTxData] = useRecoilState(txDataStatus);
+  const [txData, setTxData] = useRecoilState(txDataStatus);
   // const [selectedInToken, setSelectedInToken] = useRecoilState(
   //   selectedInTokenStatus
   // );
@@ -302,18 +252,20 @@ export function useTx(params: {
     return setTxPending(false);
   }, [isLoading, connectedChainId, isError]);
 
+  const { confirmedTransaction } = useTransaction();
+
   useEffect(() => {
-    if (isSuccess) {
+    //@ts-ignore
+    if (isSuccess && confirmedTransaction?.includes(hash as string)) {
       if (mode === "Pool" && layer === "L2") {
         const delayTime = subMode.add ? 4000 : 2000;
         setTimeout(() => {
           return setModalOpen("confirmed");
         }, delayTime);
       }
-      return;
+      return setModalOpen("confirmed");
     }
-    return setModalOpen("confirmed");
-  }, [isSuccess, layer, mode, subMode]);
+  }, [isSuccess, layer, mode, subMode, confirmedTransaction, hash]);
 
   useEffect(() => {
     if (isError) {
