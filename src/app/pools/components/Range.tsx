@@ -127,10 +127,7 @@ export default function Range(props: {
 
   const alter0AmountForTooltip = useMemo(() => {
     return page === "addLiquidity" || page === "increaseLiquidity"
-      ? utils.formatUnits(
-          inToken?.parsedAmount?.toString() ?? "0",
-          inToken?.decimals
-        )
+      ? inToken?.parsedAmount?.toString()
       : page === "removeLiquidity"
       ? amount0Removed?.toString()
       : undefined;
@@ -138,10 +135,7 @@ export default function Range(props: {
 
   const alter1AmountForTooltip = useMemo(() => {
     return page === "addLiquidity" || page === "increaseLiquidity"
-      ? utils.formatUnits(
-          outToken?.parsedAmount?.toString() ?? "0",
-          outToken?.decimals
-        )
+      ? outToken?.parsedAmount?.toString()
       : page === "removeLiquidity"
       ? amount1Removed?.toString()
       : undefined;

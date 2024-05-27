@@ -3,7 +3,10 @@ import commafy from "@/utils/trim/commafy";
 import { Flex, Text, Button, Switch } from "@chakra-ui/react";
 import { usePoolModals } from "@/hooks/modal/usePoolModals";
 import { useCallback, useMemo } from "react";
-import { smallNumberFormmater } from "@/utils/number/compareNumbers";
+import {
+  gasUsdFormatter,
+  smallNumberFormmater,
+} from "@/utils/number/compareNumbers";
 import { usePricePair } from "@/hooks/price/usePricePair";
 // import TokenNetwork from "@/components/ui/TokenNetwork";
 import "css/pool/switch.css";
@@ -64,10 +67,7 @@ export default function UnclaimedEarnings(props: {
     )
   );
 
-  const totalMarketPrice =
-    Number(info?.token0FeeValue) + Number(info?.token1FeeValue);
-
-  const { hasTokenPrice } = usePricePair({
+  const { hasTokenPrice, totalMarketPrice } = usePricePair({
     token0Name: info?.token0.name,
     token0Amount,
     token1Name: info?.token1.name,
@@ -136,7 +136,9 @@ export default function UnclaimedEarnings(props: {
           <Flex alignItems={"left"} flexDir={"column"}>
             <Text fontSize={15}>Unclaimed fees</Text>
             <Text fontSize={"24px"} as="b" mt={"6px"}>
-              {`$${commafy(totalMarketPrice, 2, undefined, "0.00")}`}
+              {totalMarketPrice
+                ? `${gasUsdFormatter(Number(totalMarketPrice))}`
+                : "NA"}
             </Text>
             <Flex
               alignItems={"center"}
@@ -186,7 +188,7 @@ export default function UnclaimedEarnings(props: {
               _hover={{ bgColor: "#007AFF" }}
               _active={{}}
               onClick={() => onClickToRoute()}
-              // isDisabled={btnIsDisabled}
+              isDisabled={btnIsDisabled}
               _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
               fontSize={14}
               w={"76px"}
