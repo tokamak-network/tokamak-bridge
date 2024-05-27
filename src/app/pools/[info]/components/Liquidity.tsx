@@ -18,6 +18,7 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 const TokenLiquidityData = (props: {
   token: Token;
@@ -43,9 +44,18 @@ const TokenLiquidityData = (props: {
         </Text>
       </Flex>
       <Flex justifyContent="end" columnGap={"12px"}>
-        <Text color="#A0A3AD" fontSize="18px" fontWeight={500}>
-          {liquidityAmount}
-        </Text>
+        <CustomTooltip
+          content={
+            <Text color="#A0A3AD" fontSize="18px" fontWeight={500}>
+              {smallNumberFormmater({
+                amount: Number(liquidityAmount.toString()),
+                trimed: true,
+                trimedDecimals: 13,
+              })}
+            </Text>
+          }
+          tooltipLabel={liquidityAmount}
+        />
         {liquidityPercent !== undefined && (
           <Text
             bgColor={"#15161D"}
@@ -237,20 +247,12 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
         >
           <TokenLiquidityData
             token={info.token1}
-            liquidityAmount={smallNumberFormmater({
-              amount: Number(info.token1Amount.toString()),
-              trimed: true,
-              trimedDecimals: 13,
-            })}
+            liquidityAmount={info.token1Amount.toString()}
             liquidityPercent={token1Ratio}
           />
           <TokenLiquidityData
             token={info.token0}
-            liquidityAmount={smallNumberFormmater({
-              amount: info.token0Amount.toString(),
-              trimed: true,
-              trimedDecimals: 13,
-            })}
+            liquidityAmount={info.token0Amount.toString()}
             liquidityPercent={token0Ratio}
           />
         </Flex>
