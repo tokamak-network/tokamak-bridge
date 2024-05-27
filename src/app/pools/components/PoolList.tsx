@@ -62,12 +62,12 @@ export default function PoolList() {
         Array.from(
           {
             length:
-              positions.length < 7
-                ? 7 - positions.length
-                : positions.length % 3 === 0
+              positions.length < 8
+                ? 8 - positions.length
+                : positions.length % 3 === 1
                 ? 1
                 : positions.length % 3 === 2
-                ? 2
+                ? 3
                 : 0,
           },
           (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />

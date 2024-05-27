@@ -253,7 +253,7 @@ export function useGetPositionIds(): {
             const sortedPositions = sortPositions(
               positions.filter((position) => position !== undefined).flat()
             );
-            return setPositions(sortedPositions.slice(0, 4));
+            return setPositions(sortedPositions);
           }
 
           return setPositions([]);
