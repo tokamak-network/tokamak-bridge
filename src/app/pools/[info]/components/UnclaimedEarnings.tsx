@@ -52,10 +52,16 @@ export default function UnclaimedEarnings(props: {
   const { onOpenClaimEarning } = usePoolModals();
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
   const token0Amount = Number(
-    ethers.utils.formatEther(info?.token0CollectedFeeBN ?? "0")
+    ethers.utils.formatUnits(
+      info?.token0CollectedFeeBN ?? "0",
+      info?.token0.decimals
+    )
   );
   const token1Amount = Number(
-    ethers.utils.formatEther(info?.token1CollectedFeeBN ?? "0")
+    ethers.utils.formatUnits(
+      info?.token1CollectedFeeBN ?? "0",
+      info?.token1.decimals
+    )
   );
 
   const totalMarketPrice =

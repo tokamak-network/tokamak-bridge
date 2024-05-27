@@ -16,10 +16,7 @@ import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
 import { removeAmount } from "@/recoil/pool/setPoolPosition";
 import { useRecoilValue } from "recoil";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
-import commafy from "@/utils/trim/commafy";
-import { estimatedGasFee } from "@/recoil/global/transaction";
 import { useEffect, useState } from "react";
-import { BigNumber } from "ethers";
 import useBlockNum from "@/hooks/network/useBlockNumber";
 
 export default function RemoveModal() {

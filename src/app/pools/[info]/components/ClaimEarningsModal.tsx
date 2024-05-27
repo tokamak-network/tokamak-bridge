@@ -27,10 +27,16 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const collectAsWETH = useRecoilValue(ATOM_collectWethOption);
 
   const token0Amount = Number(
-    ethers.utils.formatEther(info?.token0CollectedFeeBN ?? BigNumber.from(0))
+    ethers.utils.formatUnits(
+      info?.token0CollectedFeeBN ?? BigNumber.from(0),
+      info?.token0.decimals
+    )
   );
   const token1Amount = Number(
-    ethers.utils.formatEther(info?.token1CollectedFeeBN ?? BigNumber.from(0))
+    ethers.utils.formatUnits(
+      info?.token1CollectedFeeBN ?? BigNumber.from(0),
+      info?.token1.decimals
+    )
   );
 
   const { hasTokenPrice, totalMarketPrice, token0Price, token1Price } =
@@ -146,8 +152,9 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   <Text fontWeight="semibold">
                     <CustomTooltip
                       content={smallNumberFormmater({
-                        amount: ethers.utils.formatEther(
-                          info?.token0CollectedFeeBN
+                        amount: ethers.utils.formatUnits(
+                          info?.token0CollectedFeeBN,
+                          info?.token0.decimals
                         ),
                         minimumValue: 0.000001,
                       })}
@@ -195,8 +202,9 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   <Text fontWeight="semibold">
                     <CustomTooltip
                       content={smallNumberFormmater({
-                        amount: ethers.utils.formatEther(
-                          info?.token1CollectedFeeBN
+                        amount: ethers.utils.formatUnits(
+                          info?.token1CollectedFeeBN,
+                          info?.token1.decimals
                         ),
                         minimumValue: 0.000001,
                       })}

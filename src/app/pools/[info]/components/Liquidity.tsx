@@ -13,9 +13,8 @@ import {
   gasUsdFormatter,
   smallNumberFormmater,
 } from "@/utils/number/compareNumbers";
-import { splitNumber } from "@/utils/trim/splitNumber";
 import { useAccount, useSwitchNetwork } from "wagmi";
-import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
