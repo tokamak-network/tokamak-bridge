@@ -1,6 +1,5 @@
 import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
 import { ModalType } from "@/components/fw/types";
-import TipSymbol from "assets/icons/fw/tip_fw.svg";
 import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
 import Pencil from "assets/icons/fw/pencil.svg";
 import EthSymbol from "assets/icons/fw/eth_fw.svg";
@@ -53,6 +52,7 @@ const FwTransactionDetail: React.FC<TransactionDetailProps> = ({
         fontWeight={400}
         fontSize={"14px"}
         lineHeight={"21px"}
+        py={"1px"}
         color={"#E3E4C0"}
       >
         <span style={{ fontSize: "11px", lineHeight: "16.5px" }}>(</span>
@@ -67,11 +67,13 @@ interface FeeDetailProps {
   title: string;
   mainAmount: string;
   subAmount: string;
-  modalType?: ModalType; // ModalType을 직접 사용
+  modalType?: ModalType;
+  onPencilClick?: () => void;
 }
 
 interface FwConfirmDetailProps {
   modalType: ModalType;
+  onPencilClick: () => void;
 }
 
 const FeeDetail: React.FC<FeeDetailProps> = ({
@@ -79,6 +81,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   mainAmount,
   subAmount,
   modalType,
+  onPencilClick,
 }) => {
   return (
     <HStack
@@ -86,7 +89,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
       lineHeight={"18px"}
       mt={title !== "Service fee" ? "6px" : "0"}
     >
-      <Flex>
+      <Flex alignItems='center'>
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
           {title}
         </Text>
@@ -102,7 +105,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
       </Flex>
       <Flex>
         {title == "Service fee" && modalType === ModalType.History && (
-          <Flex cursor='pointer'>
+          <Flex cursor='pointer' onClick={onPencilClick}>
             <Image src={Pencil} alt={"Pencil"} />
           </Flex>
         )}
@@ -122,7 +125,10 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   );
 };
 
-export default function FwConfirmDetail({ modalType }: FwConfirmDetailProps) {
+export default function FwConfirmDetail({
+  modalType,
+  onPencilClick,
+}: FwConfirmDetailProps) {
   return (
     <Box
       bg='#15161D'
@@ -150,6 +156,7 @@ export default function FwConfirmDetail({ modalType }: FwConfirmDetailProps) {
           mainAmount='0.012 USDC'
           subAmount='$0.43'
           modalType={modalType}
+          onPencilClick={onPencilClick}
         />
         <FeeDetail
           title='Network fee'

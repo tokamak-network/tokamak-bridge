@@ -16,7 +16,9 @@ export default function FwConfirmHistoryFooter() {
         <Flex
           justifyContent={"space-between"}
           alignItems={"center"}
+          height={"40px"}
           px={"12px"}
+          py={"8px"}
         >
           <Flex>
             <Box
@@ -68,7 +70,9 @@ export default function FwConfirmHistoryFooter() {
         <Flex
           justifyContent={"space-between"}
           alignItems={"center"}
+          height={"40px"}
           px={"12px"}
+          py={"8px"}
           mt={"16px"}
         >
           <Flex>
@@ -78,7 +82,7 @@ export default function FwConfirmHistoryFooter() {
               mb={"15px"}
               width='9px'
               height='9px'
-              bgColor='#007AFF'
+              bgColor='#DB00FF'
               borderRadius='full'
             />
             <Text
@@ -100,7 +104,7 @@ export default function FwConfirmHistoryFooter() {
               color={"#FFFFFF"}
               mr={"4px"}
             >
-              ~ 3 min
+              03: 00
             </Text>
           </Flex>
         </Flex>

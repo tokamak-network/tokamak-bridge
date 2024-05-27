@@ -1,4 +1,4 @@
-import { Flex, Text } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Title from "../../add/components/Title";
 import TokenCard from "@/components/card/TokenCard";
 import add from "assets/icons/addIcon.svg";
@@ -34,7 +34,7 @@ export default function AddMoreLiquidity() {
       TITAN_SEPOLIA: token0.address,
     },
     isNativeCurrency:
-      token0.address === getWETHAddress(chainName)
+      token0.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
         ? [
             SupportedChainId.MAINNET,
             SupportedChainId.TITAN,
@@ -56,11 +56,12 @@ export default function AddMoreLiquidity() {
       TITAN_SEPOLIA: token1.address,
     },
     isNativeCurrency:
-      token1.address === getWETHAddress(chainName)
+      token1.address.toLowerCase() === getWETHAddress(chainName).toLowerCase()
         ? [
             SupportedChainId.MAINNET,
             SupportedChainId.TITAN,
             SupportedChainId.SEPOLIA,
+            SupportedChainId.TITAN_SEPOLIA,
           ]
         : null,
     decimals: token1.decimals,
@@ -98,7 +99,7 @@ export default function AddMoreLiquidity() {
           </Flex>
         </Flex>
         <Flex h={"242px"} justifyContent={"center"} pos={"absolute"}>
-          <Flex mx="6px" h={"100%"} w="24px">
+          <Flex mx="6px" h={"100%"} w="24px" justifyContent={"center"}>
             <Image src={add} alt="add" />
           </Flex>
         </Flex>

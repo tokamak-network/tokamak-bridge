@@ -24,7 +24,7 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
-{/* <MaintenanceMobileModal /> */}
+        {/* <MaintenanceMobileModal /> */}
         <Swap />
         <Details />
       </Flex>

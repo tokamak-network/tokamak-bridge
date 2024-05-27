@@ -20,7 +20,7 @@ import ClaimEarningsModal from "../../[info]/components/ClaimEarningsModal";
 import { useIsOwner } from "@/hooks/pool/useIsOwner";
 
 export default function RemoveLiquidity() {
-  const { positionId, chainIdParam, backwardLink } = useGetPositionIdFromPath();
+  const { backwardLink } = useGetPositionIdFromPath();
   const { info } = usePositionInfo();
   const { needToRedirect } = useIsOwner(info);
 
@@ -31,7 +31,7 @@ export default function RemoveLiquidity() {
   if (info === undefined) return null;
 
   return (
-    <Flex flexDir={"column"} rowGap={"8px"}>
+    <Flex flexDir={"column"} rowGap={"8px"} pt={"134px"}>
       <TopLine
         title="Remove Liquidity"
         clear={false}
@@ -45,7 +45,7 @@ export default function RemoveLiquidity() {
         justifyContent={"space-between"}
       >
         <Flex flexDirection={"column"} rowGap={"16px"} maxW={"364px"}>
-          <Range page="removeLiquidity" />
+          <Range page="removeLiquidity" estimatedGas={null} />
           <UnclaimedEarnings info={info} />
           <SelectPercentage />
           <TxDetails />

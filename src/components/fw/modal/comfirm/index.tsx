@@ -10,6 +10,7 @@ import {
 } from "@chakra-ui/react";
 import { ModalType } from "@/components/fw/types";
 import { useState } from "react";
+import useFwUpdateFeeModal from "@/components/fw/hooks/useFwUpdateFeeModal";
 import useFxConfirmModal from "@/components/fw/hooks/useFwConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
 import FwConfirmDetail from "./FwConfirmDetail";
@@ -18,7 +19,14 @@ import FwConfirmHistoryFooter from "./FwConfirmHistoryFooter";
 
 export default function FwModal() {
   const { fwConfirmModal, onCloseFwConfirmModal } = useFxConfirmModal();
+  const { onOpenFwUpdateFeeModal } = useFwUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<boolean>(false);
+
+  // pencil 클릭시 업데이트
+  const handlePencilClick = () => {
+    onCloseFwConfirmModal();
+    onOpenFwUpdateFeeModal();
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setIsChecked(e.target.checked);
@@ -56,7 +64,10 @@ export default function FwModal() {
           <CloseButton onClick={onCloseFwConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          <FwConfirmDetail modalType={fwConfirmModal.type} />
+          <FwConfirmDetail
+            modalType={fwConfirmModal.type}
+            onPencilClick={handlePencilClick}
+          />
         </ModalBody>
         <ModalFooter p={0} display='block'>
           {/** fw type에 따라 footer가 달라진다. */}

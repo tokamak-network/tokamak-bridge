@@ -5,8 +5,7 @@ import {
   usePrepareErc20Approve,
 } from "@/generated";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
-
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
 import useConnectedNetwork from "../network";
@@ -22,9 +21,9 @@ export function useApprove() {
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
 
-  const { L1BRIDGE_CONTRACT, SWAPPER_V2_CONTRACT } = useContract();
+  const { L1BRIDGE_CONTRACT, WTON_CONTRACT } = useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
-  const { connectedChainId } = useConnectedNetwork();
+  const { connectedChainId, isLayer2 } = useConnectedNetwork();
 
   const contractAddress = useMemo(() => {
     switch (mode) {
@@ -34,24 +33,17 @@ export function useApprove() {
         return UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2 as Hash;
       case "Wrap":
       case "Unwrap":
-        return SWAPPER_V2_CONTRACT as Hash;
+        return WTON_CONTRACT as Hash;
       default:
         return undefined;
     }
-  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, SWAPPER_V2_CONTRACT]);
+  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, WTON_CONTRACT]);
 
-  const { isApproved: approved, allowance } = useAllowance({
+  const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress,
     token: inToken,
-    contractAddress:
-      mode === "Deposit"
-        ? (L1BRIDGE_CONTRACT as Hash)
-        : mode === "Swap"
-        ? (UNISWAP_CONTRACT?.SWAP_ROUTER_ADDRESS2 as Hash)
-        : mode === "Wrap" || mode === "Unwrap"
-        ? (SWAPPER_V2_CONTRACT as Hash)
-        : undefined,
+    contractAddress,
   });
 
   const isApproved = useMemo(() => {
@@ -63,8 +55,9 @@ export function useApprove() {
       case "Swap":
         return approved;
       case "Wrap":
-      case "Unwrap":
         return approved;
+      case "Unwrap":
+        return true;
       case "ETH-Wrap":
       case "ETH-Unwrap":
         return true;
@@ -73,9 +66,11 @@ export function useApprove() {
     }
   }, [mode, approved]);
 
-  const isUSDT = connectedChainId
-    ? tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
-    : undefined;
+  const isUSDT = useMemo(() => {
+    return connectedChainId
+      ? tokenAddress === USDT_ADDRESS_BY_CHAINID[connectedChainId]
+      : undefined;
+  }, [connectedChainId, tokenAddress, USDT_ADDRESS_BY_CHAINID]);
 
   const { data: totalSupply } = useErc20TotalSupply({
     address: tokenAddress,
@@ -92,28 +87,72 @@ export function useApprove() {
 
   const { data, write } = useErc20Approve(config);
 
-  const { write: USDT_APPROVE } = useContractWrite({
+  const { data: usdtApproveData, write: USDT_APPROVE } = useContractWrite({
     address: tokenAddress,
     abi: USDT_ABI,
     functionName: "approve",
   });
+  const { data: usdtRevokeData, write: USDT_APPROVE_REVOKE } = useContractWrite(
+    {
+      address: tokenAddress,
+      abi: USDT_ABI,
+      functionName: "approve",
+    }
+  );
+
+  const isRevokeForUSDT = useMemo(() => {
+    if (isUSDT && allowanceIsBiggerThanZero && !isLayer2) {
+      return true;
+    }
+    return false;
+  }, [isUSDT, allowanceIsBiggerThanZero, isLayer2]);
+
+  const approveForUSDT = useCallback(() => {
+    if (isRevokeForUSDT) {
+      return USDT_APPROVE_REVOKE({
+        args: [contractAddress, 0],
+      });
+    }
+    return USDT_APPROVE({
+      args: [contractAddress, totalSupply?.toString()],
+    });
+  }, [
+    contractAddress,
+    totalSupply,
+    USDT_APPROVE,
+    USDT_APPROVE_REVOKE,
+    isRevokeForUSDT,
+  ]);
 
   const { isLoading } = useTx({
-    hash: data?.hash,
+    hash: isUSDT ? usdtApproveData?.hash : data?.hash,
     txSort: "Approve",
     tokenAddress,
     actionSort: mode,
   });
+  const { isLoading: usdtRevokeIsLoading } = useTx({
+    hash: usdtRevokeData?.hash,
+    txSort: "Revoke",
+    tokenAddress,
+    actionSort: mode,
+  });
+
+  const callApprove = useCallback(() => {
+    isUSDT ? approveForUSDT() : write?.();
+  }, [
+    contractAddress,
+    totalSupply,
+    isUSDT,
+    USDT_APPROVE,
+    write,
+    approveForUSDT,
+  ]);
 
   return {
     isApproved,
-    callApprove: () =>
-      isUSDT
-        ? USDT_APPROVE({
-            args: [contractAddress, totalSupply?.toString()],
-          })
-        : write?.(),
-    isLoading,
+    callApprove,
+    isLoading: isLoading || usdtRevokeIsLoading,
     hash: data?.hash,
+    isRevokeForUSDT,
   };
 }

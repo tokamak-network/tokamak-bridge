@@ -19,7 +19,7 @@ import ETHHalfRounded from "assets/tokens/eth_half_rounded.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
-import { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import TransactionDetail from "@/app/BridgeSwap/TransactionDetail";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
@@ -32,6 +32,9 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 import "@/css/spinner.css";
 import TokenSymbolWithNetwork from "../image/TokenSymbolWithNetwork";
+import useIsLoading from "@/hooks/ui/useIsLoading";
+import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
+import { gasUsdFormatter } from "@/utils/number/compareNumbers";
 
 const OutTokenContainer = () => {
   const { outToken } = useInOutTokens();
@@ -81,7 +84,7 @@ const OutTokenContainer = () => {
         fontWeight={mobileView ? 500 : 400}
         color={"#A0A3AD"}
       >
-        ${outTokenWithPrice || "0"}
+        {gasUsdFormatter(outTokenWithPrice) ?? "NA"}
       </Text>
     </>
   );
@@ -136,6 +139,7 @@ const TokenContainer = () => {
     tokenName: inToken?.tokenName as string,
     amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
   });
+  const { connectedChainId } = useConnectedNetwork();
 
   return (
     <Flex
@@ -180,7 +184,7 @@ const TokenContainer = () => {
         ) : (
           <TokenSymbolWithNetwork
             tokenSymbol={(inToken?.tokenSymbol as string) ?? "default"}
-            chainId={1}
+            chainId={connectedChainId}
             symbolW={56}
             symbolH={56}
             networkSymbolH={20}
@@ -215,7 +219,7 @@ const TokenContainer = () => {
           fontWeight={mobileView ? 500 : 400}
           color={"#A0A3AD"}
         >
-          ${inTokenWithPrice || "0"}
+          {gasUsdFormatter(inTokenWithPrice) ?? "NA"}
         </Text>
       </Flex>
 
@@ -252,7 +256,8 @@ export default function ActionConfirmModal() {
   const { isOpen, onCloseConfirmModal } = useConfirm();
   const { onClick } = useCallBridgeSwapAction();
   const isWithdrawConfirmed = useRecoilValue(confirmWithdrawStatus);
-  const { mobileView } = useMediaView();
+  const [isLoading] = useIsLoading();
+  const { routingPath } = useSmartRouter();
 
   return (
     <Modal isOpen={isOpen} onClose={onCloseConfirmModal} size={"xl"} isCentered>
@@ -295,7 +300,16 @@ export default function ActionConfirmModal() {
               bgColor={"#007AFF"}
               color={"#fff"}
               onClick={onClick}
-              isDisabled={mode === "Withdraw" ? !isWithdrawConfirmed : false}
+              isDisabled={
+                mode === "Withdraw"
+                  ? !isWithdrawConfirmed
+                  : mode === "Swap" &&
+                    (isLoading ||
+                      routingPath === null ||
+                      routingPath === undefined)
+                  ? true
+                  : false
+              }
               _disabled={{
                 color: "#8E8E92",
                 bgColor: "#17181D",

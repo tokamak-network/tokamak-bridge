@@ -15,8 +15,7 @@ import ErrorImage from "assets/image/modal/error.svg";
 import Check from "assets/image/modal/check.svg";
 import CloseButton from "../button/CloseButton";
 import useConnectedNetwork from "@/hooks/network";
-import { useTransaction } from "@/hooks/tx/useTx";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { txHashLog, txHashStatus } from "@/recoil/global/transaction";
@@ -25,7 +24,6 @@ import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
 
 export default function Confirmation() {
   const { blockExplorer, connectedChainId } = useConnectedNetwork();
-  const { confirmedTransaction } = useTransaction();
   const txHash = useRecoilValue(txHashStatus);
 
   const {
@@ -34,7 +32,6 @@ export default function Confirmation() {
     isError,
     isOpen,
     isClaimWaiting,
-    setIsOpen,
     closeModal,
   } = useTxConfirmModal();
   const { mode, subMode } = useGetMode();

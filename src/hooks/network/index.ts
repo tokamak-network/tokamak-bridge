@@ -76,8 +76,8 @@ export default function useConnectedNetwork() {
         return supportedChain[4];
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
-      // if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
-      //   return supportedChain[1];
+      if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
+        return supportedChain[1];
     }
   }, [chainInfo]);
 
@@ -87,9 +87,15 @@ export default function useConnectedNetwork() {
         return supportedChain.filter((chain) => !chain.isTestnet);
       }
 
-      return supportedChain.filter((chain) => chain.isTestnet);
+      return supportedChain
+        .filter((chain) => chain.isTestnet)
+        .filter((chain) => chain.chainId !== 111551118080);
     }
   }, [chainInfo]);
 
-  return { ...chainInfo, otherLayerChainInfo, chainGroup };
+  const isLayer2 = useMemo(() => {
+    return chainInfo.layer === "L2";
+  }, [chainInfo.layer]);
+
+  return { ...chainInfo, otherLayerChainInfo, chainGroup, isLayer2 };
 }

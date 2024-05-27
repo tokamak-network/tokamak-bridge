@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import FwOptionInput from "@/components/fw/modal/option/FwOptionInput";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
-import { FwOptionCrossDetailProps } from "@/components/fw/types";
+import { FwInputProps } from "@/components/fw/types";
 import { ButtonTypeMain, ButtonTypeSub } from "@/components/fw/types";
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -20,7 +20,7 @@ interface AdditionalCrossProps {
 }
 
 export default function FwOptionCrossDetail(
-  props: AdditionalCrossProps & FwOptionCrossDetailProps
+  props: AdditionalCrossProps & FwInputProps
 ) {
   const isCrossActive = props.activeMainButtonValue === ButtonTypeMain.Cross;
 
@@ -45,7 +45,7 @@ export default function FwOptionCrossDetail(
           Cross Trade Bridge
         </Text>
         <Box mt={"12px"}>
-          <Flex>
+          <Flex alignItems='center'>
             <Text
               fontWeight={400}
               fontSize={"10px"}
@@ -56,7 +56,7 @@ export default function FwOptionCrossDetail(
             </Text>
             <FwTooltip
               tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px", marginTop: "1px" }}
+              style={{ marginLeft: "2px" }}
             />
           </Flex>
           <Text
@@ -81,7 +81,9 @@ export default function FwOptionCrossDetail(
                 border: isRecommendActive ? "" : "1px solid #313442",
                 //disabled 상태에서 버튼 비활성화 css default 값
                 _disabled: {
-                  border: "1px solid #313442",
+                  border: isRecommendActive
+                    ? "none !important"
+                    : "1px solid #313442",
                   cursor: "auto",
                 },
               }}
@@ -109,7 +111,9 @@ export default function FwOptionCrossDetail(
               borderRadius='4px'
               sx={{
                 backgroundColor: isAdvancedActive ? "#DB00FF" : "#15161D",
-                border: isAdvancedActive ? "" : "1px solid #313442",
+                border: isAdvancedActive
+                  ? "none !important"
+                  : "1px solid #313442",
                 //disabled 상태에서 버튼 비활성화 css default 값
                 _disabled: {
                   border: "1px solid #313442",
@@ -133,7 +137,7 @@ export default function FwOptionCrossDetail(
         </Box>
         {isAdvancedActive && (
           <Box mt={"12px"}>
-            <Flex>
+            <Flex alignItems='center'>
               <Text
                 fontWeight={400}
                 fontSize={"10px"}
@@ -144,7 +148,7 @@ export default function FwOptionCrossDetail(
               </Text>
               <FwTooltip
                 tooltipLabel={"text will be changed"}
-                style={{ marginLeft: "2px", marginTop: "1px" }}
+                style={{ marginLeft: "2px" }}
               />
             </Flex>
             <FwOptionInput

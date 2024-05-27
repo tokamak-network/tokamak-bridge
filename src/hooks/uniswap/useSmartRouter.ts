@@ -19,15 +19,12 @@ const getPath = async (queryParmam: string | undefined | null) => {
     const res = await fetch(queryParmam, {
       method: "GET",
     });
-
     if (res.status !== 200) {
       throw new Error("no route founded");
     }
-
     if (res.ok) {
       return res.json();
     }
-
     return undefined;
   } catch (e: any) {
     console.log("**getPath error**");

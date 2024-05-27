@@ -1,26 +1,20 @@
-import {
-  Box,
-  Text,
-  Flex,
-  Circle,
-  Button,
-  InputGroup,
-  Input,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { Text, InputGroup, Input, InputRightElement } from "@chakra-ui/react";
 import { FwWarning } from "@/components/fw/components/FwWarning";
-import { FwOptionCrossDetailProps } from "@/components/fw/types";
+import { FwInputProps } from "@/components/fw/types";
+import { WarningType } from "@/components/fw/types";
 
-export default function FwOptionInput(props: FwOptionCrossDetailProps) {
+export default function FwOptionInput(props: FwInputProps) {
   const { inputValue, inputWarningCheck, onInputChange } = props;
   return (
     <>
       <InputGroup my={"4px"}>
         <Input
+          autoFocus
           w={"189px"}
           h={"34px"}
           px='12px'
           py='4px'
+          bg='#15161D'
           type='text'
           maxLength={1}
           pattern='[012]'
@@ -33,12 +27,16 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           placeholder='Enter amount'
           onChange={onInputChange}
           value={inputValue}
+          color={
+            inputWarningCheck == WarningType.Critical ? "#DD3A44" : "#FFFFFF"
+          }
           _hover={{}}
           _placeholder={{
             fontSize: "12px",
             fontWeight: "400",
             lineHeight: "26px",
             color: "#A0A3AD",
+            transform: "translateY(-1.5px)",
           }}
           _focus={{
             borderColor: "#59628D",
@@ -46,9 +44,8 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           }}
         />
         {inputValue && (
-          <InputRightElement height={"34px"}>
+          <InputRightElement height={"34px"} mr={"13px"}>
             <Text
-              pr={"12px"}
               fontSize={"12px"}
               fontWeight={400}
               color={"#A0A3AD"}
@@ -59,10 +56,13 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
           </InputRightElement>
         )}
       </InputGroup>
-      {inputWarningCheck == "critical" ? (
+      {inputWarningCheck == WarningType.Critical ? (
         <FwWarning
           label={"text will be changed"}
           type={inputWarningCheck}
+          groupStyle={{
+            height: "14px",
+          }}
           style={{
             fontWeight: 400,
             fontSize: "11px",
@@ -70,10 +70,13 @@ export default function FwOptionInput(props: FwOptionCrossDetailProps) {
             marginLeft: "6px",
           }}
         />
-      ) : inputWarningCheck == "normal" ? (
+      ) : inputWarningCheck == WarningType.Normal ? (
         <FwWarning
           label={"text will be changed"}
           type={inputWarningCheck}
+          groupStyle={{
+            height: "14px",
+          }}
           style={{
             fontWeight: 400,
             fontSize: "11px",

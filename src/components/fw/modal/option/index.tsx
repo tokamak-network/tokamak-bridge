@@ -19,14 +19,12 @@ import {
   ButtonTypeMain,
   ButtonTypeSub,
 } from "@/components/fw/types";
-import FwComingOptionDetail from "./FwComingOptionDetail";
 import FwOptionCrossDetail from "./FwOptionCrossDetail";
 import FwOptionStandardDetail from "./FwOptionStandardDetail";
 
 export default function FwOptionModal() {
   const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
   const { onOpenFwConfirmModal } = useFxConfirmModal();
-  const [nextStep, setNextStep] = useState<boolean>(false);
 
   // FwConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
@@ -76,25 +74,24 @@ export default function FwOptionModal() {
     activeSubButtonValue === ButtonTypeSub.Advanced &&
     (inputValue === "" || inputWarningCheck === WarningType.Critical);
 
-  const handleConfirm = () => {
-    if (!nextStep) {
-      setActiveMainButtonValue(ButtonTypeMain.Cross);
-      setNextStep(true);
-      return;
-    }
-    //초기화
+  const resetAllStates = () => {
     onCloseFwOptionModal();
-    setNextStep(false);
     setInputValue("");
     setActiveMainButtonValue(ButtonTypeMain.Standard);
     setActiveSubButtonValue(ButtonTypeSub.Recommend);
     setInputWarningCheck("");
+  };
+
+  const handleConfirm = () => {
+    //초기화
+    resetAllStates();
 
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       alert("Official Standard Confirmed!");
       return;
     }
 
+    // 스탠다드가 아닐때는 Trade
     onOpenFwConfirmModal(ModalType.Trade);
   };
 
@@ -116,23 +113,18 @@ export default function FwOptionModal() {
           <CloseButton onClick={onCloseFwOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {!nextStep ? (
-            <FwComingOptionDetail />
-          ) : (
-            <FwOptionCrossDetail
-              // cross, official 관련 props
-              activeMainButtonValue={activeMainButtonValue}
-              handleButtonMainClick={handleButtonMainClick}
-              // recommend, Advanced button 관련 props
-              activeSubButtonValue={activeSubButtonValue}
-              handleButtonSubClick={handleButtonSubClick}
-              // input 관련 props
-              inputValue={inputValue}
-              inputWarningCheck={inputWarningCheck}
-              onInputChange={handleInputChange}
-            />
-          )}
-
+          <FwOptionCrossDetail
+            // cross, official 관련 props
+            activeMainButtonValue={activeMainButtonValue}
+            handleButtonMainClick={handleButtonMainClick}
+            // recommend, Advanced button 관련 props
+            activeSubButtonValue={activeSubButtonValue}
+            handleButtonSubClick={handleButtonSubClick}
+            // input 관련 props
+            inputValue={inputValue}
+            inputWarningCheck={inputWarningCheck}
+            onInputChange={handleInputChange}
+          />
           <FwOptionStandardDetail
             // cross, official 관련 props
             activeMainButtonValue={activeMainButtonValue}

@@ -16,6 +16,7 @@ export default function AddLiquidity() {
 
   if (!isConnected) return <ConnecteWalletCard />;
   if (!isSupportedChain) return <UnspportedNetwork />;
+
   return (
     <NextLink href="/pools/add" passHref>
       <Flex

@@ -32,7 +32,7 @@ import { sortPositions } from "@/utils/pool/sortPositions";
 import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import JSBI from "jsbi";
-import { providerByChainId } from "@/config/getProvider";
+import { getProvider, providerByChainId } from "@/config/getProvider";
 import { useGetPositionByClients } from "./useApolloClient";
 
 export const makePositionDatas = async (
@@ -42,6 +42,17 @@ export const makePositionDatas = async (
   const positions: PoolCardDetail[] = [];
   const batchSize = positionData.length;
   const promises: any[] = [];
+
+  const UNISWAP_CONTRACT = UniswapContractByChainId[chainId];
+  const provider = providerByChainId[chainId];
+
+  if (!UNISWAP_CONTRACT || !provider) return null;
+
+  const NonfungiblePositionManagerContract = new ethers.Contract(
+    UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
+    NONFUNGIBLE_POSITION_MANAGER_ABI,
+    provider
+  );
 
   for (let i = 0; i < batchSize; i++) {
     promises.push(async () => {
@@ -93,6 +104,7 @@ export const makePositionDatas = async (
         JSBI.add(amount0 as JSBI, amount1 as JSBI),
         JSBI.BigInt(0)
       );
+
       const token0Amount =
         amount0 &&
         ethers.utils
@@ -104,26 +116,42 @@ export const makePositionDatas = async (
           .formatUnits(amount1.toString(), token1.decimals)
           .slice(0, 10);
 
-      const token0CollectedFee =
-        amount0 &&
-        ethers.utils
-          .formatUnits(amount0.toString(), token0.decimals)
-          .slice(0, 10);
-      const token1CollectedFee =
-        amount0 &&
-        ethers.utils
-          .formatUnits(amount0.toString(), token1.decimals)
-          .slice(0, 10);
+      //calculate earning fees
+      const earningFee =
+        await NonfungiblePositionManagerContract.callStatic.collect({
+          tokenId: id,
+          recipient: owner,
+          amount0Max: ethers.BigNumber.from(2).pow(128).sub(1),
+          amount1Max: ethers.BigNumber.from(2).pow(128).sub(1),
+        });
+
+      const token0CollectedFee = ethers.utils
+        .formatUnits(earningFee.amount0, token0.decimals)
+        .slice(0, 10);
+      const token1CollectedFee = ethers.utils
+        .formatUnits(earningFee.amount1, token1.decimals)
+        .slice(0, 10);
 
       const token0MarketPrice = await fetchMarketPrice(token0.name);
       const token1MarketPrice = await fetchMarketPrice(token1.name);
-      const token0Value = token0MarketPrice * Number(token0Amount);
-      const token1Value = token1MarketPrice * Number(token1Amount);
+      const token0Value = token0MarketPrice
+        ? token0MarketPrice * Number(token0Amount)
+        : undefined;
+      const token1Value = token1MarketPrice
+        ? token1MarketPrice * Number(token1Amount)
+        : undefined;
       const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
       const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-      const token0FeeValue = token0MarketPrice * token0FeeAmount;
-      const token1FeeValue = token1MarketPrice * token1FeeAmount;
-      const feeValue = token0FeeValue + token1FeeValue;
+      const token0FeeValue = token0MarketPrice
+        ? token0MarketPrice * token0FeeAmount
+        : undefined;
+      const token1FeeValue = token1MarketPrice
+        ? token1MarketPrice * token1FeeAmount
+        : undefined;
+      const feeValue =
+        token0FeeValue && token1FeeValue
+          ? token0FeeValue + token1FeeValue
+          : undefined;
       const inRange =
         tickLowerSub <= slot0TickSub && slot0TickSub < tickUpperSub;
 
@@ -140,11 +168,13 @@ export const makePositionDatas = async (
         token1MarketPrice,
         inRange,
         isClosed,
-        token0Value: isNaN(token0Value) ? 0 : token0Value,
-        token1Value: isNaN(token1Value) ? 0 : token1Value,
+        token0Value:
+          token0Value && isNaN(token0Value) ? undefined : token0Value,
+        token1Value:
+          token1Value && isNaN(token1Value) ? undefined : token1Value,
         token0FeeValue,
         token1FeeValue,
-        feeValue: isNaN(feeValue) ? 0 : feeValue,
+        feeValue: feeValue && isNaN(feeValue) ? undefined : feeValue,
         chainId,
         owner,
         hasETH: false,
@@ -195,6 +225,7 @@ export function useGetPositionIds(): {
   useEffect(() => {
     const fetchPositionData = async () => {
       try {
+        setPositionsLoading(true);
         if (connectedChainId && chainGroup) {
           if (
             (address && account !== address) ||
@@ -202,7 +233,6 @@ export function useGetPositionIds(): {
           ) {
             setAccount(address);
             setChainId(connectedChainId);
-            setPositionsLoading(true);
             setPositions(undefined);
           }
 
@@ -215,7 +245,7 @@ export function useGetPositionIds(): {
                 if (position?.data?.positions) {
                   return makePositionDatas(
                     position.data.positions,
-                    chainGroup[index === 1 ? index + 1 : index].chainId ?? 0
+                    chainGroup[index].chainId ?? 0
                   );
                 }
               })
@@ -263,7 +293,6 @@ export function useGetPositionById(positionId: number, chainId: number) {
   const { provider: _provider } = useProvier();
   const { blockNumber } = useBlockNum();
   const { connectedChainId, layer } = useConnectedNetwork();
-  const pathName = usePathname();
 
   const [positions, setPositions] = useRecoilState<
     PoolCardDetail[] | undefined
@@ -402,14 +431,14 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const token0Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
-                remainedTokens.amount0.toString(),
+                remainedTokens?.amount0.toString(),
                 token0Decimals
               );
 
           const token1Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
-                remainedTokens.amount1.toString(),
+                remainedTokens?.amount1.toString(),
                 token1Decimals
               );
 
@@ -421,15 +450,30 @@ export function useGetPositionById(positionId: number, chainId: number) {
 
           const isClosed = Number(token0Amount) + Number(token1Amount) <= 0;
 
-          const token0MarketPrice = await fetchMarketPrice(token0Name);
-          const token1MarketPrice = await fetchMarketPrice(token1Name);
-          const token0Value = token0MarketPrice * Number(token0Amount);
-          const token1Value = token1MarketPrice * Number(token1Amount);
+          //to save calls
+          //it will be fetched from the Liquidity component
+          const token0MarketPrice = undefined;
+          const token1MarketPrice = undefined;
+
+          const token0Value = token0MarketPrice
+            ? token0MarketPrice * Number(token0Amount)
+            : undefined;
+          const token1Value = token1MarketPrice
+            ? token1MarketPrice * Number(token1Amount)
+            : undefined;
           const token0FeeAmount = Number(commafy(token0CollectedFee, 8, true));
           const token1FeeAmount = Number(commafy(token1CollectedFee, 8, true));
-          const token0FeeValue = token0MarketPrice * token0FeeAmount;
-          const token1FeeValue = token1MarketPrice * token1FeeAmount;
-          const feeValue = token0FeeValue + token1FeeValue;
+
+          const token0FeeValue = token0MarketPrice
+            ? token0MarketPrice * token0FeeAmount
+            : undefined;
+          const token1FeeValue = token1MarketPrice
+            ? token1MarketPrice * token1FeeAmount
+            : undefined;
+          const feeValue =
+            token0FeeValue && token1FeeValue
+              ? token0FeeValue + token1FeeValue
+              : undefined;
 
           positions.push({
             id: positionId,
@@ -450,14 +494,21 @@ export function useGetPositionById(positionId: number, chainId: number) {
             tickLower,
             tickCurrent: tick,
             tickUpper,
-            rawPositionInfo: { ...positionInfo, sqrtPriceX96 },
+            rawPositionInfo: {
+              ...positionInfo,
+              sqrtPriceX96,
+              token0RemainedAmount: remainedTokens?.amount0,
+              token1remainedAmount: remainedTokens?.amount1,
+            },
             hasETH: token0IsNative || token1IsNative,
             isClosed,
-            token0Value: isNaN(token0Value) ? 0 : token0Value,
-            token1Value: isNaN(token1Value) ? 0 : token1Value,
+            token0Value:
+              token0Value && isNaN(token0Value) ? undefined : token0Value,
+            token1Value:
+              token1Value && isNaN(token1Value) ? undefined : token1Value,
             token0FeeValue,
             token1FeeValue,
-            feeValue: isNaN(feeValue) ? 0 : feeValue,
+            feeValue: feeValue && isNaN(feeValue) ? undefined : feeValue,
             chainId,
             owner,
             rawData: positionInfo,
@@ -475,31 +526,37 @@ export function useGetPositionById(positionId: number, chainId: number) {
 
   useEffect(() => {
     const fetchPositionIds = async () => {
-      if (positions === undefined) {
-        setIsLoading(true);
-      }
       try {
-        // setIsLoading(true);
         const result = await callPositionIds(positionId);
         if (result) {
           return setPositions(result);
         }
         return setPositions(undefined);
       } finally {
-        // setIsLoading(false);
         setIsLoading(false);
       }
     };
-    fetchPositionIds().catch((e) => {
-      console.log("**fetchPositionIds err**");
-      console.log(e);
-      if (e.toString().includes("nonexistent")) {
-        // setIsLoading(false);
-        return setPositions(undefined);
-      }
-    });
+
+    /**
+     * display spinner while delaying to query
+     * it's needed because creating a new block is way more faster than data updates on the L2 chain
+     */
+    if (positions === undefined) {
+      setIsLoading(true);
+    }
+    setTimeout(() => {
+      fetchPositionIds().catch((e) => {
+        console.log("**fetchPositionIds err**");
+        console.log(e);
+        if (e.toString().includes("nonexistent")) {
+          // setIsLoading(false);
+          return setPositions(undefined);
+        }
+      });
+    }, 2000);
+
     //add pathName to fetch new data when it's back from increase / decrease liquidity page
-  }, [blockNumber, txPending, positionId, pathName]);
+  }, [blockNumber, positionId]);
 
   return { positions };
 }
@@ -521,8 +578,6 @@ export function useGetPositionIdFromPath() {
 
   return { positionId, chainIdParam, backwardLink };
 }
-
-let count = 0;
 
 export function usePositionInfo() {
   const { positionId, chainIdParam } = useGetPositionIdFromPath();

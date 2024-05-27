@@ -10,13 +10,12 @@ import {
 } from "@/recoil/bridgeSwap/atom";
 import { actionMethodStatus, swapSettingStatus } from "@/recoil/modal/atom";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-
 import InToken from "./components/InToken";
 import OutToken from "./components/OutToken";
 import SelectNetwork from "./components/SelectNetwork";
 import MobileInToken from "./components/Mobile/MobileInToken";
 import MobileOutToken from "./components/Mobile/MobileOutToken";
-import MobileTokenBox from "@/components/mobile/input/MobileTokenBox"
+import MobileTokenBox from "@/components/mobile/input/MobileTokenBox";
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
@@ -41,30 +40,27 @@ export default function Swap() {
   const network = useConnectedNetwork();
 
   const invertTokenPair = useCallback(() => {
+    if (mode == "Deposit" || mode == "Withdraw" || !mode) return;
 
-    if(mode =="Deposit" || mode == "Withdraw" || !mode) return
-    
     if (inTokenRecoilValue && outTokenRecoilValue) {
       const tempValue = inTokenRecoilValue;
-      
-      if(
+
+      if (
         mode === "Wrap" ||
         mode === "Unwrap" ||
         mode === "ETH-Unwrap" ||
         mode === "ETH-Wrap"
-      ){
-
+      ) {
         setInTokenRecoilValue({
           ...outTokenRecoilValue,
           amountBN: tempValue.amountBN,
-          parsedAmount: tempValue.parsedAmount
-        });  
+          parsedAmount: tempValue.parsedAmount,
+        });
       } else {
         setInTokenRecoilValue(outTokenRecoilValue);
       }
-      
-      setOutTokenRecoilValue(tempValue);
 
+      setOutTokenRecoilValue(tempValue);
     } else if (inTokenRecoilValue && !outTokenRecoilValue) {
       setOutTokenRecoilValue(inTokenRecoilValue);
       setInTokenRecoilValue(null);
@@ -99,10 +95,10 @@ export default function Swap() {
               onClick={invertTokenPair}
               cursor={
                 mode === "Swap" ||
-                  mode === "Unwrap" ||
-                  mode === "Wrap" ||
-                  mode === "ETH-Unwrap" ||
-                  mode === "ETH-Wrap"
+                mode === "Unwrap" ||
+                mode === "Wrap" ||
+                mode === "ETH-Unwrap" ||
+                mode === "ETH-Wrap"
                   ? "pointer"
                   : ""
               }
@@ -169,16 +165,13 @@ export default function Swap() {
           </Flex>
 
           <Flex direction="row" justify="center" w="full">
-            {
-              (network.isSupportedChain) && (
-                <>
-                  <MobileTokenBox inToken={true} visibilityType={false}/>
-                  <MobileTokenBox inToken={false} visibilityType={false}/>
-                </>
-              )
-            
-            }
-            </Flex>
+            {network.isSupportedChain && (
+              <>
+                <MobileTokenBox inToken={true} visibilityType={false} />
+                <MobileTokenBox inToken={false} visibilityType={false} />
+              </>
+            )}
+          </Flex>
         </Box>
       )}
     </>

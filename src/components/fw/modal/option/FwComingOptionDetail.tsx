@@ -1,6 +1,6 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
-import FWoptionBg from "@/assets/icons/fw/fwOptionBg.png";
-import FWoptionButtonBg from "@/assets/icons/fw/fwOptionButtonBg.png";
+import FWoptionBg from "@/assets/image/BridgeSwap/fw/fwOptionBg.png";
+import FWoptionButtonBg from "@/assets/image/BridgeSwap/fw/fwOptionButtonBg.png";
 
 export default function FwComingOptionDetail() {
   return (

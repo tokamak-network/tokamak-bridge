@@ -4,9 +4,9 @@ import { useMemo } from "react";
 
 export function usePricePair(params: {
   token0Name: string | undefined;
-  token0Amount: number;
+  token0Amount: number | string | undefined;
   token1Name: string | undefined;
-  token1Amount: number;
+  token1Amount: number | string | undefined;
 }) {
   const { token0Name, token0Amount, token1Name, token1Amount } = params;
   const {
@@ -14,21 +14,21 @@ export function usePricePair(params: {
     tokenMarketPrice: token0MarketPrice,
   } = useGetMarketPrice({
     tokenName: token0Name,
-    amount: Number(commafy(token0Amount, 8).replaceAll(",", "")),
+    amount: token0Amount,
   });
   const {
     tokenPriceWithAmount: token1Price,
     tokenMarketPrice: token1MarketPrice,
   } = useGetMarketPrice({
     tokenName: token1Name,
-    amount: Number(commafy(token1Amount, 8).replaceAll(",", "")),
+    amount: token1Amount,
   });
 
   const totalMarketPrice = useMemo(() => {
-    return commafy(
-      Number(token0Price?.replaceAll(",", "") ?? 0) +
-        Number(token1Price?.replaceAll(",", "") ?? 0)
-    );
+    if (token0Price !== undefined && token1Price !== undefined) {
+      return commafy(Number(token0Price ?? 0) + Number(token1Price ?? 0));
+    }
+    return undefined;
   }, [token0Price, token1Price]);
 
   const hasTokenPrice = useMemo(() => {

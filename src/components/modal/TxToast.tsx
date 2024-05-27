@@ -15,7 +15,6 @@ import useConnectedNetwork from "@/hooks/network";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
-import { txDataStatus } from "@/recoil/global/transaction";
 
 type TransactionToastProp = TxInterface;
 
@@ -74,7 +73,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
-          {trimAmount(convertParsedAmount)} {"ETH"}
+          {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
         </Text>
       </Flex>
     );
@@ -102,7 +101,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
           }
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
-          {trimAmount(convertParsedAmount)} {symbol}
+          {txSort !== "Revoke" ? trimAmount(convertParsedAmount) : ""} {symbol}
         </Text>
       </Flex>
     );
@@ -166,6 +165,8 @@ function TransactionToast(props: TransactionToastProp) {
         return "Claim";
       case "Remove Liquidity":
         return "Remove";
+      case "Revoke":
+        return "Revoke";
       default:
         return txSort;
     }
@@ -195,8 +196,8 @@ function TransactionToast(props: TransactionToastProp) {
           <Text cursor={"pointer"} onClick={clickTitle}>
             {txSortMessage}
           </Text>
-          {txSort !== "Approve" && actionSort && (
-            <Text fontSize={12} color={"#A0A3AD"}>
+          {txSort === "Approve" && actionSort && (
+            <Text fontSize={12} color={"#A0A3AD"} lineHeight={"26px"}>
               ({actionSort})
             </Text>
           )}
@@ -222,8 +223,6 @@ function TransactionToast(props: TransactionToastProp) {
 function TxToast() {
   const toast = useToast();
   const [isToasted, setIsToasted] = useState<string[]>([]);
-  const [txData, setTxData] = useRecoilState(txDataStatus);
-
   const { confirmedTransaction } = useTransaction();
 
   const makeToast = useMemo(() => {
@@ -239,7 +238,7 @@ function TxToast() {
           variant: "solid",
           isClosable: true,
           id: txHash,
-          duration: 5000000000,
+          duration: 5000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);

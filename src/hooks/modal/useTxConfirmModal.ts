@@ -15,7 +15,7 @@ export default function useTxConfirmModal() {
   const isHistoryDrawerOpen = useRecoilValue(accountDrawerStatus);
   const [claimModalState, setClaimModalState] =
     useRecoilState(claimModalStatus);
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
+  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const { closeAll } = useToast();
 
   const isConfirming = modalOpen === "confirming";

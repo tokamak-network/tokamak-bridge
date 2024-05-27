@@ -20,7 +20,7 @@ export const changeTokenNameForAPI = (tokenName: string | undefined) => {
 
 export function useGetMarketPrice(params: {
   tokenName: SupportedTokenNames | string | undefined;
-  amount?: number;
+  amount?: number | string;
 }) {
   const tokenName = changeTokenNameForAPI(params.tokenName);
 
@@ -28,12 +28,13 @@ export function useGetMarketPrice(params: {
     variables: {
       tokenName: trimTokenName(tokenName),
     },
-    pollInterval: 13000,
+    pollInterval: 20000,
     fetchPolicy: "cache-and-network",
     nextFetchPolicy: "cache-first",
     context: {
       apiName: "price",
     },
+    skip: !tokenName,
   });
 
   const tokenMarketPrice: number = useMemo(() => {
@@ -45,7 +46,12 @@ export function useGetMarketPrice(params: {
 
   const tokenPriceWithAmount = useMemo(() => {
     if (tokenMarketPrice && params.amount) {
-      return commafy(data.getTokenMarketData.current_price * params.amount, 2);
+      return (
+        Number(data.getTokenMarketData.current_price) * Number(params.amount)
+      );
+    }
+    if (tokenMarketPrice && params.amount === 0) {
+      return 0;
     }
     return undefined;
   }, [tokenMarketPrice, params.amount]);

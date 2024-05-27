@@ -27,7 +27,7 @@ export default function FwOptionStandardDetail(props: AdditionalStandardProps) {
           Official Standard Bridge
         </Text>
         <Box mt={"12px"}>
-          <Flex>
+          <Flex alignItems='center'>
             <Text
               fontWeight={400}
               fontSize={"10px"}
@@ -38,7 +38,7 @@ export default function FwOptionStandardDetail(props: AdditionalStandardProps) {
             </Text>
             <FwTooltip
               tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px", marginTop: "1px" }}
+              style={{ marginLeft: "2px" }}
             />
           </Flex>
           <Text

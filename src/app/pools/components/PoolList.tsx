@@ -13,7 +13,6 @@ export default function PoolList() {
   const { positions } = useGetPositionIds();
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
-
   const isLoading = useRecoilValue(ATOM_positions_loading);
 
   return (
@@ -21,14 +20,29 @@ export default function PoolList() {
       templateColumns="repeat(3, 1fr)"
       rowGap={"16px"}
       columnGap={"16px"}
-      overflow={"hidden"}
+      overflow={"auto"}
       scrollBehavior={"initial"}
+      //for scrollbar styles
+      pr={"8px"}
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "::-webkit-scrollbar-track": {
+          background: "transparent",
+          borderRadius: "4px",
+        },
+        "::-webkit-scrollbar-thumb": {
+          background: "#343741",
+          borderRadius: "3px",
+        },
+      }}
     >
-      <LPGuide />
+      {/* <LPGuide /> */}
       <AddLiquidity />
       {isSupportedChain &&
         positions === undefined &&
-        Array.from({ length: isConnected ? 7 : 4 }, (_, index) => (
+        Array.from({ length: isConnected ? 8 : 4 }, (_, index) => (
           <EmptyCard key={index} noSpinner={!isLoading} />
         ))}
       {(!isSupportedChain || !isConnected) &&
@@ -48,15 +62,15 @@ export default function PoolList() {
         Array.from(
           {
             length:
-              positions.length < 7
-                ? 7 - positions.length
-                : positions.length % 3 === 0
+              positions.length < 8
+                ? 8 - positions.length
+                : positions.length % 3 === 1
                 ? 1
                 : positions.length % 3 === 2
-                ? 2
-                : 0,
+                ? 0
+                : 2,
           },
-          (_, index) => <EmptyCard key={index} noSpinner={true} />
+          (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />
         )}
     </Grid>
   );

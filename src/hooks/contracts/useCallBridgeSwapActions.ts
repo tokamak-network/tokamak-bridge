@@ -11,29 +11,35 @@ import useCallWithdraw from "../bridge/actions/useCallWithdraw";
 import { useAmountOut } from "../swap/useSwapTokens";
 import useWrap from "../swap/useTonWrap";
 import { predeploys } from "@eth-optimism/contracts";
-import { transactionModalStatus } from "@/recoil/modal/atom";
-import { useRecoilState } from "recoil";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
-import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { useGasFee } from "./fee/getGasFee";
+import { Hash } from "viem";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
+import { BigNumber } from "ethers";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
   const { connectToWallet } = useConnectWallet();
-  const { inToken, outToken } = useInOutTokens();
+  const { inToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
 
-  const { write: _depositETH, isError } = useCallDeposit("depositETH");
+  const {
+    write: _depositETH,
+    contract: _depositETH_contract,
+    isError,
+  } = useCallDeposit("depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
     useCallDeposit("depositERC20");
-  const { write: _withdraw, isError: _withdrawError } =
-    useCallWithdraw("withdraw");
-
-  const { callTokenSwap, isError: _swapError } = useAmountOut();
+  const {
+    write: _withdraw,
+    isError: _withdrawError,
+    contract: _withdrawContract,
+  } = useCallWithdraw("withdraw");
+  const { callTokenSwap } = useAmountOut();
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
-
-  // const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { gasLimit } = useGasFee();
 
   const onClick = useCallback(async () => {
     if (!isConnected) {
@@ -68,7 +74,7 @@ export default function useCallBridgeSwapAction() {
               args: [200000, "0x"],
               //need to put gasAmount with gasOrcale later
               value: parsedAmount as bigint,
-              gas: BigInt("1425420"),
+              gas: gasLimit,
             });
           }
 
@@ -80,16 +86,35 @@ export default function useCallBridgeSwapAction() {
               200000,
               "0x",
             ],
+            gas: gasLimit,
           });
         case "Withdraw":
           if (isETH) {
+            const txData = [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"];
+            const gasLimitForL2 = await _withdrawContract.estimateGas.withdraw({
+              //@ts-ignore
+              account: address as Hash,
+              args: txData,
+            });
             return _withdraw({
-              args: [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"],
+              args: txData,
+              gas: calculateGasMargin(BigNumber.from(gasLimitForL2)).toBigInt(),
             });
           }
-
+          const txData = [
+            inToken.address[inNetwork.chainName],
+            parsedAmount,
+            0,
+            "0x",
+          ];
+          const gasLimitForL2 = await _withdrawContract.estimateGas.withdraw({
+            //@ts-ignore
+            account: address as Hash,
+            args: txData,
+          });
           return _withdraw({
-            args: [inToken.address[inNetwork.chainName], parsedAmount, 0, "0x"],
+            args: txData,
+            gas: calculateGasMargin(BigNumber.from(gasLimitForL2)).toBigInt(),
           });
         case "Swap":
           return callTokenSwap();
@@ -105,13 +130,13 @@ export default function useCallBridgeSwapAction() {
           return console.error("action mode is not found");
       }
     }
-  }, [isConnected, connectToWallet, mode, inToken, address]);
+  }, [isConnected, connectToWallet, mode, inToken, address, gasLimit]);
 
   useEffect(() => {
-    if (isError || _depositERC20Error || _withdrawError || _swapError) {
+    if (isError || _depositERC20Error || _withdrawError) {
       setModalOpen("error");
     }
-  }, [isError, _depositERC20Error, _withdrawError, _swapError]);
+  }, [isError, _depositERC20Error, _withdrawError]);
 
   return { onClick };
 }

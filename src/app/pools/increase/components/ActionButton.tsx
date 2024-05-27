@@ -4,8 +4,46 @@ import { poolModalStatus } from "@/recoil/modal/atom";
 import { useMemo } from "react";
 import { usePoolInfo } from "@/hooks/pool/usePoolInfo";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
-import { ApproveButtonsContrainer } from "../../add/ActionButton";
 import { useApproveTokenForPools } from "@/hooks/token/useApproveToken";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import { usePool } from "@/hooks/pool/usePool";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { PoolState } from "@/types/pool/pool";
+import useConnectedNetwork from "@/hooks/network";
+import { isWETH } from "@/utils/token/isETH";
+import { ApproveButton } from "../../add/ActionButton";
+import { sub } from "date-fns";
+
+const ApproveButtonsContrainer = () => {
+  const { inTokenApproved, outTokenApproved } = useApproveTokenForPools();
+  const { inToken, outToken, inTokenHasAmount, outTokenHasAmount } =
+    useInOutTokens();
+  const [poolState] = usePool();
+  const { chainName } = useConnectedNetwork();
+  const { subMode } = useGetMode();
+  const { isBalanceOver, isOutTokenBalanceOver } = useInputBalanceCheck();
+
+  if (subMode.add && poolState === PoolState.INVALID) return null;
+  if (isBalanceOver || isOutTokenBalanceOver) return null;
+
+  const inTokenApprvedOnIncrease =
+    isWETH(inToken, chainName) && subMode.increase ? true : inTokenApproved;
+  const outTokenApprvedOnIncrease =
+    isWETH(outToken, chainName) && subMode.increase ? true : outTokenApproved;
+
+  return (
+    <Flex columnGap={"12px"} flexDir={subMode.add ? "row" : "row-reverse"}>
+      {inToken &&
+        inTokenHasAmount &&
+        !inTokenApprvedOnIncrease &&
+        !isBalanceOver && <ApproveButton isInToken={true} />}
+      {outToken &&
+        outTokenHasAmount &&
+        !outTokenApprvedOnIncrease &&
+        !isOutTokenBalanceOver && <ApproveButton isInToken={false} />}
+    </Flex>
+  );
+};
 
 const ActionButton = () => {
   const [, setPoolModal] = useRecoilState(poolModalStatus);

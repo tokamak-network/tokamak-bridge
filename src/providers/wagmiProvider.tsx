@@ -1,7 +1,6 @@
 "use client";
 import * as React from "react";
 import { WagmiConfig } from "wagmi";
-
 import { config } from "@/config/wagmi";
 
 export function WagmiProviders({ children }: { children: React.ReactNode }) {
