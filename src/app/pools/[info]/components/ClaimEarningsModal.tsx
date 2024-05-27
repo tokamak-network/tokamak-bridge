@@ -18,6 +18,7 @@ import { ATOM_collectWethOption } from "@/recoil/pool/positions";
 import useConnectedNetwork from "@/hooks/network";
 import { PoolCardDetail } from "../../components/PoolCard";
 import { BigNumber, ethers } from "ethers";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const { info } = props;
@@ -143,12 +144,18 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater({
-                      amount: ethers.utils.formatEther(
-                        info?.token0CollectedFeeBN
-                      ),
-                      minimumValue: 0.000001,
-                    })}
+                    <CustomTooltip
+                      content={smallNumberFormmater({
+                        amount: ethers.utils.formatEther(
+                          info?.token0CollectedFeeBN
+                        ),
+                        minimumValue: 0.000001,
+                      })}
+                      tooltipLabel={ethers.utils.formatUnits(
+                        info?.token0CollectedFeeBN,
+                        info?.token0.decimals
+                      )}
+                    />
                   </Text>
                   <Text minW={"60px"} color={"#A0A3AD"}>
                     {gasUsdFormatter(Number(token0Price))}
@@ -186,12 +193,18 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                   textAlign={"right"}
                 >
                   <Text fontWeight="semibold">
-                    {smallNumberFormmater({
-                      amount: ethers.utils.formatEther(
-                        info?.token1CollectedFeeBN
-                      ),
-                      minimumValue: 0.000001,
-                    })}
+                    <CustomTooltip
+                      content={smallNumberFormmater({
+                        amount: ethers.utils.formatEther(
+                          info?.token1CollectedFeeBN
+                        ),
+                        minimumValue: 0.000001,
+                      })}
+                      tooltipLabel={ethers.utils.formatUnits(
+                        info?.token1CollectedFeeBN,
+                        info?.token1.decimals
+                      )}
+                    />
                   </Text>
                   <Text minW={"60px"} color={"#A0A3AD"}>
                     {gasUsdFormatter(Number(token1Price))}
