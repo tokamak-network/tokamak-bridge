@@ -101,24 +101,22 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
               bgColor="#0F0F12"
               borderRadius="16px"
             >
-              {hasTokenPrice && (
-                <Flex justifyContent="space-between" mb="9px">
-                  <Flex justifyContent="start">
-                    <Text fontSize={14}>Total fees</Text>
-                  </Flex>
-                  <Flex justifyContent="end">
-                    <Text
-                      fontSize={16}
-                      fontWeight="semibold"
-                      color={totalMarketPrice ? "#fff" : "#A0A3AD"}
-                    >
-                      {totalMarketPrice
-                        ? gasUsdFormatter(Number(totalMarketPrice))
-                        : "NA"}
-                    </Text>
-                  </Flex>
+              <Flex justifyContent="space-between" mb="9px">
+                <Flex justifyContent="start">
+                  <Text fontSize={14}>Total fees</Text>
                 </Flex>
-              )}
+                <Flex justifyContent="end">
+                  <Text
+                    fontSize={16}
+                    fontWeight="semibold"
+                    color={totalMarketPrice ? "#fff" : "#A0A3AD"}
+                  >
+                    {totalMarketPrice
+                      ? gasUsdFormatter(Number(totalMarketPrice))
+                      : "NA"}
+                  </Text>
+                </Flex>
+              </Flex>
               <Flex justifyContent="space-between" mb="8px">
                 <Flex
                   justifyContent="start"
