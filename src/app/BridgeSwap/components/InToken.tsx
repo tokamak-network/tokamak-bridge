@@ -17,7 +17,7 @@ export default function InToken() {
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box w={"200px"} h={"32px"}>
-        <NetworkDropdown inNetwork={true} width={"200px"} height="32px" />
+        <NetworkDropdown inNetwork={true} width={"200px"} height='32px' />
       </Box>
     );
   }, []);
@@ -36,7 +36,7 @@ export default function InToken() {
           </Text>
         )}
       </Flex>
-      <Flex className="card-wrapper" minW={"224px"} minH={"386px"}>
+      <Flex className='card-wrapper' minW={"224px"} minH={"386px"}>
         {NetworkSwitcher}
         <Box
           w={"200px"}
@@ -55,18 +55,19 @@ export default function InToken() {
             />
           ) : (
             <Box
-              className="card card-empty"
+              className='card card-empty'
               display={"flex"}
               flexDir={"column"}
               rowGap={"70px"}
               w={"100%"}
               h={"100%"}
+              data-testId={`select-search-token-left`}
             >
               <SearchToken />
             </Box>
           )}
         </Box>
-        <Flex px={"12px"} mb={'-16px'}>
+        <Flex px={"12px"} mb={"-16px"}>
           {inToken !== null && (
             <TokenInput inToken={true} hasMaxButton={true} />
           )}

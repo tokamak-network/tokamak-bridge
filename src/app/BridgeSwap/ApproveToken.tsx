@@ -84,6 +84,7 @@ export default function ApproveToken() {
         <Text
           fontSize={{ base: 12, lg: 14 }}
           color={isLoading ? "#A0A3AD" : "#fff"}
+          data-testId='token-approve-text'
         >
           {text}
         </Text>
@@ -114,10 +115,19 @@ export default function ApproveToken() {
         )}
       </Flex>
       {isLoading && !isRevokeForUSDT ? (
-        <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+        <Spinner
+          w={"24px"}
+          h={"24px"}
+          color={"#007AFF"}
+          data-testId={`token-approve-loading`}
+        />
       ) : afterApproved ? (
         <Flex>
-          <Image src={ConfirmedImage} alt={"ConfirmedImage"} />
+          <Image
+            src={ConfirmedImage}
+            alt={"ConfirmedImage"}
+            data-testId={`token-approve-success`}
+          />
         </Flex>
       ) : (
         <Flex>
@@ -173,6 +183,7 @@ export default function ApproveToken() {
             }}
             isDisabled={isLoading || isRevokeForUSDT}
             _disabled={{ bg: "#15161D", color: "#8E8E92" }}
+            data-testId={`token-approve-button`}
           >
             {"Approve"}
           </Button>
