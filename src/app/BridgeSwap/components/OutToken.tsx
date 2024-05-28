@@ -70,7 +70,7 @@ export const SearchTokenComponent = () => {
       flexDir={"column"}
       rowGap={"70px"}
       mt={"12px"}
-      data-testId={`select-search-token-right`}
+      data-testid={`select-search-token-right`}
     >
       <SearchToken onClick={onOpenOutToken} />
     </Box>

@@ -102,7 +102,12 @@ export default function Confirmation() {
           </Text>
           <Flex pos={"relative"} w={"100%"} justifyContent={"center"}>
             {isConfirming ? (
-              <Box w={"96px"} h={"96px"} className="loading2 spinner2"></Box>
+              <Box
+                w={"96px"}
+                h={"96px"}
+                className='loading2 spinner2'
+                data-testid={`token-confirm-loading`}
+              ></Box>
             ) : isConfirmed ? (
               <Flex>
                 <Image src={ConfirmedImage} alt={"ConfirmedImage"} />
@@ -114,10 +119,15 @@ export default function Confirmation() {
                     top: "35%",
                     left: "40%",
                   }}
+                  data-testid={`token-confirm-success`}
                 />
               </Flex>
             ) : isError ? (
-              <Image src={ErrorImage} alt={"ErrorImage"} />
+              <Image
+                src={ErrorImage}
+                alt={"ErrorImage"}
+                data-testid={`token-confirm-fail`}
+              />
             ) : null}
           </Flex>
           <Text

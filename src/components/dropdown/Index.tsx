@@ -103,7 +103,7 @@ const ValueContainer = (props: {
       alignItems={"center"}
       fontSize={isPool ? 18 : 14}
       onClick={() => setIsOpen(true)}
-      data-testId={`select-network-button-${inNetwork}`}
+      data-testid={`select-network-button-${inNetwork}`}
     >
       <Flex columnGap={"6px"}>
         <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
@@ -274,7 +274,7 @@ export default function NetworkDropdown(props: {
             bgColor={"#1F2128"}
             _hover={{ bgColor: "#313442" }}
             onClick={() => onChange(data)}
-            data-testId={`select-item-${inNetwork}-${convertNetworkName(
+            data-testid={`select-item-${inNetwork}-${convertNetworkName(
               data.label
             )}`}
           >
@@ -312,7 +312,7 @@ export default function NetworkDropdown(props: {
         bgColor={"#1F2128"}
         _hover={{ bgColor: "#313442" }}
         onClick={() => onChange(data)}
-        data-testId={`select-item-${inNetwork}-${convertNetworkName(
+        data-testid={`select-item-${inNetwork}-${convertNetworkName(
           data.label
         )}`}
         borderRadius={"6px"}

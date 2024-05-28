@@ -249,7 +249,7 @@ export default function TokenCard(props: TokenCardProps) {
       onMouseDown={onMouseDown}
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
-      data-testId={`token-card-${tokenInfo?.tokenSymbol}`}
+      data-testid={`token-card-${tokenInfo?.tokenSymbol}`}
       {...style}
     >
       <TopLine mainSchemCol={tokenColorCode} />

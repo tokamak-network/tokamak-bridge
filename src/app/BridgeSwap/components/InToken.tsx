@@ -61,7 +61,7 @@ export default function InToken() {
               rowGap={"70px"}
               w={"100%"}
               h={"100%"}
-              data-testId={`select-search-token-left`}
+              data-testid={`select-search-token-left`}
             >
               <SearchToken />
             </Box>

@@ -558,6 +558,7 @@ export default function TokenInput(props: {
                   onFocus={handleFocus}
                   onBlur={handleBlur}
                   style={{ caretColor: mobileView ? "#007AFF" : "#FFFFFF" }}
+                  data-testid={`swap-${inToken ? "left" : "right"}-input`}
                 ></Input>
               </Flex>
             )}

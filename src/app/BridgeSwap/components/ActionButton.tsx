@@ -107,6 +107,7 @@ export default function ActionButton() {
             ? onOpenConfirmModal
             : onClick
         }
+        data-testid={`token-action-button`}
       >
         {!isConnected && "Connect Wallet"}
         {!isConnected
