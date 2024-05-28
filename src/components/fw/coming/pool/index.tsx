@@ -21,7 +21,7 @@ export default function ComingPool() {
   }
 
   const { mobileView } = useMediaView();
-  const dynamicWidth = mobileView ? "90%" : "654px";
+  const dynamicWidth = mobileView ? "90%" : "672px";
 
   const [activeButton, setActiveButton] = useState<PoolButtonType>(
     PoolButtonType.Coming
@@ -50,7 +50,7 @@ export default function ComingPool() {
         fontWeight={500}
         fontSize={"14px"}
         lineHeight={"22px"}
-        color={isActive ? "#DB00FF" : "#FFFFFF"}
+        color={isActive ? "#DB00FF" : "#8E8E92"}
       >
         {children}
       </Text>
@@ -123,8 +123,8 @@ export default function ComingPool() {
             <Box pb={mobileView ? "16px" : "24px"}>
               <Text
                 fontWeight={500}
-                fontSize={mobileView ? "20px" : "30px"}
-                lineHeight={mobileView ? "30px" : "45px"}
+                fontSize={mobileView ? "20px" : "24px"}
+                lineHeight={mobileView ? "30px" : "36px"}
                 color={"#FFFFFF"}
                 textAlign={mobileView ? "center" : undefined}
               >
@@ -146,11 +146,11 @@ export default function ComingPool() {
               </Text>
             </Box>
             {PoolButtonType.Coming === activeButton ? (
-              <Flex justifyContent='center' width='full'>
+              <Flex width='full'>
                 <ImageBox isMobile={mobileView} />
               </Flex>
             ) : (
-              <Flex justifyContent='center' width='full'>
+              <Flex width='full'>
                 {mobileView ? (
                   <ImageBox isMobile={mobileView} isPool={true} />
                 ) : (

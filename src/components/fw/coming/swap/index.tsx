@@ -93,7 +93,7 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   color={"#007AFF"}
                 >
-                  {inToken?.parsedAmount} {inToken?.tokenSymbol}
+                  {commafy(inToken?.parsedAmount, 6)} {inToken?.tokenSymbol}
                 </Text>
               </Box>
               <Box mt={"12px"}>
