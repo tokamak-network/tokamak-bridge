@@ -157,7 +157,9 @@ export default function FwComingModal() {
               backgroundColor: "#007AFF",
               color: "#FFFFFF",
             }}
+            _active={{}}
             _hover={{}}
+            _focus={{}}
             onClick={handleConfirm}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
