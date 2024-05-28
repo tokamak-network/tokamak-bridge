@@ -123,8 +123,8 @@ export default function ComingPool() {
             <Box pb={mobileView ? "16px" : "24px"}>
               <Text
                 fontWeight={500}
-                fontSize={mobileView ? "20px" : "24px"}
-                lineHeight={mobileView ? "30px" : "36px"}
+                fontSize={mobileView ? "20px" : "25px"}
+                lineHeight={mobileView ? "30px" : "37.5px"}
                 color={"#FFFFFF"}
                 textAlign={mobileView ? "center" : undefined}
               >
