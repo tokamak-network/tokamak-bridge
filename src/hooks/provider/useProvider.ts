@@ -10,12 +10,12 @@ export function useProvier() {
 
   const L1Provider = useMemo(() => {
     if (isConnectedToMainNetwork) return getProvider(supportedChain[0]);
-    return getProvider(supportedChain[0]);
+    return getProvider(supportedChain[1]);
   }, [isConnectedToMainNetwork]);
 
   const L2Provider = useMemo(() => {
-    if (isConnectedToMainNetwork) return getProvider(supportedChain[1]);
-    return getProvider(supportedChain[1]);
+    if (isConnectedToMainNetwork) return getProvider(supportedChain[2]);
+    return getProvider(supportedChain[4]);
   }, [isConnectedToMainNetwork]);
 
   const otherLayerProvider = useMemo(() => {
@@ -26,7 +26,7 @@ export function useProvier() {
     }
     //Testnet
     if (layer === "L1") return getProvider(supportedChain[0]);
-    return getProvider(supportedChain[1]);
+    return getProvider(supportedChain[2]);
   }, [isConnectedToMainNetwork, layer]);
 
   const provider = useMemo(() => {
