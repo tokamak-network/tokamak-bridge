@@ -1,7 +1,7 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
 import { ReactNode, useState } from "react";
 
-export default function CustomTooltip(props: {
+export default function FwCustomTooltip(props: {
   content: string | ReactNode;
   tooltipLabel?: string | ReactNode;
   style?: {
@@ -19,33 +19,22 @@ export default function CustomTooltip(props: {
   return (
     <Tooltip
       p={0}
+      placement='top'
       defaultIsOpen={false}
       isOpen={isOpen}
-      bg={"transparent"}
       zIndex={10000}
+      flex={1}
       label={
         <Box
           w={"100%"}
-          flex={1}
-          px={"8px"}
-          h={"28px"}
           bgColor={"#383A49"}
           borderRadius={"4px"}
-          alignItems={"center"}
-          justifyContent={"center"}
-          fontSize={11}
           fontWeight={400}
           color={"#fff"}
           pos={"relative"}
           {...props.style}
         >
-          <Text
-            w={"100%"}
-            h={"100%"}
-            lineHeight={props.style?.tooltipLineHeight ?? "28px"}
-            textAlign={"center"}
-            verticalAlign={"center"}
-          >
+          <Text fontWeight={400} fontSize={"12px"} lineHeight={"18px"}>
             {props.tooltipLabel}
           </Text>
           <Box
@@ -53,13 +42,12 @@ export default function CustomTooltip(props: {
             left={"50%"}
             w={"5px"}
             h={"5px"}
-            top={"25px"}
-            bgColor={props?.style?.bgColor ?? "#383a49"}
-            transform={"matrix(0.71, -0.71, -0.71, -0.71, 0, 0)"}
+            top={"27.5px"}
+            bgColor={"#383a49"}
+            transform={"translateX(-50%) translateY(-50%) rotate(45deg)"}
           ></Box>
         </Box>
       }
-      placement='top'
     >
       <Box
         onMouseEnter={() => setIsOpen(true)}
