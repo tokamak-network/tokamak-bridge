@@ -24,16 +24,14 @@ export default function useGetTransaction() {
   const [tDataWithdraw, setTDataWithdraw] = useState<any[]>([]);
   const { provider, L1Provider, L2Provider } = useProvier();
   const { address } = useAccount();
-  const { layer } = useConnectedNetwork();
+  const { layer, isLayer2 } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
 
   //titanSDK as an L2 provider for certain functions
-  const l2ProSDK = titanSDK.asL2Provider(
-    layer === "L2" ? provider : L2Provider
-  );
+  const l2ProSDK = titanSDK.asL2Provider(isLayer2 ? provider : L2Provider);
 
   //use metamask provider if connected to L2 and use tokamak titan L2 provider if connected to L1
-  const l2Pro = layer === "L2" ? provider : L2Provider;
+  const l2Pro = isLayer2 ? provider : L2Provider;
 
   //use metamask provider if connected to L1 and use tokamak ethereum provider if connected to L2
   const l1Pro = layer === "L1" ? provider : L1Provider;
