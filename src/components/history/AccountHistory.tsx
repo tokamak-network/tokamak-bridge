@@ -19,6 +19,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
+import AccountHistoryNew from "@/componenets/historyn";
 
 type ChainName = "MAINNET" | "TITAN" | undefined;
 
@@ -30,7 +31,7 @@ type SelectOption = {
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
-  const [ withdrawStatus ] = useRecoilState(confirmWithdrawStats);
+  const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const [tab, setTab] = useState("Activity");
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
@@ -52,7 +53,7 @@ export default function AccountHistory() {
   }) => {
     const { setTab, tab } = props;
     return (
-      <Flex columnGap={"24px"} mt="16px" mb="8px">
+      <Flex columnGap={"24px"} mt='16px' mb='8px'>
         {/* <Text
           cursor={"pointer"}
           color={tab === "Balance" ? "#fff" : "#5E626D"}
@@ -80,7 +81,7 @@ export default function AccountHistory() {
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement="right"
+      placement='right'
       onClose={() => {
         setIsOpen(false);
         setSelectedNetwork({
@@ -89,13 +90,13 @@ export default function AccountHistory() {
           networkImage: undefined,
         });
       }}
-      variant="clickThrough"
+      variant='clickThrough'
       trapFocus={false}
       useInert={true}
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}
-        onClick={() => mobileView ? setIsOpen(false) : ""}
+        onClick={() => (mobileView ? setIsOpen(false) : "")}
       />
 
       {mobileView && !withdrawStatus.isOpen && (
@@ -111,8 +112,8 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px="12px"
-        pb="0px"
+        px='12px'
+        pb='0px'
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
@@ -135,13 +136,15 @@ export default function AccountHistory() {
           ) : (
             <ActivityContainer network={selectedNetwork} />
           )} */}
-          <ActivityContainer network={selectedNetwork} />
+          <AccountHistoryNew />
+
+          {/* <ActivityContainer network={selectedNetwork} /> */}
         </Flex>
         <Flex
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg="transparent"
+          bg='transparent'
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}

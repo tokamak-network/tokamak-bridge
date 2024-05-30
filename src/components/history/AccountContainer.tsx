@@ -77,13 +77,13 @@ export default function AccountContainer() {
         <Flex
           borderRadius={"16px"}
           border={"3px solid #007AFF"}
-          h="64px"
+          h='64px'
           w={{ base: "100%", lg: "336px" }}
           flexDir={"column"}
         >
           <TopLine />
           <Flex
-            p="13px 16px 16px 13px"
+            p='13px 16px 16px 13px'
             justifyContent={"space-between"}
             zIndex={1001}
             w={"100%"}
@@ -97,8 +97,8 @@ export default function AccountContainer() {
               />
               <Text
                 fontSize={15}
-                ml="8px"
-                mr="4px"
+                ml='8px'
+                mr='4px'
                 fontWeight={500}
                 color={"#222"}
               >
@@ -121,16 +121,16 @@ export default function AccountContainer() {
             <Flex columnGap={"8px"}>
               <Flex
                 as={Link}
-                href="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge/wallet"
-                target="_blank"
+                href='https://docs.tokamak.network/home/02-service-guide/tokamak-bridge/wallet'
+                target='_blank'
                 cursor={"pointer"}
-                w="32px"
-                h="32px"
-                bg="#5D6978"
+                w='32px'
+                h='32px'
+                bg='#5D6978'
                 borderRadius={"8px"}
                 justifyContent={"center"}
               >
-                <Image src={userguide} alt="userguide" height={16} width={16} />
+                <Image src={userguide} alt='userguide' height={16} width={16} />
               </Flex>
               <Flex
                 onClick={() => {
@@ -138,13 +138,13 @@ export default function AccountContainer() {
                   setIsOpen(false);
                 }}
                 cursor={"pointer"}
-                w="32px"
-                h="32px"
-                bg="#5D6978"
+                w='32px'
+                h='32px'
+                bg='#5D6978'
                 borderRadius={"8px"}
                 justifyContent={"center"}
               >
-                <Image src={off} alt="off" height={16} width={16} />
+                <Image src={off} alt='off' height={16} width={16} />
               </Flex>
             </Flex>
           </Flex>

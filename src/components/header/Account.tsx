@@ -20,7 +20,8 @@ export default function Account() {
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   const txPending = useRecoilValue(txPendingStatus);
   const { mobileView } = useMediaView();
-  const [actionOptionStatus, setActionMethodStatus] = useRecoilState(actionMethodStatus);
+  const [actionOptionStatus, setActionMethodStatus] =
+    useRecoilState(actionMethodStatus);
 
   const buttonText = isConnected
     ? trimAddress({ address })
@@ -30,7 +31,7 @@ export default function Account() {
 
   return (
     <Center
-      className="header-right-common"
+      className='header-right-common'
       w={mobileView ? "106px" : isConnected ? "174px" : "220px"}
       h={{ base: "32px", lg: "48px" }}
       bg={!isConnected ? "#007AFF" : ""}
@@ -48,13 +49,11 @@ export default function Account() {
        */
       onClick={() => {
         isConnected ? setIsOpen((prev) => !prev) : connetAndDisconntWallet();
-        if(mobileView && !isConnected){
-          setActionMethodStatus(true)
-
-        }else {
+        if (mobileView && !isConnected) {
+          setActionMethodStatus(true);
+        } else {
           actionOptionStatus ? setActionMethodStatus(false) : "";
         }
-        
       }}
     >
       {isConnected && txPending ? (
