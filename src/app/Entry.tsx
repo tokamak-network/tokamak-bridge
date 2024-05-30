@@ -11,8 +11,6 @@ import Header from "@/components/header/Index";
 import { Center, Box, Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
-import useMediaView from "@/hooks/mediaView/useMediaView";
-import MobileView from "@/app/Mobile";
 import Footer from "@/components/footer";
 
 const GlobalComponents = () => {
