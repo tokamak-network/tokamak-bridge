@@ -64,12 +64,12 @@ export default function ComingPool() {
       h={"100%"}
       w={"100%"}
     >
-      <Box w='full'>
+      <Box w="full">
         <Flex
           w={"100%"}
-          flexDirection='column'
+          flexDirection="column"
           justifyContent={"center"}
-          alignItems='center'
+          alignItems="center"
         >
           <Box width={dynamicWidth}>
             <Text
@@ -115,9 +115,9 @@ export default function ComingPool() {
           py={mobileView ? "24px" : "32px"}
           mt={mobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection='column'
+          flexDirection="column"
           justifyContent={"center"}
-          alignItems='center'
+          alignItems="center"
         >
           <Box width={dynamicWidth}>
             <Box pb={mobileView ? "16px" : "24px"}>
@@ -146,11 +146,11 @@ export default function ComingPool() {
               </Text>
             </Box>
             {PoolButtonType.Coming === activeButton ? (
-              <Flex width='full'>
+              <Flex width="full" justifyContent={"center"}>
                 <ImageBox isMobile={mobileView} />
               </Flex>
             ) : (
-              <Flex width='full'>
+              <Flex width="full" justifyContent={"center"}>
                 {mobileView ? (
                   <ImageBox isMobile={mobileView} isPool={true} />
                 ) : (
