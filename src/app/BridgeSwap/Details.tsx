@@ -19,8 +19,7 @@ export function Details() {
   return (
     <Flex
       flexDir={"column"}
-      justify={{ base: "space-between", lg: "normal" }}
-      h={{ base: "100%", lg: "fit-content" }}
+      justify={{ base: "space-betwzcontent" }}
       w={"100%"}
       mt={{ sm: "0px", lg: "24px" }}
       rowGap={"10px"}

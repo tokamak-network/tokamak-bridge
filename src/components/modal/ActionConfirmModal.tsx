@@ -62,7 +62,7 @@ const OutTokenContainer = () => {
         h={"auto"}
         mt={"14px"}
         mb={"3px"}
-        flexWrap="wrap"
+        flexWrap='wrap'
       >
         <Text
           fontSize={{ base: 17, lg: 18 }}
@@ -109,7 +109,7 @@ const OutNetworkContrainer = () => {
       >
         {mobileView ? (
           <Image
-            alt="titan rounded"
+            alt='titan rounded'
             src={TitanHalfRounded}
             width={40}
             height={40}
@@ -171,7 +171,7 @@ const TokenContainer = () => {
             zIndex={100}
           >
             <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
-              <Image alt="eth" src={mode === "Deposit" ? ETHHalfRounded : ""} />
+              <Image alt='eth' src={mode === "Deposit" ? ETHHalfRounded : ""} />
             </Flex>
           </Flex>
         )}
@@ -197,7 +197,7 @@ const TokenContainer = () => {
           h={"24px"}
           mt={"14px"}
           mb={"3px"}
-          flexWrap="wrap"
+          flexWrap='wrap'
         >
           <Text
             fontSize={{ base: 17, lg: 18 }}
@@ -314,6 +314,7 @@ export default function ActionConfirmModal() {
                 color: "#8E8E92",
                 bgColor: "#17181D",
               }}
+              data-testid={`token-confirm-button`}
             >
               Confirm {mode}
             </Button>
