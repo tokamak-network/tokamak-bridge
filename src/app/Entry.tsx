@@ -29,7 +29,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
+        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];
@@ -43,15 +43,6 @@ const GoogleAnalyticsScript = () => {
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
-  const { pcView, minorView } = useMediaView();
-
-  if (minorView) {
-    return (
-      <Center h={"100vh"} bg={"#0F0F12"} color={"#FFFFFF"}>
-        <MobileView />
-      </Center>
-    );
-  }
 
   return (
     <>
