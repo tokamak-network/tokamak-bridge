@@ -41,10 +41,10 @@ export const historyData: TransactionHistory[] = [
   },
   {
     action: Action.Withdraw,
-    status: Status.Complete,
+    status: Status.Completed,
     blockTimestamp: "1697686103",
     inNetwork: Network.Mainnet,
-    outNetwork: Network.Sepolia,
+    outNetwork: Network.Titan,
     tokenSymbol: "ETH",
     amount: "1.576943",
     transactionHash: "",
@@ -62,7 +62,7 @@ export const historyData: TransactionHistory[] = [
   },
   {
     action: Action.Deposit,
-    status: Status.Complete,
+    status: Status.Completed,
     blockTimestamp: "1697686103",
     inNetwork: Network.Titan,
     outNetwork: Network.Mainnet,

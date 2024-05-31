@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Flex, Box } from "@chakra-ui/react";
 import { TransactionHistory, Status } from "@/componenets/historyn/types";
-import Pending from "@/componenets/historyn/drawer/Pending";
-import Complete from "@/componenets/historyn/drawer/Complete";
+import Pending from "@/components/historyn/drawer/pending";
+import Complete from "@/components/historyn/drawer/complete";
 
 export default function AccountHistoryNew() {
   // 여기서 더미 데이터를 통해 아래 뿌려주는걸 만든다.
@@ -32,8 +32,6 @@ export default function AccountHistoryNew() {
     fetchData();
   }, []);
 
-  const status = "complete";
-
   return (
     <Flex flexDirection='column' gap='2'>
       {data &&
@@ -47,10 +45,10 @@ export default function AccountHistoryNew() {
             border={"1px solid #313442"}
             bg={"#15161D"}
           >
-            {transaction.status === Status.Complete ? (
-              <Complete />
+            {transaction.status === Status.Completed ? (
+              <Complete {...transaction} />
             ) : (
-              <Pending />
+              <Pending {...transaction} />
             )}
           </Box>
         ))}

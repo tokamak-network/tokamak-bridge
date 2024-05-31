@@ -1,15 +1,15 @@
 import { TokenInfo } from "types/token/supportedToken";
 
 export enum Action {
-  Withdraw = "withdraw",
-  Deposit = "deposit",
+  Withdraw = "Withdraw",
+  Deposit = "Deposit",
 }
 
 export enum Status {
-  Initial = "initial",
-  Rollup = "rollup",
-  Finalized = "finalized",
-  Complete = "complete",
+  Initial = "Initial",
+  Rollup = "Rollup",
+  Finalized = "Finalized",
+  Completed = "Completed",
 }
 
 export enum Network {

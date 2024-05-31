@@ -2,16 +2,13 @@ import { Flex, Box, Text, Circle } from "@chakra-ui/react";
 import Image from "next/image";
 import EthTokenSymbol from "@/assets/icons/newHistory/eth-t-symbol.svg";
 import TxLink from "@/assets/icons/newHistory/link.svg";
-import TokenPair from "@/componenets/historyn/drawer/TokenPair";
+import TokenPair from "@/components/historyn/components/TokenPair";
+import { TokenSymbol } from "@/componenets/image/TokenSymbol";
+import { TransactionHistory } from "@/componenets/historyn/types";
 
-import {
-  TransactionHistory,
-  Action,
-  Status,
-  Network,
-} from "@/componenets/historyn/types";
-
-export default function Complete() {
+export default function Complete(transaction: TransactionHistory) {
+  const transactionData = transaction;
+  console.log(transactionData);
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -21,11 +18,11 @@ export default function Complete() {
           lineHeight={"22px"}
           color={"#A0A3AD"}
         >
-          withdraw completed
+          {transactionData.action} completed
         </Text>
         <TokenPair
-          networkI={Network.Mainnet}
-          networkO={Network.Titan}
+          networkI={transactionData.inNetwork}
+          networkO={transactionData.outNetwork}
           networkW={16}
           networkH={16}
         />
@@ -39,8 +36,8 @@ export default function Complete() {
         borderRadius={"6px"}
         border={"1px solid rgba(0, 122, 255, 0.40)"}
       >
-        <Flex>
-          <Image src={EthTokenSymbol} alt={"EthTokenSymbol"} />
+        <Flex alignItems='center'>
+          <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
             <Text
               fontWeight={400}
@@ -48,10 +45,10 @@ export default function Complete() {
               lineHeight={"13.5px"}
               color={"#A0A3AD"}
             >
-              ETH
+              {transactionData.tokenSymbol}
             </Text>
             <Text fontWeight={400} fontSize={"12px"} lineHeight={"18px"}>
-              0.01234
+              {transactionData.amount}
             </Text>
           </Box>
         </Flex>
