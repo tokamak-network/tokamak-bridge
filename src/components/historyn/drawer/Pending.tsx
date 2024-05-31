@@ -1,22 +1,17 @@
+import React, { useEffect, useState } from "react";
+
+import axios from "axios";
 import { Flex, Box, Text, Circle } from "@chakra-ui/react";
+import EthTokenSymbol from "@/assets/icons/newHistory/eth-t-symbol.svg";
 import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
-import EthTokenSymbol from "@/assets/icons/newHistory/eth-t-symbol.svg";
-import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
-import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
-import Arrow from "@/assets/icons/newHistory/small-arrow.svg";
+import TokenPair from "@/componenets/historyn/drawer/TokenPair";
 
-export default function AccountHistoryNew() {
+import { Network } from "@/componenets/historyn/types";
+
+export default function Pending() {
   return (
-    <Box
-      w={"336px"}
-      h={"126px"}
-      px={"12px"}
-      py={"8px"}
-      borderRadius={"8px"}
-      border={"1px solid #313442"}
-      bg={"#15161D"}
-    >
+    <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Text
           fontWeight={600}
@@ -53,15 +48,12 @@ export default function AccountHistoryNew() {
             </Text>
           </Box>
         </Flex>
-        <Box>
-          <Flex alignItems='center'>
-            <Image src={EthNetworkSymbol} alt={"EthNetworkSymbol"} />
-            <Box mx={"6px"}>
-              <Image src={Arrow} alt={"Arrow"} />
-            </Box>
-            <Image src={TitanNetworkSymbol} alt={"TitanNetworkSymbol"} />
-          </Flex>
-        </Box>
+        <TokenPair
+          networkI={Network.Mainnet}
+          networkO={Network.Titan}
+          networkW={22}
+          networkH={22}
+        />
       </Flex>
       <Box>
         <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -110,6 +102,6 @@ export default function AccountHistoryNew() {
           </Text>
         </Flex>
       </Box>
-    </Box>
+    </>
   );
 }

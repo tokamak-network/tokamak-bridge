@@ -19,7 +19,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
-import AccountHistoryNew from "@/componenets/historyn";
+import AccountHistoryNew from "@/components/historyn/drawer";
 
 type ChainName = "MAINNET" | "TITAN" | undefined;
 
@@ -130,12 +130,7 @@ export default function AccountHistory() {
             <SearchComponent tab={tab} />
           </Flex>
         )}
-        <Flex mt={{ base: "0px", lg: "12px" }} height={"100%"}>
-          {/* {tab === "Balance" ? (
-            <BalanceContainer network={selectedNetwork} />
-          ) : (
-            <ActivityContainer network={selectedNetwork} />
-          )} */}
+        <Flex mt={{ base: "0px", lg: "12px" }}>
           <AccountHistoryNew />
 
           {/* <ActivityContainer network={selectedNetwork} /> */}
