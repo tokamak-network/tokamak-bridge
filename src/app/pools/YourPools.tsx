@@ -19,7 +19,7 @@ export default function YourPools() {
   }, []);
 
   return (
-    <Flex flexDir='column' alignSelf={"baseline"} h={"100%"}>
+    <Flex flexDir="column" alignSelf={"baseline"} h={"100%"}>
       {/*
       Coming Update @Robert 
       <Flex flexDir={"column"} mb={"32px"}>
@@ -33,12 +33,12 @@ export default function YourPools() {
       </Flex> 
       */}
       <Flex
-        w='672px'
-        h={isReducedHeight ? "440px" : "600px"}
+        w="672px"
+        // h={isReducedHeight ? "440px" : "600px"}
         p={"20px"}
         pr={"0px"}
-        border='1px solid #313442'
-        borderRadius='13px'
+        border="1px solid #313442"
+        borderRadius="13px"
         overflowY={"hidden"}
       >
         <PoolList />

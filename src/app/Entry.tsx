@@ -11,8 +11,6 @@ import Header from "@/components/header/Index";
 import { Center, Box, Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
-import useMediaView from "@/hooks/mediaView/useMediaView";
-import MobileView from "@/app/Mobile";
 import Footer from "@/components/footer";
 
 const GlobalComponents = () => {
@@ -29,7 +27,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
+        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];
@@ -43,15 +41,6 @@ const GoogleAnalyticsScript = () => {
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
-  const { pcView, minorView } = useMediaView();
-
-  if (minorView) {
-    return (
-      <Center h={"100vh"} bg={"#0F0F12"} color={"#FFFFFF"}>
-        <MobileView />
-      </Center>
-    );
-  }
 
   return (
     <>

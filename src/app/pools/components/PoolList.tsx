@@ -62,8 +62,8 @@ export default function PoolList() {
         Array.from(
           {
             length:
-              positions.length < 8
-                ? 8 - positions.length
+              positions.length < 5
+                ? 5 - positions.length
                 : positions.length % 3 === 1
                 ? 1
                 : positions.length % 3 === 2
