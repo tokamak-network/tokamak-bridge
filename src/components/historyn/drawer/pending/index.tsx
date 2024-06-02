@@ -5,12 +5,12 @@ import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/componenets/image/TokenSymbol";
-import { TransactionHistory, Network } from "@/componenets/historyn/types";
+import { TransactionHistory } from "@/componenets/historyn/types";
 import PendingFooter from "./pendingFooter";
 
 export default function Pending(transaction: TransactionHistory) {
   const transactionData = transaction;
-  console.log(transactionData);
+
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -57,7 +57,7 @@ export default function Pending(transaction: TransactionHistory) {
         />
       </Flex>
       <Box>
-        <PendingFooter />
+        <PendingFooter {...transaction} />
       </Box>
     </>
   );

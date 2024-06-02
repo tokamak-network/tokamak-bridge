@@ -1,7 +1,4 @@
-import { Flex, Box, Text, Circle } from "@chakra-ui/react";
-import Image from "next/image";
-import EthTokenSymbol from "@/assets/icons/newHistory/eth-t-symbol.svg";
-import TxLink from "@/assets/icons/newHistory/link.svg";
+import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/componenets/image/TokenSymbol";
 import { TransactionHistory } from "@/componenets/historyn/types";

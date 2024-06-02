@@ -1,53 +1,43 @@
 import { Flex, Box, Text, Circle } from "@chakra-ui/react";
+import {
+  TransactionHistory,
+  Status,
+  Action,
+} from "@/componenets/historyn/types";
+import {
+  convertTimeToMinutes,
+  formatDateToYMD,
+} from "@/componenets/historyn/utils/timeUtils";
+import StatusComponent from "@/components/historyn/drawer/pending/StatusComponent";
 
-export default function PendingFooter() {
+export default function PendingFooter(transaction: TransactionHistory) {
+  const transactionData = transaction;
+  console.log(transactionData);
+  console.log(
+    formatDateToYMD(
+      Number(transactionData.blockTimestamps.initialCompletedTimestamp)
+    )
+  );
+
+  const statusConfig = {
+    withdraw: [Status.Initial, Status.Rollup, Status.Finalized],
+    deposit: [Status.Initial, Status.Finalized],
+  };
+
+  const statuses =
+    transactionData.action === Action.Withdraw
+      ? statusConfig.withdraw
+      : statusConfig.deposit;
+
   return (
     <>
-      <Flex justifyContent={"space-between"} alignItems={"center"}>
-        <Flex alignItems='center'>
-          <Circle size='6px' bg={"#007AFF"} />
-          <Text
-            ml={"6px"}
-            fontSize={"11px"}
-            fontWeight={600}
-            lineHeight={"22px"}
-            color={"#A0A3AD"}
-          >
-            Initiate
-          </Text>
-        </Flex>
-        <Text
-          fontSize={"11px"}
-          fontWeight={400}
-          lineHeight={"22px"}
-          color={"#A0A3AD"}
-        >
-          2023.04.03
-        </Text>
-      </Flex>
-      {/* 반복되는 내용 */}
-      <Flex justifyContent={"space-between"} alignItems={"center"}>
-        <Flex alignItems='center'>
-          <Circle size='6px' bg={"#007AFF"} />
-          <Text
-            ml={"6px"}
-            fontSize={"11px"}
-            fontWeight={600}
-            lineHeight={"22px"}
-            color={"#A0A3AD"}
-          >
-            Finalize
-          </Text>
-        </Flex>
-        <Text
-          fontSize={"11px"}
-          fontWeight={400}
-          lineHeight={"22px"}
-          color={"#A0A3AD"}
-        >
-          00 : 00
-        </Text>
-      </Flex>
+      {statuses.map((statusKey, index) => (
+        <StatusComponent
+          key={index}
+          label={statusKey}
+          transactionData={transactionData}
+        />
+      ))}
     </>
   );
 }

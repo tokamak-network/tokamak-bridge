@@ -19,13 +19,42 @@ export enum Network {
   Titan = "TITAN",
 }
 
-export interface TransactionHistory {
+interface BaseTransactionHistory {
   action: Action;
   status: Status;
-  blockTimestamp: string;
   inNetwork: Network;
   outNetwork: Network;
   tokenSymbol: TokenInfo["tokenSymbol"];
   amount: string;
-  transactionHash: string;
+  errorMessage?: string | null;
 }
+
+interface WithdrawTransactionHistory extends BaseTransactionHistory {
+  action: Action.Withdraw;
+  blockTimestamps: {
+    initialCompletedTimestamp: string;
+    rollupCompletedTimestamp?: string;
+    finalizedCompletedTimestamp?: string;
+  };
+  transactionHashes: {
+    initialTransactionHash: string;
+    rollupTransactionHash?: string;
+    finalizedTransactionHash?: string;
+  };
+}
+
+interface DepositTransactionHistory extends BaseTransactionHistory {
+  action: Action.Deposit;
+  blockTimestamps: {
+    initialCompletedTimestamp: string;
+    finalizedCompletedTimestamp?: string;
+  };
+  transactionHashes: {
+    initialTransactionHash: string;
+    finalizedTransactionHash?: string;
+  };
+}
+
+export type TransactionHistory =
+  | WithdrawTransactionHistory
+  | DepositTransactionHistory;
