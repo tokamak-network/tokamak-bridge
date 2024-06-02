@@ -125,10 +125,6 @@ export default function FwComingModal() {
                   >
                     Receive
                   </Text>
-                  <FwTooltip
-                    tooltipLabel={"text will be changed"}
-                    style={{ marginLeft: "2px" }}
-                  />
                 </Flex>
                 <Text
                   fontWeight={600}
@@ -146,7 +142,7 @@ export default function FwComingModal() {
                   lineHeight={"15px"}
                   color={"#A0A3AD"}
                 >
-                  Crosstrade is a common bridge service.
+                  Takes up to 24 hours to "prove" and
                 </Text>
                 <Text
                   fontSize={"10px"}
@@ -154,7 +150,7 @@ export default function FwComingModal() {
                   lineHeight={"15px"}
                   color={"#A0A3AD"}
                 >
-                  Network fee is more expensive than service fee
+                  7 days to "finalize" the withdrawal.
                 </Text>
               </Box>
             </Box>

@@ -50,7 +50,7 @@ export default function FwComingOptionDetail() {
             lineHeight={"15px"}
             color={"#A0A3AD"}
           >
-            It can be received faster depending on
+            Trade for a token on a different layer,
           </Text>
           <Text
             fontSize={"10px"}
@@ -58,7 +58,7 @@ export default function FwComingOptionDetail() {
             lineHeight={"15px"}
             color={"#A0A3AD"}
           >
-            the liquidity provider situation
+            subject to the availability of liquidity providers.
           </Text>
         </Box>
       </Box>
