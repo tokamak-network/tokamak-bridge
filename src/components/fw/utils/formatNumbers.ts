@@ -74,7 +74,6 @@ function formatNumber(
       ? commafy(value, 6)
       : commafy(value, 4);
 
-  // 소수점 이하가 모두 0인 경우, 정수 부분만 반환
   if (formattedNumber.includes(".")) {
     const [integerPart, decimalPart] = formattedNumber.split(".");
     if (/^0+$/.test(decimalPart.replace(/,/g, ""))) {

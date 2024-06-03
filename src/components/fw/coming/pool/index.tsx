@@ -64,12 +64,12 @@ export default function ComingPool() {
       h={"100%"}
       w={"100%"}
     >
-      <Box w="full">
+      <Box w='full'>
         <Flex
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"center"}
-          alignItems="center"
+          alignItems='center'
         >
           <Box width={dynamicWidth}>
             <Text
@@ -115,9 +115,9 @@ export default function ComingPool() {
           py={mobileView ? "24px" : "32px"}
           mt={mobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"center"}
-          alignItems="center"
+          alignItems='center'
         >
           <Box width={dynamicWidth}>
             <Box pb={mobileView ? "16px" : "24px"}>
@@ -129,7 +129,7 @@ export default function ComingPool() {
                 textAlign={mobileView ? "center" : undefined}
               >
                 {PoolButtonType.Coming === activeButton
-                  ? "Cross Trade Bridge Pool"
+                  ? "Coming Soon"
                   : "Uniswap V3 pool"}
               </Text>
               <Text
@@ -141,16 +141,16 @@ export default function ComingPool() {
                 textAlign={mobileView ? "center" : undefined}
               >
                 {PoolButtonType.Coming === activeButton
-                  ? "Provide liquidity for cross trade, which helps users move tokens between layers and earn fees."
+                  ? "Cross Trade Bridge is an upcoming service that enables token trading across layers."
                   : "Add liquidity to a pool, and earn a swap fee based on the trading volume."}
               </Text>
             </Box>
             {PoolButtonType.Coming === activeButton ? (
-              <Flex width="full" justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 <ImageBox isMobile={mobileView} />
               </Flex>
             ) : (
-              <Flex width="full" justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 {mobileView ? (
                   <ImageBox isMobile={mobileView} isPool={true} />
                 ) : (
