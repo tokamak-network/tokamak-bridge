@@ -32,38 +32,24 @@ export default function FwComingModal() {
     onCloseFwOptionModal();
   };
 
-  function formatNumber(value: string | number | undefined | null) {
-    // 숫자를 받아 문자열로 변환
+  function formatNumber(
+    value: string | number | undefined | null
+  ): string | undefined {
     if (value === undefined || value === null) {
-      return "-";
+      return commafy(value);
     }
 
-    const num = parseFloat(value.toString());
+    const num = Number(value);
 
-    // 만약 num이 0이면 0 반환
-    if (num === 0) {
-      return "0";
+    if (isNaN(num)) {
+      return commafy(value);
     }
 
-    // 숫자를 소수점 기준으로 나눔
-    const parts = value.toString().split(".");
-    const integerPart = parts[0];
-    const decimalPart = parts[1] || "";
-
-    // 정수 부분을 3자리마다 콤마 추가
-    const formattedInteger = parseInt(integerPart, 10).toLocaleString("en-US");
-
-    // 소수 부분 포맷팅
-    let formattedDecimal;
-    if (parseInt(integerPart, 10) === 0) {
-      // 정수 부분이 0인 경우 소수점 6자리
-      formattedDecimal = decimalPart.padEnd(6, "0").slice(0, 6);
+    if (Math.floor(num) === 0) {
+      return commafy(value, 6);
     } else {
-      // 정수 부분이 0이 아닌 경우 소수점 4자리
-      formattedDecimal = decimalPart.padEnd(4, "0").slice(0, 4);
+      return commafy(value, 4);
     }
-
-    return formattedInteger + (formattedDecimal ? "." + formattedDecimal : "");
   }
 
   // 테스트 케이스
