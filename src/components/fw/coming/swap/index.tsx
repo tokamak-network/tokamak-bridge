@@ -14,12 +14,11 @@ import {
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import FwComingOptionDetail from "../../modal/option/FwComingOptionDetail";
-import { FwTooltip } from "@/components/fw/components/FwTooltip";
 import { useRecoilState } from "recoil";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import commafy from "@/utils/trim/commafy";
+import formatNumber from "@/componenets/fw/utils/formatNumbers";
 
 export default function FwComingModal() {
   const { mobileView } = useMediaView();
@@ -31,35 +30,6 @@ export default function FwComingModal() {
     setWithdrawStatus({ isOpen: true });
     onCloseFwOptionModal();
   };
-
-  function formatNumber(
-    value: string | number | undefined | null
-  ): string | undefined {
-    if (value === undefined || value === null) {
-      return commafy(value);
-    }
-
-    const num = Number(value);
-
-    if (isNaN(num)) {
-      return commafy(value);
-    }
-
-    if (Math.floor(num) === 0) {
-      return commafy(value, 6);
-    } else {
-      return commafy(value, 4);
-    }
-  }
-
-  // 테스트 케이스
-  console.log(formatNumber("1111.598840")); // 1,111.5988
-  console.log(formatNumber("1000000.1980123")); // 1,000,000.1980
-  console.log(formatNumber("0.1234567")); // 0.123456
-  console.log(formatNumber("0")); // 0
-  console.log(formatNumber("0.0")); // 0
-  console.log(formatNumber("0.00")); // 0
-  console.log(formatNumber("0.000")); // 0
 
   return (
     <Modal
