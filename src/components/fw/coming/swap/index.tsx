@@ -21,7 +21,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import formatNumber from "@/componenets/fw/utils/formatNumbers";
 
 export default function FwComingModal() {
-  const { mobileView } = useMediaView();
+  const { tabletView } = useMediaView();
   const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { inToken } = useInOutTokens();
@@ -35,8 +35,8 @@ export default function FwComingModal() {
     <Modal
       isOpen={fwOptionModal}
       onClose={onCloseFwOptionModal}
-      motionPreset={mobileView ? "slideInBottom" : "none"}
-      isCentered={mobileView ? false : true}
+      motionPreset={tabletView ? "slideInBottom" : "none"}
+      isCentered={tabletView ? false : true}
     >
       <ModalOverlay />
       <ModalContent
@@ -44,8 +44,8 @@ export default function FwComingModal() {
         bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
-        marginTop={mobileView ? "auto" : undefined}
-        marginBottom={mobileView ? "0" : undefined}
+        marginTop={tabletView ? "auto" : undefined}
+        marginBottom={tabletView ? "0" : undefined}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>

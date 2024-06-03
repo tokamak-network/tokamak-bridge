@@ -6,11 +6,10 @@ import PoolComing from "@/assets/image/BridgeSwap/fw/poolComing.png";
 
 interface ImageBoxProp {
   isMobile: boolean;
-  isPool?: boolean;
 }
 
-export default function ImageBox(props: ImageBoxProp) {
-  const { isMobile, isPool } = props;
+export default function ImageComingBox(props: ImageBoxProp) {
+  const { isMobile } = props;
 
   return (
     <Box
@@ -22,13 +21,7 @@ export default function ImageBox(props: ImageBoxProp) {
     >
       <Box zIndex={1}>
         <Image
-          src={
-            isMobile
-              ? isPool
-                ? PoolComing
-                : FwComingCrossMobile
-              : FwComingCross
-          }
+          src={isMobile ? FwComingCrossMobile : FwComingCross}
           alt='FwComingCrossMobile'
           style={{
             width: isMobile ? undefined : "672px",
@@ -36,21 +29,7 @@ export default function ImageBox(props: ImageBoxProp) {
           }}
         />
       </Box>
-      {!isPool && (
-        <Box
-          position='absolute'
-          top={"58%"}
-          width={isMobile ? "100vw" : "672px"}
-          height={isMobile ? "60vh" : "670px"}
-          bgImage='linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)'
-          bgPos='-0.488px -410px'
-          bgSize='100.132% 231.41%'
-          bgRepeat='no-repeat'
-          backdropFilter='auto'
-          backdropBlur='1.5px'
-          zIndex={2}
-        />
-      )}
+
       <Box
         position='absolute'
         top={"75%"}
