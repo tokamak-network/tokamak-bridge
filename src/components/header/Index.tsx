@@ -1,6 +1,12 @@
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { Box, Center, Flex, Text } from "@chakra-ui/layout";
-import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import Network from "./Network";
 import Account from "./Account";
 import { usePathname } from "next/navigation";
@@ -159,23 +165,26 @@ export default function Header() {
   const [actionModalStatus, setActionMethod] =
     useRecoilState(actionMethodStatus);
   const { mobileView } = useMediaView();
+  const [menuView] = useMediaQuery("(min-width: 761px)");
+
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
-  const network = useConnectedNetwork();
+  const router = useRouter();
+  const { mode } = useGetMode();
 
-  const handleMenuButtonhover = (event: any) => {
+  const handleMenuButtonhover = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     event.preventDefault();
     setMenuState(true);
   };
 
-  const handleMenuButtonClick = (event: any) => {
+  const handleMenuButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     event.preventDefault();
-
     !menuState && setMenuState(!menuState);
   };
-
-  const router = useRouter();
-  const { mode } = useGetMode();
 
   return (
     <Flex
@@ -208,7 +217,7 @@ export default function Header() {
             alt={"LOGO_IMAGE"}
           />
         </Box>
-        <Flex columnGap={"30px"} display={{ base: "none", lg: "flex" }}>
+        <Flex columnGap={"30px"} display={menuView ? "flex" : "none"}>
           {menuList.map((menuInfo) => (
             <HeaderMenu
               key={menuInfo.title}
@@ -228,7 +237,6 @@ export default function Header() {
               fontSize={16}
               cursor={"pointer"}
               onMouseEnter={handleMenuButtonhover}
-              // onMouseLeave={()=> setHoverOn(false)}
               onMouseDown={handleMenuButtonClick}
               borderBottom={menuState ? "3px solid #007AFF" : ""}
               onClick={handleMenuButtonClick}
