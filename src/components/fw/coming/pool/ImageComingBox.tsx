@@ -14,7 +14,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
   const boxWidth = isMobile ? undefined : poolTabletView ? "536px" : "672px";
   const boxHeight = isMobile ? undefined : poolTabletView ? "548px" : "688px";
   const boxGraWidth = isMobile ? "100vw" : poolTabletView ? "536px" : "672px";
-  const boxGraHeight = isMobile ? "60vh" : poolTabletView ? "534px" : "672px";
+  const boxGraHeight = isMobile ? "60vh" : poolTabletView ? "548px" : "688px";
 
   return (
     <Box
