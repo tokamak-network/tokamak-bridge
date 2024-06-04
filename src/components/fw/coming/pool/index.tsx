@@ -25,7 +25,7 @@ export default function ComingPool() {
   const dynamicWidth = poolMobileView
     ? "90%"
     : poolTabletView
-    ? "536px"
+    ? "538px"
     : "672px";
 
   const [activeButton, setActiveButton] = useState<PoolButtonType>(
@@ -153,7 +153,7 @@ export default function ComingPool() {
               </Text>
             </Box>
             {PoolButtonType.Coming === activeButton ? (
-              <Flex width='full' height={"740px"} justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 <ImageComingBox isMobile={poolMobileView} />
               </Flex>
             ) : (

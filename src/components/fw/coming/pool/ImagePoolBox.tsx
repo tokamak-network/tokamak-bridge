@@ -18,16 +18,18 @@ export default function ImagePoolBox(props: ImageBoxProp) {
       overflow='hidden'
       border={"1px solid #313442"}
       borderRadius={"16px"}
-      width={isMobile ? undefined : "672px"}
-      height={isMobile ? undefined : "549px"}
+      width={isMobile ? "336px" : "536px"}
+      height={isMobile ? "480px" : "549px"}
     >
       <Box zIndex={1}>
         <Image
           src={isMobile ? PoolComing : PoolComingTablet}
           alt='FwComingCrossMobile'
           style={{
-            width: isMobile ? undefined : "672px",
-            height: isMobile ? undefined : "549px",
+            width: isMobile ? "336px" : "536px",
+            height: isMobile ? "480px" : "549px",
+            objectPosition: "top",
+            objectFit: "cover",
           }}
         />
       </Box>
