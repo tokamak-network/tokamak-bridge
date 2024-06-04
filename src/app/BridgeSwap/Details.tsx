@@ -8,6 +8,14 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
 
+const WrappedWarning = () => {
+  return (
+    <Box data-testid='warning-box'>
+      <Warning />
+    </Box>
+  );
+};
+
 export function Details() {
   const { mode } = useGetMode();
   const { pcView, mobileView } = useMediaView();
@@ -26,7 +34,7 @@ export function Details() {
     >
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
-          {pcView ? <Warning /> : !showWarning && <Warning />}
+          {pcView ? <WrappedWarning /> : !showWarning && <WrappedWarning />}
           <ApproveToken />
           <TransactionDetail />
         </Flex>
@@ -37,7 +45,7 @@ export function Details() {
         <ActionButton />
       ) : (
         <Flex direction='column' rowGap={"12px"}>
-          {showWarning && <Warning />}
+          {showWarning && <WrappedWarning />}
           <ActionButton />
         </Flex>
       )}

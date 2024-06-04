@@ -60,6 +60,7 @@ export const CardCarrousel = () => {
         justifyContent={"center"}
         alignItems={"center"}
         cursor={"pointer"}
+        data-testid={"select-token-left-arrow"}
       >
         <Image src={LeftArrow} alt={"LeftArrow"} />
       </Flex>
@@ -186,6 +187,7 @@ export const CardCarrousel = () => {
         justifyContent={"center"}
         alignItems={"center"}
         cursor={"pointer"}
+        data-testid={"select-token-right-arrow"}
       >
         <Image src={RightArrow} alt={"RightArrow"} />
       </Flex>
