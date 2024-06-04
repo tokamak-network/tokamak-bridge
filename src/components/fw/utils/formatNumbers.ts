@@ -13,7 +13,7 @@ function testcase() {
   console.log(formatNumber(999999)); // 999,999
   console.log(formatNumber(1000000)); // 1,000,000
   console.log(formatNumber(9999999)); // 9,999,999
-  console.log(formatNumber(9999999.123789123)); // 9,999,999
+  console.log(formatNumber(9999999.123789123)); // 9,999,999.123789123
   console.log(formatNumber(10000000)); // 10.0 m
   console.log(formatNumber(10199999.234890234809234)); // 10.1 m
   console.log(formatNumber(50000000)); // 50.0 m
@@ -24,7 +24,7 @@ function testcase() {
   console.log(formatNumber(0.001234)); // 0.001234
   console.log(formatNumber(0.000001)); // 0.000001
   console.log(formatNumber(0.987654321)); // 0.987654
-  console.log(formatNumber(0.0000001)); // 0.000000
+  console.log(formatNumber(0.0000001)); // < 0.0001 이렇게 수정한다.
 
   console.log(formatNumber(123.456)); // 123.456
   console.log(formatNumber(1100.1234)); // 1,100.1234
@@ -32,7 +32,7 @@ function testcase() {
   console.log(formatNumber(150000.987654)); // 150,000.9876
   console.log(formatNumber(12000.00001)); // 12,000.00001
 
-  console.log(formatNumber(1000000000)); // 1.0B -> M 추가해 야함
+  console.log(formatNumber(1000000000)); // 1.0B -> M 추가해 야함 M 부터 >
   console.log(formatNumber(2500000000)); // 2.5B
   console.log(formatNumber(1000000000000)); // 1.0T
   console.log(formatNumber(3500000000000)); // 3.5T
@@ -65,19 +65,19 @@ function formatNumber(
   }
 
   if (Math.abs(num) < 1e-6) {
-    return "0.000000";
+    return "< 0.0001";
   }
 
   const absNum = Math.abs(num);
   const formattedNumber: string =
     absNum >= 1e15
-      ? `${commafy(num / 1e15, 1)}Q`
+      ? `> ${commafy(num / 1e15, 1)}Q`
       : absNum >= 1e12
-      ? `${commafy(num / 1e12, 1)}T`
+      ? `> ${commafy(num / 1e12, 1)}T`
       : absNum >= 1e9
-      ? `${commafy(num / 1e9, 1)}B`
+      ? `> ${commafy(num / 1e9, 1)}B`
       : absNum >= 1e7
-      ? `${commafy(num / 1e6, 1)}M`
+      ? `> ${commafy(num / 1e6, 1)}M`
       : Math.floor(num) === 0
       ? commafy(value, 6)
       : commafy(value, 4);

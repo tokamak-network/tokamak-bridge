@@ -31,6 +31,39 @@ export default function FwComingModal() {
     onCloseFwOptionModal();
   };
 
+  interface StyledNumberProps {
+    value: string | null | undefined;
+    tokenSymbol: string | String | undefined;
+  }
+
+  const StyledNumber = ({ value, tokenSymbol }: StyledNumberProps) => {
+    const formattedValue = formatNumber(value) ?? "";
+
+    const operator =
+      formattedValue.startsWith("<") || formattedValue.startsWith(">")
+        ? formattedValue[0]
+        : "";
+    const number = operator
+      ? formattedValue.substring(1).trim()
+      : formattedValue;
+
+    return (
+      <Text
+        fontWeight={600}
+        fontSize={"22px"}
+        lineHeight={"33px"}
+        color={"#007AFF"}
+      >
+        {operator && <span style={{ fontWeight: 400 }}>{operator}</span>}
+        <span>
+          {/** Add a space */ " "}
+          {number}
+          {/** Add a space */ " "}
+        </span>
+        {tokenSymbol}
+      </Text>
+    );
+  };
   return (
     <Modal
       isOpen={fwOptionModal}
@@ -88,7 +121,10 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   color={"#007AFF"}
                 >
-                  {formatNumber(inToken?.parsedAmount)} {inToken?.tokenSymbol}
+                  <StyledNumber
+                    value={inToken?.parsedAmount}
+                    tokenSymbol={inToken?.tokenSymbol}
+                  />
                 </Text>
               </Box>
               <Box mt={"12px"}>

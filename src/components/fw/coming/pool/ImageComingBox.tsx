@@ -33,7 +33,19 @@ export default function ImageComingBox(props: ImageBoxProp) {
           }}
         />
       </Box>
-
+      <Box
+        position='absolute'
+        top={"58%"}
+        width={isMobile ? "100vw" : "672px"}
+        height={isMobile ? "60vh" : "670px"}
+        bgImage='linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)'
+        bgPos='-0.488px -410px'
+        bgSize='100.132% 231.41%'
+        bgRepeat='no-repeat'
+        backdropFilter='auto'
+        backdropBlur='2.5px'
+        zIndex={2}
+      />
       <Box
         position='absolute'
         top={"75%"}
@@ -43,7 +55,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
           "linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)"
         }
         backdropFilter='auto'
-        backdropBlur='2.5px'
+        backdropBlur='1.5px'
         opacity={0.5}
         zIndex={3}
       />
