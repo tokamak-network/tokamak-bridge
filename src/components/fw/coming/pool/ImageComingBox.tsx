@@ -13,7 +13,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
   const { poolTabletView } = useMediaView();
   const boxWidth = isMobile ? undefined : poolTabletView ? "536px" : "672px";
   const boxGraWidth = isMobile ? "100vw" : poolTabletView ? "536px" : "672px";
-  const boxGraHeight = isMobile ? "60vh" : poolTabletView ? "534px" : "670px";
+  const boxGraHeight = isMobile ? "60vh" : poolTabletView ? "534px" : "548px";
 
   return (
     <Box
@@ -21,7 +21,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
       overflow='hidden'
       borderRadius={"16px"}
       width={boxWidth}
-      height={isMobile ? undefined : "670px"}
+      height={isMobile ? undefined : "548px"}
     >
       <Box zIndex={1}>
         <Image
@@ -29,7 +29,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
           alt='FwComingCrossMobile'
           style={{
             width: boxWidth,
-            height: isMobile ? undefined : "670px",
+            height: isMobile ? undefined : "548px",
           }}
         />
       </Box>
@@ -37,7 +37,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
         position='absolute'
         top={"58%"}
         width={isMobile ? "100vw" : "672px"}
-        height={isMobile ? "60vh" : "670px"}
+        height={isMobile ? "60vh" : "548px"}
         bgImage='linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)'
         bgPos='-0.488px -410px'
         bgSize='100.132% 231.41%'
