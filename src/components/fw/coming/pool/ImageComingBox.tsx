@@ -22,6 +22,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
       overflow='hidden'
       width={boxWidth}
       height={boxHeight}
+      borderRadius={`0px 0px 16px 16px`}
     >
       <Box zIndex={1}>
         <Image
