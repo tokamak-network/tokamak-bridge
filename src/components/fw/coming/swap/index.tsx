@@ -14,15 +14,14 @@ import {
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import FwComingOptionDetail from "../../modal/option/FwComingOptionDetail";
-import { FwTooltip } from "@/components/fw/components/FwTooltip";
 import { useRecoilState } from "recoil";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import commafy from "@/utils/trim/commafy";
+import formatNumber from "@/componenets/fw/utils/formatNumbers";
 
 export default function FwComingModal() {
-  const { mobileView } = useMediaView();
+  const { tabletView } = useMediaView();
   const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { inToken } = useInOutTokens();
@@ -32,12 +31,45 @@ export default function FwComingModal() {
     onCloseFwOptionModal();
   };
 
+  interface StyledNumberProps {
+    value: string | null | undefined;
+    tokenSymbol: string | String | undefined;
+  }
+
+  const StyledNumber = ({ value, tokenSymbol }: StyledNumberProps) => {
+    const formattedValue = formatNumber(value) ?? "";
+
+    const operator =
+      formattedValue.startsWith("<") || formattedValue.startsWith(">")
+        ? formattedValue[0]
+        : "";
+    const number = operator
+      ? formattedValue.substring(1).trim()
+      : formattedValue;
+
+    return (
+      <Text
+        fontWeight={600}
+        fontSize={"22px"}
+        lineHeight={"33px"}
+        color={"#007AFF"}
+      >
+        {operator && <span style={{ fontWeight: 400 }}>{operator}</span>}
+        <span>
+          {/** Add a space */ " "}
+          {number}
+          {/** Add a space */ " "}
+        </span>
+        {tokenSymbol}
+      </Text>
+    );
+  };
   return (
     <Modal
       isOpen={fwOptionModal}
       onClose={onCloseFwOptionModal}
-      motionPreset={mobileView ? "slideInBottom" : "none"}
-      isCentered={mobileView ? false : true}
+      motionPreset={tabletView ? "slideInBottom" : "none"}
+      isCentered={tabletView ? false : true}
     >
       <ModalOverlay />
       <ModalContent
@@ -45,8 +77,8 @@ export default function FwComingModal() {
         bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
-        marginTop={mobileView ? "auto" : undefined}
-        marginBottom={mobileView ? "0" : undefined}
+        marginTop={tabletView ? "auto" : undefined}
+        marginBottom={tabletView ? "0" : undefined}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
@@ -82,10 +114,6 @@ export default function FwComingModal() {
                   >
                     Receive
                   </Text>
-                  <FwTooltip
-                    tooltipLabel={"text will be changed"}
-                    style={{ marginLeft: "2px" }}
-                  />
                 </Flex>
                 <Text
                   fontWeight={600}
@@ -93,7 +121,10 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   color={"#007AFF"}
                 >
-                  {commafy(inToken?.parsedAmount, 6)} {inToken?.tokenSymbol}
+                  <StyledNumber
+                    value={inToken?.parsedAmount}
+                    tokenSymbol={inToken?.tokenSymbol}
+                  />
                 </Text>
               </Box>
               <Box mt={"12px"}>
@@ -103,7 +134,7 @@ export default function FwComingModal() {
                   lineHeight={"15px"}
                   color={"#A0A3AD"}
                 >
-                  Crosstrade is a common bridge service.
+                  Takes up to 24 hours to "prove" and
                 </Text>
                 <Text
                   fontSize={"10px"}
@@ -111,7 +142,7 @@ export default function FwComingModal() {
                   lineHeight={"15px"}
                   color={"#A0A3AD"}
                 >
-                  Network fee is more expensive than service fee
+                  7 days to "finalize" the withdrawal.
                 </Text>
               </Box>
             </Box>

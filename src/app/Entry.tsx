@@ -12,6 +12,7 @@ import { Center, Box, Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
 import Footer from "@/components/footer";
+import { usePathname } from "next/navigation";
 
 const GlobalComponents = () => {
   return (
@@ -27,7 +28,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
+        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];
@@ -42,6 +43,10 @@ const GoogleAnalyticsScript = () => {
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
 
+  // Change footer background color when 'pool' is in the path. To be removed after ad ends. @Robert
+  const pathname = usePathname();
+  const isPoolsRoute = pathname === "/pools";
+
   return (
     <>
       <GoogleAnalyticsScript />
@@ -51,7 +56,11 @@ export default function Entry({ children }: { children: React.ReactNode }) {
             <>
               <Header />
               <Flex flexDir={"column"}>
-                <Flex justifyContent={"center"} bg={"#0F0F12"} minH={"90vh"}>
+                <Flex
+                  justifyContent={"center"}
+                  bg={"#0F0F12"}
+                  minH={isPoolsRoute ? undefined : "90vh"}
+                >
                   {children}
                 </Flex>
                 <Footer />

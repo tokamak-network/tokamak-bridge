@@ -5,7 +5,8 @@ import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import ScrolltoTopButton from "@/componenets/fw/coming/pool/ScrolltoTopButton";
-import ImageBox from "@/componenets/fw/coming/pool/ImageBox";
+import ImageComingBox from "@/componenets/fw/coming/pool/ImageComingBox";
+import ImagePoolBox from "@/componenets/fw/coming/pool/ImagePoolBox";
 
 export default function ComingPool() {
   enum PoolButtonType {
@@ -20,8 +21,12 @@ export default function ComingPool() {
     children: React.ReactNode;
   }
 
-  const { mobileView } = useMediaView();
-  const dynamicWidth = mobileView ? "90%" : "672px";
+  const { poolTabletView, poolMobileView } = useMediaView();
+  const dynamicWidth = poolMobileView
+    ? "90%"
+    : poolTabletView
+    ? "538px"
+    : "672px";
 
   const [activeButton, setActiveButton] = useState<PoolButtonType>(
     PoolButtonType.Coming
@@ -34,9 +39,11 @@ export default function ComingPool() {
     children,
   }: PoolComingButtonProps) => (
     <Button
-      ml={mobileView ? "0" : type === PoolButtonType.Active ? "16px" : "0"}
-      mt={mobileView ? (type === PoolButtonType.Active ? "12px" : "0") : "0"}
-      w={mobileView ? "full" : "auto"}
+      ml={poolMobileView ? "0" : type === PoolButtonType.Active ? "16px" : "0"}
+      mt={
+        poolMobileView ? (type === PoolButtonType.Active ? "12px" : "0") : "0"
+      }
+      w={poolMobileView ? "full" : "auto"}
       px={"16px"}
       py={"8px"}
       borderRadius={"8px"}
@@ -59,40 +66,40 @@ export default function ComingPool() {
 
   return (
     <Flex
-      pt={mobileView ? "80px" : "134px"}
+      pt={poolMobileView ? "80px" : "134px"}
       justifyContent={"center"}
       h={"100%"}
       w={"100%"}
     >
-      <Box w="full">
+      <Box w='full'>
         <Flex
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"center"}
-          alignItems="center"
+          alignItems='center'
         >
           <Box width={dynamicWidth}>
             <Text
-              fontSize={mobileView ? "20px" : "30px"}
+              fontSize={poolMobileView ? "20px" : "30px"}
               fontWeight={500}
-              lineHeight={mobileView ? "30px" : "44px"}
-              textAlign={mobileView ? "center" : undefined}
+              lineHeight={poolMobileView ? "30px" : "44px"}
+              textAlign={poolMobileView ? "center" : undefined}
             >
               Generate & multiply income
             </Text>
             <Text
-              fontSize={mobileView ? "20px" : "30px"}
+              fontSize={poolMobileView ? "20px" : "30px"}
               fontWeight={500}
-              lineHeight={mobileView ? "30px" : "44px"}
-              textAlign={mobileView ? "center" : undefined}
+              lineHeight={poolMobileView ? "30px" : "44px"}
+              textAlign={poolMobileView ? "center" : undefined}
             >
               by providing liquidity
             </Text>
           </Box>
           <Flex
-            mt={mobileView ? "24px" : "32px"}
+            mt={poolMobileView ? "24px" : "32px"}
             width={dynamicWidth}
-            direction={mobileView ? "column" : "row"}
+            direction={poolMobileView ? "column" : "row"}
           >
             <PoolComingButton
               type={PoolButtonType.Coming}
@@ -112,47 +119,49 @@ export default function ComingPool() {
         </Flex>
         <Flex
           bg={"#17181D"}
-          py={mobileView ? "24px" : "32px"}
-          mt={mobileView ? "14px" : "16px"}
+          py={poolMobileView ? "24px" : "32px"}
+          mt={poolMobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"center"}
-          alignItems="center"
+          alignItems='center'
         >
           <Box width={dynamicWidth}>
-            <Box pb={mobileView ? "16px" : "24px"}>
+            <Box pb={poolMobileView ? "16px" : "24px"}>
               <Text
                 fontWeight={500}
-                fontSize={mobileView ? "20px" : "25px"}
-                lineHeight={mobileView ? "30px" : "37.5px"}
+                fontSize={poolMobileView ? "20px" : "25px"}
+                lineHeight={poolMobileView ? "30px" : "37.5px"}
                 color={"#FFFFFF"}
-                textAlign={mobileView ? "center" : undefined}
+                textAlign={poolMobileView ? "center" : undefined}
               >
                 {PoolButtonType.Coming === activeButton
-                  ? "Cross Trade Bridge Pool"
+                  ? "Coming Soon"
                   : "Uniswap V3 pool"}
               </Text>
               <Text
                 fontWeight={400}
-                fontSize={mobileView ? "12px" : "14px"}
-                lineHeight={mobileView ? "18px" : "21px"}
+                fontSize={poolMobileView ? "12px" : "14px"}
+                lineHeight={poolMobileView ? "18px" : "21px"}
                 color={"#A0A3AD"}
                 mt={"6px"}
-                textAlign={mobileView ? "center" : undefined}
+                textAlign={poolMobileView ? "center" : undefined}
               >
                 {PoolButtonType.Coming === activeButton
-                  ? "Provide liquidity for cross trade, which helps users move tokens between layers and earn fees."
+                  ? "Cross Trade Bridge is an upcoming service that enables token trading across layers."
                   : "Add liquidity to a pool, and earn a swap fee based on the trading volume."}
               </Text>
             </Box>
             {PoolButtonType.Coming === activeButton ? (
-              <Flex width="full" justifyContent={"center"}>
-                <ImageBox isMobile={mobileView} />
+              <Flex width='full' justifyContent={"center"}>
+                <ImageComingBox isMobile={poolMobileView} />
               </Flex>
             ) : (
-              <Flex width="full" justifyContent={"center"}>
-                {mobileView ? (
-                  <ImageBox isMobile={mobileView} isPool={true} />
+              <Flex width='full' justifyContent={"center"}>
+                {poolMobileView ? (
+                  <ImagePoolBox isMobile={true} />
+                ) : poolTabletView ? (
+                  <ImagePoolBox isMobile={false} />
                 ) : (
                   <YourPools />
                 )}
@@ -161,7 +170,7 @@ export default function ComingPool() {
           </Box>
         </Flex>
       </Box>
-      {!mobileView && <ScrolltoTopButton />}
+      {!poolTabletView && <ScrolltoTopButton />}
     </Flex>
   );
 }
