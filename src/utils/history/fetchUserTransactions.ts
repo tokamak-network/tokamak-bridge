@@ -1,5 +1,4 @@
 import axios from "axios";
-import useConnectedNetwork from "@/hooks/network";
 import { L1TxType, SentMessages } from "@/types/activity/history";
 import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 
@@ -20,11 +19,7 @@ export const fetchUserTransactions = async (
 
     //gets transactions on L1
     const resTxs = await axios.post(
-      `${
-        isConnectedToMainnet
-          ? process.env.NEXT_PUBLIC_L1BRIDGE_MAINNET
-          : process.env.NEXT_PUBLIC_L1BRIDGE_GOERLI
-      }`,
+      `${"https://api.studio.thegraph.com/query/77358/tokamak-bridge-history/version/latest"}`,
       {
         query: `
         {
@@ -40,7 +35,6 @@ export const fetchUserTransactions = async (
           target
           transactionHash
         }
-        
           erc20DepositInitiateds(
           where: {_from: "${account}"}
         ) {
@@ -69,7 +63,6 @@ export const fetchUserTransactions = async (
           blockTimestamp
           transactionHash
         }
-        
           ethdepositInitiateds(
             where: {_from: "${account}"}
           ) {
@@ -94,7 +87,9 @@ export const fetchUserTransactions = async (
             id
             transactionHash
       
-        }}`,
+        }
+      
+      }`,
         variables: null,
       }
     );

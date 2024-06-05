@@ -2,7 +2,7 @@ import { useProvier } from "../provider/useProvider";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAccount } from "wagmi";
 import useConnectedNetwork from "../network";
-import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
+import { fetchUserTransactions } from "utils/history/fetchUserTransactions";
 import { ethers } from "ethers";
 import useCrosschainMessenger from "./useCrosschainMessenger";
 import {
@@ -13,11 +13,25 @@ import {
   UserL2Transaction,
   FullDepTx,
   FullWithTx,
+  Resolved,
 } from "@/types/activity/history";
 // @ts-ignore
 import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
 import { userTransactions } from "@/recoil/userHistory/transaction";
 import { useRecoilState } from "recoil";
+import { useQuery } from "@apollo/client";
+import { GET_POSITIONS, GET_sentMessages } from "@/graphql/data/queries";
+import { subgraphApolloClientsForHistory } from "@/graphql/thegraph/apolloForHistory";
+import { MAINNET_CONTRACTS } from "@/constant/contracts";
+import { getCurretStatus } from "@/utils/history/getCurrentStatus";
+
+const formatAddress = (address: string) => {
+  const formattedAddress = address.substring(2);
+  return formattedAddress;
+};
+const formattedAddress = formatAddress(
+  "0x24884B9A47049B7663aEdaC7c7C91afd406EA09e"
+);
 
 export default function useGetTransaction() {
   const [tDataDeposit, setTDataDeposit] = useState<FullDepTx[]>([]);
@@ -26,6 +40,8 @@ export default function useGetTransaction() {
   const { address } = useAccount();
   const { layer, isLayer2 } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
+
+  const client = subgraphApolloClientsForHistory[1];
 
   //titanSDK as an L2 provider for certain functions
   const l2ProSDK = titanSDK.asL2Provider(isLayer2 ? provider : L2Provider);
@@ -88,191 +104,185 @@ export default function useGetTransaction() {
               : "absent"
           );
 
-        //creates an array for all the txs in the userTxfromSubgraph.formattedWithdraw data with additional information
         const l2WithdrawTxs = await Promise.all(
-          userTxfromSubgraph.formattedWithdraw.map(
-            async (tx: L1TxType, index: number) => {
-              // the resolved object from the crossChain messenger sdk is needed for the other SDK calls
-              const resolved = await crossMessengerTokamak.toCrossChainMessage(
-                tx.transactionHash
-              ); //  office node ok
+          userTxfromSubgraph.formattedWithdraw.map(async (tx: SentMessages) => {
+            console.log("tx", tx);
+            const resolved: Resolved = {
+              target: tx.target,
+              sender: tx.sender,
+              message: tx.message,
+              messageNonce: tx.messageNonce,
+            };
 
-              //returns the current status of the transaction.
-              const currentStatus = await crossMessenger.getMessageStatus(
-                resolved
-              ); //no office node
+            /**
+             * resolved type은 sentMessage 조회로 해결 가능
+             * withdraw 콜데이터 생성을 위해 사용함
+             */
 
-              //the meaning of each status can be found here
-              //https://www.notion.so/onther/Lakmi-s-Handover-Tasks-74f3fe996632480bb827148b3488e382?pvs=4#c74175edb844412b8f20f920fca76e19
+            const currentStatus = await getCurretStatus(Number(tx.blockNumber));
 
-              // returns l2 tx receipt
-              const l2TxReceipt = await l2Pro.getTransactionReceipt(
-                tx.transactionHash
+            //the meaning of each status can be found here
+            //https://www.notion.so/onther/Lakmi-s-Handover-Tasks-74f3fe996632480bb827148b3488e382?pvs=4#c74175edb844412b8f20f920fca76e19
+
+            // returns l2 tx receipt
+            const l2TxReceipt = await l2Pro.getTransactionReceipt(
+              tx.transactionHash
+            );
+
+            //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
+            if (l2TxReceipt.logs[3] !== undefined) {
+              const logs = ethers.utils.defaultAbiCoder.decode(
+                ["address", "uint256", "bytes"],
+                l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
               );
 
-              //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-              if (l2TxReceipt.logs[3] !== undefined) {
-                const logs = ethers.utils.defaultAbiCoder.decode(
-                  ["address", "uint256", "bytes"],
-                  l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
+              const l1Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
+              )[0];
+
+              const l2Token = ethers.utils.defaultAbiCoder.decode(
+                ["address"],
+                l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
+              )[0];
+
+              // if currentStatus is 2 or 3 then the tx is still in rollup period ( wait 5 mins for rollup).
+              //if status is 4, rollup is finish and tx ready for challenge period
+
+              /**
+               * stateBatchAppendeds 조회를 활용해 currentStatus 조회 생략
+               * 2를 기준으로 UI를 표시하므로 조회가 안 되면 2로 설정하면 될 듯
+               * 4 -> IN_CHALLENGE_PERIOD
+               * 5 -> READY FOR REALY
+               * 6 -> REALYED
+               */
+
+              //if the l2txReceipt is not undefined, and rollup is not finished, return the withdraw tx object with the following data
+              if (
+                (currentStatus === 2 || currentStatus === 3) &&
+                l2TxReceipt !== undefined
+              ) {
+                //withdraw token amount can be found using the receipt logs
+                const amnt = BigInt(logs[1]).toString();
+
+                return {
+                  ...tx,
+                  l2timeStamp: tx.blockTimestamp,
+                  l2txHash: tx.transactionHash,
+                  _l1Token: l1Token,
+                  _l2Token: l2Token,
+                  _amount: amnt,
+                  l2TxReceipt: l2TxReceipt,
+                  currentStatus,
+                  resolved,
+                };
+              }
+
+              // if the current status is 4 rollup has finished and is on l1 waiting for challenge period
+              else if (
+                currentStatus === 4 &&
+                l2TxReceipt.blockNumber !== undefined
+              ) {
+                //the l2 block number is useful when calculating the time take for the rollup and challenge period to finish
+                const l2BlockNum = await l2Pro.getBlock(
+                  l2TxReceipt.blockNumber
                 );
 
-                const l1Token = ethers.utils.defaultAbiCoder.decode(
-                  ["address"],
-                  l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
-                )[0];
+                //in mainnet it takes 11 minutes for rollup to finish and 7 days for the challenge period. These two times are converted to seconds
+                // in testnet it takes 2 minutes for rollup to finish and 10 seconds for the challenge period. Additional buffer of 150 seconds is given. These 3 times are converted to seconds
+                const calculatedTimePeriod = isConnectedToMainNetwork
+                  ? 11 * 60 + 7 * 24 * 60 * 60
+                  : 2 * 60 + 10 + 150;
 
-                const l2Token = ethers.utils.defaultAbiCoder.decode(
-                  ["address"],
-                  l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
-                )[0];
+                //this is the unix timestamp when the tx is ready to be relayed (rollup & challenge is finished)
+                const testPeriod = l2BlockNum.timestamp + calculatedTimePeriod;
 
-                // if currentStatus is 2 or 3 then the tx is still in rollup period ( wait 5 mins for rollup).
-                //if status is 4, rollup is finish and tx ready for challenge period
+                // const challengePeriod =
+                //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
+                const timeReadyForRelay = testPeriod;
 
-                //if the l2txReceipt is not undefined, and rollup is not finished, return the withdraw tx object with the following data
-                if (
-                  (currentStatus === 2 || currentStatus === 3) &&
-                  l2TxReceipt !== undefined
-                ) {
-                  //withdraw token amount can be found using the receipt logs
-                  const amnt = BigInt(logs[1]).toString();
+                const amnt = BigInt(logs[1]).toString();
 
-                  return {
-                    ...tx,
-                    l2timeStamp: tx.blockTimestamp,
-                    l2txHash: tx.transactionHash,
-                    _l1Token: l1Token,
-                    _l2Token: l2Token,
-                    _amount: amnt,
-                    l2TxReceipt: l2TxReceipt,
-                    currentStatus: currentStatus,
-                    resolved: resolved,
-                  };
-                }
-
-                // if the current status is 4 rollup has finished and is on l1 waiting for challenge period
-                else if (
-                  currentStatus === 4 &&
-                  l2TxReceipt.blockNumber !== undefined
-                ) {
-                  //the l2 block number is useful when calculating the time take for the rollup and challenge period to finish
-                  const l2BlockNum = await l2Pro.getBlock(
-                    l2TxReceipt.blockNumber
-                  );
-
-                  // const messageTxIndex = l2TxReceipt.blockNumber - 1;
-
-                  // const stateBatchAppendedEvent =
-                  //   await crossMessenger.getStateBatchAppendedEventByTransactionIndex(
-                  //     messageTxIndex
-                  //   ); // no office node
-
-                  // const bn = stateBatchAppendedEvent.blockNumber;
-
-                  // const block = await l1Pro.getBlock(bn);
-
-                  // const challengePeriod =
-                  //   await crossMessenger.getChallengePeriodSeconds(); //office node ok
-                  // const timeReadyForRelay = block.timestamp + challengePeriod;
-
-                  //in mainnet it takes 11 minutes for rollup to finish and 7 days for the challenge period. These two times are converted to seconds
-                  // in testnet it takes 2 minutes for rollup to finish and 10 seconds for the challenge period. Additional buffer of 150 seconds is given. These 3 times are converted to seconds
-                  const calculatedTimePeriod = isConnectedToMainNetwork
-                    ? 11 * 60 + 7 * 24 * 60 * 60
-                    : 2 * 60 + 10 + 150;
-
-                  //this is the unix timestamp when the tx is ready to be relayed (rollup & challenge is finished)
-                  const testPeriod =
-                    l2BlockNum.timestamp + calculatedTimePeriod;
-
-                  // const challengePeriod =
-                  //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
-                  const timeReadyForRelay = testPeriod;
-
-                  const amnt = BigInt(logs[1]).toString();
-
-                  //if the tx is ready to be relayed, return the following information
-                  return {
-                    ...tx,
-                    l2TxReceipt: l2TxReceipt,
-                    l2timeStamp: tx.blockTimestamp,
-                    l2txHash: tx.transactionHash,
-                    event: "withdraw",
-                    _l1Token: l1Token,
-                    _l2Token: l2Token,
-                    _amount: amnt,
-                    timeReadyForRelay: Number(timeReadyForRelay),
-                    currentStatus: currentStatus,
-                    resolved: resolved,
-                  };
-                }
-                //if the status is 5 or 6, check if the message receipt exists. returns the tx receipt of the corresponding l1 withdraw tx
-                //If the receipt is not null, then the tx has been relayed to l1 and an L1 tx exists.
-                //If the receipt is null, L1 tx does not exist yet.
-                else {
-                  const receipt = await crossMessenger.getMessageReceipt(
-                    resolved
-                  ); //  no office node
-
-                  if (
-                    l2TxReceipt.blockNumber !== undefined &&
-                    receipt != null &&
-                    receipt.transactionReceipt != null
-                  ) {
-                    //l1 tx transaction hash
-                    const matchTx = receipt.transactionReceipt.transactionHash;
-
-                    //finds the corresponding data object of the l1 tx from the subgraph data
-                    const l1tx =
-                      userTxfromSubgraph.formattedL1WithdrawResults.filter(
-                        (tx: EthType | Erc20Type) => {
-                          return tx.transactionHash === matchTx;
-                        }
-                      )[0];
-
-                    //if subgraph data exists for the l1 tx, then return the following data
-                    if (l1tx) {
-                      let copy = {
-                        ...tx,
-                        ...l1tx,
-                        l2TxReceipt: l2TxReceipt,
-                        l2timeStamp: tx.blockTimestamp,
-                        l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
-                        l1Block: l1tx.blockNumber,
-                        l2txHash: tx.transactionHash,
-                        l1txHash: l1tx.transactionHash,
-                        event: "withdraw",
-                        _amount: l1tx._amount,
-                        _l1Token: l1tx._l1Token,
-                        _l2Token: l1tx._l2Token,
-                        currentStatus: currentStatus,
-                        resolved: resolved,
-                      };
-                      return copy;
-                    }
-                  }
-                  //if there is no l1 receipt, then return the following data
-                  else {
-                    const amnt = BigInt(logs[1]).toString();
-                    let copy = {
-                      ...tx,
-                      l2TxReceipt: l2TxReceipt,
-                      l2timeStamp: tx.blockTimestamp,
-                      l2txHash: tx.transactionHash,
-                      event: "withdraw",
-                      _l1Token: l1Token,
-                      _l2Token: l2Token,
-                      _amount: amnt,
-                      currentStatus: currentStatus,
-                      resolved: resolved,
-                    };
-                    return copy;
-                  }
-                }
+                //if the tx is ready to be relayed, return the following information
+                return {
+                  ...tx,
+                  l2TxReceipt: l2TxReceipt,
+                  l2timeStamp: tx.blockTimestamp,
+                  l2txHash: tx.transactionHash,
+                  event: "withdraw",
+                  _l1Token: l1Token,
+                  _l2Token: l2Token,
+                  _amount: amnt,
+                  timeReadyForRelay: Number(timeReadyForRelay),
+                  currentStatus: currentStatus,
+                  resolved: resolved,
+                };
               }
+              //if the status is 5 or 6, check if the message receipt exists. returns the tx receipt of the corresponding l1 withdraw tx
+              //If the receipt is not null, then the tx has been relayed to l1 and an L1 tx exists.
+              //If the receipt is null, L1 tx does not exist yet.
+              // else {
+              //   const receipt = await crossMessenger.getMessageReceipt(
+              //     resolved
+              //   ); //  no office node
+
+              //   if (
+              //     l2TxReceipt.blockNumber !== undefined &&
+              //     receipt != null &&
+              //     receipt.transactionReceipt != null
+              //   ) {
+              //     //l1 tx transaction hash
+              //     const matchTx = receipt.transactionReceipt.transactionHash;
+
+              //     //finds the corresponding data object of the l1 tx from the subgraph data
+              //     const l1tx =
+              //       userTxfromSubgraph.formattedL1WithdrawResults.filter(
+              //         (tx: EthType | Erc20Type) => {
+              //           return tx.transactionHash === matchTx;
+              //         }
+              //       )[0];
+
+              //     //if subgraph data exists for the l1 tx, then return the following data
+              //     if (l1tx) {
+              //       let copy = {
+              //         ...tx,
+              //         ...l1tx,
+              //         l2TxReceipt: l2TxReceipt,
+              //         l2timeStamp: tx.blockTimestamp,
+              //         l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
+              //         l1Block: l1tx.blockNumber,
+              //         l2txHash: tx.transactionHash,
+              //         l1txHash: l1tx.transactionHash,
+              //         event: "withdraw",
+              //         _amount: l1tx._amount,
+              //         _l1Token: l1tx._l1Token,
+              //         _l2Token: l1tx._l2Token,
+              //         currentStatus: currentStatus,
+              //         resolved: resolved,
+              //       };
+              //       return copy;
+              //     }
+              //   }
+              //   //if there is no l1 receipt, then return the following data
+              //   else {
+              //     const amnt = BigInt(logs[1]).toString();
+              //     let copy = {
+              //       ...tx,
+              //       l2TxReceipt: l2TxReceipt,
+              //       l2timeStamp: tx.blockTimestamp,
+              //       l2txHash: tx.transactionHash,
+              //       event: "withdraw",
+              //       _l1Token: l1Token,
+              //       _l2Token: l2Token,
+              //       _amount: amnt,
+              //       currentStatus: currentStatus,
+              //       resolved: resolved,
+              //     };
+              //     return copy;
+              //   }
+              // }
             }
-          )
+          })
         );
 
         // remove undefined fields of old Tx using old smart contract schema

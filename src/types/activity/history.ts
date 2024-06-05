@@ -5,7 +5,7 @@ export type SentMessages = {
   blockTimestamp: string;
   gasLimit: string;
   message: string;
-  messageNonce: string;
+  messageNonce: BigInt;
   sender: string;
   target: string;
   transactionHash: string;
@@ -24,7 +24,6 @@ export type Erc20Type = {
   transactionHash: string;
 };
 
-
 export type EthType = {
   id: string;
   _from: string;
@@ -36,10 +35,7 @@ export type EthType = {
   transactionHash: string;
 };
 
-export type L1TxType =
-  | SentMessages
-  | Erc20Type
-  | EthType
+export type L1TxType = SentMessages | Erc20Type | EthType;
 
 export type DepositTx = SentMessages &
   L1TxType & {
@@ -118,32 +114,27 @@ export type FullDepTx = Receipt & {
 };
 
 export type Resolved = {
-  blockNumber: number;
-  direction: number;
-  logIndex: number;
+  target: string;
+  sender: string;
   message: string;
   messageNonce: BigInt;
-  minGasLimit: BigInt;
-  sender: string;
-  target: string;
-  transactionHash: string;
-  value: BigInt;
 };
 
-export type FullWithTx =  Erc20Type & SentMessages &{
-  currentStatus: number;
-  event: string;
-  l1Block: string;
-  l1timeStamp: string;
-  l1txHash: string;
-  l2TxReceipt: Receipt;
-  l2timeStamp: string;
-  l2txHash: string;
-  resolved: Resolved;
-  timeReadyForRelay: number | string
-};
+export type FullWithTx = Erc20Type &
+  SentMessages & {
+    currentStatus: number;
+    event: string;
+    l1Block: string;
+    l1timeStamp: string;
+    l1txHash: string;
+    l2TxReceipt: Receipt;
+    l2timeStamp: string;
+    l2txHash: string;
+    resolved: Resolved;
+    timeReadyForRelay: number | string;
+  };
 
 export type tData = {
-  loadingState: 'present' | 'loading' | 'absent'
-  depositTxs: any[]
-}
+  loadingState: "present" | "loading" | "absent";
+  depositTxs: any[];
+};

@@ -10,7 +10,7 @@ import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { FullWithTx, FullDepTx } from "@/types/activity/history";
-import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
+import { fetchUserTransactions } from "utils/history/fetchUserTransactions";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
 import { L1TxType } from "@/types/activity/history";
@@ -61,7 +61,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   }, [ref?.current]);
 
   //get the data from the subgraphs to show as initial data until the proper data is loaded in the useGetTransactions hook
- //sets the preloaded data
+  //sets the preloaded data
   useEffect(() => {
     const getTxs = async () => {
       if (isConnectedToMainNetwork !== undefined) {
@@ -153,7 +153,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       return filteredTx;
     }
   }, [searchTxString, filteredTx, network, tData]);
-
 
   //creates the pagination array from the filtered txs
   const getPaginatedData = useMemo(() => {
