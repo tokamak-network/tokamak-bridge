@@ -23,9 +23,7 @@ export default function useCallClaim(functionName: string) {
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
   const { crossMessenger } = useCrosschainMessenger();
-  const { provider, L2Provider } = useProvier();
-  const l2Pro = layer === "L2" ? provider : L2Provider;
-  const [claimModal, setClaimModal] = useRecoilState(claimModalStatus);
+  const [, setClaimModal] = useRecoilState(claimModalStatus);
 
   const { data, write, isError } = useContractWrite({
     address: L1MESSENGER_CONTRACT,

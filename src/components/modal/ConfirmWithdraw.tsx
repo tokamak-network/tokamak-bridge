@@ -44,6 +44,8 @@ export default function ConfirmWithdraw() {
 
   const { mobileView } = useMediaView();
 
+  console.log("withdrawData", withdrawData);
+
   const getCalendarEvent = useMemo(() => {
     if (tx && tx.l2timeStamp) {
       const timeStamp = tx.l2timeStamp;
