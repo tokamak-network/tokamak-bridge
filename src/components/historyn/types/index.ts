@@ -58,3 +58,11 @@ interface DepositTransactionHistory extends BaseTransactionHistory {
 export type TransactionHistory =
   | WithdrawTransactionHistory
   | DepositTransactionHistory;
+
+export enum TransactionStatus {
+  WithdrawRollup = 1,
+  WithdrawFinalized = 2,
+  WithdrawCompleted = 3,
+  DepositFinalized = 10,
+  DepositCompleted = 11,
+}

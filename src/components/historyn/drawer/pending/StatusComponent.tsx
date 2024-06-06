@@ -1,80 +1,82 @@
+import React, { useState, useEffect } from "react";
 import { Flex, Box, Text, Circle } from "@chakra-ui/react";
 import {
   TransactionHistory,
   Status,
   Action,
+  TransactionStatus,
 } from "@/componenets/historyn/types";
 import { TRANSACTION_CONSTANTS } from "@/componenets/historyn/constants";
 import {
   convertTimeToMinutes,
   formatDateToYMD,
 } from "@/componenets/historyn/utils/timeUtils";
+import getStatusValue from "@/componenets/historyn/utils/historyStatus";
+
+function getTimeDisplay(
+  statusValue: number,
+  transactionData: TransactionHistory
+) {
+  switch (statusValue) {
+    case TransactionStatus.WithdrawRollup: {
+      console.log(transactionData);
+      return transactionData.errorMessage ? "11:11" : "00:00";
+    }
+
+    case TransactionStatus.WithdrawFinalized:
+      return "22:22";
+    case TransactionStatus.DepositFinalized:
+      return "33:33";
+    default:
+      return "-";
+  }
+}
+
+function displayTimeBasedOnStatus(
+  label: string,
+  isActive: boolean,
+  transactionData: TransactionHistory
+): string {
+  const statusValue = getStatusValue(
+    transactionData.action,
+    transactionData.status
+  );
+
+  // 해당 조건일 때는 함수를 통해 시간을 생성한다.
+  if (
+    (transactionData.status === Status.Rollup ||
+      transactionData.status === Status.Finalized) &&
+    isActive
+  ) {
+    return getTimeDisplay(statusValue, transactionData);
+    // rollup일때, finalize는 빈 값을 보여준다.
+  } else if (!isActive && label === Status.Finalized) {
+    return "";
+  }
+
+  // 그 외는 포맷 데이터를 보여준다.
+  return formatDateToYMD(
+    Number(transactionData.blockTimestamps.initialCompletedTimestamp)
+  );
+}
 
 interface TransactionStatusComponentProps {
   label: string;
   transactionData: TransactionHistory;
 }
 
-function displayTimeBasedOnStatus(
-  label: string,
-  transactionData: TransactionHistory
-): string {
-  if (label === Status.Initial) {
-    return formatDateToYMD(
-      Number(transactionData.blockTimestamps.initialCompletedTimestamp)
-    );
-  }
-
-  if (transactionData.action === Action.Withdraw) {
-    if (transactionData.status === Status.Rollup) {
-      if (transactionData.errorMessage) {
-        return "11:11";
-      }
-      return "00:00";
-    } else if (transactionData.status === Status.Finalized) {
-      return "22:22";
-    }
-  } else if (
-    transactionData.action === Action.Deposit &&
-    transactionData.status === Status.Finalized
-  ) {
-    return "33:33";
-  }
-
-  return "Not applicable";
-}
-
 export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
   const { label, transactionData } = props;
-  const timeDisplay = displayTimeBasedOnStatus(label, transactionData);
+  // console.log(transactionData);
+
   const isActive = transactionData.status === label;
-
-  // console.log(transactionData)
-  // => transactionData 값
-  //   {
-  //     "action": "Withdraw",
-  //     "status": "Finalized",
-  //     "inNetwork": "SEPOLIA",
-  //     "outNetwork": "TITAN_SEPOLIA",
-  //     "transactionHashes": {
-  //         "initialTransactionHash": "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
-  //         "rollupTransactionHash": "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3"
-  //     },
-  //     "blockTimestamps": {
-  //         "initialCompletedTimestamp": "1717315200",
-  //         "rollupCompletedTimestamp": "1717322400"
-  //     },
-  //     "tokenSymbol": "TON",
-  //     "amount": "100.1234"
-  // }
-
-  //   console.log(
-  //     formatDateToYMD(
-  //       Number(transactionData.blockTimestamps.initialCompletedTimestamp)
-  //     )
-  //   ); =>2024.06.02
+  const timeDisplay = displayTimeBasedOnStatus(
+    label,
+    isActive,
+    transactionData
+  );
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
