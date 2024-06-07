@@ -5,7 +5,7 @@ import BridgeSwap from "./BridgeSwap/Index";
 
 export default function Page() {
   return (
-    <Flex alignItems={"center"}>
+    <Flex alignItems={"center"} h={"100%"}>
       <BridgeSwap />
     </Flex>
   );
