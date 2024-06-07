@@ -33,8 +33,7 @@ import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
 import hamburger from "assets/icons/header/hamburger.svg";
-import ETHCircle from "assets/icons/network/circle/Ethereum_circle.svg";
-import TitanCircle from "assets/icons/network/circle/Titan_circle.svg";
+import big_hamburger from "assets/icons/header/big_hamburger.svg";
 import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
@@ -164,7 +163,7 @@ export default function Header() {
   const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
   const [actionModalStatus, setActionMethod] =
     useRecoilState(actionMethodStatus);
-  const { mobileView } = useMediaView();
+  const { headerMobileView: mobileView } = useMediaView();
   const [menuView] = useMediaQuery("(min-width: 680px)");
 
   const { isConnected } = useAccount();
@@ -327,10 +326,10 @@ export default function Header() {
           {/* <AccountModal /> */}
         </Flex>
 
-        {mobileView && (
+        {!menuView && (
           <Flex
-            w={"32px"}
-            h={"32px"}
+            w={!mobileView ? "48px" : "32px"}
+            h={!mobileView ? "48px" : "32px"}
             justify={"center"}
             align={"center"}
             borderRadius={8}
@@ -341,7 +340,10 @@ export default function Header() {
               setMobileMenuOpen(true);
             }}
           >
-            <Image alt="hamburger" src={hamburger} />
+            <Image
+              alt="hamburger"
+              src={!mobileView ? big_hamburger : hamburger}
+            />
           </Flex>
         )}
 
