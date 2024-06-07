@@ -19,7 +19,7 @@ export default function ImagePoolBox(props: ImageBoxProp) {
       border={"1px solid #313442"}
       borderRadius={"16px"}
       width={isMobile ? undefined : "536px"}
-      height={isMobile ? "480px" : "549px"}
+      height={isMobile ? "85vh" : "549px"}
     >
       <Box zIndex={1}>
         <Image
@@ -27,7 +27,9 @@ export default function ImagePoolBox(props: ImageBoxProp) {
           alt='FwComingCrossMobile'
           style={{
             width: isMobile ? undefined : "536px",
-            height: isMobile ? "480px" : "549px",
+            height: isMobile
+              ? "85vh"
+              : "549px" /** %단위로 잡아서 진행해 본다. */,
             objectPosition: "top",
             objectFit: "cover",
           }}

@@ -26,8 +26,8 @@ export default function ScrolltoTopButton() {
       w={"52px"}
       h={"39px"}
       position='fixed'
-      bottom='30px'
-      right='52px'
+      bottom='32px'
+      right='32px'
       zIndex='tooltip'
       onClick={scrollToTop}
       borderRadius='8px'
