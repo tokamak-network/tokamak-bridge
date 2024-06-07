@@ -28,7 +28,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
+        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];
@@ -53,13 +53,14 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ApolloProvider client={apolloClient}>
           <ChakraProvidersForNextJs>
-            <>
+            <Flex flexDir={"column"} h={"100vh"}>
               <Header />
-              <Flex flexDir={"column"}>
+              <Flex flexDir={"column"} flexGrow={1}>
                 <Flex
                   justifyContent={"center"}
+                  alignItems={"center"}
                   bg={"#0F0F12"}
-                  minH={isPoolsRoute ? undefined : "90vh"}
+                  h={"100%"}
                 >
                   {children}
                 </Flex>
@@ -69,7 +70,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
               <GlobalComponents />
               <Drawers />
               <Modals />
-            </>
+            </Flex>
           </ChakraProvidersForNextJs>
         </ApolloProvider>
       </QueryClientProvider>

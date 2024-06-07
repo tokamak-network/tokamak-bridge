@@ -73,7 +73,7 @@ const ValueContainer = (props: {
         fontSize={isPool ? 18 : 14}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Flex columnGap={"6px"} className="test">
+        <Flex columnGap={"6px"}>
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
             <Image
               src={selectedOption.networkImage}
