@@ -165,7 +165,7 @@ export default function Header() {
   const [actionModalStatus, setActionMethod] =
     useRecoilState(actionMethodStatus);
   const { mobileView } = useMediaView();
-  const [menuView] = useMediaQuery("(min-width: 761px)");
+  const [menuView] = useMediaQuery("(min-width: 680px)");
 
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
