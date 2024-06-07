@@ -1,3 +1,4 @@
+//history.mock.ts
 import {
   TransactionHistory,
   Action,
@@ -16,7 +17,7 @@ export const historyData: TransactionHistory[] = [
         "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717315200",
+      initialCompletedTimestamp: "1717727889",
     },
     tokenSymbol: "ETH",
     amount: "0.01234",

@@ -1,3 +1,4 @@
+// index.tsx
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
     INITIAL_MINUTES: 1, // Initial state time for deposit (in minutes)
