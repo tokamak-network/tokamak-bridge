@@ -66,3 +66,10 @@ export enum TransactionStatus {
   DepositFinalized = 10,
   DepositCompleted = 11,
 }
+
+// 타입 가드 추가
+export function isWithdrawTransactionHistory(
+  transaction: TransactionHistory
+): transaction is WithdrawTransactionHistory {
+  return transaction.action === Action.Withdraw;
+}

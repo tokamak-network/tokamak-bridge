@@ -22,7 +22,9 @@ export default function Pending(transaction: TransactionHistory) {
         >
           {transactionData.action}
         </Text>
-        <Image src={TxLink} alt={"TxLink"} />
+        <Flex>
+          <Image src={TxLink} alt={"TxLink"} />
+        </Flex>
       </Flex>
       <Flex
         justifyContent={"space-between"}

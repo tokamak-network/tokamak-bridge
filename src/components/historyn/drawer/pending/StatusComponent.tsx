@@ -1,108 +1,23 @@
 // StatusComponent.tsx
-import React, { useState, useEffect } from "react";
-import { Flex, Box, Text, Circle } from "@chakra-ui/react";
+import React, { useState, useMemo } from "react";
+import { Flex, Text, Circle, Button } from "@chakra-ui/react";
 import {
   TransactionHistory,
+  Action,
   Status,
-  TransactionStatus,
 } from "@/componenets/historyn/types";
-import {
-  convertTimeToMinutes,
-  formatDateToYMD,
-} from "@/componenets/historyn/utils/timeUtils";
-import { TRANSACTION_CONSTANTS } from "@/componenets/historyn/constants";
-import getStatusValue from "@/componenets/historyn/utils/historyStatus";
-
-function getTimeDisplay(
-  statusValue: number,
-  transactionData: TransactionHistory
-) {
-  // 상수를 통해 정해진 시간을 추가해준다.
-  switch (statusValue) {
-    case TransactionStatus.WithdrawRollup: {
-      console.log(transactionData);
-      //   {
-      //     "action": "Withdraw",
-      //     "status": "Rollup",
-      //     "inNetwork": "MAINNET",
-      //     "outNetwork": "TITAN",
-      //     "transactionHashes": {
-      //         "initialTransactionHash": "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3"
-      //     },
-      //     "blockTimestamps": {
-      //         "initialCompletedTimestamp": "1717315200"
-      //     },
-      //     "tokenSymbol": "ETH",
-      //     "amount": "0.01234",
-      //     "errorMessage": "Initial Error!"
-      // }
-      const timeValue = calculateInitialTime(
-        statusValue,
-        transactionData.blockTimestamps.initialCompletedTimestamp,
-        TRANSACTION_CONSTANTS.WITHDRAW.INITIAL_MINUTES
-      );
-
-      return transactionData.errorMessage ? "11:11" : timeValue;
-    }
-    case TransactionStatus.WithdrawFinalized:
-      return "22:22";
-    case TransactionStatus.DepositFinalized:
-      return "33:33";
-    default:
-      return "-";
-  }
-}
-
-function calculateInitialTime(
-  statusValue: number,
-  blockTimestamp: string,
-  additional: number
-) {
-  const initialTimestamp = Number(blockTimestamp);
-  const countdownDuration =
-    statusValue === TransactionStatus.WithdrawFinalized
-      ? convertTimeToMinutes(additional, "days", 0) * 60
-      : convertTimeToMinutes(additional, "minutes", 0) * 60;
-
-  console.log(initialTimestamp);
-  console.log(countdownDuration);
-  const currentTime = Math.floor(Date.now() / 1000);
-  console.log(currentTime);
-  const remainingTime = countdownDuration - (currentTime - initialTimestamp);
-  console.log(remainingTime);
-
-  if (remainingTime <= 0) {
-    return "00:00";
-  }
-
-  const minutes = String(Math.floor(remainingTime / 60)).padStart(2, "0");
-  const seconds = String(remainingTime % 60).padStart(2, "0");
-  return `${minutes}:${seconds}`;
-}
-
-function useCountdown(initialTime: string) {
-  const [time, setTime] = useState(initialTime);
-
-  useEffect(() => {
-    if (time === "00:00") return;
-
-    const countdown = setInterval(() => {
-      const [minutes, seconds] = time.split(":").map(Number);
-      const totalSeconds = minutes * 60 + seconds - 1;
-      const newMinutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
-      const newSeconds = String(totalSeconds % 60).padStart(2, "0");
-      setTime(`${newMinutes}:${newSeconds}`);
-
-      if (totalSeconds <= 0) {
-        clearInterval(countdown);
-      }
-    }, 1000);
-
-    return () => clearInterval(countdown);
-  }, [time]);
-
-  return time;
-}
+import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
+import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
+import { formatDateToYMD } from "@/componenets/historyn/utils/timeUtils";
+import { useCountdown } from "@/components/historyn/hooks/useCountdown";
+import { getTimeDisplay } from "@/componenets/historyn/utils/getTimeDisplay";
+import Image from "next/image";
+import { atcb_action } from "add-to-calendar-button";
+import { format, addHours } from "date-fns";
+import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
+import Refresh from "@/assets/icons/newHistory/refresh.svg";
+import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
+import { useCalendarConfig } from "@/components/historyn/hooks/useGoogleCalendar";
 
 interface TransactionStatusComponentProps {
   label: string;
@@ -115,11 +30,6 @@ export default function StatusComponent(
   const { label, transactionData } = props;
   const isActive = transactionData.status === label;
 
-  const statusValue = getStatusValue(
-    transactionData.action,
-    transactionData.status
-  );
-
   // 해당 조건일때만 카운트 다운 필요
   const shouldCountdown =
     (transactionData.status === Status.Rollup ||
@@ -128,7 +38,7 @@ export default function StatusComponent(
 
   const initialTimeDisplay = shouldCountdown
     ? // 카운트 다운 필요한 value
-      getTimeDisplay(statusValue, transactionData)
+      getTimeDisplay(transactionData)
     : // active 아닌 상태의 Finalized는 빈 값 출력
     !isActive && label === Status.Finalized
     ? ""
@@ -137,9 +47,59 @@ export default function StatusComponent(
         Number(transactionData.blockTimestamps.initialCompletedTimestamp)
       );
 
+  // 출력 변수
   const timeDisplay = shouldCountdown
-    ? useCountdown(initialTimeDisplay)
+    ? useCountdown(initialTimeDisplay, Boolean(transactionData.errorMessage))
     : initialTimeDisplay;
+
+  //error message가 존재하고, Status가 rollup인 경우 시간이 증가하고, 색상이 red가 된다.
+  const errorRollup = transactionData.errorMessage && label === Status.Rollup;
+
+  //initial이 종료되면, 쿼리를 통해 새로운 값을 받아올 수 있도록 refresh 아이콘을 출력해 준다.
+  const refreshRollup = label === Status.Rollup && timeDisplay === "00:00";
+
+  // 캘린더 버튼 표시
+  const calendarButton =
+    label === Status.Finalized &&
+    timeDisplay !== "00:00" &&
+    isActive &&
+    transactionData.action === Action.Withdraw;
+
+  // Finalized상태에서 완료 되면, claim버튼 show
+  const claimReadyButton =
+    label === Status.Finalized &&
+    timeDisplay === "00:00" &&
+    transactionData.action === Action.Withdraw;
+
+  const calendarConfig = useMemo(() => {
+    if (calendarButton) {
+      const statusDuration = convertTimeToMinutes(
+        TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
+        "days",
+        0
+      );
+      const startDate = new Date(
+        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
+          statusDuration * 60) *
+          1000
+      );
+      const formattedDate = format(startDate, "yyyy-MM-dd");
+      const startTime = format(startDate, "HH:mm");
+      const endTime = format(addHours(startDate, 1), "HH:mm");
+
+      return {
+        name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
+        description:
+          "How to claim:\n1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2. Connect to your wallet \n3. Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
+        startDate: formattedDate,
+        startTime: startTime,
+        endTime: endTime,
+        options: ["Google" as const],
+        timeZone: "currentBrowser",
+      };
+    }
+    return null;
+  }, [calendarButton]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -155,20 +115,56 @@ export default function StatusComponent(
           {label}
         </Text>
       </Flex>
-      <Text
-        fontSize={"11px"}
-        fontWeight={400}
-        lineHeight={"22px"}
-        color={
-          transactionData.errorMessage
-            ? "#DD3A44"
-            : isActive
-            ? "#FFFFFF"
-            : "#A0A3AD"
-        }
-      >
-        {timeDisplay}
-      </Text>
+      <Flex alignItems='center'>
+        {claimReadyButton ? (
+          <Button
+            w={"60px"}
+            h={"22px"}
+            px={"9px"}
+            py={"8px"}
+            justifyContent={"center"}
+            gap={"8px"}
+            flexShrink={0}
+            borderRadius={"4px"}
+            bg={"#007AFF"}
+          >
+            <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
+              Finalize
+            </Text>
+          </Button>
+        ) : (
+          <Text
+            fontSize={"11px"}
+            fontWeight={400}
+            lineHeight={"22px"}
+            color={errorRollup ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
+          >
+            {timeDisplay}
+          </Text>
+        )}
+
+        {errorRollup && (
+          <Flex w={"18px"} h={"18px"} ml={"2px"} justifyContent={"center"}>
+            <Image src={Lightbulb} alt={"Lightbulb"} />
+          </Flex>
+        )}
+        {refreshRollup && (
+          <Flex w={"18px"} h={"18px"} ml={"2px"} justifyContent={"center"}>
+            <Image src={Refresh} alt={"Refresh"} />
+          </Flex>
+        )}
+        {calendarButton && calendarConfig && (
+          <Flex
+            w={"18px"}
+            h={"18px"}
+            ml={"2px"}
+            justifyContent={"center"}
+            onClick={() => atcb_action(calendarConfig)}
+          >
+            <Image src={GoogleCalendar} alt={"GoogleCalendar"} />
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 }

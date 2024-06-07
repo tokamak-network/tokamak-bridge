@@ -17,7 +17,7 @@ export const historyData: TransactionHistory[] = [
         "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717727889",
+      initialCompletedTimestamp: "1717749288",
     },
     tokenSymbol: "ETH",
     amount: "0.01234",
@@ -33,7 +33,7 @@ export const historyData: TransactionHistory[] = [
         "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717315200",
+      initialCompletedTimestamp: "1717749999",
     },
     tokenSymbol: "ETH",
     amount: "0.01234",
@@ -52,6 +52,7 @@ export const historyData: TransactionHistory[] = [
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717315200",
+      rollupCompletedTimestamp: "1717738013",
     },
     tokenSymbol: "TON",
     amount: "100.1234",
@@ -63,15 +64,14 @@ export const historyData: TransactionHistory[] = [
     inNetwork: Network.Sepolia,
     outNetwork: Network.TitanSepolia,
     transactionHashes: {
-      //위와 같지만 에러인 경우
       initialTransactionHash:
         "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
       rollupTransactionHash:
         "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717315200",
-      rollupCompletedTimestamp: "1717322400",
+      initialCompletedTimestamp: "1716614035",
+      rollupCompletedTimestamp: "1717046035",
     },
     tokenSymbol: "ETH",
     amount: "0.01234",
@@ -108,7 +108,7 @@ export const historyData: TransactionHistory[] = [
         "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717315200",
+      initialCompletedTimestamp: "1717743200",
       finalizedCompletedTimestamp: undefined,
     },
     tokenSymbol: "TON",
