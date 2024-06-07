@@ -23,8 +23,6 @@ export default function Account() {
   const [actionOptionStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
 
-  console.log("mobileView", mobileView);
-
   const buttonText = isConnected
     ? trimAddress({ address })
     : mobileView
