@@ -19,7 +19,7 @@ export default function Account() {
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   const txPending = useRecoilValue(txPendingStatus);
-  const { mobileView } = useMediaView();
+  const { headerMobileView: mobileView } = useMediaView();
   const [actionOptionStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
 
@@ -33,7 +33,7 @@ export default function Account() {
     <Center
       className='header-right-common'
       w={mobileView ? "106px" : isConnected ? "174px" : "220px"}
-      h={{ base: "32px", lg: "48px" }}
+      h={mobileView ? "32px" : "48px"}
       bg={!isConnected ? "#007AFF" : ""}
       columnGap={{ base: "8px", lg: "17px" }}
       fontSize={18}
@@ -70,7 +70,7 @@ export default function Account() {
           ) : (
             <Image src={WALLET_ICON} width={mobileView ? 16 : 24} alt={""} />
           )}
-          <Text fontSize={{ base: 12, lg: 18 }}>{buttonText}</Text>
+          <Text fontSize={mobileView ? 12 : 18}>{buttonText}</Text>
           {isConnected && mobileView && <Image src={HISTORYICON} alt={""} />}
         </>
       )}

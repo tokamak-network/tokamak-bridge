@@ -46,7 +46,7 @@ export default function PoolList() {
           <EmptyCard key={index} noSpinner={!isLoading} />
         ))}
       {(!isSupportedChain || !isConnected) &&
-        Array.from({ length: 7 }, (_, index) => (
+        Array.from({ length: 5 }, (_, index) => (
           <EmptyCard key={index} noSpinner={true} />
         ))}
       {isSupportedChain &&
@@ -62,8 +62,8 @@ export default function PoolList() {
         Array.from(
           {
             length:
-              positions.length < 8
-                ? 8 - positions.length
+              positions.length < 5
+                ? 5 - positions.length
                 : positions.length % 3 === 1
                 ? 1
                 : positions.length % 3 === 2

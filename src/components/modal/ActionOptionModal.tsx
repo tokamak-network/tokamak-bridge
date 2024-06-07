@@ -27,7 +27,7 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
-import Footer from "@/components/footer";
+import dayjs from "dayjs";
 
 import TITAN_CIRCLE from "@/assets/icons/network/circle/Titan_circle.svg";
 import ETH_CIRCLE from "@/assets/icons/network/circle/Ethereum_circle.svg";
@@ -37,7 +37,7 @@ import "@fontsource/poppins/300.css";
 import "@fontsource/poppins/700.css";
 import "@fontsource/poppins/400.css";
 
-import useMobileChainIds from "@/hooks/mobile/useMobileChainIds"
+import useMobileChainIds from "@/hooks/mobile/useMobileChainIds";
 
 interface MethodItemProps {
   from?: Number;
@@ -45,6 +45,27 @@ interface MethodItemProps {
   title: string;
   handleClose: () => void;
 }
+
+const Footer = () => {
+  return (
+    <Flex
+      bottom={0}
+      w={"full"}
+      h={"15px"}
+      mt={"20px"}
+      mb={"16px"}
+      justify={"center"}
+      alignItems={"center"}
+      // To be removed after ad ends. @Robert
+    >
+      <Text fontSize={10} color={"#A0A3AD"}>
+        Copyright © {dayjs().year()}{" "}
+        <span style={{ color: "#007AFF" }}>Tokamak Network</span> All Rights
+        Reserved.
+      </Text>
+    </Flex>
+  );
+};
 
 const ActionMethodItem = ({
   from,
@@ -73,25 +94,30 @@ const ActionMethodItem = ({
         return supportedChain.chainId === outValue;
       })[0];
 
-      if (selectedInNetwork.chainId !== connectedChainId && !(title === "Pools")) {
+      if (
+        selectedInNetwork.chainId !== connectedChainId &&
+        !(title === "Pools")
+      ) {
         return isConnected
           ? (await switchNetworkAsync?.(selectedInNetwork.chainId),
             setNetwork({
               inNetwork: selectedInNetwork,
               outNetwork: selectedOutNetwork,
             }),
-            handleClose()
-          )
+            handleClose())
           : (setNetwork({
               inNetwork: selectedInNetwork,
               outNetwork: selectedOutNetwork,
             }),
-            handleClose()
-          );
-      } else if (selectedInNetwork.chainId === connectedChainId && !(title === "Pools")) {
-        return (setNetwork({
-          inNetwork: selectedInNetwork,
-          outNetwork: selectedOutNetwork,
+            handleClose());
+      } else if (
+        selectedInNetwork.chainId === connectedChainId &&
+        !(title === "Pools")
+      ) {
+        return (
+          setNetwork({
+            inNetwork: selectedInNetwork,
+            outNetwork: selectedOutNetwork,
           }),
           handleClose()
         );
@@ -158,7 +184,7 @@ const ActionOptionModal = () => {
 
   ////////////////////////
   const { ethChainId, titanChainId } = useMobileChainIds(connectedNetwork);
-/////////////////////////
+  /////////////////////////
 
   const closeModal = useCallback(() => {
     setActionMethodStatus(false);
@@ -213,7 +239,7 @@ const ActionOptionModal = () => {
     <Modal
       isOpen={methodStatus && mobileView && !(mode == "Pool")}
       onClose={() => closeModal()}
-      closeOnOverlayClick={false} 
+      closeOnOverlayClick={false}
     >
       <ModalOverlay bg={"#0F0F12"} />
       <ModalContent
@@ -224,64 +250,74 @@ const ActionOptionModal = () => {
         bg={"transparent"}
         mb={0}
       >
-            <Box />
-            <Flex
-              flexDir={"column"} bg={"#0F0F12"} textAlign={"center"} my={"20px"}
-            >
-              <Flex flexDir={"column"} textAlign={"center"} my={"20px"}>
-                <Text fontWeight={300} fontSize={30} lineHeight={"36px"}>
-                  Welcome to
-                </Text>
-                <Text fontWeight={700} fontSize={34} letterSpacing={"2px"}>
-                  TOKAMAK BRIDGE
-                </Text>
-              </Flex>
-            </Flex>
-            <Flex direction="column" bg={"#1F2128"} px={4} pt={2} pb={4} roundedTop={"2xl"}>
-              <Text fontWeight={500} fontSize={16}>
-                Bridge
-              </Text>
-              <Flex columnGap={"8px"}>
-                <ActionMethodItem
-                  from={ethChainId}
-                  to={titanChainId}
-                  title="Deposit"
-                  handleClose={closeModal}
-                />
-                <ActionMethodItem
-                  from={titanChainId}
-                  to={ethChainId}
-                  title="Withdraw"
-                  handleClose={closeModal}
-                />
-              </Flex>
+        <Box />
+        <Flex
+          flexDir={"column"}
+          bg={"#0F0F12"}
+          textAlign={"center"}
+          my={"20px"}
+        >
+          <Flex flexDir={"column"} textAlign={"center"} my={"20px"}>
+            <Text fontWeight={300} fontSize={30} lineHeight={"36px"}>
+              Welcome to
+            </Text>
+            <Text fontWeight={700} fontSize={34} letterSpacing={"2px"}>
+              TOKAMAK BRIDGE
+            </Text>
+          </Flex>
+        </Flex>
+        <Flex
+          direction="column"
+          bg={"#1F2128"}
+          px={4}
+          pt={2}
+          pb={4}
+          roundedTop={"2xl"}
+        >
+          <Text fontWeight={500} fontSize={16}>
+            Bridge
+          </Text>
+          <Flex columnGap={"8px"}>
+            <ActionMethodItem
+              from={ethChainId}
+              to={titanChainId}
+              title="Deposit"
+              handleClose={closeModal}
+            />
+            <ActionMethodItem
+              from={titanChainId}
+              to={ethChainId}
+              title="Withdraw"
+              handleClose={closeModal}
+            />
+          </Flex>
 
-              <Text fontWeight={500} fontSize={16} mt={"20px"}>
-                Swap
-              </Text>
+          <Text fontWeight={500} fontSize={16} mt={"20px"}>
+            Swap
+          </Text>
 
-              <Flex columnGap={"8px"}>
-                <ActionMethodItem
-                  from={ethChainId}
-                  to={ethChainId}
-                  title="Swap"
-                  handleClose={closeModal}
-                />
-                <ActionMethodItem
-                  from={titanChainId}
-                  to={titanChainId}
-                  title="Swap"
-                  handleClose={closeModal}
-                />
-                <ActionMethodItem
-                  from={ethChainId}
-                  to={titanChainId}
-                  title="Pools"
-                  handleClose={closeModal}
-                />
-              </Flex>
-              <Footer />
-              </Flex>
+          <Flex columnGap={"8px"}>
+            <ActionMethodItem
+              from={ethChainId}
+              to={ethChainId}
+              title="Swap"
+              handleClose={closeModal}
+            />
+            <ActionMethodItem
+              from={titanChainId}
+              to={titanChainId}
+              title="Swap"
+              handleClose={closeModal}
+            />
+            <ActionMethodItem
+              from={ethChainId}
+              to={titanChainId}
+              title="Pools"
+              handleClose={closeModal}
+            />
+          </Flex>
+          <Footer />
+        </Flex>
       </ModalContent>
     </Modal>
   );

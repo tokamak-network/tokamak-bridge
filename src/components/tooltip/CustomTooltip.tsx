@@ -21,7 +21,7 @@ export default function CustomTooltip(props: {
       p={0}
       defaultIsOpen={false}
       isOpen={isOpen}
-      bg={'transparent'}
+      bg={"transparent"}
       zIndex={10000}
       label={
         <Box
@@ -59,7 +59,7 @@ export default function CustomTooltip(props: {
           ></Box>
         </Box>
       }
-      placement="top"
+      placement='top'
     >
       <Box
         onMouseEnter={() => setIsOpen(true)}
