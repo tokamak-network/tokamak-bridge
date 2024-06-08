@@ -121,19 +121,37 @@ export default function AccountHistory() {
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
         // pos={"relative"}
       >
-        {!mobileView && <AccountContainer />}
-        <TabContainer setTab={setTab} tab={tab} />
-        {!mobileView && (
-          <Flex>
-            {Network}
-            {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
-            <SearchComponent tab={tab} />
+        <Flex direction='column' height='100%' overflow='hidden'>
+          {!mobileView && <AccountContainer />}
+          <TabContainer setTab={setTab} tab={tab} />
+          {!mobileView && (
+            <Flex>
+              {Network}
+              <SearchComponent tab={tab} />
+            </Flex>
+          )}
+          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
+            <Box
+              flex='1'
+              overflowY='auto'
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "6px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "transparent",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#343741",
+                  borderRadius: "3px",
+                },
+              }}
+              mr='-6px'
+            >
+              <AccountHistoryNew />
+            </Box>
           </Flex>
-        )}
-        <Flex mt={{ base: "0px", lg: "12px" }}>
-          <AccountHistoryNew />
-
-          {/* <ActivityContainer network={selectedNetwork} /> */}
         </Flex>
         <Flex
           pos={"absolute"}

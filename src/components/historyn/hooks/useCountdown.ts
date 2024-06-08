@@ -1,22 +1,19 @@
-//useCountdown.ts
 import { useState, useEffect } from "react";
 
 export function useCountdown(initialTime: string, errorType?: boolean) {
   const [time, setTime] = useState(initialTime);
   const [format, setFormat] = useState(
-    initialTime.split(":").length === 3 ? "HH:MM:SS" : "MM:SS"
+    initialTime.split(":").length === 3 ? "HH : MM : SS" : "MM : SS"
   );
 
   useEffect(() => {
-    if (time === "00:00" || time === "00:00:00") return;
-
-    console.log(initialTime);
+    if (time === "00 : 00" || time === "00 : 00 : 00") return;
 
     const countdown = setInterval(() => {
-      const timeParts = time.split(":").map(Number);
+      const timeParts = time.split(" : ").map(Number);
 
       if (timeParts.length === 3) {
-        // HH:MM:SS 형식일 경우
+        // HH : MM : SS 형식일 경우
         const [hours, minutes, seconds] = timeParts;
         let totalSeconds = hours * 3600 + minutes * 60 + seconds;
 
@@ -31,9 +28,9 @@ export function useCountdown(initialTime: string, errorType?: boolean) {
         const newSeconds = totalSeconds % 60;
 
         if (newHours === 0) {
-          setFormat("MM:SS");
+          setFormat("MM : SS");
           setTime(
-            `${String(newMinutes).padStart(2, "0")}:${String(
+            `${String(newMinutes).padStart(2, "0")} : ${String(
               newSeconds
             ).padStart(2, "0")}`
           );
@@ -42,14 +39,16 @@ export function useCountdown(initialTime: string, errorType?: boolean) {
           const formattedMinutes = String(newMinutes).padStart(2, "0");
           const formattedSeconds = String(newSeconds).padStart(2, "0");
 
-          setTime(`${formattedHours}:${formattedMinutes}:${formattedSeconds}`);
+          setTime(
+            `${formattedHours} : ${formattedMinutes} : ${formattedSeconds}`
+          );
         }
 
         if (!errorType && totalSeconds <= 0) {
           clearInterval(countdown);
         }
       } else {
-        // MM:SS 형식일 경우
+        // MM : SS 형식일 경우
         const [minutes, seconds] = timeParts;
         let totalSeconds = minutes * 60 + seconds;
 
@@ -66,15 +65,15 @@ export function useCountdown(initialTime: string, errorType?: boolean) {
           const newHours = Math.floor(newMinutes / 60);
           const remainingMinutes = newMinutes % 60;
 
-          setFormat("HH:MM:SS");
+          setFormat("HH : MM : SS");
           setTime(
-            `${String(newHours).padStart(2, "0")}:${String(
+            `${String(newHours).padStart(2, "0")} : ${String(
               remainingMinutes
-            ).padStart(2, "0")}:${String(newSeconds).padStart(2, "0")}`
+            ).padStart(2, "0")} : ${String(newSeconds).padStart(2, "0")}`
           );
         } else {
           setTime(
-            `${String(newMinutes).padStart(2, "0")}:${String(
+            `${String(newMinutes).padStart(2, "0")} : ${String(
               newSeconds
             ).padStart(2, "0")}`
           );

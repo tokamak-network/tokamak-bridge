@@ -1,14 +1,21 @@
 import React from "react";
 
-import { Flex, Box, Text, Circle } from "@chakra-ui/react";
+import { Flex, Box, Text, Link } from "@chakra-ui/react";
 import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/componenets/image/TokenSymbol";
 import { TransactionHistory } from "@/componenets/historyn/types";
+import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants";
 import PendingFooter from "./pendingFooter";
 
-export default function Pending(transaction: TransactionHistory) {
+interface PendingProps {
+  transaction: TransactionHistory;
+  transactionHash: string | undefined;
+}
+
+export default function Pending(props: PendingProps) {
+  const { transaction, transactionHash } = props;
   const transactionData = transaction;
 
   return (
@@ -23,7 +30,17 @@ export default function Pending(transaction: TransactionHistory) {
           {transactionData.action}
         </Text>
         <Flex>
-          <Image src={TxLink} alt={"TxLink"} />
+          <Link
+            target='_blank'
+            href={`${
+              BLOCKEXPLORER_CONSTANTS[transaction.inNetwork]
+            }/tx/${transactionHash}`}
+            textDecor={"none"}
+            _hover={{ textDecor: "none" }}
+            display={"flex"}
+          >
+            <Image src={TxLink} alt={"TxLink"} />
+          </Link>
         </Flex>
       </Flex>
       <Flex

@@ -70,7 +70,7 @@ export function calculateInitialTime(
   const totalTime = errorType ? Math.abs(remainingTime) : remainingTime;
 
   if (totalTime <= 0) {
-    return "00:00";
+    return "00 : 00";
   }
 
   const hours = Math.floor(totalTime / 3600);
@@ -81,10 +81,10 @@ export function calculateInitialTime(
     const formattedHours = String(hours).padStart(2, "0");
     const formattedMinutes = String(minutes).padStart(2, "0");
     const formattedSeconds = String(seconds).padStart(2, "0");
-    return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
+    return `${formattedHours} : ${formattedMinutes} : ${formattedSeconds}`;
   } else {
     const formattedMinutes = String(minutes).padStart(2, "0");
     const formattedSeconds = String(seconds).padStart(2, "0");
-    return `${formattedMinutes}:${formattedSeconds}`;
+    return `${formattedMinutes} : ${formattedSeconds}`;
   }
 }

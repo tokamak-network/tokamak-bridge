@@ -56,27 +56,32 @@ export default function AccountHistoryNew() {
       return finalizedTransactionHash || initialTransactionHash;
     }
   };
-
   return (
     <Flex flexDirection='column' gap='2'>
       {data &&
-        data.map((transaction) => (
-          <Box
-            key={getTransactionKey(transaction)}
-            w={"336px"}
-            px={"12px"}
-            py={"8px"}
-            borderRadius={"8px"}
-            border={"1px solid #313442"}
-            bg={"#15161D"}
-          >
-            {transaction.status === Status.Completed ? (
-              <Complete {...transaction} />
-            ) : (
-              <Pending {...transaction} />
-            )}
-          </Box>
-        ))}
+        data.map((transaction) => {
+          const transactionHash = getTransactionKey(transaction);
+          return (
+            <Box
+              key={transactionHash}
+              w={"336px"}
+              px={"12px"}
+              py={"8px"}
+              borderRadius={"8px"}
+              border={"1px solid #313442"}
+              bg={"#15161D"}
+            >
+              {transaction.status === Status.Completed ? (
+                <Complete {...transaction} />
+              ) : (
+                <Pending
+                  transaction={transaction}
+                  transactionHash={transactionHash}
+                />
+              )}
+            </Box>
+          );
+        })}
     </Flex>
   );
 }

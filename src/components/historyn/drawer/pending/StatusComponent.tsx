@@ -1,10 +1,11 @@
 // StatusComponent.tsx
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Flex, Text, Circle, Button } from "@chakra-ui/react";
 import {
   TransactionHistory,
   Action,
   Status,
+  isWithdrawTransactionHistory,
 } from "@/componenets/historyn/types";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
 import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
@@ -12,12 +13,10 @@ import { formatDateToYMD } from "@/componenets/historyn/utils/timeUtils";
 import { useCountdown } from "@/components/historyn/hooks/useCountdown";
 import { getTimeDisplay } from "@/componenets/historyn/utils/getTimeDisplay";
 import Image from "next/image";
-import { atcb_action } from "add-to-calendar-button";
-import { format, addHours } from "date-fns";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
-import { useCalendarConfig } from "@/components/historyn/hooks/useGoogleCalendar";
+import { useCalendar } from "@/components/historyn/hooks/useGoogleCalendar";
 
 interface TransactionStatusComponentProps {
   label: string;
@@ -30,76 +29,70 @@ export default function StatusComponent(
   const { label, transactionData } = props;
   const isActive = transactionData.status === label;
 
-  // 해당 조건일때만 카운트 다운 필요
+  // Countdown is needed only for the following conditions
   const shouldCountdown =
     (transactionData.status === Status.Rollup ||
       transactionData.status === Status.Finalized) &&
     isActive;
 
   const initialTimeDisplay = shouldCountdown
-    ? // 카운트 다운 필요한 value
+    ? // Value needed for countdown
       getTimeDisplay(transactionData)
-    : // active 아닌 상태의 Finalized는 빈 값 출력
+    : // If not active and status is Finalized, display empty value
     !isActive && label === Status.Finalized
     ? ""
-    : // 그 외는 모두 완료된 상태이므로 format 날짜 출력
+    : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
         Number(transactionData.blockTimestamps.initialCompletedTimestamp)
       );
 
-  // 출력 변수
+  // Output variable
   const timeDisplay = shouldCountdown
     ? useCountdown(initialTimeDisplay, Boolean(transactionData.errorMessage))
     : initialTimeDisplay;
 
-  //error message가 존재하고, Status가 rollup인 경우 시간이 증가하고, 색상이 red가 된다.
+  // Calendar start time
+  const startDate = useMemo(() => {
+    if (
+      // Use type guard as rollup exists only for withdraw condition
+      isWithdrawTransactionHistory(transactionData) &&
+      transactionData.blockTimestamps.rollupCompletedTimestamp
+    ) {
+      return new Date(
+        // Calculate rollup 7 days
+        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
+          convertTimeToMinutes(
+            TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
+            "days",
+            0
+          ) *
+            60) *
+          1000
+      );
+    }
+    return null;
+  }, [transactionData]);
+
+  const { handleCalendarClick } = useCalendar(startDate);
+
+  // If error message exists and status is rollup, time increases and color turns red
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
 
-  //initial이 종료되면, 쿼리를 통해 새로운 값을 받아올 수 있도록 refresh 아이콘을 출력해 준다.
+  // When initial phase ends, display refresh icon to fetch new values via query
   const refreshRollup = label === Status.Rollup && timeDisplay === "00:00";
 
-  // 캘린더 버튼 표시
+  // Display calendar button
   const calendarButton =
     label === Status.Finalized &&
     timeDisplay !== "00:00" &&
     isActive &&
     transactionData.action === Action.Withdraw;
 
-  // Finalized상태에서 완료 되면, claim버튼 show
+  // Show claim button when Finalized status is complete
   const claimReadyButton =
     label === Status.Finalized &&
     timeDisplay === "00:00" &&
     transactionData.action === Action.Withdraw;
-
-  const calendarConfig = useMemo(() => {
-    if (calendarButton) {
-      const statusDuration = convertTimeToMinutes(
-        TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
-        "days",
-        0
-      );
-      const startDate = new Date(
-        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
-          statusDuration * 60) *
-          1000
-      );
-      const formattedDate = format(startDate, "yyyy-MM-dd");
-      const startTime = format(startDate, "HH:mm");
-      const endTime = format(addHours(startDate, 1), "HH:mm");
-
-      return {
-        name: "Claim withdrawal on Ethereum network using Tokamak Bridge",
-        description:
-          "How to claim:\n1. Go to Tokamak Bridge (https://bridge.tokamak.network/) \n2. Connect to your wallet \n3. Click the wallet address on the top right  \n4. Find the relevant claim transaction and click “Claim”  ",
-        startDate: formattedDate,
-        startTime: startTime,
-        endTime: endTime,
-        options: ["Google" as const],
-        timeZone: "currentBrowser",
-      };
-    }
-    return null;
-  }, [calendarButton]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -142,7 +135,6 @@ export default function StatusComponent(
             {timeDisplay}
           </Text>
         )}
-
         {errorRollup && (
           <Flex w={"18px"} h={"18px"} ml={"2px"} justifyContent={"center"}>
             <Image src={Lightbulb} alt={"Lightbulb"} />
@@ -153,13 +145,13 @@ export default function StatusComponent(
             <Image src={Refresh} alt={"Refresh"} />
           </Flex>
         )}
-        {calendarButton && calendarConfig && (
+        {calendarButton && (
           <Flex
             w={"18px"}
             h={"18px"}
-            ml={"2px"}
+            ml={"6px"}
             justifyContent={"center"}
-            onClick={() => atcb_action(calendarConfig)}
+            onClick={handleCalendarClick}
           >
             <Image src={GoogleCalendar} alt={"GoogleCalendar"} />
           </Flex>

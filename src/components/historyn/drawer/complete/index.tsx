@@ -5,7 +5,7 @@ import { TransactionHistory } from "@/componenets/historyn/types";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
-  console.log(transactionData);
+
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
