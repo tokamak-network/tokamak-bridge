@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { historyData } from "../__mocks__/history.mock";
+import { historyData } from "@/components/historyn/__mocks__/history.mock";
 
 export default async function handler(
   req: NextApiRequest,
