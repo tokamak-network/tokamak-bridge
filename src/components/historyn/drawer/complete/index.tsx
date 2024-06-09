@@ -1,7 +1,7 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/components/historyn/components/TokenPair";
-import { TokenSymbol } from "@/componenets/image/TokenSymbol";
-import { TransactionHistory } from "@/componenets/historyn/types";
+import { TokenSymbol } from "@/components/image/TokenSymbol";
+import { TransactionHistory } from "@/components/historyn/types";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;

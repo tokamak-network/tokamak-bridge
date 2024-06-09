@@ -4,7 +4,7 @@ import {
   Action,
   Status,
   Network,
-} from "@/componenets/historyn/types";
+} from "@/components/historyn/types";
 
 export const historyData: TransactionHistory[] = [
   {

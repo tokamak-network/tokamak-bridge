@@ -1,9 +1,5 @@
 //historyStatus.ts
-import {
-  Status,
-  Action,
-  TransactionStatus,
-} from "@/componenets/historyn/types";
+import { Status, Action, TransactionStatus } from "@/components/historyn/types";
 
 const getStatusValue = (action: Action, status: Status): number => {
   if (action === Action.Withdraw) {

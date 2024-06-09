@@ -11,12 +11,12 @@ import {
   Button,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { Network } from "@/componenets/historyn/types";
+import { Network } from "@/components/historyn/types";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
-import { TokenSymbol } from "@/componenets/image/TokenSymbol";
+import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";

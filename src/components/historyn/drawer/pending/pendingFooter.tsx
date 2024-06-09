@@ -2,7 +2,7 @@ import {
   TransactionHistory,
   Status,
   Action,
-} from "@/componenets/historyn/types";
+} from "@/components/historyn/types";
 import StatusComponent from "@/components/historyn/drawer/pending/StatusComponent";
 
 export default function PendingFooter(transaction: TransactionHistory) {

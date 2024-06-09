@@ -6,12 +6,12 @@ import {
   Action,
   Status,
   isWithdrawTransactionHistory,
-} from "@/componenets/historyn/types";
+} from "@/components/historyn/types";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
 import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
-import { formatDateToYMD } from "@/componenets/historyn/utils/timeUtils";
+import { formatDateToYMD } from "@/components/historyn/utils/timeUtils";
 import { useCountdown } from "@/components/historyn/hooks/useCountdown";
-import { getTimeDisplay } from "@/componenets/historyn/utils/getTimeDisplay";
+import { getTimeDisplay } from "@/components/historyn/utils/getTimeDisplay";
 import Image from "next/image";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";

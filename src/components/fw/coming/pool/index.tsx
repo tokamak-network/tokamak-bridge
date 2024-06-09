@@ -4,9 +4,9 @@ import { Box, Text, Flex, Button } from "@chakra-ui/react";
 
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import ScrolltoTopButton from "@/componenets/fw/coming/pool/ScrolltoTopButton";
-import ImageComingBox from "@/componenets/fw/coming/pool/ImageComingBox";
-import ImagePoolBox from "@/componenets/fw/coming/pool/ImagePoolBox";
+import ScrolltoTopButton from "@/components/fw/coming/pool/ScrolltoTopButton";
+import ImageComingBox from "@/components/fw/coming/pool/ImageComingBox";
+import ImagePoolBox from "@/components/fw/coming/pool/ImagePoolBox";
 
 export default function ComingPool() {
   enum PoolButtonType {
@@ -71,12 +71,12 @@ export default function ComingPool() {
       h={"100%"}
       w={"100%"}
     >
-      <Box w="full">
+      <Box w='full'>
         <Flex
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"center"}
-          alignItems="center"
+          alignItems='center'
         >
           <Box width={dynamicWidth}>
             <Text
@@ -122,9 +122,9 @@ export default function ComingPool() {
           pt={poolMobileView ? "24px" : "32px"}
           mt={poolMobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"flex-start"}
-          alignItems="center"
+          alignItems='center'
           h={"90%"}
         >
           <Box width={dynamicWidth}>
@@ -154,11 +154,11 @@ export default function ComingPool() {
               </Text>
             </Box>
             {PoolButtonType.Coming === activeButton ? (
-              <Flex width="full" justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 <ImageComingBox isMobile={poolMobileView} />
               </Flex>
             ) : (
-              <Flex width="full" justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 {poolMobileView ? (
                   <ImagePoolBox isMobile={true} />
                 ) : poolTabletView ? (

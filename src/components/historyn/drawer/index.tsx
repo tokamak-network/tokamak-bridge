@@ -7,7 +7,7 @@ import {
   TransactionHistory,
   Status,
   Action,
-} from "@/componenets/historyn/types";
+} from "@/components/historyn/types";
 import Pending from "@/components/historyn/drawer/pending";
 import Complete from "@/components/historyn/drawer/complete";
 

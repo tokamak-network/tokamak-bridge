@@ -1,7 +1,7 @@
 "use client";
 
 import YourPools from "@/pools/YourPools";
-import ComingPools from "@/componenets/fw/coming/pool";
+import ComingPools from "@/components/fw/coming/pool";
 import { Flex } from "@chakra-ui/react";
 
 export default function Page() {

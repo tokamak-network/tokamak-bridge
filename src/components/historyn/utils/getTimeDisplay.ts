@@ -5,7 +5,7 @@ import {
 } from "@/components/historyn/types";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
 import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
-import getStatusValue from "@/componenets/historyn/utils/historyStatus";
+import getStatusValue from "@/components/historyn/utils/historyStatus";
 
 // status 별로 변수 넣는 함수
 export function getTimeDisplay(transactionData: TransactionHistory) {

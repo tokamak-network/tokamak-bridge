@@ -4,7 +4,7 @@ import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import Arrow from "@/assets/icons/newHistory/small-arrow.svg";
 
-import { Network } from "@/componenets/historyn/types";
+import { Network } from "@/components/historyn/types";
 
 type TokenPairProp = {
   networkI: string | undefined;

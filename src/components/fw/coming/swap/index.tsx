@@ -18,7 +18,7 @@ import { useRecoilState } from "recoil";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import formatNumber from "@/componenets/fw/utils/formatNumbers";
+import formatNumber from "@/components/fw/utils/formatNumbers";
 
 export default function FwComingModal() {
   const { tabletView } = useMediaView();

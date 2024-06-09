@@ -4,8 +4,8 @@ import { Flex, Box, Text, Link } from "@chakra-ui/react";
 import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/components/historyn/components/TokenPair";
-import { TokenSymbol } from "@/componenets/image/TokenSymbol";
-import { TransactionHistory } from "@/componenets/historyn/types";
+import { TokenSymbol } from "@/components/image/TokenSymbol";
+import { TransactionHistory } from "@/components/historyn/types";
 import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants";
 import PendingFooter from "./pendingFooter";
 
