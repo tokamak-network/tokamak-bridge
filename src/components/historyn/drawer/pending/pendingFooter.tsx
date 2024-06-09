@@ -1,4 +1,3 @@
-import { Flex, Box, Text, Circle } from "@chakra-ui/react";
 import {
   TransactionHistory,
   Status,
