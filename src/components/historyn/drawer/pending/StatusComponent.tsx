@@ -79,19 +79,19 @@ export default function StatusComponent(
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
 
   // When initial phase ends, display refresh icon to fetch new values via query
-  const refreshRollup = label === Status.Rollup && timeDisplay === "00:00";
+  const refreshRollup = label === Status.Rollup && timeDisplay === "00 : 00";
 
   // Display calendar button
   const calendarButton =
     label === Status.Finalized &&
-    timeDisplay !== "00:00" &&
+    timeDisplay !== "00 : 00" &&
     isActive &&
     transactionData.action === Action.Withdraw;
 
   // Show claim button when Finalized status is complete
   const claimReadyButton =
     label === Status.Finalized &&
-    timeDisplay === "00:00" &&
+    timeDisplay === "00 : 00" &&
     transactionData.action === Action.Withdraw;
 
   return (

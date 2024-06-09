@@ -14,7 +14,7 @@ export const historyData: TransactionHistory[] = [
     outNetwork: Network.Titan,
     transactionHashes: {
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0xb01f1f5aa0cc6609b776746c791b77725bae46340953d989a7402095d297de2a",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717749288",
@@ -30,7 +30,7 @@ export const historyData: TransactionHistory[] = [
     transactionHashes: {
       // 위와 같지만 에러인 경우
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0xf3d7d8bbb647b0cce5f804f9fc7cdbe0d67c747643932ead849d7a3229578ed4",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717749999",
@@ -46,9 +46,9 @@ export const historyData: TransactionHistory[] = [
     outNetwork: Network.TitanSepolia,
     transactionHashes: {
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x0105c9c8fc3668304c2f0a182d51e366761941c57fbe6d6e0b36aea63dd8f7c6",
       rollupTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x0105c9c8fc3668304c2f0a182d51e366761941c57fbe6d6e0b36aea63dd8f7c6",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717315200",
@@ -65,9 +65,9 @@ export const historyData: TransactionHistory[] = [
     outNetwork: Network.TitanSepolia,
     transactionHashes: {
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0xe0cd42db728f7c95ebf1771f05d36492864a77636f83f5acf8080b1c9f3ea63d ",
       rollupTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0xe0cd42db728f7c95ebf1771f05d36492864a77636f83f5acf8080b1c9f3ea63d ",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1716614035",
@@ -84,11 +84,11 @@ export const historyData: TransactionHistory[] = [
     transactionHashes: {
       // When Status is Completed and finalizedTransactionHash is present, finalized (claim) is complete
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x9a580ad51941487603323df6b91a8d64be86b96ab93c05be05bb9e529b9c127e",
       rollupTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x9a580ad51941487603323df6b91a8d64be86b96ab93c05be05bb9e529b9c127e",
       finalizedTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x9a580ad51941487603323df6b91a8d64be86b96ab93c05be05bb9e529b9c127e",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717315200",
@@ -105,7 +105,7 @@ export const historyData: TransactionHistory[] = [
     outNetwork: Network.Sepolia,
     transactionHashes: {
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x07811133692f29c3511151aba88a2c8b8f3995e91ff4013e1ba8f8bdf7c160ca",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717743200",
@@ -121,9 +121,9 @@ export const historyData: TransactionHistory[] = [
     outNetwork: Network.Mainnet,
     transactionHashes: {
       initialTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x3a78133e444e5d6a0b005b6c4005d0b689e685c937a762f59d35fd3376b3ca07",
       finalizedTransactionHash:
-        "0x5de0a5f7af71e9c76cbb18f3184a188bea5241d0d405f6f964022a99202e77b3",
+        "0x3a78133e444e5d6a0b005b6c4005d0b689e685c937a762f59d35fd3376b3ca07",
     },
     blockTimestamps: {
       initialCompletedTimestamp: "1717315200",

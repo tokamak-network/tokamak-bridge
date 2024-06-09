@@ -20,7 +20,9 @@ export default function AccountHistoryNew() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const apiUrl = process.env.NEXT_PUBLIC_HISTORY_API;
+      // const apiUrl = process.env.NEXT_PUBLIC_HISTORY_API;
+
+      const apiUrl = "/api/history";
       if (!apiUrl) {
         console.error("API URL is not defined");
         return;
@@ -72,6 +74,7 @@ export default function AccountHistoryNew() {
               borderRadius={"8px"}
               border={"1px solid #313442"}
               bg={"#15161D"}
+              cursor={"pointer"}
               onClick={onOpenSwapConfirmModal}
             >
               {transaction.status === Status.Completed ? (
