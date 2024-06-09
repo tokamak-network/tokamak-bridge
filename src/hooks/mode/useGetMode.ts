@@ -18,11 +18,11 @@ export function useGetMode() {
   }, [mode]);
 
   const pathname = usePathname();
-  const isPool = pathname.includes("pools");
-  const add = pathname.includes("add");
-  const increase = pathname.includes("increase");
-  const remove = pathname.includes("remove");
-  const claim = pathname.includes("claim");
+  const isPool = pathname?.includes("pools");
+  const add = pathname?.includes("add");
+  const increase = pathname?.includes("increase");
+  const remove = pathname?.includes("remove");
+  const claim = pathname?.includes("claim");
 
   return {
     mode: isPool ? "Pool" : mode,
