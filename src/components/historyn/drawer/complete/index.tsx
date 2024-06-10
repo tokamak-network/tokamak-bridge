@@ -2,9 +2,11 @@ import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/components/historyn/types";
+import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
+  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
 
   return (
     <>
@@ -22,6 +24,7 @@ export default function Complete(transaction: TransactionHistory) {
           networkO={transactionData.outNetwork}
           networkW={16}
           networkH={16}
+          pairType={"completed"}
         />
       </Flex>
       <Flex
@@ -54,6 +57,8 @@ export default function Complete(transaction: TransactionHistory) {
           fontSize={"11px"}
           lineHeight={"22px"}
           color={"#A0A3AD"}
+          cursor={"pointer"}
+          onClick={onOpenSwapConfirmModal}
         >
           2023.04.03
         </Text>

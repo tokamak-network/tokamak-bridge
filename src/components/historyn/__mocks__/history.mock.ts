@@ -10,14 +10,14 @@ export const historyData: TransactionHistory[] = [
   {
     action: Action.Withdraw,
     status: Status.Rollup,
-    inNetwork: Network.Mainnet,
-    outNetwork: Network.Titan,
+    inNetwork: Network.Titan,
+    outNetwork: Network.Mainnet,
     transactionHashes: {
       initialTransactionHash:
         "0xb01f1f5aa0cc6609b776746c791b77725bae46340953d989a7402095d297de2a",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717749288",
+      initialCompletedTimestamp: "1717983025",
     },
     tokenSymbol: "ETH",
     amount: "0.01234",
@@ -25,8 +25,8 @@ export const historyData: TransactionHistory[] = [
   {
     action: Action.Withdraw,
     status: Status.Rollup,
-    inNetwork: Network.Mainnet,
-    outNetwork: Network.Titan,
+    inNetwork: Network.Titan,
+    outNetwork: Network.Mainnet,
     transactionHashes: {
       // 위와 같지만 에러인 경우
       initialTransactionHash:
@@ -42,8 +42,8 @@ export const historyData: TransactionHistory[] = [
   {
     action: Action.Withdraw,
     status: Status.Finalized,
-    inNetwork: Network.Sepolia,
-    outNetwork: Network.TitanSepolia,
+    inNetwork: Network.TitanSepolia,
+    outNetwork: Network.Sepolia,
     transactionHashes: {
       initialTransactionHash:
         "0x0105c9c8fc3668304c2f0a182d51e366761941c57fbe6d6e0b36aea63dd8f7c6",
@@ -61,8 +61,8 @@ export const historyData: TransactionHistory[] = [
     //파이널라이즈는 애러가 없다. 헤딩 mock은 추후 시간을 조정해서 claim버튼이 나오도록(7일 지난 걸로 하는 데이터로 한다.)
     action: Action.Withdraw,
     status: Status.Finalized,
-    inNetwork: Network.Sepolia,
-    outNetwork: Network.TitanSepolia,
+    inNetwork: Network.TitanSepolia,
+    outNetwork: Network.Sepolia,
     transactionHashes: {
       initialTransactionHash:
         "0xe0cd42db728f7c95ebf1771f05d36492864a77636f83f5acf8080b1c9f3ea63d ",
@@ -79,8 +79,8 @@ export const historyData: TransactionHistory[] = [
   {
     action: Action.Withdraw,
     status: Status.Completed,
-    inNetwork: Network.Mainnet,
-    outNetwork: Network.Titan,
+    inNetwork: Network.Titan,
+    outNetwork: Network.Mainnet,
     transactionHashes: {
       // When Status is Completed and finalizedTransactionHash is present, finalized (claim) is complete
       initialTransactionHash:
@@ -101,14 +101,14 @@ export const historyData: TransactionHistory[] = [
   {
     action: Action.Deposit,
     status: Status.Finalized,
-    inNetwork: Network.TitanSepolia,
-    outNetwork: Network.Sepolia,
+    inNetwork: Network.Sepolia,
+    outNetwork: Network.TitanSepolia,
     transactionHashes: {
       initialTransactionHash:
         "0x07811133692f29c3511151aba88a2c8b8f3995e91ff4013e1ba8f8bdf7c160ca",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: "1717743200",
+      initialCompletedTimestamp: "1717983025",
       finalizedCompletedTimestamp: undefined,
     },
     tokenSymbol: "TON",
@@ -117,8 +117,8 @@ export const historyData: TransactionHistory[] = [
   {
     action: Action.Deposit,
     status: Status.Completed,
-    inNetwork: Network.Titan,
-    outNetwork: Network.Mainnet,
+    inNetwork: Network.Mainnet,
+    outNetwork: Network.Titan,
     transactionHashes: {
       initialTransactionHash:
         "0x3a78133e444e5d6a0b005b6c4005d0b689e685c937a762f59d35fd3376b3ca07",

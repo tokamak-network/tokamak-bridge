@@ -5,7 +5,10 @@ import {
   Flex,
   Text,
   Box,
+  Button,
 } from "@chakra-ui/react";
+import Refresh from "@/assets/icons/newHistory/refresh.svg";
+import RefreshBlue from "@/assets/icons/newHistory/refresh-blue.svg";
 import Image from "next/image";
 import { useAccount } from "wagmi";
 import { useMemo, useState, SetStateAction, Dispatch, useEffect } from "react";
@@ -53,24 +56,33 @@ export default function AccountHistory() {
   }) => {
     const { setTab, tab } = props;
     return (
-      <Flex columnGap={"24px"} mt='16px' mb='8px'>
-        {/* <Text
-          cursor={"pointer"}
-          color={tab === "Balance" ? "#fff" : "#5E626D"}
-          _hover={{ color: "#A0A3AD" }}
-          onClick={() => setTab("Balance")}
-        >
-          Balance
-        </Text> */}
+      <Flex
+        mt='16px'
+        mb='12px'
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
         <Text
-          // cursor={"pointer"}
-          // color={tab === "Activity" ? "#fff" : "#5E626D"}
-          color={"#fff"}
-          // _hover={{ color: "#A0A3AD" }}
-          // onClick={() => setTab("Activity")}
+          fontWeight={500}
+          fontSize={"16px"}
+          lineHeight={"24px"}
+          color={"#FFFFFF"}
         >
           Bridge History
         </Text>
+        <Box
+          w={"32px"}
+          h={"32px"}
+          p={"7px"}
+          borderRadius={"6px"}
+          gap={"8px"}
+          bg={"#15161D"}
+          cursor={"pointer"}
+        >
+          <Flex w={"18px"} h={"18px"} p={"3px"}>
+            <Image src={RefreshBlue} alt={"RefreshBlue"} />
+          </Flex>
+        </Box>
       </Flex>
     );
   };

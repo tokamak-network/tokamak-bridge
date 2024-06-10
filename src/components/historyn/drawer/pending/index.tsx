@@ -1,6 +1,7 @@
 import React from "react";
 
-import { Flex, Box, Text, Link } from "@chakra-ui/react";
+import { Flex, Box, Text, Link, Spacer } from "@chakra-ui/react";
+import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
 import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/components/historyn/components/TokenPair";
@@ -16,6 +17,7 @@ interface PendingProps {
 
 export default function Pending(props: PendingProps) {
   const { transaction, transactionHash } = props;
+  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
   const transactionData = transaction;
 
   return (
@@ -29,43 +31,43 @@ export default function Pending(props: PendingProps) {
         >
           {transactionData.action}
         </Text>
-        <Flex>
-          <Link
-            target='_blank'
-            href={`${
-              BLOCKEXPLORER_CONSTANTS[transaction.inNetwork]
-            }/tx/${transactionHash}`}
-            textDecor={"none"}
-            _hover={{ textDecor: "none" }}
-            display={"flex"}
-          >
-            <Image src={TxLink} alt={"TxLink"} />
-          </Link>
+        <Flex cursor={"pointer"} onClick={onOpenSwapConfirmModal}>
+          <Image src={TxLink} alt={"TxLink"} />
         </Flex>
       </Flex>
       <Flex
+        h={"36px"}
         justifyContent={"space-between"}
         alignItems={"center"}
         px={"12px"}
         py={"4px"}
         my={"4px"}
+        gap={"6px"}
         borderRadius={"6px"}
         border={"1px solid rgba(0, 122, 255, 0.40)"}
       >
         <Flex alignItems='center'>
           <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
-            <Text
-              fontWeight={400}
-              fontSize={"9px"}
-              lineHeight={"13.5px"}
-              color={"#A0A3AD"}
-            >
-              {transactionData.tokenSymbol}
-            </Text>
-            <Text fontWeight={400} fontSize={"12px"} lineHeight={"18px"}>
-              {transactionData.amount}
-            </Text>
+            <Flex>
+              <Text
+                fontWeight={600}
+                fontSize={"14px"}
+                lineHeight={"21px"}
+                color={"#FFFFFF"}
+              >
+                {transactionData.amount}
+              </Text>
+              <Box w='4px' /> {/** space bar */}
+              <Text
+                fontWeight={400}
+                fontSize={"14px"}
+                lineHeight={"21px"}
+                color={"#A0A3AD"}
+              >
+                {transactionData.tokenSymbol}
+              </Text>
+            </Flex>
           </Box>
         </Flex>
         <TokenPair
@@ -73,6 +75,7 @@ export default function Pending(props: PendingProps) {
           networkO={transactionData.outNetwork}
           networkW={22}
           networkH={22}
+          pairType={"pending"}
         />
       </Flex>
       <Box>

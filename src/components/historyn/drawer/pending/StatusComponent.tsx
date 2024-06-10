@@ -7,6 +7,7 @@ import {
   Status,
   isWithdrawTransactionHistory,
 } from "@/components/historyn/types";
+import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
 import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
 import { formatDateToYMD } from "@/components/historyn/utils/timeUtils";
@@ -27,6 +28,7 @@ export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
   const { label, transactionData } = props;
+  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
   const isActive = transactionData.status === label;
 
   // Countdown is needed only for the following conditions
@@ -97,7 +99,10 @@ export default function StatusComponent(
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
       <Flex alignItems='center'>
-        <Circle size='6px' bg={"#007AFF"} />
+        <Circle
+          size='6px'
+          bg={!isActive && label === Status.Finalized ? "#A0A3AD" : "#007AFF"}
+        />
         <Text
           ml={"6px"}
           fontSize={"11px"}
@@ -134,17 +139,31 @@ export default function StatusComponent(
             fontWeight={400}
             lineHeight={"22px"}
             color={errorRollup ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
+            cursor={!isActive ? "pointer" : "default"}
+            onClick={!isActive ? onOpenSwapConfirmModal : undefined}
           >
             {timeDisplay}
           </Text>
         )}
         {errorRollup && (
-          <Flex w={"18px"} h={"18px"} ml={"2px"} justifyContent={"center"}>
+          <Flex
+            w={"18px"}
+            h={"18px"}
+            ml={"2px"}
+            justifyContent={"center"}
+            cursor={"pointer"}
+          >
             <Image src={Lightbulb} alt={"Lightbulb"} />
           </Flex>
         )}
         {refreshRollup && (
-          <Flex w={"18px"} h={"18px"} ml={"2px"} justifyContent={"center"}>
+          <Flex
+            w={"18px"}
+            h={"18px"}
+            ml={"2px"}
+            justifyContent={"center"}
+            cursor={"pointer"}
+          >
             <Image src={Refresh} alt={"Refresh"} />
           </Flex>
         )}
@@ -154,6 +173,7 @@ export default function StatusComponent(
             h={"18px"}
             ml={"6px"}
             justifyContent={"center"}
+            cursor={"pointer"}
             onClick={handleCalendarClick}
           >
             <Image src={GoogleCalendar} alt={"GoogleCalendar"} />

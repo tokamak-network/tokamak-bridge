@@ -11,6 +11,7 @@ type TokenPairProp = {
   networkO: string | undefined;
   networkW: number;
   networkH: number;
+  pairType: "pending" | "completed";
 };
 
 const getImageProps = (network: string | undefined) => {
@@ -21,7 +22,7 @@ const getImageProps = (network: string | undefined) => {
 };
 
 export default function TokenPair(props: TokenPairProp) {
-  const { networkI, networkO, networkH, networkW } = props;
+  const { pairType, networkI, networkO, networkH, networkW } = props;
   const inNetwork = getImageProps(networkI);
   const outNetwork = getImageProps(networkO);
 
@@ -41,7 +42,7 @@ export default function TokenPair(props: TokenPairProp) {
             height={networkH}
           />
         </Flex>
-        <Box mx={"6px"}>
+        <Box mx={pairType === "pending" ? "6px" : "4px"}>
           <Image src={Arrow} alt={"Arrow"} />
         </Box>
         <Flex
