@@ -400,7 +400,9 @@ export default function SwapConfirmModal() {
               backgroundColor: "#17181D",
               color: "#8E8E92",
             }}
+            _active={{}}
             _hover={{}}
+            _focus={{}}
           >
             <Flex alignItems={"center"}>
               <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>

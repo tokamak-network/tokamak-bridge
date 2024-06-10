@@ -120,6 +120,9 @@ export default function StatusComponent(
             flexShrink={0}
             borderRadius={"4px"}
             bg={"#007AFF"}
+            _active={{}}
+            _hover={{}}
+            _focus={{}}
           >
             <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
               Finalize
