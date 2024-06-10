@@ -19,7 +19,7 @@ import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
 import TxLink from "@/assets/icons/confirm/link.svg";
-import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
+import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 
 export default function SwapConfirmModal() {
@@ -52,6 +52,7 @@ export default function SwapConfirmModal() {
             px={"16px"}
             py={"12px"}
             border={"1px solid #313442"}
+            borderRadius={"8px"}
             bg='#0F0F12'
           >
             {/** Box안 fLEX 두번 반복 @Repeat1 */}
@@ -60,7 +61,7 @@ export default function SwapConfirmModal() {
                 <Box>
                   <Text
                     fontWeight={500}
-                    fontSize={"12px"}
+                    fontSize={"14px"}
                     lineHeight={"21px"}
                     color={"#FFFFFF"}
                   >
@@ -79,7 +80,7 @@ export default function SwapConfirmModal() {
                       lineHeight={"14px"}
                       color={"#A0A3AD"}
                     >
-                      Ethereum
+                      Titan
                     </Text>
                   </Flex>
                 </Box>
@@ -88,7 +89,7 @@ export default function SwapConfirmModal() {
                     <Flex alignItems={"center"}>
                       <TokenSymbol w={24} h={24} tokenType={"ETH"} />
                     </Flex>
-                    <Box ml={"6px"}>
+                    <Box ml={"8px"}>
                       <Flex>
                         <Text
                           mr={"6px"}
@@ -124,7 +125,7 @@ export default function SwapConfirmModal() {
                 <Box>
                   <Text
                     fontWeight={500}
-                    fontSize={"12px"}
+                    fontSize={"14px"}
                     lineHeight={"21px"}
                     color={"#FFFFFF"}
                   >
@@ -143,7 +144,7 @@ export default function SwapConfirmModal() {
                       lineHeight={"14px"}
                       color={"#A0A3AD"}
                     >
-                      Titan
+                      Ethereum
                     </Text>
                   </Flex>
                 </Box>
@@ -152,7 +153,7 @@ export default function SwapConfirmModal() {
                     <Flex alignItems={"center"}>
                       <TokenSymbol w={24} h={24} tokenType={"ETH"} />
                     </Flex>
-                    <Box ml={"6px"}>
+                    <Box ml={"8px"}>
                       <Flex>
                         <Text
                           mr={"6px"}
@@ -351,7 +352,14 @@ export default function SwapConfirmModal() {
                   </Text>
                   <Box>
                     <Flex alignItems={"center"}>
-                      <Flex w={"12.25px"} h={"14px"}>
+                      <Flex
+                        w={"14px"}
+                        h={"16px"}
+                        px={"0.88px"}
+                        py={"1px"}
+                        justifyContent={"center"}
+                        alignItems={"center"}
+                      >
                         <Image
                           src={GasStationSymbol}
                           alt={"GasStationSymbol"}
