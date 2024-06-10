@@ -202,8 +202,8 @@ export default function useGetTransaction() {
                   _l2Token: l2Token,
                   _amount: amnt,
                   timeReadyForRelay: Number(timeReadyForRelay),
-                  currentStatus: currentStatus,
-                  resolved: resolved,
+                  currentStatus,
+                  resolved,
                 };
               }
               //if the status is 5 or 6, check if the message receipt exists. returns the tx receipt of the corresponding l1 withdraw tx

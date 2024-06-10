@@ -9,7 +9,7 @@ import {
   toHexString,
   encodeCrossDomainMessageV0,
 } from "@eth-optimism/core-utils";
-import { RLP } from "@ethereumjs/rlp";
+import * as RLP from "@ethersproject/rlp";
 import StateCommitmentChainAbi from "constant/abis/StateCommitmentChain.json";
 import { predeploys } from "@eth-optimism/contracts";
 
@@ -74,17 +74,26 @@ export const getWithdarwCalldata = async (params: {
         sentMessageEvent.sender,
         sentMessageEvent.message,
         BigNumber.from(sentMessageEvent.messageNonce)
-      ) + remove0x(StateCommitmentChain_CONTRACT.address)
+      ) + remove0x(predeploys.L2CrossDomainMessenger)
     ) + "00".repeat(32)
+  );
+
+  console.log(
+    Number(l2BlcokNumber),
+    predeploys.OVM_L2ToL1MessagePasser,
+    messageSlot,
+    l2Provider
   );
 
   //step4
   const stateTrieProof = await makeStateTrieProof(
     l2Provider as ethers.providers.JsonRpcProvider,
-    Number(sentMessageEvent.blockNumber),
+    Number(l2BlcokNumber),
     predeploys.OVM_L2ToL1MessagePasser,
     messageSlot
   );
+
+  console.log(stateTrieProof);
 
   const messageTxIndex = l2BlcokNumber - 1;
   //step5
@@ -101,6 +110,8 @@ export const getWithdarwCalldata = async (params: {
     batch: stateRootBatch,
   };
 
+  console.log("stateTrieProof", stateTrieProof);
+
   //step6
   const proof = {
     stateRoot: stateRoot.stateRoot,
@@ -112,9 +123,7 @@ export const getWithdarwCalldata = async (params: {
         stateRoot.stateRootIndexInBatch
       ),
     },
-    //@ts-ignore
     stateTrieWitness: toHexString(RLP.encode(stateTrieProof.accountProof)),
-    //@ts-ignore
     storageTrieWitness: toHexString(RLP.encode(stateTrieProof.storageProof)),
   };
 
