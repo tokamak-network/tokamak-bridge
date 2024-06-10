@@ -9,9 +9,9 @@ import {
   toHexString,
   encodeCrossDomainMessageV0,
 } from "@eth-optimism/core-utils";
-import { RLP } from "@ethereumjs/rlp";
 import StateCommitmentChainAbi from "constant/abis/StateCommitmentChain.json";
 import { predeploys } from "@eth-optimism/contracts";
+import * as RLP from "@ethersproject/rlp";
 
 /**
  * https://www.notion.so/tokamak/New-bridge-history-logic-fa37475899de433f983d74a8b83477f3
@@ -74,14 +74,14 @@ export const getWithdarwCalldata = async (params: {
         sentMessageEvent.sender,
         sentMessageEvent.message,
         BigNumber.from(sentMessageEvent.messageNonce)
-      ) + remove0x(StateCommitmentChain_CONTRACT.address)
+      ) + remove0x(predeploys.L2CrossDomainMessenger)
     ) + "00".repeat(32)
   );
 
   //step4
   const stateTrieProof = await makeStateTrieProof(
     l2Provider as ethers.providers.JsonRpcProvider,
-    Number(sentMessageEvent.blockNumber),
+    Number(l2BlcokNumber),
     predeploys.OVM_L2ToL1MessagePasser,
     messageSlot
   );
@@ -112,9 +112,7 @@ export const getWithdarwCalldata = async (params: {
         stateRoot.stateRootIndexInBatch
       ),
     },
-    //@ts-ignore
     stateTrieWitness: toHexString(RLP.encode(stateTrieProof.accountProof)),
-    //@ts-ignore
     storageTrieWitness: toHexString(RLP.encode(stateTrieProof.storageProof)),
   };
 

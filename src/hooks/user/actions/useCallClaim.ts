@@ -15,7 +15,6 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import useCrosschainMessenger from "../useCrosschainMessenger";
 import { claimModalStatus } from "@/recoil/modal/atom";
 import { getWithdarwCalldata } from "@/utils/history/getWithdrawCalldata";
-import { l2Provider } from "@/config/l2Provider";
 
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
@@ -69,7 +68,8 @@ export default function useCallClaim(functionName: string) {
         hash: txt.stateBatchAppendedEvent.transactionHash,
         //@ts-ignore
         provider: L1Provider,
-        l2Provider: l2Provider,
+        //@ts-ignore
+        l2Provider: L2Provider,
         stateBatchAppendedEvent: txt.stateBatchAppendedEvent,
         sentMessageEvent: { ...txt.resolved, blockNumber: txt.blockNumber },
         l2BlcokNumber: txt.blockNumber,
