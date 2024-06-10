@@ -19,6 +19,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
+import AccountHistoryNew from "@/components/historyn/drawer";
 
 type ChainName = "MAINNET" | "TITAN" | undefined;
 
@@ -30,7 +31,7 @@ type SelectOption = {
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
-  const [ withdrawStatus ] = useRecoilState(confirmWithdrawStats);
+  const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const [tab, setTab] = useState("Activity");
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
@@ -52,7 +53,7 @@ export default function AccountHistory() {
   }) => {
     const { setTab, tab } = props;
     return (
-      <Flex columnGap={"24px"} mt="16px" mb="8px">
+      <Flex columnGap={"24px"} mt='16px' mb='8px'>
         {/* <Text
           cursor={"pointer"}
           color={tab === "Balance" ? "#fff" : "#5E626D"}
@@ -80,7 +81,7 @@ export default function AccountHistory() {
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement="right"
+      placement='right'
       onClose={() => {
         setIsOpen(false);
         setSelectedNetwork({
@@ -89,13 +90,13 @@ export default function AccountHistory() {
           networkImage: undefined,
         });
       }}
-      variant="clickThrough"
+      variant='clickThrough'
       trapFocus={false}
       useInert={true}
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}
-        onClick={() => mobileView ? setIsOpen(false) : ""}
+        onClick={() => (mobileView ? setIsOpen(false) : "")}
       />
 
       {mobileView && !withdrawStatus.isOpen && (
@@ -111,8 +112,8 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px="12px"
-        pb="0px"
+        px='12px'
+        pb='0px'
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
@@ -120,28 +121,43 @@ export default function AccountHistory() {
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
         // pos={"relative"}
       >
-        {!mobileView && <AccountContainer />}
-        <TabContainer setTab={setTab} tab={tab} />
-        {!mobileView && (
-          <Flex>
-            {Network}
-            {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
-            <SearchComponent tab={tab} />
+        <Flex direction='column' height='100%' overflow='hidden'>
+          {!mobileView && <AccountContainer />}
+          <TabContainer setTab={setTab} tab={tab} />
+          {!mobileView && (
+            <Flex>
+              {Network}
+              <SearchComponent tab={tab} />
+            </Flex>
+          )}
+          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
+            <Box
+              flex='1'
+              overflowY='auto'
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "6px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "transparent",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#343741",
+                  borderRadius: "3px",
+                },
+              }}
+              mr='-6px'
+            >
+              <AccountHistoryNew />
+            </Box>
           </Flex>
-        )}
-        <Flex mt={{ base: "0px", lg: "12px" }} height={"100%"}>
-          {/* {tab === "Balance" ? (
-            <BalanceContainer network={selectedNetwork} />
-          ) : (
-            <ActivityContainer network={selectedNetwork} />
-          )} */}
-          <ActivityContainer network={selectedNetwork} />
         </Flex>
         <Flex
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg="transparent"
+          bg='transparent'
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}

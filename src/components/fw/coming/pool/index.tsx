@@ -4,9 +4,9 @@ import { Box, Text, Flex, Button } from "@chakra-ui/react";
 
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import ScrolltoTopButton from "@/componenets/fw/coming/pool/ScrolltoTopButton";
-import ImageComingBox from "@/componenets/fw/coming/pool/ImageComingBox";
-import ImagePoolBox from "@/componenets/fw/coming/pool/ImagePoolBox";
+import ScrolltoTopButton from "@/components/fw/coming/pool/ScrolltoTopButton";
+import ImageComingBox from "@/components/fw/coming/pool/ImageComingBox";
+import ImagePoolBox from "@/components/fw/coming/pool/ImagePoolBox";
 
 export default function ComingPool() {
   enum PoolButtonType {
@@ -119,12 +119,13 @@ export default function ComingPool() {
         </Flex>
         <Flex
           bg={"#17181D"}
-          py={poolMobileView ? "24px" : "32px"}
+          pt={poolMobileView ? "24px" : "32px"}
           mt={poolMobileView ? "14px" : "16px"}
           w={"100%"}
           flexDirection='column'
-          justifyContent={"center"}
+          justifyContent={"flex-start"}
           alignItems='center'
+          h={"90%"}
         >
           <Box width={dynamicWidth}>
             <Box pb={poolMobileView ? "16px" : "24px"}>

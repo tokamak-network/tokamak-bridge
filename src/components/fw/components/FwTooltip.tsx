@@ -1,4 +1,4 @@
-import FwCustomTooltip from "@/componenets/fw/components/FwCustomTooltip";
+import FwCustomTooltip from "@/components/fw/components/FwCustomTooltip";
 import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import { CSSProperties } from "react";

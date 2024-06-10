@@ -94,3 +94,8 @@ export const fwUpdateFeeModalStatus = atom<boolean>({
   key: "fwUpdateFeeModalStatus",
   default: false,
 });
+
+export const swapConfirmModalStatus = atom<boolean>({
+  key: "swapConfirmModalStatus",
+  default: false,
+});

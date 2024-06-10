@@ -20,7 +20,7 @@ import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
 
-import useFxOptionModal from "@/componenets/fw/hooks/useFwOptionModal";
+import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();

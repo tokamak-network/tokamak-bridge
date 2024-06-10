@@ -1,5 +1,5 @@
 import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
-import FwCheckCustomIcon from "@/componenets/fw/components/FwCheckCustomIcon";
+import FwCheckCustomIcon from "@/components/fw/components/FwCheckCustomIcon";
 
 type TradeConfirmationProps = {
   isChecked: boolean;

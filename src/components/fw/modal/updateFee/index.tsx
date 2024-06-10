@@ -19,7 +19,7 @@ import useFwRecommend from "@/components/fw/hooks/useFwRecommend";
 import FwUpdateButton from "./FwUpdateButton";
 import FwUpdateFeeDetail from "./FwUpdateFeeDetail";
 import FwRefundDetail from "./FwRefundDetail";
-import FwCheckCustomIcon from "@/componenets/fw/components/FwCheckCustomIcon";
+import FwCheckCustomIcon from "@/components/fw/components/FwCheckCustomIcon";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.

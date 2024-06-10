@@ -1,6 +1,12 @@
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { Box, Center, Flex, Text } from "@chakra-ui/layout";
-import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  useMediaQuery,
+} from "@chakra-ui/react";
 import Network from "./Network";
 import Account from "./Account";
 import { usePathname } from "next/navigation";
@@ -27,8 +33,7 @@ import telegramHover from "assets/icons/header/telegramHover.svg";
 import linkedInHover from "assets/icons/header/linkedinHover.svg";
 import githubHover from "assets/icons/header/githubHover.svg";
 import hamburger from "assets/icons/header/hamburger.svg";
-import ETHCircle from "assets/icons/network/circle/Ethereum_circle.svg";
-import TitanCircle from "assets/icons/network/circle/Titan_circle.svg";
+import big_hamburger from "assets/icons/header/big_hamburger.svg";
 import { useRecoilState } from "recoil";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useConnectedNetwork from "@/hooks/network";
@@ -63,7 +68,9 @@ const HeaderMenu = (props: {
       fontSize={16}
       cursor={"pointer"}
       borderBottom={
-        !menuState && pathname.split("/")[1] === link.replaceAll("/", "")
+        !menuState &&
+        pathname &&
+        pathname.split("/")[1] === link.replaceAll("/", "")
           ? "3px solid #007AFF"
           : ""
       }
@@ -89,19 +96,19 @@ const CustomMenuItem = (props: {
     <MenuItem
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      target="_blank"
+      target='_blank'
       as={"a"}
       href={link}
       h={"18px"}
       marginBottom={"16px"}
       padding={"0px"}
       // border={'1px solid red'}
-      bg="#0F0F12"
+      bg='#0F0F12'
       _focus={{ background: "0F0F12" }}
       _hover={{ bg: "none", color: "#2a72e5" }}
     >
-      <Flex mr="9px">
-        <Image src={hover ? hoverIcon : icon} alt="icon" />
+      <Flex mr='9px'>
+        <Image src={hover ? hoverIcon : icon} alt='icon' />
       </Flex>
       <Text
         fontSize={
@@ -158,24 +165,27 @@ export default function Header() {
   const [isMobileMenu, setMobileMenuOpen] = useRecoilState(mobileMenuStatus);
   const [actionModalStatus, setActionMethod] =
     useRecoilState(actionMethodStatus);
-  const { mobileView } = useMediaView();
+  const { headerMobileView: mobileView } = useMediaView();
+  const [menuView] = useMediaQuery("(min-width: 680px)");
+
   const { isConnected } = useAccount();
   const { isSupportedChain } = useConnectedNetwork();
-  const network = useConnectedNetwork();
+  const router = useRouter();
+  const { mode } = useGetMode();
 
-  const handleMenuButtonhover = (event: any) => {
+  const handleMenuButtonhover = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     event.preventDefault();
     setMenuState(true);
   };
 
-  const handleMenuButtonClick = (event: any) => {
+  const handleMenuButtonClick = (
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
     event.preventDefault();
-
     !menuState && setMenuState(!menuState);
   };
-
-  const router = useRouter();
-  const { mode } = useGetMode();
 
   return (
     <Flex
@@ -208,7 +218,7 @@ export default function Header() {
             alt={"LOGO_IMAGE"}
           />
         </Box>
-        <Flex columnGap={"30px"} display={{ base: "none", lg: "flex" }}>
+        <Flex columnGap={"30px"} display={menuView ? "flex" : "none"}>
           {menuList.map((menuInfo) => (
             <HeaderMenu
               key={menuInfo.title}
@@ -228,7 +238,6 @@ export default function Header() {
               fontSize={16}
               cursor={"pointer"}
               onMouseEnter={handleMenuButtonhover}
-              // onMouseLeave={()=> setHoverOn(false)}
               onMouseDown={handleMenuButtonClick}
               borderBottom={menuState ? "3px solid #007AFF" : ""}
               onClick={handleMenuButtonClick}
@@ -243,13 +252,13 @@ export default function Header() {
                   // width={"24px"}
                   transform={menuState === true ? "rotate(180deg)" : ""}
                 >
-                  <Image src={arrow} alt="icon_arrow" />
+                  <Image src={arrow} alt='icon_arrow' />
                 </Flex>
               </Flex>
             </MenuButton>
             <MenuList
               onMouseLeave={() => setMenuState(false)}
-              bg="#0F0F12"
+              bg='#0F0F12'
               mt={"17px"}
               border={"1px solid #313442"}
               style={{
@@ -261,23 +270,23 @@ export default function Header() {
               }}
             >
               <CustomMenuItem
-                link="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge"
-                title="User Guide"
+                link='https://docs.tokamak.network/home/02-service-guide/tokamak-bridge'
+                title='User Guide'
                 icon={userguide}
                 hoverIcon={userGuideHover}
               />
               <CustomMenuItem
-                link="https://forms.gle/GLY1PZq4BH4RqZY79"
-                title="Get Help"
+                link='https://forms.gle/GLY1PZq4BH4RqZY79'
+                title='Get Help'
                 icon={lightbulb}
                 hoverIcon={lightbulbHover}
               />
-              <Flex w="100%" alignItems={"center"} mb={"16px"}>
-                <Flex w="24px" h="1px" bg={"#757893"} mr="10px"></Flex>
+              <Flex w='100%' alignItems={"center"} mb={"16px"}>
+                <Flex w='24px' h='1px' bg={"#757893"} mr='10px'></Flex>
                 <Text color={"#757893"} fontSize={"12px"}>
                   COMMUNITY
                 </Text>
-                <Flex w="24px" h="1px" bg={"#757893"} ml="10px"></Flex>
+                <Flex w='24px' h='1px' bg={"#757893"} ml='10px'></Flex>
               </Flex>
               {menuLinks.map((link: any) => {
                 return (
@@ -319,10 +328,10 @@ export default function Header() {
           {/* <AccountModal /> */}
         </Flex>
 
-        {mobileView && (
+        {!menuView && (
           <Flex
-            w={"32px"}
-            h={"32px"}
+            w={!mobileView ? "48px" : "32px"}
+            h={!mobileView ? "48px" : "32px"}
             justify={"center"}
             align={"center"}
             borderRadius={8}
@@ -333,7 +342,10 @@ export default function Header() {
               setMobileMenuOpen(true);
             }}
           >
-            <Image alt="hamburger" src={hamburger} />
+            <Image
+              alt='hamburger'
+              src={!mobileView ? big_hamburger : hamburger}
+            />
           </Flex>
         )}
 

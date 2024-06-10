@@ -86,7 +86,7 @@ const MaintenanceBanner = () => {
             {" "}
             <Text fontSize={"14px"}>
               {isTestnet
-                ? "Titan Goerli Network under maintenance."
+                ? "Titan Sepolia Network under maintenance."
                 : "Titan Network under maintenance."}
             </Text>
           </>
@@ -95,7 +95,7 @@ const MaintenanceBanner = () => {
             {" "}
             <Text fontSize={"14px"}>
               {isTestnet
-                ? "Titan Goerli Network scheduled maintenance commencing in:"
+                ? "Titan Sepolia Network scheduled maintenance commencing in:"
                 : "Titan Network scheduled maintenance commencing in:"}
             </Text>
           </>
