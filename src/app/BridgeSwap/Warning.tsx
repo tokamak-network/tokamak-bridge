@@ -10,8 +10,8 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import { WarningText } from "@/components/ui/WarningText";
 import useIsTon from "@/hooks/token/useIsTon";
 import {
-  GOERLI_CONTRACTS,
   MAINNET_CONTRACTS,
+  SEPOLIA_CONTRACTS,
   TOKAMAK_CONTRACTS,
 } from "@/constant/contracts";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
@@ -53,7 +53,7 @@ export default function Warning() {
   if (mode === "Swap" && inToken && outToken && isTONatPair) {
     if (
       outToken?.tokenAddress === MAINNET_CONTRACTS.TON_ADDRESS ||
-      outToken?.tokenAddress === GOERLI_CONTRACTS.TON_ADDRESS
+      outToken?.tokenAddress === SEPOLIA_CONTRACTS.TON_ADDRESS
     ) {
       return (
         <WarningText

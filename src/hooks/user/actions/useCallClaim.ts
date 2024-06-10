@@ -14,6 +14,8 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
 import useCrosschainMessenger from "../useCrosschainMessenger";
 import { claimModalStatus } from "@/recoil/modal/atom";
+import { getWithdarwCalldata } from "@/utils/history/getWithdrawCalldata";
+import { l2Provider } from "@/config/l2Provider";
 
 export default function useCallClaim(functionName: string) {
   const { connectedChainId, isConnectedToMainNetwork, layer } =
@@ -45,13 +47,33 @@ export default function useCallClaim(functionName: string) {
     return proof;
   };
 
+  const { L1Provider, L2Provider } = useProvier();
+
   const claim = useCallback(
     async (txt: any) => {
       setClaimModal(true);
       setIsOpen(true);
       setModalOpen("confirming");
 
-      getProof(txt).then(async (proof) => {
+      // const proof = await getWithdarwCalldata({
+      //   hash: txt.stateBatchAppendedEvent.transactionHash,
+      //   //@ts-ignore
+      //   provider: L1Provider,
+      //   l2Provider: l2Provider,
+      //   stateBatchAppendedEvent: txt.stateBatchAppendedEvent,
+      //   sentMessageEvent: { ...txt.resolved, blockNumber: txt.blockNumber },
+      //   l2BlcokNumber: txt.blockNumber,
+      // });
+
+      getWithdarwCalldata({
+        hash: txt.stateBatchAppendedEvent.transactionHash,
+        //@ts-ignore
+        provider: L1Provider,
+        l2Provider: l2Provider,
+        stateBatchAppendedEvent: txt.stateBatchAppendedEvent,
+        sentMessageEvent: { ...txt.resolved, blockNumber: txt.blockNumber },
+        l2BlcokNumber: txt.blockNumber,
+      }).then(async (proof) => {
         setClaimModal(false);
 
         if (Boolean(layer !== "L1") || layer === "L2") {
@@ -91,6 +113,18 @@ export default function useCallClaim(functionName: string) {
             }
           }
         } else {
+          console.log(
+            "target : ",
+            txt.resolved.target,
+            "sender : ",
+            txt.resolved.sender,
+            "message : ",
+            txt.resolved.message,
+            "messageNonce : ",
+            txt.resolved.messageNonce,
+            "proof : ",
+            proof
+          );
           try {
             write({
               args: [

@@ -46,6 +46,7 @@ export const getWithdarwCalldata = async (params: {
     StateCommitmentChainAbi,
     provider
   );
+
   //step 2
   const [stateRoots] =
     StateCommitmentChain_CONTRACT.interface.decodeFunctionData(
@@ -64,6 +65,7 @@ export const getWithdarwCalldata = async (params: {
       extraData: stateBatchAppendedEvent._extraData,
     },
   };
+
   //step3
   const messageSlot = ethers.utils.keccak256(
     ethers.utils.keccak256(
@@ -79,7 +81,7 @@ export const getWithdarwCalldata = async (params: {
   //step4
   const stateTrieProof = await makeStateTrieProof(
     l2Provider as ethers.providers.JsonRpcProvider,
-    sentMessageEvent.blockNumber,
+    Number(sentMessageEvent.blockNumber),
     predeploys.OVM_L2ToL1MessagePasser,
     messageSlot
   );

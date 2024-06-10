@@ -106,10 +106,8 @@ export default function useGetTransaction() {
              * withdraw 콜데이터 생성을 위해 사용함
              */
 
-            const currentStatus = await getCurretStatus(
-              Number(tx.blockNumber),
-              resolved
-            );
+            const { currentStatus, stateBatchAppendeds } =
+              await getCurretStatus(Number(tx.blockNumber), resolved);
 
             //the meaning of each status can be found here
             //https://www.notion.so/onther/Lakmi-s-Handover-Tasks-74f3fe996632480bb827148b3488e382?pvs=4#c74175edb844412b8f20f920fca76e19
@@ -229,7 +227,7 @@ export default function useGetTransaction() {
                     let copy = {
                       ...tx,
                       ...l1tx,
-                      l2TxReceipt: l2TxReceipt,
+                      l2TxReceipt,
                       l2timeStamp: tx.blockTimestamp,
                       l1timeStamp: l1tx ? l1tx.blockTimestamp : 0,
                       l1Block: l1tx.blockNumber,
@@ -239,8 +237,11 @@ export default function useGetTransaction() {
                       _amount: l1tx._amount,
                       _l1Token: l1tx._l1Token,
                       _l2Token: l1tx._l2Token,
-                      currentStatus: currentStatus,
-                      resolved: resolved,
+                      currentStatus,
+                      resolved,
+                      stateBatchAppendedEvent: stateBatchAppendeds,
+                      // sentMessageEvent: ,
+                      // l2blockNumber
                     };
                     return copy;
                   }
@@ -258,8 +259,9 @@ export default function useGetTransaction() {
                     _l1Token: l1Token,
                     _l2Token: l2Token,
                     _amount: amnt,
-                    currentStatus: currentStatus,
-                    resolved: resolved,
+                    currentStatus,
+                    resolved,
+                    stateBatchAppendedEvent: stateBatchAppendeds,
                   };
                   return copy;
                 }

@@ -79,7 +79,6 @@ export default function Entry({ children }: { children: React.ReactNode }) {
                   ></Box>
                 )}
               </Flex>
-
               <GlobalComponents />
               <Drawers />
               <Modals />

@@ -269,27 +269,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       >
         {txes}
       </Flex>
-      {/* {getLayerFiltered.length > getPaginatedData.length &&
-        tData.loadingState === "present" && (
-          <Flex
-            my={{ base:"16px", lg: "32px" }}
-            justifyContent={"center"}
-            alignItems={"start"}
-          >
-            <Button
-              bg="transparent"
-              border={"1px solid #313442"}
-              fontSize={"12px"}
-              color={"#fff"}
-              fontWeight={500}
-              _hover={{}}
-              _active={{}}
-              onClick={() => setNumData(numData + 2)}
-            >
-              Load more
-            </Button>
-          </Flex>
-        )} */}
     </Flex>
   );
 }
