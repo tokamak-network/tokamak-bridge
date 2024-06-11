@@ -41,7 +41,7 @@ export const historyData: TransactionHistory[] = [
   },
   {
     action: Action.Withdraw,
-    status: Status.Finalized,
+    status: Status.Finalize,
     inNetwork: Network.Sepolia,
     outNetwork: Network.TitanSepolia,
     transactionHashes: {
@@ -60,7 +60,7 @@ export const historyData: TransactionHistory[] = [
   {
     //파이널라이즈는 애러가 없다. 헤딩 mock은 추후 시간을 조정해서 claim버튼이 나오도록(7일 지난 걸로 하는 데이터로 한다.)
     action: Action.Withdraw,
-    status: Status.Finalized,
+    status: Status.Finalize,
     inNetwork: Network.Sepolia,
     outNetwork: Network.TitanSepolia,
     transactionHashes: {
@@ -100,7 +100,7 @@ export const historyData: TransactionHistory[] = [
   },
   {
     action: Action.Deposit,
-    status: Status.Finalized,
+    status: Status.Finalize,
     inNetwork: Network.TitanSepolia,
     outNetwork: Network.Sepolia,
     transactionHashes: {

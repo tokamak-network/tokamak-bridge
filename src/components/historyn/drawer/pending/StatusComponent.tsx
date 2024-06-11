@@ -32,14 +32,14 @@ export default function StatusComponent(
   // Countdown is needed only for the following conditions
   const shouldCountdown =
     (transactionData.status === Status.Rollup ||
-      transactionData.status === Status.Finalized) &&
+      transactionData.status === Status.Finalize) &&
     isActive;
 
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
       getTimeDisplay(transactionData)
     : // If not active and status is Finalized, display empty value
-    !isActive && label === Status.Finalized
+    !isActive && label === Status.Finalize
     ? ""
     : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
@@ -83,14 +83,14 @@ export default function StatusComponent(
 
   // Display calendar button
   const calendarButton =
-    label === Status.Finalized &&
+    label === Status.Finalize &&
     timeDisplay !== "00 : 00" &&
     isActive &&
     transactionData.action === Action.Withdraw;
 
   // Show claim button when Finalized status is complete
   const claimReadyButton =
-    label === Status.Finalized &&
+    label === Status.Finalize &&
     timeDisplay === "00 : 00" &&
     transactionData.action === Action.Withdraw;
 
