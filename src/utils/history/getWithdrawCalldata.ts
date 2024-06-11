@@ -9,9 +9,9 @@ import {
   toHexString,
   encodeCrossDomainMessageV0,
 } from "@eth-optimism/core-utils";
-import * as RLP from "@ethersproject/rlp";
 import StateCommitmentChainAbi from "constant/abis/StateCommitmentChain.json";
 import { predeploys } from "@eth-optimism/contracts";
+import * as RLP from "@ethersproject/rlp";
 
 /**
  * https://www.notion.so/tokamak/New-bridge-history-logic-fa37475899de433f983d74a8b83477f3
