@@ -19,7 +19,7 @@ export const fetchUserTransactions = async (
 
     //gets transactions on L1
     const resTxs = await axios.post(
-      `${"https://api.studio.thegraph.com/query/77358/tokamak-bridge-history/version/latest"}`,
+      `${process.env.NEXT_PUBLIC_HISTORY_L1_SUBGRAPH}`,
       {
         query: `
         {
