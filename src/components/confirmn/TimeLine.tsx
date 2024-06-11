@@ -6,7 +6,7 @@ export default function Timeline() {
       <Circle size='8px' bg='#007AFF' />
       <Box
         w={"0.5px"}
-        height='56px'
+        height='82px'
         border={"0.5px solid #007AFF"}
         opacity={"0.4"}
       />

@@ -4,19 +4,15 @@ import {
   Action,
 } from "@/components/historyn/types";
 import StatusComponent from "@/components/historyn/drawer/pending/StatusComponent";
+import { STATUS_CONFIG } from "@/components/historyn/constants";
 
 export default function PendingFooter(transaction: TransactionHistory) {
   const transactionData = transaction;
 
-  const statusConfig = {
-    withdraw: [Status.Initiate, Status.Rollup, Status.Finalize],
-    deposit: [Status.Initiate, Status.Finalize],
-  };
-
   const statuses =
     transactionData.action === Action.Withdraw
-      ? statusConfig.withdraw
-      : statusConfig.deposit;
+      ? STATUS_CONFIG.WITHDRAW
+      : STATUS_CONFIG.DEPOSIT;
 
   return (
     <>

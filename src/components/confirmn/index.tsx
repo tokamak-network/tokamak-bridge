@@ -24,12 +24,22 @@ import ConfirmDetails from "@/components/confirmn/ConfirmDetails";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
+import { STATUS_CONFIG } from "@/components/historyn/constants";
+import StatusComponent from "@/components/confirmn/StatusComponent";
+import ConditionalBox from "@/components/confirmn/ConditionalBox";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
   const { address } = useAccount();
 
-  console.log(swapConfirmModal.transaction);
+  if (!swapConfirmModal.transaction) {
+    return null;
+  }
+
+  const statuses =
+    swapConfirmModal.transaction.action === Action.Withdraw
+      ? STATUS_CONFIG.WITHDRAW
+      : STATUS_CONFIG.DEPOSIT;
 
   return (
     <Modal
@@ -146,93 +156,17 @@ export default function SwapConfirmModal() {
               </Box>
               <Box ml={"10px"}>
                 {/** 내부 반복 @inrepeat1 */}
-                <Flex
-                  h={"38px"}
-                  justifyContent={"space-between"}
-                  alignItems={"flex-start"}
-                  mb={"24px"}
-                >
-                  <Text
-                    fontWeight={600}
-                    fontSize={"17px"}
-                    lineHeight={"20px"}
-                    color={"#A0A3AD"}
-                  >
-                    Initiate
-                  </Text>
-                  <Flex alignItems={"center"}>
-                    <Text
-                      mr={"4px"}
-                      fontWeight={400}
-                      fontSize={"13px"}
-                      lineHeight={"20px"}
-                      color={"#A0A3AD"}
-                    >
-                      Transaction
-                    </Text>
-                    <Flex w={"14px"} h={"14px"}>
-                      <Image src={TxLink} alt={"TxLink"} />
-                    </Flex>
-                  </Flex>
-                </Flex>
+                <StatusComponent />
+                {/** @Box1 */}
+                <ConditionalBox type='wait' />
                 {/** 내부 반복 @inrepeat2 */}
-                <Flex
-                  h={"38px"}
-                  justifyContent={"space-between"}
-                  alignItems={"flex-start"}
-                >
-                  <Text
-                    fontWeight={600}
-                    fontSize={"17px"}
-                    lineHeight={"20px"}
-                    color={"#A0A3AD"}
-                  >
-                    Rollup
-                  </Text>
-                  <Flex alignItems={"center"}>
-                    <Text
-                      mr={"4px"}
-                      fontWeight={400}
-                      fontSize={"13px"}
-                      lineHeight={"20px"}
-                      color={"#A0A3AD"}
-                    >
-                      Transaction
-                    </Text>
-                    <Flex w={"14px"} h={"14px"}>
-                      <Image src={TxLink} alt={"TxLink"} />
-                    </Flex>
-                  </Flex>
-                </Flex>
-                <Box
-                  mt={"3px"}
-                  mb={"21px"}
-                  pl={"12px"}
-                  pr={"210px"}
-                  py={"3px"}
-                  borderRadius={"4px"}
-                  bg={"#1F2128"}
-                >
-                  <Flex alignItems={"center"}>
-                    <Text
-                      fontWeight={600}
-                      fontSize={"11px"}
-                      lineHeight={"22px"}
-                    >
-                      84 : 00 : 00
-                    </Text>
-                    <Flex
-                      w={"18px"}
-                      h={"18px"}
-                      ml={"6px"}
-                      justifyContent={"center"}
-                    >
-                      <Image src={GoogleCalendar} alt={"GoogleCalendar"} />
-                    </Flex>
-                  </Flex>
-                </Box>
+                <StatusComponent />
+                {/** 내부 반복 @inrepeat2 */}
+                {/** @Box2 */}
+                <ConditionalBox type='timer' />
                 {/** 내부 반복 @inrepeat3 */}
-                <Flex
+                <StatusComponent />
+                {/* <Flex
                   h={"38px"}
                   justifyContent={"space-between"}
                   alignItems={"flex-start"}
@@ -280,7 +214,7 @@ export default function SwapConfirmModal() {
                       $30.63
                     </Text>
                   </Box>
-                </Flex>
+                </Flex> */}
               </Box>
             </Flex>
           </Box>

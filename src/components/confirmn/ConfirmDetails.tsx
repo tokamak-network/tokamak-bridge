@@ -3,17 +3,22 @@ import Image from "next/image";
 import { useMemo } from "react";
 import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import { TransactionHistory } from "@/components/historyn/types";
+import {
+  TransactionHistory,
+  Status,
+  Action,
+} from "@/components/historyn/types";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants/index";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { STATUS_CONFIG } from "@/components/historyn/constants";
 
-interface ConfirmDetail {
+interface ConfirmDetailProps {
   isInNetwork: boolean;
   transactionHistory: TransactionHistory | undefined;
 }
 
-export default function ConfirmDetails(props: ConfirmDetail) {
+export default function ConfirmDetails(props: ConfirmDetailProps) {
   const { isInNetwork, transactionHistory } = props;
 
   if (!transactionHistory) {
@@ -31,6 +36,11 @@ export default function ConfirmDetails(props: ConfirmDetail) {
     }
     return "0.00";
   }, [tokenPriceWithAmount, transactionHistory]);
+
+  const statuses =
+    transactionHistory.action === Action.Withdraw
+      ? STATUS_CONFIG.WITHDRAW
+      : STATUS_CONFIG.DEPOSIT;
 
   return (
     <Flex

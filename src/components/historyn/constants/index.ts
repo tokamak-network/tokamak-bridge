@@ -1,3 +1,5 @@
+import { Status } from "@/components/historyn/types";
+
 // index.tsx
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
@@ -15,4 +17,9 @@ export const BLOCKEXPLORER_CONSTANTS = {
   SEPOLIA: "https://sepolia.etherscan.io",
   TITAN_SEPOLIA: "https://explorer.titan-sepolia.tokamak.network",
   TITAN: "https://explorer.titan.tokamak.network",
+};
+
+export const STATUS_CONFIG = {
+  WITHDRAW: [Status.Initiate, Status.Rollup, Status.Finalize],
+  DEPOSIT: [Status.Initiate, Status.Finalize],
 };

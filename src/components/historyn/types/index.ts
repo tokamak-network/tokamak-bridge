@@ -60,6 +60,7 @@ export type TransactionHistory =
   | DepositTransactionHistory;
 
 export enum TransactionStatus {
+  Initiate = 0,
   WithdrawRollup = 1,
   WithdrawFinalized = 2,
   WithdrawCompleted = 3,
