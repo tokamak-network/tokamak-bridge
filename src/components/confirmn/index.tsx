@@ -26,9 +26,11 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
 
+  console.log(swapConfirmModal.transaction);
+
   return (
     <Modal
-      isOpen={swapConfirmModal}
+      isOpen={swapConfirmModal.isOpen}
       onClose={onCloseSwapConfirmModal}
       isCentered
     >

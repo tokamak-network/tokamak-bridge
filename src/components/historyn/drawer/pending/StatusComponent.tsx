@@ -101,7 +101,7 @@ export default function StatusComponent(
       <Flex alignItems='center'>
         <Circle
           size='6px'
-          bg={!isActive && label === Status.Finalized ? "#A0A3AD" : "#007AFF"}
+          bg={!isActive && label === Status.Finalize ? "#A0A3AD" : "#007AFF"}
         />
         <Text
           ml={"6px"}
@@ -140,7 +140,11 @@ export default function StatusComponent(
             lineHeight={"22px"}
             color={errorRollup ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}
-            onClick={!isActive ? onOpenSwapConfirmModal : undefined}
+            onClick={
+              !isActive
+                ? () => onOpenSwapConfirmModal(transactionData)
+                : undefined
+            }
           >
             {timeDisplay}
           </Text>

@@ -7,7 +7,6 @@ import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/components/historyn/types";
-import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants";
 import PendingFooter from "./pendingFooter";
 
 interface PendingProps {
@@ -31,7 +30,10 @@ export default function Pending(props: PendingProps) {
         >
           {transactionData.action}
         </Text>
-        <Flex cursor={"pointer"} onClick={onOpenSwapConfirmModal}>
+        <Flex
+          cursor={"pointer"}
+          onClick={() => onOpenSwapConfirmModal(transactionData)}
+        >
           <Image src={TxLink} alt={"TxLink"} />
         </Flex>
       </Flex>

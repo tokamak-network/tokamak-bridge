@@ -58,7 +58,7 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
           cursor={"pointer"}
-          onClick={onOpenSwapConfirmModal}
+          onClick={() => onOpenSwapConfirmModal(transactionData)}
         >
           2023.04.03
         </Text>
