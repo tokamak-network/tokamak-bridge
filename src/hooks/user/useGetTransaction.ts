@@ -18,7 +18,6 @@ import {
 import * as titanSDK from "@tokamak-network/tokamak-layer2-sdk";
 import { userTransactions } from "@/recoil/userHistory/transaction";
 import { useRecoilState } from "recoil";
-import { subgraphApolloClientsForHistory } from "@/graphql/thegraph/apolloForHistory";
 import { getCurretStatus } from "@/utils/history/getCurrentStatus";
 
 export default function useGetTransaction() {
@@ -28,8 +27,6 @@ export default function useGetTransaction() {
   const { address } = useAccount();
   const { layer, isLayer2 } = useConnectedNetwork();
   const { crossMessenger, crossMessengerTokamak } = useCrosschainMessenger();
-
-  const client = subgraphApolloClientsForHistory[1];
 
   //titanSDK as an L2 provider for certain functions
   const l2ProSDK = titanSDK.asL2Provider(isLayer2 ? provider : L2Provider);
@@ -106,7 +103,7 @@ export default function useGetTransaction() {
              * withdraw 콜데이터 생성을 위해 사용함
              */
 
-            const { currentStatus, stateBatchAppendeds } =
+            const { currentStatus, stateBatchAppendeds, relayedMessageTxHash } =
               await getCurretStatus(Number(tx.blockNumber), resolved);
 
             //the meaning of each status can be found here
@@ -210,14 +207,14 @@ export default function useGetTransaction() {
               //If the receipt is not null, then the tx has been relayed to l1 and an L1 tx exists.
               //If the receipt is null, L1 tx does not exist yet.
               else {
-                if (currentStatus === 6) {
+                if (currentStatus === 6 && relayedMessageTxHash) {
                   //finds the corresponding data object of the l1 tx from the subgraph data
                   const l1tx =
                     userTxfromSubgraph.formattedL1WithdrawResults.filter(
                       (txWithdrawResult: EthType | Erc20Type) => {
                         return (
                           txWithdrawResult.transactionHash ===
-                          tx.transactionHash
+                          relayedMessageTxHash
                         );
                       }
                     )[0];
@@ -240,14 +237,11 @@ export default function useGetTransaction() {
                       currentStatus,
                       resolved,
                       stateBatchAppendedEvent: stateBatchAppendeds,
-                      // sentMessageEvent: ,
-                      // l2blockNumber
                     };
                     return copy;
                   }
-                }
-                //if there is no l1 receipt, then return the following data
-                else {
+                } else {
+                  //if there is no l1 receipt, then return the following data
                   const amnt = BigInt(logs[1]).toString();
                   let copy = {
                     ...tx,
@@ -255,7 +249,6 @@ export default function useGetTransaction() {
                     l2timeStamp: tx.blockTimestamp,
                     l2txHash: tx.transactionHash,
                     event: "withdraw",
-                    test: "test",
                     _l1Token: l1Token,
                     _l2Token: l2Token,
                     _amount: amnt,
@@ -263,6 +256,7 @@ export default function useGetTransaction() {
                     resolved,
                     stateBatchAppendedEvent: stateBatchAppendeds,
                   };
+
                   return copy;
                 }
               }

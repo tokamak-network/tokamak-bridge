@@ -93,8 +93,6 @@ export const getWithdarwCalldata = async (params: {
     messageSlot
   );
 
-  console.log(stateTrieProof);
-
   const messageTxIndex = l2BlcokNumber - 1;
   //step5
   const indexInBatch =
@@ -109,8 +107,6 @@ export const getWithdarwCalldata = async (params: {
     stateRootIndexInBatch: indexInBatch,
     batch: stateRootBatch,
   };
-
-  console.log("stateTrieProof", stateTrieProof);
 
   //step6
   const proof = {

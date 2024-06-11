@@ -19,7 +19,7 @@ export const fetchUserTransactions = async (
 
     //gets transactions on L1
     const resTxs = await axios.post(
-      `${process.env.NEXT_PUBLIC_HISTORY_L1_SUBGRAPH}`,
+      `${"https://api.studio.thegraph.com/query/77358/tokamak-bridge-history/version/latest"}`,
       {
         query: `
         {
@@ -199,10 +199,10 @@ export const fetchUserTransactions = async (
     const formattedL1WithdrawResults = allWithL1Txs;
 
     return {
-      formattedL1DepositResults: formattedL1DepositResults,
-      formattedL1WithdrawResults: formattedL1WithdrawResults,
-      formattedWithdraw: formattedWithdraw,
-      formattedDeposit: formattedDeposit,
+      formattedL1DepositResults,
+      formattedL1WithdrawResults,
+      formattedWithdraw,
+      formattedDeposit,
     };
   }
 };

@@ -47,7 +47,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
 
   const handleCheckWithdrawModal = () => {
     //when the general area of the withdraw tx is clicked, it should open the confirm withdraw modal.
-    //setting up the necessary data for the claim withdraw modal and set it to open 
+    //setting up the necessary data for the claim withdraw modal and set it to open
     if (tx !== undefined) {
       setClaimTx(tx);
       setWithdrawStatus({
@@ -72,7 +72,13 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
       w={{ baes: "100%", lg: "336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}
-      bg={!mobileView ? "#15161D" : tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? "" : "#15161D"}
+      bg={
+        !mobileView
+          ? "#15161D"
+          : tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
+          ? ""
+          : "#15161D"
+      }
       p="12px"
       flexDir={"column"}
       rowGap={"8px"}
@@ -88,23 +94,38 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
         <Flex justifyContent={"space-between"} w="100%">
           {mobileView ? (
             <>
-                <Flex columnGap={"4px"} onClick={handleCheckWithdrawModal}>
-                  <Text fontSize={"14px"} fontWeight={600} color={tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? "#A0A3AD" : ""}>
-                    {
-                      tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? "Withdraw Completed" : "Withdraw"
-                    }
-                  </Text>
-                </Flex>
-                <Flex columnGap={"4px"} align={"center"} onClick={handleCheckWithdrawModal}>
-                  <Text fontSize={12}>
-                    {commafy(ethers.utils.formatUnits(
+              <Flex columnGap={"4px"} onClick={handleCheckWithdrawModal}>
+                <Text
+                  fontSize={"14px"}
+                  fontWeight={600}
+                  color={
+                    tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
+                      ? "#A0A3AD"
+                      : ""
+                  }
+                >
+                  {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
+                    ? "Withdraw Completed"
+                    : "Withdraw"}
+                </Text>
+              </Flex>
+              <Flex
+                columnGap={"4px"}
+                align={"center"}
+                onClick={handleCheckWithdrawModal}
+              >
+                <Text fontSize={12}>
+                  {commafy(
+                    ethers.utils.formatUnits(
                       tx._amount.toString(),
                       token?.decimals
-                    ), 2)}{" "}
-                    {(token?.symbol as string) || "ETH"}
-                  </Text>
-                  <Image width={18} height={18} alt="link" src={LinkIcon} />
-                </Flex>
+                    ),
+                    2
+                  )}{" "}
+                  {(token?.symbol as string) || "ETH"}
+                </Text>
+                <Image width={18} height={18} alt="link" src={LinkIcon} />
+              </Flex>
             </>
           ) : (
             <>
@@ -145,7 +166,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                     });
                   } else {
                     // Prevent the click event from propagating to the parent Flex
-                    //when the status is 5, the user can claim. confirm withdraw modal opens 
+                    //when the status is 5, the user can claim. confirm withdraw modal opens
                     event.stopPropagation();
                     setClaimTx(tx);
                     claim(tx);

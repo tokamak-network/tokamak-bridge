@@ -220,7 +220,7 @@ export default function StatusTx(props: {
             fontWeight={600}
             cursor={"pointer"}
             _hover={{
-              textDecoration: mobileView ? "none" : "underline"
+              textDecoration: mobileView ? "none" : "underline",
             }}
             onClick={
               mobileView
@@ -301,27 +301,26 @@ export default function StatusTx(props: {
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
-        <Flex
-          fontSize={"11px"}
-        >
+        <Flex fontSize={"11px"}>
           <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-            
-            {!mobileView ? format(fromUnixTime(date), "yyyy.MM.dd") : (
+            {!mobileView ? (
+              format(fromUnixTime(date), "yyyy.MM.dd")
+            ) : (
               <Link
                 target="_blank"
                 style={{ textDecoration: "none" }}
-                href={
-                  `${
-                      layer === "L1"
-                        ? providers.l1BlockExplorer
-                        : providers.l2BlockExplorer
-                    }/tx/${txHash}`
-                }
+                href={`${
+                  layer === "L1"
+                    ? providers.l1BlockExplorer
+                    : providers.l2BlockExplorer
+                }/tx/${txHash}`}
               >
-                  <Flex gap="4px" >Transaction<Image alt="txmove" src={txMove} /></Flex>
+                <Flex gap="4px">
+                  Transaction
+                  <Image alt="txmove" src={txMove} />
+                </Flex>
               </Link>
             )}
-          
           </Text>
           {!mobileView && (
             <Text ml="3px" color={"#A0A3AD"}>
