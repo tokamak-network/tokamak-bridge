@@ -11,7 +11,9 @@ import {
   Button,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { Network } from "@/components/historyn/types";
+import { useAccount } from "wagmi";
+import { trimAddress } from "@/utils/trim";
+import { Network, Action } from "@/components/historyn/types";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
@@ -25,6 +27,7 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
+  const { address } = useAccount();
 
   console.log(swapConfirmModal.transaction);
 
@@ -43,7 +46,10 @@ export default function SwapConfirmModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            Confirm Withdraw
+            Confirm{" "}
+            {swapConfirmModal.transaction?.action === Action.Withdraw
+              ? "Withdraw"
+              : "Deposit"}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
@@ -68,76 +74,9 @@ export default function SwapConfirmModal() {
                 isInNetwork={false}
                 transactionHistory={swapConfirmModal.transaction}
               />
-
-              {/** Box안 fLEX 두번 반복 @Repeat2 */}
-              {/* <Flex
-                mt={"16px"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <Box>
-                  <Text
-                    fontWeight={500}
-                    fontSize={"14px"}
-                    lineHeight={"21px"}
-                    color={"#FFFFFF"}
-                  >
-                    Receive
-                  </Text>
-                  <Flex mt={"4px"}>
-                    <NetworkSymbol
-                      networkI={Network.Mainnet}
-                      networkH={14}
-                      networkW={14}
-                    />
-                    <Text
-                      ml={"6px"}
-                      fontWeight={400}
-                      fontSize={"11px"}
-                      lineHeight={"14px"}
-                      color={"#A0A3AD"}
-                    >
-                      Ethereum
-                    </Text>
-                  </Flex>
-                </Box>
-                <Box>
-                  <Flex>
-                    <Flex alignItems={"center"}>
-                      <TokenSymbol w={24} h={24} tokenType={"ETH"} />
-                    </Flex>
-                    <Box ml={"8px"}>
-                      <Flex>
-                        <Text
-                          mr={"6px"}
-                          fontWeight={600}
-                          fontSize={"16px"}
-                          lineHeight={"24px"}
-                          color={"#FFFFFF"}
-                        >
-                          2.0123409 ETH
-                        </Text>
-                        <Flex alignItems={"center"}>
-                          <Image src={TxLink} alt={"TxLink"} />
-                        </Flex>
-                      </Flex>
-                      <Text
-                        fontWeight={400}
-                        fontSize={"12px"}
-                        lineHeight={"18px"}
-                        color={"#A0A3AD"}
-                      >
-                        $000.00
-                      </Text>
-                    </Box>
-                  </Flex>
-                </Box>
-              </Flex> */}
             </Box>
-
             {/** BORDER TOP 경계 그려진다. */}
             <Box borderTop='1px solid #313442' mt={"16px"} pt={"16px"}>
-              {/** 해당 fLEX 두번 반복 @Repeat1 */}
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text
                   fontWeight={400}
@@ -164,7 +103,6 @@ export default function SwapConfirmModal() {
                   </Text>
                 </Flex>
               </Flex>
-              {/** 해당 fLEX 두번 반복 @Repeat2 */}
               <Flex
                 mt={"6px"}
                 justifyContent={"space-between"}
@@ -176,7 +114,11 @@ export default function SwapConfirmModal() {
                   lineHeight={"18px"}
                   color={"#A0A3AD"}
                 >
-                  Withdraw to
+                  {swapConfirmModal.transaction?.action === Action.Withdraw
+                    ? "Withdraw"
+                    : "Deposit"}
+                  {/** Add a space */ " "}
+                  to
                 </Text>
                 <Text
                   fontWeight={600}
@@ -184,7 +126,7 @@ export default function SwapConfirmModal() {
                   lineHeight={"18px"}
                   color={"#FFFFFF"}
                 >
-                  0x1234...1234
+                  {trimAddress({ address: address, firstChar: 6 })}
                 </Text>
               </Flex>
             </Box>
