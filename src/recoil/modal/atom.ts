@@ -98,11 +98,11 @@ export const fwUpdateFeeModalStatus = atom<boolean>({
 
 export const swapConfirmModalStatus = atom<{
   isOpen: boolean;
-  transaction: TransactionHistory | null;
+  transaction: TransactionHistory | undefined;
 }>({
   key: "swapConfirmModalStatus",
   default: {
     isOpen: false,
-    transaction: null,
+    transaction: undefined,
   },
 });

@@ -13,7 +13,7 @@ export default function useSwapConfirm() {
   };
 
   const onCloseSwapConfirmModal = useCallback(() => {
-    setSwapConfirmModal({ isOpen: false, transaction: null });
+    setSwapConfirmModal((prev) => ({ ...prev, isOpen: false }));
   }, []);
 
   return {

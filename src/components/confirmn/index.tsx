@@ -60,8 +60,14 @@ export default function SwapConfirmModal() {
           >
             {/** Box안 fLEX 두번 반복 @Repeat1 */}
             <Box>
-              <ConfirmDetails direction={"send"} />
-              <ConfirmDetails direction={"receive"} />
+              <ConfirmDetails
+                isInNetwork={true}
+                transactionHistory={swapConfirmModal.transaction}
+              />
+              <ConfirmDetails
+                isInNetwork={false}
+                transactionHistory={swapConfirmModal.transaction}
+              />
 
               {/** Box안 fLEX 두번 반복 @Repeat2 */}
               {/* <Flex
@@ -322,7 +328,6 @@ export default function SwapConfirmModal() {
                         0.0099 ETH
                       </Text>
                     </Flex>
-                    {/**오른쪽으로 붙이고 싶어 */}
                     <Text
                       fontWeight={400}
                       fontSize={"11px"}
