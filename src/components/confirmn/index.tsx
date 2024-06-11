@@ -18,6 +18,7 @@ import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
+import ConfirmDetails from "@/components/confirmn/ConfirmDetails";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
@@ -57,67 +58,11 @@ export default function SwapConfirmModal() {
           >
             {/** Box안 fLEX 두번 반복 @Repeat1 */}
             <Box>
-              <Flex justifyContent={"space-between"} alignItems={"center"}>
-                <Box>
-                  <Text
-                    fontWeight={500}
-                    fontSize={"14px"}
-                    lineHeight={"21px"}
-                    color={"#FFFFFF"}
-                  >
-                    Send
-                  </Text>
-                  <Flex mt={"4px"}>
-                    <NetworkSymbol
-                      networkI={Network.Titan}
-                      networkH={14}
-                      networkW={14}
-                    />
-                    <Text
-                      ml={"6px"}
-                      fontWeight={400}
-                      fontSize={"11px"}
-                      lineHeight={"14px"}
-                      color={"#A0A3AD"}
-                    >
-                      Titan
-                    </Text>
-                  </Flex>
-                </Box>
-                <Box>
-                  <Flex>
-                    <Flex alignItems={"center"}>
-                      <TokenSymbol w={24} h={24} tokenType={"ETH"} />
-                    </Flex>
-                    <Box ml={"8px"}>
-                      <Flex>
-                        <Text
-                          mr={"6px"}
-                          fontWeight={600}
-                          fontSize={"16px"}
-                          lineHeight={"24px"}
-                          color={"#FFFFFF"}
-                        >
-                          2.0123409 ETH
-                        </Text>
-                        <Flex alignItems={"center"}>
-                          <Image src={TxLink} alt={"TxLink"} />
-                        </Flex>
-                      </Flex>
-                      <Text
-                        fontWeight={400}
-                        fontSize={"12px"}
-                        lineHeight={"18px"}
-                        color={"#A0A3AD"}
-                      >
-                        $000.00
-                      </Text>
-                    </Box>
-                  </Flex>
-                </Box>
-              </Flex>
+              <ConfirmDetails direction={"send"} />
+              <ConfirmDetails direction={"receive"} />
+
               {/** Box안 fLEX 두번 반복 @Repeat2 */}
-              <Flex
+              {/* <Flex
                 mt={"16px"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
@@ -179,7 +124,7 @@ export default function SwapConfirmModal() {
                     </Box>
                   </Flex>
                 </Box>
-              </Flex>
+              </Flex> */}
             </Box>
 
             {/** BORDER TOP 경계 그려진다. */}
