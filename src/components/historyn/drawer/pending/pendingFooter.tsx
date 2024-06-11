@@ -9,8 +9,8 @@ export default function PendingFooter(transaction: TransactionHistory) {
   const transactionData = transaction;
 
   const statusConfig = {
-    withdraw: [Status.Initial, Status.Rollup, Status.Finalized],
-    deposit: [Status.Initial, Status.Finalized],
+    withdraw: [Status.Initiate, Status.Rollup, Status.Finalize],
+    deposit: [Status.Initiate, Status.Finalize],
   };
 
   const statuses =

@@ -6,14 +6,14 @@ const getStatusValue = (action: Action, status: Status): number => {
     switch (status) {
       case Status.Rollup:
         return TransactionStatus.WithdrawRollup;
-      case Status.Finalized:
+      case Status.Finalize:
         return TransactionStatus.WithdrawFinalized;
       case Status.Completed:
         return TransactionStatus.WithdrawCompleted;
     }
   } else if (action === Action.Deposit) {
     switch (status) {
-      case Status.Finalized:
+      case Status.Finalize:
         return TransactionStatus.DepositFinalized;
       case Status.Completed:
         return TransactionStatus.DepositCompleted;

@@ -6,9 +6,9 @@ export enum Action {
 }
 
 export enum Status {
-  Initial = "Initial",
+  Initiate = "Initiate",
   Rollup = "Rollup",
-  Finalized = "Finalized",
+  Finalize = "Finalize",
   Completed = "Completed",
 }
 
