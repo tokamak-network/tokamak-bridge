@@ -74,7 +74,7 @@ export default function FwComingModal() {
       <ModalOverlay />
       <ModalContent
         width={"404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
         marginTop={tabletView ? "auto" : undefined}
@@ -91,8 +91,8 @@ export default function FwComingModal() {
         <ModalBody p={0}>
           <FwComingOptionDetail />
           <Flex
-            alignItems='center'
-            justifyContent='space-between'
+            alignItems="center"
+            justifyContent="space-between"
             mt={"12px"}
             border={"1px solid #007AFF"}
             py={"16px"}
@@ -105,7 +105,7 @@ export default function FwComingModal() {
                 Official Standard Bridge
               </Text>
               <Box mt={"12px"}>
-                <Flex alignItems='center'>
+                <Flex alignItems="center">
                   <Text
                     fontWeight={400}
                     fontSize={"10px"}
@@ -134,7 +134,7 @@ export default function FwComingModal() {
                   lineHeight={"15px"}
                   color={"#A0A3AD"}
                 >
-                  Takes up to 24 hours to "prove" and
+                  Takes up to 11 minutes to "rollup" and
                 </Text>
                 <Text
                   fontSize={"10px"}
@@ -147,9 +147,9 @@ export default function FwComingModal() {
               </Box>
             </Box>
             <Circle
-              size='56px'
-              border='1px solid #007AFF'
-              bg='#15161D'
+              size="56px"
+              border="1px solid #007AFF"
+              bg="#15161D"
               pb={"8px"}
               pt={"6px"}
             >
@@ -161,7 +161,7 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   letterSpacing={"-0.05em"}
                   color={"#007AFF"}
-                  textAlign='center'
+                  textAlign="center"
                 >
                   7
                 </Text>
@@ -170,7 +170,7 @@ export default function FwComingModal() {
                   fontSize={"10px"}
                   lineHeight={"15px"}
                   color={"#007AFF"}
-                  textAlign='center'
+                  textAlign="center"
                 >
                   days
                 </Text>
@@ -178,10 +178,10 @@ export default function FwComingModal() {
             </Circle>
           </Flex>
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           <Button
             mt={"12px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{
