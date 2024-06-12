@@ -78,7 +78,8 @@ export default function useGetTransaction() {
         l2Pro !== undefined &&
         crossMessenger !== undefined &&
         crossMessengerTokamak !== undefined &&
-        userTxfromSubgraph !== undefined
+        userTxfromSubgraph !== undefined &&
+        isConnectedToMainNetwork !== undefined
       ) {
         //if 'set' parameter is set to true and there are formatted withdraw txs coming from the subgraph,
         //set the withdraw tx loading status to 'loading' and if not to 'absent'
@@ -104,7 +105,11 @@ export default function useGetTransaction() {
              */
 
             const { currentStatus, stateBatchAppendeds, relayedMessageTxHash } =
-              await getCurretStatus(Number(tx.blockNumber), resolved);
+              await getCurretStatus(
+                Number(tx.blockNumber),
+                resolved,
+                isConnectedToMainNetwork
+              );
 
             //the meaning of each status can be found here
             //https://www.notion.so/onther/Lakmi-s-Handover-Tasks-74f3fe996632480bb827148b3488e382?pvs=4#c74175edb844412b8f20f920fca76e19

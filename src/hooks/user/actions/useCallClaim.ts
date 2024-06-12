@@ -50,25 +50,15 @@ export default function useCallClaim(functionName: string) {
 
   const claim = useCallback(
     async (txt: any) => {
+      if (!L1Provider || !L2Provider) throw new Error("Provider not found");
+
       setClaimModal(true);
       setIsOpen(true);
       setModalOpen("confirming");
 
-      // const proof = await getWithdarwCalldata({
-      //   hash: txt.stateBatchAppendedEvent.transactionHash,
-      //   //@ts-ignore
-      //   provider: L1Provider,
-      //   l2Provider: l2Provider,
-      //   stateBatchAppendedEvent: txt.stateBatchAppendedEvent,
-      //   sentMessageEvent: { ...txt.resolved, blockNumber: txt.blockNumber },
-      //   l2BlcokNumber: txt.blockNumber,
-      // });
-
       getWithdarwCalldata({
         hash: txt.stateBatchAppendedEvent.transactionHash,
-        //@ts-ignore
         provider: L1Provider,
-        //@ts-ignore
         l2Provider: L2Provider,
         stateBatchAppendedEvent: txt.stateBatchAppendedEvent,
         sentMessageEvent: {

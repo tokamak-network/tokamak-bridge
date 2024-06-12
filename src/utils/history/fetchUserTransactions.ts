@@ -15,7 +15,7 @@ export const fetchUserTransactions = async (
     const formattedAddress = formatAddress(account);
     const L1Bridge = isConnectedToMainnet
       ? MAINNET_CONTRACTS.L1Bridge
-      : SEPOLIA_CONTRACTS.L1Bridge;
+      : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
 
     //gets transactions on L1
     const resTxs = await axios.post(
@@ -102,7 +102,7 @@ export const fetchUserTransactions = async (
     const withdrawTx = await axios.post(
       `${
         isConnectedToMainnet
-          ? process.env.NEXT_PUBLIC_L2MESSENGER_TITAN
+          ? process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY
           : process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY
       }`,
       {

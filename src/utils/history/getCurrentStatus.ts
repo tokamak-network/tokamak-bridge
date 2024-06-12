@@ -16,7 +16,11 @@ export const getCurretStatus = async (
   relayedMessageTxHash?: string;
 }> => {
   const resTxs = await axios.post(
-    `${"https://api.studio.thegraph.com/query/77358/tokamak-bridge-history/version/latest"}`,
+    `${
+      isConnectedToMainnet
+        ? process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY
+        : process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY
+    }`,
     {
       query: `
         {
