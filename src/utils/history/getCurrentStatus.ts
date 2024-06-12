@@ -8,7 +8,8 @@ import { stat } from "fs";
 
 export const getCurretStatus = async (
   l2BlockNumber: number,
-  resolved: Resolved
+  resolved: Resolved,
+  isConnectedToMainnet: boolean
 ): Promise<{
   currentStatus: number;
   stateBatchAppendeds: any;
@@ -51,7 +52,11 @@ export const getCurretStatus = async (
       value: BigNumber.from(0),
     });
     const resMesHash = await axios.post(
-      `${process.env.NEXT_PUBLIC_HISTORY_L1_SUBGRAPH}`,
+      `${
+        isConnectedToMainnet
+          ? process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY
+          : process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY
+      }`,
       {
         query: `
         query GetRelayedMessages($msgHash: String!) {

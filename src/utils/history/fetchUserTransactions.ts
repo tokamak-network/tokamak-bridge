@@ -19,7 +19,11 @@ export const fetchUserTransactions = async (
 
     //gets transactions on L1
     const resTxs = await axios.post(
-      `${process.env.NEXT_PUBLIC_HISTORY_L1_SUBGRAPH}`,
+      `${
+        isConnectedToMainnet
+          ? process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY
+          : process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY
+      }`,
       {
         query: `
         {
@@ -99,7 +103,7 @@ export const fetchUserTransactions = async (
       `${
         isConnectedToMainnet
           ? process.env.NEXT_PUBLIC_L2MESSENGER_TITAN
-          : process.env.NEXT_PUBLIC_L2MESSENGER_TITAN_GOERLI
+          : process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY
       }`,
       {
         query: `{sentMessages(
