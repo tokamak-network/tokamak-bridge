@@ -243,8 +243,8 @@ export default function SwapConfirmModal() {
             height={"48px"}
             borderRadius={"8px"}
             sx={{
-              backgroundColor: "#17181D",
-              color: "#8E8E92",
+              backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
+              color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
             }}
             _active={{}}
             _hover={{}}
@@ -254,10 +254,10 @@ export default function SwapConfirmModal() {
               <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
                 Finalize
               </Text>
-              <FwTooltip
+              {/* <FwTooltip
                 tooltipLabel={"text will be changed"}
                 style={{ marginLeft: "2px" }}
-              />
+              /> */}
             </Flex>
           </Button>
         </ModalFooter>
