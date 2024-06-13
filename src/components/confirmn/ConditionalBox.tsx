@@ -1,13 +1,29 @@
-import React from "react";
-import { Box, Flex, Text, Image } from "@chakra-ui/react";
+import React, { useMemo } from "react";
+import Image from "next/image";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
+import {
+  Status,
+  Action,
+  TransactionHistory,
+  isWithdrawTransactionHistory,
+} from "@/components/historyn/types";
+import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
+import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
+import { getTimeDisplay } from "@/components/historyn/utils/getTimeDisplay";
+import { useCountdown } from "@/components/historyn/hooks/useCountdown";
+import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
+import Refresh from "@/assets/icons/newHistory/refresh.svg";
+import { useCalendar } from "@/components/historyn/hooks/useGoogleCalendar";
 
 interface ConditionalBoxProps {
-  type: "wait" | "timer";
+  type: "wait" | "timer" | "box";
+  transactionData: TransactionHistory;
+  waitMessage?: string | undefined;
 }
 
 export default function ConditionalBox(props: ConditionalBoxProps) {
-  const { type } = props;
+  const { type, transactionData, waitMessage } = props;
 
   if (type === "wait") {
     return (
@@ -19,12 +35,56 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
             lineHeight='18px'
             color='#59628D'
           >
-            {"Wait 7 days"}
+            {waitMessage}
           </Text>
         </Flex>
       </Box>
     );
   } else if (type === "timer") {
+    const initialTimeDisplay = getTimeDisplay(transactionData);
+    const timeDisplay = useCountdown(
+      initialTimeDisplay,
+      Boolean(transactionData.errorMessage)
+    );
+
+    const errorRollup =
+      transactionData.errorMessage && transactionData.status === Status.Rollup;
+    const refreshRollup =
+      transactionData.status === Status.Rollup && timeDisplay === "00 : 00";
+    const calendarButton =
+      transactionData.status === Status.Finalize &&
+      timeDisplay !== "00 : 00" &&
+      transactionData.action === Action.Withdraw;
+    const claimReadyButton =
+      transactionData.status === Status.Finalize &&
+      timeDisplay === "00 : 00" &&
+      transactionData.action === Action.Withdraw;
+
+    if (claimReadyButton) {
+      return <Box w={"305.5px"} mt='3px' mb='21px' py='3px' bg='#15161D'></Box>;
+    }
+
+    const startDate = useMemo(() => {
+      if (
+        isWithdrawTransactionHistory(transactionData) &&
+        transactionData.blockTimestamps.rollupCompletedTimestamp
+      ) {
+        return new Date(
+          (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
+            convertTimeToMinutes(
+              TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
+              "days",
+              0
+            ) *
+              60) *
+            1000
+        );
+      }
+      return null;
+    }, [transactionData]);
+
+    const { handleCalendarClick } = useCalendar(startDate);
+
     return (
       <Box
         w={"305.5px"}
@@ -38,15 +98,52 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
         bg='#1F2128'
       >
         <Flex alignItems='center'>
-          <Text fontWeight={600} fontSize='11px' lineHeight='22px'>
-            84 : 00 : 00
+          <Text
+            fontWeight={600}
+            fontSize='11px'
+            lineHeight='22px'
+            color={errorRollup ? "#DD3A44" : "#FFFFFF"}
+          >
+            {timeDisplay}
           </Text>
-          <Flex w='18px' h='18px' ml='6px' justifyContent='center'>
-            <Image src={GoogleCalendar} alt='GoogleCalendar' />
-          </Flex>
+          {errorRollup && (
+            <Flex
+              w={"18px"}
+              h={"18px"}
+              ml={"2px"}
+              justifyContent={"center"}
+              cursor={"pointer"}
+            >
+              <Image src={Lightbulb} alt={"Lightbulb"} />
+            </Flex>
+          )}
+          {refreshRollup && (
+            <Flex
+              w={"18px"}
+              h={"18px"}
+              ml={"2px"}
+              justifyContent={"center"}
+              cursor={"pointer"}
+            >
+              <Image src={Refresh} alt={"Refresh"} />
+            </Flex>
+          )}
+          {calendarButton && (
+            <Flex
+              w={"18px"}
+              h={"18px"}
+              ml={"6px"}
+              justifyContent={"center"}
+              cursor={"pointer"}
+              onClick={handleCalendarClick}
+            >
+              <Image src={GoogleCalendar} alt={"GoogleCalendar"} />
+            </Flex>
+          )}
         </Flex>
       </Box>
     );
   }
-  return null; // return null if the type does not match any condition
+  // Box type
+  return <Box w={"305.5px"} mt='3px' mb='21px' py='3px' bg='#15161D' />;
 }

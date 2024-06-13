@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import {
   Modal,
   Flex,
@@ -13,33 +14,108 @@ import {
 import Image from "next/image";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import { Network, Action } from "@/components/historyn/types";
+import {
+  Network,
+  Action,
+  Status,
+  TransactionHistory,
+  isWithdrawTransactionHistory,
+} from "@/components/historyn/types";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
-import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
 import ConfirmDetails from "@/components/confirmn/ConfirmDetails";
-import TxLink from "@/assets/icons/confirm/link.svg";
-import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
-import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { STATUS_CONFIG } from "@/components/historyn/constants";
 import StatusComponent from "@/components/confirmn/StatusComponent";
 import ConditionalBox from "@/components/confirmn/ConditionalBox";
+import { getTimeDisplay } from "@/components/historyn/utils/getTimeDisplay";
+import getLineType from "@/components/confirmn/utils/getLineType";
+import { useCountdown } from "@/components/historyn/hooks/useCountdown";
+import { useCalendar } from "@/components/historyn/hooks/useGoogleCalendar";
+import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
+import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
+  const transactionData = swapConfirmModal.transaction;
+
   const { address } = useAccount();
 
-  if (!swapConfirmModal.transaction) {
+  if (!transactionData) {
     return null;
   }
+  const lineType = getLineType(transactionData);
 
-  const statuses =
-    swapConfirmModal.transaction.action === Action.Withdraw
+  const statuses: Status[] =
+    transactionData.action === Action.Withdraw
       ? STATUS_CONFIG.WITHDRAW
       : STATUS_CONFIG.DEPOSIT;
+
+  const renderStatusComponents = (
+    statuses: Status[],
+    transaction: TransactionHistory
+  ) => {
+    return statuses.map((statusKey, index) => {
+      const lineType = getLineType(transaction);
+
+      const type = (() => {
+        switch (lineType) {
+          case 0:
+            return "wait";
+          case 1:
+            return index === 0 ? "timer" : "wait";
+          case 2:
+            return index === 0 ? "box" : "timer";
+          case 3:
+            return "box";
+          case 4:
+            return "box";
+          case 100:
+            return "wait";
+          case 101:
+            return "timer";
+          case 102:
+            return "box";
+          default:
+            return undefined;
+        }
+      })();
+
+      const waitMessage = (() => {
+        if (lineType === 0) {
+          return index === 0 ? "Wait 1~11 min" : "Wait 7 days";
+        } else if (lineType === 1) {
+          return "Wait 7 days";
+        } else if (lineType === 100) {
+          return "Wait 1 min";
+        } else {
+          return undefined;
+        }
+      })();
+
+      return (
+        <React.Fragment key={index}>
+          <StatusComponent
+            label={statusKey}
+            transactionData={transaction}
+            lineType={lineType}
+          />
+          {(statuses.length === 2 && index === 0) ||
+          (statuses.length === 3 && index < 2)
+            ? type !== undefined && (
+                <ConditionalBox
+                  type={type}
+                  transactionData={transaction}
+                  waitMessage={waitMessage}
+                />
+              )
+            : null}
+        </React.Fragment>
+      );
+    });
+  };
 
   return (
     <Modal
@@ -57,7 +133,7 @@ export default function SwapConfirmModal() {
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
             Confirm{" "}
-            {swapConfirmModal.transaction?.action === Action.Withdraw
+            {transactionData?.action === Action.Withdraw
               ? "Withdraw"
               : "Deposit"}
           </Text>
@@ -78,11 +154,11 @@ export default function SwapConfirmModal() {
             <Box>
               <ConfirmDetails
                 isInNetwork={true}
-                transactionHistory={swapConfirmModal.transaction}
+                transactionHistory={transactionData}
               />
               <ConfirmDetails
                 isInNetwork={false}
-                transactionHistory={swapConfirmModal.transaction}
+                transactionHistory={transactionData}
               />
             </Box>
             {/** BORDER TOP 경계 그려진다. */}
@@ -124,7 +200,7 @@ export default function SwapConfirmModal() {
                   lineHeight={"18px"}
                   color={"#A0A3AD"}
                 >
-                  {swapConfirmModal.transaction?.action === Action.Withdraw
+                  {transactionData?.action === Action.Withdraw
                     ? "Withdraw"
                     : "Deposit"}
                   {/** Add a space */ " "}
@@ -152,69 +228,10 @@ export default function SwapConfirmModal() {
             <Flex>
               {/** 타임라인 @TimeLine */}
               <Box>
-                <TimeLine />
+                <TimeLine lineType={lineType} />
               </Box>
               <Box ml={"10px"}>
-                {/** 내부 반복 @inrepeat1 */}
-                <StatusComponent />
-                {/** @Box1 */}
-                <ConditionalBox type='wait' />
-                {/** 내부 반복 @inrepeat2 */}
-                <StatusComponent />
-                {/** 내부 반복 @inrepeat2 */}
-                {/** @Box2 */}
-                <ConditionalBox type='timer' />
-                {/** 내부 반복 @inrepeat3 */}
-                <StatusComponent />
-                {/* <Flex
-                  h={"38px"}
-                  justifyContent={"space-between"}
-                  alignItems={"flex-start"}
-                >
-                  <Text
-                    fontWeight={600}
-                    fontSize={"17px"}
-                    lineHeight={"20px"}
-                    color={"#A0A3AD"}
-                  >
-                    Finalize
-                  </Text>
-                  <Box>
-                    <Flex alignItems={"center"}>
-                      <Flex
-                        w={"14px"}
-                        h={"16px"}
-                        px={"0.88px"}
-                        py={"1px"}
-                        justifyContent={"center"}
-                        alignItems={"center"}
-                      >
-                        <Image
-                          src={GasStationSymbol}
-                          alt={"GasStationSymbol"}
-                        />
-                      </Flex>
-                      <Text
-                        ml={"6px"}
-                        fontWeight={400}
-                        fontSize={"14px"}
-                        lineHeight={"20px"}
-                        color={"#A0A3AD"}
-                      >
-                        0.0099 ETH
-                      </Text>
-                    </Flex>
-                    <Text
-                      fontWeight={400}
-                      fontSize={"11px"}
-                      lineHeight={"16.5px"}
-                      color={"#A0A3AD"}
-                      textAlign='right'
-                    >
-                      $30.63
-                    </Text>
-                  </Box>
-                </Flex> */}
+                {renderStatusComponents(statuses, transactionData)}
               </Box>
             </Flex>
           </Box>

@@ -1,18 +1,104 @@
 import { Box, VStack, Circle } from "@chakra-ui/react";
+import React from "react";
 
-export default function Timeline() {
+const Timeline = ({ lineType }: { lineType: number }) => {
+  const renderTimeline = () => {
+    switch (lineType) {
+      case 0:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box w={"0.5px"} height='82px' border={"0.5px dashed #A0A3AD"} />
+            <Circle size='8px' bg='#A0A3AD' />
+            <Box w={"0.5px"} height='82px' border={"0.5px dashed #A0A3AD"} />
+            <Circle size='8px' bg='#A0A3AD' />
+          </>
+        );
+      case 1:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box w={"0.5px"} height='82px' border={"0.5px dashed #007AFF"} />
+            <Circle size='8px' bg='#A0A3AD' />
+            <Box w={"0.5px"} height='82px' border={"0.5px dashed #A0A3AD"} />
+            <Circle size='8px' bg='#A0A3AD' />
+          </>
+        );
+      case 2:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box
+              w={"0.5px"}
+              height='59px'
+              border={"0.5px solid #007AFF"}
+              opacity='0.4'
+            />
+            <Circle size='8px' bg='#007AFF' />
+            <Box w={"0.5px"} height='84px' border={"0.5px dashed #007AFF"} />
+            <Circle size='8px' bg='#A0A3AD' />
+          </>
+        );
+      case 3:
+      case 4:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box
+              w={"0.5px"}
+              height='60px'
+              border={"0.5px solid #007AFF"}
+              opacity='0.4'
+            />
+            <Circle size='8px' bg='#007AFF' />
+            <Box
+              w={"0.5px"}
+              height='60px'
+              border={"0.5px solid #007AFF"}
+              opacity='0.4'
+            />
+            <Circle size='8px' bg='#007AFF' />
+          </>
+        );
+      case 100:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box w={"0.5px"} height='82px' border={"0.5px dashed #A0A3AD"} />
+            <Circle size='8px' bg='#A0A3AD' />
+          </>
+        );
+      case 101:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box w={"0.5px"} height='82px' border={"0.5px dashed #007AFF"} />
+            <Circle size='8px' bg='#A0A3AD' />
+          </>
+        );
+      case 102:
+        return (
+          <>
+            <Circle size='8px' bg='#007AFF' />
+            <Box
+              w={"0.5px"}
+              height='60px'
+              opacity='0.4'
+              border={"0.5px dashed #007AFF"}
+            />
+            <Circle size='8px' bg='#007AFF' />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
     <VStack mt={"6px"} spacing={0} align='center'>
-      <Circle size='8px' bg='#007AFF' />
-      <Box
-        w={"0.5px"}
-        height='82px'
-        border={"0.5px solid #007AFF"}
-        opacity={"0.4"}
-      />
-      <Circle size='8px' bg='#007AFF' />
-      <Box w={"0.5px"} height='82px' border={"0.5px dashed #007AFF"} />
-      <Circle size='8px' bg='#A0A3AD' />
+      {renderTimeline()}
     </VStack>
   );
-}
+};
+
+export default Timeline;

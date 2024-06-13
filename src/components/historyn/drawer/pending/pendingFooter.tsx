@@ -9,7 +9,7 @@ import { STATUS_CONFIG } from "@/components/historyn/constants";
 export default function PendingFooter(transaction: TransactionHistory) {
   const transactionData = transaction;
 
-  const statuses =
+  const statuses: Status[] =
     transactionData.action === Action.Withdraw
       ? STATUS_CONFIG.WITHDRAW
       : STATUS_CONFIG.DEPOSIT;

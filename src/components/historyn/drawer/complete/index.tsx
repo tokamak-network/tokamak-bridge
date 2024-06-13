@@ -3,6 +3,7 @@ import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/components/historyn/types";
 import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
+import formatNumber from "@/components/fw/utils/formatNumbers";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
@@ -39,17 +40,25 @@ export default function Complete(transaction: TransactionHistory) {
         <Flex alignItems='center'>
           <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
-            <Text
-              fontWeight={400}
-              fontSize={"9px"}
-              lineHeight={"13.5px"}
-              color={"#A0A3AD"}
-            >
-              {transactionData.tokenSymbol}
-            </Text>
-            <Text fontWeight={400} fontSize={"12px"} lineHeight={"18px"}>
-              {transactionData.amount}
-            </Text>
+            <Flex>
+              <Text
+                fontWeight={600}
+                fontSize={"14px"}
+                lineHeight={"21px"}
+                color={"#FFFFFF"}
+              >
+                {transactionData.amount}
+              </Text>
+              <Box w='4px' /> {/** space bar */}
+              <Text
+                fontWeight={400}
+                fontSize={"14px"}
+                lineHeight={"21px"}
+                color={"#A0A3AD"}
+              >
+                {transactionData.tokenSymbol}
+              </Text>
+            </Flex>
           </Box>
         </Flex>
         <Text
