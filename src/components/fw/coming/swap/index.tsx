@@ -18,7 +18,7 @@ import { useRecoilState } from "recoil";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import formatNumber from "@/components/fw/utils/formatNumbers";
+import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
 
 export default function FwComingModal() {
   const { tabletView } = useMediaView();
@@ -36,34 +36,6 @@ export default function FwComingModal() {
     tokenSymbol: string | String | undefined;
   }
 
-  const StyledNumber = ({ value, tokenSymbol }: StyledNumberProps) => {
-    const formattedValue = formatNumber(value) ?? "";
-
-    const operator =
-      formattedValue.startsWith("<") || formattedValue.startsWith(">")
-        ? formattedValue[0]
-        : "";
-    const number = operator
-      ? formattedValue.substring(1).trim()
-      : formattedValue;
-
-    return (
-      <Text
-        fontWeight={600}
-        fontSize={"22px"}
-        lineHeight={"33px"}
-        color={"#007AFF"}
-      >
-        {operator && <span style={{ fontWeight: 400 }}>{operator}</span>}
-        <span>
-          {/** Add a space */ " "}
-          {number}
-          {/** Add a space */ " "}
-        </span>
-        {tokenSymbol}
-      </Text>
-    );
-  };
   return (
     <Modal
       isOpen={fwOptionModal}
@@ -121,7 +93,13 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   color={"#007AFF"}
                 >
-                  <StyledNumber
+                  <FwFormatNumber
+                    style={{
+                      fontWeight: 600,
+                      fontSize: "22px",
+                      lineHeight: "33px",
+                      color: "#007AFF",
+                    }}
                     value={inToken?.parsedAmount}
                     tokenSymbol={inToken?.tokenSymbol}
                   />

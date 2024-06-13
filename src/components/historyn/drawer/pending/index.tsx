@@ -8,6 +8,7 @@ import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/components/historyn/types";
 import PendingFooter from "./pendingFooter";
+import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
 
 interface PendingProps {
   transaction: TransactionHistory;
@@ -52,14 +53,15 @@ export default function Pending(props: PendingProps) {
           <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
             <Flex>
-              <Text
-                fontWeight={600}
-                fontSize={"14px"}
-                lineHeight={"21px"}
-                color={"#FFFFFF"}
-              >
-                {transactionData.amount}
-              </Text>
+              <FwFormatNumber
+                style={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  lineHeight: "21px",
+                  color: "#FFFFFF",
+                }}
+                value={transactionData.amount}
+              />
               <Box w='4px' /> {/** space bar */}
               <Text
                 fontWeight={400}

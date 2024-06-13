@@ -36,7 +36,7 @@ export const historyData: TransactionHistory[] = [
       initialCompletedTimestamp: "1717749999",
     },
     tokenSymbol: "ETH",
-    amount: "0.01234",
+    amount: "0.000000001",
     errorMessage: "Initial Error!",
   },
   {
@@ -56,7 +56,7 @@ export const historyData: TransactionHistory[] = [
       rollupCompletedTimestamp: "1717738013",
     },
     tokenSymbol: "TON",
-    amount: "100.1234",
+    amount: "31920833123.0123432480234",
   },
   {
     //파이널라이즈는 애러가 없다. 헤딩 mock은 추후 시간을 조정해서 claim버튼이 나오도록(7일 지난 걸로 하는 데이터로 한다.)

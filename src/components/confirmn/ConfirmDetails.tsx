@@ -11,6 +11,8 @@ import {
 import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants/index";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import capitalizeFirstLetter from "@/components/confirmn/utils/capitalizeFirstLetter";
+import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
 import { STATUS_CONFIG } from "@/components/historyn/constants";
 
 interface ConfirmDetailProps {
@@ -37,10 +39,12 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     return "0.00";
   }, [tokenPriceWithAmount, transactionHistory]);
 
-  const statuses =
-    transactionHistory.action === Action.Withdraw
-      ? STATUS_CONFIG.WITHDRAW
-      : STATUS_CONFIG.DEPOSIT;
+  const networkName = isInNetwork
+    ? transactionHistory.inNetwork
+    : transactionHistory.outNetwork;
+
+  const displayNetworkName =
+    networkName === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(networkName);
 
   return (
     <Flex
@@ -74,9 +78,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
             lineHeight={"14px"}
             color={"#A0A3AD"}
           >
-            {isInNetwork
-              ? transactionHistory.inNetwork
-              : transactionHistory.outNetwork}
+            {displayNetworkName}
           </Text>
         </Flex>
       </Box>
@@ -91,17 +93,17 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
           </Flex>
           <Box ml={"8px"}>
             <Flex>
-              <Text
-                mr={"6px"}
-                fontWeight={600}
-                fontSize={"16px"}
-                lineHeight={"24px"}
-                color={"#FFFFFF"}
-              >
-                {transactionHistory.amount}
-                {/** Add a space */ " "}
-                {transactionHistory.tokenSymbol}
-              </Text>
+              <FwFormatNumber
+                style={{
+                  marginRight: "6px",
+                  fontWeight: 600,
+                  fontSize: "16px",
+                  lineHeight: "24px",
+                  color: "#FFFFFF",
+                }}
+                value={transactionHistory.amount}
+                tokenSymbol={transactionHistory.tokenSymbol}
+              />
               <Link
                 target='_blank'
                 href={`${

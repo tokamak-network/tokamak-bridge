@@ -11,7 +11,6 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import Image from "next/image";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import {
@@ -19,7 +18,6 @@ import {
   Action,
   Status,
   TransactionHistory,
-  isWithdrawTransactionHistory,
 } from "@/components/historyn/types";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
 import TimeLine from "./TimeLine";
@@ -30,12 +28,7 @@ import ConfirmDetails from "@/components/confirmn/ConfirmDetails";
 import { STATUS_CONFIG } from "@/components/historyn/constants";
 import StatusComponent from "@/components/confirmn/StatusComponent";
 import ConditionalBox from "@/components/confirmn/ConditionalBox";
-import { getTimeDisplay } from "@/components/historyn/utils/getTimeDisplay";
 import getLineType from "@/components/confirmn/utils/getLineType";
-import { useCountdown } from "@/components/historyn/hooks/useCountdown";
-import { useCalendar } from "@/components/historyn/hooks/useGoogleCalendar";
-import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
-import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
@@ -221,7 +214,7 @@ export default function SwapConfirmModal() {
           <Box
             my={"12px"}
             px={"20px"}
-            py={"16px"}
+            pt={"16px"}
             borderRadius={"8px"}
             bg='#15161D'
           >

@@ -70,19 +70,25 @@ export default function AccountHistory() {
         >
           Bridge History
         </Text>
-        <Box
+        <Flex
           w={"32px"}
           h={"32px"}
-          p={"7px"}
+          justifyContent={"center"}
+          alignItems={"center"}
           borderRadius={"6px"}
           gap={"8px"}
           bg={"#15161D"}
           cursor={"pointer"}
         >
-          <Flex w={"18px"} h={"18px"} p={"3px"}>
+          <Flex
+            w={"18px"}
+            h={"18px"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
             <Image src={RefreshBlue} alt={"RefreshBlue"} />
           </Flex>
-        </Box>
+        </Flex>
       </Flex>
     );
   };

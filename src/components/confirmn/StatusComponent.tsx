@@ -41,7 +41,12 @@ export default function StatusComponent(props: StatusComponentProps) {
   const isTransaction = !isRelay && !isGasFee;
 
   return (
-    <Flex h={"38px"} justifyContent={"space-between"} alignItems={"flex-start"}>
+    <Flex
+      h={"38px"}
+      mb={isGasFee && label === Status.Finalize ? "16px" : undefined}
+      justifyContent={"space-between"}
+      alignItems={"flex-start"}
+    >
       <Text
         fontWeight={600}
         fontSize={"17px"}

@@ -1,9 +1,10 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import { TransactionHistory } from "@/components/historyn/types";
+import { TransactionHistory, Action } from "@/components/historyn/types";
 import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
-import formatNumber from "@/components/fw/utils/formatNumbers";
+import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
+import { formatDateToYMD } from "@/components/historyn/utils/timeUtils";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
@@ -41,14 +42,15 @@ export default function Complete(transaction: TransactionHistory) {
           <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
             <Flex>
-              <Text
-                fontWeight={600}
-                fontSize={"14px"}
-                lineHeight={"21px"}
-                color={"#FFFFFF"}
-              >
-                {transactionData.amount}
-              </Text>
+              <FwFormatNumber
+                style={{
+                  fontWeight: 600,
+                  fontSize: "14px",
+                  lineHeight: "21px",
+                  color: "#FFFFFF",
+                }}
+                value={transactionData.amount}
+              />
               <Box w='4px' /> {/** space bar */}
               <Text
                 fontWeight={400}
@@ -69,7 +71,9 @@ export default function Complete(transaction: TransactionHistory) {
           cursor={"pointer"}
           onClick={() => onOpenSwapConfirmModal(transactionData)}
         >
-          2023.04.03
+          {formatDateToYMD(
+            Number(transactionData.blockTimestamps.finalizedCompletedTimestamp)
+          )}
         </Text>
       </Flex>
     </>
