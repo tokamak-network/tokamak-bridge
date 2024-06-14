@@ -13,21 +13,16 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import {
-  Network,
-  Action,
-  Status,
-  TransactionHistory,
-} from "@/components/historyn/types";
+import { Network, Action, Status } from "@/components/historyn/types";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
-import ConfirmDetails from "@/components/confirmn/ConfirmDetails";
+import ConfirmDetails from "@/components/confirmn/modal/other/ConfirmDetails";
 import { STATUS_CONFIG } from "@/components/historyn/constants";
-import StatusComponent from "@/components/confirmn/StatusComponent";
-import ConditionalBox from "@/components/confirmn/ConditionalBox";
+import StatusComponent from "@/components/confirmn/modal/other/StatusComponent";
+import ConditionalBox from "@/components/confirmn/modal/other/ConditionalBox";
 import {
   getLineType,
   getType,
@@ -50,6 +45,17 @@ export default function SwapConfirmModal() {
       ? STATUS_CONFIG.WITHDRAW
       : STATUS_CONFIG.DEPOSIT;
 
+  {
+    /**
+     * The renderStatusComponents function iterates over the statuses array @Robert
+     * and renders a StatusComponent and, conditionally, a ConditionalBox
+     * component for each status. The ConditionalBox component is rendered
+     * between the StatusComponent elements based on the length of the statuses array.
+     *
+     * - For WITHDRAW (length 3): Two ConditionalBox components are inserted between the StatusComponent elements.
+     * - For DEPOSIT (length 2): One ConditionalBox component is inserted between the StatusComponent elements.
+     */
+  }
   const renderStatusComponents = (statuses: Status[]) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);

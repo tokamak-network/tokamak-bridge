@@ -29,7 +29,7 @@ interface BaseTransactionHistory {
   errorMessage?: string | null;
 }
 
-interface WithdrawTransactionHistory extends BaseTransactionHistory {
+export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;
   blockTimestamps: {
     initialCompletedTimestamp: string;
@@ -43,7 +43,7 @@ interface WithdrawTransactionHistory extends BaseTransactionHistory {
   };
 }
 
-interface DepositTransactionHistory extends BaseTransactionHistory {
+export interface DepositTransactionHistory extends BaseTransactionHistory {
   action: Action.Deposit;
   blockTimestamps: {
     initialCompletedTimestamp: string;

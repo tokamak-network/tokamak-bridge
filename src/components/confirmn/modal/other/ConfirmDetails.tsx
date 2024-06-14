@@ -13,7 +13,6 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants/index";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/components/confirmn/utils/capitalizeFirstLetter";
 import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
-import { STATUS_CONFIG } from "@/components/historyn/constants";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;

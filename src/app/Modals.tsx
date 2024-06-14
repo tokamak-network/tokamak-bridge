@@ -9,7 +9,7 @@ import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
 import FwComingModal from "@/components/fw/coming/swap";
-import SwapConfirmModal from "@/components/confirmn";
+import SwapConfirmModal from "@/components/confirmn/modal/other";
 
 export default function Modals() {
   const { mobileView } = useMediaView();

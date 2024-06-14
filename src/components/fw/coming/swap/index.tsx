@@ -18,16 +18,29 @@ import { useRecoilState } from "recoil";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
 import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
+import { Action, Status, Network } from "@/components/historyn/types";
+import { createTransaction } from "@/components/historyn/utils/getCreateTransaction";
 
 export default function FwComingModal() {
   const { tabletView } = useMediaView();
+  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
   const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
-  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { inToken } = useInOutTokens();
 
   const handleConfirm = () => {
-    setWithdrawStatus({ isOpen: true });
+    // const transaction = createTransaction(
+    //   Action.Withdraw,
+    //   Status.Initiate,
+    //   Network.Mainnet,
+    //   Network.Titan,
+    //   inToken?.tokenSymbol || "ETH",
+    //   inToken?.parsedAmount || "0.0",
+    //   new Date().toISOString(),
+    //   "0x123456789abcdef"
+    // );
+    //onOpenSwapConfirmModal();
     onCloseFwOptionModal();
   };
 
