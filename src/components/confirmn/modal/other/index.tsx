@@ -13,7 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import { Network, Action, Status } from "@/components/historyn/types";
+import {
+  Network,
+  Action,
+  Status,
+  GasCostData,
+} from "@/components/historyn/types";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
@@ -23,11 +28,17 @@ import ConfirmDetails from "@/components/confirmn/modal/other/ConfirmDetails";
 import { STATUS_CONFIG } from "@/components/historyn/constants";
 import StatusComponent from "@/components/confirmn/modal/other/StatusComponent";
 import ConditionalBox from "@/components/confirmn/modal/other/ConditionalBox";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import useRelayGas from "@/components/confirmn/hooks/useGetGas";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
 import {
   getLineType,
   getType,
   getWaitMessage,
 } from "@/components/confirmn/utils/getConfirmType";
+import { getGasCostText, gasUsdFormatter } from "@/utils/number/compareNumbers";
+import { ST } from "next/dist/shared/lib/utils";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
@@ -35,9 +46,36 @@ export default function SwapConfirmModal() {
 
   const { address } = useAccount();
 
+  const { totalGasCost, gasCostUS } = useGasFee();
+  const CLAIM_GAS_USED = 600000;
+  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+
+  const gasCostData: GasCostData = useMemo(() => {
+    const formatValue = (value: string | undefined | null) =>
+      value == null || value === "0" ? "-" : value;
+
+    if (transactionData?.action === Action.Deposit) {
+      return {
+        depositInitiateGasCostText: formatValue(getGasCostText(totalGasCost)),
+        depositGasCostUS: formatValue(gasCostUS),
+      };
+    } else if (transactionData?.action === Action.Withdraw) {
+      return {
+        withdrawInitiateGasCostText: formatValue(getGasCostText(totalGasCost)),
+        withdrawInitiateGasCostUS: formatValue(gasCostUS),
+        withdrawClaimGasCostText: formatValue(
+          getGasCostText(withdrawCost.totalGasCost)
+        ),
+        withdrawClaimGasCostUS: formatValue(withdrawCost.usGasCost),
+      };
+    }
+    return {};
+  }, [transactionData, totalGasCost, gasCostUS, withdrawCost]);
+
   if (!transactionData) {
     return null;
   }
+
   const lineType = getLineType(transactionData);
 
   const statuses: Status[] =
@@ -68,6 +106,7 @@ export default function SwapConfirmModal() {
             label={statusKey}
             transactionData={transactionData}
             lineType={lineType}
+            gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
           (statuses.length === 3 && index < 2)
@@ -227,7 +266,9 @@ export default function SwapConfirmModal() {
             >
               <Flex alignItems={"center"}>
                 <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                  Finalize
+                  {transactionData.status === Status.Initiate
+                    ? "Initiate"
+                    : "Finalize"}
                 </Text>
                 <FwTooltip
                   tooltipLabel={"text will be changed"}

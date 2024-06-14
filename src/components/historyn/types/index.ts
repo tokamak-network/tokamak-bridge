@@ -19,7 +19,7 @@ export enum Network {
   Titan = "TITAN",
 }
 
-interface BaseTransactionHistory {
+export interface BaseTransactionHistory {
   action: Action;
   status: Status;
   inNetwork: Network;
@@ -56,6 +56,7 @@ export interface DepositTransactionHistory extends BaseTransactionHistory {
 }
 
 export type TransactionHistory =
+  | BaseTransactionHistory
   | WithdrawTransactionHistory
   | DepositTransactionHistory;
 
@@ -68,9 +69,33 @@ export enum TransactionStatus {
   DepositCompleted = 11,
 }
 
-// 타입 가드 추가
 export function isWithdrawTransactionHistory(
   transaction: TransactionHistory
 ): transaction is WithdrawTransactionHistory {
-  return transaction.action === Action.Withdraw;
+  return (
+    transaction.action === Action.Withdraw &&
+    "blockTimestamps" in transaction &&
+    "transactionHashes" in transaction &&
+    "rollupCompletedTimestamp" in transaction.blockTimestamps
+  );
+}
+
+export function isDepositTransactionHistory(
+  transaction: TransactionHistory
+): transaction is DepositTransactionHistory {
+  return (
+    transaction.action === Action.Deposit &&
+    "blockTimestamps" in transaction &&
+    "transactionHashes" in transaction &&
+    !("rollupCompletedTimestamp" in transaction.blockTimestamps)
+  );
+}
+
+export interface GasCostData {
+  withdrawInitiateGasCostText?: string;
+  withdrawInitiateGasCostUS?: string;
+  withdrawClaimGasCostText?: string;
+  withdrawClaimGasCostUS?: string;
+  depositInitiateGasCostText?: string;
+  depositGasCostUS?: string;
 }

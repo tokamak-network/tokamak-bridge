@@ -30,17 +30,15 @@ export default function FwComingModal() {
   const { inToken } = useInOutTokens();
 
   const handleConfirm = () => {
-    // const transaction = createTransaction(
-    //   Action.Withdraw,
-    //   Status.Initiate,
-    //   Network.Mainnet,
-    //   Network.Titan,
-    //   inToken?.tokenSymbol || "ETH",
-    //   inToken?.parsedAmount || "0.0",
-    //   new Date().toISOString(),
-    //   "0x123456789abcdef"
-    // );
-    //onOpenSwapConfirmModal();
+    const transaction = createTransaction(
+      Action.Withdraw,
+      Status.Initiate,
+      Network.Mainnet,
+      Network.Titan,
+      inToken?.tokenSymbol as string,
+      inToken?.parsedAmount as string
+    );
+    onOpenSwapConfirmModal(transaction);
     onCloseFwOptionModal();
   };
 

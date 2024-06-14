@@ -20,7 +20,7 @@ const getLineType = (transactionData: TransactionHistory): number => {
         return 1;
       case Status.Finalize:
         const initialTimeDisplay = getTimeDisplay(transactionData);
-        if (initialTimeDisplay === "00:00") {
+        if (initialTimeDisplay === "00 : 00") {
           // 1. type: box
           // 2. type: box
           return 3;

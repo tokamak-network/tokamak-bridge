@@ -102,12 +102,14 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
         borderRadius='4px'
         bg='#1F2128'
       >
-        <Flex alignItems='center'>
+        <Flex alignItems='center' w='100px'>
           <Text
             fontWeight={600}
             fontSize='11px'
             lineHeight='22px'
             color={errorRollup ? "#DD3A44" : "#FFFFFF"}
+            whiteSpace='nowrap'
+            overflow='hidden'
           >
             {timeDisplay}
           </Text>

@@ -1,5 +1,3 @@
-// src/utils/createTransaction.ts
-
 import {
   Action,
   Status,
@@ -7,6 +5,7 @@ import {
   WithdrawTransactionHistory,
   DepositTransactionHistory,
   TransactionHistory,
+  BaseTransactionHistory,
 } from "@/components/historyn/types";
 
 // Withdraw 트랜잭션 생성 함수
@@ -73,7 +72,25 @@ export function createDepositTransaction(
   };
 }
 
-// 공용 트랜잭션 생성 함수
+// Base 트랜잭션 생성 함수
+export function createBaseTransaction(
+  action: Action,
+  status: Status,
+  inNetwork: Network,
+  outNetwork: Network,
+  tokenSymbol: string,
+  amount: string
+): BaseTransactionHistory {
+  return {
+    action,
+    status,
+    inNetwork,
+    outNetwork,
+    tokenSymbol,
+    amount,
+  };
+}
+
 export function createTransaction(
   action: Action,
   status: Status,
@@ -81,22 +98,31 @@ export function createTransaction(
   outNetwork: Network,
   tokenSymbol: string,
   amount: string,
-  initialCompletedTimestamp: string,
-  initialTransactionHash: string,
+  initialCompletedTimestamp?: string,
+  initialTransactionHash?: string,
   rollupCompletedTimestamp?: string,
   finalizedCompletedTimestamp?: string,
   rollupTransactionHash?: string,
   finalizedTransactionHash?: string
 ): TransactionHistory {
-  if (action === Action.Withdraw) {
+  if (status === Status.Initiate) {
+    return createBaseTransaction(
+      action,
+      status,
+      inNetwork,
+      outNetwork,
+      tokenSymbol,
+      amount
+    );
+  } else if (action === Action.Withdraw) {
     return createWithdrawTransaction(
       status,
       inNetwork,
       outNetwork,
       tokenSymbol,
       amount,
-      initialCompletedTimestamp,
-      initialTransactionHash,
+      initialCompletedTimestamp!,
+      initialTransactionHash!,
       rollupCompletedTimestamp,
       finalizedCompletedTimestamp,
       rollupTransactionHash,
@@ -109,8 +135,8 @@ export function createTransaction(
       outNetwork,
       tokenSymbol,
       amount,
-      initialCompletedTimestamp,
-      initialTransactionHash,
+      initialCompletedTimestamp!,
+      initialTransactionHash!,
       finalizedCompletedTimestamp,
       finalizedTransactionHash
     );
