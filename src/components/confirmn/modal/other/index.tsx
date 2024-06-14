@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Modal,
   Flex,
@@ -30,6 +30,7 @@ import StatusComponent from "@/components/confirmn/modal/other/StatusComponent";
 import ConditionalBox from "@/components/confirmn/modal/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import useRelayGas from "@/components/confirmn/hooks/useGetGas";
+import ConfirmInitiateFooter from "@/components/confirmn/modal/other/ConfirmInitiateFooter";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 import {
@@ -37,7 +38,7 @@ import {
   getType,
   getWaitMessage,
 } from "@/components/confirmn/utils/getConfirmType";
-import { getGasCostText, gasUsdFormatter } from "@/utils/number/compareNumbers";
+import { getGasCostText } from "@/utils/number/compareNumbers";
 import { ST } from "next/dist/shared/lib/utils";
 
 export default function SwapConfirmModal() {
@@ -241,42 +242,50 @@ export default function SwapConfirmModal() {
               <Box ml={"10px"}>{renderStatusComponents(statuses)}</Box>
             </Flex>
           </Box>
-          <Box mt={"12px"} mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
-            <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-              Estimated Time of Arrival: ~1 day
-            </Text>
-            <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-              Estimated Time of Arrival: ~1 day
-            </Text>
-          </Box>
         </ModalBody>
         <ModalFooter p={0} display='block'>
-          {isButtonVisible && (
-            <Button
-              width='full'
-              height={"48px"}
-              borderRadius={"8px"}
-              sx={{
-                backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
-                color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
-              }}
-              _active={{}}
-              _hover={{}}
-              _focus={{}}
-            >
-              <Flex alignItems={"center"}>
-                <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                  {transactionData.status === Status.Initiate
-                    ? "Initiate"
-                    : "Finalize"}
+          {transactionData.status === Status.Initiate ? (
+            <ConfirmInitiateFooter />
+          ) : (
+            <>
+              <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
+                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+                  Estimated Time of Arrival: ~1 day
                 </Text>
-                <FwTooltip
-                  tooltipLabel={"text will be changed"}
-                  style={{ marginLeft: "2px" }}
-                  type={lineType !== 3 ? "grey" : "white"}
-                />
-              </Flex>
-            </Button>
+                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+                  Estimated Time of Arrival: ~1 day
+                </Text>
+              </Box>
+              {isButtonVisible && (
+                <Button
+                  width='full'
+                  height={"48px"}
+                  borderRadius={"8px"}
+                  sx={{
+                    backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
+                    color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
+                  }}
+                  _active={{}}
+                  _hover={{}}
+                  _focus={{}}
+                >
+                  <Flex alignItems={"center"}>
+                    <Text
+                      fontWeight={600}
+                      fontSize={"16px"}
+                      lineHeight={"24px"}
+                    >
+                      Finalize
+                    </Text>
+                    <FwTooltip
+                      tooltipLabel={"text will be changed"}
+                      style={{ marginLeft: "2px" }}
+                      type={lineType !== 3 ? "grey" : "white"}
+                    />
+                  </Flex>
+                </Button>
+              )}
+            </>
           )}
         </ModalFooter>
       </ModalContent>

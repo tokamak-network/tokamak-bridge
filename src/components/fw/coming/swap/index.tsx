@@ -27,6 +27,7 @@ export default function FwComingModal() {
   const { tabletView } = useMediaView();
   const { onOpenSwapConfirmModal } = useSwapConfirmModal();
   const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
+  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { inToken } = useInOutTokens();
 
   const handleConfirm = () => {
@@ -39,6 +40,7 @@ export default function FwComingModal() {
       inToken?.parsedAmount as string
     );
     onOpenSwapConfirmModal(transaction);
+    //setWithdrawStatus({ isOpen: true });
     onCloseFwOptionModal();
   };
 
