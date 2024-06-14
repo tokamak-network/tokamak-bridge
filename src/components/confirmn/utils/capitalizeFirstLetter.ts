@@ -1,5 +1,8 @@
-// 첫 글자를 대문자로, 나머지 글자를 소문자로 변환하는 함수
+/**
+ * Converts the first letter to uppercase and the remaining letters to lowercase. @Robert
+ * Handles the case where the input string is empty.
+ */
 export default function capitalizeFirstLetter(str: string) {
-  if (!str) return str; // str이 비어있을 경우를 처리
+  if (!str) return str; // Handle the case where str is empty
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }

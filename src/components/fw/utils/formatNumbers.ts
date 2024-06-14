@@ -52,6 +52,7 @@ function testcase() {
   console.log(formatNumber(120000000000000)); // 120.0T
 }
 
+//formatNumber.ts
 function formatNumber(
   value: string | number | undefined | null
 ): string | undefined {
@@ -71,13 +72,13 @@ function formatNumber(
   const absNum = Math.abs(num);
   const formattedNumber: string =
     absNum >= 1e15
-      ? `> ${commafy(num / 1e15, 1)}Q`
+      ? `${commafy(num / 1e15, 1)}Q`
       : absNum >= 1e12
-      ? `> ${commafy(num / 1e12, 1)}T`
+      ? `${commafy(num / 1e12, 1)}T`
       : absNum >= 1e9
-      ? `> ${commafy(num / 1e9, 1)}B`
+      ? `${commafy(num / 1e9, 1)}B`
       : absNum >= 1e7
-      ? `> ${commafy(num / 1e6, 1)}M`
+      ? `${commafy(num / 1e6, 1)}M`
       : Math.floor(num) === 0
       ? commafy(value, 6)
       : commafy(value, 4);

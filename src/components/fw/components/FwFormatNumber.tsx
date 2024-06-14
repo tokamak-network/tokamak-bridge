@@ -2,6 +2,7 @@ import { Text, Box } from "@chakra-ui/react";
 import { CSSProperties } from "react";
 import formatNumber from "@/components/fw/utils/formatNumbers";
 
+// FwFormatNumber.tsx
 interface StyledNumberProps {
   style: CSSProperties;
   value: string | null | undefined;

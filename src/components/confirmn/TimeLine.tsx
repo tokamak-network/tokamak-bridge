@@ -3,7 +3,7 @@ import React from "react";
 
 const Timeline = ({ lineType }: { lineType: number }) => {
   const dashedBackgroundImageGray =
-    "linear-gradient(to bottom, #A0A3AD 33%, rgba(255,255,255,0) 0%)";
+    "linear-gradient(to bottom, #313442 33%, rgba(255,255,255,0) 0%)";
   const dashedBackgroundImageBlue =
     "linear-gradient(to bottom, #007AFF 33%, rgba(255,255,255,0) 0%)";
 

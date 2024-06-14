@@ -28,7 +28,11 @@ import ConfirmDetails from "@/components/confirmn/ConfirmDetails";
 import { STATUS_CONFIG } from "@/components/historyn/constants";
 import StatusComponent from "@/components/confirmn/StatusComponent";
 import ConditionalBox from "@/components/confirmn/ConditionalBox";
-import getLineType from "@/components/confirmn/utils/getLineType";
+import {
+  getLineType,
+  getType,
+  getWaitMessage,
+} from "@/components/confirmn/utils/getConfirmType";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
@@ -46,61 +50,25 @@ export default function SwapConfirmModal() {
       ? STATUS_CONFIG.WITHDRAW
       : STATUS_CONFIG.DEPOSIT;
 
-  const renderStatusComponents = (
-    statuses: Status[],
-    transaction: TransactionHistory
-  ) => {
+  const renderStatusComponents = (statuses: Status[]) => {
     return statuses.map((statusKey, index) => {
-      const lineType = getLineType(transaction);
-
-      const type = (() => {
-        switch (lineType) {
-          case 0:
-            return "wait";
-          case 1:
-            return index === 0 ? "timer" : "wait";
-          case 2:
-            return index === 0 ? "box" : "timer";
-          case 3:
-            return "box";
-          case 4:
-            return "box";
-          case 100:
-            return "wait";
-          case 101:
-            return "timer";
-          case 102:
-            return "box";
-          default:
-            return undefined;
-        }
-      })();
-
-      const waitMessage = (() => {
-        if (lineType === 0) {
-          return index === 0 ? "Wait 1~11 min" : "Wait 7 days";
-        } else if (lineType === 1) {
-          return "Wait 7 days";
-        } else if (lineType === 100) {
-          return "Wait 1 min";
-        } else {
-          return undefined;
-        }
-      })();
+      const lineType = getLineType(transactionData);
+      const typeValue = getType(lineType, index);
+      const waitMessage = getWaitMessage(lineType, index);
 
       return (
         <React.Fragment key={index}>
           <StatusComponent
             label={statusKey}
-            transactionData={transaction}
+            transactionData={transactionData}
             lineType={lineType}
           />
           {(statuses.length === 2 && index === 0) ||
           (statuses.length === 3 && index < 2)
-            ? type !== undefined && (
+            ? typeValue !== undefined && (
                 <ConditionalBox
-                  type={type}
-                  transactionData={transaction}
+                  type={typeValue}
+                  transactionData={transactionData}
                   waitMessage={waitMessage}
                 />
               )
@@ -109,6 +77,13 @@ export default function SwapConfirmModal() {
       );
     });
   };
+
+  const isButtonVisible =
+    !(transactionData.action === Action.Deposit) &&
+    !(
+      transactionData.action === Action.Withdraw &&
+      transactionData.status === Status.Completed
+    );
 
   return (
     <Modal
@@ -135,7 +110,6 @@ export default function SwapConfirmModal() {
           <CloseButton onClick={onCloseSwapConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          {/** 첫번째 박스 @Box1 */}
           <Box
             px={"16px"}
             py={"12px"}
@@ -143,7 +117,6 @@ export default function SwapConfirmModal() {
             borderRadius={"8px"}
             bg='#0F0F12'
           >
-            {/** Box안 fLEX 두번 반복 @Repeat1 */}
             <Box>
               <ConfirmDetails
                 isInNetwork={true}
@@ -154,7 +127,6 @@ export default function SwapConfirmModal() {
                 transactionHistory={transactionData}
               />
             </Box>
-            {/** BORDER TOP 경계 그려진다. */}
             <Box borderTop='1px solid #313442' mt={"16px"} pt={"16px"}>
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text
@@ -210,7 +182,6 @@ export default function SwapConfirmModal() {
               </Flex>
             </Box>
           </Box>
-          {/** 두번째 박스 @Box2 */}
           <Box
             my={"12px"}
             px={"20px"}
@@ -219,16 +190,13 @@ export default function SwapConfirmModal() {
             bg='#15161D'
           >
             <Flex>
-              {/** 타임라인 @TimeLine */}
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"}>
-                {renderStatusComponents(statuses, transactionData)}
-              </Box>
+              <Box ml={"10px"}>{renderStatusComponents(statuses)}</Box>
             </Flex>
           </Box>
-          <Box my={"12px"}>
+          <Box mt={"12px"} mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
             <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
               Estimated Time of Arrival: ~1 day
             </Text>
@@ -238,28 +206,31 @@ export default function SwapConfirmModal() {
           </Box>
         </ModalBody>
         <ModalFooter p={0} display='block'>
-          <Button
-            width='full'
-            height={"48px"}
-            borderRadius={"8px"}
-            sx={{
-              backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
-              color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
-            }}
-            _active={{}}
-            _hover={{}}
-            _focus={{}}
-          >
-            <Flex alignItems={"center"}>
-              <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                Finalize
-              </Text>
-              {/* <FwTooltip
-                tooltipLabel={"text will be changed"}
-                style={{ marginLeft: "2px" }}
-              /> */}
-            </Flex>
-          </Button>
+          {isButtonVisible && (
+            <Button
+              width='full'
+              height={"48px"}
+              borderRadius={"8px"}
+              sx={{
+                backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
+                color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
+              }}
+              _active={{}}
+              _hover={{}}
+              _focus={{}}
+            >
+              <Flex alignItems={"center"}>
+                <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+                  Finalize
+                </Text>
+                <FwTooltip
+                  tooltipLabel={"text will be changed"}
+                  style={{ marginLeft: "2px" }}
+                  type={lineType !== 3 ? "grey" : "white"}
+                />
+              </Flex>
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

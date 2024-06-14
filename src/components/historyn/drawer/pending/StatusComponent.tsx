@@ -81,7 +81,13 @@ export default function StatusComponent(
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
 
   // When initial phase ends, display refresh icon to fetch new values via query
-  const refreshRollup = label === Status.Rollup && timeDisplay === "00 : 00";
+  const refreshRollup =
+    (label === Status.Rollup &&
+      timeDisplay === "00 : 00" &&
+      transactionData.action === Action.Withdraw) ||
+    (label === Status.Finalize &&
+      timeDisplay === "00 : 00" &&
+      transactionData.action === Action.Deposit);
 
   // Display calendar button
   const calendarButton =
@@ -136,7 +142,7 @@ export default function StatusComponent(
         ) : (
           <Text
             fontSize={"11px"}
-            fontWeight={400}
+            fontWeight={600}
             lineHeight={"22px"}
             color={errorRollup ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}
