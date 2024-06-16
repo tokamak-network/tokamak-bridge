@@ -134,7 +134,7 @@ const WithdrawDetailRow = (props: WithdrawDetailProp) => {
                       TON
                     </Text>
                   }
-                  tooltipLabel="The fee is 2% cheaper than ETH"
+                  tooltipLabel='The fee is 2% cheaper than ETH'
                   style={{
                     width: "185px",
                     bgColor: "#007AFF",
@@ -385,7 +385,11 @@ const Content = (props: {
       <Flex>
         <Box flex={1} flexDir={"column"}>
           {!isMobile && <DivisionLine />}
-          <Flex flexDir={"column"} rowGap={"10px"}>
+          <Flex
+            flexDir={"column"}
+            rowGap={"10px"}
+            data-testid='swap-valid-accordion-detail'
+          >
             {detailRow}
           </Flex>
           {mode === "Withdraw" && isOnConfirm && isOpen && (
@@ -525,7 +529,12 @@ const Title = (props: {
         fontSize={{ base: 12, lg: 14 }}
       >
         {isLoading ? (
-          <Box w={"100%"} h={"20px"} mb={"5px"}>
+          <Box
+            w={"100%"}
+            h={"20px"}
+            mb={"5px"}
+            data-testid='swap-valid-loading-spinner'
+          >
             <GradientSpinner />
           </Box>
         ) : (
@@ -534,10 +543,10 @@ const Title = (props: {
               {1} {inToken?.tokenSymbol}
             </Text>
             <Text mx={mobileView ? "4px" : "9px"}>=</Text>
-            <Text>
+            <Text data-testid='swap-valid-price-info'>
               {isWrapUnwrap ? 1 : formatPrice(outPrice)} {outToken?.tokenSymbol}
               {mobileView && (
-                <Text as="span" color="#A0A3AD">
+                <Text as='span' color='#A0A3AD'>
                   (${token1PriceWithAmount})
                 </Text>
               )}
@@ -562,6 +571,7 @@ const Title = (props: {
                       color={"#A0A3AD"}
                       ml={"6px"}
                       sx={{ mr: mobileView ? 0 : "13px" }}
+                      data-testid='swap-valid-gas-info'
                     >
                       {gasCostUS ? `$${gasCostUS}` : `NA`}
                     </Text>
@@ -569,7 +579,11 @@ const Title = (props: {
                 )}
                 {!mobileView && (
                   <motion.div animate={arrowControl}>
-                    <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+                    <Image
+                      src={AccoridonArrowImg}
+                      alt={"AccoridonArrowImg"}
+                      data-testid='swap-valid-accordion-arrow'
+                    />
                   </motion.div>
                 )}
               </Flex>
