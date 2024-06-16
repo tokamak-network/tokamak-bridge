@@ -4,12 +4,6 @@ import { useFeeData } from "wagmi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
-/**
- * Lakmi src/components/history/modalComponents/Step4.tsx @Robert
- * Removed interval, added gasLimit parameter.
- * Replaced 600000 and 10000000 with gasLimit parameter.
- * Changed fixed chainId to chainId parameter.
- */
 const useRelayGas = (gasLimit: number, chainId: number) => {
   const [usGasCost, setUsGasCost] = useState("0");
   const [totalGasCost, setTotalGasCost] = useState("0");
@@ -25,7 +19,6 @@ const useRelayGas = (gasLimit: number, chainId: number) => {
           gasCost.toString(),
           "ether"
         );
-        console.log(parsedTotalGasCost);
         setTotalGasCost(parsedTotalGasCost);
         if (tokenMarketPrice) {
           const usTotal = commafy(

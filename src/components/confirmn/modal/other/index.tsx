@@ -32,6 +32,7 @@ import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import useRelayGas from "@/components/confirmn/hooks/useGetGas";
 import ConfirmInitiateFooter from "@/components/confirmn/modal/other/ConfirmInitiateFooter";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 
 import {
   getLineType,
@@ -39,16 +40,22 @@ import {
   getWaitMessage,
 } from "@/components/confirmn/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
-import { ST } from "next/dist/shared/lib/utils";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
   const transactionData = swapConfirmModal.transaction;
 
   const { address } = useAccount();
-
+  const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
-  const CLAIM_GAS_USED = 600000;
+
+  /**
+   * Lakmi src/components/history/modalComponents/Step4.tsx @Robert
+   * Removed interval, added gasLimit parameter.
+   * Replaced 600000 and 1000000 with gasLimit parameter.
+   * Changed fixed chainId to chainId parameter.
+   */
+  const CLAIM_GAS_USED = 1000000;
   const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
 
   const gasCostData: GasCostData = useMemo(() => {
@@ -245,7 +252,10 @@ export default function SwapConfirmModal() {
         </ModalBody>
         <ModalFooter p={0} display='block'>
           {transactionData.status === Status.Initiate ? (
-            <ConfirmInitiateFooter />
+            <ConfirmInitiateFooter
+              onClick={onClick}
+              onCloseSwapConfirmModal={onCloseSwapConfirmModal}
+            />
           ) : (
             <>
               <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>

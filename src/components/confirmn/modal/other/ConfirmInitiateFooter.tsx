@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
 import FwCheckCustomIcon from "@/components/fw/components/FwCheckCustomIcon";
-import { useRecoilState, useRecoilValue } from "recoil";
-import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
+import { confirmWithdrawData } from "@/recoil/modal/atom";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { FwTooltip } from "@/components/fw/components/FwTooltip";
-import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
-import { txDataStatus } from "@/recoil/global/transaction";
-import { claimTx } from "@/recoil/userHistory/claimTx";
 
-export default function ConfirmInitiateFooter() {
-  const [withdrawData, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const { onCloseSwapConfirmModal } = useSwapConfirm();
-  const { onClick } = useCallBridgeSwapAction();
+interface ConfirmInitiateFooterProps {
+  onCloseSwapConfirmModal: () => void;
+  onClick: () => void;
+}
 
+export default function ConfirmInitiateFooter(
+  props: ConfirmInitiateFooterProps
+) {
+  const { onCloseSwapConfirmModal, onClick } = props;
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setIsChecked(e.target.checked);
@@ -74,10 +75,7 @@ export default function ConfirmInitiateFooter() {
           isDisabled={!isChecked}
           onClick={() => {
             onClick();
-            setWithdrawData({
-              modalData: null,
-            });
-            //onCloseSwapConfirmModal();
+            onCloseSwapConfirmModal();
           }}
           sx={{
             backgroundColor: isChecked ? "#007AFF" : "#17181D",
