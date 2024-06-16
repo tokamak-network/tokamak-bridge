@@ -96,13 +96,18 @@ export const fwUpdateFeeModalStatus = atom<boolean>({
   default: false,
 });
 
-export const swapConfirmModalStatus = atom<{
+export const depositWithdrawConfirmModalStatus = atom<{
   isOpen: boolean;
   transaction: TransactionHistory | undefined;
 }>({
-  key: "swapConfirmModalStatus",
+  key: "depositWithdrawConfirmModalStatus",
   default: {
     isOpen: false,
     transaction: undefined,
   },
+});
+
+export const swapConfirmModalStatus = atom<boolean>({
+  key: "swapConfirmModalStatus",
+  default: false,
 });

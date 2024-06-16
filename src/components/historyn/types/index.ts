@@ -74,9 +74,10 @@ export function isWithdrawTransactionHistory(
 ): transaction is WithdrawTransactionHistory {
   return (
     transaction.action === Action.Withdraw &&
-    "blockTimestamps" in transaction &&
     "transactionHashes" in transaction &&
-    "rollupCompletedTimestamp" in transaction.blockTimestamps
+    "initialTransactionHash" in transaction.transactionHashes &&
+    "blockTimestamps" in transaction &&
+    "initialCompletedTimestamp" in transaction.blockTimestamps
   );
 }
 
@@ -85,9 +86,10 @@ export function isDepositTransactionHistory(
 ): transaction is DepositTransactionHistory {
   return (
     transaction.action === Action.Deposit &&
-    "blockTimestamps" in transaction &&
     "transactionHashes" in transaction &&
-    !("rollupCompletedTimestamp" in transaction.blockTimestamps)
+    "initialTransactionHash" in transaction.transactionHashes &&
+    "blockTimestamps" in transaction &&
+    "initialCompletedTimestamp" in transaction.blockTimestamps
   );
 }
 

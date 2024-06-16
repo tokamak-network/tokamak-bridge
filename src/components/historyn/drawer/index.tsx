@@ -6,6 +6,8 @@ import {
   TransactionHistory,
   Status,
   Action,
+  isWithdrawTransactionHistory,
+  isDepositTransactionHistory,
 } from "@/components/historyn/types";
 import Pending from "@/components/historyn/drawer/pending";
 import Complete from "@/components/historyn/drawer/complete";
@@ -41,7 +43,7 @@ export default function AccountHistoryNew() {
 
   // The last available hash becomes the transaction key.
   const getTransactionKey = (transaction: TransactionHistory) => {
-    if (transaction.action === Action.Withdraw) {
+    if (isWithdrawTransactionHistory(transaction)) {
       const {
         initialTransactionHash,
         rollupTransactionHash,
@@ -52,7 +54,7 @@ export default function AccountHistoryNew() {
         rollupTransactionHash ||
         initialTransactionHash
       );
-    } else if (transaction.action === Action.Deposit) {
+    } else if (isDepositTransactionHistory(transaction)) {
       const { initialTransactionHash, finalizedTransactionHash } =
         transaction.transactionHashes;
       return finalizedTransactionHash || initialTransactionHash;

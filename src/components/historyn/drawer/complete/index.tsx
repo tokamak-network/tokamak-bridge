@@ -1,14 +1,29 @@
+import React, { useMemo } from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/components/historyn/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import { TransactionHistory, Action } from "@/components/historyn/types";
-import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
+import {
+  TransactionHistory,
+  isWithdrawTransactionHistory,
+  isDepositTransactionHistory,
+} from "@/components/historyn/types";
+import useDepositWithdrawConfirmModal from "@/components/confirmn/hooks/useDepositWithdrawConfirmModal";
 import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
 import { formatDateToYMD } from "@/components/historyn/utils/timeUtils";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
-  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
+  const { onOpenDepositWithdrawConfirmModal } =
+    useDepositWithdrawConfirmModal();
+
+  const completedTimestamp = useMemo(() => {
+    if (isWithdrawTransactionHistory(transactionData)) {
+      return transactionData.blockTimestamps.finalizedCompletedTimestamp;
+    } else if (isDepositTransactionHistory(transactionData)) {
+      return transactionData.blockTimestamps.finalizedCompletedTimestamp;
+    }
+    return null;
+  }, [transactionData]);
 
   return (
     <>
@@ -69,11 +84,9 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
           cursor={"pointer"}
-          onClick={() => onOpenSwapConfirmModal(transactionData)}
+          onClick={() => onOpenDepositWithdrawConfirmModal(transactionData)}
         >
-          {formatDateToYMD(
-            Number(transactionData.blockTimestamps.finalizedCompletedTimestamp)
-          )}
+          {formatDateToYMD(Number(completedTimestamp))}
         </Text>
       </Flex>
     </>

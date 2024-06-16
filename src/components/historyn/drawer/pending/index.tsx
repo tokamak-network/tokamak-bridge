@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Flex, Box, Text, Link, Spacer } from "@chakra-ui/react";
-import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
+import useDepositWithdrawConfirmModal from "@/components/confirmn/hooks/useDepositWithdrawConfirmModal";
 import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/components/historyn/components/TokenPair";
@@ -17,7 +17,8 @@ interface PendingProps {
 
 export default function Pending(props: PendingProps) {
   const { transaction, transactionHash } = props;
-  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
+  const { onOpenDepositWithdrawConfirmModal } =
+    useDepositWithdrawConfirmModal();
   const transactionData = transaction;
 
   return (
@@ -33,7 +34,7 @@ export default function Pending(props: PendingProps) {
         </Text>
         <Flex
           cursor={"pointer"}
-          onClick={() => onOpenSwapConfirmModal(transactionData)}
+          onClick={() => onOpenDepositWithdrawConfirmModal(transactionData)}
         >
           <Image src={TxLink} alt={"TxLink"} />
         </Flex>

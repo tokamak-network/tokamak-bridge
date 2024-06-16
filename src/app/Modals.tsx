@@ -9,7 +9,7 @@ import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
 import FwComingModal from "@/components/fw/coming/swap";
-import SwapConfirmModal from "@/components/confirmn/modal/other";
+import DepositWithdrawConfirmModal from "@/components/confirmn/modal/other";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -25,11 +25,17 @@ export default function Modals() {
         <SelectCardModal />
       )}
       <Confirmation />
-      <ActionConfirmModal />
       <TutorialModal />
-      <ConfirmWithdraw />
       <ActionOptionModal />
       <SwapSettingModal />
+
+      {/**new confirm modal @Robert */}
+      {/*
+       * <ConfirmWithdraw />
+       * <ActionConfirmModal />
+       */}
+      <DepositWithdrawConfirmModal />
+      <ActionConfirmModal />
 
       {/**FW coming modal @Robert */}
       <FwComingModal />
@@ -38,8 +44,6 @@ export default function Modals() {
         <FwModal />
         <FwFeeUpdateModal /> 
       */}
-      {/**new confirm modal @Robert */}
-      <SwapConfirmModal />
     </>
   );
 }

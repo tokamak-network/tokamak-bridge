@@ -19,7 +19,7 @@ import {
   Status,
   GasCostData,
 } from "@/components/historyn/types";
-import useSwapConfirm from "@/components/confirmn/hooks/useSwapConfirmModal";
+import useDepositWithdrawConfirmModal from "@/components/confirmn/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/components/confirmn/components/NetworkSymbol";
@@ -41,9 +41,10 @@ import {
 } from "@/components/confirmn/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
 
-export default function SwapConfirmModal() {
-  const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
-  const transactionData = swapConfirmModal.transaction;
+export default function DepositWithdrawConfirmModal() {
+  const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
+    useDepositWithdrawConfirmModal();
+  const transactionData = depositWithdrawConfirmModal.transaction;
 
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
@@ -140,8 +141,8 @@ export default function SwapConfirmModal() {
 
   return (
     <Modal
-      isOpen={swapConfirmModal.isOpen}
-      onClose={onCloseSwapConfirmModal}
+      isOpen={depositWithdrawConfirmModal.isOpen}
+      onClose={onCloseDepositWithdrawConfirmModal}
       isCentered
     >
       <ModalOverlay />
@@ -160,7 +161,7 @@ export default function SwapConfirmModal() {
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={onCloseSwapConfirmModal} />
+          <CloseButton onClick={onCloseDepositWithdrawConfirmModal} />
         </Box>
         <ModalBody p={0}>
           <Box
@@ -254,7 +255,9 @@ export default function SwapConfirmModal() {
           {transactionData.status === Status.Initiate ? (
             <ConfirmInitiateFooter
               onClick={onClick}
-              onCloseSwapConfirmModal={onCloseSwapConfirmModal}
+              onCloseDepositWithdrawConfirmModal={
+                onCloseDepositWithdrawConfirmModal
+              }
             />
           ) : (
             <>

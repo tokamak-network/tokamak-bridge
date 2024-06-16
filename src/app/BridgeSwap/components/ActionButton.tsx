@@ -19,8 +19,9 @@ import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
-
+import { Action, Status, Network } from "@/components/historyn/types";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
+import { useHandleConfirm } from "@/components/confirmn/hooks/useDepositWithdrawHandleConfirm";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -32,13 +33,15 @@ export default function ActionButton() {
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const txPending = useRecoilValue(txPendingStatus);
-  const { outToken, outTokenInfo } = useInOutTokens();
+  const { outToken, inToken } = useInOutTokens();
   const { isTONatPair } = useIsTon();
   const status = useRecoilValue(bannerStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
 
   const needToOpenModal = mode === "Deposit" || mode === "Swap";
   const needToOpenWithdrawModal = mode === "Withdraw";
+  const needToOpenDepositModal = mode === "Deposit";
+  const needToOpenSwapModal = mode === "Swap";
 
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2"; //checks if the action is L2
 
@@ -83,6 +86,7 @@ export default function ActionButton() {
     /** add coming code  @Robert */
   }
   const { onOpenFwOptionModal } = useFxOptionModal();
+  const handleConfirm = useHandleConfirm();
 
   return (
     <>
@@ -101,10 +105,11 @@ export default function ActionButton() {
           isConnected === false
             ? () => connetAndDisconntWallet()
             : needToOpenWithdrawModal
-            ? // ? () => setWithdrawStatus({ isOpen: true })
-              () => onOpenFwOptionModal()
-            : needToOpenModal
-            ? onOpenConfirmModal
+            ? () => onOpenFwOptionModal()
+            : needToOpenDepositModal
+            ? () => handleConfirm(Action.Deposit, Status.Initiate)
+            : needToOpenSwapModal
+            ? () => onOpenConfirmModal()
             : onClick
         }
       >

@@ -114,8 +114,16 @@ const Timeline = ({ lineType }: { lineType: number }) => {
         return (
           <>
             <Circle size='8px' bg='#007AFF' />
-
-            <Box w={"0.5px"} height='82px' border={"0.5px dashed #A0A3AD"} />
+            <Box
+              w={"1px"}
+              height='82px'
+              style={{
+                backgroundImage: dashedBackgroundImageGray,
+                backgroundPosition: "bottom",
+                backgroundSize: "5px 5px",
+                backgroundRepeat: "repeat-y",
+              }}
+            />
             <Circle size='8px' bg='#A0A3AD' />
           </>
         );
@@ -140,17 +148,6 @@ const Timeline = ({ lineType }: { lineType: number }) => {
         return (
           <>
             <Circle size='8px' bg='#007AFF' />
-            {/* <Box
-              w={"1px"}
-              height='82px'
-              style={{
-                backgroundImage: dashedBackgroundImageGray,
-                backgroundPosition: "bottom",
-                backgroundSize: "5px 5px",
-                opacity:"0.4",
-                backgroundRepeat: "repeat-y",
-              }}
-            /> */}
             <Box
               w={"0.5px"}
               height='60px'

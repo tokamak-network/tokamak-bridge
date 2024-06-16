@@ -11,43 +11,27 @@ import {
   Flex,
   Circle,
 } from "@chakra-ui/react";
-import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
+import useFwOptionModal from "@/components/fw/hooks/useFwOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import FwComingOptionDetail from "../../modal/option/FwComingOptionDetail";
-import { useRecoilState } from "recoil";
-import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
 import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
-import { Action, Status, Network } from "@/components/historyn/types";
-import { createTransaction } from "@/components/historyn/utils/getCreateTransaction";
+import { Action, Status } from "@/components/historyn/types";
+import { useHandleConfirm } from "@/components/confirmn/hooks/useDepositWithdrawHandleConfirm";
 
 export default function FwComingModal() {
   const { tabletView } = useMediaView();
-  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
-  const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
-  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
+
+  const { fwOptionModal, onCloseFwOptionModal } = useFwOptionModal();
   const { inToken } = useInOutTokens();
 
-  const handleConfirm = () => {
-    const transaction = createTransaction(
-      Action.Withdraw,
-      Status.Initiate,
-      Network.Mainnet,
-      Network.Titan,
-      inToken?.tokenSymbol as string,
-      inToken?.parsedAmount as string
-    );
-    onOpenSwapConfirmModal(transaction);
-    //setWithdrawStatus({ isOpen: true });
+  const handleConfirm = useHandleConfirm();
+
+  const handleClickConfirm = () => {
+    handleConfirm(Action.Withdraw, Status.Initiate);
     onCloseFwOptionModal();
   };
-
-  interface StyledNumberProps {
-    value: string | null | undefined;
-    tokenSymbol: string | String | undefined;
-  }
 
   return (
     <Modal
@@ -182,7 +166,7 @@ export default function FwComingModal() {
             _active={{}}
             _hover={{}}
             _focus={{}}
-            onClick={handleConfirm}
+            onClick={handleClickConfirm}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
               Next

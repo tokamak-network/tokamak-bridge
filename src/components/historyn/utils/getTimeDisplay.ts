@@ -1,6 +1,7 @@
 import {
   TransactionHistory,
   isWithdrawTransactionHistory,
+  isDepositTransactionHistory,
   TransactionStatus,
 } from "@/components/historyn/types";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
@@ -20,13 +21,18 @@ export function getTimeDisplay(transactionData: TransactionHistory) {
   // 상수를 통해 정해진 시간을 추가해준다.
   switch (statusValue) {
     case TransactionStatus.WithdrawRollup: {
-      const timeValue = calculateInitialTime(
-        statusValue,
-        transactionData.blockTimestamps.initialCompletedTimestamp,
-        TRANSACTION_CONSTANTS.WITHDRAW.INITIAL_MINUTES,
-        Boolean(transactionData.errorMessage)
-      );
-      return timeValue;
+      if (
+        isWithdrawTransactionHistory(transactionData) &&
+        transactionData.blockTimestamps.initialCompletedTimestamp
+      ) {
+        const timeValue = calculateInitialTime(
+          statusValue,
+          transactionData.blockTimestamps.initialCompletedTimestamp,
+          TRANSACTION_CONSTANTS.WITHDRAW.INITIAL_MINUTES,
+          Boolean(transactionData.errorMessage)
+        );
+        return timeValue;
+      }
     }
     case TransactionStatus.WithdrawFinalized: {
       if (
@@ -42,12 +48,17 @@ export function getTimeDisplay(transactionData: TransactionHistory) {
       }
     }
     case TransactionStatus.DepositFinalized: {
-      const timeValue = calculateInitialTime(
-        statusValue,
-        transactionData.blockTimestamps.initialCompletedTimestamp,
-        TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES
-      );
-      return timeValue;
+      if (
+        isDepositTransactionHistory(transactionData) &&
+        transactionData.blockTimestamps.initialCompletedTimestamp
+      ) {
+        const timeValue = calculateInitialTime(
+          statusValue,
+          transactionData.blockTimestamps.initialCompletedTimestamp,
+          TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES
+        );
+        return timeValue;
+      }
     }
     default:
       return "-";

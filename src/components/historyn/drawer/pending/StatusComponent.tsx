@@ -6,8 +6,9 @@ import {
   Action,
   Status,
   isWithdrawTransactionHistory,
+  isDepositTransactionHistory,
 } from "@/components/historyn/types";
-import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
+import useDepositWithdrawConfirmModal from "@/components/confirmn/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
 import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
 import { formatDateToYMD } from "@/components/historyn/utils/timeUtils";
@@ -28,7 +29,8 @@ export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
   const { label, transactionData } = props;
-  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
+  const { onOpenDepositWithdrawConfirmModal } =
+    useDepositWithdrawConfirmModal();
   const isActive = transactionData.status === label;
 
   // Countdown is needed only for the following conditions
@@ -45,7 +47,12 @@ export default function StatusComponent(
     ? ""
     : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
-        Number(transactionData.blockTimestamps.initialCompletedTimestamp)
+        Number(
+          isWithdrawTransactionHistory(transactionData) ||
+            isDepositTransactionHistory(transactionData)
+            ? transactionData.blockTimestamps.initialCompletedTimestamp
+            : 0
+        )
       );
 
   // Output variable
@@ -148,7 +155,7 @@ export default function StatusComponent(
             cursor={!isActive ? "pointer" : "default"}
             onClick={
               !isActive
-                ? () => onOpenSwapConfirmModal(transactionData)
+                ? () => onOpenDepositWithdrawConfirmModal(transactionData)
                 : undefined
             }
           >

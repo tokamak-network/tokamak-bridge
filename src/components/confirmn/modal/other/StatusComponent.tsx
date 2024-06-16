@@ -38,7 +38,7 @@ export default function StatusComponent(props: StatusComponentProps) {
       transactionData.action === Action.Deposit);
 
   const isGasFee =
-    ((lineType === 0 || lineType === 100) &&
+    ((lineType === 0 || (lineType === 100 && label === Status.Initiate)) &&
       (label === Status.Initiate || label === Status.Finalize)) ||
     ((lineType === 1 || lineType === 2 || lineType === 3) &&
       label === Status.Finalize);
@@ -68,8 +68,6 @@ export default function StatusComponent(props: StatusComponentProps) {
       return gasCostData?.depositGasCostUS;
     }
   }, [transactionData.action, label, gasCostData]);
-
-  console.log(gasCost, gasCostUs);
 
   return (
     <Flex

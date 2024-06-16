@@ -1,5 +1,4 @@
 import { swapConfirmModalStatus } from "@/recoil/modal/atom";
-import { TransactionHistory } from "@/components/historyn/types";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
 
@@ -8,12 +7,12 @@ export default function useSwapConfirm() {
     swapConfirmModalStatus
   );
 
-  const onOpenSwapConfirmModal = (transaction: TransactionHistory) => {
-    setSwapConfirmModal({ isOpen: true, transaction: transaction });
+  const onOpenSwapConfirmModal = () => {
+    setSwapConfirmModal(true);
   };
 
   const onCloseSwapConfirmModal = useCallback(() => {
-    setSwapConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    setSwapConfirmModal(false);
   }, []);
 
   return {
