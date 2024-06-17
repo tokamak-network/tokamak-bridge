@@ -5,6 +5,7 @@ import {
   DrawerContent,
   DrawerOverlay,
   Box,
+  Center,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import { menuLinks } from "./Index";
@@ -16,6 +17,8 @@ import userGuideHover from "assets/icons/header/userGuideHover.svg";
 import lightbulbHover from "assets/icons/header/LightbulbHover.svg";
 import lightbulb from "assets/icons/header/Lightbulb.svg";
 import LOGO from "assets/icons/header/logo-dark-hc.svg";
+import { usePathname, useRouter } from "next/navigation";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 const CustomMenuItem = (props: {
   link: string;
@@ -38,7 +41,11 @@ const CustomMenuItem = (props: {
       borderRadius={"8px"}
     >
       <Flex mr="9px">
-        <Image width={title === "User Guide" || title === "Get Help" ? 24 : 18} src={icon} alt="icon" />
+        <Image
+          width={title === "User Guide" || title === "Get Help" ? 24 : 18}
+          src={icon}
+          alt="icon"
+        />
       </Flex>
       <Text
         fontSize={
@@ -47,6 +54,30 @@ const CustomMenuItem = (props: {
       >
         {title}
       </Text>
+    </Flex>
+  );
+};
+
+const RouterMenu = (props: { title: string; link: string }) => {
+  const { title, link } = props;
+  const router = useRouter();
+  const { initializeTokenPair } = useInOutTokens();
+  const [, setHamburgerOpen] = useRecoilState(mobileMenuStatus);
+
+  return (
+    <Flex
+      alignItems={"center"}
+      fontSize={16}
+      h={"40px"}
+      mb={"8px"}
+      cursor={"pointer"}
+      onClick={() => {
+        router.push(link);
+        initializeTokenPair();
+        setHamburgerOpen(false);
+      }}
+    >
+      <Text>{title}</Text>
     </Flex>
   );
 };
@@ -64,12 +95,21 @@ const HamburgerMenu = () => {
       trapFocus={false}
       useInert={true}
     >
-      <DrawerOverlay onClick={() => setHamburgerOpen(false)}
-          sx={{
-            bg: "rgba(0, 0, 0, 0.5)"
-          }}
+      <DrawerOverlay
+        onClick={() => setHamburgerOpen(false)}
+        sx={{
+          bg: "rgba(0, 0, 0, 0.5)",
+        }}
       />
-      <Box zIndex={1400} pos={"fixed"} w={"full"} h={"full"} left={0} top={0} bg={'#000000B0'}>
+      <Box
+        zIndex={1400}
+        pos={"fixed"}
+        w={"full"}
+        h={"full"}
+        left={0}
+        top={0}
+        bg={"#000000B0"}
+      >
         <DrawerContent maxW={"248px"}>
           <Flex
             w={"100%"}
@@ -78,8 +118,10 @@ const HamburgerMenu = () => {
             flexDir={"column"}
             padding={"32px 21px"}
           >
-            <Image src={LOGO} alt="Logo"/>
+            <Image src={LOGO} alt="Logo" />
             <Box padding={"8px"} marginTop={"32px"}>
+              <RouterMenu title="BRIDGE & SWAP" link="/" />
+              <RouterMenu title="POOLS" link="/pools" />
               <CustomMenuItem
                 link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
                 title="User Guide"

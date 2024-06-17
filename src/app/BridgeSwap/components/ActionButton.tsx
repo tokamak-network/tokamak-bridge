@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { Button } from "@chakra-ui/react";
+import { Button, Text } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import { useAccount } from "wagmi";
 import { useApprove } from "@/hooks/token/useApproval";
@@ -19,6 +19,8 @@ import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
+
+import useFxOptionModal from "@/componenets/fw/hooks/useFwOptionModal";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -72,44 +74,51 @@ export default function ActionButton() {
     mode,
     outToken,
   ]);
-
   const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
 
+  {
+    /** add coming code  @Robert */
+  }
+  const { onOpenFwOptionModal } = useFxOptionModal();
+
   return (
-    <Button
-      w={"100%"}
-      h={"48px"}
-      fontSize={16}
-      fontWeight={600}
-      _active={{}}
-      _hover={{}}
-      _disabled={{}}
-      bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
-      color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
-      isDisabled={!isConnected ? false : isDisabled}
-      onClick={
-        isConnected === false
-          ? () => connetAndDisconntWallet()
-          : needToOpenWithdrawModal
-          ? () => setWithdrawStatus({ isOpen: true })
-          : needToOpenModal
-          ? onOpenConfirmModal
-          : onClick
-      }
-    >
-      {!isConnected && "Connect Wallet"}
-      {!isConnected
-        ? null
-        : isConnected && mode === null
-        ? "Select Network"
-        : mode?.replaceAll("ETH-", "")}{" "}
-      <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
-        {deactivateButton ? "(Service under maintenance)" : ""}
-        {/* {'(Service under maintenance)'} */}
-      </span>
-    </Button>
+    <>
+      <Button
+        w={"100%"}
+        h={"48px"}
+        fontSize={16}
+        fontWeight={600}
+        _active={{}}
+        _hover={{}}
+        _disabled={{}}
+        bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
+        color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
+        isDisabled={!isConnected ? false : isDisabled}
+        onClick={
+          isConnected === false
+            ? () => connetAndDisconntWallet()
+            : needToOpenWithdrawModal
+            ? // ? () => setWithdrawStatus({ isOpen: true })
+              () => onOpenFwOptionModal()
+            : needToOpenModal
+            ? onOpenConfirmModal
+            : onClick
+        }
+      >
+        {!isConnected && "Connect Wallet"}
+        {!isConnected
+          ? null
+          : isConnected && mode === null
+          ? "Select Network"
+          : mode?.replaceAll("ETH-", "")}{" "}
+        <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
+          {deactivateButton ? "(Service under maintenance)" : ""}
+          {/* {'(Service under maintenance)'} */}
+        </span>
+      </Button>
+    </>
   );
 }

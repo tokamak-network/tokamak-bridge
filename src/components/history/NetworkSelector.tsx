@@ -50,8 +50,12 @@ const customStyles = (maxHeight: string) => {
       margin: "0px",
       marginTop: "4px",
       background: "#1F2128",
-      minWidth: isConnectedToMainNetwork?  "136px !important": "156px !important",
-      maxWidth: isConnectedToMainNetwork?  "136px !important": "156px !important",
+      minWidth: isConnectedToMainNetwork
+        ? "136px !important"
+        : "156px !important",
+      maxWidth: isConnectedToMainNetwork
+        ? "136px !important"
+        : "156px !important",
       borderRadius: "6px",
       position: "absolute",
       border: "1px solid #313442",
@@ -80,7 +84,7 @@ const ValueContainer = (props: {
         fontSize={14}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Flex columnGap={"6px"} className="test">
+        <Flex columnGap={"6px"}>
           <Box w={"20px"} h={"20px"}>
             <Image
               src={selectedOption.networkImage}
@@ -166,7 +170,7 @@ export default function NetworkSelector(props: {
 
   const CustomOption = (props: { data: SelectOption }) => {
     const { data } = props;
-    
+
     if (data.chainId === 0) {
       return (
         <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
@@ -224,7 +228,7 @@ export default function NetworkSelector(props: {
       if (
         // isConnectedToMainNetwork === true ||
         // isConnectedToMainNetwork === undefined
-true
+        true
       ) {
         return [
           SupportedChainId["MAINNET"],
@@ -232,7 +236,7 @@ true
         ].includes(chainInfo.chainId);
       }
       // return [SupportedChainId["GOERLI"], SupportedChainId["DARIUS"]].includes(
-        //   chainInfo.chainId
+      //   chainInfo.chainId
       // );
     })
     .map((chainInfo) => {
@@ -273,7 +277,7 @@ true
           IndicatorsContainer: () => null,
         }}
         //@ts-ignore
-        styles={customStyles('40px')}
+        styles={customStyles("40px")}
         value={selectedOption}
       ></Select>
     </Box>

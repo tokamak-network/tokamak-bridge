@@ -8,12 +8,11 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Script from "next/script";
 import Header from "@/components/header/Index";
-import { Center, Box, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
-import useMediaView from "@/hooks/mediaView/useMediaView";
-import MobileView from "@/app/Mobile";
 import Footer from "@/components/footer";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const GlobalComponents = () => {
   return (
@@ -43,15 +42,7 @@ const GoogleAnalyticsScript = () => {
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
-  const { pcView, minorView } = useMediaView();
-
-  if (minorView) {
-    return (
-      <Center h={"100vh"} bg={"#0F0F12"} color={"#FFFFFF"}>
-        <MobileView />
-      </Center>
-    );
-  }
+  const { mobileView } = useMediaView();
 
   return (
     <>
@@ -59,30 +50,23 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ApolloProvider client={apolloClient}>
           <ChakraProvidersForNextJs>
-            <>
+            <Flex flexDir={"column"} h={"100vh"}>
               <Header />
-              <Flex flexDir={"column"}>
-                <Flex justifyContent={"center"} bg={"#0F0F12"} minH={"90vh"}>
+              <Flex flexDir={"column"} flexGrow={1}>
+                <Flex
+                  justifyContent={"center"}
+                  alignItems={"center"}
+                  bg={"#0F0F12"}
+                  h={"100%"}
+                >
                   {children}
                 </Flex>
-                {pcView ? (
-                  <Footer />
-                ) : (
-                  <Box
-                    position="fixed"
-                    top="0"
-                    right="0"
-                    bottom="0"
-                    left="0"
-                    zIndex={-1}
-                    bg={"#0F0F12"}
-                  ></Box>
-                )}
+                <Footer />
               </Flex>
               <GlobalComponents />
               <Drawers />
               <Modals />
-            </>
+            </Flex>
           </ChakraProvidersForNextJs>
         </ApolloProvider>
       </QueryClientProvider>
