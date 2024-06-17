@@ -2,11 +2,13 @@ import {
   TransactionHistory,
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
-  TransactionStatus,
 } from "@/components/historyn/types";
 import { TRANSACTION_CONSTANTS } from "@/components/historyn/constants";
 import { convertTimeToMinutes } from "@/components/historyn/utils/timeUtils";
-import getStatusValue from "@/components/historyn/utils/historyStatus";
+import {
+  TransactionStatus,
+  getStatusValue,
+} from "@/components/historyn/utils/historyStatus";
 
 // 여기에 개별 타입을 만든다.
 

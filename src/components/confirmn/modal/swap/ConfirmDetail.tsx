@@ -11,7 +11,6 @@ import {
 import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/components/historyn/constants/index";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import capitalizeFirstLetter from "@/components/confirmn/utils/capitalizeFirstLetter";
 import { FwFormatNumber } from "@/components/fw/components/FwFormatNumber";
 import { TokenInfo } from "types/token/supportedToken";
 import getBlockExplorerUrl from "@/components/confirmn/utils/getBlockExplorerUrl";

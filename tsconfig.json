@@ -32,7 +32,8 @@
       "@/contracts/*": ["constant/contracts/*"],
       "@/bridgeComponent/*": ["app/BridgeSwap/components/*"],
       "@/pools/*": ["app/pools/*"],
-      "@/constant/": ["constant"]
+      "@/constant/": ["constant"],
+      "@/staging/": ["staging/*"]
     },
     "plugins": [
       {

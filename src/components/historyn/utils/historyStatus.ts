@@ -1,7 +1,15 @@
 //historyStatus.ts
-import { Status, Action, TransactionStatus } from "@/components/historyn/types";
+import { Status, Action } from "@/components/historyn/types";
 
-const getStatusValue = (action: Action, status: Status): number => {
+export enum TransactionStatus {
+  WithdrawRollup = 1,
+  WithdrawFinalized = 2,
+  WithdrawCompleted = 3,
+  DepositFinalized = 101,
+  DepositCompleted = 102,
+}
+
+export const getStatusValue = (action: Action, status: Status): number => {
   if (action === Action.Withdraw) {
     switch (status) {
       case Status.Rollup:
@@ -21,5 +29,3 @@ const getStatusValue = (action: Action, status: Status): number => {
   }
   return 0; // no type
 };
-
-export default getStatusValue;
