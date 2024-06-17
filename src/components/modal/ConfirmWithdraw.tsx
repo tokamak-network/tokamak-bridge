@@ -55,6 +55,7 @@ export default function ConfirmWithdraw() {
       const add1Hour = addHours(startDate, 1);
       const startTime = format(startDate, "HH:mm");
       const formattedEndTime = format(add1Hour, "HH:mm");
+
       return {
         formattedDate: formattedDate,
         startTime: startTime,
