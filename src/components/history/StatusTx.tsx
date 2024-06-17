@@ -46,7 +46,7 @@ export default function StatusTx(props: {
   layer: string;
   txHash: string;
   timeStamp?: number;
-  tx: TxType & { stateBatchAppendedEvent: any };
+  tx: TxType & { stateBatchAppendedEvent?: any };
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
@@ -64,8 +64,6 @@ export default function StatusTx(props: {
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setClaimTx] = useRecoilState(claimTx);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-
-  console.log("tx", tx);
 
   //creates the calendar event start time, end time, and even date
   const getCalendarEvent = useMemo(() => {
@@ -96,7 +94,6 @@ export default function StatusTx(props: {
   //creates the count up clock for the rollup period
   useEffect(() => {
     if (tx.l2timeStamp) {
-      console.log("tx", tx);
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
         const currentTimeUTC = new Date();
