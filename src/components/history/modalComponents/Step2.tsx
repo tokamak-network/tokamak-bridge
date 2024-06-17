@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { differenceInSeconds, format } from "date-fns";
-import { Flex, Text, Tooltip } from "@chakra-ui/react";
+import { Flex, Text, Link } from "@chakra-ui/react";
 import Image from "next/image";
 import useConnectedNetwork from "@/hooks/network";
 import { confirmWithdrawData } from "@/recoil/modal/atom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/questionGray.svg";
+import useGetTxLayers from "@/hooks/user/useGetTxLayers";
+import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
 
 function Step2(props: { progress: string; timeStamp?: number; check: any }) {
   const withdraw = useRecoilValue(confirmWithdrawData);
@@ -15,6 +17,7 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
   const [duration, setDuration] = useState("0");
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const tx = withdraw.modalData;
+  const providers = useGetTxLayers();
 
   useEffect(() => {
     if (timeStamp) {
@@ -58,7 +61,7 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
               <span>L2 state roots are rolled up at least every 6 hours.</span>
               <span>It may take less than 6 hours.</span>
             </Flex>
-        }
+          }
           style={{
             tooltipLineHeight: "normal",
             height: "45px",
@@ -70,6 +73,22 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
           <Text mr="6px" fontSize={"14px"} color={check.color}>
             {tx ? duration : isConnectedToMainNetwork ? "~ 6 hours" : "2 min"}
           </Text>
+        </Flex>
+      )}
+      {tx?.currentStatus > 3 && (
+        <Flex>
+          <Link
+            target="_blank"
+            href={`${providers.l1BlockExplorer}/tx/${tx?.stateBatchAppendedEvent?.transactionHash}`}
+            textDecor={"none"}
+            _hover={{ textDecor: "none" }}
+            display={"flex"}
+          >
+            <Text mr="6px" fontSize={"14px"} color={"#FFFFFF"}>
+              Transaction
+            </Text>
+            <Image src={TxLinkIcon} alt="gas station" />
+          </Link>
         </Flex>
       )}
     </Flex>
