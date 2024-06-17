@@ -8,9 +8,9 @@ import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
-import FwComingModal from "@/components/fw/coming/swap";
-import DepositWithdrawConfirmModal from "@/components/confirmn/modal/other";
-import SwapConfirmModal from "@/components/confirmn/modal/swap";
+import FwComingModal from "@/staging/components/cross-trade/coming/swap";
+import DepositWithdrawConfirmModal from "@/staging/components/new-confirm/modal/other";
+import SwapConfirmModal from "@/staging/components/new-confirm/modal/swap";
 
 export default function Modals() {
   const { mobileView } = useMediaView();

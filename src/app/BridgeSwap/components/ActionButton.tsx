@@ -19,10 +19,14 @@ import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
-import { Action, Status, Network } from "@/components/historyn/types";
-import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
-import { useHandleConfirm } from "@/components/confirmn/hooks/useDepositWithdrawHandleConfirm";
-import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
+import {
+  Action,
+  Status,
+  Network,
+} from "@/staging/components/new-history/types";
+import useFxOptionModal from "@/staging/components/cross-trade/hooks/useFwOptionModal";
+import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
+import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapConfirmModal";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();

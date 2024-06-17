@@ -1,6 +1,9 @@
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
-import { FwConfirmModalType, ModalType } from "@/components/fw/types";
-import { TransactionHistory } from "@/components/historyn/types";
+import {
+  FwConfirmModalType,
+  ModalType,
+} from "@/staging/components/cross-trade/types";
+import { TransactionHistory } from "@/staging/components/new-history/types";
 import { atom } from "recoil";
 
 type withdrawModal = {
