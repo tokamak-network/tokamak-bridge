@@ -8,9 +8,9 @@ import {
   Input,
   InputRightElement,
 } from "@chakra-ui/react";
-import FwOptionInput from "@/staging/components/cross-trade/modal/option/FwOptionInput";
-import { FwTooltip } from "@/staging/components/cross-trade/components/FwTooltip";
-import { FwInputProps } from "@/staging/components/cross-trade/types";
+import CTOptionInput from "@/staging/components/cross-trade/modal/option/CTOptionInput";
+import { CTTooltip } from "@/staging/components/cross-trade/components/CTTooltip";
+import { CTInputProps } from "@/staging/components/cross-trade/types";
 import {
   ButtonTypeMain,
   ButtonTypeSub,
@@ -22,8 +22,8 @@ interface AdditionalCrossProps {
   handleButtonSubClick: (value: ButtonTypeSub) => void;
 }
 
-export default function FwOptionCrossDetail(
-  props: AdditionalCrossProps & FwInputProps
+export default function CTOptionCrossDetail(
+  props: AdditionalCrossProps & CTInputProps
 ) {
   const isCrossActive = props.activeMainButtonValue === ButtonTypeMain.Cross;
 
@@ -57,7 +57,7 @@ export default function FwOptionCrossDetail(
             >
               Receive
             </Text>
-            <FwTooltip
+            <CTTooltip
               tooltipLabel={"text will be changed"}
               style={{ marginLeft: "2px" }}
             />
@@ -149,12 +149,12 @@ export default function FwOptionCrossDetail(
               >
                 Service fee
               </Text>
-              <FwTooltip
+              <CTTooltip
                 tooltipLabel={"text will be changed"}
                 style={{ marginLeft: "2px" }}
               />
             </Flex>
-            <FwOptionInput
+            <CTOptionInput
               inputValue={props.inputValue}
               inputWarningCheck={props.inputWarningCheck}
               onInputChange={props.onInputChange}

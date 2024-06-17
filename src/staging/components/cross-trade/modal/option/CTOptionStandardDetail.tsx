@@ -1,12 +1,12 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
-import { FwTooltip } from "@/staging/components/cross-trade/components/FwTooltip";
+import { CTTooltip } from "@/staging/components/cross-trade/components/CTTooltip";
 import { ButtonTypeMain } from "@/staging/components/cross-trade/types";
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
   handleButtonMainClick: (value: ButtonTypeMain) => void;
 }
 
-export default function FwOptionStandardDetail(props: AdditionalStandardProps) {
+export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const isStandardActive =
     props.activeMainButtonValue === ButtonTypeMain.Standard;
 
@@ -36,7 +36,7 @@ export default function FwOptionStandardDetail(props: AdditionalStandardProps) {
             >
               Receive
             </Text>
-            <FwTooltip
+            <CTTooltip
               tooltipLabel={"text will be changed"}
               style={{ marginLeft: "2px" }}
             />

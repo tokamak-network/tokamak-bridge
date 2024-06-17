@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export default function useFwRecommend(recommendCheck: boolean): string {
+export default function useCTRecommend(recommendCheck: boolean): string {
   const [recommendValue, setRecommendValue] = useState<string>("0.99");
 
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
 import { ReactNode, useState } from "react";
 
-export default function FwCustomTooltip(props: {
+export default function CTCustomTooltip(props: {
   content: string | ReactNode;
   tooltipLabel?: string | ReactNode;
   style?: {

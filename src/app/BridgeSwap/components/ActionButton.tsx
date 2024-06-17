@@ -24,7 +24,7 @@ import {
   Status,
   Network,
 } from "@/staging/components/new-history/types";
-import useFxOptionModal from "@/staging/components/cross-trade/hooks/useFwOptionModal";
+import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
 import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapConfirmModal";
 
@@ -90,7 +90,7 @@ export default function ActionButton() {
   {
     /** add coming code  @Robert */
   }
-  const { onOpenFwOptionModal } = useFxOptionModal();
+  const { onOpenCTOptionModal } = useCTOptionModal();
   const handleConfirm = useHandleConfirm();
   const { onOpenSwapConfirmModal } = useSwapConfirmModal();
 
@@ -111,7 +111,7 @@ export default function ActionButton() {
           isConnected === false
             ? () => connetAndDisconntWallet()
             : needToOpenWithdrawModal
-            ? () => onOpenFwOptionModal()
+            ? () => onOpenCTOptionModal()
             : needToOpenDepositModal
             ? () => handleConfirm(Action.Deposit, Status.Initiate)
             : needToOpenSwapModal

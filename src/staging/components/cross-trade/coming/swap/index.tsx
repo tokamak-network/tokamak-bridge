@@ -11,32 +11,32 @@ import {
   Flex,
   Circle,
 } from "@chakra-ui/react";
-import useFwOptionModal from "@/staging/components/cross-trade/hooks/useFwOptionModal";
+import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
-import FwComingOptionDetail from "../../modal/option/FwComingOptionDetail";
+import CTComingOptionDetail from "../../modal/option/CTComingOptionDetail";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import { FwFormatNumber } from "@/staging/components/cross-trade/components/FwFormatNumber";
+import { CTFormatNumber } from "@/staging/components/cross-trade/components/CTFormatNumber";
 import { Action, Status } from "@/staging/components/new-history/types";
 import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
 
-export default function FwComingModal() {
+export default function CTComingModal() {
   const { tabletView } = useMediaView();
 
-  const { fwOptionModal, onCloseFwOptionModal } = useFwOptionModal();
+  const { ctOptionModal, onCloseCTOptionModal } = useCTOptionModal();
   const { inToken } = useInOutTokens();
 
   const handleConfirm = useHandleConfirm();
 
   const handleClickConfirm = () => {
     handleConfirm(Action.Withdraw, Status.Initiate);
-    onCloseFwOptionModal();
+    onCloseCTOptionModal();
   };
 
   return (
     <Modal
-      isOpen={fwOptionModal}
-      onClose={onCloseFwOptionModal}
+      isOpen={ctOptionModal}
+      onClose={onCloseCTOptionModal}
       motionPreset={tabletView ? "slideInBottom" : "none"}
       isCentered={tabletView ? false : true}
     >
@@ -55,10 +55,10 @@ export default function FwComingModal() {
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={onCloseFwOptionModal} />
+          <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          <FwComingOptionDetail />
+          <CTComingOptionDetail />
           <Flex
             alignItems='center'
             justifyContent='space-between'
@@ -90,7 +90,7 @@ export default function FwComingModal() {
                   lineHeight={"33px"}
                   color={"#007AFF"}
                 >
-                  <FwFormatNumber
+                  <CTFormatNumber
                     style={{
                       fontWeight: 600,
                       fontSize: "22px",

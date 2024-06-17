@@ -23,7 +23,7 @@ import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hoo
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
-import { FwTooltip } from "@/staging/components/cross-trade/components/FwTooltip";
+import { CTTooltip } from "@/staging/components/cross-trade/components/CTTooltip";
 import ConfirmDetails from "@/staging/components/new-confirm/modal/other/ConfirmDetails";
 import { STATUS_CONFIG } from "@/staging/components/new-history/constants";
 import StatusComponent from "@/staging/components/new-confirm/modal/other/StatusComponent";
@@ -290,7 +290,7 @@ export default function DepositWithdrawConfirmModal() {
                     >
                       Finalize
                     </Text>
-                    <FwTooltip
+                    <CTTooltip
                       tooltipLabel={"text will be changed"}
                       style={{ marginLeft: "2px" }}
                       type={lineType !== 3 ? "grey" : "white"}

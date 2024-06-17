@@ -1,10 +1,10 @@
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import Image from "next/image";
-import FwUpdateInput from "./FwUpdateInput";
-import FwDownArrow from "assets/icons/fw/fwDownArrow.svg";
-import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
-import FwUsdcSymbol from "assets/icons/fw/fwUsdcSymbol.svg";
-import { FwInputProps } from "@/staging/components/cross-trade/types";
+import CTUpdateInput from "./CTUpdateInput";
+import CTDownArrow from "assets/icons/ct/ctDownArrow.svg";
+import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
+import CTUsdcSymbol from "assets/icons/ct/ctUsdcSymbol.svg";
+import { CTInputProps } from "@/staging/components/cross-trade/types";
 
 enum FeeDetailType {
   Receive,
@@ -109,8 +109,8 @@ interface AdditionalDetailProps {
   onRecommendRefresh: () => void;
 }
 
-export default function FwUpdateFeeDetail(
-  props: FwInputProps & AdditionalDetailProps
+export default function CTUpdateFeeDetail(
+  props: CTInputProps & AdditionalDetailProps
 ) {
   // update fee 상세
   // 공백일때는 값이 들어가면 안된다.
@@ -137,7 +137,7 @@ export default function FwUpdateFeeDetail(
             0.012
           </Text>
           <Flex>
-            <Image src={FwUsdcSymbol} alt={"FwUsdcSymbol"} />
+            <Image src={CTUsdcSymbol} alt={"CTUsdcSymbol"} />
             <Text
               ml={"4px"}
               fontSize={"16px"}
@@ -155,9 +155,9 @@ export default function FwUpdateFeeDetail(
         p={"4px"}
         my={"6px"}
       >
-        <Image src={FwDownArrow} alt={"FwDownArrow"} />
+        <Image src={CTDownArrow} alt={"CTDownArrow"} />
       </Flex>
-      <FwUpdateInput
+      <CTUpdateInput
         // input 관련 props
         inputValue={props.inputValue}
         inputWarningCheck={props.inputWarningCheck}

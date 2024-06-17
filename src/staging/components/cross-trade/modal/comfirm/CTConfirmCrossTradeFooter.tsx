@@ -1,5 +1,5 @@
 import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
-import FwCheckCustomIcon from "@/staging/components/cross-trade/components/FwCheckCustomIcon";
+import CTCheckCustomIcon from "@/staging/components/cross-trade/components/CTCheckCustomIcon";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -7,7 +7,7 @@ type TradeConfirmationProps = {
   onConfirm: () => void;
 };
 
-export default function FwConfirmCrossTradeFooter(
+export default function CTConfirmCrossTradeFooter(
   props: TradeConfirmationProps
 ) {
   const { isChecked, onCheckboxChange, onConfirm } = props;
@@ -19,7 +19,7 @@ export default function FwConfirmCrossTradeFooter(
         <Checkbox
           isChecked={isChecked}
           onChange={onCheckboxChange}
-          icon={<FwCheckCustomIcon />}
+          icon={<CTCheckCustomIcon />}
           sx={{
             ".chakra-checkbox__control": {
               borderWidth: "1px",

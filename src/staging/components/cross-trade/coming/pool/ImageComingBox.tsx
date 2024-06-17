@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Box } from "@chakra-ui/react";
-import FwComingCrossMobile from "@/assets/image/BridgeSwap/fw/fwComingCrossMobile.png";
-import FwComingCross from "@/assets/image/BridgeSwap/fw/fwComingCross.png";
+import CTComingCrossMobile from "@/assets/image/BridgeSwap/ct/ctComingCrossMobile.png";
+import CTComingCross from "@/assets/image/BridgeSwap/ct/ctComingCross.png";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
 interface ImageBoxProp {
@@ -26,8 +26,8 @@ export default function ImageComingBox(props: ImageBoxProp) {
     >
       <Box zIndex={1}>
         <Image
-          src={isMobile ? FwComingCrossMobile : FwComingCross}
-          alt='FwComingCrossMobile'
+          src={isMobile ? CTComingCrossMobile : CTComingCross}
+          alt='CTComingCrossMobile'
           style={{
             width: boxWidth,
             height: boxHeight,

@@ -8,11 +8,11 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import Image from "next/image";
-import { FwInputProps } from "@/staging/components/cross-trade/types";
-import FwReCircle from "assets/icons/fw/fwReCircle.svg";
-import FwReCirclePurple from "assets/icons/fw/fwReCircle_purple.svg";
-import FwUsdcSymbol from "assets/icons/fw/fwUsdcSymbol.svg";
-import { FwWarning } from "@/staging/components/cross-trade/components/FwWarning";
+import { CTInputProps } from "@/staging/components/cross-trade/types";
+import CTReCircle from "assets/icons/ct/ctReCircle.svg";
+import CTReCirclePurple from "assets/icons/ct/ctReCircle_purple.svg";
+import CTUsdcSymbol from "assets/icons/ct/ctUsdcSymbol.svg";
+import { CTWarning } from "@/staging/components/cross-trade/components/CTWarning";
 import { WarningType } from "@/staging/components/cross-trade/types";
 
 interface AdditionalDetailProps {
@@ -21,8 +21,8 @@ interface AdditionalDetailProps {
   onRecommendRefresh: () => void;
 }
 
-export default function FwUpdateInput(
-  props: FwInputProps & AdditionalDetailProps
+export default function CTUpdateInput(
+  props: CTInputProps & AdditionalDetailProps
 ) {
   const {
     inputValue,
@@ -77,9 +77,9 @@ export default function FwUpdateInput(
             cursor='pointer'
           >
             {recommendCheck ? (
-              <Image src={FwReCircle} alt={"FwReCircle"} />
+              <Image src={CTReCircle} alt={"CTReCircle"} />
             ) : (
-              <Image src={FwReCirclePurple} alt={"FwReCirclePurple"} />
+              <Image src={CTReCirclePurple} alt={"CTReCirclePurple"} />
             )}
           </Box>
         </Flex>
@@ -112,7 +112,7 @@ export default function FwUpdateInput(
           />
           <InputRightElement mr={"24px"}>
             <Flex>
-              <Image src={FwUsdcSymbol} alt={"FwUsdcSymbol"} />
+              <Image src={CTUsdcSymbol} alt={"CTUsdcSymbol"} />
               <Text
                 ml={"4px"}
                 fontSize={"16px"}
@@ -128,7 +128,7 @@ export default function FwUpdateInput(
       </Box>
       <Box mt={"8px"}>
         {inputWarningCheck == WarningType.Critical ? (
-          <FwWarning
+          <CTWarning
             label={"text will be changed"}
             type={inputWarningCheck}
             groupStyle={{
@@ -142,7 +142,7 @@ export default function FwUpdateInput(
             }}
           />
         ) : inputWarningCheck == WarningType.Normal ? (
-          <FwWarning
+          <CTWarning
             label={"text will be changed"}
             type={inputWarningCheck}
             groupStyle={{

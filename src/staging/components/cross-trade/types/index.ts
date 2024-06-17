@@ -5,7 +5,7 @@ export enum ModalType {
   History = "history",
 }
 
-export type FwConfirmModalType = {
+export type CTConfirmModalType = {
   isOpen: boolean;
   type: ModalType;
 };
@@ -15,7 +15,7 @@ export enum WarningType {
   Normal = "normal",
 }
 
-export interface FwInputProps {
+export interface CTInputProps {
   inputValue: string;
   inputWarningCheck: WarningType | "";
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;

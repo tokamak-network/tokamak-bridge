@@ -1,11 +1,11 @@
 import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
-import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
-import Pencil from "assets/icons/fw/pencil.svg";
-import EthSymbol from "assets/icons/fw/eth_fw.svg";
-import ThanosSymbol from "assets/icons/fw/thanos_symbol.svg";
+import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
+import Pencil from "assets/icons/ct/pencil.svg";
+import EthSymbol from "assets/icons/ct/eth_ct.svg";
+import ThanosSymbol from "assets/icons/ct/thanos_symbol.svg";
 import Image from "next/image";
-import { FwTooltip } from "@/staging/components/cross-trade/components/FwTooltip";
+import { CTTooltip } from "@/staging/components/cross-trade/components/CTTooltip";
 
 interface TransactionDetailProps {
   title: string;
@@ -14,7 +14,7 @@ interface TransactionDetailProps {
   iconSrc: any;
 }
 
-const FwTransactionDetail: React.FC<TransactionDetailProps> = ({
+const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   title,
   mainValue,
   subValue,
@@ -71,7 +71,7 @@ interface FeeDetailProps {
   onPencilClick?: () => void;
 }
 
-interface FwConfirmDetailProps {
+interface CTConfirmDetailProps {
   modalType: ModalType;
   onPencilClick: () => void;
 }
@@ -97,7 +97,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           // <Box ml={"2px"}>
           //   <Image src={TipSymbol} alt={"TipSymbol"} />
           // </Box>
-          <FwTooltip
+          <CTTooltip
             tooltipLabel={"text will be changed"}
             style={{ marginLeft: "2px" }}
           />
@@ -125,10 +125,10 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   );
 };
 
-export default function FwConfirmDetail({
+export default function CTConfirmDetail({
   modalType,
   onPencilClick,
-}: FwConfirmDetailProps) {
+}: CTConfirmDetailProps) {
   return (
     <Box
       bg='#15161D'
@@ -137,13 +137,13 @@ export default function FwConfirmDetail({
       border={"1px, 1px, 0px, 1px"}
       borderRadius={"8px"}
     >
-      <FwTransactionDetail
+      <CTTransactionDetail
         title='Send'
         mainValue='10 USDC'
         subValue='$99.00'
         iconSrc={ThanosSymbol}
       />
-      <FwTransactionDetail
+      <CTTransactionDetail
         title='Receive'
         mainValue='9.988 USDC'
         subValue='$99.00'

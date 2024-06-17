@@ -1,8 +1,8 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
-import FWoptionBg from "@/assets/image/BridgeSwap/fw/fwOptionBg.png";
-import FWoptionButtonBg from "@/assets/image/BridgeSwap/fw/fwOptionButtonBg.png";
+import FWoptionBg from "@/assets/image/BridgeSwap/ct/ctOptionBg.png";
+import FWoptionButtonBg from "@/assets/image/BridgeSwap/ct/ctOptionButtonBg.png";
 
-export default function FwComingOptionDetail() {
+export default function CTComingOptionDetail() {
   return (
     <Flex
       alignItems='center'

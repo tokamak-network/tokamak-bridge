@@ -1,9 +1,9 @@
 import { Box, Text, Flex, Center } from "@chakra-ui/react";
-import ThanosSymbol_bg from "assets/icons/fw/thanos_symbol_bg_white.svg";
-import txlink from "@/assets/icons/fw/txlink.svg";
+import ThanosSymbol_bg from "assets/icons/ct/thanos_symbol_bg_white.svg";
+import txlink from "@/assets/icons/ct/txlink.svg";
 import Image from "next/image";
 
-export default function FwConfirmHistoryFooter() {
+export default function CTConfirmHistoryFooter() {
   return (
     <>
       <Box

@@ -12,7 +12,7 @@ import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/components/new-history/constants/index";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/staging/components/new-confirm/utils/capitalizeFirstLetter";
-import { FwFormatNumber } from "@/staging/components/cross-trade/components/FwFormatNumber";
+import { CTFormatNumber } from "@/staging/components/cross-trade/components/CTFormatNumber";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -92,7 +92,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
           </Flex>
           <Box ml={"8px"}>
             <Flex>
-              <FwFormatNumber
+              <CTFormatNumber
                 style={{
                   marginRight: "6px",
                   fontWeight: 600,

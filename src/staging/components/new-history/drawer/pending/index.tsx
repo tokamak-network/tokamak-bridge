@@ -8,7 +8,7 @@ import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/staging/components/new-history/types";
 import PendingFooter from "./pendingFooter";
-import { FwFormatNumber } from "@/staging/components/cross-trade/components/FwFormatNumber";
+import { CTFormatNumber } from "@/staging/components/cross-trade/components/CTFormatNumber";
 
 interface PendingProps {
   transaction: TransactionHistory;
@@ -54,7 +54,7 @@ export default function Pending(props: PendingProps) {
           <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
             <Flex>
-              <FwFormatNumber
+              <CTFormatNumber
                 style={{
                   fontWeight: 600,
                   fontSize: "14px",

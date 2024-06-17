@@ -1,6 +1,6 @@
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import Image from "next/image";
-import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
+import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 
 export enum ConfirmDetailType {

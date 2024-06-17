@@ -1,11 +1,11 @@
-import FwCustomTooltip from "@/staging/components/cross-trade/components/FwCustomTooltip";
+import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCustomTooltip";
 import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import { CSSProperties } from "react";
-import QUESTION_ICON from "assets/icons/fw/tip_fw.svg";
-import QUESTION_ICON_WHITE from "assets/icons/fw/tip_fw_white.svg";
+import QUESTION_ICON from "assets/icons/ct/tip_ct.svg";
+import QUESTION_ICON_WHITE from "assets/icons/ct/tip_ct_white.svg";
 
-export function FwTooltip(props: {
+export function CTTooltip(props: {
   tooltipLabel: string;
   style?: CSSProperties;
   type?: "grey" | "white";
@@ -14,7 +14,7 @@ export function FwTooltip(props: {
 
   return (
     <Box style={style}>
-      <FwCustomTooltip
+      <CTCustomTooltip
         content={
           <Flex>
             {type === "grey" ? (

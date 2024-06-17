@@ -8,7 +8,7 @@ import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
-import FwComingModal from "@/staging/components/cross-trade/coming/swap";
+import CTComingModal from "@/staging/components/cross-trade/coming/swap";
 import DepositWithdrawConfirmModal from "@/staging/components/new-confirm/modal/other";
 import SwapConfirmModal from "@/staging/components/new-confirm/modal/swap";
 
@@ -39,11 +39,11 @@ export default function Modals() {
       <SwapConfirmModal />
 
       {/**FW coming modal @Robert */}
-      <FwComingModal />
+      <CTComingModal />
       {/* 
-        <FwOptionModal />
-        <FwModal />
-        <FwFeeUpdateModal /> 
+        <CTOptionModal />
+        <CTModal />
+        <CTFeeUpdateModal /> 
       */}
     </>
   );

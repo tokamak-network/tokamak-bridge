@@ -11,7 +11,7 @@ import {
 import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/components/new-history/constants/index";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { FwFormatNumber } from "@/staging/components/cross-trade/components/FwFormatNumber";
+import { CTFormatNumber } from "@/staging/components/cross-trade/components/CTFormatNumber";
 import { TokenInfo } from "types/token/supportedToken";
 import getBlockExplorerUrl from "@/staging/components/new-confirm/utils/getBlockExplorerUrl";
 
@@ -73,7 +73,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
           </Flex>
           <Box ml={"8px"}>
             <Flex>
-              <FwFormatNumber
+              <CTFormatNumber
                 style={{
                   marginRight: "6px",
                   fontWeight: 600,

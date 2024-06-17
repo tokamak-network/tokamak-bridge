@@ -1,8 +1,8 @@
 import { Box, Text } from "@chakra-ui/react";
 import Image from "next/image";
 
-import PoolComing from "@/assets/image/BridgeSwap/fw/poolComing.png";
-import PoolComingTablet from "@/assets/image/BridgeSwap/fw/poolComingTablet.png";
+import PoolComing from "@/assets/image/BridgeSwap/ct/poolComing.png";
+import PoolComingTablet from "@/assets/image/BridgeSwap/ct/poolComingTablet.png";
 
 interface ImageBoxProp {
   isMobile: boolean;
@@ -24,7 +24,7 @@ export default function ImagePoolBox(props: ImageBoxProp) {
       <Box zIndex={1}>
         <Image
           src={isMobile ? PoolComing : PoolComingTablet}
-          alt='FwComingCrossMobile'
+          alt='CTComingCrossMobile'
           style={{
             width: isMobile ? undefined : "536px",
             height: isMobile

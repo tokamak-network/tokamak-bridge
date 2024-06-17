@@ -39,15 +39,15 @@ function ToggleButton({
   );
 }
 
-interface FwUpdateButtonProps {
+interface CTUpdateButtonProps {
   activeButton: UpdateFeeButtonType;
   setActiveButton: React.Dispatch<React.SetStateAction<UpdateFeeButtonType>>;
 }
 
-export default function FwUpdateButton({
+export default function CTUpdateButton({
   activeButton,
   setActiveButton,
-}: FwUpdateButtonProps) {
+}: CTUpdateButtonProps) {
   return (
     <Flex
       width='332px'

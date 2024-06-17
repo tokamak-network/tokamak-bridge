@@ -10,23 +10,23 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
-import useFxOptionModal from "@/staging/components/cross-trade/hooks/useFwOptionModal";
+import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
-import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useFwConfirmModal";
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import {
   ModalType,
   WarningType,
   ButtonTypeMain,
   ButtonTypeSub,
 } from "@/staging/components/cross-trade/types";
-import FwOptionCrossDetail from "./FwOptionCrossDetail";
-import FwOptionStandardDetail from "./FwOptionStandardDetail";
+import CTOptionCrossDetail from "./CTOptionCrossDetail";
+import CTOptionStandardDetail from "./CTOptionStandardDetail";
 
-export default function FwOptionModal() {
-  const { fwOptionModal, onCloseFwOptionModal } = useFxOptionModal();
-  const { onOpenFwConfirmModal } = useFxConfirmModal();
+export default function CTOptionModal() {
+  const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
+  const { onOpenCTConfirmModal } = useFxConfirmModal();
 
-  // FwConfirmDetail button 관련 state 및 function Start @Robert
+  // CTConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
     useState<ButtonTypeMain>(ButtonTypeMain.Standard);
 
@@ -41,7 +41,7 @@ export default function FwOptionModal() {
     setActiveSubButtonValue(value);
   };
 
-  // FwOptionInput 관련 state 및 function Start @Robert
+  // CTOptionInput 관련 state 및 function Start @Robert
   const [inputValue, setInputValue] = useState("");
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
@@ -75,7 +75,7 @@ export default function FwOptionModal() {
     (inputValue === "" || inputWarningCheck === WarningType.Critical);
 
   const resetAllStates = () => {
-    onCloseFwOptionModal();
+    onCloseCTOptionModal();
     setInputValue("");
     setActiveMainButtonValue(ButtonTypeMain.Standard);
     setActiveSubButtonValue(ButtonTypeSub.Recommend);
@@ -92,11 +92,11 @@ export default function FwOptionModal() {
     }
 
     // 스탠다드가 아닐때는 Trade
-    onOpenFwConfirmModal(ModalType.Trade);
+    onOpenCTConfirmModal(ModalType.Trade);
   };
 
   return (
-    <Modal isOpen={fwOptionModal} onClose={onCloseFwOptionModal} isCentered>
+    <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
       <ModalOverlay />
       <ModalContent
         width={"404px"}
@@ -110,10 +110,10 @@ export default function FwOptionModal() {
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={onCloseFwOptionModal} />
+          <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          <FwOptionCrossDetail
+          <CTOptionCrossDetail
             // cross, official 관련 props
             activeMainButtonValue={activeMainButtonValue}
             handleButtonMainClick={handleButtonMainClick}
@@ -125,7 +125,7 @@ export default function FwOptionModal() {
             inputWarningCheck={inputWarningCheck}
             onInputChange={handleInputChange}
           />
-          <FwOptionStandardDetail
+          <CTOptionStandardDetail
             // cross, official 관련 props
             activeMainButtonValue={activeMainButtonValue}
             handleButtonMainClick={handleButtonMainClick}

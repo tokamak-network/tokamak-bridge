@@ -2,13 +2,13 @@ import { Text, Box } from "@chakra-ui/react";
 import { CSSProperties } from "react";
 import formatNumber from "@/staging/components/cross-trade/utils/formatNumbers";
 
-// FwFormatNumber.tsx
+// CTFormatNumber.tsx
 interface StyledNumberProps {
   style: CSSProperties;
   value: string | null | undefined;
   tokenSymbol?: string | String | undefined;
 }
-export function FwFormatNumber(props: StyledNumberProps) {
+export function CTFormatNumber(props: StyledNumberProps) {
   const { value, tokenSymbol } = props;
   const formattedValue = formatNumber(value) ?? "";
 
@@ -32,7 +32,7 @@ export function FwFormatNumber(props: StyledNumberProps) {
 }
 
 {
-  /* <FwTooltip
+  /* <CTTooltip
 tooltipLabel={"text will be changed"}
 style={{ marginLeft: "2px" }}
 /> */

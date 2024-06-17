@@ -8,7 +8,7 @@ import {
   isDepositTransactionHistory,
 } from "@/staging/components/new-history/types";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
-import { FwFormatNumber } from "@/staging/components/cross-trade/components/FwFormatNumber";
+import { CTFormatNumber } from "@/staging/components/cross-trade/components/CTFormatNumber";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 
 export default function Complete(transaction: TransactionHistory) {
@@ -57,7 +57,7 @@ export default function Complete(transaction: TransactionHistory) {
           <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
           <Box ml={"6px"}>
             <Flex>
-              <FwFormatNumber
+              <CTFormatNumber
                 style={{
                   fontWeight: 600,
                   fontSize: "14px",

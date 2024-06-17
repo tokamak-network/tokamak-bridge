@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { Box, Flex, Text, Center, HStack } from "@chakra-ui/react";
-import ThanosSymbol from "assets/icons/fw/thanos_symbol.svg";
-import GasStationSymbol from "assets/icons/fw/gas_station_fw.svg";
+import ThanosSymbol from "assets/icons/ct/thanos_symbol.svg";
+import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 
-export default function FwRefundDetail() {
+export default function CTRefundDetail() {
   return (
     <Box mt={"16px"}>
       <Box>

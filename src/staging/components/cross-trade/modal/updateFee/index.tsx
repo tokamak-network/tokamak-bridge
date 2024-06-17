@@ -17,19 +17,19 @@ import {
   UpdateFeeButtonType,
 } from "@/staging/components/cross-trade/types";
 import CloseButton from "@/components/button/CloseButton";
-import useFwUpdateFee from "@/staging/components/cross-trade/hooks/useFwUpdateFeeModal";
-import useFwRecommend from "@/staging/components/cross-trade/hooks/useFwRecommend";
-import FwUpdateButton from "./FwUpdateButton";
-import FwUpdateFeeDetail from "./FwUpdateFeeDetail";
-import FwRefundDetail from "./FwRefundDetail";
-import FwCheckCustomIcon from "@/staging/components/cross-trade/components/FwCheckCustomIcon";
+import useCTUpdateFee from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
+import useCTRecommend from "@/staging/components/cross-trade/hooks/useCTRecommend";
+import CTUpdateButton from "./CTUpdateButton";
+import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
+import CTRefundDetail from "./CTRefundDetail";
+import CTCheckCustomIcon from "@/staging/components/cross-trade/components/CTCheckCustomIcon";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
 // 타입을 맞추고, 타입에 맞게 데이터셋을 뽑는다.
 
-export default function FwFeeUpdateModal() {
-  const { fwUpdateFeeModal, onCloseFwUpdateFeeModal } = useFwUpdateFee();
+export default function CTFeeUpdateModal() {
+  const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
   //Button props
   const [activeButton, setActiveButton] = useState<UpdateFeeButtonType>(
     UpdateFeeButtonType.Update
@@ -39,14 +39,14 @@ export default function FwFeeUpdateModal() {
   // false 일때는 사용자 입력 값
   const [recommendCheck, setRecommendCheck] = useState<boolean>(true);
 
-  // FwInput 관련 state 및 function Start @Robert
+  // CTInput 관련 state 및 function Start @Robert
   const [inputValue, setInputValue] = useState("");
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
   // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
   // usehook안에서 hook은 돌리면 안된다. //메모리 문재
-  const recommendValue = useFwRecommend(recommendCheck);
+  const recommendValue = useCTRecommend(recommendCheck);
 
   // 리프래시 버튼 누를 때, recommend 값 초기화
   const handleRefreshRecommend = () => {
@@ -101,7 +101,7 @@ export default function FwFeeUpdateModal() {
     setInputValue("");
     setInputWarningCheck("");
     setIsChecked(false);
-    onCloseFwUpdateFeeModal();
+    onCloseCTUpdateFeeModal();
   };
 
   const handleConfirm = () => {
@@ -110,7 +110,7 @@ export default function FwFeeUpdateModal() {
   };
 
   return (
-    <Modal isOpen={fwUpdateFeeModal} onClose={resetAllStates} isCentered>
+    <Modal isOpen={ctUpdateFeeModal} onClose={resetAllStates} isCentered>
       <ModalOverlay />
       <ModalContent
         bg='#1F2128'
@@ -135,12 +135,12 @@ export default function FwFeeUpdateModal() {
             borderRadius={"8px"}
           >
             {/** 상위 버튼 */}
-            <FwUpdateButton
+            <CTUpdateButton
               activeButton={activeButton}
               setActiveButton={setActiveButton}
             />
             {activeButton == UpdateFeeButtonType.Update ? (
-              <FwUpdateFeeDetail
+              <CTUpdateFeeDetail
                 // input 관련 props
                 inputValue={inputValue}
                 inputWarningCheck={inputWarningCheck}
@@ -153,7 +153,7 @@ export default function FwFeeUpdateModal() {
                 onRecommendRefresh={handleRefreshRecommend}
               />
             ) : (
-              <FwRefundDetail />
+              <CTRefundDetail />
             )}
           </Box>
         </ModalBody>
@@ -163,7 +163,7 @@ export default function FwFeeUpdateModal() {
               <Checkbox
                 isChecked={isChecked}
                 onChange={handleCheckboxChange}
-                icon={<FwCheckCustomIcon />}
+                icon={<CTCheckCustomIcon />}
                 sx={{
                   ".chakra-checkbox__control": {
                     borderWidth: "1px",

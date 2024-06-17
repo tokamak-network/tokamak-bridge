@@ -1,7 +1,7 @@
 import { Icon } from "@chakra-ui/react";
 import { createIcon } from "@chakra-ui/icons";
 
-export default function FwCheckCustomIcon(props: any) {
+export default function CTCheckCustomIcon(props: any) {
   const { isChecked, ...rest } = props;
 
   const d =

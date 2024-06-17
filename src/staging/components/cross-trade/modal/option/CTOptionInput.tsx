@@ -1,9 +1,9 @@
 import { Text, InputGroup, Input, InputRightElement } from "@chakra-ui/react";
-import { FwWarning } from "@/staging/components/cross-trade/components/FwWarning";
-import { FwInputProps } from "@/staging/components/cross-trade/types";
+import { CTWarning } from "@/staging/components/cross-trade/components/CTWarning";
+import { CTInputProps } from "@/staging/components/cross-trade/types";
 import { WarningType } from "@/staging/components/cross-trade/types";
 
-export default function FwOptionInput(props: FwInputProps) {
+export default function CTOptionInput(props: CTInputProps) {
   const { inputValue, inputWarningCheck, onInputChange } = props;
   return (
     <>
@@ -57,7 +57,7 @@ export default function FwOptionInput(props: FwInputProps) {
         )}
       </InputGroup>
       {inputWarningCheck == WarningType.Critical ? (
-        <FwWarning
+        <CTWarning
           label={"text will be changed"}
           type={inputWarningCheck}
           groupStyle={{
@@ -71,7 +71,7 @@ export default function FwOptionInput(props: FwInputProps) {
           }}
         />
       ) : inputWarningCheck == WarningType.Normal ? (
-        <FwWarning
+        <CTWarning
           label={"text will be changed"}
           type={inputWarningCheck}
           groupStyle={{

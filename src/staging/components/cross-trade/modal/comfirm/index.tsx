@@ -10,22 +10,22 @@ import {
 } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import { useState } from "react";
-import useFwUpdateFeeModal from "@/staging/components/cross-trade/hooks/useFwUpdateFeeModal";
-import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useFwConfirmModal";
+import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
-import FwConfirmDetail from "./FwConfirmDetail";
-import FwConfirmCrossTradeFooter from "./FwConfirmCrossTradeFooter";
-import FwConfirmHistoryFooter from "./FwConfirmHistoryFooter";
+import CTConfirmDetail from "./CTConfirmDetail";
+import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
+import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
 
-export default function FwModal() {
-  const { fwConfirmModal, onCloseFwConfirmModal } = useFxConfirmModal();
-  const { onOpenFwUpdateFeeModal } = useFwUpdateFeeModal();
+export default function CTModal() {
+  const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
+  const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
-    onCloseFwConfirmModal();
-    onOpenFwUpdateFeeModal();
+    onCloseCTConfirmModal();
+    onOpenCTUpdateFeeModal();
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -34,7 +34,7 @@ export default function FwModal() {
   const handleConfirm = () => {
     alert("Cross Confirmed!");
     setIsChecked(false);
-    onCloseFwConfirmModal();
+    onCloseCTConfirmModal();
   };
 
   const modalTitles = {
@@ -44,8 +44,8 @@ export default function FwModal() {
 
   return (
     <Modal
-      isOpen={fwConfirmModal.isOpen}
-      onClose={onCloseFwConfirmModal}
+      isOpen={ctConfirmModal.isOpen}
+      onClose={onCloseCTConfirmModal}
       isCentered
     >
       <ModalOverlay />
@@ -57,28 +57,28 @@ export default function FwModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {modalTitles[fwConfirmModal.type]}
+            {modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={onCloseFwConfirmModal} />
+          <CloseButton onClick={onCloseCTConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          <FwConfirmDetail
-            modalType={fwConfirmModal.type}
+          <CTConfirmDetail
+            modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
           />
         </ModalBody>
         <ModalFooter p={0} display='block'>
-          {/** fw type에 따라 footer가 달라진다. */}
-          {fwConfirmModal.type == ModalType.Trade ? (
-            <FwConfirmCrossTradeFooter
+          {/** ct type에 따라 footer가 달라진다. */}
+          {ctConfirmModal.type == ModalType.Trade ? (
+            <CTConfirmCrossTradeFooter
               isChecked={isChecked}
               onCheckboxChange={handleCheckboxChange}
               onConfirm={handleConfirm}
             />
           ) : (
-            <FwConfirmHistoryFooter />
+            <CTConfirmHistoryFooter />
           )}
         </ModalFooter>
       </ModalContent>
