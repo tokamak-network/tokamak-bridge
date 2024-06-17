@@ -3,7 +3,7 @@ import {
   CTConfirmModalType,
   ModalType,
 } from "@/staging/components/cross-trade/types";
-import { TransactionHistory } from "@/staging/components/new-history/types";
+import { TransactionHistory } from "@/staging/types/transaction";
 import { atom } from "recoil";
 
 type withdrawModal = {

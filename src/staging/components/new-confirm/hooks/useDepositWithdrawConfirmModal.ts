@@ -1,5 +1,5 @@
 import { depositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
-import { TransactionHistory } from "@/staging/components/new-history/types";
+import { TransactionHistory } from "@/staging/types/transaction";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
 

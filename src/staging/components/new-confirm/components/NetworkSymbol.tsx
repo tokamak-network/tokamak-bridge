@@ -2,7 +2,7 @@ import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
-import { Network } from "@/staging/components/new-history/types";
+import { Network } from "@/staging/types/transaction";
 
 type TokenPairProp = {
   networkI: string | undefined;

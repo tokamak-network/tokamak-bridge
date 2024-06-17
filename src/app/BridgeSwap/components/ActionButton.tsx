@@ -19,11 +19,7 @@ import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
-import {
-  Action,
-  Status,
-  Network,
-} from "@/staging/components/new-history/types";
+import { Action, Status, Network } from "@/staging/types/transaction";
 import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
 import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapConfirmModal";

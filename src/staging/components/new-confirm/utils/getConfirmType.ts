@@ -3,7 +3,7 @@ import {
   Status,
   Action,
   TransactionHistory,
-} from "@/staging/components/new-history/types";
+} from "@/staging/types/transaction";
 import { getTimeDisplay } from "@/staging/components/new-history/utils/getTimeDisplay";
 
 //getConfirmType.ts

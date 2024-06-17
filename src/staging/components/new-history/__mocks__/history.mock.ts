@@ -4,7 +4,7 @@ import {
   Action,
   Status,
   Network,
-} from "@/staging/components/new-history/types";
+} from "@/staging/types/transaction";
 
 export const historyData: TransactionHistory[] = [
   {

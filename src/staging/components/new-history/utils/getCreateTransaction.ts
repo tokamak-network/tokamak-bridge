@@ -6,7 +6,7 @@ import {
   DepositTransactionHistory,
   TransactionHistory,
   BaseTransactionHistory,
-} from "@/staging/components/new-history/types";
+} from "@/staging/types/transaction";
 
 // Withdraw 트랜잭션 생성 함수
 export function createWithdrawTransaction(

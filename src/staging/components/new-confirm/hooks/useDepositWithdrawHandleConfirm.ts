@@ -1,8 +1,4 @@
-import {
-  Network,
-  Action,
-  Status,
-} from "@/staging/components/new-history/types";
+import { Network, Action, Status } from "@/staging/types/transaction";
 import { createTransaction } from "@/staging/components/new-history/utils/getCreateTransaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";

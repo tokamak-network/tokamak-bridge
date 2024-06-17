@@ -1,5 +1,5 @@
 //historyStatus.ts
-import { Status, Action } from "@/staging/components/new-history/types";
+import { Status, Action } from "@/staging/types/transaction";
 
 export enum TransactionStatus {
   WithdrawRollup = 1,

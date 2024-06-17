@@ -2,8 +2,8 @@ import {
   TransactionHistory,
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
-} from "@/staging/components/new-history/types";
-import { TRANSACTION_CONSTANTS } from "@/staging/components/new-history/constants";
+} from "@/staging/types/transaction";
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import {
   TransactionStatus,
