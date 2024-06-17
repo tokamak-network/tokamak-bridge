@@ -1,4 +1,3 @@
-import { rollupTime } from "@/constant/history";
 import { Resolved } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { hashCrossChainMessage } from "@tokamak-network/titan-sdk";

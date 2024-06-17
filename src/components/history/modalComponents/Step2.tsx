@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { differenceInSeconds, format } from "date-fns";
 import { Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
@@ -6,8 +6,8 @@ import useConnectedNetwork from "@/hooks/network";
 import { confirmWithdrawData } from "@/recoil/modal/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
 
-function Step2(props: { progress: string; timeStamp?: number , check:any}) {
-  const [withdraw, setWithdraw] = useRecoilState(confirmWithdrawData);
+function Step2(props: { progress: string; timeStamp?: number; check: any }) {
+  const withdraw = useRecoilValue(confirmWithdrawData);
   const durationRef = useRef("0");
   const { timeStamp, check } = props;
   const [duration, setDuration] = useState("0");
@@ -35,7 +35,6 @@ function Step2(props: { progress: string; timeStamp?: number , check:any}) {
     }
   }, []);
 
-
   return (
     <Flex
       h="36px"
@@ -47,18 +46,14 @@ function Step2(props: { progress: string; timeStamp?: number , check:any}) {
       <Flex>
         <Image src={check.check} alt="check" />
         <Text ml="8px" fontSize={"14px"} color={check.color}>
-          Wait {isConnectedToMainNetwork ? "~11" : "~2"} min for rollup
+          Wait {isConnectedToMainNetwork ? "~6" : "~2"}{" "}
+          {isConnectedToMainNetwork ? "hours" : "mins"} for rollup
         </Text>
       </Flex>
       {props.progress !== "done" && (
         <Flex>
-          <Text
-            mr="6px"
-            fontSize={"14px"}
-            color={check.color}
-          >
-           
-            {tx ? duration : isConnectedToMainNetwork ? "11 min" : "2 min"}
+          <Text mr="6px" fontSize={"14px"} color={check.color}>
+            {tx ? duration : isConnectedToMainNetwork ? "~ 6 hours" : "2 min"}
           </Text>
         </Flex>
       )}

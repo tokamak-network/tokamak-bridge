@@ -178,7 +178,7 @@ export default function useGetTransaction() {
                 //in mainnet it takes 11 minutes for rollup to finish and 7 days for the challenge period. These two times are converted to seconds
                 // in testnet it takes 2 minutes for rollup to finish and 10 seconds for the challenge period. Additional buffer of 150 seconds is given. These 3 times are converted to seconds
                 const calculatedTimePeriod = isConnectedToMainNetwork
-                  ? 11 * 60 + 7 * 24 * 60 * 60
+                  ? 7 * 24 * 60 * 60
                   : 2 * 60 + 10 + 150;
 
                 //this is the unix timestamp when the tx is ready to be relayed (rollup & challenge is finished)
@@ -206,6 +206,7 @@ export default function useGetTransaction() {
                   timeReadyForRelay: Number(timeReadyForRelay),
                   currentStatus,
                   resolved,
+                  stateBatchAppendedEvent: stateBatchAppendeds,
                 };
               }
               //if the status is 5 or 6, check if the message receipt exists. returns the tx receipt of the corresponding l1 withdraw tx

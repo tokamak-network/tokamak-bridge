@@ -294,9 +294,9 @@ export default function StatusTx(props: {
           >
             {mobileView
               ? "Wait for rollup"
-              : `${layer}: Wait ~${
-                  isConnectedToMainNetwork ? "11" : "2"
-                } min for rollup`}
+              : `${layer}: Wait ~${isConnectedToMainNetwork ? "6" : "1"} ${
+                  isConnectedToMainNetwork ? "hours" : "min"
+                } for rollup`}
           </Text>
         )}
       </Flex>
