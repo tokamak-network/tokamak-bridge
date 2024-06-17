@@ -45,9 +45,9 @@ export default function ConfirmWithdraw() {
   const { mobileView } = useMediaView();
 
   const getCalendarEvent = useMemo(() => {
-    if (tx && tx.l2timeStamp) {
+    if (tx && tx.l2timeStamp && tx?.stateBatchAppendedEvent?.blockTimestamp) {
       const timeStamp = tx.stateBatchAppendedEvent.blockTimestamp;
-      const status4Duration = isConnectedToMainNetwork ? 604800 : 610; //7 days challenge period on mainnet +  5 minutes rollup
+      const status4Duration = isConnectedToMainNetwork ? 604800 : 300;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 
