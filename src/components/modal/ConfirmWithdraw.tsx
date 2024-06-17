@@ -219,7 +219,7 @@ export default function ConfirmWithdraw() {
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />
-          ) : tx.currentStatus >= 2 && tx.currentStatus < 5 ? (
+          ) : tx.currentStatus === 4 ? (
             <CalendarComponent config={config} />
           ) : null}
           <ActionButton />

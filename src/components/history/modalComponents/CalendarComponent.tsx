@@ -14,16 +14,10 @@ const CalendarComponent = ({ config }: { config: Object }) => {
       alignItems={"center"}
       cursor={"pointer"}
       w="100%"
-      h={{ base: "fit-content", lg: "70px" }}
+      h={{ base: "fit-content", lg: "43px" }}
       onClick={() => atcb_action(config)}
     >
-      {pcView && (
-        <Text h="19px" fontSize={"12px"} textAlign={"center"}>
-          Set calendar reminder to claim withdraw on Ethereum
-        </Text>
-      )}
       <Flex
-        mt="6px"
         w="196px"
         h="36px"
         borderRadius={"8px"}
@@ -32,7 +26,7 @@ const CalendarComponent = ({ config }: { config: Object }) => {
         alignItems={"center"}
       >
         <Text fontSize={"12px"} mr="8px">
-          Add to Google Calendar
+          Remind me to claim
         </Text>
         <Flex height={"16px"} w="16px" p="0px">
           <Image src={CalendarIcon} alt="calendar" />
