@@ -30,14 +30,14 @@ const MaintenanceBanner = () => {
       const today = new Date();
       const nowTime = getTime(today);
       const activeTimeStartThisWeek = add(banner, {
-        hours: 2,
+        hours: 24,
         minutes: 0,
         seconds: 0,
       }); //the duration when the warning banner (yellow) is visible
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-        hours: 0,
-        minutes: 30,
+        hours: 1,
+        minutes: 0,
         seconds: 0,
       }); //the duration when the red banner is visible and L2 actions are disabled
 
@@ -104,7 +104,7 @@ const MaintenanceBanner = () => {
         <Text fontSize={"10px"}>
           Maintenance scheduled from{" "}
           <span style={{ fontWeight: "bold" }}>
-            {isTestnet ? "2:00 - 2:30 UTC+0" : "2:00 -2:30 UTC+0"}
+            {isTestnet ? "4:00 - 5:00 UTC+0" : "4:00 -5:00 UTC+0"}
           </span>{" "}
           *You may still swap on {isTestnet ? "Goerli" : "Ethereum"} Network{" "}
         </Text>
