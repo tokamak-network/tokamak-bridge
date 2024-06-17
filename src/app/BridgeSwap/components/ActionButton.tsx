@@ -22,6 +22,7 @@ import { txPendingStatus } from "@/recoil/global/transaction";
 import { Action, Status, Network } from "@/components/historyn/types";
 import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
 import { useHandleConfirm } from "@/components/confirmn/hooks/useDepositWithdrawHandleConfirm";
+import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -87,6 +88,7 @@ export default function ActionButton() {
   }
   const { onOpenFwOptionModal } = useFxOptionModal();
   const handleConfirm = useHandleConfirm();
+  const { onOpenSwapConfirmModal } = useSwapConfirmModal();
 
   return (
     <>
@@ -109,7 +111,7 @@ export default function ActionButton() {
             : needToOpenDepositModal
             ? () => handleConfirm(Action.Deposit, Status.Initiate)
             : needToOpenSwapModal
-            ? () => onOpenConfirmModal()
+            ? () => onOpenSwapConfirmModal()
             : onClick
         }
       >
