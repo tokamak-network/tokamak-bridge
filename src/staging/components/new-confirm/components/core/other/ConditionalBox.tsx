@@ -11,10 +11,10 @@ import {
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import { getTimeDisplay } from "@/staging/components/new-history/utils/getTimeDisplay";
-import { useCountdown } from "@/staging/components/new-history/hooks/useCountdown";
+import { useCountdown } from "@/staging/hooks/useCountdown";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
-import { useCalendar } from "@/staging/components/new-history/hooks/useGoogleCalendar";
+import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 
 interface ConditionalBoxProps {
   type: "wait" | "timer" | "box";
