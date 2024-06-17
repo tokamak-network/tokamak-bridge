@@ -144,7 +144,7 @@ const MaintenanceBanner = () => {
           </>
         )}
 
-        <Text fontSize={"10px"}>
+        <Text fontSize={"12px"}>
           Maintenance scheduled from{" "}
           <span style={{ fontWeight: "bold" }}>
             {isTestnet
