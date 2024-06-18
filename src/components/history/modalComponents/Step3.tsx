@@ -67,7 +67,9 @@ const Step3 = (props: { progress: string; timeStamp: number; check: any }) => {
           tooltipLabel={
             <Flex flexDir={"column"} justifyContent={"center"} h={"100%"}>
               <span>The fault challenge period lasts 7 days, during</span>
-              <span>which anyone can challenge the L2 state root.</span>
+              <span style={{ zIndex: 1 }}>
+                which anyone can challenge the L2 state root.
+              </span>
             </Flex>
           }
           style={{

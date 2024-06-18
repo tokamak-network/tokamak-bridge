@@ -59,7 +59,7 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
           tooltipLabel={
             <Flex flexDir={"column"} justifyContent={"center"} h={"100%"}>
               <span>L2 state roots are rolled up at least every 6 hours.</span>
-              <span>It may take less than 6 hours.</span>
+              <span style={{ zIndex: 1 }}>It may take less than 6 hours.</span>
             </Flex>
           }
           style={{
