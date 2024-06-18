@@ -1,12 +1,9 @@
 import Image from "next/image";
 import { Flex, Text } from "@chakra-ui/react";
 import { atcb_action } from "add-to-calendar-button";
-import useMediaView from "@/hooks/mediaView/useMediaView";
 import CalendarIcon from "assets/icons/Google_Calendar_icon.svg";
 
 const CalendarComponent = ({ config }: { config: Object }) => {
-  const { pcView } = useMediaView();
-
   return (
     <Flex
       flexDir={"column"}

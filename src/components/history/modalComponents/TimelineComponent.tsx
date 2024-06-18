@@ -42,7 +42,8 @@ export default function TimelineComponent(props: { tx: TxType }) {
       w={{ base: "full", lg: "364px" }}
       h="218px"
       px="12px"
-      py="8px">
+      py="8px"
+    >
       <Step1
         progress={
           props.tx === undefined || props.tx === null ? "inProgress" : "done"

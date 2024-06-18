@@ -178,18 +178,17 @@ export default function useGetTransaction() {
                 //in mainnet it takes 11 minutes for rollup to finish and 7 days for the challenge period. These two times are converted to seconds
                 // in testnet it takes 2 minutes for rollup to finish and 10 seconds for the challenge period. Additional buffer of 150 seconds is given. These 3 times are converted to seconds
                 const calculatedTimePeriod = isConnectedToMainNetwork
-                  ? 7 * 24 * 60 * 60
-                  : 2 * 60 + 10 + 150;
+                  ? 604800
+                  : 300;
+
+                console.log(stateBatchAppendeds.blockTimestamp);
 
                 //this is the unix timestamp when the tx is ready to be relayed (rollup & challenge is finished)
                 // const testPeriod =
                 //   Number(tx.blockTimestamp) + calculatedTimePeriod;
-                const testPeriod =
-                  Number(tx.blockTimestamp) + calculatedTimePeriod;
-
-                // const challengePeriod =
-                //   await crossMessengerTokamak.getChallengePeriodSeconds(); //office node ok
-                const timeReadyForRelay = testPeriod;
+                const timeReadyForRelay =
+                  Number(stateBatchAppendeds.blockTimestamp) +
+                  calculatedTimePeriod;
 
                 const amnt = BigInt(logs[1]).toString();
 

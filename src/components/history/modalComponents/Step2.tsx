@@ -22,7 +22,6 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
   useEffect(() => {
     if (timeStamp) {
       const getDuration = setInterval(() => {
-        console.log("go?");
         const startDate = new Date(timeStamp * 1000);
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(

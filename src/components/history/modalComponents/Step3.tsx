@@ -10,7 +10,7 @@ import QuestionIcon from "assets/icons/questionGray.svg";
 const Step3 = (props: { progress: string; timeStamp: number; check: any }) => {
   const [withdraw, setWithdraw] = useRecoilState(confirmWithdrawData);
 
-  const { progress, timeStamp, check } = props;
+  const { check, timeStamp } = props;
   const tx = withdraw.modalData;
 
   const [duration, setDuration] = useState<Duration>({
@@ -23,11 +23,11 @@ const Step3 = (props: { progress: string; timeStamp: number; check: any }) => {
   });
 
   useEffect(() => {
-    if (props.timeStamp) {
+    if (timeStamp) {
       const intervalID = setInterval(() => {
         const nowTime = getUnixTime(new Date());
 
-        if (nowTime > props.timeStamp) {
+        if (nowTime > timeStamp) {
           setDuration({
             days: 0,
             hours: 0,
@@ -39,7 +39,7 @@ const Step3 = (props: { progress: string; timeStamp: number; check: any }) => {
         } else {
           setDuration(
             intervalToDuration({
-              start: getTime(props.timeStamp * 1000),
+              start: getTime(timeStamp * 1000),
               end: getTime(nowTime * 1000),
             })
           );

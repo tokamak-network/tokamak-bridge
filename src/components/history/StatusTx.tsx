@@ -93,9 +93,11 @@ export default function StatusTx(props: {
 
   //creates the count up clock for the rollup period
   useEffect(() => {
-    if (tx.l2timeStamp) {
+    if (tx.stateBatchAppendedEvent?.blockTimestamp) {
       const getDuration = setInterval(() => {
-        const startDate = new Date(Number(tx.l2timeStamp) * 1000);
+        const startDate = new Date(
+          Number(tx.stateBatchAppendedEvent.blockTimestamp) * 1000
+        );
         const currentTimeUTC = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTimeUTC,
