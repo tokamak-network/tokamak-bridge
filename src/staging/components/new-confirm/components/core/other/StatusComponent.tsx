@@ -7,9 +7,12 @@ import {
   Action,
   Status,
   GasCostData,
+  isWithdrawTransactionHistory,
+  isDepositTransactionHistory,
 } from "@/staging/types/transaction";
 import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GasStationWhiteSymbol from "assets/icons/confirm/gas-station-white.svg";
+import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 
 interface StatusComponentProps {
   label: string;
@@ -68,6 +71,29 @@ export default function StatusComponent(props: StatusComponentProps) {
       return gasCostData?.depositGasCostUS;
     }
   }, [transactionData.action, label, gasCostData]);
+
+  const explorerUrl = useMemo(() => {
+    const txHash =
+      label === Status.Initiate &&
+      (isWithdrawTransactionHistory(transactionData) ||
+        isDepositTransactionHistory(transactionData))
+        ? transactionData.transactionHashes.initialTransactionHash
+        : label === Status.Rollup &&
+          isWithdrawTransactionHistory(transactionData)
+        ? transactionData.transactionHashes.rollupTransactionHash || ""
+        : label === Status.Finalize &&
+          (isWithdrawTransactionHistory(transactionData) ||
+            isDepositTransactionHistory(transactionData))
+        ? transactionData.transactionHashes.finalizedTransactionHash || ""
+        : "";
+
+    const network =
+      label === Status.Initiate
+        ? transactionData.inNetwork
+        : transactionData.outNetwork;
+
+    return `${BLOCKEXPLORER_CONSTANTS[network]}/tx/${txHash}`;
+  }, [transactionData, label]);
 
   return (
     <Flex
@@ -156,21 +182,34 @@ export default function StatusComponent(props: StatusComponentProps) {
           </Text>
         </Box>
       )}
+      {/** @Robert
+       *
+       * Withdraw = initiate : innetwork, rollup : outnetwork, finalize : outnetwork
+       * Finalize = initiate : innetwork, finalize : outnetwork
+       */}
       {isTransaction && (
-        <Flex alignItems={"center"}>
-          <Text
-            mr={"6px"}
-            fontWeight={400}
-            fontSize={"13px"}
-            lineHeight={"20px"}
-            color={"#A0A3AD"}
-          >
-            Transaction
-          </Text>
-          <Flex w={"14px"} h={"14px"}>
-            <Image src={TxLink} alt={"TxLink"} />
+        <Link
+          target='_blank'
+          href={explorerUrl}
+          textDecor={"none"}
+          _hover={{ textDecor: "none" }}
+          display={"flex"}
+        >
+          <Flex alignItems={"center"}>
+            <Text
+              mr={"6px"}
+              fontWeight={400}
+              fontSize={"13px"}
+              lineHeight={"20px"}
+              color={"#A0A3AD"}
+            >
+              Transaction
+            </Text>
+            <Flex w={"14px"} h={"14px"}>
+              <Image src={TxLink} alt={"TxLink"} />
+            </Flex>
           </Flex>
-        </Flex>
+        </Link>
       )}
     </Flex>
   );

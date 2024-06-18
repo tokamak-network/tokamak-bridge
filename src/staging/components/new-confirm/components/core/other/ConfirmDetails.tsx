@@ -111,7 +111,6 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                       ? transactionHistory.inNetwork
                       : transactionHistory.outNetwork
                   ]
-                  /** To be updated with the correct values after the proper type design @Robert */
                 }/address/${
                   isInNetwork
                     ? getTokenAddress(
