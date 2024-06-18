@@ -6,7 +6,7 @@ import GradientSpinner from "@/components/ui/GradientSpinner";
 export enum ConfirmDetailType {
   Rate = "Rate",
   MinReceived = "Min. received",
-  GasFee = "Gas Fee",
+  NetworkFee = "Network fee",
 }
 
 interface ConfirmSubDetailProps {
@@ -63,7 +63,7 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
                       <span style={{ fontSize: "10px", lineHeight: "15px" }}>
                         (
                       </span>
-                      ${gasValue}
+                      {gasValue}
                       <span style={{ fontSize: "10px", lineHeight: "15px" }}>
                         )
                       </span>
@@ -84,7 +84,7 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
                 </Text>
               </Flex>
             )}
-            {type == ConfirmDetailType.GasFee && (
+            {type == ConfirmDetailType.NetworkFee && (
               <Flex>
                 <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
                 <Text
@@ -100,7 +100,7 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
                   <span style={{ fontSize: "10px", lineHeight: "15px" }}>
                     (
                   </span>
-                  ${gasValue}
+                  {gasValue}
                   <span style={{ fontSize: "10px", lineHeight: "15px" }}>
                     )
                   </span>

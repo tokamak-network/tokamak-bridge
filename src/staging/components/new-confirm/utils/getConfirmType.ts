@@ -5,6 +5,7 @@ import {
   TransactionHistory,
 } from "@/staging/types/transaction";
 import { getTimeDisplay } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 
 //getConfirmType.ts
 const getLineType = (transactionData: TransactionHistory): number => {
@@ -73,9 +74,12 @@ const getType = (lineType: number, index: number) => {
 
 const getWaitMessage = (lineType: number, index: number) => {
   const waitMessageMap: Record<number, string> = {
-    0: index === 0 ? "Wait 1~11 min" : "Wait 7 days",
-    1: "Wait 7 days",
-    100: "Wait 1 min",
+    0:
+      index === 0
+        ? "Wait 1~11 min"
+        : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
+    1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
+    100: `Wait ${TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES} min`,
   };
   return waitMessageMap[lineType] || undefined;
 };

@@ -49,6 +49,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
 
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
+
     const refreshRollup =
       (transactionData.status === Status.Rollup &&
         timeDisplay === "00 : 00" &&
@@ -56,10 +57,12 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       (transactionData.status === Status.Finalize &&
         timeDisplay === "00 : 00" &&
         transactionData.action === Action.Deposit);
+
     const calendarButton =
       transactionData.status === Status.Finalize &&
       timeDisplay !== "00 : 00" &&
       transactionData.action === Action.Withdraw;
+
     const claimReadyButton =
       transactionData.status === Status.Finalize &&
       timeDisplay === "00 : 00" &&

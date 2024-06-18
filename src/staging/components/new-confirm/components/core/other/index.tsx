@@ -61,7 +61,7 @@ export default function DepositWithdrawConfirmModal() {
 
   const gasCostData: GasCostData = useMemo(() => {
     const formatValue = (value: string | undefined | null) =>
-      value == null || value === "0" ? "-" : value;
+      value == null || value === "0" || value === "-" ? "NA" : value;
 
     if (transactionData?.action === Action.Deposit) {
       return {

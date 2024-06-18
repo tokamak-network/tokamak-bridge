@@ -89,8 +89,8 @@ export default function SwapConfirmModal() {
               )} ${outToken?.tokenSymbol}`}
               gasValue={
                 token1PriceWithAmount
-                  ? `${formatNumber(token1PriceWithAmount)}`
-                  : ""
+                  ? `$${formatNumber(token1PriceWithAmount)}`
+                  : "NA"
               }
               isLoading={isLoadingCheck}
             />
@@ -104,9 +104,9 @@ export default function SwapConfirmModal() {
               isLoading={isLoadingCheck}
             />
             <ConfirmSubDetail
-              type={ConfirmDetailType.GasFee}
+              type={ConfirmDetailType.NetworkFee}
               tokenValue={totalGasFee ?? "NA"}
-              gasValue={gasCostUS ?? ""}
+              gasValue={gasCostUS ? `$${gasCostUS}` : "NA"}
               isLoading={isLoadingCheck}
             />
           </Box>
@@ -121,7 +121,10 @@ export default function SwapConfirmModal() {
               backgroundColor: "#007AFF",
               color: "#FFFFFF",
             }}
-            onClick={onClick}
+            onClick={() => {
+              onClick();
+              onCloseSwapConfirmModal();
+            }}
             _active={{}}
             _hover={{}}
             _focus={{}}

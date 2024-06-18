@@ -13,6 +13,7 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
+import { getTokenAddress } from "@/staging/utils/getAddressByNetworkAndToken";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -25,7 +26,6 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
   if (!transactionHistory) {
     return null;
   }
-
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: transactionHistory.tokenSymbol as string,
     amount: Number(transactionHistory.amount.replaceAll(",", "")),
@@ -33,9 +33,9 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
 
   const marketPrice = useMemo(() => {
     if (transactionHistory && tokenPriceWithAmount) {
-      return tokenPriceWithAmount;
+      return `$${tokenPriceWithAmount}`;
     }
-    return "0.00";
+    return "NA";
   }, [tokenPriceWithAmount, transactionHistory]);
 
   const networkName = isInNetwork
@@ -112,10 +112,16 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                       : transactionHistory.outNetwork
                   ]
                   /** To be updated with the correct values after the proper type design @Robert */
-                }/tx/${
+                }/address/${
                   isInNetwork
-                    ? "0xe6854c552980e17af34cb66f7716d76a20b61078f4017bac519a6b119bbfe504"
-                    : "0x99276fdfaca49fc2d0874b1ef8b519d54f859c6de66d239c6db204cb8a6e833f"
+                    ? getTokenAddress(
+                        transactionHistory.inNetwork,
+                        transactionHistory.tokenSymbol as string
+                      )
+                    : getTokenAddress(
+                        transactionHistory.outNetwork,
+                        transactionHistory.tokenSymbol as string
+                      )
                 }`}
                 textDecor={"none"}
                 _hover={{ textDecor: "none" }}
@@ -130,7 +136,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
               lineHeight={"18px"}
               color={"#A0A3AD"}
             >
-              ${marketPrice}
+              {marketPrice}
             </Text>
           </Box>
         </Flex>

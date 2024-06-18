@@ -152,7 +152,7 @@ export default function StatusComponent(props: StatusComponentProps) {
             color={"#A0A3AD"}
             textAlign={"right"}
           >
-            ${gasCostUs}
+            {gasCostUs === "NA" ? gasCostUs : `$${gasCostUs}`}
           </Text>
         </Box>
       )}

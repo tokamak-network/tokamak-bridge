@@ -33,6 +33,8 @@ interface ConfirmDetailProps {
 export default function ConfirmDetails(props: ConfirmDetailProps) {
   const { isInNetwork, inToken } = props;
 
+  console.log(inToken);
+
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: inToken?.tokenSymbol as string,
     amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
@@ -40,9 +42,9 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
 
   const marketPrice = useMemo(() => {
     if (tokenPriceWithAmount) {
-      return tokenPriceWithAmount;
+      return `$${tokenPriceWithAmount}`;
     }
-    return "0.00";
+    return "NA";
   }, [tokenPriceWithAmount]);
 
   return (
@@ -90,11 +92,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                     ? `${
                         getBlockExplorerUrl(inToken?.token.chainId)
                         /** To be updated with the correct values after the proper type design @Robert */
-                      }/tx/${
-                        isInNetwork
-                          ? "0x99276fdfaca49fc2d0874b1ef8b519d54f859c6de66d239c6db204cb8a6e833f"
-                          : "0x99276fdfaca49fc2d0874b1ef8b519d54f859c6de66d239c6db204cb8a6e833f"
-                      }`
+                      }/address/${inToken.tokenAddress}`
                     : ""
                 }
                 textDecor={"none"}
@@ -110,7 +108,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
               lineHeight={"18px"}
               color={"#A0A3AD"}
             >
-              ${marketPrice}
+              {marketPrice}
             </Text>
           </Box>
         </Flex>
