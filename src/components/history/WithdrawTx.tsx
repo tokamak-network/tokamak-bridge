@@ -72,13 +72,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
       w={{ baes: "100%", lg: "336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}
-      bg={
-        !mobileView
-          ? "#15161D"
-          : tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
-          ? ""
-          : "#15161D"
-      }
+      bg={!mobileView ? "#15161D" : tx.currentStatus === 6 ? "" : "#15161D"}
       p="12px"
       flexDir={"column"}
       rowGap={"8px"}
@@ -98,11 +92,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                 <Text
                   fontSize={"14px"}
                   fontWeight={600}
-                  color={
-                    tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
-                      ? "#A0A3AD"
-                      : ""
-                  }
+                  color={tx.currentStatus === 6 ? "#A0A3AD" : ""}
                 >
                   {tx.currentStatus === 6 ? "Withdraw Completed" : "Withdraw"}
                 </Text>
