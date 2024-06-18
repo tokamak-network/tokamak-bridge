@@ -1,7 +1,7 @@
 import { Flex, Text } from "@chakra-ui/react";
 import { bannerSelector, bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilValue, useRecoilState } from "recoil";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { add, getTime, intervalToDuration, Duration } from "date-fns";
 import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -30,14 +30,14 @@ const MaintenanceBanner = () => {
       const today = new Date();
       const nowTime = getTime(today);
       const activeTimeStartThisWeek = add(banner, {
-        hours: 2,
+        hours: 24,
         minutes: 0,
         seconds: 0,
       }); //the duration when the warning banner (yellow) is visible
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-        hours: 0,
-        minutes: 30,
+        hours: 2,
+        minutes: 0,
         seconds: 0,
       }); //the duration when the red banner is visible and L2 actions are disabled
 
@@ -66,6 +66,49 @@ const MaintenanceBanner = () => {
     }, 1000); // 60 seconds in milliseconds
 
     return () => clearInterval(intervalId); // Clean up the interval on component unmount
+  }, [banner]);
+
+  const localTime = useMemo(() => {
+    const activeTimeStartThisWeek = add(banner, {
+      hours: 24,
+      minutes: 0,
+      seconds: 0,
+    }); //the duration when the warning banner (yellow) is visible
+
+    const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
+      hours: 2,
+      minutes: 0,
+      seconds: 0,
+    }); //the duration when the red banner is visible and L2 actions are disabled
+
+    // 브라우저의 타임존 오프셋 가져오기 (분 단위)
+    const timezoneOffsetMinutes = new Date().getTimezoneOffset();
+
+    // 시간과 분으로 변환
+    const offsetHours = Math.floor(Math.abs(timezoneOffsetMinutes) / 60);
+    const offsetMinutes = Math.abs(timezoneOffsetMinutes) % 60;
+
+    // 오프셋 문자열 생성
+    const offsetSign = timezoneOffsetMinutes <= 0 ? "+" : "-";
+    const timezoneOffsetString = `UTC${offsetSign}${offsetHours}:${offsetMinutes
+      .toString()
+      .padStart(2, "0")}`;
+
+    return {
+      startTime: `${activeTimeStartThisWeek
+        .getHours()
+        .toLocaleString()}:${activeTimeStartThisWeek
+        .getMinutes()
+        .toLocaleString()
+        .padStart(2, "0")}`,
+      endTime: `${activeTimeEndThisWeek
+        .getHours()
+        .toLocaleString()}:${activeTimeEndThisWeek
+        .getMinutes()
+        .toLocaleString()
+        .padStart(2, "0")}`,
+      timezone: timezoneOffsetString,
+    };
   }, [banner]);
 
   return isBannerStatus !== "Hidden" ? (
@@ -104,9 +147,11 @@ const MaintenanceBanner = () => {
         <Text fontSize={"10px"}>
           Maintenance scheduled from{" "}
           <span style={{ fontWeight: "bold" }}>
-            {isTestnet ? "2:00 - 2:30 UTC+0" : "2:00 -2:30 UTC+0"}
+            {isTestnet
+              ? `${localTime.startTime} ~ ${localTime.endTime}`
+              : `${localTime.startTime} ~ ${localTime.endTime}`}{" "}
+            {localTime.timezone}
           </span>{" "}
-          *You may still swap on {isTestnet ? "Goerli" : "Ethereum"} Network{" "}
         </Text>
       </Flex>
 
