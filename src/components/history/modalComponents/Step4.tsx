@@ -11,7 +11,9 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 const Step4 = (props: { progress: string; check: any }) => {
   const { check } = props;
-  const [relayGasCost, setRelayGasCost] = useState(undefined);
+  const [relayGasCost, setRelayGasCost] = useState<string | undefined>(
+    undefined
+  );
 
   const { data: feeData } = useFeeData({
     chainId: 1,
