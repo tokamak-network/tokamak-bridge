@@ -32,9 +32,9 @@ export interface BaseTransactionHistory {
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;
   blockTimestamps: {
-    initialCompletedTimestamp: string;
-    rollupCompletedTimestamp?: string;
-    finalizedCompletedTimestamp?: string;
+    initialCompletedTimestamp: number;
+    rollupCompletedTimestamp?: number;
+    finalizedCompletedTimestamp?: number;
   };
   transactionHashes: {
     initialTransactionHash: string;
@@ -46,8 +46,8 @@ export interface WithdrawTransactionHistory extends BaseTransactionHistory {
 export interface DepositTransactionHistory extends BaseTransactionHistory {
   action: Action.Deposit;
   blockTimestamps: {
-    initialCompletedTimestamp: string;
-    finalizedCompletedTimestamp?: string;
+    initialCompletedTimestamp: number;
+    finalizedCompletedTimestamp?: number;
   };
   transactionHashes: {
     initialTransactionHash: string;

@@ -51,7 +51,6 @@ const CONTRACTS_MAP: { [key in Network]: { [key: string]: string } } = {
   },
 };
 
-// 함수 정의
 export function getTokenAddress(network: Network, tokenSymbol: string): string {
   const contracts = CONTRACTS_MAP[network];
   return contracts ? contracts[tokenSymbol] : "";

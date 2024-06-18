@@ -72,6 +72,13 @@ export default function StatusComponent(props: StatusComponentProps) {
     }
   }, [transactionData.action, label, gasCostData]);
 
+  {
+    /** @Robert
+     *
+     * Withdraw = initiate : innetwork, rollup : outnetwork, finalize : outnetwork
+     * Finalize = initiate : innetwork, finalize : outnetwork
+     */
+  }
   const explorerUrl = useMemo(() => {
     const txHash =
       label === Status.Initiate &&
@@ -182,11 +189,6 @@ export default function StatusComponent(props: StatusComponentProps) {
           </Text>
         </Box>
       )}
-      {/** @Robert
-       *
-       * Withdraw = initiate : innetwork, rollup : outnetwork, finalize : outnetwork
-       * Finalize = initiate : innetwork, finalize : outnetwork
-       */}
       {isTransaction && (
         <Link
           target='_blank'

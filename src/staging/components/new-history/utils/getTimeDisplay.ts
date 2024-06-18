@@ -70,7 +70,7 @@ export function getTimeDisplay(transactionData: TransactionHistory) {
 // 타임 함수
 export function calculateInitialTime(
   statusValue: number,
-  blockTimestamp: string,
+  blockTimestamp: number,
   additional: number,
   errorType?: boolean
 ) {

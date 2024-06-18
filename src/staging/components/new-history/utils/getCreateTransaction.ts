@@ -15,10 +15,10 @@ export function createWithdrawTransaction(
   outNetwork: Network,
   tokenSymbol: string,
   amount: string,
-  initialCompletedTimestamp: string,
+  initialCompletedTimestamp: number,
   initialTransactionHash: string,
-  rollupCompletedTimestamp?: string,
-  finalizedCompletedTimestamp?: string,
+  rollupCompletedTimestamp?: number,
+  finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
   finalizedTransactionHash?: string
 ): WithdrawTransactionHistory {
@@ -49,9 +49,9 @@ export function createDepositTransaction(
   outNetwork: Network,
   tokenSymbol: string,
   amount: string,
-  initialCompletedTimestamp: string,
+  initialCompletedTimestamp: number,
   initialTransactionHash: string,
-  finalizedCompletedTimestamp?: string,
+  finalizedCompletedTimestamp?: number,
   finalizedTransactionHash?: string
 ): DepositTransactionHistory {
   return {
@@ -98,10 +98,10 @@ export function createTransaction(
   outNetwork: Network,
   tokenSymbol: string,
   amount: string,
-  initialCompletedTimestamp?: string,
+  initialCompletedTimestamp?: number,
   initialTransactionHash?: string,
-  rollupCompletedTimestamp?: string,
-  finalizedCompletedTimestamp?: string,
+  rollupCompletedTimestamp?: number,
+  finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
   finalizedTransactionHash?: string
 ): TransactionHistory {
