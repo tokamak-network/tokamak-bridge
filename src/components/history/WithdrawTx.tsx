@@ -104,9 +104,7 @@ export default function WithdrawTx(props: { tx: FullWithTx }) {
                       : ""
                   }
                 >
-                  {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash)
-                    ? "Withdraw Completed"
-                    : "Withdraw"}
+                  {tx.currentStatus === 6 ? "Withdraw Completed" : "Withdraw"}
                 </Text>
               </Flex>
               <Flex
