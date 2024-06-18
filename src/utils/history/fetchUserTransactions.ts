@@ -1,5 +1,4 @@
 import axios from "axios";
-import useConnectedNetwork from "@/hooks/network";
 import { L1TxType, SentMessages } from "@/types/activity/history";
 import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 
@@ -16,14 +15,14 @@ export const fetchUserTransactions = async (
     const formattedAddress = formatAddress(account);
     const L1Bridge = isConnectedToMainnet
       ? MAINNET_CONTRACTS.L1Bridge
-      : SEPOLIA_CONTRACTS.L1Bridge;
+      : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
 
     //gets transactions on L1
     const resTxs = await axios.post(
       `${
         isConnectedToMainnet
-          ? process.env.NEXT_PUBLIC_L1BRIDGE_MAINNET
-          : process.env.NEXT_PUBLIC_L1BRIDGE_GOERLI
+          ? process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY
+          : process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY
       }`,
       {
         query: `
@@ -40,7 +39,6 @@ export const fetchUserTransactions = async (
           target
           transactionHash
         }
-        
           erc20DepositInitiateds(
           where: {_from: "${account}"}
         ) {
@@ -69,7 +67,6 @@ export const fetchUserTransactions = async (
           blockTimestamp
           transactionHash
         }
-        
           ethdepositInitiateds(
             where: {_from: "${account}"}
           ) {
@@ -94,7 +91,9 @@ export const fetchUserTransactions = async (
             id
             transactionHash
       
-        }}`,
+        }
+      
+      }`,
         variables: null,
       }
     );
@@ -103,8 +102,8 @@ export const fetchUserTransactions = async (
     const withdrawTx = await axios.post(
       `${
         isConnectedToMainnet
-          ? process.env.NEXT_PUBLIC_L2MESSENGER_TITAN
-          : process.env.NEXT_PUBLIC_L2MESSENGER_TITAN_GOERLI
+          ? process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY
+          : process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY
       }`,
       {
         query: `{sentMessages(
@@ -204,10 +203,10 @@ export const fetchUserTransactions = async (
     const formattedL1WithdrawResults = allWithL1Txs;
 
     return {
-      formattedL1DepositResults: formattedL1DepositResults,
-      formattedL1WithdrawResults: formattedL1WithdrawResults,
-      formattedWithdraw: formattedWithdraw,
-      formattedDeposit: formattedDeposit,
+      formattedL1DepositResults,
+      formattedL1WithdrawResults,
+      formattedWithdraw,
+      formattedDeposit,
     };
   }
 };

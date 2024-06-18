@@ -36,7 +36,7 @@ const MaintenanceBanner = () => {
       }); //the duration when the warning banner (yellow) is visible
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-        hours: 2,
+        hours: 0,
         minutes: 0,
         seconds: 0,
       }); //the duration when the red banner is visible and L2 actions are disabled
@@ -76,7 +76,7 @@ const MaintenanceBanner = () => {
     }); //the duration when the warning banner (yellow) is visible
 
     const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-      hours: 2,
+      hours: 1,
       minutes: 0,
       seconds: 0,
     }); //the duration when the red banner is visible and L2 actions are disabled
@@ -144,7 +144,7 @@ const MaintenanceBanner = () => {
           </>
         )}
 
-        <Text fontSize={"10px"}>
+        <Text fontSize={"12px"}>
           Maintenance scheduled from{" "}
           <span style={{ fontWeight: "bold" }}>
             {isTestnet

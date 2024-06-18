@@ -83,3 +83,24 @@ export const GET_POOLS = gql`
   }  
 }
 `;
+
+export const GET_sentMessages = gql`
+  query SentMessages($formattedAddress: String!) {
+    sentMessages(
+      where: {
+        message_contains: $formattedAddress
+        sender: "0x59aa194798Ba87D26Ba6bEF80B85ec465F4bbcfD"
+        target: "0x4200000000000000000000000000000000000010"
+      }
+    ) {
+      blockNumber
+      blockTimestamp
+      gasLimit
+      message
+      messageNonce
+      sender
+      target
+      transactionHash
+    }
+  }
+`;
