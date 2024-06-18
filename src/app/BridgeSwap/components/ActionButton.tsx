@@ -19,10 +19,10 @@ import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
-import { Action, Status, Network } from "@/components/historyn/types";
-import useFxOptionModal from "@/components/fw/hooks/useFwOptionModal";
-import { useHandleConfirm } from "@/components/confirmn/hooks/useDepositWithdrawHandleConfirm";
-import useSwapConfirmModal from "@/components/confirmn/hooks/useSwapConfirmModal";
+import { Action, Status, Network } from "@/staging/types/transaction";
+import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
+import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
+import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapConfirmModal";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -86,7 +86,7 @@ export default function ActionButton() {
   {
     /** add coming code  @Robert */
   }
-  const { onOpenFwOptionModal } = useFxOptionModal();
+  const { onOpenCTOptionModal } = useCTOptionModal();
   const handleConfirm = useHandleConfirm();
   const { onOpenSwapConfirmModal } = useSwapConfirmModal();
 
@@ -107,7 +107,7 @@ export default function ActionButton() {
           isConnected === false
             ? () => connetAndDisconntWallet()
             : needToOpenWithdrawModal
-            ? () => onOpenFwOptionModal()
+            ? () => onOpenCTOptionModal()
             : needToOpenDepositModal
             ? () => handleConfirm(Action.Deposit, Status.Initiate)
             : needToOpenSwapModal
