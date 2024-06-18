@@ -9,6 +9,7 @@ import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/questionGray.svg";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
 import TxLinkIcon from "assets/icons/accountHistory/TxLink.svg";
+import { utcToZonedTime } from "date-fns-tz";
 
 function Step2(props: { progress: string; timeStamp?: number; check: any }) {
   const withdraw = useRecoilValue(confirmWithdrawData);
@@ -28,12 +29,16 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
           currentTime,
           startDate
         );
-        const formattedTime = format(
-          new Date(elapsedTimeInSeconds * 1000),
-          "hh:mm:ss"
-        );
-        durationRef.current = formattedTime;
 
+        const elapsedTimeDate = new Date(0);
+        elapsedTimeDate.setUTCSeconds(elapsedTimeInSeconds);
+
+        const formattedTime = format(
+          utcToZonedTime(elapsedTimeDate, "UTC"),
+          "HH:mm:ss"
+        );
+
+        durationRef.current = formattedTime;
         setDuration(formattedTime);
       }, 1000);
       return () => clearInterval(getDuration);
