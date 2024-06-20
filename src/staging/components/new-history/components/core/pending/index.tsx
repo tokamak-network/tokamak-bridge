@@ -7,7 +7,7 @@ import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/staging/types/transaction";
-import PendingFooter from "./pendingFooter";
+import PendingFooter from "./PendingFooter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 
 interface PendingProps {
