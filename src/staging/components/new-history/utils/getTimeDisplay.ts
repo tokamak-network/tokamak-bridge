@@ -9,11 +9,10 @@ import {
   TransactionStatus,
   getStatusValue,
 } from "@/staging/components/new-history/utils/historyStatus";
-
-// 여기에 개별 타입을 만든다.
+import { utcToZonedTime } from "date-fns-tz";
 
 // status 별로 변수 넣는 함수
-export function getTimeDisplay(transactionData: TransactionHistory) {
+export function getRemainTime(transactionData: TransactionHistory): number {
   // 상태 별 number
   const statusValue = getStatusValue(
     transactionData.action,
@@ -63,34 +62,44 @@ export function getTimeDisplay(transactionData: TransactionHistory) {
       }
     }
     default:
-      return "-";
+      return 0;
   }
 }
 
 // 타임 함수
-export function calculateInitialTime(
+function calculateInitialTime(
   statusValue: number,
   blockTimestamp: number,
   additional: number,
   errorType?: boolean
-) {
+): number {
   const initialTimestamp = Number(blockTimestamp);
   const countdownDuration =
     statusValue === TransactionStatus.WithdrawFinalized
       ? convertTimeToMinutes(additional, "days", 0) * 60
       : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
-  const currentTime = Math.floor(Date.now() / 1000);
+  // Current time in UTC
+  const currentTimeUTC = new Date();
+  // Convert to Asia/Seoul time -> timestamp in milliseconds
+  const currentTimeKST = utcToZonedTime(currentTimeUTC, "Asia/Seoul");
+  // Convert milliseconds to seconds (needed for countdown calculation in seconds)
+  const currentTime = Math.floor(currentTimeKST.getTime() / 1000);
+
   const remainingTime = countdownDuration - (currentTime - initialTimestamp);
   const totalTime = errorType ? Math.abs(remainingTime) : remainingTime;
 
-  if (totalTime <= 0) {
+  return totalTime;
+}
+
+export function formatTimeDisplay(finalTime: number): string {
+  if (finalTime <= 0) {
     return "00 : 00";
   }
 
-  const hours = Math.floor(totalTime / 3600);
-  const minutes = Math.floor((totalTime % 3600) / 60);
-  const seconds = totalTime % 60;
+  const hours = Math.floor(finalTime / 3600);
+  const minutes = Math.floor((finalTime % 3600) / 60);
+  const seconds = finalTime % 60;
 
   if (hours > 0) {
     const formattedHours = String(hours).padStart(2, "0");

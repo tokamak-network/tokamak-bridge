@@ -13,7 +13,10 @@ import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 import { useCountdown } from "@/staging/hooks/useCountdown";
-import { getTimeDisplay } from "@/staging/components/new-history/utils/getTimeDisplay";
+import {
+  getRemainTime,
+  formatTimeDisplay,
+} from "@/staging/components/new-history/utils/getTimeDisplay";
 import Image from "next/image";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
@@ -41,7 +44,7 @@ export default function StatusComponent(
 
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-      getTimeDisplay(transactionData)
+      formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
     !isActive && label === Status.Finalize
     ? ""

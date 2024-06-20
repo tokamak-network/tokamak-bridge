@@ -10,7 +10,10 @@ import {
 } from "@/staging/types/transaction";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
-import { getTimeDisplay } from "@/staging/components/new-history/utils/getTimeDisplay";
+import {
+  getRemainTime,
+  formatTimeDisplay,
+} from "@/staging/components/new-history/utils/getTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
@@ -42,31 +45,35 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     );
   }
   if (type === "timer") {
-    const initialTimeDisplay = getTimeDisplay(transactionData);
-    const timeDisplay = useCountdown(
-      initialTimeDisplay,
-      Boolean(transactionData.errorMessage)
-    );
+    const remainTime = getRemainTime(transactionData);
+    const isZeroTime = remainTime <= 0;
+
+    const timeDisplay = isZeroTime
+      ? "00 : 00"
+      : useCountdown(
+          formatTimeDisplay(remainTime),
+          Boolean(transactionData.errorMessage)
+        );
 
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
 
     const refreshRollup =
       (transactionData.status === Status.Rollup &&
-        timeDisplay === "00 : 00" &&
+        isZeroTime &&
         transactionData.action === Action.Withdraw) ||
       (transactionData.status === Status.Finalize &&
-        timeDisplay === "00 : 00" &&
+        isZeroTime &&
         transactionData.action === Action.Deposit);
 
     const calendarButton =
       transactionData.status === Status.Finalize &&
-      timeDisplay !== "00 : 00" &&
+      !isZeroTime &&
       transactionData.action === Action.Withdraw;
 
     const claimReadyButton =
       transactionData.status === Status.Finalize &&
-      timeDisplay === "00 : 00" &&
+      isZeroTime &&
       transactionData.action === Action.Withdraw;
 
     if (claimReadyButton) {
