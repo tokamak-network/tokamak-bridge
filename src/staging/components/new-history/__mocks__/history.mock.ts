@@ -19,8 +19,20 @@ export const historyData: TransactionHistory[] = [
     blockTimestamps: {
       initialCompletedTimestamp: 1717983025,
     },
-    tokenSymbol: "ETH",
-    amount: "0.01234",
+    inToken: {
+      address: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.01234",
+      decimals: 18,
+    },
+    outToken: {
+      address: "",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.01234",
+      decimals: 18,
+    },
   },
   {
     action: Action.Withdraw,
@@ -35,8 +47,20 @@ export const historyData: TransactionHistory[] = [
     blockTimestamps: {
       initialCompletedTimestamp: 1717749999,
     },
-    tokenSymbol: "ETH",
-    amount: "0.000000001",
+    inToken: {
+      address: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.0000000014",
+      decimals: 18,
+    },
+    outToken: {
+      address: "",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.0000000014",
+      decimals: 18,
+    },
     errorMessage: "Initial Error!",
   },
   {
@@ -55,8 +79,20 @@ export const historyData: TransactionHistory[] = [
       initialCompletedTimestamp: 1717315200,
       rollupCompletedTimestamp: 1718345225,
     },
-    tokenSymbol: "TON",
-    amount: "31920833123.0123432480234",
+    inToken: {
+      address: "0x7c6b91d9be155a6db01f749217d76ff02a7227f2",
+      name: "Tokamak Network",
+      symbol: "TON",
+      amount: "31920833123.0123432480234",
+      decimals: 18,
+    },
+    outToken: {
+      address: "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
+      name: "Tokamak Network",
+      symbol: "TON",
+      amount: "31920833123.0123432480234",
+      decimals: 18,
+    },
   },
   {
     //파이널라이즈는 애러가 없다. 헤딩 mock은 추후 시간을 조정해서 claim버튼이 나오도록(7일 지난 걸로 하는 데이터로 한다.)
@@ -74,8 +110,20 @@ export const historyData: TransactionHistory[] = [
       initialCompletedTimestamp: 1716614035,
       rollupCompletedTimestamp: 1717046035,
     },
-    tokenSymbol: "ETH",
-    amount: "0.01234",
+    inToken: {
+      address: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.01234",
+      decimals: 18,
+    },
+    outToken: {
+      address: "",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.01234",
+      decimals: 18,
+    },
   },
   {
     action: Action.Withdraw,
@@ -96,12 +144,23 @@ export const historyData: TransactionHistory[] = [
       rollupCompletedTimestamp: 1717321000,
       finalizedCompletedTimestamp: 1717322400,
     },
-    tokenSymbol: "ETH",
-    amount: "1.576943",
+    inToken: {
+      address: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "1.576943",
+      decimals: 18,
+    },
+    outToken: {
+      address: "",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "1.576943",
+      decimals: 18,
+    },
   },
   {
     action: Action.Deposit,
-
     status: Status.Finalize,
     inNetwork: Network.Sepolia,
     outNetwork: Network.TitanSepolia,
@@ -113,8 +172,20 @@ export const historyData: TransactionHistory[] = [
       initialCompletedTimestamp: 1717983025,
       finalizedCompletedTimestamp: undefined,
     },
-    tokenSymbol: "TON",
-    amount: "12029.12031293",
+    inToken: {
+      address: "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
+      name: "Tokamak Network",
+      symbol: "TON",
+      amount: "12029.120312933",
+      decimals: 18,
+    },
+    outToken: {
+      address: "0x7c6b91d9be155a6db01f749217d76ff02a7227f2",
+      name: "Tokamak Network",
+      symbol: "TON",
+      amount: "12029.12031293",
+      decimals: 18,
+    },
   },
   {
     action: Action.Deposit,
@@ -131,7 +202,19 @@ export const historyData: TransactionHistory[] = [
       initialCompletedTimestamp: 1717315200,
       finalizedCompletedTimestamp: 1717322400,
     },
-    tokenSymbol: "ETH",
-    amount: "0.1238901290312903",
+    inToken: {
+      address: "",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.1238901290312903",
+      decimals: 18,
+    },
+    outToken: {
+      address: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
+      name: "ETHEREUM",
+      symbol: "ETH",
+      amount: "0.1238901290312903",
+      decimals: 18,
+    },
   },
 ];

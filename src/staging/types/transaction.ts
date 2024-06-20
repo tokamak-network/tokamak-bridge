@@ -1,3 +1,4 @@
+import { inTokenSelector } from "@/recoil/bridgeSwap/atom";
 import { TokenInfo } from "types/token/supportedToken";
 
 export enum Action {
@@ -19,13 +20,21 @@ export enum Network {
   Titan = "TITAN",
 }
 
+export interface TransactionToken {
+  address: string;
+  name: string;
+  symbol: string;
+  amount: string;
+  decimals: number;
+}
+
 export interface BaseTransactionHistory {
   action: Action;
   status: Status;
   inNetwork: Network;
   outNetwork: Network;
-  tokenSymbol: TokenInfo["tokenSymbol"];
-  amount: string;
+  inToken: TransactionToken;
+  outToken: TransactionToken;
   errorMessage?: string | null;
 }
 

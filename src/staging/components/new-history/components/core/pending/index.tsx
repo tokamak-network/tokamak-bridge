@@ -51,7 +51,11 @@ export default function Pending(props: PendingProps) {
         border={"1px solid rgba(0, 122, 255, 0.40)"}
       >
         <Flex alignItems='center'>
-          <TokenSymbol w={22} h={22} tokenType={transactionData.tokenSymbol} />
+          <TokenSymbol
+            w={22}
+            h={22}
+            tokenType={transactionData.inToken.symbol}
+          />
           <Box ml={"6px"}>
             <Flex>
               <FormatNumber
@@ -61,7 +65,7 @@ export default function Pending(props: PendingProps) {
                   lineHeight: "21px",
                   color: "#FFFFFF",
                 }}
-                value={transactionData.amount}
+                value={transactionData.inToken.amount}
               />
               <Box w='4px' /> {/** space bar */}
               <Text
@@ -70,7 +74,7 @@ export default function Pending(props: PendingProps) {
                 lineHeight={"21px"}
                 color={"#A0A3AD"}
               >
-                {transactionData.tokenSymbol}
+                {transactionData.inToken.symbol}
               </Text>
             </Flex>
           </Box>

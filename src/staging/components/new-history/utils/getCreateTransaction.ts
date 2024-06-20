@@ -2,6 +2,7 @@ import {
   Action,
   Status,
   Network,
+  TransactionToken,
   WithdrawTransactionHistory,
   DepositTransactionHistory,
   TransactionHistory,
@@ -13,8 +14,8 @@ export function createWithdrawTransaction(
   status: Status,
   inNetwork: Network,
   outNetwork: Network,
-  tokenSymbol: string,
-  amount: string,
+  inToken: TransactionToken,
+  outToken: TransactionToken,
   initialCompletedTimestamp: number,
   initialTransactionHash: string,
   rollupCompletedTimestamp?: number,
@@ -27,8 +28,8 @@ export function createWithdrawTransaction(
     status,
     inNetwork,
     outNetwork,
-    tokenSymbol,
-    amount,
+    inToken,
+    outToken,
     blockTimestamps: {
       initialCompletedTimestamp,
       rollupCompletedTimestamp,
@@ -47,8 +48,8 @@ export function createDepositTransaction(
   status: Status,
   inNetwork: Network,
   outNetwork: Network,
-  tokenSymbol: string,
-  amount: string,
+  inToken: TransactionToken,
+  outToken: TransactionToken,
   initialCompletedTimestamp: number,
   initialTransactionHash: string,
   finalizedCompletedTimestamp?: number,
@@ -59,8 +60,8 @@ export function createDepositTransaction(
     status,
     inNetwork,
     outNetwork,
-    tokenSymbol,
-    amount,
+    inToken,
+    outToken,
     blockTimestamps: {
       initialCompletedTimestamp,
       finalizedCompletedTimestamp,
@@ -78,16 +79,16 @@ export function createBaseTransaction(
   status: Status,
   inNetwork: Network,
   outNetwork: Network,
-  tokenSymbol: string,
-  amount: string
+  inToken: TransactionToken,
+  outToken: TransactionToken
 ): BaseTransactionHistory {
   return {
     action,
     status,
     inNetwork,
     outNetwork,
-    tokenSymbol,
-    amount,
+    inToken,
+    outToken,
   };
 }
 
@@ -96,8 +97,8 @@ export function createTransaction(
   status: Status,
   inNetwork: Network,
   outNetwork: Network,
-  tokenSymbol: string,
-  amount: string,
+  inToken: TransactionToken,
+  outToken: TransactionToken,
   initialCompletedTimestamp?: number,
   initialTransactionHash?: string,
   rollupCompletedTimestamp?: number,
@@ -111,8 +112,8 @@ export function createTransaction(
       status,
       inNetwork,
       outNetwork,
-      tokenSymbol,
-      amount
+      inToken,
+      outToken
     );
   }
   if (action === Action.Withdraw) {
@@ -120,8 +121,8 @@ export function createTransaction(
       status,
       inNetwork,
       outNetwork,
-      tokenSymbol,
-      amount,
+      inToken,
+      outToken,
       initialCompletedTimestamp!,
       initialTransactionHash!,
       rollupCompletedTimestamp,
@@ -134,8 +135,8 @@ export function createTransaction(
       status,
       inNetwork,
       outNetwork,
-      tokenSymbol,
-      amount,
+      inToken,
+      outToken,
       initialCompletedTimestamp!,
       initialTransactionHash!,
       finalizedCompletedTimestamp,

@@ -13,7 +13,6 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
-import { getTokenAddress } from "@/staging/utils/getAddressByNetworkAndToken";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -27,8 +26,8 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     return null;
   }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: transactionHistory.tokenSymbol as string,
-    amount: Number(transactionHistory.amount.replaceAll(",", "")),
+    tokenName: transactionHistory.inToken.symbol as string,
+    amount: Number(transactionHistory.inToken.amount.replaceAll(",", "")),
   });
 
   const marketPrice = useMemo(() => {
@@ -44,6 +43,10 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
 
   const displayNetworkName =
     networkName === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(networkName);
+
+  const tokenAddress = isInNetwork
+    ? transactionHistory.inToken.address
+    : transactionHistory.outToken.address;
 
   return (
     <Flex
@@ -87,7 +90,11 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
             <TokenSymbol
               w={24}
               h={24}
-              tokenType={transactionHistory.tokenSymbol as string}
+              tokenType={
+                isInNetwork
+                  ? (transactionHistory.inToken.symbol as string)
+                  : (transactionHistory.outToken.symbol as string)
+              }
             />
           </Flex>
           <Box ml={"8px"}>
@@ -100,34 +107,34 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                   lineHeight: "24px",
                   color: "#FFFFFF",
                 }}
-                value={transactionHistory.amount}
-                tokenSymbol={transactionHistory.tokenSymbol}
-              />
-              <Link
-                target='_blank'
-                href={`${
-                  BLOCKEXPLORER_CONSTANTS[
-                    isInNetwork
-                      ? transactionHistory.inNetwork
-                      : transactionHistory.outNetwork
-                  ]
-                }/address/${
+                value={
                   isInNetwork
-                    ? getTokenAddress(
-                        transactionHistory.inNetwork,
-                        transactionHistory.tokenSymbol as string
-                      )
-                    : getTokenAddress(
-                        transactionHistory.outNetwork,
-                        transactionHistory.tokenSymbol as string
-                      )
-                }`}
-                textDecor={"none"}
-                _hover={{ textDecor: "none" }}
-                display={"flex"}
-              >
-                <Image src={TxLink} alt={"TxLink"} />
-              </Link>
+                    ? transactionHistory.inToken.amount
+                    : transactionHistory.outToken.amount
+                }
+                tokenSymbol={
+                  isInNetwork
+                    ? transactionHistory.inToken.symbol
+                    : transactionHistory.outToken.symbol
+                }
+              />
+              {tokenAddress && tokenAddress !== "" && (
+                <Link
+                  target='_blank'
+                  href={`${
+                    BLOCKEXPLORER_CONSTANTS[
+                      isInNetwork
+                        ? transactionHistory.inNetwork
+                        : transactionHistory.outNetwork
+                    ]
+                  }/address/${tokenAddress}`}
+                  textDecor={"none"}
+                  _hover={{ textDecor: "none" }}
+                  display={"flex"}
+                >
+                  <Image src={TxLink} alt={"TxLink"} />
+                </Link>
+              )}
             </Flex>
             <Text
               fontWeight={400}
