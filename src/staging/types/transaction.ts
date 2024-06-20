@@ -9,6 +9,7 @@ export enum Action {
 export enum Status {
   Initiate = "Initiate",
   Rollup = "Rollup",
+  Prove = "Prove",
   Finalize = "Finalize",
   Completed = "Completed",
 }
@@ -18,6 +19,8 @@ export enum Network {
   Sepolia = "SEPOLIA",
   TitanSepolia = "TITAN_SEPOLIA",
   Titan = "TITAN",
+  Thanos = "THANOS",
+  ThanosSepolia = "THANOS_SEPOLIA",
 }
 
 export interface TransactionToken {
