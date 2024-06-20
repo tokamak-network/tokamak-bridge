@@ -9,7 +9,7 @@ import {
   TransactionStatus,
   getStatusValue,
 } from "@/staging/components/new-history/utils/historyStatus";
-import { utcToZonedTime } from "date-fns-tz";
+import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 // status 별로 변수 넣는 함수
 export function getRemainTime(transactionData: TransactionHistory): number {
@@ -66,7 +66,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
   }
 }
 
-// 타임 함수
+// Function to calculate the initial time
 function calculateInitialTime(
   statusValue: number,
   blockTimestamp: number,
@@ -79,14 +79,24 @@ function calculateInitialTime(
       ? convertTimeToMinutes(additional, "days", 0) * 60
       : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
-  // Current time in UTC
+  // Get the current time in the user's local timezone
   const currentTimeUTC = new Date();
-  // Convert to Asia/Seoul time -> timestamp in milliseconds
-  const currentTimeKST = utcToZonedTime(currentTimeUTC, "Asia/Seoul");
-  // Convert milliseconds to seconds (needed for countdown calculation in seconds)
-  const currentTime = Math.floor(currentTimeKST.getTime() / 1000);
+  const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  const currentTime = utcToZonedTime(currentTimeUTC, currentTimeZone);
 
-  const remainingTime = countdownDuration - (currentTime - initialTimestamp);
+  // Convert the current time from milliseconds to seconds
+  const currentTimeInSeconds = Math.floor(currentTime.getTime() / 1000);
+
+  // Convert blockTimestamp to the user's current timezone
+  const zoneTime = utcToZonedTime(
+    new Date(initialTimestamp * 1000),
+    currentTimeZone
+  );
+  const adjustedBlockTimestamp = Math.floor(zoneTime.getTime() / 1000);
+
+  // Calculate the remaining time
+  const remainingTime =
+    countdownDuration - (currentTimeInSeconds - adjustedBlockTimestamp);
   const totalTime = errorType ? Math.abs(remainingTime) : remainingTime;
 
   return totalTime;

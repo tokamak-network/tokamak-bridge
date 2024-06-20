@@ -17,7 +17,7 @@ export const historyData: TransactionHistory[] = [
         "0xb01f1f5aa0cc6609b776746c791b77725bae46340953d989a7402095d297de2a",
     },
     blockTimestamps: {
-      initialCompletedTimestamp: 1718877343,
+      initialCompletedTimestamp: 1718879675,
     },
     inToken: {
       address: "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
