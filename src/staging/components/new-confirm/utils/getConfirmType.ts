@@ -34,7 +34,8 @@ const getLineType = (transactionData: TransactionHistory): number => {
         // 2. type: box
         return 4;
     }
-  } else if (transactionData.action === Action.Deposit) {
+  }
+  if (transactionData.action === Action.Deposit) {
     switch (transactionData.status) {
       case Status.Initiate:
         // 1. type: wait, waitMessage: "Wait 1 min"

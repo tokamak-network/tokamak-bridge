@@ -114,7 +114,8 @@ export function createTransaction(
       tokenSymbol,
       amount
     );
-  } else if (action === Action.Withdraw) {
+  }
+  if (action === Action.Withdraw) {
     return createWithdrawTransaction(
       status,
       inNetwork,

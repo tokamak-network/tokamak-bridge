@@ -68,7 +68,8 @@ export default function DepositWithdrawConfirmModal() {
         depositInitiateGasCostText: formatValue(getGasCostText(totalGasCost)),
         depositGasCostUS: formatValue(gasCostUS),
       };
-    } else if (transactionData?.action === Action.Withdraw) {
+    }
+    if (transactionData?.action === Action.Withdraw) {
       return {
         withdrawInitiateGasCostText: formatValue(getGasCostText(totalGasCost)),
         withdrawInitiateGasCostUS: formatValue(gasCostUS),

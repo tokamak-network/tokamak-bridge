@@ -19,7 +19,8 @@ export const getStatusValue = (action: Action, status: Status): number => {
       case Status.Completed:
         return TransactionStatus.WithdrawCompleted;
     }
-  } else if (action === Action.Deposit) {
+  }
+  if (action === Action.Deposit) {
     switch (status) {
       case Status.Finalize:
         return TransactionStatus.DepositFinalized;

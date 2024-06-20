@@ -40,7 +40,8 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
         </Flex>
       </Box>
     );
-  } else if (type === "timer") {
+  }
+  if (type === "timer") {
     const initialTimeDisplay = getTimeDisplay(transactionData);
     const timeDisplay = useCountdown(
       initialTimeDisplay,

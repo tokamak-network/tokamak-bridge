@@ -54,7 +54,8 @@ export default function AccountHistoryNew() {
         rollupTransactionHash ||
         initialTransactionHash
       );
-    } else if (isDepositTransactionHistory(transaction)) {
+    }
+    if (isDepositTransactionHistory(transaction)) {
       const { initialTransactionHash, finalizedTransactionHash } =
         transaction.transactionHashes;
       return finalizedTransactionHash || initialTransactionHash;
