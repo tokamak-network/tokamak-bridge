@@ -18,20 +18,22 @@
     "paths": {
       "@/*": ["./*"],
       "@/utils/*": ["utils/*"],
-      "@/componenets/*": ["components/*"],
+      "@/components/*": ["components/*"],
       "@/hooks/*": ["hooks/*"],
       "@/types/*": ["types/*"],
       "@/graphql/*": ["graphql/*"],
       "@/config/*": ["config/*"],
       "@/app/*": ["app/*"],
       "@/page/*": ["page/*"],
+      "@/pages/*": ["pages/*"],
       "@/bridgeSwap/*": ["app/BridgeSwap/*"],
       "@/abis/*": ["constant/abis/*"],
       "@/css/*": ["css/*"],
       "@/contracts/*": ["constant/contracts/*"],
       "@/bridgeComponent/*": ["app/BridgeSwap/components/*"],
       "@/pools/*": ["app/pools/*"],
-      "@/constnat/": ["constant"]
+      "@/constant/": ["constant"],
+      "@/staging/": ["staging/*"]
     },
     "plugins": [
       {

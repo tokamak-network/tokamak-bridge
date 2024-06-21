@@ -31,7 +31,7 @@ export default function Account() {
 
   return (
     <Center
-      className="header-right-common"
+      className='header-right-common'
       w={mobileView ? "106px" : isConnected ? "174px" : "220px"}
       h={mobileView ? "32px" : "48px"}
       bg={!isConnected ? "#007AFF" : ""}

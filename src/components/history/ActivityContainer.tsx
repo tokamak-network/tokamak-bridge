@@ -61,7 +61,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
   }, [ref?.current]);
 
   //get the data from the subgraphs to show as initial data until the proper data is loaded in the useGetTransactions hook
- //sets the preloaded data
+  //sets the preloaded data
   useEffect(() => {
     const getTxs = async () => {
       if (isConnectedToMainNetwork !== undefined) {
@@ -70,12 +70,16 @@ export default function ActivityContainer(props: { network: SelectOption }) {
           isConnectedToMainNetwork
         );
 
+        console.log(txs);
+
         const depTx = txs?.formattedL1DepositResults.map((tx: any) => {
           return {
             ...tx,
             event: "deposit",
           };
         });
+
+        console.log(depTx);
 
         const wthTx = txs?.formattedL1WithdrawResults.map((tx: any) => {
           return {
@@ -84,12 +88,16 @@ export default function ActivityContainer(props: { network: SelectOption }) {
           };
         });
 
+        console.log(wthTx);
+
         const allTxs = depTx
           .concat(wthTx)
           .sort(
             (tx1: L1TxType, tx2: L1TxType) =>
               Number(tx2.blockTimestamp) - Number(tx1.blockTimestamp)
           );
+
+        console.log(allTxs);
 
         setPreLoadData(allTxs);
       }
@@ -154,7 +162,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
     }
   }, [searchTxString, filteredTx, network, tData]);
 
-
   //creates the pagination array from the filtered txs
   const getPaginatedData = useMemo(() => {
     const startIndex = 0;
@@ -168,14 +175,14 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       case "absent":
         return (
           <Flex
-            w="100%"
+            w='100%'
             h={"100%"}
             justifyContent={"center"}
             alignItems={"center"}
             flexDir={"column"}
           >
             <Image
-              alt="noActivityIcon"
+              alt='noActivityIcon'
               src={noActivityIcon}
               height={75}
               width={60}
@@ -184,7 +191,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#e3f3ff"}
               fontWeight={500}
               fontSize={"16px"}
-              mt="24px"
+              mt='24px'
             >
               No activity yet
             </Text>
@@ -192,8 +199,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#7B7F8F"}
               fontWeight={400}
               fontSize={"11px"}
-              mt="7px"
-              w="191px"
+              mt='7px'
+              w='191px'
             >
               Your onchain transactions and crypto purchases will appear here.
             </Text>
@@ -243,7 +250,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       justifyContent={"space-between"}
       h={"calc(100% - 20px)"}
       bg={"transparent"}
-      w="100%"
+      w='100%'
     >
       <Flex
         ref={ref}

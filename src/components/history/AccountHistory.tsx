@@ -5,7 +5,10 @@ import {
   Flex,
   Text,
   Box,
+  Button,
 } from "@chakra-ui/react";
+import Refresh from "@/assets/icons/newHistory/refresh.svg";
+import RefreshBlue from "@/assets/icons/newHistory/refresh-blue.svg";
 import Image from "next/image";
 import { useAccount } from "wagmi";
 import { useMemo, useState, SetStateAction, Dispatch, useEffect } from "react";
@@ -19,6 +22,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
+import AccountHistoryNew from "@/staging/components/new-history/components/core";
 
 type ChainName = "MAINNET" | "TITAN" | undefined;
 
@@ -30,7 +34,7 @@ type SelectOption = {
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
-  const [ withdrawStatus ] = useRecoilState(confirmWithdrawStats);
+  const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const [tab, setTab] = useState("Activity");
   const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
@@ -52,24 +56,39 @@ export default function AccountHistory() {
   }) => {
     const { setTab, tab } = props;
     return (
-      <Flex columnGap={"24px"} mt="16px" mb="8px">
-        {/* <Text
-          cursor={"pointer"}
-          color={tab === "Balance" ? "#fff" : "#5E626D"}
-          _hover={{ color: "#A0A3AD" }}
-          onClick={() => setTab("Balance")}
-        >
-          Balance
-        </Text> */}
+      <Flex
+        mt='16px'
+        mb='12px'
+        justifyContent={"space-between"}
+        alignItems={"center"}
+      >
         <Text
-          // cursor={"pointer"}
-          // color={tab === "Activity" ? "#fff" : "#5E626D"}
-          color={"#fff"}
-          // _hover={{ color: "#A0A3AD" }}
-          // onClick={() => setTab("Activity")}
+          fontWeight={500}
+          fontSize={"16px"}
+          lineHeight={"24px"}
+          color={"#FFFFFF"}
         >
           Bridge History
         </Text>
+        <Flex
+          w={"32px"}
+          h={"32px"}
+          justifyContent={"center"}
+          alignItems={"center"}
+          borderRadius={"6px"}
+          gap={"8px"}
+          bg={"#15161D"}
+          cursor={"pointer"}
+        >
+          <Flex
+            w={"18px"}
+            h={"18px"}
+            justifyContent={"center"}
+            alignItems={"center"}
+          >
+            <Image src={RefreshBlue} alt={"RefreshBlue"} />
+          </Flex>
+        </Flex>
       </Flex>
     );
   };
@@ -80,7 +99,7 @@ export default function AccountHistory() {
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement="right"
+      placement='right'
       onClose={() => {
         setIsOpen(false);
         setSelectedNetwork({
@@ -89,13 +108,13 @@ export default function AccountHistory() {
           networkImage: undefined,
         });
       }}
-      variant="clickThrough"
+      variant='clickThrough'
       trapFocus={false}
       useInert={true}
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}
-        onClick={() => mobileView ? setIsOpen(false) : ""}
+        onClick={() => (mobileView ? setIsOpen(false) : "")}
       />
 
       {mobileView && !withdrawStatus.isOpen && (
@@ -111,8 +130,8 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px="12px"
-        pb="0px"
+        px='12px'
+        pb='0px'
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
@@ -120,28 +139,43 @@ export default function AccountHistory() {
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
         // pos={"relative"}
       >
-        {!mobileView && <AccountContainer />}
-        <TabContainer setTab={setTab} tab={tab} />
-        {!mobileView && (
-          <Flex>
-            {Network}
-            {/* <NetworkSelector  setNetwork={setSelectedNetwork} /> */}
-            <SearchComponent tab={tab} />
+        <Flex direction='column' height='100%' overflow='hidden'>
+          {!mobileView && <AccountContainer />}
+          <TabContainer setTab={setTab} tab={tab} />
+          {!mobileView && (
+            <Flex>
+              {Network}
+              <SearchComponent tab={tab} />
+            </Flex>
+          )}
+          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
+            <Box
+              flex='1'
+              overflowY='auto'
+              css={{
+                "&::-webkit-scrollbar": {
+                  width: "6px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  background: "transparent",
+                  borderRadius: "4px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  background: "#343741",
+                  borderRadius: "3px",
+                },
+              }}
+              mr='-6px'
+            >
+              <AccountHistoryNew />
+            </Box>
           </Flex>
-        )}
-        <Flex mt={{ base: "0px", lg: "12px" }} height={"100%"}>
-          {/* {tab === "Balance" ? (
-            <BalanceContainer network={selectedNetwork} />
-          ) : (
-            <ActivityContainer network={selectedNetwork} />
-          )} */}
-          <ActivityContainer network={selectedNetwork} />
         </Flex>
         <Flex
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg="transparent"
+          bg='transparent'
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}
