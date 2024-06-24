@@ -43,6 +43,7 @@ export interface BaseTransactionHistory {
 
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;
+  status: Status;
   blockTimestamps: {
     initialCompletedTimestamp: number;
     rollupCompletedTimestamp?: number;
@@ -68,7 +69,6 @@ export interface DepositTransactionHistory extends BaseTransactionHistory {
 }
 
 export type TransactionHistory =
-  | BaseTransactionHistory
   | WithdrawTransactionHistory
   | DepositTransactionHistory;
 

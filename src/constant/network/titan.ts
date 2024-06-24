@@ -1,0 +1,2 @@
+const ONE_WEEK = 604800;
+export const TITAN_CHALLENGE_PERIOD = ONE_WEEK;

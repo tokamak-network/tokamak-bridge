@@ -1,3 +1,4 @@
+import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
 import { Resolved } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { hashCrossChainMessage } from "@tokamak-network/titan-sdk";
@@ -5,14 +6,45 @@ import axios from "axios";
 import { BigNumber } from "ethers";
 import { stat } from "fs";
 
+export type CurrentStatus = 0 | 1 | 2 | 3 | 4;
+export type StateBatchAppended = {
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+  _batchIndex: number;
+  _batchRoot: string;
+  _batchSize: number;
+  _extraData: string;
+  _prevTotalElements: number;
+};
+export type RelayMessage = {
+  blockNumber: number;
+  blockTimestamp: number;
+  msgHash: string;
+  transactionHash: string;
+};
+
+/**
+ *
+ * @param l2BlockNumber
+ * @param resolved
+ * @param isConnectedToMainnet
+ * @returns Promise
+ * currentStatus
+ * - 0 : initiate
+ * - 1 : prove
+ * - 2 : in Challenge Period
+ * - 3 : wait to claim
+ * - 4 : done with realyed
+ */
 export const getCurretStatus = async (
   l2BlockNumber: number,
   resolved: Resolved,
   isConnectedToMainnet: boolean
 ): Promise<{
-  currentStatus: number;
-  stateBatchAppendeds: any;
-  relayedMessageTxHash?: string;
+  currentStatus: CurrentStatus;
+  stateBatchAppendeds?: StateBatchAppended;
+  relayedMessageTx?: RelayMessage;
 }> => {
   const resTxs = await axios.post(
     `${
@@ -39,12 +71,20 @@ export const getCurretStatus = async (
   );
 
   if (resTxs?.data?.data?.stateBatchAppendeds.length > 0) {
-    const stateBatchAppendeds = resTxs.data.data.stateBatchAppendeds[0];
-    const { blockTimestamp } = stateBatchAppendeds;
+    const _stateBatchAppendeds = resTxs.data.data.stateBatchAppendeds[0];
+    const { blockTimestamp } = _stateBatchAppendeds;
     const currentTime = Math.floor(Date.now() / 1000);
-    const plusChallengePeriod = Number(blockTimestamp) + 7 * 24 * 60 * 60;
+    const plusChallengePeriod = Number(blockTimestamp) + TITAN_CHALLENGE_PERIOD;
+    const stateBatchAppendeds = {
+      ..._stateBatchAppendeds,
+      blockNumber: Number(_stateBatchAppendeds.blockNumber),
+      blockTimestamp: Number(_stateBatchAppendeds.blockTimestamp),
+      _batchIndex: Number(_stateBatchAppendeds._batchIndex),
+      _batchSize: Number(_stateBatchAppendeds._batchSize),
+      _prevTotalElements: Number(_stateBatchAppendeds._prevTotalElements),
+    };
     if (plusChallengePeriod > currentTime) {
-      return { currentStatus: 4, stateBatchAppendeds };
+      return { currentStatus: 2, stateBatchAppendeds };
     }
     const msgHash = hashCrossChainMessage({
       sender: resolved.sender,
@@ -66,6 +106,8 @@ export const getCurretStatus = async (
           relayedMessages(where: {msgHash: $msgHash}) {
             msgHash
             transactionHash
+            blockTimestamp
+            blockNumber
           }
         }
       `,
@@ -75,18 +117,23 @@ export const getCurretStatus = async (
       }
     );
     if (resMesHash?.data?.data?.relayedMessages.length > 0) {
+      const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
+      const relayedMessageTx = {
+        ..._relayedMessageTx,
+        blockNumber: Number(_relayedMessageTx.blockNumber),
+        blockTimestamp: Number(_relayedMessageTx.blockTimestamp),
+      };
       return {
-        currentStatus: 6,
+        currentStatus: 4,
         stateBatchAppendeds,
-        relayedMessageTxHash:
-          resMesHash.data.data.relayedMessages[0].transactionHash,
+        relayedMessageTx,
       };
     }
 
     return {
-      currentStatus: 5,
+      currentStatus: 3,
       stateBatchAppendeds,
     };
   }
-  return { currentStatus: 2, stateBatchAppendeds: undefined };
+  return { currentStatus: 0, stateBatchAppendeds: undefined };
 };

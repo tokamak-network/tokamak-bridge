@@ -9,15 +9,18 @@ import {
 } from "@apollo/client";
 import { ChainId } from "@uniswap/sdk-core";
 
+/**
+ * For Standard Bridge History Subgraphs
+ */
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
-  [ChainId.MAINNET]:
-    "https://thegraph.com/studio/subgraph/tokamak-bridge-history/",
-  [SupportedChainId.TITAN]:
-    "https://thegraph.titan.tokamak.network/subgraphs/name/tokamak/titan-uniswap-subgraph",
-  //   [SupportedChainId.SEPOLIA]:
-  //     "https://api.studio.thegraph.com/query/49678/tokamak-uniswapv3/version/latest",
-  //   [SupportedChainId.TITAN_SEPOLIA]:
-  //     "https://graph-node.titan-sepolia.tokamak.network/subgraphs/name/tokamak/titan-sepolia-uniswap-subgraph",
+  [ChainId.MAINNET]: process.env
+    .NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY as string,
+  [SupportedChainId.TITAN]: process.env
+    .NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY as string,
+  [SupportedChainId.SEPOLIA]: process.env
+    .NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY as string,
+  [SupportedChainId.TITAN_SEPOLIA]: process.env
+    .NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY as string,
 };
 
 const httpLink = new HttpLink({ uri: CHAIN_SUBGRAPH_URL[ChainId.MAINNET] });
@@ -43,15 +46,15 @@ const apolloClient_Titan = new ApolloClient({
   link: concat(authMiddleware(SupportedChainId.TITAN), httpLink),
 });
 
-// const apolloClient_Sepolia = new ApolloClient({
-//   cache: new InMemoryCache(),
-//   link: concat(authMiddleware(SupportedChainId.SEPOLIA), httpLink),
-// });
+const apolloClient_Sepolia = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: concat(authMiddleware(SupportedChainId.SEPOLIA), httpLink),
+});
 
-// const apolloClient_Titan_Sepolia = new ApolloClient({
-//   cache: new InMemoryCache(),
-//   link: concat(authMiddleware(SupportedChainId.TITAN_SEPOLIA), httpLink),
-// });
+const apolloClient_Titan_Sepolia = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: concat(authMiddleware(SupportedChainId.TITAN_SEPOLIA), httpLink),
+});
 
 export const subgraphApolloClientsForHistory: Record<
   number,
@@ -59,6 +62,6 @@ export const subgraphApolloClientsForHistory: Record<
 > = {
   [SupportedChainId.MAINNET]: apolloClient_Ethereum,
   [SupportedChainId.TITAN]: apolloClient_Titan,
-  //   [SupportedChainId.SEPOLIA]: apolloClient_Sepolia,
-  //   [SupportedChainId.TITAN_SEPOLIA]: apolloClient_Titan_Sepolia,
+  [SupportedChainId.SEPOLIA]: apolloClient_Sepolia,
+  [SupportedChainId.TITAN_SEPOLIA]: apolloClient_Titan_Sepolia,
 };

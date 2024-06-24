@@ -136,9 +136,6 @@ export default function useGetTransaction() {
                 l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
               )[0];
 
-              // if currentStatus is 2 or 3 then the tx is still in rollup period ( wait 5 mins for rollup).
-              //if status is 4, rollup is finish and tx ready for challenge period
-
               /**
                * stateBatchAppendeds 조회를 활용해 currentStatus 조회 생략
                * 2를 기준으로 UI를 표시하므로 조회가 안 되면 2로 설정하면 될 듯
