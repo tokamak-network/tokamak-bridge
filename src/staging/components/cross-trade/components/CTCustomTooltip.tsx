@@ -13,6 +13,12 @@ export default function CTCustomTooltip(props: {
     py?: string;
     tooltipLineHeight?: string;
   };
+  contentStyle?: {
+    fontWeight?: string | number;
+    fontSize?: string;
+    lineHeight?: string;
+    color?: string;
+  };
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
@@ -53,7 +59,7 @@ export default function CTCustomTooltip(props: {
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
       >
-        {props.content}
+        <Text {...props.contentStyle}>{props.content}</Text>
       </Box>
     </Tooltip>
   );

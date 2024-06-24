@@ -9,25 +9,40 @@ import {
   Tr,
   Th,
   Td,
-  Button,
 } from "@chakra-ui/react";
-import { Token, Profit, CrossTradeData } from "@/staging/types/crossTrade";
+import { CrossTradeData } from "@/staging/types/crossTrade";
 import TokenDetail from "@/staging/components/cross-trade/components/core/main/TokenDetail";
+import CTProvider from "@/staging/components/cross-trade/components/core/main/CTMainProvider";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import Image from "next/image";
 import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
+import Polygon from "assets/icons/ct/polygon.svg";
+import { useAccount } from "wagmi";
+import {
+  STATUS,
+  getStatus,
+} from "@/staging/components/cross-trade/utils/getStatus";
 
+{
+  /** 
+    If the requester is the same as the current user's address, do not show the request in the list.
+    When someone makes a new request, the request is initially disabled.
+    After a 15-minute countdown, the request becomes active and the 'Provide' button is enabled.
+    by Monica
+  */
+}
 export default function CTMain() {
   const LIMIT = 10;
   const [data, setData] = useState<CrossTradeData[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { address } = useAccount();
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `/api/crossTrade?limit=${LIMIT}&offset=${offset}`
+        `/api/crossTrade?limit=${LIMIT}&offset=${offset}&address=${address}`
       );
       const newData: CrossTradeData[] = await response.json();
       setData((prevData) => [...prevData, ...newData]);
@@ -73,8 +88,12 @@ export default function CTMain() {
             }}
           >
             <Th textTransform='none'>
-              <Flex>
+              <Flex alignItems='center'>
+                <Flex justifyContent={"center"} alignItems={"center"}>
+                  <Image src={Polygon} alt={"Polygon"} />
+                </Flex>
                 <Text
+                  ml='4px'
                   fontWeight={"500"}
                   fontSize={"12px"}
                   lineHeight={"18px"}
@@ -82,6 +101,10 @@ export default function CTMain() {
                 >
                   Provide
                 </Text>
+                <Tooltip
+                  tooltipLabel={"text will be changed"}
+                  style={{ marginLeft: "2px" }}
+                />
               </Flex>
             </Th>
             <Th textTransform='none'>
@@ -101,7 +124,7 @@ export default function CTMain() {
               </Flex>
             </Th>
             <Th textTransform='none'>
-              <Flex>
+              <Flex justifyContent={"center"}>
                 <Text
                   fontWeight={"500"}
                   fontSize={"12px"}
@@ -138,110 +161,39 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((item, index) => (
-            <Tr
-              key={index}
-              sx={{
-                "& td": { pl: "20px", py: "16px", pr: "auto" },
-                borderBottom: "1px solid #23242B",
-              }}
-            >
-              <Td>
-                <TokenDetail
-                  amount={item.inToken.amount}
-                  symbol={item.inToken.symbol}
-                  detail={item.inToken.amountUSD}
-                  network={item.inNetwork}
-                />
-              </Td>
-              <Td>
-                <TokenDetail
-                  amount={item.outToken.amount}
-                  symbol={item.outToken.symbol}
-                  detail={item.outToken.amountUSD}
-                  network={item.outNetwork}
-                />
-              </Td>
-              <Td>
-                <TokenDetail
-                  amount={item.profit.amount}
-                  symbol={item.inToken.symbol}
-                  detail={item.profit.percent}
-                />
-                {/* <Box ml='10px'>
-                  <Flex alignItems={"center"}>
-                    <Text
-                      fontWeight={500}
-                      fontSize={"14px"}
-                      lineHeight={"21px"}
-                      color={"#FFFFFF"}
-                    >
-                      {item.profit.percent}
-                    </Text>
-                    <Text
-                      ml={"4px"}
-                      fontWeight={400}
-                      fontSize={"14px"}
-                      lineHeight={"21px"}
-                      color={"#A0A3AD"}
-                    >
-                      %
-                    </Text>
-                  </Flex>
-                  <Flex alignItems={"center"}>
-                    <Text
-                      fontWeight={400}
-                      fontSize={"9px"}
-                      lineHeight={"13.5px"}
-                      color={"#A0A3AD"}
-                    >
-                      (
-                    </Text>
-                    <Text
-                      fontWeight={400}
-                      fontSize={"11px"}
-                      lineHeight={"16.5px"}
-                      color={"#A0A3AD"}
-                    >
-                      {item.profit.amount} {item.profit.symbol}
-                    </Text>
-                    <Text
-                      fontWeight={400}
-                      fontSize={"9px"}
-                      lineHeight={"13.5px"}
-                      color={"#A0A3AD"}
-                    >
-                      )
-                    </Text>
-                  </Flex>
-                </Box> */}
-              </Td>
-              <Td>
-                <Button
-                  w={"64px"}
-                  h={"28px"}
-                  px={"10px"}
-                  py={"5px"}
-                  justifyContent={"center"}
-                  gap={"8px"}
-                  flexShrink={0}
-                  borderRadius={"6px"}
-                  bg={"#007AFF"}
-                  _active={{}}
-                  _hover={{}}
-                  _focus={{}}
-                >
-                  <Text
-                    fontWeight={600}
-                    fontSize={"11px"}
-                    lineHeight={"16.5px"}
-                  >
-                    Provide
-                  </Text>
-                </Button>
-              </Td>
-            </Tr>
-          ))}
+          {data.map((item, index) => {
+            const status = getStatus(item);
+            const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
+
+            return (
+              <Tr
+                key={index}
+                sx={{
+                  "& td": { pl: "20px", py: "16px", pr: "auto" },
+                  borderBottom: "1px solid #23242B",
+                }}
+              >
+                <Td sx={{ opacity: rowOpacity }}>
+                  <TokenDetail token={item.inToken} network={item.inNetwork} />
+                </Td>
+                <Td sx={{ opacity: rowOpacity }}>
+                  <TokenDetail
+                    token={item.outToken}
+                    network={item.outNetwork}
+                  />
+                </Td>
+                <Td sx={{ opacity: rowOpacity }}>
+                  <TokenDetail profit={item.profit} />
+                </Td>
+                <Td>
+                  <CTProvider
+                    status={status}
+                    blockTimestamps={item.blockTimestamps}
+                  />
+                </Td>
+              </Tr>
+            );
+          })}
         </Tbody>
       </Table>
     </Box>

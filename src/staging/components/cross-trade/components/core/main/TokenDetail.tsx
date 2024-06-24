@@ -1,22 +1,41 @@
 import { Flex, Text, Box } from "@chakra-ui/react";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
-import { Token } from "@/staging/types/crossTrade";
+import { Token, Profit } from "@/staging/types/crossTrade";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import formatNumber from "@/staging/utils/formatNumbers";
+import { convertNumber } from "@/utils/trim/convertNumber";
+import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCustomTooltip";
 
 interface TokenDetailProps {
-  amount: string;
-  symbol: string;
-  detail: string;
+  token?: Token;
   network?: number;
+  profit?: Profit;
 }
 
 export default function TokenDetail(props: TokenDetailProps) {
-  const { amount, symbol, detail, network } = props;
-  const isProfit = network ? true : false;
+  const { token, network, profit } = props;
+
+  const formattedAmount = token
+    ? convertNumber(token.amount, token.decimals)
+    : profit?.amount;
+
+  const symbol = token ? token.symbol : profit?.symbol;
+
+  const priceOrPercent = token
+    ? (() => {
+        const { tokenPriceWithAmount } = useGetMarketPrice({
+          tokenName: token.name,
+          amount: Number(formattedAmount),
+        });
+        return tokenPriceWithAmount ? `$${tokenPriceWithAmount}` : "NA";
+      })()
+    : `${profit?.percent}%`;
+
   return (
     <Flex>
-      {isProfit && (
+      {network && token && (
         <TokenSymbolWithNetwork
-          tokenSymbol={symbol}
+          tokenSymbol={token.symbol}
           chainId={network}
           networkSymbolW={18}
           networkSymbolH={18}
@@ -31,9 +50,23 @@ export default function TokenDetail(props: TokenDetailProps) {
             fontSize={"14px"}
             lineHeight={"21px"}
             color={"#FFFFFF"}
-          >
-            {amount}
-          </Text>
+          ></Text>
+          <CTCustomTooltip
+            content={formatNumber(formattedAmount)}
+            tooltipLabel={formattedAmount}
+            style={{
+              maxW: "245px",
+              px: "8px",
+              py: "5px",
+              tooltipLineHeight: "18px",
+            }}
+            contentStyle={{
+              fontWeight: 500,
+              fontSize: "14px",
+              lineHeight: "21px",
+              color: "#FFFFFF",
+            }}
+          />
           <Text
             ml={"4px"}
             fontWeight={400}
@@ -59,7 +92,7 @@ export default function TokenDetail(props: TokenDetailProps) {
             lineHeight={"16.5px"}
             color={"#A0A3AD"}
           >
-            {isProfit ? `$${detail}` : `${detail}%`}
+            {priceOrPercent}
           </Text>
           <Text
             fontWeight={400}

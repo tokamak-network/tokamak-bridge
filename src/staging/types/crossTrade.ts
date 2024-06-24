@@ -3,7 +3,6 @@ export interface Token {
   name: string;
   symbol: string;
   amount: string;
-  amountUSD: string;
   decimals: number;
 }
 
@@ -11,6 +10,7 @@ export interface Profit {
   amount: string;
   symbol: string;
   percent: string;
+  decimal: number;
 }
 
 export interface CrossTradeData {

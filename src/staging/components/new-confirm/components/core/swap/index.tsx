@@ -19,7 +19,7 @@ import ConfirmSubDetail, {
   ConfirmDetailType,
 } from "@/staging/components/new-confirm/components/core/swap/ConfirmSubDetail";
 import usePriceImpact from "@/hooks/swap/usePriceImpact";
-import formatNumber from "@/staging/components/cross-trade/utils/formatNumbers";
+import formatNumber from "@/staging/utils/formatNumbers";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { getGasCostText } from "@/utils/number/compareNumbers";
