@@ -10,7 +10,7 @@ import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { FullWithTx, FullDepTx } from "@/types/activity/history";
-import { fetchUserTransactions } from "@/components/history/utils/fetchUserTransactions";
+import { fetchUserTransactions } from "utils/history/fetchUserTransactions";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount } from "wagmi";
 import { L1TxType } from "@/types/activity/history";
@@ -277,27 +277,6 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       >
         {txes}
       </Flex>
-      {/* {getLayerFiltered.length > getPaginatedData.length &&
-        tData.loadingState === "present" && (
-          <Flex
-            my={{ base:"16px", lg: "32px" }}
-            justifyContent={"center"}
-            alignItems={"start"}
-          >
-            <Button
-              bg="transparent"
-              border={"1px solid #313442"}
-              fontSize={"12px"}
-              color={"#fff"}
-              fontWeight={500}
-              _hover={{}}
-              _active={{}}
-              onClick={() => setNumData(numData + 2)}
-            >
-              Load more
-            </Button>
-          </Flex>
-        )} */}
     </Flex>
   );
 }

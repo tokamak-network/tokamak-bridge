@@ -11,7 +11,9 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 
 const Step4 = (props: { progress: string; check: any }) => {
   const { check } = props;
-  const [relayGasCost, setRelayGasCost] = useState("0");
+  const [relayGasCost, setRelayGasCost] = useState<string | undefined>(
+    undefined
+  );
 
   const { data: feeData } = useFeeData({
     chainId: 1,
@@ -60,7 +62,8 @@ const Step4 = (props: { progress: string; check: any }) => {
       justifyContent={"space-between"}
       alignItems={"center"}
       // border={"1px solid red"}
-      w="100%">
+      w="100%"
+    >
       <Flex>
         <Image src={check.check} alt="check" />
         <Text ml="8px" fontSize={"14px"} color={check.color}>
@@ -71,7 +74,8 @@ const Step4 = (props: { progress: string; check: any }) => {
         <Flex>
           <Text mr="6px" fontSize={"14px"} color={check.color}>
             {" "}
-            ~ ${relayGasCost}
+            {relayGasCost ? `~ $` : ""}
+            {relayGasCost ?? "NA"}
           </Text>
           <Image src={check.gas} alt="gas station" />
         </Flex>
@@ -80,5 +84,4 @@ const Step4 = (props: { progress: string; check: any }) => {
   );
 };
 
-
-export default Step4
+export default Step4;

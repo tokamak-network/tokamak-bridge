@@ -1,6 +1,5 @@
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import { useContractWrite, usePublicClient } from "wagmi";
-import { TOKAMAK_GOERLI_CONTRACTS } from "@/constant/contracts";
 import { Hash, getContract } from "viem";
 import useContract from "@/hooks/contracts/useContract";
 

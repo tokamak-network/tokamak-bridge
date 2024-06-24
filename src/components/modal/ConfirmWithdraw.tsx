@@ -45,9 +45,9 @@ export default function ConfirmWithdraw() {
   const { mobileView } = useMediaView();
 
   const getCalendarEvent = useMemo(() => {
-    if (tx && tx.l2timeStamp) {
-      const timeStamp = tx.l2timeStamp;
-      const status4Duration = isConnectedToMainNetwork ? 605400 : 610; //7 days challenge period on mainnet +  5 minutes rollup
+    if (tx && tx.l2timeStamp && tx?.stateBatchAppendedEvent?.blockTimestamp) {
+      const timeStamp = tx.stateBatchAppendedEvent.blockTimestamp;
+      const status4Duration = isConnectedToMainNetwork ? 604800 : 300;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 
@@ -55,6 +55,7 @@ export default function ConfirmWithdraw() {
       const add1Hour = addHours(startDate, 1);
       const startTime = format(startDate, "HH:mm");
       const formattedEndTime = format(add1Hour, "HH:mm");
+
       return {
         formattedDate: formattedDate,
         startTime: startTime,
@@ -196,7 +197,6 @@ export default function ConfirmWithdraw() {
           </Flex>
           <Flex alignItems={"center"} columnGap={{ base: "8px", lg: "0px" }}>
             <TitanContainer tx={tx} />
-
             {mobileView ? (
               <Image width={24} height={24} src={ARROW} alt={"ARROW"} />
             ) : (
@@ -215,13 +215,12 @@ export default function ConfirmWithdraw() {
                 <Image src={ARROW_ICON} alt="ARROW_ICON" />
               </Flex>
             )}
-
             <EthereumContainer />
           </Flex>
           <TimelineComponent tx={tx} />
           {!tx ? (
             <CheckContainer />
-          ) : tx.currentStatus >= 2 && tx.currentStatus < 5 ? (
+          ) : tx.currentStatus === 4 ? (
             <CalendarComponent config={config} />
           ) : null}
           <ActionButton />

@@ -1,6 +1,6 @@
 import {
-  GOERLI_CONTRACTS,
-  TOKAMAK_GOERLI_CONTRACTS,
+  SEPOLIA_CONTRACTS,
+  TITAN_SEPOLIA_CONTRACTS,
 } from "@/constant/contracts/index";
 import { Token } from "@uniswap/sdk-core";
 
@@ -13,7 +13,7 @@ export const QUOTER_CONTRACT_ADDRESS =
 
 export const WTON = new Token(
   5,
-  GOERLI_CONTRACTS.WTON_ADDRESS,
+  SEPOLIA_CONTRACTS.WTON_ADDRESS,
   27,
   "WTON",
   "Wrapped TON"
@@ -21,7 +21,7 @@ export const WTON = new Token(
 
 export const GOERLI_TON = new Token(
   5,
-  GOERLI_CONTRACTS.TON_ADDRESS,
+  SEPOLIA_CONTRACTS.TON_ADDRESS,
   18,
   "TON",
   "Tokamak Network Token"
@@ -29,7 +29,7 @@ export const GOERLI_TON = new Token(
 
 export const DARIUS_TON = new Token(
   5050,
-  TOKAMAK_GOERLI_CONTRACTS.TON_ADDRESS,
+  TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
   18,
   "TON",
   "Tokamak Network Token"
@@ -37,7 +37,7 @@ export const DARIUS_TON = new Token(
 
 export const GOERLI_TOS = new Token(
   5,
-  GOERLI_CONTRACTS.TOS_ADDRESS,
+  SEPOLIA_CONTRACTS.TOS_ADDRESS,
   18,
   "TOS",
   "TONStarter Token"
@@ -45,7 +45,7 @@ export const GOERLI_TOS = new Token(
 
 export const DARIUS_TOS = new Token(
   5050,
-  TOKAMAK_GOERLI_CONTRACTS.TOS_ADDRESS,
+  TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
   18,
   "TOS",
   "TONStarter Token"
@@ -53,7 +53,7 @@ export const DARIUS_TOS = new Token(
 
 export const AURA = new Token(
   5,
-  GOERLI_CONTRACTS.AURA_ADDRESS,
+  SEPOLIA_CONTRACTS.AURA_ADDRESS,
   18,
   "AURA",
   "AURA"
