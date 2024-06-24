@@ -1,21 +1,20 @@
 import Image from "next/image";
 import { useState } from "react";
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
-
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import ScrolltoTopButton from "@/staging/components/cross-trade/components/ScrolltoTopButton";
-import ImageComingBox from "@/staging/components/cross-trade/components/core/coming/pool/ImageComingBox";
 import ImagePoolBox from "@/staging/components/cross-trade/components/core/coming/pool/ImagePoolBox";
+import CTMain from "@/staging/components/cross-trade/components/core/main/CTMain";
 
-export default function ComingPool() {
-  enum PoolButtonType {
-    Coming = "Coming Pool",
-    Active = "Active Pool",
+export default function CrossTrade() {
+  enum ButtonType {
+    CROSS_TRADE = "Cross_Trade",
+    UNISWAP_POOL = "Uniswap_Pool",
   }
 
-  interface PoolComingButtonProps {
-    type: PoolButtonType;
+  interface CrossTradeButtonProps {
+    type: ButtonType;
     isActive: boolean;
     onClick: () => void;
     children: React.ReactNode;
@@ -28,20 +27,22 @@ export default function ComingPool() {
     ? "536px"
     : "672px";
 
-  const [activeButton, setActiveButton] = useState<PoolButtonType>(
-    PoolButtonType.Coming
+  const [activeButton, setActiveButton] = useState<ButtonType>(
+    ButtonType.CROSS_TRADE
   );
 
-  const PoolComingButton = ({
+  const CrossTradeButton = ({
     type,
     isActive,
     onClick,
     children,
-  }: PoolComingButtonProps) => (
+  }: CrossTradeButtonProps) => (
     <Button
-      ml={poolMobileView ? "0" : type === PoolButtonType.Active ? "16px" : "0"}
+      ml={
+        poolMobileView ? "0" : type === ButtonType.UNISWAP_POOL ? "16px" : "0"
+      }
       mt={
-        poolMobileView ? (type === PoolButtonType.Active ? "12px" : "0") : "0"
+        poolMobileView ? (type === ButtonType.UNISWAP_POOL ? "12px" : "0") : "0"
       }
       w={poolMobileView ? "full" : "auto"}
       px={"16px"}
@@ -101,20 +102,20 @@ export default function ComingPool() {
             width={dynamicWidth}
             direction={poolMobileView ? "column" : "row"}
           >
-            <PoolComingButton
-              type={PoolButtonType.Coming}
-              isActive={PoolButtonType.Coming === activeButton}
-              onClick={() => setActiveButton(PoolButtonType.Coming)}
+            <CrossTradeButton
+              type={ButtonType.CROSS_TRADE}
+              isActive={ButtonType.CROSS_TRADE === activeButton}
+              onClick={() => setActiveButton(ButtonType.CROSS_TRADE)}
             >
               Cross Trade Bridge Pool
-            </PoolComingButton>
-            <PoolComingButton
-              type={PoolButtonType.Active}
-              isActive={PoolButtonType.Active === activeButton}
-              onClick={() => setActiveButton(PoolButtonType.Active)}
+            </CrossTradeButton>
+            <CrossTradeButton
+              type={ButtonType.UNISWAP_POOL}
+              isActive={ButtonType.UNISWAP_POOL === activeButton}
+              onClick={() => setActiveButton(ButtonType.UNISWAP_POOL)}
             >
               Uniswap v3 Pool
-            </PoolComingButton>
+            </CrossTradeButton>
           </Flex>
         </Flex>
         <Flex
@@ -131,13 +132,13 @@ export default function ComingPool() {
             <Box pb={poolMobileView ? "16px" : "24px"}>
               <Text
                 fontWeight={500}
-                fontSize={poolMobileView ? "20px" : "25px"}
-                lineHeight={poolMobileView ? "30px" : "37.5px"}
+                fontSize={poolMobileView ? "20px" : "30px"}
+                lineHeight={poolMobileView ? "30px" : "45px"}
                 color={"#FFFFFF"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                {PoolButtonType.Coming === activeButton
-                  ? "Coming Soon"
+                {ButtonType.CROSS_TRADE === activeButton
+                  ? "Cross Trade Bridge Pool"
                   : "Uniswap V3 pool"}
               </Text>
               <Text
@@ -148,14 +149,14 @@ export default function ComingPool() {
                 mt={"6px"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                {PoolButtonType.Coming === activeButton
-                  ? "Cross Trade Bridge is an upcoming service that enables token trading across layers."
+                {ButtonType.CROSS_TRADE === activeButton
+                  ? "Provide liquidity for cross trade, which helps users move tokens between layers and earn fees."
                   : "Add liquidity to a pool, and earn a swap fee based on the trading volume."}
               </Text>
             </Box>
-            {PoolButtonType.Coming === activeButton ? (
+            {ButtonType.CROSS_TRADE === activeButton ? (
               <Flex width='full' justifyContent={"center"}>
-                <ImageComingBox isMobile={poolMobileView} />
+                <CTMain />
               </Flex>
             ) : (
               <Flex width='full' justifyContent={"center"}>
