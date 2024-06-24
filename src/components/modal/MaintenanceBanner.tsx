@@ -6,6 +6,8 @@ import { add, getTime, intervalToDuration, Duration } from "date-fns";
 import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useConnectedNetwork from "@/hooks/network";
+import MaintenanceMobileModal from "./MaintenanceMobileModal"; // 경로는 실제 파일 위치에 맞게 조정
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 type Banner = "Pending" | "Active" | "Hidden";
 
@@ -13,6 +15,7 @@ const MaintenanceBanner = () => {
   const [isBannerStatus, setIsBannerStatus] = useRecoilState(bannerStatus);
   const banner = useRecoilValue(bannerSelector).previewTimeStartThisWeek;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { mobileView } = useMediaView();
 
   const [duration, setDuration] = useState<Duration>({
     days: 0,
@@ -36,7 +39,7 @@ const MaintenanceBanner = () => {
       }); //the duration when the warning banner (yellow) is visible
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-        hours: 2,
+        hours: 0,
         minutes: 0,
         seconds: 0,
       }); //the duration when the red banner is visible and L2 actions are disabled
@@ -76,7 +79,7 @@ const MaintenanceBanner = () => {
     }); //the duration when the warning banner (yellow) is visible
 
     const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-      hours: 2,
+      hours: 1,
       minutes: 0,
       seconds: 0,
     }); //the duration when the red banner is visible and L2 actions are disabled
@@ -111,47 +114,52 @@ const MaintenanceBanner = () => {
     };
   }, [banner]);
 
+  const bannerText = isTestnet
+    ? "Titan Sepolia Network under maintenance."
+    : "Titan Network under maintenance.";
+  const bannerScheduleText = isTestnet
+    ? "Titan Sepolia Network scheduled maintenance commencing in:"
+    : "Titan Network scheduled maintenance commencing in:";
+  const maintenanceTimeText = `${localTime.startTime} ~ ${localTime.endTime} ${localTime.timezone}`;
+
+  if (mobileView) {
+    return (
+      <MaintenanceMobileModal
+        isOpen={isBannerStatus !== "Hidden"}
+        onClose={() => setIsBannerStatus("Hidden")}
+        modalType={isBannerStatus === "Pending" ? "yellow" : "red"}
+        remainingTime={`${duration.hours}:${duration.minutes}:${duration.seconds}`}
+        maintenanceTimeText={maintenanceTimeText}
+      />
+    );
+  }
+
   return isBannerStatus !== "Hidden" ? (
     <Flex
-      h="61px"
-      w="560px"
+      h='61px'
+      w='560px'
       bg={isBannerStatus === "Pending" ? "#F9C03E" : "#DD3A44"}
       borderRadius={"5px"}
       justifyContent={"space-between"}
       alignItems={"center"}
       color={isBannerStatus === "Pending" ? "#0F0F12" : "#fff"}
-      p="16px"
+      p='16px'
       mb={"10px"}
     >
       <Flex flexDir={"column"}>
         {isBannerStatus === "Active" ? (
           <>
-            {" "}
-            <Text fontSize={"14px"}>
-              {isTestnet
-                ? "Titan Sepolia Network under maintenance."
-                : "Titan Network under maintenance."}
-            </Text>
+            <Text fontSize={"14px"}>{bannerText}</Text>
           </>
         ) : (
           <>
-            {" "}
-            <Text fontSize={"14px"}>
-              {isTestnet
-                ? "Titan Sepolia Network scheduled maintenance commencing in:"
-                : "Titan Network scheduled maintenance commencing in:"}
-            </Text>
+            <Text fontSize={"14px"}>{bannerScheduleText}</Text>
           </>
         )}
 
-        <Text fontSize={"10px"}>
+        <Text fontSize={"12px"}>
           Maintenance scheduled from{" "}
-          <span style={{ fontWeight: "bold" }}>
-            {isTestnet
-              ? `${localTime.startTime} ~ ${localTime.endTime}`
-              : `${localTime.startTime} ~ ${localTime.endTime}`}{" "}
-            {localTime.timezone}
-          </span>{" "}
+          <span style={{ fontWeight: "bold" }}>{maintenanceTimeText}</span>{" "}
         </Text>
       </Flex>
 
@@ -165,9 +173,7 @@ const MaintenanceBanner = () => {
         {duration.seconds}
       </Text>
     </Flex>
-  ) : (
-    <></>
-  );
+  ) : null;
 };
 
 export default MaintenanceBanner;

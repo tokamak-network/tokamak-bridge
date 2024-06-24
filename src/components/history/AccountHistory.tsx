@@ -22,7 +22,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
-import AccountHistoryNew from "@/components/historyn/drawer";
+import AccountHistoryNew from "@/staging/components/new-history/components/core";
 
 type ChainName = "MAINNET" | "TITAN" | undefined;
 

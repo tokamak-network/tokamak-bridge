@@ -23,6 +23,7 @@ import {
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import txMove from "@/assets/icons/txmove.svg";
+import { utcToZonedTime } from "date-fns-tz";
 
 // type TokenData = {
 //   token0Symbol: string;
@@ -45,7 +46,7 @@ export default function StatusTx(props: {
   layer: string;
   txHash: string;
   timeStamp?: number;
-  tx: TxType;
+  tx: TxType & { stateBatchAppendedEvent?: any };
 }) {
   const { completed, date, layer, txHash, timeStamp, tx } = props;
   const providers = useGetTxLayers();
@@ -66,11 +67,11 @@ export default function StatusTx(props: {
 
   //creates the calendar event start time, end time, and even date
   const getCalendarEvent = useMemo(() => {
-    if (tx.l2timeStamp) {
-      const timeStamp = tx.l2timeStamp;
+    if (tx.l2timeStamp && tx?.stateBatchAppendedEvent?.blockTimestamp) {
+      const timeStamp = tx.stateBatchAppendedEvent.blockTimestamp;
       //605400 === 7 days +10 minutes of rollup & challenge period => mainnet
       //610 === 10 minutes  and 10 seconds of rollup & challenge period => testnet
-      const status4Duration = isConnectedToMainNetwork ? 605400 : 610;
+      const status4Duration = isConnectedToMainNetwork ? 604800 : 300;
       const status4EndTimestamp = Number(timeStamp) + status4Duration;
       const startDate = new Date(status4EndTimestamp * 1000);
 
@@ -95,20 +96,25 @@ export default function StatusTx(props: {
     if (tx.l2timeStamp) {
       const getDuration = setInterval(() => {
         const startDate = new Date(Number(tx.l2timeStamp) * 1000);
-        const currentTime = new Date();
+        const currentTimeUTC = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
-          currentTime,
+          currentTimeUTC,
           startDate
         );
+
+        // Convert the elapsed time in seconds back to a Date object
+        const elapsedTimeDate = new Date(0);
+        elapsedTimeDate.setUTCSeconds(elapsedTimeInSeconds);
+        // Use utcToZonedTime to ensure the time is treated as UTC+0
         const formattedTime = format(
-          new Date(elapsedTimeInSeconds * 1000),
-          "mm:ss"
+          utcToZonedTime(elapsedTimeDate, "UTC"),
+          "HH:mm:ss"
         );
         setDurationRollup(formattedTime);
       }, 1000);
       return () => clearInterval(getDuration);
     }
-  }, [tx.l2timeStamp]);
+  }, [tx.l2timeStamp, tx.currentStatus]);
 
   // todo: should be adjusted for the browser's timezone
   //creates the calendar config.
@@ -220,7 +226,7 @@ export default function StatusTx(props: {
             fontWeight={600}
             cursor={"pointer"}
             _hover={{
-              textDecoration: mobileView ? "none" : "underline"
+              textDecoration: mobileView ? "none" : "underline",
             }}
             onClick={
               mobileView
@@ -294,38 +300,37 @@ export default function StatusTx(props: {
           >
             {mobileView
               ? "Wait for rollup"
-              : `${layer}: Wait ~${
-                  isConnectedToMainNetwork ? "11" : "2"
-                } min for rollup`}
+              : `${layer}: Wait ~${isConnectedToMainNetwork ? "6" : "1"} ${
+                  isConnectedToMainNetwork ? "hours" : "min"
+                } for rollup`}
           </Text>
         )}
       </Flex>
       {tx.currentStatus === 6 || (layer === "L2" && tx.l2txHash) ? (
-        <Flex
-          fontSize={"11px"}
-        >
+        <Flex fontSize={"11px"}>
           <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-            
-            {!mobileView ? format(fromUnixTime(date), "yyyy.MM.dd") : (
+            {!mobileView ? (
+              format(fromUnixTime(date), "yyyy.MM.dd")
+            ) : (
               <Link
                 target="_blank"
                 style={{ textDecoration: "none" }}
-                href={
-                  `${
-                      layer === "L1"
-                        ? providers.l1BlockExplorer
-                        : providers.l2BlockExplorer
-                    }/tx/${txHash}`
-                }
+                href={`${
+                  layer === "L1"
+                    ? providers.l1BlockExplorer
+                    : providers.l2BlockExplorer
+                }/tx/${txHash}`}
               >
-                  <Flex gap="4px" >Transaction<Image alt="txmove" src={txMove} /></Flex>
+                <Flex gap="4px">
+                  Transaction
+                  <Image alt="txmove" src={txMove} />
+                </Flex>
               </Link>
             )}
-          
           </Text>
           {!mobileView && (
             <Text ml="3px" color={"#A0A3AD"}>
-              {format(fromUnixTime(date), "hh:mm b (z)")}
+              {format(fromUnixTime(date), "hh:mm b")}
             </Text>
           )}
         </Flex>
@@ -351,7 +356,7 @@ export default function StatusTx(props: {
         </Flex>
       ) : tx.currentStatus === 2 ? (
         <Flex>
-          <Text mr="6px" fontSize={"12px"} color={"#8497DB"}>
+          <Text fontSize={"12px"} color={"#8497DB"}>
             {durationRollup}
           </Text>
           {/* <Flex

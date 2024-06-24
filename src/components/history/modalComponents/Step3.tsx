@@ -3,91 +3,100 @@ import { getUnixTime, intervalToDuration, getTime } from "date-fns";
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { confirmWithdrawData } from "@/recoil/modal/atom";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import QuestionIcon from "assets/icons/questionGray.svg";
 
+const Step3 = (props: { progress: string; timeStamp: number; check: any }) => {
+  const [withdraw, setWithdraw] = useRecoilState(confirmWithdrawData);
 
-const Step3 = (props: { progress: string; timeStamp: number,check:any }) => {
-    const [withdraw, setWithdraw] = useRecoilState(confirmWithdrawData);
+  const { check, timeStamp } = props;
+  const tx = withdraw.modalData;
 
-    const { progress, timeStamp,check} = props
-    const tx = withdraw.modalData;
+  const [duration, setDuration] = useState<Duration>({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    months: 0,
+    seconds: 0,
+    years: 0,
+  });
 
-    const [duration, setDuration] = useState<Duration>({
-      days: 0,
-      hours: 0,
-      minutes: 0,
-      months: 0,
-      seconds: 0,
-      years: 0,
-    });
+  useEffect(() => {
+    if (timeStamp) {
+      const intervalID = setInterval(() => {
+        const nowTime = getUnixTime(new Date());
 
-    useEffect(() => {
-      if (props.timeStamp) {
-        const intervalID = setInterval(() => {
-          const nowTime = getUnixTime(new Date());
+        if (nowTime > timeStamp) {
+          setDuration({
+            days: 0,
+            hours: 0,
+            minutes: 0,
+            months: 0,
+            seconds: 0,
+            years: 0,
+          });
+        } else {
+          setDuration(
+            intervalToDuration({
+              start: getTime(timeStamp * 1000),
+              end: getTime(nowTime * 1000),
+            })
+          );
+        }
+      }, 1000);
+      return () => clearInterval(intervalID);
+    }
+  }, [props.timeStamp]);
 
-          if (nowTime > props.timeStamp) {
-            setDuration({
-              days: 0,
-              hours: 0,
-              minutes: 0,
-              months: 0,
-              seconds: 0,
-              years: 0,
-            });
-          } else {
-            setDuration(
-              intervalToDuration({
-                start: getTime(props.timeStamp * 1000),
-                end: getTime(nowTime * 1000),
-              })
-            );
+  return (
+    <Flex
+      h="36px"
+      justifyContent={"space-between"}
+      alignItems={"center"}
+      // border={"1px solid red"}
+      w="100%"
+    >
+      <Flex alignItems={"center"}>
+        <Image src={check.check} alt="check" />
+        <Text ml="8px" mr={"4px"} fontSize={"14px"} color={check.color}>
+          Wait 7 days
+        </Text>
+        <CustomTooltip
+          content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+          tooltipLabel={
+            <Flex flexDir={"column"} justifyContent={"center"} h={"100%"}>
+              <span>The fault challenge period lasts 7 days, during</span>
+              <span style={{ zIndex: 1 }}>
+                which anyone can challenge the L2 state root.
+              </span>
+            </Flex>
           }
-        }, 1000);
-        return () => clearInterval(intervalID);
-      }
-    }, [props.timeStamp]);
-
-    return (
-      <Flex
-        h="36px"
-        justifyContent={"space-between"}
-        alignItems={"center"}
-        // border={"1px solid red"}
-        w="100%"
-      >
+          style={{
+            tooltipLineHeight: "normal",
+            height: "45px",
+            width: "285px",
+            px: "8px",
+          }}
+        ></CustomTooltip>
+      </Flex>
+      {tx && props.progress === "inProgress" && (
         <Flex>
-          <Image src={check.check} alt="check" />
-          <Text ml="8px" fontSize={"14px"} color={check.color}>
-            Wait 7 days
+          <Text mr="6px" fontSize={"14px"} color={check.color}>
+            {" "}
+            {duration.days !== undefined && duration.days < 10 ? "0" : ""}
+            {duration.days}:
+            {duration.hours !== undefined && duration.hours < 10 ? "0" : ""}
+            {duration.hours}:
+            {duration.minutes !== undefined && duration.minutes < 10 ? "0" : ""}
+            {duration.minutes}:
+            {duration.seconds !== undefined && duration.seconds < 10 ? "0" : ""}
+            {duration.seconds} Left
           </Text>
         </Flex>
-        {tx && props.progress === "inProgress" && (
-          <Flex>
-            <Text
-              mr="6px"
-              fontSize={"14px"}
-              color={check.color}
-            >
-              {" "}
-              {duration.days !== undefined && duration.days < 10 ? "0" : ""}
-              {duration.days}:
-              {duration.hours !== undefined && duration.hours < 10 ? "0" : ""}
-              {duration.hours}:
-              {duration.minutes !== undefined && duration.minutes < 10
-                ? "0"
-                : ""}
-              {duration.minutes}:
-              {duration.seconds !== undefined && duration.seconds < 10
-                ? "0"
-                : ""}
-              {duration.seconds} Left
-            </Text>
-          </Flex>
-        )}
-      </Flex>
-    );
-  };
+      )}
+    </Flex>
+  );
+};
 
-
-  export default Step3
+export default Step3;
