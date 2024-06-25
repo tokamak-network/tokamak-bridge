@@ -40,7 +40,7 @@ export const crossTradeData = [
       decimals: 6,
     },
     profit: { amount: "100000", symbol: "USDT", decimals: 6, percent: "0.2" },
-    blockTimestamps: 1719218684,
+    blockTimestamps: 1719278242,
     isActive: false,
   },
   {

@@ -60,6 +60,9 @@ export default function CTProvider({
         _active={{}}
         _hover={{}}
         _focus={{}}
+        _disabled={{
+          opacity: 1,
+        }}
       >
         <Text
           fontWeight={600}

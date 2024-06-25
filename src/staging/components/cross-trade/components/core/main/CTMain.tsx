@@ -85,6 +85,7 @@ export default function CTMain() {
             sx={{
               "& th": { pl: "20px", py: "10px", pr: "auto" },
               borderBottom: "1px solid #23242B",
+              letterSpacing: 0,
             }}
           >
             <Th textTransform='none'>
@@ -95,9 +96,10 @@ export default function CTMain() {
                 <Text
                   ml='4px'
                   fontWeight={"500"}
-                  fontSize={"12px"}
+                  fontSize={"13px"}
                   lineHeight={"18px"}
                   color={"#FFFFFF"}
+                  letterSpacing={0}
                 >
                   Provide
                 </Text>
@@ -111,9 +113,10 @@ export default function CTMain() {
               <Flex alignItems='center'>
                 <Text
                   fontWeight={"500"}
-                  fontSize={"12px"}
+                  fontSize={"13px"}
                   lineHeight={"18px"}
                   color={"#A0A3AD"}
+                  letterSpacing={0}
                 >
                   Receive
                 </Text>
@@ -127,9 +130,10 @@ export default function CTMain() {
               <Flex justifyContent={"center"}>
                 <Text
                   fontWeight={"500"}
-                  fontSize={"12px"}
+                  fontSize={"13px"}
                   lineHeight={"18px"}
                   color={"#A0A3AD"}
+                  letterSpacing={0}
                 >
                   Profit (%)
                 </Text>
@@ -150,9 +154,10 @@ export default function CTMain() {
                 </Flex>
                 <Text
                   fontWeight={"500"}
-                  fontSize={"12px"}
+                  fontSize={"13px"}
                   lineHeight={"18px"}
                   color={"#A0A3AD"}
+                  letterSpacing={0}
                 >
                   $8.43
                 </Text>
