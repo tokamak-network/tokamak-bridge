@@ -57,10 +57,6 @@ export default function CTOptionCrossDetail(
             >
               Receive
             </Text>
-            <Tooltip
-              tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px" }}
-            />
           </Flex>
           <Text
             fontWeight={600}
@@ -161,7 +157,6 @@ export default function CTOptionCrossDetail(
             />
           </Box>
         )}
-
         <Box mt={"12px"}>
           <Text
             fontSize={"10px"}
@@ -170,19 +165,13 @@ export default function CTOptionCrossDetail(
             color={"#A0A3AD"}
           >
             It can be received faster depending on
-          </Text>
-          <Text
-            fontSize={"10px"}
-            fontWeight={400}
-            lineHeight={"15px"}
-            color={"#A0A3AD"}
-          >
-            the liquidity provider situation
+            <br />
+            the liquidity provider situation.
           </Text>
         </Box>
       </Box>
       <Circle
-        size='56px'
+        size='72px'
         border='1px solid #DB00FF'
         bg='#15161D'
         pb={"8px"}
@@ -191,23 +180,22 @@ export default function CTOptionCrossDetail(
         <Box>
           <Text
             fontWeight={600}
-            fontSize={"22px"}
-            height={"29px"}
-            lineHeight={"33px"}
-            letterSpacing={"-0.05em"}
+            fontSize={"16px"}
+            lineHeight={"24px"}
             color={"#DB00FF"}
             textAlign='center'
           >
-            ?
+            $0.16
           </Text>
           <Text
+            mt={"1.5px"}
             fontWeight={400}
-            fontSize={"10px"}
-            lineHeight={"15px"}
+            fontSize={"8px"}
+            lineHeight={"12px"}
             color={"#DB00FF"}
             textAlign='center'
           >
-            day
+            Network fee
           </Text>
         </Box>
       </Circle>

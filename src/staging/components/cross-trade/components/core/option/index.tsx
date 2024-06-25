@@ -28,7 +28,7 @@ export default function CTOptionModal() {
 
   // CTConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
-    useState<ButtonTypeMain>(ButtonTypeMain.Standard);
+    useState<ButtonTypeMain>(ButtonTypeMain.Cross);
 
   const [activeSubButtonValue, setActiveSubButtonValue] =
     useState<ButtonTypeSub>(ButtonTypeSub.Recommend);
@@ -74,6 +74,7 @@ export default function CTOptionModal() {
     activeSubButtonValue === ButtonTypeSub.Advanced &&
     (inputValue === "" || inputWarningCheck === WarningType.Critical);
 
+  // 추후 삭제
   const resetAllStates = () => {
     onCloseCTOptionModal();
     setInputValue("");
@@ -83,16 +84,8 @@ export default function CTOptionModal() {
   };
 
   const handleConfirm = () => {
-    //초기화
+    // 시연을 위한 초기화 추후 삭제
     resetAllStates();
-
-    if (activeMainButtonValue === ButtonTypeMain.Standard) {
-      alert("Official Standard Confirmed!");
-      return;
-    }
-
-    // 스탠다드가 아닐때는 Trade
-    onOpenCTConfirmModal(ModalType.Trade);
   };
 
   return (

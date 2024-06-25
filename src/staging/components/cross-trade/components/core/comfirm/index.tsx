@@ -32,7 +32,6 @@ export default function CTModal() {
     setIsChecked(e.target.checked);
 
   const handleConfirm = () => {
-    alert("Cross Confirmed!");
     setIsChecked(false);
     onCloseCTConfirmModal();
   };

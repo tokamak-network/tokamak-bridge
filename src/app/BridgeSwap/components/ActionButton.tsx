@@ -20,9 +20,15 @@ import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import { Action, Status, Network } from "@/staging/types/transaction";
-import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
+
 import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
 import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapConfirmModal";
+
+// FW UI test @Robert
+import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
+import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
+import { ModalType } from "@/staging/components/cross-trade/types";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -90,8 +96,30 @@ export default function ActionButton() {
   const handleConfirm = useHandleConfirm();
   const { onOpenSwapConfirmModal } = useSwapConfirmModal();
 
+  const { onOpenCTConfirmModal } = useCTConfirmModal();
+  const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
+  console.log(mode);
   return (
     <>
+      {/** FW UI test Start @Robert*/}
+      <>
+        <Button
+          color={"#8E8E92"}
+          onClick={() => onOpenCTConfirmModal(ModalType.Trade)}
+        >
+          <Text>Confirm Button</Text>
+        </Button>
+        <Button
+          color={"#8E8E92"}
+          onClick={() => onOpenCTConfirmModal(ModalType.History)}
+        >
+          <Text>History button</Text>
+        </Button>
+        <Button color={"#8E8E92"} onClick={() => onOpenCTUpdateFeeModal()}>
+          <Text>Update Fee button</Text>
+        </Button>
+      </>
+      {/** FW UI test End @Robert*/}
       <Button
         w={"100%"}
         h={"48px"}

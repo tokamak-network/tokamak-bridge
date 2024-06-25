@@ -45,7 +45,7 @@ export default function CTFeeUpdateModal() {
     ""
   );
   // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
-  // usehook안에서 hook은 돌리면 안된다. //메모리 문재
+  // 반복문, usehook안에서 hook은 돌리면 안된다. //메모리 문재
   const recommendValue = useCTRecommend(recommendCheck);
 
   // 리프래시 버튼 누를 때, recommend 값 초기화
@@ -95,6 +95,7 @@ export default function CTFeeUpdateModal() {
         !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
 
+  // 추후 삭제
   const resetAllStates = () => {
     setRecommendCheck(true);
     setActiveButton(UpdateFeeButtonType.Update);
@@ -105,7 +106,7 @@ export default function CTFeeUpdateModal() {
   };
 
   const handleConfirm = () => {
-    alert("Confirm");
+    // 시연을 위한 초기화 추후 삭제
     resetAllStates();
   };
 

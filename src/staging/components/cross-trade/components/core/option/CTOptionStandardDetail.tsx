@@ -36,10 +36,6 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             >
               Receive
             </Text>
-            <Tooltip
-              tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px" }}
-            />
           </Flex>
           <Text
             fontWeight={600}
@@ -57,20 +53,13 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             lineHeight={"15px"}
             color={"#A0A3AD"}
           >
-            Crosstrade is a common bridge service.
-          </Text>
-          <Text
-            fontSize={"10px"}
-            fontWeight={400}
-            lineHeight={"15px"}
-            color={"#A0A3AD"}
-          >
-            Network fee is more expensive than service fee
+            Takes up to 6 hours to "rollup" and
+            <br />7 days to "finalize" the withdrawal.
           </Text>
         </Box>
       </Box>
       <Circle
-        size='56px'
+        size='72px'
         border='1px solid #007AFF'
         bg='#15161D'
         pb={"8px"}
@@ -79,23 +68,23 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
         <Box>
           <Text
             fontWeight={600}
-            fontSize={"22px"}
-            height={"29px"}
-            lineHeight={"33px"}
-            letterSpacing={"-0.05em"}
+            fontSize={"16px"}
+            height={"24px"}
+            lineHeight={"24px"}
             color={"#007AFF"}
             textAlign='center'
           >
-            7
+            $50.16
           </Text>
           <Text
+            mt={"1.5px"}
             fontWeight={400}
-            fontSize={"10px"}
-            lineHeight={"15px"}
+            fontSize={"8px"}
+            lineHeight={"12px"}
             color={"#007AFF"}
             textAlign='center'
           >
-            days
+            Network fee
           </Text>
         </Box>
       </Circle>

@@ -51,13 +51,7 @@ export default function CTComingOptionDetail() {
             color={"#A0A3AD"}
           >
             Trade for a token on a different layer,
-          </Text>
-          <Text
-            fontSize={"10px"}
-            fontWeight={400}
-            lineHeight={"15px"}
-            color={"#A0A3AD"}
-          >
+            <br />
             subject to the availability of liquidity providers.
           </Text>
         </Box>
