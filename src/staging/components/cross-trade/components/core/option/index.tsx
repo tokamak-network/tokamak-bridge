@@ -14,13 +14,13 @@ import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOption
 import CloseButton from "@/components/button/CloseButton";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import {
-  ModalType,
   WarningType,
   ButtonTypeMain,
   ButtonTypeSub,
 } from "@/staging/components/cross-trade/types";
 import CTOptionCrossDetail from "./CTOptionCrossDetail";
 import CTOptionStandardDetail from "./CTOptionStandardDetail";
+import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -78,7 +78,7 @@ export default function CTOptionModal() {
   const resetAllStates = () => {
     onCloseCTOptionModal();
     setInputValue("");
-    setActiveMainButtonValue(ButtonTypeMain.Standard);
+    setActiveMainButtonValue(ButtonTypeMain.Cross);
     setActiveSubButtonValue(ButtonTypeSub.Recommend);
     setInputWarningCheck("");
   };
@@ -106,18 +106,26 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          <CTOptionCrossDetail
-            // cross, official 관련 props
-            activeMainButtonValue={activeMainButtonValue}
-            handleButtonMainClick={handleButtonMainClick}
-            // recommend, Advanced button 관련 props
-            activeSubButtonValue={activeSubButtonValue}
-            handleButtonSubClick={handleButtonSubClick}
-            // input 관련 props
-            inputValue={inputValue}
-            inputWarningCheck={inputWarningCheck}
-            onInputChange={handleInputChange}
-          />
+          {/** 현재 임시로 standard를 클릭 했을 때, disabled가 나오게 함. @Robert
+           * 추후, crosstrade가 지원 되지 않은 토큰 일 때,  CTOptionDisabledDetail 해당 컴포넌트가 나오도록 수정
+           */}
+          {activeMainButtonValue === ButtonTypeMain.Standard ? (
+            <CTOptionDisabledDetail />
+          ) : (
+            <CTOptionCrossDetail
+              // cross, official 관련 props
+              activeMainButtonValue={activeMainButtonValue}
+              handleButtonMainClick={handleButtonMainClick}
+              // recommend, Advanced button 관련 props
+              activeSubButtonValue={activeSubButtonValue}
+              handleButtonSubClick={handleButtonSubClick}
+              // input 관련 props
+              inputValue={inputValue}
+              inputWarningCheck={inputWarningCheck}
+              onInputChange={handleInputChange}
+            />
+          )}
+
           <CTOptionStandardDetail
             // cross, official 관련 props
             activeMainButtonValue={activeMainButtonValue}

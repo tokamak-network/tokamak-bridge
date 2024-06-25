@@ -13,7 +13,7 @@ import {
 } from "@chakra-ui/react";
 import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
-import CTComingOptionDetail from "@/staging/components/cross-trade/components/core/option/CTComingOptionDetail";
+import CTComingOptionDetail from "@/staging/components/cross-trade/components/core/coming/swap/CTComingOptionDetail";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
