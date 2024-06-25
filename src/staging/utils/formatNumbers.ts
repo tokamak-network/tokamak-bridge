@@ -3,11 +3,11 @@ import commafy from "@/utils/trim/commafy";
 function testcase() {
   console.log(formatNumber(0.0000001));
   console.log(formatNumber(0));
-  console.log(formatNumber(123));
-  console.log(formatNumber(999));
-  console.log(formatNumber(1001));
-  console.log(formatNumber(2048));
-  console.log(formatNumber(53000));
+  console.log(formatNumber(123.12345));
+  console.log(formatNumber(999.1212345));
+  console.log(formatNumber(1001.1234565));
+  console.log(formatNumber(2048.127391273));
+  console.log(formatNumber(53000.123128390123));
   console.log(formatNumber(105000));
   console.log(formatNumber(999999));
   console.log(formatNumber(1000000));
@@ -70,18 +70,28 @@ function formatNumber(
   }
 
   const absNum = Math.abs(num);
-  const formattedNumber: string =
-    absNum >= 1e15
-      ? `${commafy(num / 1e15, 1)}Q`
-      : absNum >= 1e12
-      ? `${commafy(num / 1e12, 1)}T`
-      : absNum >= 1e9
-      ? `${commafy(num / 1e9, 1)}B`
-      : absNum >= 1e7
-      ? `${commafy(num / 1e6, 1)}M`
-      : Math.floor(num) === 0
-      ? commafy(value, 4)
-      : commafy(value, 2);
+  const formattedNumber = (() => {
+    if (absNum >= 1e15) {
+      return `${commafy(num / 1e15, 1)}Q`;
+    }
+    if (absNum >= 1e12) {
+      return `${commafy(num / 1e12, 1)}T`;
+    }
+    if (absNum >= 1e9) {
+      return `${commafy(num / 1e9, 1)}B`;
+    }
+    if (absNum >= 1e6) {
+      return `${commafy(num / 1e6, 1)}M`;
+    }
+    const integerPart = Math.floor(absNum).toString();
+    if (integerPart.length <= 3) {
+      return commafy(value, 4);
+    }
+    if (integerPart.length === 4) {
+      return commafy(value, 2);
+    }
+    return commafy(Math.floor(num).toString());
+  })();
 
   if (formattedNumber.includes(".")) {
     const [integerPart, decimalPart] = formattedNumber.split(".");
@@ -93,6 +103,6 @@ function formatNumber(
   return formattedNumber;
 }
 
-testcase();
+// testcase();
 
 export default formatNumber;
