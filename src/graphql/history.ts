@@ -66,6 +66,18 @@ export const FETCH_USER_TRANSACTIONS_L1 = gql`
       id
       transactionHash
     }
+    sentMessages(
+      where: {message_contains: $formattedAddress, target: $L1Bridge, sender: "0x4200000000000000000000000000000000000010"}
+    ) {
+      blockNumber
+      blockTimestamp
+      gasLimit
+      message
+      messageNonce
+      sender
+      target
+      transactionHash
+    }
   }
 `;
 

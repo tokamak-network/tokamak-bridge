@@ -1,11 +1,7 @@
 import axios from "axios";
 import { L1TxType, SentMessages } from "@/types/activity/history";
 import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
-
-const formatAddress = (address: string) => {
-  const formattedAddress = address.substring(2);
-  return formattedAddress;
-};
+import { formatAddress } from "../trim/formatAddress";
 
 export const fetchUserTransactions = async (
   account: string | undefined,

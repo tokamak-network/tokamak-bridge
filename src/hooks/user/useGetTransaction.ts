@@ -104,7 +104,7 @@ export default function useGetTransaction() {
              * withdraw 콜데이터 생성을 위해 사용함
              */
 
-            const { currentStatus, stateBatchAppendeds, relayedMessageTxHash } =
+            const { currentStatus, stateBatchAppendeds, relayedMessageTx } =
               await getCurretStatus(
                 Number(tx.blockNumber),
                 resolved,

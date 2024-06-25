@@ -7,6 +7,7 @@ import { BigNumber } from "ethers";
 import { stat } from "fs";
 
 export type CurrentStatus = 0 | 1 | 2 | 3 | 4;
+export type CurrentDepositStatus = 0 | 4;
 export type StateBatchAppended = {
   blockNumber: number;
   blockTimestamp: number;
@@ -94,6 +95,7 @@ export const getCurretStatus = async (
       minGasLimit: BigNumber.from(0),
       value: BigNumber.from(0),
     });
+
     const resMesHash = await axios.post(
       `${
         isConnectedToMainnet
@@ -116,6 +118,7 @@ export const getCurretStatus = async (
         },
       }
     );
+
     if (resMesHash?.data?.data?.relayedMessages.length > 0) {
       const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
       const relayedMessageTx = {
@@ -136,4 +139,56 @@ export const getCurretStatus = async (
     };
   }
   return { currentStatus: 0, stateBatchAppendeds: undefined };
+};
+
+export const getCurrentDepositStatus = async (
+  resolved: Resolved,
+  isConnectedToMainnetwork: boolean
+): Promise<{
+  currentStatus: CurrentDepositStatus;
+  relayedMessageTx?: RelayMessage;
+}> => {
+  const msgHash = hashCrossChainMessage({
+    sender: resolved.sender,
+    target: resolved.target,
+    message: resolved.message,
+    messageNonce: BigNumber.from(resolved.messageNonce),
+    minGasLimit: BigNumber.from(0),
+    value: BigNumber.from(0),
+  });
+
+  const resMesHash = await axios.post(
+    `${
+      isConnectedToMainnetwork
+        ? process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY
+        : process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY
+    }`,
+    {
+      query: `
+        query GetRelayedMessages($msgHash: String!) {
+          relayedMessages(where: {msgHash: $msgHash}) {
+            msgHash
+            transactionHash
+            blockTimestamp
+            blockNumber
+          }
+        }
+      `,
+      variables: {
+        msgHash: msgHash,
+      },
+    }
+  );
+
+  if (resMesHash?.data?.data?.relayedMessages.length > 0) {
+    const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
+    const relayedMessageTx = {
+      ..._relayedMessageTx,
+      blockNumber: Number(_relayedMessageTx.blockNumber),
+      blockTimestamp: Number(_relayedMessageTx.blockTimestamp),
+    };
+
+    return { currentStatus: 4, relayedMessageTx };
+  }
+  return { currentStatus: 0, relayedMessageTx: undefined };
 };

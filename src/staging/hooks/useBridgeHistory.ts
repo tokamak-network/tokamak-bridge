@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Action,
+  DepositTransactionHistory,
   Network,
   Status,
   TransactionToken,
@@ -21,16 +22,19 @@ import {
   CurrentStatus,
   RelayMessage,
   StateBatchAppended,
+  getCurrentDepositStatus,
   getCurretStatus,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { utils } from "ethers";
+import { utils, providers } from "ethers";
 import {
   USDC_ADDRESS_BY_CHAINID,
   USDT_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 import { supportedTokens } from "@/types/token/supportedToken";
 import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
+import { getDecodeLog } from "@/utils/history/getDecodeLog";
+import { formatAddress } from "@/utils/trim/formatAddress";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -52,11 +56,6 @@ const useGetApolloClient = () => {
   }, [isConnectedToMainNetwork]);
 
   return apolloClient;
-};
-
-const formatAddress = (address: string | undefined) => {
-  const formattedAddress = address?.substring(2);
-  return formattedAddress;
 };
 
 const errorHandler = (error: ApolloError) => {
@@ -296,11 +295,9 @@ export const useWithdrawData = () => {
     WithdrawTransactionHistory[] | [] | null
   >(null);
 
-  const { l1Data, l1Loading, l1error, l2Data, l2Loading, l2_error } =
-    useSubgraph();
-
+  const { l2Data } = useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { provider, L1Provider, L2Provider } = useProvier();
+  const { L2Provider } = useProvier();
 
   const fetchData = useCallback(async () => {
     if (l2Data && isConnectedToMainNetwork !== undefined && L2Provider) {
@@ -374,17 +371,117 @@ export const useWithdrawData = () => {
           return result;
         })
       );
-      if (result) {
-        setWithdrawHistory(result);
-      }
+
+      const filteredResult = result.filter(
+        (tx) => !(tx instanceof Error) || tx !== undefined
+      );
+
+      if (filteredResult) return setWithdrawHistory(filteredResult);
+      return setWithdrawHistory([]);
     }
   }, [l2Data, isConnectedToMainNetwork, L2Provider]);
 
   useEffect(() => {
-    fetchData();
+    fetchData().catch((error) => {
+      console.error("Error in fetching withdraw data", error);
+    });
   }, [l2Data, isConnectedToMainNetwork, L2Provider]);
 
   return { withdrawHistory };
 };
 
-export const useBridgeHistory = () => {};
+export const useDepositData = () => {
+  const [depositHistory, setDepositHistory] = useState<
+    DepositTransactionHistory[] | [] | null
+  >(null);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { l1Data } = useSubgraph();
+  const { L1Provider } = useProvier();
+
+  const fetchData = useCallback(async () => {
+    if (l1Data && isConnectedToMainNetwork !== undefined && L1Provider) {
+      const l1SentMessges = l1Data.sentMessages;
+      const result: DepositTransactionHistory[] = await Promise.all(
+        l1SentMessges.map(async (sentMessage: SentMessages) => {
+          const resolved: Resolved = {
+            target: sentMessage.target,
+            sender: sentMessage.sender,
+            message: sentMessage.message,
+            messageNonce: sentMessage.messageNonce,
+          };
+          const { currentStatus, relayedMessageTx } =
+            await getCurrentDepositStatus(resolved, isConnectedToMainNetwork);
+
+          const l1TxReceipt = await L1Provider.getTransactionReceipt(
+            sentMessage.transactionHash
+          );
+
+          //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
+          if (!l1TxReceipt || !currentStatus) {
+            return new Error("Invalid transaction");
+          }
+
+          const logIndex = l1TxReceipt.logs.length - 1;
+          const isERC20Deposit = logIndex > 2;
+          const log = l1TxReceipt.logs[logIndex];
+          const { l1TokenAddress, l2TokenAddress, amount } = getDecodeLog(
+            isERC20Deposit,
+            log
+          );
+
+          const { l1Token, l2Token } = getTransactionToken(
+            l1TokenAddress,
+            l2TokenAddress,
+            amount
+          );
+
+          const status = getStatus(currentStatus);
+          const { blockTimestamps, transactionHashes } = getTransaction({
+            currentStatus,
+            sentMessage,
+            relayMessage: relayedMessageTx,
+          });
+
+          if (blockTimestamps instanceof Error) {
+            return;
+          }
+
+          const result: DepositTransactionHistory = {
+            action: Action.Deposit,
+            status: status,
+            inNetwork: Network.Mainnet,
+            outNetwork: Network.Titan,
+            inToken: l2Token,
+            outToken: l1Token,
+            blockTimestamps,
+            transactionHashes,
+          };
+
+          return result;
+        })
+      );
+
+      const filteredResult = result.filter(
+        (tx) => !(tx instanceof Error) || tx !== undefined
+      );
+
+      if (filteredResult) return setDepositHistory(filteredResult);
+      return setDepositHistory([]);
+    }
+  }, [l1Data, isConnectedToMainNetwork, L1Provider]);
+
+  useEffect(() => {
+    fetchData().catch((error) => {
+      console.error("Error in fetching deposit data", error);
+    });
+  }, [l1Data, isConnectedToMainNetwork, L1Provider]);
+
+  return { depositHistory };
+};
+
+export const useBridgeHistory = () => {
+  const { depositHistory } = useDepositData();
+  const { withdrawHistory } = useWithdrawData();
+
+  return { depositHistory, withdrawHistory };
+};

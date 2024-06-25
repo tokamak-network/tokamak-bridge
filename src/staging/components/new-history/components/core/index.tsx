@@ -11,15 +11,18 @@ import {
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history/components/core/pending";
 import Complete from "@/staging/components/new-history/components/core/complete";
-import { useWithdrawData } from "@/staging/hooks/useBridgeHistory";
+import {
+  useBridgeHistory,
+  useDepositData,
+  useWithdrawData,
+} from "@/staging/hooks/useBridgeHistory";
 
 export default function AccountHistoryNew() {
   // 여기서 더미 데이터를 통해 아래 뿌려주는걸 만든다.
   // 새로 고침시 전체 데이터를 다시 불러온다.
   // hook에서 데이터를 가져온다.
 
-  const [data, setData] = useState<TransactionHistory[] | null>(null);
-  const { withdrawHistory } = useWithdrawData();
+  const { depositHistory, withdrawHistory } = useBridgeHistory();
 
   // The last available hash becomes the transaction key.
   const getTransactionKey = (transaction: TransactionHistory) => {
@@ -42,13 +45,16 @@ export default function AccountHistoryNew() {
     }
   };
 
+  const test = depositHistory &&
+    withdrawHistory && [...depositHistory, ...withdrawHistory];
+
   return (
     <Flex flexDirection="column" gap="2">
-      {withdrawHistory?.map((transaction) => {
+      {test?.map((transaction, index) => {
         const transactionHash = getTransactionKey(transaction);
         return (
           <Box
-            key={transactionHash}
+            // key={transactionHash}
             w={"336px"}
             px={"12px"}
             py={"8px"}
@@ -61,7 +67,7 @@ export default function AccountHistoryNew() {
             ) : (
               <Pending
                 transaction={transaction}
-                transactionHash={transactionHash}
+                transactionHash={`${transactionHash}_${index}`}
               />
             )}
           </Box>
