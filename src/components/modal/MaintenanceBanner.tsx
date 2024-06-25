@@ -76,8 +76,8 @@ const MaintenanceBanner = () => {
     }); //the duration when the warning banner (yellow) is visible
 
     const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
-      hours: 1,
-      minutes: 0,
+      hours: 0,
+      minutes: 30,
       seconds: 0,
     }); //the duration when the red banner is visible and L2 actions are disabled
 
