@@ -118,7 +118,7 @@ export const bannerSelector = selector<{ previewTimeStartThisWeek: number }>({
     // console.log("getTime(zoneTime),", getTime(zoneTime));
 
     return {
-      previewTimeStartThisWeek: getTime(zoneTime),
+      previewTimeStartThisWeek: desiredDateThisWeek,
     };
   },
 });
