@@ -3,8 +3,6 @@ import {
   Action,
   DepositTransactionHistory,
   Network,
-  Status,
-  TransactionToken,
   WithdrawTransactionHistory,
 } from "../types/transaction";
 import { ApolloError, useQuery } from "@apollo/client";
@@ -19,22 +17,18 @@ import {
 } from "@/graphql/history";
 import { Resolved, SentMessages } from "@/types/activity/history";
 import {
-  CurrentStatus,
-  RelayMessage,
-  StateBatchAppended,
   getCurrentDepositStatus,
   getCurretStatus,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { utils, providers } from "ethers";
-import {
-  USDC_ADDRESS_BY_CHAINID,
-  USDT_ADDRESS_BY_CHAINID,
-} from "@/constant/contracts/tokens";
-import { supportedTokens } from "@/types/token/supportedToken";
-import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
+import { utils } from "ethers";
 import { getDecodeLog } from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
+import {
+  getStatus,
+  getTransaction,
+  getTransactionToken,
+} from "@/utils/history/getTransaction";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -80,159 +74,6 @@ const errorHandler = (error: ApolloError) => {
     // Here, you can also update your UI accordingly
     // For example, show an error message to the user
   }
-};
-
-const isStableCoin = (tokenAddress: string) => {
-  const isUSDT = Object.values(USDT_ADDRESS_BY_CHAINID).some(
-    (tokenAddress) => tokenAddress !== undefined
-  );
-  const isUSDC = Object.values(USDC_ADDRESS_BY_CHAINID).some(
-    (tokenAddress) => tokenAddress !== undefined
-  );
-  return isUSDT || isUSDC;
-};
-
-const getTokenInfo = (tokenAddress: string) => {
-  for (const token of supportedTokens) {
-    for (const [network, address] of Object.entries(token.address)) {
-      if (address?.toLowerCase() === tokenAddress.toLowerCase()) {
-        return {
-          name: token.tokenName as string,
-          symbol: token.tokenSymbol as string,
-          decimals: token.decimals,
-        };
-      }
-    }
-  }
-  throw new Error(`Token address(${tokenAddress}) not found`);
-};
-
-const getTransactionToken = (
-  l1TokenAddress: string,
-  l2TokenAddress: string,
-  amount: string
-): { l1Token: TransactionToken; l2Token: TransactionToken } => {
-  const tokenInfo = getTokenInfo(l2TokenAddress);
-  const l2Token: TransactionToken = {
-    ...tokenInfo,
-    address: l2TokenAddress,
-    amount,
-  };
-  const l1Token: TransactionToken = {
-    ...tokenInfo,
-    address: l1TokenAddress,
-    amount,
-  };
-  return {
-    l1Token,
-    l2Token,
-  };
-};
-
-const getStatus = (currentStatus: CurrentStatus) => {
-  switch (currentStatus) {
-    case 0:
-      return Status.Initiate;
-    case 1:
-      return Status.Prove;
-    case 2:
-      return Status.Rollup;
-    case 3:
-      return Status.Finalize;
-    case 4:
-      return Status.Completed;
-  }
-};
-
-const getTransactionTimestamp = (params: {
-  currentStatus: CurrentStatus;
-  sentMessageTimestamp: number;
-  stateBatchTimestamp?: number;
-  relayedMessageTimestamp?: number;
-}): WithdrawTransactionHistory["blockTimestamps"] | Error => {
-  const {
-    currentStatus,
-    sentMessageTimestamp,
-    stateBatchTimestamp,
-    relayedMessageTimestamp,
-  } = params;
-
-  if (currentStatus > 0 && !sentMessageTimestamp) {
-    return new Error("SentMessage's timestamp is missing");
-  }
-  if (currentStatus >= 4 && !relayedMessageTimestamp) {
-    return new Error("Relay's timestamp is missing");
-  }
-
-  const initialCompletedTimestamp = sentMessageTimestamp;
-  const rollupCompletedTimestamp =
-    stateBatchTimestamp ?? 0 + TITAN_CHALLENGE_PERIOD;
-  const finalizedCompletedTimestamp = relayedMessageTimestamp;
-
-  switch (currentStatus) {
-    case 0:
-      return {
-        initialCompletedTimestamp,
-      };
-    case 1:
-    case 2:
-      return {
-        initialCompletedTimestamp,
-        rollupCompletedTimestamp,
-      };
-    case 3:
-      return {
-        initialCompletedTimestamp,
-        rollupCompletedTimestamp,
-      };
-    case 4:
-      return {
-        initialCompletedTimestamp,
-        rollupCompletedTimestamp,
-        finalizedCompletedTimestamp,
-      };
-  }
-};
-
-const getTransactionHash = (params: {
-  sentMessageTxhash: string;
-  stateBatchTxhash?: string;
-  relayedMessageTxhash?: string;
-}): WithdrawTransactionHistory["transactionHashes"] => {
-  const { sentMessageTxhash, stateBatchTxhash, relayedMessageTxhash } = params;
-
-  const initialTransactionHash = sentMessageTxhash;
-  const rollupTransactionHash = stateBatchTxhash;
-  const finalizedTransactionHash = relayedMessageTxhash;
-
-  return {
-    initialTransactionHash,
-    rollupTransactionHash,
-    finalizedTransactionHash,
-  };
-};
-
-const getTransaction = (params: {
-  currentStatus: CurrentStatus;
-  sentMessage: SentMessages;
-  stateBatchAppended?: StateBatchAppended;
-  relayMessage?: RelayMessage;
-}) => {
-  const { currentStatus, sentMessage, stateBatchAppended, relayMessage } =
-    params;
-  const blockTimestamps = getTransactionTimestamp({
-    currentStatus,
-    sentMessageTimestamp: Number(sentMessage.blockTimestamp),
-    stateBatchTimestamp: stateBatchAppended?.blockTimestamp,
-    relayedMessageTimestamp: relayMessage?.blockTimestamp,
-  });
-  const transactionHashes = getTransactionHash({
-    sentMessageTxhash: sentMessage.transactionHash,
-    stateBatchTxhash: stateBatchAppended?.transactionHash,
-    relayedMessageTxhash: relayMessage?.transactionHash,
-  });
-
-  return { blockTimestamps, transactionHashes };
 };
 
 export const useSubgraph = () => {

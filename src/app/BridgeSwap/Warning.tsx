@@ -1,7 +1,6 @@
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Flex, Link, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import WARNING_ICON from "assets/icons/warning.svg";
 import WARNING_RED_ICON from "assets/icons/warningRed.svg";
 
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";

@@ -5,6 +5,10 @@ import {
   TOKAMAK_CONTRACTS,
   TITAN_SEPOLIA_CONTRACTS,
 } from "@/constant/contracts";
+import {
+  USDC_ADDRESS_BY_CHAINID,
+  USDT_ADDRESS_BY_CHAINID,
+} from "@/constant/contracts/tokens";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export function getUSDTAddressByChainId(chainId: number) {
@@ -23,3 +27,13 @@ export function isUSDT(tokenAddress: string, chainId: number) {
   const usdtAddress = getUSDTAddressByChainId(chainId);
   return tokenAddress === usdtAddress;
 }
+
+export const isStableCoin = (tokenAddress: string) => {
+  const isUSDT = Object.values(USDT_ADDRESS_BY_CHAINID).some(
+    (tokenAddress) => tokenAddress !== undefined
+  );
+  const isUSDC = Object.values(USDC_ADDRESS_BY_CHAINID).some(
+    (tokenAddress) => tokenAddress !== undefined
+  );
+  return isUSDT || isUSDC;
+};
