@@ -53,7 +53,7 @@ export default function TokenDetail(props: TokenDetailProps) {
           ></Text>
           <CTCustomTooltip
             content={formatNumber(formattedAmount)}
-            tooltipLabel={formattedAmount}
+            tooltipLabel={`${formattedAmount} ${symbol}`}
             style={{
               maxW: "245px",
               px: "8px",
