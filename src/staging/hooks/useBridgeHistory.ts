@@ -220,8 +220,13 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) || tx !== undefined
       );
+      const sortedResult = filteredResult.sort(
+        (currentTx, previousTx) =>
+          previousTx.blockTimestamps.initialCompletedTimestamp -
+          currentTx.blockTimestamps.initialCompletedTimestamp
+      );
 
-      if (filteredResult) return setWithdrawHistory(filteredResult);
+      if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
     }
   }, [l2Data, isConnectedToMainNetwork, L2Provider]);
@@ -263,7 +268,8 @@ export const useDepositData = () => {
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
           if (!l1TxReceipt || !currentStatus) {
-            return new Error("Invalid transaction");
+            new Error(`Invalid transaction (${sentMessage.transactionHash})`);
+            return;
           }
 
           const logIndex = l1TxReceipt.logs.length - 1;
@@ -306,11 +312,16 @@ export const useDepositData = () => {
         })
       );
 
-      const filteredResult = result.filter(
-        (tx) => !(tx instanceof Error) || tx !== undefined
+      const filteredResult = result.filter((tx) => {
+        if (!(tx instanceof Error) || tx !== undefined) return tx;
+      });
+      const sortedResult = filteredResult.sort(
+        (currentTx, previousTx) =>
+          previousTx.blockTimestamps.initialCompletedTimestamp -
+          currentTx.blockTimestamps.initialCompletedTimestamp
       );
 
-      if (filteredResult) return setDepositHistory(filteredResult);
+      if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
     }
   }, [l1Data, isConnectedToMainNetwork, L1Provider]);
