@@ -30,9 +30,10 @@ const getTokenInfo = (tokenAddress: string) => {
 export const getTransactionToken = (
   l1TokenAddress: string,
   l2TokenAddress: string,
-  amount: string
+  amount: string,
+  isL1: boolean
 ): { l1Token: TransactionToken; l2Token: TransactionToken } => {
-  const tokenInfo = getTokenInfo(l2TokenAddress);
+  const tokenInfo = getTokenInfo(isL1 ? l1TokenAddress : l2TokenAddress);
   const l2Token: TransactionToken = {
     ...tokenInfo,
     address: l2TokenAddress,

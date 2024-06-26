@@ -185,7 +185,8 @@ export const useWithdrawData = () => {
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
             l2TokenAddress,
-            amount
+            amount,
+            false
           );
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
@@ -202,8 +203,8 @@ export const useWithdrawData = () => {
           const result: WithdrawTransactionHistory = {
             action: Action.Withdraw,
             status: status,
-            inNetwork: Network.Mainnet,
-            outNetwork: Network.Titan,
+            inNetwork: Network.Titan,
+            outNetwork: Network.Mainnet,
             inToken: l2Token,
             outToken: l1Token,
             blockNumber: Number(sentMessage.blockNumber),
@@ -283,7 +284,8 @@ export const useDepositData = () => {
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
             l2TokenAddress,
-            amount
+            amount,
+            true
           );
 
           const status = getStatus(currentStatus);
@@ -320,6 +322,8 @@ export const useDepositData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
+
+      console.log("sortedResult", sortedResult);
 
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
