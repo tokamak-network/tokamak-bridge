@@ -37,7 +37,7 @@ const MaintenanceBanner = () => {
 
       const activeTimeEndThisWeek = add(activeTimeStartThisWeek, {
         hours: 0,
-        minutes: 0,
+        minutes: 30,
         seconds: 0,
       }); //the duration when the red banner is visible and L2 actions are disabled
 
