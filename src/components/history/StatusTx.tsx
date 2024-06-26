@@ -7,7 +7,7 @@ import { useRecoilState } from "recoil";
 import { atcb_action } from "add-to-calendar-button";
 import useConnectedNetwork from "@/hooks/network";
 import useGetTxLayers from "@/hooks/user/useGetTxLayers";
-import { claimTx } from "@/recoil/userHistory/claimTx";
+import { claimTx } from "@/recoil/history/claimTx";
 import { FullWithTx } from "@/types/activity/history";
 import {
   getTime,

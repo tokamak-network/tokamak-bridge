@@ -4,7 +4,7 @@ import DepositTx from "./DepositTx";
 import DepositTxMobile from "./DepositTxMobile";
 import { useEffect, useMemo, useState } from "react";
 import { useRecoilValue } from "recoil";
-import { searchTxStatus } from "@/recoil/userHistory/searchTx";
+import { searchTxStatus } from "@/recoil/history/searchTx";
 import LoadingTx from "./LoadingTx";
 import noActivityIcon from "assets/icons/accountHistory/noActivityIcon.svg";
 import Image from "next/image";
@@ -175,14 +175,14 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       case "absent":
         return (
           <Flex
-            w='100%'
+            w="100%"
             h={"100%"}
             justifyContent={"center"}
             alignItems={"center"}
             flexDir={"column"}
           >
             <Image
-              alt='noActivityIcon'
+              alt="noActivityIcon"
               src={noActivityIcon}
               height={75}
               width={60}
@@ -191,7 +191,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#e3f3ff"}
               fontWeight={500}
               fontSize={"16px"}
-              mt='24px'
+              mt="24px"
             >
               No activity yet
             </Text>
@@ -199,8 +199,8 @@ export default function ActivityContainer(props: { network: SelectOption }) {
               color={"#7B7F8F"}
               fontWeight={400}
               fontSize={"11px"}
-              mt='7px'
-              w='191px'
+              mt="7px"
+              w="191px"
             >
               Your onchain transactions and crypto purchases will appear here.
             </Text>
@@ -250,7 +250,7 @@ export default function ActivityContainer(props: { network: SelectOption }) {
       justifyContent={"space-between"}
       h={"calc(100% - 20px)"}
       bg={"transparent"}
-      w='100%'
+      w="100%"
     >
       <Flex
         ref={ref}

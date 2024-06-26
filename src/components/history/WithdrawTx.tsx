@@ -9,7 +9,7 @@ import useCallClaim from "@/hooks/user/actions/useCallClaim";
 import { FullWithTx } from "@/types/activity/history";
 import { txDataStatus } from "@/recoil/global/transaction";
 
-import { claimTx } from "@/recoil/userHistory/claimTx";
+import { claimTx } from "@/recoil/history/claimTx";
 import { useRecoilState } from "recoil";
 import { confirmWithdrawStats, confirmWithdrawData } from "@/recoil/modal/atom";
 import { Hash } from "viem";

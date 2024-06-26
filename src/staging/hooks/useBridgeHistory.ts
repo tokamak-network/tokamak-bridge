@@ -3,6 +3,7 @@ import {
   Action,
   DepositTransactionHistory,
   Network,
+  TransactionHistory,
   WithdrawTransactionHistory,
 } from "../types/transaction";
 import { ApolloError, useQuery } from "@apollo/client";
@@ -327,5 +328,17 @@ export const useBridgeHistory = () => {
   const { depositHistory } = useDepositData();
   const { withdrawHistory } = useWithdrawData();
 
-  return { depositHistory, withdrawHistory };
+  const bridgeHistoryData = useMemo(() => {
+    if (depositHistory !== null && withdrawHistory !== null) {
+      // Ensure both arrays are of a compatible type
+      const combinedHistory: TransactionHistory[] = [
+        ...(depositHistory as TransactionHistory[]),
+        ...(withdrawHistory as TransactionHistory[]),
+      ];
+
+      return combinedHistory;
+    }
+  }, [depositHistory, withdrawHistory]);
+
+  return { depositHistory, withdrawHistory, bridgeHistoryData };
 };

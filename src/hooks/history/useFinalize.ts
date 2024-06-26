@@ -1,29 +1,19 @@
 import useConnectedNetwork from "@/hooks/network";
-import {
-  SupportedChainId,
-  supportedChain,
-} from "@/types/network/supportedNetwork";
-import { useRecoilState } from "recoil";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import L1CrossDomainMessenger_ABI from "constant/abis/L1CrossDomainMessenger.json";
 import useContract from "@/hooks/contracts/useContract";
-import { confirmWithdrawData, confirmWithdrawStats } from "@/recoil/modal/atom";
 import { useCallback, useEffect } from "react";
 import { useContractWrite, useSwitchNetwork } from "wagmi";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { claimModalStatus } from "@/recoil/modal/atom";
 import { getWithdarwCalldata } from "@/utils/history/getWithdrawCalldata";
 import { WithdrawTransactionHistory } from "@/staging/types/transaction";
 
 export const useFinalize = (params?: WithdrawTransactionHistory) => {
-  const { connectedChainId, isConnectedToMainNetwork, layer } =
-    useConnectedNetwork();
+  const { isConnectedToMainNetwork, layer } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
-  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
-  const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const [, setClaimModal] = useRecoilState(claimModalStatus);
   const { setModalOpen } = useTxConfirmModal();
   const { L1Provider, L2Provider } = useProvier();
 

@@ -13,7 +13,7 @@ import Image from "next/image";
 import { useMemo } from "react";
 import { format, addHours } from "date-fns";
 import useCallClaim from "@/hooks/user/actions/useCallClaim";
-import { claimTx } from "@/recoil/userHistory/claimTx";
+import { claimTx } from "@/recoil/history/claimTx";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import { confirmWithdrawStatus } from "@/recoil/bridgeSwap/atom";
 import useConnectedNetwork from "@/hooks/network";
@@ -25,7 +25,6 @@ import TitanContainer from "./TitanContainer";
 import EthereumContainer from "./EthereumContainer";
 import CalendarComponent from "../history/modalComponents/CalendarComponent";
 import CloseButton from "../button/CloseButton";
-
 import ARROW_ICON from "assets/icons/toast/toastArrow.svg";
 import ARROW from "assets/icons/arrow.svg";
 import "./CalendarButton.css";

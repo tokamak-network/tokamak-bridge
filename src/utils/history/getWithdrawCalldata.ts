@@ -46,7 +46,9 @@ export const getWithdarwCalldata = async (params: {
   const hashData = await provider.getTransaction(hash);
 
   const StateCommitmentChain_CONTRACT = new Contract(
-    isConnectedToMainNetwork ? MAINNET_CONTRACTS.StateCommitmentChain : SEPOLIA_CONTRACTS.StateCommitmentChain,
+    isConnectedToMainNetwork
+      ? MAINNET_CONTRACTS.StateCommitmentChain
+      : SEPOLIA_CONTRACTS.StateCommitmentChain,
     StateCommitmentChainAbi,
     provider
   );
@@ -80,13 +82,6 @@ export const getWithdarwCalldata = async (params: {
         BigNumber.from(sentMessageEvent.messageNonce)
       ) + remove0x(predeploys.L2CrossDomainMessenger)
     ) + "00".repeat(32)
-  );
-
-  console.log(
-    Number(l2BlcokNumber),
-    predeploys.OVM_L2ToL1MessagePasser,
-    messageSlot,
-    l2Provider
   );
 
   //step4

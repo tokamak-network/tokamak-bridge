@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 import axios from "axios";
 import { Flex, Box } from "@chakra-ui/react";
@@ -12,6 +12,8 @@ import {
 import Pending from "@/staging/components/new-history/components/core/pending";
 import Complete from "@/staging/components/new-history/components/core/complete";
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
+import { useRecoilValue } from "recoil";
+import { selectedTransactionCategory } from "@/recoil/history/transaction";
 
 export default function AccountHistoryNew() {
   // 여기서 더미 데이터를 통해 아래 뿌려주는걸 만든다.
@@ -19,6 +21,14 @@ export default function AccountHistoryNew() {
   // hook에서 데이터를 가져온다.
 
   const { depositHistory, withdrawHistory } = useBridgeHistory();
+  const _selectedTransactionCategory = useRecoilValue(
+    selectedTransactionCategory
+  );
+
+  const historyData = useMemo(() => {
+    if (_selectedTransactionCategory === "Deposit") return depositHistory;
+    if (_selectedTransactionCategory === "Withdraw") return withdrawHistory;
+  }, [_selectedTransactionCategory, depositHistory, withdrawHistory]);
 
   // The last available hash becomes the transaction key.
   const getTransactionKey = (transaction: TransactionHistory) => {
@@ -41,12 +51,9 @@ export default function AccountHistoryNew() {
     }
   };
 
-  const test = depositHistory &&
-    withdrawHistory && [...depositHistory, ...withdrawHistory];
-
   return (
     <Flex flexDirection="column" gap="2">
-      {test?.map((transaction, index) => {
+      {historyData?.map((transaction, index) => {
         const transactionHash = getTransactionKey(transaction);
         return (
           <Box
