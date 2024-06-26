@@ -11,11 +11,7 @@ import {
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history/components/core/pending";
 import Complete from "@/staging/components/new-history/components/core/complete";
-import {
-  useBridgeHistory,
-  useDepositData,
-  useWithdrawData,
-} from "@/staging/hooks/useBridgeHistory";
+import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 
 export default function AccountHistoryNew() {
   // 여기서 더미 데이터를 통해 아래 뿌려주는걸 만든다.

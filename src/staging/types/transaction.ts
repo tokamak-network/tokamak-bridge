@@ -1,4 +1,6 @@
 import { inTokenSelector } from "@/recoil/bridgeSwap/atom";
+import { Resolved } from "@/types/activity/history";
+import { StateBatchAppended } from "@/utils/history/getCurrentStatus";
 import { TokenInfo } from "types/token/supportedToken";
 
 export enum Action {
@@ -54,6 +56,9 @@ export interface WithdrawTransactionHistory extends BaseTransactionHistory {
     rollupTransactionHash?: string;
     finalizedTransactionHash?: string;
   };
+  resolved: Resolved;
+  stateBatchAppended?: StateBatchAppended;
+  blockNumber: number;
 }
 
 export interface DepositTransactionHistory extends BaseTransactionHistory {

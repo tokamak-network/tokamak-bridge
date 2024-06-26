@@ -12,6 +12,7 @@ import {
 import StateCommitmentChainAbi from "constant/abis/StateCommitmentChain.json";
 import { predeploys } from "@eth-optimism/contracts";
 import * as RLP from "@ethersproject/rlp";
+import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 
 /**
  * https://www.notion.so/tokamak/New-bridge-history-logic-fa37475899de433f983d74a8b83477f3
@@ -31,6 +32,7 @@ export const getWithdarwCalldata = async (params: {
   };
   sentMessageEvent: Resolved & { blockNumber: number };
   l2BlcokNumber: number;
+  isConnectedToMainNetwork: boolean;
 }) => {
   const {
     hash,
@@ -39,10 +41,12 @@ export const getWithdarwCalldata = async (params: {
     sentMessageEvent,
     stateBatchAppendedEvent,
     l2BlcokNumber,
+    isConnectedToMainNetwork,
   } = params;
   const hashData = await provider.getTransaction(hash);
+
   const StateCommitmentChain_CONTRACT = new Contract(
-    "0x66b9f45E84A0aD7fE3983c97556798352a8E0a56",
+    isConnectedToMainNetwork ? MAINNET_CONTRACTS.StateCommitmentChain : SEPOLIA_CONTRACTS.StateCommitmentChain,
     StateCommitmentChainAbi,
     provider
   );

@@ -3,19 +3,19 @@ import { Resolved } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { hashCrossChainMessage } from "@tokamak-network/titan-sdk";
 import axios from "axios";
-import { BigNumber } from "ethers";
+import { BigNumber, Bytes } from "ethers";
 import { stat } from "fs";
 
 export type CurrentStatus = 0 | 1 | 2 | 3 | 4;
 export type CurrentDepositStatus = 0 | 4;
 export type StateBatchAppended = {
-  blockNumber: number;
+  blockNumber: BigInt | number;
   blockTimestamp: number;
   transactionHash: string;
-  _batchIndex: number;
-  _batchRoot: string;
-  _batchSize: number;
-  _extraData: string;
+  _batchIndex: BigInt | number;
+  _batchRoot: Bytes;
+  _batchSize: BigInt | number;
+  _extraData: Bytes;
   _prevTotalElements: number;
 };
 export type RelayMessage = {
@@ -44,7 +44,7 @@ export const getCurretStatus = async (
   isConnectedToMainnet: boolean
 ): Promise<{
   currentStatus: CurrentStatus;
-  stateBatchAppendeds?: StateBatchAppended;
+  stateBatchAppended?: StateBatchAppended;
   relayedMessageTx?: RelayMessage;
 }> => {
   const resTxs = await axios.post(
@@ -76,7 +76,7 @@ export const getCurretStatus = async (
     const { blockTimestamp } = _stateBatchAppendeds;
     const currentTime = Math.floor(Date.now() / 1000);
     const plusChallengePeriod = Number(blockTimestamp) + TITAN_CHALLENGE_PERIOD;
-    const stateBatchAppendeds = {
+    const stateBatchAppended = {
       ..._stateBatchAppendeds,
       blockNumber: Number(_stateBatchAppendeds.blockNumber),
       blockTimestamp: Number(_stateBatchAppendeds.blockTimestamp),
@@ -85,7 +85,7 @@ export const getCurretStatus = async (
       _prevTotalElements: Number(_stateBatchAppendeds._prevTotalElements),
     };
     if (plusChallengePeriod > currentTime) {
-      return { currentStatus: 2, stateBatchAppendeds };
+      return { currentStatus: 2, stateBatchAppended };
     }
     const msgHash = hashCrossChainMessage({
       sender: resolved.sender,
@@ -128,17 +128,17 @@ export const getCurretStatus = async (
       };
       return {
         currentStatus: 4,
-        stateBatchAppendeds,
+        stateBatchAppended,
         relayedMessageTx,
       };
     }
 
     return {
       currentStatus: 3,
-      stateBatchAppendeds,
+      stateBatchAppended,
     };
   }
-  return { currentStatus: 0, stateBatchAppendeds: undefined };
+  return { currentStatus: 0, stateBatchAppended: undefined };
 };
 
 export const getCurrentDepositStatus = async (

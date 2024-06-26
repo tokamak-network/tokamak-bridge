@@ -23,7 +23,6 @@ export default function useCallClaim(functionName: string) {
   const { L1MESSENGER_CONTRACT } = useContract();
   const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
   const [, setWithdrawData] = useRecoilState(confirmWithdrawData);
-  const { crossMessenger } = useCrosschainMessenger();
   const [, setClaimModal] = useRecoilState(claimModalStatus);
 
   const { data, write, isError } = useContractWrite({
@@ -40,11 +39,6 @@ export default function useCallClaim(functionName: string) {
       setModalOpen("error");
     }
   }, [isError]);
-
-  const getProof = async (txt: any) => {
-    const proof = await crossMessenger.getMessageProof(txt.resolved);
-    return proof;
-  };
 
   const { L1Provider, L2Provider } = useProvier();
 
@@ -66,6 +60,7 @@ export default function useCallClaim(functionName: string) {
           blockNumber: Number(txt.blockNumber),
         },
         l2BlcokNumber: Number(txt.blockNumber),
+        isConnectedToMainNetwork: true,
       }).then(async (proof) => {
         setClaimModal(false);
 
@@ -106,18 +101,6 @@ export default function useCallClaim(functionName: string) {
             }
           }
         } else {
-          console.log(
-            "target : ",
-            txt.resolved.target,
-            "sender : ",
-            txt.resolved.sender,
-            "message : ",
-            txt.resolved.message,
-            "messageNonce : ",
-            txt.resolved.messageNonce,
-            "proof : ",
-            proof
-          );
           try {
             write({
               args: [

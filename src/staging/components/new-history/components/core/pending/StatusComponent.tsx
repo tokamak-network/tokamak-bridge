@@ -22,6 +22,7 @@ import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
+import { useFinalize } from "@/hooks/history/useFinalize";
 
 interface TransactionStatusComponentProps {
   label: string;
@@ -112,11 +113,15 @@ export default function StatusComponent(
     timeDisplay === "00 : 00" &&
     transactionData.action === Action.Withdraw;
 
+  const { callToFinalize } = useFinalize(
+    claimReadyButton ? transactionData : undefined
+  );
+
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
-      <Flex alignItems='center'>
+      <Flex alignItems="center">
         <Circle
-          size='6px'
+          size="6px"
           bg={!isActive && label === Status.Finalize ? "#A0A3AD" : "#007AFF"}
         />
         <Text
@@ -129,7 +134,7 @@ export default function StatusComponent(
           {label}
         </Text>
       </Flex>
-      <Flex alignItems='center'>
+      <Flex alignItems="center">
         {claimReadyButton ? (
           <Button
             w={"60px"}
@@ -144,6 +149,7 @@ export default function StatusComponent(
             _active={{}}
             _hover={{}}
             _focus={{}}
+            onClick={callToFinalize}
           >
             <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
               Finalize

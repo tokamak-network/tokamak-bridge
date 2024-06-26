@@ -152,7 +152,7 @@ export const useWithdrawData = () => {
             messageNonce: sentMessage.messageNonce,
           };
 
-          const { currentStatus, stateBatchAppendeds, relayedMessageTx } =
+          const { currentStatus, stateBatchAppended, relayedMessageTx } =
             await getCurretStatus(
               Number(sentMessage.blockNumber),
               resolved,
@@ -190,7 +190,7 @@ export const useWithdrawData = () => {
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
             sentMessage,
-            stateBatchAppended: stateBatchAppendeds,
+            stateBatchAppended,
             relayMessage: relayedMessageTx,
           });
 
@@ -205,8 +205,11 @@ export const useWithdrawData = () => {
             outNetwork: Network.Titan,
             inToken: l2Token,
             outToken: l1Token,
+            blockNumber: Number(sentMessage.blockNumber),
             blockTimestamps,
             transactionHashes,
+            resolved,
+            stateBatchAppended,
           };
 
           return result;
