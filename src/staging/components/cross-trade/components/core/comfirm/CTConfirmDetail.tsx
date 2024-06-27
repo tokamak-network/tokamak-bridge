@@ -95,7 +95,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
     <HStack
       justify='space-between'
       lineHeight={"18px"}
-      my={title !== "Service fee" ? "6px" : "0"}
+      mt={title === "Service fee" || title === "Network fee" ? "6px" : "0"}
     >
       <Flex alignItems='center'>
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
@@ -181,11 +181,13 @@ export default function CTConfirmDetail({
           modalType={modalType}
           onPencilClick={onPencilClick}
         />
-        <FeeDetail
-          title='Network fee'
-          mainAmount='0.16 ETH'
-          subAmount='$0.43'
-        />
+        {modalType === ModalType.Trade && (
+          <FeeDetail
+            title='Network fee'
+            mainAmount='0.16 ETH'
+            subAmount='$0.43'
+          />
+        )}
       </Box>
     </Box>
   );
