@@ -28,23 +28,10 @@ import {
   selectedTransactionCategory,
 } from "@/recoil/history/transaction";
 
-type ChainName = "MAINNET" | "TITAN" | undefined;
-
-type SelectOption = {
-  chainId: number;
-  chainName: ChainName;
-  networkImage: any;
-};
-
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
-  const [, setSelectedNetwork] = useState<SelectOption>({
-    chainId: 0,
-    chainName: undefined,
-    networkImage: undefined,
-  });
   const { mobileView } = useMediaView();
   const [_selectedTab, setSelectedTab] = useRecoilState(selectedTab);
   const [_selectedTransactionCategory, setSelectedTransactionCategory] =
@@ -103,11 +90,6 @@ export default function AccountHistory() {
       placement="right"
       onClose={() => {
         setIsOpen(false);
-        setSelectedNetwork({
-          chainId: 0,
-          chainName: undefined,
-          networkImage: undefined,
-        });
       }}
       variant="clickThrough"
       trapFocus={false}
@@ -229,11 +211,6 @@ export default function AccountHistory() {
           }}
           onClick={() => {
             setIsOpen(false);
-            setSelectedNetwork({
-              chainId: 0,
-              chainName: undefined,
-              networkImage: undefined,
-            });
           }}
           cursor={"pointer"}
           // transform={"translate(-7px)"}

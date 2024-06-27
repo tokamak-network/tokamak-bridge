@@ -22,7 +22,7 @@ import {
   getCurretStatus,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import { getDecodeLog } from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
@@ -309,7 +309,6 @@ export const useDepositData = () => {
             blockTimestamps,
             transactionHashes,
           };
-
           return result;
         })
       );
@@ -322,8 +321,6 @@ export const useDepositData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-
-      console.log("sortedResult", sortedResult);
 
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
@@ -344,7 +341,7 @@ export const useBridgeHistory = () => {
   const { withdrawHistory } = useWithdrawData();
 
   const bridgeHistoryData = useMemo(() => {
-    if (depositHistory !== null && withdrawHistory !== null) {
+    if (depositHistory && withdrawHistory) {
       // Ensure both arrays are of a compatible type
       const combinedHistory: TransactionHistory[] = [
         ...(depositHistory as TransactionHistory[]),
