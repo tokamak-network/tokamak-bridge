@@ -6,8 +6,10 @@ import {
   WithdrawTransactionHistory,
   DepositTransactionHistory,
   TransactionHistory,
-  BaseTransactionHistory,
 } from "@/staging/types/transaction";
+
+import { Resolved } from "@/types/activity/history";
+import { StateBatchAppended } from "@/utils/history/getCurrentStatus";
 
 // Withdraw 트랜잭션 생성 함수
 export function createWithdrawTransaction(
@@ -18,6 +20,8 @@ export function createWithdrawTransaction(
   outToken: TransactionToken,
   initialCompletedTimestamp: number,
   initialTransactionHash: string,
+  resolved: Resolved,
+  blockNumber: number,
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
@@ -40,6 +44,8 @@ export function createWithdrawTransaction(
       rollupTransactionHash,
       finalizedTransactionHash,
     },
+    resolved,
+    blockNumber,
   };
 }
 
@@ -73,25 +79,6 @@ export function createDepositTransaction(
   };
 }
 
-// Base 트랜잭션 생성 함수
-export function createBaseTransaction(
-  action: Action,
-  status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
-  inToken: TransactionToken,
-  outToken: TransactionToken
-): BaseTransactionHistory {
-  return {
-    action,
-    status,
-    inNetwork,
-    outNetwork,
-    inToken,
-    outToken,
-  };
-}
-
 export function createTransaction(
   action: Action,
   status: Status,
@@ -101,21 +88,13 @@ export function createTransaction(
   outToken: TransactionToken,
   initialCompletedTimestamp?: number,
   initialTransactionHash?: string,
+  resolved?: Resolved,
+  blockNumber?: number,
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
   finalizedTransactionHash?: string
 ): TransactionHistory {
-  if (status === Status.Initiate) {
-    return createBaseTransaction(
-      action,
-      status,
-      inNetwork,
-      outNetwork,
-      inToken,
-      outToken
-    );
-  }
   if (action === Action.Withdraw) {
     return createWithdrawTransaction(
       status,
@@ -125,6 +104,8 @@ export function createTransaction(
       outToken,
       initialCompletedTimestamp!,
       initialTransactionHash!,
+      resolved!,
+      blockNumber!,
       rollupCompletedTimestamp,
       finalizedCompletedTimestamp,
       rollupTransactionHash,

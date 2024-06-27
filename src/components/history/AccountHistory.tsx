@@ -15,9 +15,6 @@ import { useMemo, useState, SetStateAction, Dispatch, useEffect } from "react";
 import DrawerCloseIcon from "assets/icons/accountHistory/drawerClose.svg";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
-import ActivityContainer from "./ActivityContainer";
-import NetworkSelector from "./NetworkSelector";
-import SearchComponent from "./SearchComponent";
 import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
@@ -87,11 +84,11 @@ export default function AccountHistory() {
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement="right"
+      placement='right'
       onClose={() => {
         setIsOpen(false);
       }}
-      variant="clickThrough"
+      variant='clickThrough'
       trapFocus={false}
       useInert={true}
     >
@@ -113,15 +110,15 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px="12px"
-        pb="0px"
+        px='12px'
+        pb='0px'
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
         bgColor={"#1F2128"}
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
       >
-        <Flex direction="column" height="100%" overflow="hidden">
+        <Flex direction='column' height='100%' overflow='hidden'>
           {!mobileView && <AccountContainer />}
           <Flex
             w={"336px"}
@@ -168,10 +165,10 @@ export default function AccountHistory() {
             </Box>
           </Flex>
           {subCategoryButtons}
-          <Flex mt={{ base: "0px", lg: "12px" }} flex="1" overflow="hidden">
+          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
             <Box
-              flex="1"
-              overflowY="auto"
+              flex='1'
+              overflowY='auto'
               css={{
                 "&::-webkit-scrollbar": {
                   width: "6px",
@@ -185,7 +182,7 @@ export default function AccountHistory() {
                   borderRadius: "3px",
                 },
               }}
-              mr="-6px"
+              mr='-6px'
             >
               <AccountHistoryNew />
             </Box>
@@ -199,7 +196,7 @@ export default function AccountHistory() {
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg="transparent"
+          bg='transparent'
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}
