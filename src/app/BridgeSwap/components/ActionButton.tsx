@@ -98,7 +98,6 @@ export default function ActionButton() {
 
   const { onOpenCTConfirmModal } = useCTConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
-  console.log(mode);
   return (
     <>
       {/** FW UI test Start @Robert*/}

@@ -32,6 +32,10 @@ export default function CTOptionCrossDetail(
   const isAdvancedActive =
     props.activeSubButtonValue === ButtonTypeSub.Advanced;
 
+  // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
+  // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
+  const isDisabledRecommend = props.inputValue === "1";
+
   return (
     <Flex
       alignItems='center'
@@ -70,7 +74,13 @@ export default function CTOptionCrossDetail(
         <Box mt={"12px"}>
           <Flex>
             <Button
-              width={isRecommendActive ? "99px" : "98px"}
+              width={
+                isRecommendActive
+                  ? "99px"
+                  : isDisabledRecommend
+                  ? "116px"
+                  : "98px"
+              }
               height='26px'
               padding='4px 10px'
               gap='8px'
@@ -85,21 +95,30 @@ export default function CTOptionCrossDetail(
                     : "1px solid #313442",
                   cursor: "auto",
                 },
+                opacity: isDisabledRecommend ? 0.3 : 1,
               }}
               _hover={{}}
               onClick={() =>
                 props.handleButtonSubClick(ButtonTypeSub.Recommend)
               }
-              isDisabled={isRecommendActive}
+              isDisabled={isRecommendActive || isDisabledRecommend}
             >
-              <Text
-                fontSize={"12px"}
-                color={isRecommendActive ? "#FFFFFF" : "#A0A3AD"}
-                fontWeight={isRecommendActive ? "600" : "400"}
-                lineHeight={"18px"}
-              >
-                Recommend
-              </Text>
+              <Flex alignItems={"center"} justifyContent={"center"}>
+                <Text
+                  fontSize={"12px"}
+                  color={isRecommendActive ? "#FFFFFF" : "#A0A3AD"}
+                  fontWeight={isRecommendActive ? "600" : "400"}
+                  lineHeight={"18px"}
+                >
+                  Recommend{" "}
+                </Text>
+                {isDisabledRecommend && (
+                  <Tooltip
+                    tooltipLabel={"text will be changed"}
+                    style={{ marginLeft: "2px" }}
+                  />
+                )}
+              </Flex>
             </Button>
             <Button
               width={isAdvancedActive ? "83px" : "82px"}
