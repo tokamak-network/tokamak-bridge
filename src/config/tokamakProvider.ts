@@ -85,8 +85,8 @@ export const mainnet = {
     symbol: "ETH",
   },
   rpcUrls: {
-    public: { http: [process.env.NEXT_PUBLIC_ETHEREUM_RPC as string] },
-    default: { http: [process.env.NEXT_PUBLIC_ETHEREUM_RPC as string] },
+    public: { http: [process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM as string] },
+    default: { http: [process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM as string] },
   },
   blockExplorers: {
     etherscan: {
