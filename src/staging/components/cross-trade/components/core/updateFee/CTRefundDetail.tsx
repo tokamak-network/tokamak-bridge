@@ -2,6 +2,8 @@ import Image from "next/image";
 import { Box, Flex, Text, Center, HStack } from "@chakra-ui/react";
 import ThanosSymbol from "assets/icons/ct/thanos_symbol.svg";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
+import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 
 export default function CTRefundDetail() {
   return (
@@ -21,14 +23,16 @@ export default function CTRefundDetail() {
             <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
               10 USDC
             </Text>
-            <Center
-              width='32px'
-              height='32px'
-              bg={"#FFFFFF"}
-              borderRadius='2px'
-            >
-              <Image src={ThanosSymbol} alt={"ThanosSymbol"} />
-            </Center>
+            <TokenSymbolWithNetwork
+              tokenSymbol={"USDC"}
+              chainId={55004}
+              networkSymbolW={22}
+              networkSymbolH={22}
+              symbolW={40}
+              symbolH={40}
+              bottom={-0.5}
+              right={-0.5}
+            />
           </Flex>
         </Box>
         <Text
@@ -44,7 +48,7 @@ export default function CTRefundDetail() {
         </Text>
       </Box>
       <Box mt={"16px"} borderTop='1px solid #313442' pt={"16px"} px={0} pb={0}>
-        <HStack justify='space-between' lineHeight={"18px"} mt={"6px"}>
+        <HStack justify='space-between'>
           <Flex>
             <Text
               fontWeight={400}
@@ -52,17 +56,42 @@ export default function CTRefundDetail() {
               color={"#A0A3AD"}
               mr={"2px"}
             >
-              Network fee on Ethereum
+              Refund network
+            </Text>
+          </Flex>
+          <Flex>
+            <Flex w={"14px"} maxW={"14px"} h={"14px"} maxH={"14px"}>
+              <Image src={TitanNetworkSymbol} alt={"TitanNetworkSymbol"} />
+            </Flex>
+            <Text
+              fontWeight={400}
+              fontSize={"12px"}
+              lineHeight={"14px"}
+              ml={"4px"}
+            >
+              Titan
+            </Text>
+          </Flex>
+        </HStack>
+        <HStack justify='space-between' mt={"6px"}>
+          <Flex>
+            <Text
+              fontWeight={400}
+              fontSize={"12px"}
+              color={"#A0A3AD"}
+              mr={"2px"}
+            >
+              Network fee
             </Text>
           </Flex>
           <Flex>
             <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
             <Text fontWeight={600} fontSize={"12px"} mx={"4px"}>
-              0.16 TON
+              0.16 ETH
             </Text>
             <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"}>
               <span style={{ fontSize: "10px", lineHeight: "15px" }}>(</span>
-              0.16 TON
+              $0.43
               <span style={{ fontSize: "10px", lineHeight: "15px" }}>)</span>
             </Text>
           </Flex>

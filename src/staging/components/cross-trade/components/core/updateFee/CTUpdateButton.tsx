@@ -61,9 +61,9 @@ export default function CTUpdateButton({
         label={UpdateFeeButtonType.Update}
       />
       <ToggleButton
-        isActive={activeButton === UpdateFeeButtonType.Refund}
-        onClick={() => setActiveButton(UpdateFeeButtonType.Refund)}
-        label={UpdateFeeButtonType.Refund}
+        isActive={activeButton === UpdateFeeButtonType.CancelRequest}
+        onClick={() => setActiveButton(UpdateFeeButtonType.CancelRequest)}
+        label={UpdateFeeButtonType.CancelRequest}
         marginLeft='8px'
       />
     </Flex>
