@@ -25,6 +25,14 @@ export type RelayMessage = {
   transactionHash: string;
 };
 
+const subgraphQueryURL_ETHEREUM =
+  process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY;
+const subgraphQueryURL_SEPOLIA =
+  process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY;
+const subgraphQueryURL_TITAN = process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY;
+const subgraphQueryURL_TITAN_SEPOLIA =
+  process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY;
+
 /**
  *
  * @param l2BlockNumber
@@ -41,20 +49,17 @@ export type RelayMessage = {
 export const getCurretStatus = async (
   l2BlockNumber: number,
   resolved: Resolved,
-  isConnectedToMainnet: boolean
+  isConnectedToMainnetwork: boolean
 ): Promise<{
   currentStatus: CurrentStatus;
   stateBatchAppended?: StateBatchAppended;
   relayedMessageTx?: RelayMessage;
 }> => {
-  const resTxs = await axios.post(
-    `${
-      isConnectedToMainnet
-        ? process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY
-        : process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY
-    }`,
-    {
-      query: `
+  const subgraphQueryURL = isConnectedToMainnetwork
+    ? subgraphQueryURL_ETHEREUM
+    : subgraphQueryURL_SEPOLIA;
+  const resTxs = await axios.post(`${subgraphQueryURL}`, {
+    query: `
         {
           stateBatchAppendeds(where:{and: [{rollUpBatch_gte: ${l2BlockNumber}}, {_prevTotalElements_lt: ${l2BlockNumber}}]}) {
                 blockTimestamp
@@ -68,8 +73,7 @@ export const getCurretStatus = async (
           }
       }
         `,
-    }
-  );
+  });
 
   if (resTxs?.data?.data?.stateBatchAppendeds.length > 0) {
     const _stateBatchAppendeds = resTxs.data.data.stateBatchAppendeds[0];
@@ -96,14 +100,8 @@ export const getCurretStatus = async (
       value: BigNumber.from(0),
     });
 
-    const resMesHash = await axios.post(
-      `${
-        isConnectedToMainnet
-          ? process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY
-          : process.env.NEXT_PUBLIC_SUBGRAPH_SEPOLIA_HISTORY
-      }`,
-      {
-        query: `
+    const resMesHash = await axios.post(`${subgraphQueryURL}`, {
+      query: `
         query GetRelayedMessages($msgHash: String!) {
           relayedMessages(where: {msgHash: $msgHash}) {
             msgHash
@@ -113,11 +111,10 @@ export const getCurretStatus = async (
           }
         }
       `,
-        variables: {
-          msgHash: msgHash,
-        },
-      }
-    );
+      variables: {
+        msgHash: msgHash,
+      },
+    });
 
     if (resMesHash?.data?.data?.relayedMessages.length > 0) {
       const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
@@ -156,15 +153,12 @@ export const getCurrentDepositStatus = async (
     minGasLimit: BigNumber.from(0),
     value: BigNumber.from(0),
   });
+  const subgraphQueryURL = isConnectedToMainnetwork
+    ? subgraphQueryURL_TITAN
+    : subgraphQueryURL_TITAN_SEPOLIA;
 
-  const resMesHash = await axios.post(
-    `${
-      isConnectedToMainnetwork
-        ? process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY
-        : process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY
-    }`,
-    {
-      query: `
+  const resMesHash = await axios.post(`${subgraphQueryURL}`, {
+    query: `
         query GetRelayedMessages($msgHash: String!) {
           relayedMessages(where: {msgHash: $msgHash}) {
             msgHash
@@ -174,11 +168,10 @@ export const getCurrentDepositStatus = async (
           }
         }
       `,
-      variables: {
-        msgHash: msgHash,
-      },
-    }
-  );
+    variables: {
+      msgHash: msgHash,
+    },
+  });
 
   if (resMesHash?.data?.data?.relayedMessages.length > 0) {
     const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
