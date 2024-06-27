@@ -12,6 +12,9 @@ import {
 } from "@apollo/client";
 import { ChainId } from "@uniswap/sdk-core";
 
+/**
+ * For Uniswap Subgraphs
+ */
 const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   [ChainId.MAINNET]:
     "https://api.thegraph.com/subgraphs/name/uniswap/uniswap-v3?source=uniswap",

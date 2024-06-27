@@ -54,7 +54,7 @@ export default function Complete(transaction: TransactionHistory) {
         borderRadius={"6px"}
         border={"1px solid rgba(0, 122, 255, 0.40)"}
       >
-        <Flex alignItems='center'>
+        <Flex alignItems="center">
           <TokenSymbol
             w={22}
             h={22}
@@ -71,7 +71,7 @@ export default function Complete(transaction: TransactionHistory) {
                 }}
                 value={transactionData.inToken.amount}
               />
-              <Box w='4px' /> {/** space bar */}
+              <Box w="4px" /> {/** space bar */}
               <Text
                 fontWeight={400}
                 fontSize={"14px"}

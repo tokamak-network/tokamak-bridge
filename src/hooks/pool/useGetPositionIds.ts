@@ -32,7 +32,7 @@ import { sortPositions } from "@/utils/pool/sortPositions";
 import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import JSBI from "jsbi";
-import { getProvider, providerByChainId } from "@/config/getProvider";
+import { providerByChainId } from "@/config/getProvider";
 import { useGetPositionByClients } from "./useApolloClient";
 
 export const makePositionDatas = async (

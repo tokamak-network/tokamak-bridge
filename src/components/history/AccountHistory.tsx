@@ -23,26 +23,19 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
 import AccountHistoryNew from "@/staging/components/new-history/components/core";
-
-type ChainName = "MAINNET" | "TITAN" | undefined;
-
-type SelectOption = {
-  chainId: number;
-  chainName: ChainName;
-  networkImage: any;
-};
+import {
+  selectedTab,
+  selectedTransactionCategory,
+} from "@/recoil/history/transaction";
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
-  const [tab, setTab] = useState("Activity");
-  const [selectedNetwork, setSelectedNetwork] = useState<SelectOption>({
-    chainId: 0,
-    chainName: undefined,
-    networkImage: undefined,
-  });
   const { mobileView } = useMediaView();
+  const [_selectedTab, setSelectedTab] = useRecoilState(selectedTab);
+  const [_selectedTransactionCategory, setSelectedTransactionCategory] =
+    useRecoilState(selectedTransactionCategory);
 
   useEffect(() => {
     if (address === undefined) {
@@ -50,65 +43,55 @@ export default function AccountHistory() {
     }
   }, [address]);
 
-  const TabContainer = (props: {
-    setTab: Dispatch<SetStateAction<string>>;
-    tab: string;
-  }) => {
-    const { setTab, tab } = props;
+  const subCategoryButtons = useMemo(() => {
+    if (_selectedTab === "CorssTrade") return null;
+    const isDeposit = _selectedTransactionCategory === "Deposit";
     return (
-      <Flex
-        mt='16px'
-        mb='12px'
-        justifyContent={"space-between"}
-        alignItems={"center"}
-      >
-        <Text
-          fontWeight={500}
-          fontSize={"16px"}
-          lineHeight={"24px"}
-          color={"#FFFFFF"}
-        >
-          Bridge History
-        </Text>
-        <Flex
-          w={"32px"}
+      <Flex mt={"16px"} mb={"12px"} columnGap={"8px"}>
+        <Button
+          w={"74px"}
           h={"32px"}
-          justifyContent={"center"}
-          alignItems={"center"}
-          borderRadius={"6px"}
-          gap={"8px"}
-          bg={"#15161D"}
-          cursor={"pointer"}
+          textAlign={"center"}
+          fontSize={13}
+          fontWeight={400}
+          color={isDeposit ? "none" : "#A0A3AD"}
+          bg={isDeposit ? "#007AFF" : "none"}
+          border={isDeposit ? "none" : "1px solid #313442"}
+          lineHeight={"32px"}
+          _hover={{}}
+          _active={{}}
+          onClick={() => setSelectedTransactionCategory("Deposit")}
         >
-          <Flex
-            w={"18px"}
-            h={"18px"}
-            justifyContent={"center"}
-            alignItems={"center"}
-          >
-            <Image src={RefreshBlue} alt={"RefreshBlue"} />
-          </Flex>
-        </Flex>
+          Deposit
+        </Button>
+        <Button
+          w={"87px"}
+          h={"32px"}
+          textAlign={"center"}
+          fontSize={13}
+          fontWeight={400}
+          color={!isDeposit ? "none" : "#A0A3AD"}
+          bg={!isDeposit ? "#007AFF" : "none"}
+          border={!isDeposit ? "none" : "1px solid #313442"}
+          lineHeight={"32px"}
+          _hover={{}}
+          _active={{}}
+          onClick={() => setSelectedTransactionCategory("Withdraw")}
+        >
+          Withdraw
+        </Button>
       </Flex>
     );
-  };
-  const Network = useMemo(() => {
-    return <NetworkSelector setNetwork={setSelectedNetwork} />;
-  }, []);
+  }, [_selectedTab, _selectedTransactionCategory]);
 
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement='right'
+      placement="right"
       onClose={() => {
         setIsOpen(false);
-        setSelectedNetwork({
-          chainId: 0,
-          chainName: undefined,
-          networkImage: undefined,
-        });
       }}
-      variant='clickThrough'
+      variant="clickThrough"
       trapFocus={false}
       useInert={true}
     >
@@ -130,28 +113,65 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px='12px'
-        pb='0px'
+        px="12px"
+        pb="0px"
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
         bgColor={"#1F2128"}
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
-        // pos={"relative"}
       >
-        <Flex direction='column' height='100%' overflow='hidden'>
+        <Flex direction="column" height="100%" overflow="hidden">
           {!mobileView && <AccountContainer />}
-          <TabContainer setTab={setTab} tab={tab} />
-          {!mobileView && (
-            <Flex>
-              {Network}
-              <SearchComponent tab={tab} />
-            </Flex>
-          )}
-          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
+          <Flex
+            w={"336px"}
+            h={"40px"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            mt={"16px"}
+          >
             <Box
-              flex='1'
-              overflowY='auto'
+              w={"50%"}
+              textAlign={"center"}
+              fontSize={14}
+              fontWeight={600}
+              py={"10px"}
+              cursor={"pointer"}
+              color={
+                _selectedTab === "OfficialStandard" ? "#007AFF" : "#565B72"
+              }
+              borderBottom={
+                _selectedTab === "OfficialStandard"
+                  ? "1px solid #007AFF"
+                  : "1px solid #1F2128"
+              }
+              onClick={() => setSelectedTab("OfficialStandard")}
+            >
+              Official Standard
+            </Box>
+            <Box
+              w={"50%"}
+              textAlign={"center"}
+              fontSize={14}
+              fontWeight={600}
+              py={"10px"}
+              cursor={"pointer"}
+              color={_selectedTab === "CorssTrade" ? "#007AFF" : "#565B72"}
+              borderBottom={
+                _selectedTab === "CorssTrade"
+                  ? "1px solid #007AFF"
+                  : "1px solid #1F2128"
+              }
+              onClick={() => setSelectedTab("CorssTrade")}
+            >
+              Cross Trade
+            </Box>
+          </Flex>
+          {subCategoryButtons}
+          <Flex mt={{ base: "0px", lg: "12px" }} flex="1" overflow="hidden">
+            <Box
+              flex="1"
+              overflowY="auto"
               css={{
                 "&::-webkit-scrollbar": {
                   width: "6px",
@@ -165,17 +185,21 @@ export default function AccountHistory() {
                   borderRadius: "3px",
                 },
               }}
-              mr='-6px'
+              mr="-6px"
             >
               <AccountHistoryNew />
             </Box>
           </Flex>
         </Flex>
+
+        {/**
+         * Drawer Footer
+         */}
         <Flex
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg='transparent'
+          bg="transparent"
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}
@@ -187,11 +211,6 @@ export default function AccountHistory() {
           }}
           onClick={() => {
             setIsOpen(false);
-            setSelectedNetwork({
-              chainId: 0,
-              chainName: undefined,
-              networkImage: undefined,
-            });
           }}
           cursor={"pointer"}
           // transform={"translate(-7px)"}
