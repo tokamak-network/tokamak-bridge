@@ -1,4 +1,6 @@
-export const crossTradeData = [
+import { CrossTradeData } from "@/staging/types/crossTrade";
+
+export const crossTradeData: CrossTradeData[] = [
   {
     requester: "0x8091C2fD8a79a9EF812d487052496243f6825B02",
     inNetwork: 1,
@@ -66,6 +68,7 @@ export const crossTradeData = [
     isActive: true,
   },
   {
+    requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
     inNetwork: 1,
     outNetwork: 111551118080,
     inToken: {

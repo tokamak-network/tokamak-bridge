@@ -1,3 +1,5 @@
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
 export interface Token {
   address: string;
   name: string;
@@ -10,13 +12,13 @@ export interface Profit {
   amount: string;
   symbol: string;
   percent: string;
-  decimal: number;
+  decimals: number;
 }
 
 export interface CrossTradeData {
   requester: string;
-  inNetwork: number;
-  outNetwork: number;
+  inNetwork: SupportedChainId;
+  outNetwork: SupportedChainId;
   inToken: Token;
   outToken: Token;
   profit: Profit;

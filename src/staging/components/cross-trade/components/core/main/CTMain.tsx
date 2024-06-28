@@ -169,7 +169,6 @@ export default function CTMain() {
           {data.map((item, index) => {
             const status = getStatus(item);
             const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
-
             return (
               <Tr
                 key={index}
