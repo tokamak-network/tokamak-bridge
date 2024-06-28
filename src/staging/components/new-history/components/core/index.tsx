@@ -16,10 +16,6 @@ import { useRecoilValue } from "recoil";
 import { selectedTransactionCategory } from "@/recoil/history/transaction";
 
 export default function AccountHistoryNew() {
-  // 여기서 더미 데이터를 통해 아래 뿌려주는걸 만든다.
-  // 새로 고침시 전체 데이터를 다시 불러온다.
-  // hook에서 데이터를 가져온다.
-
   const { depositHistory, withdrawHistory } = useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
@@ -65,7 +61,7 @@ export default function AccountHistoryNew() {
             border={"1px solid #313442"}
             bg={"#15161D"}
           >
-            {/** 히스토리에 팬딩은 현재 완료되지 않은 화면을 보여주고, complete는 완료된 화면을 보여준다. */}
+            {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {transaction.status === Status.Completed ? (
               <Complete {...transaction} />
             ) : (
