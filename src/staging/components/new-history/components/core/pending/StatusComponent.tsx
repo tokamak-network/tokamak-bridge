@@ -13,10 +13,8 @@ import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 import { useCountdown } from "@/staging/hooks/useCountdown";
-import {
-  getRemainTime,
-  formatTimeDisplay,
-} from "@/staging/components/new-history/utils/getTimeDisplay";
+import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import Image from "next/image";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";

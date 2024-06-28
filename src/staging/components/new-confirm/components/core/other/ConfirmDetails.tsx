@@ -13,6 +13,9 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
+import { convertNumber } from "@/utils/trim/convertNumber";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -37,12 +40,14 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     return "NA";
   }, [tokenPriceWithAmount, transactionHistory]);
 
-  const networkName = isInNetwork
+  const networkChainId = isInNetwork
     ? transactionHistory.inNetwork
     : transactionHistory.outNetwork;
 
+  const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
+
   const displayNetworkName =
-    networkName === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(networkName);
+    chainName === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(chainName);
 
   const tokenAddress = isInNetwork
     ? transactionHistory.inToken.address
@@ -109,8 +114,14 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                 }}
                 value={
                   isInNetwork
-                    ? transactionHistory.inToken.amount
-                    : transactionHistory.outToken.amount
+                    ? convertNumber(
+                        transactionHistory.inToken.amount,
+                        transactionHistory.inToken.decimals
+                      )
+                    : convertNumber(
+                        transactionHistory.outToken.amount,
+                        transactionHistory.outToken.decimals
+                      )
                 }
                 tokenSymbol={
                   isInNetwork

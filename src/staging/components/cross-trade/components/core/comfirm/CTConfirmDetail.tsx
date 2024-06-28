@@ -2,23 +2,25 @@ import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import Pencil from "assets/icons/ct/pencil.svg";
-import EthSymbol from "assets/icons/ct/eth_ct.svg";
-import ThanosSymbol from "assets/icons/ct/thanos_symbol.svg";
 import Image from "next/image";
 import { Tooltip } from "@/staging/components/common/Tooltip";
+import CTNetworkTransition from "@/staging/components/cross-trade/components/core/comfirm/CTNetworkTransition";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 
 interface TransactionDetailProps {
   title: string;
   mainValue: string;
   subValue: string;
-  iconSrc: any;
+  chainId: number;
+  tokenSymbol: string;
 }
 
 const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   title,
   mainValue,
   subValue,
-  iconSrc,
+  chainId,
+  tokenSymbol,
 }) => {
   return (
     <Box mt={title !== "Send" ? "24px" : "0"}>
@@ -35,15 +37,16 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
           <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
             {mainValue}
           </Text>
-          <Center
-            width='32px'
-            height='32px'
-            bg={title != "Send" ? "#383736" : "#FFFFFF"}
-            borderRadius='2px'
-          >
-            <Image
-              src={iconSrc}
-              alt={title !== "Send" ? "ThanosSymbol" : "EthSymbol"}
+          <Center width='32px' height='32px'>
+            <TokenSymbolWithNetwork
+              tokenSymbol={tokenSymbol}
+              chainId={chainId}
+              networkSymbolW={22}
+              networkSymbolH={22}
+              symbolW={40}
+              symbolH={40}
+              bottom={-0.5}
+              right={-0.5}
             />
           </Center>
         </Flex>
@@ -65,8 +68,10 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
 
 interface FeeDetailProps {
   title: string;
-  mainAmount: string;
-  subAmount: string;
+  mainAmount?: string;
+  subAmount?: string;
+  inNetwork?: number;
+  outNetwork?: number;
   modalType?: ModalType;
   onPencilClick?: () => void;
 }
@@ -82,21 +87,20 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   subAmount,
   modalType,
   onPencilClick,
+  inNetwork,
+  outNetwork,
 }) => {
   return (
     <HStack
       justify='space-between'
       lineHeight={"18px"}
-      mt={title !== "Service fee" ? "6px" : "0"}
+      mt={title === "Service fee" || title === "Network fee" ? "6px" : "0"}
     >
       <Flex alignItems='center'>
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
           {title}
         </Text>
         {title == "Service fee" && (
-          // <Box ml={"2px"}>
-          //   <Image src={TipSymbol} alt={"TipSymbol"} />
-          // </Box>
           <Tooltip
             tooltipLabel={"text will be changed"}
             style={{ marginLeft: "2px" }}
@@ -104,22 +108,33 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
         )}
       </Flex>
       <Flex>
-        {title == "Service fee" && modalType === ModalType.History && (
-          <Flex cursor='pointer' onClick={onPencilClick}>
-            <Image src={Pencil} alt={"Pencil"} />
-          </Flex>
+        {title === "Network" ? (
+          <CTNetworkTransition
+            networkI={inNetwork}
+            networkO={outNetwork}
+            networkH={14}
+            networkW={14}
+          />
+        ) : (
+          <>
+            {title == "Service fee" && modalType === ModalType.History && (
+              <Flex cursor='pointer' onClick={onPencilClick}>
+                <Image src={Pencil} alt={"Pencil"} />
+              </Flex>
+            )}
+            {title == "Network fee" && (
+              <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
+            )}
+            <Text fontWeight={600} fontSize={"12px"} mx={"4px"}>
+              {mainAmount}
+            </Text>
+            <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"}>
+              <span style={{ fontSize: "10px", lineHeight: "15px" }}>(</span>
+              {subAmount}
+              <span style={{ fontSize: "10px", lineHeight: "15px" }}>)</span>
+            </Text>
+          </>
         )}
-        {title == "Network fee" && (
-          <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
-        )}
-        <Text fontWeight={600} fontSize={"12px"} mx={"4px"}>
-          {mainAmount}
-        </Text>
-        <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"}>
-          <span style={{ fontSize: "10px", lineHeight: "15px" }}>(</span>
-          {subAmount}
-          <span style={{ fontSize: "10px", lineHeight: "15px" }}>)</span>
-        </Text>
       </Flex>
     </HStack>
   );
@@ -141,16 +156,19 @@ export default function CTConfirmDetail({
         title='Send'
         mainValue='10 USDC'
         subValue='$99.00'
-        iconSrc={ThanosSymbol}
+        chainId={55004}
+        tokenSymbol={"USDC"}
       />
       <CTTransactionDetail
         title='Receive'
         mainValue='9.988 USDC'
         subValue='$99.00'
-        iconSrc={EthSymbol}
+        chainId={1}
+        tokenSymbol={"USDC"}
       />
 
       <Box mt={"24px"} borderTop='1px solid #313442' pt={"16px"} px={0} pb={0}>
+        <FeeDetail title='Network' inNetwork={55004} outNetwork={1} />
         <FeeDetail
           title='Service fee'
           mainAmount='0.012 USDC'
@@ -158,11 +176,13 @@ export default function CTConfirmDetail({
           modalType={modalType}
           onPencilClick={onPencilClick}
         />
-        <FeeDetail
-          title='Network fee'
-          mainAmount='0.16 TON'
-          subAmount='$0.43'
-        />
+        {modalType === ModalType.Trade && (
+          <FeeDetail
+            title='Network fee'
+            mainAmount='0.16 ETH'
+            subAmount='$0.43'
+          />
+        )}
       </Box>
     </Box>
   );

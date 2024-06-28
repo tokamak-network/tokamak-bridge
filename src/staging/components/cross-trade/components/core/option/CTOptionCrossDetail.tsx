@@ -32,6 +32,10 @@ export default function CTOptionCrossDetail(
   const isAdvancedActive =
     props.activeSubButtonValue === ButtonTypeSub.Advanced;
 
+  // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
+  // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
+  const isDisabledRecommend = props.inputValue === "1";
+
   return (
     <Flex
       alignItems='center'
@@ -57,10 +61,6 @@ export default function CTOptionCrossDetail(
             >
               Receive
             </Text>
-            <Tooltip
-              tooltipLabel={"text will be changed"}
-              style={{ marginLeft: "2px" }}
-            />
           </Flex>
           <Text
             fontWeight={600}
@@ -74,7 +74,13 @@ export default function CTOptionCrossDetail(
         <Box mt={"12px"}>
           <Flex>
             <Button
-              width={isRecommendActive ? "99px" : "98px"}
+              width={
+                isRecommendActive
+                  ? "99px"
+                  : isDisabledRecommend
+                  ? "116px"
+                  : "98px"
+              }
               height='26px'
               padding='4px 10px'
               gap='8px'
@@ -89,21 +95,32 @@ export default function CTOptionCrossDetail(
                     : "1px solid #313442",
                   cursor: "auto",
                 },
+                opacity: isDisabledRecommend ? 0.3 : 1,
               }}
               _hover={{}}
+              _active={{}}
+              _focus={{}}
               onClick={() =>
                 props.handleButtonSubClick(ButtonTypeSub.Recommend)
               }
-              isDisabled={isRecommendActive}
+              isDisabled={isRecommendActive || isDisabledRecommend}
             >
-              <Text
-                fontSize={"12px"}
-                color={isRecommendActive ? "#FFFFFF" : "#A0A3AD"}
-                fontWeight={isRecommendActive ? "600" : "400"}
-                lineHeight={"18px"}
-              >
-                Recommend
-              </Text>
+              <Flex alignItems={"center"} justifyContent={"center"}>
+                <Text
+                  fontSize={"12px"}
+                  color={isRecommendActive ? "#FFFFFF" : "#A0A3AD"}
+                  fontWeight={isRecommendActive ? "600" : "400"}
+                  lineHeight={"18px"}
+                >
+                  Recommend{" "}
+                </Text>
+                {isDisabledRecommend && (
+                  <Tooltip
+                    tooltipLabel={"text will be changed"}
+                    style={{ marginLeft: "2px" }}
+                  />
+                )}
+              </Flex>
             </Button>
             <Button
               width={isAdvancedActive ? "83px" : "82px"}
@@ -124,6 +141,8 @@ export default function CTOptionCrossDetail(
                 },
               }}
               _hover={{}}
+              _active={{}}
+              _focus={{}}
               onClick={() => props.handleButtonSubClick(ButtonTypeSub.Advanced)}
               isDisabled={isAdvancedActive}
             >
@@ -161,7 +180,6 @@ export default function CTOptionCrossDetail(
             />
           </Box>
         )}
-
         <Box mt={"12px"}>
           <Text
             fontSize={"10px"}
@@ -169,20 +187,14 @@ export default function CTOptionCrossDetail(
             lineHeight={"15px"}
             color={"#A0A3AD"}
           >
-            It can be received faster depending on
-          </Text>
-          <Text
-            fontSize={"10px"}
-            fontWeight={400}
-            lineHeight={"15px"}
-            color={"#A0A3AD"}
-          >
-            the liquidity provider situation
+            Trade for a token on a different layer,
+            <br />
+            subject to the availability of liquidity providers.
           </Text>
         </Box>
       </Box>
       <Circle
-        size='56px'
+        size='72px'
         border='1px solid #DB00FF'
         bg='#15161D'
         pb={"8px"}
@@ -191,23 +203,22 @@ export default function CTOptionCrossDetail(
         <Box>
           <Text
             fontWeight={600}
-            fontSize={"22px"}
-            height={"29px"}
-            lineHeight={"33px"}
-            letterSpacing={"-0.05em"}
+            fontSize={"16px"}
+            lineHeight={"24px"}
             color={"#DB00FF"}
             textAlign='center'
           >
-            ?
+            $0.16
           </Text>
           <Text
+            mt={"1.5px"}
             fontWeight={400}
-            fontSize={"10px"}
-            lineHeight={"15px"}
+            fontSize={"8px"}
+            lineHeight={"12px"}
             color={"#DB00FF"}
             textAlign='center'
           >
-            day
+            Network fee
           </Text>
         </Box>
       </Circle>

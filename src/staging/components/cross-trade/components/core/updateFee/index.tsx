@@ -10,6 +10,7 @@ import {
   ModalBody,
   ModalFooter,
   Checkbox,
+  textDecoration,
 } from "@chakra-ui/react";
 import { useState, useEffect } from "react";
 import {
@@ -45,7 +46,7 @@ export default function CTFeeUpdateModal() {
     ""
   );
   // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
-  // usehook안에서 hook은 돌리면 안된다. //메모리 문재
+  // 반복문, usehook안에서 hook은 돌리면 안된다. //메모리 문재
   const recommendValue = useCTRecommend(recommendCheck);
 
   // 리프래시 버튼 누를 때, recommend 값 초기화
@@ -94,7 +95,9 @@ export default function CTFeeUpdateModal() {
       ? recommendCheck ||
         !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
+  const [networkCheck, setNetworkCheck] = useState<boolean>(true);
 
+  // 추후 삭제
   const resetAllStates = () => {
     setRecommendCheck(true);
     setActiveButton(UpdateFeeButtonType.Update);
@@ -102,11 +105,13 @@ export default function CTFeeUpdateModal() {
     setInputWarningCheck("");
     setIsChecked(false);
     onCloseCTUpdateFeeModal();
+    setNetworkCheck(true);
   };
 
+  // 시연을 위한 초기화 추후 삭제
+
   const handleConfirm = () => {
-    alert("Confirm");
-    resetAllStates();
+    setNetworkCheck(false);
   };
 
   return (
@@ -139,6 +144,32 @@ export default function CTFeeUpdateModal() {
               activeButton={activeButton}
               setActiveButton={setActiveButton}
             />
+            {!networkCheck && activeButton == UpdateFeeButtonType.Update && (
+              <Box
+                my={"16px"}
+                px={"16px"}
+                py={"12px"}
+                justifyContent={"center"}
+                alignItems={"flex-start"}
+                gap={"4px"}
+                bg={"#15161D"}
+                borderRadius={"8px"}
+                border={"1px solid #DD3A44"}
+              >
+                <Text
+                  fontWeight={400}
+                  fontSize={"12px"}
+                  lineHeight={"18px"}
+                  color={"#DD3A44"}
+                >
+                  Please switch to{" "}
+                  <span style={{ textDecoration: "underline" }}>
+                    Titan Network
+                  </span>
+                </Text>
+              </Box>
+            )}
+
             {activeButton == UpdateFeeButtonType.Update ? (
               <CTUpdateFeeDetail
                 // input 관련 props
@@ -158,7 +189,7 @@ export default function CTFeeUpdateModal() {
           </Box>
         </ModalBody>
         <ModalFooter p={0} display='block'>
-          {activeButton == UpdateFeeButtonType.Refund && (
+          {activeButton == UpdateFeeButtonType.CancelRequest && (
             <Box mt={"16px"}>
               <Checkbox
                 isChecked={isChecked}
@@ -198,17 +229,21 @@ export default function CTFeeUpdateModal() {
             height={"48px"}
             borderRadius={"8px"}
             sx={{
-              backgroundColor: activeConfirmButton ? "#007AFF" : "#17181D",
-              color: activeConfirmButton ? "#FFFFFF" : "#8E8E92",
+              backgroundColor:
+                activeConfirmButton && networkCheck ? "#007AFF" : "#17181D",
+              color:
+                activeConfirmButton && networkCheck ? "#FFFFFF" : "#8E8E92",
             }}
             _hover={{}}
             onClick={handleConfirm}
-            isDisabled={!activeConfirmButton}
+            isDisabled={!activeConfirmButton || !networkCheck}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
               {activeButton == UpdateFeeButtonType.Update
-                ? "Update Fee"
-                : "Refund"}
+                ? !networkCheck
+                  ? "Wrong Network"
+                  : "Update fee"
+                : "Cancel request"}
             </Text>
           </Button>
         </ModalFooter>

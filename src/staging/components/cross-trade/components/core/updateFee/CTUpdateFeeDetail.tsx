@@ -8,7 +8,6 @@ import { CTInputProps } from "@/staging/components/cross-trade/types";
 
 enum FeeDetailType {
   Receive,
-  Time,
   Network,
 }
 
@@ -22,7 +21,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
   return (
     <Flex
       justifyContent='space-between'
-      my={type == FeeDetailType.Time ? "6px" : ""}
+      mt={type == FeeDetailType.Network ? "6px" : undefined}
     >
       <Text
         color={"#A0A3AD"}
@@ -69,16 +68,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
           </Flex>
         </Flex>
       )}
-      {type == FeeDetailType.Time && (
-        <Text
-          color={"#DB00FF"}
-          fontSize={"12px"}
-          fontWeight={600}
-          lineHeight={"18px"}
-        >
-          {inputValue ? "~ 1 day" : "-"}
-        </Text>
-      )}
+
       {type == FeeDetailType.Network && (
         <Flex>
           <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
@@ -172,11 +162,6 @@ export default function CTUpdateFeeDetail(
         <FeeDetail
           type={FeeDetailType.Receive}
           title={"Receive"}
-          inputValue={inputValueCheck}
-        />
-        <FeeDetail
-          type={FeeDetailType.Time}
-          title={"Estimated Time of Arrival"}
           inputValue={inputValueCheck}
         />
         <FeeDetail

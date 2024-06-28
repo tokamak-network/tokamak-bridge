@@ -8,6 +8,7 @@ import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TransactionHistory } from "@/staging/types/transaction";
 import PendingFooter from "./PendingFooter";
+import { convertNumber } from "@/utils/trim/convertNumber";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 
 interface PendingProps {
@@ -15,6 +16,7 @@ interface PendingProps {
   transactionHash: string | undefined;
 }
 
+// 코멘트
 export default function Pending(props: PendingProps) {
   const { transaction, transactionHash } = props;
   const { onOpenDepositWithdrawConfirmModal } =
@@ -65,7 +67,10 @@ export default function Pending(props: PendingProps) {
                   lineHeight: "21px",
                   color: "#FFFFFF",
                 }}
-                value={transactionData.inToken.amount}
+                value={convertNumber(
+                  transactionData.inToken.amount,
+                  transactionData.inToken.decimals
+                )}
               />
               <Box w='4px' /> {/** space bar */}
               <Text

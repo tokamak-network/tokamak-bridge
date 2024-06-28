@@ -10,6 +10,7 @@ import {
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
+import { convertNumber } from "@/utils/trim/convertNumber";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
@@ -35,7 +36,7 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
         >
-          {transactionData.action} completed
+          {transactionData.action}
         </Text>
         <TokenPair
           networkI={transactionData.inNetwork}
@@ -54,7 +55,7 @@ export default function Complete(transaction: TransactionHistory) {
         borderRadius={"6px"}
         border={"1px solid rgba(0, 122, 255, 0.40)"}
       >
-        <Flex alignItems="center">
+        <Flex alignItems='center'>
           <TokenSymbol
             w={22}
             h={22}
@@ -69,9 +70,12 @@ export default function Complete(transaction: TransactionHistory) {
                   lineHeight: "21px",
                   color: "#FFFFFF",
                 }}
-                value={transactionData.inToken.amount}
+                value={convertNumber(
+                  transactionData.inToken.amount,
+                  transactionData.inToken.decimals
+                )}
               />
-              <Box w="4px" /> {/** space bar */}
+              <Box w='4px' /> {/** space bar */}
               <Text
                 fontWeight={400}
                 fontSize={"14px"}

@@ -1,23 +1,26 @@
 import {
   Action,
   Status,
-  Network,
   TransactionToken,
   WithdrawTransactionHistory,
   DepositTransactionHistory,
   TransactionHistory,
-  BaseTransactionHistory,
 } from "@/staging/types/transaction";
+
+import { Resolved } from "@/types/activity/history";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // Withdraw 트랜잭션 생성 함수
 export function createWithdrawTransaction(
   status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId,
   inToken: TransactionToken,
   outToken: TransactionToken,
   initialCompletedTimestamp: number,
   initialTransactionHash: string,
+  resolved: Resolved,
+  blockNumber: number,
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
@@ -40,14 +43,16 @@ export function createWithdrawTransaction(
       rollupTransactionHash,
       finalizedTransactionHash,
     },
+    resolved,
+    blockNumber,
   };
 }
 
 // Deposit 트랜잭션 생성 함수
 export function createDepositTransaction(
   status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId,
   inToken: TransactionToken,
   outToken: TransactionToken,
   initialCompletedTimestamp: number,
@@ -73,49 +78,22 @@ export function createDepositTransaction(
   };
 }
 
-// Base 트랜잭션 생성 함수
-export function createBaseTransaction(
-  action: Action,
-  status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
-  inToken: TransactionToken,
-  outToken: TransactionToken
-): BaseTransactionHistory {
-  return {
-    action,
-    status,
-    inNetwork,
-    outNetwork,
-    inToken,
-    outToken,
-  };
-}
-
 export function createTransaction(
   action: Action,
   status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId,
   inToken: TransactionToken,
   outToken: TransactionToken,
   initialCompletedTimestamp?: number,
   initialTransactionHash?: string,
+  resolved?: Resolved,
+  blockNumber?: number,
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
   finalizedTransactionHash?: string
 ): TransactionHistory {
-  if (status === Status.Initiate) {
-    return createBaseTransaction(
-      action,
-      status,
-      inNetwork,
-      outNetwork,
-      inToken,
-      outToken
-    );
-  }
   if (action === Action.Withdraw) {
     return createWithdrawTransaction(
       status,
@@ -125,6 +103,8 @@ export function createTransaction(
       outToken,
       initialCompletedTimestamp!,
       initialTransactionHash!,
+      resolved!,
+      blockNumber!,
       rollupCompletedTimestamp,
       finalizedCompletedTimestamp,
       rollupTransactionHash,

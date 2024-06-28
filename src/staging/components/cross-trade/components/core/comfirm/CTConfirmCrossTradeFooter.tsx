@@ -76,7 +76,7 @@ export default function CTConfirmCrossTradeFooter(
           _hover={{}}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-            Confirm Cross Trade
+            Cross Trade
           </Text>
         </Button>
       </Box>

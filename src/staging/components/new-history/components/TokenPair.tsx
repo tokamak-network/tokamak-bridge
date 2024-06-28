@@ -1,30 +1,20 @@
 import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
-import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
-import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import Arrow from "@/assets/icons/newHistory/small-arrow.svg";
-
-import { Network } from "@/staging/types/transaction";
+import fetchNetworkImage from "@/staging/utils/fetchNetworkImage";
 
 type TokenPairProp = {
-  networkI: string | undefined;
-  networkO: string | undefined;
+  networkI: number;
+  networkO: number;
   networkW: number;
   networkH: number;
   pairType: "pending" | "completed";
 };
 
-const getImageProps = (network: string | undefined) => {
-  if (network === Network.Mainnet || network === Network.Sepolia) {
-    return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
-  }
-  return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };
-};
-
 export default function TokenPair(props: TokenPairProp) {
   const { pairType, networkI, networkO, networkH, networkW } = props;
-  const inNetwork = getImageProps(networkI);
-  const outNetwork = getImageProps(networkO);
+  const inNetwork = fetchNetworkImage(networkI);
+  const outNetwork = fetchNetworkImage(networkO);
 
   return (
     <Box>

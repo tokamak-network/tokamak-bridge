@@ -1,6 +1,6 @@
 import { Text, Box } from "@chakra-ui/react";
 import { CSSProperties } from "react";
-import formatNumber from "@/staging/components/cross-trade/utils/formatNumbers";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 // FormatNumber.tsx
 interface StyledNumberProps {

@@ -1,4 +1,4 @@
-import { Box, Flex, SystemCSSProperties } from "@chakra-ui/react";
+import { Box, Flex, SystemCSSProperties, border } from "@chakra-ui/react";
 import { TokenSymbol } from "./TokenSymbol";
 import { NetworkSymbol } from "./NetworkSymbol";
 import { CSSProperties } from "react";
@@ -41,9 +41,8 @@ export default function TokenSymbolWithNetwork(
         pos={"absolute"}
         // bgColor={inNetwork.nativeToken === "TON" ? "#fff" : "#383736"}
         // borderRadius={"2px"}
-        // border={"2px solid #1F2128"}
-        bottom={bottom ?? "-2px"}
-        right={right ?? "-2px"}
+        bottom={bottom ?? "3.8px"}
+        right={right ?? "-1.5"}
         justify={"flex-end"}
         alignItems={"end"}
       >

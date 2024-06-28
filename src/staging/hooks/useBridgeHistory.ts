@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Action,
   DepositTransactionHistory,
-  Network,
   TransactionHistory,
   WithdrawTransactionHistory,
 } from "../types/transaction";
@@ -203,8 +202,8 @@ export const useWithdrawData = () => {
           const result: WithdrawTransactionHistory = {
             action: Action.Withdraw,
             status: status,
-            inNetwork: Network.Titan,
-            outNetwork: Network.Mainnet,
+            inNetwork: SupportedChainId.TITAN,
+            outNetwork: SupportedChainId.MAINNET,
             inToken: l2Token,
             outToken: l1Token,
             blockNumber: Number(sentMessage.blockNumber),
@@ -302,8 +301,8 @@ export const useDepositData = () => {
           const result: DepositTransactionHistory = {
             action: Action.Deposit,
             status: status,
-            inNetwork: Network.Mainnet,
-            outNetwork: Network.Titan,
+            inNetwork: SupportedChainId.MAINNET,
+            outNetwork: SupportedChainId.TITAN,
             inToken: l2Token,
             outToken: l1Token,
             blockTimestamps,

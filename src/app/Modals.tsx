@@ -2,15 +2,16 @@ import { SelectCardModal } from "@/components/card/SelectCard";
 import ActionConfirmModal from "@/components/modal/ActionConfirmModal";
 import Confirmation from "@/components/modal/Confirmation";
 import TutorialModal from "@/components/modal/TutorialModal";
-import ConfirmWithdraw from "@/components/modal/ConfirmWithdraw";
 import ActionOptionModal from "@/components/modal/ActionOptionModal";
 import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
-import CTComingModal from "@/staging/components/cross-trade/components/core/coming/swap";
 import DepositWithdrawConfirmModal from "@/staging/components/new-confirm/components/core/other";
 import SwapConfirmModal from "@/staging/components/new-confirm/components/core/swap";
+import CTOptionModal from "@/staging/components/cross-trade/components/core/option";
+import CTModal from "@/staging/components/cross-trade/components/core/comfirm";
+import CTFeeUpdateModal from "@/staging/components/cross-trade/components/core/updateFee";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -38,13 +39,10 @@ export default function Modals() {
       <DepositWithdrawConfirmModal />
       <SwapConfirmModal />
 
-      {/**FW coming modal @Robert */}
-      <CTComingModal />
-      {/* 
-        <CTOptionModal />
-        <CTModal />
-        <CTFeeUpdateModal /> 
-      */}
+      {/* <CTComingModal /> */}
+      <CTOptionModal />
+      <CTModal />
+      <CTFeeUpdateModal />
     </>
   );
 }

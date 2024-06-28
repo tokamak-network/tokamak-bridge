@@ -16,10 +16,6 @@ import { useRecoilValue } from "recoil";
 import { selectedTransactionCategory } from "@/recoil/history/transaction";
 
 export default function AccountHistoryNew() {
-  // 여기서 더미 데이터를 통해 아래 뿌려주는걸 만든다.
-  // 새로 고침시 전체 데이터를 다시 불러온다.
-  // hook에서 데이터를 가져온다.
-
   const { depositHistory, withdrawHistory } = useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
@@ -52,7 +48,7 @@ export default function AccountHistoryNew() {
   };
 
   return (
-    <Flex flexDirection="column" gap="2">
+    <Flex flexDirection='column' gap='2'>
       {historyData?.map((transaction, index) => {
         const transactionHash = getTransactionKey(transaction);
         return (
@@ -65,6 +61,7 @@ export default function AccountHistoryNew() {
             border={"1px solid #313442"}
             bg={"#15161D"}
           >
+            {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {transaction.status === Status.Completed ? (
               <Complete {...transaction} />
             ) : (

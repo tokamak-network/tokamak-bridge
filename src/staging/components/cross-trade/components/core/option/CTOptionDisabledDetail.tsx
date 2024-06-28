@@ -1,8 +1,8 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
 import FWoptionBg from "@/assets/image/BridgeSwap/ct/ctOptionBg.png";
-import FWoptionButtonBg from "@/assets/image/BridgeSwap/ct/ctOptionButtonBg.png";
+import CTOptionDisabledOptionBg from "@/assets/image/BridgeSwap/ct/ctOptionDisabledOptionBg.png";
 
-export default function CTComingOptionDetail() {
+export default function CTOptionDisabledDetail() {
   return (
     <Flex
       alignItems='center'
@@ -11,10 +11,7 @@ export default function CTComingOptionDetail() {
       pt={"16.5px"}
       pb={"15.5px"}
       borderRadius={"8px"}
-      backgroundImage={`url('${FWoptionBg.src}')`}
-      backgroundSize='cover'
-      backgroundRepeat='no-repeat'
-      cursor='not-allowed'
+      bg={"#17181D"}
     >
       <Box>
         <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
@@ -26,7 +23,7 @@ export default function CTComingOptionDetail() {
           width={"141px"}
           height={"44px"}
           borderRadius={"8px"}
-          backgroundImage={`url('${FWoptionButtonBg.src}')`}
+          backgroundImage={`url('${CTOptionDisabledOptionBg.src}')`}
           backgroundSize='cover'
           backgroundRepeat='no-repeat'
           gap={"8px"}
@@ -40,7 +37,7 @@ export default function CTComingOptionDetail() {
             color={"#DB00FF"}
             textAlign='center'
           >
-            Coming soon
+            Not available
           </Text>
         </Box>
         <Box mt={"20px"}>
@@ -51,19 +48,13 @@ export default function CTComingOptionDetail() {
             color={"#A0A3AD"}
           >
             Trade for a token on a different layer,
-          </Text>
-          <Text
-            fontSize={"10px"}
-            fontWeight={400}
-            lineHeight={"15px"}
-            color={"#A0A3AD"}
-          >
+            <br />
             subject to the availability of liquidity providers.
           </Text>
         </Box>
       </Box>
       <Circle
-        size='56px'
+        size='72px'
         border='1px solid #DB00FF'
         bg='#15161D'
         pb={"8px"}
@@ -72,23 +63,22 @@ export default function CTComingOptionDetail() {
         <Box>
           <Text
             fontWeight={600}
-            fontSize={"22px"}
-            height={"29px"}
-            lineHeight={"33px"}
-            letterSpacing={"-0.05em"}
+            fontSize={"16px"}
+            lineHeight={"24px"}
             color={"#DB00FF"}
             textAlign='center'
           >
-            ?
+            $0.16
           </Text>
           <Text
+            mt={"1.5px"}
             fontWeight={400}
-            fontSize={"10px"}
-            lineHeight={"15px"}
+            fontSize={"8px"}
+            lineHeight={"12px"}
             color={"#DB00FF"}
             textAlign='center'
           >
-            day
+            Network fee
           </Text>
         </Box>
       </Circle>

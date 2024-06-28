@@ -13,12 +13,7 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import {
-  Network,
-  Action,
-  Status,
-  GasCostData,
-} from "@/staging/types/transaction";
+import { Action, Status, GasCostData } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
@@ -149,7 +144,7 @@ export default function DepositWithdrawConfirmModal() {
       <ModalOverlay />
       <ModalContent
         width={"404px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
       >
@@ -170,7 +165,7 @@ export default function DepositWithdrawConfirmModal() {
             py={"12px"}
             border={"1px solid #313442"}
             borderRadius={"8px"}
-            bg="#0F0F12"
+            bg='#0F0F12'
           >
             <Box>
               <ConfirmDetails
@@ -182,7 +177,7 @@ export default function DepositWithdrawConfirmModal() {
                 transactionHistory={transactionData}
               />
             </Box>
-            <Box borderTop="1px solid #313442" mt={"16px"} pt={"16px"}>
+            <Box borderTop='1px solid #313442' mt={"16px"} pt={"16px"}>
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text
                   fontWeight={400}
@@ -193,11 +188,7 @@ export default function DepositWithdrawConfirmModal() {
                   Bridge
                 </Text>
                 <Flex>
-                  <NetworkSymbol
-                    networkI={Network.Titan}
-                    networkH={16}
-                    networkW={16}
-                  />
+                  <NetworkSymbol networkI={55004} networkH={16} networkW={16} />
                   <Text
                     ml={"4px"}
                     fontWeight={500}
@@ -242,7 +233,7 @@ export default function DepositWithdrawConfirmModal() {
             px={"20px"}
             pt={"16px"}
             borderRadius={"8px"}
-            bg="#15161D"
+            bg='#15161D'
           >
             <Flex>
               <Box>
@@ -252,7 +243,7 @@ export default function DepositWithdrawConfirmModal() {
             </Flex>
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter p={0} display='block'>
           {transactionData.status === Status.Initiate ? (
             <ConfirmInitiateFooter
               onClick={onClick}
@@ -272,7 +263,7 @@ export default function DepositWithdrawConfirmModal() {
               </Box>
               {isButtonVisible && (
                 <Button
-                  width="full"
+                  width='full'
                   height={"48px"}
                   borderRadius={"8px"}
                   sx={{
