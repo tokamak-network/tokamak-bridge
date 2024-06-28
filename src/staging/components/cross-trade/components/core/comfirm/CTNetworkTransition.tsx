@@ -1,10 +1,8 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
-import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
-import ThanosNetworkSymbol from "@/assets/icons/newHistory/thanos-n-symbol.svg";
 import Arrow from "@/assets/icons/newHistory/small-arrow.svg";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
+import fetchNetworkImage from "@/staging/utils/fetchNetworkImage";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 
@@ -15,22 +13,6 @@ type TokenPairProp = {
   networkH: number;
 };
 
-const getImageProps = (network: number) => {
-  if (
-    network === SupportedChainId.MAINNET ||
-    network === SupportedChainId.SEPOLIA
-  ) {
-    return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
-  }
-  if (
-    network === SupportedChainId.THANOS ||
-    network === SupportedChainId.THANOS_SEPOLIA
-  ) {
-    return { src: ThanosNetworkSymbol, alt: "ThanosNetworkSymbol" };
-  }
-  return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };
-};
-
 export default function CTNetworkTransition(props: TokenPairProp) {
   const { networkI, networkO, networkH, networkW } = props;
 
@@ -38,8 +20,8 @@ export default function CTNetworkTransition(props: TokenPairProp) {
     return <></>;
   }
 
-  const inNetwork = getImageProps(networkI);
-  const outNetwork = getImageProps(networkO);
+  const inNetwork = fetchNetworkImage(networkI);
+  const outNetwork = fetchNetworkImage(networkO);
 
   const chainNameIn = getKeyByValue(SupportedChainId, networkI) || "";
   const chainNameOut = getKeyByValue(SupportedChainId, networkO) || "";

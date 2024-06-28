@@ -1,24 +1,16 @@
 import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
-import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
-import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
+import fetchNetworkImage from "@/staging/utils/fetchNetworkImage";
 
 type TokenPairProp = {
-  networkI: number | undefined;
+  networkI: number;
   networkW: number;
   networkH: number;
 };
 
-const getImageProps = (network: number | undefined) => {
-  if (network === 1 || network === 11155111) {
-    return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
-  }
-  return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };
-};
-
 export default function NetworkSymbol(props: TokenPairProp) {
   const { networkI, networkH, networkW } = props;
-  const inNetwork = getImageProps(networkI);
+  const inNetwork = fetchNetworkImage(networkI);
 
   return (
     <Flex alignItems='center'>
