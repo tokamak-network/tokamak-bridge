@@ -7,7 +7,6 @@ import SwapSettingModal from "@/components/modal/SwapSettingModal";
 import SelectTokenModal from "@/components/mobile/modal/SelectTokenModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import AmountInputModal from "@/components/mobile/modal/AmountInputModal";
-import CTComingModal from "@/staging/components/cross-trade/components/core/coming/swap";
 import DepositWithdrawConfirmModal from "@/staging/components/new-confirm/components/core/other";
 import SwapConfirmModal from "@/staging/components/new-confirm/components/core/swap";
 import CTOptionModal from "@/staging/components/cross-trade/components/core/option";
