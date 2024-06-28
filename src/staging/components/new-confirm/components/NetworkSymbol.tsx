@@ -2,16 +2,15 @@ import { Flex, Box } from "@chakra-ui/react";
 import Image from "next/image";
 import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
-import { Network } from "@/staging/types/transaction";
 
 type TokenPairProp = {
-  networkI: string | undefined;
+  networkI: number | undefined;
   networkW: number;
   networkH: number;
 };
 
-const getImageProps = (network: string | undefined) => {
-  if (network === Network.Mainnet || network === Network.Sepolia) {
+const getImageProps = (network: number | undefined) => {
+  if (network === 1 || network === 11155111) {
     return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
   }
   return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };

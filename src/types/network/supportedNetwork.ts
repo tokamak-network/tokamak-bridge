@@ -18,6 +18,8 @@ export enum SupportedChainId {
   //   BNB = 56,
   TITAN = 55004,
   SEPOLIA = 11155111,
+  // thanos is a temporary value
+  THANOS = 987654321,
   THANOS_SEPOLIA = 111551118080,
   TITAN_SEPOLIA = 55007,
 }

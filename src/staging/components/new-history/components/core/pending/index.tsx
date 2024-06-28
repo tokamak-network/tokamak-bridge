@@ -16,6 +16,7 @@ interface PendingProps {
   transactionHash: string | undefined;
 }
 
+// 코멘트
 export default function Pending(props: PendingProps) {
   const { transaction, transactionHash } = props;
   const { onOpenDepositWithdrawConfirmModal } =

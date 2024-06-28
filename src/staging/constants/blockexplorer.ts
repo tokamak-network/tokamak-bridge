@@ -1,20 +1,22 @@
 // This can be moved to an env file later
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
 export const BLOCKEXPLORER_CONSTANTS = {
-  MAINNET:
+  [SupportedChainId.MAINNET]:
     process.env.NEXT_PUBLIC_ETHEREUM_BLOCKEXPLORER || "https://etherscan.io",
-  SEPOLIA:
+  [SupportedChainId.SEPOLIA]:
     process.env.NEXT_PUBLIC_SEPOLIA_BLOCKEXPLORER ||
     "https://sepolia.etherscan.io",
-  TITAN_SEPOLIA:
+  [SupportedChainId.TITAN_SEPOLIA]:
     process.env.NEXT_PUBLIC_TITAN_SEPOLIA_BLOCKEXPLORER ||
     "https://explorer.titan-sepolia.tokamak.network",
-  TITAN:
+  [SupportedChainId.TITAN]:
     process.env.NEXT_PUBLIC_TITAN_BLOCKEXPLORER ||
     "https://explorer.titan.tokamak.network",
-  THANOS_SEPOLIA:
+  [SupportedChainId.THANOS_SEPOLIA]:
     process.env.NEXT_PUBLIC_THANOS_SEPOLIA_BLOCKEXPLORER ||
     "https://explorer.thanos-sepolia.tokamak.network",
-  THANOS:
+  [SupportedChainId.THANOS]:
     process.env.NEXT_PUBLIC_THANOS_BLOCKEXPLORER ||
     "https://explorer.thanos.tokamak.network",
 };

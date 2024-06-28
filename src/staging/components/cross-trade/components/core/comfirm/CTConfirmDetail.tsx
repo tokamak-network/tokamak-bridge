@@ -4,7 +4,6 @@ import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import Pencil from "assets/icons/ct/pencil.svg";
 import Image from "next/image";
 import { Tooltip } from "@/staging/components/common/Tooltip";
-import { Network } from "@/staging/types/transaction";
 import CTNetworkTransition from "@/staging/components/cross-trade/components/core/comfirm/CTNetworkTransition";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 
@@ -71,8 +70,8 @@ interface FeeDetailProps {
   title: string;
   mainAmount?: string;
   subAmount?: string;
-  inNetwork?: string;
-  outNetwork?: string;
+  inNetwork?: number;
+  outNetwork?: number;
   modalType?: ModalType;
   onPencilClick?: () => void;
 }
@@ -169,11 +168,7 @@ export default function CTConfirmDetail({
       />
 
       <Box mt={"24px"} borderTop='1px solid #313442' pt={"16px"} px={0} pb={0}>
-        <FeeDetail
-          title='Network'
-          inNetwork={Network.Titan}
-          outNetwork={Network.Mainnet}
-        />
+        <FeeDetail title='Network' inNetwork={55004} outNetwork={1} />
         <FeeDetail
           title='Service fee'
           mainAmount='0.012 USDC'

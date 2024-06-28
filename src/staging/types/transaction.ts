@@ -1,7 +1,6 @@
-import { inTokenSelector } from "@/recoil/bridgeSwap/atom";
 import { Resolved } from "@/types/activity/history";
 import { StateBatchAppended } from "@/utils/history/getCurrentStatus";
-import { TokenInfo } from "types/token/supportedToken";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export enum Action {
   Withdraw = "Withdraw",
@@ -16,15 +15,6 @@ export enum Status {
   Completed = "Completed",
 }
 
-export enum Network {
-  Mainnet = "MAINNET",
-  Sepolia = "SEPOLIA",
-  TitanSepolia = "TITAN_SEPOLIA",
-  Titan = "TITAN",
-  Thanos = "THANOS",
-  ThanosSepolia = "THANOS_SEPOLIA",
-}
-
 export interface TransactionToken {
   address: string;
   name: string;
@@ -36,8 +26,8 @@ export interface TransactionToken {
 export interface BaseTransactionHistory {
   action: Action;
   status: Status;
-  inNetwork: Network;
-  outNetwork: Network;
+  inNetwork: SupportedChainId;
+  outNetwork: SupportedChainId;
   inToken: TransactionToken;
   outToken: TransactionToken;
   errorMessage?: string | null;

@@ -4,41 +4,53 @@ import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import ThanosNetworkSymbol from "@/assets/icons/newHistory/thanos-n-symbol.svg";
 import Arrow from "@/assets/icons/newHistory/small-arrow.svg";
-import { Network } from "@/staging/types/transaction";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 
 type TokenPairProp = {
-  networkI: string | undefined;
-  networkO: string | undefined;
+  networkI: number | undefined;
+  networkO: number | undefined;
   networkW: number;
   networkH: number;
 };
 
-const getImageProps = (network: string | undefined) => {
-  if (network === Network.Mainnet || network === Network.Sepolia)
+const getImageProps = (network: number) => {
+  if (
+    network === SupportedChainId.MAINNET ||
+    network === SupportedChainId.SEPOLIA
+  ) {
     return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
-
-  if (network === Network.Thanos || network === Network.ThanosSepolia)
+  }
+  if (
+    network === SupportedChainId.THANOS ||
+    network === SupportedChainId.THANOS_SEPOLIA
+  ) {
     return { src: ThanosNetworkSymbol, alt: "ThanosNetworkSymbol" };
-
+  }
   return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };
 };
 
 export default function CTNetworkTransition(props: TokenPairProp) {
   const { networkI, networkO, networkH, networkW } = props;
 
-  const inNetwork = getImageProps(networkI);
-  const outNetwork = getImageProps(networkO);
-
   if (networkI === undefined || networkO === undefined) {
     return <></>;
   }
 
+  const inNetwork = getImageProps(networkI);
+  const outNetwork = getImageProps(networkO);
+
+  const chainNameIn = getKeyByValue(SupportedChainId, networkI) || "";
+  const chainNameOut = getKeyByValue(SupportedChainId, networkO) || "";
+
   const displayNetworkNameIn =
-    networkI === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(networkI);
+    chainNameIn === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(chainNameIn);
 
   const displayNetworkNameOut =
-    networkO === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(networkO);
+    chainNameOut === "MAINNET"
+      ? "Ethereum"
+      : capitalizeFirstLetter(chainNameOut);
 
   return (
     <Flex alignItems='center'>

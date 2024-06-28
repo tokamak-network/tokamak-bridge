@@ -1,9 +1,4 @@
-import {
-  Network,
-  Action,
-  Status,
-  TransactionToken,
-} from "@/staging/types/transaction";
+import { Action, Status, TransactionToken } from "@/staging/types/transaction";
 import { createTransaction } from "@/staging/components/new-history/utils/getCreateTransaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -16,27 +11,6 @@ export const useHandleConfirm = () => {
   const { inNetwork, outNetwork } = useInOutNetwork();
 
   const handleConfirm = (action: Action, status: Status) => {
-    const getNetworkEnumValue = (
-      chainName: string | undefined
-    ): Network | undefined => {
-      if (chainName && Object.values(Network).includes(chainName as Network)) {
-        return chainName as Network;
-      }
-      return undefined;
-    };
-
-    const inNetworkEnum = getNetworkEnumValue(inNetwork?.chainName);
-    const outNetworkEnum = getNetworkEnumValue(outNetwork?.chainName);
-
-    if (inNetworkEnum === undefined || outNetworkEnum === undefined) {
-      console.error(
-        "Invalid network chain names:",
-        inNetwork?.chainName,
-        outNetwork?.chainName
-      );
-      return;
-    }
-
     if (inToken === null || inNetwork === null || outNetwork === null) {
       console.error("Invalid value", inToken, inNetwork, outNetwork);
       return;
@@ -61,8 +35,8 @@ export const useHandleConfirm = () => {
     const transaction = createTransaction(
       action,
       status,
-      Network.Mainnet,
-      Network.Titan,
+      inNetwork.chainId,
+      outNetwork.chainId,
       inTransactionToken,
       outTransactionToken
     );

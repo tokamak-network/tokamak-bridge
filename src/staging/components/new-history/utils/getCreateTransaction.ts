@@ -1,7 +1,6 @@
 import {
   Action,
   Status,
-  Network,
   TransactionToken,
   WithdrawTransactionHistory,
   DepositTransactionHistory,
@@ -9,12 +8,13 @@ import {
 } from "@/staging/types/transaction";
 
 import { Resolved } from "@/types/activity/history";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // Withdraw 트랜잭션 생성 함수
 export function createWithdrawTransaction(
   status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId,
   inToken: TransactionToken,
   outToken: TransactionToken,
   initialCompletedTimestamp: number,
@@ -51,8 +51,8 @@ export function createWithdrawTransaction(
 // Deposit 트랜잭션 생성 함수
 export function createDepositTransaction(
   status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId,
   inToken: TransactionToken,
   outToken: TransactionToken,
   initialCompletedTimestamp: number,
@@ -81,8 +81,8 @@ export function createDepositTransaction(
 export function createTransaction(
   action: Action,
   status: Status,
-  inNetwork: Network,
-  outNetwork: Network,
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId,
   inToken: TransactionToken,
   outToken: TransactionToken,
   initialCompletedTimestamp?: number,

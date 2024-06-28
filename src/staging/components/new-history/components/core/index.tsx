@@ -52,7 +52,7 @@ export default function AccountHistoryNew() {
   };
 
   return (
-    <Flex flexDirection="column" gap="2">
+    <Flex flexDirection='column' gap='2'>
       {historyData?.map((transaction, index) => {
         const transactionHash = getTransactionKey(transaction);
         return (
@@ -65,6 +65,7 @@ export default function AccountHistoryNew() {
             border={"1px solid #313442"}
             bg={"#15161D"}
           >
+            {/** 히스토리에 팬딩은 현재 완료되지 않은 화면을 보여주고, complete는 완료된 화면을 보여준다. */}
             {transaction.status === Status.Completed ? (
               <Complete {...transaction} />
             ) : (
