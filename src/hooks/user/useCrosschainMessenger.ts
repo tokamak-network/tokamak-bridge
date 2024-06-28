@@ -26,12 +26,12 @@ export default function useCrosschainMessenger() {
           layer === "L1"
             ? isConnectedToMainNetwork
               ? new ethers.providers.JsonRpcProvider(
-                  process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+                  process.env.NEXT_PUBLIC_ETHEREUM_RPC
                 )
               : l1Pro.getSigner(address)
             : new ethers.providers.JsonRpcProvider(
                 isConnectedToMainNetwork
-                  ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+                  ? process.env.NEXT_PUBLIC_ETHEREUM_RPC
                   : process.env.NEXT_PUBLIC_SEPOLIA_RPC
               ).getSigner(address),
         l2SignerOrProvider: l2Pro.getSigner(address),
@@ -51,7 +51,7 @@ export default function useCrosschainMessenger() {
             ? l1Pro.getSigner(address)
             : new ethers.providers.JsonRpcProvider(
                 isConnectedToMainNetwork
-                  ? process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+                  ? process.env.NEXT_PUBLIC_ETHEREUM_RPC
                   : process.env.NEXT_PUBLIC_SEPOLIA_RPC
               ).getSigner(address),
         l2SignerOrProvider: l2Pro.getSigner(address),

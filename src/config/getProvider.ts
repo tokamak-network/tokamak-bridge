@@ -5,7 +5,7 @@ import {
 import { ethers } from "ethers";
 
 const EthereumProvider = new ethers.providers.JsonRpcProvider(
-  process.env.NEXT_PUBLIC_INFURA_RPC_ETHEREUM
+  process.env.NEXT_PUBLIC_ETHEREUM_RPC
 );
 const TitanProvider = new ethers.providers.JsonRpcProvider(
   process.env.NEXT_PUBLIC_TITAN_RPC
