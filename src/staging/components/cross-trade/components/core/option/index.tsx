@@ -12,19 +12,19 @@ import {
 import { useState, useEffect } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
-import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import {
   WarningType,
   ButtonTypeMain,
   ButtonTypeSub,
 } from "@/staging/components/cross-trade/types";
+import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
+import { Action, Status } from "@/staging/types/transaction";
 import CTOptionCrossDetail from "./CTOptionCrossDetail";
 import CTOptionStandardDetail from "./CTOptionStandardDetail";
 import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
-  const { onOpenCTConfirmModal } = useFxConfirmModal();
 
   // CTConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
@@ -83,9 +83,15 @@ export default function CTOptionModal() {
     setInputWarningCheck("");
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = useHandleConfirm();
+
+  const handleClickConfirm = () => {
     // 시연을 위한 초기화 추후 삭제
     resetAllStates();
+
+    if (activeMainButtonValue === ButtonTypeMain.Standard) {
+      handleConfirm(Action.Withdraw, Status.Initiate);
+    }
   };
 
   return (
@@ -145,7 +151,7 @@ export default function CTOptionModal() {
             _hover={{}}
             _active={{}}
             _focus={{}}
-            onClick={handleConfirm}
+            onClick={handleClickConfirm}
             isDisabled={shouldShowEnterAmount}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
