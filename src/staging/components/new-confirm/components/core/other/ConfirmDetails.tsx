@@ -13,6 +13,7 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
+import { convertNumber } from "@/utils/trim/convertNumber";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -109,8 +110,14 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                 }}
                 value={
                   isInNetwork
-                    ? transactionHistory.inToken.amount
-                    : transactionHistory.outToken.amount
+                    ? convertNumber(
+                        transactionHistory.inToken.amount,
+                        transactionHistory.inToken.decimals
+                      )
+                    : convertNumber(
+                        transactionHistory.outToken.amount,
+                        transactionHistory.outToken.decimals
+                      )
                 }
                 tokenSymbol={
                   isInNetwork

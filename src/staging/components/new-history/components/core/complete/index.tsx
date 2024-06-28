@@ -36,7 +36,7 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
         >
-          {transactionData.action} completed
+          {transactionData.action}
         </Text>
         <TokenPair
           networkI={transactionData.inNetwork}

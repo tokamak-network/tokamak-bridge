@@ -143,6 +143,8 @@ export default function CTOptionModal() {
               color: shouldShowEnterAmount ? "#8E8E92" : "#FFFFFF",
             }}
             _hover={{}}
+            _active={{}}
+            _focus={{}}
             onClick={handleConfirm}
             isDisabled={shouldShowEnterAmount}
           >

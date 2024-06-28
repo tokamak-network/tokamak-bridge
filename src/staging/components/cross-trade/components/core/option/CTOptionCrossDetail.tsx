@@ -98,6 +98,8 @@ export default function CTOptionCrossDetail(
                 opacity: isDisabledRecommend ? 0.3 : 1,
               }}
               _hover={{}}
+              _active={{}}
+              _focus={{}}
               onClick={() =>
                 props.handleButtonSubClick(ButtonTypeSub.Recommend)
               }
@@ -139,6 +141,8 @@ export default function CTOptionCrossDetail(
                 },
               }}
               _hover={{}}
+              _active={{}}
+              _focus={{}}
               onClick={() => props.handleButtonSubClick(ButtonTypeSub.Advanced)}
               isDisabled={isAdvancedActive}
             >
@@ -183,9 +187,9 @@ export default function CTOptionCrossDetail(
             lineHeight={"15px"}
             color={"#A0A3AD"}
           >
-            It can be received faster depending on
+            Trade for a token on a different layer,
             <br />
-            the liquidity provider situation.
+            subject to the availability of liquidity providers.
           </Text>
         </Box>
       </Box>
