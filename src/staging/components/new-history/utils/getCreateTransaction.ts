@@ -9,7 +9,6 @@ import {
 } from "@/staging/types/transaction";
 
 import { Resolved } from "@/types/activity/history";
-import { StateBatchAppended } from "@/utils/history/getCurrentStatus";
 
 // Withdraw 트랜잭션 생성 함수
 export function createWithdrawTransaction(
