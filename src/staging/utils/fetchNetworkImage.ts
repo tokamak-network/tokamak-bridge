@@ -10,10 +10,7 @@ const fetchNetworkImage = (network: number) => {
   ) {
     return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
   }
-  if (
-    network === SupportedChainId.THANOS ||
-    network === SupportedChainId.THANOS_SEPOLIA
-  ) {
+  if (network === SupportedChainId.THANOS_SEPOLIA) {
     return { src: ThanosNetworkSymbol, alt: "ThanosNetworkSymbol" };
   }
   return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };

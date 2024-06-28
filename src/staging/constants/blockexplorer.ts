@@ -16,7 +16,4 @@ export const BLOCKEXPLORER_CONSTANTS = {
   [SupportedChainId.THANOS_SEPOLIA]:
     process.env.NEXT_PUBLIC_THANOS_SEPOLIA_BLOCKEXPLORER ||
     "https://explorer.thanos-sepolia.tokamak.network",
-  [SupportedChainId.THANOS]:
-    process.env.NEXT_PUBLIC_THANOS_BLOCKEXPLORER ||
-    "https://explorer.thanos.tokamak.network",
 };
