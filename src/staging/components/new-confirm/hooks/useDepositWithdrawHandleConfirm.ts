@@ -20,7 +20,7 @@ export const useHandleConfirm = () => {
       address: inToken.address[inNetwork?.chainName] as string,
       name: inToken.tokenName as string,
       symbol: inToken.tokenSymbol as string,
-      amount: inToken.parsedAmount as string,
+      amount: String(inToken.amountBN) as string,
       decimals: inToken.decimals,
     };
 
@@ -28,7 +28,7 @@ export const useHandleConfirm = () => {
       address: inToken.address[outNetwork?.chainName] as string,
       name: inToken.tokenName as string,
       symbol: inToken.tokenSymbol as string,
-      amount: inToken.parsedAmount as string,
+      amount: String(inToken.amountBN) as string,
       decimals: inToken.decimals,
     };
 
