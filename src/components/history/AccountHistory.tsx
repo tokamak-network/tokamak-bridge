@@ -24,13 +24,16 @@ import {
   selectedTab,
   selectedTransactionCategory,
 } from "@/recoil/history/transaction";
+import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
+import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const { mobileView } = useMediaView();
-  const [_selectedTab, setSelectedTab] = useRecoilState(selectedTab);
+  const [, setSelectedTab] = useRecoilState(selectedTab);
+  const { isOnOfficialStandard, isOnCrossTrade } = useHistoryTab();
   const [_selectedTransactionCategory, setSelectedTransactionCategory] =
     useRecoilState(selectedTransactionCategory);
 
@@ -41,7 +44,45 @@ export default function AccountHistory() {
   }, [address]);
 
   const subCategoryButtons = useMemo(() => {
-    if (_selectedTab === "CorssTrade") return null;
+    if (!isOnOfficialStandard) {
+      const isRequest = _selectedTransactionCategory === CT_ACTION.REQUEST;
+      return (
+        <Flex mt={"16px"} mb={"12px"} columnGap={"8px"}>
+          <Button
+            w={"77px"}
+            h={"32px"}
+            textAlign={"center"}
+            fontSize={13}
+            fontWeight={400}
+            color={isRequest ? "none" : "#A0A3AD"}
+            bg={isRequest ? "#007AFF" : "none"}
+            border={isRequest ? "none" : "1px solid #313442"}
+            lineHeight={"32px"}
+            _hover={{}}
+            _active={{}}
+            onClick={() => setSelectedTransactionCategory(CT_ACTION.REQUEST)}
+          >
+            Request
+          </Button>
+          <Button
+            w={"73px"}
+            h={"32px"}
+            textAlign={"center"}
+            fontSize={13}
+            fontWeight={400}
+            color={!isRequest ? "none" : "#A0A3AD"}
+            bg={!isRequest ? "#007AFF" : "none"}
+            border={!isRequest ? "none" : "1px solid #313442"}
+            lineHeight={"32px"}
+            _hover={{}}
+            _active={{}}
+            onClick={() => setSelectedTransactionCategory(CT_ACTION.PROVIDE)}
+          >
+            Provide
+          </Button>
+        </Flex>
+      );
+    }
     const isDeposit = _selectedTransactionCategory === "Deposit";
     return (
       <Flex mt={"16px"} mb={"12px"} columnGap={"8px"}>
@@ -57,7 +98,7 @@ export default function AccountHistory() {
           lineHeight={"32px"}
           _hover={{}}
           _active={{}}
-          onClick={() => setSelectedTransactionCategory("Deposit")}
+          onClick={() => setSelectedTransactionCategory(Action.Deposit)}
         >
           Deposit
         </Button>
@@ -73,22 +114,22 @@ export default function AccountHistory() {
           lineHeight={"32px"}
           _hover={{}}
           _active={{}}
-          onClick={() => setSelectedTransactionCategory("Withdraw")}
+          onClick={() => setSelectedTransactionCategory(Action.Withdraw)}
         >
           Withdraw
         </Button>
       </Flex>
     );
-  }, [_selectedTab, _selectedTransactionCategory]);
+  }, [isOnOfficialStandard, _selectedTransactionCategory]);
 
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement='right'
+      placement="right"
       onClose={() => {
         setIsOpen(false);
       }}
-      variant='clickThrough'
+      variant="clickThrough"
       trapFocus={false}
       useInert={true}
     >
@@ -110,15 +151,15 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px='12px'
-        pb='0px'
+        px="12px"
+        pb="0px"
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
         bgColor={"#1F2128"}
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
       >
-        <Flex direction='column' height='100%' overflow='hidden'>
+        <Flex direction="column" height="100%" overflow="hidden">
           {!mobileView && <AccountContainer />}
           <Flex
             w={"336px"}
@@ -134,15 +175,14 @@ export default function AccountHistory() {
               fontWeight={600}
               py={"10px"}
               cursor={"pointer"}
-              color={
-                _selectedTab === "OfficialStandard" ? "#007AFF" : "#565B72"
-              }
+              color={isOnOfficialStandard ? "#007AFF" : "#565B72"}
               borderBottom={
-                _selectedTab === "OfficialStandard"
-                  ? "1px solid #007AFF"
-                  : "1px solid #1F2128"
+                isOnOfficialStandard ? "1px solid #007AFF" : "1px solid #1F2128"
               }
-              onClick={() => setSelectedTab("OfficialStandard")}
+              onClick={() => {
+                setSelectedTransactionCategory(Action.Deposit);
+                setSelectedTab(HISTORY_SORT.STANDARD);
+              }}
             >
               Official Standard
             </Box>
@@ -153,22 +193,23 @@ export default function AccountHistory() {
               fontWeight={600}
               py={"10px"}
               cursor={"pointer"}
-              color={_selectedTab === "CorssTrade" ? "#007AFF" : "#565B72"}
+              color={isOnCrossTrade ? "#007AFF" : "#565B72"}
               borderBottom={
-                _selectedTab === "CorssTrade"
-                  ? "1px solid #007AFF"
-                  : "1px solid #1F2128"
+                isOnCrossTrade ? "1px solid #007AFF" : "1px solid #1F2128"
               }
-              onClick={() => setSelectedTab("CorssTrade")}
+              onClick={() => {
+                setSelectedTransactionCategory(CT_ACTION.REQUEST);
+                setSelectedTab(HISTORY_SORT.CROSS_TRADE);
+              }}
             >
               Cross Trade
             </Box>
           </Flex>
           {subCategoryButtons}
-          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
+          <Flex mt={{ base: "0px", lg: "12px" }} flex="1" overflow="hidden">
             <Box
-              flex='1'
-              overflowY='auto'
+              flex="1"
+              overflowY="auto"
               css={{
                 "&::-webkit-scrollbar": {
                   width: "6px",
@@ -182,7 +223,7 @@ export default function AccountHistory() {
                   borderRadius: "3px",
                 },
               }}
-              mr='-6px'
+              mr="-6px"
             >
               <AccountHistoryNew />
             </Box>
@@ -196,7 +237,7 @@ export default function AccountHistory() {
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg='transparent'
+          bg="transparent"
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}

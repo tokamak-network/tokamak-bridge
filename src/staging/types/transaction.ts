@@ -2,9 +2,19 @@ import { Resolved } from "@/types/activity/history";
 import { StateBatchAppended } from "@/utils/history/getCurrentStatus";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
+export enum HISTORY_SORT {
+  STANDARD,
+  CROSS_TRADE,
+}
+
 export enum Action {
   Withdraw = "Withdraw",
   Deposit = "Deposit",
+}
+
+export enum CT_ACTION {
+  REQUEST,
+  PROVIDE,
 }
 
 export enum Status {
@@ -15,6 +25,23 @@ export enum Status {
   Completed = "Completed",
 }
 
+export enum CT_REQUEST {
+  Request = "CT_REQ_REQUEST",
+  UpdateFee = "CT_REQ_UPDATE_FEE",
+  WaitForReceive = "CT_REQ_WAIT_FOR_RECEIVE",
+  Completed = "CT_REQ_COMPLETED",
+  CancelRequest = "CT_REQ_CANCEL_REQUEST",
+  Refund = "CT_REQ_REFUND",
+}
+
+export enum CT_PROVIDE {
+  Provide = "CT_PRO_PROVIDE",
+  Return = "CT_PRO_RETURN",
+  Completed = "CT_PRO_COMPLETED",
+}
+
+export type CT_Status = CT_REQUEST | CT_PROVIDE;
+export type HISTORY_TRANSACTION_STATUS = Status | CT_Status;
 export interface TransactionToken {
   address: string;
   name: string;
@@ -32,7 +59,15 @@ export interface BaseTransactionHistory {
   outToken: TransactionToken;
   errorMessage?: string | null;
 }
-
+export interface BaseCTTransactionHistory {
+  action: CT_ACTION;
+  status: CT_Status;
+  inNetwork: SupportedChainId;
+  outNetwork: SupportedChainId;
+  inToken: TransactionToken;
+  outToken: TransactionToken;
+  errorMessage?: string | null;
+}
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;
   status: Status;
@@ -63,9 +98,45 @@ export interface DepositTransactionHistory extends BaseTransactionHistory {
   };
 }
 
-export type TransactionHistory =
+export interface CT_Request_History extends BaseCTTransactionHistory {
+  action: CT_ACTION.REQUEST;
+  blockTimestamps: {
+    request: number;
+    updateFee?: number[];
+    waitForReceive?: number;
+    cancelRequest?: number;
+    refund?: number;
+    completed?: number;
+  };
+  transactionHashes: {
+    request: string;
+    updateFee?: string[];
+    waitForReceive?: string;
+    cancelRequest?: string;
+    refund?: string;
+    completed?: string;
+  };
+}
+export interface CT_Provide_History extends BaseCTTransactionHistory {
+  action: CT_ACTION.PROVIDE;
+  blockTimestamps: {
+    provide: number;
+    return?: number;
+    completed?: number;
+  };
+  transactionHashes: {
+    provide: string;
+    return?: string;
+    completed?: string;
+  };
+}
+
+export type StandardHistory =
   | WithdrawTransactionHistory
   | DepositTransactionHistory;
+export type CT_History = CT_Request_History | CT_Provide_History;
+
+export type TransactionHistory = StandardHistory | CT_History;
 
 export function isWithdrawTransactionHistory(
   transaction: TransactionHistory
@@ -91,6 +162,12 @@ export function isDepositTransactionHistory(
   );
 }
 
+export function isInCT_REQUEST(value: HISTORY_TRANSACTION_STATUS): boolean {
+  return Object.values(CT_REQUEST).includes(value as CT_REQUEST);
+}
+export function isInCT_Provide(value: HISTORY_TRANSACTION_STATUS): boolean {
+  return Object.values(CT_PROVIDE).includes(value as CT_PROVIDE);
+}
 export interface GasCostData {
   withdrawInitiateGasCostText?: string;
   withdrawInitiateGasCostUS?: string;

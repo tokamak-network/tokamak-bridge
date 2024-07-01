@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { use, useMemo } from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
@@ -6,16 +6,19 @@ import {
   TransactionHistory,
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
+  CT_ACTION,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 import { convertNumber } from "@/utils/trim/convertNumber";
+import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
+  const { isOnOfficialStandard } = useHistoryTab();
 
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {
@@ -27,6 +30,21 @@ export default function Complete(transaction: TransactionHistory) {
     return null;
   }, [transactionData]);
 
+  const title = useMemo(() => {
+    switch (transactionData.action) {
+      case "Withdraw":
+        return "Withdraw";
+      case "Deposit":
+        return "Deposit";
+      case CT_ACTION.REQUEST:
+        return "Request";
+      case CT_ACTION.PROVIDE:
+        return "Provide";
+      default:
+        return "-";
+    }
+  }, [transactionData.action]);
+
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -36,7 +54,7 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
         >
-          {transactionData.action}
+          {title}
         </Text>
         <TokenPair
           networkI={transactionData.inNetwork}
@@ -53,9 +71,14 @@ export default function Complete(transaction: TransactionHistory) {
         py={"4px"}
         my={"4px"}
         borderRadius={"6px"}
-        border={"1px solid rgba(0, 122, 255, 0.40)"}
+        borderWidth={"1px"}
+        borderColor={
+          isOnOfficialStandard
+            ? "rgba(0, 122, 255, 0.4)"
+            : "rgba(219, 0, 255, 0.4)"
+        }
       >
-        <Flex alignItems='center'>
+        <Flex alignItems="center">
           <TokenSymbol
             w={22}
             h={22}
@@ -75,7 +98,7 @@ export default function Complete(transaction: TransactionHistory) {
                   transactionData.inToken.decimals
                 )}
               />
-              <Box w='4px' /> {/** space bar */}
+              <Box w="4px" /> {/** space bar */}
               <Text
                 fontWeight={400}
                 fontSize={"14px"}

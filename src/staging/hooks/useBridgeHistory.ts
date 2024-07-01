@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Action,
+  CT_ACTION,
+  CT_History,
+  CT_PROVIDE,
+  CT_Provide_History,
+  CT_REQUEST,
+  CT_Request_History,
   DepositTransactionHistory,
   TransactionHistory,
   WithdrawTransactionHistory,
@@ -21,7 +27,7 @@ import {
   getCurretStatus,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { ethers, utils } from "ethers";
+import { utils } from "ethers";
 import { getDecodeLog } from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
@@ -335,9 +341,159 @@ export const useDepositData = () => {
   return { depositHistory };
 };
 
+export const useRequestData = () => {
+  const [requestHistory, setRequestHistory] = useState<
+    CT_Request_History[] | [] | null
+  >(null);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { l1Data } = useSubgraph();
+
+  useEffect(() => {
+    setRequestHistory([
+      {
+        action: CT_ACTION.REQUEST,
+        status: CT_REQUEST.Completed,
+        blockTimestamps: {
+          request: 0,
+          updateFee: [0],
+          waitForReceive: 0,
+          completed: 0,
+        },
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          request: "",
+          updateFee: [""],
+          waitForReceive: "",
+          completed: "",
+        },
+      },
+      {
+        action: CT_ACTION.REQUEST,
+        status: CT_REQUEST.WaitForReceive,
+        blockTimestamps: {
+          request: 0,
+          updateFee: [0],
+          waitForReceive: 0,
+        },
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          request: "",
+          updateFee: [""],
+          waitForReceive: "",
+        },
+      },
+    ]);
+  }, []);
+
+  return { requestHistory };
+};
+
+export const useProvideData = () => {
+  const [provideHistory, setProvideHistory] = useState<
+    CT_Provide_History[] | [] | null
+  >(null);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { l1Data } = useSubgraph();
+
+  useEffect(() => {
+    setProvideHistory([
+      {
+        action: CT_ACTION.PROVIDE,
+        status: CT_PROVIDE.Completed,
+        blockTimestamps: {
+          provide: 0,
+          return: 0,
+          completed: 0,
+        },
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          provide: "",
+          return: "",
+          completed: "",
+        },
+      },
+      {
+        action: CT_ACTION.PROVIDE,
+        status: CT_PROVIDE.Provide,
+        blockTimestamps: {
+          provide: 0,
+        },
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          provide: "",
+        },
+      },
+    ]);
+  }, []);
+
+  return { provideHistory };
+};
+
 export const useBridgeHistory = () => {
   const { depositHistory } = useDepositData();
   const { withdrawHistory } = useWithdrawData();
+  const { requestHistory } = useRequestData();
+  const { provideHistory } = useProvideData();
 
   const bridgeHistoryData = useMemo(() => {
     if (depositHistory && withdrawHistory) {
@@ -351,5 +507,24 @@ export const useBridgeHistory = () => {
     }
   }, [depositHistory, withdrawHistory]);
 
-  return { depositHistory, withdrawHistory, bridgeHistoryData };
+  const CT_HistoryData = useMemo(() => {
+    if (requestHistory && provideHistory) {
+      // Ensure both arrays are of a compatible type
+      const combinedHistory: CT_History[] = [
+        ...(requestHistory as CT_Request_History[]),
+        ...(provideHistory as CT_Provide_History[]),
+      ];
+
+      return combinedHistory;
+    }
+  }, [requestHistory, provideHistory]);
+
+  return {
+    depositHistory,
+    withdrawHistory,
+    bridgeHistoryData,
+    requestHistory,
+    provideHistory,
+    CT_HistoryData,
+  };
 };

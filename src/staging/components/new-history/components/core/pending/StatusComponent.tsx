@@ -7,6 +7,12 @@ import {
   Status,
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
+  HISTORY_TRANSACTION_STATUS,
+  WithdrawTransactionHistory,
+  CT_REQUEST,
+  isInCT_REQUEST,
+  isInCT_Provide,
+  CT_PROVIDE,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
@@ -21,16 +27,88 @@ import Refresh from "@/assets/icons/newHistory/refresh.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 import { useFinalize } from "@/hooks/history/useFinalize";
+import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
-interface TransactionStatusComponentProps {
-  label: string;
+type TransactionStatusComponentProps = {
+  label: HISTORY_TRANSACTION_STATUS;
   transactionData: TransactionHistory;
-}
+};
+
+const ErrorRollupComponent = () => {
+  return (
+    <Flex
+      w={"18px"}
+      h={"18px"}
+      ml={"2px"}
+      justifyContent={"center"}
+      cursor={"pointer"}
+    >
+      <Image src={Lightbulb} alt={"Lightbulb"} />
+    </Flex>
+  );
+};
+const RefreshRollupComponent = () => {
+  return (
+    <Flex
+      w={"18px"}
+      h={"18px"}
+      ml={"2px"}
+      justifyContent={"center"}
+      cursor={"pointer"}
+    >
+      <Image src={Refresh} alt={"Refresh"} />
+    </Flex>
+  );
+};
+const CalenderButtonComponent = (props: {
+  handleCalendarClick: () => void;
+}) => {
+  return (
+    <Flex
+      w={"18px"}
+      h={"18px"}
+      ml={"6px"}
+      justifyContent={"center"}
+      cursor={"pointer"}
+      onClick={props.handleCalendarClick}
+    >
+      <Image src={GoogleCalendar} alt={"GoogleCalendar"} />
+    </Flex>
+  );
+};
+const FinalizeButtonComponent = (props: {
+  transactionData: WithdrawTransactionHistory;
+}) => {
+  const { callToFinalize } = useFinalize(props.transactionData);
+
+  return (
+    <Button
+      w={"60px"}
+      h={"22px"}
+      px={"9px"}
+      py={"8px"}
+      justifyContent={"center"}
+      gap={"8px"}
+      flexShrink={0}
+      borderRadius={"4px"}
+      bg={"#007AFF"}
+      _active={{}}
+      _hover={{}}
+      _focus={{}}
+      onClick={callToFinalize}
+    >
+      <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
+        Finalize
+      </Text>
+    </Button>
+  );
+};
 
 export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
   const { label, transactionData } = props;
+
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const isActive = transactionData.status === label;
@@ -110,17 +188,50 @@ export default function StatusComponent(
     label === Status.Finalize &&
     timeDisplay === "00 : 00" &&
     transactionData.action === Action.Withdraw;
+  const { isOnOfficialStandard } = useHistoryTab();
 
-  const { callToFinalize } = useFinalize(
-    claimReadyButton ? transactionData : undefined
-  );
+  const statusTitle = useMemo(() => {
+    if (isInCT_REQUEST(label)) {
+      switch (label) {
+        case CT_REQUEST.Request:
+          return "Request";
+        case CT_REQUEST.UpdateFee:
+          return "Update Fee";
+        case CT_REQUEST.WaitForReceive:
+          return "Wait For Receive";
+        case CT_REQUEST.Refund:
+          return "Refund";
+        case CT_REQUEST.CancelRequest:
+          return undefined;
+        default:
+          return undefined;
+      }
+    }
+    if (isInCT_Provide(label)) {
+      switch (label) {
+        case CT_PROVIDE.Provide:
+          return "Provide liquidity";
+        case CT_PROVIDE.Return:
+          return "Return liquidity";
+        default:
+          return undefined;
+      }
+    }
+    return label;
+  }, [label]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>
       <Flex alignItems="center">
         <Circle
           size="6px"
-          bg={!isActive && label === Status.Finalize ? "#A0A3AD" : "#007AFF"}
+          bg={
+            !isActive && label === Status.Finalize
+              ? "#A0A3AD"
+              : isOnOfficialStandard
+              ? "#007AFF"
+              : "#DB00FF"
+          }
         />
         <Text
           ml={"6px"}
@@ -129,30 +240,12 @@ export default function StatusComponent(
           lineHeight={"22px"}
           color={isActive ? "#FFFFFF" : "#A0A3AD"}
         >
-          {label}
+          {statusTitle}
         </Text>
       </Flex>
       <Flex alignItems="center">
         {claimReadyButton ? (
-          <Button
-            w={"60px"}
-            h={"22px"}
-            px={"9px"}
-            py={"8px"}
-            justifyContent={"center"}
-            gap={"8px"}
-            flexShrink={0}
-            borderRadius={"4px"}
-            bg={"#007AFF"}
-            _active={{}}
-            _hover={{}}
-            _focus={{}}
-            onClick={callToFinalize}
-          >
-            <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
-              Finalize
-            </Text>
-          </Button>
+          <FinalizeButtonComponent transactionData={transactionData} />
         ) : (
           <Text
             fontSize={"11px"}
@@ -169,39 +262,10 @@ export default function StatusComponent(
             {timeDisplay}
           </Text>
         )}
-        {errorRollup && (
-          <Flex
-            w={"18px"}
-            h={"18px"}
-            ml={"2px"}
-            justifyContent={"center"}
-            cursor={"pointer"}
-          >
-            <Image src={Lightbulb} alt={"Lightbulb"} />
-          </Flex>
-        )}
-        {refreshRollup && (
-          <Flex
-            w={"18px"}
-            h={"18px"}
-            ml={"2px"}
-            justifyContent={"center"}
-            cursor={"pointer"}
-          >
-            <Image src={Refresh} alt={"Refresh"} />
-          </Flex>
-        )}
+        {errorRollup && <ErrorRollupComponent />}
+        {refreshRollup && <RefreshRollupComponent />}
         {calendarButton && (
-          <Flex
-            w={"18px"}
-            h={"18px"}
-            ml={"6px"}
-            justifyContent={"center"}
-            cursor={"pointer"}
-            onClick={handleCalendarClick}
-          >
-            <Image src={GoogleCalendar} alt={"GoogleCalendar"} />
-          </Flex>
+          <CalenderButtonComponent handleCalendarClick={handleCalendarClick} />
         )}
       </Flex>
     </Flex>

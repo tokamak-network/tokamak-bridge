@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 
 import { Flex, Box, Text, Link, Spacer } from "@chakra-ui/react";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
@@ -6,22 +6,35 @@ import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import { TransactionHistory } from "@/staging/types/transaction";
+import { CT_ACTION, TransactionHistory } from "@/staging/types/transaction";
 import PendingFooter from "./PendingFooter";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 
 interface PendingProps {
   transaction: TransactionHistory;
-  transactionHash: string | undefined;
 }
 
-// 코멘트
 export default function Pending(props: PendingProps) {
-  const { transaction, transactionHash } = props;
+  const { transaction } = props;
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const transactionData = transaction;
+
+  const title = useMemo(() => {
+    switch (transactionData.action) {
+      case "Withdraw":
+        return "Withdraw";
+      case "Deposit":
+        return "Deposit";
+      case CT_ACTION.REQUEST:
+        return "Request";
+      case CT_ACTION.PROVIDE:
+        return "Provide";
+      default:
+        return "-";
+    }
+  }, [transactionData.action]);
 
   return (
     <>
@@ -32,7 +45,7 @@ export default function Pending(props: PendingProps) {
           lineHeight={"22px"}
           color={"#FFFFFF"}
         >
-          {transactionData.action}
+          {title}
         </Text>
         <Flex
           cursor={"pointer"}
@@ -52,7 +65,7 @@ export default function Pending(props: PendingProps) {
         borderRadius={"6px"}
         border={"1px solid rgba(0, 122, 255, 0.40)"}
       >
-        <Flex alignItems='center'>
+        <Flex alignItems="center">
           <TokenSymbol
             w={22}
             h={22}
@@ -72,7 +85,7 @@ export default function Pending(props: PendingProps) {
                   transactionData.inToken.decimals
                 )}
               />
-              <Box w='4px' /> {/** space bar */}
+              <Box w="4px" /> {/** space bar */}
               <Text
                 fontWeight={400}
                 fontSize={"14px"}

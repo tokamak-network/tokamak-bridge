@@ -1,3 +1,4 @@
+import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { atom } from "recoil";
 
 export const userTransactions = atom<any>({
@@ -5,12 +6,12 @@ export const userTransactions = atom<any>({
   default: undefined,
 });
 
-export const selectedTab = atom<"OfficialStandard" | "CorssTrade">({
+export const selectedTab = atom<HISTORY_SORT>({
   key: "selectedTab",
-  default: "OfficialStandard",
+  default: HISTORY_SORT.STANDARD,
 });
 
-export const selectedTransactionCategory = atom<"Deposit" | "Withdraw">({
+export const selectedTransactionCategory = atom<Action | CT_ACTION>({
   key: "selectedTransactionCategory",
-  default: "Deposit",
+  default: Action.Deposit,
 });

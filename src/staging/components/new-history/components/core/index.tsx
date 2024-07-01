@@ -1,13 +1,11 @@
-import React, { useEffect, useMemo, useState } from "react";
-
-import axios from "axios";
+import React, { useMemo } from "react";
 import { Flex, Box } from "@chakra-ui/react";
 import {
-  TransactionHistory,
-  Status,
   Action,
-  isWithdrawTransactionHistory,
-  isDepositTransactionHistory,
+  CT_ACTION,
+  CT_PROVIDE,
+  CT_REQUEST,
+  Status,
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history/components/core/pending";
 import Complete from "@/staging/components/new-history/components/core/complete";
@@ -16,44 +14,39 @@ import { useRecoilValue } from "recoil";
 import { selectedTransactionCategory } from "@/recoil/history/transaction";
 
 export default function AccountHistoryNew() {
-  const { depositHistory, withdrawHistory } = useBridgeHistory();
+  const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
+    useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
 
   const historyData = useMemo(() => {
-    if (_selectedTransactionCategory === "Deposit") return depositHistory;
-    if (_selectedTransactionCategory === "Withdraw") return withdrawHistory;
-  }, [_selectedTransactionCategory, depositHistory, withdrawHistory]);
-
-  // The last available hash becomes the transaction key.
-  const getTransactionKey = (transaction: TransactionHistory) => {
-    if (isWithdrawTransactionHistory(transaction)) {
-      const {
-        initialTransactionHash,
-        rollupTransactionHash,
-        finalizedTransactionHash,
-      } = transaction.transactionHashes;
-      return (
-        finalizedTransactionHash ||
-        rollupTransactionHash ||
-        initialTransactionHash
-      );
+    switch (_selectedTransactionCategory) {
+      case Action.Deposit:
+        return depositHistory;
+      case Action.Withdraw:
+        return withdrawHistory;
+      case CT_ACTION.REQUEST:
+        return requestHistory;
+      case CT_ACTION.PROVIDE:
+        return provideHistory;
+      default:
+        return;
     }
-    if (isDepositTransactionHistory(transaction)) {
-      const { initialTransactionHash, finalizedTransactionHash } =
-        transaction.transactionHashes;
-      return finalizedTransactionHash || initialTransactionHash;
-    }
-  };
+  }, [
+    _selectedTransactionCategory,
+    depositHistory,
+    withdrawHistory,
+    requestHistory,
+    provideHistory,
+  ]);
 
   return (
-    <Flex flexDirection='column' gap='2'>
+    <Flex flexDirection="column" gap="2">
       {historyData?.map((transaction, index) => {
-        const transactionHash = getTransactionKey(transaction);
         return (
           <Box
-            // key={transactionHash}
+            key={transaction.transactionHashes.initialTransactionHash}
             w={"336px"}
             px={"12px"}
             py={"8px"}
@@ -62,13 +55,12 @@ export default function AccountHistoryNew() {
             bg={"#15161D"}
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
-            {transaction.status === Status.Completed ? (
+            {transaction.status === Status.Completed ||
+            transaction.status === CT_REQUEST.Completed ||
+            transaction.status === CT_PROVIDE.Completed ? (
               <Complete {...transaction} />
             ) : (
-              <Pending
-                transaction={transaction}
-                transactionHash={`${transactionHash}_${index}`}
-              />
+              <Pending transaction={transaction} />
             )}
           </Box>
         );
