@@ -75,7 +75,7 @@ export default function Complete(transaction: TransactionHistory) {
         borderColor={
           isOnOfficialStandard
             ? "rgba(0, 122, 255, 0.4)"
-            : "rgba(219, 0, 255, 0.4)"
+            : "rgba(219, 0, 255, 0.40)"
         }
       >
         <Flex alignItems="center">

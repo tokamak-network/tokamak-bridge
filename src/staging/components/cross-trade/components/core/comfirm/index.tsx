@@ -66,6 +66,7 @@ export default function CTModal() {
           <CTConfirmDetail
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
+            txData={ctConfirmModal.txData}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">

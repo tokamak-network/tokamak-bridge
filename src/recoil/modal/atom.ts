@@ -86,6 +86,7 @@ export const ctConfirmModalStatus = atom<CTConfirmModalType>({
   default: {
     isOpen: false,
     type: ModalType.Trade,
+    txData: null,
   },
 });
 

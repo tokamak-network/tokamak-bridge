@@ -13,6 +13,8 @@ import {
   isInCT_REQUEST,
   isInCT_Provide,
   CT_PROVIDE,
+  CT_REQUEST_CANCEL,
+  isInCT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
@@ -199,12 +201,18 @@ export default function StatusComponent(
           return "Update Fee";
         case CT_REQUEST.WaitForReceive:
           return "Wait For Receive";
-        case CT_REQUEST.Refund:
-          return "Refund";
-        case CT_REQUEST.CancelRequest:
-          return undefined;
         default:
-          return undefined;
+          return;
+      }
+    }
+    if (isInCT_REQUEST_CANCEL(label)) {
+      switch (label) {
+        case CT_REQUEST_CANCEL.Request:
+          return "Request";
+        case CT_REQUEST_CANCEL.Refund:
+          return "Refund";
+        default:
+          return;
       }
     }
     if (isInCT_Provide(label)) {
@@ -214,7 +222,7 @@ export default function StatusComponent(
         case CT_PROVIDE.Return:
           return "Return liquidity";
         default:
-          return undefined;
+          return;
       }
     }
     return label;

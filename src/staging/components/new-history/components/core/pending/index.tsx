@@ -18,6 +18,7 @@ import { convertNumber } from "@/utils/trim/convertNumber";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { ModalType } from "@/staging/components/cross-trade/types";
+import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
 interface PendingProps {
   transaction: TransactionHistory;
@@ -58,6 +59,8 @@ export default function Pending(props: PendingProps) {
     }
   }, [transactionData]);
 
+  const { isOnOfficialStandard } = useHistoryTab();
+
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -82,7 +85,12 @@ export default function Pending(props: PendingProps) {
         my={"4px"}
         gap={"6px"}
         borderRadius={"6px"}
-        border={"1px solid rgba(0, 122, 255, 0.40)"}
+        borderWidth={"1px"}
+        borderColor={
+          isOnOfficialStandard
+            ? "rgba(0, 122, 255, 0.4)"
+            : "rgba(219, 0, 255, 0.40)"
+        }
       >
         <Flex alignItems="center">
           <TokenSymbol

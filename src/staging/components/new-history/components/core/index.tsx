@@ -5,6 +5,7 @@ import {
   CT_ACTION,
   CT_PROVIDE,
   CT_REQUEST,
+  CT_REQUEST_CANCEL,
   Status,
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history/components/core/pending";
@@ -81,6 +82,7 @@ export default function AccountHistoryNew() {
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {transaction.status === Status.Completed ||
             transaction.status === CT_REQUEST.Completed ||
+            transaction.status === CT_REQUEST_CANCEL.Completed ||
             transaction.status === CT_PROVIDE.Completed ? (
               <Complete {...transaction} />
             ) : (

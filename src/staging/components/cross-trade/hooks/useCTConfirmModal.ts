@@ -17,7 +17,7 @@ export default function useCTConfirm() {
   };
 
   const onCloseCTConfirmModal = useCallback(() => {
-    setCTConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    setCTConfirmModal((prev) => ({ ...prev, isOpen: false, txData: null }));
   }, []);
 
   return {

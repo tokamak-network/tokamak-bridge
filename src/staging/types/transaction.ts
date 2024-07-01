@@ -30,17 +30,19 @@ export enum CT_REQUEST {
   UpdateFee = "CT_REQ_UPDATE_FEE",
   WaitForReceive = "CT_REQ_WAIT_FOR_RECEIVE",
   Completed = "CT_REQ_COMPLETED",
-  CancelRequest = "CT_REQ_CANCEL_REQUEST",
-  Refund = "CT_REQ_REFUND",
 }
-
+export enum CT_REQUEST_CANCEL {
+  Request = "CT_REQ_REQUEST",
+  Refund = "CT_REQ_REFUND",
+  Completed = "CT_REQ_CANCEL_COMPLETED",
+}
 export enum CT_PROVIDE {
   Provide = "CT_PRO_PROVIDE",
   Return = "CT_PRO_RETURN",
   Completed = "CT_PRO_COMPLETED",
 }
 
-export type CT_Status = CT_REQUEST | CT_PROVIDE;
+export type CT_Status = CT_REQUEST | CT_REQUEST_CANCEL | CT_PROVIDE;
 export type HISTORY_TRANSACTION_STATUS = Status | CT_Status;
 export interface TransactionToken {
   address: string;
@@ -99,6 +101,7 @@ export interface DepositTransactionHistory extends BaseTransactionHistory {
 
 export interface CT_Request_History extends BaseCTTransactionHistory {
   action: CT_ACTION.REQUEST;
+  isCanceled: boolean;
   blockTimestamps: {
     request: number;
     updateFee?: number[];
@@ -164,8 +167,21 @@ export function isDepositTransactionHistory(
 export function isInCT_REQUEST(value: HISTORY_TRANSACTION_STATUS): boolean {
   return Object.values(CT_REQUEST).includes(value as CT_REQUEST);
 }
+
+export function isInCT_REQUEST_CANCEL(
+  value: HISTORY_TRANSACTION_STATUS
+): boolean {
+  return Object.values(CT_REQUEST_CANCEL).includes(value as CT_REQUEST_CANCEL);
+}
+
 export function isInCT_Provide(value: HISTORY_TRANSACTION_STATUS): boolean {
   return Object.values(CT_PROVIDE).includes(value as CT_PROVIDE);
+}
+
+export function getCancelValueFromCTRequestHistory(
+  object: any
+): object is CT_Request_History {
+  return (object as CT_Request_History).isCanceled;
 }
 export interface GasCostData {
   withdrawInitiateGasCostText?: string;

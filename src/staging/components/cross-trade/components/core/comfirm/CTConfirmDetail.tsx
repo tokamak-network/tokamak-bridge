@@ -6,6 +6,9 @@ import Image from "next/image";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import CTNetworkTransition from "@/staging/components/cross-trade/components/core/comfirm/CTNetworkTransition";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
+import { CT_History } from "@/staging/types/transaction";
+import { sub } from "date-fns";
+import { convertNumber } from "@/utils/trim/convertNumber";
 
 interface TransactionDetailProps {
   title: string;
@@ -37,7 +40,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
           <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
             {mainValue}
           </Text>
-          <Center width='32px' height='32px'>
+          <Center width="32px" height="32px">
             <TokenSymbolWithNetwork
               tokenSymbol={tokenSymbol}
               chainId={chainId}
@@ -78,6 +81,7 @@ interface FeeDetailProps {
 
 interface CTConfirmDetailProps {
   modalType: ModalType;
+  txData: CT_History | null;
   onPencilClick: () => void;
 }
 
@@ -92,11 +96,11 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
 }) => {
   return (
     <HStack
-      justify='space-between'
+      justify="space-between"
       lineHeight={"18px"}
       mt={title === "Service fee" || title === "Network fee" ? "6px" : "0"}
     >
-      <Flex alignItems='center'>
+      <Flex alignItems="center">
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
           {title}
         </Text>
@@ -118,7 +122,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
         ) : (
           <>
             {title == "Service fee" && modalType === ModalType.History && (
-              <Flex cursor='pointer' onClick={onPencilClick}>
+              <Flex cursor="pointer" onClick={onPencilClick}>
                 <Image src={Pencil} alt={"Pencil"} />
               </Flex>
             )}
@@ -143,44 +147,60 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
 export default function CTConfirmDetail({
   modalType,
   onPencilClick,
+  txData,
 }: CTConfirmDetailProps) {
+  if (txData === null) return null;
+
+  const { inToken, outToken, inNetwork, outNetwork } = txData;
+
+  const sendTokenInfo = {
+    title: "Send",
+    mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
+      outToken.symbol
+    }`,
+    subValue: `$${"99.00"}`,
+    chainId: outNetwork,
+    tokenSymbol: outToken.symbol,
+  };
+  const outTokenInfo = {
+    title: "Receive",
+    mainValue: `${convertNumber(inToken.amount, inToken.decimals)} ${
+      inToken.symbol
+    }`,
+    subValue: `$${"99.00"}`,
+    chainId: inNetwork,
+    tokenSymbol: inToken.symbol,
+  };
+
   return (
     <Box
-      bg='#15161D'
+      bg="#15161D"
       px={"20px"}
       py={"16px"}
       border={"1px, 1px, 0px, 1px"}
       borderRadius={"8px"}
     >
-      <CTTransactionDetail
-        title='Send'
-        mainValue='10 USDC'
-        subValue='$99.00'
-        chainId={55004}
-        tokenSymbol={"USDC"}
-      />
-      <CTTransactionDetail
-        title='Receive'
-        mainValue='9.988 USDC'
-        subValue='$99.00'
-        chainId={1}
-        tokenSymbol={"USDC"}
-      />
+      <CTTransactionDetail {...sendTokenInfo} />
+      <CTTransactionDetail {...outTokenInfo} />
 
-      <Box mt={"24px"} borderTop='1px solid #313442' pt={"16px"} px={0} pb={0}>
-        <FeeDetail title='Network' inNetwork={55004} outNetwork={1} />
+      <Box mt={"24px"} borderTop="1px solid #313442" pt={"16px"} px={0} pb={0}>
         <FeeDetail
-          title='Service fee'
-          mainAmount='0.012 USDC'
-          subAmount='$0.43'
+          title="Network"
+          inNetwork={inNetwork}
+          outNetwork={outNetwork}
+        />
+        <FeeDetail
+          title="Service fee"
+          mainAmount="0.012 USDC"
+          subAmount="$0.43"
           modalType={modalType}
           onPencilClick={onPencilClick}
         />
         {modalType === ModalType.Trade && (
           <FeeDetail
-            title='Network fee'
-            mainAmount='0.16 ETH'
-            subAmount='$0.43'
+            title="Network fee"
+            mainAmount="0.16 ETH"
+            subAmount="$0.43"
           />
         )}
       </Box>
