@@ -50,7 +50,7 @@ export default function CTModal() {
       <ModalOverlay />
       <ModalContent
         width={"404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
       >
@@ -68,7 +68,7 @@ export default function CTModal() {
             onPencilClick={handlePencilClick}
           />
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           {/** ct type에 따라 footer가 달라진다. */}
           {ctConfirmModal.type == ModalType.Trade ? (
             <CTConfirmCrossTradeFooter

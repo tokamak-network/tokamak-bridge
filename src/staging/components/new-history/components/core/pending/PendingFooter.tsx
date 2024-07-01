@@ -9,7 +9,7 @@ import StatusComponent from "@/staging/components/new-history/components/core/pe
 import { STATUS_CONFIG } from "@/staging/constants/status";
 
 const getStatusHandler = (status: Action | CT_ACTION) => {
-  const actionHandlers = { 
+  const actionHandlers = {
     [Action.Deposit]: STATUS_CONFIG.DEPOSIT,
     [Action.Withdraw]: STATUS_CONFIG.WITHDRAW,
     [CT_ACTION.REQUEST]: STATUS_CONFIG.REQUEST,

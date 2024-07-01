@@ -5,11 +5,12 @@ const gradientAnimation = keyframes`
   100% { background-position: 200% 0%; }
 `;
 
-export default function GradientSpinner() {
+export default function GradientSpinner(props: { minW?: string }) {
+  const { minW } = props;
   return (
     <Box
       w="100%"
-      minW={"100px"}
+      minW={minW ?? "100px"}
       h="100%"
       bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
       bgSize="200% 100%"

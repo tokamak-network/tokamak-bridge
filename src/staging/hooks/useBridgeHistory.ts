@@ -8,6 +8,7 @@ import {
   CT_REQUEST,
   CT_Request_History,
   DepositTransactionHistory,
+  HISTORY_SORT,
   TransactionHistory,
   WithdrawTransactionHistory,
 } from "../types/transaction";
@@ -206,6 +207,7 @@ export const useWithdrawData = () => {
           }
 
           const result: WithdrawTransactionHistory = {
+            category: HISTORY_SORT.STANDARD,
             action: Action.Withdraw,
             status: status,
             inNetwork: SupportedChainId.TITAN,
@@ -305,6 +307,7 @@ export const useDepositData = () => {
           }
 
           const result: DepositTransactionHistory = {
+            category: HISTORY_SORT.STANDARD,
             action: Action.Deposit,
             status: status,
             inNetwork: SupportedChainId.MAINNET,
@@ -351,6 +354,7 @@ export const useRequestData = () => {
   useEffect(() => {
     setRequestHistory([
       {
+        category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.REQUEST,
         status: CT_REQUEST.Completed,
         blockTimestamps: {
@@ -383,6 +387,7 @@ export const useRequestData = () => {
         },
       },
       {
+        category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.REQUEST,
         status: CT_REQUEST.WaitForReceive,
         blockTimestamps: {
@@ -428,6 +433,7 @@ export const useProvideData = () => {
   useEffect(() => {
     setProvideHistory([
       {
+        category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.PROVIDE,
         status: CT_PROVIDE.Completed,
         blockTimestamps: {
@@ -458,6 +464,7 @@ export const useProvideData = () => {
         },
       },
       {
+        category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.PROVIDE,
         status: CT_PROVIDE.Provide,
         blockTimestamps: {

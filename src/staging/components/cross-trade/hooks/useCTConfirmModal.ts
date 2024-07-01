@@ -2,13 +2,18 @@ import { ctConfirmModalStatus } from "@/recoil/modal/atom";
 import { CTConfirmModalType } from "@/staging/components/cross-trade/types";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
+import { CT_History } from "@/staging/types/transaction";
 
 export default function useCTConfirm() {
   const [ctConfirmModal, setCTConfirmModal] =
     useRecoilState(ctConfirmModalStatus);
 
-  const onOpenCTConfirmModal = (type: CTConfirmModalType["type"]) => {
-    setCTConfirmModal({ isOpen: true, type: type });
+  const onOpenCTConfirmModal = (params: {
+    type: CTConfirmModalType["type"];
+    txData: CT_History;
+  }) => {
+    const { type, txData } = params;
+    setCTConfirmModal({ isOpen: true, type, txData });
   };
 
   const onCloseCTConfirmModal = useCallback(() => {

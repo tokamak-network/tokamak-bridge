@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 
 import { Flex, Box, Text, Link, Spacer } from "@chakra-ui/react";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
@@ -6,10 +6,18 @@ import Image from "next/image";
 import TxLink from "@/assets/icons/newHistory/link.svg";
 import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import { CT_ACTION, TransactionHistory } from "@/staging/types/transaction";
+import {
+  Action,
+  CT_ACTION,
+  CT_History,
+  HISTORY_SORT,
+  TransactionHistory,
+} from "@/staging/types/transaction";
 import PendingFooter from "./PendingFooter";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
+import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import { ModalType } from "@/staging/components/cross-trade/types";
 
 interface PendingProps {
   transaction: TransactionHistory;
@@ -19,13 +27,15 @@ export default function Pending(props: PendingProps) {
   const { transaction } = props;
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
+  const { onOpenCTConfirmModal } = useCTConfirmModal();
+
   const transactionData = transaction;
 
   const title = useMemo(() => {
     switch (transactionData.action) {
-      case "Withdraw":
+      case Action.Withdraw:
         return "Withdraw";
-      case "Deposit":
+      case Action.Deposit:
         return "Deposit";
       case CT_ACTION.REQUEST:
         return "Request";
@@ -35,6 +45,18 @@ export default function Pending(props: PendingProps) {
         return "-";
     }
   }, [transactionData.action]);
+
+  const openModal = useCallback(() => {
+    if (transactionData.category === HISTORY_SORT.STANDARD) {
+      onOpenDepositWithdrawConfirmModal(transactionData);
+    }
+    if (transactionData.category === HISTORY_SORT.CROSS_TRADE) {
+      onOpenCTConfirmModal({
+        type: ModalType.History,
+        txData: transactionData as CT_History,
+      });
+    }
+  }, [transactionData]);
 
   return (
     <>
@@ -47,10 +69,7 @@ export default function Pending(props: PendingProps) {
         >
           {title}
         </Text>
-        <Flex
-          cursor={"pointer"}
-          onClick={() => onOpenDepositWithdrawConfirmModal(transactionData)}
-        >
+        <Flex cursor={"pointer"} onClick={openModal}>
           <Image src={TxLink} alt={"TxLink"} />
         </Flex>
       </Flex>

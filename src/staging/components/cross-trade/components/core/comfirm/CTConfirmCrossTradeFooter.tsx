@@ -34,7 +34,7 @@ export default function CTConfirmCrossTradeFooter(
               },
             },
           }}
-          colorScheme='#A0A3AD'
+          colorScheme="#A0A3AD"
         >
           <Text
             color={isChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -70,7 +70,7 @@ export default function CTConfirmCrossTradeFooter(
             backgroundColor: isChecked ? "#007AFF" : "#17181D",
             color: isChecked ? "#FFFFFF" : "#8E8E92",
           }}
-          width='full'
+          width="full"
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}

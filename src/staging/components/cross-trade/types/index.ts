@@ -1,3 +1,4 @@
+import { CT_History } from "@/staging/types/transaction";
 import { ChangeEvent, FocusEvent } from "react";
 
 export enum ModalType {
@@ -8,6 +9,7 @@ export enum ModalType {
 export type CTConfirmModalType = {
   isOpen: boolean;
   type: ModalType;
+  txData: CT_History;
 };
 
 export enum WarningType {

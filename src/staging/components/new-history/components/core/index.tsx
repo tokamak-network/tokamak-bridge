@@ -12,6 +12,29 @@ import Complete from "@/staging/components/new-history/components/core/complete"
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 import { useRecoilValue } from "recoil";
 import { selectedTransactionCategory } from "@/recoil/history/transaction";
+import GradientSpinner from "@/components/ui/GradientSpinner";
+
+const LoadingSpinner = () => {
+  const components = new Array(5).fill(null).map((_, index) => (
+    <Box
+      key={`${Math.random()}_${index}`}
+      w={"336px"}
+      px={"12px"}
+      py={"8px"}
+      borderRadius={"8px"}
+      border={"1px solid #313442"}
+      bg={"#15161D"}
+    >
+      <Flex key={index} w={"336px"} h={"78px"}>
+        <Box w={"92%"}>
+          <GradientSpinner minW="50%" />
+        </Box>
+      </Flex>
+    </Box>
+  ));
+
+  return <>{components}</>;
+};
 
 export default function AccountHistoryNew() {
   const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
@@ -43,10 +66,11 @@ export default function AccountHistoryNew() {
 
   return (
     <Flex flexDirection="column" gap="2">
+      {!historyData && <LoadingSpinner />}
       {historyData?.map((transaction, index) => {
         return (
           <Box
-            key={transaction.transactionHashes.initialTransactionHash}
+            key={`${transaction.action}-${index}`}
             w={"336px"}
             px={"12px"}
             py={"8px"}

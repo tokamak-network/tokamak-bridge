@@ -50,23 +50,22 @@ export interface TransactionToken {
   decimals: number;
 }
 
-export interface BaseTransactionHistory {
-  action: Action;
-  status: Status;
+export interface I_TransactionHistory {
+  category: HISTORY_SORT;
   inNetwork: SupportedChainId;
   outNetwork: SupportedChainId;
   inToken: TransactionToken;
   outToken: TransactionToken;
   errorMessage?: string | null;
 }
-export interface BaseCTTransactionHistory {
+
+export interface BaseTransactionHistory extends I_TransactionHistory {
+  action: Action;
+  status: Status;
+}
+export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;
   status: CT_Status;
-  inNetwork: SupportedChainId;
-  outNetwork: SupportedChainId;
-  inToken: TransactionToken;
-  outToken: TransactionToken;
-  errorMessage?: string | null;
 }
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;

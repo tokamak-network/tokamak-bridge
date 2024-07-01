@@ -31,7 +31,7 @@ const TransactionItem = (props: TransactionItemProps) => {
           >
             Transaction
           </Text>
-          <Flex cursor='pointer'>
+          <Flex cursor="pointer">
             <Image src={txlink} alt={"txlink"} />
           </Flex>
         </Flex>
@@ -45,7 +45,7 @@ export default function CTConfirmHistoryFooter() {
     <>
       <Box
         mt={"16px"}
-        bg='#15161D'
+        bg="#15161D"
         py={"16px"}
         px={"20px"}
         border={"1px, 1px, 0px, 1px"}
