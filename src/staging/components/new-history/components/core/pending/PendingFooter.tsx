@@ -35,7 +35,6 @@ export default function PendingFooter(transaction: TransactionHistory) {
     endIndex > 0 ? endIndex : undefined
   );
 
-  
   return (
     <>
       {limitedStatuses.map((statusKey, index) => (

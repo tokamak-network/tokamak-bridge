@@ -3,7 +3,8 @@ import ThanosSymbol_bg from "assets/icons/ct/thanos_symbol_bg_white.svg";
 import txlink from "@/assets/icons/ct/txlink.svg";
 import Image from "next/image";
 import CTTimeline from "./CTTimeLine";
-import { CT_History } from "@/staging/types/transaction";
+import { CT_History, isInCT_REQUEST } from "@/staging/types/transaction";
+import { useMemo } from "react";
 
 interface TransactionItemProps {
   title: string;
@@ -47,8 +48,25 @@ export default function CTConfirmHistoryFooter(props: {
   const { txData } = props;
 
   if (txData === null) return null;
-
-  console.log(txData);
+  const keyLength = Object.keys(txData.transactionHashes).length;
+  const TransactionHistory = useMemo(() => {
+    return (
+      <Box ml={"18px"} flex={1}>
+        {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
+          const isActive = keyLength - 1 === index;
+          if (typeof hash === "string") {
+            return <TransactionItem title={key} isActive={isActive} />;
+          }
+          return hash.map((tx, index) => {
+            const isActiveOnUpdateFee = isActive && index === hash.length - 1;
+            return (
+              <TransactionItem title={key} isActive={isActiveOnUpdateFee} />
+            );
+          });
+        })}
+      </Box>
+    );
+  }, [txData.transactionHashes, keyLength]);
 
   return (
     <>
@@ -62,14 +80,9 @@ export default function CTConfirmHistoryFooter(props: {
       >
         <Flex>
           <Box width={"auto"}>
-            <CTTimeline lineType={1} />
+            <CTTimeline lineType={keyLength} />
           </Box>
-          <Box ml={"18px"} flex={1}>
-            <TransactionItem title={"Request"} isActive={false} />
-            <TransactionItem title={"Update fee"} isActive={false} />
-            <TransactionItem title={"Update fee"} isActive={false} />
-            <TransactionItem title={"Wait for receive"} isActive={true} />
-          </Box>
+          {TransactionHistory}
         </Flex>
       </Box>
       <Box mt={"12px"} pb={"4px"}>
