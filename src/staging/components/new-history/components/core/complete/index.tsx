@@ -37,7 +37,7 @@ export default function Complete(transaction: TransactionHistory) {
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
-  
+
   const openModal = useCallback(() => {
     if (transactionData.category === HISTORY_SORT.STANDARD) {
       onOpenDepositWithdrawConfirmModal(transactionData);
@@ -100,6 +100,7 @@ export default function Complete(transaction: TransactionHistory) {
             ? "rgba(0, 122, 255, 0.4)"
             : "rgba(219, 0, 255, 0.40)"
         }
+        h={"36px"}
       >
         <Flex alignItems="center">
           <TokenSymbol

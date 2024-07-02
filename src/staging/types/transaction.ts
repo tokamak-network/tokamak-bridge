@@ -108,7 +108,6 @@ export interface CT_Request_History extends BaseCTTransactionHistory {
     waitForReceive?: number;
     cancelRequest?: number;
     refund?: number;
-    completed?: number;
   };
   transactionHashes: {
     request: string;
@@ -116,7 +115,6 @@ export interface CT_Request_History extends BaseCTTransactionHistory {
     waitForReceive?: string;
     cancelRequest?: string;
     refund?: string;
-    completed?: string;
   };
 }
 export interface CT_Provide_History extends BaseCTTransactionHistory {
@@ -124,12 +122,10 @@ export interface CT_Provide_History extends BaseCTTransactionHistory {
   blockTimestamps: {
     provide: number;
     return?: number;
-    completed?: number;
   };
   transactionHashes: {
     provide: string;
     return?: string;
-    completed?: string;
   };
 }
 

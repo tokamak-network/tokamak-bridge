@@ -5,6 +5,7 @@ import {
   CT_ACTION,
   HISTORY_TRANSACTION_STATUS,
   getCancelValueFromCTRequestHistory,
+  isInCT_REQUEST,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { STATUS_CONFIG } from "@/staging/constants/status";

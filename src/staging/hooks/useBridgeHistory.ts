@@ -424,7 +424,6 @@ export const useRequestData = () => {
         blockTimestamps: {
           request: 0,
           updateFee: [0],
-          completed: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -445,7 +444,6 @@ export const useRequestData = () => {
         transactionHashes: {
           request: "",
           updateFee: [""],
-          completed: "",
         },
       },
       {
@@ -455,8 +453,7 @@ export const useRequestData = () => {
         status: CT_REQUEST_CANCEL.Refund,
         blockTimestamps: {
           request: 0,
-          updateFee: [0],
-          completed: 0,
+          refund: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -476,9 +473,7 @@ export const useRequestData = () => {
         },
         transactionHashes: {
           request: "",
-          updateFee: [""],
-          waitForReceive: "",
-          completed: "",
+          refund: "",
         },
       },
       {
@@ -490,7 +485,6 @@ export const useRequestData = () => {
           request: 0,
           updateFee: [0],
           waitForReceive: 0,
-          completed: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -512,7 +506,6 @@ export const useRequestData = () => {
           request: "",
           updateFee: [""],
           waitForReceive: "",
-          completed: "",
         },
       },
     ]);
@@ -537,7 +530,6 @@ export const useProvideData = () => {
         blockTimestamps: {
           provide: 0,
           return: 0,
-          completed: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -558,34 +550,6 @@ export const useProvideData = () => {
         transactionHashes: {
           provide: "",
           return: "",
-          completed: "",
-        },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.PROVIDE,
-        status: CT_PROVIDE.Provide,
-        blockTimestamps: {
-          provide: 0,
-        },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          provide: "",
         },
       },
       {
@@ -594,6 +558,7 @@ export const useProvideData = () => {
         status: CT_PROVIDE.Return,
         blockTimestamps: {
           provide: 0,
+          return: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -613,6 +578,7 @@ export const useProvideData = () => {
         },
         transactionHashes: {
           provide: "",
+          return: "",
         },
       },
     ]);

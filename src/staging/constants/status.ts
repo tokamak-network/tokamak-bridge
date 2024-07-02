@@ -13,6 +13,10 @@ export const STATUS_CONFIG = {
     CT_REQUEST.UpdateFee,
     CT_REQUEST.WaitForReceive,
   ],
-  REQUEST_CANCEL: [CT_REQUEST_CANCEL.Request, CT_REQUEST_CANCEL.Refund],
+  REQUEST_CANCEL: [
+    CT_REQUEST_CANCEL.Request,
+    CT_REQUEST.UpdateFee,
+    CT_REQUEST_CANCEL.Refund,
+  ],
   PROVIDE: [CT_PROVIDE.Provide, CT_PROVIDE.Return],
 };

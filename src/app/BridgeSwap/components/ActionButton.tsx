@@ -9,7 +9,6 @@ import useConfirmModal from "@/hooks/modal/useConfirmModal";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
-import { useTransaction } from "@/hooks/tx/useTx";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";

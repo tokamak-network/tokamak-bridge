@@ -36,6 +36,8 @@ const TransactionItem = (props: TransactionItemProps) => {
         return "Provide";
       case "return":
         return "Return Liquidity";
+      case "refund":
+        return "Refund";
       default:
         return title;
     }
@@ -93,6 +95,7 @@ export default function CTConfirmHistoryFooter(props: {
   const { txData } = props;
 
   if (txData === null) return null;
+
   const isCompleted = isFinalStatus(txData.status);
   const keyLength = Object.keys(txData.transactionHashes).length;
   const TransactionHistory = useMemo(() => {
