@@ -7,6 +7,8 @@ import {
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
   CT_ACTION,
+  CT_REQUEST_CANCEL,
+  getCancelValueFromCTRequestHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
@@ -29,6 +31,8 @@ export default function Complete(transaction: TransactionHistory) {
     }
     return null;
   }, [transactionData]);
+  const isCT_Request_Cancel =
+    getCancelValueFromCTRequestHistory(transactionData);
 
   const title = useMemo(() => {
     switch (transactionData.action) {
@@ -37,13 +41,14 @@ export default function Complete(transaction: TransactionHistory) {
       case "Deposit":
         return "Deposit";
       case CT_ACTION.REQUEST:
+        if (isCT_Request_Cancel) return "Request (Cancel)";
         return "Request";
       case CT_ACTION.PROVIDE:
         return "Provide";
       default:
         return "-";
     }
-  }, [transactionData.action]);
+  }, [transactionData.action, isCT_Request_Cancel]);
 
   return (
     <>
@@ -58,7 +63,7 @@ export default function Complete(transaction: TransactionHistory) {
         </Text>
         <TokenPair
           networkI={transactionData.inNetwork}
-          networkO={transactionData.outNetwork}
+          networkO={isCT_Request_Cancel ? null : transactionData.outNetwork}
           networkW={16}
           networkH={16}
           pairType={"completed"}
