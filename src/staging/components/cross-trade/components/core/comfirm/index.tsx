@@ -78,7 +78,7 @@ export default function CTModal() {
               onConfirm={handleConfirm}
             />
           ) : (
-            <CTConfirmHistoryFooter />
+            <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />
           )}
         </ModalFooter>
       </ModalContent>

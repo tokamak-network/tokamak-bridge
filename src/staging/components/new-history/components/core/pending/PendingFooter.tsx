@@ -27,12 +27,22 @@ export default function PendingFooter(transaction: TransactionHistory) {
     transactionData.action,
     getCancelValueFromCTRequestHistory(transactionData)
   );
+
+  const endIndex =
+    statuses.findIndex((statusKey) => statusKey === transactionData.status) + 1;
+  const limitedStatuses = statuses.slice(
+    0,
+    endIndex > 0 ? endIndex : undefined
+  );
+
+  
   return (
     <>
-      {statuses.map((statusKey, index) => (
+      {limitedStatuses.map((statusKey, index) => (
         <StatusComponent
           key={index}
           label={statusKey}
+          order={index}
           transactionData={transactionData}
         />
       ))}

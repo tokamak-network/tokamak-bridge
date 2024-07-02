@@ -362,7 +362,6 @@ export const useRequestData = () => {
         blockTimestamps: {
           request: 0,
           updateFee: [0],
-          waitForReceive: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -383,7 +382,6 @@ export const useRequestData = () => {
         transactionHashes: {
           request: "",
           updateFee: [""],
-          waitForReceive: "",
         },
       },
       {

@@ -34,6 +34,7 @@ import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
   transactionData: TransactionHistory;
+  order: number;
 };
 
 const ErrorRollupComponent = () => {
@@ -109,7 +110,7 @@ const FinalizeButtonComponent = (props: {
 export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
-  const { label, transactionData } = props;
+  const { label, transactionData, order } = props;
 
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();

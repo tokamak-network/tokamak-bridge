@@ -3,6 +3,7 @@ import ThanosSymbol_bg from "assets/icons/ct/thanos_symbol_bg_white.svg";
 import txlink from "@/assets/icons/ct/txlink.svg";
 import Image from "next/image";
 import CTTimeline from "./CTTimeLine";
+import { CT_History } from "@/staging/types/transaction";
 
 interface TransactionItemProps {
   title: string;
@@ -40,7 +41,15 @@ const TransactionItem = (props: TransactionItemProps) => {
   );
 };
 
-export default function CTConfirmHistoryFooter() {
+export default function CTConfirmHistoryFooter(props: {
+  txData: CT_History | null;
+}) {
+  const { txData } = props;
+
+  if (txData === null) return null;
+
+  console.log(txData);
+
   return (
     <>
       <Box
