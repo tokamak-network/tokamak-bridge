@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
-import { Button, Text } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
 import { useAccount } from "wagmi";
 import { useApprove } from "@/hooks/token/useApproval";
@@ -25,9 +25,6 @@ import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapC
 
 // FW UI test @Robert
 import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
-import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
-import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
-import { ModalType } from "@/staging/components/cross-trade/types";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -44,7 +41,6 @@ export default function ActionButton() {
   const status = useRecoilValue(bannerStatus);
   const { inNetwork, outNetwork } = useInOutNetwork();
 
-  const needToOpenModal = mode === "Deposit" || mode === "Swap";
   const needToOpenWithdrawModal = mode === "Withdraw";
   const needToOpenDepositModal = mode === "Deposit";
   const needToOpenSwapModal = mode === "Swap";
@@ -95,28 +91,8 @@ export default function ActionButton() {
   const handleConfirm = useHandleConfirm();
   const { onOpenSwapConfirmModal } = useSwapConfirmModal();
 
-  const { onOpenCTConfirmModal } = useCTConfirmModal();
-  const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   return (
     <>
-      {/** FW UI test Start @Robert*/}
-      <>
-        <Button
-          color={"#8E8E92"}
-          onClick={() => onOpenCTConfirmModal(ModalType.Trade)}
-        >
-          <Text>Confirm Button</Text>
-        </Button>
-        <Button
-          color={"#8E8E92"}
-          onClick={() => onOpenCTConfirmModal(ModalType.History)}
-        >
-          <Text>History button</Text>
-        </Button>
-        <Button color={"#8E8E92"} onClick={() => onOpenCTUpdateFeeModal()}>
-          <Text>Update Fee button</Text>
-        </Button>
-      </>
       {/** FW UI test End @Robert*/}
       <Button
         w={"100%"}
