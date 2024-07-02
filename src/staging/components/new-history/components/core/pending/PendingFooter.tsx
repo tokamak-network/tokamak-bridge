@@ -21,7 +21,11 @@ const getStatusHandler = (status: Action | CT_ACTION, isCanceled?: boolean) => {
   return actionHandlers[status];
 };
 
-export default function PendingFooter(transaction: TransactionHistory) {
+export default function PendingFooter(params: {
+  transaction: TransactionHistory;
+  openModal: () => void;
+}) {
+  const { transaction, openModal } = params;
   const transactionData = transaction;
   const statuses: HISTORY_TRANSACTION_STATUS[] = getStatusHandler(
     transactionData.action,
@@ -41,8 +45,8 @@ export default function PendingFooter(transaction: TransactionHistory) {
         <StatusComponent
           key={index}
           label={statusKey}
-          order={index}
           transactionData={transactionData}
+          openModal={openModal}
         />
       ))}
     </>

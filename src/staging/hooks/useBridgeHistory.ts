@@ -388,7 +388,6 @@ export const useRequestData = () => {
         category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.REQUEST,
         isCanceled: false,
-
         status: CT_REQUEST.WaitForReceive,
         blockTimestamps: {
           request: 0,
@@ -425,7 +424,6 @@ export const useRequestData = () => {
         blockTimestamps: {
           request: 0,
           updateFee: [0],
-          waitForReceive: 0,
           completed: 0,
         },
         inNetwork: SupportedChainId.TITAN,
@@ -447,7 +445,6 @@ export const useRequestData = () => {
         transactionHashes: {
           request: "",
           updateFee: [""],
-          waitForReceive: "",
           completed: "",
         },
       },
@@ -459,7 +456,6 @@ export const useRequestData = () => {
         blockTimestamps: {
           request: 0,
           updateFee: [0],
-          waitForReceive: 0,
           completed: 0,
         },
         inNetwork: SupportedChainId.TITAN,

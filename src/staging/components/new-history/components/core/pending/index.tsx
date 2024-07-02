@@ -133,7 +133,7 @@ export default function Pending(props: PendingProps) {
         />
       </Flex>
       <Box>
-        <PendingFooter {...transaction} />
+        <PendingFooter transaction={transaction} openModal={openModal} />
       </Box>
     </>
   );

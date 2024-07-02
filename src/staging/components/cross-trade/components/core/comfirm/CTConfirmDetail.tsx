@@ -9,6 +9,7 @@ import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { CT_History } from "@/staging/types/transaction";
 import { sub } from "date-fns";
 import { convertNumber } from "@/utils/trim/convertNumber";
+import { isFinalStatus } from "../../../utils/getStatus";
 
 interface TransactionDetailProps {
   title: string;
@@ -77,6 +78,7 @@ interface FeeDetailProps {
   outNetwork?: number;
   modalType?: ModalType;
   onPencilClick?: () => void;
+  isCompleted?: boolean;
 }
 
 interface CTConfirmDetailProps {
@@ -93,6 +95,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   onPencilClick,
   inNetwork,
   outNetwork,
+  isCompleted,
 }) => {
   return (
     <HStack
@@ -121,11 +124,13 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           />
         ) : (
           <>
-            {title == "Service fee" && modalType === ModalType.History && (
-              <Flex cursor="pointer" onClick={onPencilClick}>
-                <Image src={Pencil} alt={"Pencil"} />
-              </Flex>
-            )}
+            {title == "Service fee" &&
+              modalType === ModalType.History &&
+              !isCompleted && (
+                <Flex cursor="pointer" onClick={onPencilClick}>
+                  <Image src={Pencil} alt={"Pencil"} />
+                </Flex>
+              )}
             {title == "Network fee" && (
               <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
             )}
@@ -151,7 +156,8 @@ export default function CTConfirmDetail({
 }: CTConfirmDetailProps) {
   if (txData === null) return null;
 
-  const { inToken, outToken, inNetwork, outNetwork } = txData;
+  const { inToken, outToken, inNetwork, outNetwork, status } = txData;
+  const isCompleted = isFinalStatus(status);
 
   const sendTokenInfo = {
     title: "Send",
@@ -195,6 +201,7 @@ export default function CTConfirmDetail({
           subAmount="$0.43"
           modalType={modalType}
           onPencilClick={onPencilClick}
+          isCompleted={isCompleted}
         />
         {modalType === ModalType.Trade && (
           <FeeDetail

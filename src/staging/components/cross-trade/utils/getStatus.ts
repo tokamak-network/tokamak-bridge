@@ -1,4 +1,11 @@
 import { CrossTradeData } from "@/staging/types/crossTrade";
+import {
+  CT_PROVIDE,
+  CT_REQUEST,
+  CT_REQUEST_CANCEL,
+  HISTORY_TRANSACTION_STATUS,
+  Status,
+} from "@/staging/types/transaction";
 import { utcToZonedTime } from "date-fns-tz";
 
 export const STATUS = {
@@ -46,3 +53,12 @@ export function calculateInitialCountdown(
 
   return remainingTime;
 }
+
+export const isFinalStatus = (status: HISTORY_TRANSACTION_STATUS) => {
+  return (
+    status === Status.Completed ||
+    status === CT_REQUEST.Completed ||
+    status === CT_REQUEST_CANCEL.Completed ||
+    status === CT_PROVIDE.Completed
+  );
+};

@@ -1,10 +1,26 @@
+import {
+  CT_PROVIDE,
+  CT_REQUEST,
+  CT_REQUEST_CANCEL,
+  HISTORY_TRANSACTION_STATUS,
+  Status,
+} from "@/staging/types/transaction";
 import { Box, VStack, Circle } from "@chakra-ui/react";
 import React, { useMemo } from "react";
+import { isFinalStatus } from "../../../utils/getStatus";
 
-const CTTimeline = ({ lineType }: { lineType: number }) => {
+const CTTimeline = ({
+  lineType,
+  status,
+}: {
+  lineType: number;
+  status: HISTORY_TRANSACTION_STATUS;
+}) => {
   //dash type
   const dashedBackgroundImagePink =
     "linear-gradient(to bottom, #DB00FF 33%, rgba(255,255,255,0) 0%)";
+
+  const isFinalStep = isFinalStatus(status);
 
   const RenderTimeline = useMemo(() => {
     return (
@@ -15,7 +31,7 @@ const CTTimeline = ({ lineType }: { lineType: number }) => {
           }
           return (
             <>
-              {index + 1 !== lineType ? (
+              {index + 1 !== lineType || isFinalStep ? (
                 <Box
                   w={"0.5px"}
                   height="36px"
@@ -42,27 +58,6 @@ const CTTimeline = ({ lineType }: { lineType: number }) => {
     );
   }, [lineType]);
 
-  // const renderTimeline = () => {
-  //   return;
-  //   switch (lineType) {
-  //     case 1:
-  //       return (
-  //         <>
-  //           <Circle size="8px" bg="#DB00FF" />
-  //           <Box
-  //             w={"0.5px"}
-  //             height="36px"
-  //             border={"0.5px solid #DB00FF"}
-  //             opacity="0.4"
-  //           />
-  //           <Circle size="8px" bg="#DB00FF" />
-  //           <Box
-  //             w={"0.5px"}
-  //             height="36px"
-  //             border={"0.5px solid #DB00FF"}
-  //             opacity="0.4"
-  //           />
-  //           <Circle size="8px" bg="#DB00FF" />
   <Box
     w={"1px"}
     height="36px"
@@ -73,13 +68,6 @@ const CTTimeline = ({ lineType }: { lineType: number }) => {
       backgroundRepeat: "repeat-y",
     }}
   />;
-  //           <Circle size="8px" bg="#DB00FF" />
-  //         </>
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // };
 
   return (
     <VStack mt={"6px"} spacing={0} align="center">

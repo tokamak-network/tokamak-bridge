@@ -1,4 +1,4 @@
-import React, { use, useMemo } from "react";
+import React, { use, useCallback, useMemo } from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/staging/components/new-history/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
@@ -9,17 +9,19 @@ import {
   CT_ACTION,
   CT_REQUEST_CANCEL,
   getCancelValueFromCTRequestHistory,
+  HISTORY_SORT,
+  CT_History,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
+import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import { ModalType } from "@/staging/components/cross-trade/types";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
-  const { onOpenDepositWithdrawConfirmModal } =
-    useDepositWithdrawConfirmModal();
   const { isOnOfficialStandard } = useHistoryTab();
 
   const completedTimestamp = useMemo(() => {
@@ -31,9 +33,25 @@ export default function Complete(transaction: TransactionHistory) {
     }
     return null;
   }, [transactionData]);
+
+  const { onOpenDepositWithdrawConfirmModal } =
+    useDepositWithdrawConfirmModal();
+  const { onOpenCTConfirmModal } = useCTConfirmModal();
+  
+  const openModal = useCallback(() => {
+    if (transactionData.category === HISTORY_SORT.STANDARD) {
+      onOpenDepositWithdrawConfirmModal(transactionData);
+    }
+    if (transactionData.category === HISTORY_SORT.CROSS_TRADE) {
+      onOpenCTConfirmModal({
+        type: ModalType.History,
+        txData: transactionData as CT_History,
+      });
+    }
+  }, [transactionData]);
+
   const isCT_Request_Cancel =
     getCancelValueFromCTRequestHistory(transactionData);
-
   const title = useMemo(() => {
     switch (transactionData.action) {
       case "Withdraw":
@@ -121,7 +139,7 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
           cursor={"pointer"}
-          onClick={() => onOpenDepositWithdrawConfirmModal(transactionData)}
+          onClick={openModal}
         >
           {formatDateToYMD(Number(completedTimestamp))}
         </Text>

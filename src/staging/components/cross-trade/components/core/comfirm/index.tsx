@@ -16,6 +16,7 @@ import CloseButton from "@/components/button/CloseButton";
 import CTConfirmDetail from "./CTConfirmDetail";
 import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
+import { isFinalStatus } from "../../../utils/getStatus";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
