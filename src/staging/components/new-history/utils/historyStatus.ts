@@ -1,5 +1,10 @@
 //historyStatus.ts
-import { Status, Action } from "@/staging/types/transaction";
+import {
+  Status,
+  Action,
+  CT_ACTION,
+  CT_Status,
+} from "@/staging/types/transaction";
 
 export enum TransactionStatus {
   WithdrawRollup = 1,
@@ -9,7 +14,10 @@ export enum TransactionStatus {
   DepositCompleted = 102,
 }
 
-export const getStatusValue = (action: Action, status: Status): number => {
+export const getStatusValue = (
+  action: Action | CT_ACTION,
+  status: Status | CT_Status
+): number => {
   if (action === Action.Withdraw) {
     switch (status) {
       case Status.Rollup:

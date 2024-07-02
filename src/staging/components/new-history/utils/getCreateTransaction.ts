@@ -5,6 +5,7 @@ import {
   WithdrawTransactionHistory,
   DepositTransactionHistory,
   TransactionHistory,
+  HISTORY_SORT,
 } from "@/staging/types/transaction";
 
 import { Resolved } from "@/types/activity/history";
@@ -29,6 +30,7 @@ export function createWithdrawTransaction(
   return {
     action: Action.Withdraw,
     status,
+    category: HISTORY_SORT.STANDARD,
     inNetwork,
     outNetwork,
     inToken,
@@ -63,6 +65,7 @@ export function createDepositTransaction(
   return {
     action: Action.Deposit,
     status,
+    category: HISTORY_SORT.STANDARD,
     inNetwork,
     outNetwork,
     inToken,
