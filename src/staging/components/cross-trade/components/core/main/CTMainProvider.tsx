@@ -1,11 +1,11 @@
 import { Text, Button, Flex } from "@chakra-ui/react";
 import {
   STATUS,
-  FIFTEEN_MINUTES,
   calculateInitialCountdown,
 } from "@/staging/components/cross-trade/utils/getStatus";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 
 interface CTProviderProps {
   status: number;
@@ -20,7 +20,7 @@ export default function CTProvider({
     if (status === STATUS.COUNTDOWN && blockTimestamps) {
       const remainTime = calculateInitialCountdown(
         blockTimestamps,
-        FIFTEEN_MINUTES
+        TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
       );
       const isZeroTime = remainTime <= 0;
       const timeDisplay = isZeroTime

@@ -9,7 +9,13 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { transactionData } from "@/recoil/global/transaction";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { isFinalStatus } from "../../../utils/getStatus";
+import {
+  calculateInitialCountdown,
+  isFinalStatus,
+} from "../../../utils/getStatus";
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
+import { useCountdown } from "@/staging/hooks/useCountdown";
 
 interface TransactionItemProps {
   title: string;
@@ -51,6 +57,15 @@ const TransactionItem = (props: TransactionItemProps) => {
     ? SupportedChainId.TITAN
     : SupportedChainId.TITAN_SEPOLIA;
 
+  const remainTime = calculateInitialCountdown(
+    Math.floor(Date.now() / 1000),
+    TRANSACTION_CONSTANTS.CROSS_TRADE.REQUEST
+  );
+  const initialTimeDisplay = formatTimeDisplay(remainTime);
+  const timeDisplay = useCountdown(initialTimeDisplay, false);
+
+  console.log("timeDisplay", timeDisplay);
+
   return (
     <Flex justifyContent={"space-between"} mb={isActive ? undefined : "24px"}>
       <Text
@@ -84,6 +99,17 @@ const TransactionItem = (props: TransactionItemProps) => {
             </Flex>
           </Link>
         </Flex>
+      )}
+      {isActive && (
+        <Text
+          fontWeight={400}
+          fontSize={"13px"}
+          lineHeight={"20px"}
+          color={"#fff"}
+          mr={"4px"}
+        >
+          {timeDisplay}
+        </Text>
       )}
     </Flex>
   );

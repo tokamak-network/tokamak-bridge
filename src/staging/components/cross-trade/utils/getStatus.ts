@@ -1,3 +1,4 @@
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import {
   CT_PROVIDE,
@@ -14,13 +15,13 @@ export const STATUS = {
   ACTIVE: 2,
 };
 
-export const FIFTEEN_MINUTES = 900; // 15 minutes in seconds
-
 export const getStatus = (item: CrossTradeData): number => {
   const currentTimeUTC = new Date();
   const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const currentTime = utcToZonedTime(currentTimeUTC, currentTimeZone).getTime();
-  const activationTime = item.blockTimestamps * 1000 + FIFTEEN_MINUTES * 1000; // Convert to milliseconds
+  const activationTime =
+    item.blockTimestamps * 1000 +
+    TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE * 1000; // Convert to milliseconds
 
   if (!item.isActive) {
     if (currentTime < activationTime) {
