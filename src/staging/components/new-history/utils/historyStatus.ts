@@ -4,6 +4,7 @@ import {
   Action,
   CT_ACTION,
   CT_Status,
+  CT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
 
 export enum TransactionStatus {
@@ -12,6 +13,7 @@ export enum TransactionStatus {
   WithdrawCompleted = 3,
   DepositFinalized = 101,
   DepositCompleted = 102,
+  REQUEST_CANCEL,
 }
 
 export const getStatusValue = (
@@ -35,6 +37,9 @@ export const getStatusValue = (
       case Status.Completed:
         return TransactionStatus.DepositCompleted;
     }
+  }
+  if (status === CT_REQUEST_CANCEL.Refund) {
+    return TransactionStatus.REQUEST_CANCEL;
   }
   return 0; // no type
 };

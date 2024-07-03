@@ -424,6 +424,7 @@ export const useRequestData = () => {
         blockTimestamps: {
           request: 0,
           updateFee: [0],
+          waitForReceive: 0,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -444,6 +445,7 @@ export const useRequestData = () => {
         transactionHashes: {
           request: "",
           updateFee: [""],
+          waitForReceive: "",
         },
       },
       {
@@ -453,7 +455,37 @@ export const useRequestData = () => {
         status: CT_REQUEST_CANCEL.Refund,
         blockTimestamps: {
           request: 0,
-          refund: 0,
+          refund: Math.floor(Date.now() / 1000),
+        },
+        inNetwork: SupportedChainId.TITAN,
+        outNetwork: SupportedChainId.MAINNET,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          request: "",
+          refund: "",
+        },
+      },
+      {
+        category: HISTORY_SORT.CROSS_TRADE,
+        action: CT_ACTION.REQUEST,
+        isCanceled: true,
+        status: CT_REQUEST_CANCEL.Refund,
+        blockTimestamps: {
+          request: 0,
+          refund: Math.floor(Date.now() / 1000) - 300,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,

@@ -2,6 +2,8 @@ import {
   TransactionHistory,
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
+  isInCT_REQUEST_CANCEL,
+  CT_Request_History,
 } from "@/staging/types/transaction";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
@@ -61,7 +63,23 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         return timeValue;
       }
     }
-    default:
+    case TransactionStatus.REQUEST_CANCEL:
+      {
+        const CT_Request_TransactionData =
+          transactionData as CT_Request_History;
+
+        if (
+          isInCT_REQUEST_CANCEL(CT_Request_TransactionData.status) &&
+          CT_Request_TransactionData.blockTimestamps.refund
+        ) {
+          const timeValue = calculateInitialTime(
+            statusValue,
+            CT_Request_TransactionData.blockTimestamps.refund,
+            TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST
+          );
+          return timeValue;
+        }
+      }
       return 0;
   }
 }
@@ -77,6 +95,8 @@ function calculateInitialTime(
   const countdownDuration =
     statusValue === TransactionStatus.WithdrawFinalized
       ? convertTimeToMinutes(additional, "days", 0) * 60
+      : TransactionStatus.REQUEST_CANCEL
+      ? convertTimeToMinutes(additional, "minutes", 5)
       : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
   // Get the current time in the user's local timezone

@@ -10,5 +10,6 @@ export const TRANSACTION_CONSTANTS = {
   CROSS_TRADE: {
     PROVIDE: 900, //15 minutes in seconds
     REQUEST: 300,
+    CANCEL_REQUEST: 300,
   },
 };

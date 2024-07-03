@@ -111,15 +111,13 @@ export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
   const { label, transactionData, openModal } = props;
-
-  const { onOpenDepositWithdrawConfirmModal } =
-    useDepositWithdrawConfirmModal();
   const isActive = transactionData.status === label;
 
   // Countdown is needed only for the following conditions
   const shouldCountdown =
     (transactionData.status === Status.Rollup ||
-      transactionData.status === Status.Finalize) &&
+      transactionData.status === Status.Finalize ||
+      transactionData.status === CT_REQUEST_CANCEL.Refund) &&
     isActive;
 
   const initialTimeDisplay = shouldCountdown
@@ -137,6 +135,8 @@ export default function StatusComponent(
             : 0
         )
       );
+
+  console.log("initialTimeDisplay", initialTimeDisplay);
 
   // Output variable
   const timeDisplay = shouldCountdown

@@ -6,7 +6,6 @@ import CTTimeline from "./CTTimeLine";
 import { CT_History, isInCT_REQUEST } from "@/staging/types/transaction";
 import { useMemo } from "react";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
-import { transactionData } from "@/recoil/global/transaction";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
@@ -21,10 +20,10 @@ interface TransactionItemProps {
   title: string;
   isActive: boolean;
   txHash?: string;
+  isCT_REQUEST_CANCEL?: boolean;
 }
 const TransactionItem = (props: TransactionItemProps) => {
   const { title, isActive, txHash } = props;
-
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const isOnL1 = title === "Wait For Receive";
 
@@ -33,15 +32,15 @@ const TransactionItem = (props: TransactionItemProps) => {
       case "request":
         return "Request";
       case "updateFee":
-        return "Update Fee";
+        return "Update fee";
       case "waitForReceive":
-        return "Wait For Receive";
+        return "Wait for receive";
       case "completed":
         return "Completed";
       case "provide":
         return "Provide";
       case "return":
-        return "Return Liquidity";
+        return "Return liquidity";
       case "refund":
         return "Refund";
       default:
@@ -64,10 +63,8 @@ const TransactionItem = (props: TransactionItemProps) => {
   const initialTimeDisplay = formatTimeDisplay(remainTime);
   const timeDisplay = useCountdown(initialTimeDisplay, false);
 
-  console.log("timeDisplay", timeDisplay);
-
   return (
-    <Flex justifyContent={"space-between"} mb={isActive ? undefined : "24px"}>
+    <Flex justifyContent={"space-between"}>
       <Text
         fontWeight={600}
         fontSize={"15px"}
@@ -126,7 +123,7 @@ export default function CTConfirmHistoryFooter(props: {
   const keyLength = Object.keys(txData.transactionHashes).length;
   const TransactionHistory = useMemo(() => {
     return (
-      <Box ml={"18px"} flex={1}>
+      <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
           const isActive = isCompleted ? false : keyLength - 1 === index;
           if (typeof hash === "string") {
@@ -145,7 +142,7 @@ export default function CTConfirmHistoryFooter(props: {
             );
           });
         })}
-      </Box>
+      </Flex>
     );
   }, [txData.transactionHashes, keyLength, isCompleted]);
 
