@@ -7,11 +7,55 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 
 type TokenPairProp = {
-  networkI: number | undefined;
-  networkO: number | undefined;
+  networkI?: number;
+  networkO?: number;
   networkW: number;
   networkH: number;
 };
+
+export function CTSingleNetworkTransition(props: TokenPairProp) {
+  const { networkI, networkO, networkH, networkW } = props;
+
+  if (networkI === undefined) {
+    return <></>;
+  }
+
+  const inNetwork = fetchNetworkImage(networkI);
+
+  const chainNameIn = getKeyByValue(SupportedChainId, networkI) || "";
+
+  const displayNetworkNameIn =
+    chainNameIn === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(chainNameIn);
+
+  return (
+    <Flex alignItems="center">
+      <Flex>
+        <Flex
+          w={networkW}
+          maxW={`${networkW}px`}
+          h={`${networkH}px`}
+          maxH={`${networkH}px`}
+        >
+          <Image
+            src={inNetwork.src}
+            alt={inNetwork.alt}
+            width={networkW}
+            height={networkH}
+          />
+        </Flex>
+        <Text
+          ml="4px"
+          fontWeight={"400"}
+          fontSize={"12px"}
+          lineHeight={"14px"}
+          color={"#FFFFFF"}
+        >
+          {displayNetworkNameIn}
+        </Text>
+      </Flex>
+    </Flex>
+  );
+}
 
 export default function CTNetworkTransition(props: TokenPairProp) {
   const { networkI, networkO, networkH, networkW } = props;
@@ -35,7 +79,7 @@ export default function CTNetworkTransition(props: TokenPairProp) {
       : capitalizeFirstLetter(chainNameOut);
 
   return (
-    <Flex alignItems='center'>
+    <Flex alignItems="center">
       <Flex>
         <Flex
           w={networkW}
@@ -51,7 +95,7 @@ export default function CTNetworkTransition(props: TokenPairProp) {
           />
         </Flex>
         <Text
-          ml='4px'
+          ml="4px"
           fontWeight={"400"}
           fontSize={"12px"}
           lineHeight={"14px"}
@@ -78,7 +122,7 @@ export default function CTNetworkTransition(props: TokenPairProp) {
           />
         </Flex>
         <Text
-          ml='4px'
+          ml="4px"
           fontWeight={"400"}
           fontSize={"12px"}
           lineHeight={"14px"}

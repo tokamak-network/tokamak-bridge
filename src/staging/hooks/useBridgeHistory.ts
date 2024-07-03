@@ -505,7 +505,7 @@ export const useRequestData = () => {
         transactionHashes: {
           request: "",
           updateFee: [""],
-          waitForReceive: "",
+          refund: "",
         },
       },
     ]);
@@ -551,7 +551,7 @@ export const useProvideData = () => {
           provide: "",
           return: "",
         },
-    },
+      },
       {
         category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.PROVIDE,

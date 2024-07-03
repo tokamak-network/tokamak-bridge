@@ -4,9 +4,14 @@ import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import Pencil from "assets/icons/ct/pencil.svg";
 import Image from "next/image";
 import { Tooltip } from "@/staging/components/common/Tooltip";
-import CTNetworkTransition from "@/staging/components/cross-trade/components/core/comfirm/CTNetworkTransition";
+import CTNetworkTransition, {
+  CTSingleNetworkTransition,
+} from "@/staging/components/cross-trade/components/core/comfirm/CTNetworkTransition";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
-import { CT_History } from "@/staging/types/transaction";
+import {
+  CT_History,
+  getCancelValueFromCTRequestHistory,
+} from "@/staging/types/transaction";
 import { sub } from "date-fns";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { isFinalStatus } from "../../../utils/getStatus";
@@ -17,6 +22,7 @@ interface TransactionDetailProps {
   subValue: string;
   chainId: number;
   tokenSymbol: string;
+  isCanceled?: boolean;
 }
 
 const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
@@ -25,9 +31,10 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   subValue,
   chainId,
   tokenSymbol,
+  isCanceled,
 }) => {
   return (
-    <Box mt={title !== "Send" ? "24px" : "0"}>
+    <Box mt={title !== "Send" || isCanceled ? "24px" : "0"}>
       <Text
         fontSize={"12px"}
         fontWeight={500}
@@ -122,6 +129,12 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
             networkH={14}
             networkW={14}
           />
+        ) : title === "Refund network" ? (
+          <CTSingleNetworkTransition
+            networkI={inNetwork}
+            networkH={14}
+            networkW={14}
+          />
         ) : (
           <>
             {title == "Service fee" &&
@@ -158,9 +171,10 @@ export default function CTConfirmDetail({
 
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
+  const isCanceled = getCancelValueFromCTRequestHistory(txData);
 
   const sendTokenInfo = {
-    title: "Send",
+    title: isCanceled ? "Refund" : "Send",
     mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
       outToken.symbol
     }`,
@@ -186,23 +200,34 @@ export default function CTConfirmDetail({
       border={"1px, 1px, 0px, 1px"}
       borderRadius={"8px"}
     >
-      <CTTransactionDetail {...sendTokenInfo} />
-      <CTTransactionDetail {...outTokenInfo} />
+      <CTTransactionDetail {...sendTokenInfo} isCanceled={isCanceled} />
+      {!isCanceled && <CTTransactionDetail {...outTokenInfo} />}
 
       <Box mt={"24px"} borderTop="1px solid #313442" pt={"16px"} px={0} pb={0}>
-        <FeeDetail
-          title="Network"
-          inNetwork={inNetwork}
-          outNetwork={outNetwork}
-        />
-        <FeeDetail
-          title="Service fee"
-          mainAmount="0.012 USDC"
-          subAmount="$0.43"
-          modalType={modalType}
-          onPencilClick={onPencilClick}
-          isCompleted={isCompleted}
-        />
+        {isCanceled && (
+          <FeeDetail
+            title="Refund network"
+            inNetwork={inNetwork}
+            outNetwork={outNetwork}
+          />
+        )}
+        {!isCanceled && (
+          <FeeDetail
+            title="Network"
+            inNetwork={inNetwork}
+            outNetwork={outNetwork}
+          />
+        )}
+        {!isCanceled && (
+          <FeeDetail
+            title="Service fee"
+            mainAmount="0.012 USDC"
+            subAmount="$0.43"
+            modalType={modalType}
+            onPencilClick={onPencilClick}
+            isCompleted={isCompleted}
+          />
+        )}
         {modalType === ModalType.Trade && (
           <FeeDetail
             title="Network fee"
