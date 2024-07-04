@@ -35,7 +35,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   isCanceled,
 }) => {
   return (
-    <Box mt={title !== "Send" || isCanceled ? "24px" : "0"}>
+    <Box mt={title !== "Send" || isCanceled ? "0" : "0"}>
       <Text
         fontSize={"12px"}
         fontWeight={500}
