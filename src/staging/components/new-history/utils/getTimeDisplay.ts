@@ -80,25 +80,23 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         return timeValue;
       }
     }
-    case TransactionStatus.RETURN_NOT_COMPLETED:
-      {
-        const CT_Request_TransactionData =
-          transactionData as CT_Provide_History;
+    case TransactionStatus.RETURN_NOT_COMPLETED: {
+      const CT_Request_TransactionData = transactionData as CT_Provide_History;
 
-        if (
-          isInCT_Provide(CT_Request_TransactionData.status) &&
-          CT_Request_TransactionData.blockTimestamps.return
-        ) {
-          const timeValue = calculateInitialTime(
-            statusValue,
-            CT_Request_TransactionData.blockTimestamps.return,
-            TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY
-          );
-          return timeValue;
-        }
+      if (
+        isInCT_Provide(CT_Request_TransactionData.status) &&
+        CT_Request_TransactionData.blockTimestamps.return
+      ) {
+        const timeValue = calculateInitialTime(
+          statusValue,
+          CT_Request_TransactionData.blockTimestamps.return,
+          TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY
+        );
+        return timeValue;
       }
-      return 0;
+    }
   }
+  return 0;
 }
 
 // Function to calculate the initial time
