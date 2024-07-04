@@ -52,13 +52,19 @@ export interface TransactionToken {
   decimals: number;
 }
 
+export enum ERROR_CODE {
+  ROLLUP_NOT_COMPLETED,
+  CT_REFUND_NOT_COMPLETED,
+  CT_LIQUIDITY_NOT_RETURNED,
+}
+
 export interface I_TransactionHistory {
   category: HISTORY_SORT;
   inNetwork: SupportedChainId;
   outNetwork: SupportedChainId;
   inToken: TransactionToken;
   outToken: TransactionToken;
-  errorMessage?: string | null;
+  errorMessage?: ERROR_CODE;
 }
 
 export interface BaseTransactionHistory extends I_TransactionHistory {

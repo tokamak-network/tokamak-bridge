@@ -15,6 +15,7 @@ import {
   CT_PROVIDE,
   CT_REQUEST_CANCEL,
   isInCT_REQUEST_CANCEL,
+  ERROR_CODE,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
@@ -37,7 +38,7 @@ type TransactionStatusComponentProps = {
   openModal: () => void;
 };
 
-const ErrorRollupComponent = () => {
+export const ErrorRollupComponent = () => {
   return (
     <Flex
       w={"18px"}
@@ -117,7 +118,8 @@ export default function StatusComponent(
   const shouldCountdown =
     (transactionData.status === Status.Rollup ||
       transactionData.status === Status.Finalize ||
-      transactionData.status === CT_REQUEST_CANCEL.Refund) &&
+      transactionData.status === CT_REQUEST_CANCEL.Refund ||
+      transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
   const initialTimeDisplay = shouldCountdown
@@ -135,8 +137,6 @@ export default function StatusComponent(
             : 0
         )
       );
-
-  console.log("initialTimeDisplay", initialTimeDisplay);
 
   // Output variable
   const timeDisplay = shouldCountdown
@@ -169,6 +169,13 @@ export default function StatusComponent(
 
   // If error message exists and status is rollup, time increases and color turns red
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
+  const errorRefund =
+    transactionData.errorMessage === ERROR_CODE.CT_REFUND_NOT_COMPLETED &&
+    label === CT_REQUEST_CANCEL.Refund;
+  const errorReturnLiquidity =
+    transactionData.errorMessage === ERROR_CODE.CT_LIQUIDITY_NOT_RETURNED &&
+    label === CT_PROVIDE.Return;
+  const isError = errorRollup || errorRefund || errorReturnLiquidity;
 
   // When initial phase ends, display refresh icon to fetch new values via query
   const refreshRollup =
@@ -260,14 +267,14 @@ export default function StatusComponent(
             fontSize={"11px"}
             fontWeight={600}
             lineHeight={"22px"}
-            color={errorRollup ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
+            color={isError ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}
             onClick={!isActive ? openModal : undefined}
           >
             {timeDisplay}
           </Text>
         )}
-        {errorRollup && <ErrorRollupComponent />}
+        {isError && <ErrorRollupComponent />}
         {refreshRollup && <RefreshRollupComponent />}
         {calendarButton && (
           <CalenderButtonComponent handleCalendarClick={handleCalendarClick} />

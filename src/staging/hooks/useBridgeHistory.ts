@@ -9,6 +9,7 @@ import {
   CT_REQUEST_CANCEL,
   CT_Request_History,
   DepositTransactionHistory,
+  ERROR_CODE,
   HISTORY_SORT,
   TransactionHistory,
   WithdrawTransactionHistory,
@@ -507,6 +508,7 @@ export const useRequestData = () => {
           request: "",
           refund: "",
         },
+        errorMessage: ERROR_CODE.CT_REFUND_NOT_COMPLETED,
       },
       {
         category: HISTORY_SORT.CROSS_TRADE,
@@ -590,7 +592,7 @@ export const useProvideData = () => {
         status: CT_PROVIDE.Return,
         blockTimestamps: {
           provide: 0,
-          return: 0,
+          return: Math.floor(Date.now() / 1000),
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -612,6 +614,36 @@ export const useProvideData = () => {
           provide: "",
           return: "",
         },
+      },
+      {
+        category: HISTORY_SORT.CROSS_TRADE,
+        action: CT_ACTION.PROVIDE,
+        status: CT_PROVIDE.Return,
+        blockTimestamps: {
+          provide: 0,
+          return: Math.floor(Date.now() / 1000) - 300,
+        },
+        inNetwork: SupportedChainId.TITAN,
+        outNetwork: SupportedChainId.MAINNET,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          provide: "",
+          return: "",
+        },
+        errorMessage: ERROR_CODE.CT_LIQUIDITY_NOT_RETURNED,
       },
     ]);
   }, []);

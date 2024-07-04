@@ -11,5 +11,6 @@ export const TRANSACTION_CONSTANTS = {
     PROVIDE: 900, //15 minutes in seconds
     REQUEST: 300,
     CANCEL_REQUEST: 300,
+    RETURN_LIQUIDITY: 300,
   },
 };

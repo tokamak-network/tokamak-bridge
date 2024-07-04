@@ -4,6 +4,8 @@ import {
   isDepositTransactionHistory,
   isInCT_REQUEST_CANCEL,
   CT_Request_History,
+  isInCT_Provide,
+  CT_Provide_History,
 } from "@/staging/types/transaction";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
@@ -63,19 +65,34 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         return timeValue;
       }
     }
-    case TransactionStatus.REQUEST_CANCEL:
+    case TransactionStatus.REQUEST_CANCEL: {
+      const CT_Request_TransactionData = transactionData as CT_Request_History;
+
+      if (
+        isInCT_REQUEST_CANCEL(CT_Request_TransactionData.status) &&
+        CT_Request_TransactionData.blockTimestamps.refund
+      ) {
+        const timeValue = calculateInitialTime(
+          statusValue,
+          CT_Request_TransactionData.blockTimestamps.refund,
+          TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST
+        );
+        return timeValue;
+      }
+    }
+    case TransactionStatus.RETURN_NOT_COMPLETED:
       {
         const CT_Request_TransactionData =
-          transactionData as CT_Request_History;
+          transactionData as CT_Provide_History;
 
         if (
-          isInCT_REQUEST_CANCEL(CT_Request_TransactionData.status) &&
-          CT_Request_TransactionData.blockTimestamps.refund
+          isInCT_Provide(CT_Request_TransactionData.status) &&
+          CT_Request_TransactionData.blockTimestamps.return
         ) {
           const timeValue = calculateInitialTime(
             statusValue,
-            CT_Request_TransactionData.blockTimestamps.refund,
-            TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST
+            CT_Request_TransactionData.blockTimestamps.return,
+            TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY
           );
           return timeValue;
         }

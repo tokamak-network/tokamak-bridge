@@ -15,17 +15,21 @@ import {
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
+import { ErrorRollupComponent } from "@/staging/components/new-history/components/core/pending/StatusComponent";
 
 interface TransactionItemProps {
   title: string;
   isActive: boolean;
   txHash?: string;
-  isCT_REQUEST_CANCEL?: boolean;
+  isError?: boolean;
+  blockTimestamp?: number[];
 }
+
 const TransactionItem = (props: TransactionItemProps) => {
-  const { title, isActive, txHash } = props;
+  const { title, isActive, txHash, isError } = props;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const isOnL1 = title === "Wait For Receive";
+  const isOnError = isActive && isError;
 
   const _title = useMemo(() => {
     switch (title) {
@@ -61,7 +65,7 @@ const TransactionItem = (props: TransactionItemProps) => {
     TRANSACTION_CONSTANTS.CROSS_TRADE.REQUEST
   );
   const initialTimeDisplay = formatTimeDisplay(remainTime);
-  const timeDisplay = useCountdown(initialTimeDisplay, false);
+  const timeDisplay = useCountdown(initialTimeDisplay, isError);
 
   return (
     <Flex justifyContent={"space-between"}>
@@ -73,41 +77,43 @@ const TransactionItem = (props: TransactionItemProps) => {
       >
         {_title}
       </Text>
-      {!isActive && (
-        <Flex cursor={"pointer"}>
-          <Link
-            target="_blank"
-            href={`${BLOCKEXPLORER_CONSTANTS[chainId]}/tx/${txHash}`}
-            textDecor={"none"}
-            _hover={{ textDecor: "none" }}
-            display={"flex"}
-          >
-            <Text
-              fontWeight={400}
-              fontSize={"13px"}
-              lineHeight={"20px"}
-              color={"#A0A3AD"}
-              mr={"4px"}
+      <Flex>
+        {!isActive && (
+          <Flex cursor={"pointer"}>
+            <Link
+              target="_blank"
+              href={`${BLOCKEXPLORER_CONSTANTS[chainId]}/tx/${txHash}`}
+              textDecor={"none"}
+              _hover={{ textDecor: "none" }}
+              display={"flex"}
             >
-              Transaction
-            </Text>
-            <Flex cursor="pointer">
-              <Image src={txlink} alt={"txlink"} />
-            </Flex>
-          </Link>
-        </Flex>
-      )}
-      {isActive && (
-        <Text
-          fontWeight={400}
-          fontSize={"13px"}
-          lineHeight={"20px"}
-          color={"#fff"}
-          mr={"4px"}
-        >
-          {timeDisplay}
-        </Text>
-      )}
+              <Text
+                fontWeight={400}
+                fontSize={"13px"}
+                lineHeight={"20px"}
+                color={"#A0A3AD"}
+                mr={"4px"}
+              >
+                Transaction
+              </Text>
+              <Flex cursor="pointer">
+                <Image src={txlink} alt={"txlink"} />
+              </Flex>
+            </Link>
+          </Flex>
+        )}
+        {isActive && (
+          <Text
+            fontWeight={400}
+            fontSize={"13px"}
+            lineHeight={"20px"}
+            color={isOnError ? "#DD3A44" : "#fff"}
+          >
+            {timeDisplay}
+          </Text>
+        )}
+        {isOnError && <ErrorRollupComponent />}
+      </Flex>
     </Flex>
   );
 };
@@ -121,6 +127,7 @@ export default function CTConfirmHistoryFooter(props: {
 
   const isCompleted = isFinalStatus(txData.status);
   const keyLength = Object.keys(txData.transactionHashes).length;
+  const isError = txData.errorMessage !== undefined;
   const TransactionHistory = useMemo(() => {
     return (
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
@@ -128,7 +135,12 @@ export default function CTConfirmHistoryFooter(props: {
           const isActive = isCompleted ? false : keyLength - 1 === index;
           if (typeof hash === "string") {
             return (
-              <TransactionItem title={key} isActive={isActive} txHash={hash} />
+              <TransactionItem
+                title={key}
+                isActive={isActive}
+                txHash={hash}
+                isError={isError}
+              />
             );
           }
           return hash.map((tx, index) => {
@@ -138,6 +150,7 @@ export default function CTConfirmHistoryFooter(props: {
                 title={key}
                 isActive={isActiveOnUpdateFee}
                 txHash={tx}
+                isError={isError}
               />
             );
           });
