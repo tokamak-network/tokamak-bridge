@@ -185,6 +185,14 @@ export function getCancelValueFromCTRequestHistory(
 ): object is CT_Request_History {
   return (object as CT_Request_History).isCanceled;
 }
+
+export function ableToUpdateFee(transaction: any): boolean {
+  return (
+    transaction.status === CT_REQUEST.Request ||
+    transaction.status === CT_REQUEST.UpdateFee ||
+    transaction.status === CT_REQUEST.WaitForReceive
+  );
+}
 export interface GasCostData {
   withdrawInitiateGasCostText?: string;
   withdrawInitiateGasCostUS?: string;

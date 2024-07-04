@@ -359,36 +359,6 @@ export const useRequestData = () => {
         category: HISTORY_SORT.CROSS_TRADE,
         action: CT_ACTION.REQUEST,
         isCanceled: false,
-        status: CT_REQUEST.UpdateFee,
-        blockTimestamps: {
-          request: 0,
-          updateFee: [0],
-        },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          request: "",
-          updateFee: [""],
-        },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: false,
         status: CT_REQUEST.WaitForReceive,
         blockTimestamps: {
           request: 0,

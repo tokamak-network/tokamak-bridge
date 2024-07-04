@@ -66,6 +66,7 @@ const TransactionItem = (props: TransactionItemProps) => {
   );
   const initialTimeDisplay = formatTimeDisplay(remainTime);
   const timeDisplay = useCountdown(initialTimeDisplay, isError);
+  const needToShowTimeDisplay = title === "refund" || title === "return";
 
   return (
     <Flex justifyContent={"space-between"}>
@@ -102,7 +103,7 @@ const TransactionItem = (props: TransactionItemProps) => {
             </Link>
           </Flex>
         )}
-        {isActive && (
+        {isActive && needToShowTimeDisplay && (
           <Text
             fontWeight={400}
             fontSize={"13px"}

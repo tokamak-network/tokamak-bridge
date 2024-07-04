@@ -10,6 +10,7 @@ import CTNetworkTransition, {
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import {
   CT_History,
+  ableToUpdateFee,
   getCancelValueFromCTRequestHistory,
 } from "@/staging/types/transaction";
 import { sub } from "date-fns";
@@ -172,6 +173,7 @@ export default function CTConfirmDetail({
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
   const isCanceled = getCancelValueFromCTRequestHistory(txData);
+  const updateFee = ableToUpdateFee(txData);
 
   const sendTokenInfo = {
     title: isCanceled ? "Refund" : "Send",
@@ -218,7 +220,7 @@ export default function CTConfirmDetail({
             outNetwork={outNetwork}
           />
         )}
-        {!isCanceled && (
+        {!isCanceled && updateFee && (
           <FeeDetail
             title="Service fee"
             mainAmount="0.012 USDC"
