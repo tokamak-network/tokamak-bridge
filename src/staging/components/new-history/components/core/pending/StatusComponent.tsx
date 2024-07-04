@@ -122,11 +122,14 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
+  console.log("label", label, isActive);
+
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
-    !isActive && label === Status.Finalize
+    (!isActive && label === Status.Finalize) ||
+      (isActive && label === CT_REQUEST.WaitForReceive)
     ? ""
     : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
