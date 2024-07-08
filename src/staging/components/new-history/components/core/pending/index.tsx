@@ -86,6 +86,7 @@ export default function Pending(props: PendingProps) {
         gap={"6px"}
         borderRadius={"6px"}
         borderWidth={"1px"}
+        backgroundColor={"#0F0F12"}
         borderColor={
           isOnOfficialStandard
             ? "rgba(0, 122, 255, 0.4)"

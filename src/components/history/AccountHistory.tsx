@@ -55,7 +55,7 @@ export default function AccountHistory() {
             fontSize={13}
             fontWeight={400}
             color={isRequest ? "none" : "#A0A3AD"}
-            bg={isRequest ? "#007AFF" : "none"}
+            bg={isRequest ? "#007AFF" : "#15161D"}
             border={isRequest ? "none" : "1px solid #313442"}
             lineHeight={"32px"}
             _hover={{}}
@@ -71,7 +71,7 @@ export default function AccountHistory() {
             fontSize={13}
             fontWeight={400}
             color={!isRequest ? "none" : "#A0A3AD"}
-            bg={!isRequest ? "#007AFF" : "none"}
+            bg={!isRequest ? "#007AFF" : "#15161D"}
             border={!isRequest ? "none" : "1px solid #313442"}
             lineHeight={"32px"}
             _hover={{}}
@@ -173,12 +173,11 @@ export default function AccountHistory() {
               textAlign={"center"}
               fontSize={14}
               fontWeight={600}
-              py={"10px"}
+              py={isOnOfficialStandard ? "9px" : "10px"}
               cursor={"pointer"}
               color={isOnOfficialStandard ? "#007AFF" : "#565B72"}
-              borderBottom={
-                isOnOfficialStandard ? "1px solid #007AFF" : "1px solid #1F2128"
-              }
+              borderBottomColor={isOnOfficialStandard ? "#007AFF" : "#565B72"}
+              borderBottomWidth={isOnOfficialStandard ? "2px" : "1px"}
               onClick={() => {
                 setSelectedTransactionCategory(Action.Deposit);
                 setSelectedTab(HISTORY_SORT.STANDARD);
@@ -191,12 +190,11 @@ export default function AccountHistory() {
               textAlign={"center"}
               fontSize={14}
               fontWeight={600}
-              py={"10px"}
+              py={isOnCrossTrade ? "9px" : "10px"}
               cursor={"pointer"}
               color={isOnCrossTrade ? "#007AFF" : "#565B72"}
-              borderBottom={
-                isOnCrossTrade ? "1px solid #007AFF" : "1px solid #1F2128"
-              }
+              borderBottomColor={isOnCrossTrade ? "#007AFF" : "#565B72"}
+              borderBottomWidth={isOnCrossTrade ? "2px" : "1px"}
               onClick={() => {
                 setSelectedTransactionCategory(CT_ACTION.REQUEST);
                 setSelectedTab(HISTORY_SORT.CROSS_TRADE);

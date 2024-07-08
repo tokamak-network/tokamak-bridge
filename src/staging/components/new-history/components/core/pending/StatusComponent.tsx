@@ -122,8 +122,6 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
-  console.log("label", label, isActive);
-
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
@@ -268,7 +266,7 @@ export default function StatusComponent(
         ) : (
           <Text
             fontSize={"11px"}
-            fontWeight={600}
+            fontWeight={400}
             lineHeight={"22px"}
             color={isError ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}

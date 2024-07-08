@@ -595,7 +595,6 @@ export default function TransactionDetail(props: {
 
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen || mobileView);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
-  const { isApproved } = useApprove();
 
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
@@ -616,7 +615,8 @@ export default function TransactionDetail(props: {
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
     !isConnected ||
-    (mode === "Swap" && isTONatPair)
+    (mode === "Swap" && isTONatPair) ||
+    mode === "Withdraw"
   ) {
     return null;
   }

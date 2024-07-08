@@ -59,7 +59,6 @@ export default function Complete(transaction: TransactionHistory) {
       case "Deposit":
         return "Deposit";
       case CT_ACTION.REQUEST:
-        if (isCT_Request_Cancel) return "Request (Cancel)";
         return "Request";
       case CT_ACTION.PROVIDE:
         return "Provide";
@@ -77,7 +76,14 @@ export default function Complete(transaction: TransactionHistory) {
           lineHeight={"22px"}
           color={"#A0A3AD"}
         >
-          {title}
+          {title}{" "}
+          {isCT_Request_Cancel && (
+            <>
+              <span style={{ fontSize: "10px", fontWeight: 400 }}>{"("}</span>
+              <span>Cancel</span>
+              <span style={{ fontSize: "10px", fontWeight: 400 }}>{")"}</span>
+            </>
+          )}
         </Text>
         <TokenPair
           networkI={transactionData.inNetwork}

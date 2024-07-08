@@ -122,6 +122,8 @@ export default function ActionButton() {
           ? null
           : isConnected && mode === null
           ? "Select Network"
+          : mode === "Withdraw"
+          ? "Next"
           : mode?.replaceAll("ETH-", "")}{" "}
         <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
           {deactivateButton ? "(Service under maintenance)" : ""}
