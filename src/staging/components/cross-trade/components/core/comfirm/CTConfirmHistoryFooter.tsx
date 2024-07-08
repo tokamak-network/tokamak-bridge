@@ -16,6 +16,7 @@ import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import { ErrorRollupComponent } from "@/staging/components/new-history/components/core/pending/StatusComponent";
+import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 
 interface TransactionItemProps {
   title: string;
@@ -23,10 +24,11 @@ interface TransactionItemProps {
   txHash?: string;
   isError?: boolean;
   blockTimestamp?: number[];
+  txData: CT_History;
 }
 
 const TransactionItem = (props: TransactionItemProps) => {
-  const { title, isActive, txHash, isError } = props;
+  const { title, isActive, txHash, isError, blockTimestamp, txData } = props;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const isOnL1 = title === "Wait For Receive";
   const isOnError = isActive && isError;
@@ -62,13 +64,24 @@ const TransactionItem = (props: TransactionItemProps) => {
     ? SupportedChainId.TITAN
     : SupportedChainId.TITAN_SEPOLIA;
 
-  const remainTime = calculateInitialCountdown(
-    Math.floor(Date.now() / 1000),
-    TRANSACTION_CONSTANTS.CROSS_TRADE.REQUEST
-  );
-  const initialTimeDisplay = formatTimeDisplay(remainTime);
-  const timeDisplay = useCountdown(initialTimeDisplay, isError);
-  const needToShowTimeDisplay = title === "refund" || title === "return";
+  const needToShowTimeDisplay =
+    (title === "refund" || title === "return") && isActive;
+  const initialTimeDisplay = formatTimeDisplay(getRemainTime(txData));
+  const timeDisplay = useCountdown(initialTimeDisplay, Boolean(isOnError));
+
+  const CountdownComponent = useMemo(() => {
+    if (!needToShowTimeDisplay) return null;
+    return (
+      <Text
+        fontWeight={400}
+        fontSize={"13px"}
+        lineHeight={"20px"}
+        color={isOnError ? "#DD3A44" : "#fff"}
+      >
+        {timeDisplay}
+      </Text>
+    );
+  }, [timeDisplay, needToShowTimeDisplay]);
 
   return (
     <Flex justifyContent={"space-between"}>
@@ -105,16 +118,7 @@ const TransactionItem = (props: TransactionItemProps) => {
             </Link>
           </Flex>
         )}
-        {isActive && needToShowTimeDisplay && (
-          <Text
-            fontWeight={400}
-            fontSize={"13px"}
-            lineHeight={"20px"}
-            color={isOnError ? "#DD3A44" : "#fff"}
-          >
-            {timeDisplay}
-          </Text>
-        )}
+        {CountdownComponent}
         {isOnError && <ErrorRollupComponent />}
       </Flex>
     </Flex>
@@ -131,11 +135,14 @@ export default function CTConfirmHistoryFooter(props: {
   const isCompleted = isFinalStatus(txData.status);
   const keyLength = Object.keys(txData.transactionHashes).length;
   const isError = txData.errorMessage !== undefined;
+
   const TransactionHistory = useMemo(() => {
     return (
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
           const isActive = isCompleted ? false : keyLength - 1 === index;
+          //@ts-ignore
+          const blockTimestamp = txData.blockTimestamps[key];
           if (typeof hash === "string") {
             return (
               <TransactionItem
@@ -143,6 +150,8 @@ export default function CTConfirmHistoryFooter(props: {
                 isActive={isActive}
                 txHash={hash}
                 isError={isError}
+                blockTimestamp={blockTimestamp}
+                txData={txData}
               />
             );
           }
@@ -154,13 +163,14 @@ export default function CTConfirmHistoryFooter(props: {
                 isActive={isActiveOnUpdateFee}
                 txHash={tx}
                 isError={isError}
+                txData={txData}
               />
             );
           });
         })}
       </Flex>
     );
-  }, [txData.transactionHashes, keyLength, isCompleted]);
+  }, [txData, keyLength, isCompleted]);
 
   return (
     <>

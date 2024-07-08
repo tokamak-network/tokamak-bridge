@@ -648,9 +648,7 @@ export default function TransactionDetail(props: {
       )}
       {(!mobileView ||
         isOnConfirm ||
-        (mode !== "Deposit" &&
-          mode !== "Withdraw" &&
-          !(isWrapUnwrap && mobileView))) && (
+        (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
         <Content
           isExpanded={isExpanded}
           isOnConfirm={isOnConfirm}
