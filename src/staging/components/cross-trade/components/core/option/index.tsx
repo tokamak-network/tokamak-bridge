@@ -99,7 +99,7 @@ export default function CTOptionModal() {
       <ModalOverlay />
       <ModalContent
         width={"404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
       >
@@ -138,10 +138,10 @@ export default function CTOptionModal() {
             handleButtonMainClick={handleButtonMainClick}
           />
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           <Button
             mt={"12px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{

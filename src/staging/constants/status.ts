@@ -15,7 +15,7 @@ export const STATUS_CONFIG = {
   ],
   REQUEST_CANCEL: [
     CT_REQUEST_CANCEL.Request,
-    CT_REQUEST.UpdateFee,
+    CT_REQUEST_CANCEL.CancelRequest,
     CT_REQUEST_CANCEL.Refund,
   ],
   PROVIDE: [CT_PROVIDE.Provide, CT_PROVIDE.Return],

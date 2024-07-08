@@ -12,10 +12,13 @@ import {
   CT_History,
   ableToUpdateFee,
   getCancelValueFromCTRequestHistory,
+  isInCT_Provide,
+  isInCT_REQUEST,
 } from "@/staging/types/transaction";
 import { sub } from "date-fns";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { isFinalStatus } from "../../../utils/getStatus";
+import { LinkContainer } from "@/staging/components/common/LinkContainer";
 
 interface TransactionDetailProps {
   title: string;
@@ -24,6 +27,7 @@ interface TransactionDetailProps {
   chainId: number;
   tokenSymbol: string;
   isCanceled?: boolean;
+  tokenAddress: string;
 }
 
 const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
@@ -33,6 +37,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   chainId,
   tokenSymbol,
   isCanceled,
+  tokenAddress,
 }) => {
   return (
     <Box mt={title !== "Send" || isCanceled ? "0" : "0"}>
@@ -50,15 +55,21 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
             {mainValue}
           </Text>
           <Center width="32px" height="32px">
-            <TokenSymbolWithNetwork
-              tokenSymbol={tokenSymbol}
+            <LinkContainer
               chainId={chainId}
-              networkSymbolW={22}
-              networkSymbolH={22}
-              symbolW={40}
-              symbolH={40}
-              bottom={-0.5}
-              right={-0.5}
+              address={tokenAddress}
+              component={
+                <TokenSymbolWithNetwork
+                  tokenSymbol={tokenSymbol}
+                  chainId={chainId}
+                  networkSymbolW={22}
+                  networkSymbolH={22}
+                  symbolW={40}
+                  symbolH={40}
+                  bottom={-0.5}
+                  right={-0.5}
+                />
+              }
             />
           </Center>
         </Flex>
@@ -172,17 +183,20 @@ export default function CTConfirmDetail({
 
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
+  const isProvide = isInCT_Provide(status);
+  const isRequest = isInCT_REQUEST(status);
   const isCanceled = getCancelValueFromCTRequestHistory(txData);
   const updateFee = ableToUpdateFee(txData);
 
   const sendTokenInfo = {
-    title: isCanceled ? "Refund" : "Send",
+    title: isProvide ? "Provide" : isCanceled ? "Refund" : "Send",
     mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
       outToken.symbol
     }`,
     subValue: `$${"99.00"}`,
-    chainId: outNetwork,
+    chainId: isProvide || isRequest ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,
+    tokenAddress: outToken.address,
   };
   const outTokenInfo = {
     title: "Receive",
@@ -190,8 +204,9 @@ export default function CTConfirmDetail({
       inToken.symbol
     }`,
     subValue: `$${"99.00"}`,
-    chainId: inNetwork,
+    chainId: outNetwork,
     tokenSymbol: inToken.symbol,
+    tokenAddress: inToken.address,
   };
 
   return (
@@ -202,9 +217,10 @@ export default function CTConfirmDetail({
       border={"1px, 1px, 0px, 1px"}
       borderRadius={"8px"}
     >
-      <CTTransactionDetail {...sendTokenInfo} isCanceled={isCanceled} />
-      {!isCanceled && <CTTransactionDetail {...outTokenInfo} />}
-
+      <Flex flexDir={"column"} rowGap={"24px"}>
+        <CTTransactionDetail {...sendTokenInfo} isCanceled={isCanceled} />
+        {!isCanceled && <CTTransactionDetail {...outTokenInfo} />}
+      </Flex>
       <Box mt={"24px"} borderTop="1px solid #313442" pt={"16px"} px={0} pb={0}>
         {isCanceled && (
           <FeeDetail
@@ -220,7 +236,7 @@ export default function CTConfirmDetail({
             outNetwork={outNetwork}
           />
         )}
-        {!isCanceled && updateFee && (
+        {!isCanceled && (updateFee || isProvide) && (
           <FeeDetail
             title="Service fee"
             mainAmount="0.012 USDC"

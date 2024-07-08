@@ -38,8 +38,8 @@ export default function CTOptionCrossDetail(
 
   return (
     <Flex
-      alignItems='center'
-      justifyContent='space-between'
+      alignItems="center"
+      justifyContent="space-between"
       border={isCrossActive ? "1px solid #DB00FF" : "1px solid #313442"}
       py={"16px"}
       px={"20px"}
@@ -52,7 +52,7 @@ export default function CTOptionCrossDetail(
           Cross Trade Bridge
         </Text>
         <Box mt={"12px"}>
-          <Flex alignItems='center'>
+          <Flex alignItems="center">
             <Text
               fontWeight={400}
               fontSize={"10px"}
@@ -81,10 +81,10 @@ export default function CTOptionCrossDetail(
                   ? "116px"
                   : "98px"
               }
-              height='26px'
-              padding='4px 10px'
-              gap='8px'
-              borderRadius='4px'
+              height="26px"
+              padding="4px 10px"
+              gap="8px"
+              borderRadius="4px"
               sx={{
                 backgroundColor: isRecommendActive ? "#DB00FF" : "#15161D",
                 border: isRecommendActive ? "" : "1px solid #313442",
@@ -124,11 +124,11 @@ export default function CTOptionCrossDetail(
             </Button>
             <Button
               width={isAdvancedActive ? "83px" : "82px"}
-              height='26px'
-              padding='4px 10px'
+              height="26px"
+              padding="4px 10px"
               ml={"8px"}
-              gap='8px'
-              borderRadius='4px'
+              gap="8px"
+              borderRadius="4px"
               sx={{
                 backgroundColor: isAdvancedActive ? "#DB00FF" : "#15161D",
                 border: isAdvancedActive
@@ -159,7 +159,7 @@ export default function CTOptionCrossDetail(
         </Box>
         {isAdvancedActive && (
           <Box mt={"12px"}>
-            <Flex alignItems='center'>
+            <Flex alignItems="center">
               <Text
                 fontWeight={400}
                 fontSize={"10px"}
@@ -194,9 +194,9 @@ export default function CTOptionCrossDetail(
         </Box>
       </Box>
       <Circle
-        size='72px'
-        border='1px solid #DB00FF'
-        bg='#15161D'
+        size="72px"
+        border="1px solid #DB00FF"
+        bg="#15161D"
         pb={"8px"}
         pt={"6px"}
       >
@@ -206,7 +206,7 @@ export default function CTOptionCrossDetail(
             fontSize={"16px"}
             lineHeight={"24px"}
             color={"#DB00FF"}
-            textAlign='center'
+            textAlign="center"
           >
             $0.16
           </Text>
@@ -216,7 +216,7 @@ export default function CTOptionCrossDetail(
             fontSize={"8px"}
             lineHeight={"12px"}
             color={"#DB00FF"}
-            textAlign='center'
+            textAlign="center"
           >
             Network fee
           </Text>

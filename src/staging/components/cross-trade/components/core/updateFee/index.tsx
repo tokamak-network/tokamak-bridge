@@ -118,7 +118,7 @@ export default function CTFeeUpdateModal() {
     <Modal isOpen={ctUpdateFeeModal} onClose={resetAllStates} isCentered>
       <ModalOverlay />
       <ModalContent
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
         width={"404px"}
@@ -134,7 +134,7 @@ export default function CTFeeUpdateModal() {
         <ModalBody p={0}>
           <Box
             width={"364px"}
-            bg='#15161D'
+            bg="#15161D"
             px={"16px"}
             py={"16px"}
             borderRadius={"8px"}
@@ -188,7 +188,7 @@ export default function CTFeeUpdateModal() {
             )}
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           {activeButton == UpdateFeeButtonType.CancelRequest && (
             <Box mt={"16px"}>
               <Checkbox
@@ -209,7 +209,7 @@ export default function CTFeeUpdateModal() {
                     },
                   },
                 }}
-                colorScheme='#A0A3AD'
+                colorScheme="#A0A3AD"
               >
                 <Text
                   color={isChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -225,7 +225,7 @@ export default function CTFeeUpdateModal() {
           )}
           <Button
             mt={"16px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{
@@ -242,8 +242,8 @@ export default function CTFeeUpdateModal() {
               {activeButton == UpdateFeeButtonType.Update
                 ? !networkCheck
                   ? "Wrong Network"
-                  : "Update fee"
-                : "Cancel request"}
+                  : "Update Fee"
+                : "Cancel Request"}
             </Text>
           </Button>
         </ModalFooter>

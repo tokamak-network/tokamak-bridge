@@ -33,6 +33,7 @@ export enum CT_REQUEST {
 }
 export enum CT_REQUEST_CANCEL {
   Request = "CT_REQ_REQUEST",
+  CancelRequest = "CT_REQ_CANCEL_REQUEST",
   Refund = "CT_REQ_REFUND",
   Completed = "CT_REQ_CANCEL_COMPLETED",
 }

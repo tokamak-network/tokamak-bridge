@@ -426,6 +426,7 @@ export const useRequestData = () => {
         status: CT_REQUEST_CANCEL.Refund,
         blockTimestamps: {
           request: 0,
+          cancelRequest: 0,
           refund: Math.floor(Date.now() / 1000),
         },
         inNetwork: SupportedChainId.TITAN,
@@ -446,6 +447,7 @@ export const useRequestData = () => {
         },
         transactionHashes: {
           request: "",
+          cancelRequest: "",
           refund: "",
         },
       },
@@ -456,6 +458,7 @@ export const useRequestData = () => {
         status: CT_REQUEST_CANCEL.Refund,
         blockTimestamps: {
           request: 0,
+          cancelRequest: 0,
           refund: Math.floor(Date.now() / 1000) - 300,
         },
         inNetwork: SupportedChainId.TITAN,
@@ -476,6 +479,7 @@ export const useRequestData = () => {
         },
         transactionHashes: {
           request: "",
+          cancelRequest: "",
           refund: "",
         },
         errorMessage: ERROR_CODE.CT_REFUND_NOT_COMPLETED,
@@ -535,8 +539,8 @@ export const useProvideData = () => {
           provide: 0,
           return: 0,
         },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
         inToken: {
           address: "0x",
           name: "ETH",
@@ -564,8 +568,8 @@ export const useProvideData = () => {
           provide: 0,
           return: Math.floor(Date.now() / 1000),
         },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
         inToken: {
           address: "0x",
           name: "ETH",
@@ -593,8 +597,8 @@ export const useProvideData = () => {
           provide: 0,
           return: Math.floor(Date.now() / 1000) - 300,
         },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
+        inNetwork: SupportedChainId.MAINNET,
+        outNetwork: SupportedChainId.TITAN,
         inToken: {
           address: "0x",
           name: "ETH",

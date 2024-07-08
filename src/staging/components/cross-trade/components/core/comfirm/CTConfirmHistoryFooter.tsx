@@ -47,6 +47,8 @@ const TransactionItem = (props: TransactionItemProps) => {
         return "Return liquidity";
       case "refund":
         return "Refund";
+      case "cancelRequest":
+        return "Cancel Request";
       default:
         return title;
     }

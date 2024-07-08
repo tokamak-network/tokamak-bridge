@@ -42,6 +42,8 @@ export default function CTModal() {
     [ModalType.History]: "Cross Trade",
   };
 
+  console.log("ctConfirmModal.type", ctConfirmModal.type);
+
   return (
     <Modal
       isOpen={ctConfirmModal.isOpen}

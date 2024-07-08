@@ -218,6 +218,8 @@ export default function StatusComponent(
       switch (label) {
         case CT_REQUEST_CANCEL.Request:
           return "Request";
+        case CT_REQUEST_CANCEL.CancelRequest:
+          return "Cancel Request";
         case CT_REQUEST_CANCEL.Refund:
           return "Refund";
         default:
