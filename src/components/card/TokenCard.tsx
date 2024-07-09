@@ -177,7 +177,8 @@ export default function TokenCard(props: TokenCardProps) {
   const { amountOut } = useAmountOut();
 
   const { tokenPriceWithAmount: inTokenWithPrice } = useGetMarketPrice({
-    tokenName: inTokenInfo?.tokenName as string,
+    //make it not able to fetch when token is not defined
+    tokenName: isPrice ? (inTokenInfo?.tokenName as string) : undefined,
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
   });
 
@@ -198,7 +199,8 @@ export default function TokenCard(props: TokenCardProps) {
   }, [mode, inTokenInfo, amountOut]);
 
   const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
-    tokenName: outTokenInfo?.tokenName as string,
+    //make it not able to fetch when token is not defined
+    tokenName: isPrice ? (outTokenInfo?.tokenName as string) : undefined,
     amount: Number(outAmount),
   });
 

@@ -42,6 +42,7 @@ export function useGasFee() {
   const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
   const { isBalanceOver } = useInputBalanceCheck();
   const { isApproved } = useApprove();
+  // const { estimatedGasUsageGwei } = useAmountOut();
 
   const swapGasUseEstimate = useMemo(() => {
     if (routingPath && mode === "Swap") {
@@ -147,10 +148,6 @@ export function useGasFee() {
               );
               const estimateTotalGasCost =
                 await l2Provider.estimateTotalGasCost({ ...tx, from: address });
-              console.log(
-                "estimateTotalGasCost",
-                estimateTotalGasCost.toString()
-              );
               return estimateTotalGasCost;
             }
             const tx = await withdrawContract.populateTransaction.withdraw(
