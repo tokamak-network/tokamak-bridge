@@ -1,9 +1,5 @@
-import { GET_MARKET_PRICE } from "@/graphql/getMarketPrice";
 import { SupportedTokenNames } from "@/types/token/supportedToken";
-import { useQuery } from "@apollo/client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { CoinGeckoClient } from "coingecko-api-v3";
-import { set } from "date-fns";
 
 export const trimTokenName = (tokenName: string | undefined) => {
   if (tokenName?.includes(" "))
