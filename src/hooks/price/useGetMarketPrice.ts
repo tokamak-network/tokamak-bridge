@@ -50,7 +50,9 @@ export function useGetMarketPrice(params: {
           return setData({ getTokenMarketData: data[0] });
         }
         setData(undefined);
-      } catch (error) {}
+      } catch (error) {
+        setData(undefined);
+      }
     }
     if (
       tokenName !== undefined &&
