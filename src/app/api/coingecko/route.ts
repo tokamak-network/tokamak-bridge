@@ -1,7 +1,7 @@
 import fetch from "node-fetch";
 import { NextRequest, NextResponse } from "next/server";
 
-export const isTokamakEcosystemTokenName = (tokenName: string): boolean => {
+const isTokamakEcosystemTokenName = (tokenName: string): boolean => {
   if (!tokenName) {
     throw new Error("Token name is required");
   }
