@@ -16,12 +16,21 @@ import {
   WarningType,
   ButtonTypeMain,
   ButtonTypeSub,
+  ModalType,
 } from "@/staging/components/cross-trade/types";
 import { useHandleConfirm } from "@/staging/components/new-confirm/hooks/useDepositWithdrawHandleConfirm";
-import { Action, Status } from "@/staging/types/transaction";
+import {
+  Action,
+  CT_ACTION,
+  CT_REQUEST,
+  HISTORY_SORT,
+  Status,
+} from "@/staging/types/transaction";
 import CTOptionCrossDetail from "./CTOptionCrossDetail";
 import CTOptionStandardDetail from "./CTOptionStandardDetail";
 import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
+import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -74,23 +83,45 @@ export default function CTOptionModal() {
     activeSubButtonValue === ButtonTypeSub.Advanced &&
     (inputValue === "" || inputWarningCheck === WarningType.Critical);
 
-  // 추후 삭제
-  const resetAllStates = () => {
-    onCloseCTOptionModal();
-    setInputValue("");
-    setActiveMainButtonValue(ButtonTypeMain.Cross);
-    setActiveSubButtonValue(ButtonTypeSub.Recommend);
-    setInputWarningCheck("");
-  };
-
   const handleConfirm = useHandleConfirm();
+  const { onOpenCTConfirmModal } = useCTConfirmModal();
 
   const handleClickConfirm = () => {
-    // 시연을 위한 초기화 추후 삭제
-    resetAllStates();
-
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
-      handleConfirm(Action.Withdraw, Status.Initiate);
+      return handleConfirm(Action.Withdraw, Status.Initiate);
+    }
+    if (activeMainButtonValue === ButtonTypeMain.Cross) {
+      return onOpenCTConfirmModal({
+        type: ModalType.Trade,
+        txData: {
+          category: HISTORY_SORT.CROSS_TRADE,
+          action: CT_ACTION.REQUEST,
+          isCanceled: false,
+          status: CT_REQUEST.Request,
+          blockTimestamps: {
+            request: 0,
+          },
+          inNetwork: SupportedChainId.TITAN,
+          outNetwork: SupportedChainId.MAINNET,
+          inToken: {
+            address: "0x",
+            name: "ETH",
+            symbol: "ETH",
+            amount: "000000000000",
+            decimals: 0,
+          },
+          outToken: {
+            address: "0x",
+            name: "ETH",
+            symbol: "ETH",
+            amount: "000000000000",
+            decimals: 0,
+          },
+          transactionHashes: {
+            request: "",
+          },
+        },
+      });
     }
   };
 
@@ -112,11 +143,20 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {/** 현재 임시로 standard를 클릭 했을 때, disabled가 나오게 함. @Robert
-           * 추후, crosstrade가 지원 되지 않은 토큰 일 때,  CTOptionDisabledDetail 해당 컴포넌트가 나오도록 수정
-           */}
           {activeMainButtonValue === ButtonTypeMain.Standard ? (
-            <CTOptionDisabledDetail />
+            // <CTOptionDisabledDetail />
+            <CTOptionCrossDetail
+              // cross, official 관련 props
+              activeMainButtonValue={activeMainButtonValue}
+              handleButtonMainClick={handleButtonMainClick}
+              // recommend, Advanced button 관련 props
+              activeSubButtonValue={activeSubButtonValue}
+              handleButtonSubClick={handleButtonSubClick}
+              // input 관련 props
+              inputValue={inputValue}
+              inputWarningCheck={inputWarningCheck}
+              onInputChange={handleInputChange}
+            />
           ) : (
             <CTOptionCrossDetail
               // cross, official 관련 props
@@ -131,7 +171,6 @@ export default function CTOptionModal() {
               onInputChange={handleInputChange}
             />
           )}
-
           <CTOptionStandardDetail
             // cross, official 관련 props
             activeMainButtonValue={activeMainButtonValue}

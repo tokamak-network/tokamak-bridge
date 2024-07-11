@@ -16,7 +16,6 @@ import CloseButton from "@/components/button/CloseButton";
 import CTConfirmDetail from "./CTConfirmDetail";
 import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
-import { isFinalStatus } from "../../../utils/getStatus";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
@@ -41,8 +40,6 @@ export default function CTModal() {
     [ModalType.Trade]: "Confirm Cross Trade",
     [ModalType.History]: "Cross Trade",
   };
-
-  console.log("ctConfirmModal.type", ctConfirmModal.type);
 
   return (
     <Modal

@@ -79,10 +79,8 @@ export default function ActionButton() {
     mode,
     outToken,
   ]);
-  const { onOpenConfirmModal } = useConfirmModal();
   const { onClick } = useCallBridgeSwapAction();
   const { connetAndDisconntWallet } = useConnectWallet();
-  const [, setWithdrawStatus] = useRecoilState(confirmWithdrawStats);
 
   {
     /** add coming code  @Robert */

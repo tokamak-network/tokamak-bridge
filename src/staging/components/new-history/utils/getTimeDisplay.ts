@@ -13,7 +13,7 @@ import {
   TransactionStatus,
   getStatusValue,
 } from "@/staging/components/new-history/utils/historyStatus";
-import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { utcToZonedTime } from "date-fns-tz";
 
 // status 별로 변수 넣는 함수
 export function getRemainTime(transactionData: TransactionHistory): number {

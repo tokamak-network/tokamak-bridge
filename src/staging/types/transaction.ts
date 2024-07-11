@@ -15,7 +15,7 @@ export enum Action {
 export enum CT_ACTION {
   REQUEST,
   PROVIDE,
-}
+} 
 
 export enum Status {
   Initiate = "Initiate",
@@ -24,7 +24,6 @@ export enum Status {
   Finalize = "Finalize",
   Completed = "Completed",
 }
-
 export enum CT_REQUEST {
   Request = "CT_REQ_REQUEST",
   UpdateFee = "CT_REQ_UPDATE_FEE",

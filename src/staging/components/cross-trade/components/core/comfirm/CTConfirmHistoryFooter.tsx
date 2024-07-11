@@ -8,11 +8,7 @@ import { useMemo } from "react";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import {
-  calculateInitialCountdown,
-  isFinalStatus,
-} from "../../../utils/getStatus";
-import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { isFinalStatus } from "../../../utils/getStatus";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import { ErrorRollupComponent } from "@/staging/components/new-history/components/core/pending/StatusComponent";
