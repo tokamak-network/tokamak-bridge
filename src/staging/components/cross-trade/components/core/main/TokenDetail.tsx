@@ -9,11 +9,12 @@ import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCusto
 interface TokenDetailProps {
   token?: Token;
   network?: number;
+  usd?: number;
   profit?: Profit;
 }
 
 export default function TokenDetail(props: TokenDetailProps) {
-  const { token, network, profit } = props;
+  const { token, network, usd, profit } = props;
 
   const formattedAmount = token
     ? convertNumber(token.amount, token.decimals)
@@ -23,11 +24,7 @@ export default function TokenDetail(props: TokenDetailProps) {
 
   const priceOrPercent = token
     ? (() => {
-        const { tokenPriceWithAmount } = useGetMarketPrice({
-          tokenName: token.name,
-          amount: Number(formattedAmount),
-        });
-        return tokenPriceWithAmount ? `$${tokenPriceWithAmount}` : "NA";
+        return usd ? `$${usd}` : "NA";
       })()
     : `${profit?.percent}%`;
 
@@ -43,7 +40,7 @@ export default function TokenDetail(props: TokenDetailProps) {
           symbolH={32}
         />
       )}
-      <Box ml='10px'>
+      <Box ml="10px">
         <Flex alignItems={"center"}>
           <Text
             fontWeight={500}

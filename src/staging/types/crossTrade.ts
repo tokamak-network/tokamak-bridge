@@ -24,4 +24,6 @@ export interface CrossTradeData {
   profit: Profit;
   blockTimestamps: number;
   isActive: boolean;
+  providingUSD: number;
+  recevingUSD: number;
 }

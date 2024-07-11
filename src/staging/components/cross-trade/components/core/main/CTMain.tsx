@@ -22,6 +22,7 @@ import {
   STATUS,
   getStatus,
 } from "@/staging/components/cross-trade/utils/getStatus";
+import is from "date-fns/esm/locale/is/index.js";
 
 {
   /** 
@@ -32,11 +33,14 @@ import {
   */
 }
 export default function CTMain() {
-  const LIMIT = 10;
+  const LIMIT = 50;
   const [data, setData] = useState<CrossTradeData[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const { address } = useAccount();
+  const [isSortedDescending, setIsSortedDescending] = useState<boolean | null>(
+    null
+  );
 
   const fetchData = useCallback(async () => {
     setLoading(true);
@@ -71,15 +75,29 @@ export default function CTMain() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [handleScroll]);
 
+  useEffect(() => {
+    if (isSortedDescending === null) return;
+    if (isSortedDescending) {
+      return setData((prevData) => [
+        ...prevData.sort((a, b) => b.providingUSD - a.providingUSD),
+      ]);
+    }
+    if (!isSortedDescending) {
+      return setData((prevData) => [
+        ...prevData.sort((a, b) => a.providingUSD - b.providingUSD),
+      ]);
+    }
+  }, [isSortedDescending]);
+
   return (
     <Box
-      w='100%'
-      h='100%'
+      w="100%"
+      h="100%"
       borderRadius={"16px"}
       border={"1px solid #313442"}
-      overflow='hidden'
+      overflow="hidden"
     >
-      <Table variant={"unstyled"} w='100%' h='100%'>
+      <Table variant={"unstyled"} w="100%" h="100%">
         <Thead>
           <Tr
             sx={{
@@ -88,13 +106,31 @@ export default function CTMain() {
               letterSpacing: 0,
             }}
           >
-            <Th textTransform='none'>
-              <Flex alignItems='center'>
-                <Flex justifyContent={"center"} alignItems={"center"}>
-                  <Image src={Polygon} alt={"Polygon"} />
-                </Flex>
+            <Th textTransform="none">
+              <Flex
+                alignItems="center"
+                cursor={"pointer"}
+                onClick={() =>
+                  setIsSortedDescending(
+                    isSortedDescending !== null ? !isSortedDescending : true
+                  )
+                }
+              >
+                {isSortedDescending !== null && (
+                  <Flex
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    style={{
+                      transform: isSortedDescending
+                        ? "rotate(360deg)"
+                        : "rotate(180deg)",
+                    }}
+                  >
+                    <Image src={Polygon} alt={"Polygon"} />
+                  </Flex>
+                )}
                 <Text
-                  ml='4px'
+                  ml="4px"
                   fontWeight={"500"}
                   fontSize={"13px"}
                   lineHeight={"18px"}
@@ -109,8 +145,8 @@ export default function CTMain() {
                 />
               </Flex>
             </Th>
-            <Th textTransform='none'>
-              <Flex alignItems='center'>
+            <Th textTransform="none">
+              <Flex alignItems="center">
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}
@@ -126,7 +162,7 @@ export default function CTMain() {
                 />
               </Flex>
             </Th>
-            <Th textTransform='none'>
+            <Th textTransform="none">
               <Flex justifyContent={"center"}>
                 <Text
                   fontWeight={"500"}
@@ -139,7 +175,7 @@ export default function CTMain() {
                 </Text>
               </Flex>
             </Th>
-            <Th textTransform='none'>
+            <Th textTransform="none">
               <Flex>
                 <Flex
                   w={"16px"}
@@ -178,7 +214,11 @@ export default function CTMain() {
                 }}
               >
                 <Td sx={{ opacity: rowOpacity }}>
-                  <TokenDetail token={item.inToken} network={item.inNetwork} />
+                  <TokenDetail
+                    token={item.inToken}
+                    network={item.inNetwork}
+                    usd={item.providingUSD}
+                  />
                 </Td>
                 <Td sx={{ opacity: rowOpacity }}>
                   <TokenDetail

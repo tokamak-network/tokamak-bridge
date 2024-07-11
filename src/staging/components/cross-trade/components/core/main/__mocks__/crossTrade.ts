@@ -22,6 +22,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "100000", symbol: "USDT", decimals: 6, percent: "10" },
     blockTimestamps: 1625241600,
     isActive: false,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -44,6 +46,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "100000", symbol: "USDT", decimals: 6, percent: "0.2" },
     blockTimestamps: 1719278242,
     isActive: false,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -66,6 +70,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "10000", symbol: "USDT", decimals: 6, percent: "0.2" },
     blockTimestamps: 1625241700,
     isActive: true,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -88,6 +94,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "12000", symbol: "USDT", decimals: 6, percent: "0.2" },
     blockTimestamps: 1625241800,
     isActive: true,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -115,6 +123,8 @@ export const crossTradeData: CrossTradeData[] = [
     },
     blockTimestamps: 1625241900,
     isActive: true,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -159,6 +169,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "1200000", symbol: "USDT", decimals: 6, percent: "0.2" },
     blockTimestamps: 1625242100,
     isActive: true,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -181,6 +193,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "1200000", symbol: "USDT", decimals: 6, percent: "0.2" },
     blockTimestamps: 1625242200,
     isActive: true,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -203,6 +217,8 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "1200000", symbol: "USDT", decimals: 6, percent: "0.2" },
     blockTimestamps: 1625242300,
     isActive: true,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
   {
     requester: "0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B",
@@ -247,5 +263,7 @@ export const crossTradeData: CrossTradeData[] = [
     profit: { amount: "1200000", symbol: "TON", decimals: 18, percent: "0.2" },
     blockTimestamps: 1625242500,
     isActive: false,
+    providingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 1000,
+    recevingUSD: Math.floor(Math.random() * (5000 - 1000 + 1)) + 100,
   },
 ];
