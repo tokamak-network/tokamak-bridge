@@ -75,7 +75,8 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           CT_Request_TransactionData.blockTimestamps.refund,
-          TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST
+          TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST,
+          Boolean(transactionData.errorMessage)
         );
         return timeValue;
       }
@@ -90,7 +91,8 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           CT_Request_TransactionData.blockTimestamps.return,
-          TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY
+          TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
+          Boolean(transactionData.errorMessage)
         );
         return timeValue;
       }
@@ -111,7 +113,7 @@ function calculateInitialTime(
     statusValue === TransactionStatus.WithdrawFinalized
       ? convertTimeToMinutes(additional, "days", 0) * 60
       : TransactionStatus.REQUEST_CANCEL
-      ? convertTimeToMinutes(additional, "minutes", 5)
+      ? additional
       : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
   // Get the current time in the user's local timezone

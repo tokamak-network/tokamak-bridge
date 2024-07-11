@@ -459,7 +459,7 @@ export const useRequestData = () => {
         blockTimestamps: {
           request: 0,
           cancelRequest: 0,
-          refund: Math.floor(Date.now() / 1000) - 300,
+          refund: Math.floor(Date.now() / 1000) - 400,
         },
         inNetwork: SupportedChainId.TITAN,
         outNetwork: SupportedChainId.MAINNET,
@@ -595,7 +595,7 @@ export const useProvideData = () => {
         status: CT_PROVIDE.Return,
         blockTimestamps: {
           provide: 0,
-          return: Math.floor(Date.now() / 1000) - 300,
+          return: Math.floor(Date.now() / 1000) - 400,
         },
         inNetwork: SupportedChainId.MAINNET,
         outNetwork: SupportedChainId.TITAN,
