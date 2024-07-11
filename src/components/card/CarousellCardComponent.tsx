@@ -141,6 +141,7 @@ export default function CarousellCardComponent<T>(props: {
           w: getSymbolSize(index, currentIndex, maxIndex),
           h: getSymbolSize(index, currentIndex, maxIndex),
         }}
+        isPrice={false}
         style={{
           transition: maxIndex === 0 ? "none" : "margin .5s ease-in-out",
           //need to change mt property based on selectIndex

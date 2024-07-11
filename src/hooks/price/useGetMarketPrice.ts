@@ -1,8 +1,5 @@
-import { GET_MARKET_PRICE } from "@/graphql/getMarketPrice";
 import { SupportedTokenNames } from "@/types/token/supportedToken";
-import commafy from "@/utils/trim/commafy";
-import { useQuery } from "@apollo/client";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export const trimTokenName = (tokenName: string | undefined) => {
   if (tokenName?.includes(" "))
@@ -11,7 +8,8 @@ export const trimTokenName = (tokenName: string | undefined) => {
 };
 
 export const changeTokenNameForAPI = (tokenName: string | undefined) => {
-  if (tokenName === "Wrapped TON") return "tokamak-network";
+  if (tokenName === "Tokamak Network" || tokenName === "Wrapped TON")
+    return "tokamak-network";
   if (tokenName === "Wrapped Ether" || tokenName === "ETH") return "ethereum";
   if (tokenName === "USD Coin") return "usd-coin";
   if (tokenName === "Tether USD") return "tether";
@@ -23,22 +21,51 @@ export function useGetMarketPrice(params: {
   amount?: number | string;
 }) {
   const tokenName = changeTokenNameForAPI(params.tokenName);
+  const [data, setData] = useState<any>(undefined);
 
-  const { data } = useQuery(GET_MARKET_PRICE, {
-    variables: {
-      tokenName: trimTokenName(tokenName),
-    },
-    pollInterval: 20000,
-    fetchPolicy: "cache-and-network",
-    nextFetchPolicy: "cache-first",
-    context: {
-      apiName: "price",
-    },
-    skip: !tokenName,
-  });
+  // const { data } = useQuery(GET_MARKET_PRICE, {
+  //   variables: {
+  //     tokenName: trimTokenName(tokenName),
+  //   },
+  //   pollInterval: 20000,
+  //   fetchPolicy: "cache-and-network",
+  //   nextFetchPolicy: "cache-first",
+  //   context: {
+  //     apiName: "price",
+  //   },
+  //   skip: !tokenName,
+  // });
+
+  const prevTokenNameRef = useRef<string | undefined>(undefined);
+
+  useEffect(() => {
+    async function fetchPrice() {
+      try {
+        const response = await fetch(`/api/coingecko?tokenName=${tokenName}`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch the market price");
+        }
+        const data = await response.json();
+        if (data) {
+          return setData({ getTokenMarketData: data[0] });
+        }
+        setData(undefined);
+      } catch (error) {
+        setData(undefined);
+      }
+    }
+    if (
+      tokenName !== undefined &&
+      tokenName !== "" &&
+      tokenName !== prevTokenNameRef.current
+    ) {
+      fetchPrice();
+    }
+    prevTokenNameRef.current = tokenName;
+  }, [tokenName]);
 
   const tokenMarketPrice: number = useMemo(() => {
-    if (data?.getTokenMarketData.current_price !== undefined) {
+    if (data?.getTokenMarketData?.current_price !== undefined) {
       return data.getTokenMarketData.current_price;
     }
     return undefined;
