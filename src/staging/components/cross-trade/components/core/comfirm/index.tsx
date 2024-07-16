@@ -76,6 +76,7 @@ export default function CTModal() {
               isChecked={isChecked}
               onCheckboxChange={handleCheckboxChange}
               onConfirm={handleConfirm}
+              isProvide={ctConfirmModal.isProvide}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />

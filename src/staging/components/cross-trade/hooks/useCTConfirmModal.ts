@@ -10,10 +10,11 @@ export default function useCTConfirm() {
 
   const onOpenCTConfirmModal = (params: {
     type: CTConfirmModalType["type"];
-    txData: CT_History;
+    isProvide?: boolean;
+    txData: CT_History & {};
   }) => {
-    const { type, txData } = params;
-    setCTConfirmModal({ isOpen: true, type, txData });
+    const { type, txData, isProvide } = params;
+    setCTConfirmModal({ isOpen: true, type, txData, isProvide });
   };
 
   const onCloseCTConfirmModal = useCallback(() => {

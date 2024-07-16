@@ -6,6 +6,14 @@ import {
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import {
+  HISTORY_SORT,
+  CT_ACTION,
+  CT_REQUEST,
+} from "@/staging/types/transaction";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { ModalType } from "../../../types";
 
 interface CTProviderProps {
   status: number;
@@ -16,6 +24,42 @@ export default function CTProvider({
   status,
   blockTimestamps,
 }: CTProviderProps) {
+  const { onOpenCTConfirmModal } = useCTConfirmModal();
+
+  const openProvideModal = () =>
+    onOpenCTConfirmModal({
+      type: ModalType.Trade,
+      txData: {
+        category: HISTORY_SORT.CROSS_TRADE,
+        action: CT_ACTION.REQUEST,
+        isCanceled: false,
+        status: CT_REQUEST.Request,
+        blockTimestamps: {
+          request: 0,
+        },
+        inNetwork: SupportedChainId.TITAN,
+        outNetwork: SupportedChainId.MAINNET,
+        inToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        outToken: {
+          address: "0x",
+          name: "ETH",
+          symbol: "ETH",
+          amount: "000000000000",
+          decimals: 0,
+        },
+        transactionHashes: {
+          request: "",
+        },
+      },
+      isProvide: true,
+    });
+
   const renderButton = () => {
     if (status === STATUS.COUNTDOWN && blockTimestamps) {
       const remainTime = calculateInitialCountdown(
@@ -63,6 +107,8 @@ export default function CTProvider({
         _disabled={{
           opacity: 1,
         }}
+        cursor={"pointer"}
+        onClick={() => openProvideModal()}
       >
         <Text
           fontWeight={600}

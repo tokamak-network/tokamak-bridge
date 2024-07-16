@@ -10,6 +10,7 @@ export type CTConfirmModalType = {
   isOpen: boolean;
   type: ModalType;
   txData: CT_History | null;
+  isProvide?: boolean;
 };
 
 export enum WarningType {
