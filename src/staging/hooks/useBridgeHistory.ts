@@ -23,7 +23,7 @@ import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 import {
   FETCH_USER_TRANSACTIONS_L1,
   FETCH_USER_TRANSACTIONS_L2,
-} from "@/graphql/history";
+} from "@/graphql/queries/history";
 import { Resolved, SentMessages } from "@/types/activity/history";
 import {
   getCurrentDepositStatus,

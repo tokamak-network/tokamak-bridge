@@ -1,5 +1,4 @@
-import { apolloClient } from "@/apollo";
-import { GET_MARKET_PRICE } from "@/graphql/getMarketPrice";
+import { GET_MARKET_PRICE } from "@/graphql/queries/getMarketPrice";
 import {
   changeTokenNameForAPI,
   trimTokenName,

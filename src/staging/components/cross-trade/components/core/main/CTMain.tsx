@@ -23,6 +23,7 @@ import {
   getStatus,
 } from "@/staging/components/cross-trade/utils/getStatus";
 import is from "date-fns/esm/locale/is/index.js";
+import { useRequestData } from "@/staging/hooks/useCrossTrade";
 
 {
   /** 
@@ -34,7 +35,6 @@ import is from "date-fns/esm/locale/is/index.js";
 }
 export default function CTMain() {
   const LIMIT = 50;
-  const [data, setData] = useState<CrossTradeData[]>([]);
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const { address } = useAccount();
@@ -42,38 +42,21 @@ export default function CTMain() {
     null
   );
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(
-        `/api/crossTrade?limit=${LIMIT}&offset=${offset}&address=${address}`
-      );
-      const newData: CrossTradeData[] = await response.json();
-      setData((prevData) => [...prevData, ...newData]);
-      setOffset((prevOffset) => prevOffset + LIMIT);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-    setLoading(false);
-  }, [offset]);
+  const { requestList } = useRequestData();
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // const handleScroll = useCallback(() => {
+  //   if (
+  //     window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 &&
+  //     !loading
+  //   ) {
+  //     fetchData();
+  //   }
+  // }, [loading, fetchData]);
 
-  const handleScroll = useCallback(() => {
-    if (
-      window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 &&
-      !loading
-    ) {
-      fetchData();
-    }
-  }, [loading, fetchData]);
-
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll]);
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => window.removeEventListener("scroll", handleScroll);
+  // }, [handleScroll]);
 
   useEffect(() => {
     if (isSortedDescending === null) return;
@@ -202,7 +185,7 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {data.map((item, index) => {
+          {requestList?.map((item, index) => {
             const status = getStatus(item);
             const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
             return (

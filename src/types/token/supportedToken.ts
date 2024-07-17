@@ -38,8 +38,8 @@ export type TokenInfo = {
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
   availableForBirdge?: boolean;
-  isNew?: boolean
-  isLiked?: 'true' | 'false' | 'none' | String | string;
+  isNew?: boolean;
+  isLiked?: "true" | "false" | "none" | String | string;
 };
 
 export type SupportedTokens_T = TokenInfo[];
@@ -187,3 +187,12 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
 ];
+
+export const supportedTokensForCT = supportedTokens.filter(
+  (token) =>
+    token.tokenSymbol === "ETH" ||
+    token.tokenSymbol === "TON" ||
+    token.tokenSymbol === "TOS" ||
+    token.tokenSymbol === "USDC" ||
+    token.tokenSymbol === "USDT"
+);
