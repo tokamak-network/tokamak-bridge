@@ -8,6 +8,12 @@ import {
 } from "@/constant/contracts";
 import { useUniswapContracts } from "@/hooks/uniswap/useUniswapContracts";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  L1_ETHEREUM_CT,
+  L1_SEPOLIA_CT,
+  L2_TITAN_CT,
+  L2_TITAN_SEPOLIA_CT,
+} from "@/constant/contracts/crossTrade";
 
 export default function useContract() {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
@@ -35,11 +41,20 @@ export default function useContract() {
     ? SEPOLIA_CONTRACTS.L1Messenger
     : SEPOLIA_CONTRACTS.L1Messenger_TITAN_SEPOLIA;
 
+  const L1CrossTrade_CONTRACT = isConnectedToMainNetwork
+    ? L1_ETHEREUM_CT
+    : L1_SEPOLIA_CT;
+  const L2CrossTrade_CONTRACT = isConnectedToMainNetwork
+    ? L2_TITAN_CT
+    : L2_TITAN_SEPOLIA_CT;
+
   return {
     UNISWAP_CONTRACT,
     L1BRIDGE_CONTRACT,
     L2BRIDGE_CONTRACT,
     WTON_CONTRACT,
     L1MESSENGER_CONTRACT,
+    L1CrossTrade_CONTRACT,
+    L2CrossTrade_CONTRACT,
   };
 }
