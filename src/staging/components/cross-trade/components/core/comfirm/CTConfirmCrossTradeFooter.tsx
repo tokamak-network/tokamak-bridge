@@ -13,8 +13,14 @@ import { useCallback, useMemo, useState } from "react";
 import { trimAddress } from "@/utils/trim";
 import { useNetwork } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useBridgeHistory";
-import { useRequestRegisteredToken } from "@/staging/hooks/useCrossTradeContracts";
+import {
+  useCrossTradeContract,
+  useRequestRegisteredToken,
+} from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { isETH } from "@/utils/token/isETH";
+import { ZERO_ADDRESS } from "@/constant/misc";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -34,32 +40,45 @@ export default function CTConfirmCrossTradeFooter(
   const btnDisabled = useMemo(() => {
     return isProvide ? !provideConfirmed : !isChecked;
   }, [isProvide, isChecked, provideConfirmed]);
+  const { inToken } = useInOutTokens();
+  const inTokenIsETH = isETH(inToken);
 
-  const { callToRequest } = useRequestRegisteredToken();
+  const { requestRegisteredToken } = useCrossTradeContract();
   const test = useCallback(() => {
     try {
-      console.log(txData);
       console.log(
-        "params",
-        "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
+        "--parrams--",
+        txData?.outToken.address,
         txData?.inToken.address,
         txData?.inToken.amount,
-        100000000000000000,
+        100000000000000,
         txData?.outNetwork
       );
-      callToRequest({
+      if (inTokenIsETH) {
+        return requestRegisteredToken({
+          args: [
+            ZERO_ADDRESS,
+            ZERO_ADDRESS,
+            txData?.inToken.amount,
+            100000000000000,
+            txData?.outNetwork,
+          ],
+          value: BigInt(txData?.inToken.amount as string),
+        });
+      }
+      return requestRegisteredToken({
         args: [
-          "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
+          txData?.outToken.address,
           txData?.inToken.address,
           txData?.inToken.amount,
-          100000000000000000,
+          100000000000000,
           txData?.outNetwork,
         ],
       });
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [inTokenIsETH, txData, requestRegisteredToken]);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>
