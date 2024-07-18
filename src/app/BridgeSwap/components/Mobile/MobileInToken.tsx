@@ -5,7 +5,7 @@ import { Flex, Text, Box } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { tokenModalStatus, networkStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import TokenCard from "@/components/card/TokenCard";
+import TokenCard from "@/components/token/TokenCard";
 import useConnectedNetwork from "@/hooks/network";
 
 import ETHIcon from "@/assets/tokens/eth_half_rounded.svg";

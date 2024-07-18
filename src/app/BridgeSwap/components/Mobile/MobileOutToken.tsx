@@ -6,7 +6,7 @@ import TitanIcon from "@/assets/tokens/titan_half_rounded.svg";
 
 import { useRecoilState, useRecoilValue } from "recoil";
 import { networkStatus, tokenModalStatus } from "@/recoil/bridgeSwap/atom";
-import TokenCard from "@/components/card/TokenCard";
+import TokenCard from "@/components/token/TokenCard";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork from "@/hooks/network";

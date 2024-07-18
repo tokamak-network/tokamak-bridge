@@ -1,6 +1,6 @@
 import { Flex } from "@chakra-ui/react";
 import Title from "../../add/components/Title";
-import TokenCard from "@/components/card/TokenCard";
+import TokenCard from "@/components/token/TokenCard";
 import add from "assets/icons/addIcon.svg";
 import Image from "next/image";
 import { usePositionInfo } from "@/hooks/pool/useGetPositionIds";
