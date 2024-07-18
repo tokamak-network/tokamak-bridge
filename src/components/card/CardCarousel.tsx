@@ -1,4 +1,4 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
 import { useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
@@ -83,14 +83,14 @@ export const CardCarrousel = () => {
           //   outRightControl,
           //   waitControl,
           // } = useCarrousellAnimation({ currentIndex, index });
-
+          console.log(currentIndex)
           const startIndex =
             currentIndex !== null
               ? currentIndex - 4 < 0
                 ? currentIndex - 4 + filteredTokenList.length
                 : currentIndex - 4
               : null;
-
+          
           const waitCondition =
             filteredTokenList.length < 6
               ? false
@@ -153,8 +153,8 @@ export const CardCarrousel = () => {
                 (startIndex !== null &&
                   startIndex !== undefined &&
                   startIndex + 7 === index);
-
-          return (
+                  console.log(startIndex, waitCondition, filteredTokenList)
+          return (            
             <CarousellCardComponent
               tokenData={tokenData}
               currentIndex={currentIndex}

@@ -4,7 +4,7 @@ import {
 } from "@/hooks/tokenCard/useCarrousellAnimation";
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
 import { motion } from "framer-motion";
-import TokenCard from "./TokenCard";
+import TokenCard from "@/componenets/token/TokenCard";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
@@ -87,7 +87,7 @@ export default function CarousellCardComponent<T>(props: {
     setHandUiOpened(true);
     return true;
   }, [handUiOpened]);
-
+  console.log(tokenData, index, filteredTokenList, currentIndex, waitCondition, isHover);
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
