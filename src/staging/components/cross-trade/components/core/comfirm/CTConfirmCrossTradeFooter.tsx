@@ -9,28 +9,57 @@ import {
   Link,
 } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import { useMemo, useState } from "react";
-import { formatAddress } from "@/utils/trim/formatAddress";
+import { useCallback, useMemo, useState } from "react";
 import { trimAddress } from "@/utils/trim";
 import { useNetwork } from "wagmi";
+import { useRequestData } from "@/staging/hooks/useBridgeHistory";
+import { useRequestRegisteredToken } from "@/staging/hooks/useCrossTradeContracts";
+import { CT_History } from "@/staging/types/transaction";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirm: () => void;
+  txData: CT_History | null;
   isProvide?: boolean;
 };
 
 export default function CTConfirmCrossTradeFooter(
   props: TradeConfirmationProps
 ) {
-  const { isChecked, onCheckboxChange, onConfirm, isProvide } = props;
+  const { isChecked, onCheckboxChange, onConfirm, isProvide, txData } = props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { chain } = useNetwork();
   const blockExplorer = chain?.blockExplorers?.default.url;
   const btnDisabled = useMemo(() => {
     return isProvide ? !provideConfirmed : !isChecked;
   }, [isProvide, isChecked, provideConfirmed]);
+
+  const { callToRequest } = useRequestRegisteredToken();
+  const test = useCallback(() => {
+    try {
+      console.log(txData);
+      console.log(
+        "params",
+        "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
+        txData?.inToken.address,
+        txData?.inToken.amount,
+        100000000000000000,
+        txData?.outNetwork
+      );
+      callToRequest({
+        args: [
+          "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
+          txData?.inToken.address,
+          txData?.inToken.amount,
+          100000000000000000,
+          txData?.outNetwork,
+        ],
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }, []);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>
@@ -132,7 +161,7 @@ export default function CTConfirmCrossTradeFooter(
       <Box>
         <Button
           isDisabled={btnDisabled}
-          onClick={onConfirm}
+          onClick={test}
           sx={{
             backgroundColor: !btnDisabled ? "#007AFF" : "#17181D",
             color: !btnDisabled ? "#FFFFFF" : "#8E8E92",

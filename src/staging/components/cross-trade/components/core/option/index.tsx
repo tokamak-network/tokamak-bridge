@@ -31,6 +31,8 @@ import CTOptionStandardDetail from "./CTOptionStandardDetail";
 import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useInOutNetwork } from "@/hooks/network";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -85,12 +87,21 @@ export default function CTOptionModal() {
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
+  const { inToken } = useInOutTokens();
+  const { inNetwork, outNetwork } = useInOutNetwork();
 
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return handleConfirm(Action.Withdraw, Status.Initiate);
     }
-    if (activeMainButtonValue === ButtonTypeMain.Cross) {
+    if (
+      activeMainButtonValue === ButtonTypeMain.Cross &&
+      inToken &&
+      inNetwork &&
+      outNetwork &&
+      inToken.address[outNetwork.chainName] !== null
+    ) {
+      console.log("inToken", inToken);
       return onOpenCTConfirmModal({
         type: ModalType.Trade,
         txData: {
@@ -101,21 +112,21 @@ export default function CTOptionModal() {
           blockTimestamps: {
             request: 0,
           },
-          inNetwork: SupportedChainId.TITAN,
-          outNetwork: SupportedChainId.MAINNET,
+          inNetwork: inNetwork.chainId,
+          outNetwork: outNetwork.chainId,
           inToken: {
-            address: "0x",
-            name: "ETH",
-            symbol: "ETH",
-            amount: "000000000000",
-            decimals: 0,
+            address: inToken.tokenAddress,
+            name: inToken.tokenName as string,
+            symbol: inToken.tokenSymbol as string,
+            amount: inToken.amountBN?.toString() as string,
+            decimals: inToken.decimals,
           },
           outToken: {
-            address: "0x",
-            name: "ETH",
-            symbol: "ETH",
-            amount: "000000000000",
-            decimals: 0,
+            address: inToken.address[outNetwork.chainName] as string,
+            name: inToken.tokenName as string,
+            symbol: inToken.tokenSymbol as string,
+            amount: inToken.amountBN?.toString() as string,
+            decimals: inToken.decimals,
           },
           transactionHashes: {
             request: "",

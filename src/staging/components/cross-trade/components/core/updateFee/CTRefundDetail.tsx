@@ -4,8 +4,11 @@ import ThanosSymbol from "assets/icons/ct/thanos_symbol.svg";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function CTRefundDetail() {
+  const { inToken } = useInOutTokens();
+
   return (
     <Box mt={"16px"}>
       <Box>
@@ -47,8 +50,8 @@ export default function CTRefundDetail() {
           <span style={{ fontSize: "11px", lineHeight: "16.5px" }}>)</span>
         </Text>
       </Box>
-      <Box mt={"16px"} borderTop='1px solid #313442' pt={"16px"} px={0} pb={0}>
-        <HStack justify='space-between'>
+      <Box mt={"16px"} borderTop="1px solid #313442" pt={"16px"} px={0} pb={0}>
+        <HStack justify="space-between">
           <Flex>
             <Text
               fontWeight={400}
@@ -73,7 +76,7 @@ export default function CTRefundDetail() {
             </Text>
           </Flex>
         </HStack>
-        <HStack justify='space-between' mt={"6px"}>
+        <HStack justify="space-between" mt={"6px"}>
           <Flex>
             <Text
               fontWeight={400}

@@ -70,12 +70,12 @@ export default function CTModal() {
           />
         </ModalBody>
         <ModalFooter p={0} display="block">
-          {/** ct type에 따라 footer가 달라진다. */}
           {ctConfirmModal.type == ModalType.Trade ? (
             <CTConfirmCrossTradeFooter
               isChecked={isChecked}
               onCheckboxChange={handleCheckboxChange}
               onConfirm={handleConfirm}
+              txData={ctConfirmModal.txData}
               isProvide={ctConfirmModal.isProvide}
             />
           ) : (

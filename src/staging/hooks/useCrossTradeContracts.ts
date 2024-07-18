@@ -5,7 +5,6 @@ import { useTx } from "@/hooks/tx/useTx";
 
 export const useRequestRegisteredToken = () => {
   const { L2CrossTrade_CONTRACT } = useContract();
-
   const { data, write } = useContractWrite({
     address: L2CrossTrade_CONTRACT.L2CrossTradeProxy,
     abi: L2CrossTradeAbi.abi,

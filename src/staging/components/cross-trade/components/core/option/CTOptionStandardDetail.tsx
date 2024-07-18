@@ -1,6 +1,7 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import { ButtonTypeMain } from "@/staging/components/cross-trade/types";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
   handleButtonMainClick: (value: ButtonTypeMain) => void;
@@ -9,11 +10,12 @@ interface AdditionalStandardProps {
 export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const isStandardActive =
     props.activeMainButtonValue === ButtonTypeMain.Standard;
+  const { inToken } = useInOutTokens();
 
   return (
     <Flex
-      alignItems='center'
-      justifyContent='space-between'
+      alignItems="center"
+      justifyContent="space-between"
       mt={"12px"}
       border={isStandardActive ? "1px solid #007AFF" : "1px solid #313442"}
       py={"16px"}
@@ -27,7 +29,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
           Official Standard Bridge
         </Text>
         <Box mt={"12px"}>
-          <Flex alignItems='center'>
+          <Flex alignItems="center">
             <Text
               fontWeight={400}
               fontSize={"10px"}
@@ -43,7 +45,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             lineHeight={"33px"}
             color={"#007AFF"}
           >
-            10.00 USDC
+            {`${inToken?.parsedAmount} ${inToken?.tokenSymbol}`}
           </Text>
         </Box>
         <Box mt={"12px"}>
@@ -59,9 +61,9 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
         </Box>
       </Box>
       <Circle
-        size='72px'
-        border='1px solid #007AFF'
-        bg='#15161D'
+        size="72px"
+        border="1px solid #007AFF"
+        bg="#15161D"
         pb={"8px"}
         pt={"6px"}
       >
@@ -72,7 +74,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             height={"24px"}
             lineHeight={"24px"}
             color={"#007AFF"}
-            textAlign='center'
+            textAlign="center"
           >
             $50.16
           </Text>
@@ -82,7 +84,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             fontSize={"8px"}
             lineHeight={"12px"}
             color={"#007AFF"}
-            textAlign='center'
+            textAlign="center"
           >
             Network fee
           </Text>

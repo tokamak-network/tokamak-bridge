@@ -15,6 +15,7 @@ import {
   ButtonTypeMain,
   ButtonTypeSub,
 } from "@/staging/components/cross-trade/types";
+import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
   handleButtonMainClick: (value: ButtonTypeMain) => void;
@@ -35,6 +36,8 @@ export default function CTOptionCrossDetail(
   // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
   // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
   const isDisabledRecommend = props.inputValue === "1";
+
+  const { inToken } = useInOutTokens();
 
   return (
     <Flex
@@ -68,7 +71,7 @@ export default function CTOptionCrossDetail(
             lineHeight={"33px"}
             color={"#DB00FF"}
           >
-            9.988 USDC
+            {`${inToken?.parsedAmount} ${inToken?.tokenSymbol}`}
           </Text>
         </Box>
         <Box mt={"12px"}>
