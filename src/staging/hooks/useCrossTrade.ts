@@ -80,9 +80,6 @@ export const useRequestData = (): {
     client: L2_CLIENT,
   });
 
-  console.log("data", data);
-  console.log(loading, error);
-
   const requestList = useMemo(() => {
     if (error || loading) return null;
     if (data) {
@@ -95,18 +92,13 @@ export const useRequestData = (): {
         ? SupportedChainId.MAINNET
         : SupportedChainId.SEPOLIA;
       const result: CrossTradeData[] = datas.map((item) => {
-        // const inToken = isZeroAddress(item._l2token)
-        //   ? {
-        //       address: item._l2token,
-        //       name: "ETH",
-        //       symbol: "ETH",
-        //       amount: item._totalAmount,
-        //       decimals: 18,
-        //     }
-        //   : supportedTokensForCT.map((token) => {
-        //       const supportedAddresses = Object.values(token.address);
-        //       return supportedAddresses.includes(item._l2token);
-        //   });
+        //  will be refactor with split functions
+        const test = supportedTokensForCT
+          .map((token) => {
+            const supportedAddresses = Object.values(token.address);
+            return supportedAddresses.includes(item._l2token) ? token : null;
+          })
+          .filter((item) => item !== null)[0];
         const inToken = isZeroAddress(item._l2token)
           ? {
               address: item._l2token,
@@ -117,11 +109,12 @@ export const useRequestData = (): {
             }
           : {
               address: item._l2token,
-              name: "ETH",
-              symbol: "ETH",
+              name: test?.tokenName as string,
+              symbol: test?.tokenSymbol as string,
               amount: item._totalAmount,
               decimals: 18,
             };
+
         const outToken = isZeroAddress(item._l2token)
           ? {
               address: item._l1token,
@@ -131,9 +124,9 @@ export const useRequestData = (): {
               decimals: 18,
             }
           : {
-              address: item._l2token,
-              name: "ETH",
-              symbol: "ETH",
+              address: item._l1token,
+              name: test?.tokenName as string,
+              symbol: test?.tokenSymbol as string,
               amount: item._totalAmount,
               decimals: 18,
             };
