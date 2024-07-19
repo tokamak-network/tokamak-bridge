@@ -216,6 +216,7 @@ export default function CTMain() {
                   <CTProvider
                     status={status}
                     blockTimestamps={item.blockTimestamps}
+                    subgraphData={item.subgraphData}
                   />
                 </Td>
               </Tr>

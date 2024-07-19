@@ -1,5 +1,7 @@
+import { sub } from "date-fns";
 import { CT_History } from "@/staging/types/transaction";
 import { ChangeEvent, FocusEvent } from "react";
+import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 
 export enum ModalType {
   Trade = "trade",
@@ -11,6 +13,7 @@ export type CTConfirmModalType = {
   type: ModalType;
   txData: CT_History | null;
   isProvide?: boolean;
+  subgraphData?: T_FETCH_REQUEST_LIST_L2;
 };
 
 export enum WarningType {

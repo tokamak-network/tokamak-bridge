@@ -1,4 +1,5 @@
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { T_FETCH_REQUEST_LIST_L2 } from "../hooks/useCrossTrade";
 
 export interface Token {
   address: string;
@@ -26,4 +27,5 @@ export interface CrossTradeData {
   isActive: boolean;
   providingUSD: number;
   recevingUSD: number;
+  subgraphData: T_FETCH_REQUEST_LIST_L2;
 }

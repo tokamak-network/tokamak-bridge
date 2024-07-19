@@ -21,6 +21,7 @@ import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";
 import { ZERO_ADDRESS } from "@/constant/misc";
+import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -28,12 +29,20 @@ type TradeConfirmationProps = {
   onConfirm: () => void;
   txData: CT_History | null;
   isProvide?: boolean;
+  subgraphData?: T_FETCH_REQUEST_LIST_L2;
 };
 
 export default function CTConfirmCrossTradeFooter(
   props: TradeConfirmationProps
 ) {
-  const { isChecked, onCheckboxChange, onConfirm, isProvide, txData } = props;
+  const {
+    isChecked,
+    onCheckboxChange,
+    onConfirm,
+    isProvide,
+    txData,
+    subgraphData,
+  } = props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { chain } = useNetwork();
   const blockExplorer = chain?.blockExplorers?.default.url;
@@ -43,42 +52,89 @@ export default function CTConfirmCrossTradeFooter(
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
 
-  const { requestRegisteredToken } = useCrossTradeContract();
+  const { requestRegisteredToken, provideCT } = useCrossTradeContract();
+
   const test = useCallback(() => {
     try {
+      if (!txData) return new Error("txData is not defined");
+      if (isProvide) {
+        if (!subgraphData) return new Error("subgraphData is not defined");
+        if (inTokenIsETH) {
+          return provideCT({
+            args: [
+              // zeroAddr,
+              // zeroAddr,
+              // l2Wallet.address,
+              // threeETH,
+              // twoETH,
+              // saleCount,
+              // chainId,
+              // 200000,
+              // saleInformation.hashValue,
+              // {
+              //   value: twoETH,
+              // },
+            ],
+          });
+        }
+        console.log("go?");
+        return provideCT({
+          args: [
+            // mockTON.address, //l1token (L1TON or ERC20 Addr)
+            // l2mockTONAddr, //l2token (L2TON or ERC20 Addr)
+            // l2Wallet.address, //requesterAddr
+            // threeETH, //totalAmount
+            // twoETH, //ctAmount
+            // saleCount, //saleCount
+            // chainId, //L2chainId
+            // 2000000, //gasLimit
+            // saleInformation.hashValue, //hashValue
+            subgraphData._l1token,
+            subgraphData._l2token,
+            subgraphData._requester,
+            subgraphData._totalAmount,
+            subgraphData._ctAmount,
+            subgraphData._saleCount,
+            subgraphData._l2chainId,
+            2000000,
+            subgraphData._hashValue,
+          ],
+        });
+      }
+
       console.log(
         "--parrams--",
-        txData?.outToken.address,
-        txData?.inToken.address,
-        txData?.inToken.amount,
+        txData.outToken.address,
+        txData.inToken.address,
+        txData.inToken.amount,
         100000000000000,
-        txData?.outNetwork
+        txData.outNetwork
       );
       if (inTokenIsETH) {
         return requestRegisteredToken({
           args: [
             ZERO_ADDRESS,
             ZERO_ADDRESS,
-            txData?.inToken.amount,
+            txData.inToken.amount,
             100000000000000,
-            txData?.outNetwork,
+            txData.outNetwork,
           ],
-          value: BigInt(txData?.inToken.amount as string),
+          value: BigInt(txData.inToken.amount as string),
         });
       }
       return requestRegisteredToken({
         args: [
-          txData?.outToken.address,
-          txData?.inToken.address,
-          txData?.inToken.amount,
+          txData.outToken.address,
+          txData.inToken.address,
+          txData.inToken.amount,
           100000000000000,
-          txData?.outNetwork,
+          txData.outNetwork,
         ],
       });
     } catch (e) {
       console.log(e);
     }
-  }, [inTokenIsETH, txData, requestRegisteredToken]);
+  }, [isProvide, inTokenIsETH, txData, requestRegisteredToken]);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>

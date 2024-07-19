@@ -14,15 +14,18 @@ import {
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
+import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 
 interface CTProviderProps {
   status: number;
   blockTimestamps?: number;
+  subgraphData: T_FETCH_REQUEST_LIST_L2;
 }
 
 export default function CTProvider({
   status,
   blockTimestamps,
+  subgraphData,
 }: CTProviderProps) {
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
@@ -58,6 +61,7 @@ export default function CTProvider({
         },
       },
       isProvide: true,
+      subgraphData,
     });
 
   const renderButton = () => {

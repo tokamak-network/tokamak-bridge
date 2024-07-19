@@ -54,7 +54,7 @@ const errorHandler = (error: ApolloError) => {
   }
 };
 
-type T_FETCH_REQUEST_LIST_L2 = {
+export type T_FETCH_REQUEST_LIST_L2 = {
   blockTimestamp: string;
   __typename: string;
   _ctAmount: string;
@@ -147,6 +147,7 @@ export const useRequestData = (): {
           isActive: true,
           providingUSD: 100,
           recevingUSD: 100,
+          subgraphData: item,
         };
       });
       return result;

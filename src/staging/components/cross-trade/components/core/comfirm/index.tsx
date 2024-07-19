@@ -77,6 +77,7 @@ export default function CTModal() {
               onConfirm={handleConfirm}
               txData={ctConfirmModal.txData}
               isProvide={ctConfirmModal.isProvide}
+              subgraphData={ctConfirmModal.subgraphData}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />
