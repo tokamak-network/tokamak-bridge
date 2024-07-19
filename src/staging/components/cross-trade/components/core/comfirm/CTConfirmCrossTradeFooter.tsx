@@ -22,6 +22,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";
 import { ZERO_ADDRESS } from "@/constant/misc";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
+import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -59,36 +60,38 @@ export default function CTConfirmCrossTradeFooter(
       if (!txData) return new Error("txData is not defined");
       if (isProvide) {
         if (!subgraphData) return new Error("subgraphData is not defined");
-        if (inTokenIsETH) {
+        if (isZeroAddress(subgraphData._l1token)) {
+          console.log(
+            ZERO_ADDRESS,
+            ZERO_ADDRESS,
+            subgraphData._requester,
+            subgraphData._totalAmount,
+            subgraphData._ctAmount,
+            subgraphData._saleCount,
+            subgraphData._l2chainId,
+            2000000,
+            subgraphData._hashValue,
+            {
+              value: BigInt(subgraphData._ctAmount),
+            }
+          );
           return provideCT({
             args: [
-              // zeroAddr,
-              // zeroAddr,
-              // l2Wallet.address,
-              // threeETH,
-              // twoETH,
-              // saleCount,
-              // chainId,
-              // 200000,
-              // saleInformation.hashValue,
-              // {
-              //   value: twoETH,
-              // },
+              ZERO_ADDRESS,
+              ZERO_ADDRESS,
+              subgraphData._requester,
+              subgraphData._totalAmount,
+              subgraphData._ctAmount,
+              subgraphData._saleCount,
+              subgraphData._l2chainId,
+              2000000,
+              subgraphData._hashValue,
             ],
+            value: BigInt(subgraphData._ctAmount),
           });
         }
-        console.log("go?");
         return provideCT({
           args: [
-            // mockTON.address, //l1token (L1TON or ERC20 Addr)
-            // l2mockTONAddr, //l2token (L2TON or ERC20 Addr)
-            // l2Wallet.address, //requesterAddr
-            // threeETH, //totalAmount
-            // twoETH, //ctAmount
-            // saleCount, //saleCount
-            // chainId, //L2chainId
-            // 2000000, //gasLimit
-            // saleInformation.hashValue, //hashValue
             subgraphData._l1token,
             subgraphData._l2token,
             subgraphData._requester,
