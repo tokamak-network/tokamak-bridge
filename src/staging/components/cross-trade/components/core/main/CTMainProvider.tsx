@@ -15,18 +15,21 @@ import {
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
+import { CrossTradeData } from "@/staging/types/crossTrade";
 
 interface CTProviderProps {
   status: number;
-  blockTimestamps?: number;
+  crossTradeData: CrossTradeData;
   subgraphData: T_FETCH_REQUEST_LIST_L2;
 }
 
 export default function CTProvider({
   status,
-  blockTimestamps,
+  crossTradeData,
   subgraphData,
 }: CTProviderProps) {
+  const { blockTimestamps, inNetwork, outNetwork, inToken, outToken } =
+    crossTradeData;
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
   const openProvideModal = () =>
@@ -40,22 +43,10 @@ export default function CTProvider({
         blockTimestamps: {
           request: 0,
         },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
+        inNetwork,
+        outNetwork,
+        inToken,
+        outToken,
         transactionHashes: {
           request: "",
         },

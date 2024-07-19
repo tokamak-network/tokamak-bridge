@@ -62,6 +62,7 @@ export default function CTConfirmCrossTradeFooter(
         if (!subgraphData) return new Error("subgraphData is not defined");
         if (isZeroAddress(subgraphData._l1token)) {
           console.log(
+            "--parrams--",
             ZERO_ADDRESS,
             ZERO_ADDRESS,
             subgraphData._requester,

@@ -215,7 +215,7 @@ export default function CTMain() {
                 <Td>
                   <CTProvider
                     status={status}
-                    blockTimestamps={item.blockTimestamps}
+                    crossTradeData={item}
                     subgraphData={item.subgraphData}
                   />
                 </Td>
