@@ -2,7 +2,7 @@ import { gql } from "@apollo/client";
 
 export const FETCH_REQUEST_LIST_L2 = gql`
   query GetRequestCTs {
-    requestCTs { 
+    requestCTs(orderBy: blockTimestamp, orderDirection: desc) { 
     _l1token 
     _l2token 
     _requester 

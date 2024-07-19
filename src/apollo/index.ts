@@ -51,7 +51,6 @@ export const apolloClient = new ApolloClient({
     new MultiAPILink({
       endpoints: {
         price: process.env.NEXT_PUBLIC_PRICE_API as string,
-        l1BridgeMainnet: process.env.NEXT_PUBLIC_L1BRIDGE_MAINNET as string,
         l2BridgeTitanGoerli: process.env
           .NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY as string,
         l2BridgeTitan: process.env.NEXT_PUBLIC_L2MESSENGER_TITAN as string,
