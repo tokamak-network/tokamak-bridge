@@ -8,7 +8,7 @@ import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import CarousellCardComponent from "./CarousellCardComponent";
 
 export const CardCarrousel = () => {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(2);
   const [isHover, setIsHover] = useState<number | null>(null);
 
   const { filteredTokenList } = useGetTokenList();

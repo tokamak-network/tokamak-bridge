@@ -1,4 +1,5 @@
 import {
+  CardOverlay,
   getTokenCardStyle,
   useCarrousellAnimation,
 } from "@/hooks/tokenCard/useCarrousellAnimation";
@@ -39,7 +40,7 @@ const getSymbolSize = (
 
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
-  currentIndex: number | null;
+  currentIndex: number;
   index: number;
   filteredTokenList: SupportedTokens_T;
   waitCondition: any;
@@ -67,10 +68,35 @@ export default function CarousellCardComponent<T>(props: {
     outRightControl,
     waitControl,
   } = useCarrousellAnimation({ currentIndex, index });
+
+  const getZIndex = (currentIndex: number, index: number) => {
+    const circularIndex =
+      (index + filteredTokenList.length) % filteredTokenList.length;
+    const distance = Math.abs(currentIndex - circularIndex);
+    const circularDistance = Math.min(
+      distance,
+      filteredTokenList.length - distance
+    );
+    switch (circularDistance) {
+      case 0:
+        return CardOverlay.Center;
+      case 1:
+        return CardOverlay.Side;
+      case 2:
+        return CardOverlay.End;
+      default:
+        return;
+    }
+  };
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
   const styleCode = useMemo(() => {
-    return getTokenCardStyle(index, maxIndex);
-  }, [filteredTokenList]);
+    const style = getTokenCardStyle(index, maxIndex);
+    const zIndex = getZIndex(currentIndex, index);
+    if (zIndex) {
+      (style as any).zIndex = zIndex;
+    }
+    return style;
+  }, [filteredTokenList, currentIndex]);
 
   const size =
     getSymbolSize(index, currentIndex, maxIndex) === 118
