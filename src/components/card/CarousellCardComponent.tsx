@@ -55,7 +55,6 @@ export default function CarousellCardComponent<T>(props: {
     isHover,
     setIsHover,
   } = props;
-
   const maxIndex = filteredTokenList.length - 1;
 
   const {
@@ -87,7 +86,6 @@ export default function CarousellCardComponent<T>(props: {
     setHandUiOpened(true);
     return true;
   }, [handUiOpened]);
-  console.log(tokenData, index, filteredTokenList, currentIndex, waitCondition, isHover);
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
@@ -95,7 +93,7 @@ export default function CarousellCardComponent<T>(props: {
       style={styleCode}
       transition={{ duration: 0.5 }}
       initial={{ opacity: 0 }}
-      whileHover={{ zIndex: 200 }}
+      whileHover={{ zIndex: 200, scale: 1.05 }}
       animate={
         maxIndex < 6
           ? index === 0
@@ -125,9 +123,7 @@ export default function CarousellCardComponent<T>(props: {
           ? outLeftControl
           : waitControl
       }
-      onMouseEnter={() =>
-        outLeftControl || outRightControl ? null : setIsHover(index)
-      }
+      onMouseEnter={() => setIsHover(index)}
       onMouseLeave={() => setIsHover(null)}
     >
       <TokenCard
@@ -151,6 +147,10 @@ export default function CarousellCardComponent<T>(props: {
               ? `drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.25))`
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
+          boxShadow:
+            isHover === index
+              ? "0px 0px 20px rgba(255, 255, 255, 0.25)"
+              : "none",
         }}
         type={size}
         requireCall={requireCall}

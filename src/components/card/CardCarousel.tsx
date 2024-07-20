@@ -73,24 +73,12 @@ export const CardCarrousel = () => {
         pos={"relative"}
       >
         {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
-          // const {
-          //   endLeftControl,
-          //   endRightControl,
-          //   sideLeftControl,
-          //   sideRightControl,
-          //   centerControl,
-          //   outLeftControl,
-          //   outRightControl,
-          //   waitControl,
-          // } = useCarrousellAnimation({ currentIndex, index });
-          console.log(currentIndex)
           const startIndex =
             currentIndex !== null
               ? currentIndex - 4 < 0
                 ? currentIndex - 4 + filteredTokenList.length
                 : currentIndex - 4
               : null;
-          
           const waitCondition =
             filteredTokenList.length < 6
               ? false
@@ -153,8 +141,8 @@ export const CardCarrousel = () => {
                 (startIndex !== null &&
                   startIndex !== undefined &&
                   startIndex + 7 === index);
-                  console.log(startIndex, waitCondition, filteredTokenList)
-          return (            
+
+          return (
             <CarousellCardComponent
               tokenData={tokenData}
               currentIndex={currentIndex}

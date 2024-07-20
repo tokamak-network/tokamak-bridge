@@ -187,6 +187,10 @@ export default function TokenCard(props: TokenCardProps) {
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
       {...style}
+      _hover={{ // add hover styles
+        boxShadow: "0px 0px 20px rgba(255, 255, 255, 0.25)",
+        transform: "scale(1.05) translateY(-50px)",
+      }}
     >
       <TokenTopLine mainSchemCol={tokenColorCode} />
       {pcView && (
