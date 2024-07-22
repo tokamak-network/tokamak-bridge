@@ -17,7 +17,7 @@ export const changeTokenNameForAPI = (tokenName: string | undefined) => {
 };
 
 export function useGetMarketPrice(params: {
-  tokenName: SupportedTokenNames | string | undefined;
+  tokenName?: SupportedTokenNames | string;
   amount?: number | string;
 }) {
   const tokenName = changeTokenNameForAPI(params.tokenName);

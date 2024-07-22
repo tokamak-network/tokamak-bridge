@@ -207,6 +207,7 @@ export default function CTMain() {
                   <TokenDetail
                     token={item.outToken}
                     network={item.outNetwork}
+                    usd={item.recevingUSD}
                   />
                 </Td>
                 <Td sx={{ opacity: rowOpacity }}>

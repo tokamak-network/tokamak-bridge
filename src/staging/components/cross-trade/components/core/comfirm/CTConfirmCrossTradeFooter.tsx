@@ -70,7 +70,7 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._ctAmount,
             subgraphData._saleCount,
             subgraphData._l2chainId,
-            txData.serviceFee,
+            500000,
             subgraphData._hashValue,
             {
               value: BigInt(subgraphData._ctAmount),
@@ -85,12 +85,24 @@ export default function CTConfirmCrossTradeFooter(
               subgraphData._ctAmount,
               subgraphData._saleCount,
               subgraphData._l2chainId,
-              txData.serviceFee,
+              500000,
               subgraphData._hashValue,
             ],
             value: BigInt(subgraphData._ctAmount),
           });
         }
+        console.log(
+          "--provideCT params--",
+          subgraphData._l1token,
+          subgraphData._l2token,
+          subgraphData._requester,
+          subgraphData._totalAmount,
+          subgraphData._ctAmount,
+          subgraphData._saleCount,
+          subgraphData._l2chainId,
+          500000,
+          subgraphData._hashValue
+        );
         return provideCT({
           args: [
             subgraphData._l1token,
@@ -100,7 +112,7 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._ctAmount,
             subgraphData._saleCount,
             subgraphData._l2chainId,
-            txData.serviceFee,
+            500000,
             subgraphData._hashValue,
           ],
         });

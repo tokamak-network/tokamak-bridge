@@ -8,3 +8,12 @@ export function convertNumber(
   const parsedAmount = ethers.utils.formatUnits(String(amount), decimals);
   return parsedAmount;
 }
+
+export function toParseNumber(amount: bigint | string, decimals: number) {
+  return ethers.utils.parseUnits(String(amount), decimals);
+}
+
+export function formatUnits(amount?: string, decimals?: number) {
+  if (amount === undefined || decimals === undefined) return "0";
+  return ethers.utils.formatUnits(amount, decimals);
+}

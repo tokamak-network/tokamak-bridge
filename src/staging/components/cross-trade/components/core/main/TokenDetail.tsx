@@ -3,8 +3,9 @@ import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { Token, Profit } from "@/staging/types/crossTrade";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
-import { convertNumber } from "@/utils/trim/convertNumber";
+import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCustomTooltip";
+import { useMemo } from "react";
 
 interface TokenDetailProps {
   token?: Token;
@@ -22,11 +23,19 @@ export default function TokenDetail(props: TokenDetailProps) {
 
   const symbol = token ? token.symbol : profit?.symbol;
 
-  const priceOrPercent = token
-    ? (() => {
-        return usd ? `$${usd}` : "NA";
-      })()
-    : `${profit?.percent}%`;
+  const { tokenPriceWithAmount } = useGetMarketPrice({
+    tokenName: token?.name,
+    amount: formatUnits(token?.amount, token?.decimals),
+  });
+
+  const priceOrPercent = useMemo(() => {
+    if (token) {
+      return tokenPriceWithAmount
+        ? `$${formatNumber(tokenPriceWithAmount)}`
+        : "NA";
+    }
+    return `${profit?.percent}%`;
+  }, [tokenPriceWithAmount, profit?.percent]);
 
   return (
     <Flex>

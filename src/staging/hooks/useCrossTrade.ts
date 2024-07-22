@@ -7,6 +7,7 @@ import { subgraphApolloClientsForCT } from "@/graphql/thegraph/apollosForCT";
 import { CrossTradeData } from "../types/crossTrade";
 import { supportedTokensForCT } from "@/types/token/supportedToken";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
+import { formatUnits, toParseNumber } from "@/utils/trim/convertNumber";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -85,6 +86,8 @@ export const useRequestData = (): {
     if (data) {
       const datas = data.requestCTs;
 
+      console.log("datas", datas);
+
       const inNetwork = isConnectedToMainNetwork
         ? SupportedChainId.TITAN
         : SupportedChainId.TITAN_SEPOLIA;
@@ -99,7 +102,8 @@ export const useRequestData = (): {
             return supportedAddresses.includes(item._l2token) ? token : null;
           })
           .filter((item) => item !== null)[0];
-        const inToken = isZeroAddress(item._l2token)
+        const isETH = isZeroAddress(item._l2token);
+        const inToken = isETH
           ? {
               address: item._l2token,
               name: "ETH",
@@ -112,10 +116,12 @@ export const useRequestData = (): {
               name: test?.tokenName as string,
               symbol: test?.tokenSymbol as string,
               amount: item._totalAmount,
-              decimals: 18,
+              decimals: test?.decimals,
             };
 
-        const outToken = isZeroAddress(item._l2token)
+        const sumAmount = BigInt(item._totalAmount) + BigInt(item._ctAmount);
+
+        const outToken = isETH
           ? {
               address: item._l1token,
               name: "ETH",
@@ -127,9 +133,14 @@ export const useRequestData = (): {
               address: item._l1token,
               name: test?.tokenName as string,
               symbol: test?.tokenSymbol as string,
-              amount: item._totalAmount,
-              decimals: 18,
+              amount: sumAmount.toString(),
+              decimals: test?.decimals,
             };
+
+        const profitAmount = sumAmount - BigInt(item._totalAmount);
+        const profitRatio =
+          (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
+        const providingUSD = 1
 
         return {
           requester: item._requester,
@@ -138,15 +149,15 @@ export const useRequestData = (): {
           inToken,
           outToken,
           profit: {
-            amount: item._totalAmount,
-            symbol: "ETH",
-            percent: "100",
-            decimals: 18,
+            amount: formatUnits(item._ctAmount, test?.decimals),
+            symbol: isETH ? "ETH" : (test?.tokenSymbol as string),
+            percent: profitRatio.toString(),
+            decimals: test?.decimals,
           },
           blockTimestamps: Number(item.blockTimestamp),
           isActive: true,
-          providingUSD: 100,
-          recevingUSD: 100,
+          providingUSD: 1000,
+          recevingUSD: 2000,
           subgraphData: item,
         };
       });
