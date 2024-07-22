@@ -10,7 +10,7 @@ import { CTInputProps } from "@/staging/components/cross-trade/types";
 import { WarningType } from "@/staging/components/cross-trade/types";
 
 export default function CTOptionInput(props: CTInputProps) {
-  const { inputValue, inputWarningCheck, onInputChange } = props;
+  const { inputValue, inputWarningCheck, onInputChange, inTokenSymbol } = props;
   return (
     <>
       <Flex w={"189px"}>
@@ -58,7 +58,7 @@ export default function CTOptionInput(props: CTInputProps) {
                 color={"#A0A3AD"}
                 lineHeight={"26px"}
               >
-                'TON'
+                {inTokenSymbol}
               </Text>
             </InputRightElement>
           )}

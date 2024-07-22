@@ -34,8 +34,8 @@ export default function CTOptionCrossDetail(
 
   // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
   // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
-  const isDisabledRecommend = props.inputValue === "1";
-
+  // const isDisabledRecommend = props.inputValue === "1";
+  const isDisabledRecommend = false;
   const { inToken } = useInOutTokens();
 
   return (
@@ -178,6 +178,7 @@ export default function CTOptionCrossDetail(
             <CTOptionInput
               inputValue={props.inputValue}
               inputWarningCheck={props.inputWarningCheck}
+              inTokenSymbol={inToken?.tokenSymbol as string}
               onInputChange={props.onInputChange}
             />
           </Box>

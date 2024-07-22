@@ -9,7 +9,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import {
@@ -33,6 +33,7 @@ import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfi
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useInOutNetwork } from "@/hooks/network";
+import { ethers } from "ethers";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -83,9 +84,7 @@ export default function CTOptionModal() {
   const shouldShowEnterAmount =
     activeMainButtonValue === ButtonTypeMain.Cross &&
     activeSubButtonValue === ButtonTypeSub.Advanced &&
-    (serviceFee === "" ||
-      serviceFee === undefined ||
-      inputWarningCheck === WarningType.Critical);
+    (serviceFee === undefined || inputWarningCheck === WarningType.Critical);
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
@@ -110,7 +109,9 @@ export default function CTOptionModal() {
           action: CT_ACTION.REQUEST,
           isCanceled: false,
           status: CT_REQUEST.Request,
-          serviceFee,
+          serviceFee: ethers.utils
+            .parseUnits(serviceFee, inToken.decimals)
+            .toBigInt(),
           blockTimestamps: {
             request: 0,
           },
@@ -138,8 +139,15 @@ export default function CTOptionModal() {
     }
   };
 
+  const closeCTOptionModal = useCallback(() => {
+    setServiceFee(undefined);
+    setInputWarningCheck("");
+    setActiveSubButtonValue(ButtonTypeSub.Recommend);
+    onCloseCTOptionModal();
+  }, []);
+
   return (
-    <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
+    <Modal isOpen={ctOptionModal} onClose={closeCTOptionModal} isCentered>
       <ModalOverlay />
       <ModalContent
         width={"404px"}
@@ -153,7 +161,7 @@ export default function CTOptionModal() {
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
-          <CloseButton onClick={onCloseCTOptionModal} />
+          <CloseButton onClick={closeCTOptionModal} />
         </Box>
         <ModalBody p={0}>
           {activeMainButtonValue === ButtonTypeMain.Standard ? (

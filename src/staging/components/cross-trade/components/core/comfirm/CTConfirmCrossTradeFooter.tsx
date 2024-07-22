@@ -62,7 +62,7 @@ export default function CTConfirmCrossTradeFooter(
         if (!subgraphData) return new Error("subgraphData is not defined");
         if (isZeroAddress(subgraphData._l1token)) {
           console.log(
-            "--parrams--",
+            "--provideCT params--",
             ZERO_ADDRESS,
             ZERO_ADDRESS,
             subgraphData._requester,
@@ -70,7 +70,7 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._ctAmount,
             subgraphData._saleCount,
             subgraphData._l2chainId,
-            2000000,
+            txData.serviceFee,
             subgraphData._hashValue,
             {
               value: BigInt(subgraphData._ctAmount),
@@ -85,7 +85,7 @@ export default function CTConfirmCrossTradeFooter(
               subgraphData._ctAmount,
               subgraphData._saleCount,
               subgraphData._l2chainId,
-              2000000,
+              txData.serviceFee,
               subgraphData._hashValue,
             ],
             value: BigInt(subgraphData._ctAmount),
@@ -100,18 +100,18 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._ctAmount,
             subgraphData._saleCount,
             subgraphData._l2chainId,
-            2000000,
+            txData.serviceFee,
             subgraphData._hashValue,
           ],
         });
       }
 
       console.log(
-        "--parrams--",
+        "--requestRegisteredToken params--",
         txData.outToken.address,
         txData.inToken.address,
         txData.inToken.amount,
-        100000000000000,
+        txData.serviceFee,
         txData.outNetwork
       );
       if (inTokenIsETH) {
@@ -120,7 +120,7 @@ export default function CTConfirmCrossTradeFooter(
             ZERO_ADDRESS,
             ZERO_ADDRESS,
             txData.inToken.amount,
-            100000000000000,
+            txData.serviceFee,
             txData.outNetwork,
           ],
           value: BigInt(txData.inToken.amount as string),
@@ -131,7 +131,7 @@ export default function CTConfirmCrossTradeFooter(
           txData.outToken.address,
           txData.inToken.address,
           txData.inToken.amount,
-          100000000000000,
+          txData.serviceFee,
           txData.outNetwork,
         ],
       });

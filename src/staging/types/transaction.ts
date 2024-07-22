@@ -74,7 +74,7 @@ export interface BaseTransactionHistory extends I_TransactionHistory {
 export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;
   status: CT_Status;
-  serviceFee: string;
+  serviceFee: BigInt;
 }
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;

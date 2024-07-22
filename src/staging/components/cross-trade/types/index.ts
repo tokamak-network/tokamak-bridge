@@ -24,6 +24,7 @@ export enum WarningType {
 export interface CTInputProps {
   inputValue: string;
   inputWarningCheck: WarningType | "";
+  inTokenSymbol?: string;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onInputFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 }
