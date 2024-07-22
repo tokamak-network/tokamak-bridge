@@ -15,7 +15,7 @@ export enum Action {
 export enum CT_ACTION {
   REQUEST,
   PROVIDE,
-} 
+}
 
 export enum Status {
   Initiate = "Initiate",
@@ -74,6 +74,7 @@ export interface BaseTransactionHistory extends I_TransactionHistory {
 export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;
   status: CT_Status;
+  serviceFee: string;
 }
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;

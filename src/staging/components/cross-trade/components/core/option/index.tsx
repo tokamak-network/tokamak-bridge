@@ -53,43 +53,44 @@ export default function CTOptionModal() {
   };
 
   // CTOptionInput 관련 state 및 function Start @Robert
-  const [inputValue, setInputValue] = useState("");
+  const [serviceFee, setServiceFee] = useState<string | undefined>(undefined);
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (/^[123\s]*$/.test(value)) {
-      setInputValue(value);
-    }
+    // if (/^[123\s]*$/.test(value)) {
+    setServiceFee(value);
+    // }
   };
 
   // input이 변경될 때, 값이 있으면 rightElement를 보여준다.
   // 현재 1일때 red warning, 2일때, yellow warning
   useEffect(() => {
-    switch (inputValue) {
-      case "1":
-        setInputWarningCheck(WarningType.Critical);
-        break;
-      case "2":
-        setInputWarningCheck(WarningType.Normal);
-        break;
+    switch (serviceFee) {
+      // case "1":
+      //   setInputWarningCheck(WarningType.Critical);
+      //   break;
+      // case "2":
+      //   setInputWarningCheck(WarningType.Normal);
+      //   break;
       default:
         setInputWarningCheck("");
     }
-  }, [inputValue]);
+  }, [serviceFee]);
 
   const shouldShowEnterAmount =
     activeMainButtonValue === ButtonTypeMain.Cross &&
     activeSubButtonValue === ButtonTypeSub.Advanced &&
-    (inputValue === "" || inputWarningCheck === WarningType.Critical);
+    (serviceFee === "" ||
+      serviceFee === undefined ||
+      inputWarningCheck === WarningType.Critical);
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
   const { inToken } = useInOutTokens();
   const { inNetwork, outNetwork } = useInOutNetwork();
-
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return handleConfirm(Action.Withdraw, Status.Initiate);
@@ -99,9 +100,9 @@ export default function CTOptionModal() {
       inToken &&
       inNetwork &&
       outNetwork &&
-      inToken.address[outNetwork.chainName] !== null
+      inToken.address[outNetwork.chainName] !== null &&
+      serviceFee
     ) {
-      console.log("inToken", inToken);
       return onOpenCTConfirmModal({
         type: ModalType.Trade,
         txData: {
@@ -109,6 +110,7 @@ export default function CTOptionModal() {
           action: CT_ACTION.REQUEST,
           isCanceled: false,
           status: CT_REQUEST.Request,
+          serviceFee,
           blockTimestamps: {
             request: 0,
           },
@@ -164,7 +166,7 @@ export default function CTOptionModal() {
               activeSubButtonValue={activeSubButtonValue}
               handleButtonSubClick={handleButtonSubClick}
               // input 관련 props
-              inputValue={inputValue}
+              inputValue={serviceFee ?? ""}
               inputWarningCheck={inputWarningCheck}
               onInputChange={handleInputChange}
             />
@@ -177,7 +179,7 @@ export default function CTOptionModal() {
               activeSubButtonValue={activeSubButtonValue}
               handleButtonSubClick={handleButtonSubClick}
               // input 관련 props
-              inputValue={inputValue}
+              inputValue={serviceFee ?? ""}
               inputWarningCheck={inputWarningCheck}
               onInputChange={handleInputChange}
             />

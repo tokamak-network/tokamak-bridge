@@ -19,19 +19,19 @@ export default function CTOptionInput(props: CTInputProps) {
             autoFocus
             w={"189px"}
             h={"34px"}
-            px='12px'
-            py='4px'
-            bg='#15161D'
-            type='text'
-            maxLength={1}
-            pattern='[012]'
-            inputMode='decimal'
+            px="12px"
+            py="4px"
+            bg="#15161D"
+            type="text"
+            // maxLength={1}
+            pattern="[012]"
+            inputMode="decimal"
             border={"1px solid #313442"}
             borderRadius={"4px"}
             fontSize={"16px"}
             fontWeight={600}
             lineHeight={"26px"}
-            placeholder='Enter amount'
+            placeholder="Enter amount"
             onChange={onInputChange}
             value={inputValue}
             color={
@@ -58,7 +58,7 @@ export default function CTOptionInput(props: CTInputProps) {
                 color={"#A0A3AD"}
                 lineHeight={"26px"}
               >
-                USDC
+                'TON'
               </Text>
             </InputRightElement>
           )}

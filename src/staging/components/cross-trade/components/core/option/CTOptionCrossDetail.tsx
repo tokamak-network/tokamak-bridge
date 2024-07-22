@@ -27,7 +27,6 @@ export default function CTOptionCrossDetail(
   props: AdditionalCrossProps & CTInputProps
 ) {
   const isCrossActive = props.activeMainButtonValue === ButtonTypeMain.Cross;
-
   const isRecommendActive =
     props.activeSubButtonValue === ButtonTypeSub.Recommend;
   const isAdvancedActive =
