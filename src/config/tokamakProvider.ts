@@ -51,7 +51,7 @@ export const titan_sepolia = {
 } as const satisfies Chain;
 
 export const thanos_sepolia = {
-  id: 111551118080,
+  id: 111551119090,
   name: "Thanos Sepolia",
   network: "Thanos Sepolia",
   nativeCurrency: {
