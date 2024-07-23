@@ -160,7 +160,6 @@ export const getRequestTransactionHash = (parmas: {
         });
         return {
           request: requestTransactionHash,
-          updateFee: [],
           completed: providerClaimCT.transactionHash,
         };
       }
@@ -181,7 +180,6 @@ export const getTokenInfo = (parmas: {
   decimals: number;
 } => {
   const { requestData } = parmas;
-
   const isETH = isZeroAddress(requestData._l2token);
 
   return {

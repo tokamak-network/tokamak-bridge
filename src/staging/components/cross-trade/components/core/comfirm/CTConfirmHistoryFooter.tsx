@@ -124,15 +124,13 @@ const TransactionItem = (props: TransactionItemProps) => {
 export default function CTConfirmHistoryFooter(props: {
   txData: CT_History | null;
 }) {
-const { txData } = props;
+  const { txData } = props;
 
   if (txData === null) return null;
 
   const isCompleted = isFinalStatus(txData.status);
   const keyLength = Object.keys(txData.transactionHashes).length;
   const isError = txData.errorMessage !== undefined;
-
-  console.log("txData", txData);
 
   const TransactionHistory = useMemo(() => {
     return (
@@ -141,6 +139,7 @@ const { txData } = props;
           const isActive = isCompleted ? false : keyLength - 1 === index;
           //@ts-ignore
           const blockTimestamp = txData.blockTimestamps[key];
+          if (hash === "" || hash === undefined) return null;
           if (typeof hash === "string") {
             return (
               <TransactionItem
@@ -155,6 +154,7 @@ const { txData } = props;
           }
           return hash.map((tx, index) => {
             const isActiveOnUpdateFee = isActive && index === hash.length - 1;
+            if (tx === "" || tx === undefined) return null;
             return (
               <TransactionItem
                 title={key}
