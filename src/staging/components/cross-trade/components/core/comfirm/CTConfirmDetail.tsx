@@ -16,9 +16,11 @@ import {
   isInCT_REQUEST,
 } from "@/staging/types/transaction";
 import { sub } from "date-fns";
-import { convertNumber } from "@/utils/trim/convertNumber";
+import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { LinkContainer } from "@/staging/components/common/LinkContainer";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 interface TransactionDetailProps {
   title: string;
@@ -187,26 +189,34 @@ export default function CTConfirmDetail({
   const isRequest = isInCT_REQUEST(status);
   const isCanceled = getCancelValueFromCTRequestHistory(txData);
   const updateFee = ableToUpdateFee(txData);
+  const { tokenPriceWithAmount: inTokenPrice } = useGetMarketPrice({
+    tokenName: inToken?.name,
+    amount: formatUnits(inToken?.amount, inToken?.decimals),
+  });
+  const { tokenPriceWithAmount: outTokenPrice } = useGetMarketPrice({
+    tokenName: outToken?.name,
+    amount: formatUnits(outToken?.amount, outToken?.decimals),
+  });
 
   const sendTokenInfo = {
     title: isProvide ? "Provide" : isCanceled ? "Refund" : "Send",
-    mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
-      outToken.symbol
-    }`,
-    subValue: `$${"99.00"}`,
-    chainId: isProvide || isRequest ? inNetwork : outNetwork,
-    tokenSymbol: outToken.symbol,
-    tokenAddress: outToken.address,
-  };
-  const outTokenInfo = {
-    title: "Receive",
     mainValue: `${convertNumber(inToken.amount, inToken.decimals)} ${
       inToken.symbol
     }`,
-    subValue: `$${"99.00"}`,
+    subValue: `$${formatNumber(inTokenPrice)}`,
     chainId: outNetwork,
     tokenSymbol: inToken.symbol,
     tokenAddress: inToken.address,
+  };
+  const outTokenInfo = {
+    title: "Receive",
+    mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
+      outToken.symbol
+    }`,
+    subValue: `$${formatNumber(outTokenPrice)}`,
+    chainId: isProvide || isRequest ? inNetwork : outNetwork,
+    tokenSymbol: outToken.symbol,
+    tokenAddress: outToken.address,
   };
 
   return (

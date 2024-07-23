@@ -16,6 +16,7 @@ import CloseButton from "@/components/button/CloseButton";
 import CTConfirmDetail from "./CTConfirmDetail";
 import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
+import { isInCT_Provide } from "@/staging/types/transaction";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
@@ -41,6 +42,10 @@ export default function CTModal() {
     [ModalType.History]: "Cross Trade",
   };
 
+  const isProvide = ctConfirmModal?.txData
+    ? isInCT_Provide(ctConfirmModal.txData.status)
+    : false;
+
   return (
     <Modal
       isOpen={ctConfirmModal.isOpen}
@@ -56,7 +61,9 @@ export default function CTModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {modalTitles[ctConfirmModal.type]}
+            {isProvide
+              ? "Confirm Provide Liquidity"
+              : modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>

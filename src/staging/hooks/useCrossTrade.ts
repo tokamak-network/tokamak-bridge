@@ -2,12 +2,17 @@ import { useEffect, useMemo } from "react";
 import { ApolloError, useQuery } from "@apollo/client";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { FETCH_REQUEST_LIST_L2 } from "@/graphql/queries/crossTrade";
+import {
+  FETCH_REQUEST_HISTORY_ACCOUNT,
+  FETCH_REQUEST_LIST_L2,
+} from "@/graphql/queries/crossTrade";
 import { subgraphApolloClientsForCT } from "@/graphql/thegraph/apollosForCT";
 import { CrossTradeData } from "../types/crossTrade";
 import { supportedTokensForCT } from "@/types/token/supportedToken";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { formatUnits, toParseNumber } from "@/utils/trim/convertNumber";
+import { useAccount } from "wagmi";
+import { formatAddress } from "@/utils/trim/formatAddress";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -57,6 +62,7 @@ const errorHandler = (error: ApolloError) => {
 
 export type T_FETCH_REQUEST_LIST_L2 = {
   blockTimestamp: string;
+  transactionHash: string;
   __typename: string;
   _ctAmount: string;
   _hashValue: string;
@@ -68,26 +74,42 @@ export type T_FETCH_REQUEST_LIST_L2 = {
   _l2chainId: string;
 };
 
+export const useRequestRawData = (parmas: { isHistory?: boolean }) => {
+  const { isHistory } = parmas;
+  const { L2_CLIENT } = useGetApolloClient();
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { address } = useAccount();
+  const { data, loading, error } = useQuery<{
+    requestCTs: T_FETCH_REQUEST_LIST_L2[];
+    claimCTs: { _saleCount: string }[];
+    providerClaimCTs: { _saleCount: string }[];
+  }>(isHistory ? FETCH_REQUEST_HISTORY_ACCOUNT : FETCH_REQUEST_LIST_L2, {
+    pollInterval: 13000,
+    client: L2_CLIENT,
+    variables: isHistory
+      ? {
+          account: address as string,
+        }
+      : undefined,
+  });
+
+  console.log("data :>> ", data);
+
+  return { data, loading, error };
+};
+
 export const useRequestData = (): {
   requestList: CrossTradeData[] | null;
   isLoading: boolean;
 } => {
-  const { L2_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { data, loading, error } = useQuery<{
-    requestCTs: T_FETCH_REQUEST_LIST_L2[];
-  }>(FETCH_REQUEST_LIST_L2, {
-    pollInterval: 13000,
-    client: L2_CLIENT,
-  });
+  const { data, error, loading } = useRequestRawData({ isHistory: false });
 
   const requestList = useMemo(() => {
     if (error || loading) return null;
     if (data) {
       const datas = data.requestCTs;
-
-      console.log("datas", datas);
-
+      const providerClaimCTs = data.providerClaimCTs;
       const inNetwork = isConnectedToMainNetwork
         ? SupportedChainId.TITAN
         : SupportedChainId.TITAN_SEPOLIA;
@@ -140,7 +162,10 @@ export const useRequestData = (): {
         const profitAmount = sumAmount - BigInt(item._totalAmount);
         const profitRatio =
           (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
-        const providingUSD = 1
+        const providingUSD = 1;
+        const isProvided = providerClaimCTs.some(
+          (claimCT) => claimCT._saleCount === item._saleCount
+        );
 
         return {
           requester: item._requester,
@@ -159,6 +184,7 @@ export const useRequestData = (): {
           providingUSD: 1000,
           recevingUSD: 2000,
           subgraphData: item,
+          isProvided,
         };
       });
       return result;

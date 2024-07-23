@@ -38,6 +38,7 @@ import {
   getTransaction,
   getTransactionToken,
 } from "@/utils/history/getTransaction";
+import { useRequestData, useRequestRawData } from "./useCrossTrade";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -346,178 +347,112 @@ export const useDepositData = () => {
   return { depositHistory };
 };
 
-export const useRequestData = () => {
+export const useRequestHistoryData = () => {
   const [requestHistory, setRequestHistory] = useState<
     CT_Request_History[] | [] | null
   >(null);
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { l1Data } = useSubgraph();
+  const { data } = useRequestRawData({
+    isHistory: true,
+  });
+
+  console.log("data", data);
 
   useEffect(() => {
-    setRequestHistory([
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: false,
-        status: CT_REQUEST.WaitForReceive,
-        blockTimestamps: {
-          request: 0,
-          updateFee: [0],
-          waitForReceive: 0,
+    if (data) {
+      const datas = data.requestCTs;
+
+      const t = datas.map((request) => {
+        const {
+          _l1token,
+          _l2token,
+          _requester,
+          _totalAmount,
+          _ctAmount,
+          _saleCount,
+          _hashValue,
+          _l2chainId,
+          blockTimestamp,
+        } = request;
+
+        const status = undefined;
+        const blockTimestamps = undefined;
+        const inToken = undefined;
+        const outToken = undefined;
+        const transactionHashes = undefined;
+        const serviceFee = undefined;
+
+        //  {
+        //   category: HISTORY_SORT.CROSS_TRADE,
+        //   action: CT_ACTION.REQUEST,
+        //   isCanceled: false,
+        //   status: CT_REQUEST.WaitForReceive,
+        //   blockTimestamps: {
+        //     request: 0,
+        //     updateFee: [0],
+        //     waitForReceive: 0,
+        //   },
+        //   inNetwork: Number(_l2chainId),
+        //   outNetwork: SupportedChainId.MAINNET,
+        //   inToken: {
+        //     address: "0x",
+        //     name: "ETH",
+        //     symbol: "ETH",
+        //     amount: "000000000000",
+        //     decimals: 0,
+        //   },
+        //   outToken: {
+        //     address: "0x",
+        //     name: "ETH",
+        //     symbol: "ETH",
+        //     amount: "000000000000",
+        //     decimals: 0,
+        //   },
+        //   transactionHashes: {
+        //     request: "",
+        //     updateFee: [""],
+        //     waitForReceive: "",
+        //   },
+        //   serviceFee: BigInt(0),
+        // },
+      });
+
+      setRequestHistory([
+        {
+          category: HISTORY_SORT.CROSS_TRADE,
+          action: CT_ACTION.REQUEST,
+          isCanceled: false,
+          status: CT_REQUEST.WaitForReceive,
+          blockTimestamps: {
+            request: 0,
+            updateFee: [0],
+            waitForReceive: 0,
+          },
+          inNetwork: SupportedChainId.TITAN,
+          outNetwork: SupportedChainId.MAINNET,
+          inToken: {
+            address: "0x",
+            name: "ETH",
+            symbol: "ETH",
+            amount: "000000000000",
+            decimals: 0,
+          },
+          outToken: {
+            address: "0x",
+            name: "ETH",
+            symbol: "ETH",
+            amount: "000000000000",
+            decimals: 0,
+          },
+          transactionHashes: {
+            request: "",
+            updateFee: [""],
+            waitForReceive: "",
+          },
+          serviceFee: BigInt(0),
         },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          request: "",
-          updateFee: [""],
-          waitForReceive: "",
-        },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: false,
-        status: CT_REQUEST.Completed,
-        blockTimestamps: {
-          request: 0,
-          updateFee: [0],
-          waitForReceive: 0,
-        },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          request: "",
-          updateFee: [""],
-          waitForReceive: "",
-        },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: true,
-        status: CT_REQUEST_CANCEL.Refund,
-        blockTimestamps: {
-          request: 0,
-          cancelRequest: 0,
-          refund: Math.floor(Date.now() / 1000),
-        },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          request: "",
-          cancelRequest: "",
-          refund: "",
-        },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: true,
-        status: CT_REQUEST_CANCEL.Refund,
-        blockTimestamps: {
-          request: 0,
-          cancelRequest: 0,
-          refund: Math.floor(Date.now() / 1000) - 400,
-        },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          request: "",
-          cancelRequest: "",
-          refund: "",
-        },
-        errorMessage: ERROR_CODE.CT_REFUND_NOT_COMPLETED,
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: true,
-        status: CT_REQUEST_CANCEL.Completed,
-        blockTimestamps: {
-          request: 0,
-          updateFee: [0],
-          waitForReceive: 0,
-        },
-        inNetwork: SupportedChainId.TITAN,
-        outNetwork: SupportedChainId.MAINNET,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          request: "",
-          updateFee: [""],
-          refund: "",
-        },
-      },
-    ]);
-  }, []);
+      ]);
+    }
+  }, [data]);
 
   return { requestHistory };
 };
@@ -559,65 +494,7 @@ export const useProvideData = () => {
           provide: "",
           return: "",
         },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.PROVIDE,
-        status: CT_PROVIDE.Return,
-        blockTimestamps: {
-          provide: 0,
-          return: Math.floor(Date.now() / 1000),
-        },
-        inNetwork: SupportedChainId.MAINNET,
-        outNetwork: SupportedChainId.TITAN,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          provide: "",
-          return: "",
-        },
-      },
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.PROVIDE,
-        status: CT_PROVIDE.Return,
-        blockTimestamps: {
-          provide: 0,
-          return: Math.floor(Date.now() / 1000) - 400,
-        },
-        inNetwork: SupportedChainId.MAINNET,
-        outNetwork: SupportedChainId.TITAN,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          provide: "",
-          return: "",
-        },
-        errorMessage: ERROR_CODE.CT_LIQUIDITY_NOT_RETURNED,
+        serviceFee: BigInt(0),
       },
     ]);
   }, []);
@@ -628,7 +505,7 @@ export const useProvideData = () => {
 export const useBridgeHistory = () => {
   const { depositHistory } = useDepositData();
   const { withdrawHistory } = useWithdrawData();
-  const { requestHistory } = useRequestData();
+  const { requestHistory } = useRequestHistoryData();
   const { provideHistory } = useProvideData();
 
   const bridgeHistoryData = useMemo(() => {

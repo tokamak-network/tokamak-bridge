@@ -220,11 +220,11 @@ export default function CTConfirmCrossTradeFooter(
               <Link
                 ml={"2px"}
                 textDecor={"underline"}
-                href={`${blockExplorer}/address/${"address"}`}
+                href={`${blockExplorer}/tx/${subgraphData?.transactionHash}`}
                 isExternal={true}
               >
                 {trimAddress({
-                  address: "0x1234567890abcdef1234567890abcdef12345678",
+                  address: subgraphData?.transactionHash,
                   firstChar: 7,
                   lastChar: 5,
                 })}

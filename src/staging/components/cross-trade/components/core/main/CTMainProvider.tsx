@@ -11,6 +11,7 @@ import {
   HISTORY_SORT,
   CT_ACTION,
   CT_REQUEST,
+  CT_PROVIDE,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
@@ -18,7 +19,8 @@ import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 
 interface CTProviderProps {
-  status: number;
+  // status: number;
+  status: boolean;
   crossTradeData: CrossTradeData;
   subgraphData: T_FETCH_REQUEST_LIST_L2;
 }
@@ -37,50 +39,50 @@ export default function CTProvider({
       type: ModalType.Trade,
       txData: {
         category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.REQUEST,
-        isCanceled: false,
-        status: CT_REQUEST.Request,
-        blockTimestamps: {
-          request: 0,
-        },
+        action: CT_ACTION.PROVIDE,
+        status: CT_PROVIDE.Provide,
         inNetwork,
         outNetwork,
         inToken,
         outToken,
-        transactionHashes: {
-          request: "",
+        blockTimestamps: {
+          provide: 0,
         },
+        transactionHashes: {
+          provide: "",
+        },
+        serviceFee: BigInt(0),
       },
       isProvide: true,
       subgraphData,
     });
 
   const renderButton = () => {
-    if (status === STATUS.COUNTDOWN && blockTimestamps) {
-      const remainTime = calculateInitialCountdown(
-        blockTimestamps,
-        TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
-      );
-      const isZeroTime = remainTime <= 0;
-      const timeDisplay = isZeroTime
-        ? "00 : 00"
-        : useCountdown(formatTimeDisplay(remainTime));
+    // if (status === STATUS.COUNTDOWN && blockTimestamps) {
+    //   const remainTime = calculateInitialCountdown(
+    //     blockTimestamps,
+    //     TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
+    //   );
+    //   const isZeroTime = remainTime <= 0;
+    //   const timeDisplay = isZeroTime
+    //     ? "00 : 00"
+    //     : useCountdown(formatTimeDisplay(remainTime));
 
-      return (
-        <Flex justifyContent={"center"}>
-          <Text
-            fontWeight={600}
-            fontSize={"11px"}
-            lineHeight={"16.5px"}
-            color={"#DB00FF"}
-          >
-            {timeDisplay}
-          </Text>
-        </Flex>
-      );
-    }
+    //   return (
+    //     <Flex justifyContent={"center"}>
+    //       <Text
+    //         fontWeight={600}
+    //         fontSize={"11px"}
+    //         lineHeight={"16.5px"}
+    //         color={"#DB00FF"}
+    //       >
+    //         {timeDisplay}
+    //       </Text>
+    //     </Flex>
+    //   );
+    // }
 
-    const isDisabled = status === STATUS.DISABLED;
+    const isDisabled = status;
     const bgColor = isDisabled ? "#23242B" : "#007AFF";
     const textColor = isDisabled ? "#A0A3AD" : "#FFFFFF";
 

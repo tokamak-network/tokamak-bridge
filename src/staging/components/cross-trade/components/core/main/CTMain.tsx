@@ -186,8 +186,11 @@ export default function CTMain() {
         </Thead>
         <Tbody>
           {requestList?.map((item, index) => {
-            const status = getStatus(item);
-            const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
+            console.log("item", item);
+            // const status = getStatus(item);
+            const status = item.isProvided;
+            // const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
+            const rowOpacity = status ? 0.3 : 1;
             return (
               <Tr
                 key={index}

@@ -28,4 +28,5 @@ export interface CrossTradeData {
   providingUSD: number;
   recevingUSD: number;
   subgraphData: T_FETCH_REQUEST_LIST_L2;
+  isProvided: boolean;
 }
