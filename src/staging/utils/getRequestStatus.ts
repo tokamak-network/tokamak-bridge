@@ -9,6 +9,7 @@ import {
   CT_REQUEST,
   CT_REQUEST_CANCEL,
   CT_REQUEST_HISTORY_blockTimestamps,
+  CT_REQUEST_HISTORY_transactionHashes,
   CT_REQUEST_STATUSES,
   isInCT_REQUEST,
   isInCT_REQUEST_CANCEL,
@@ -76,7 +77,7 @@ export const getRequestStatus = (params: {
   });
   if (isProvided) return CT_REQUEST.Completed;
 
-  return CT_REQUEST.Request;
+  return CT_REQUEST.WaitForReceive;
 };
 
 export const getRequestBlockTimestamp = (parmas: {
@@ -87,11 +88,6 @@ export const getRequestBlockTimestamp = (parmas: {
   editCTs: T_FETCH_EditCTs;
 }): CT_REQUEST_HISTORY_blockTimestamps | undefined => {
   const { status, requestData, cancelCTs, providerClaimCTs, editCTs } = parmas;
-  //1. status에 따라 blockTimestamp 가져오는 함수 추가
-  //cancel
-  //waitForReceive
-  //completed
-  //updateFee
 
   const requestBlockTimestamp = Number(requestData.blockTimestamp);
 
@@ -120,7 +116,52 @@ export const getRequestBlockTimestamp = (parmas: {
         });
         return {
           request: requestBlockTimestamp,
-          finalizedCompletedTimestamp: Number(providerClaimCT.blockTimestamp),
+          completed: Number(providerClaimCT.blockTimestamp),
+        };
+      }
+    }
+  }
+  if (isInCT_REQUEST_CANCEL(status)) {
+  }
+  return undefined;
+};
+
+export const getRequestTransactionHash = (parmas: {
+  status: CT_REQUEST | CT_REQUEST_CANCEL;
+  requestData: T_FETCH_REQUEST_LIST_L2;
+  cancelCTs: T_FETCH_CancelCTs;
+  providerClaimCTs: T_FETCH_ProviderClaimCTs;
+  editCTs: T_FETCH_EditCTs;
+}): CT_REQUEST_HISTORY_transactionHashes | undefined => {
+  const { status, requestData, cancelCTs, providerClaimCTs, editCTs } = parmas;
+  const requestTransactionHash = requestData.transactionHash;
+  console.log("requestData", requestData);
+  if (isInCT_REQUEST(status)) {
+    switch (status) {
+      case CT_REQUEST.WaitForReceive: {
+        const isUpdatedFee = isRequestEdited({
+          editCTs,
+          saleCount: requestData._saleCount,
+        });
+        if (isUpdatedFee) return undefined;
+        return {
+          request: requestTransactionHash,
+        };
+      }
+      case CT_REQUEST.Completed: {
+        const isUpdatedFee = isRequestEdited({
+          editCTs,
+          saleCount: requestData._saleCount,
+        });
+        if (isUpdatedFee) return undefined;
+        const providerClaimCT = getTransaction_providerClaimCT({
+          providerClaimCTs,
+          saleCount: requestData._saleCount,
+        });
+        return {
+          request: requestTransactionHash,
+          updateFee: [],
+          completed: providerClaimCT.transactionHash,
         };
       }
     }

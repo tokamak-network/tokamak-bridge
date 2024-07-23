@@ -124,13 +124,15 @@ const TransactionItem = (props: TransactionItemProps) => {
 export default function CTConfirmHistoryFooter(props: {
   txData: CT_History | null;
 }) {
-  const { txData } = props;
+const { txData } = props;
 
   if (txData === null) return null;
 
   const isCompleted = isFinalStatus(txData.status);
   const keyLength = Object.keys(txData.transactionHashes).length;
   const isError = txData.errorMessage !== undefined;
+
+  console.log("txData", txData);
 
   const TransactionHistory = useMemo(() => {
     return (

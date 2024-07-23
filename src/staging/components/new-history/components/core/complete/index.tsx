@@ -26,8 +26,6 @@ export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
   const { isOnOfficialStandard } = useHistoryTab();
 
-  console.log("transactionData", transactionData);
-
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;
@@ -38,7 +36,7 @@ export default function Complete(transaction: TransactionHistory) {
     if (isInCT_REQUEST(transactionData.status)) {
       const blockTimestamps =
         transactionData.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
-      return blockTimestamps.finalizedCompletedTimestamp;
+      return blockTimestamps.completed;
     }
     return null;
   }, [transactionData]);

@@ -110,7 +110,7 @@ export type CT_REQUEST_HISTORY_blockTimestamps = {
   request: number;
   updateFee?: number[];
   waitForReceive?: number;
-  finalizedCompletedTimestamp?: number;
+  completed?: number;
   cancelRequest?: number;
   refund?: number;
 };
@@ -118,6 +118,7 @@ export type CT_REQUEST_HISTORY_transactionHashes = {
   request: string;
   updateFee?: string[];
   waitForReceive?: string;
+  completed?: string;
   cancelRequest?: string;
   refund?: string;
 };

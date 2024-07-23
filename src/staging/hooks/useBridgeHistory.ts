@@ -46,6 +46,7 @@ import {
 import {
   getRequestBlockTimestamp,
   getRequestStatus,
+  getRequestTransactionHash,
   getTokenInfo,
 } from "../utils/getRequestStatus";
 
@@ -404,7 +405,13 @@ export const useRequestHistoryData = () => {
         });
         const inToken = getTokenInfo({ requestData });
         const outToken = getTokenInfo({ requestData });
-        const transactionHashes = undefined;
+        const transactionHashes = getRequestTransactionHash({
+          status,
+          requestData,
+          cancelCTs,
+          providerClaimCTs,
+          editCTs,
+        });
         const serviceFee = BigInt(requestData._ctAmount);
 
         console.log("blockTimestamps", blockTimestamps);
@@ -421,17 +428,11 @@ export const useRequestHistoryData = () => {
             : SupportedChainId.SEPOLIA,
           inToken,
           outToken,
-          transactionHashes: {
-            request: "",
-            updateFee: [""],
-            waitForReceive: "",
-          },
+          transactionHashes,
           serviceFee,
         };
         return result;
       });
-
-      
 
       console.log("trimedData", trimedData);
 
@@ -483,8 +484,6 @@ export const useProvideData = () => {
       },
     ]);
   }, []);
-
-  
 
   return { provideHistory };
 };

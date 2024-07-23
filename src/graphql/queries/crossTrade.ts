@@ -19,6 +19,7 @@ export const FETCH_PROVIDE_LIST_L1_ACCOUNT = gql`
       _requester
       blockTimestamp
       blockNumber
+      transactionHash
     }
   } 
 `;
@@ -64,6 +65,7 @@ export const FETCH_REQUEST_HISTORY_ACCOUNT = gql`
     _hashValue 
     _l2chainId
     blockTimestamp 
+    transactionHash
     }
     cancelCTs 
     {
