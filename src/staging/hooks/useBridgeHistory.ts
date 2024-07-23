@@ -38,7 +38,16 @@ import {
   getTransaction,
   getTransactionToken,
 } from "@/utils/history/getTransaction";
-import { useRequestData, useRequestRawData } from "./useCrossTrade";
+import {
+  useCrossTradeData_L1,
+  useRequestData,
+  useCrossTradeData_L2,
+} from "./useCrossTrade";
+import {
+  getRequestBlockTimestamp,
+  getRequestStatus,
+  getTokenInfo,
+} from "../utils/getRequestStatus";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -351,17 +360,24 @@ export const useRequestHistoryData = () => {
   const [requestHistory, setRequestHistory] = useState<
     CT_Request_History[] | [] | null
   >(null);
-  const { data } = useRequestRawData({
+  const { data: l2Data } = useCrossTradeData_L2({
     isHistory: true,
   });
-
-  console.log("data", data);
+  const { data: l1Data } = useCrossTradeData_L1({
+    isHistory: true,
+  });
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   useEffect(() => {
-    if (data) {
-      const datas = data.requestCTs;
+    if (l2Data && l1Data) {
+      const requestCTs = l2Data.requestCTs;
+      const cancelCTs = l2Data.cancelCTs;
+      const providerClaimCTs = l2Data.providerClaimCTs;
+      const editCTs = l1Data.editCTs;
 
-      const t = datas.map((request) => {
+      console.log(l1Data);
+
+      const trimedData = requestCTs.map((requestData) => {
         const {
           _l1token,
           _l2token,
@@ -372,87 +388,56 @@ export const useRequestHistoryData = () => {
           _hashValue,
           _l2chainId,
           blockTimestamp,
-        } = request;
+        } = requestData;
 
-        const status = undefined;
-        const blockTimestamps = undefined;
-        const inToken = undefined;
-        const outToken = undefined;
+        const status = getRequestStatus({
+          requestData,
+          cancelCTs,
+          providerClaimCTs,
+        });
+        const blockTimestamps = getRequestBlockTimestamp({
+          status,
+          requestData,
+          cancelCTs,
+          providerClaimCTs,
+          editCTs,
+        });
+        const inToken = getTokenInfo({ requestData });
+        const outToken = getTokenInfo({ requestData });
         const transactionHashes = undefined;
-        const serviceFee = undefined;
+        const serviceFee = BigInt(requestData._ctAmount);
 
-        //  {
-        //   category: HISTORY_SORT.CROSS_TRADE,
-        //   action: CT_ACTION.REQUEST,
-        //   isCanceled: false,
-        //   status: CT_REQUEST.WaitForReceive,
-        //   blockTimestamps: {
-        //     request: 0,
-        //     updateFee: [0],
-        //     waitForReceive: 0,
-        //   },
-        //   inNetwork: Number(_l2chainId),
-        //   outNetwork: SupportedChainId.MAINNET,
-        //   inToken: {
-        //     address: "0x",
-        //     name: "ETH",
-        //     symbol: "ETH",
-        //     amount: "000000000000",
-        //     decimals: 0,
-        //   },
-        //   outToken: {
-        //     address: "0x",
-        //     name: "ETH",
-        //     symbol: "ETH",
-        //     amount: "000000000000",
-        //     decimals: 0,
-        //   },
-        //   transactionHashes: {
-        //     request: "",
-        //     updateFee: [""],
-        //     waitForReceive: "",
-        //   },
-        //   serviceFee: BigInt(0),
-        // },
-      });
+        console.log("blockTimestamps", blockTimestamps);
 
-      setRequestHistory([
-        {
+        const result = {
           category: HISTORY_SORT.CROSS_TRADE,
           action: CT_ACTION.REQUEST,
           isCanceled: false,
-          status: CT_REQUEST.WaitForReceive,
-          blockTimestamps: {
-            request: 0,
-            updateFee: [0],
-            waitForReceive: 0,
-          },
-          inNetwork: SupportedChainId.TITAN,
-          outNetwork: SupportedChainId.MAINNET,
-          inToken: {
-            address: "0x",
-            name: "ETH",
-            symbol: "ETH",
-            amount: "000000000000",
-            decimals: 0,
-          },
-          outToken: {
-            address: "0x",
-            name: "ETH",
-            symbol: "ETH",
-            amount: "000000000000",
-            decimals: 0,
-          },
+          status,
+          blockTimestamps,
+          inNetwork: Number(_l2chainId),
+          outNetwork: isConnectedToMainNetwork
+            ? SupportedChainId.MAINNET
+            : SupportedChainId.SEPOLIA,
+          inToken,
+          outToken,
           transactionHashes: {
             request: "",
             updateFee: [""],
             waitForReceive: "",
           },
-          serviceFee: BigInt(0),
-        },
-      ]);
+          serviceFee,
+        };
+        return result;
+      });
+
+      
+
+      console.log("trimedData", trimedData);
+
+      setRequestHistory(trimedData);
     }
-  }, [data]);
+  }, [l1Data, l2Data, isConnectedToMainNetwork]);
 
   return { requestHistory };
 };
@@ -498,6 +483,8 @@ export const useProvideData = () => {
       },
     ]);
   }, []);
+
+  
 
   return { provideHistory };
 };

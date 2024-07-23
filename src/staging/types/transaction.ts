@@ -41,8 +41,8 @@ export enum CT_PROVIDE {
   Return = "CT_PRO_RETURN",
   Completed = "CT_PRO_COMPLETED",
 }
-
-export type CT_Status = CT_REQUEST | CT_REQUEST_CANCEL | CT_PROVIDE;
+export type CT_REQUEST_STATUSES = CT_REQUEST | CT_REQUEST_CANCEL;
+export type CT_Status = CT_REQUEST_STATUSES | CT_PROVIDE;
 export type HISTORY_TRANSACTION_STATUS = Status | CT_Status;
 export interface TransactionToken {
   address: string;
@@ -106,23 +106,26 @@ export interface DepositTransactionHistory extends BaseTransactionHistory {
   };
 }
 
+export type CT_REQUEST_HISTORY_blockTimestamps = {
+  request: number;
+  updateFee?: number[];
+  waitForReceive?: number;
+  finalizedCompletedTimestamp?: number;
+  cancelRequest?: number;
+  refund?: number;
+};
+export type CT_REQUEST_HISTORY_transactionHashes = {
+  request: string;
+  updateFee?: string[];
+  waitForReceive?: string;
+  cancelRequest?: string;
+  refund?: string;
+};
 export interface CT_Request_History extends BaseCTTransactionHistory {
   action: CT_ACTION.REQUEST;
   isCanceled: boolean;
-  blockTimestamps: {
-    request: number;
-    updateFee?: number[];
-    waitForReceive?: number;
-    cancelRequest?: number;
-    refund?: number;
-  };
-  transactionHashes: {
-    request: string;
-    updateFee?: string[];
-    waitForReceive?: string;
-    cancelRequest?: string;
-    refund?: string;
-  };
+  blockTimestamps: CT_REQUEST_HISTORY_blockTimestamps;
+  transactionHashes: CT_REQUEST_HISTORY_transactionHashes;
 }
 export interface CT_Provide_History extends BaseCTTransactionHistory {
   action: CT_ACTION.PROVIDE;

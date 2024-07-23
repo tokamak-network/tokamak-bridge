@@ -12,11 +12,7 @@ import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { useCallback, useMemo, useState } from "react";
 import { trimAddress } from "@/utils/trim";
 import { useNetwork } from "wagmi";
-import { useRequestData } from "@/staging/hooks/useBridgeHistory";
-import {
-  useCrossTradeContract,
-  useRequestRegisteredToken,
-} from "@/staging/hooks/useCrossTradeContracts";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";

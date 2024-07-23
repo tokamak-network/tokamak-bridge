@@ -1,5 +1,28 @@
 import { gql } from "@apollo/client";
 
+export const FETCH_PROVIDE_LIST_L1 = gql`
+  query GetProvideCTs {
+    editCTs(orderBy: blockTimestamp, orderDirection: desc) { 
+      _saleCount
+      _requester
+      blockTimestamp
+      blockNumber
+      transactionHash
+    }
+  } 
+`;
+
+export const FETCH_PROVIDE_LIST_L1_ACCOUNT = gql`
+  query GetProvideCTs($account: String!) {
+    editCTs(orderBy: blockTimestamp, orderDirection: desc, where: {_requester: $account}) { 
+      _saleCount
+      _requester
+      blockTimestamp
+      blockNumber
+    }
+  } 
+`;
+
 export const FETCH_REQUEST_LIST_L2 = gql`
   query GetRequestCTs {
     requestCTs(orderBy: blockTimestamp, orderDirection: desc) { 
@@ -14,13 +37,17 @@ export const FETCH_REQUEST_LIST_L2 = gql`
     blockTimestamp 
     transactionHash
     }
-     cancelCTs 
+    cancelCTs 
     {
-    _saleCount
+      _saleCount
+      blockTimestamp 
+      transactionHash
     }
     providerClaimCTs 
     {
-    _saleCount
+      _saleCount
+      blockTimestamp 
+      transactionHash
     }
   }
 `;
@@ -37,6 +64,18 @@ export const FETCH_REQUEST_HISTORY_ACCOUNT = gql`
     _hashValue 
     _l2chainId
     blockTimestamp 
+    }
+    cancelCTs 
+    {
+      _saleCount
+      blockTimestamp 
+      transactionHash
+    }
+    providerClaimCTs 
+    {
+      _saleCount
+      blockTimestamp 
+      transactionHash
     }
   }
 `;

@@ -3,6 +3,8 @@ import { ApolloError, useQuery } from "@apollo/client";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
+  FETCH_PROVIDE_LIST_L1,
+  FETCH_PROVIDE_LIST_L1_ACCOUNT,
   FETCH_REQUEST_HISTORY_ACCOUNT,
   FETCH_REQUEST_LIST_L2,
 } from "@/graphql/queries/crossTrade";
@@ -13,6 +15,7 @@ import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { formatUnits, toParseNumber } from "@/utils/trim/convertNumber";
 import { useAccount } from "wagmi";
 import { formatAddress } from "@/utils/trim/formatAddress";
+import { isRequestProvided } from "../utils/getRequestStatus";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -73,16 +76,56 @@ export type T_FETCH_REQUEST_LIST_L2 = {
   _totalAmount: string;
   _l2chainId: string;
 };
+export type T_CancelCTs = {
+  _saleCount: string;
+  blockTimestamp: string;
+  transactionHash: string;
+};
+export type T_FETCH_CancelCTs = T_CancelCTs[];
+export type T_ProviderClaimCTs = {
+  _saleCount: string;
+  blockTimestamp: string;
+  transactionHash: string;
+};
+export type T_FETCH_ProviderClaimCTs = T_ProviderClaimCTs[];
+export type T_EditCTs = {
+  _saleCount: string;
+  _requester: string;
+  blockTimestamp: string;
+  blockNumber: string;
+  transactionHash: string;
+};
+export type T_FETCH_EditCTs = T_EditCTs[];
 
-export const useRequestRawData = (parmas: { isHistory?: boolean }) => {
+export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
+  const { isHistory } = parmas;
+  const { L1_CLIENT } = useGetApolloClient();
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { address } = useAccount();
+  const { data, loading, error } = useQuery<{
+    editCTs: T_FETCH_EditCTs;
+  }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
+    pollInterval: 13000,
+    client: L1_CLIENT,
+    variables: isHistory
+      ? {
+          account: address as string,
+        }
+      : undefined,
+  });
+
+  return { data, loading, error };
+};
+
+export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
   const { isHistory } = parmas;
   const { L2_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const { data, loading, error } = useQuery<{
     requestCTs: T_FETCH_REQUEST_LIST_L2[];
-    claimCTs: { _saleCount: string }[];
-    providerClaimCTs: { _saleCount: string }[];
+    cancelCTs: T_FETCH_CancelCTs;
+    providerClaimCTs: T_FETCH_ProviderClaimCTs;
   }>(isHistory ? FETCH_REQUEST_HISTORY_ACCOUNT : FETCH_REQUEST_LIST_L2, {
     pollInterval: 13000,
     client: L2_CLIENT,
@@ -93,8 +136,6 @@ export const useRequestRawData = (parmas: { isHistory?: boolean }) => {
       : undefined,
   });
 
-  console.log("data :>> ", data);
-
   return { data, loading, error };
 };
 
@@ -103,7 +144,7 @@ export const useRequestData = (): {
   isLoading: boolean;
 } => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { data, error, loading } = useRequestRawData({ isHistory: false });
+  const { data, error, loading } = useCrossTradeData_L2({ isHistory: false });
 
   const requestList = useMemo(() => {
     if (error || loading) return null;
@@ -163,9 +204,10 @@ export const useRequestData = (): {
         const profitRatio =
           (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
         const providingUSD = 1;
-        const isProvided = providerClaimCTs.some(
-          (claimCT) => claimCT._saleCount === item._saleCount
-        );
+        const isProvided = isRequestProvided({
+          providerClaimCTs,
+          saleCount: item._saleCount,
+        });
 
         return {
           requester: item._requester,

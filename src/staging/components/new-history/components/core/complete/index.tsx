@@ -11,6 +11,8 @@ import {
   getCancelValueFromCTRequestHistory,
   HISTORY_SORT,
   CT_History,
+  isInCT_REQUEST,
+  CT_REQUEST_HISTORY_blockTimestamps,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
@@ -24,12 +26,19 @@ export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
   const { isOnOfficialStandard } = useHistoryTab();
 
+  console.log("transactionData", transactionData);
+
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;
     }
     if (isDepositTransactionHistory(transactionData)) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;
+    }
+    if (isInCT_REQUEST(transactionData.status)) {
+      const blockTimestamps =
+        transactionData.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+      return blockTimestamps.finalizedCompletedTimestamp;
     }
     return null;
   }, [transactionData]);
