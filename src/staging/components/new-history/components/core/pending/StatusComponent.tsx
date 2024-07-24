@@ -35,6 +35,7 @@ import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
   transactionData: TransactionHistory;
+  blockTimestamp?: number;
   openModal: () => void;
 };
 
@@ -111,7 +112,7 @@ const FinalizeButtonComponent = (props: {
 export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
-  const { label, transactionData, openModal } = props;
+  const { label, transactionData, blockTimestamp, openModal } = props;
   const isActive = transactionData.status === label;
 
   // Countdown is needed only for the following conditions
@@ -135,7 +136,7 @@ export default function StatusComponent(
           isWithdrawTransactionHistory(transactionData) ||
             isDepositTransactionHistory(transactionData)
             ? transactionData.blockTimestamps.initialCompletedTimestamp
-            : 0
+            : blockTimestamp ?? 0
         )
       );
 

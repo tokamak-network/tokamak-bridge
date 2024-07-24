@@ -1,18 +1,19 @@
 import { ctUpdateFeeModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
+import { CT_History } from "@/staging/types/transaction";
 
 export default function useCTUpdateFee() {
   const [ctUpdateFeeModal, setCTUpdateFeeModal] = useRecoilState(
     ctUpdateFeeModalStatus
   );
 
-  const onOpenCTUpdateFeeModal = () => {
-    setCTUpdateFeeModal(true);
+  const onOpenCTUpdateFeeModal = (txData: CT_History | null) => {
+    setCTUpdateFeeModal({ isOpen: true, txData });
   };
 
   const onCloseCTUpdateFeeModal = useCallback(() => {
-    setCTUpdateFeeModal(false);
+    setCTUpdateFeeModal({ isOpen: false, txData: null });
   }, []);
 
   return {

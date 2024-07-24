@@ -57,9 +57,9 @@ export default function CTUpdateInput(
         borderRadius={"8px"}
         border={isFocused ? "1px solid #59628D" : "1px solid #313442"}
         onClick={handleBoxClick}
-        cursor='pointer'
+        cursor="pointer"
       >
-        <Flex justifyContent='space-between'>
+        <Flex justifyContent="space-between">
           <Text
             lineHeight={"18px"}
             fontWeight={500}
@@ -74,7 +74,7 @@ export default function CTUpdateInput(
               //상위 onclick에 이벤트 버블링 안되게 막음
               event.stopPropagation();
             }}
-            cursor='pointer'
+            cursor="pointer"
           >
             {recommendCheck ? (
               <Image src={CTReCircle} alt={"CTReCircle"} />
@@ -86,9 +86,8 @@ export default function CTUpdateInput(
         <InputGroup mt={"4px"} height={"38px"}>
           <Input
             ref={inputRef}
-            type='text'
-            maxLength={1}
-            pattern='[012]'
+            type="text"
+            pattern="[012]"
             width={"260px"}
             pl={0}
             fontWeight={600}

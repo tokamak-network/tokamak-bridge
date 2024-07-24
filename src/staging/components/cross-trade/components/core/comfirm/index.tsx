@@ -23,10 +23,12 @@ export default function CTModal() {
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
+  console.log("ctConfirmModal", ctConfirmModal);
+
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
     onCloseCTConfirmModal();
-    onOpenCTUpdateFeeModal();
+    onOpenCTUpdateFeeModal(ctConfirmModal.txData);
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>

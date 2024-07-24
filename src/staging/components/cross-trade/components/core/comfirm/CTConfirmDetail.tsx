@@ -21,6 +21,7 @@ import { isFinalStatus } from "../../../utils/getStatus";
 import { LinkContainer } from "@/staging/components/common/LinkContainer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useMemo } from "react";
 
 interface TransactionDetailProps {
   title: string;
@@ -218,6 +219,14 @@ export default function CTConfirmDetail({
     tokenSymbol: outToken.symbol,
     tokenAddress: outToken.address,
   };
+  const serviceFee = useMemo(() => {
+    return formatUnits(txData.serviceFee.toString(), inToken.decimals);
+  }, [txData.serviceFee, inToken.decimals]);
+
+  const { tokenPriceWithAmount } = useGetMarketPrice({
+    amount: serviceFee,
+    tokenName: inToken.name,
+  });
 
   return (
     <Box
@@ -249,8 +258,8 @@ export default function CTConfirmDetail({
         {!isCanceled && (updateFee || isProvide) && (
           <FeeDetail
             title="Service fee"
-            mainAmount="0.012 USDC"
-            subAmount="$0.43"
+            mainAmount={`${serviceFee} ${sendTokenInfo.tokenSymbol}`}
+            subAmount={`$${tokenPriceWithAmount}`}
             modalType={modalType}
             onPencilClick={onPencilClick}
             isCompleted={isCompleted}

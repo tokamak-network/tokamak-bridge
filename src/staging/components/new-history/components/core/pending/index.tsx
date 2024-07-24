@@ -55,6 +55,7 @@ export default function Pending(props: PendingProps) {
       onOpenCTConfirmModal({
         type: ModalType.History,
         txData: transactionData as CT_History,
+        subgraphData: (transactionData as CT_History).L2_subgraphData,
       });
     }
   }, [transactionData]);

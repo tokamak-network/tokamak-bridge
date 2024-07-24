@@ -49,6 +49,7 @@ import {
   getRequestTransactionHash,
   getTokenInfo,
 } from "../utils/getRequestStatus";
+import { sub } from "date-fns";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -376,8 +377,6 @@ export const useRequestHistoryData = () => {
       const providerClaimCTs = l2Data.providerClaimCTs;
       const editCTs = l1Data.editCTs;
 
-      console.log(l1Data);
-
       const trimedData = requestCTs.map((requestData) => {
         const {
           _l1token,
@@ -414,8 +413,6 @@ export const useRequestHistoryData = () => {
         });
         const serviceFee = BigInt(requestData._ctAmount);
 
-        console.log("blockTimestamps", blockTimestamps);
-
         const result = {
           category: HISTORY_SORT.CROSS_TRADE,
           action: CT_ACTION.REQUEST,
@@ -430,11 +427,10 @@ export const useRequestHistoryData = () => {
           outToken,
           transactionHashes,
           serviceFee,
+          L2_subgraphData: requestData,
         };
         return result;
       });
-
-      console.log("trimedData", trimedData);
 
       setRequestHistory(trimedData);
     }

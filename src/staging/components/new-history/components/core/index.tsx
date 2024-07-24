@@ -64,7 +64,8 @@ export default function AccountHistoryNew() {
     requestHistory,
     provideHistory,
   ]);
-  
+
+  console.log("requestHistory", requestHistory);
 
   return (
     <Flex flexDirection="column" gap="2">

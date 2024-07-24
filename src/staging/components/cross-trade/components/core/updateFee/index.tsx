@@ -12,7 +12,7 @@ import {
   Checkbox,
   textDecoration,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import {
   WarningType,
   UpdateFeeButtonType,
@@ -24,6 +24,10 @@ import CTUpdateButton from "./CTUpdateButton";
 import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
+import useContract from "@/hooks/contracts/useContract";
+import { useContractWrite } from "wagmi";
+import L1CrossTrade from "@/abis/L1CrossTrade.json";
+import { toParseNumber } from "@/utils/trim/convertNumber";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
@@ -58,9 +62,8 @@ export default function CTFeeUpdateModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (/^[123\s]*$/.test(value)) {
-      setInputValue(value);
-    }
+    console.log(value);
+    setInputValue(value);
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -71,18 +74,18 @@ export default function CTFeeUpdateModal() {
   // input이 변경될 때, 값이 있으면 rightElement를 보여준다.
   // 현재 1일때 red warning, 2일때, yellow warning, 3일때 통과
   // 123 밖에 입력이 안됨
-  useEffect(() => {
-    switch (inputValue) {
-      case "1":
-        setInputWarningCheck(WarningType.Critical);
-        break;
-      case "2":
-        setInputWarningCheck(WarningType.Normal);
-        break;
-      default:
-        setInputWarningCheck("");
-    }
-  }, [inputValue]);
+  // useEffect(() => {
+  //   switch (inputValue) {
+  //     case "1":
+  //       setInputWarningCheck(WarningType.Critical);
+  //       break;
+  //     case "2":
+  //       setInputWarningCheck(WarningType.Normal);
+  //       break;
+  //     default:
+  //       setInputWarningCheck("");
+  //   }
+  // }, [inputValue]);
 
   //check box
   const [isChecked, setIsChecked] = useState<boolean>(false);
@@ -97,7 +100,6 @@ export default function CTFeeUpdateModal() {
       : isChecked;
   const [networkCheck, setNetworkCheck] = useState<boolean>(true);
 
-  // 추후 삭제
   const resetAllStates = () => {
     setRecommendCheck(true);
     setActiveButton(UpdateFeeButtonType.Update);
@@ -108,14 +110,72 @@ export default function CTFeeUpdateModal() {
     setNetworkCheck(true);
   };
 
-  // 시연을 위한 초기화 추후 삭제
+  const { L1CrossTrade_CONTRACT } = useContract();
+  const { write: editFee } = useContractWrite({
+    address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
+    abi: L1CrossTrade.abi,
+    functionName: "editFee",
+  });
+  // const handleConfirm = () => {
+  //   setNetworkCheck(false);
+  // };
+  const handleConfirm = useCallback(() => {
+    try {
+      if (!networkCheck) {
+        setNetworkCheck(false);
+      }
+      if (ctUpdateFeeModal.txData) {
+        console.log("go");
+        const {
+          _l1token,
+          _l2token,
+          _totalAmount,
+          _ctAmount,
+          _saleCount,
+          _l2chainId,
+          _hashValue,
+        } = ctUpdateFeeModal.txData.L2_subgraphData;
+        console.log("?");
+        console.log(inputValue, ctUpdateFeeModal.txData.inToken.decimals);
+        const editAmount = toParseNumber(
+          inputValue,
+          ctUpdateFeeModal.txData.inToken.decimals
+        );
+        console.log("editAmount : ", editAmount);
+        console.log(
+          "--editFee params--",
+          _l1token,
+          _l2token,
+          _totalAmount,
+          _ctAmount,
+          editAmount,
+          _saleCount,
+          _l2chainId,
+          _hashValue
+        );
+        const params = [
+          _l1token,
+          _l2token,
+          _totalAmount,
+          _ctAmount,
+          editAmount,
+          _saleCount,
+          _l2chainId,
+          _hashValue,
+        ];
+        editFee({
+          args: params,
+        });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [editFee, ctUpdateFeeModal.txData, inputValue]);
 
-  const handleConfirm = () => {
-    setNetworkCheck(false);
-  };
+  console.log("ctUpdateFeeModal : ", ctUpdateFeeModal);
 
   return (
-    <Modal isOpen={ctUpdateFeeModal} onClose={resetAllStates} isCentered>
+    <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
       <ModalOverlay />
       <ModalContent
         bg="#1F2128"
@@ -170,7 +230,8 @@ export default function CTFeeUpdateModal() {
               </Box>
             )}
 
-            {activeButton == UpdateFeeButtonType.Update ? (
+            {activeButton == UpdateFeeButtonType.Update &&
+            ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail
                 // input 관련 props
                 inputValue={inputValue}
@@ -182,6 +243,7 @@ export default function CTFeeUpdateModal() {
                 recommendValue={recommendValue}
                 //새로 고침 props
                 onRecommendRefresh={handleRefreshRecommend}
+                txData={ctUpdateFeeModal.txData}
               />
             ) : (
               <CTRefundDetail />

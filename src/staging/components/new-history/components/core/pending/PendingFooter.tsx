@@ -6,6 +6,7 @@ import {
   HISTORY_TRANSACTION_STATUS,
   getCancelValueFromCTRequestHistory,
   isInCT_REQUEST,
+  CT_REQUEST_HISTORY_blockTimestamps,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { STATUS_CONFIG } from "@/staging/constants/status";
@@ -20,6 +21,26 @@ const getStatusHandler = (status: Action | CT_ACTION, isCanceled?: boolean) => {
     [CT_ACTION.PROVIDE]: STATUS_CONFIG.PROVIDE,
   };
   return actionHandlers[status];
+};
+
+const getBlockTimestamp = (
+  transaction: TransactionHistory,
+  statusKey: HISTORY_TRANSACTION_STATUS
+) => {
+  // statusKey가 "CT_REQ_REQUEST"와 일치하는지 확인
+  if (
+    statusKey === "CT_REQ_REQUEST" &&
+    transaction &&
+    transaction.blockTimestamps
+  ) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+    if (blockTimestamps.request) {
+      return blockTimestamps.request;
+    }
+    return undefined;
+  }
+  return undefined;
 };
 
 export default function PendingFooter(params: {
@@ -47,6 +68,7 @@ export default function PendingFooter(params: {
           key={index}
           label={statusKey}
           transactionData={transactionData}
+          blockTimestamp={getBlockTimestamp(transactionData, statusKey)}
           openModal={openModal}
         />
       ))}

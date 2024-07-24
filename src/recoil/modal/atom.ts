@@ -3,7 +3,7 @@ import {
   CTConfirmModalType,
   ModalType,
 } from "@/staging/components/cross-trade/types";
-import { TransactionHistory } from "@/staging/types/transaction";
+import { CT_History, TransactionHistory } from "@/staging/types/transaction";
 import { atom } from "recoil";
 
 type withdrawModal = {
@@ -95,9 +95,15 @@ export const ctOptionModalStatus = atom<boolean>({
   default: false,
 });
 
-export const ctUpdateFeeModalStatus = atom<boolean>({
+export const ctUpdateFeeModalStatus = atom<{
+  isOpen: boolean;
+  txData: CT_History | null;
+}>({
   key: "ctUpdateFeeModalStatus",
-  default: false,
+  default: {
+    isOpen: false,
+    txData: null,
+  },
 });
 
 export const depositWithdrawConfirmModalStatus = atom<{

@@ -5,6 +5,9 @@ import CTDownArrow from "assets/icons/ct/ctDownArrow.svg";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import CTUsdcSymbol from "assets/icons/ct/ctUsdcSymbol.svg";
 import { CTInputProps } from "@/staging/components/cross-trade/types";
+import { CT_History } from "@/staging/types/transaction";
+import { useMemo } from "react";
+import { formatUnits } from "@/utils/trim/convertNumber";
 
 enum FeeDetailType {
   Receive,
@@ -20,7 +23,7 @@ interface FeeDetailProps {
 const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
   return (
     <Flex
-      justifyContent='space-between'
+      justifyContent="space-between"
       mt={type == FeeDetailType.Network ? "6px" : undefined}
     >
       <Text
@@ -61,7 +64,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
               fontSize={"10px"}
               fontWeight={400}
               lineHeight={"18px"}
-              mx='1px'
+              mx="1px"
             >
               %
             </Text>
@@ -97,15 +100,21 @@ interface AdditionalDetailProps {
   recommendCheck: boolean;
   recommendValue: string;
   onRecommendRefresh: () => void;
+  txData: CT_History;
 }
 
 export default function CTUpdateFeeDetail(
   props: CTInputProps & AdditionalDetailProps
 ) {
+  const { txData } = props;
   // update fee 상세
   // 공백일때는 값이 들어가면 안된다.
   // 하지만, recommendCheck가 true이면 값이 들어가야 한다.
   const inputValueCheck = props.inputValue != "" || props.recommendCheck;
+  const currentServiceFee = useMemo(() => {
+    return formatUnits(txData.serviceFee.toString(), txData.inToken.decimals);
+  }, [txData.serviceFee, txData.inToken]);
+
   return (
     <>
       <Box
@@ -122,9 +131,9 @@ export default function CTUpdateFeeDetail(
         >
           Current fee
         </Text>
-        <Flex mt={"4px"} justifyContent='space-between'>
+        <Flex mt={"4px"} justifyContent="space-between">
           <Text fontSize={"16px"} fontWeight={400} lineHeight={"24px"}>
-            0.012
+            {currentServiceFee}
           </Text>
           <Flex>
             <Image src={CTUsdcSymbol} alt={"CTUsdcSymbol"} />
@@ -134,7 +143,7 @@ export default function CTUpdateFeeDetail(
               fontWeight={400}
               lineHeight={"24px"}
             >
-              USDC
+              {txData.inToken.symbol}
             </Text>
           </Flex>
         </Flex>
