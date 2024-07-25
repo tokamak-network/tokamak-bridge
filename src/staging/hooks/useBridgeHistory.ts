@@ -444,42 +444,53 @@ export const useProvideData = () => {
     CT_Provide_History[] | [] | null
   >(null);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { l1Data } = useSubgraph();
+  const { data: l2Data } = useCrossTradeData_L2({
+    isHistory: true,
+  });
 
   useEffect(() => {
-    setProvideHistory([
-      {
-        category: HISTORY_SORT.CROSS_TRADE,
-        action: CT_ACTION.PROVIDE,
-        status: CT_PROVIDE.Completed,
-        blockTimestamps: {
-          provide: 0,
-          return: 0,
-        },
-        inNetwork: SupportedChainId.MAINNET,
-        outNetwork: SupportedChainId.TITAN,
-        inToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        outToken: {
-          address: "0x",
-          name: "ETH",
-          symbol: "ETH",
-          amount: "000000000000",
-          decimals: 0,
-        },
-        transactionHashes: {
-          provide: "",
-          return: "",
-        },
-        serviceFee: BigInt(0),
-      },
-    ]);
-  }, []);
+    if (l2Data) {
+      const requestCTs = l2Data.requestCTs;
+      const cancelCTs = l2Data.cancelCTs;
+      const providerClaimCTs = l2Data.providerClaimCTs;
+
+      console.log("providerClaimCTs");
+      console.log(providerClaimCTs);
+    }
+    // setProvideHistory([
+    //   {
+    //     category: HISTORY_SORT.CROSS_TRADE,
+    //     action: CT_ACTION.PROVIDE,
+    //     status: CT_PROVIDE.Completed,
+    //     blockTimestamps: {
+    //       provide: 0,
+    //       return: 0,
+    //     },
+    //     inNetwork: SupportedChainId.MAINNET,
+    //     outNetwork: SupportedChainId.TITAN,
+    //     inToken: {
+    //       address: "0x",
+    //       name: "ETH",
+    //       symbol: "ETH",
+    //       amount: "000000000000",
+    //       decimals: 0,
+    //     },
+    //     outToken: {
+    //       address: "0x",
+    //       name: "ETH",
+    //       symbol: "ETH",
+    //       amount: "000000000000",
+    //       decimals: 0,
+    //     },
+    //     transactionHashes: {
+    //       provide: "",
+    //       return: "",
+    //     },
+    //     serviceFee: BigInt(0),
+    //     // L2_subgraphData,
+    //   },
+    // ]);
+  }, [l2Data]);
 
   return { provideHistory };
 };

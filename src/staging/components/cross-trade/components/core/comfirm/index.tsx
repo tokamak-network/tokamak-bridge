@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
@@ -22,8 +22,6 @@ export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<boolean>(false);
-
-  console.log("ctConfirmModal", ctConfirmModal);
 
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
@@ -47,6 +45,10 @@ export default function CTModal() {
   const isProvide = ctConfirmModal?.txData
     ? isInCT_Provide(ctConfirmModal.txData.status)
     : false;
+
+  useEffect(() => {
+    if (ctConfirmModal) return setIsChecked(false);
+  }, [ctConfirmModal]);
 
   return (
     <Modal

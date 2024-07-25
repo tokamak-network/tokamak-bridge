@@ -76,7 +76,7 @@ export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;
   status: CT_Status;
   serviceFee: BigInt;
-  L2_subgraphData: T_FETCH_REQUEST_LIST_L2;
+  L2_subgraphData?: T_FETCH_REQUEST_LIST_L2;
 }
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;

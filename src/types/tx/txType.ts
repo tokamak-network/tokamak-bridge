@@ -11,6 +11,7 @@ type SwapperTxSort = "Wrap" | "Unwrap";
 type ETHWrapTxSort = "ETH-Wrap" | "ETH-Unwrap";
 type EtcTxSort = "Approve" | "Revoke";
 type UserHistorySort = "Claim";
+type CrossTradeTxSort = "Request" | "Provide" | "UpdateFee" | "CancelRequest";
 
 export type TxSort =
   | UniswapTxSort
@@ -18,7 +19,8 @@ export type TxSort =
   | SwapperTxSort
   | ETHWrapTxSort
   | EtcTxSort
-  | UserHistorySort;
+  | UserHistorySort
+  | CrossTradeTxSort;
 
 export type ActionSort = ActionMode;
 

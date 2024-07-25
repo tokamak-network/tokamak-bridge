@@ -47,13 +47,14 @@ export const FETCH_REQUEST_LIST_L2 = gql`
     providerClaimCTs 
     {
       _saleCount
+      _provider
       blockTimestamp 
       transactionHash
     }
   }
 `;
 
-export const FETCH_REQUEST_HISTORY_ACCOUNT = gql`
+export const FETCH_REQUEST_LIST_L2_ACCOUNT = gql`
   query GetRequestHistory($account: String!) {
     requestCTs(orderBy: blockTimestamp, orderDirection: desc, where: {_requester: $account}) { 
     _l1token 
@@ -73,9 +74,10 @@ export const FETCH_REQUEST_HISTORY_ACCOUNT = gql`
       blockTimestamp 
       transactionHash
     }
-    providerClaimCTs 
+    providerClaimCTs(where: {_provider: $account})
     {
       _saleCount
+      _provider
       blockTimestamp 
       transactionHash
     }

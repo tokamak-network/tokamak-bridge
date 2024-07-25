@@ -19,6 +19,7 @@ import { isETH } from "@/utils/token/isETH";
 import { ZERO_ADDRESS } from "@/constant/misc";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -50,10 +51,11 @@ export default function CTConfirmCrossTradeFooter(
   const inTokenIsETH = isETH(inToken);
 
   const { requestRegisteredToken, provideCT } = useCrossTradeContract();
+  const { setModalOpen } = useTxConfirmModal();
 
   const test = useCallback(() => {
+    if (!txData) return new Error("txData is not defined");
     try {
-      if (!txData) return new Error("txData is not defined");
       if (isProvide) {
         if (!subgraphData) return new Error("subgraphData is not defined");
         if (isZeroAddress(subgraphData._l1token)) {
@@ -114,37 +116,48 @@ export default function CTConfirmCrossTradeFooter(
         });
       }
 
+      const ctAmount =
+        BigInt(txData.inToken.amount) - BigInt(txData.serviceFee.toString());
       console.log(
         "--requestRegisteredToken params--",
         txData.outToken.address,
         txData.inToken.address,
         txData.inToken.amount,
-        txData.serviceFee,
+        ctAmount,
         txData.outNetwork
       );
-      if (inTokenIsETH) {
+
+      try {
+        if (inTokenIsETH) {
+          return requestRegisteredToken({
+            args: [
+              ZERO_ADDRESS,
+              ZERO_ADDRESS,
+              txData.inToken.amount,
+              ctAmount,
+              txData.outNetwork,
+            ],
+            value: BigInt(txData.inToken.amount as string),
+          });
+        }
         return requestRegisteredToken({
           args: [
-            ZERO_ADDRESS,
-            ZERO_ADDRESS,
+            txData.outToken.address,
+            txData.inToken.address,
             txData.inToken.amount,
-            txData.serviceFee,
+            ctAmount,
             txData.outNetwork,
           ],
-          value: BigInt(txData.inToken.amount as string),
         });
+      } catch (e) {
+        console.log("**error**");
+        console.log(e);
+        setModalOpen("error");
       }
-      return requestRegisteredToken({
-        args: [
-          txData.outToken.address,
-          txData.inToken.address,
-          txData.inToken.amount,
-          txData.serviceFee,
-          txData.outNetwork,
-        ],
-      });
     } catch (e) {
+      console.log("**error**");
       console.log(e);
+      setModalOpen("error");
     }
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken]);
 

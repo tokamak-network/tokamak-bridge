@@ -231,15 +231,8 @@ export function useTx(params: {
     chainId: connectedChainId,
   });
 
-  // const [isLoading, setIsLoading] = useState<boolean>(false);
-  // const [isSuccess, setIsSuccess] = useState<boolean>(false);
-  // const [isError, setIsError] = useState<boolean>(false);
   const { mode, subMode } = useGetMode();
-
-  const [txData, setTxData] = useRecoilState(txDataStatus);
-  // const [selectedInToken, setSelectedInToken] = useRecoilState(
-  //   selectedInTokenStatus
-  // );
+  const [, setTxData] = useRecoilState(txDataStatus);
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);

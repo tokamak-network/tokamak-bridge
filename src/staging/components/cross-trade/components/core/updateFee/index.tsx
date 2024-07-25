@@ -124,8 +124,7 @@ export default function CTFeeUpdateModal() {
       if (!networkCheck) {
         setNetworkCheck(false);
       }
-      if (ctUpdateFeeModal.txData) {
-        console.log("go");
+      if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
         const {
           _l1token,
           _l2token,
@@ -135,13 +134,10 @@ export default function CTFeeUpdateModal() {
           _l2chainId,
           _hashValue,
         } = ctUpdateFeeModal.txData.L2_subgraphData;
-        console.log("?");
-        console.log(inputValue, ctUpdateFeeModal.txData.inToken.decimals);
         const editAmount = toParseNumber(
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
-        console.log("editAmount : ", editAmount);
         console.log(
           "--editFee params--",
           _l1token,

@@ -126,6 +126,7 @@ export default function CTConfirmHistoryFooter(props: {
 }) {
   const { txData } = props;
 
+  console.log("txData", txData);
   if (txData === null) return null;
 
   const isCompleted = isFinalStatus(txData.status);

@@ -186,7 +186,8 @@ export default function CTMain() {
         </Thead>
         <Tbody>
           {requestList?.map((item, index) => {
-            console.log("item", item);
+            //Decided not to show the request is already done with providing liquidity because countdown does not needed.
+            if (item.isProvided) return null;
             // const status = getStatus(item);
             const status = item.isProvided;
             // const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;

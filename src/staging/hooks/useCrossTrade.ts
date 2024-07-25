@@ -5,7 +5,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import {
   FETCH_PROVIDE_LIST_L1,
   FETCH_PROVIDE_LIST_L1_ACCOUNT,
-  FETCH_REQUEST_HISTORY_ACCOUNT,
+  FETCH_REQUEST_LIST_L2_ACCOUNT,
   FETCH_REQUEST_LIST_L2,
 } from "@/graphql/queries/crossTrade";
 import { subgraphApolloClientsForCT } from "@/graphql/thegraph/apollosForCT";
@@ -67,13 +67,13 @@ export type T_FETCH_REQUEST_LIST_L2 = {
   blockTimestamp: string;
   transactionHash: string;
   __typename: string;
+  _totalAmount: string;
   _ctAmount: string;
   _hashValue: string;
   _l1token: string;
   _l2token: string;
   _requester: string;
   _saleCount: string;
-  _totalAmount: string;
   _l2chainId: string;
 };
 export type T_CancelCTs = {
@@ -84,6 +84,12 @@ export type T_CancelCTs = {
 export type T_FETCH_CancelCTs = T_CancelCTs[];
 export type T_ProviderClaimCTs = {
   _saleCount: string;
+  _provider: string;
+  _l1token: string;
+  _l2token: string;
+  _requester: string;
+  _totalAmount: string;
+  _ctAmount: string;
   blockTimestamp: string;
   transactionHash: string;
 };
@@ -126,7 +132,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     requestCTs: T_FETCH_REQUEST_LIST_L2[];
     cancelCTs: T_FETCH_CancelCTs;
     providerClaimCTs: T_FETCH_ProviderClaimCTs;
-  }>(isHistory ? FETCH_REQUEST_HISTORY_ACCOUNT : FETCH_REQUEST_LIST_L2, {
+  }>(isHistory ? FETCH_REQUEST_LIST_L2_ACCOUNT : FETCH_REQUEST_LIST_L2, {
     pollInterval: 13000,
     client: L2_CLIENT,
     variables: isHistory
