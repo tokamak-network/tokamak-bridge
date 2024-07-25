@@ -177,18 +177,16 @@ export const useRequestData = (): {
               address: item._l2token,
               name: "ETH",
               symbol: "ETH",
-              amount: item._totalAmount,
+              amount: item._ctAmount,
               decimals: 18,
             }
           : {
               address: item._l2token,
               name: test?.tokenName as string,
               symbol: test?.tokenSymbol as string,
-              amount: item._totalAmount,
+              amount: item._ctAmount,
               decimals: test?.decimals,
             };
-
-        const sumAmount = BigInt(item._totalAmount) + BigInt(item._ctAmount);
 
         const outToken = isETH
           ? {
@@ -202,11 +200,11 @@ export const useRequestData = (): {
               address: item._l1token,
               name: test?.tokenName as string,
               symbol: test?.tokenSymbol as string,
-              amount: sumAmount.toString(),
+              amount: item._totalAmount,
               decimals: test?.decimals,
             };
 
-        const profitAmount = sumAmount - BigInt(item._totalAmount);
+        const profitAmount = BigInt(item._totalAmount) - BigInt(item._ctAmount);
         const profitRatio =
           (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
         const providingUSD = 1;
@@ -222,7 +220,7 @@ export const useRequestData = (): {
           inToken,
           outToken,
           profit: {
-            amount: formatUnits(item._ctAmount, test?.decimals),
+            amount: formatUnits(profitAmount.toString(), test?.decimals),
             symbol: isETH ? "ETH" : (test?.tokenSymbol as string),
             percent: profitRatio.toString(),
             decimals: test?.decimals,
