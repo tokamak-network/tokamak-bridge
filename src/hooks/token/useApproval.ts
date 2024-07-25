@@ -6,7 +6,7 @@ import {
   useErc20TotalSupply,
   usePrepareErc20Approve,
 } from "@/generated";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite } from "wagmi";
 import { useCallback, useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
@@ -17,14 +17,22 @@ import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import USDT_ABI from "@/constant/abis/USDT.json";
+import { TokenInfo } from "@/types/token/supportedToken";
 
-export function useApprove() {
-  const { mode } = useGetMode();
+export function useApprove(params?: {
+  inToken?: TokenInfo & { amountBN: BigInt | undefined };
+}) {
+  const _inToken = params?.inToken;
+  const { mode, subMode } = useGetMode();
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
 
-  const { L1BRIDGE_CONTRACT, WTON_CONTRACT, L2CrossTrade_CONTRACT } =
-    useContract();
+  const {
+    L1BRIDGE_CONTRACT,
+    WTON_CONTRACT,
+    L1CrossTrade_CONTRACT,
+    L2CrossTrade_CONTRACT,
+  } = useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { connectedChainId, isLayer2 } = useConnectedNetwork();
   const { ctConfirmModal } = useFxConfirmModal();
@@ -41,22 +49,28 @@ export function useApprove() {
       case "Withdraw":
         if (ctConfirmModal.isOpen)
           return L2CrossTrade_CONTRACT.L2CrossTradeProxy;
+      case "Pool": {
+        if (subMode.ctPools) return L1CrossTrade_CONTRACT.L1CrossTradeProxy;
+        return undefined;
+      }
       default:
         return undefined;
     }
   }, [
     mode,
+    subMode,
     L1BRIDGE_CONTRACT,
     UNISWAP_CONTRACT,
     WTON_CONTRACT,
+    L1CrossTrade_CONTRACT.L1CrossTradeProxy,
     L2CrossTrade_CONTRACT.L2CrossTradeProxy,
     ctConfirmModal.isOpen,
   ]);
 
   const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
-    inputTokenAmount: inToken?.amountBN,
+    inputTokenAmount: _inToken ? _inToken.amountBN : inToken?.amountBN,
     tokenAddress,
-    token: inToken,
+    token: _inToken ? _inToken : inToken,
     contractAddress,
   });
 
@@ -76,10 +90,13 @@ export function useApprove() {
       case "ETH-Wrap":
       case "ETH-Unwrap":
         return true;
+      case "Pool": {
+        if (subMode.ctPools) return approved;
+      }
       default:
         return false;
     }
-  }, [mode, approved]);
+  }, [mode, subMode, approved]);
 
   const isUSDT = useMemo(() => {
     return connectedChainId

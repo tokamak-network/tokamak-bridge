@@ -12,7 +12,6 @@ import {
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { useCallback, useMemo, useState } from "react";
 import { trimAddress } from "@/utils/trim";
-import { useNetwork } from "wagmi";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -22,6 +21,10 @@ import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useApprove } from "@/hooks/token/useApproval";
+import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
+import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { getSupportedTokenInfo } from "@/utils/token/getSupportedTokenInfo";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -38,9 +41,19 @@ export default function CTConfirmCrossTradeFooter(
   const { isChecked, onCheckboxChange, isProvide, txData, subgraphData } =
     props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
-  const { chain } = useNetwork();
-  const blockExplorer = chain?.blockExplorers?.default.url;
-  const { isApproved, isLoading, callApprove } = useApprove();
+  const { isConnectedToMainNetwork, chainName } = useConnectedNetwork();
+  const blockExplorer = getBlockExplorerUrl(
+    isConnectedToMainNetwork
+      ? SupportedChainId.TITAN
+      : SupportedChainId.TITAN_SEPOLIA
+  );
+  const inTokenInfo = getSupportedTokenInfo({
+    tokenAddress: txData?.inToken.address as string,
+    chainId: chainName as string,
+  });
+  const { isApproved, isLoading, callApprove } = useApprove({
+    inToken: { ...inTokenInfo, amountBN: txData?.inToken.amount },
+  });
 
   const btnDisabled = useMemo(() => {
     return (isProvide ? !provideConfirmed : !isChecked) || !isApproved;
@@ -152,6 +165,8 @@ export default function CTConfirmCrossTradeFooter(
       setModalOpen("error");
     }
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken]);
+
+  console.log("isApproved", isApproved);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>

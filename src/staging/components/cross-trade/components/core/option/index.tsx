@@ -69,21 +69,26 @@ export default function CTOptionModal() {
   // 현재 1일때 red warning, 2일때, yellow warning
   useEffect(() => {
     switch (serviceFee) {
-      // case "1":
-      //   setInputWarningCheck(WarningType.Critical);
-      //   break;
-      // case "2":
-      //   setInputWarningCheck(WarningType.Normal);
-      //   break;
+      case "1":
+        setInputWarningCheck(WarningType.Critical);
+        break;
+      case "2":
+        setInputWarningCheck(WarningType.Normal);
+        break;
       default:
         setInputWarningCheck("");
     }
   }, [serviceFee]);
 
+  console.log("serviceFee", serviceFee);
+  console.log("inputWarningCheck", inputWarningCheck);
+
   const shouldShowEnterAmount =
-    activeMainButtonValue === ButtonTypeMain.Cross &&
-    activeSubButtonValue === ButtonTypeSub.Advanced &&
-    (serviceFee === undefined || inputWarningCheck === WarningType.Critical);
+    activeMainButtonValue === ButtonTypeMain.Cross ||
+    (activeSubButtonValue === ButtonTypeSub.Advanced &&
+      (serviceFee === "" ||
+        serviceFee === undefined ||
+        inputWarningCheck === WarningType.Critical));
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();

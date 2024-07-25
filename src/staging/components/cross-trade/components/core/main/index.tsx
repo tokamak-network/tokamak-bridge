@@ -6,20 +6,17 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import ScrolltoTopButton from "@/staging/components/cross-trade/components/ScrolltoTopButton";
 import ImagePoolBox from "@/staging/components/cross-trade/components/core/coming/pool/ImagePoolBox";
 import CTMain from "@/staging/components/cross-trade/components/core/main/CTMain";
+import { ATOM_pool_page, ButtonType_Pools } from "@/recoil/pool/pages";
+import { useRecoilState } from "recoil";
+
+interface CrossTradeButtonProps {
+  type: ButtonType_Pools;
+  isActive: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
 
 export default function CrossTrade() {
-  enum ButtonType {
-    CROSS_TRADE = "Cross_Trade",
-    UNISWAP_POOL = "Uniswap_Pool",
-  }
-
-  interface CrossTradeButtonProps {
-    type: ButtonType;
-    isActive: boolean;
-    onClick: () => void;
-    children: React.ReactNode;
-  }
-
   const { poolTabletView, poolMobileView } = useMediaView();
   const dynamicWidth = poolMobileView
     ? "90%"
@@ -27,9 +24,8 @@ export default function CrossTrade() {
     ? "536px"
     : "672px";
 
-  const [activeButton, setActiveButton] = useState<ButtonType>(
-    ButtonType.CROSS_TRADE
-  );
+  const [activeButton, setActiveButton] =
+    useRecoilState<ButtonType_Pools>(ATOM_pool_page);
 
   const CrossTradeButton = ({
     type,
@@ -39,10 +35,18 @@ export default function CrossTrade() {
   }: CrossTradeButtonProps) => (
     <Button
       ml={
-        poolMobileView ? "0" : type === ButtonType.UNISWAP_POOL ? "16px" : "0"
+        poolMobileView
+          ? "0"
+          : type === ButtonType_Pools.UNISWAP_POOL
+          ? "16px"
+          : "0"
       }
       mt={
-        poolMobileView ? (type === ButtonType.UNISWAP_POOL ? "12px" : "0") : "0"
+        poolMobileView
+          ? type === ButtonType_Pools.UNISWAP_POOL
+            ? "12px"
+            : "0"
+          : "0"
       }
       w={poolMobileView ? "full" : "auto"}
       px={"16px"}
@@ -72,12 +76,12 @@ export default function CrossTrade() {
       h={"100%"}
       w={"100%"}
     >
-      <Box w='full'>
+      <Box w="full">
         <Flex
           w={"100%"}
-          flexDirection='column'
+          flexDirection="column"
           justifyContent={"center"}
-          alignItems='center'
+          alignItems="center"
         >
           <Box width={dynamicWidth}>
             <Text
@@ -103,16 +107,16 @@ export default function CrossTrade() {
             direction={poolMobileView ? "column" : "row"}
           >
             <CrossTradeButton
-              type={ButtonType.CROSS_TRADE}
-              isActive={ButtonType.CROSS_TRADE === activeButton}
-              onClick={() => setActiveButton(ButtonType.CROSS_TRADE)}
+              type={ButtonType_Pools.CROSS_TRADE}
+              isActive={ButtonType_Pools.CROSS_TRADE === activeButton}
+              onClick={() => setActiveButton(ButtonType_Pools.CROSS_TRADE)}
             >
               Cross Trade Bridge Pool
             </CrossTradeButton>
             <CrossTradeButton
-              type={ButtonType.UNISWAP_POOL}
-              isActive={ButtonType.UNISWAP_POOL === activeButton}
-              onClick={() => setActiveButton(ButtonType.UNISWAP_POOL)}
+              type={ButtonType_Pools.UNISWAP_POOL}
+              isActive={ButtonType_Pools.UNISWAP_POOL === activeButton}
+              onClick={() => setActiveButton(ButtonType_Pools.UNISWAP_POOL)}
             >
               Uniswap v3 Pool
             </CrossTradeButton>
@@ -123,9 +127,9 @@ export default function CrossTrade() {
           pt={poolMobileView ? "24px" : "32px"}
           mt={poolMobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection='column'
+          flexDirection="column"
           justifyContent={"flex-start"}
-          alignItems='center'
+          alignItems="center"
           h={"90%"}
         >
           <Box width={dynamicWidth}>
@@ -137,7 +141,7 @@ export default function CrossTrade() {
                 color={"#FFFFFF"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                {ButtonType.CROSS_TRADE === activeButton
+                {ButtonType_Pools.CROSS_TRADE === activeButton
                   ? "Cross Trade Bridge Pool"
                   : "Uniswap V3 pool"}
               </Text>
@@ -149,17 +153,17 @@ export default function CrossTrade() {
                 mt={"6px"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                {ButtonType.CROSS_TRADE === activeButton
+                {ButtonType_Pools.CROSS_TRADE === activeButton
                   ? "Provide liquidity for cross trade, which helps users move tokens between layers and earn fees."
                   : "Add liquidity to a pool, and earn a swap fee based on the trading volume."}
               </Text>
             </Box>
-            {ButtonType.CROSS_TRADE === activeButton ? (
-              <Flex width='full' justifyContent={"center"}>
+            {ButtonType_Pools.CROSS_TRADE === activeButton ? (
+              <Flex width="full" justifyContent={"center"}>
                 <CTMain />
               </Flex>
             ) : (
-              <Flex width='full' justifyContent={"center"}>
+              <Flex width="full" justifyContent={"center"}>
                 {poolMobileView ? (
                   <ImagePoolBox isMobile={true} />
                 ) : poolTabletView ? (
