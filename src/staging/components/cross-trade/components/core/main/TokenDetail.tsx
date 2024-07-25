@@ -11,12 +11,11 @@ import commafy from "@/utils/trim/commafy";
 interface TokenDetailProps {
   token?: Token;
   network?: number;
-  usd?: number;
   profit?: Profit;
 }
 
 export default function TokenDetail(props: TokenDetailProps) {
-  const { token, network, usd, profit } = props;
+  const { token, network, profit } = props;
 
   const formattedAmount = token
     ? convertNumber(token.amount, token.decimals)

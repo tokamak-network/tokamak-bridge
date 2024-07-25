@@ -1,3 +1,5 @@
+import { is } from "date-fns/esm/locale/is/index.js";
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   useErc20Approve,
@@ -21,9 +23,11 @@ export function useApprove() {
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
 
-  const { L1BRIDGE_CONTRACT, WTON_CONTRACT } = useContract();
+  const { L1BRIDGE_CONTRACT, WTON_CONTRACT, L2CrossTrade_CONTRACT } =
+    useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { connectedChainId, isLayer2 } = useConnectedNetwork();
+  const { ctConfirmModal } = useFxConfirmModal();
 
   const contractAddress = useMemo(() => {
     switch (mode) {
@@ -34,10 +38,20 @@ export function useApprove() {
       case "Wrap":
       case "Unwrap":
         return WTON_CONTRACT as Hash;
+      case "Withdraw":
+        if (ctConfirmModal.isOpen)
+          return L2CrossTrade_CONTRACT.L2CrossTradeProxy;
       default:
         return undefined;
     }
-  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, WTON_CONTRACT]);
+  }, [
+    mode,
+    L1BRIDGE_CONTRACT,
+    UNISWAP_CONTRACT,
+    WTON_CONTRACT,
+    L2CrossTrade_CONTRACT.L2CrossTradeProxy,
+    ctConfirmModal.isOpen,
+  ]);
 
   const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
@@ -51,6 +65,7 @@ export function useApprove() {
       case "Deposit":
         return approved;
       case "Withdraw":
+        if (ctConfirmModal.isOpen) return approved;
         return true;
       case "Swap":
         return approved;

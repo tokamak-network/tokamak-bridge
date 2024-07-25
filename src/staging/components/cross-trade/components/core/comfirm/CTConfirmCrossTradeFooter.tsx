@@ -7,6 +7,7 @@ import {
   Grid,
   Center,
   Link,
+  Spinner,
 } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { useCallback, useMemo, useState } from "react";
@@ -20,6 +21,7 @@ import { ZERO_ADDRESS } from "@/constant/misc";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import { useApprove } from "@/hooks/token/useApproval";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -33,27 +35,23 @@ type TradeConfirmationProps = {
 export default function CTConfirmCrossTradeFooter(
   props: TradeConfirmationProps
 ) {
-  const {
-    isChecked,
-    onCheckboxChange,
-    onConfirm,
-    isProvide,
-    txData,
-    subgraphData,
-  } = props;
+  const { isChecked, onCheckboxChange, isProvide, txData, subgraphData } =
+    props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { chain } = useNetwork();
   const blockExplorer = chain?.blockExplorers?.default.url;
+  const { isApproved, isLoading, callApprove } = useApprove();
+
   const btnDisabled = useMemo(() => {
-    return isProvide ? !provideConfirmed : !isChecked;
-  }, [isProvide, isChecked, provideConfirmed]);
+    return (isProvide ? !provideConfirmed : !isChecked) || !isApproved;
+  }, [isProvide, isChecked, provideConfirmed, isApproved]);
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
 
   const { requestRegisteredToken, provideCT } = useCrossTradeContract();
   const { setModalOpen } = useTxConfirmModal();
 
-  const test = useCallback(() => {
+  const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
       if (isProvide) {
@@ -127,33 +125,27 @@ export default function CTConfirmCrossTradeFooter(
         txData.outNetwork
       );
 
-      try {
-        if (inTokenIsETH) {
-          return requestRegisteredToken({
-            args: [
-              ZERO_ADDRESS,
-              ZERO_ADDRESS,
-              txData.inToken.amount,
-              ctAmount,
-              txData.outNetwork,
-            ],
-            value: BigInt(txData.inToken.amount as string),
-          });
-        }
+      if (inTokenIsETH) {
         return requestRegisteredToken({
           args: [
-            txData.outToken.address,
-            txData.inToken.address,
+            ZERO_ADDRESS,
+            ZERO_ADDRESS,
             txData.inToken.amount,
             ctAmount,
             txData.outNetwork,
           ],
+          value: BigInt(txData.inToken.amount as string),
         });
-      } catch (e) {
-        console.log("**error**");
-        console.log(e);
-        setModalOpen("error");
       }
+      return requestRegisteredToken({
+        args: [
+          txData.outToken.address,
+          txData.inToken.address,
+          txData.inToken.amount,
+          ctAmount,
+          txData.outNetwork,
+        ],
+      });
     } catch (e) {
       console.log("**error**");
       console.log(e);
@@ -258,10 +250,31 @@ export default function CTConfirmCrossTradeFooter(
         </Grid>
       )}
       {/** Confirm Button */}
-      <Box>
+      <Flex flexDir={"column"} rowGap={"12px"}>
+        {!isApproved && (
+          <Button
+            onClick={callApprove}
+            sx={{
+              backgroundColor: !isLoading ? "#007AFF" : "#17181D",
+              color: !isLoading ? "#FFFFFF" : "#8E8E92",
+            }}
+            width="full"
+            height={"48px"}
+            borderRadius={"8px"}
+            _hover={{}}
+          >
+            {isLoading ? (
+              <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
+            ) : (
+              <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+                {`Approve ${inToken?.tokenSymbol}`}
+              </Text>
+            )}
+          </Button>
+        )}
         <Button
           isDisabled={btnDisabled}
-          onClick={test}
+          onClick={requestCrossTrade}
           sx={{
             backgroundColor: !btnDisabled ? "#007AFF" : "#17181D",
             color: !btnDisabled ? "#FFFFFF" : "#8E8E92",
@@ -275,7 +288,7 @@ export default function CTConfirmCrossTradeFooter(
             {isProvide ? "Provide Liquidity" : "Cross Trade"}
           </Text>
         </Button>
-      </Box>
+      </Flex>
     </Grid>
   );
 }

@@ -22,6 +22,7 @@ import { LinkContainer } from "@/staging/components/common/LinkContainer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
 import { useMemo } from "react";
+import commafy from "@/utils/trim/commafy";
 
 interface TransactionDetailProps {
   title: string;
@@ -204,7 +205,7 @@ export default function CTConfirmDetail({
     mainValue: `${convertNumber(inToken.amount, inToken.decimals)} ${
       inToken.symbol
     }`,
-    subValue: `$${formatNumber(inTokenPrice)}`,
+    subValue: `$${commafy(inTokenPrice)}`,
     chainId: outNetwork,
     tokenSymbol: inToken.symbol,
     tokenAddress: inToken.address,
@@ -214,7 +215,7 @@ export default function CTConfirmDetail({
     mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
       outToken.symbol
     }`,
-    subValue: `$${formatNumber(outTokenPrice)}`,
+    subValue: `$${commafy(outTokenPrice)}`,
     chainId: isProvide || isRequest ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,
     tokenAddress: outToken.address,
