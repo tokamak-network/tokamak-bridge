@@ -19,10 +19,7 @@ import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import USDT_ABI from "@/constant/abis/USDT.json";
 import { TokenInfo } from "@/types/token/supportedToken";
 
-export function useApprove(params?: {
-  inToken?: TokenInfo & { amountBN: BigInt | undefined };
-}) {
-  const _inToken = params?.inToken;
+export function useApprove() {
   const { mode, subMode } = useGetMode();
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
@@ -62,15 +59,14 @@ export function useApprove(params?: {
     L1BRIDGE_CONTRACT,
     UNISWAP_CONTRACT,
     WTON_CONTRACT,
-    L1CrossTrade_CONTRACT.L1CrossTradeProxy,
     L2CrossTrade_CONTRACT.L2CrossTradeProxy,
     ctConfirmModal.isOpen,
   ]);
 
   const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
-    inputTokenAmount: _inToken ? _inToken.amountBN : inToken?.amountBN,
+    inputTokenAmount: inToken?.amountBN,
     tokenAddress,
-    token: _inToken ? _inToken : inToken,
+    token: inToken,
     contractAddress,
   });
 

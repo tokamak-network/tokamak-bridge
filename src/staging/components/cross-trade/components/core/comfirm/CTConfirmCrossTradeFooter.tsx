@@ -10,7 +10,7 @@ import {
   Spinner,
 } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { trimAddress } from "@/utils/trim";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
@@ -25,6 +25,9 @@ import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getSupportedTokenInfo } from "@/utils/token/getSupportedTokenInfo";
+import useTokenModal from "@/hooks/modal/useTokenModal";
+import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
+import { useRecoilState } from "recoil";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -49,20 +52,34 @@ export default function CTConfirmCrossTradeFooter(
   );
   const inTokenInfo = getSupportedTokenInfo({
     tokenAddress: txData?.inToken.address as string,
-    chainId: chainName as string,
+    networkName: chainName as string,
   });
-  const { isApproved, isLoading, callApprove } = useApprove({
-    inToken: { ...inTokenInfo, amountBN: txData?.inToken.amount },
-  });
+
+  const { isApproved, isLoading, callApprove } = useApprove();
 
   const btnDisabled = useMemo(() => {
     return (isProvide ? !provideConfirmed : !isChecked) || !isApproved;
   }, [isProvide, isChecked, provideConfirmed, isApproved]);
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
+  const approveBtnDisabled = useMemo(() => {
+    return isApproved || isLoading || !provideConfirmed;
+  }, [isApproved, isLoading, provideConfirmed]);
 
-  const { requestRegisteredToken, provideCT } = useCrossTradeContract();
+  //set inTokenInfo for useApprove hook
+  const [, setInTokenRecoilValue] = useRecoilState(selectedInTokenStatus);
+  useEffect(() => {
+    if (inTokenInfo && txData)
+      setInTokenRecoilValue({
+        ...inTokenInfo,
+        amountBN: BigInt(txData.inToken.amount),
+        parsedAmount: txData.inToken.amount,
+        tokenAddress: txData.outToken.address,
+      });
+  }, [inTokenInfo]);
+
   const { setModalOpen } = useTxConfirmModal();
+  const { requestRegisteredToken, provideCT } = useCrossTradeContract();
 
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
@@ -166,7 +183,7 @@ export default function CTConfirmCrossTradeFooter(
     }
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken]);
 
-  console.log("isApproved", isApproved);
+  console.log("inToken", inToken);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>
@@ -268,10 +285,11 @@ export default function CTConfirmCrossTradeFooter(
       <Flex flexDir={"column"} rowGap={"12px"}>
         {!isApproved && (
           <Button
+            isDisabled={approveBtnDisabled}
             onClick={callApprove}
             sx={{
-              backgroundColor: !isLoading ? "#007AFF" : "#17181D",
-              color: !isLoading ? "#FFFFFF" : "#8E8E92",
+              backgroundColor: !approveBtnDisabled ? "#007AFF" : "#17181D",
+              color: !approveBtnDisabled ? "#FFFFFF" : "#8E8E92",
             }}
             width="full"
             height={"48px"}

@@ -6,17 +6,17 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
  */
 
 type L1_SEPOLIA_CT = {
-  L1CrossTradeProxy: "0x48bD3707805CfDd51252383550c6879Dd3ac23B9";
+  L1CrossTradeProxy: "0x656Cd3f9fe074a71Cb19707CDEd5e020F71db097";
 };
 type L2_TITAN_SEPOLIA_CT = {
   L2CrossTradeProxy: "0x8a9fb22afa73083ee183ca8e751faeab7efd7f23";
 };
 
 export const L1_ETHEREUM_CT: L1_SEPOLIA_CT = {
-  L1CrossTradeProxy: "0x48bD3707805CfDd51252383550c6879Dd3ac23B9",
+  L1CrossTradeProxy: "0x656Cd3f9fe074a71Cb19707CDEd5e020F71db097",
 };
 export const L1_SEPOLIA_CT: L1_SEPOLIA_CT = {
-  L1CrossTradeProxy: "0x48bD3707805CfDd51252383550c6879Dd3ac23B9",
+  L1CrossTradeProxy: "0x656Cd3f9fe074a71Cb19707CDEd5e020F71db097",
 };
 export const L2_TITAN_SEPOLIA_CT: L2_TITAN_SEPOLIA_CT = {
   L2CrossTradeProxy: "0x8a9fb22afa73083ee183ca8e751faeab7efd7f23",
