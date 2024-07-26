@@ -28,6 +28,8 @@ import { getSupportedTokenInfo } from "@/utils/token/getSupportedTokenInfo";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState } from "recoil";
+import { formatUnits } from "@/utils/trim/convertNumber";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 type TradeConfirmationProps = {
   isChecked: boolean;
@@ -56,15 +58,19 @@ export default function CTConfirmCrossTradeFooter(
   });
 
   const { isApproved, isLoading, callApprove } = useApprove();
+  const { mode } = useGetMode();
 
   const btnDisabled = useMemo(() => {
     return (isProvide ? !provideConfirmed : !isChecked) || !isApproved;
   }, [isProvide, isChecked, provideConfirmed, isApproved]);
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
+
   const approveBtnDisabled = useMemo(() => {
-    return isApproved || isLoading || !provideConfirmed;
-  }, [isApproved, isLoading, provideConfirmed]);
+    return isApproved || isLoading || mode === "Withdraw"
+      ? !isChecked
+      : !provideConfirmed;
+  }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 
   //set inTokenInfo for useApprove hook
   const [, setInTokenRecoilValue] = useRecoilState(selectedInTokenStatus);
@@ -73,7 +79,10 @@ export default function CTConfirmCrossTradeFooter(
       setInTokenRecoilValue({
         ...inTokenInfo,
         amountBN: BigInt(txData.inToken.amount),
-        parsedAmount: txData.inToken.amount,
+        parsedAmount: formatUnits(
+          txData.inToken.amount,
+          txData.inToken.decimals
+        ),
         tokenAddress: txData.outToken.address,
       });
   }, [inTokenInfo]);

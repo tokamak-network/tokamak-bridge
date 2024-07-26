@@ -65,8 +65,6 @@ export default function AccountHistoryNew() {
     provideHistory,
   ]);
 
-  console.log("requestHistory", requestHistory);
-
   return (
     <Flex flexDirection="column" gap="2">
       {!historyData && <LoadingSpinner />}

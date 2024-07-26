@@ -168,8 +168,6 @@ export default function CTFeeUpdateModal() {
     }
   }, [editFee, ctUpdateFeeModal.txData, inputValue]);
 
-  console.log("ctUpdateFeeModal : ", ctUpdateFeeModal);
-
   return (
     <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
       <ModalOverlay />

@@ -80,15 +80,11 @@ export default function CTOptionModal() {
     }
   }, [serviceFee]);
 
-  console.log("serviceFee", serviceFee);
-  console.log("inputWarningCheck", inputWarningCheck);
-
   const shouldShowEnterAmount =
-    activeMainButtonValue === ButtonTypeMain.Cross ||
-    (activeSubButtonValue === ButtonTypeSub.Advanced &&
-      (serviceFee === "" ||
-        serviceFee === undefined ||
-        inputWarningCheck === WarningType.Critical));
+    activeSubButtonValue === ButtonTypeSub.Advanced &&
+    (serviceFee === "" ||
+      serviceFee === undefined ||
+      inputWarningCheck === WarningType.Critical);
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();

@@ -63,7 +63,11 @@ export function useApprove() {
     ctConfirmModal.isOpen,
   ]);
 
-  const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
+  const {
+    isApproved: approved,
+    allowanceIsBiggerThanZero,
+    allowance,
+  } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress,
     token: inToken,

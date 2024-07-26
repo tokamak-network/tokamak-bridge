@@ -4,6 +4,8 @@ import {
   T_FETCH_EditCTs,
   T_FETCH_ProviderClaimCTs,
   T_FETCH_REQUEST_LIST_L2,
+  T_provideCTs_L1,
+  T_ProviderClaimCTs,
 } from "../hooks/useCrossTrade";
 import {
   CT_REQUEST,
@@ -135,7 +137,6 @@ export const getRequestTransactionHash = (parmas: {
 }): CT_REQUEST_HISTORY_transactionHashes | undefined => {
   const { status, requestData, cancelCTs, providerClaimCTs, editCTs } = parmas;
   const requestTransactionHash = requestData.transactionHash;
-  console.log("requestData", requestData);
   if (isInCT_REQUEST(status)) {
     switch (status) {
       case CT_REQUEST.WaitForReceive: {
@@ -171,7 +172,8 @@ export const getRequestTransactionHash = (parmas: {
 };
 
 export const getTokenInfo = (parmas: {
-  requestData: T_FETCH_REQUEST_LIST_L2;
+  requestData: T_FETCH_REQUEST_LIST_L2 | T_provideCTs_L1 | T_ProviderClaimCTs;
+  ctAmount?: boolean;
 }): {
   address: string;
   name: string;
@@ -179,14 +181,14 @@ export const getTokenInfo = (parmas: {
   amount: string;
   decimals: number;
 } => {
-  const { requestData } = parmas;
+  const { requestData, ctAmount } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
 
   return {
     address: isETH ? ZERO_ADDRESS : requestData._l1token,
     name: isETH ? "ETH" : "TON",
     symbol: isETH ? "ETH" : "TON",
-    amount: requestData._totalAmount,
+    amount: ctAmount ? requestData._ctAmount : requestData._totalAmount,
     decimals: 18,
   };
 };

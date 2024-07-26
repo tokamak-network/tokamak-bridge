@@ -102,6 +102,20 @@ export type T_EditCTs = {
   transactionHash: string;
 };
 export type T_FETCH_EditCTs = T_EditCTs[];
+export type T_provideCTs_L1 = {
+  _l1token: string;
+  _l2token: string;
+  _saleCount: string;
+  _requester: string;
+  _provider: string;
+  _totalAmount: string;
+  _ctAmount: string;
+  _l2chainId: string;
+  blockNumber: string;
+  blockTimestamp: string;
+  transactionHash: string;
+};
+export type T_FETCH_ProvideCTs_L1 = T_provideCTs_L1[];
 
 export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
   const { isHistory } = parmas;
@@ -110,6 +124,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
   const { address } = useAccount();
   const { data, loading, error } = useQuery<{
     editCTs: T_FETCH_EditCTs;
+    provideCTs: T_FETCH_ProvideCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
     pollInterval: 13000,
     client: L1_CLIENT,
@@ -119,6 +134,8 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
         }
       : undefined,
   });
+
+  console.log("data :>> ", data, error);
 
   return { data, loading, error };
 };

@@ -130,16 +130,18 @@ export interface CT_Request_History extends BaseCTTransactionHistory {
   blockTimestamps: CT_REQUEST_HISTORY_blockTimestamps;
   transactionHashes: CT_REQUEST_HISTORY_transactionHashes;
 }
+
+export type CT_PROVIDE_HISTORY_transactionHashes = {
+  provide: string;
+  return?: string;
+};
 export interface CT_Provide_History extends BaseCTTransactionHistory {
   action: CT_ACTION.PROVIDE;
   blockTimestamps: {
     provide: number;
     return?: number;
   };
-  transactionHashes: {
-    provide: string;
-    return?: string;
-  };
+  transactionHashes: CT_PROVIDE_HISTORY_transactionHashes;
 }
 
 export type StandardHistory =
