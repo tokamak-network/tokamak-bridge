@@ -111,11 +111,12 @@ export default function CTFeeUpdateModal() {
     setNetworkCheck(true);
   };
 
-  const { editFee } = useCrossTradeContract();
+  const { editFee: _editFee, cancelRequest: _cancelRequest } =
+    useCrossTradeContract();
   // const handleConfirm = () => {
   //   setNetworkCheck(false);
   // };
-  const handleConfirm = useCallback(() => {
+  const editFee = useCallback(() => {
     try {
       if (!networkCheck) {
         setNetworkCheck(false);
@@ -134,18 +135,6 @@ export default function CTFeeUpdateModal() {
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
-
-        console.log(
-          "--editFee params--",
-          _l1token,
-          _l2token,
-          _totalAmount,
-          _ctAmount,
-          editAmount,
-          _saleCount,
-          _l2chainId,
-          _hashValue
-        );
         const params = [
           _l1token,
           _l2token,
@@ -156,7 +145,10 @@ export default function CTFeeUpdateModal() {
           _l2chainId,
           _hashValue,
         ];
-        editFee({
+
+        console.log("--editFee params--", params);
+
+        _editFee({
           args: params,
         });
         resetAllStates();
@@ -164,7 +156,43 @@ export default function CTFeeUpdateModal() {
     } catch (e) {
       console.log(e);
     }
-  }, [editFee, ctUpdateFeeModal.txData, inputValue]);
+  }, [_editFee, ctUpdateFeeModal.txData, inputValue]);
+
+  const cancelRequest = useCallback(() => {
+    if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
+      const {
+        _l1token,
+        _l2token,
+        _totalAmount,
+        _ctAmount,
+        _saleCount,
+        _l2chainId,
+        _hashValue,
+      } = ctUpdateFeeModal.txData.L2_subgraphData;
+
+      const params = [
+        _l1token,
+        _l2token,
+        _totalAmount,
+        _ctAmount,
+        _saleCount,
+        _l2chainId,
+        200000,
+        _hashValue,
+      ];
+      console.log("--cancel params--", params);
+
+      _cancelRequest({
+        args: params,
+      });
+    }
+  }, [ctUpdateFeeModal.txData, _cancelRequest]);
+
+  const handleConfirm = useCallback(() => {
+    if (activeButton === UpdateFeeButtonType.Update) return editFee();
+    if (activeButton === UpdateFeeButtonType.CancelRequest)
+      return cancelRequest();
+  }, [activeButton, editFee, cancelRequest]);
 
   return (
     <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
@@ -238,7 +266,7 @@ export default function CTFeeUpdateModal() {
                 txData={ctUpdateFeeModal.txData}
               />
             ) : (
-              <CTRefundDetail />
+              <CTRefundDetail txData={ctUpdateFeeModal.txData} />
             )}
           </Box>
         </ModalBody>

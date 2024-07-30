@@ -57,6 +57,18 @@ const useEditFee = () => {
   return { data, write, isLoading, isSuccess, isError, error, status };
 };
 
+const useCancelRequest = () => {
+  const { L1CrossTrade_CONTRACT } = useContract();
+  const { data, write, isLoading, isSuccess, isError, error, status } =
+    useContractWrite({
+      address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
+      abi: L1CrossTradeAbi.abi,
+      functionName: "cancel",
+    });
+
+  return { data, write, isLoading, isSuccess, isError, error, status };
+};
+
 export const useCrossTradeContract = () => {
   const {
     write: _requestRegisteredToken,
@@ -64,23 +76,36 @@ export const useCrossTradeContract = () => {
   } = useRequestRegisteredToken();
   const { write: _provideCT, isLoading: _isProvideLoading } = useProvideCT();
   const { write: _editFee, isLoading: _isEditLoading } = useEditFee();
+  const { write: _cancelRequest, isLoading: _isCancelLoading } =
+    useCancelRequest();
 
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { onCloseCTConfirmModal } = useFxConfirmModal();
   const { onCloseCTOptionModal } = useFxOptionModal();
 
   useEffect(() => {
-    if (_isResisteredTokenLoading || _isProvideLoading || _isEditLoading) {
+    if (
+      _isResisteredTokenLoading ||
+      _isProvideLoading ||
+      _isEditLoading ||
+      _isCancelLoading
+    ) {
       onCloseCTConfirmModal();
       onCloseCTOptionModal();
       setIsOpen(true);
       setModalOpen("confirming");
     }
-  }, [_isResisteredTokenLoading, _isProvideLoading, _isEditLoading]);
+  }, [
+    _isResisteredTokenLoading,
+    _isProvideLoading,
+    _isEditLoading,
+    _isCancelLoading,
+  ]);
 
   return {
     requestRegisteredToken: _requestRegisteredToken,
     provideCT: _provideCT,
     editFee: _editFee,
+    cancelRequest: _cancelRequest,
   };
 };

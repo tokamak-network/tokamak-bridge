@@ -4,10 +4,17 @@ import ThanosSymbol from "assets/icons/ct/thanos_symbol.svg";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { CT_History } from "@/staging/types/transaction";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
+import { useCallback } from "react";
+import { formatUnits } from "@/utils/trim/convertNumber";
+import useConnectedNetwork from "@/hooks/network";
 
-export default function CTRefundDetail() {
-  const { inToken } = useInOutTokens();
+export default function CTRefundDetail(props: { txData: CT_History | null }) {
+  const { txData } = props;
+  if (!txData) return null;
+  const { inToken, inNetwork } = txData;
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   return (
     <Box mt={"16px"}>
@@ -24,11 +31,11 @@ export default function CTRefundDetail() {
         <Box>
           <Flex justifyContent={"space-between"} alignItems={"center"}>
             <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
-              10 USDC
+              {formatUnits(inToken?.amount, inToken.decimals)} {inToken?.symbol}
             </Text>
             <TokenSymbolWithNetwork
-              tokenSymbol={"USDC"}
-              chainId={55004}
+              tokenSymbol={inToken?.symbol}
+              chainId={inNetwork}
               networkSymbolW={22}
               networkSymbolH={22}
               symbolW={40}
@@ -72,7 +79,7 @@ export default function CTRefundDetail() {
               lineHeight={"14px"}
               ml={"4px"}
             >
-              Titan
+              {isConnectedToMainNetwork ? "Titan" : "Titan Sepolia"}
             </Text>
           </Flex>
         </HStack>
