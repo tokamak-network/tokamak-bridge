@@ -7,16 +7,28 @@ import {
   getCancelValueFromCTRequestHistory,
   isInCT_REQUEST,
   CT_REQUEST_HISTORY_blockTimestamps,
+  CT_REQUEST,
+  CT_Request_History,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { STATUS_CONFIG } from "@/staging/constants/status";
 
-const getStatusHandler = (status: Action | CT_ACTION, isCanceled?: boolean) => {
+const getStatusHandler = (params: {
+  status: Action | CT_ACTION;
+  isCanceled?: boolean;
+  isUpdateFee?: boolean;
+  hasMultipleUpdateFees?: boolean;
+}) => {
+  const { status, isCanceled, isUpdateFee, hasMultipleUpdateFees } = params;
   const actionHandlers = {
     [Action.Deposit]: STATUS_CONFIG.DEPOSIT,
     [Action.Withdraw]: STATUS_CONFIG.WITHDRAW,
     [CT_ACTION.REQUEST]: isCanceled
       ? STATUS_CONFIG.REQUEST_CANCEL
+      : isUpdateFee
+      ? hasMultipleUpdateFees
+        ? STATUS_CONFIG.REQUEST_UPDATE_FEES
+        : STATUS_CONFIG.REQUEST_UPDATE_FEE
       : STATUS_CONFIG.REQUEST,
     [CT_ACTION.PROVIDE]: STATUS_CONFIG.PROVIDE,
   };
@@ -25,20 +37,28 @@ const getStatusHandler = (status: Action | CT_ACTION, isCanceled?: boolean) => {
 
 const getBlockTimestamp = (
   transaction: TransactionHistory,
-  statusKey: HISTORY_TRANSACTION_STATUS
+  statusKey: HISTORY_TRANSACTION_STATUS,
+  isUpdateFee: boolean,
+  hasMultipleUpdateFees?: boolean
 ) => {
-  // statusKey가 "CT_REQ_REQUEST"와 일치하는지 확인
   if (
-    statusKey === "CT_REQ_REQUEST" &&
+    statusKey === CT_REQUEST.Request &&
     transaction &&
     transaction.blockTimestamps
   ) {
+    // statusKey가 "CT_REQ_REQUEST"와 일치하는지 확인
     const blockTimestamps =
       transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
     if (blockTimestamps.request) {
       return blockTimestamps.request;
     }
+
     return undefined;
+  }
+  if (isUpdateFee) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+    if (blockTimestamps.updateFee) return blockTimestamps.updateFee[0];
   }
   return undefined;
 };
@@ -49,26 +69,36 @@ export default function PendingFooter(params: {
 }) {
   const { transaction, openModal } = params;
   const transactionData = transaction;
-  const statuses: HISTORY_TRANSACTION_STATUS[] = getStatusHandler(
-    transactionData.action,
-    getCancelValueFromCTRequestHistory(transactionData)
-  );
+  const status = transactionData.action;
+  const isCanceled = getCancelValueFromCTRequestHistory(transactionData);
+  const isRequest = isInCT_REQUEST(transactionData.status);
+  const isUpdateFee = isRequest
+    ? (transactionData as CT_Request_History).isUpdateFee
+    : false;
+  const hasMultipleUpdateFees = isUpdateFee
+    ? (transactionData as CT_Request_History).hasMultipleUpdateFees
+    : false;
 
-  const endIndex =
-    statuses.findIndex((statusKey) => statusKey === transactionData.status) + 1;
-  const limitedStatuses = statuses.slice(
-    0,
-    endIndex > 0 ? endIndex : undefined
-  );
+  const statuses = getStatusHandler({
+    status,
+    isCanceled,
+    isUpdateFee,
+    hasMultipleUpdateFees,
+  });
 
   return (
     <>
-      {limitedStatuses.map((statusKey, index) => (
+      {statuses.map((statusKey, index) => (
         <StatusComponent
           key={index}
           label={statusKey}
           transactionData={transactionData}
-          blockTimestamp={getBlockTimestamp(transactionData, statusKey)}
+          blockTimestamp={getBlockTimestamp(
+            transactionData,
+            statusKey,
+            isUpdateFee,
+            hasMultipleUpdateFees
+          )}
           openModal={openModal}
         />
       ))}

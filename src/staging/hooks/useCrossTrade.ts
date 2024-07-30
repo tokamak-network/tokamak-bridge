@@ -135,8 +135,6 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
       : undefined,
   });
 
-  console.log("data :>> ", data, error);
-
   return { data, loading, error };
 };
 

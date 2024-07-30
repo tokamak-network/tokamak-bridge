@@ -252,8 +252,8 @@ export default function CTConfirmDetail({
         {!isCanceled && (
           <FeeDetail
             title="Network"
-            inNetwork={inNetwork}
-            outNetwork={outNetwork}
+            inNetwork={isProvide ? outNetwork : inNetwork}
+            outNetwork={isProvide ? inNetwork : outNetwork}
           />
         )}
         {!isCanceled && (updateFee || isProvide) && (

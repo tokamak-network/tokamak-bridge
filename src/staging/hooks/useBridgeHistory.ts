@@ -48,6 +48,7 @@ import {
   getRequestStatus,
   getRequestTransactionHash,
   getTokenInfo,
+  isRequestEdited,
 } from "../utils/getRequestStatus";
 import { sub } from "date-fns";
 import {
@@ -400,7 +401,14 @@ export const useRequestHistoryData = () => {
           requestData,
           cancelCTs,
           providerClaimCTs,
+          editCTs,
         });
+        
+        const isUpdateFee = isRequestEdited({
+          editCTs,
+          saleCount: _saleCount,
+        });
+
         const blockTimestamps = getRequestBlockTimestamp({
           status,
           requestData,
@@ -409,7 +417,7 @@ export const useRequestHistoryData = () => {
           editCTs,
         });
         const inToken = getTokenInfo({ requestData });
-        const outToken = getTokenInfo({ requestData });
+        const outToken = getTokenInfo({ requestData, ctAmount: true });
         const transactionHashes = getRequestTransactionHash({
           status,
           requestData,
@@ -419,7 +427,15 @@ export const useRequestHistoryData = () => {
         });
         const serviceFee = BigInt(_totalAmount) - BigInt(_ctAmount);
 
-        const result = {
+        if (!blockTimestamps || !transactionHashes) return null;
+
+        const hasMultipleUpdateFees = () => {
+          if (!isUpdateFee) return false;
+          if (blockTimestamps && blockTimestamps.updateFee)
+            return blockTimestamps.updateFee.length > 1;
+        };
+
+        const result: CT_Request_History = {
           category: HISTORY_SORT.CROSS_TRADE,
           action: CT_ACTION.REQUEST,
           isCanceled: false,
@@ -434,11 +450,13 @@ export const useRequestHistoryData = () => {
           transactionHashes,
           serviceFee,
           L2_subgraphData: requestData,
+          isUpdateFee,
+          hasMultipleUpdateFees: hasMultipleUpdateFees(),
         };
         return result;
       });
 
-      setRequestHistory(trimedData);
+      setRequestHistory(trimedData.filter((data) => data !== null));
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);
 
@@ -531,6 +549,8 @@ export const useBridgeHistory = () => {
   const { withdrawHistory } = useWithdrawData();
   const { requestHistory } = useRequestHistoryData();
   const { provideHistory } = useProvideData();
+
+  console.log("requestHistory", requestHistory);
 
   const bridgeHistoryData = useMemo(() => {
     if (depositHistory && withdrawHistory) {

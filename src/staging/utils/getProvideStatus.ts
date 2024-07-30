@@ -7,6 +7,7 @@ import {
 } from "../hooks/useCrossTrade";
 import {
   CT_PROVIDE,
+  CT_PROVIDE_HISTORY_blockTimestamps,
   CT_PROVIDE_HISTORY_transactionHashes,
 } from "../types/transaction";
 
@@ -51,7 +52,7 @@ export const getProvideBlockTimestamp = (params: {
   status: CT_PROVIDE;
   provideCT: T_provideCTs_L1;
   providerClaimCT: T_ProviderClaimCTs | null;
-}): { provide: number; return?: number } => {
+}): CT_PROVIDE_HISTORY_blockTimestamps => {
   const { status, provideCT, providerClaimCT } = params;
   if (status === CT_PROVIDE.Completed && providerClaimCT) {
     return {

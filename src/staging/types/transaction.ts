@@ -129,18 +129,21 @@ export interface CT_Request_History extends BaseCTTransactionHistory {
   isCanceled: boolean;
   blockTimestamps: CT_REQUEST_HISTORY_blockTimestamps;
   transactionHashes: CT_REQUEST_HISTORY_transactionHashes;
+  isUpdateFee: boolean;
+  hasMultipleUpdateFees?: boolean;
 }
 
+export type CT_PROVIDE_HISTORY_blockTimestamps = {
+  provide: number;
+  return?: number;
+};
 export type CT_PROVIDE_HISTORY_transactionHashes = {
   provide: string;
   return?: string;
 };
 export interface CT_Provide_History extends BaseCTTransactionHistory {
   action: CT_ACTION.PROVIDE;
-  blockTimestamps: {
-    provide: number;
-    return?: number;
-  };
+  blockTimestamps: CT_PROVIDE_HISTORY_blockTimestamps;
   transactionHashes: CT_PROVIDE_HISTORY_transactionHashes;
 }
 

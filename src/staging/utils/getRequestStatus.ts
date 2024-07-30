@@ -17,6 +17,7 @@ import {
   isInCT_REQUEST_CANCEL,
 } from "../types/transaction";
 import { ZERO_ADDRESS } from "@/constant/misc";
+import { is } from "date-fns/locale";
 
 export const isRequestProvided = (params: {
   providerClaimCTs: T_FETCH_ProviderClaimCTs;
@@ -57,15 +58,16 @@ export const getEditCTTransaction = (params: {
   saleCount: string;
 }) => {
   const { editCTs, saleCount } = params;
-  return editCTs.filter((editCT) => editCT._saleCount === saleCount)[0];
+  return editCTs.filter((editCT) => editCT._saleCount === saleCount);
 };
 
 export const getRequestStatus = (params: {
   requestData: T_FETCH_REQUEST_LIST_L2;
   cancelCTs: T_FETCH_CancelCTs;
   providerClaimCTs: T_FETCH_ProviderClaimCTs;
+  editCTs: T_FETCH_EditCTs;
 }): CT_REQUEST_STATUSES => {
-  const { requestData, cancelCTs, providerClaimCTs } = params;
+  const { requestData, cancelCTs, providerClaimCTs, editCTs } = params;
 
   const isCanceled = isRequestCanceled({
     cancelCTs,
@@ -78,6 +80,12 @@ export const getRequestStatus = (params: {
     saleCount: requestData._saleCount,
   });
   if (isProvided) return CT_REQUEST.Completed;
+
+  // const isUpdateFee = isRequestEdited({
+  //   editCTs,
+  //   saleCount: requestData._saleCount,
+  // });
+  // if (isUpdateFee) return CT_REQUEST.UpdateFee;
 
   return CT_REQUEST.WaitForReceive;
 };
@@ -100,11 +108,20 @@ export const getRequestBlockTimestamp = (parmas: {
           editCTs,
           saleCount: requestData._saleCount,
         });
-        if (isUpdatedFee) return undefined;
-        return {
-          request: requestBlockTimestamp,
-          waitForReceive: 0,
-        };
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) =>
+            Number(edit.blockTimestamp)
+          );
+          return {
+            request: requestBlockTimestamp,
+            updateFee,
+          };
+        }
+        return { request: requestBlockTimestamp };
       }
       case CT_REQUEST.Completed: {
         const isUpdatedFee = isRequestEdited({
@@ -116,10 +133,11 @@ export const getRequestBlockTimestamp = (parmas: {
           providerClaimCTs,
           saleCount: requestData._saleCount,
         });
-        return {
-          request: requestBlockTimestamp,
-          completed: Number(providerClaimCT.blockTimestamp),
-        };
+        if (providerClaimCT)
+          return {
+            request: requestBlockTimestamp,
+            completed: Number(providerClaimCT.blockTimestamp),
+          };
       }
     }
   }
@@ -144,9 +162,21 @@ export const getRequestTransactionHash = (parmas: {
           editCTs,
           saleCount: requestData._saleCount,
         });
-        if (isUpdatedFee) return undefined;
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) => edit.transactionHash);
+          return {
+            request: requestTransactionHash,
+            updateFee,
+            waitForReceive: "",
+          };
+        }
         return {
           request: requestTransactionHash,
+          waitForReceive: "",
         };
       }
       case CT_REQUEST.Completed: {

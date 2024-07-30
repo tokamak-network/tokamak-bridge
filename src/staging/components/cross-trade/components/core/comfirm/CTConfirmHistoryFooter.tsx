@@ -90,7 +90,7 @@ const TransactionItem = (props: TransactionItemProps) => {
         {_title}
       </Text>
       <Flex>
-        {!isActive && (
+        {!isActive && (txHash !== undefined || txHash !== "") && (
           <Flex cursor={"pointer"}>
             <Link
               target="_blank"
@@ -121,26 +121,56 @@ const TransactionItem = (props: TransactionItemProps) => {
   );
 };
 
+const analyzeTransactionHashes = (txData: {
+  transactionHashes: any;
+}): {
+  nestedArrayLengthSum: number;
+  nonNestedKeyLength: number;
+  entries: [string, any][];
+} => {
+  if (
+    typeof txData.transactionHashes === "object" &&
+    txData.transactionHashes !== null
+  ) {
+    let nestedArrayLengthSum = 0;
+    let nonNestedKeyLength = 0;
+    const entries = Object.entries(txData.transactionHashes);
+
+    entries.forEach(([key, value]) => {
+      if (Array.isArray(value)) {
+        nestedArrayLengthSum += value.length;
+      } else {
+        nonNestedKeyLength += 1;
+      }
+    });
+
+    return { nestedArrayLengthSum, nonNestedKeyLength, entries };
+  }
+  return { nestedArrayLengthSum: 0, nonNestedKeyLength: 0, entries: [] };
+};
+
 export default function CTConfirmHistoryFooter(props: {
   txData: CT_History | null;
 }) {
   const { txData } = props;
-
-  console.log("txData", txData);
   if (txData === null) return null;
 
   const isCompleted = isFinalStatus(txData.status);
-  const keyLength = Object.keys(txData.transactionHashes).length;
+  const { nestedArrayLengthSum, nonNestedKeyLength, entries } =
+    analyzeTransactionHashes(txData);
+  const keyLength = nestedArrayLengthSum + nonNestedKeyLength;
   const isError = txData.errorMessage !== undefined;
+  const lastIndex = entries.length - 1;
 
   const TransactionHistory = useMemo(() => {
     return (
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
-          const isActive = isCompleted ? false : keyLength - 1 === index;
+          const isActive = isCompleted ? false : lastIndex === index;
           //@ts-ignore
           const blockTimestamp = txData.blockTimestamps[key];
-          if (hash === "" || hash === undefined) return null;
+          if ((hash === "" || hash === undefined) && key !== "waitForReceive")
+            return null;
           if (typeof hash === "string") {
             return (
               <TransactionItem
