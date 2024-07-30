@@ -10,9 +10,8 @@ import {
   ModalBody,
   ModalFooter,
   Checkbox,
-  textDecoration,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   WarningType,
   UpdateFeeButtonType,
@@ -24,11 +23,10 @@ import CTUpdateButton from "./CTUpdateButton";
 import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import useContract from "@/hooks/contracts/useContract";
-import { useContractWrite } from "wagmi";
-import L1CrossTrade from "@/abis/L1CrossTrade.json";
 import { toParseNumber } from "@/utils/trim/convertNumber";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
+import useConnectedNetwork from "@/hooks/network";
+import { WrongNetwork } from "../../common/WrongNetwork";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
@@ -63,7 +61,6 @@ export default function CTFeeUpdateModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    console.log(value);
     setInputValue(value);
   };
 
@@ -99,7 +96,7 @@ export default function CTFeeUpdateModal() {
       ? recommendCheck ||
         !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
-  const [networkCheck, setNetworkCheck] = useState<boolean>(true);
+  const { connectedToLayer1 } = useConnectedNetwork();
 
   const resetAllStates = () => {
     setRecommendCheck(true);
@@ -108,19 +105,12 @@ export default function CTFeeUpdateModal() {
     setInputWarningCheck("");
     setIsChecked(false);
     onCloseCTUpdateFeeModal();
-    setNetworkCheck(true);
   };
 
   const { editFee: _editFee, cancelRequest: _cancelRequest } =
     useCrossTradeContract();
-  // const handleConfirm = () => {
-  //   setNetworkCheck(false);
-  // };
   const editFee = useCallback(() => {
     try {
-      if (!networkCheck) {
-        setNetworkCheck(false);
-      }
       if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
         const {
           _l1token,
@@ -224,31 +214,7 @@ export default function CTFeeUpdateModal() {
               activeButton={activeButton}
               setActiveButton={setActiveButton}
             />
-            {!networkCheck && activeButton == UpdateFeeButtonType.Update && (
-              <Box
-                my={"16px"}
-                px={"16px"}
-                py={"12px"}
-                justifyContent={"center"}
-                alignItems={"flex-start"}
-                gap={"4px"}
-                bg={"#15161D"}
-                borderRadius={"8px"}
-                border={"1px solid #DD3A44"}
-              >
-                <Text
-                  fontWeight={400}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#DD3A44"}
-                >
-                  Please switch to{" "}
-                  <span style={{ textDecoration: "underline" }}>
-                    Titan Network
-                  </span>
-                </Text>
-              </Box>
-            )}
+            {activeButton == UpdateFeeButtonType.Update && <WrongNetwork />}
 
             {activeButton == UpdateFeeButtonType.Update &&
             ctUpdateFeeModal.txData ? (
@@ -312,17 +278,21 @@ export default function CTFeeUpdateModal() {
             borderRadius={"8px"}
             sx={{
               backgroundColor:
-                activeConfirmButton && networkCheck ? "#007AFF" : "#17181D",
+                activeConfirmButton && connectedToLayer1
+                  ? "#007AFF"
+                  : "#17181D",
               color:
-                activeConfirmButton && networkCheck ? "#FFFFFF" : "#8E8E92",
+                activeConfirmButton && connectedToLayer1
+                  ? "#FFFFFF"
+                  : "#8E8E92",
             }}
             _hover={{}}
             onClick={handleConfirm}
-            isDisabled={!activeConfirmButton || !networkCheck}
+            isDisabled={!activeConfirmButton || !connectedToLayer1}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
               {activeButton == UpdateFeeButtonType.Update
-                ? !networkCheck
+                ? !connectedToLayer1
                   ? "Wrong Network"
                   : "Update Fee"
                 : "Cancel Request"}

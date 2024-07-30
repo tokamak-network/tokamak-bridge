@@ -59,10 +59,15 @@ export default function CTConfirmCrossTradeFooter(
 
   const { isApproved, isLoading, callApprove } = useApprove();
   const { mode } = useGetMode();
+  const { connectedToLayer1 } = useConnectedNetwork();
 
   const btnDisabled = useMemo(() => {
-    return (isProvide ? !provideConfirmed : !isChecked) || !isApproved;
-  }, [isProvide, isChecked, provideConfirmed, isApproved]);
+    return (
+      (isProvide ? !provideConfirmed || !connectedToLayer1 : !isChecked) ||
+      !isApproved
+    );
+  }, [isProvide, isChecked, provideConfirmed, isApproved, connectedToLayer1]);
+
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
 
@@ -191,8 +196,6 @@ export default function CTConfirmCrossTradeFooter(
       setModalOpen("error");
     }
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken]);
-
-  console.log("inToken", inToken);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>

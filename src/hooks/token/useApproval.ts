@@ -63,16 +63,13 @@ export function useApprove() {
     ctConfirmModal.isOpen,
   ]);
 
-  const {
-    isApproved: approved,
-    allowanceIsBiggerThanZero,
-    allowance,
-  } = useAllowance({
+  const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress,
     token: inToken,
     contractAddress,
   });
+  const { connectedToLayer1 } = useConnectedNetwork();
 
   const isApproved = useMemo(() => {
     switch (mode) {
@@ -91,12 +88,12 @@ export function useApprove() {
       case "ETH-Unwrap":
         return true;
       case "Pool": {
-        if (subMode.ctPools) return approved;
+        if (subMode.ctPools && connectedToLayer1) return approved;
       }
       default:
-        return false;
+        return true;
     }
-  }, [mode, subMode, approved]);
+  }, [mode, subMode, approved, connectedToLayer1]);
 
   const isUSDT = useMemo(() => {
     return connectedChainId

@@ -17,6 +17,7 @@ import CTConfirmDetail from "./CTConfirmDetail";
 import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
 import { isInCT_Provide } from "@/staging/types/transaction";
+import { WrongNetwork } from "../../common/WrongNetwork";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
@@ -74,6 +75,7 @@ export default function CTModal() {
           <CloseButton onClick={onCloseCTConfirmModal} />
         </Box>
         <ModalBody p={0}>
+          <WrongNetwork />
           <CTConfirmDetail
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
