@@ -8,6 +8,8 @@ import { CTInputProps } from "@/staging/components/cross-trade/types";
 import { CT_History } from "@/staging/types/transaction";
 import { useMemo } from "react";
 import { formatUnits } from "@/utils/trim/convertNumber";
+import { TokenSymbol } from "@/components/image/TokenSymbol";
+import { TokenInfo } from "@/types/token/supportedToken";
 
 enum FeeDetailType {
   Receive,
@@ -135,8 +137,12 @@ export default function CTUpdateFeeDetail(
           <Text fontSize={"16px"} fontWeight={400} lineHeight={"24px"}>
             {currentServiceFee}
           </Text>
-          <Flex>
-            <Image src={CTUsdcSymbol} alt={"CTUsdcSymbol"} />
+          <Flex alignItems={"center"}>
+            <TokenSymbol
+              tokenType={txData.inToken.symbol as TokenInfo["tokenSymbol"]}
+              w={20}
+              h={20}
+            />
             <Text
               ml={"4px"}
               fontSize={"16px"}
@@ -166,6 +172,7 @@ export default function CTUpdateFeeDetail(
         recommendCheck={props.recommendCheck}
         recommendValue={props.recommendValue}
         onRecommendRefresh={props.onRecommendRefresh}
+        tokenInfo={txData.inToken}
       />
       <Box mt={"16px"}>
         <FeeDetail

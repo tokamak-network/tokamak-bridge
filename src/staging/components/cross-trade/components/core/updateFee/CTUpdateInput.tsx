@@ -14,11 +14,15 @@ import CTReCirclePurple from "assets/icons/ct/ctReCircle_purple.svg";
 import CTUsdcSymbol from "assets/icons/ct/ctUsdcSymbol.svg";
 import { CTWarning } from "@/staging/components/cross-trade/components/CTWarning";
 import { WarningType } from "@/staging/components/cross-trade/types";
+import { TransactionToken } from "@/staging/types/transaction";
+import { TokenSymbol } from "@/components/image/TokenSymbol";
+import { TokenInfo } from "@/types/token/supportedToken";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
   recommendValue: string;
   onRecommendRefresh: () => void;
+  tokenInfo: TransactionToken;
 }
 
 export default function CTUpdateInput(
@@ -32,6 +36,7 @@ export default function CTUpdateInput(
     recommendCheck,
     recommendValue,
     onRecommendRefresh,
+    tokenInfo,
   } = props;
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -109,9 +114,13 @@ export default function CTUpdateInput(
             _hover={{ border: "none" }}
             _focus={{ boxShadow: "none", border: "none" }}
           />
-          <InputRightElement mr={"24px"}>
-            <Flex>
-              <Image src={CTUsdcSymbol} alt={"CTUsdcSymbol"} />
+          <InputRightElement mr={"7px"}>
+            <Flex alignItems={"center"}>
+              <TokenSymbol
+                tokenType={tokenInfo.symbol as TokenInfo["tokenSymbol"]}
+                w={20}
+                h={20}
+              />
               <Text
                 ml={"4px"}
                 fontSize={"16px"}
@@ -119,7 +128,7 @@ export default function CTUpdateInput(
                 color={"#FFFFFF"}
                 lineHeight={"24px"}
               >
-                USDC
+                {tokenInfo.symbol}
               </Text>
             </Flex>
           </InputRightElement>

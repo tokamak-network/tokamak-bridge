@@ -18,18 +18,6 @@ const useRequestRegisteredToken = () => {
     });
 
   const {} = useTx({ hash: data?.hash, txSort: "Request" });
-  const { setModalOpen, setIsOpen } = useTxConfirmModal();
-  const { onCloseCTConfirmModal } = useFxConfirmModal();
-  const { onCloseCTOptionModal } = useFxOptionModal();
-
-  useEffect(() => {
-    if (isLoading) {
-      onCloseCTConfirmModal();
-      onCloseCTOptionModal();
-      setIsOpen(true);
-      setModalOpen("confirming");
-    }
-  }, [isLoading]);
 
   // useEffect(() => {
   //   if (isSuccess) {
@@ -40,27 +28,59 @@ const useRequestRegisteredToken = () => {
   //   }
   // }, [isSuccess, isError, error]);
 
-  return { write };
+  return { data, write, isLoading, isSuccess, isError, error, status };
 };
 
 const useProvideCT = () => {
   const { L1CrossTrade_CONTRACT } = useContract();
-  const { data, write } = useContractWrite({
-    address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
-    abi: L1CrossTradeAbi.abi,
-    functionName: "provideCT",
-  });
+  const { data, write, isLoading, isSuccess, isError, error, status } =
+    useContractWrite({
+      address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
+      abi: L1CrossTradeAbi.abi,
+      functionName: "provideCT",
+    });
   // const {} = useTx({ hash: data?.hash, txSort: "Withdraw" });
+  const {} = useTx({ hash: data?.hash, txSort: "Request" });
 
-  return { write };
+  return { data, write, isLoading, isSuccess, isError, error, status };
+};
+
+const useEditFee = () => {
+  const { L1CrossTrade_CONTRACT } = useContract();
+  const { data, write, isLoading, isSuccess, isError, error, status } =
+    useContractWrite({
+      address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
+      abi: L1CrossTradeAbi.abi,
+      functionName: "editFee",
+    });
+
+  return { data, write, isLoading, isSuccess, isError, error, status };
 };
 
 export const useCrossTradeContract = () => {
-  const { write: _requestRegisteredToken } = useRequestRegisteredToken();
-  const { write: _provideCT } = useProvideCT();
+  const {
+    write: _requestRegisteredToken,
+    isLoading: _isResisteredTokenLoading,
+  } = useRequestRegisteredToken();
+  const { write: _provideCT, isLoading: _isProvideLoading } = useProvideCT();
+  const { write: _editFee, isLoading: _isEditLoading } = useEditFee();
+
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { onCloseCTConfirmModal } = useFxConfirmModal();
+  const { onCloseCTOptionModal } = useFxOptionModal();
+
+  useEffect(() => {
+    if (_isResisteredTokenLoading || _isProvideLoading || _isEditLoading) {
+      onCloseCTConfirmModal();
+      onCloseCTOptionModal();
+      setIsOpen(true);
+      setModalOpen("confirming");
+    }
+  }, [_isResisteredTokenLoading, _isProvideLoading, _isEditLoading]);
 
   return {
     requestRegisteredToken: _requestRegisteredToken,
     provideCT: _provideCT,
+    editFee: _editFee,
   };
 };

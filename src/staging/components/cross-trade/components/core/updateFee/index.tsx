@@ -28,6 +28,7 @@ import useContract from "@/hooks/contracts/useContract";
 import { useContractWrite } from "wagmi";
 import L1CrossTrade from "@/abis/L1CrossTrade.json";
 import { toParseNumber } from "@/utils/trim/convertNumber";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
@@ -110,12 +111,7 @@ export default function CTFeeUpdateModal() {
     setNetworkCheck(true);
   };
 
-  const { L1CrossTrade_CONTRACT } = useContract();
-  const { write: editFee } = useContractWrite({
-    address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
-    abi: L1CrossTrade.abi,
-    functionName: "editFee",
-  });
+  const { editFee } = useCrossTradeContract();
   // const handleConfirm = () => {
   //   setNetworkCheck(false);
   // };
@@ -138,6 +134,7 @@ export default function CTFeeUpdateModal() {
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
+
         console.log(
           "--editFee params--",
           _l1token,
@@ -162,6 +159,7 @@ export default function CTFeeUpdateModal() {
         editFee({
           args: params,
         });
+        resetAllStates();
       }
     } catch (e) {
       console.log(e);
