@@ -11,6 +11,7 @@ import {
   DepositTransactionHistory,
   ERROR_CODE,
   HISTORY_SORT,
+  isInCT_REQUEST_CANCEL,
   TransactionHistory,
   WithdrawTransactionHistory,
 } from "../types/transaction";
@@ -44,6 +45,7 @@ import {
   useCrossTradeData_L2,
 } from "./useCrossTrade";
 import {
+  getErrorMessage,
   getRequestBlockTimestamp,
   getRequestStatus,
   getRequestTransactionHash,
@@ -384,6 +386,8 @@ export const useRequestHistoryData = () => {
       const providerClaimCTs = l2Data.providerClaimCTs;
       const editCTs = l1Data.editCTs;
 
+      console.log("requestCTs", requestCTs);
+
       const trimedData = requestCTs.map((requestData) => {
         const {
           _l1token,
@@ -403,7 +407,7 @@ export const useRequestHistoryData = () => {
           providerClaimCTs,
           editCTs,
         });
-        
+
         const isUpdateFee = isRequestEdited({
           editCTs,
           saleCount: _saleCount,
@@ -438,7 +442,7 @@ export const useRequestHistoryData = () => {
         const result: CT_Request_History = {
           category: HISTORY_SORT.CROSS_TRADE,
           action: CT_ACTION.REQUEST,
-          isCanceled: false,
+          isCanceled: isInCT_REQUEST_CANCEL(status),
           status,
           blockTimestamps,
           inNetwork: Number(_l2chainId),
@@ -452,6 +456,7 @@ export const useRequestHistoryData = () => {
           L2_subgraphData: requestData,
           isUpdateFee,
           hasMultipleUpdateFees: hasMultipleUpdateFees(),
+          errorMessage: getErrorMessage(status, blockTimestamps),
         };
         return result;
       });

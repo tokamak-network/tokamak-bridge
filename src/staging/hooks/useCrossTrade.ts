@@ -12,9 +12,8 @@ import { subgraphApolloClientsForCT } from "@/graphql/thegraph/apollosForCT";
 import { CrossTradeData } from "../types/crossTrade";
 import { supportedTokensForCT } from "@/types/token/supportedToken";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
-import { formatUnits, toParseNumber } from "@/utils/trim/convertNumber";
+import { formatUnits } from "@/utils/trim/convertNumber";
 import { useAccount } from "wagmi";
-import { formatAddress } from "@/utils/trim/formatAddress";
 import { isRequestProvided } from "../utils/getRequestStatus";
 
 const getApolloClient = (chainId: number) => {

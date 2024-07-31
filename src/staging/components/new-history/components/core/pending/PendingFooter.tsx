@@ -9,6 +9,7 @@ import {
   CT_REQUEST_HISTORY_blockTimestamps,
   CT_REQUEST,
   CT_Request_History,
+  CT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { STATUS_CONFIG } from "@/staging/constants/status";
@@ -52,7 +53,6 @@ const getBlockTimestamp = (
     if (blockTimestamps.request) {
       return blockTimestamps.request;
     }
-
     return undefined;
   }
   if (isUpdateFee) {
@@ -60,6 +60,18 @@ const getBlockTimestamp = (
       transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
     if (blockTimestamps.updateFee) return blockTimestamps.updateFee[0];
   }
+
+  if (statusKey === CT_REQUEST_CANCEL.CancelRequest) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+    if (blockTimestamps.cancelRequest) return blockTimestamps.cancelRequest;
+  }
+  if (statusKey === CT_REQUEST_CANCEL.Refund) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+    if (blockTimestamps.cancelRequest) return blockTimestamps.cancelRequest;
+  }
+
   return undefined;
 };
 

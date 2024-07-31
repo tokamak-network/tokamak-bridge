@@ -13,6 +13,7 @@ import {
   CT_REQUEST_HISTORY_blockTimestamps,
   CT_REQUEST_HISTORY_transactionHashes,
   CT_REQUEST_STATUSES,
+  ERROR_CODE,
   isInCT_REQUEST,
   isInCT_REQUEST_CANCEL,
 } from "../types/transaction";
@@ -61,6 +62,14 @@ export const getEditCTTransaction = (params: {
   return editCTs.filter((editCT) => editCT._saleCount === saleCount);
 };
 
+export const getCancelCTTransaction = (params: {
+  cancelCTs: T_FETCH_CancelCTs;
+  saleCount: string;
+}) => {
+  const { cancelCTs, saleCount } = params;
+  return cancelCTs.filter((cancelCT) => cancelCT._saleCount === saleCount);
+};
+
 export const getRequestStatus = (params: {
   requestData: T_FETCH_REQUEST_LIST_L2;
   cancelCTs: T_FETCH_CancelCTs;
@@ -73,7 +82,7 @@ export const getRequestStatus = (params: {
     cancelCTs,
     saleCount: requestData._saleCount,
   });
-  if (isCanceled) return CT_REQUEST_CANCEL.CancelRequest;
+  if (isCanceled) return CT_REQUEST_CANCEL.Refund;
 
   const isProvided = isRequestProvided({
     providerClaimCTs,
@@ -142,6 +151,62 @@ export const getRequestBlockTimestamp = (parmas: {
     }
   }
   if (isInCT_REQUEST_CANCEL(status)) {
+    const cancelCT = getCancelCTTransaction({
+      cancelCTs,
+      saleCount: requestData._saleCount,
+    });
+    const cancelBlockTimestamp = Number(cancelCT[0].blockTimestamp);
+    const isUpdatedFee = isRequestEdited({
+      editCTs,
+      saleCount: requestData._saleCount,
+    });
+    const editHistory = getEditCTTransaction({
+      editCTs,
+      saleCount: requestData._saleCount,
+    });
+    const updateFee = editHistory.map((edit) => Number(edit.blockTimestamp));
+    switch (status) {
+      case CT_REQUEST_CANCEL.Refund: {
+        const isUpdatedFee = isRequestEdited({
+          editCTs,
+          saleCount: requestData._saleCount,
+        });
+        //Need to plus 500sec(5mins)
+        //It's the waiting time for the user to confirm the refund
+        if (isUpdatedFee) {
+          return {
+            request: requestBlockTimestamp,
+            updateFee,
+            cancelRequest: cancelBlockTimestamp,
+            refund: cancelBlockTimestamp + 300,
+          };
+        }
+        return {
+          request: requestBlockTimestamp,
+          cancelRequest: cancelBlockTimestamp,
+          refund: cancelBlockTimestamp + 300,
+        };
+      }
+      case CT_REQUEST_CANCEL.Completed: {
+        if (isUpdatedFee)
+          return {
+            request: requestBlockTimestamp,
+            updateFee,
+            cancelRequest: cancelBlockTimestamp,
+            completed: 0,
+          };
+        const providerClaimCT = getTransaction_providerClaimCT({
+          providerClaimCTs,
+          saleCount: requestData._saleCount,
+        });
+        if (providerClaimCT)
+          return {
+            request: requestBlockTimestamp,
+            cancelRequest: 0,
+            completed: 0,
+          };
+      }
+    }
   }
   return undefined;
 };
@@ -156,12 +221,12 @@ export const getRequestTransactionHash = (parmas: {
   const { status, requestData, cancelCTs, providerClaimCTs, editCTs } = parmas;
   const requestTransactionHash = requestData.transactionHash;
   if (isInCT_REQUEST(status)) {
+    const isUpdatedFee = isRequestEdited({
+      editCTs,
+      saleCount: requestData._saleCount,
+    });
     switch (status) {
       case CT_REQUEST.WaitForReceive: {
-        const isUpdatedFee = isRequestEdited({
-          editCTs,
-          saleCount: requestData._saleCount,
-        });
         if (isUpdatedFee) {
           const editHistory = getEditCTTransaction({
             editCTs,
@@ -180,10 +245,6 @@ export const getRequestTransactionHash = (parmas: {
         };
       }
       case CT_REQUEST.Completed: {
-        const isUpdatedFee = isRequestEdited({
-          editCTs,
-          saleCount: requestData._saleCount,
-        });
         if (isUpdatedFee) return undefined;
         const providerClaimCT = getTransaction_providerClaimCT({
           providerClaimCTs,
@@ -194,9 +255,63 @@ export const getRequestTransactionHash = (parmas: {
           completed: providerClaimCT.transactionHash,
         };
       }
+      case CT_REQUEST_CANCEL.Refund: {
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) => edit.transactionHash);
+          return {
+            request: requestTransactionHash,
+            updateFee,
+            cancelRequest: "",
+          };
+        }
+        return {
+          request: requestTransactionHash,
+          cancelRequest: "",
+        };
+      }
+      case CT_REQUEST_CANCEL.Completed: {
+        return {
+          request: requestTransactionHash,
+          completed: "",
+        };
+      }
     }
   }
   if (isInCT_REQUEST_CANCEL(status)) {
+    const isUpdatedFee = isRequestEdited({
+      editCTs,
+      saleCount: requestData._saleCount,
+    });
+    switch (status) {
+      case CT_REQUEST_CANCEL.Refund: {
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) => edit.transactionHash);
+          return {
+            request: requestTransactionHash,
+            updateFee,
+            cancelRequest: "",
+          };
+        }
+        return {
+          request: requestTransactionHash,
+          cancelRequest: "",
+        };
+      }
+      case CT_REQUEST_CANCEL.Completed: {
+        return {
+          request: requestTransactionHash,
+          completed: "",
+        };
+      }
+    }
   }
   return undefined;
 };
@@ -221,4 +336,18 @@ export const getTokenInfo = (parmas: {
     amount: ctAmount ? requestData._ctAmount : requestData._totalAmount,
     decimals: 18,
   };
+};
+
+export const getErrorMessage = (
+  status: CT_REQUEST_STATUSES,
+  blockTimestamp: CT_REQUEST_HISTORY_blockTimestamps
+) => {
+  if (isInCT_REQUEST_CANCEL(status)) {
+    if (blockTimestamp.cancelRequest) {
+      const isPassedCancelWaitingTime =
+        blockTimestamp.cancelRequest < Math.floor(Date.now() / 1000);
+      return ERROR_CODE.CT_REFUND_NOT_COMPLETED;
+    }
+  }
+  return undefined;
 };
