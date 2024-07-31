@@ -71,6 +71,11 @@ const getBlockTimestamp = (
       transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
     if (blockTimestamps.cancelRequest) return blockTimestamps.cancelRequest;
   }
+  if (statusKey === CT_REQUEST_CANCEL.Completed) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+    if (blockTimestamps.cancelRequest) return blockTimestamps.cancelRequest;
+  }
 
   return undefined;
 };

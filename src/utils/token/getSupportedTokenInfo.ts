@@ -1,4 +1,7 @@
-import { supportedTokens } from "@/types/token/supportedToken";
+import {
+  supportedTokens,
+  supportedTokensForCT,
+} from "@/types/token/supportedToken";
 
 function checkIfTokenAddressExists(
   tokenAddress: string,
@@ -21,4 +24,15 @@ export const getSupportedTokenInfo = (params: {
     checkIfTokenAddressExists(tokenAddress, token.address)
   );
   if (supportedOutToken) return supportedOutToken[0];
+};
+
+export const getSupportedTokenForCT = (tokenAddress: string) => {
+  const result = supportedTokensForCT
+    .map((token) => {
+      const supportedAddresses = Object.values(token.address);
+      return supportedAddresses.includes(tokenAddress) ? token : null;
+    })
+    .filter((item) => item !== null)[0];
+
+  return result;
 };

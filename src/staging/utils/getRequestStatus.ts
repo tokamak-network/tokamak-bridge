@@ -46,6 +46,14 @@ export const isRequestCanceled = (params: {
   return cancelCTs.some((cancelCT) => cancelCT._saleCount === saleCount);
 };
 
+export const isRequestCancelCompleted = (params: {
+  cancelCTs: T_FETCH_CancelCTs;
+  saleCount: string;
+}) => {
+  const { cancelCTs, saleCount } = params;
+  return cancelCTs.some((cancelCT) => cancelCT._saleCount === saleCount);
+};
+
 export const isRequestEdited = (params: {
   editCTs: T_FETCH_EditCTs;
   saleCount: string;
@@ -82,7 +90,14 @@ export const getRequestStatus = (params: {
     cancelCTs,
     saleCount: requestData._saleCount,
   });
-  if (isCanceled) return CT_REQUEST_CANCEL.Refund;
+  if (isCanceled) {
+    const isCompleted = isRequestCancelCompleted({
+      cancelCTs,
+      saleCount: requestData._saleCount,
+    });
+    if (isCompleted) return CT_REQUEST_CANCEL.Completed;
+    return CT_REQUEST_CANCEL.Refund;
+  }
 
   const isProvided = isRequestProvided({
     providerClaimCTs,
@@ -193,18 +208,13 @@ export const getRequestBlockTimestamp = (parmas: {
             request: requestBlockTimestamp,
             updateFee,
             cancelRequest: cancelBlockTimestamp,
-            completed: 0,
+            completed: cancelBlockTimestamp,
           };
-        const providerClaimCT = getTransaction_providerClaimCT({
-          providerClaimCTs,
-          saleCount: requestData._saleCount,
-        });
-        if (providerClaimCT)
-          return {
-            request: requestBlockTimestamp,
-            cancelRequest: 0,
-            completed: 0,
-          };
+        return {
+          request: requestBlockTimestamp,
+          cancelRequest: cancelBlockTimestamp,
+          completed: cancelBlockTimestamp,
+        };
       }
     }
   }

@@ -15,6 +15,7 @@ import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useAccount } from "wagmi";
 import { isRequestProvided } from "../utils/getRequestStatus";
+import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -179,12 +180,7 @@ export const useRequestData = (): {
         : SupportedChainId.SEPOLIA;
       const result: CrossTradeData[] = datas.map((item) => {
         //  will be refactor with split functions
-        const test = supportedTokensForCT
-          .map((token) => {
-            const supportedAddresses = Object.values(token.address);
-            return supportedAddresses.includes(item._l2token) ? token : null;
-          })
-          .filter((item) => item !== null)[0];
+        const tokenInfo = getSupportedTokenForCT(item._l2token);
         const isETH = isZeroAddress(item._l2token);
         const inToken = isETH
           ? {
@@ -196,10 +192,10 @@ export const useRequestData = (): {
             }
           : {
               address: item._l2token,
-              name: test?.tokenName as string,
-              symbol: test?.tokenSymbol as string,
+              name: tokenInfo?.tokenName as string,
+              symbol: tokenInfo?.tokenSymbol as string,
               amount: item._ctAmount,
-              decimals: test?.decimals,
+              decimals: tokenInfo?.decimals,
             };
 
         const outToken = isETH
@@ -212,16 +208,15 @@ export const useRequestData = (): {
             }
           : {
               address: item._l1token,
-              name: test?.tokenName as string,
-              symbol: test?.tokenSymbol as string,
+              name: tokenInfo?.tokenName as string,
+              symbol: tokenInfo?.tokenSymbol as string,
               amount: item._totalAmount,
-              decimals: test?.decimals,
+              decimals: tokenInfo?.decimals,
             };
 
         const profitAmount = BigInt(item._totalAmount) - BigInt(item._ctAmount);
         const profitRatio =
           (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
-        const providingUSD = 1;
         const isProvided = isRequestProvided({
           providerClaimCTs,
           saleCount: item._saleCount,
@@ -234,10 +229,10 @@ export const useRequestData = (): {
           inToken,
           outToken,
           profit: {
-            amount: formatUnits(profitAmount.toString(), test?.decimals),
-            symbol: isETH ? "ETH" : (test?.tokenSymbol as string),
+            amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
+            symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
             percent: profitRatio.toString(),
-            decimals: test?.decimals,
+            decimals: tokenInfo?.decimals,
           },
           blockTimestamps: Number(item.blockTimestamp),
           isActive: true,

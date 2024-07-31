@@ -18,11 +18,15 @@ import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
 import { isInCT_Provide } from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<boolean>(false);
+  const { subMode } = useGetMode();
+
+  console.log("ctConfirmModal", ctConfirmModal);
 
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
@@ -75,7 +79,7 @@ export default function CTModal() {
           <CloseButton onClick={onCloseCTConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          <WrongNetwork />
+          {isProvide && ctConfirmModal.type !== "history" && <WrongNetwork />}
           <CTConfirmDetail
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}

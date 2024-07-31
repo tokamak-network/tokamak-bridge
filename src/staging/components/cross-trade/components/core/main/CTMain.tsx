@@ -18,11 +18,6 @@ import Image from "next/image";
 import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
-import {
-  STATUS,
-  getStatus,
-} from "@/staging/components/cross-trade/utils/getStatus";
-import is from "date-fns/esm/locale/is/index.js";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 
 {

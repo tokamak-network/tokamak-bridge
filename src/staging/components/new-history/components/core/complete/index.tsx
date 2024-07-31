@@ -15,6 +15,7 @@ import {
   CT_REQUEST_HISTORY_blockTimestamps,
   isInCT_Provide,
   CT_PROVIDE_HISTORY_blockTimestamps,
+  isInCT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
@@ -36,6 +37,11 @@ export default function Complete(transaction: TransactionHistory) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;
     }
     if (isInCT_REQUEST(transactionData.status)) {
+      const blockTimestamps =
+        transactionData.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
+      return blockTimestamps.completed;
+    }
+    if (isInCT_REQUEST_CANCEL(transactionData.status)) {
       const blockTimestamps =
         transactionData.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
       return blockTimestamps.completed;
