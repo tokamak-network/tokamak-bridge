@@ -122,16 +122,17 @@ export default function Confirmation() {
           </Flex>
           <Text
             w={"254px"}
-            mt={"46px"}
-            px={isConfirming ? "32px" : ""}
+            mt={"42px"}
+            px={isConfirming ? "29px" : ""}
             textAlign={"center"}
             fontSize={14}
-            fontWeight={500}
+            lineHeight={"26px"}
+            // fontWeight={500}
           >
             {isClaimWaiting ? (
               "Please wait a few seconds for MetaMask popup to appear."
             ) : isConfirming ? (
-              "Please confirm transaction in your wallet"
+              "Please confirm txn. If is not updating check your wallet."
             ) : isConfirmed ? (
               <Link
                 href={`${blockExplorer}/tx/${txHash}`}
