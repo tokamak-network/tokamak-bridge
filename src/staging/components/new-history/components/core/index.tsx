@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { Flex, Box } from "@chakra-ui/react";
+import { Flex, Box, Text } from "@chakra-ui/react";
 import {
   Action,
   CT_ACTION,
@@ -14,6 +14,23 @@ import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 import { useRecoilValue } from "recoil";
 import { selectedTransactionCategory } from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
+import Image from "next/image";
+import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
+
+const NoAcitivityComponent = () => {
+  return (
+    <Flex
+      flexDir={"column"}
+      rowGap={"24px"}
+      alignItems={"center"}
+      justifyContent={"center"}
+      h={"640px"}
+    >
+      <Image src={NoAcitivity} alt={"noActivityIcon"}></Image>
+      <Text>No activity yet</Text>
+    </Flex>
+  );
+};
 
 const LoadingSpinner = () => {
   const components = new Array(5).fill(null).map((_, index) => (
@@ -65,9 +82,12 @@ export default function AccountHistoryNew() {
     provideHistory,
   ]);
 
+  console.log("historyData", historyData);
+
   return (
-    <Flex flexDirection="column" gap="2">
+    <Flex flexDirection="column" gap="2" h={"100%"}>
       {!historyData && <LoadingSpinner />}
+      {historyData?.length === 0 && <NoAcitivityComponent />}
       {historyData?.map((transaction, index) => {
         return (
           <Box
