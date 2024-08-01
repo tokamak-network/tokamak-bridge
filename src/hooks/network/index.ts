@@ -89,7 +89,7 @@ export default function useConnectedNetwork() {
 
       return supportedChain
         .filter((chain) => chain.isTestnet)
-        .filter((chain) => chain.chainId !== 111551118080);
+        .filter((chain) => chain.chainId !== 111551119090);
     }
   }, [chainInfo]);
 
