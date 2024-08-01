@@ -1,5 +1,5 @@
 import { TokenInfo } from "types/token/supportedToken";
-import { Box, Button, Flex, Text, TextProps, useTheme } from "@chakra-ui/react";
+import { Button, Flex, Text, useTheme } from "@chakra-ui/react";
 import { TokenSymbol } from "../image/TokenSymbol";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useRecoilState } from "recoil";
@@ -17,6 +17,8 @@ import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { ethers } from "ethers";
+import TokenTopLine from "./TokenTopLine";
+import TokenTitle from "./TokenTitle";
 
 type TokenCardSizeType = "small" | "medium" | "large";
 
@@ -41,73 +43,6 @@ type TokenCardProps = {
   requireCall?: boolean;
   watch?: boolean;
   isDark?: boolean;
-};
-
-const TopLine = (props: { mainSchemCol: string }) => {
-  return (
-    <>
-      <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"100px"}
-        top={"-83px"}
-        left={"-100px"}
-        bg={props.mainSchemCol}
-        transform={"rotate(-30deg)"}
-        opacity={0.15}
-      ></Box>
-      <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"4.63px"}
-        top={"15px"}
-        left={"-100px"}
-        bg={"rgba(255, 255, 255, 0.5)"}
-        transform={"rotate(-30deg)"}
-      ></Box>
-      <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"47px"}
-        top={"28px"}
-        left={"-100px"}
-        bg={`linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)`}
-        transform={"rotate(-30deg)"}
-      ></Box>
-      {/* <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"20px"}
-        top={"25px"}
-        left={"-100px"}
-        bg={`linear-gradient(180deg, #fff, props.mainSchemCol)`}
-        transform={"rotate(-30deg)"}
-      ></Box> */}
-    </>
-  );
-};
-
-const TokenTitle = (props: {
-  tokenName: String;
-  isName: boolean;
-  style?: TextProps;
-}) => {
-  const { style } = props;
-  return (
-    <Text
-      w={props.isName ? "110px" : "60px"}
-      fontSize={props.isName ? 18 : 14}
-      fontWeight={props.isName ? 700 : 400}
-      color={"#222222"}
-      textAlign={props.isName ? "left" : "right"}
-      lineHeight={props?.isName ? "20px" : ""}
-      zIndex={100}
-      {...props.style}
-    >
-      {/* {props.tokenName.toUpperCase()} */}
-      {props.tokenName}
-    </Text>
-  );
 };
 
 export default function TokenCard(props: TokenCardProps) {
@@ -252,8 +187,12 @@ export default function TokenCard(props: TokenCardProps) {
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
       {...style}
+      _hover={{ // add hover styles
+        boxShadow: "0px 0px 20px rgba(255, 255, 255, 0.25)",
+        transform: "scale(1.05) translateY(-50px)",
+      }}
     >
-      <TopLine mainSchemCol={tokenColorCode} />
+      <TokenTopLine mainSchemCol={tokenColorCode} />
       {pcView && (
         <Flex justifyContent={"space-between"} w={"100%"}>
           <TokenTitle

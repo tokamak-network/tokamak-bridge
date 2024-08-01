@@ -6,7 +6,7 @@ import { useInOutNetwork } from "@/hooks/network";
 import { ImageFileType } from "@/types/style/imageFileType";
 import TokenInput from "@/components/input/TokenInput";
 import useTokenModal from "@/hooks/modal/useTokenModal";
-import TokenCard from "@/components/card/TokenCard";
+import TokenCard from "@/components/token/TokenCard";
 import { useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import Setting from "@/components/Setting";

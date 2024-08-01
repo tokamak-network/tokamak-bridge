@@ -4,8 +4,7 @@ import {
   StackedCarousel,
 } from "react-stacked-center-carousel";
 import { useRecoilState, useRecoilValue } from "recoil";
-
-import TokenCard from "../TokenCard";
+import TokenCard from "@/componenets/token/TokenCard";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import { TokenInfo } from "@/types/token/supportedToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
