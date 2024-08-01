@@ -132,7 +132,7 @@ export default function Confirmation() {
             {isClaimWaiting ? (
               "Please wait a few seconds for MetaMask popup to appear."
             ) : isConfirming ? (
-              "Please confirm txn. If is not updating check your wallet."
+              "Please confirm txn. If is not updating, check your wallet."
             ) : isConfirmed ? (
               <Link
                 href={`${blockExplorer}/tx/${txHash}`}
