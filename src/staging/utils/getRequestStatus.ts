@@ -265,30 +265,6 @@ export const getRequestTransactionHash = (parmas: {
           completed: providerClaimCT.transactionHash,
         };
       }
-      case CT_REQUEST_CANCEL.Refund: {
-        if (isUpdatedFee) {
-          const editHistory = getEditCTTransaction({
-            editCTs,
-            saleCount: requestData._saleCount,
-          });
-          const updateFee = editHistory.map((edit) => edit.transactionHash);
-          return {
-            request: requestTransactionHash,
-            updateFee,
-            cancelRequest: "",
-          };
-        }
-        return {
-          request: requestTransactionHash,
-          cancelRequest: "",
-        };
-      }
-      case CT_REQUEST_CANCEL.Completed: {
-        return {
-          request: requestTransactionHash,
-          completed: "",
-        };
-      }
     }
   }
   if (isInCT_REQUEST_CANCEL(status)) {
@@ -298,6 +274,10 @@ export const getRequestTransactionHash = (parmas: {
     });
     switch (status) {
       case CT_REQUEST_CANCEL.Refund: {
+        const cancelCT = getCancelCTTransaction({
+          cancelCTs,
+          saleCount: requestData._saleCount,
+        });
         if (isUpdatedFee) {
           const editHistory = getEditCTTransaction({
             editCTs,
@@ -307,18 +287,36 @@ export const getRequestTransactionHash = (parmas: {
           return {
             request: requestTransactionHash,
             updateFee,
-            cancelRequest: "",
+            cancelRequest: cancelCT[0].transactionHash,
           };
         }
         return {
           request: requestTransactionHash,
-          cancelRequest: "",
+          cancelRequest: cancelCT[0].transactionHash,
         };
       }
       case CT_REQUEST_CANCEL.Completed: {
+        const cancelCT = getCancelCTTransaction({
+          cancelCTs,
+          saleCount: requestData._saleCount,
+        });
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) => edit.transactionHash);
+          return {
+            request: requestTransactionHash,
+            updateFee,
+            cancelRequest: cancelCT[0].transactionHash,
+            completed: cancelCT[0].transactionHash,
+          };
+        }
         return {
           request: requestTransactionHash,
-          completed: "",
+          cancelRequest: cancelCT[0].transactionHash,
+          completed: cancelCT[0].transactionHash,
         };
       }
     }

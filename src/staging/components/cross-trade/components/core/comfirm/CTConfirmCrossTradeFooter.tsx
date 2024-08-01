@@ -312,7 +312,7 @@ export default function CTConfirmCrossTradeFooter(
               <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
             ) : (
               <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                {`Approve ${inToken?.tokenSymbol}`}
+                {`${"Approve"} ${inToken?.tokenSymbol}`}
               </Text>
             )}
           </Button>

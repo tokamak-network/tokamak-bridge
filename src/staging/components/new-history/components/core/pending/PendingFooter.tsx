@@ -40,6 +40,7 @@ const getBlockTimestamp = (
   transaction: TransactionHistory,
   statusKey: HISTORY_TRANSACTION_STATUS,
   isUpdateFee: boolean,
+  index: number,
   hasMultipleUpdateFees?: boolean
 ) => {
   if (
@@ -58,7 +59,14 @@ const getBlockTimestamp = (
   if (isUpdateFee) {
     const blockTimestamps =
       transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
-    if (blockTimestamps.updateFee) return blockTimestamps.updateFee[0];
+    if (blockTimestamps.updateFee) {
+      if (hasMultipleUpdateFees) {
+        return index === 1
+          ? blockTimestamps.updateFee[blockTimestamps.updateFee.length - 2]
+          : blockTimestamps.updateFee[blockTimestamps.updateFee.length - 1];
+      }
+      return blockTimestamps.updateFee[0];
+    }
   }
 
   if (statusKey === CT_REQUEST_CANCEL.CancelRequest) {
@@ -114,6 +122,7 @@ export default function PendingFooter(params: {
             transactionData,
             statusKey,
             isUpdateFee,
+            index,
             hasMultipleUpdateFees
           )}
           openModal={openModal}

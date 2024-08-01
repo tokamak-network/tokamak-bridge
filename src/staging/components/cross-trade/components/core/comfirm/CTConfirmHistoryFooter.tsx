@@ -13,6 +13,7 @@ import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import { ErrorRollupComponent } from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
 
 interface TransactionItemProps {
   title: string;
@@ -25,8 +26,6 @@ interface TransactionItemProps {
 
 const TransactionItem = (props: TransactionItemProps) => {
   const { title, isActive, txHash, isError, blockTimestamp, txData } = props;
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const isOnL1 = title === "Wait For Receive";
   const isOnError = isActive && isError;
 
   const _title = useMemo(() => {
@@ -52,13 +51,28 @@ const TransactionItem = (props: TransactionItemProps) => {
     }
   }, [title]);
 
-  const chainId = isOnL1
-    ? isConnectedToMainNetwork
-      ? SupportedChainId.MAINNET
-      : SupportedChainId.SEPOLIA
-    : isConnectedToMainNetwork
-    ? SupportedChainId.TITAN
-    : SupportedChainId.TITAN_SEPOLIA;
+  const { ethereumExplorer, titanExplorer } = useBlockExplorer();
+
+  const blockExplorer = useMemo(() => {
+    switch (title) {
+      case "request":
+        return titanExplorer;
+      case "updateFee":
+        return ethereumExplorer;
+      case "completed":
+        return titanExplorer;
+      case "provide":
+        return ethereumExplorer;
+      case "return":
+        return titanExplorer;
+      case "refund":
+        return titanExplorer;
+      case "cancelRequest":
+        return ethereumExplorer;
+      default:
+        return undefined;
+    }
+  }, [ethereumExplorer, titanExplorer, title]);
 
   const needToShowTimeDisplay =
     (title === "refund" || title === "return") && isActive;
@@ -94,7 +108,7 @@ const TransactionItem = (props: TransactionItemProps) => {
           <Flex cursor={"pointer"}>
             <Link
               target="_blank"
-              href={`${BLOCKEXPLORER_CONSTANTS[chainId]}/tx/${txHash}`}
+              href={`${blockExplorer}/tx/${txHash}`}
               textDecor={"none"}
               _hover={{ textDecor: "none" }}
               display={"flex"}
