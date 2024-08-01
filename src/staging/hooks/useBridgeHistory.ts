@@ -46,7 +46,9 @@ import {
 } from "./useCrossTrade";
 import {
   getErrorMessage,
+  getProvideErrorMessage,
   getRequestBlockTimestamp,
+  getRequestErrorMessage,
   getRequestStatus,
   getRequestTransactionHash,
   getTokenInfo,
@@ -386,8 +388,6 @@ export const useRequestHistoryData = () => {
       const providerClaimCTs = l2Data.providerClaimCTs;
       const editCTs = l1Data.editCTs;
 
-      console.log("requestCTs", requestCTs);
-
       const trimedData = requestCTs.map((requestData) => {
         const {
           _l1token,
@@ -456,7 +456,7 @@ export const useRequestHistoryData = () => {
           L2_subgraphData: requestData,
           isUpdateFee,
           hasMultipleUpdateFees: hasMultipleUpdateFees(),
-          errorMessage: getErrorMessage(status, blockTimestamps),
+          errorMessage: getRequestErrorMessage(status, blockTimestamps),
         };
         return result;
       });
@@ -485,6 +485,9 @@ export const useProvideData = () => {
       const requestCTs = l2Data.requestCTs;
       const providerClaimCTs = l2Data.providerClaimCTs;
       const provideCTs = l1Data.provideCTs;
+
+      console.log("provideCTs", provideCTs);
+      console.log("providerClaimCTs", providerClaimCTs);
 
       const trimedData: CT_Provide_History[] = provideCTs.map((provideCT) => {
         const {
@@ -539,12 +542,15 @@ export const useProvideData = () => {
           outToken,
           transactionHashes,
           serviceFee,
+          errorMessage: getProvideErrorMessage(status, blockTimestamps),
         };
       });
 
       setProvideHistory(trimedData);
     }
   }, [l1Data, l2Data]);
+
+  console.log("provideHistory", provideHistory);
 
   return { provideHistory };
 };
@@ -554,8 +560,6 @@ export const useBridgeHistory = () => {
   const { withdrawHistory } = useWithdrawData();
   const { requestHistory } = useRequestHistoryData();
   const { provideHistory } = useProvideData();
-
-  console.log("requestHistory", requestHistory);
 
   const bridgeHistoryData = useMemo(() => {
     if (depositHistory && withdrawHistory) {

@@ -23,6 +23,7 @@ interface CTProviderProps {
   status: boolean;
   crossTradeData: CrossTradeData;
   subgraphData: T_FETCH_REQUEST_LIST_L2;
+  serviceFee: BigInt;
 }
 
 export default function CTProvider({
@@ -30,8 +31,14 @@ export default function CTProvider({
   crossTradeData,
   subgraphData,
 }: CTProviderProps) {
-  const { blockTimestamps, inNetwork, outNetwork, inToken, outToken } =
-    crossTradeData;
+  const {
+    blockTimestamps,
+    inNetwork,
+    outNetwork,
+    inToken,
+    outToken,
+    serviceFee,
+  } = crossTradeData;
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
   const openProvideModal = () =>
@@ -51,7 +58,7 @@ export default function CTProvider({
         transactionHashes: {
           provide: "",
         },
-        serviceFee: BigInt(0),
+        serviceFee,
       },
       isProvide: true,
       subgraphData,

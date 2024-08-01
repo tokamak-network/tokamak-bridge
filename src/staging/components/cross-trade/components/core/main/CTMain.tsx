@@ -212,6 +212,7 @@ export default function CTMain() {
                     status={status}
                     crossTradeData={item}
                     subgraphData={item.subgraphData}
+                    serviceFee={item.serviceFee}
                   />
                 </Td>
               </Tr>

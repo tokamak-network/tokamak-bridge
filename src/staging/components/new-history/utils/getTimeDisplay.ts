@@ -83,14 +83,13 @@ export function getRemainTime(transactionData: TransactionHistory): number {
     }
     case TransactionStatus.RETURN_NOT_COMPLETED: {
       const CT_Request_TransactionData = transactionData as CT_Provide_History;
-
       if (
         isInCT_Provide(CT_Request_TransactionData.status) &&
-        CT_Request_TransactionData.blockTimestamps.return
+        CT_Request_TransactionData.blockTimestamps.provide
       ) {
         const timeValue = calculateInitialTime(
           statusValue,
-          CT_Request_TransactionData.blockTimestamps.return,
+          CT_Request_TransactionData.blockTimestamps.provide,
           TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
           Boolean(transactionData.errorMessage)
         );

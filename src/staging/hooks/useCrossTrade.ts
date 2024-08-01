@@ -10,7 +10,6 @@ import {
 } from "@/graphql/queries/crossTrade";
 import { subgraphApolloClientsForCT } from "@/graphql/thegraph/apollosForCT";
 import { CrossTradeData } from "../types/crossTrade";
-import { supportedTokensForCT } from "@/types/token/supportedToken";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useAccount } from "wagmi";
@@ -240,6 +239,7 @@ export const useRequestData = (): {
           recevingUSD: 2000,
           subgraphData: item,
           isProvided,
+          serviceFee: BigInt(profitAmount.toString()),
         };
       });
       return result;

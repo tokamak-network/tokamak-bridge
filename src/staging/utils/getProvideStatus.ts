@@ -62,6 +62,7 @@ export const getProvideBlockTimestamp = (params: {
   }
   return {
     provide: Number(provideCT.blockTimestamp),
+    return: Number(provideCT.blockTimestamp + 500),
   };
 };
 
@@ -81,5 +82,6 @@ export const getProvideTransactionHash = (params: {
 
   return {
     provide: provideCT.transactionHash,
+    return: "",
   };
 };

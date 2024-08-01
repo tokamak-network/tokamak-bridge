@@ -8,12 +8,15 @@ import {
   T_ProviderClaimCTs,
 } from "../hooks/useCrossTrade";
 import {
+  CT_PROVIDE,
+  CT_PROVIDE_HISTORY_blockTimestamps,
   CT_REQUEST,
   CT_REQUEST_CANCEL,
   CT_REQUEST_HISTORY_blockTimestamps,
   CT_REQUEST_HISTORY_transactionHashes,
   CT_REQUEST_STATUSES,
   ERROR_CODE,
+  isInCT_Provide,
   isInCT_REQUEST,
   isInCT_REQUEST_CANCEL,
 } from "../types/transaction";
@@ -346,15 +349,38 @@ export const getTokenInfo = (parmas: {
   };
 };
 
-export const getErrorMessage = (
+export const getRequestErrorMessage = (
   status: CT_REQUEST_STATUSES,
   blockTimestamp: CT_REQUEST_HISTORY_blockTimestamps
 ) => {
   if (isInCT_REQUEST_CANCEL(status)) {
-    if (blockTimestamp.cancelRequest) {
+    const _blockTimestamp =
+      blockTimestamp as CT_REQUEST_HISTORY_blockTimestamps;
+    if (_blockTimestamp.cancelRequest) {
       const isPassedCancelWaitingTime =
-        blockTimestamp.cancelRequest < Math.floor(Date.now() / 1000);
-      return ERROR_CODE.CT_REFUND_NOT_COMPLETED;
+        _blockTimestamp.cancelRequest < Math.floor(Date.now() / 1000);
+      return isPassedCancelWaitingTime
+        ? ERROR_CODE.CT_REFUND_NOT_COMPLETED
+        : undefined;
+    }
+  }
+
+  return undefined;
+};
+
+export const getProvideErrorMessage = (
+  status: CT_PROVIDE,
+  blockTimestamp: CT_PROVIDE_HISTORY_blockTimestamps
+) => {
+  if (isInCT_Provide(status)) {
+    const _blockTimestamp =
+      blockTimestamp as CT_PROVIDE_HISTORY_blockTimestamps;
+    if (_blockTimestamp.provide) {
+      const isPassedProvideWaitingTime =
+        _blockTimestamp.provide + 500 < Math.floor(Date.now() / 1000);
+      return isPassedProvideWaitingTime
+        ? ERROR_CODE.CT_LIQUIDITY_NOT_RETURNED
+        : undefined;
     }
   }
   return undefined;

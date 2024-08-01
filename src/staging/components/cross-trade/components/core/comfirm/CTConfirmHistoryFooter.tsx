@@ -183,7 +183,11 @@ export default function CTConfirmHistoryFooter(props: {
           const isActive = isCompleted ? false : lastIndex === index;
           //@ts-ignore
           const blockTimestamp = txData.blockTimestamps[key];
-          if ((hash === "" || hash === undefined) && key !== "waitForReceive")
+          if (
+            (hash === "" || hash === undefined) &&
+            key !== "waitForReceive" &&
+            key !== "return"
+          )
             return null;
           if (typeof hash === "string") {
             return (

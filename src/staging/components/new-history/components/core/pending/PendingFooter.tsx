@@ -10,6 +10,8 @@ import {
   CT_REQUEST,
   CT_Request_History,
   CT_REQUEST_CANCEL,
+  CT_PROVIDE,
+  CT_PROVIDE_HISTORY_blockTimestamps,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { STATUS_CONFIG } from "@/staging/constants/status";
@@ -85,6 +87,18 @@ const getBlockTimestamp = (
     if (blockTimestamps.cancelRequest) return blockTimestamps.cancelRequest;
   }
 
+  if (statusKey === CT_PROVIDE.Provide) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_PROVIDE_HISTORY_blockTimestamps;
+    if (blockTimestamps.provide) return blockTimestamps.provide;
+  }
+
+  if (statusKey === CT_PROVIDE.Return) {
+    const blockTimestamps =
+      transaction.blockTimestamps as CT_PROVIDE_HISTORY_blockTimestamps;
+    if (blockTimestamps.return) return blockTimestamps.return;
+  }
+
   return undefined;
 };
 
@@ -113,21 +127,23 @@ export default function PendingFooter(params: {
 
   return (
     <>
-      {statuses.map((statusKey, index) => (
-        <StatusComponent
-          key={index}
-          label={statusKey}
-          transactionData={transactionData}
-          blockTimestamp={getBlockTimestamp(
-            transactionData,
-            statusKey,
-            isUpdateFee,
-            index,
-            hasMultipleUpdateFees
-          )}
-          openModal={openModal}
-        />
-      ))}
+      {statuses.map((statusKey, index) => {
+        return (
+          <StatusComponent
+            key={index}
+            label={statusKey}
+            transactionData={transactionData}
+            blockTimestamp={getBlockTimestamp(
+              transactionData,
+              statusKey,
+              isUpdateFee,
+              index,
+              hasMultipleUpdateFees
+            )}
+            openModal={openModal}
+          />
+        );
+      })}
     </>
   );
 }
