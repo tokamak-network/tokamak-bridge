@@ -274,8 +274,8 @@ export const useRequestData = (): {
           isCanceled,
         };
       });
-      // const trimedResult = result.filter((item) => item.isCanceled === false);
-      const trimedResult = result;
+      const trimedResult = result.filter((item) => item.isCanceled === false);
+      // const trimedResult = result;
       return trimedResult;
     }
 
