@@ -13,7 +13,10 @@ import { CrossTradeData } from "../types/crossTrade";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useAccount } from "wagmi";
-import { isRequestProvided } from "../utils/getRequestStatus";
+import {
+  isRequestCanceled,
+  isRequestProvided,
+} from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 
 const getApolloClient = (chainId: number) => {
@@ -166,12 +169,19 @@ export const useRequestData = (): {
 } => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { data, error, loading } = useCrossTradeData_L2({ isHistory: false });
+  const {
+    data: _l1Data,
+    error: _l1Error,
+    loading: _l1Loading,
+  } = useCrossTradeData_L1({ isHistory: false });
 
   const requestList = useMemo(() => {
     if (error || loading) return null;
     if (data) {
       const datas = data.requestCTs;
       const providerClaimCTs = data.providerClaimCTs;
+      const cancelCTs = data.cancelCTs;
+
       const inNetwork = isConnectedToMainNetwork
         ? SupportedChainId.TITAN
         : SupportedChainId.TITAN_SEPOLIA;
@@ -182,6 +192,11 @@ export const useRequestData = (): {
         //  will be refactor with split functions
         const tokenInfo = getSupportedTokenForCT(item._l2token);
         const isETH = isZeroAddress(item._l2token);
+
+        const isCanceled = isRequestCanceled({
+          cancelCTs,
+          saleCount: item._saleCount,
+        });
 
         const inToken = isETH
           ? {
@@ -242,9 +257,11 @@ export const useRequestData = (): {
           subgraphData: item,
           isProvided,
           serviceFee: BigInt(profitAmount.toString()),
+          isCanceled,
         };
       });
-      return result;
+      const trimedResult = result.filter((item) => item.isCanceled === false);
+      return trimedResult;
     }
 
     return null;
