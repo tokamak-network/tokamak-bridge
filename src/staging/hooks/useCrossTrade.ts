@@ -225,15 +225,15 @@ export const useRequestData = (): {
               address: item._l1token,
               name: "ETH",
               symbol: "ETH",
-              amount: ctAmount,
+              amount: ctAmount.toString(),
               decimals: 18,
             }
           : {
               address: item._l1token,
               name: tokenInfo?.tokenName as string,
               symbol: tokenInfo?.tokenSymbol as string,
-              amount: ctAmount,
-              decimals: tokenInfo?.decimals,
+              amount: ctAmount.toString(),
+              decimals: tokenInfo?.decimals as number,
             };
 
         const outToken = isETH
@@ -249,7 +249,7 @@ export const useRequestData = (): {
               name: tokenInfo?.tokenName as string,
               symbol: tokenInfo?.tokenSymbol as string,
               amount: item._totalAmount,
-              decimals: tokenInfo?.decimals,
+              decimals: tokenInfo?.decimals as number,
             };
 
         return {
@@ -262,7 +262,7 @@ export const useRequestData = (): {
             amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
             symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
             percent: profitRatio.toString(),
-            decimals: tokenInfo?.decimals,
+            decimals: tokenInfo?.decimals as number,
           },
           blockTimestamps: Number(item.blockTimestamp),
           isActive: true,

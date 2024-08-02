@@ -347,12 +347,12 @@ export const getTokenInfo = (parmas: {
 
   return {
     address: isETH ? ZERO_ADDRESS : requestData._l1token,
-    name: isETH ? "ETH" : (tokenInfo.tokenName as string),
-    symbol: isETH ? "ETH" : (tokenInfo.tokenSymbol as string),
+    name: isETH ? "ETH" : (tokenInfo?.tokenName as string),
+    symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
     amount: ctAmount
       ? _editedctAmount ?? requestData._ctAmount
       : requestData._totalAmount,
-    decimals: isETH ? 18 : tokenInfo.decimals,
+    decimals: isETH ? 18 : (tokenInfo?.decimals as number),
   };
 };
 

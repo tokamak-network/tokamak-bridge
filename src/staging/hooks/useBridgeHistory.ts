@@ -471,7 +471,8 @@ export const useRequestHistoryData = () => {
         return result;
       });
 
-      setRequestHistory(trimedData.filter((data) => data !== null));
+      const result = trimedData.filter((data) => data !== null);
+      setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);
 
