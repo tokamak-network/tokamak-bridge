@@ -5,8 +5,6 @@ import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { CT_History } from "@/staging/types/transaction";
-import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
-import { useCallback } from "react";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import useConnectedNetwork from "@/hooks/network";
 

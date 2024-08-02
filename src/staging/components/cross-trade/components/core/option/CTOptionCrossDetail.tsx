@@ -18,6 +18,8 @@ import {
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useMemo } from "react";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import commafy from "@/utils/trim/commafy";
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
   handleButtonMainClick: (value: ButtonTypeMain) => void;
@@ -52,6 +54,11 @@ export default function CTOptionCrossDetail(
     }
     return inToken?.parsedAmount;
   }, [props.inputValue, inToken]);
+
+  const { tokenPriceWithAmount } = useGetMarketPrice({
+    amount: receiveTokenValue as string,
+    tokenName: inToken?.tokenName as string,
+  });
 
   return (
     <Flex
@@ -88,7 +95,11 @@ export default function CTOptionCrossDetail(
             {`${formatNumber(receiveTokenValue)} ${inToken?.tokenSymbol}`}
           </Text>
           <Text fontSize={10} color={"#DB00FF"}>
-            $1,1193.10
+            {`$${
+              Number(tokenPriceWithAmount) < 0
+                ? 0
+                : commafy(tokenPriceWithAmount)
+            }`}
           </Text>
         </Box>
         <Box mt={"12px"}>

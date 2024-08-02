@@ -5,11 +5,12 @@ import CTDownArrow from "assets/icons/ct/ctDownArrow.svg";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import CTUsdcSymbol from "assets/icons/ct/ctUsdcSymbol.svg";
 import { CTInputProps } from "@/staging/components/cross-trade/types";
-import { CT_History } from "@/staging/types/transaction";
+import { CT_History, TransactionToken } from "@/staging/types/transaction";
 import { useMemo } from "react";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 enum FeeDetailType {
   Receive,
@@ -19,10 +20,36 @@ enum FeeDetailType {
 interface FeeDetailProps {
   type: FeeDetailType;
   title: string;
-  inputValue: boolean;
+  inputValue: string;
+  tokenInfo?: TransactionToken;
 }
 
-const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
+const FeeDetail: React.FC<FeeDetailProps> = ({
+  type,
+  title,
+  inputValue,
+  tokenInfo,
+}) => {
+  const receivedAmount = useMemo(() => {
+    if (inputValue && tokenInfo) {
+      const parsedTotalAmount = formatUnits(
+        tokenInfo.amount,
+        tokenInfo.decimals
+      );
+      return Number(parsedTotalAmount) - Number(inputValue);
+    }
+  }, [inputValue, tokenInfo?.amount]);
+
+  const receviedRatio = useMemo(() => {
+    if (inputValue && tokenInfo) {
+      const parsedTotalAmount = formatUnits(
+        tokenInfo.amount,
+        tokenInfo.decimals
+      );
+      return (Number(receivedAmount) / Number(parsedTotalAmount)) * 100;
+    }
+  }, [receivedAmount, tokenInfo]);
+
   return (
     <Flex
       justifyContent="space-between"
@@ -44,7 +71,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
             fontWeight={600}
             lineHeight={"18px"}
           >
-            {inputValue ? "9.998" : "-"} USDC
+            {formatNumber(receivedAmount) ?? "-"} {tokenInfo?.symbol}
           </Text>
           <Flex
             ml={"6px"}
@@ -59,7 +86,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({ type, title, inputValue }) => {
               fontWeight={500}
               lineHeight={"18px"}
             >
-              {inputValue ? "98.31" : "-"}
+              {formatNumber(receviedRatio) ?? "-"}
             </Text>
             <Text
               color={"#FFFFFF"}
@@ -116,6 +143,8 @@ export default function CTUpdateFeeDetail(
   const currentServiceFee = useMemo(() => {
     return formatUnits(txData.serviceFee.toString(), txData.inToken.decimals);
   }, [txData.serviceFee, txData.inToken]);
+
+  console.log("inputValue", props.inputValue);
 
   return (
     <>
@@ -178,12 +207,13 @@ export default function CTUpdateFeeDetail(
         <FeeDetail
           type={FeeDetailType.Receive}
           title={"Receive"}
-          inputValue={inputValueCheck}
+          inputValue={props.inputValue}
+          tokenInfo={txData.inToken}
         />
         <FeeDetail
           type={FeeDetailType.Network}
           title={"Network fee"}
-          inputValue={inputValueCheck}
+          inputValue={props.inputValue}
         />
       </Box>
     </>

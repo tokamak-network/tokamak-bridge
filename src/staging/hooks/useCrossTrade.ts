@@ -96,6 +96,7 @@ export type T_FETCH_ProviderClaimCTs = T_ProviderClaimCTs[];
 export type T_EditCTs = {
   _saleCount: string;
   _requester: string;
+  _ctAmount: string;
   blockTimestamp: string;
   blockNumber: string;
   transactionHash: string;

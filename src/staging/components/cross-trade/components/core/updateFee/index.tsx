@@ -27,6 +27,7 @@ import { toParseNumber } from "@/utils/trim/convertNumber";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
+import { BigNumber } from "ethers";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
@@ -125,12 +126,13 @@ export default function CTFeeUpdateModal() {
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
+        const _editedctAmount = BigNumber.from(_totalAmount).sub(editAmount);
         const params = [
           _l1token,
           _l2token,
           _totalAmount,
           _ctAmount,
-          editAmount,
+          _editedctAmount,
           _saleCount,
           _l2chainId,
           _hashValue,

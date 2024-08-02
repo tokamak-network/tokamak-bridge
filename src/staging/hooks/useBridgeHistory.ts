@@ -45,7 +45,7 @@ import {
   useCrossTradeData_L2,
 } from "./useCrossTrade";
 import {
-  getErrorMessage,
+  getEditCTTransaction,
   getProvideErrorMessage,
   getRequestBlockTimestamp,
   getRequestErrorMessage,
@@ -54,7 +54,6 @@ import {
   getTokenInfo,
   isRequestEdited,
 } from "../utils/getRequestStatus";
-import { sub } from "date-fns";
 import {
   getL2TransactionsBySaleCount,
   getProvideBlockTimestamp,
@@ -412,6 +411,11 @@ export const useRequestHistoryData = () => {
           editCTs,
           saleCount: _saleCount,
         });
+        const editCT = getEditCTTransaction({
+          editCTs,
+          saleCount: _saleCount,
+        })[0];
+        console.log("editCT", editCT);
 
         const blockTimestamps = getRequestBlockTimestamp({
           status,
@@ -421,7 +425,11 @@ export const useRequestHistoryData = () => {
           editCTs,
         });
         const inToken = getTokenInfo({ requestData });
-        const outToken = getTokenInfo({ requestData, ctAmount: true });
+        const outToken = getTokenInfo({
+          requestData,
+          ctAmount: true,
+          _editedctAmount: isUpdateFee ? editCT._ctAmount : undefined,
+        });
         const transactionHashes = getRequestTransactionHash({
           status,
           requestData,
@@ -429,7 +437,10 @@ export const useRequestHistoryData = () => {
           providerClaimCTs,
           editCTs,
         });
-        const serviceFee = BigInt(_totalAmount) - BigInt(_ctAmount);
+        const ctAmount = isUpdateFee
+          ? BigInt(editCT._ctAmount)
+          : BigInt(_ctAmount);
+        const serviceFee = BigInt(_totalAmount) - ctAmount;
 
         if (!blockTimestamps || !transactionHashes) return null;
 

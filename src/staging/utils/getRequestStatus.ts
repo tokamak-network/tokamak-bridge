@@ -71,7 +71,9 @@ export const getEditCTTransaction = (params: {
   saleCount: string;
 }) => {
   const { editCTs, saleCount } = params;
-  return editCTs.filter((editCT) => editCT._saleCount === saleCount);
+  return editCTs
+    .filter((editCT) => editCT._saleCount === saleCount)
+    .sort((a: any, b: any) => b.blockNumber - a.blockNumber);
 };
 
 export const getCancelCTTransaction = (params: {
@@ -331,6 +333,7 @@ export const getRequestTransactionHash = (parmas: {
 export const getTokenInfo = (parmas: {
   requestData: T_FETCH_REQUEST_LIST_L2 | T_provideCTs_L1 | T_ProviderClaimCTs;
   ctAmount?: boolean;
+  _editedctAmount?: string;
 }): {
   address: string;
   name: string;
@@ -338,7 +341,7 @@ export const getTokenInfo = (parmas: {
   amount: string;
   decimals: number;
 } => {
-  const { requestData, ctAmount } = parmas;
+  const { requestData, ctAmount, _editedctAmount } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
   const tokenInfo = getSupportedTokenForCT(requestData._l2token);
 
@@ -346,7 +349,9 @@ export const getTokenInfo = (parmas: {
     address: isETH ? ZERO_ADDRESS : requestData._l1token,
     name: isETH ? "ETH" : (tokenInfo.tokenName as string),
     symbol: isETH ? "ETH" : (tokenInfo.tokenSymbol as string),
-    amount: ctAmount ? requestData._ctAmount : requestData._totalAmount,
+    amount: ctAmount
+      ? _editedctAmount ?? requestData._ctAmount
+      : requestData._totalAmount,
     decimals: isETH ? 18 : tokenInfo.decimals,
   };
 };
