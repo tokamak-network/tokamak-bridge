@@ -486,9 +486,6 @@ export const useProvideData = () => {
       const providerClaimCTs = l2Data.providerClaimCTs;
       const provideCTs = l1Data.provideCTs;
 
-      console.log("provideCTs", provideCTs);
-      console.log("providerClaimCTs", providerClaimCTs);
-
       const trimedData: CT_Provide_History[] = provideCTs.map((provideCT) => {
         const {
           _l1token,

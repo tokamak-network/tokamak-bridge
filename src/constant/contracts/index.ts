@@ -1,6 +1,9 @@
 //Phase1 contract datas
 //https://www.notion.so/onther/Phase1-deploy-contract-interface-b48f4c779c7043df971ddc3dac783ec8
 
+import { ZERO } from "@/utils/pool/internalConstants";
+import { ZERO_ADDRESS } from "../misc";
+
 //Titan Sepolia
 //https://www.notion.so/onther/Titan-Sepolia-on-office-295bbf4271034a0faac7ab25875b4410
 
@@ -132,6 +135,7 @@ const TOKAMAK_CONTRACTS: L2_CONTRACT_ADDRESSES = {
 
 const THANOS_SEPOLIA_CONTRACTS = {
   L2Bridge: "0x4200000000000000000000000000000000000010",
+  TON_ADDRESS: ZERO_ADDRESS,
   TOS_ADDRESS: "0xec32659a42904a96d415468d3a213e57b13ee5c0",
   AURA_ADDRESS: "0x69a3414b4a44819b55c00ab3eca9c24411ceae31",
   DOC_ADDRESS: "0xe56d096c4d626f31769a5b11bc9e42a95a1cfb1a",

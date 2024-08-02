@@ -1,4 +1,3 @@
-import { is } from "date-fns/esm/locale/is/index.js";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {

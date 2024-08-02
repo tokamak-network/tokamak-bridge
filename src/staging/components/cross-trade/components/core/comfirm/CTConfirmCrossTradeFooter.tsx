@@ -131,18 +131,17 @@ export default function CTConfirmCrossTradeFooter(
             value: BigInt(subgraphData._ctAmount),
           });
         }
-        console.log(
-          "--provideCT params--",
-          subgraphData._l1token,
-          subgraphData._l2token,
-          subgraphData._requester,
-          subgraphData._totalAmount,
-          subgraphData._ctAmount,
-          subgraphData._saleCount,
-          subgraphData._l2chainId,
-          500000,
-          subgraphData._hashValue
-        );
+        console.log("--provideCT params--", {
+          _l1token: subgraphData._l1token,
+          _l2token: subgraphData._l2token,
+          _requester: subgraphData._requester,
+          _totalAmount: subgraphData._totalAmount,
+          _ctAmount: subgraphData._ctAmount,
+          _saleCount: subgraphData._saleCount,
+          _l2chainId: subgraphData._l2chainId,
+          _minGasLimit: 500000,
+          _hashValue: subgraphData._hashValue,
+        });
         return provideCT({
           args: [
             subgraphData._l1token,

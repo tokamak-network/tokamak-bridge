@@ -6,6 +6,7 @@ import {
   THANOS_SEPOLIA_CONTRACTS,
   TITAN_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
+import { ZERO_ADDRESS } from "@/constant/misc";
 
 type SupportedMainTokenNames =
   | "Tokamak Network Token"
@@ -51,7 +52,7 @@ export const supportedTokens: SupportedTokens_T = [
     address: {
       MAINNET: "",
       TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
-      SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+      SEPOLIA: "",
       THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
       TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
     },
@@ -196,3 +197,123 @@ export const supportedTokensForCT = supportedTokens.filter(
     token.tokenSymbol === "USDC" ||
     token.tokenSymbol === "USDT"
 );
+
+// const supportedTokensForCt: {
+//   [key in SupportedChainId]: {
+//     [token: string]: {
+//       address: string;
+//       decimals: number;
+//     };
+//   };
+// } = {
+//   [SupportedChainId.MAINNET]: {
+//     TON: {
+//       address: MAINNET_CONTRACTS.TON_ADDRESS,
+//       decimals: 18,
+//     },
+//     USDC: {
+//       address: MAINNET_CONTRACTS.USDC_ADDRESS,
+//       decimals: 6,
+//     },
+//     USDT: {
+//       address: MAINNET_CONTRACTS.USDT_ADDRESS,
+//       decimals: 6,
+//     },
+//     ETH: {
+//       address: ZERO_ADDRESS,
+//       decimals: 18,
+//     },
+//     TOS: {
+//       address: MAINNET_CONTRACTS.TOS_ADDRESS,
+//       decimals: 18,
+//     },
+//   },
+//   [SupportedChainId.SEPOLIA]: {
+//     TON: {
+//       address: SEPOLIA_CONTRACTS.TON_ADDRESS,
+//       decimals: 18,
+//     },
+//     USDC: {
+//       address: SEPOLIA_CONTRACTS.USDC_ADDRESS,
+//       decimals: 6,
+//     },
+//     USDT: {
+//       address: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+//       decimals: 6,
+//     },
+//     ETH: {
+//       address: "",
+//       decimals: 18,
+//     },
+//     TOS: {
+//       address: SEPOLIA_CONTRACTS.TOS_ADDRESS,
+//       decimals: 18,
+//     },
+//   },
+//   [SupportedChainId.TITAN]: {
+//     TON: {
+//       address: TOKAMAK_CONTRACTS.TON_ADDRESS,
+//       decimals: 18,
+//     },
+//     USDC: {
+//       address: TOKAMAK_CONTRACTS.USDC_ADDRESS,
+//       decimals: 6,
+//     },
+//     USDT: {
+//       address: TOKAMAK_CONTRACTS.USDT_ADDRESS,
+//       decimals: 6,
+//     },
+//     ETH: {
+//       address: TOKAMAK_CONTRACTS.OVM_ETH,
+//       decimals: 18,
+//     },
+//     TOS: {
+//       address: TOKAMAK_CONTRACTS.TOS_ADDRESS,
+//       decimals: 18,
+//     },
+//   },
+//   [SupportedChainId.TITAN_SEPOLIA]: {
+//     TON: {
+//       address: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
+//       decimals: 18,
+//     },
+//     USDC: {
+//       address: TITAN_SEPOLIA_CONTRACTS.USDC_ADDRESS,
+//       decimals: 6,
+//     },
+//     USDT: {
+//       address: TITAN_SEPOLIA_CONTRACTS.USDT_ADDRESS,
+//       decimals: 6,
+//     },
+//     ETH: {
+//       address: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
+//       decimals: 18,
+//     },
+//     TOS: {
+//       address: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
+//       decimals: 18,
+//     },
+//   },
+//   [SupportedChainId.THANOS_SEPOLIA]: {
+//     TON: {
+//       address: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
+//       decimals: 18,
+//     },
+//     USDC: {
+//       address: THANOS_SEPOLIA_CONTRACTS.USDC_ADDRESS,
+//       decimals: 6,
+//     },
+//     USDT: {
+//       address: THANOS_SEPOLIA_CONTRACTS.USDT_ADDRESS,
+//       decimals: 6,
+//     },
+//     ETH: {
+//       address: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+//       decimals: 18,
+//     },
+//     TOS: {
+//       address: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
+//       decimals: 18,
+//     },
+//   },
+// };

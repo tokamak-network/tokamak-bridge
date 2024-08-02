@@ -33,6 +33,7 @@ import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfi
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
+import { actionAsyncStorage } from "next/dist/client/components/action-async-storage";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -54,9 +55,6 @@ export default function CTOptionModal() {
 
   // CTOptionInput 관련 state 및 function Start @Robert
   const [serviceFee, setServiceFee] = useState<string | undefined>(undefined);
-  const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
-    ""
-  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -64,27 +62,6 @@ export default function CTOptionModal() {
     setServiceFee(value);
     // }
   };
-
-  // input이 변경될 때, 값이 있으면 rightElement를 보여준다.
-  // 현재 1일때 red warning, 2일때, yellow warning
-  useEffect(() => {
-    switch (serviceFee) {
-      case "1":
-        setInputWarningCheck(WarningType.Critical);
-        break;
-      case "2":
-        setInputWarningCheck(WarningType.Normal);
-        break;
-      default:
-        setInputWarningCheck("");
-    }
-  }, [serviceFee]);
-
-  const shouldShowEnterAmount =
-    activeSubButtonValue === ButtonTypeSub.Advanced &&
-    (serviceFee === "" ||
-      serviceFee === undefined ||
-      inputWarningCheck === WarningType.Critical);
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
@@ -140,10 +117,34 @@ export default function CTOptionModal() {
           transactionHashes: {
             request: "",
           },
+          isUpdateFee: false,
         },
       });
     }
   };
+
+  const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
+    ""
+  );
+  useEffect(() => {
+    if (inToken?.parsedAmount) {
+      const serviceFeeIsNotOver =
+        Number(inToken.parsedAmount) - Number(serviceFee);
+      if (serviceFeeIsNotOver < 0)
+        return setInputWarningCheck(WarningType.Critical);
+      return setInputWarningCheck("");
+    }
+    // switch (serviceFee) {
+    //   case "1":
+    //     setInputWarningCheck(WarningType.Critical);
+    //     break;
+    //   case "2":
+    //     setInputWarningCheck(WarningType.Normal);
+    //     break;
+    //   default:
+    //     setInputWarningCheck("");
+    // }
+  }, [serviceFee, inToken]);
 
   useEffect(() => {
     if (ctOptionModal) {
@@ -152,6 +153,13 @@ export default function CTOptionModal() {
       setActiveSubButtonValue(ButtonTypeSub.Recommend);
     }
   }, [ctOptionModal]);
+
+  const shouldShowEnterAmount =
+    activeSubButtonValue === ButtonTypeSub.Recommend ||
+    (activeSubButtonValue === ButtonTypeSub.Advanced &&
+      (serviceFee === "" ||
+        serviceFee === undefined ||
+        inputWarningCheck === WarningType.Critical));
 
   return (
     <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>

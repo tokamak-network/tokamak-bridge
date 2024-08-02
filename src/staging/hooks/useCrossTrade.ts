@@ -181,6 +181,7 @@ export const useRequestData = (): {
         //  will be refactor with split functions
         const tokenInfo = getSupportedTokenForCT(item._l2token);
         const isETH = isZeroAddress(item._l2token);
+
         const inToken = isETH
           ? {
               address: item._l2token,

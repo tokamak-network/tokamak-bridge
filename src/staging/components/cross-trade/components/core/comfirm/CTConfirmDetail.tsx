@@ -259,7 +259,7 @@ export default function CTConfirmDetail({
         {!isCanceled && (updateFee || isProvide) && (
           <FeeDetail
             title="Service fee"
-            mainAmount={`${serviceFee} ${sendTokenInfo.tokenSymbol}`}
+            mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}
             subAmount={`$${tokenPriceWithAmount}`}
             modalType={modalType}
             onPencilClick={onPencilClick}

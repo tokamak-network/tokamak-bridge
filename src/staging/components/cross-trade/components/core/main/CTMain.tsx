@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useMemo } from "react";
 import {
   Flex,
   Text,
@@ -38,6 +38,14 @@ export default function CTMain() {
   );
 
   const { requestList } = useRequestData();
+
+  const [data, setData] = useState<CrossTradeData[]>([]);
+
+  useEffect(() => {
+    if (requestList) {
+      setData(requestList);
+    }
+  }, [requestList]);
 
   // const handleScroll = useCallback(() => {
   //   if (
@@ -180,7 +188,7 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {requestList?.map((item, index) => {
+          {data?.map((item, index) => {
             //Decided not to show the request is already done with providing liquidity because countdown does not needed.
             if (item.isProvided) return null;
             // const status = getStatus(item);

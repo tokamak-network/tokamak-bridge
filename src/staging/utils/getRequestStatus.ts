@@ -22,6 +22,7 @@ import {
 } from "../types/transaction";
 import { ZERO_ADDRESS } from "@/constant/misc";
 import { is } from "date-fns/locale";
+import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 
 export const isRequestProvided = (params: {
   providerClaimCTs: T_FETCH_ProviderClaimCTs;
@@ -339,13 +340,14 @@ export const getTokenInfo = (parmas: {
 } => {
   const { requestData, ctAmount } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
+  const tokenInfo = getSupportedTokenForCT(requestData._l2token);
 
   return {
     address: isETH ? ZERO_ADDRESS : requestData._l1token,
-    name: isETH ? "ETH" : "TON",
-    symbol: isETH ? "ETH" : "TON",
+    name: isETH ? "ETH" : (tokenInfo.tokenName as string),
+    symbol: isETH ? "ETH" : (tokenInfo.tokenSymbol as string),
     amount: ctAmount ? requestData._ctAmount : requestData._totalAmount,
-    decimals: 18,
+    decimals: isETH ? 18 : tokenInfo.decimals,
   };
 };
 

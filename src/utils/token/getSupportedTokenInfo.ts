@@ -30,7 +30,16 @@ export const getSupportedTokenForCT = (tokenAddress: string) => {
   const result = supportedTokensForCT
     .map((token) => {
       const supportedAddresses = Object.values(token.address);
-      return supportedAddresses.includes(tokenAddress) ? token : null;
+      const isIncluded = supportedAddresses.some(
+        (address) => address?.toLowerCase() === tokenAddress.toLowerCase()
+      );
+
+      //need to refactor index later
+      //it's only for test demo now
+      return isIncluded &&
+        supportedAddresses[4]?.toLocaleLowerCase() === tokenAddress
+        ? token
+        : null;
     })
     .filter((item) => item !== null)[0];
 
