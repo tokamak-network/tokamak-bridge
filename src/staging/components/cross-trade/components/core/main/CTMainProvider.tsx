@@ -10,14 +10,16 @@ import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfi
 import {
   HISTORY_SORT,
   CT_ACTION,
-  CT_REQUEST,
   CT_PROVIDE,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { CrossTradeData } from "@/staging/types/crossTrade";
-
+import { useAccount } from "wagmi";
+import { useCallback, useMemo } from "react";
+import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 interface CTProviderProps {
   // status: number;
   status: boolean;
@@ -64,6 +66,31 @@ export default function CTProvider({
       subgraphData,
     });
 
+  const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
+  const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
+  const openUpdateModal = useCallback(() => {
+    onCloseCTConfirmModal();
+    // onOpenCTUpdateFeeModal({
+    //     category: HISTORY_SORT.CROSS_TRADE,
+    //     action: CT_ACTION.PROVIDE,
+    //     status: CT_PROVIDE.Provide,
+    //     inNetwork,
+    //     outNetwork,
+    //     inToken,
+    //     outToken,
+    //     blockTimestamps: {
+    //       provide: 0,
+    //     },
+    //     transactionHashes: {
+    //       provide: "",
+    //     },
+    //     serviceFee,
+    //   },
+    //   isProvide: true,
+    //   subgraphData,
+    // });
+  }, []);
+
   const renderButton = () => {
     // if (status === STATUS.COUNTDOWN && blockTimestamps) {
     //   const remainTime = calculateInitialCountdown(
@@ -89,9 +116,25 @@ export default function CTProvider({
     //   );
     // }
 
+    const { address } = useAccount();
+    const isCreatedByUser = useMemo(() => {
+      return (
+        address?.toLocaleLowerCase() ===
+        crossTradeData.requester?.toLocaleLowerCase()
+      );
+    }, [address, crossTradeData.requester]);
+
     const isDisabled = status;
-    const bgColor = isDisabled ? "#23242B" : "#007AFF";
-    const textColor = isDisabled ? "#A0A3AD" : "#FFFFFF";
+    const bgColor = isDisabled
+      ? "#23242B"
+      : isCreatedByUser
+      ? "none"
+      : "#007AFF";
+    const textColor = isDisabled
+      ? "#A0A3AD"
+      : isCreatedByUser
+      ? "#DB00FF"
+      : "#FFFFFF";
 
     return (
       <Button
@@ -104,6 +147,7 @@ export default function CTProvider({
         flexShrink={0}
         borderRadius={"6px"}
         bg={bgColor}
+        border={isCreatedByUser ? "1px solid var(--X-Trade, #DB00FF);" : "none"}
         isDisabled={isDisabled}
         _active={{}}
         _hover={{}}
@@ -112,7 +156,7 @@ export default function CTProvider({
           opacity: 1,
         }}
         cursor={"pointer"}
-        onClick={() => openProvideModal()}
+        onClick={openProvideModal}
       >
         <Text
           fontWeight={600}
@@ -120,7 +164,7 @@ export default function CTProvider({
           lineHeight={"16.5px"}
           color={textColor}
         >
-          Provide
+          {isCreatedByUser ? "Update" : "Provide"}
         </Text>
       </Button>
     );

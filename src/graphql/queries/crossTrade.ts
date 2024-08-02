@@ -5,6 +5,7 @@ export const FETCH_PROVIDE_LIST_L1 = gql`
     editCTs(orderBy: blockTimestamp, orderDirection: desc) { 
       _saleCount
       _requester
+      _ctAmount
       blockTimestamp
       blockNumber
       transactionHash

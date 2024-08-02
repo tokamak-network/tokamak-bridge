@@ -147,7 +147,7 @@ export default function CTMain() {
               </Flex>
             </Th>
             <Th textTransform="none">
-              <Flex justifyContent={"center"}>
+              <Flex ml={"9px"}>
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}
@@ -159,30 +159,7 @@ export default function CTMain() {
                 </Text>
               </Flex>
             </Th>
-            <Th textTransform="none">
-              <Flex>
-                <Flex
-                  w={"16px"}
-                  h={"16px"}
-                  mr={"4px"}
-                  px={"0.88px"}
-                  py={"1px"}
-                  justifyContent={"center"}
-                  alignItems={"center"}
-                >
-                  <Image src={GasStationSymbol} alt={"GasStationSymbol"} />
-                </Flex>
-                <Text
-                  fontWeight={"500"}
-                  fontSize={"13px"}
-                  lineHeight={"18px"}
-                  color={"#A0A3AD"}
-                  letterSpacing={0}
-                >
-                  $8.43
-                </Text>
-              </Flex>
-            </Th>
+            <Th textTransform="none"></Th>
           </Tr>
         </Thead>
         <Tbody>

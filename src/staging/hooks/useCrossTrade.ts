@@ -14,7 +14,9 @@ import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useAccount } from "wagmi";
 import {
+  getEditCTTransaction,
   isRequestCanceled,
+  isRequestEdited,
   isRequestProvided,
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
@@ -177,10 +179,11 @@ export const useRequestData = (): {
 
   const requestList = useMemo(() => {
     if (error || loading) return null;
-    if (data) {
+    if (data && _l1Data) {
       const datas = data.requestCTs;
       const providerClaimCTs = data.providerClaimCTs;
       const cancelCTs = data.cancelCTs;
+      const editCTs = _l1Data.editCTs;
 
       const inNetwork = isConnectedToMainNetwork
         ? SupportedChainId.TITAN
@@ -197,20 +200,39 @@ export const useRequestData = (): {
           cancelCTs,
           saleCount: item._saleCount,
         });
+        const isUpdated = isRequestEdited({
+          editCTs,
+          saleCount: item._saleCount,
+        });
+        const editCT = getEditCTTransaction({
+          editCTs,
+          saleCount: item._saleCount,
+        })[0];
+
+        const ctAmount = isUpdated
+          ? BigInt(editCT._ctAmount)
+          : BigInt(item._ctAmount);
+        const profitAmount = BigInt(item._totalAmount) - ctAmount;
+        const profitRatio =
+          (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
+        const isProvided = isRequestProvided({
+          providerClaimCTs,
+          saleCount: item._saleCount,
+        });
 
         const inToken = isETH
           ? {
               address: item._l1token,
               name: "ETH",
               symbol: "ETH",
-              amount: item._ctAmount,
+              amount: ctAmount,
               decimals: 18,
             }
           : {
               address: item._l1token,
               name: tokenInfo?.tokenName as string,
               symbol: tokenInfo?.tokenSymbol as string,
-              amount: item._ctAmount,
+              amount: ctAmount,
               decimals: tokenInfo?.decimals,
             };
 
@@ -229,14 +251,6 @@ export const useRequestData = (): {
               amount: item._totalAmount,
               decimals: tokenInfo?.decimals,
             };
-
-        const profitAmount = BigInt(item._totalAmount) - BigInt(item._ctAmount);
-        const profitRatio =
-          (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
-        const isProvided = isRequestProvided({
-          providerClaimCTs,
-          saleCount: item._saleCount,
-        });
 
         return {
           requester: item._requester,
@@ -260,12 +274,13 @@ export const useRequestData = (): {
           isCanceled,
         };
       });
-      const trimedResult = result.filter((item) => item.isCanceled === false);
+      // const trimedResult = result.filter((item) => item.isCanceled === false);
+      const trimedResult = result;
       return trimedResult;
     }
 
     return null;
-  }, [data, loading, error, isConnectedToMainNetwork]);
+  }, [data, loading, error, isConnectedToMainNetwork, _l1Data]);
 
   useEffect(() => {
     if (error) {

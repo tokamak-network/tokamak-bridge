@@ -144,8 +144,6 @@ export default function CTUpdateFeeDetail(
     return formatUnits(txData.serviceFee.toString(), txData.inToken.decimals);
   }, [txData.serviceFee, txData.inToken]);
 
-  console.log("inputValue", props.inputValue);
-
   return (
     <>
       <Box

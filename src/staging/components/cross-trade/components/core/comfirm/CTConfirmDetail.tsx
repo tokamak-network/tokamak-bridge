@@ -206,7 +206,7 @@ export default function CTConfirmDetail({
       inToken.symbol
     }`,
     subValue: `$${commafy(inTokenPrice)}`,
-    chainId: outNetwork,
+    chainId: isProvide ? outNetwork : inNetwork,
     tokenSymbol: inToken.symbol,
     tokenAddress: inToken.address,
   };
@@ -216,7 +216,7 @@ export default function CTConfirmDetail({
       outToken.symbol
     }`,
     subValue: `$${commafy(outTokenPrice)}`,
-    chainId: isProvide || isRequest ? inNetwork : outNetwork,
+    chainId: isProvide ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,
     tokenAddress: outToken.address,
   };
@@ -260,7 +260,7 @@ export default function CTConfirmDetail({
           <FeeDetail
             title="Service fee"
             mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}
-            subAmount={`$${tokenPriceWithAmount}`}
+            subAmount={`$${commafy(tokenPriceWithAmount)}`}
             modalType={modalType}
             onPencilClick={onPencilClick}
             isCompleted={isCompleted}

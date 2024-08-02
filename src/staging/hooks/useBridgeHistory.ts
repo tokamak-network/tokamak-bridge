@@ -415,7 +415,6 @@ export const useRequestHistoryData = () => {
           editCTs,
           saleCount: _saleCount,
         })[0];
-        console.log("editCT", editCT);
 
         const blockTimestamps = getRequestBlockTimestamp({
           status,
