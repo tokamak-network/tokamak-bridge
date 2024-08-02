@@ -87,13 +87,7 @@ export default function Confirmation() {
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
-              ? `Confirming ${
-                  subModeValue.length === 1
-                    ? capitalizeFirstChar(subModeValue[0])
-                    : mode === "Pool"
-                    ? "Claim"
-                    : mode
-                }`
+              ? `Confirming`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError

@@ -198,6 +198,20 @@ export const supportedTokensForCT = supportedTokens.filter(
     token.tokenSymbol === "USDT"
 );
 
+export const L1_SEPOLIA_TokenWhitelistForCT = {
+  TON: SEPOLIA_CONTRACTS.TON_ADDRESS,
+  USDT: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+  USDC: SEPOLIA_CONTRACTS.USDC_ADDRESS,
+  TOS: SEPOLIA_CONTRACTS.TOS_ADDRESS,
+};
+
+export const L2_TITAN_SEPOLIA_TokenWhitelistForCT = {
+  TON: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
+  USDT: TITAN_SEPOLIA_CONTRACTS.USDT_ADDRESS,
+  USDC: TITAN_SEPOLIA_CONTRACTS.USDC_ADDRESS,
+  TOS: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
+};
+
 // const supportedTokensForCt: {
 //   [key in SupportedChainId]: {
 //     [token: string]: {

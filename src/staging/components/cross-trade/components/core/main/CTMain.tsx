@@ -36,9 +36,7 @@ export default function CTMain() {
   const [isSortedDescending, setIsSortedDescending] = useState<boolean | null>(
     null
   );
-
   const { requestList } = useRequestData();
-
   const [data, setData] = useState<CrossTradeData[]>([]);
 
   useEffect(() => {

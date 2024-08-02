@@ -8,7 +8,9 @@ function checkIfTokenAddressExists(
   address: Object
 ): string | null {
   for (const [network, contractAddress] of Object.entries(address)) {
-    if (contractAddress === tokenAddress) {
+    if (
+      contractAddress.toLocaleLowerCase() === tokenAddress.toLocaleLowerCase()
+    ) {
       return network;
     }
   }
@@ -18,11 +20,15 @@ function checkIfTokenAddressExists(
 export const getSupportedTokenInfo = (params: {
   tokenAddress: string;
   networkName: string;
+  tokenSymbol: string;
 }) => {
-  const { tokenAddress, networkName } = params;
-  const supportedOutToken = supportedTokens.filter((token) =>
-    checkIfTokenAddressExists(tokenAddress, token.address)
-  );
+  const { tokenAddress, networkName, tokenSymbol } = params;
+  const supportedOutToken = supportedTokens.filter((token) => {
+    if (token.tokenSymbol === tokenSymbol) {
+      return token;
+    }
+  });
+
   if (supportedOutToken) return supportedOutToken[0];
 };
 

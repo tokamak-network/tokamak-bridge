@@ -33,7 +33,6 @@ import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfi
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
-import { actionAsyncStorage } from "next/dist/client/components/action-async-storage";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();

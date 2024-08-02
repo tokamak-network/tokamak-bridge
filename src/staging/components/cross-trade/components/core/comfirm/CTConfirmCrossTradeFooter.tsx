@@ -55,6 +55,7 @@ export default function CTConfirmCrossTradeFooter(
   const inTokenInfo = getSupportedTokenInfo({
     tokenAddress: txData?.inToken.address as string,
     networkName: chainName as string,
+    tokenSymbol: txData?.inToken.symbol as string,
   });
 
   const { isApproved, isLoading, callApprove } = useApprove();

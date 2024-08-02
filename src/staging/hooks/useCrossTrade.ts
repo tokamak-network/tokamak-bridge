@@ -184,14 +184,14 @@ export const useRequestData = (): {
 
         const inToken = isETH
           ? {
-              address: item._l2token,
+              address: item._l1token,
               name: "ETH",
               symbol: "ETH",
               amount: item._ctAmount,
               decimals: 18,
             }
           : {
-              address: item._l2token,
+              address: item._l1token,
               name: tokenInfo?.tokenName as string,
               symbol: tokenInfo?.tokenSymbol as string,
               amount: item._ctAmount,
@@ -200,14 +200,14 @@ export const useRequestData = (): {
 
         const outToken = isETH
           ? {
-              address: item._l1token,
+              address: item._l2token,
               name: "ETH",
               symbol: "ETH",
               amount: item._totalAmount,
               decimals: 18,
             }
           : {
-              address: item._l1token,
+              address: item._l2token,
               name: tokenInfo?.tokenName as string,
               symbol: tokenInfo?.tokenSymbol as string,
               amount: item._totalAmount,
