@@ -1,6 +1,7 @@
+import { defineConfig } from "@wagmi/cli";
 import { TxSort, ActionSort } from "@/types/tx/txType";
-import { ethers, providers } from "ethers";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { ethers } from "ethers";
+import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
@@ -21,7 +22,6 @@ import {
   txPendingStatus,
 } from "@/recoil/global/transaction";
 import useConnectedNetwork from "../network";
-import { transactionModalStatus } from "@/recoil/modal/atom";
 import {
   TON_ADDRESS_BY_CHAINID,
   WETH_ADDRESS_BY_CHAINID,
@@ -29,6 +29,11 @@ import {
 } from "@/constant/contracts/tokens";
 import { Log } from "viem";
 import { useGetMode } from "../mode/useGetMode";
+import useTxConfirmModal from "../modal/useTxConfirmModal";
+import L1CrossTradeAbi from "@/abis/L1CrossTrade.json";
+import L2CrossTradeAbi from "@/abis/L2CrossTrade.json";
+import L2CrossTradeProxyAbi from "@/abis/L2CrossTradeProxy.json";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -45,6 +50,8 @@ const getInterface = () => {
     L1CrossDomainMessengerAbi
   );
   const ETHSwapperI = new ethers.utils.Interface(WethABi);
+  const CrossTradeProxyL1_I = new ethers.utils.Interface(L1CrossTradeAbi.abi);
+  const CrossTradeProxyL2_I = new ethers.utils.Interface(L2CrossTradeAbi.abi);
 
   return {
     l1BridgeI,
@@ -57,6 +64,8 @@ const getInterface = () => {
     L1CrossDomainMessengerI,
     ETHSwapperI,
     USDT_I,
+    CrossTradeProxyL1_I,
+    CrossTradeProxyL2_I,
   };
 };
 
@@ -233,13 +242,15 @@ export function useTx(params: {
 
   const { mode, subMode } = useGetMode();
   const [, setTxData] = useRecoilState(txDataStatus);
-  const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
 
   useEffect(() => {
     if (isLoading && !isError) {
+      setIsOpen(true);
+      setModalOpen("confirming");
       return setTxPending(true);
     }
     return setTxPending(false);
@@ -336,6 +347,8 @@ export function useTx(params: {
         WTON_I,
         nonFungiblePositionManagerI,
         ETHSwapperI,
+        CrossTradeProxyL1_I,
+        CrossTradeProxyL2_I,
       } = getInterface();
       setModalOpen("confirmed");
 
@@ -728,6 +741,36 @@ export function useTx(params: {
               ],
               network: connectedChainId,
               isToasted: false,
+            },
+          });
+        }
+
+        //CrossTrade
+        case "Request": {
+          const result = CrossTradeProxyL2_I.parseLog(logs[logs.length - 1]);
+          console.log(result);
+          const { args } = result;
+          const { _l1token, _l2token, _totalAmount, _ctAmount, _amount } = args;
+
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l2token,
+                  amount: _totalAmount,
+                },
+                {
+                  tokenAddress: _l2token,
+                  amount: _ctAmount,
+                },
+              ],
+              network: connectedChainId,
+              outNetwork: SupportedChainId.MAINNET,
+              isToasted: false,
+              actionSort: "Cross Trade",
             },
           });
         }

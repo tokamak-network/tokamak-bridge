@@ -12,7 +12,10 @@ import {
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { trimAddress } from "@/utils/trim";
-import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
+import {
+  useCrossTradeContract,
+  useRequestRegisteredToken,
+} from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";
@@ -58,7 +61,7 @@ export default function CTConfirmCrossTradeFooter(
     tokenSymbol: txData?.inToken.symbol as string,
   });
 
-  const { isApproved, isLoading, callApprove } = useApprove();
+  const { isApproved, isLoading, callApprove } = useApprove("Cross Trade");
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
 
@@ -94,8 +97,8 @@ export default function CTConfirmCrossTradeFooter(
   }, [inTokenInfo]);
 
   const { setModalOpen } = useTxConfirmModal();
-  const { requestRegisteredToken, provideCT } = useCrossTradeContract();
-
+  const { provideCT } = useCrossTradeContract();
+  const { write: requestRegisteredToken } = useRequestRegisteredToken();
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
@@ -195,7 +198,7 @@ export default function CTConfirmCrossTradeFooter(
       console.log(e);
       setModalOpen("error");
     }
-  }, [isProvide, inTokenIsETH, txData, requestRegisteredToken]);
+  }, [isProvide, inTokenIsETH, txData, requestRegisteredToken, provideCT]);
 
   return (
     <Grid rowGap={"12px"} mt={"12px"}>

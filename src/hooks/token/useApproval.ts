@@ -17,8 +17,9 @@ import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import USDT_ABI from "@/constant/abis/USDT.json";
 import { TokenInfo } from "@/types/token/supportedToken";
+import { ActionMode } from "@/types/bridgeSwap";
 
-export function useApprove() {
+export function useApprove(_mode?: ActionMode) {
   const { mode, subMode } = useGetMode();
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
@@ -156,13 +157,13 @@ export function useApprove() {
     hash: isUSDT ? usdtApproveData?.hash : data?.hash,
     txSort: "Approve",
     tokenAddress,
-    actionSort: mode,
+    actionSort: _mode ?? mode,
   });
   const { isLoading: usdtRevokeIsLoading } = useTx({
     hash: usdtRevokeData?.hash,
     txSort: "Revoke",
     tokenAddress,
-    actionSort: mode,
+    actionSort: _mode ?? mode,
   });
 
   const callApprove = useCallback(() => {

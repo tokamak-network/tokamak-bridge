@@ -35,6 +35,7 @@ export interface TxInterface {
   transactionState: "success" | "fail" | undefined;
   tokenData: TokenTxData[] | undefined;
   network: number;
+  outNetwork?: number;
   isToasted: boolean;
   actionSort?: ActionSort;
 }

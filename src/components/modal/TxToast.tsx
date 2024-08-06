@@ -69,6 +69,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
               ? otherLayerChainInfo?.chainId
               : txSort === "Withdraw" && isToken0 === false
               ? otherLayerChainInfo?.chainId
+              : txSort === "Request" && isToken0 === false
+              ? otherLayerChainInfo?.chainId
               : network
           }
         />
@@ -97,6 +99,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
               ? 55004
               : txSort === "Withdraw" && isToken0 === false
               ? 1
+              : txSort === "Request" && isToken0 === false
+              ? otherLayerChainInfo?.chainId
               : network
           }
         />
@@ -109,22 +113,24 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
 }
 
 function ToastIcon(props: TransactionToastProp) {
+  const { txSort } = props;
   if (
-    props.txSort === "Swap" ||
-    props.txSort === "Wrap" ||
-    props.txSort === "Unwrap" ||
-    props.txSort === "Deposit" ||
-    props.txSort === "Withdraw" ||
-    props.txSort === "ETH-Wrap" ||
-    props.txSort === "ETH-Unwrap"
+    txSort === "Swap" ||
+    txSort === "Wrap" ||
+    txSort === "Unwrap" ||
+    txSort === "Deposit" ||
+    txSort === "Withdraw" ||
+    txSort === "ETH-Wrap" ||
+    txSort === "ETH-Unwrap" ||
+    txSort === "Request"
   ) {
     return <Image src={ARROW_ICON} alt={"ARROW_ICON"} />;
   }
   if (
-    props.txSort === "Add Liquidity" ||
-    props.txSort === "Collect Fee" ||
-    props.txSort === "Increase Liquidity" ||
-    props.txSort === "Remove Liquidity"
+    txSort === "Add Liquidity" ||
+    txSort === "Collect Fee" ||
+    txSort === "Increase Liquidity" ||
+    txSort === "Remove Liquidity"
   ) {
     return <Image src={PLUS_ICON} alt={"PLUS_ICON"} />;
   }
@@ -133,7 +139,6 @@ function ToastIcon(props: TransactionToastProp) {
 
 function TransactionToast(props: TransactionToastProp) {
   const { txSort, transactionHash, actionSort } = props;
-
   const toast = useToast();
   const { blockExplorer } = useConnectedNetwork();
   const [historyTabOpen, setHistoryTabOpen] =
@@ -196,7 +201,7 @@ function TransactionToast(props: TransactionToastProp) {
           <Text cursor={"pointer"} onClick={clickTitle}>
             {txSortMessage}
           </Text>
-          {txSort === "Approve" && actionSort && (
+          {(txSort === "Approve" || txSort === "Request") && actionSort && (
             <Text fontSize={12} color={"#A0A3AD"} lineHeight={"26px"}>
               ({actionSort})
             </Text>
@@ -238,7 +243,7 @@ function TxToast() {
           variant: "solid",
           isClosable: true,
           id: txHash,
-          duration: 5000,
+          duration: 5000000000000,
           render: () => <TransactionToast {...transaction[1]} />,
         });
         setIsToasted([...isToasted, txHash]);
