@@ -245,12 +245,10 @@ export function useTx(params: {
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [, setTxHash] = useRecoilState(txHashStatus);
   const [, setTxLog] = useRecoilState(txHashLog);
-  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { setModalOpen } = useTxConfirmModal();
 
   useEffect(() => {
     if (isLoading && !isError) {
-      setIsOpen(true);
-      setModalOpen("confirming");
       return setTxPending(true);
     }
     return setTxPending(false);

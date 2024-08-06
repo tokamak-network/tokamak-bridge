@@ -66,7 +66,7 @@ export default function CTOptionInput(props: CTInputProps) {
       </Flex>
       {inputWarningCheck == WarningType.Critical ? (
         <CTWarning
-          label={"text will be changed"}
+          label={"Service fee is too high. Invalid request."}
           type={inputWarningCheck}
           groupStyle={{
             height: "14px",
@@ -80,7 +80,7 @@ export default function CTOptionInput(props: CTInputProps) {
         />
       ) : inputWarningCheck == WarningType.Normal ? (
         <CTWarning
-          label={"text will be changed"}
+          label={"Service fee is low. May take long time."}
           type={inputWarningCheck}
           groupStyle={{
             height: "14px",

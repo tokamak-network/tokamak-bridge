@@ -16,7 +16,10 @@ import CloseButton from "@/components/button/CloseButton";
 import CTConfirmDetail from "./CTConfirmDetail";
 import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
-import { isInCT_Provide } from "@/staging/types/transaction";
+import {
+  isInCT_Provide,
+  isInCT_REQUEST_CANCEL,
+} from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
 
 export default function CTModal() {
@@ -38,14 +41,14 @@ export default function CTModal() {
     onCloseCTConfirmModal();
   };
 
-  const modalTitles = {
-    [ModalType.Trade]: "Confirm Cross Trade",
-    [ModalType.History]: "Cross Trade",
-  };
-
   const isProvide = ctConfirmModal?.txData
     ? isInCT_Provide(ctConfirmModal.txData.status)
     : false;
+
+  const modalTitles = {
+    [ModalType.Trade]: "Confirm Request",
+    [ModalType.History]: isProvide ? "Provide" : "Request",
+  };
 
   useEffect(() => {
     if (ctConfirmModal) return setIsChecked(false);
@@ -66,9 +69,7 @@ export default function CTModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {isProvide
-              ? "Confirm Provide Liquidity"
-              : modalTitles[ctConfirmModal.type]}
+            {isProvide ? "Provide" : modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>

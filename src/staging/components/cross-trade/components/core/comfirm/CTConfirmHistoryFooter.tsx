@@ -33,19 +33,19 @@ const TransactionItem = (props: TransactionItemProps) => {
       case "request":
         return "Request";
       case "updateFee":
-        return "Update fee";
+        return "Update";
       case "waitForReceive":
-        return "Wait for receive";
+        return "Waiting";
       case "completed":
         return "Completed";
       case "provide":
         return "Provide";
       case "return":
-        return "Return liquidity";
+        return "Receive";
       case "refund":
         return "Refund";
       case "cancelRequest":
-        return "Cancel Request";
+        return "Cancel";
       default:
         return title;
     }
@@ -175,6 +175,7 @@ export default function CTConfirmHistoryFooter(props: {
   const keyLength = nestedArrayLengthSum + nonNestedKeyLength;
   const isError = txData.errorMessage !== undefined;
   const lastIndex = entries.length - 1;
+  const isRequest = isInCT_REQUEST(txData.status);
 
   const TransactionHistory = useMemo(() => {
     return (
@@ -236,14 +237,14 @@ export default function CTConfirmHistoryFooter(props: {
           {TransactionHistory}
         </Flex>
       </Box>
-      <Box mt={"12px"} pb={"4px"}>
-        <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-          Estimated Time of Arrival: ~1 day
-        </Text>
-        <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-          Estimated Time of Arrival: ~1 day
-        </Text>
-      </Box>
+      {isRequest && (
+        <Box mt={"12px"} pb={"4px"}>
+          <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+            Tip: Update the service fee to reflect significant <br /> change in
+            L1 gas price.
+          </Text>
+        </Box>
+      )}
     </>
   );
 }

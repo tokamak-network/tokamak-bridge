@@ -158,7 +158,7 @@ export default function CTUpdateFeeDetail(
           fontWeight={500}
           lineHeight={"18px"}
         >
-          Current fee
+          Current
         </Text>
         <Flex mt={"4px"} justifyContent="space-between">
           <Text fontSize={"16px"} fontWeight={400} lineHeight={"24px"}>

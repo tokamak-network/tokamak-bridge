@@ -71,7 +71,7 @@ export default function CTUpdateInput(
             fontSize={"12px"}
             color={"#A0A3AD"}
           >
-            New fee
+            New
           </Text>
           <Box
             onClick={(event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

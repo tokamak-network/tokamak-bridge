@@ -124,7 +124,7 @@ export default function CTMain() {
                   Provide
                 </Text>
                 <Tooltip
-                  tooltipLabel={"text will be changed"}
+                  tooltipLabel={"Total amount to pay."}
                   style={{ marginLeft: "2px" }}
                 />
               </Flex>
@@ -141,7 +141,9 @@ export default function CTMain() {
                   Receive
                 </Text>
                 <Tooltip
-                  tooltipLabel={"text will be changed"}
+                  tooltipLabel={
+                    "Total amount to receive, including the service fee. It takes at least 2~5 minutes to receive (depending on the L2 sequencer)."
+                  }
                   style={{ marginLeft: "2px" }}
                 />
               </Flex>

@@ -47,6 +47,15 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
+  const targetChainId = useMemo(() => {
+    const isForOtherLayer =
+      txSort === "Deposit" || txSort === "Withdraw" || txSort === "Request";
+    const isNotInToken = isToken0 === false;
+
+    if (isForOtherLayer && isNotInToken) return otherLayerChainInfo?.chainId;
+    return network;
+  }, [txSort, isToken0, otherLayerChainInfo?.chainId, network]);
+
   if (symbol === "WETH" || tokenData[tokenIndex].tokenAddress === "ETH") {
     return (
       <Flex
@@ -64,15 +73,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
          */}
         <TokenSymbolWithNetwork
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
-          chainId={
-            txSort === "Deposit" && isToken0 === false
-              ? otherLayerChainInfo?.chainId
-              : txSort === "Withdraw" && isToken0 === false
-              ? otherLayerChainInfo?.chainId
-              : txSort === "Request" && isToken0 === false
-              ? otherLayerChainInfo?.chainId
-              : network
-          }
+          chainId={targetChainId}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
           {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
@@ -92,18 +93,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <TokenSymbolWithNetwork
-          tokenSymbol={symbol}
-          chainId={
-            txSort === "Deposit" && isToken0 === false
-              ? 55004
-              : txSort === "Withdraw" && isToken0 === false
-              ? 1
-              : txSort === "Request" && isToken0 === false
-              ? otherLayerChainInfo?.chainId
-              : network
-          }
-        />
+        <TokenSymbolWithNetwork tokenSymbol={symbol} chainId={targetChainId} />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
           {txSort !== "Revoke" ? trimAmount(convertParsedAmount) : ""} {symbol}
         </Text>

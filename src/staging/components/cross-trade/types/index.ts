@@ -40,6 +40,6 @@ export enum ButtonTypeSub {
 }
 
 export enum UpdateFeeButtonType {
-  Update = "Update fee",
-  CancelRequest = "Cancel request",
+  Update = "Service fee",
+  CancelRequest = "Cancel",
 }

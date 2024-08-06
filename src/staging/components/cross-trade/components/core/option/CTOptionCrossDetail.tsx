@@ -20,6 +20,10 @@ import { useMemo } from "react";
 import formatNumber from "@/staging/utils/formatNumbers";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import commafy from "@/utils/trim/commafy";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import Image from "next/image";
+import QuestionIcon from "assets/icons/question.svg";
+
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
   handleButtonMainClick: (value: ButtonTypeMain) => void;
@@ -72,9 +76,39 @@ export default function CTOptionCrossDetail(
       cursor={isCrossActive ? "auto" : "pointer"}
     >
       <Box>
-        <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-          Cross Trade Bridge
-        </Text>
+        <Flex alignItems={"center"}>
+          <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+            Cross Trade Bridge
+          </Text>
+          <CustomTooltip
+            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+            tooltipLabel={
+              <Flex
+                w={"316px"}
+                h={"56px"}
+                fontSize={12}
+                textAlign={"center"}
+                alignItems={"center"}
+                justifyContent={"center"}
+              >
+                {
+                  <span>
+                    Cross trade bridge trades L2 token for L1 token. <br />
+                    There is no guaranteed deadline; it depends <br />
+                    on when liquidity is provided on L1.
+                  </span>
+                }
+              </Flex>
+            }
+            style={{
+              px: "8px",
+              py: "10px",
+              tooltipLineHeight: "15x",
+              height: "normal",
+            }}
+          />
+        </Flex>
+
         <Box mt={"12px"}>
           <Flex alignItems="center">
             <Text
@@ -88,13 +122,13 @@ export default function CTOptionCrossDetail(
           </Flex>
           <Text
             fontWeight={600}
-            fontSize={"22px"}
+            fontSize={24}
             lineHeight={"33px"}
             color={"#DB00FF"}
           >
             {`${formatNumber(receiveTokenValue)} ${inToken?.tokenSymbol}`}
           </Text>
-          <Text fontSize={10} color={"#DB00FF"}>
+          <Text fontSize={12} color={"#DB00FF"}>
             {`$${
               Number(tokenPriceWithAmount) < 0
                 ? 0
@@ -147,7 +181,9 @@ export default function CTOptionCrossDetail(
                 </Text>
                 {isDisabledRecommend && (
                   <Tooltip
-                    tooltipLabel={"text will be changed"}
+                    tooltipLabel={
+                      "The recommendation system is currently unavailable. Please come back later."
+                    }
                     style={{ marginLeft: "2px" }}
                   />
                 )}
@@ -200,7 +236,9 @@ export default function CTOptionCrossDetail(
                 Service fee
               </Text>
               <Tooltip
-                tooltipLabel={"text will be changed"}
+                tooltipLabel={
+                  "The service fee incentivizes the liquidity provider to accept the request. The amount received on L1 is calculated after deducting this fee."
+                }
                 style={{ marginLeft: "2px" }}
               />
             </Flex>

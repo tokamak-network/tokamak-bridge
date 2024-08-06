@@ -208,9 +208,9 @@ export default function StatusComponent(
         case CT_REQUEST.Request:
           return "Request";
         case CT_REQUEST.UpdateFee:
-          return "Update Fee";
+          return "Update";
         case CT_REQUEST.WaitForReceive:
-          return "Wait For Receive";
+          return "Waiting";
         default:
           return;
       }
@@ -220,7 +220,7 @@ export default function StatusComponent(
         case CT_REQUEST_CANCEL.Request:
           return "Request";
         case CT_REQUEST_CANCEL.CancelRequest:
-          return "Cancel Request";
+          return "Cancel";
         case CT_REQUEST_CANCEL.Refund:
           return "Refund";
         default:
@@ -230,9 +230,9 @@ export default function StatusComponent(
     if (isInCT_Provide(label)) {
       switch (label) {
         case CT_PROVIDE.Provide:
-          return "Provide liquidity";
+          return "Provide";
         case CT_PROVIDE.Return:
-          return "Return liquidity";
+          return "Receive";
         default:
           return;
       }

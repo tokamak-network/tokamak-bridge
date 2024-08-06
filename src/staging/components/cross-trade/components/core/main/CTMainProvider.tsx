@@ -164,7 +164,7 @@ export default function CTProvider({
           lineHeight={"16.5px"}
           color={textColor}
         >
-          {isCreatedByUser ? "Update" : "Provide"}
+          {isCreatedByUser ? "Edit" : "Provide"}
         </Text>
       </Button>
     );

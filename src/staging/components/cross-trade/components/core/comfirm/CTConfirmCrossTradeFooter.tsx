@@ -201,10 +201,20 @@ export default function CTConfirmCrossTradeFooter(
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken, provideCT]);
 
   return (
-    <Grid rowGap={"12px"} mt={"12px"}>
+    <Grid mt={"3px"}>
       {/** Check Box */}
       {!isProvide && (
-        <Box mt={"12px"}>
+        <Box>
+          <Text
+            mt={"5px"}
+            color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+            fontWeight={600}
+            fontSize={13}
+            lineHeight={"20px"}
+            letterSpacing={"0.01em"}
+          >
+            I understand
+          </Text>
           <Checkbox
             isChecked={isChecked}
             onChange={onCheckboxChange}
@@ -227,28 +237,43 @@ export default function CTConfirmCrossTradeFooter(
           >
             <Text
               color={isChecked ? "#FFFFFF" : "#A0A3AD"}
-              fontWeight={600}
-              fontSize={"13px"}
+              fontWeight={400}
+              fontSize={12}
+              lineHeight={"20px"}
+            >
+              there is no guaranteed deadline, and
+            </Text>
+          </Checkbox>
+          <Checkbox
+            isChecked={isChecked}
+            onChange={onCheckboxChange}
+            icon={<CheckCustomIcon />}
+            sx={{
+              ".chakra-checkbox__control": {
+                borderWidth: "1px",
+                borderColor: "#A0A3AD",
+                _focus: {
+                  boxShadow: "none",
+                },
+              },
+              _checked: {
+                "& .chakra-checkbox__control": {
+                  borderColor: "#FFFFFF",
+                },
+              },
+            }}
+            colorScheme="#A0A3AD"
+          >
+            <Text
+              color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+              fontWeight={400}
+              fontSize={12}
               lineHeight={"20px"}
               letterSpacing={"0.01em"}
             >
-              Estimated Time of Arrival:{" "}
-              <span style={{ color: isChecked ? "#DB00FF" : "#A0A3AD" }}>
-                ~1 day
-              </span>
+              the request can be edited from L1
             </Text>
           </Checkbox>
-          <Text
-            mt={"5px"}
-            color={isChecked ? "#FFFFFF" : "#A0A3AD"}
-            pl={"25px"}
-            fontWeight={400}
-            fontSize={"12px"}
-            lineHeight={"20px"}
-            letterSpacing={"0.01em"}
-          >
-            text will be changed
-          </Text>
         </Box>
       )}
       {isProvide && (
@@ -261,22 +286,24 @@ export default function CTConfirmCrossTradeFooter(
           rowGap={"12px"}
         >
           <Flex flexDir={"column"} fontSize={12} lineHeight={"20px"}>
-            <Text fontWeight={700}>If you don't check, you can lose money</Text>
-            <Text>You've verified that the request actually exists and</Text>
             <Text>
-              that the fee (parameters) are correct
+              <span style={{ fontWeight: 600, color: "#DB00FF" }}>
+                Warning:
+              </span>
+              Tokamak Bridge can't guarantee this
+            </Text>
+            <Text>request’s validity or compensate for lost funds.</Text>
+            <Text>
               <Link
                 ml={"2px"}
                 textDecor={"underline"}
                 href={`${blockExplorer}/tx/${subgraphData?.transactionHash}`}
                 isExternal={true}
+                fontWeight={600}
               >
-                {trimAddress({
-                  address: subgraphData?.transactionHash,
-                  firstChar: 7,
-                  lastChar: 5,
-                })}
-              </Link>
+                Verity this request
+              </Link>{" "}
+              before providing liquidity.
             </Text>
           </Flex>
           {!provideConfirmed ? (
@@ -287,17 +314,18 @@ export default function CTConfirmCrossTradeFooter(
                 _hover={{}}
                 _active={{}}
                 fontSize={14}
+                fontWeight={600}
                 bgColor={"#DB00FF"}
                 onClick={() => setProvideConfirmed(true)}
               >
-                Check Request
+                I understand the risk
               </Button>
             </Center>
           ) : null}
         </Grid>
       )}
       {/** Confirm Button */}
-      <Flex flexDir={"column"} rowGap={"12px"}>
+      <Flex flexDir={"column"} rowGap={"12px"} mt={"12px"}>
         {!isApproved && (
           <Button
             isDisabled={approveBtnDisabled}
@@ -333,7 +361,7 @@ export default function CTConfirmCrossTradeFooter(
           _hover={{}}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-            {isProvide ? "Provide Liquidity" : "Cross Trade"}
+            {isProvide ? "Provide" : "Request"}
           </Text>
         </Button>
       </Flex>

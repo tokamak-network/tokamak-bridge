@@ -24,7 +24,10 @@ import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { toParseNumber } from "@/utils/trim/convertNumber";
-import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
+import {
+  useCancelRequest,
+  useEditFee,
+} from "@/staging/hooks/useCrossTradeContracts";
 import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { BigNumber } from "ethers";
@@ -108,8 +111,8 @@ export default function CTFeeUpdateModal() {
     onCloseCTUpdateFeeModal();
   };
 
-  const { editFee: _editFee, cancelRequest: _cancelRequest } =
-    useCrossTradeContract();
+  const { write: _editFee } = useEditFee();
+  const { write: _cancelRequest } = useCancelRequest();
   const editFee = useCallback(() => {
     try {
       if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
@@ -197,7 +200,7 @@ export default function CTFeeUpdateModal() {
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"normal"}>
-            Update
+            Edit Request
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
@@ -240,10 +243,20 @@ export default function CTFeeUpdateModal() {
         </ModalBody>
         <ModalFooter p={0} display="block">
           {activeButton == UpdateFeeButtonType.CancelRequest && (
-            <Box mt={"16px"}>
+            <Flex flexDir={"column"} justifyContent={"flex-start"}>
+              <Text
+                mt={"5px"}
+                color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+                fontWeight={600}
+                fontSize={13}
+                lineHeight={"20px"}
+                letterSpacing={"0.01em"}
+              >
+                I understand
+              </Text>
               <Checkbox
-                isChecked={isChecked}
-                onChange={handleCheckboxChange}
+                isChecked={false}
+                onChange={() => {}}
                 icon={<CheckCustomIcon />}
                 sx={{
                   ".chakra-checkbox__control": {
@@ -264,14 +277,14 @@ export default function CTFeeUpdateModal() {
                 <Text
                   color={isChecked ? "#FFFFFF" : "#A0A3AD"}
                   fontWeight={400}
-                  fontSize={"12px"}
+                  fontSize={12}
                   lineHeight={"20px"}
-                  letterSpacing={"0.12px"}
                 >
-                  text will be changed
+                  refund may take at least 2~5 minutes <br />
+                  (depending on L2 sequencer).
                 </Text>
               </Checkbox>
-            </Box>
+            </Flex>
           )}
           <Button
             mt={"16px"}
@@ -296,10 +309,16 @@ export default function CTFeeUpdateModal() {
               {activeButton == UpdateFeeButtonType.Update
                 ? !connectedToLayer1
                   ? "Wrong Network"
-                  : "Update Fee"
-                : "Cancel Request"}
+                  : "Update"
+                : "Cancel"}
             </Text>
           </Button>
+          {activeButton == UpdateFeeButtonType.Update && (
+            <Text mt={"16px"} fontSize={13} fontWeight={400}>
+              Tip: Updating or canceling requests takes place on L1 <br />
+              to avoid race conditions.
+            </Text>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

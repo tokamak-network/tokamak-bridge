@@ -20,9 +20,10 @@ import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { LinkContainer } from "@/staging/components/common/LinkContainer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import formatNumber from "@/staging/utils/formatNumbers";
 import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import QuestionIcon from "assets/icons/questionGray.svg";
 
 interface TransactionDetailProps {
   title: string;
@@ -32,6 +33,7 @@ interface TransactionDetailProps {
   tokenSymbol: string;
   isCanceled?: boolean;
   tokenAddress: string;
+  isProvide: boolean;
 }
 
 const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
@@ -42,17 +44,55 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   tokenSymbol,
   isCanceled,
   tokenAddress,
+  isProvide,
 }) => {
+  const tooltipMessage = useMemo(() => {
+    switch (title) {
+      case "Request":
+        return (
+          <span>
+            Total amount to pay, <br />
+            including the service fee.
+          </span>
+        );
+      case "Receive":
+        if (isProvide)
+          return (
+            <span>
+              Total amount to receive, including the service
+              <br /> fee. It takes at least 2~5 minutes to receive <br />{" "}
+              (depending on the L2 sequencer).
+            </span>
+          );
+
+        return <span>Total amount to receive.</span>;
+      case "Provide":
+        return <span>Total amount to pay.</span>;
+    }
+  }, [title, isProvide]);
+
   return (
     <Box mt={title !== "Send" || isCanceled ? "0" : "0"}>
-      <Text
-        fontSize={"12px"}
-        fontWeight={500}
-        color={"#A0A3AD"}
-        lineHeight={"18px"}
-      >
-        {title}
-      </Text>
+      <Flex alignItems={"center"}>
+        <Text
+          fontSize={"12px"}
+          fontWeight={500}
+          color={"#A0A3AD"}
+          lineHeight={"18px"}
+        >
+          {title}
+        </Text>
+        <CustomTooltip
+          content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+          tooltipLabel={tooltipMessage}
+          style={{
+            px: "8px",
+            py: "10px",
+            tooltipLineHeight: "15x",
+            height: "normal",
+          }}
+        />
+      </Flex>
       <Box>
         <Flex justifyContent={"space-between"} alignItems={"center"}>
           <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
@@ -132,7 +172,9 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
         </Text>
         {title == "Service fee" && (
           <Tooltip
-            tooltipLabel={"text will be changed"}
+            tooltipLabel={
+              "The service fee incentivizes the liquidity provider to accept the request. The amount received on L1 is calculated after deducting this fee."
+            }
             style={{ marginLeft: "2px" }}
           />
         )}
@@ -201,7 +243,7 @@ export default function CTConfirmDetail({
   });
 
   const sendTokenInfo = {
-    title: isProvide ? "Provide" : isCanceled ? "Refund" : "Send",
+    title: isProvide ? "Provide" : isCanceled ? "Refund" : "Request",
     mainValue: `${convertNumber(inToken.amount, inToken.decimals)} ${
       inToken.symbol
     }`,
@@ -238,8 +280,14 @@ export default function CTConfirmDetail({
       borderRadius={"8px"}
     >
       <Flex flexDir={"column"} rowGap={"24px"}>
-        <CTTransactionDetail {...sendTokenInfo} isCanceled={isCanceled} />
-        {!isCanceled && <CTTransactionDetail {...outTokenInfo} />}
+        <CTTransactionDetail
+          {...sendTokenInfo}
+          isCanceled={isCanceled}
+          isProvide={isProvide}
+        />
+        {!isCanceled && (
+          <CTTransactionDetail {...outTokenInfo} isProvide={isProvide} />
+        )}
       </Flex>
       <Box mt={"24px"} borderTop="1px solid #313442" pt={"16px"} px={0} pb={0}>
         {isCanceled && (
