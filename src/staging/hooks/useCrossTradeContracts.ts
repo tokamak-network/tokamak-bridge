@@ -54,7 +54,8 @@ export const useProvideCT = () => {
       abi: L1CrossTradeAbi.abi,
       functionName: "provideCT",
     });
-  const {} = useTx({ hash: data?.hash, txSort: "Request" });
+  console.log("data", data);
+  const {} = useTx({ hash: data?.hash, txSort: "Provide" });
 
   useEffect(() => {
     if (isLoading) {

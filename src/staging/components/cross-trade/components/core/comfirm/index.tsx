@@ -21,6 +21,7 @@ import {
   isInCT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
@@ -53,6 +54,8 @@ export default function CTModal() {
   useEffect(() => {
     if (ctConfirmModal) return setIsChecked(false);
   }, [ctConfirmModal]);
+
+  const { provideCT, requestRegisteredToken } = useCrossTradeContract();
 
   return (
     <Modal
@@ -92,6 +95,8 @@ export default function CTModal() {
               txData={ctConfirmModal.txData}
               isProvide={ctConfirmModal.isProvide}
               subgraphData={ctConfirmModal.subgraphData}
+              provideCT={provideCT}
+              requestRegisteredToken={requestRegisteredToken}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />

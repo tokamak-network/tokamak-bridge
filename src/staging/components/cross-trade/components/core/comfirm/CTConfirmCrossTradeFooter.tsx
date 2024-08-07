@@ -33,7 +33,7 @@ import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState } from "recoil";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-
+type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
   isChecked: boolean;
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -41,13 +41,22 @@ type TradeConfirmationProps = {
   txData: CT_History | null;
   isProvide?: boolean;
   subgraphData?: T_FETCH_REQUEST_LIST_L2;
+  provideCT: ContractWrite;
+  requestRegisteredToken: ContractWrite;
 };
 
 export default function CTConfirmCrossTradeFooter(
   props: TradeConfirmationProps
 ) {
-  const { isChecked, onCheckboxChange, isProvide, txData, subgraphData } =
-    props;
+  const {
+    isChecked,
+    onCheckboxChange,
+    isProvide,
+    txData,
+    subgraphData,
+    provideCT,
+    requestRegisteredToken,
+  } = props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { isConnectedToMainNetwork, chainName } = useConnectedNetwork();
   const blockExplorer = getBlockExplorerUrl(
@@ -97,8 +106,7 @@ export default function CTConfirmCrossTradeFooter(
   }, [inTokenInfo]);
 
   const { setModalOpen } = useTxConfirmModal();
-  const { provideCT } = useCrossTradeContract();
-  const { write: requestRegisteredToken } = useRequestRegisteredToken();
+  // const { provideCT, requestRegisteredToken } = useCrossTradeContract();
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
