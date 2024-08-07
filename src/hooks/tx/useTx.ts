@@ -780,7 +780,7 @@ export function useTx(params: {
           const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
           console.log(result);
           const { args } = result;
-          const { _l1token, _l2token, _totalAmount, _ctAmount, _amount } = args;
+          const { _l1token, _l2token, _totalAmount, _ctAmount } = args;
 
           return setTxData({
             [hash]: {
@@ -789,16 +789,16 @@ export function useTx(params: {
               transactionState: "success",
               tokenData: [
                 {
-                  tokenAddress: _l2token,
-                  amount: _totalAmount,
+                  tokenAddress: _l1token,
+                  amount: _ctAmount,
                 },
                 {
-                  tokenAddress: _l2token,
-                  amount: _ctAmount,
+                  tokenAddress: _l1token,
+                  amount: _totalAmount,
                 },
               ],
               network: connectedChainId,
-              outNetwork: SupportedChainId.MAINNET,
+              outNetwork: SupportedChainId.TITAN,
               isToasted: false,
               actionSort: "Cross Trade",
             },

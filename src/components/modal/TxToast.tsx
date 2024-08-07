@@ -49,7 +49,10 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
 
   const targetChainId = useMemo(() => {
     const isForOtherLayer =
-      txSort === "Deposit" || txSort === "Withdraw" || txSort === "Request";
+      txSort === "Deposit" ||
+      txSort === "Withdraw" ||
+      txSort === "Request" ||
+      txSort === "Provide";
     const isNotInToken = isToken0 === false;
 
     if (isForOtherLayer && isNotInToken) return otherLayerChainInfo?.chainId;
@@ -104,24 +107,34 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
 
 function ToastIcon(props: TransactionToastProp) {
   const { txSort } = props;
-  if (
-    txSort === "Swap" ||
-    txSort === "Wrap" ||
-    txSort === "Unwrap" ||
-    txSort === "Deposit" ||
-    txSort === "Withdraw" ||
-    txSort === "ETH-Wrap" ||
-    txSort === "ETH-Unwrap" ||
-    txSort === "Request"
-  ) {
+
+  const hasArrow = useMemo(() => {
+    return (
+      txSort === "Swap" ||
+      txSort === "Wrap" ||
+      txSort === "Unwrap" ||
+      txSort === "Deposit" ||
+      txSort === "Withdraw" ||
+      txSort === "ETH-Wrap" ||
+      txSort === "ETH-Unwrap" ||
+      txSort === "Request" ||
+      txSort === "Provide"
+    );
+  }, [txSort]);
+
+  const hasPlus = useMemo(() => {
+    return (
+      txSort === "Add Liquidity" ||
+      txSort === "Collect Fee" ||
+      txSort === "Increase Liquidity" ||
+      txSort === "Remove Liquidity"
+    );
+  }, [txSort]);
+
+  if (hasArrow) {
     return <Image src={ARROW_ICON} alt={"ARROW_ICON"} />;
   }
-  if (
-    txSort === "Add Liquidity" ||
-    txSort === "Collect Fee" ||
-    txSort === "Increase Liquidity" ||
-    txSort === "Remove Liquidity"
-  ) {
+  if (hasPlus) {
     return <Image src={PLUS_ICON} alt={"PLUS_ICON"} />;
   }
   return null;
@@ -167,6 +180,10 @@ function TransactionToast(props: TransactionToastProp) {
     }
   }, [txSort]);
 
+  const hasSubTitle = useMemo(() => {
+    return txSort === "Approve" || txSort === "Request" || txSort === "Provide";
+  }, [txSort]);
+
   return (
     <WagmiProviders>
       <Flex
@@ -191,7 +208,7 @@ function TransactionToast(props: TransactionToastProp) {
           <Text cursor={"pointer"} onClick={clickTitle}>
             {txSortMessage}
           </Text>
-          {(txSort === "Approve" || txSort === "Request") && actionSort && (
+          {hasSubTitle && (
             <Text fontSize={12} color={"#A0A3AD"} lineHeight={"26px"}>
               ({actionSort})
             </Text>
