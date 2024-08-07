@@ -137,7 +137,7 @@ export default function CTUpdateInput(
       <Box mt={"8px"}>
         {inputWarningCheck == WarningType.Critical ? (
           <CTWarning
-            label={"text will be changed"}
+            label={"Service fee is too high. Invalid request."}
             type={inputWarningCheck}
             groupStyle={{
               height: "16px",
@@ -151,7 +151,7 @@ export default function CTUpdateInput(
           />
         ) : inputWarningCheck == WarningType.Normal ? (
           <CTWarning
-            label={"text will be changed"}
+            label={"Service fee is low. May take long time"}
             type={inputWarningCheck}
             groupStyle={{
               height: "16px",

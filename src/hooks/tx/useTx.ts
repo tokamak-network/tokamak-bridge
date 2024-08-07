@@ -1,6 +1,6 @@
 import { defineConfig } from "@wagmi/cli";
 import { TxSort, ActionSort } from "@/types/tx/txType";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
@@ -775,8 +775,6 @@ export function useTx(params: {
         }
 
         case "Provide": {
-          console.log("CrossTradeProxyL1_I", CrossTradeProxyL1_I);
-          console.log("logs", logs);
           const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
           console.log(result);
           const { args } = result;
@@ -799,6 +797,30 @@ export function useTx(params: {
               ],
               network: connectedChainId,
               outNetwork: SupportedChainId.TITAN,
+              isToasted: false,
+              actionSort: "Cross Trade",
+            },
+          });
+        }
+
+        case "UpdateFee": {
+          const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
+          console.log(result);
+          const { args } = result;
+          const { _l1token, _l2token, _totalAmount, _ctAmount } = args;
+
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l1token,
+                  amount: BigInt(0),
+                },
+              ],
+              network: connectedChainId,
               isToasted: false,
               actionSort: "Cross Trade",
             },
