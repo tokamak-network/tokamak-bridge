@@ -35,7 +35,10 @@ import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
-  isChecked: boolean;
+  isChecked: {
+    firstChecked: boolean;
+    secondChecked: boolean;
+  };
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirm: () => void;
   txData: CT_History | null;
@@ -75,10 +78,9 @@ export default function CTConfirmCrossTradeFooter(
   const { connectedToLayer1 } = useConnectedNetwork();
 
   const btnDisabled = useMemo(() => {
-    return (
-      (isProvide ? !provideConfirmed || !connectedToLayer1 : !isChecked) ||
-      !isApproved
-    );
+    if (!isApproved) return true;
+    if (isProvide) return !provideConfirmed || !connectedToLayer1;
+    return !isChecked.firstChecked || !isChecked.secondChecked;
   }, [isProvide, isChecked, provideConfirmed, isApproved, connectedToLayer1]);
 
   const { inToken } = useInOutTokens();
@@ -224,7 +226,8 @@ export default function CTConfirmCrossTradeFooter(
             I understand
           </Text>
           <Checkbox
-            isChecked={isChecked}
+            isChecked={isChecked.firstChecked}
+            id={"firstChecked"}
             onChange={onCheckboxChange}
             icon={<CheckCustomIcon />}
             sx={{
@@ -244,7 +247,7 @@ export default function CTConfirmCrossTradeFooter(
             colorScheme="#A0A3AD"
           >
             <Text
-              color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+              color={isChecked.firstChecked ? "#FFFFFF" : "#A0A3AD"}
               fontWeight={400}
               fontSize={12}
               lineHeight={"20px"}
@@ -253,7 +256,8 @@ export default function CTConfirmCrossTradeFooter(
             </Text>
           </Checkbox>
           <Checkbox
-            isChecked={isChecked}
+            isChecked={isChecked.secondChecked}
+            id={"secondChecked"}
             onChange={onCheckboxChange}
             icon={<CheckCustomIcon />}
             sx={{
@@ -273,7 +277,7 @@ export default function CTConfirmCrossTradeFooter(
             colorScheme="#A0A3AD"
           >
             <Text
-              color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+              color={isChecked.secondChecked ? "#FFFFFF" : "#A0A3AD"}
               fontWeight={400}
               fontSize={12}
               lineHeight={"20px"}

@@ -139,25 +139,28 @@ export default function CTOptionModal() {
     ""
   );
 
-  useEffect(() => {
+  const serviceFeeIsNotOver = useMemo(() => {
     if (inToken?.parsedAmount) {
-      const serviceFeeIsNotOver =
-        Number(inToken.parsedAmount) - Number(serviceFee);
-      if (serviceFeeIsNotOver < 0)
+      return Number(inToken.parsedAmount) - Number(serviceFee) < 0;
+    }
+  }, [inToken?.parsedAmount, serviceFee]);
+
+  const isLessThanRecommendedFee = useMemo(() => {
+    if (serviceFee && recommendedFee) {
+      console.log("go?");
+      return Number(serviceFee) < Number(recommendedFee);
+    }
+  }, [serviceFee, recommendedFee]);
+
+  useEffect(() => {
+    {
+      if (serviceFeeIsNotOver)
         return setInputWarningCheck(WarningType.Critical);
+      if (isLessThanRecommendedFee)
+        return setInputWarningCheck(WarningType.Normal);
       return setInputWarningCheck("");
     }
-    // switch (serviceFee) {
-    //   case "1":
-    //     setInputWarningCheck(WarningType.Critical);
-    //     break;
-    //   case "2":
-    //     setInputWarningCheck(WarningType.Normal);
-    //     break;
-    //   default:
-    //     setInputWarningCheck("");
-    // }
-  }, [serviceFee, inToken]);
+  }, [serviceFeeIsNotOver, isLessThanRecommendedFee]);
 
   useEffect(() => {
     if (ctOptionModal) {

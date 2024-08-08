@@ -49,10 +49,6 @@ export const useRecommendFee = (params: {
     }
   }, [totalAmount, additionalFeeRatio]);
 
-  console.log("additionalFeeRatio", additionalFeeRatio);
-  console.log("additionalFee", additionalFee);
-  console.log("totalAmount", totalAmount);
-
   const { tokenPriceWithAmount: serviceFee } = useGetMarketPrice({
     tokenName: "ethereum",
     amount: formatUnits(recomendFeeConfig.gas.provideCT.toString(), 18),

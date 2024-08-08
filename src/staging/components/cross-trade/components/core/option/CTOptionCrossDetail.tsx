@@ -49,7 +49,7 @@ export default function CTOptionCrossDetail(
   const { inToken } = useInOutTokens();
 
   const receiveTokenValue = useMemo(() => {
-    if (isRecommendActive) return commafy(props.recommnededFee);
+    if (isRecommendActive) return props.recommnededFee;
 
     const inputValue = props.inputValue;
     if (
