@@ -1,8 +1,4 @@
-import {
-  getTokenCardStyle,
-  useCarrousellAnimation,
-} from "@/hooks/tokenCard/useCarrousellAnimation";
-import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
+import { TokenInfo } from "@/types/token/supportedToken";
 import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
 import { Dispatch, SetStateAction, useMemo } from "react";
@@ -10,75 +6,31 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
 
-const isSecondSideIndex = (
-  index: number,
-  currentIndex: number | null,
-  length: number
-) => {
-  const markIndex = currentIndex === null ? 2 : currentIndex;
-  if (markIndex - 1 < 0) {
-    return index === length;
-  }
-  if (markIndex + 1 > length) {
-    return index === 0;
-  }
-  return markIndex - 1 === index || markIndex + 1 === index;
-};
-
-const getSymbolSize = (
-  index: number,
-  currentIndex: number | null,
-  maxIndex: number
-) => {
-  const markIndex = currentIndex === null ? 2 : currentIndex;
-
-  if (markIndex === index) return 118;
-  if (isSecondSideIndex(index, currentIndex, maxIndex)) return 110;
-  return 86;
-};
-
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
-  currentIndex: number | null;
-  index: number;
-  filteredTokenList: SupportedTokens_T;
-  waitCondition: any;
+  level: number;
   isHover: number | null;
+  index: number;
+  length: number;
+  tokenColor: string;
   setIsHover: Dispatch<SetStateAction<number | null>>;
 }) {
-  const {
-    tokenData,
-    index,
-    filteredTokenList,
-    currentIndex,
-    waitCondition,
-    isHover,
-    setIsHover,
-  } = props;
+  const { tokenData, level, isHover, setIsHover, index, tokenColor, length } =
+    props;
 
-  const maxIndex = filteredTokenList.length - 1;
+  const layer = Math.abs(level);
 
-  const {
-    endLeftControl,
-    endRightControl,
-    sideLeftControl,
-    sideRightControl,
-    centerControl,
-    outLeftControl,
-    outRightControl,
-    waitControl,
-  } = useCarrousellAnimation({ currentIndex, index });
+  const LEFT = ["0px", "137px", "320px", "530px", "705px"];
+
+  const CARD_SIZE = [
+    { width: "254px", height: "332px" },
+    { width: "226px", height: "298px" },
+    { width: "186px", height: "242px" },
+  ];
+
+  const TOP = ["0px", "35px", "90px"];
+
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-  const styleCode = useMemo(() => {
-    return getTokenCardStyle(index, maxIndex);
-  }, [filteredTokenList]);
-
-  const size =
-    getSymbolSize(index, currentIndex, maxIndex) === 118
-      ? "large"
-      : getSymbolSize(index, currentIndex, maxIndex) === 110
-      ? "medium"
-      : "small";
 
   const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
 
@@ -90,70 +42,53 @@ export default function CarousellCardComponent<T>(props: {
 
   return (
     <motion.div
-      key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
-      className={`motion-div ${tokenData.tokenName}_${index}`}
-      style={styleCode}
+      style={{
+        position: "absolute",
+        overflow: "hidden",
+        borderRadius: "16px",
+        boxSizing: "border-box",
+      }}
+      initial={{
+        opacity: 0,
+        left: `${level === 2 ? -217 : 920}`,
+        zIndex: 0,
+        transform: `${level === 2 ? "rotate(-10deg)" : "rotate(10deg)"}`,
+        top: 268,
+      }}
+      animate={{
+        opacity: 0.9,
+        left: `${LEFT[index + Math.floor((5 - length) / 2)]}`,
+        zIndex: 3 - layer,
+        transform: `rotate(${level * -5}deg)`,
+        width: `${CARD_SIZE[layer]?.width ?? "200px"}`,
+        height: `${CARD_SIZE[layer]?.height ?? "248px"}`,
+        top: `${TOP[layer]}`,
+      }}
+      exit={{
+        opacity: 0,
+        left: `${level === 2 ? "-217px" : "920px"}`,
+        zIndex: 0,
+        transform: `${level === 2 ? "rotate(-10deg)" : "rotate(10deg)"}`,
+        top: 268,
+      }}
       transition={{ duration: 0.5 }}
-      initial={{ opacity: 0 }}
-      whileHover={{ zIndex: 200 }}
-      animate={
-        maxIndex < 6
-          ? index === 0
-            ? centerControl
-            : index === 1
-            ? sideLeftControl
-            : index === 2
-            ? sideRightControl
-            : index === 3
-            ? endLeftControl
-            : endRightControl
-          : waitCondition
-          ? waitControl
-          : index === 0
-          ? endLeftControl
-          : index === 1
-          ? sideLeftControl
-          : index === 2
-          ? centerControl
-          : index === 3
-          ? sideRightControl
-          : index === 4
-          ? endRightControl
-          : index === 5
-          ? outRightControl
-          : index === filteredTokenList.length - 1
-          ? outLeftControl
-          : waitControl
-      }
-      onMouseEnter={() =>
-        outLeftControl || outRightControl ? null : setIsHover(index)
-      }
+      whileHover={{
+        zIndex: 4,
+        boxShadow: `0px 0px 20px 0px ${tokenColor}`,
+        marginTop: "-20px",
+      }}
+      onMouseEnter={() => setIsHover(level)}
       onMouseLeave={() => setIsHover(null)}
     >
       <TokenCard
-        w={"100%"}
-        h={"100%"}
         tokenInfo={tokenData}
+        level={level}
+        isHover={isHover}
+        requireCall={requireCall}
         inNetwork={true}
         hasInput={false}
         isNew={tokenData.isNew}
-        symbolSize={{
-          w: getSymbolSize(index, currentIndex, maxIndex),
-          h: getSymbolSize(index, currentIndex, maxIndex),
-        }}
         isPrice={false}
-        style={{
-          transition: maxIndex === 0 ? "none" : "margin .5s ease-in-out",
-          //need to change mt property based on selectIndex
-          _hover: maxIndex === 0 ? "none" : { marginTop: "-10" },
-          filter:
-            isHover === index
-              ? `drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.25))`
-              : undefined,
-          opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
-        }}
-        type={size}
-        requireCall={requireCall}
         onClick={() => {
           try {
             setSelectedToken(tokenData);

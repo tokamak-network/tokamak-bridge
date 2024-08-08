@@ -48,7 +48,7 @@ export default function SelectPair() {
                 tokenInfo={inTokenInfo}
                 hasInput={true}
                 inNetwork={true}
-                type={"small"}
+                level={2}
                 symbolSize={{ w: 86, h: 86 }}
               />
             ) : (
@@ -84,7 +84,7 @@ export default function SelectPair() {
                 tokenInfo={outTokenInfo}
                 hasInput={true}
                 inNetwork={true}
-                type={"small"}
+                level={2}
                 symbolSize={{ w: 86, h: 86 }}
               />
             ) : (
