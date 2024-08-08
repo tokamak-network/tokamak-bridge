@@ -2,7 +2,9 @@ import { Box, Text, Flex, Circle } from "@chakra-ui/react";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import { ButtonTypeMain } from "@/staging/components/cross-trade/types";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import CustomTooltip, {
+  CustomTooltipWithQuestion,
+} from "@/components/tooltip/CustomTooltip";
 import Image from "next/image";
 import QuestionIcon from "assets/icons/question.svg";
 
@@ -29,34 +31,24 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
       cursor={isStandardActive ? "auto" : "pointer"}
     >
       <Box>
-        <Flex>
+        <Flex alignItems={"center"}>
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             Standard Bridge
           </Text>
-          <CustomTooltip
-            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
             tooltipLabel={
-              <Flex
-                w={"316px"}
-                h={"56px"}
-                fontSize={12}
-                textAlign={"center"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                {
-                  <span>
-                    Standard Bridge takes at least 7 days to withdraw <br />
-                    (it may take longer depending on the rollup time).
-                  </span>
-                }
-              </Flex>
+              <Box fontSize={12}>
+                <Text>Standard Bridge takes at least 7 days to withdraw</Text>
+                <Text>(it may take longer depending on the rollup time)</Text>
+              </Box>
             }
             style={{
+              width: "316px",
+              height: "56px",
+              tooltipLineHeight: "18px",
               px: "8px",
               py: "10px",
-              tooltipLineHeight: "15x",
-              height: "normal",
             }}
           />
         </Flex>
@@ -78,17 +70,6 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             color={"#007AFF"}
           >
             {`${inToken?.parsedAmount} ${inToken?.tokenSymbol}`}
-          </Text>
-        </Box>
-        <Box mt={"12px"}>
-          <Text
-            fontSize={"10px"}
-            fontWeight={400}
-            lineHeight={"15px"}
-            color={"#A0A3AD"}
-          >
-            Takes up to 6 hours to "rollup" and
-            <br />7 days to "finalize" the withdrawal.
           </Text>
         </Box>
       </Box>

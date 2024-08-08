@@ -6,7 +6,6 @@ import {
   THANOS_SEPOLIA_CONTRACTS,
   TITAN_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
-import { ZERO_ADDRESS } from "@/constant/misc";
 
 type SupportedMainTokenNames =
   | "Tokamak Network Token"

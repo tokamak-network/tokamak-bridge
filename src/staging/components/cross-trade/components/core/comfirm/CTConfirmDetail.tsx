@@ -15,7 +15,6 @@ import {
   isInCT_Provide,
   isInCT_REQUEST,
 } from "@/staging/types/transaction";
-import { sub } from "date-fns";
 import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { LinkContainer } from "@/staging/components/common/LinkContainer";
@@ -24,6 +23,7 @@ import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/questionGray.svg";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 interface TransactionDetailProps {
   title: string;
@@ -244,9 +244,9 @@ export default function CTConfirmDetail({
 
   const sendTokenInfo = {
     title: isProvide ? "Provide" : isCanceled ? "Refund" : "Request",
-    mainValue: `${convertNumber(inToken.amount, inToken.decimals)} ${
-      inToken.symbol
-    }`,
+    mainValue: `${formatNumber(
+      convertNumber(inToken.amount, inToken.decimals)
+    )} ${inToken.symbol}`,
     subValue: `$${commafy(inTokenPrice)}`,
     chainId: isProvide ? outNetwork : inNetwork,
     tokenSymbol: inToken.symbol,
@@ -254,9 +254,9 @@ export default function CTConfirmDetail({
   };
   const outTokenInfo = {
     title: "Receive",
-    mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
-      outToken.symbol
-    }`,
+    mainValue: `${formatNumber(
+      convertNumber(outToken.amount, outToken.decimals)
+    )} ${outToken.symbol}`,
     subValue: `$${commafy(outTokenPrice)}`,
     chainId: isProvide ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,

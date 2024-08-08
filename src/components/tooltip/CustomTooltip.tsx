@@ -1,5 +1,8 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
+import Image from "next/image";
 import { ReactNode, useState } from "react";
+import QuestionIcon from "assets/icons/question.svg";
+import GrayQuestionIcon from "assets/icons/questionGray.svg";
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
@@ -59,7 +62,7 @@ export default function CustomTooltip(props: {
           ></Box>
         </Box>
       }
-      placement='top'
+      placement="top"
     >
       <Box
         onMouseEnter={() => setIsOpen(true)}
@@ -70,3 +73,30 @@ export default function CustomTooltip(props: {
     </Tooltip>
   );
 }
+
+export const CustomTooltipWithQuestion = (props: {
+  isGrayIcon?: boolean;
+  tooltipLabel: string | ReactNode;
+  style?: {
+    width?: string;
+    maxW?: string;
+    bgColor?: string;
+    height?: string;
+    px?: string;
+    py?: string;
+    tooltipLineHeight?: string;
+  };
+}) => {
+  return (
+    <CustomTooltip
+      content={
+        <Image
+          src={props.isGrayIcon ? GrayQuestionIcon : QuestionIcon}
+          alt={"QuestionIcon"}
+        ></Image>
+      }
+      tooltipLabel={props.tooltipLabel}
+      style={props.style}
+    />
+  );
+};

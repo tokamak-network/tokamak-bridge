@@ -20,7 +20,9 @@ import { useMemo } from "react";
 import formatNumber from "@/staging/utils/formatNumbers";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import commafy from "@/utils/trim/commafy";
-import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import CustomTooltip, {
+  CustomTooltipWithQuestion,
+} from "@/components/tooltip/CustomTooltip";
 import Image from "next/image";
 import QuestionIcon from "assets/icons/question.svg";
 
@@ -43,10 +45,12 @@ export default function CTOptionCrossDetail(
   // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
   // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
   // const isDisabledRecommend = props.inputValue === "1";
-  const isDisabledRecommend = true;
+  const isDisabledRecommend = false;
   const { inToken } = useInOutTokens();
 
   const receiveTokenValue = useMemo(() => {
+    if (isRecommendActive) return commafy(props.recommnededFee);
+
     const inputValue = props.inputValue;
     if (
       inputValue !== "" &&
@@ -57,7 +61,7 @@ export default function CTOptionCrossDetail(
       return result;
     }
     return inToken?.parsedAmount;
-  }, [props.inputValue, inToken]);
+  }, [props.inputValue, inToken, isRecommendActive]);
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
     amount: receiveTokenValue as string,
@@ -80,35 +84,24 @@ export default function CTOptionCrossDetail(
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             Cross Trade Bridge
           </Text>
-          <CustomTooltip
-            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
             tooltipLabel={
-              <Flex
-                w={"316px"}
-                h={"56px"}
-                fontSize={12}
-                textAlign={"center"}
-                alignItems={"center"}
-                justifyContent={"center"}
-              >
-                {
-                  <span>
-                    Cross trade bridge trades L2 token for L1 token. <br />
-                    There is no guaranteed deadline; it depends <br />
-                    on when liquidity is provided on L1.
-                  </span>
-                }
-              </Flex>
+              <Box fontSize={12}>
+                <Text>Cross trade bridge trades L2 token for L1 token.</Text>
+                <Text>There is no guaranteed deadline; it depends</Text>
+                <Text>on when liquidity is provided on L1.</Text>
+              </Box>
             }
             style={{
+              width: "293px",
+              height: "74px",
+              tooltipLineHeight: "18px",
               px: "8px",
               py: "10px",
-              tooltipLineHeight: "15x",
-              height: "normal",
             }}
           />
         </Flex>
-
         <Box mt={"12px"}>
           <Flex alignItems="center">
             <Text
@@ -235,11 +228,24 @@ export default function CTOptionCrossDetail(
               >
                 Service fee
               </Text>
-              <Tooltip
+              <CustomTooltipWithQuestion
+                isGrayIcon={true}
                 tooltipLabel={
-                  "The service fee incentivizes the liquidity provider to accept the request. The amount received on L1 is calculated after deducting this fee."
+                  <Box fontSize={12}>
+                    <Text>
+                      The service fee incentivizes the liquidity provider
+                    </Text>
+                    <Text>to accept the request. The amount received</Text>
+                    <Text>on L1 is calculated after deducting this fee. </Text>
+                  </Box>
                 }
-                style={{ marginLeft: "2px" }}
+                style={{
+                  width: "304px",
+                  height: "74px",
+                  tooltipLineHeight: "18px",
+                  px: "8px",
+                  py: "10px",
+                }}
               />
             </Flex>
             <CTOptionInput
