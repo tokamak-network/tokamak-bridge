@@ -25,6 +25,8 @@ import CustomTooltip, {
 } from "@/components/tooltip/CustomTooltip";
 import Image from "next/image";
 import QuestionIcon from "assets/icons/question.svg";
+import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
 
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -67,6 +69,9 @@ export default function CTOptionCrossDetail(
     amount: receiveTokenValue as string,
     tokenName: inToken?.tokenName as string,
   });
+  const { estimatedGasFeeUSD } = useCrossTradeGasFee(
+    CTTransactionType.requestRegisteredToken
+  );
 
   return (
     <Flex
@@ -272,7 +277,7 @@ export default function CTOptionCrossDetail(
             color={"#DB00FF"}
             textAlign="center"
           >
-            $0.16
+            ${commafy(estimatedGasFeeUSD)}
           </Text>
           <Text
             mt={"1.5px"}

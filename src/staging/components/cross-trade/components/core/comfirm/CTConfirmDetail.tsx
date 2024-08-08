@@ -24,6 +24,8 @@ import commafy from "@/utils/trim/commafy";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/questionGray.svg";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
 
 interface TransactionDetailProps {
   title: string;
@@ -270,6 +272,9 @@ export default function CTConfirmDetail({
     amount: serviceFee,
     tokenName: inToken.name,
   });
+  const { estimatedGasFeeUSD, estimatedGasFeeETH } = useCrossTradeGasFee(
+    CTTransactionType.requestRegisteredToken
+  );
 
   return (
     <Box
@@ -317,8 +322,8 @@ export default function CTConfirmDetail({
         {modalType === ModalType.Trade && (
           <FeeDetail
             title="Network fee"
-            mainAmount="0.16 ETH"
-            subAmount="$0.43"
+            mainAmount={`${formatNumber(0.00014167255)} ETH`}
+            subAmount={`$ ${commafy(0.34)}`}
           />
         )}
       </Box>

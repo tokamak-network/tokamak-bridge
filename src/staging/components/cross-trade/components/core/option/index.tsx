@@ -147,7 +147,6 @@ export default function CTOptionModal() {
 
   const isLessThanRecommendedFee = useMemo(() => {
     if (serviceFee && recommendedFee) {
-      console.log("go?");
       return Number(serviceFee) < Number(recommendedFee);
     }
   }, [serviceFee, recommendedFee]);

@@ -7,6 +7,9 @@ import CustomTooltip, {
 } from "@/components/tooltip/CustomTooltip";
 import Image from "next/image";
 import QuestionIcon from "assets/icons/question.svg";
+import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
+import commafy from "@/utils/trim/commafy";
 
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -17,6 +20,9 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const isStandardActive =
     props.activeMainButtonValue === ButtonTypeMain.Standard;
   const { inToken } = useInOutTokens();
+  const { estimatedGasFeeUSD } = useCrossTradeGasFee(
+    CTTransactionType.strandardWithdrawERC20
+  );
 
   return (
     <Flex
@@ -89,7 +95,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             color={"#007AFF"}
             textAlign="center"
           >
-            $50.16
+            ${commafy(estimatedGasFeeUSD)}
           </Text>
           <Text
             mt={"1.5px"}

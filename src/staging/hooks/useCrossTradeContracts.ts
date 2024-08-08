@@ -8,8 +8,7 @@ import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Hash } from "viem";
-import { useEffect, useMemo, useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect } from "react";
 import useCTUpdateFee from "../components/cross-trade/hooks/useCTUpdateFeeModal";
 
 const useRequestRegisteredToken = () => {
