@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
@@ -7,6 +7,9 @@ import { TokenInfo } from "types/token/supportedToken";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import CarousellCardComponent from "./CarousellCardComponent";
 import { AnimatePresence } from "framer-motion";
+import { tokenColor } from "@/utils/carousel/tokenColorCode";
+import { useRecoilState } from "recoil";
+import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
 
 export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -23,34 +26,15 @@ export const CardCarrousel = () => {
     setCurrentIndex((prev) => (prev - 1 + newLists.length) % newLists.length);
   };
 
-  const tokenColor = (symbol?: String) => {
-    switch (symbol) {
-      case "ETH":
-        return "#627EEA";
-      case "WETH":
-        return "#393939";
-      case "TON":
-        return "#007AFF";
-      case "WTON":
-        return "#007AFF";
-      case "TOS":
-        return "#007AFF";
-      case "DOC":
-        return "#9e9e9e";
-      case "AURA":
-        return "#CB1000";
-      case "LYDA":
-        return "#4361EE";
-      case "USDC":
-        return "#2775CA";
-      case "USDT":
-        return "#50AF95";
-      default:
-        return "#9e9e9e";
-    }
-  };
-
   const length = newLists.length > 5 ? 5 : newLists.length;
+
+  const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
+
+  const requireCall = useMemo(() => {
+    if (handUiOpened) return false;
+    setHandUiOpened(true);
+    return true;
+  }, [handUiOpened]);
 
   const generateItems = useCallback(() => {
     return Array.from({ length: length }, (_, i) => {
@@ -62,6 +46,7 @@ export const CardCarrousel = () => {
       return (
         <CarousellCardComponent
           tokenData={newLists[index]}
+          requireCall={requireCall}
           isHover={isHover}
           level={level}
           index={i}
@@ -80,9 +65,10 @@ export const CardCarrousel = () => {
       w={"100%"}
       justifyContent={"center"}
       pt={"70px"}
-      pl={"235px"}
-      pr={"235px"}
+      pl={"165px"}
+      pr={"171px"}
       pos={"relative"}
+      bg={"transparent"}
     >
       <Flex
         onClick={newLists.length > 1 ? handlePrev : undefined}
@@ -91,8 +77,6 @@ export const CardCarrousel = () => {
         maxW={"64px"}
         h={"64px"}
         p={0}
-        pos={"absolute"}
-        left={"135px"}
         m={0}
         borderRadius={100}
         mb={"40px"}
@@ -110,6 +94,7 @@ export const CardCarrousel = () => {
         justifyContent={"center"}
         h={"332px"}
         pos={"relative"}
+        bg={"transparent"}
       >
         <AnimatePresence>{generateItems()}</AnimatePresence>
       </Flex>
@@ -122,8 +107,6 @@ export const CardCarrousel = () => {
         h={"64px"}
         _hover={{}}
         p={0}
-        pos={"absolute"}
-        right={"135px"}
         borderRadius={100}
         mb={"40px"}
         zIndex={10}

@@ -29,7 +29,7 @@ import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
 import SearchIcon from "assets/icons/search.svg";
 import CancelIcon from "assets/icons/close.svg";
-import { isIOS } from 'react-device-detect';
+import { isIOS } from "react-device-detect";
 
 export function SelectCardButton(props: { field: Field }) {
   const { field } = props;
@@ -44,7 +44,7 @@ export function SelectCardButton(props: { field: Field }) {
       cursor={"pointer"}
       onClick={() => (field === "INPUT" ? onOpenInToken() : onOpenOutToken())}
       pos={"relative"}
-    // zIndex={Overlay_Index}
+      // zIndex={Overlay_Index}
     >
       <Image
         src={BgImageButton}
@@ -94,26 +94,29 @@ const SearchToken = () => {
   const handleFocus = () => {
     setTokenSearch(true);
     setIsInputAmount(false);
-  }
+  };
 
   const handleBlur = () => {
     setTokenSearch(false);
-  }
+  };
 
   const onKeyDown = (e: any) => {
     if (e.key === "Enter" && mobileView) {
       ref?.current?.blur();
     }
-  }
+  };
 
   useEffect(() => {
     if (searchValue === "") {
       return setSearchToken(null);
     }
     if (connectedChainId) {
-      return setSearchToken({ nameOrAdd: searchValue, chainId: connectedChainId });
+      return setSearchToken({
+        nameOrAdd: searchValue,
+        chainId: connectedChainId,
+      });
     }
-  }, [searchValue])
+  }, [searchValue]);
 
   return (
     <Flex
@@ -153,7 +156,9 @@ const SearchToken = () => {
           onMouseDown={(e) => {
             e.preventDefault();
           }}
-          onClick={() => { setSearchValue("") }}
+          onClick={() => {
+            setSearchValue("");
+          }}
         />
       )}
 
@@ -222,7 +227,10 @@ export function SelectCardModal() {
         minW={"100%"}
         maxW={"100%"}
         h={{
-          base: (isInputAmount && !isIOS || isTokenSearch && !isIOS) ? "calc(100% - 60px)" : "fit-content",
+          base:
+            (isInputAmount && !isIOS) || (isTokenSearch && !isIOS)
+              ? "calc(100% - 60px)"
+              : "fit-content",
           lg: "100%",
         }}
         m={{ base: "none", lg: 0 }}
@@ -234,7 +242,7 @@ export function SelectCardModal() {
         bg={{ base: "#1F2128", lg: "transparent" }}
         overflow={"hidden"}
         borderRadius={"24px 24px 0px 0px"}
-        >
+      >
         <ModalBody
           minW={"100%"}
           maxW={"100%"}
@@ -245,7 +253,7 @@ export function SelectCardModal() {
           bg={"transparent"}
           id="out-area"
           zIndex={1}
-          >
+        >
           <Flex
             w={"1362px"}
             h={{ base: "100%", lg: "486px" }}
@@ -258,6 +266,7 @@ export function SelectCardModal() {
             backgroundImage={BgImage}
             zIndex={100}
             overflow={{ base: "hidden" }}
+            backdropFilter={"blur(2px)"}
             mb={{ base: "auto", lg: "0" }}
           >
             {pcView && (
@@ -289,22 +298,29 @@ export function SelectCardModal() {
                   justify={"center"}
                   align={"start"}
                   columnGap={"11px"}
-                // onBlur={handleBlur}
-                // px={"10px"}
+                  // onBlur={handleBlur}
+                  // px={"10px"}
                 >
-                  {((isInputAmount && isInTokenOpen) || (isOutputAmount && isOutTokenOpen)) ? 
+                  {(isInputAmount && isInTokenOpen) ||
+                  (isOutputAmount && isOutTokenOpen) ? (
                     <TokenInput
                       inToken={isOpen === "INPUT" ? true : false}
                       hasMaxButton={isOpen === "INPUT" ? true : false}
-                      style={isInputAmount || isOutputAmount ? "" : { display: "none" }}
+                      style={
+                        isInputAmount || isOutputAmount
+                          ? ""
+                          : { display: "none" }
+                      }
                       customRef={ref}
                       placeholder={"input amount"}
                       isDisabled={isOpen === "INPUT" ? false : true}
                       defaultValue={
                         isOpen === "INPUT" ? selectedInToken?.parsedAmount : ""
                       }
-                    /> : <></>
-                  }
+                    />
+                  ) : (
+                    <></>
+                  )}
                   {/* <Flex
                     minW={"40px"}
                     minH={"40px"}

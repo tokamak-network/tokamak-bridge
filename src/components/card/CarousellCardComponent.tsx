@@ -5,6 +5,7 @@ import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
+import { CARD_SIZE, TOP, TRANSLATE } from "@/constant/carousel";
 
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
@@ -13,32 +14,23 @@ export default function CarousellCardComponent<T>(props: {
   index: number;
   length: number;
   tokenColor: string;
+  requireCall: boolean;
   setIsHover: Dispatch<SetStateAction<number | null>>;
 }) {
-  const { tokenData, level, isHover, setIsHover, index, tokenColor, length } =
-    props;
+  const {
+    tokenData,
+    level,
+    isHover,
+    setIsHover,
+    index,
+    tokenColor,
+    length,
+    requireCall,
+  } = props;
 
   const layer = Math.abs(level);
 
-  const LEFT = ["0px", "137px", "320px", "530px", "705px"];
-
-  const CARD_SIZE = [
-    { width: "254px", height: "332px" },
-    { width: "226px", height: "298px" },
-    { width: "186px", height: "242px" },
-  ];
-
-  const TOP = ["0px", "35px", "90px"];
-
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-
-  const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
-
-  const requireCall = useMemo(() => {
-    if (handUiOpened) return false;
-    setHandUiOpened(true);
-    return true;
-  }, [handUiOpened]);
 
   return (
     <motion.div
@@ -50,25 +42,32 @@ export default function CarousellCardComponent<T>(props: {
       }}
       initial={{
         opacity: 0,
-        left: `${level === 2 ? -217 : 920}`,
         zIndex: 0,
-        transform: `${level === 2 ? "rotate(-10deg)" : "rotate(10deg)"}`,
+        transform: `${
+          level === 2
+            ? "rotate(-10deg) translate(-790px, 200px)"
+            : "rotate(10deg) translate(790px, 200px)"
+        }`,
         top: 268,
       }}
       animate={{
         opacity: 0.9,
-        left: `${LEFT[index + Math.floor((5 - length) / 2)]}`,
         zIndex: 3 - layer,
-        transform: `rotate(${level * -5}deg)`,
+        transform: `rotate(${level * -5}deg) translate(${
+          TRANSLATE[index + Math.floor((5 - length) / 2)]
+        })`,
         width: `${CARD_SIZE[layer]?.width ?? "200px"}`,
         height: `${CARD_SIZE[layer]?.height ?? "248px"}`,
         top: `${TOP[layer]}`,
       }}
       exit={{
         opacity: 0,
-        left: `${level === 2 ? "-217px" : "920px"}`,
         zIndex: 0,
-        transform: `${level === 2 ? "rotate(-10deg)" : "rotate(10deg)"}`,
+        transform: `${
+          level === 2
+            ? "rotate(-10deg) translate(-790px, 200px)"
+            : "rotate(10deg) translate(790px, 200px)"
+        }`,
         top: 268,
       }}
       transition={{ duration: 0.5 }}
