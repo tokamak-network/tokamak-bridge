@@ -18,7 +18,7 @@ import {
 import {
   IsSearchToken,
   isInputTokenAmount,
-  isOutputTokenAmount
+  isOutputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import useConnectedNetwork from "@/hooks/network";
 
@@ -31,17 +31,17 @@ const CarouselCard = React.memo((props) => {
   const { data, dataIndex, slideIndex, swipeTo }: any = props;
 
   const tokenData: TokenInfo & { isNew?: boolean } = data[dataIndex];
-  const tokenData2: TokenInfo & { isNew?: boolean } = data[(dataIndex - 2 + data.length) % data.length];
+  const tokenData2: TokenInfo & { isNew?: boolean } =
+    data[(dataIndex - 2 + data.length) % data.length];
 
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
-  const [isOutputAmount, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
+  const [isOutputAmount, setIsOutputAmount] =
+    useRecoilState(isOutputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
   const { chainName } = useConnectedNetwork();
-  const [, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
-  );
+  const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
   useEffect(() => {
     if (slideIndex === 0 && tokenData && isOutputAmount && isOutTokenOpen) {
@@ -50,14 +50,15 @@ const CarouselCard = React.memo((props) => {
 
     if (isInTokenOpen) {
       const inToken = selectedInToken;
-      setSelectedToken(tokenData2, true)
-      if (isInTokenOpen && chainName)
-        {setSelectedInToken({
+      setSelectedToken(tokenData2, true);
+      if (isInTokenOpen && chainName) {
+        setSelectedInToken({
           ...tokenData2,
           amountBN: inToken?.amountBN || null,
           parsedAmount: inToken?.parsedAmount || null,
           tokenAddress: inToken?.tokenAddress || null,
-        })}
+        });
+      }
     }
   }, [slideIndex, dataIndex]);
 
@@ -74,17 +75,7 @@ const CarouselCard = React.memo((props) => {
           w: 42,
           h: 42,
         }}
-        type={"small"}
-        onMouseDown={(e: any) => {
-          e.preventDefault();
-          // if (slideIndex === 0 && isTokenSearch) setIsTokenSearch(false);
-          // if (
-          //   slideIndex === 0 &&
-          //   !isTokenSearch &&
-          //   selectedInToken?.parsedAmount
-          // )
-          //   onCloseTokenModal();
-        }}
+        level={2}
         onClick={(e: any) => {
           if (slideIndex === 0) {
             if (isInTokenOpen) {
@@ -95,31 +86,32 @@ const CarouselCard = React.memo((props) => {
             }
 
             const inToken = selectedInToken;
-            setSelectedToken(tokenData, true)
+            setSelectedToken(tokenData, true);
             isInTokenOpen && chainName
               ? setSelectedInToken({
-                ...tokenData,
-                amountBN: inToken?.amountBN || null,
-                parsedAmount: inToken?.parsedAmount || null,
-                tokenAddress: inToken?.tokenAddress || null,
-              })
+                  ...tokenData,
+                  amountBN: inToken?.amountBN || null,
+                  parsedAmount: inToken?.parsedAmount || null,
+                  tokenAddress: inToken?.tokenAddress || null,
+                })
               : chainName &&
-              setSelectedOutToken({
-                ...tokenData,
-                amountBN: null,
-                parsedAmount: null,
-                tokenAddress: tokenData.address[chainName],
-              });
+                setSelectedOutToken({
+                  ...tokenData,
+                  amountBN: null,
+                  parsedAmount: null,
+                  tokenAddress: tokenData.address[chainName],
+                });
 
             if (
-              (selectedInToken?.parsedAmount && isInTokenOpen && isInputAmount) ||
+              (selectedInToken?.parsedAmount &&
+                isInTokenOpen &&
+                isInputAmount) ||
               (isOutTokenOpen && isOutputAmount)
             ) {
               onCloseTokenModal();
             }
           } else if (slideIndex === 1) swipeTo(1);
           else if (slideIndex === -1) swipeTo(-1);
-
         }}
         isDark={slideIndex === 0 ? false : true}
       />
@@ -135,7 +127,7 @@ export function CardCarouselMobile() {
   const [resultToken, setResultTokenArr] =
     useState<TokenInfo[]>(filteredTokenList);
   const [isTokenSearch] = useRecoilState(IsSearchToken);
-  const {tabletView} = useMediaView();
+  const { tabletView } = useMediaView();
 
   const move = (input: TokenInfo[], from: number) => {
     let numberOfDeletedElm = 1;
@@ -160,10 +152,7 @@ export function CardCarouselMobile() {
         const isSelectedToken = (el: TokenInfo) =>
           el.tokenName ===
           (isOpen === "INPUT" ? inToken?.tokenName : outToken?.tokenName);
-        move(
-          filteredTokenList,
-          filteredTokenList.findIndex(isSelectedToken)
-        );
+        move(filteredTokenList, filteredTokenList.findIndex(isSelectedToken));
       }
       setResultTokenArr(filteredTokenList);
     }
@@ -184,7 +173,9 @@ export function CardCarouselMobile() {
               data={filteredTokenList}
               currentVisibleSlide={currentVisibleSlide}
               maxVisibleSlide={parentWidth < 768 ? 3 : 5}
-              customScales={parentWidth < 768 ? [1, 0.85, 0.4] : [1, 0.85, 0.7, 0.6] }
+              customScales={
+                parentWidth < 768 ? [1, 0.85, 0.4] : [1, 0.85, 0.7, 0.6]
+              }
               fadeDistance={0}
               useGrabCursor
               transitionTime={800}

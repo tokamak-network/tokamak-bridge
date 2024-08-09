@@ -1,61 +1,90 @@
-import { Box, Button, Flex } from "@chakra-ui/react";
-import { useState } from "react";
+import { Flex } from "@chakra-ui/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
 import { TokenInfo } from "types/token/supportedToken";
 import { useGetTokenList } from "@/hooks/tokenCard/useGetTokenList";
 import CarousellCardComponent from "./CarousellCardComponent";
+import { AnimatePresence } from "framer-motion";
+import { tokenColor } from "@/utils/carousel/tokenColorCode";
+import { useRecoilState } from "recoil";
+import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
 
 export const CardCarrousel = () => {
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isHover, setIsHover] = useState<number | null>(null);
+  const [firstOpenModal, setFirstOpenModal] = useState(true);
+  useEffect(() => setFirstOpenModal(true), []);
 
   const { filteredTokenList } = useGetTokenList();
+  let newLists: TokenInfo[] = [...filteredTokenList];
 
   const handlePrev = () => {
-    setCurrentIndex(
-      currentIndex !== null
-        ? currentIndex + 1 === filteredTokenList.length
-          ? 0
-          : currentIndex + 1
-        : 3
-    );
+    setFirstOpenModal(false);
+    setCurrentIndex((prev) => (prev + 1) % newLists.length);
   };
 
   const handleNext = () => {
-    setCurrentIndex(
-      currentIndex !== null
-        ? currentIndex - 1 < 0
-          ? filteredTokenList.length - 1
-          : currentIndex - 1
-        : 1
-    );
+    setFirstOpenModal(false);
+    setCurrentIndex((prev) => (prev - 1 + newLists.length) % newLists.length);
   };
+
+  const length = newLists.length > 5 ? 5 : newLists.length;
+
+  const [handUiOpened, setHandUiOpened] = useRecoilState(handUiOpenedStatus);
+
+  const requireCall = useMemo(() => {
+    if (handUiOpened) return false;
+    setHandUiOpened(true);
+    return true;
+  }, [handUiOpened]);
+
+  const generateItems = useCallback(() => {
+    return Array.from({ length: length }, (_, i) => {
+      let index = currentIndex - Math.floor(length / 2) + i;
+      if (index < 0) index += newLists.length;
+      if (index >= newLists.length) index %= newLists.length;
+      const level = Math.floor(length / 2) - i;
+
+      return (
+        <CarousellCardComponent
+          tokenData={newLists[index]}
+          requireCall={requireCall}
+          isHover={isHover}
+          level={level}
+          index={i}
+          tokenColor={tokenColor(newLists[index].tokenSymbol)}
+          setIsHover={setIsHover}
+          length={length}
+          firstOpenModal={firstOpenModal}
+          key={`${newLists[index].tokenName}_${index}` as string}
+        />
+      );
+    });
+  }, [currentIndex, newLists]);
 
   return (
     <Flex
       alignItems={"end"}
       w={"100%"}
       justifyContent={"center"}
-      pt={"75px"}
+      pt={"70px"}
       pl={"165px"}
       pr={"171px"}
+      pos={"relative"}
+      bg={"transparent"}
     >
       <Flex
-        onClick={handlePrev}
-        // border={"2px solid #17181D"}
-        // bgColor={"#0f0f12"}
+        onClick={newLists.length > 1 ? handlePrev : undefined}
         w={"64px"}
         minW={"64px"}
         maxW={"64px"}
         h={"64px"}
-        _active={{}}
-        _hover={{}}
         p={0}
         m={0}
         borderRadius={100}
-        mb={"70px"}
+        mb={"40px"}
         zIndex={10}
         justifyContent={"center"}
         alignItems={"center"}
@@ -63,125 +92,28 @@ export const CardCarrousel = () => {
       >
         <Image src={LeftArrow} alt={"LeftArrow"} />
       </Flex>
+
       <Flex
-        // overflowX={"hidden"}
         w={"100%"}
         alignItems={"end"}
-        // pb={"10px"}
         justifyContent={"center"}
         h={"332px"}
         pos={"relative"}
+        bg={"transparent"}
       >
-        {filteredTokenList?.map((tokenData: TokenInfo, index: number) => {
-          // const {
-          //   endLeftControl,
-          //   endRightControl,
-          //   sideLeftControl,
-          //   sideRightControl,
-          //   centerControl,
-          //   outLeftControl,
-          //   outRightControl,
-          //   waitControl,
-          // } = useCarrousellAnimation({ currentIndex, index });
-
-          const startIndex =
-            currentIndex !== null
-              ? currentIndex - 4 < 0
-                ? currentIndex - 4 + filteredTokenList.length
-                : currentIndex - 4
-              : null;
-
-          const waitCondition =
-            filteredTokenList.length < 6
-              ? false
-              : startIndex === filteredTokenList.length
-              ? startIndex - 11 === index ||
-                startIndex - 10 === index ||
-                startIndex - 9 === index ||
-                startIndex - 8 === index ||
-                startIndex - 7 === index ||
-                startIndex - 6 === index ||
-                startIndex - 5 === index ||
-                startIndex - 4 === index ||
-                startIndex - 3 === index ||
-                startIndex - 2 === index ||
-                startIndex - 1 === index ||
-                startIndex === index
-              : startIndex === filteredTokenList.length - 1
-              ? startIndex - 11 === index ||
-                startIndex - 10 === index ||
-                startIndex - 9 === index ||
-                startIndex - 8 === index ||
-                startIndex - 7 === index ||
-                startIndex - 6 === index ||
-                startIndex - 5 === index ||
-                startIndex - 4 === index ||
-                startIndex - 3 === index ||
-                startIndex - 2 === index ||
-                startIndex - 1 === index ||
-                startIndex === index
-              : startIndex === filteredTokenList.length - 2
-              ? startIndex - 7 === index ||
-                startIndex - 6 === index ||
-                startIndex - 5 === index ||
-                startIndex - 4 === index ||
-                startIndex - 3 === index ||
-                startIndex - 2 === index ||
-                startIndex - 1 === index ||
-                startIndex === index
-              : (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 1 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 2 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 3 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 4 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 5 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 6 === index) ||
-                (startIndex !== null &&
-                  startIndex !== undefined &&
-                  startIndex + 7 === index);
-
-          return (
-            <CarousellCardComponent
-              tokenData={tokenData}
-              currentIndex={currentIndex}
-              index={index}
-              filteredTokenList={filteredTokenList}
-              waitCondition={waitCondition}
-              isHover={isHover}
-              setIsHover={setIsHover}
-              key={`${tokenData.tokenName}_${index}` as string}
-            />
-          );
-        })}
+        <AnimatePresence>{generateItems()}</AnimatePresence>
       </Flex>
 
       <Flex
-        onClick={handleNext}
-        // border={"2px solid #17181D"}
-        // bgColor={"#0f0f12"}
+        onClick={newLists.length > 1 ? handleNext : undefined}
         w={"64px"}
         minW={"64px"}
         maxW={"64px"}
         h={"64px"}
-        _active={{}}
         _hover={{}}
         p={0}
         borderRadius={100}
-        mb={"70px"}
+        mb={"40px"}
         zIndex={10}
         justifyContent={"center"}
         alignItems={"center"}
