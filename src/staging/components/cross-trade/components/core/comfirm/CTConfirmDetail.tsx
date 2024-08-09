@@ -1,4 +1,4 @@
-import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
+import { Box, HStack, Flex, Center, Text, Link } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import Pencil from "assets/icons/ct/pencil.svg";
@@ -26,6 +26,8 @@ import QuestionIcon from "assets/icons/questionGray.svg";
 import formatNumber from "@/staging/utils/formatNumbers";
 import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
+import { trimAddress } from "@/utils/trim";
+import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
 
 interface TransactionDetailProps {
   title: string;
@@ -144,12 +146,14 @@ interface FeeDetailProps {
   modalType?: ModalType;
   onPencilClick?: () => void;
   isCompleted?: boolean;
+  txHash?: string;
 }
 
 interface CTConfirmDetailProps {
   modalType: ModalType;
   txData: CT_History | null;
   onPencilClick: () => void;
+  requester?: string;
 }
 
 const FeeDetail: React.FC<FeeDetailProps> = ({
@@ -161,12 +165,20 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   inNetwork,
   outNetwork,
   isCompleted,
+  txHash,
 }) => {
+  const { ethereumExplorer } = useBlockExplorer();
   return (
     <HStack
       justify="space-between"
       lineHeight={"18px"}
-      mt={title === "Service fee" || title === "Network fee" ? "6px" : "0"}
+      mt={
+        title === "Service fee" ||
+        title === "Network fee" ||
+        title === "Send to"
+          ? "6px"
+          : "0"
+      }
     >
       <Flex alignItems="center">
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
@@ -195,6 +207,19 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
             networkH={14}
             networkW={14}
           />
+        ) : title === "Send to" ? (
+          <Link
+            fontSize={12}
+            href={`${ethereumExplorer}/address/${txHash}`}
+            isExternal={true}
+          >
+            {trimAddress({
+              address: txHash,
+              firstChar: 6,
+              lastChar: 6,
+              dots: "...",
+            })}
+          </Link>
         ) : (
           <>
             {title == "Service fee" &&
@@ -226,13 +251,13 @@ export default function CTConfirmDetail({
   modalType,
   onPencilClick,
   txData,
+  requester,
 }: CTConfirmDetailProps) {
   if (txData === null) return null;
 
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
   const isProvide = isInCT_Provide(status);
-  const isRequest = isInCT_REQUEST(status);
   const isCanceled = getCancelValueFromCTRequestHistory(txData);
   const updateFee = ableToUpdateFee(txData);
   const { tokenPriceWithAmount: inTokenPrice } = useGetMarketPrice({
@@ -273,7 +298,9 @@ export default function CTConfirmDetail({
     tokenName: inToken.name,
   });
   const { estimatedGasFeeUSD, estimatedGasFeeETH } = useCrossTradeGasFee(
-    CTTransactionType.requestRegisteredToken
+    isProvide
+      ? CTTransactionType.provideCT
+      : CTTransactionType.requestRegisteredToken
   );
 
   return (
@@ -309,7 +336,7 @@ export default function CTConfirmDetail({
             outNetwork={isProvide ? inNetwork : outNetwork}
           />
         )}
-        {!isCanceled && (updateFee || isProvide) && (
+        {!isCanceled && updateFee && !isProvide && (
           <FeeDetail
             title="Service fee"
             mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}
@@ -319,11 +346,12 @@ export default function CTConfirmDetail({
             isCompleted={isCompleted}
           />
         )}
+        {isProvide && <FeeDetail title="Send to" txHash={requester} />}
         {modalType === ModalType.Trade && (
           <FeeDetail
             title="Network fee"
-            mainAmount={`${formatNumber(0.00014167255)} ETH`}
-            subAmount={`$ ${commafy(0.34)}`}
+            mainAmount={`${formatNumber(estimatedGasFeeETH)} ETH`}
+            subAmount={`$ ${commafy(estimatedGasFeeUSD)}`}
           />
         )}
       </Box>

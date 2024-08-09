@@ -141,7 +141,7 @@ export default function CTOptionModal() {
 
   const serviceFeeIsNotOver = useMemo(() => {
     if (inToken?.parsedAmount) {
-      return Number(inToken.parsedAmount) - Number(serviceFee) < 0;
+      return Number(inToken.parsedAmount) - Number(serviceFee) <= 0;
     }
   }, [inToken?.parsedAmount, serviceFee]);
 

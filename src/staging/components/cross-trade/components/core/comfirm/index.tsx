@@ -71,6 +71,8 @@ export default function CTModal() {
 
   const { provideCT, requestRegisteredToken } = useCrossTradeContract();
 
+  console.log(ctConfirmModal);
+
   return (
     <Modal
       isOpen={ctConfirmModal.isOpen}
@@ -98,6 +100,7 @@ export default function CTModal() {
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
             txData={ctConfirmModal.txData}
+            requester={ctConfirmModal.subgraphData?._requester}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">

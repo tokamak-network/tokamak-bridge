@@ -18,7 +18,7 @@ export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
         return recommendFeeConfig.gas[CTTransactionType.requestRegisteredToken];
       case CTTransactionType.editFee:
         return recommendFeeConfig.gas[CTTransactionType.editFee];
-      case CTTransactionType.provideCT:
+      case CTTransactionType.cancel:
         return recommendFeeConfig.gas[CTTransactionType.cancel];
       case CTTransactionType.strandardWithdrawERC20:
         return recommendFeeConfig.gas[CTTransactionType.strandardWithdrawERC20];
@@ -28,7 +28,7 @@ export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
   }, [trasnactionType]);
 
   const { connectedChainId } = useConnectedNetwork();
-  //   const { data: feeData } = useFeeData({ chainId: connectedChainId });
+  const { data: feeData } = useFeeData({ chainId: connectedChainId });
   const { tokenMarketPrice } = useGetMarketPrice({
     tokenName: "ethereum",
     amount: 1,
@@ -50,8 +50,14 @@ export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
       case CTTransactionType.strandardWithdrawERC20: {
         return 0.000150936101651164 + (60000 + 30) / 1e9;
       }
+      case CTTransactionType.provideCT: {
+        if (feeData) {
+          const { gasPrice } = feeData;
+          return (estimatedGasUsage * Number(gasPrice)) / 1e18;
+        }
+      }
     }
-  }, [trasnactionType]);
+  }, [trasnactionType, estimatedGasUsage, feeData]);
 
   const estimatedGasFeeUSD = useMemo(() => {
     if (tokenMarketPrice && estimatedGasFeeETH) {
