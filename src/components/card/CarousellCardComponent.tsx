@@ -15,6 +15,7 @@ export default function CarousellCardComponent<T>(props: {
   length: number;
   tokenColor: string;
   requireCall: boolean;
+  firstOpenModal: boolean;
   setIsHover: Dispatch<SetStateAction<number | null>>;
 }) {
   const {
@@ -26,6 +27,7 @@ export default function CarousellCardComponent<T>(props: {
     tokenColor,
     length,
     requireCall,
+    firstOpenModal,
   } = props;
 
   const layer = Math.abs(level);
@@ -44,7 +46,9 @@ export default function CarousellCardComponent<T>(props: {
         opacity: 0,
         zIndex: 0,
         transform: `${
-          level === 2
+          firstOpenModal
+            ? `rotate(0deg) translate(0, 0)`
+            : level === 2
             ? "rotate(-10deg) translate(-790px, 200px)"
             : "rotate(10deg) translate(790px, 200px)"
         }`,

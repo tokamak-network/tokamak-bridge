@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import LeftArrow from "assets/icons/tokenCardLeftArrow.svg";
 import RightArrow from "assets/icons/tokenCardRightArrow.svg";
@@ -14,15 +14,19 @@ import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
 export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isHover, setIsHover] = useState<number | null>(null);
+  const [firstOpenModal, setFirstOpenModal] = useState(true);
+  useEffect(() => setFirstOpenModal(true), []);
 
   const { filteredTokenList } = useGetTokenList();
   let newLists: TokenInfo[] = [...filteredTokenList];
 
   const handlePrev = () => {
+    setFirstOpenModal(false);
     setCurrentIndex((prev) => (prev + 1) % newLists.length);
   };
 
   const handleNext = () => {
+    setFirstOpenModal(false);
     setCurrentIndex((prev) => (prev - 1 + newLists.length) % newLists.length);
   };
 
@@ -53,6 +57,7 @@ export const CardCarrousel = () => {
           tokenColor={tokenColor(newLists[index].tokenSymbol)}
           setIsHover={setIsHover}
           length={length}
+          firstOpenModal={firstOpenModal}
           key={`${newLists[index].tokenName}_${index}` as string}
         />
       );
