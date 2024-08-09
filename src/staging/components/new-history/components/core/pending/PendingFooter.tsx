@@ -29,9 +29,7 @@ const getStatusHandler = (params: {
     [CT_ACTION.REQUEST]: isCanceled
       ? STATUS_CONFIG.REQUEST_CANCEL
       : isUpdateFee
-      ? hasMultipleUpdateFees
-        ? STATUS_CONFIG.REQUEST_UPDATE_FEES
-        : STATUS_CONFIG.REQUEST_UPDATE_FEE
+      ? STATUS_CONFIG.REQUEST_UPDATE_FEE
       : STATUS_CONFIG.REQUEST,
     [CT_ACTION.PROVIDE]: STATUS_CONFIG.PROVIDE,
   };
@@ -41,9 +39,7 @@ const getStatusHandler = (params: {
 const getBlockTimestamp = (
   transaction: TransactionHistory,
   statusKey: HISTORY_TRANSACTION_STATUS,
-  isUpdateFee: boolean,
-  index: number,
-  hasMultipleUpdateFees?: boolean
+  isUpdateFee: boolean
 ) => {
   if (
     statusKey === CT_REQUEST.Request &&
@@ -62,12 +58,7 @@ const getBlockTimestamp = (
     const blockTimestamps =
       transaction.blockTimestamps as CT_REQUEST_HISTORY_blockTimestamps;
     if (blockTimestamps.updateFee) {
-      if (hasMultipleUpdateFees) {
-        return index === 1
-          ? blockTimestamps.updateFee[blockTimestamps.updateFee.length - 2]
-          : blockTimestamps.updateFee[blockTimestamps.updateFee.length - 1];
-      }
-      return blockTimestamps.updateFee[0];
+      return blockTimestamps.updateFee[blockTimestamps.updateFee.length - 1];
     }
   }
 
@@ -117,6 +108,9 @@ export default function PendingFooter(params: {
   const hasMultipleUpdateFees = isUpdateFee
     ? (transactionData as CT_Request_History).hasMultipleUpdateFees
     : false;
+  const updateFeeCount = isUpdateFee
+    ? (transactionData as CT_Request_History).transactionHashes.updateFee?.length
+    : 0;
 
   const statuses = getStatusHandler({
     status,
@@ -124,6 +118,10 @@ export default function PendingFooter(params: {
     isUpdateFee,
     hasMultipleUpdateFees,
   });
+
+  if (hasMultipleUpdateFees) {
+    console.log("params", params);
+  }
 
   return (
     <>
@@ -136,10 +134,9 @@ export default function PendingFooter(params: {
             blockTimestamp={getBlockTimestamp(
               transactionData,
               statusKey,
-              isUpdateFee,
-              index,
-              hasMultipleUpdateFees
+              isUpdateFee
             )}
+            updateFeeCount={updateFeeCount}
             openModal={openModal}
           />
         );
