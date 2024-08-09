@@ -109,7 +109,8 @@ export default function PendingFooter(params: {
     ? (transactionData as CT_Request_History).hasMultipleUpdateFees
     : false;
   const updateFeeCount = isUpdateFee
-    ? (transactionData as CT_Request_History).transactionHashes.updateFee?.length
+    ? (transactionData as CT_Request_History).transactionHashes.updateFee
+        ?.length
     : 0;
 
   const statuses = getStatusHandler({
@@ -118,10 +119,6 @@ export default function PendingFooter(params: {
     isUpdateFee,
     hasMultipleUpdateFees,
   });
-
-  if (hasMultipleUpdateFees) {
-    console.log("params", params);
-  }
 
   return (
     <>

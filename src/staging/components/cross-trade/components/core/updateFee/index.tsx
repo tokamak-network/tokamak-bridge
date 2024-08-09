@@ -29,6 +29,7 @@ import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { BigNumber } from "ethers";
 import { Hash } from "viem";
+import { useRecommendFee } from "../../../hooks/useRecommendFee";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
@@ -50,18 +51,11 @@ export default function CTFeeUpdateModal() {
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
-  // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
-  // 반복문, usehook안에서 hook은 돌리면 안된다. //메모리 문재
-  const recommendValue = useCTRecommend(recommendCheck);
 
-  // 리프래시 버튼 누를 때, recommend 값 초기화
-  const handleRefreshRecommend = () => {
-    // 호이스팅
-    setInputValue("");
-    setRecommendCheck(true);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement> | string
+  ) => {
+    if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
     setInputValue(value);
   };
@@ -90,6 +84,31 @@ export default function CTFeeUpdateModal() {
       );
     }
   }, [ctUpdateFeeModal.txData?.L2_subgraphData?._totalAmount]);
+
+  const tokenAddress =
+    ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
+  const { recommendedFee: recommendValue } = useRecommendFee({
+    totalAmount: Number(
+      formatUnits(
+        totalAmount?.toString(),
+        ctUpdateFeeModal.txData?.inToken.decimals
+      )
+    ),
+    tokenAddress,
+  });
+
+  useEffect(() => {
+    if (recommendValue) {
+      setInputValue(recommendValue.toString());
+    }
+  }, [recommendValue]);
+
+  const handleRefreshRecommend = useCallback(() => {
+    if (recommendValue) {
+      setInputValue(recommendValue.toString());
+      setRecommendCheck(true);
+    }
+  }, [recommendValue]);
 
   const isInputOver = useMemo(() => {
     if (inputParsedAmount && totalAmount) {
@@ -251,7 +270,7 @@ export default function CTFeeUpdateModal() {
                 onInputFocus={handleInputFocus}
                 // input 관련 recommend 관련 props
                 recommendCheck={recommendCheck}
-                recommendValue={recommendValue}
+                recommendValue={recommendValue?.toString()}
                 //새로 고침 props
                 onRecommendRefresh={handleRefreshRecommend}
                 txData={ctUpdateFeeModal.txData}

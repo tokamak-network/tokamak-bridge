@@ -50,7 +50,7 @@ export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
       case CTTransactionType.strandardWithdrawERC20: {
         return 0.000150936101651164 + (60000 + 30) / 1e9;
       }
-      case CTTransactionType.provideCT: {
+      default: {
         if (feeData) {
           const { gasPrice } = feeData;
           return (estimatedGasUsage * Number(gasPrice)) / 1e18;

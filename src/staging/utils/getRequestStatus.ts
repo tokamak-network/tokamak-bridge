@@ -334,6 +334,7 @@ export const getTokenInfo = (parmas: {
   requestData: T_FETCH_REQUEST_LIST_L2 | T_provideCTs_L1 | T_ProviderClaimCTs;
   ctAmount?: boolean;
   _editedctAmount?: string;
+  isL1Token?: boolean;
 }): {
   address: string;
   name: string;
@@ -341,9 +342,11 @@ export const getTokenInfo = (parmas: {
   amount: string;
   decimals: number;
 } => {
-  const { requestData, ctAmount, _editedctAmount } = parmas;
+  const { requestData, ctAmount, _editedctAmount, isL1Token } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
-  const tokenInfo = getSupportedTokenForCT(requestData._l2token);
+  const tokenInfo = getSupportedTokenForCT(
+    isL1Token ? requestData._l1token : requestData._l2token
+  );
 
   return {
     address: isETH ? ZERO_ADDRESS : requestData._l1token,
