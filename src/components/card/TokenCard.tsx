@@ -27,6 +27,7 @@ import {
 } from "@/constant/carousel";
 import Warning from "assets/icons/white_warning.svg";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo & { isNew?: boolean };
@@ -90,11 +91,15 @@ const TokenTitle = (props: {
 }) => {
   return (
     <Text
+      as={motion.span}
       fontWeight={props.isName ? 700 : 400}
       color={"#222222"}
       lineHeight={props?.isName ? "24px" : ""}
       zIndex={100}
       {...props.style}
+      initial={{ fontSize: "16px" }}
+      animate={{ fontSize: props.style?.fontSize }}
+      transition="0.3 linear"
     >
       {props.tokenName}
     </Text>
@@ -199,6 +204,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   return (
     <Flex
+      as={motion.div}
       bg={
         notAdded
           ? "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), rgb(98, 126, 234);"
@@ -229,6 +235,9 @@ export default function TokenCard(props: TokenCardProps) {
       onClick={notAdded ? addNewCard : onClick}
       fontFamily={theme.fonts.Quicksand}
       {...style}
+      initial={{ padding: "16px" }}
+      animate={{ padding: `${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px` }}
+      transition="0.3 linear"
     >
       <TopLine layer={layer} />
       {notAdded ? (
@@ -275,7 +284,7 @@ export default function TokenCard(props: TokenCardProps) {
       ) : (
         <>
           {pcView && (
-            <Flex justifyContent={"space-between"} w={"100%"}>
+            <Flex justifyContent={"space-between"} w={"100%"} gap={"10px"}>
               <TokenTitle
                 tokenName={
                   thisTokenIsETH
@@ -391,14 +400,24 @@ export default function TokenCard(props: TokenCardProps) {
               {pcView ? (
                 <>
                   <Text
+                    as={motion.span}
                     fontWeight={400}
-                    fontSize={`${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`}
+                    initial={{ fontSize: "16px" }}
+                    animate={{
+                      fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
+                    }}
+                    transition="0.3 linear"
                   >
                     balance:{" "}
                   </Text>
                   <Text
+                    as={motion.span}
                     fontWeight={700}
-                    fontSize={`${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`}
+                    initial={{ fontSize: "16px" }}
+                    animate={{
+                      fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
+                    }}
+                    transition="0.3 linear"
                   >
                     {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
                   </Text>
