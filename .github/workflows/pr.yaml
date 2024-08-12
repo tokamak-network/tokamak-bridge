@@ -1,0 +1,32 @@
+name: PR Notification
+
+on:
+  pull_request:
+    # types: [opened]
+    branches:
+      - dev
+      - staging
+      - main
+
+jobs:
+  PR_Open:
+    name: Deploy
+    runs-on: ubuntu-latest
+    env:
+      APP: API-${{ github.event.pull_request.base.ref }}
+      ENV: ${{ github.event.pull_request.base.ref }}
+
+    steps:
+      - name: Send Slack notification
+        uses: slackapi/slack-github-action@v1.24.0
+        with:
+          payload: |
+            {
+              "text": "A new pull request has been opened",
+              "env": "${{ env.ENV }}",
+              "app": "${{ env.APP }}",
+              "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",
+              "title": "${{ github.event.pull_request.title }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PR }}
