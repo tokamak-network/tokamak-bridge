@@ -10,7 +10,7 @@ on:
 
 jobs:
   PR_Open:
-    name: Deploy
+    name: A new PR opened
     runs-on: ubuntu-latest
     env:
       APP: API-${{ github.event.pull_request.base.ref }}
@@ -22,10 +22,36 @@ jobs:
         with:
           payload: |
             {
-              "env": "${{ env.ENV }}",
-              "app": "${{ env.APP }}",
-              "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",
-              "title": "${{ github.event.pull_request.title }}"
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "A new pull request has been opened."
+                  }
+                },
+                {
+                  "type": "section",
+                  "fields": [
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Environment*\n${{ env.ENV }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*App*\n${{ env.APP }}"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*PR Link*\n<${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}|PR #${{ github.event.pull_request.number }}>"
+                    },
+                    {
+                      "type": "mrkdwn",
+                      "text": "*Title*\n${{ github.event.pull_request.title }}"
+                    }
+                  ]
+                }
+              ]
             }
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PR }}
