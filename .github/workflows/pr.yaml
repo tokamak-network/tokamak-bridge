@@ -4,9 +4,9 @@ on:
   pull_request:
     # types: [opened]
     branches:
-      - develop
+      - dev
       - staging
-      - production
+      - main
 
 jobs:
   PR_Open:
