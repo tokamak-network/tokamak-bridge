@@ -2,30 +2,53 @@ name: PR Notification
 
 on:
   pull_request:
-    # types: [opened]
+    types: [opened, reopened, closed] # Listen for both opened and closed events
     branches:
       - dev
       - staging
       - main
 
 jobs:
-  PR_Open:
-    name: Deploy
+  PR_Opened:
+    if: github.event.action == 'opened' || github.event.action == 'reopened'
+    name: PR Opened Notification
     runs-on: ubuntu-latest
     env:
-      APP: API-${{ github.event.pull_request.base.ref }}
+      APP: Tokamak-bridge-WebApp
       ENV: ${{ github.event.pull_request.base.ref }}
 
     steps:
-      - name: Send Slack notification
+      - name: Send Slack notification for opened PR
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
-            {
-              "env": "${{ env.ENV }}",
-              "app": "${{ env.APP }}",
-              "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",
-              "title": "${{ github.event.pull_request.title }}"
+            {  
+              "env": "${{ env.ENV }}",  
+              "app": "${{ env.APP }}",  
+              "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",  
+              "title": "A new PR has been opened."  
             }
         env:
-          SLACK_WEBHOOK_URL: https://hooks.slack.com/triggers/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
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  PR_Merged:
+    if: github.event.action == 'closed' && github.event.pull_request.merged == true
+    name: PR Merged Notification
+    runs-on: ubuntu-latest
+    env:
+      APP: Tokamak-bridge-WebApp
+      ENV: ${{ github.event.pull_request.base.ref }}
+
+    steps:
+      - name: Send Slack notification for merged PR
+        uses: slackapi/slack-github-action@v1.26.0
+        with:
+          payload: |
+            {  
+              "env": "${{ env.ENV }}",  
+              "app": "${{ env.APP }}",  
+              "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",  
+              "title": "A PR has been merged."  
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
