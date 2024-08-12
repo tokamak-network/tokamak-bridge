@@ -23,18 +23,18 @@ export default function ImageSymbol(props: {
   return (
     <motion.div
       initial={{
-        width: "96px",
-        maxWidth: "96px",
-        height: "96px",
-        maxHeight: "96px",
+        width: `${props.w ?? 86}px`,
+        maxWidth: `${props.w ?? 86}px`,
+        height: `${props.h ?? 86}px`,
+        maxHeight: `${props.h ?? 86}px`,
       }}
       animate={{
-        width: `${props.w ?? 96}px`,
-        maxWidth: `${props.w ?? 96}px`,
-        height: `${props.h ?? 96}px `,
-        maxHeight: `${props.h ?? 96}px `,
+        width: `${props.w ?? 86}px`,
+        maxWidth: `${props.w ?? 86}px`,
+        height: `${props.h ?? 86}px`,
+        maxHeight: `${props.h ?? 86}px`,
       }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: 0.5 }}
     >
       <Flex style={{ width: `100%`, height: `100%` }}>
         <Image
