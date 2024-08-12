@@ -62,23 +62,29 @@ const TopLine = (props: { layer: number }) => {
       pos={"absolute"}
     >
       <Box
+        as={motion.div}
         w={"344px"}
         h={`${LINE_STYLE[props.layer]?.thin.height || 4.6}px`}
         transform={"rotate(-30deg)"}
-        top={`${LINE_STYLE[props.layer]?.thin.marginTop || 40}px`}
         bg={"rgba(255, 255, 255, 0.5)"}
         position={"relative"}
+        initial={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
+        animate={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
+        transition="0.5 linear"
       ></Box>
       <Box
+        as={motion.div}
         w={"344px"}
         h={`${LINE_STYLE[props.layer]?.thick.height || 46.6}px`}
-        top={`${LINE_STYLE[props.layer]?.thick.marginTop || 48}px`}
         left={"2.26px"}
         transform={"rotate(-30deg)"}
         bg={
           "linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)"
         }
         pos={"relative"}
+        initial={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
+        animate={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
+        transition="0.5 linear"
       ></Box>
     </Box>
   );
@@ -334,13 +340,22 @@ export default function TokenCard(props: TokenCardProps) {
 
       {!notAdded && (
         <Flex
+          as={motion.div}
           justifyContent={"center"}
           pos={"absolute"}
           h={"100%"}
           w={"100%"}
           ml={`-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`}
-          mt={`-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`}
           alignItems={notAdded ? "baseline" : "center"}
+          initial={{
+            marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+            marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+          }}
+          animate={{
+            marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+            marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+          }}
+          transition="0.5 linear"
         >
           <TokenSymbol
             w={
