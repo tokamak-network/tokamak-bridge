@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useCallback, useMemo } from "react";
+import React, {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import {
   Flex,
   Text,
@@ -19,6 +25,7 @@ import Image from "next/image";
 import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 {
   /** 
@@ -58,6 +65,43 @@ export default function CTMain() {
       ]);
     }
   }, [isSortedDescending]);
+
+  const [displayedItems, setDisplayedItems] = useState<CrossTradeData[]>([]);
+  const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
+  const observer = useRef<IntersectionObserver | null>(null);
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+
+  //will be refactored to controll fetch data with it to save traffics
+  useEffect(() => {
+    // Initialize displayed items
+    if (requestList && itemsToShow)
+      setDisplayedItems(requestList.slice(0, itemsToShow));
+  }, [requestList, itemsToShow]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportHeight(window.innerHeight);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const loadMoreItems = useCallback(() => {
+    const rowHeight = 70.5;
+    const additionalItems = Math.floor(viewportHeight / rowHeight);
+    setItemsToShow((prev) => prev && prev + additionalItems);
+  }, [viewportHeight]);
+
+  const lastItemRef = useCallback((node: HTMLDivElement | null) => {
+    if (observer.current) observer.current.disconnect();
+    observer.current = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        loadMoreItems();
+      }
+    });
+    if (node) observer.current.observe(node);
+  }, []);
 
   return (
     <Box
@@ -151,7 +195,7 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {data?.map((item, index) => {
+          {displayedItems?.map((item, index) => {
             //Decided not to show the request is already done with providing liquidity because countdown does not needed.
             if (item.isProvided) return null;
             // const status = getStatus(item);
@@ -165,6 +209,7 @@ export default function CTMain() {
                   "& td": { pl: "20px", py: "16px", pr: "auto" },
                   borderBottom: "1px solid #23242B",
                 }}
+                ref={lastItemRef}
               >
                 <Td sx={{ opacity: rowOpacity }}>
                   <TokenDetail token={item.inToken} network={item.inNetwork} />
