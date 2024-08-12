@@ -55,7 +55,7 @@ export default function CarousellCardComponent<T>(props: {
         top: 268,
       }}
       animate={{
-        opacity: 0.9,
+        opacity: 1,
         zIndex: 3 - layer,
         transform: `rotate(${level * -5}deg) translate(${
           TRANSLATE[index + Math.floor((5 - length) / 2)]

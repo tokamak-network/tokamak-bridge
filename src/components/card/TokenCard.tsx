@@ -335,6 +335,11 @@ export default function TokenCard(props: TokenCardProps) {
       {!notAdded && (
         <Flex
           justifyContent={"center"}
+          pos={"absolute"}
+          h={"100%"}
+          w={"100%"}
+          ml={`-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`}
+          mt={`-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`}
           alignItems={notAdded ? "baseline" : "center"}
         >
           <TokenSymbol
