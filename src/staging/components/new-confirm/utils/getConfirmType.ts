@@ -1,4 +1,3 @@
-//getLineType.ts
 import {
   Status,
   Action,
@@ -78,7 +77,7 @@ const getWaitMessage = (lineType: number, index: number) => {
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? "Wait 1~11 min"
+        ? "Wait 6 hours"
         : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES} min`,

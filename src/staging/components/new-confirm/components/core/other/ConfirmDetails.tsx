@@ -13,9 +13,10 @@ import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
-import { convertNumber } from "@/utils/trim/convertNumber";
+import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import commafy from "@/utils/trim/commafy";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -30,12 +31,15 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
   }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: transactionHistory.inToken.symbol as string,
-    amount: Number(transactionHistory.inToken.amount.replaceAll(",", "")),
+    amount: formatUnits(
+      transactionHistory.inToken.amount,
+      transactionHistory.inToken.decimals
+    ),
   });
 
   const marketPrice = useMemo(() => {
     if (transactionHistory && tokenPriceWithAmount) {
-      return `$${tokenPriceWithAmount}`;
+      return `$${commafy(tokenPriceWithAmount)}`;
     }
     return "NA";
   }, [tokenPriceWithAmount, transactionHistory]);
@@ -131,7 +135,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
               />
               {tokenAddress && tokenAddress !== "" && (
                 <Link
-                  target='_blank'
+                  target="_blank"
                   href={`${
                     BLOCKEXPLORER_CONSTANTS[
                       isInNetwork

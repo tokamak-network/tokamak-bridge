@@ -15,7 +15,6 @@ import TokenDetail from "@/staging/components/cross-trade/components/core/main/T
 import CTProvider from "@/staging/components/cross-trade/components/core/main/CTMainProvider";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import Image from "next/image";
-import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";

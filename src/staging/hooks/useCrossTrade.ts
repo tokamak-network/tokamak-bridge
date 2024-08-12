@@ -178,7 +178,7 @@ export const useRequestData = (): {
   } = useCrossTradeData_L1({ isHistory: false });
 
   const requestList = useMemo(() => {
-    if (error || loading) return null;
+    if (error || loading || _l1Error || _l1Loading) return null;
     if (data && _l1Data) {
       const datas = data.requestCTs;
       const providerClaimCTs = data.providerClaimCTs;
@@ -280,7 +280,15 @@ export const useRequestData = (): {
     }
 
     return null;
-  }, [data, loading, error, isConnectedToMainNetwork, _l1Data]);
+  }, [
+    data,
+    loading,
+    error,
+    isConnectedToMainNetwork,
+    _l1Data,
+    _l1Error,
+    _l1Loading,
+  ]);
 
   useEffect(() => {
     if (error) {

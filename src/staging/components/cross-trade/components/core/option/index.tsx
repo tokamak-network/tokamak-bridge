@@ -34,7 +34,6 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
-import commafy from "@/utils/trim/commafy";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
