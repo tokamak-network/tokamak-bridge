@@ -6,7 +6,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      PROJECT: BEE
+      PROJECT: tokamak-bridge
       APP: tokamak-bridge-webapp
       OWNER: victor
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -22,11 +22,11 @@ jobs:
         run: npm install -g vercel
       # PULL VERCEL ENV
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }} --project=${{env.PROJECT}}
       # INSTALL DEPENDENCIES
       - name: Install dependencies
         run: npm install
       # BUILD
-      - name: Build
-        run: npm run build
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
       # TEST // To be added at some point
