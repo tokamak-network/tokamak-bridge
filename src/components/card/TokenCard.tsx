@@ -94,7 +94,7 @@ const TokenTitle = (props: {
       as={motion.span}
       fontWeight={props.isName ? 700 : 400}
       color={"#222222"}
-      lineHeight={props?.isName ? "24px" : ""}
+      lineHeight={props?.isName ? props.style?.fontSize : ""}
       zIndex={100}
       {...props.style}
       initial={{ fontSize: "16px" }}
@@ -298,6 +298,7 @@ export default function TokenCard(props: TokenCardProps) {
                 isName={true}
                 style={{
                   fontSize: `${FONT_SIZE[layer]?.name ?? 18}px`,
+                  lineHeight: `${24 - 2 * layer}px`,
                 }}
               />
               <TokenTitle
