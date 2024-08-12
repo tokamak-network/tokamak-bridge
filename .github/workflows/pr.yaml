@@ -31,7 +31,7 @@ jobs:
               "title": "A new PR has been opened."  
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PR }}
 
   PR_Merged:
     if: github.event.action == 'closed' && github.event.pull_request.merged == true
@@ -53,4 +53,4 @@ jobs:
               "title": "A PR has been merged."  
             }
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL_PR }}
