@@ -16,7 +16,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "21"
+          node-version: "20"
       # INSTALL VERCEL CLI IN SERVER.
       - name: Install Vercel CLI
         run: npm install -g vercel
@@ -29,3 +29,4 @@ jobs:
       # BUILD
       - name: Build
         run: npm run build
+      # TEST // To be added at some point
