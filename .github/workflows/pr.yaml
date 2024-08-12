@@ -22,7 +22,6 @@ jobs:
         with:
           payload: |
             {
-              "text": "A new pull request has been opened",
               "env": "${{ env.ENV }}",
               "app": "${{ env.APP }}",
               "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",
