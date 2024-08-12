@@ -1,0 +1,28 @@
+name: Vercel CI
+on:
+  pull_request:
+    branches: ["main", "dev", "staging"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: BEE
+      APP: tokamak-bridge-webapp
+      OWNER: victor
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      #INSTALL NODEJS
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "21"
+      #INSTALL VERCEL CLI IN SERVER.
+      - name: Install Vercel CLI
+        run: yarn global add vercel
+      #PULL VERCEL ENV
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
+      #INSTALL DEPENDENCIES
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
