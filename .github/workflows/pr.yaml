@@ -14,7 +14,8 @@ jobs:
     name: PR Opened Notification
     runs-on: ubuntu-latest
     env:
-      APP: Tokamak-bridge-WebApp
+      PROJECT: BEE
+      APP: tokamak-bridge-webapp
       ENV: ${{ github.event.pull_request.base.ref }}
 
     steps:
@@ -24,6 +25,7 @@ jobs:
           payload: |
             {  
               "env": "${{ env.ENV }}",  
+              "project": "${{env.PROJECT}}",
               "app": "${{ env.APP }}",  
               "pr": "${{ github.server_url }}/${{ github.repository }}/pull/${{ github.event.pull_request.number }}",  
               "title": "A new PR has been opened."  
