@@ -38,11 +38,11 @@ export const useRecommendFee = (params: {
   });
 
   const recommendedFee = useMemo(() => {
-    if (serviceFee && additionalFee && tokenInfo.decimals) {
+    if (serviceFee && additionalFee && tokenInfo?.decimals) {
       const sum = serviceFee + additionalFee;
       return Number(sum.toFixed(tokenInfo.decimals));
     }
-  }, [serviceFee, additionalFee, tokenInfo.decimals]);
+  }, [serviceFee, additionalFee, tokenInfo?.decimals]);
 
   const recommendedCtAmount = useMemo(() => {
     if (totalAmount && recommendedFee) {

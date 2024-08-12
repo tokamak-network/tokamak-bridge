@@ -11,11 +11,6 @@ import {
 } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { trimAddress } from "@/utils/trim";
-import {
-  useCrossTradeContract,
-  useRequestRegisteredToken,
-} from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";
@@ -28,11 +23,11 @@ import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getSupportedTokenInfo } from "@/utils/token/getSupportedTokenInfo";
-import useTokenModal from "@/hooks/modal/useTokenModal";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState } from "recoil";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+
 type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
   isChecked: {

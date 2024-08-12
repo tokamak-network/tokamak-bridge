@@ -258,8 +258,10 @@ export default function CTFeeUpdateModal() {
               activeButton={activeButton}
               setActiveButton={setActiveButton}
             />
-            {activeButton == UpdateFeeButtonType.Update && <WrongNetwork />}
-
+            {activeButton == UpdateFeeButtonType.Update ||
+              (activeButton === UpdateFeeButtonType.CancelRequest && (
+                <WrongNetwork />
+              ))}
             {activeButton == UpdateFeeButtonType.Update &&
             ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail

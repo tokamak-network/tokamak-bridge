@@ -51,7 +51,7 @@ const getInterface = () => {
     L1CrossDomainMessengerAbi
   );
   const ETHSwapperI = new ethers.utils.Interface(WethABi);
-  const CrossTradeProxyL1_I = new ethers.utils.Interface(L1CrossTradeProxyAbi);
+  const CrossTradeProxyL1_I = new ethers.utils.Interface(L1CrossTradeAbi.abi);
   const CrossTradeProxyL2_I = new ethers.utils.Interface(L2CrossTradeAbi.abi);
 
   return {
@@ -775,6 +775,7 @@ export function useTx(params: {
         }
 
         case "Provide": {
+          console.log("logs ", logs);
           const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
           console.log(result);
           const { args } = result;

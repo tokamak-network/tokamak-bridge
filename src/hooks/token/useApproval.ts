@@ -16,7 +16,6 @@ import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import USDT_ABI from "@/constant/abis/USDT.json";
-import { TokenInfo } from "@/types/token/supportedToken";
 import { ActionMode } from "@/types/bridgeSwap";
 
 export function useApprove(_mode?: ActionMode) {
