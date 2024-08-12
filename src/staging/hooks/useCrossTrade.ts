@@ -18,6 +18,7 @@ import {
   isRequestCanceled,
   isRequestEdited,
   isRequestProvided,
+  isRequestProvidedOnL1,
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 
@@ -184,6 +185,9 @@ export const useRequestData = (): {
       const providerClaimCTs = data.providerClaimCTs;
       const cancelCTs = data.cancelCTs;
       const editCTs = _l1Data.editCTs;
+      const provideCTs = _l1Data.provideCTs;
+
+      console.log("_l1Data", _l1Data);
 
       const inNetwork = isConnectedToMainNetwork
         ? SupportedChainId.TITAN
@@ -219,6 +223,11 @@ export const useRequestData = (): {
           providerClaimCTs,
           saleCount: item._saleCount,
         });
+        const isProvidedOnL1 = isRequestProvidedOnL1({
+          provideCTs,
+          saleCount: item._saleCount,
+        });
+        const isInRelay = isProvidedOnL1 && !isProvided;
 
         const inToken = isETH
           ? {
@@ -272,6 +281,7 @@ export const useRequestData = (): {
           isProvided,
           serviceFee: BigInt(profitAmount.toString()),
           isCanceled,
+          isInRelay,
         };
       });
       const trimedResult = result.filter((item) => item.isCanceled === false);

@@ -10,6 +10,19 @@ export const FETCH_PROVIDE_LIST_L1 = gql`
       blockNumber
       transactionHash
     }
+      provideCTs (orderBy: blockTimestamp, orderDirection: desc) { 
+      _l1token
+      _l2token
+      _saleCount
+      _requester
+      _provider
+      _totalAmount
+      _ctAmount
+      _l2chainId
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
   } 
 `;
 

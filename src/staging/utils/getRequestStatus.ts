@@ -2,6 +2,7 @@ import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import {
   T_FETCH_CancelCTs,
   T_FETCH_EditCTs,
+  T_FETCH_ProvideCTs_L1,
   T_FETCH_ProviderClaimCTs,
   T_FETCH_REQUEST_LIST_L2,
   T_provideCTs_L1,
@@ -21,8 +22,15 @@ import {
   isInCT_REQUEST_CANCEL,
 } from "../types/transaction";
 import { ZERO_ADDRESS } from "@/constant/misc";
-import { is } from "date-fns/locale";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
+
+export const isRequestProvidedOnL1 = (params: {
+  provideCTs: T_FETCH_ProvideCTs_L1;
+  saleCount: string;
+}) => {
+  const { provideCTs, saleCount } = params;
+  return provideCTs.some((provideCT) => provideCT._saleCount === saleCount);
+};
 
 export const isRequestProvided = (params: {
   providerClaimCTs: T_FETCH_ProviderClaimCTs;

@@ -91,6 +91,8 @@ export default function CTOptionModal() {
       inToken.address[outNetwork.chainName] !== null &&
       serviceFeeValue
     ) {
+      console.log("serviceFeeValue", serviceFeeValue);
+      console.log(inToken.decimals);
       const ctAmount =
         BigInt(inToken.amountBN.toString()) -
         BigInt(

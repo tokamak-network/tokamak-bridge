@@ -1,3 +1,4 @@
+import { BigNumber } from "@ethersproject/bignumber";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { recommendFeeConfig } from "@/staging/constants/fee";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
@@ -11,6 +12,7 @@ export const useRecommendFee = (params: {
 }) => {
   const { totalAmount, tokenAddress } = params;
   const tokenInfo = getSupportedTokenForCT(tokenAddress);
+
   const hasRecomendFee =
     tokenInfo?.tokenSymbol &&
     recommendFeeConfig.fee.hasOwnProperty(tokenInfo.tokenSymbol as string);
@@ -36,8 +38,11 @@ export const useRecommendFee = (params: {
   });
 
   const recommendedFee = useMemo(() => {
-    if (serviceFee && additionalFee) return serviceFee + additionalFee;
-  }, [serviceFee, additionalFee]);
+    if (serviceFee && additionalFee && tokenInfo.decimals) {
+      const sum = serviceFee + additionalFee;
+      return Number(sum.toFixed(tokenInfo.decimals));
+    }
+  }, [serviceFee, additionalFee, tokenInfo.decimals]);
 
   const recommendedCtAmount = useMemo(() => {
     if (totalAmount && recommendedFee) {

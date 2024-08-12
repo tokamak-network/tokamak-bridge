@@ -9,6 +9,7 @@ import {
   Tr,
   Th,
   Td,
+  Center,
 } from "@chakra-ui/react";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import TokenDetail from "@/staging/components/cross-trade/components/core/main/TokenDetail";
@@ -35,7 +36,7 @@ export default function CTMain() {
   const [isSortedDescending, setIsSortedDescending] = useState<boolean | null>(
     null
   );
-  const { requestList } = useRequestData();
+  const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[]>([]);
 
   useEffect(() => {
@@ -43,20 +44,6 @@ export default function CTMain() {
       setData(requestList);
     }
   }, [requestList]);
-
-  // const handleScroll = useCallback(() => {
-  //   if (
-  //     window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 &&
-  //     !loading
-  //   ) {
-  //     fetchData();
-  //   }
-  // }, [loading, fetchData]);
-
-  // useEffect(() => {
-  //   window.addEventListener("scroll", handleScroll);
-  //   return () => window.removeEventListener("scroll", handleScroll);
-  // }, [handleScroll]);
 
   useEffect(() => {
     if (isSortedDescending === null) return;
@@ -202,6 +189,28 @@ export default function CTMain() {
               </Tr>
             );
           })}
+          {!isLoading && data.length === 0 && (
+            <Tr
+              key={0}
+              sx={{
+                "& td": { pl: "20px", py: "16px", pr: "auto" },
+                borderBottom: "1px solid #23242B",
+              }}
+              textAlign={"center"}
+            >
+              <Td
+                colSpan={4}
+                style={{
+                  textAlign: "center",
+                  height: "144px",
+                  lineHeight: "144px",
+                  color: "#E3F3FF",
+                }}
+              >
+                <Box>No active requests</Box>
+              </Td>
+            </Tr>
+          )}
         </Tbody>
       </Table>
     </Box>
