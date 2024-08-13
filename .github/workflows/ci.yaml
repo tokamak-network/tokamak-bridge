@@ -35,6 +35,6 @@ jobs:
           echo "NEXT_PUBLIC_TITAN_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_TITAN_SEPOLIA_RPC}}" >> .env
           echo "NEXT_PUBLIC_THANOS_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_THANOS_SEPOLIA_RPC}}" >> .env
       # BUILD
-      - name: Build Project Artifacts
-        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project
+        run: npm run build
       # TEST // To be added at some point
