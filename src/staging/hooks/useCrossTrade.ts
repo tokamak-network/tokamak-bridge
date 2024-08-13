@@ -22,6 +22,7 @@ import {
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
+import { getCTTokenPrice } from "../utils/getCTTokenPrice";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -179,25 +180,29 @@ export const useRequestData = (): {
     loading: _l1Loading,
   } = useCrossTradeData_L1({ isHistory: false });
   const [requestList, setRequestList] = useState<CrossTradeData[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const fetchRequestList = useCallback(async () => {
-    if (error || loading || _l1Error || _l1Loading) return null;
-    if (data && _l1Data) {
-      const datas = data.requestCTs;
-      const providerClaimCTs = data.providerClaimCTs;
-      const cancelCTs = data.cancelCTs;
-      const editCTs = _l1Data.editCTs;
-      const provideCTs = _l1Data.provideCTs;
+    try {
+      if (error || _l1Error) return null;
+      if (data && _l1Data) {
+        const datas = data.requestCTs;
+        const providerClaimCTs = data.providerClaimCTs;
+        const cancelCTs = data.cancelCTs;
+        const editCTs = _l1Data.editCTs;
+        const provideCTs = _l1Data.provideCTs;
 
-      const inNetwork = isConnectedToMainNetwork
-        ? SupportedChainId.TITAN
-        : SupportedChainId.TITAN_SEPOLIA;
-      const outNetwork = isConnectedToMainNetwork
-        ? SupportedChainId.MAINNET
-        : SupportedChainId.SEPOLIA;
+        const inNetwork = isConnectedToMainNetwork
+          ? SupportedChainId.TITAN
+          : SupportedChainId.TITAN_SEPOLIA;
+        const outNetwork = isConnectedToMainNetwork
+          ? SupportedChainId.MAINNET
+          : SupportedChainId.SEPOLIA;
 
-      const result: CrossTradeData[] = await Promise.all(
-        datas.map(async (item) => {
+        //TON, ETH, USDC, USDT, TOS
+        const priceList = await getCTTokenPrice();
+
+        const result: CrossTradeData[] = datas.map((item) => {
           //  will be refactor with split functions
           const tokenInfo = getSupportedTokenForCT(item._l2token);
           const isETH = isZeroAddress(item._l2token);
@@ -263,13 +268,22 @@ export const useRequestData = (): {
                 decimals: tokenInfo?.decimals as number,
               };
 
-          const marketPrice = await fetchMarketPrice(inToken.name);
+          let marketPrice: number | undefined;
+          if (
+            tokenInfo?.tokenSymbol &&
+            (tokenInfo.tokenSymbol as string) in priceList
+          ) {
+            marketPrice =
+              priceList[tokenInfo.tokenSymbol as keyof typeof priceList];
+          } else {
+            marketPrice = undefined;
+          }
+
           const inTokenAmount = formatUnits(inToken.amount, inToken.decimals);
           const outTokenAmount = formatUnits(
             outToken.amount,
             outToken.decimals
           );
-          console.log("marketPrice", marketPrice);
           const providingUSD = Number(inTokenAmount) * Number(marketPrice);
           const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
 
@@ -295,14 +309,17 @@ export const useRequestData = (): {
             isCanceled,
             isInRelay,
           };
-        })
-      );
-      const trimedResult = result.filter((item) => item.isCanceled === false);
-      // const trimedResult = result;
-      return setRequestList(trimedResult);
+        });
+        const trimedResult = result.filter((item) => item.isCanceled === false);
+        setIsLoading(false);
+        return setRequestList(trimedResult);
+      }
+      setIsLoading(false);
+      return null;
+    } catch (e) {
+    } finally {
+      // setIsLoading(false);
     }
-
-    return null;
   }, [
     data,
     loading,
@@ -323,5 +340,5 @@ export const useRequestData = (): {
     }
   }, [error]);
 
-  return { requestList, isLoading: loading };
+  return { requestList, isLoading };
 };
