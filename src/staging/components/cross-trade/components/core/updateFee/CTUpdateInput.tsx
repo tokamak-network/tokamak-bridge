@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
   Box,
   Text,
@@ -17,10 +17,11 @@ import { WarningType } from "@/staging/components/cross-trade/types";
 import { TransactionToken } from "@/staging/types/transaction";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
+import useCTRecommend from "../../../hooks/useCTRecommend";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
-  recommendValue: string;
+  recommendValue?: string;
   onRecommendRefresh: () => void;
   tokenInfo: TransactionToken;
 }
@@ -137,7 +138,7 @@ export default function CTUpdateInput(
       <Box mt={"8px"}>
         {inputWarningCheck == WarningType.Critical ? (
           <CTWarning
-            label={"text will be changed"}
+            label={"Service fee is too high. Invalid request."}
             type={inputWarningCheck}
             groupStyle={{
               height: "16px",
@@ -151,7 +152,7 @@ export default function CTUpdateInput(
           />
         ) : inputWarningCheck == WarningType.Normal ? (
           <CTWarning
-            label={"text will be changed"}
+            label={"Service fee is low. May take long time"}
             type={inputWarningCheck}
             groupStyle={{
               height: "16px",

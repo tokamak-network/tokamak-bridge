@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ApolloError, useQuery } from "@apollo/client";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -18,8 +18,11 @@ import {
   isRequestCanceled,
   isRequestEdited,
   isRequestProvided,
+  isRequestProvidedOnL1,
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
+import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
+import { getCTTokenPrice } from "../utils/getCTTokenPrice";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -176,111 +179,160 @@ export const useRequestData = (): {
     error: _l1Error,
     loading: _l1Loading,
   } = useCrossTradeData_L1({ isHistory: false });
+  const [requestList, setRequestList] = useState<CrossTradeData[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const requestList = useMemo(() => {
-    if (error || loading) return null;
-    if (data && _l1Data) {
-      const datas = data.requestCTs;
-      const providerClaimCTs = data.providerClaimCTs;
-      const cancelCTs = data.cancelCTs;
-      const editCTs = _l1Data.editCTs;
+  const fetchRequestList = useCallback(async () => {
+    try {
+      if (error || _l1Error) return null;
+      if (data && _l1Data) {
+        const datas = data.requestCTs;
+        const providerClaimCTs = data.providerClaimCTs;
+        const cancelCTs = data.cancelCTs;
+        const editCTs = _l1Data.editCTs;
+        const provideCTs = _l1Data.provideCTs;
 
-      const inNetwork = isConnectedToMainNetwork
-        ? SupportedChainId.TITAN
-        : SupportedChainId.TITAN_SEPOLIA;
-      const outNetwork = isConnectedToMainNetwork
-        ? SupportedChainId.MAINNET
-        : SupportedChainId.SEPOLIA;
-      const result: CrossTradeData[] = datas.map((item) => {
-        //  will be refactor with split functions
-        const tokenInfo = getSupportedTokenForCT(item._l2token);
-        const isETH = isZeroAddress(item._l2token);
+        const inNetwork = isConnectedToMainNetwork
+          ? SupportedChainId.TITAN
+          : SupportedChainId.TITAN_SEPOLIA;
+        const outNetwork = isConnectedToMainNetwork
+          ? SupportedChainId.MAINNET
+          : SupportedChainId.SEPOLIA;
 
-        const isCanceled = isRequestCanceled({
-          cancelCTs,
-          saleCount: item._saleCount,
-        });
-        const isUpdated = isRequestEdited({
-          editCTs,
-          saleCount: item._saleCount,
-        });
-        const editCT = getEditCTTransaction({
-          editCTs,
-          saleCount: item._saleCount,
-        })[0];
+        //TON, ETH, USDC, USDT, TOS
+        const priceList = await getCTTokenPrice();
 
-        const ctAmount = isUpdated
-          ? BigInt(editCT._ctAmount)
-          : BigInt(item._ctAmount);
-        const profitAmount = BigInt(item._totalAmount) - ctAmount;
-        const profitRatio =
-          (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
-        const isProvided = isRequestProvided({
-          providerClaimCTs,
-          saleCount: item._saleCount,
-        });
+        const result: CrossTradeData[] = datas.map((item) => {
+          //  will be refactor with split functions
+          const tokenInfo = getSupportedTokenForCT(item._l2token);
+          const isETH = isZeroAddress(item._l2token);
 
-        const inToken = isETH
-          ? {
-              address: item._l1token,
-              name: "ETH",
-              symbol: "ETH",
-              amount: ctAmount.toString(),
-              decimals: 18,
-            }
-          : {
-              address: item._l1token,
-              name: tokenInfo?.tokenName as string,
-              symbol: tokenInfo?.tokenSymbol as string,
-              amount: ctAmount.toString(),
+          const isCanceled = isRequestCanceled({
+            cancelCTs,
+            saleCount: item._saleCount,
+          });
+          const isUpdated = isRequestEdited({
+            editCTs,
+            saleCount: item._saleCount,
+          });
+          const editCT = getEditCTTransaction({
+            editCTs,
+            saleCount: item._saleCount,
+          })[0];
+
+          const ctAmount = isUpdated
+            ? BigInt(editCT._ctAmount)
+            : BigInt(item._ctAmount);
+          const profitAmount = BigInt(item._totalAmount) - ctAmount;
+          const profitRatio =
+            (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
+          const isProvided = isRequestProvided({
+            providerClaimCTs,
+            saleCount: item._saleCount,
+          });
+          const isProvidedOnL1 = isRequestProvidedOnL1({
+            provideCTs,
+            saleCount: item._saleCount,
+          });
+          const isInRelay = isProvidedOnL1 && !isProvided;
+
+          const inToken = isETH
+            ? {
+                address: item._l1token,
+                name: "ETH",
+                symbol: "ETH",
+                amount: ctAmount.toString(),
+                decimals: 18,
+              }
+            : {
+                address: item._l1token,
+                name: tokenInfo?.tokenName as string,
+                symbol: tokenInfo?.tokenSymbol as string,
+                amount: ctAmount.toString(),
+                decimals: tokenInfo?.decimals as number,
+              };
+
+          const outToken = isETH
+            ? {
+                address: item._l2token,
+                name: "ETH",
+                symbol: "ETH",
+                amount: item._totalAmount,
+                decimals: 18,
+              }
+            : {
+                address: item._l2token,
+                name: tokenInfo?.tokenName as string,
+                symbol: tokenInfo?.tokenSymbol as string,
+                amount: item._totalAmount,
+                decimals: tokenInfo?.decimals as number,
+              };
+
+          let marketPrice: number | undefined;
+          if (
+            tokenInfo?.tokenSymbol &&
+            (tokenInfo.tokenSymbol as string) in priceList
+          ) {
+            marketPrice =
+              priceList[tokenInfo.tokenSymbol as keyof typeof priceList];
+          } else {
+            marketPrice = undefined;
+          }
+
+          const inTokenAmount = formatUnits(inToken.amount, inToken.decimals);
+          const outTokenAmount = formatUnits(
+            outToken.amount,
+            outToken.decimals
+          );
+          const providingUSD = Number(inTokenAmount) * Number(marketPrice);
+          const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
+
+          return {
+            requester: item._requester,
+            inNetwork,
+            outNetwork,
+            inToken,
+            outToken,
+            profit: {
+              amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
+              symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
+              percent: profitRatio.toString(),
               decimals: tokenInfo?.decimals as number,
-            };
-
-        const outToken = isETH
-          ? {
-              address: item._l2token,
-              name: "ETH",
-              symbol: "ETH",
-              amount: item._totalAmount,
-              decimals: 18,
-            }
-          : {
-              address: item._l2token,
-              name: tokenInfo?.tokenName as string,
-              symbol: tokenInfo?.tokenSymbol as string,
-              amount: item._totalAmount,
-              decimals: tokenInfo?.decimals as number,
-            };
-
-        return {
-          requester: item._requester,
-          inNetwork,
-          outNetwork,
-          inToken,
-          outToken,
-          profit: {
-            amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
-            symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
-            percent: profitRatio.toString(),
-            decimals: tokenInfo?.decimals as number,
-          },
-          blockTimestamps: Number(item.blockTimestamp),
-          isActive: true,
-          providingUSD: 1000,
-          recevingUSD: 2000,
-          subgraphData: item,
-          isProvided,
-          serviceFee: BigInt(profitAmount.toString()),
-          isCanceled,
-        };
-      });
-      const trimedResult = result.filter((item) => item.isCanceled === false);
-      // const trimedResult = result;
-      return trimedResult;
+            },
+            blockTimestamps: Number(item.blockTimestamp),
+            isActive: true,
+            providingUSD,
+            recevingUSD,
+            subgraphData: item,
+            isProvided,
+            serviceFee: BigInt(profitAmount.toString()),
+            isCanceled,
+            isInRelay,
+          };
+        });
+        const trimedResult = result.filter((item) => item.isCanceled === false);
+        setIsLoading(false);
+        return setRequestList(trimedResult);
+      }
+      setIsLoading(false);
+      return null;
+    } catch (e) {
+    } finally {
+      // setIsLoading(false);
     }
+  }, [
+    data,
+    loading,
+    error,
+    isConnectedToMainNetwork,
+    _l1Data,
+    _l1Error,
+    _l1Loading,
+  ]);
 
-    return null;
-  }, [data, loading, error, isConnectedToMainNetwork, _l1Data]);
+  useEffect(() => {
+    fetchRequestList();
+  }, [fetchRequestList]);
 
   useEffect(() => {
     if (error) {
@@ -288,5 +340,5 @@ export const useRequestData = (): {
     }
   }, [error]);
 
-  return { requestList, isLoading: loading };
+  return { requestList, isLoading };
 };

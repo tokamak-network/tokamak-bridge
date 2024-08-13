@@ -1,6 +1,6 @@
 import { defineConfig } from "@wagmi/cli";
 import { TxSort, ActionSort } from "@/types/tx/txType";
-import { ethers } from "ethers";
+import { BigNumber, ethers } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
@@ -32,7 +32,8 @@ import { useGetMode } from "../mode/useGetMode";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
 import L1CrossTradeAbi from "@/abis/L1CrossTrade.json";
 import L2CrossTradeAbi from "@/abis/L2CrossTrade.json";
-import L2CrossTradeProxyAbi from "@/abis/L2CrossTradeProxy.json";
+import L1CrossTradeProxyAbi from "@/abis/L1CrossTradeProxy.json";
+import L2CrossTradeProxyI from "@/abis/L2CrossTradeProxy.json";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 const getInterface = () => {
@@ -767,6 +768,60 @@ export function useTx(params: {
               ],
               network: connectedChainId,
               outNetwork: SupportedChainId.MAINNET,
+              isToasted: false,
+              actionSort: "Cross Trade",
+            },
+          });
+        }
+
+        case "Provide": {
+          console.log("logs ", logs);
+          const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
+          console.log(result);
+          const { args } = result;
+          const { _l1token, _l2token, _totalAmount, _ctAmount } = args;
+
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l1token,
+                  amount: _ctAmount,
+                },
+                {
+                  tokenAddress: _l1token,
+                  amount: _totalAmount,
+                },
+              ],
+              network: connectedChainId,
+              outNetwork: SupportedChainId.TITAN,
+              isToasted: false,
+              actionSort: "Cross Trade",
+            },
+          });
+        }
+
+        case "UpdateFee": {
+          const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
+          console.log(result);
+          const { args } = result;
+          const { _l1token, _l2token, _totalAmount, _ctAmount } = args;
+
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l1token,
+                  amount: BigInt(0),
+                },
+              ],
+              network: connectedChainId,
               isToasted: false,
               actionSort: "Cross Trade",
             },

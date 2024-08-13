@@ -27,6 +27,7 @@ export interface CTInputProps {
   inTokenSymbol?: string;
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onInputFocus?: (e: FocusEvent<HTMLInputElement>) => void;
+  recommnededFee?: number;
 }
 
 export enum ButtonTypeMain {

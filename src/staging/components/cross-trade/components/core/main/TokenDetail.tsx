@@ -11,22 +11,25 @@ import commafy from "@/utils/trim/commafy";
 interface TokenDetailProps {
   token?: Token;
   network?: number;
+  isProvide?: boolean;
+  providingUSD?: number;
+  recevingUSD?: number;
   profit?: Profit;
 }
 
 export default function TokenDetail(props: TokenDetailProps) {
-  const { token, network, profit } = props;
+  const { token, network, profit, isProvide, providingUSD, recevingUSD } =
+    props;
 
   const formattedAmount = token
     ? convertNumber(token.amount, token.decimals)
     : profit?.amount;
 
   const symbol = token ? token.symbol : profit?.symbol;
-
-  const { tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: token?.name,
-    amount: formatUnits(token?.amount, token?.decimals),
-  });
+  const tokenPriceWithAmount = useMemo(() => {
+    if (isProvide) return providingUSD;
+    return recevingUSD;
+  }, [isProvide, providingUSD, recevingUSD]);
 
   const priceOrPercent = useMemo(() => {
     if (token) {

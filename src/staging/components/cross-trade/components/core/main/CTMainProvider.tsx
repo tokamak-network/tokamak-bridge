@@ -40,6 +40,7 @@ export default function CTProvider({
     inToken,
     outToken,
     serviceFee,
+    isInRelay,
   } = crossTradeData;
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
@@ -125,16 +126,18 @@ export default function CTProvider({
     }, [address, crossTradeData.requester]);
 
     const isDisabled = status;
-    const bgColor = isDisabled
-      ? "#23242B"
-      : isCreatedByUser
-      ? "none"
-      : "#007AFF";
-    const textColor = isDisabled
-      ? "#A0A3AD"
-      : isCreatedByUser
-      ? "#DB00FF"
-      : "#FFFFFF";
+    const bgColor =
+      isDisabled || isInRelay
+        ? "#23242B"
+        : isCreatedByUser
+        ? "none"
+        : "#007AFF";
+    const textColor =
+      isDisabled || isInRelay
+        ? "#A0A3AD"
+        : isCreatedByUser
+        ? "#DB00FF"
+        : "#FFFFFF";
 
     return (
       <Button
@@ -147,7 +150,13 @@ export default function CTProvider({
         flexShrink={0}
         borderRadius={"6px"}
         bg={bgColor}
-        border={isCreatedByUser ? "1px solid var(--X-Trade, #DB00FF);" : "none"}
+        border={
+          isInRelay
+            ? "none"
+            : isCreatedByUser
+            ? "1px solid var(--X-Trade, #DB00FF);"
+            : "none"
+        }
         isDisabled={isDisabled}
         _active={{}}
         _hover={{}}
@@ -164,7 +173,7 @@ export default function CTProvider({
           lineHeight={"16.5px"}
           color={textColor}
         >
-          {isCreatedByUser ? "Edit" : "Provide"}
+          {isInRelay ? "Provided" : isCreatedByUser ? "Edit" : "Provide"}
         </Text>
       </Button>
     );

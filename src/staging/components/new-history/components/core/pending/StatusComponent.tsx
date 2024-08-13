@@ -35,8 +35,9 @@ import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
   transactionData: TransactionHistory;
-  blockTimestamp?: number;
   openModal: () => void;
+  blockTimestamp?: number;
+  updateFeeCount?: number;
 };
 
 export const ErrorRollupComponent = () => {
@@ -112,7 +113,8 @@ const FinalizeButtonComponent = (props: {
 export default function StatusComponent(
   props: TransactionStatusComponentProps
 ) {
-  const { label, transactionData, blockTimestamp, openModal } = props;
+  const { label, transactionData, blockTimestamp, updateFeeCount, openModal } =
+    props;
   const isActive = transactionData.status === label;
 
   // Countdown is needed only for the following conditions
@@ -208,7 +210,9 @@ export default function StatusComponent(
         case CT_REQUEST.Request:
           return "Request";
         case CT_REQUEST.UpdateFee:
-          return "Update";
+          return `Update ${
+            updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
+          }`;
         case CT_REQUEST.WaitForReceive:
           return "Waiting";
         default:
@@ -238,7 +242,7 @@ export default function StatusComponent(
       }
     }
     return label;
-  }, [label]);
+  }, [label, updateFeeCount]);
 
   return (
     <Flex justifyContent={"space-between"} alignItems={"center"}>

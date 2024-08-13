@@ -133,7 +133,14 @@ export default function CrossTrade() {
           h={"90%"}
         >
           <Box width={dynamicWidth}>
-            <Box pb={poolMobileView ? "16px" : "24px"}>
+            <Box
+              pb={poolMobileView ? "16px" : "24px"}
+              top={0}
+              position={"sticky"}
+              bgColor={"#17181D"}
+              w={"100%"}
+              zIndex={1000}
+            >
               <Text
                 fontWeight={500}
                 fontSize={poolMobileView ? "20px" : "30px"}

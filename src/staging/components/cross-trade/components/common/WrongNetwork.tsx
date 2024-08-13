@@ -3,7 +3,7 @@ import { Box, Text } from "@chakra-ui/react";
 
 export function WrongNetwork() {
   const { switchToEthereum } = useChangeNetwork();
-  const { connectedToLayer1 } = useConnectedNetwork();
+  const { connectedToLayer1, isConnectedToMainNetwork } = useConnectedNetwork();
 
   if (connectedToLayer1) return null;
 
@@ -28,7 +28,9 @@ export function WrongNetwork() {
         cursor={"pointer"}
       >
         Please switch to{" "}
-        <span style={{ textDecoration: "underline" }}>Ethereum</span>
+        <span style={{ textDecoration: "underline" }}>
+          {isConnectedToMainNetwork ? "Ethereum" : "Sepolia"}
+        </span>
       </Text>
     </Box>
   );

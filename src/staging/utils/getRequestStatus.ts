@@ -2,6 +2,7 @@ import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import {
   T_FETCH_CancelCTs,
   T_FETCH_EditCTs,
+  T_FETCH_ProvideCTs_L1,
   T_FETCH_ProviderClaimCTs,
   T_FETCH_REQUEST_LIST_L2,
   T_provideCTs_L1,
@@ -21,8 +22,15 @@ import {
   isInCT_REQUEST_CANCEL,
 } from "../types/transaction";
 import { ZERO_ADDRESS } from "@/constant/misc";
-import { is } from "date-fns/locale";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
+
+export const isRequestProvidedOnL1 = (params: {
+  provideCTs: T_FETCH_ProvideCTs_L1;
+  saleCount: string;
+}) => {
+  const { provideCTs, saleCount } = params;
+  return provideCTs.some((provideCT) => provideCT._saleCount === saleCount);
+};
 
 export const isRequestProvided = (params: {
   providerClaimCTs: T_FETCH_ProviderClaimCTs;
@@ -334,6 +342,7 @@ export const getTokenInfo = (parmas: {
   requestData: T_FETCH_REQUEST_LIST_L2 | T_provideCTs_L1 | T_ProviderClaimCTs;
   ctAmount?: boolean;
   _editedctAmount?: string;
+  isL1Token?: boolean;
 }): {
   address: string;
   name: string;
@@ -341,9 +350,11 @@ export const getTokenInfo = (parmas: {
   amount: string;
   decimals: number;
 } => {
-  const { requestData, ctAmount, _editedctAmount } = parmas;
+  const { requestData, ctAmount, _editedctAmount, isL1Token } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
-  const tokenInfo = getSupportedTokenForCT(requestData._l2token);
+  const tokenInfo = getSupportedTokenForCT(
+    isL1Token ? requestData._l1token : requestData._l2token
+  );
 
   return {
     address: isETH ? ZERO_ADDRESS : requestData._l1token,

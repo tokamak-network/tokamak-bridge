@@ -14,18 +14,24 @@ import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpd
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
 import CTConfirmDetail from "./CTConfirmDetail";
-import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
+import CTConfirmCrossTradeFooter, {
+  ContractWrite,
+} from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
-import {
-  isInCT_Provide,
-  isInCT_REQUEST_CANCEL,
-} from "@/staging/types/transaction";
+import { isInCT_Provide } from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
-  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isChecked, setIsChecked] = useState<{
+    firstChecked: boolean;
+    secondChecked: boolean;
+  }>({
+    firstChecked: false,
+    secondChecked: false,
+  });
 
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
@@ -33,11 +39,18 @@ export default function CTModal() {
     onOpenCTUpdateFeeModal(ctConfirmModal.txData);
   };
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setIsChecked(e.target.checked);
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id } = e.target;
+    if (id === "firstChecked" || id === "secondChecked") {
+      setIsChecked({ ...isChecked, [id]: !isChecked[id] });
+    }
+  };
 
   const handleConfirm = () => {
-    setIsChecked(false);
+    setIsChecked({
+      firstChecked: false,
+      secondChecked: false,
+    });
     onCloseCTConfirmModal();
   };
 
@@ -51,8 +64,16 @@ export default function CTModal() {
   };
 
   useEffect(() => {
-    if (ctConfirmModal) return setIsChecked(false);
+    if (ctConfirmModal)
+      return setIsChecked({
+        firstChecked: false,
+        secondChecked: false,
+      });
   }, [ctConfirmModal]);
+
+  const { provideCT, requestRegisteredToken } = useCrossTradeContract();
+
+  console.log(ctConfirmModal);
 
   return (
     <Modal
@@ -81,6 +102,7 @@ export default function CTModal() {
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
             txData={ctConfirmModal.txData}
+            requester={ctConfirmModal.subgraphData?._requester}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">
@@ -92,6 +114,8 @@ export default function CTModal() {
               txData={ctConfirmModal.txData}
               isProvide={ctConfirmModal.isProvide}
               subgraphData={ctConfirmModal.subgraphData}
+              provideCT={provideCT as ContractWrite}
+              requestRegisteredToken={requestRegisteredToken as ContractWrite}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />

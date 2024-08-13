@@ -11,11 +11,6 @@ import {
 } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { trimAddress } from "@/utils/trim";
-import {
-  useCrossTradeContract,
-  useRequestRegisteredToken,
-} from "@/staging/hooks/useCrossTradeContracts";
 import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";
@@ -28,26 +23,38 @@ import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getSupportedTokenInfo } from "@/utils/token/getSupportedTokenInfo";
-import useTokenModal from "@/hooks/modal/useTokenModal";
 import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState } from "recoil";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
+export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
-  isChecked: boolean;
+  isChecked: {
+    firstChecked: boolean;
+    secondChecked: boolean;
+  };
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirm: () => void;
   txData: CT_History | null;
   isProvide?: boolean;
   subgraphData?: T_FETCH_REQUEST_LIST_L2;
+  provideCT: ContractWrite;
+  requestRegisteredToken: ContractWrite;
 };
 
 export default function CTConfirmCrossTradeFooter(
   props: TradeConfirmationProps
 ) {
-  const { isChecked, onCheckboxChange, isProvide, txData, subgraphData } =
-    props;
+  const {
+    isChecked,
+    onCheckboxChange,
+    isProvide,
+    txData,
+    subgraphData,
+    provideCT,
+    requestRegisteredToken,
+  } = props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { isConnectedToMainNetwork, chainName } = useConnectedNetwork();
   const blockExplorer = getBlockExplorerUrl(
@@ -66,10 +73,9 @@ export default function CTConfirmCrossTradeFooter(
   const { connectedToLayer1 } = useConnectedNetwork();
 
   const btnDisabled = useMemo(() => {
-    return (
-      (isProvide ? !provideConfirmed || !connectedToLayer1 : !isChecked) ||
-      !isApproved
-    );
+    if (!isApproved) return true;
+    if (isProvide) return !provideConfirmed || !connectedToLayer1;
+    return !isChecked.firstChecked || !isChecked.secondChecked;
   }, [isProvide, isChecked, provideConfirmed, isApproved, connectedToLayer1]);
 
   const { inToken } = useInOutTokens();
@@ -97,8 +103,7 @@ export default function CTConfirmCrossTradeFooter(
   }, [inTokenInfo]);
 
   const { setModalOpen } = useTxConfirmModal();
-  const { provideCT } = useCrossTradeContract();
-  const { write: requestRegisteredToken } = useRequestRegisteredToken();
+  // const { provideCT, requestRegisteredToken } = useCrossTradeContract();
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
@@ -216,7 +221,8 @@ export default function CTConfirmCrossTradeFooter(
             I understand
           </Text>
           <Checkbox
-            isChecked={isChecked}
+            isChecked={isChecked.firstChecked}
+            id={"firstChecked"}
             onChange={onCheckboxChange}
             icon={<CheckCustomIcon />}
             sx={{
@@ -236,7 +242,7 @@ export default function CTConfirmCrossTradeFooter(
             colorScheme="#A0A3AD"
           >
             <Text
-              color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+              color={isChecked.firstChecked ? "#FFFFFF" : "#A0A3AD"}
               fontWeight={400}
               fontSize={12}
               lineHeight={"20px"}
@@ -245,7 +251,8 @@ export default function CTConfirmCrossTradeFooter(
             </Text>
           </Checkbox>
           <Checkbox
-            isChecked={isChecked}
+            isChecked={isChecked.secondChecked}
+            id={"secondChecked"}
             onChange={onCheckboxChange}
             icon={<CheckCustomIcon />}
             sx={{
@@ -265,7 +272,7 @@ export default function CTConfirmCrossTradeFooter(
             colorScheme="#A0A3AD"
           >
             <Text
-              color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+              color={isChecked.secondChecked ? "#FFFFFF" : "#A0A3AD"}
               fontWeight={400}
               fontSize={12}
               lineHeight={"20px"}

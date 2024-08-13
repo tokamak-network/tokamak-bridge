@@ -9,8 +9,9 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { Hash } from "viem";
 import { useEffect } from "react";
+import useCTUpdateFee from "../components/cross-trade/hooks/useCTUpdateFeeModal";
 
-export const useRequestRegisteredToken = () => {
+const useRequestRegisteredToken = () => {
   const { L2CrossTrade_CONTRACT } = useContract();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { onCloseCTConfirmModal } = useFxConfirmModal();
@@ -41,8 +42,7 @@ export const useRequestRegisteredToken = () => {
 
   return { data, write, isLoading, isSuccess, isError, error, status };
 };
-
-export const useProvideCT = () => {
+const useProvideCT = () => {
   const { L1CrossTrade_CONTRACT } = useContract();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { onCloseCTConfirmModal } = useFxConfirmModal();
@@ -54,7 +54,7 @@ export const useProvideCT = () => {
       abi: L1CrossTradeAbi.abi,
       functionName: "provideCT",
     });
-  const {} = useTx({ hash: data?.hash, txSort: "Request" });
+  const {} = useTx({ hash: data?.hash, txSort: "Provide" });
 
   useEffect(() => {
     if (isLoading) {
@@ -68,7 +68,7 @@ export const useProvideCT = () => {
   return { data, write, isLoading, isSuccess, isError, error, status };
 };
 
-export const useEditFee = () => {
+const useEditFee = () => {
   const { L1CrossTrade_CONTRACT } = useContract();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { onCloseCTConfirmModal } = useFxConfirmModal();
@@ -84,6 +84,7 @@ export const useEditFee = () => {
     hash: data?.hash,
     txSort: "UpdateFee",
     actionSort: "Cross Trade",
+    // tokenAddress,
   });
 
   useEffect(() => {
@@ -98,14 +99,30 @@ export const useEditFee = () => {
   return { data, write, isLoading, isSuccess, isError, error, status };
 };
 
-export const useCancelRequest = () => {
+const useCancelRequest = () => {
   const { L1CrossTrade_CONTRACT } = useContract();
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { onCloseCTUpdateFeeModal } = useCTUpdateFee();
   const { data, write, isLoading, isSuccess, isError, error, status } =
     useContractWrite({
       address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
       abi: L1CrossTradeAbi.abi,
       functionName: "cancel",
     });
+  const {} = useTx({
+    hash: data?.hash,
+    txSort: "CancelRequest",
+    actionSort: "Cross Trade",
+    // tokenAddress,
+  });
+
+  useEffect(() => {
+    if (isLoading) {
+      setIsOpen(true);
+      setModalOpen("confirming");
+      onCloseCTUpdateFeeModal();
+    }
+  }, [isLoading]);
 
   return { data, write, isLoading, isSuccess, isError, error, status };
 };

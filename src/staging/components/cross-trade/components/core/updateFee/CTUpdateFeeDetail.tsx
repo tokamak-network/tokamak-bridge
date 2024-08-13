@@ -11,6 +11,9 @@ import { formatUnits } from "@/utils/trim/convertNumber";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
+import commafy from "@/utils/trim/commafy";
 
 enum FeeDetailType {
   Receive,
@@ -20,7 +23,7 @@ enum FeeDetailType {
 interface FeeDetailProps {
   type: FeeDetailType;
   title: string;
-  inputValue: string;
+  inputValue?: string;
   tokenInfo?: TransactionToken;
 }
 
@@ -30,6 +33,10 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   inputValue,
   tokenInfo,
 }) => {
+  const { estimatedGasFeeETH, estimatedGasFeeUSD } = useCrossTradeGasFee(
+    CTTransactionType.editFee
+  );
+
   const receivedAmount = useMemo(() => {
     if (inputValue && tokenInfo) {
       const parsedTotalAmount = formatUnits(
@@ -111,12 +118,11 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
             lineHeight={"18px"}
             mx={"4px"}
           >
-            {inputValue ? "0.16" : "- "}
-            ETH
+            {formatNumber(estimatedGasFeeETH)} ETH
           </Text>
           <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"}>
             <span style={{ fontSize: "10px", lineHeight: "15px" }}>(</span>$
-            {inputValue ? "0.43" : "-"}
+            {commafy(estimatedGasFeeUSD)}
             <span style={{ fontSize: "10px", lineHeight: "15px" }}>)</span>
           </Text>
         </Flex>
@@ -127,7 +133,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
-  recommendValue: string;
+  recommendValue?: string;
   onRecommendRefresh: () => void;
   txData: CT_History;
 }
@@ -162,7 +168,7 @@ export default function CTUpdateFeeDetail(
         </Text>
         <Flex mt={"4px"} justifyContent="space-between">
           <Text fontSize={"16px"} fontWeight={400} lineHeight={"24px"}>
-            {currentServiceFee}
+            {formatNumber(currentServiceFee)}
           </Text>
           <Flex alignItems={"center"}>
             <TokenSymbol
@@ -208,11 +214,7 @@ export default function CTUpdateFeeDetail(
           inputValue={props.inputValue}
           tokenInfo={txData.inToken}
         />
-        <FeeDetail
-          type={FeeDetailType.Network}
-          title={"Network fee"}
-          inputValue={props.inputValue}
-        />
+        <FeeDetail type={FeeDetailType.Network} title={"Network fee"} />
       </Box>
     </>
   );
