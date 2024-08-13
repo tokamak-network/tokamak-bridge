@@ -19,6 +19,7 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      DEPLOYMENT_MODE: ${{ inputs.environment == 'production' && '--prod' || '' }}
 
     steps:
       #INSTALL NODEJS
@@ -35,13 +36,7 @@ jobs:
         run: npm install
       # PULL VERCEL ENV
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{ env.ENV}} --token=${{ env.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
       # DEPLOY TO VERCEL
       - name: Deploy to Vercel
-        run: |
-          if [ "${{ env.ENV }}" = "production" ]; then  
-            ENV="production"  
-          else  
-            ENV="preview"  
-          fi  
-          vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --env=$ENV
+        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}
