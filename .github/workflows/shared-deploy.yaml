@@ -28,9 +28,6 @@ jobs:
       # INSTALL VERCEL CLI IN SERVER.
       - name: Install Vercel CLI
         run: npm install -g vercel
-      # PULL VERCEL ENV
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
       # INSTALL DEPENDENCIES
       - name: Install dependencies
         run: npm install
