@@ -19,6 +19,12 @@ jobs:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
 
     steps:
+      #INSTALL NODEJS
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
       # INSTALL VERCEL CLI IN SERVER.
       - name: Install Vercel CLI
         run: npm install -g vercel
