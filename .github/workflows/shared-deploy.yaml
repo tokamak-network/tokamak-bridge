@@ -44,4 +44,4 @@ jobs:
           echo "NEXT_PUBLIC_THANOS_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_THANOS_SEPOLIA_RPC}}" >> .env
       # DEPLOY TO VERCEL
       - name: Deploy to Vercel
-        run: vercel --prod --confirm --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}
+        run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}
