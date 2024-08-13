@@ -53,6 +53,7 @@ export const SearchTokenComponent = () => {
     return (
       <TokenCard
         h={"248px"}
+        w={"200px"}
         tokenInfo={outToken}
         hasInput={true}
         inNetwork={false}

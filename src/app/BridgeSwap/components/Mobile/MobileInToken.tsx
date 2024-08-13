@@ -115,7 +115,6 @@ const MobileInToken = () => {
               symbolSize={{ w: 64, h: 64 }}
               forBridge={true}
               isPrice={true}
-              level={2}
               isInput
             />
             {/* <Box>
