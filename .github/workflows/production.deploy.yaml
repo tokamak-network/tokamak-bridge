@@ -1,0 +1,15 @@
+name: PRODUCTION - Deploy on Vercel
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - main
+
+jobs:
+  deploy:
+    if: github.event.pull_request.merged == true
+    uses: ./.github/workflows/shared-deploy.yaml
+    with:
+      environment: production
+    secrets: inherit
