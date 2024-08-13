@@ -37,4 +37,4 @@ jobs:
       # BUILD
       - name: Build Project Artifacts
         run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
-      # TEST // To be added at some point #
+      # TEST // To be added at some point
