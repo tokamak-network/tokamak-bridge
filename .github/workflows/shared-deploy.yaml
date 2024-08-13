@@ -33,14 +33,9 @@ jobs:
       # INSTALL DEPENDENCIES
       - name: Install dependencies
         run: npm install
-      # Create .env file with environment variables
-      - name: Create .env file
-        run: |
-          echo "NEXT_PUBLIC_ETHEREUM_RPC=${{vars.NEXT_PUBLIC_ETHEREUM_RPC}}" > .env  
-          echo "NEXT_PUBLIC_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_SEPOLIA_RPC}}" >> .env
-          echo "NEXT_PUBLIC_TITAN_RPC=${{vars.NEXT_PUBLIC_TITAN_RPC}}" >> .env
-          echo "NEXT_PUBLIC_TITAN_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_TITAN_SEPOLIA_RPC}}" >> .env
-          echo "NEXT_PUBLIC_THANOS_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_THANOS_SEPOLIA_RPC}}" >> .env
+      # PULL VERCEL ENV
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ env.ENV}} --token=${{ env.VERCEL_TOKEN }}
       # DEPLOY TO VERCEL
       - name: Deploy to Vercel
         run: vercel --prod --yes --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}
