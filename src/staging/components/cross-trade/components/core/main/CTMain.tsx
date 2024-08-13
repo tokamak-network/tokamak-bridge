@@ -26,6 +26,7 @@ import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import GradientSpinner from "@/components/ui/GradientSpinner";
 
 {
   /** 
@@ -44,7 +45,7 @@ export default function CTMain() {
     null
   );
   const { requestList, isLoading } = useRequestData();
-  const [data, setData] = useState<CrossTradeData[]>([]);
+  const [data, setData] = useState<CrossTradeData[] | null>(null);
 
   useEffect(() => {
     if (requestList) {
@@ -55,14 +56,20 @@ export default function CTMain() {
   useEffect(() => {
     if (isSortedDescending === null) return;
     if (isSortedDescending) {
-      return setData((prevData) => [
-        ...prevData.sort((a, b) => b.providingUSD - a.providingUSD),
-      ]);
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort((a, b) => b.providingUSD - a.providingUSD),
+          ]
+      );
     }
     if (!isSortedDescending) {
-      return setData((prevData) => [
-        ...prevData.sort((a, b) => a.providingUSD - b.providingUSD),
-      ]);
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort((a, b) => a.providingUSD - b.providingUSD),
+          ]
+      );
     }
   }, [isSortedDescending]);
 
@@ -74,9 +81,8 @@ export default function CTMain() {
   //will be refactored to controll fetch data with it to save traffics
   useEffect(() => {
     // Initialize displayed items
-    if (requestList && itemsToShow)
-      setDisplayedItems(requestList.slice(0, itemsToShow));
-  }, [requestList, itemsToShow]);
+    if (data && itemsToShow) setDisplayedItems(data.slice(0, itemsToShow));
+  }, [data, itemsToShow]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -195,46 +201,54 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {displayedItems?.map((item, index) => {
-            //Decided not to show the request is already done with providing liquidity because countdown does not needed.
-            if (item.isProvided) return null;
-            // const status = getStatus(item);
-            const status = item.isProvided;
-            // const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
-            const rowOpacity = status ? 0.3 : 1;
-            return (
-              <Tr
-                key={index}
-                sx={{
-                  "& td": { pl: "20px", py: "16px", pr: "auto" },
-                  borderBottom: "1px solid #23242B",
-                }}
-                ref={lastItemRef}
-              >
-                <Td sx={{ opacity: rowOpacity }}>
-                  <TokenDetail token={item.inToken} network={item.inNetwork} />
-                </Td>
-                <Td sx={{ opacity: rowOpacity }}>
-                  <TokenDetail
-                    token={item.outToken}
-                    network={item.outNetwork}
-                  />
-                </Td>
-                <Td sx={{ opacity: rowOpacity }}>
-                  <TokenDetail profit={item.profit} />
-                </Td>
-                <Td>
-                  <CTProvider
-                    status={status}
-                    crossTradeData={item}
-                    subgraphData={item.subgraphData}
-                    serviceFee={item.serviceFee}
-                  />
-                </Td>
-              </Tr>
-            );
-          })}
-          {!isLoading && data.length === 0 && (
+          {!isLoading &&
+            displayedItems?.map((item, index) => {
+              //Decided not to show the request is already done with providing liquidity because countdown does not needed.
+              if (item.isProvided) return null;
+              // const status = getStatus(item);
+              const status = item.isProvided;
+              // const rowOpacity = status === STATUS.COUNTDOWN ? 0.3 : 1;
+              const rowOpacity = status ? 0.3 : 1;
+              return (
+                <Tr
+                  key={index}
+                  sx={{
+                    "& td": { pl: "20px", py: "16px", pr: "auto" },
+                    borderBottom: "1px solid #23242B",
+                  }}
+                  ref={lastItemRef}
+                >
+                  <Td sx={{ opacity: rowOpacity }}>
+                    <TokenDetail
+                      token={item.inToken}
+                      network={item.inNetwork}
+                      isProvide={true}
+                      providingUSD={item.providingUSD}
+                    />
+                  </Td>
+                  <Td sx={{ opacity: rowOpacity }}>
+                    <TokenDetail
+                      token={item.outToken}
+                      network={item.outNetwork}
+                      isProvide={false}
+                      recevingUSD={item.recevingUSD}
+                    />
+                  </Td>
+                  <Td sx={{ opacity: rowOpacity }}>
+                    <TokenDetail profit={item.profit} />
+                  </Td>
+                  <Td>
+                    <CTProvider
+                      status={status}
+                      crossTradeData={item}
+                      subgraphData={item.subgraphData}
+                      serviceFee={item.serviceFee}
+                    />
+                  </Td>
+                </Tr>
+              );
+            })}
+          {!isLoading && data?.length === 0 && (
             <Tr
               key={0}
               sx={{
@@ -253,6 +267,37 @@ export default function CTMain() {
                 }}
               >
                 <Box>No active requests</Box>
+              </Td>
+            </Tr>
+          )}
+          {isLoading && (
+            <Tr
+              key={0}
+              sx={{
+                "& td": { pl: "20px", py: "16px", pr: "auto" },
+                borderBottom: "1px solid #23242B",
+              }}
+              textAlign={"center"}
+            >
+              <Td
+                colSpan={4}
+                style={{
+                  height: "288px",
+                  color: "#E3F3FF",
+                }}
+              >
+                <Flex h={"17px"} mb={"14px"}>
+                  <GradientSpinner />
+                </Flex>
+                <Flex h={"17px"} mb={"32px"}>
+                  <GradientSpinner />
+                </Flex>
+                <Flex h={"17px"} mb={"14px"}>
+                  <GradientSpinner />
+                </Flex>
+                <Flex h={"17px"} mb={"122px"}>
+                  <GradientSpinner />
+                </Flex>
               </Td>
             </Tr>
           )}
