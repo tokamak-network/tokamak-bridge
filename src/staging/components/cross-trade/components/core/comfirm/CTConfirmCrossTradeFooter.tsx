@@ -28,7 +28,7 @@ import { useRecoilState } from "recoil";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 
-type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
+export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
   isChecked: {
     firstChecked: boolean;

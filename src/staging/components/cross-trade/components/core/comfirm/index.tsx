@@ -14,7 +14,9 @@ import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpd
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
 import CTConfirmDetail from "./CTConfirmDetail";
-import CTConfirmCrossTradeFooter from "./CTConfirmCrossTradeFooter";
+import CTConfirmCrossTradeFooter, {
+  ContractWrite,
+} from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
 import { isInCT_Provide } from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
@@ -112,8 +114,8 @@ export default function CTModal() {
               txData={ctConfirmModal.txData}
               isProvide={ctConfirmModal.isProvide}
               subgraphData={ctConfirmModal.subgraphData}
-              provideCT={provideCT}
-              requestRegisteredToken={requestRegisteredToken}
+              provideCT={provideCT as ContractWrite}
+              requestRegisteredToken={requestRegisteredToken as ContractWrite}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />
