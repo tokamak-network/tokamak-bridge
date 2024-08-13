@@ -17,73 +17,76 @@ import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import { trimAmount } from "@/utils/trim";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { ethers } from "ethers";
-
-type TokenCardSizeType = "small" | "medium" | "large";
+import { tokenColor } from "@/utils/carousel/tokenColorCode";
+import {
+  BALANCE_FONT_SIZE,
+  FONT_SIZE,
+  ICON_SIZE,
+  LINE_STYLE,
+  PADDING_SIZE,
+} from "@/constant/carousel";
+import Warning from "assets/icons/white_warning.svg";
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 type TokenCardProps = {
-  tokenInfo: TokenInfo;
-  w?: string | number;
-  h?: string | number;
-  hasInput: boolean;
-  inNetwork: boolean;
+  tokenInfo: TokenInfo & { isNew?: boolean };
+  level?: number;
   isNew?: boolean;
-  symbolSize?: {
-    w: number;
-    h: number;
-  };
-  onClick?: (e: any) => any;
-  onMouseDown?: (e: any) => any;
-  style?: {};
-  type?: TokenCardSizeType;
   forBridge?: boolean;
   isPrice?: boolean;
+  inNetwork?: boolean;
+  hasInput?: boolean;
   isInput?: boolean;
   requireCall?: boolean;
   watch?: boolean;
   isDark?: boolean;
+  isHover?: number | null;
+  onClick?: (e: any) => any;
+  w?: string | number;
+  h?: string | number;
+  style?: {};
+  symbolSize?: {
+    w: number;
+    h: number;
+  };
 };
 
-const TopLine = (props: { mainSchemCol: string }) => {
+const TopLine = (props: { layer: number }) => {
   return (
-    <>
+    <Box
+      w={"332px"}
+      h={"231.17px"}
+      top={"-40px"}
+      left={"-40px"}
+      pos={"absolute"}
+    >
       <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"100px"}
-        top={"-83px"}
-        left={"-100px"}
-        bg={props.mainSchemCol}
+        as={motion.div}
+        w={"344px"}
+        h={`${LINE_STYLE[props.layer]?.thin.height || 4.6}px`}
         transform={"rotate(-30deg)"}
-        opacity={0.15}
-      ></Box>
-      <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"4.63px"}
-        top={"15px"}
-        left={"-100px"}
         bg={"rgba(255, 255, 255, 0.5)"}
-        transform={"rotate(-30deg)"}
+        position={"relative"}
+        initial={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
+        animate={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
+        transition="0.5 linear"
       ></Box>
       <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"47px"}
-        top={"28px"}
-        left={"-100px"}
-        bg={`linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)`}
+        as={motion.div}
+        w={"344px"}
+        h={`${LINE_STYLE[props.layer]?.thick.height || 46.6}px`}
+        left={"2.26px"}
         transform={"rotate(-30deg)"}
+        bg={
+          "linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 100%)"
+        }
+        pos={"relative"}
+        initial={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
+        animate={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
+        transition="0.5 linear"
       ></Box>
-      {/* <Box
-        pos={"absolute"}
-        w={"400px"}
-        h={"20px"}
-        top={"25px"}
-        left={"-100px"}
-        bg={`linear-gradient(180deg, #fff, props.mainSchemCol)`}
-        transform={"rotate(-30deg)"}
-      ></Box> */}
-    </>
+    </Box>
   );
 };
 
@@ -92,19 +95,18 @@ const TokenTitle = (props: {
   isName: boolean;
   style?: TextProps;
 }) => {
-  const { style } = props;
   return (
     <Text
-      w={props.isName ? "110px" : "60px"}
-      fontSize={props.isName ? 18 : 14}
+      as={motion.span}
       fontWeight={props.isName ? 700 : 400}
       color={"#222222"}
-      textAlign={props.isName ? "left" : "right"}
-      lineHeight={props?.isName ? "20px" : ""}
+      lineHeight={props?.isName ? props.style?.fontSize : ""}
       zIndex={100}
       {...props.style}
+      initial={{ fontSize: props.style?.fontSize }}
+      animate={{ fontSize: props.style?.fontSize }}
+      transition="0.3 linear"
     >
-      {/* {props.tokenName.toUpperCase()} */}
       {props.tokenName}
     </Text>
   );
@@ -113,51 +115,25 @@ const TokenTitle = (props: {
 export default function TokenCard(props: TokenCardProps) {
   const {
     tokenInfo,
-    w,
-    h,
-    hasInput,
-    inNetwork,
     isNew,
-    symbolSize,
-    onClick,
-    onMouseDown,
-    style,
-    type,
     forBridge,
     isPrice,
     isInput,
     requireCall,
     watch,
+    onClick,
+    isHover,
+    level,
     isDark,
+    h,
+    hasInput,
+    inNetwork,
+    style,
+    symbolSize,
+    w,
   } = props;
+  const layer = Math.abs(level ?? 3);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
-
-  const tokenColorCode = useMemo(() => {
-    switch (tokenInfo?.tokenSymbol) {
-      case "ETH":
-        return "#627EEA";
-      case "WETH":
-        return "#393939";
-      case "TON":
-        return "#007AFF";
-      case "WTON":
-        return "#007AFF";
-      case "TOS":
-        return "#007AFF";
-      case "DOC":
-        return "#9e9e9e";
-      case "AURA":
-        return "#CB1000";
-      case "LYDA":
-        return "#4361EE";
-      case "USDC":
-        return "#2775CA";
-      case "USDT":
-        return "#50AF95";
-      default:
-        return "#9e9e9e";
-    }
-  }, [tokenInfo]);
 
   const tokenData = useTokenBalance(tokenInfo, requireCall, watch);
   const thisTokenIsETH = isETH(tokenInfo);
@@ -182,8 +158,10 @@ export default function TokenCard(props: TokenCardProps) {
     amount: Number(inTokenInfo?.parsedAmount?.replaceAll(",", "")),
   });
 
-  const { pcView, mobileView } = useMediaView();
+  const { mobileView } = useMediaView();
   const { mode } = useGetMode();
+
+  const pcView = window.matchMedia("(min-width: 1200px)").matches;
 
   const outAmount = useMemo(() => {
     if (
@@ -231,209 +209,291 @@ export default function TokenCard(props: TokenCardProps) {
       });
     }
   }, [amountOut, mode]);
-
   return (
     <Flex
-      w={typeof w === "string" ? w : `${w ?? 200}px`}
-      height={typeof h === "string" ? h : `${h ?? 248}px`}
-      bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
-      opacity={isNew || isDark ? 0.25 : 0.85}
-      border={`3px solid ${tokenColorCode} `}
-      borderRadius={{ base: "9px", lg: "16px" }}
-      pos={"relative"}
-      pt={{ base: "12px", lg: "15px" }}
-      pb={type === "small" ? "13px" : type === "medium" ? "15px" : "30px"}
-      overflow={"hidden"}
-      flexDir={"column"}
-      justifyContent={"space-between"}
-      px={{ base: "12px", lg: "16px" }}
-      cursor={"pointer"}
-      onMouseDown={onMouseDown}
-      onClick={notAdded ? addNewCard : onClick}
-      fontFamily={theme.fonts.Quicksand}
+      bg={
+        notAdded
+          ? "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), rgb(98, 126, 234);"
+          : `linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColor(
+              tokenInfo?.tokenSymbol
+            )};`
+      }
+      w={typeof w === "string" ? w : `${w ? w + "px" : "100%"}`}
+      h={typeof h === "string" ? h : `${h ? h + "px" : "100%"}`}
+      opacity={
+        isNew || isDark
+          ? 0.25
+          : isHover === undefined || isHover === null || isHover === level
+          ? 0.9
+          : 0.5
+      }
       {...style}
+      overflow={"hidden"}
+      pos={"relative"}
+      borderRadius={"16px"}
     >
-      <TopLine mainSchemCol={tokenColorCode} />
-      {pcView && (
-        <Flex justifyContent={"space-between"} w={"100%"}>
-          <TokenTitle
-            tokenName={
-              thisTokenIsETH
-                ? "Ethereum"
-                : tokenInfo?.tokenSymbol === "WETH"
-                ? "Wrapped Ethereum"
-                : tokenInfo?.tokenName === "Tokamak Network Token"
-                ? "Tokamak Network"
-                : tokenInfo?.tokenName ?? "TOKEN"
-            }
-            isName={true}
-            style={{
-              fontSize:
-                type === "small" ? "16px" : type === "medium" ? "20px" : "22px",
-            }}
-          />
-          <TokenTitle
-            tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
-            isName={false}
-            style={{
-              fontSize:
-                type === "small" ? "12px" : type === "medium" ? "16px" : "18px",
-            }}
-          />
-        </Flex>
-      )}
-      {!pcView && (
-        <Flex
-          flexDir={"column"}
-          justifyContent={"space-between"}
-          w={"100%"}
-          color={"#222222"}
-        >
-          <Text fontWeight={700} fontSize={16} zIndex={100}>
-            {tokenInfo?.tokenSymbol ?? "TOK"}
-          </Text>
-          <Text fontWeight={700} fontSize={10} zIndex={100}>
-            {thisTokenIsETH
-              ? "Ethereum"
-              : tokenInfo?.tokenSymbol === "WETH"
-              ? "Wrapped Ethereum"
-              : tokenInfo?.tokenName ?? "TOKEN"}
-          </Text>
-        </Flex>
-      )}
       <Flex
-        // pt={"25px"}
-        // pb={"37px"}
-        // my={notAdded ? "20px" : ""}
+        as={motion.div}
+        w={"100%"}
         h={"100%"}
-        justifyContent={"center"}
-        alignItems={notAdded ? "baseline" : "center"}
-        my={{ base: "10px", lg: "0px" }}
+        borderRadius={"16px"}
+        border={`${layer === 0 ? 4 : 3}px solid ${
+          notAdded ? "rgb(98, 126, 234)" : tokenColor(tokenInfo?.tokenSymbol)
+        }`}
+        pos={"relative"}
+        flexDir={"column"}
+        justifyContent={"space-between"}
+        cursor={"pointer"}
+        boxSizing={"border-box"}
+        onClick={notAdded ? addNewCard : onClick}
+        fontFamily={theme.fonts.Quicksand}
+        initial={{
+          padding: `${PADDING_SIZE[layer] || (pcView ? 16 : 8)}px`,
+        }}
+        animate={{
+          padding: `${PADDING_SIZE[layer] || (pcView ? 16 : 8)}px`,
+        }}
+        transition="0.5 linear"
       >
-        <TokenSymbol
-          w={symbolSize?.w ?? (notAdded ? 40 : 92)}
-          h={symbolSize?.w ?? (notAdded ? 40 : 92)}
-          tokenType={tokenInfo?.tokenSymbol}
-        />
-      </Flex>
-      {notAdded ? (
-        <Flex flexDir={"column"} alignItems={"center"}>
-          <Text fontSize={12} color={"#222222"} w={"206px"}>
-            This token isn’t traded on leading U.S. centralized exchanges or
-            frequently swapped on Tokamak Network. Always conduct your own
-            research before trading.
-          </Text>
-          <Button
-            w={"206px"}
-            h={"40px"}
-            my={"20px"}
-            bg={"#007AFF"}
-            _hover={{}}
-            _active={{}}
-            fontSize={16}
-            fontWeight={600}
-            onClick={() => addNewCard}
-          >
-            I Agree
-          </Button>
-          <Text fontSize={16} fontWeight={400} color={"#222222"}>
-            Cancel
-          </Text>
-        </Flex>
-      ) : forBridge ? (
-        pcView ? (
-          <Flex flexDir={"column"} rowGap={"13px"}>
-            <Flex fontSize={16} h={"8px"} color={"#222222"} columnGap={"2px"}>
-              <Text fontWeight={500}>Balance: </Text>
-              <Text fontWeight={700}>
-                {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
-              </Text>
+        <TopLine layer={layer} />
+        {notAdded ? (
+          <Flex flexDirection={"column"}>
+            <Flex
+              w={"100%"}
+              justifyContent={"space-between"}
+              alignItems={"end"}
+            >
+              <TokenTitle
+                tokenName={
+                  thisTokenIsETH
+                    ? "Ethereum"
+                    : tokenInfo?.tokenSymbol === "WETH"
+                    ? "Wrapped Ethereum"
+                    : tokenInfo?.tokenName === "Tokamak Network Token"
+                    ? "Tokamak Network"
+                    : tokenInfo?.tokenName ?? "TOKEN"
+                }
+                isName={true}
+                style={{
+                  fontSize: `${FONT_SIZE[layer]?.name ?? 18}px`,
+                }}
+              />
+              <Flex
+                p={"8px 10px"}
+                alignSelf={"flex-start"}
+                fontSize={"16px"}
+                bg={"#1F2128"}
+                color={"#fff"}
+                borderRadius={"6px"}
+                gap={"2px"}
+              >
+                Add
+                <Image src={Warning} alt="warning" />
+              </Flex>
+            </Flex>
+            <Flex>
+              <TokenTitle
+                tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
+                isName={false}
+                style={{
+                  fontSize: `${FONT_SIZE[layer]?.symbol ?? 14}px`,
+                }}
+              />
             </Flex>
           </Flex>
         ) : (
-          <Flex flexDir={"column"} rowGap={"7px"}>
-            <Flex fontSize={12} h={"8px"} color={"#222222"}>
-              <Text fontWeight={500}>Balance </Text>
-            </Flex>
-            <Text fontWeight={700} fontSize={18} color={"#222222"}>
-              {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 12)}
+          <>
+            {pcView && (
+              <Flex justifyContent={"space-between"} w={"100%"} gap={"10px"}>
+                <TokenTitle
+                  tokenName={
+                    thisTokenIsETH
+                      ? "Ethereum"
+                      : tokenInfo?.tokenSymbol === "WETH"
+                      ? "Wrapped Ethereum"
+                      : tokenInfo?.tokenName === "Tokamak Network Token"
+                      ? "Tokamak Network"
+                      : tokenInfo?.tokenName ?? "TOKEN"
+                  }
+                  isName={true}
+                  style={{
+                    fontSize: `${FONT_SIZE[layer]?.name ?? 18}px`,
+                    lineHeight: `${24 - 2 * layer}px`,
+                  }}
+                />
+                <TokenTitle
+                  tokenName={tokenInfo?.tokenSymbol ?? "TOK"}
+                  isName={false}
+                  style={{
+                    fontSize: `${FONT_SIZE[layer]?.symbol ?? 14}px`,
+                  }}
+                />
+              </Flex>
+            )}
+            {!pcView && (
+              <Flex
+                flexDir={"column"}
+                justifyContent={"space-between"}
+                w={"100%"}
+                color={"#222222"}
+              >
+                <Text fontWeight={700} fontSize={16} zIndex={100}>
+                  {tokenInfo?.tokenSymbol ?? "TOK"}
+                </Text>
+                <Text fontWeight={700} fontSize={10} zIndex={100}>
+                  {thisTokenIsETH
+                    ? "Ethereum"
+                    : tokenInfo?.tokenSymbol === "WETH"
+                    ? "Wrapped Ethereum"
+                    : tokenInfo?.tokenName ?? "TOKEN"}
+                </Text>
+              </Flex>
+            )}
+          </>
+        )}
+
+        {!notAdded && (
+          <Flex
+            as={motion.div}
+            justifyContent={"center"}
+            pos={"absolute"}
+            h={"100%"}
+            w={"100%"}
+            alignItems={notAdded ? "baseline" : "center"}
+            initial={{
+              marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+              marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+            }}
+            animate={{
+              marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+              marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
+            }}
+            transition="0.5 linear"
+          >
+            <TokenSymbol
+              w={
+                (symbolSize ? symbolSize?.w : ICON_SIZE[layer]) ??
+                (notAdded ? 40 : 92)
+              }
+              h={
+                (symbolSize ? symbolSize?.h : ICON_SIZE[layer]) ??
+                (notAdded ? 40 : 92)
+              }
+              tokenType={tokenInfo?.tokenSymbol}
+            />
+          </Flex>
+        )}
+        {notAdded ? (
+          <Flex flexDir={"column"} alignItems={"center"}>
+            <Text fontSize={12} color={"#fff"} w={"100%"}>
+              This token isn’t traded on leading U.S. centralized exchanges or
+              frequently swapped on Tokamak Network. Always conduct your own
+              research before trading.
+            </Text>
+            <Button
+              w={"100%"}
+              h={"40px"}
+              my={"20px"}
+              bg={"#007AFF"}
+              _hover={{}}
+              _active={{}}
+              fontSize={16}
+              fontWeight={600}
+              onClick={() => addNewCard}
+            >
+              I Understand
+            </Button>
+            <Text fontSize={16} fontWeight={400} color={"#fff"}>
+              Cancel
             </Text>
           </Flex>
-        )
-      ) : (
-        <Flex
-          flexDir={"column"}
-          mt={"auto"}
-          color={"#222"}
-          rowGap={type === "small" ? "8px" : type === "medium" ? "9px" : "12px"}
-        >
-          {!isPrice && (
-            <>
-              {pcView ? (
-                <>
-                  <Text
-                    fontWeight={400}
-                    fontSize={
-                      type === "small" ? 12 : type === "medium" ? 13 : 14
-                    }
-                    h={
-                      type === "small"
-                        ? "8px"
-                        : type === "medium"
-                        ? "9px"
-                        : "10px"
-                    }
-                  >
-                    balance:{" "}
-                  </Text>
-                  <Text
-                    fontWeight={700}
-                    fontSize={
-                      type === "small" ? 24 : type === "medium" ? 30 : 36
-                    }
-                    h={
-                      type === "small"
-                        ? "33px"
-                        : type === "medium"
-                        ? "40px"
-                        : "40px"
-                    }
-                  >
-                    {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
-                  </Text>
-                </>
-              ) : (
-                <Text fontWeight={700} fontSize={18}>
+        ) : forBridge ? (
+          pcView ? (
+            <Flex flexDir={"column"} rowGap={"13px"}>
+              <Flex fontSize={16} color={"#222222"} columnGap={"2px"}>
+                <Text fontWeight={500}>Balance: </Text>
+                <Text fontWeight={700}>
                   {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
                 </Text>
-              )}
-            </>
-          )}
-
-          {isPrice && (
-            <Flex flexDir={"column"} rowGap={0}>
-              <Text
-                h={"28px"}
-                fontFamily={theme.fonts.Quicksand}
-                fontWeight={700}
-                fontSize={22}
-                textOverflow={"hidden"}
-              >
-                {isInput
-                  ? trimAmount(inTokenInfo?.parsedAmount, 10) || "0"
-                  : trimAmount(outAmount, 10) || "0"}
-              </Text>
-              <Text
-                fontFamily={theme.fonts.Quicksand}
-                fontWeight={700}
-                fontSize={10}
-              >
-                ${isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
+              </Flex>
+            </Flex>
+          ) : (
+            <Flex flexDir={"column"}>
+              <Flex fontSize={12} color={"#222222"}>
+                <Text fontWeight={500}>Balance </Text>
+              </Flex>
+              <Text fontWeight={700} fontSize={18} color={"#222222"}>
+                {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 12)}
               </Text>
             </Flex>
-          )}
-        </Flex>
-      )}
+          )
+        ) : (
+          <Flex flexDir={"column"} color={"#222"}>
+            {!isPrice && (
+              <>
+                {pcView ? (
+                  <>
+                    <Text
+                      as={motion.span}
+                      fontWeight={400}
+                      initial={{
+                        fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
+                      }}
+                      animate={{
+                        fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
+                      }}
+                      transition="0.3 linear"
+                    >
+                      balance:{" "}
+                    </Text>
+                    <Text
+                      as={motion.span}
+                      fontWeight={700}
+                      initial={{
+                        fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
+                      }}
+                      animate={{
+                        fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
+                      }}
+                      transition="0.3 linear"
+                    >
+                      {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                    </Text>
+                  </>
+                ) : (
+                  <Text fontWeight={700} fontSize={18}>
+                    {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                  </Text>
+                )}
+              </>
+            )}
+
+            {isPrice && (
+              <Flex flexDir={"column"} rowGap={0}>
+                <Text
+                  h={"28px"}
+                  fontFamily={theme.fonts.Quicksand}
+                  fontWeight={700}
+                  fontSize={22}
+                  textOverflow={"hidden"}
+                >
+                  {isInput
+                    ? trimAmount(inTokenInfo?.parsedAmount, 10) || "0"
+                    : trimAmount(outAmount, 10) || "0"}
+                </Text>
+                <Text
+                  fontFamily={theme.fonts.Quicksand}
+                  fontWeight={700}
+                  fontSize={10}
+                >
+                  $
+                  {isInput ? inTokenWithPrice || "0" : outTokenWithPrice || "0"}
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+        )}
+      </Flex>
     </Flex>
   );
 }
