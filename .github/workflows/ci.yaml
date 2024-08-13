@@ -1,0 +1,40 @@
+name: Vercel CI
+on:
+  pull_request:
+    branches: ["main", "dev", "staging"]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: tokamak-bridge
+      APP: tokamak-bridge-webapp
+      OWNER: victor
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+    steps:
+      #INSTALL NODEJS
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+      # INSTALL VERCEL CLI IN SERVER.
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      # PULL VERCEL ENV
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
+      # INSTALL DEPENDENCIES
+      - name: Install dependencies
+        run: npm install
+      # Create .env file with environment variables
+      - name: Create .env file
+        run: |
+          echo "NEXT_PUBLIC_ETHEREUM_RPC=${{vars.NEXT_PUBLIC_ETHEREUM_RPC}}" > .env  
+          echo "NEXT_PUBLIC_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_SEPOLIA_RPC}}" >> .env
+          echo "NEXT_PUBLIC_TITAN_RPC=${{vars.NEXT_PUBLIC_TITAN_RPC}}" >> .env
+          echo "NEXT_PUBLIC_TITAN_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_TITAN_SEPOLIA_RPC}}" >> .env
+          echo "NEXT_PUBLIC_THANOS_SEPOLIA_RPC=${{vars.NEXT_PUBLIC_THANOS_SEPOLIA_RPC}}" >> .env
+      # BUILD
+      - name: Build Project
+        run: npm run build
+      # TEST // To be added at some point
