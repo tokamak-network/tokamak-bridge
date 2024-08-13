@@ -183,7 +183,7 @@ export default function AccountHistory() {
                 setSelectedTab(HISTORY_SORT.STANDARD);
               }}
             >
-              Official Standard
+              Standard
             </Box>
             <Box
               w={"50%"}

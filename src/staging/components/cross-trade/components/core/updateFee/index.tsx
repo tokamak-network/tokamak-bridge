@@ -116,12 +116,18 @@ export default function CTFeeUpdateModal() {
     }
   }, [inputParsedAmount, totalAmount]);
 
+  const isLessThanRecommendedFee = useMemo(() => {
+    if (inputValue && recommendValue) {
+      return Number(inputParsedAmount) < Number(recommendValue);
+    }
+  }, [inputValue, recommendValue]);
+
   useEffect(() => {
     if (isInputOver) return setInputWarningCheck(WarningType.Critical);
-
-    // will be implemented when recommend value is added
-    // if(true) return setInputWarningCheck(WarningType.Normal);
-  }, [isInputOver]);
+    if (isLessThanRecommendedFee)
+      return setInputWarningCheck(WarningType.Normal);
+    return setInputWarningCheck("");
+  }, [isInputOver, isLessThanRecommendedFee]);
 
   //check box
   const [isChecked, setIsChecked] = useState<boolean>(false);
