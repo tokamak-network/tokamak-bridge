@@ -96,7 +96,11 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <TokenSymbolWithNetwork tokenSymbol={symbol} chainId={targetChainId} />
+        <TokenSymbolWithNetwork
+          tokenSymbol={symbol}
+          chainId={targetChainId}
+          bottom={0}
+        />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
           {txSort !== "Revoke" ? trimAmount(convertParsedAmount) : ""} {symbol}
         </Text>
