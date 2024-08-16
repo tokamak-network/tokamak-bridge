@@ -775,7 +775,6 @@ export function useTx(params: {
         }
 
         case "Provide": {
-          console.log("logs ", logs);
           const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
           console.log(result);
           const { args } = result;
@@ -808,7 +807,7 @@ export function useTx(params: {
           const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
           console.log(result);
           const { args } = result;
-          const { _l1token, _l2token, _totalAmount, _ctAmount } = args;
+          const { _l1token } = args;
 
           return setTxData({
             [hash]: {

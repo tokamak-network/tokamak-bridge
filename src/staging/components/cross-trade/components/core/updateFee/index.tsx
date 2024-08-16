@@ -57,7 +57,10 @@ export default function CTFeeUpdateModal() {
   ) => {
     if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
-    setInputValue(value);
+
+    if (!isNaN(Number(value))) {
+      setInputValue(value);
+    }
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -174,6 +177,9 @@ export default function CTFeeUpdateModal() {
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
+
+        if (!editAmount) return console.error("editAmount is undefined");
+
         const _editedctAmount = BigNumber.from(_totalAmount).sub(editAmount);
         const params = [
           _l1token,

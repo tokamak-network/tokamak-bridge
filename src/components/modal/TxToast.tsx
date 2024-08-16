@@ -188,6 +188,8 @@ function TransactionToast(props: TransactionToastProp) {
     return txSort === "Approve" || txSort === "Request" || txSort === "Provide";
   }, [txSort]);
 
+  console.log("go?", txSort);
+
   return (
     <WagmiProviders>
       <Flex
@@ -240,6 +242,8 @@ function TxToast() {
   const toast = useToast();
   const [isToasted, setIsToasted] = useState<string[]>([]);
   const { confirmedTransaction } = useTransaction();
+
+  console.log("confirmedTransaction", confirmedTransaction);
 
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {

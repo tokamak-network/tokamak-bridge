@@ -73,8 +73,6 @@ export default function CTModal() {
 
   const { provideCT, requestRegisteredToken } = useCrossTradeContract();
 
-  console.log(ctConfirmModal);
-
   return (
     <Modal
       isOpen={ctConfirmModal.isOpen}
