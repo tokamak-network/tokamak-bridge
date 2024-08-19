@@ -32,6 +32,8 @@ import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useIsTon from "@/hooks/token/useIsTon";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { supportedChain } from "@/types/network/supportedNetwork";
+import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -469,7 +471,34 @@ const Title = (props: {
     const priceStr = price.toString();
     return priceStr.length > 10 ? `${priceStr.slice(0, 10)}...` : priceStr;
   };
-
+  if (mode === "Deposit" && outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID) {
+    return (
+      <Flex
+        w={"100%"}
+        // px={"12px"}
+        flexDir={"column"}
+        gap={"8px"}
+        justifyContent={"space-between"}
+      >
+        <Flex justifyContent={"space-between"}>
+          <Text size={"14px"} color={"#A0A3AD"}>
+            Time to Deposit
+          </Text>
+          <Text size={"14px"} fontWeight={"600"}>
+            ~1 minutes
+          </Text>
+        </Flex>
+        <Flex justifyContent={"space-between"}>
+          <Text size={"14px"} color={"#A0A3AD"}>
+            Network fee
+          </Text>
+          <Text size={"14px"} fontWeight={"600"}>
+            {gasCostUS ? `$${gasCostUS}` : `NA`}
+          </Text>
+        </Flex>
+      </Flex>
+    );
+  }
   if (mode === "Deposit" || mode === "Withdraw") {
     return (
       <Flex
@@ -601,6 +630,10 @@ export default function TransactionDetail(props: {
   const { isInputZero } = useInputBalanceCheck();
   const { isConnected } = useAccount();
   const { isTONatPair } = useIsTon();
+  const { outNetwork } = useInOutNetwork();
+
+  const isThanosDeposit =
+    mode === "Deposit" && outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID;
 
   const isWrapUnwrap =
     mode === "Wrap" ||
@@ -626,22 +659,26 @@ export default function TransactionDetail(props: {
       w={"100%"}
       // h={isExpanded ? "310px" : "48px"}
       minH={{ base: "40px", lg: "48px" }}
-      bg={"#1f2128"}
+      bg={isThanosDeposit ? "#100E12" : "#1f2128"}
       borderRadius={"8px"}
       px={!isMobile ? { base: "16px", lg: "20px" } : ""}
       flexDir={"column"}
       pt={
-        !isMobile
+        !isMobile && !isThanosDeposit
           ? {
               base: isExpanded ? "11px" : "11px",
               lg: isExpanded ? "20px" : "14px",
             }
           : ""
       }
-      pb={{
-        base: isExpanded ? "12px" : "",
-        lg: isExpanded ? "20px" : "",
-      }}
+      pb={
+        !isThanosDeposit
+          ? {
+              base: isExpanded ? "12px" : "",
+              lg: isExpanded ? "20px" : "",
+            }
+          : ""
+      }
     >
       {!isMobile && (
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />

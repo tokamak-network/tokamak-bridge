@@ -89,7 +89,6 @@ export function useGasFee() {
             )[0];
             const outTokenAddress =
               supportedOutToken.address[outNetwork.chainName];
-
             // Set the gas limit as default value when can't fetch from contract function due to insufficient balance or non-approval
             if (isBalanceOver || !isApproved) {
               return 200000;
