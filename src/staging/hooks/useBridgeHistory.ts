@@ -39,11 +39,7 @@ import {
   getTransaction,
   getTransactionToken,
 } from "@/utils/history/getTransaction";
-import {
-  useCrossTradeData_L1,
-  useRequestData,
-  useCrossTradeData_L2,
-} from "./useCrossTrade";
+import { useCrossTradeData_L1, useCrossTradeData_L2 } from "./useCrossTrade";
 import {
   getEditCTTransaction,
   getProvideErrorMessage,
@@ -557,8 +553,6 @@ export const useProvideData = () => {
       setProvideHistory(trimedData);
     }
   }, [l1Data, l2Data]);
-
-  console.log("provideHistory", provideHistory);
 
   return { provideHistory };
 };

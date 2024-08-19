@@ -827,6 +827,30 @@ export function useTx(params: {
           });
         }
 
+        case "CancelRequest": {
+          const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
+          console.log(result);
+          const { args } = result;
+          const { _l1token } = args;
+
+          return setTxData({
+            [hash]: {
+              transactionHash,
+              txSort,
+              transactionState: "success",
+              tokenData: [
+                {
+                  tokenAddress: _l1token,
+                  amount: BigInt(0),
+                },
+              ],
+              network: connectedChainId,
+              isToasted: false,
+              actionSort: "Cross Trade",
+            },
+          });
+        }
+
         //etc
         case "Approve": {
           const result = erc20I.parseLog(logs[logs.length - 1]);
