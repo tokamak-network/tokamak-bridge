@@ -315,7 +315,7 @@ export default function CTFeeUpdateModal() {
               </Text>
               <Flex columnGap={"12px"}>
                 <Checkbox
-                  isChecked={false}
+                  isChecked={isChecked}
                   onChange={handleCheckboxChange}
                   icon={<CheckCustomIcon />}
                   sx={{
