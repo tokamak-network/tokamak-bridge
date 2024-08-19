@@ -27,7 +27,7 @@ import { useRecoilValue } from "recoil";
 import BgImage from "assets/image/BridgeSwap/selectTokenCardBg.svg";
 import BgImageButton from "assets/image/BridgeSwap/selectTokenBg.svg";
 import CloseIcon from "assets/icons/close.svg";
-import SearchIcon from "assets/icons/search.svg";
+import SearchIcon from "assets/icons/searchGray.svg";
 import CancelIcon from "assets/icons/close.svg";
 import { isIOS } from "react-device-detect";
 
@@ -138,6 +138,7 @@ const SearchToken = () => {
         boxShadow={"none !important"}
         border={{}}
         bgColor={"#0F0F12"}
+        pr={"40px"}
         _focus={{}}
         _active={{}}
         onChange={onChange}
@@ -148,7 +149,7 @@ const SearchToken = () => {
         value={searchValue}
       ></Input>
 
-      {mobileView && (
+      {mobileView ? (
         <Image
           src={searchValue ? CancelIcon : SearchIcon}
           alt={"close"}
@@ -160,17 +161,18 @@ const SearchToken = () => {
             setSearchValue("");
           }}
         />
-      )}
-
-      {pcView && (
-        <Box pos={"absolute"} right={"69px"}>
-          <Image
-            src={CloseIcon}
-            alt={"close"}
-            style={{ cursor: "pointer" }}
-            onClick={() => onCloseTokenModal()}
-          />
-        </Box>
+      ) : (
+        <Image
+          src={searchValue ? CancelIcon : SearchIcon}
+          alt={"close"}
+          style={{ cursor: "pointer", marginLeft: "-36px", zIndex: 1 }}
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
+          onClick={() => {
+            setSearchValue("");
+          }}
+        />
       )}
     </Flex>
   );
@@ -222,7 +224,6 @@ export function SelectCardModal() {
       // isOpen={false}
       onClose={mobileView ? handleClose : onCloseTokenModal}
     >
-      <ModalOverlay />
       <ModalContent
         minW={"100%"}
         maxW={"100%"}
@@ -266,7 +267,6 @@ export function SelectCardModal() {
             backgroundImage={BgImage}
             zIndex={100}
             overflow={{ base: "hidden" }}
-            backdropFilter={"blur(2px)"}
             mb={{ base: "auto", lg: "0" }}
           >
             {pcView && (

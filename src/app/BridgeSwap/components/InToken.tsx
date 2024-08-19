@@ -12,8 +12,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 export default function InToken() {
   const { inToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
-  const { onOpenInToken } = useTokenModal();
-
+  const { onOpenInToken, isInTokenOpen, isOutTokenOpen } = useTokenModal();
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box w={"200px"} h={"32px"}>
@@ -23,7 +22,11 @@ export default function InToken() {
   }, []);
 
   return (
-    <Flex flexDir={"column"} rowGap={"28px"}>
+    <Flex
+      flexDir={"column"}
+      rowGap={"28px"}
+      opacity={isOutTokenOpen && !isInTokenOpen ? 0.05 : 1}
+    >
       <Flex pos={"relative"} h={"54px"}>
         {mode && (
           <Text

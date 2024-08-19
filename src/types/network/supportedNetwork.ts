@@ -1,7 +1,7 @@
 import { ImageFileType } from "../style/imageFileType";
 import NETWORK_ETHEREUM from "assets/icons/network/circle/Ethereum_circle.svg";
-import SYMBOL_TITAN from "assets/icons/network/darius.svg";
-import SYMBOL_THANOS from "assets/icons/network/Thanos.svg";
+import SYMBOL_TITAN from "assets/icons/network/circle/Titan_circle.svg";
+import SYMBOL_THANOS from "assets/icons/network/circle/Thanos_circle.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
