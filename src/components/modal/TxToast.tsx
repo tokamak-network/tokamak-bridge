@@ -59,6 +59,14 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
     return network;
   }, [txSort, isToken0, otherLayerChainInfo?.chainId, network]);
 
+  const noNeedToShowAmount = useMemo(() => {
+    return (
+      txSort === "Revoke" ||
+      txSort === "UpdateFee" ||
+      txSort === "CancelRequest"
+    );
+  }, [txSort]);
+
   if (symbol === "WETH" || tokenData[tokenIndex].tokenAddress === "ETH") {
     return (
       <Flex
@@ -96,9 +104,13 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         justifyContent={"center"}
         alignItems={"center"}
       >
-        <TokenSymbolWithNetwork tokenSymbol={symbol} chainId={targetChainId} />
+        <TokenSymbolWithNetwork
+          tokenSymbol={symbol}
+          chainId={targetChainId}
+          bottom={0}
+        />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
-          {txSort !== "Revoke" ? trimAmount(convertParsedAmount) : ""} {symbol}
+          {noNeedToShowAmount ? "" : trimAmount(convertParsedAmount)} {symbol}
         </Text>
       </Flex>
     );
@@ -175,13 +187,23 @@ function TransactionToast(props: TransactionToastProp) {
         return "Remove";
       case "Revoke":
         return "Revoke";
+      case "UpdateFee":
+        return "Update";
+      case "CancelRequest":
+        return "Cancel";
       default:
         return txSort;
     }
   }, [txSort]);
 
   const hasSubTitle = useMemo(() => {
-    return txSort === "Approve" || txSort === "Request" || txSort === "Provide";
+    return (
+      txSort === "Approve" ||
+      txSort === "Request" ||
+      txSort === "Provide" ||
+      txSort === "UpdateFee" ||
+      txSort === "CancelRequest"
+    );
   }, [txSort]);
 
   return (
@@ -237,6 +259,9 @@ function TxToast() {
   const [isToasted, setIsToasted] = useState<string[]>([]);
   const { confirmedTransaction } = useTransaction();
 
+  const [historyTabOpen, setHistoryTabOpen] =
+    useRecoilState(accountDrawerStatus);
+
   const makeToast = useMemo(() => {
     confirmedTransaction?.map((transaction) => {
       const txHash = transaction[0];
@@ -245,6 +270,7 @@ function TxToast() {
         toast.isActive(txHash) === false &&
         isToasted.includes(txHash) === false
       ) {
+        setHistoryTabOpen(false);
         toast({
           position: "top-right",
           variant: "solid",

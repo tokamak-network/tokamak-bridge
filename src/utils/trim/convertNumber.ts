@@ -10,6 +10,7 @@ export function convertNumber(
 }
 
 export function toParseNumber(amount: bigint | string, decimals: number) {
+  if (isNaN(Number(amount.toString()))) return undefined;
   return ethers.utils.parseUnits(String(amount), decimals);
 }
 

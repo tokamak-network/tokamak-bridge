@@ -30,6 +30,8 @@ import { WrongNetwork } from "../../common/WrongNetwork";
 import { BigNumber } from "ethers";
 import { Hash } from "viem";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import { useRecoilState } from "recoil";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
 
 // 데이터 셋을 선언만 하면, 참고 해서 서버 작업
 // 데이터 셋 타입파일을 만든다.
@@ -57,7 +59,10 @@ export default function CTFeeUpdateModal() {
   ) => {
     if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
-    setInputValue(value);
+
+    if (!isNaN(Number(value))) {
+      setInputValue(value);
+    }
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -141,6 +146,7 @@ export default function CTFeeUpdateModal() {
         !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
   const { connectedToLayer1 } = useConnectedNetwork();
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
 
   const resetAllStates = () => {
     setRecommendCheck(true);
@@ -149,6 +155,7 @@ export default function CTFeeUpdateModal() {
     setInputWarningCheck("");
     setIsChecked(false);
     onCloseCTUpdateFeeModal();
+    setIsOpen(false);
   };
 
   useEffect(() => {
@@ -174,6 +181,9 @@ export default function CTFeeUpdateModal() {
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
+
+        if (!editAmount) return console.error("editAmount is undefined");
+
         const _editedctAmount = BigNumber.from(_totalAmount).sub(editAmount);
         const params = [
           _l1token,
@@ -225,6 +235,7 @@ export default function CTFeeUpdateModal() {
       _cancelRequest({
         args: params,
       });
+      resetAllStates();
     }
   }, [ctUpdateFeeModal.txData, _cancelRequest]);
 

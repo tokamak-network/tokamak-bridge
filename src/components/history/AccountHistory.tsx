@@ -7,11 +7,9 @@ import {
   Box,
   Button,
 } from "@chakra-ui/react";
-import Refresh from "@/assets/icons/newHistory/refresh.svg";
-import RefreshBlue from "@/assets/icons/newHistory/refresh-blue.svg";
 import Image from "next/image";
 import { useAccount } from "wagmi";
-import { useMemo, useState, SetStateAction, Dispatch, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import DrawerCloseIcon from "assets/icons/accountHistory/drawerClose.svg";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
@@ -28,7 +26,7 @@ import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
 export default function AccountHistory() {
-  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
+const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const { mobileView } = useMediaView();
