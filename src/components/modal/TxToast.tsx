@@ -15,6 +15,7 @@ import useConnectedNetwork from "@/hooks/network";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
+import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 
 type TransactionToastProp = TxInterface;
 
@@ -67,7 +68,11 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
     );
   }, [txSort]);
 
-  if (symbol === "WETH" || tokenData[tokenIndex].tokenAddress === "ETH") {
+  if (
+    symbol === "WETH" ||
+    tokenData[tokenIndex].tokenAddress === "ETH" ||
+    isZeroAddress(tokenData[tokenIndex].tokenAddress)
+  ) {
     return (
       <Flex
         w={"92px"}
@@ -205,6 +210,8 @@ function TransactionToast(props: TransactionToastProp) {
       txSort === "CancelRequest"
     );
   }, [txSort]);
+
+  console.log("props", props);
 
   return (
     <WagmiProviders>
