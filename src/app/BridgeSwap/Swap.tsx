@@ -20,12 +20,10 @@ import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
 import { useCallback } from "react";
-import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConnectedNetwork from "@/hooks/network";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 
 export default function Swap() {
-  const { inToken, outToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
