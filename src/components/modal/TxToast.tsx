@@ -212,8 +212,6 @@ function TransactionToast(props: TransactionToastProp) {
     );
   }, [txSort]);
 
-  console.log("props", props);
-
   return (
     <WagmiProviders>
       <Flex
