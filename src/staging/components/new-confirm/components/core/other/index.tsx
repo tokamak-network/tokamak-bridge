@@ -26,7 +26,10 @@ import ConditionalBox from "@/staging/components/new-confirm/components/core/oth
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
 import ConfirmInitiateFooter from "@/staging/components/new-confirm/components/core/other/ConfirmInitiateFooter";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  NetworkDisplayName,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 
 import {
@@ -35,6 +38,8 @@ import {
   getWaitMessage,
 } from "@/staging/components/new-confirm/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 
 export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
@@ -44,7 +49,11 @@ export default function DepositWithdrawConfirmModal() {
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
+  const networkChainId = transactionData?.outNetwork || THANOS_SEPOLIA_CHAIN_ID;
 
+  const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
+
+  const displayNetworkName = NetworkDisplayName[chainName];
   /**
    * Lakmi src/components/history/modalComponents/Step4.tsx @Robert
    * Removed interval, added gasLimit parameter.
@@ -103,7 +112,11 @@ export default function DepositWithdrawConfirmModal() {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
-      const waitMessage = getWaitMessage(lineType, index);
+      const waitMessage = getWaitMessage(
+        lineType,
+        index,
+        transactionData.outNetwork
+      );
 
       return (
         <React.Fragment key={index}>
@@ -188,7 +201,11 @@ export default function DepositWithdrawConfirmModal() {
                   Bridge
                 </Text>
                 <Flex>
-                  <NetworkSymbol networkI={55004} networkH={16} networkW={16} />
+                  <NetworkSymbol
+                    networkI={transactionData.outNetwork}
+                    networkH={16}
+                    networkW={16}
+                  />
                   <Text
                     ml={"4px"}
                     fontWeight={500}
@@ -196,7 +213,7 @@ export default function DepositWithdrawConfirmModal() {
                     lineHeight={"18px"}
                     color={"#FFFFFF"}
                   >
-                    Titan Standard bridge
+                    {`${displayNetworkName} Standard Bridge`}
                   </Text>
                 </Flex>
               </Flex>

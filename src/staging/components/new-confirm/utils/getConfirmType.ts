@@ -5,6 +5,7 @@ import {
 } from "@/staging/types/transaction";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 //getConfirmType.ts
 const getLineType = (transactionData: TransactionHistory): number => {
@@ -73,14 +74,23 @@ const getType = (lineType: number, index: number) => {
   return typeMap[lineType] || undefined;
 };
 
-const getWaitMessage = (lineType: number, index: number) => {
+const getWaitMessage = (
+  lineType: number,
+  index: number,
+  chainId: SupportedChainId
+) => {
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
         ? "Wait 6 hours"
         : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
-    100: `Wait ${TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES} min`,
+    100: `Wait ${
+      chainId === SupportedChainId.TITAN ||
+      chainId === SupportedChainId.TITAN_SEPOLIA
+        ? 5
+        : 1
+    } min`,
   };
   return waitMessageMap[lineType] || undefined;
 };

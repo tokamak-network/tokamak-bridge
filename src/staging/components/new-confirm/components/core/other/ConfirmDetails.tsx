@@ -15,7 +15,10 @@ import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  NetworkDisplayName,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
 import commafy from "@/utils/trim/commafy";
 
 interface ConfirmDetailProps {
@@ -50,8 +53,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
 
   const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
 
-  const displayNetworkName =
-    chainName === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(chainName);
+  const displayNetworkName = NetworkDisplayName[chainName];
 
   const tokenAddress = isInNetwork
     ? transactionHistory.inToken.address
@@ -72,7 +74,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
         >
           {isInNetwork ? "Send" : "Receive"}
         </Text>
-        <Flex mt={"4px"}>
+        <Flex mt={"4px"} alignItems={"center"}>
           <NetworkSymbol
             networkI={
               isInNetwork
@@ -94,73 +96,53 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
         </Flex>
       </Box>
       <Box>
-        <Flex>
-          <Flex alignItems={"center"}>
-            <TokenSymbol
-              w={24}
-              h={24}
-              tokenType={
-                isInNetwork
-                  ? (transactionHistory.inToken.symbol as string)
-                  : (transactionHistory.outToken.symbol as string)
-              }
-            />
-          </Flex>
-          <Box ml={"8px"}>
-            <Flex>
-              <FormatNumber
-                style={{
-                  marginRight: "6px",
-                  fontWeight: 600,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  color: "#FFFFFF",
-                }}
-                value={
-                  isInNetwork
-                    ? convertNumber(
-                        transactionHistory.inToken.amount,
-                        transactionHistory.inToken.decimals
-                      )
-                    : convertNumber(
-                        transactionHistory.outToken.amount,
-                        transactionHistory.outToken.decimals
-                      )
-                }
-                tokenSymbol={
-                  isInNetwork
-                    ? transactionHistory.inToken.symbol
-                    : transactionHistory.outToken.symbol
-                }
-              />
-              {tokenAddress && tokenAddress !== "" && (
-                <Link
-                  target="_blank"
-                  href={`${
-                    BLOCKEXPLORER_CONSTANTS[
-                      isInNetwork
-                        ? transactionHistory.inNetwork
-                        : transactionHistory.outNetwork
-                    ]
-                  }/address/${tokenAddress}`}
-                  textDecor={"none"}
-                  _hover={{ textDecor: "none" }}
-                  display={"flex"}
-                >
-                  <Image src={TxLink} alt={"TxLink"} />
-                </Link>
-              )}
-            </Flex>
-            <Text
-              fontWeight={400}
-              fontSize={"12px"}
-              lineHeight={"18px"}
-              color={"#A0A3AD"}
-            >
-              {marketPrice}
-            </Text>
-          </Box>
+        <Flex gap={"8px"} alignItems={"center"}>
+          <FormatNumber
+            style={{
+              fontWeight: 600,
+              fontSize: "16px",
+              lineHeight: "24px",
+              color: "#FFFFFF",
+            }}
+            value={
+              isInNetwork
+                ? convertNumber(
+                    transactionHistory.inToken.amount,
+                    transactionHistory.inToken.decimals
+                  )
+                : convertNumber(
+                    transactionHistory.outToken.amount,
+                    transactionHistory.outToken.decimals
+                  )
+            }
+            tokenSymbol={
+              isInNetwork
+                ? transactionHistory.inToken.symbol
+                : transactionHistory.outToken.symbol
+            }
+          />
+          <TokenSymbol
+            w={20}
+            h={20}
+            tokenType={
+              isInNetwork
+                ? (transactionHistory.inToken.symbol as string)
+                : (transactionHistory.outToken.symbol as string)
+            }
+          />
         </Flex>
+        <Box>
+          <Text
+            fontWeight={400}
+            fontSize={"12px"}
+            lineHeight={"18px"}
+            color={"#A0A3AD"}
+            textAlign={"right"}
+            marginRight={"28px"}
+          >
+            {marketPrice}
+          </Text>
+        </Box>
       </Box>
     </Flex>
   );

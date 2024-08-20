@@ -22,6 +22,14 @@ export enum SupportedChainId {
   TITAN_SEPOLIA = 55007,
 }
 
+export const NetworkDisplayName: Record<string, string> = {
+  MAINNET: "Ethereum",
+  TITAN: "Titan",
+  SEPOLIA: "Sepolia",
+  THANOS_SEPOLIA: "Thanos Sepolia",
+  TITAN_SEPOLIA: "Titan Sepolia",
+};
+
 export interface SupportedChainProperties {
   chainId: SupportedChainId;
   chainName: keyof typeof SupportedChainId;
