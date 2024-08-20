@@ -90,6 +90,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         <TokenSymbolWithNetwork
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
           chainId={targetChainId}
+          bottom={0}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
           {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
