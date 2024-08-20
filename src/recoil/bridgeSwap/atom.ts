@@ -2,10 +2,8 @@ import { ActionMode, InOutNetworks } from "@/types/bridgeSwap";
 import { Field } from "@/types/swap/swap";
 import { TokenInfo, supportedTokens } from "types/token/supportedToken";
 import { atom, selector } from "recoil";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
-
-import { getISODay, startOfWeek, add, getTime } from "date-fns";
+import { getISODay, add, getTime } from "date-fns";
 import { isETH } from "@/utils/token/isETH";
 
 export const networkStatus = atom<InOutNetworks>({
