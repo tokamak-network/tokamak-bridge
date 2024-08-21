@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1BridgeAbi from "@/abis/L1StandardBridge.json";
+// import L1BridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import WTON_ABI from "@/abis/WTON.json";
@@ -31,7 +32,11 @@ import { useGetMode } from "../mode/useGetMode";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
 import L1CrossTradeAbi from "@/abis/L1CrossTrade.json";
 import L2CrossTradeAbi from "@/abis/L2CrossTrade.json";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  SupportedChainId,
+  SupportedL2ChainId,
+} from "@/types/network/supportedNetwork";
+import { L2ChainID } from "@tokamak-network/titan-sdk";
 
 const getInterface = () => {
   const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
@@ -230,8 +235,10 @@ export function useTx(params: {
   tokenAddress?: `0x${string}`;
   tokenOutAddress?: `0x${string}`;
   actionSort?: ActionSort;
+  L2Chain?: SupportedL2ChainId;
 }) {
-  const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
+  const { hash, txSort, tokenAddress, tokenOutAddress, actionSort, L2Chain } =
+    params;
   const { connectedChainId, layer } = useConnectedNetwork();
   const { data, isLoading, isSuccess, isError } = useWaitForTransaction({
     hash,
@@ -567,11 +574,38 @@ export function useTx(params: {
           return;
         //bridge
         case "Deposit": {
-          const result = l1BridgeI.parseLog(logs[logs.length - 1]);
-          const { args } = result;
-          const { _l1Token, _l2Token, _amount } = args;
+          console.log(L2Chain);
+          if (
+            L2Chain === SupportedL2ChainId.TITAN ||
+            L2Chain === SupportedL2ChainId.TITAN_SEPOLIA
+          ) {
+            const result = l1BridgeI.parseLog(logs[logs.length - 1]);
+            const { args } = result;
+            const { _l1Token, _l2Token, _amount } = args;
 
-          if (_l1Token === undefined) {
+            if (_l1Token === undefined) {
+              return setTxData({
+                [hash]: {
+                  transactionHash,
+                  txSort,
+                  transactionState: "success",
+                  tokenData: [
+                    {
+                      tokenAddress: "ETH",
+                      amount: _amount,
+                    },
+                    {
+                      tokenAddress: "ETH",
+                      amount: _amount,
+                    },
+                  ],
+                  network: connectedChainId,
+                  isToasted: false,
+                  actionSort,
+                },
+              });
+            }
+
             return setTxData({
               [hash]: {
                 transactionHash,
@@ -579,11 +613,11 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: "ETH",
+                    tokenAddress: _l1Token,
                     amount: _amount,
                   },
                   {
-                    tokenAddress: "ETH",
+                    tokenAddress: _l1Token,
                     amount: _amount,
                   },
                 ],
@@ -592,28 +626,10 @@ export function useTx(params: {
                 actionSort,
               },
             });
+          } else if (L2Chain === SupportedL2ChainId.THANOS_SEPOLIA) {
+            console.log(logs);
           }
-
-          return setTxData({
-            [hash]: {
-              transactionHash,
-              txSort,
-              transactionState: "success",
-              tokenData: [
-                {
-                  tokenAddress: _l1Token,
-                  amount: _amount,
-                },
-                {
-                  tokenAddress: _l1Token,
-                  amount: _amount,
-                },
-              ],
-              network: connectedChainId,
-              isToasted: false,
-              actionSort,
-            },
-          });
+          return;
         }
 
         case "Withdraw": {
