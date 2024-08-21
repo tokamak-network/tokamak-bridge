@@ -223,7 +223,7 @@ export const useWithdrawData = () => {
           });
 
           if (blockTimestamps instanceof Error) {
-            return;
+            return new Error("Invalid transaction");
           }
 
           const result: WithdrawTransactionHistory = {
@@ -246,7 +246,7 @@ export const useWithdrawData = () => {
       );
 
       const filteredResult = result.filter(
-        (tx) => !(tx instanceof Error) || tx !== undefined
+        (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
@@ -342,7 +342,7 @@ export const useDepositData = () => {
       );
 
       const filteredResult = result.filter((tx) => {
-        if (!(tx instanceof Error) || tx !== undefined) return tx;
+        !(tx instanceof Error) && tx !== undefined && tx !== null;
       });
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
