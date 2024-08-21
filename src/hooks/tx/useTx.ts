@@ -2,8 +2,8 @@ import { TxSort, ActionSort } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
-import L1BridgeAbi from "@/abis/L1StandardBridge.json";
-// import L1BridgeAbi from "@/abis/L1ThanosStandardBridge.json";
+import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
+import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import WTON_ABI from "@/abis/WTON.json";
@@ -39,7 +39,8 @@ import {
 import { L2ChainID } from "@tokamak-network/titan-sdk";
 
 const getInterface = () => {
-  const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
+  const l1TitanBridgeI = new ethers.utils.Interface(L1TitanBridgeAbi);
+  const l1ThanosBridgeI = new ethers.utils.Interface(L1ThanosBridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
@@ -57,7 +58,8 @@ const getInterface = () => {
   const CrossTradeProxyL2_I = new ethers.utils.Interface(L2CrossTradeAbi.abi);
 
   return {
-    l1BridgeI,
+    l1TitanBridgeI,
+    l1ThanosBridgeI,
     l2BridgeI,
     swapRouterI,
     erc20I,
@@ -343,7 +345,8 @@ export function useTx(params: {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
       const {
-        l1BridgeI,
+        l1TitanBridgeI,
+        l1ThanosBridgeI,
         l2BridgeI,
         swapRouterI,
         erc20I,
@@ -574,12 +577,11 @@ export function useTx(params: {
           return;
         //bridge
         case "Deposit": {
-          console.log(L2Chain);
           if (
             L2Chain === SupportedL2ChainId.TITAN ||
             L2Chain === SupportedL2ChainId.TITAN_SEPOLIA
           ) {
-            const result = l1BridgeI.parseLog(logs[logs.length - 1]);
+            const result = l1TitanBridgeI.parseLog(logs[logs.length - 1]);
             const { args } = result;
             const { _l1Token, _l2Token, _amount } = args;
 
@@ -627,7 +629,30 @@ export function useTx(params: {
               },
             });
           } else if (L2Chain === SupportedL2ChainId.THANOS_SEPOLIA) {
-            console.log(logs);
+            const result = l1ThanosBridgeI.parseLog(logs[0]);
+            const { args } = result;
+            const { amount } = args;
+            return setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: "ETH",
+                    amount: amount,
+                  },
+                  {
+                    tokenAddress: "ETH",
+                    amount: amount,
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+                actionSort,
+                L2Chain,
+              },
+            });
           }
           return;
         }

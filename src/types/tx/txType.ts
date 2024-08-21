@@ -1,4 +1,5 @@
 import { ActionMode } from "@/types/bridgeSwap";
+import { SupportedL2ChainId } from "../network/supportedNetwork";
 
 type UniswapTxSort =
   | "Add Liquidity"
@@ -38,4 +39,5 @@ export interface TxInterface {
   outNetwork?: number;
   isToasted: boolean;
   actionSort?: ActionSort;
+  L2Chain?: SupportedL2ChainId;
 }

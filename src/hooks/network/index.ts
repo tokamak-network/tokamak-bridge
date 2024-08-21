@@ -17,7 +17,7 @@ export function useInOutNetwork() {
 }
 
 export default function useConnectedNetwork() {
-  const { inNetwork } = useInOutNetwork();
+  const { inNetwork, outNetwork } = useInOutNetwork();
   const { chain: _chain } = useNetwork();
 
   const chain = useMemo(() => {
@@ -73,7 +73,7 @@ export default function useConnectedNetwork() {
         return supportedChain[2];
       if (chainInfo.layer === "L1" && !chainInfo.isConnectedToMainNetwork)
         // connect to Titan Sepolia for now
-        return supportedChain[4];
+        return outNetwork;
       if (chainInfo.layer === "L2" && chainInfo.isConnectedToMainNetwork)
         return supportedChain[0];
       if (chainInfo.layer === "L2" && !chainInfo.isConnectedToMainNetwork)
