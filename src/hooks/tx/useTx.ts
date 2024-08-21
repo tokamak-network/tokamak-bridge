@@ -1,4 +1,4 @@
-import { TxSort, ActionSort } from "@/types/tx/txType";
+import { TxSort, ActionSort, ThanosDepositType } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
@@ -629,9 +629,19 @@ export function useTx(params: {
               },
             });
           } else if (L2Chain === SupportedL2ChainId.THANOS_SEPOLIA) {
-            const result = l1ThanosBridgeI.parseLog(logs[0]);
+            const depositType: ThanosDepositType =
+              logs.length === 4
+                ? "ETH"
+                : logs.length === 13
+                ? "NativeToken"
+                : "ERC20";
+
+            const result = l1ThanosBridgeI.parseLog(
+              depositType === "NativeToken" ? logs[3] : logs[0]
+            );
             const { args } = result;
-            const { amount } = args;
+            const { l1Token, l2Token, amount } = args;
+            const L2TokenAddress = depositType === "ETH" ? "ETH" : l1Token;
             return setTxData({
               [hash]: {
                 transactionHash,
@@ -639,11 +649,11 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: "ETH",
+                    tokenAddress: L2TokenAddress,
                     amount: amount,
                   },
                   {
-                    tokenAddress: "ETH",
+                    tokenAddress: L2TokenAddress,
                     amount: amount,
                   },
                 ],

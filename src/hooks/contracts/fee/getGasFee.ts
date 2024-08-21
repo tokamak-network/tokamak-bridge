@@ -22,6 +22,9 @@ import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { isETH as checkIsETH } from "@/utils/token/isETH";
 import { asL2Provider } from "@tokamak-network/titan-sdk";
+import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
+import { isThanosSepolia } from "@/utils/network/checkNetwork";
+import { isTON } from "@/utils/token/checkToken";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -31,6 +34,8 @@ export function useGasFee() {
   const { mode } = useGetMode();
   const { contract: _depositETH_contract } = useCallDeposit("depositETH");
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
+  const { contract: _depositNativeToken_contract } =
+    useCallDeposit("depositNativeToken");
   const { contract: _withdraw_contract } = useCallWithdraw("withdraw");
   const [totalGasCost, setTotalGasCost] = useState<string | null>(null);
   const { data: feeData } = useFeeData();
@@ -93,7 +98,6 @@ export function useGasFee() {
             if (isBalanceOver || !isApproved) {
               return 200000;
             }
-
             if (isETH) {
               const estimatedGasUsage =
                 await _depositETH_contract.estimateGas.depositETH({
@@ -104,6 +108,20 @@ export function useGasFee() {
                   value: parsedAmount as bigint,
                 });
 
+              return calculateGasMargin(
+                BigNumber.from(estimatedGasUsage)
+              ).toBigInt();
+            }
+            // deposite TON to thanos
+            if (isThanosSepolia(outNetwork) && isTON(inToken)) {
+              const estimatedGasUsage =
+                await _depositNativeToken_contract.estimateGas.depositNativeToken(
+                  {
+                    //@ts-ignore
+                    account: address,
+                    args: [parsedAmount as bigint, 200000, "0x"],
+                  }
+                );
               return calculateGasMargin(
                 BigNumber.from(estimatedGasUsage)
               ).toBigInt();

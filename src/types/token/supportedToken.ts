@@ -1,3 +1,4 @@
+import { ZERO_ADDRESS } from "@/constant/misc";
 import { SupportedChainId } from "../network/supportedNetwork";
 import {
   MAINNET_CONTRACTS,
@@ -84,7 +85,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TON_ADDRESS,
       SEPOLIA: SEPOLIA_CONTRACTS.TON_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+      THANOS_SEPOLIA: ZERO_ADDRESS,
       TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
     },
     decimals: 18,
