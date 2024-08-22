@@ -16,6 +16,8 @@ import { useGasFee } from "./fee/getGasFee";
 import { Hash } from "viem";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { BigNumber } from "ethers";
+import { isThanosSepolia } from "@/utils/network/checkNetwork";
+import { isTON } from "@/utils/token/checkToken";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -30,6 +32,8 @@ export default function useCallBridgeSwapAction() {
   } = useCallDeposit("depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
     useCallDeposit("depositERC20");
+  const { write: _depositNativeToken_contract } =
+    useCallDeposit("depositNativeToken");
   const {
     write: _withdraw,
     isError: _withdrawError,
@@ -76,7 +80,13 @@ export default function useCallBridgeSwapAction() {
               gas: gasLimit,
             });
           }
-
+          // deposit TON to Thanos
+          if (isThanosSepolia(outNetwork) && isTON(inToken)) {
+            return _depositNativeToken_contract({
+              //@ts-ignore
+              args: [parsedAmount as bigint, 200000, "0x"],
+            });
+          }
           return _depositERC20({
             args: [
               inToken.address[inNetwork.chainName],

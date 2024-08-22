@@ -684,11 +684,11 @@ export default function TransactionDetail(props: {
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
       )}
       {(!mobileView ||
-        isOnConfirm ||
+        // isOnConfirm ||
         (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
         <Content
           isExpanded={isExpanded}
-          isOnConfirm={isOnConfirm}
+          isOnConfirm={false}
           isMobile={isMobile}
         ></Content>
       )}

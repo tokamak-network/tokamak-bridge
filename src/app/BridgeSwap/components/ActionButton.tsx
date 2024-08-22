@@ -52,7 +52,7 @@ export default function ActionButton() {
     const timeoutId = setTimeout(() => {
       const disabled =
         !isReady ||
-        isApproved === false ||
+        // isApproved === false ||
         (mode === "Swap" && isLoading) ||
         isNotSupportForSwap ||
         isBalanceOver ||
