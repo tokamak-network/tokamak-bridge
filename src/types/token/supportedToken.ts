@@ -21,9 +21,9 @@ export type SupportedTokenNames =
   | SupportedEcosystemTokenNames
   | SupportedStableTokenNames;
 
-type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH";
+type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH" | "WETH";
 type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
-type SupportedStableTokens = "USDC";
+type SupportedStableTokens = "USDC" | "USDT";
 
 export type SupportedTokenSymbol =
   | SupportedMainTokens

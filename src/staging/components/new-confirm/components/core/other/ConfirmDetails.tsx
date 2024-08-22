@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Link } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import Image from "next/image";
 import { useMemo } from "react";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
@@ -20,6 +20,9 @@ import {
   SupportedChainId,
 } from "@/types/network/supportedNetwork";
 import commafy from "@/utils/trim/commafy";
+import Link from "next/link";
+import { useInOutNetwork } from "@/hooks/network";
+import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -28,6 +31,7 @@ interface ConfirmDetailProps {
 
 export default function ConfirmDetails(props: ConfirmDetailProps) {
   const { isInNetwork, transactionHistory } = props;
+  const { inNetwork, outNetwork } = useInOutNetwork();
 
   if (!transactionHistory) {
     return null;
@@ -121,15 +125,31 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                 : transactionHistory.outToken.symbol
             }
           />
-          <TokenSymbol
-            w={20}
-            h={20}
-            tokenType={
+          <Link
+            target="_blank"
+            href={`${
+              BLOCKEXPLORER_CONSTANTS[
+                isInNetwork
+                  ? inNetwork?.chainId ?? SupportedChainId.MAINNET
+                  : outNetwork?.chainId ?? SupportedChainId.MAINNET
+              ]
+            }/token/${getTokenAddressByChainId(
               isInNetwork
                 ? (transactionHistory.inToken.symbol as string)
-                : (transactionHistory.outToken.symbol as string)
-            }
-          />
+                : (transactionHistory.outToken.symbol as string),
+              isInNetwork ? inNetwork?.chainId : outNetwork?.chainId
+            )}`}
+          >
+            <TokenSymbol
+              w={20}
+              h={20}
+              tokenType={
+                isInNetwork
+                  ? (transactionHistory.inToken.symbol as string)
+                  : (transactionHistory.outToken.symbol as string)
+              }
+            />
+          </Link>
         </Flex>
         <Box>
           <Text

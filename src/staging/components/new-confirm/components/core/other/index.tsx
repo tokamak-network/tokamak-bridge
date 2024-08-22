@@ -40,6 +40,8 @@ import {
 import { getGasCostText } from "@/utils/number/compareNumbers";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
+import Link from "next/link";
+import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 
 export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
@@ -234,14 +236,22 @@ export default function DepositWithdrawConfirmModal() {
                   {/** Add a space */ " "}
                   to
                 </Text>
-                <Text
-                  fontWeight={600}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#FFFFFF"}
+                <Link
+                  target="_blank"
+                  href={`${
+                    BLOCKEXPLORER_CONSTANTS[SupportedChainId.MAINNET]
+                  }/address/${address}`}
                 >
-                  {trimAddress({ address: address, firstChar: 6 })}
-                </Text>
+                  <Text
+                    fontWeight={600}
+                    fontSize={"12px"}
+                    lineHeight={"18px"}
+                    color={"#FFFFFF"}
+                    cursor={"pointer"}
+                  >
+                    {trimAddress({ address: address, firstChar: 6 })}
+                  </Text>
+                </Link>
               </Flex>
             </Box>
           </Box>
