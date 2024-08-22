@@ -630,7 +630,7 @@ export function useTx(params: {
             });
           } else if (L2Chain === SupportedL2ChainId.THANOS_SEPOLIA) {
             const depositType: ThanosDepositType =
-              logs.length === 4
+              logs.length === 5
                 ? "ETH"
                 : logs.length === 13
                 ? "NativeToken"
