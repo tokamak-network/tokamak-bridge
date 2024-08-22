@@ -18,7 +18,7 @@ export default function SelectNetwork() {
     <Flex
       pos={"relative"}
       className="card-wrapper"
-      maxH={"388px !important"}
+      maxH={"385px !important"}
       mt={"80px"}
       opacity={!isInTokenOpen ? 1 : 0.05}
     >
@@ -48,8 +48,6 @@ export default function SelectNetwork() {
             </Flex>
           </Box>
         </Flex>
-        <Box className={"second-layer"} />
-        <Box className={"third-layer"} />
       </Flex>
     </Flex>
   );

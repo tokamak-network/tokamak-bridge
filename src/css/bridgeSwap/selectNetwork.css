@@ -2,14 +2,13 @@
   /* Rectangle 788 */
   box-sizing: border-box;
   position: absolute;
-  width: 192px;
-  height: 240px;
+  width: 200px;
+  height: 248px;
   right: 12px;
   top: 0px;
-  background: #0f0f12;
   /* select network */
-  border: 1px solid #313442;
-  border-radius: 16px;
+  background: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23333' stroke-width='1' stroke-dasharray='12%2c 6' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e");
+  border-radius: "16px";
 }
 
 .second-layer {
