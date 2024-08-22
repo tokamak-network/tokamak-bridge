@@ -221,7 +221,7 @@ export default function CTFeeUpdateModal() {
       } = ctUpdateFeeModal.txData.L2_subgraphData;
 
       const params = [
-        _l1token,
+        _l1token ,
         _l2token,
         _totalAmount,
         _ctAmount,
@@ -369,10 +369,10 @@ export default function CTFeeUpdateModal() {
             isDisabled={!activeConfirmButton || !connectedToLayer1}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
-              {activeButton == UpdateFeeButtonType.Update
-                ? !connectedToLayer1
-                  ? "Wrong Network"
-                  : "Update"
+              {!connectedToLayer1
+                ? "Wrong Network"
+                : activeButton == UpdateFeeButtonType.Update
+                ? "Update"
                 : "Cancel"}
             </Text>
           </Button>

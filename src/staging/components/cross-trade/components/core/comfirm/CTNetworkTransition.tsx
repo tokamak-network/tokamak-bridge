@@ -1,6 +1,6 @@
 import { Flex, Box, Text } from "@chakra-ui/react";
 import Image from "next/image";
-import Arrow from "@/assets/icons/newHistory/small-arrow.svg";
+import Arrow from "@/assets/icons/newHistory/small-arrow-gray.svg";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import fetchNetworkImage from "@/staging/utils/fetchNetworkImage";
 import { SupportedChainId } from "@/types/network/supportedNetwork";

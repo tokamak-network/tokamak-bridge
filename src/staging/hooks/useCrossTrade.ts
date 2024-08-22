@@ -160,7 +160,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     client: L2_CLIENT,
     variables: isHistory
       ? {
-          account: address as string,
+          account: address,
         }
       : undefined,
   });

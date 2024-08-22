@@ -69,7 +69,7 @@ export default function CTOptionInput(props: CTInputProps) {
           label={"Service fee is too high. Invalid request."}
           type={inputWarningCheck}
           groupStyle={{
-            height: "14px",
+            height: "16px",
           }}
           style={{
             fontWeight: 400,
@@ -83,7 +83,7 @@ export default function CTOptionInput(props: CTInputProps) {
           label={"Service fee is low. May take long time."}
           type={inputWarningCheck}
           groupStyle={{
-            height: "14px",
+            height: "16px",
           }}
           style={{
             fontWeight: 400,

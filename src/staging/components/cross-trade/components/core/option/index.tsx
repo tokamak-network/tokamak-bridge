@@ -261,7 +261,7 @@ export default function CTOptionModal() {
             isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {btnDisabled ? "Enter amount" : "Next"}
+              {"Next"}
             </Text>
           </Button>
         </ModalFooter>

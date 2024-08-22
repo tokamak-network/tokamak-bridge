@@ -10,6 +10,8 @@ import QuestionIcon from "assets/icons/question.svg";
 import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
 import commafy from "@/utils/trim/commafy";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -23,6 +25,11 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const { estimatedGasFeeUSD } = useCrossTradeGasFee(
     CTTransactionType.strandardWithdrawERC20
   );
+
+  const { tokenPriceWithAmount } = useGetMarketPrice({
+    amount: inToken?.parsedAmount as string,
+    tokenName: inToken?.tokenName as string,
+  });
 
   return (
     <Flex
@@ -38,7 +45,12 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
     >
       <Box>
         <Flex alignItems={"center"}>
-          <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+          <Text
+            fontWeight={600}
+            fontSize={"16px"}
+            lineHeight={"24px"}
+            mr={"2px"}
+          >
             Standard Bridge
           </Text>
           <CustomTooltipWithQuestion
@@ -78,6 +90,11 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             {`${inToken?.parsedAmount} ${inToken?.tokenSymbol}`}
           </Text>
         </Box>
+        <Text fontSize={12} color={"#007AFF"}>
+          {`$${
+            Number(tokenPriceWithAmount) < 0 ? 0 : commafy(tokenPriceWithAmount)
+          }`}
+        </Text>
       </Box>
       <Circle
         size="72px"

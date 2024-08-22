@@ -1,13 +1,9 @@
-import { Box, Text, Flex, Center, Link } from "@chakra-ui/react";
-import ThanosSymbol_bg from "assets/icons/ct/thanos_symbol_bg_white.svg";
+import { Box, Text, Flex, Link } from "@chakra-ui/react";
 import txlink from "@/assets/icons/ct/txlink.svg";
 import Image from "next/image";
 import CTTimeline from "./CTTimeLine";
 import { CT_History, isInCT_REQUEST } from "@/staging/types/transaction";
 import { useMemo } from "react";
-import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
-import useConnectedNetwork from "@/hooks/network";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
@@ -25,7 +21,7 @@ interface TransactionItemProps {
 }
 
 const TransactionItem = (props: TransactionItemProps) => {
-  const { title, isActive, txHash, isError, blockTimestamp, txData } = props;
+  const { title, isActive, txHash, isError, txData } = props;
   const isOnError = isActive && isError;
 
   const _title = useMemo(() => {

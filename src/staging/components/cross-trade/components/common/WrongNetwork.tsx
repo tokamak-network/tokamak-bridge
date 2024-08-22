@@ -17,13 +17,13 @@ export function WrongNetwork() {
       gap={"4px"}
       bg={"#15161D"}
       borderRadius={"8px"}
-      border={"1px solid #DD3A44"}
+      bgColor={"#DD3A44"}
     >
       <Text
         fontWeight={400}
         fontSize={"12px"}
         lineHeight={"18px"}
-        color={"#DD3A44"}
+        color={"#fff"}
         onClick={switchToEthereum}
         cursor={"pointer"}
       >
