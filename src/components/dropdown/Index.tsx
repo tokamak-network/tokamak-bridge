@@ -41,7 +41,7 @@ const customStyles = (maxHeight: string, maxWidth: string) => {
     }),
     menu: (styles: any) => ({
       margin: "0px",
-      marginTop: "4px",
+      marginTop: "9px",
       background: "#1F2128",
       minWidth: `${maxWidth} !important`,
       maxWidth: `${maxWidth} !important`,
@@ -75,7 +75,7 @@ const ValueContainer = (props: {
         fontWeight={600}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Flex columnGap={"6px"}>
+        <Flex columnGap={"8px"}>
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
             <Image
               src={selectedOption.networkImage}
@@ -242,7 +242,7 @@ export default function NetworkDropdown(props: {
 
     if (data.layer === "L2") {
       return (
-        <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
+        <Flex flexDir={"column"} rowGap={"6px"}>
           {data.isTOP && (
             <Flex
               w={"100%"}
@@ -277,7 +277,7 @@ export default function NetworkDropdown(props: {
             onClick={() => onChange(data)}
             padding={"6px 12px 6px 12px !important"}
           >
-            <Flex columnGap={"6px"}>
+            <Flex columnGap={"8px"}>
               <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
                 <Image
                   src={data.networkImage}
@@ -312,8 +312,9 @@ export default function NetworkDropdown(props: {
         _hover={{ bgColor: "#313442" }}
         onClick={() => onChange(data)}
         padding={"6px 12px 6px 12px !important"}
+        mb={"8px"}
       >
-        <Flex columnGap={"6px"}>
+        <Flex columnGap={"8px"}>
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
             <Image
               src={data.networkImage}
@@ -377,7 +378,7 @@ export default function NetworkDropdown(props: {
             />
           ),
           MenuList: (e) => (
-            <Flex flexDir={"column"} rowGap={"12px"}>
+            <Flex flexDir={"column"} rowGap={"4px"}>
               {e.children}
             </Flex>
           ),
