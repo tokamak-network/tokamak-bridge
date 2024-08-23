@@ -481,18 +481,18 @@ const Title = (props: {
         justifyContent={"space-between"}
       >
         <Flex justifyContent={"space-between"}>
-          <Text size={"14px"} color={"#A0A3AD"}>
+          <Text fontSize={"14px"} color={"#A0A3AD"}>
             Time to Deposit
           </Text>
-          <Text size={"14px"} fontWeight={"600"}>
+          <Text fontSize={"14px"} fontWeight={"600"}>
             ~1 minutes
           </Text>
         </Flex>
         <Flex justifyContent={"space-between"}>
-          <Text size={"14px"} color={"#A0A3AD"}>
+          <Text fontSize={"14px"} color={"#A0A3AD"}>
             Network fee
           </Text>
-          <Text size={"14px"} fontWeight={"600"}>
+          <Text fontSize={"14px"} fontWeight={"600"}>
             {gasCostUS ? `$${gasCostUS}` : `NA`}
           </Text>
         </Flex>
