@@ -87,6 +87,11 @@ export default function useCallBridgeSwapAction() {
               args: [parsedAmount as bigint, 200000, "0x"],
             });
           }
+          console.log(
+            inToken.address[inNetwork.chainName],
+            outTokenAddress,
+            parsedAmount
+          );
           return _depositERC20({
             args: [
               inToken.address[inNetwork.chainName],
@@ -95,7 +100,7 @@ export default function useCallBridgeSwapAction() {
               200000,
               "0x",
             ],
-            gas: gasLimit,
+            // gas: gasLimit,
           });
         case "Withdraw":
           if (isETH) {

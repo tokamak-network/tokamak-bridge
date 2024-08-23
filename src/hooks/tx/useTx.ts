@@ -637,7 +637,11 @@ export function useTx(params: {
                 : "ERC20";
 
             const result = l1ThanosBridgeI.parseLog(
-              depositType === "NativeToken" ? logs[3] : logs[0]
+              depositType === "NativeToken"
+                ? logs[3]
+                : depositType === "ETH"
+                ? logs[0]
+                : logs[1]
             );
             const { args } = result;
             const { l1Token, l2Token, amount } = args;
