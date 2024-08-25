@@ -14,17 +14,21 @@ import {
   L2_TITAN_CT,
   L2_TITAN_SEPOLIA_CT,
 } from "@/constant/contracts/crossTrade";
+import { useInOutTokens } from "../token/useInOutTokens";
 
 export default function useContract() {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { outNetwork } = useInOutNetwork();
+  const { outToken } = useInOutTokens();
 
   const L1BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
-    : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
-    ? SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA
-    : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
+    : outNetwork?.chainId !== SupportedChainId["THANOS_SEPOLIA"]
+    ? SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA
+    : outToken?.tokenSymbol === "USDC"
+    ? SEPOLIA_CONTRACTS.L1USDCBridge_THANOS_SEPOLIA
+    : SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA;
   const L2BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? TOKAMAK_CONTRACTS.L2Bridge
     : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
