@@ -20,13 +20,13 @@ export default function useContract() {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { outNetwork } = useInOutNetwork();
-  const { outToken } = useInOutTokens();
+  const { inToken } = useInOutTokens();
 
   const L1BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
     : outNetwork?.chainId !== SupportedChainId["THANOS_SEPOLIA"]
     ? SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA
-    : outToken?.tokenSymbol === "USDC"
+    : inToken?.tokenSymbol === "USDC"
     ? SEPOLIA_CONTRACTS.L1USDCBridge_THANOS_SEPOLIA
     : SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA;
   const L2BRIDGE_CONTRACT = isConnectedToMainNetwork

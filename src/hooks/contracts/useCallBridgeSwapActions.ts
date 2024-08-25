@@ -87,11 +87,6 @@ export default function useCallBridgeSwapAction() {
               args: [parsedAmount as bigint, 200000, "0x"],
             });
           }
-          console.log(
-            inToken.address[inNetwork.chainName],
-            outTokenAddress,
-            parsedAmount
-          );
           return _depositERC20({
             args: [
               inToken.address[inNetwork.chainName],

@@ -13,7 +13,7 @@ type ETHWrapTxSort = "ETH-Wrap" | "ETH-Unwrap";
 type EtcTxSort = "Approve" | "Revoke";
 type UserHistorySort = "Claim";
 type CrossTradeTxSort = "Request" | "Provide" | "UpdateFee" | "CancelRequest";
-export type ThanosDepositType = "ETH" | "NativeToken" | "ERC20";
+export type ThanosDepositType = "ETH" | "USDC" | "NativeToken" | "ERC20";
 
 export type TxSort =
   | UniswapTxSort

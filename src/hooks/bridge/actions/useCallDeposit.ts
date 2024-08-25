@@ -12,14 +12,14 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function useCallDeposit(functionName: string) {
   const { outNetwork } = useInOutNetwork();
-  const { outToken } = useInOutTokens();
+  const { inToken } = useInOutTokens();
   const abi =
     outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID
       ? L1ThanosBridgeAbi
       : L1TitanBridgeAbi;
   const { L1BRIDGE_CONTRACT } = useContract();
   const { data, write, isError } =
-    outToken?.tokenSymbol === "USDC"
+    inToken?.tokenSymbol === "USDC"
       ? useContractWrite({
           address: L1BRIDGE_CONTRACT,
           abi: L1ThanosUSDCBridgeAbi,
@@ -32,7 +32,7 @@ export default function useCallDeposit(functionName: string) {
         });
   const provider = usePublicClient();
   const contract =
-    outToken?.tokenSymbol === "USDC"
+    inToken?.tokenSymbol === "USDC"
       ? getContract({
           address: L1BRIDGE_CONTRACT,
           abi: L1ThanosUSDCBridgeAbi,
@@ -50,6 +50,7 @@ export default function useCallDeposit(functionName: string) {
       outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID
         ? SupportedL2ChainId.THANOS_SEPOLIA
         : SupportedL2ChainId.TITAN,
+    inToken: inToken?.tokenSymbol,
   });
 
   return { write, contract, hash: data?.hash, isError };

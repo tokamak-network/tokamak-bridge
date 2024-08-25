@@ -4,6 +4,7 @@ import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
+import L1ThanosUSDCBridgeAbi from "@/constant/abis/L1USDCBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import WTON_ABI from "@/abis/WTON.json";
@@ -37,10 +38,13 @@ import {
   SupportedL2ChainId,
 } from "@/types/network/supportedNetwork";
 import { L2ChainID } from "@tokamak-network/titan-sdk";
+import { SupportedTokenSymbol } from "@/types/token/supportedToken";
+import InToken from "@/app/BridgeSwap/components/InToken";
 
 const getInterface = () => {
   const l1TitanBridgeI = new ethers.utils.Interface(L1TitanBridgeAbi);
   const l1ThanosBridgeI = new ethers.utils.Interface(L1ThanosBridgeAbi);
+  const l1ThanosUSDCBridgeI = new ethers.utils.Interface(L1ThanosUSDCBridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
@@ -60,6 +64,7 @@ const getInterface = () => {
   return {
     l1TitanBridgeI,
     l1ThanosBridgeI,
+    l1ThanosUSDCBridgeI,
     l2BridgeI,
     swapRouterI,
     erc20I,
@@ -238,9 +243,17 @@ export function useTx(params: {
   tokenOutAddress?: `0x${string}`;
   actionSort?: ActionSort;
   L2Chain?: SupportedL2ChainId;
+  inToken?: string | String | undefined;
 }) {
-  const { hash, txSort, tokenAddress, tokenOutAddress, actionSort, L2Chain } =
-    params;
+  const {
+    hash,
+    txSort,
+    tokenAddress,
+    tokenOutAddress,
+    actionSort,
+    L2Chain,
+    inToken,
+  } = params;
   const { connectedChainId, layer } = useConnectedNetwork();
   const { data, isLoading, isSuccess, isError } = useWaitForTransaction({
     hash,
@@ -347,6 +360,7 @@ export function useTx(params: {
       const {
         l1TitanBridgeI,
         l1ThanosBridgeI,
+        l1ThanosUSDCBridgeI,
         l2BridgeI,
         swapRouterI,
         erc20I,
@@ -630,19 +644,24 @@ export function useTx(params: {
             });
           } else if (L2Chain === SupportedL2ChainId.THANOS_SEPOLIA) {
             const depositType: ThanosDepositType =
-              logs.length === 5
+              inToken === "USDC"
+                ? "USDC"
+                : logs.length === 5
                 ? "ETH"
                 : logs.length === 13
                 ? "NativeToken"
                 : "ERC20";
 
-            const result = l1ThanosBridgeI.parseLog(
-              depositType === "NativeToken"
-                ? logs[3]
-                : depositType === "ETH"
-                ? logs[0]
-                : logs[1]
-            );
+            const result =
+              inToken === "USDC"
+                ? l1ThanosUSDCBridgeI.parseLog(logs[4])
+                : l1ThanosBridgeI.parseLog(
+                    depositType === "NativeToken"
+                      ? logs[3]
+                      : depositType === "ETH"
+                      ? logs[0]
+                      : logs[1]
+                  );
             const { args } = result;
             const { l1Token, l2Token, amount } = args;
             const L2TokenAddress = depositType === "ETH" ? "ETH" : l1Token;
