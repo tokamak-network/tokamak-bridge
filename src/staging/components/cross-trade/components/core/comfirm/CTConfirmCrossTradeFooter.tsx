@@ -293,7 +293,13 @@ export default function CTConfirmCrossTradeFooter(
         >
           <Flex flexDir={"column"} fontSize={12} lineHeight={"20px"}>
             <Text>
-              <span style={{ fontWeight: 600, color: "#DB00FF" }}>
+              <span
+                style={{
+                  fontWeight: 600,
+                  color: "#DB00FF",
+                  marginRight: "2px",
+                }}
+              >
                 Warning:
               </span>
               Tokamak Bridge can't guarantee this

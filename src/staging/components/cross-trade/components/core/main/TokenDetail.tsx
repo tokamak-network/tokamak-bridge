@@ -50,7 +50,7 @@ export default function TokenDetail(props: TokenDetailProps) {
           symbolH={32}
         />
       )}
-      <Box ml="10px">
+      <Box ml="14px">
         <Flex alignItems={"center"}>
           <Text
             fontWeight={500}

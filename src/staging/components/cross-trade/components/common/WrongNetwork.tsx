@@ -1,7 +1,8 @@
 import useConnectedNetwork, { useChangeNetwork } from "@/hooks/network";
 import { Box, Text } from "@chakra-ui/react";
+import { CSSProperties } from "react";
 
-export function WrongNetwork() {
+export function WrongNetwork(props: { style?: CSSProperties }) {
   const { switchToEthereum } = useChangeNetwork();
   const { connectedToLayer1, isConnectedToMainNetwork } = useConnectedNetwork();
 
@@ -9,7 +10,6 @@ export function WrongNetwork() {
 
   return (
     <Box
-      my={"16px"}
       px={"16px"}
       py={"12px"}
       justifyContent={"center"}
@@ -18,6 +18,7 @@ export function WrongNetwork() {
       bg={"#15161D"}
       borderRadius={"8px"}
       bgColor={"#DD3A44"}
+      style={props?.style}
     >
       <Text
         fontWeight={400}

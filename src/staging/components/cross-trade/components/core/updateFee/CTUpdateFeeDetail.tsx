@@ -145,7 +145,6 @@ export default function CTUpdateFeeDetail(
   // update fee 상세
   // 공백일때는 값이 들어가면 안된다.
   // 하지만, recommendCheck가 true이면 값이 들어가야 한다.
-  const inputValueCheck = props.inputValue != "" || props.recommendCheck;
   const currentServiceFee = useMemo(() => {
     return formatUnits(txData.serviceFee.toString(), txData.inToken.decimals);
   }, [txData.serviceFee, txData.inToken]);
