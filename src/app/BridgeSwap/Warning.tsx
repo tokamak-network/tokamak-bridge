@@ -104,13 +104,15 @@ export default function Warning() {
         />
       );
     if (inToken)
-      <WarningText
-        label={`Cannot deposit/withdraw ${inToken?.tokenName} to ${
-          NetworkDisplayName[
-            outNetwork?.chainName ?? SupportedChainId.THANOS_SEPOLIA
-          ]
-        }`}
-      />;
+      return (
+        <WarningText
+          label={`Cannot deposit/withdraw ${inToken?.tokenName} to ${
+            NetworkDisplayName[
+              outNetwork?.chainName ?? SupportedChainId.THANOS_SEPOLIA
+            ]
+          }`}
+        />
+      );
   }
 
   if (mode === "Swap" && isNotSupportForSwap) {

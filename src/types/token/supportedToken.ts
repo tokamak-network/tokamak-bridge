@@ -122,7 +122,6 @@ export const supportedTokens: SupportedTokens_T = [
     decimals: 18,
     isNativeCurrency: null,
     availableForBirdge: true,
-    availableForThanosBridge: false,
   },
   {
     tokenName: "Dooropen",
