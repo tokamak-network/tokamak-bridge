@@ -342,14 +342,14 @@ export const useDepositData = () => {
       );
 
       const filteredResult = result.filter((tx) => {
-        !(tx instanceof Error) && tx !== undefined && tx !== null;
+        if (!(tx instanceof Error) && tx !== undefined && tx !== null)
+          return tx;
       });
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
     }
