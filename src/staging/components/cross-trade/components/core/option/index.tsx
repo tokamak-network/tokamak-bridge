@@ -34,6 +34,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import commafy from "@/utils/trim/commafy";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -78,6 +79,13 @@ export default function CTOptionModal() {
       return serviceFee;
     }
   }, [recommendedFee, serviceFee]);
+
+  useEffect(() => {
+    if (recommendedFee) {
+      setServiceFee(recommendedFee.toString());
+    }
+  }, [recommendedFee]);
+
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return handleConfirm(Action.Withdraw, Status.Initiate);
@@ -91,8 +99,6 @@ export default function CTOptionModal() {
       inToken.address[outNetwork.chainName] !== null &&
       serviceFeeValue
     ) {
-      console.log("serviceFeeValue", serviceFeeValue);
-      console.log(inToken.decimals);
       const ctAmount =
         BigInt(inToken.amountBN.toString()) -
         BigInt(
@@ -164,7 +170,6 @@ export default function CTOptionModal() {
 
   useEffect(() => {
     if (ctOptionModal) {
-      setServiceFee(undefined);
       setInputWarningCheck("");
       setActiveSubButtonValue(ButtonTypeSub.Recommend);
     }
@@ -261,7 +266,7 @@ export default function CTOptionModal() {
             isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {btnDisabled ? "Enter amount" : "Next"}
+              {"Next"}
             </Text>
           </Button>
         </ModalFooter>

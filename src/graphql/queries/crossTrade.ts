@@ -102,10 +102,11 @@ export const FETCH_REQUEST_LIST_L2_ACCOUNT = gql`
       blockTimestamp 
       transactionHash
     }
-    providerClaimCTs(where: {_provider: $account})
+    providerClaimCTs(orderBy: blockTimestamp, orderDirection: desc,where: {_provider: $account})
     {
       _saleCount
       _provider
+      _requester
       blockTimestamp 
       transactionHash
     }

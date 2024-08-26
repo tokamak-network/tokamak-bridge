@@ -18,7 +18,6 @@ import {
 } from "@/staging/components/cross-trade/types";
 import CloseButton from "@/components/button/CloseButton";
 import useCTUpdateFee from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
-import useCTRecommend from "@/staging/components/cross-trade/hooks/useCTRecommend";
 import CTUpdateButton from "./CTUpdateButton";
 import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
@@ -28,7 +27,6 @@ import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { BigNumber } from "ethers";
-import { Hash } from "viem";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
@@ -67,7 +65,6 @@ export default function CTFeeUpdateModal() {
 
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     // 사용자의 입력 필드에 포커스가 맞춰지면, 추천 체크를 제거한다.
-    setRecommendCheck(false);
   };
 
   const inputParsedAmount = useMemo(() => {
@@ -275,7 +272,7 @@ export default function CTFeeUpdateModal() {
               activeButton={activeButton}
               setActiveButton={setActiveButton}
             />
-            <WrongNetwork />
+            <WrongNetwork style={{ marginTop: "12px" }} />
             {activeButton == UpdateFeeButtonType.Update &&
             ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail
@@ -369,10 +366,10 @@ export default function CTFeeUpdateModal() {
             isDisabled={!activeConfirmButton || !connectedToLayer1}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
-              {activeButton == UpdateFeeButtonType.Update
-                ? !connectedToLayer1
-                  ? "Wrong Network"
-                  : "Update"
+              {!connectedToLayer1
+                ? "Wrong Network"
+                : activeButton == UpdateFeeButtonType.Update
+                ? "Update"
                 : "Cancel"}
             </Text>
           </Button>

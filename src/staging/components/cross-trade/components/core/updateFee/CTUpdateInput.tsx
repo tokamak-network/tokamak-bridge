@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   Box,
   Text,
@@ -54,6 +54,12 @@ export default function CTUpdateInput(
     setIsFocused(false);
   };
 
+  const refreshButtonActive = useMemo(() => {
+    if (recommendValue && inputValue && recommendValue === inputValue)
+      return true;
+    return false;
+  }, [inputValue, recommendValue, recommendCheck]);
+
   return (
     <>
       <Box
@@ -82,7 +88,7 @@ export default function CTUpdateInput(
             }}
             cursor="pointer"
           >
-            {recommendCheck ? (
+            {refreshButtonActive ? (
               <Image src={CTReCircle} alt={"CTReCircle"} />
             ) : (
               <Image src={CTReCirclePurple} alt={"CTReCirclePurple"} />

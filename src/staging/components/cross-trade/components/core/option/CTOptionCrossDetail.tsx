@@ -86,7 +86,12 @@ export default function CTOptionCrossDetail(
     >
       <Box>
         <Flex alignItems={"center"}>
-          <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+          <Text
+            fontWeight={600}
+            fontSize={"16px"}
+            lineHeight={"24px"}
+            mr={"2px"}
+          >
             Cross Trade Bridge
           </Text>
           <CustomTooltipWithQuestion

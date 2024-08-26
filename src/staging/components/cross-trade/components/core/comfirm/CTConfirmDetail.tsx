@@ -86,16 +86,18 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
         >
           {title}
         </Text>
-        <CustomTooltip
-          content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
-          tooltipLabel={tooltipMessage}
-          style={{
-            px: "8px",
-            py: "10px",
-            tooltipLineHeight: "15x",
-            height: "normal",
-          }}
-        />
+        {!isCanceled && (
+          <CustomTooltip
+            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+            tooltipLabel={tooltipMessage}
+            style={{
+              px: "8px",
+              py: "10px",
+              tooltipLineHeight: "15x",
+              height: "normal",
+            }}
+          />
+        )}
       </Flex>
       <Box>
         <Flex justifyContent={"space-between"} alignItems={"center"}>

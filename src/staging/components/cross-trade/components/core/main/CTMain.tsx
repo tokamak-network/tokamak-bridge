@@ -25,7 +25,6 @@ import Image from "next/image";
 import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
-import useMediaView from "@/hooks/mediaView/useMediaView";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 
 {

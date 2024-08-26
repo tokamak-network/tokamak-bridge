@@ -342,14 +342,14 @@ export const useDepositData = () => {
       );
 
       const filteredResult = result.filter((tx) => {
-        !(tx instanceof Error) && tx !== undefined && tx !== null;
+        if (!(tx instanceof Error) && tx !== undefined && tx !== null)
+          return tx;
       });
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
     }
@@ -369,7 +369,7 @@ export const useRequestHistoryData = () => {
     CT_Request_History[] | [] | null
   >(null);
   const { data: l2Data } = useCrossTradeData_L2({
-    isHistory: true,
+    isHistory: false,
   });
   const { data: l1Data } = useCrossTradeData_L1({
     isHistory: true,

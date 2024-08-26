@@ -47,6 +47,7 @@ const CTTimeline = ({
                     backgroundPosition: "bottom",
                     backgroundSize: "6px 5px",
                     backgroundRepeat: "repeat-y",
+                    opacity: 0.4,
                   }}
                 />
               )}
