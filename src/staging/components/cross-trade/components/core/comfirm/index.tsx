@@ -88,14 +88,16 @@ export default function CTModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {isProvide ? "Provide" : modalTitles[ctConfirmModal.type]}
+            {isProvide ? "Confirm Provide" : modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
           <CloseButton onClick={onCloseCTConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          {isProvide && ctConfirmModal.type !== "history" && <WrongNetwork />}
+          {isProvide && ctConfirmModal.type !== "history" && (
+            <WrongNetwork style={{ marginBottom: "12px" }} />
+          )}
           <CTConfirmDetail
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}

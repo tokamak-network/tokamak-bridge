@@ -8,9 +8,23 @@ import {
 import { CTWarning } from "@/staging/components/cross-trade/components/CTWarning";
 import { CTInputProps } from "@/staging/components/cross-trade/types";
 import { WarningType } from "@/staging/components/cross-trade/types";
+import { useMemo } from "react";
 
 export default function CTOptionInput(props: CTInputProps) {
-  const { inputValue, inputWarningCheck, onInputChange, inTokenSymbol } = props;
+  const {
+    inputValue: _inputValue,
+    inputWarningCheck,
+    onInputChange,
+    inTokenSymbol,
+  } = props;
+
+  const inputValue = useMemo(() => {
+    if (_inputValue.length > 12) {
+      return `${_inputValue.slice(0, 12)}...`;
+    }
+    return _inputValue;
+  }, [_inputValue]);
+
   return (
     <>
       <Flex w={"189px"}>
@@ -69,7 +83,7 @@ export default function CTOptionInput(props: CTInputProps) {
           label={"Service fee is too high. Invalid request."}
           type={inputWarningCheck}
           groupStyle={{
-            height: "14px",
+            height: "16px",
           }}
           style={{
             fontWeight: 400,
@@ -83,7 +97,7 @@ export default function CTOptionInput(props: CTInputProps) {
           label={"Service fee is low. May take long time."}
           type={inputWarningCheck}
           groupStyle={{
-            height: "14px",
+            height: "16px",
           }}
           style={{
             fontWeight: 400,

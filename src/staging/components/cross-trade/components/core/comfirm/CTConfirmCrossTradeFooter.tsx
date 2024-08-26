@@ -209,9 +209,8 @@ export default function CTConfirmCrossTradeFooter(
     <Grid mt={"3px"}>
       {/** Check Box */}
       {!isProvide && (
-        <Box>
+        <Flex flexDir={"column"} rowGap={"8px"} mt={"5px"}>
           <Text
-            mt={"5px"}
             color={isChecked ? "#FFFFFF" : "#A0A3AD"}
             fontWeight={600}
             fontSize={13}
@@ -281,7 +280,7 @@ export default function CTConfirmCrossTradeFooter(
               the request can be edited from L1
             </Text>
           </Checkbox>
-        </Box>
+        </Flex>
       )}
       {isProvide && (
         <Grid
@@ -294,7 +293,13 @@ export default function CTConfirmCrossTradeFooter(
         >
           <Flex flexDir={"column"} fontSize={12} lineHeight={"20px"}>
             <Text>
-              <span style={{ fontWeight: 600, color: "#DB00FF" }}>
+              <span
+                style={{
+                  fontWeight: 600,
+                  color: "#DB00FF",
+                  marginRight: "2px",
+                }}
+              >
                 Warning:
               </span>
               Tokamak Bridge can't guarantee this
