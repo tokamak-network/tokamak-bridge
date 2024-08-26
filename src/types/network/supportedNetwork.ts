@@ -28,7 +28,9 @@ export enum SupportedL2ChainId {
   TITAN_SEPOLIA = 55007,
 }
 
-export const NetworkDisplayName: Record<string, string> = {
+export const NetworkDisplayName: Partial<
+  Record<string | SupportedChainId, string>
+> = {
   MAINNET: "Ethereum",
   TITAN: "Titan",
   SEPOLIA: "Sepolia",

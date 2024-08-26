@@ -39,6 +39,7 @@ export type TokenInfo = {
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
   availableForBirdge?: boolean;
+  availableForThanosBridge?: boolean;
   isNew?: boolean;
   isLiked?: "true" | "false" | "none" | String | string;
 };
@@ -64,6 +65,7 @@ export const supportedTokens: SupportedTokens_T = [
       SupportedChainId.TITAN_SEPOLIA,
     ],
     availableForBirdge: true,
+    availableForThanosBridge: true,
   },
   {
     tokenName: "WETH",
@@ -91,6 +93,7 @@ export const supportedTokens: SupportedTokens_T = [
     decimals: 18,
     isNativeCurrency: null,
     availableForBirdge: true,
+    availableForThanosBridge: true,
   },
   {
     tokenName: "Wrapped TON",
@@ -119,6 +122,7 @@ export const supportedTokens: SupportedTokens_T = [
     decimals: 18,
     isNativeCurrency: null,
     availableForBirdge: true,
+    availableForThanosBridge: false,
   },
   {
     tokenName: "Dooropen",
@@ -172,6 +176,7 @@ export const supportedTokens: SupportedTokens_T = [
     decimals: 6,
     isNativeCurrency: null,
     availableForBirdge: true,
+    availableForThanosBridge: true,
   },
   {
     tokenName: "Tether USD",
@@ -186,6 +191,7 @@ export const supportedTokens: SupportedTokens_T = [
     decimals: 6,
     isNativeCurrency: null,
     availableForBirdge: true,
+    availableForThanosBridge: true,
   },
 ];
 

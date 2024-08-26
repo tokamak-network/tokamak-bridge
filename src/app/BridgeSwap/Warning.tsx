@@ -19,6 +19,11 @@ import {
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import {
+  NetworkDisplayName,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 // import { isETH } from "@/utils/token/isETH";
 
 export default function Warning() {
@@ -98,6 +103,14 @@ export default function Warning() {
           }. Unwrap to ETH and withdraw.`}
         />
       );
+    if (inToken)
+      <WarningText
+        label={`Cannot deposit/withdraw ${inToken?.tokenName} to ${
+          NetworkDisplayName[
+            outNetwork?.chainName ?? SupportedChainId.THANOS_SEPOLIA
+          ]
+        }`}
+      />;
   }
 
   if (mode === "Swap" && isNotSupportForSwap) {
