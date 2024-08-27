@@ -26,7 +26,7 @@ import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
 export default function AccountHistory() {
-const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
+  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const { mobileView } = useMediaView();
@@ -174,7 +174,7 @@ const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
               py={isOnOfficialStandard ? "9px" : "10px"}
               cursor={"pointer"}
               color={isOnOfficialStandard ? "#007AFF" : "#565B72"}
-              borderBottomColor={isOnOfficialStandard ? "#007AFF" : "#565B72"}
+              borderBottomColor={isOnOfficialStandard ? "#007AFF" : "#313442"}
               borderBottomWidth={isOnOfficialStandard ? "2px" : "1px"}
               onClick={() => {
                 setSelectedTransactionCategory(Action.Deposit);
@@ -191,7 +191,7 @@ const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
               py={isOnCrossTrade ? "9px" : "10px"}
               cursor={"pointer"}
               color={isOnCrossTrade ? "#007AFF" : "#565B72"}
-              borderBottomColor={isOnCrossTrade ? "#007AFF" : "#565B72"}
+              borderBottomColor={isOnCrossTrade ? "#007AFF" : "#313442"}
               borderBottomWidth={isOnCrossTrade ? "2px" : "1px"}
               onClick={() => {
                 setSelectedTransactionCategory(CT_ACTION.REQUEST);

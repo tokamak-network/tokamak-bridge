@@ -277,7 +277,7 @@ export default function CTConfirmDetail({
       convertNumber(inToken.amount, inToken.decimals)
     )} ${inToken.symbol}`,
     subValue: `$${commafy(inTokenPrice)}`,
-    chainId: isProvide ? outNetwork : inNetwork,
+    chainId: isProvide && modalType === "trade" ? outNetwork : inNetwork,
     tokenSymbol: inToken.symbol,
     tokenAddress: inToken.address,
   };
@@ -287,7 +287,7 @@ export default function CTConfirmDetail({
       convertNumber(outToken.amount, outToken.decimals)
     )} ${outToken.symbol}`,
     subValue: `$${commafy(outTokenPrice)}`,
-    chainId: isProvide ? inNetwork : outNetwork,
+    chainId: isProvide && modalType === "trade" ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,
     tokenAddress: outToken.address,
   };
