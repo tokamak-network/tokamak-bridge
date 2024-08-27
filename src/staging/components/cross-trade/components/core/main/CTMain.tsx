@@ -115,9 +115,11 @@ export default function CTMain() {
       borderRadius={"16px"}
       border={"1px solid #313442"}
       overflow="hidden"
+      pos={"sticky"}
+      top={500}
     >
       <Table variant={"unstyled"} w="100%" h="100%">
-        <Thead>
+        <Thead pos={"sticky"} top={0} zIndex={10000}>
           <Tr
             sx={{
               "& th": { pl: "20px", py: "10px", pr: "auto" },
@@ -125,7 +127,7 @@ export default function CTMain() {
               letterSpacing: 0,
             }}
           >
-            <Th textTransform="none">
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex
                 alignItems="center"
                 cursor={"pointer"}
@@ -164,7 +166,7 @@ export default function CTMain() {
                 />
               </Flex>
             </Th>
-            <Th textTransform="none">
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex alignItems="center">
                 <Text
                   fontWeight={"500"}
@@ -183,8 +185,8 @@ export default function CTMain() {
                 />
               </Flex>
             </Th>
-            <Th textTransform="none">
-              <Flex ml={"9px"}>
+            <Th textTransform="none" minW={"140px"} maxW={"140px"} p={0}>
+              <Flex>
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}

@@ -353,7 +353,7 @@ export default function CTConfirmDetail({
           <FeeDetail
             title="Network fee"
             mainAmount={`${formatNumber(estimatedGasFeeETH)} ETH`}
-            subAmount={`$ ${commafy(estimatedGasFeeUSD)}`}
+            subAmount={`$${commafy(estimatedGasFeeUSD)}`}
           />
         )}
       </Box>

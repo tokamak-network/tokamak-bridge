@@ -82,7 +82,9 @@ export default function CTConfirmCrossTradeFooter(
   const inTokenIsETH = isETH(inToken);
 
   const approveBtnDisabled = useMemo(() => {
-    return isApproved || isLoading || mode === "Withdraw"
+    return isLoading
+      ? true
+      : isApproved || mode === "Withdraw"
       ? !isChecked
       : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
@@ -297,7 +299,7 @@ export default function CTConfirmCrossTradeFooter(
                 style={{
                   fontWeight: 600,
                   color: "#DB00FF",
-                  marginRight: "2px",
+                  marginRight: "3px",
                 }}
               >
                 Warning:
@@ -342,14 +344,18 @@ export default function CTConfirmCrossTradeFooter(
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
-            sx={{
-              backgroundColor: !approveBtnDisabled ? "#007AFF" : "#17181D",
-              color: !approveBtnDisabled ? "#FFFFFF" : "#8E8E92",
-            }}
             width="full"
             height={"48px"}
             borderRadius={"8px"}
             _hover={{}}
+            sx={{
+              backgroundColor: !approveBtnDisabled ? "#007AFF" : "#17181D",
+              color: !approveBtnDisabled ? "#FFFFFF" : "#8E8E92",
+            }}
+            _disabled={{
+              backgroundColor: "#17181D",
+              color: "#8E8E92",
+            }}
           >
             {isLoading ? (
               <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
@@ -371,6 +377,10 @@ export default function CTConfirmCrossTradeFooter(
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}
+          _disabled={{
+            backgroundColor: "#17181D",
+            color: "#8E8E92",
+          }}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             {isProvide ? "Provide" : "Request"}
