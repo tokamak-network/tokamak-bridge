@@ -4,11 +4,15 @@ import React, { CSSProperties, ReactNode, useState } from "react";
 import QuestionIcon from "assets/icons/question.svg";
 import GrayQuestionIcon from "assets/icons/questionGray.svg";
 import TooltipArrow from "assets/icons/tooltipArrow.svg";
+import { atom, useRecoilState } from "recoil";
+
+const tooltipStatus = atom<boolean>({
+  key: "tooltipStatus",
+  default: false,
+});
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
-  isOpen: boolean;
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   tooltipLabel?: string | ReactNode;
   style?: {
     width?: string;
@@ -20,7 +24,8 @@ export default function CustomTooltip(props: {
     tooltipLineHeight?: string;
   };
 }) {
-  const { isOpen, setIsOpen } = props;
+  const [isOpen, setIsOpen] = useRecoilState<boolean>(tooltipStatus);
+
   return (
     <Tooltip
       p={0}
@@ -91,7 +96,8 @@ export const CustomTooltipWithQuestion = (props: {
   };
   containerSyle?: CSSProperties;
 }) => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useRecoilState<boolean>(tooltipStatus);
+
   return (
     <Box pos={"relative"} style={props.containerSyle}>
       <CustomTooltip
@@ -103,8 +109,6 @@ export const CustomTooltipWithQuestion = (props: {
         }
         tooltipLabel={props.tooltipLabel}
         style={props.style}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
       />
       {isOpen && (
         <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
