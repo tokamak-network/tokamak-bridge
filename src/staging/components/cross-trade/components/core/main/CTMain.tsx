@@ -26,6 +26,7 @@ import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import GradientSpinner from "@/components/ui/GradientSpinner";
+import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
 
 {
   /** 
@@ -115,9 +116,11 @@ export default function CTMain() {
       borderRadius={"16px"}
       border={"1px solid #313442"}
       overflow="hidden"
+      pos={"sticky"}
+      top={500}
     >
       <Table variant={"unstyled"} w="100%" h="100%">
-        <Thead>
+        <Thead pos={"sticky"} top={0} zIndex={10000}>
           <Tr
             sx={{
               "& th": { pl: "20px", py: "10px", pr: "auto" },
@@ -125,7 +128,7 @@ export default function CTMain() {
               letterSpacing: 0,
             }}
           >
-            <Th textTransform="none">
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex
                 alignItems="center"
                 cursor={"pointer"}
@@ -153,18 +156,19 @@ export default function CTMain() {
                   fontWeight={"500"}
                   fontSize={"13px"}
                   lineHeight={"18px"}
-                  color={"#FFFFFF"}
                   letterSpacing={0}
+                  color={"#A0A3AD"}
                 >
                   Provide
                 </Text>
-                <Tooltip
+                <CustomTooltipWithQuestion
+                  isGrayIcon={true}
                   tooltipLabel={"Total amount to pay."}
-                  style={{ marginLeft: "2px" }}
+                  containerSyle={{ marginLeft: "2px" }}
                 />
               </Flex>
             </Th>
-            <Th textTransform="none">
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex alignItems="center">
                 <Text
                   fontWeight={"500"}
@@ -175,16 +179,24 @@ export default function CTMain() {
                 >
                   Receive
                 </Text>
-                <Tooltip
+                <CustomTooltipWithQuestion
+                  isGrayIcon={true}
                   tooltipLabel={
                     "Total amount to receive, including the service fee. It takes at least 2~5 minutes to receive (depending on the L2 sequencer)."
                   }
-                  style={{ marginLeft: "2px" }}
+                  style={{
+                    width: "289px",
+                    height: "70px",
+                    tooltipLineHeight: "normal",
+                    py: "10px",
+                    px: "8px",
+                  }}
+                  containerSyle={{ marginLeft: "2px" }}
                 />
               </Flex>
             </Th>
-            <Th textTransform="none">
-              <Flex ml={"9px"}>
+            <Th textTransform="none" minW={"140px"} maxW={"140px"} p={0}>
+              <Flex>
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}

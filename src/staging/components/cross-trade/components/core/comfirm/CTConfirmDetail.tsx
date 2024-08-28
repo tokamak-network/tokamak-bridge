@@ -21,7 +21,9 @@ import { LinkContainer } from "@/staging/components/common/LinkContainer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
-import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import CustomTooltip, {
+  CustomTooltipWithQuestion,
+} from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/questionGray.svg";
 import formatNumber from "@/staging/utils/formatNumbers";
 import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
@@ -87,8 +89,11 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
           {title}
         </Text>
         {!isCanceled && (
-          <CustomTooltip
-            content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+          <CustomTooltipWithQuestion
+            // tooltipLabel={
+            //   <Image src={QuestionIcon} alt={"QuestionIcon"}></Image>
+            // }
+            isGrayIcon={true}
             tooltipLabel={tooltipMessage}
             style={{
               px: "8px",
@@ -96,6 +101,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
               tooltipLineHeight: "15x",
               height: "normal",
             }}
+            containerSyle={{ marginLeft: "2px" }}
           />
         )}
       </Flex>
@@ -187,11 +193,19 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           {title}
         </Text>
         {title == "Service fee" && (
-          <Tooltip
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
             tooltipLabel={
               "The service fee incentivizes the liquidity provider to accept the request. The amount received on L1 is calculated after deducting this fee."
             }
-            style={{ marginLeft: "2px" }}
+            style={{
+              width: "288px",
+              height: "70px",
+              py: "10px",
+              px: "8px",
+              tooltipLineHeight: "normal",
+            }}
+            containerSyle={{ marginLeft: "2px" }}
           />
         )}
       </Flex>
@@ -277,7 +291,7 @@ export default function CTConfirmDetail({
       convertNumber(inToken.amount, inToken.decimals)
     )} ${inToken.symbol}`,
     subValue: `$${commafy(inTokenPrice)}`,
-    chainId: isProvide ? outNetwork : inNetwork,
+    chainId: isProvide && modalType === "trade" ? outNetwork : inNetwork,
     tokenSymbol: inToken.symbol,
     tokenAddress: inToken.address,
   };
@@ -287,7 +301,7 @@ export default function CTConfirmDetail({
       convertNumber(outToken.amount, outToken.decimals)
     )} ${outToken.symbol}`,
     subValue: `$${commafy(outTokenPrice)}`,
-    chainId: isProvide ? inNetwork : outNetwork,
+    chainId: isProvide && modalType === "trade" ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,
     tokenAddress: outToken.address,
   };
@@ -353,7 +367,7 @@ export default function CTConfirmDetail({
           <FeeDetail
             title="Network fee"
             mainAmount={`${formatNumber(estimatedGasFeeETH)} ETH`}
-            subAmount={`$ ${commafy(estimatedGasFeeUSD)}`}
+            subAmount={`$${commafy(estimatedGasFeeUSD)}`}
           />
         )}
       </Box>

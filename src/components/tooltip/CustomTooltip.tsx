@@ -1,11 +1,14 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
 import Image from "next/image";
-import { ReactNode, useState } from "react";
+import React, { CSSProperties, ReactNode, useState } from "react";
 import QuestionIcon from "assets/icons/question.svg";
 import GrayQuestionIcon from "assets/icons/questionGray.svg";
+import TooltipArrow from "assets/icons/tooltipArrow.svg";
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
+  isOpen: boolean;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   tooltipLabel?: string | ReactNode;
   style?: {
     width?: string;
@@ -17,15 +20,14 @@ export default function CustomTooltip(props: {
     tooltipLineHeight?: string;
   };
 }) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
+  const { isOpen, setIsOpen } = props;
   return (
     <Tooltip
       p={0}
       defaultIsOpen={false}
       isOpen={isOpen}
       bg={"transparent"}
-      zIndex={10000}
+      zIndex={1000000}
       label={
         <Box
           w={"100%"}
@@ -84,19 +86,31 @@ export const CustomTooltipWithQuestion = (props: {
     height?: string;
     px?: string;
     py?: string;
+    ml?: string;
     tooltipLineHeight?: string;
   };
+  containerSyle?: CSSProperties;
 }) => {
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <CustomTooltip
-      content={
-        <Image
-          src={props.isGrayIcon ? GrayQuestionIcon : QuestionIcon}
-          alt={"QuestionIcon"}
-        ></Image>
-      }
-      tooltipLabel={props.tooltipLabel}
-      style={props.style}
-    />
+    <Box pos={"relative"} style={props.containerSyle}>
+      <CustomTooltip
+        content={
+          <Image
+            src={props.isGrayIcon ? GrayQuestionIcon : QuestionIcon}
+            alt={"QuestionIcon"}
+          ></Image>
+        }
+        tooltipLabel={props.tooltipLabel}
+        style={props.style}
+        isOpen={isOpen}
+        setIsOpen={setIsOpen}
+      />
+      {isOpen && (
+        <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
+          <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
+        </Box>
+      )}
+    </Box>
   );
 };

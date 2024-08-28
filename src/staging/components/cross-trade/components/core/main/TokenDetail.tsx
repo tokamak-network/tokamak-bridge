@@ -39,7 +39,7 @@ export default function TokenDetail(props: TokenDetailProps) {
   }, [tokenPriceWithAmount, profit?.percent]);
 
   return (
-    <Flex>
+    <Flex columnGap={"13px"}>
       {network && token && (
         <TokenSymbolWithNetwork
           tokenSymbol={token.symbol}
@@ -50,7 +50,7 @@ export default function TokenDetail(props: TokenDetailProps) {
           symbolH={32}
         />
       )}
-      <Box ml="14px">
+      <Box>
         <Flex alignItems={"center"}>
           <Text
             fontWeight={500}
