@@ -18,7 +18,10 @@ import CTConfirmCrossTradeFooter, {
   ContractWrite,
 } from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
-import { isInCT_Provide } from "@/staging/types/transaction";
+import {
+  isInCT_Provide,
+  isInCT_REQUEST_CANCEL,
+} from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 
@@ -57,10 +60,17 @@ export default function CTModal() {
   const isProvide = ctConfirmModal?.txData
     ? isInCT_Provide(ctConfirmModal.txData.status)
     : false;
+  const isCanceled =
+    ctConfirmModal?.txData &&
+    isInCT_REQUEST_CANCEL(ctConfirmModal.txData.status);
 
   const modalTitles = {
     [ModalType.Trade]: "Confirm Request",
-    [ModalType.History]: isProvide ? "Provide" : "Request",
+    [ModalType.History]: isProvide
+      ? "Provide"
+      : isCanceled
+      ? "Cancel"
+      : "Request",
   };
 
   useEffect(() => {

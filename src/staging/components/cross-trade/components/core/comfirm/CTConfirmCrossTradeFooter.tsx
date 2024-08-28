@@ -213,7 +213,7 @@ export default function CTConfirmCrossTradeFooter(
       {!isProvide && (
         <Flex flexDir={"column"} rowGap={"8px"} mt={"5px"}>
           <Text
-            color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+            color={"#A0A3AD"}
             fontWeight={600}
             fontSize={13}
             lineHeight={"20px"}

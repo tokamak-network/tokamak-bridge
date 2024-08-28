@@ -2,7 +2,11 @@ import { Box, Text, Flex, Link } from "@chakra-ui/react";
 import txlink from "@/assets/icons/ct/txlink.svg";
 import Image from "next/image";
 import CTTimeline from "./CTTimeLine";
-import { CT_History, isInCT_REQUEST } from "@/staging/types/transaction";
+import {
+  CT_History,
+  isInCT_REQUEST,
+  isInCT_REQUEST_CANCEL,
+} from "@/staging/types/transaction";
 import { useMemo } from "react";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
@@ -186,10 +190,12 @@ export default function CTConfirmHistoryFooter(props: {
             key !== "return"
           )
             return null;
+          const isCancelCompleted =
+            isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
             return (
               <TransactionItem
-                title={key}
+                title={isCancelCompleted ? "Refund" : key}
                 isActive={isActive}
                 txHash={hash}
                 isError={isError}
