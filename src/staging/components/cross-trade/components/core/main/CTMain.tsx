@@ -157,7 +157,7 @@ export default function CTMain() {
                   fontSize={"13px"}
                   lineHeight={"18px"}
                   letterSpacing={0}
-                  color={"#A0A3AD"}
+                  color={isSortedDescending !== null ? "#fff" : "#A0A3AD"}
                 >
                   Provide
                 </Text>

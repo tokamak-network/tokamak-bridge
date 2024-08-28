@@ -105,7 +105,7 @@ export default function CTConfirmCrossTradeFooter(
   }, [inTokenInfo]);
 
   const { setModalOpen } = useTxConfirmModal();
-  // const { provideCT, requestRegisteredToken } = useCrossTradeContract();
+
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
@@ -383,7 +383,11 @@ export default function CTConfirmCrossTradeFooter(
           }}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-            {isProvide ? "Provide" : "Request"}
+            {!connectedToLayer1
+              ? "Wrong Network "
+              : isProvide
+              ? "Provide"
+              : "Request"}
           </Text>
         </Button>
       </Flex>

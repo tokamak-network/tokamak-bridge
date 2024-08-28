@@ -14,6 +14,7 @@ import { useCountdown } from "@/staging/hooks/useCountdown";
 import { ErrorRollupComponent } from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
+import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
 
 interface TransactionItemProps {
   title: string;
@@ -95,14 +96,34 @@ const TransactionItem = (props: TransactionItemProps) => {
 
   return (
     <Flex justifyContent={"space-between"}>
-      <Text
-        fontWeight={600}
-        fontSize={"15px"}
-        lineHeight={"20px"}
-        color={isActive ? "#FFFFFF" : "#A0A3AD"}
-      >
-        {_title}
-      </Text>
+      <Flex columnGap={"2px"} alignItems={"center"}>
+        <Text
+          fontWeight={600}
+          fontSize={"15px"}
+          lineHeight={"20px"}
+          color={isActive ? "#FFFFFF" : "#A0A3AD"}
+        >
+          {_title}
+        </Text>
+        {_title === "Receive" && (
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
+            style={{
+              width: "223px",
+              height: "53px",
+              tooltipLineHeight: "normal",
+              px: "8px",
+              py: "10px",
+            }}
+            tooltipLabel={
+              <span>
+                It take at least 2~5 minutes to receive <br />
+                (depending on the L2 sequencer).{" "}
+              </span>
+            }
+          />
+        )}
+      </Flex>
       <Flex>
         {!isActive && (txHash !== undefined || txHash !== "") && (
           <Flex cursor={"pointer"}>

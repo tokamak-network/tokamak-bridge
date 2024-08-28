@@ -547,6 +547,7 @@ export const useProvideData = () => {
           transactionHashes,
           serviceFee,
           errorMessage: getProvideErrorMessage(status, blockTimestamps),
+          L2_subgraphData: provideCT,
         };
       });
 
