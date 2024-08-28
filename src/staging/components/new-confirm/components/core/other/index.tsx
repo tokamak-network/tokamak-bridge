@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Flex,
@@ -25,7 +25,6 @@ import StatusComponent from "@/staging/components/new-confirm/components/core/ot
 import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
-import ConfirmInitiateFooter from "@/staging/components/new-confirm/components/core/other/ConfirmInitiateFooter";
 import {
   NetworkDisplayName,
   SupportedChainId,
@@ -42,6 +41,10 @@ import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 import Link from "next/link";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
+import ConfirmCheckboxComponent from "./ConfirmCheckbox";
+import InitiateButton from "@/staging/components/new-confirm/components/core/other/InitiateButton";
+import ApproveButton from "./ApproveButton";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
@@ -64,6 +67,17 @@ export default function DepositWithdrawConfirmModal() {
    */
   const CLAIM_GAS_USED = 1000000;
   const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+
+  const handleConfirmCheck = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setIsConfirmed(e.target.checked);
+
+  const { isApproved } = useApprove();
+
+  useEffect(() => {
+    setIsConfirmed(false);
+  }, [depositWithdrawConfirmModal.isOpen]);
 
   const gasCostData: GasCostData = useMemo(() => {
     const formatValue = (value: string | undefined | null) =>
@@ -272,12 +286,21 @@ export default function DepositWithdrawConfirmModal() {
         </ModalBody>
         <ModalFooter p={0} display="block">
           {transactionData.status === Status.Initiate ? (
-            <ConfirmInitiateFooter
-              onClick={onClick}
-              onCloseDepositWithdrawConfirmModal={
-                onCloseDepositWithdrawConfirmModal
-              }
-            />
+            <Flex gap={"12px"} flexDir={"column"}>
+              <ConfirmCheckboxComponent
+                isChecked={isConfirmed}
+                onClickCheckbox={handleConfirmCheck}
+              />
+              <ApproveButton isConfirmed={isConfirmed} />
+              <InitiateButton
+                isApproved={isApproved}
+                isConfirmed={isConfirmed}
+                onClick={onClick}
+                onCloseDepositWithdrawConfirmModal={
+                  onCloseDepositWithdrawConfirmModal
+                }
+              />
+            </Flex>
           ) : (
             <>
               <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
