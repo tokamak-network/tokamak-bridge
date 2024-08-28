@@ -64,7 +64,9 @@ export default function CTOptionModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setServiceFee(value);
+    if (/^\d*\.?\d*$/.test(value)) {
+      setServiceFee(value);
+    }
   };
 
   const handleConfirm = useHandleConfirm();
