@@ -1,6 +1,6 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
 import Image from "next/image";
-import React, { ReactNode, useState } from "react";
+import React, { CSSProperties, ReactNode, useState } from "react";
 import QuestionIcon from "assets/icons/question.svg";
 import GrayQuestionIcon from "assets/icons/questionGray.svg";
 import TooltipArrow from "assets/icons/tooltipArrow.svg";
@@ -86,12 +86,14 @@ export const CustomTooltipWithQuestion = (props: {
     height?: string;
     px?: string;
     py?: string;
+    ml?: string;
     tooltipLineHeight?: string;
   };
+  containerSyle?: CSSProperties;
 }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
-    <Box pos={"relative"}>
+    <Box pos={"relative"} style={props.containerSyle}>
       <CustomTooltip
         content={
           <Image
