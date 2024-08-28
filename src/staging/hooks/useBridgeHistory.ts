@@ -20,9 +20,14 @@ import { useAccount } from "wagmi";
 import { subgraphApolloClientsForHistory } from "@/graphql/thegraph/apolloForHistory";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 import {
-  FETCH_USER_TRANSACTIONS_L1,
+  MAINNET_CONTRACTS,
+  SEPOLIA_CONTRACTS,
+  THANOS_SEPOLIA_CONTRACTS,
+} from "@/constant/contracts";
+import {
+  FETCH_USER_TRANSACTIONS_L1_THANOS,
+  FETCH_USER_TRANSACTIONS_L1_TITAN,
   FETCH_USER_TRANSACTIONS_L2,
 } from "@/graphql/queries/history";
 import { Resolved, SentMessages } from "@/types/activity/history";
@@ -112,23 +117,26 @@ export const useSubgraph = () => {
     ? MAINNET_CONTRACTS.L1Bridge
     : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
 
+  const L1StandardBridgeForThanos = SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA;
+  const L1USDCBridgeForThanos = SEPOLIA_CONTRACTS.L1USDCBridge_THANOS_SEPOLIA;
+
   const {
-    data: _l1Data,
-    loading: _l1Loading,
-    error: _l1Error,
-  } = useQuery(FETCH_USER_TRANSACTIONS_L1, {
+    data: _l1TitanData,
+    loading: _l1TitanLoading,
+    error: _l1TitanError,
+  } = useQuery(FETCH_USER_TRANSACTIONS_L1_TITAN, {
     variables: {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
     },
     pollInterval: 13000,
-    client: L1_CLIENT,
+    client: L1_CLIENT[0],
   });
   const {
-    data: _l2Data,
-    loading: _l2Loading,
-    error: _l2Error,
+    data: _l2Titan,
+    loading: _l2TitanLoading,
+    error: _l2TitanError,
   } = useQuery(FETCH_USER_TRANSACTIONS_L2, {
     variables: {
       formattedAddress: formatAddress(address),
@@ -136,25 +144,63 @@ export const useSubgraph = () => {
       account: address,
     },
     pollInterval: 13000,
-    client: L2_CLIENT,
+    client: L2_CLIENT[0],
+  });
+
+  const {
+    data: _l1ThanosData,
+    loading: _l1ThanosLoading,
+    error: _l1ThanosError,
+  } = useQuery(FETCH_USER_TRANSACTIONS_L1_THANOS, {
+    variables: {
+      formattedAddress: formatAddress(address),
+      L1Bridge: L1StandardBridgeForThanos,
+      account: address,
+    },
+    pollInterval: 13000,
+    client: L1_CLIENT[1],
+  });
+
+  const {
+    data: _l1ThanosUSDCData,
+    loading: _l1ThanosUSDCLoading,
+    error: _l1ThanosUSDCError,
+  } = useQuery(FETCH_USER_TRANSACTIONS_L1_THANOS, {
+    variables: {
+      formattedAddress: formatAddress(address),
+      L1Bridge: L1USDCBridgeForThanos,
+      account: address,
+    },
+    pollInterval: 13000,
+    client: L1_CLIENT[1],
   });
 
   useEffect(() => {
-    if (_l1Error) {
-      errorHandler(_l1Error);
+    if (_l1TitanError) {
+      errorHandler(_l1TitanError);
     }
-    if (_l2Error) {
-      errorHandler(_l2Error);
+    if (_l2TitanError) {
+      errorHandler(_l2TitanError);
     }
-  }, [_l1Error, _l2Error]);
+    if (_l1ThanosError) {
+      errorHandler(_l1ThanosError);
+    }
+    if (_l1ThanosUSDCError) {
+      errorHandler(_l1ThanosUSDCError);
+    }
+  }, [_l1TitanError, _l2TitanError]);
 
   return {
-    l1Data: _l1Data,
-    l1Loading: _l1Loading,
-    l1error: _l1Error,
-    l2Data: _l2Data,
-    l2Loading: _l2Loading,
-    l2_error: _l2Error,
+    l1TitanData: _l1TitanData,
+    l1TitanLoading: _l1TitanLoading,
+    l1Titanerror: _l1TitanError,
+    l1ThanosData: _l1ThanosData,
+    l1ThanosLoading: _l1ThanosLoading,
+    l1Thanoserror: _l1ThanosError,
+    l1ThanosUSDCData: _l1ThanosUSDCData,
+    l1ThanosUSDCLoading: _l1ThanosUSDCLoading,
+    l1ThanosUSDCerror: _l1ThanosUSDCError,
+    l2TitanData: _l2Titan,
   };
 };
 
@@ -163,13 +209,13 @@ export const useWithdrawData = () => {
     WithdrawTransactionHistory[] | [] | null
   >(null);
 
-  const { l2Data } = useSubgraph();
+  const { l2TitanData } = useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider } = useProvier();
 
   const fetchData = useCallback(async () => {
-    if (l2Data && isConnectedToMainNetwork !== undefined && L2Provider) {
-      const l2SentMessges = l2Data.sentMessages;
+    if (l2TitanData && isConnectedToMainNetwork !== undefined && L2Provider) {
+      const l2SentMessges = l2TitanData.sentMessages;
       const result: WithdrawTransactionHistory[] = await Promise.all(
         l2SentMessges.map(async (sentMessage: SentMessages) => {
           const resolved: Resolved = {
@@ -257,13 +303,13 @@ export const useWithdrawData = () => {
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
     }
-  }, [l2Data, isConnectedToMainNetwork, L2Provider]);
+  }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
 
   useEffect(() => {
     fetchData().catch((error) => {
       console.error("Error in fetching withdraw data", error);
     });
-  }, [l2Data, isConnectedToMainNetwork, L2Provider]);
+  }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
 
   return { withdrawHistory };
 };
@@ -273,12 +319,12 @@ export const useDepositData = () => {
     DepositTransactionHistory[] | [] | null
   >(null);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { l1Data } = useSubgraph();
+  const { l1TitanData, l1ThanosData } = useSubgraph();
   const { L1Provider } = useProvier();
 
-  const fetchData = useCallback(async () => {
-    if (l1Data && isConnectedToMainNetwork !== undefined && L1Provider) {
-      const l1SentMessges = l1Data.sentMessages;
+  const fetchTitanData = useCallback(async () => {
+    if (l1TitanData && isConnectedToMainNetwork !== undefined && L1Provider) {
+      const l1SentMessges = l1TitanData.sentMessages;
       const result: DepositTransactionHistory[] = await Promise.all(
         l1SentMessges.map(async (sentMessage: SentMessages) => {
           const resolved: Resolved = {
@@ -353,13 +399,13 @@ export const useDepositData = () => {
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
     }
-  }, [l1Data, isConnectedToMainNetwork, L1Provider]);
+  }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
 
   useEffect(() => {
-    fetchData().catch((error) => {
+    fetchTitanData().catch((error) => {
       console.error("Error in fetching deposit data", error);
     });
-  }, [l1Data, isConnectedToMainNetwork, L1Provider]);
+  }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
 
   return { depositHistory };
 };

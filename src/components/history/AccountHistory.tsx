@@ -26,7 +26,7 @@ import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 
 export default function AccountHistory() {
-const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
+  const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
   const [withdrawStatus] = useRecoilState(confirmWithdrawStats);
   const { address } = useAccount();
   const { mobileView } = useMediaView();
