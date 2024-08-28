@@ -182,10 +182,14 @@ export default function CTMain() {
                 <CustomTooltipWithQuestion
                   isGrayIcon={true}
                   tooltipLabel={
-                    "Total amount to receive, including the service fee. It takes at least 2~5 minutes to receive (depending on the L2 sequencer)."
+                    <span>
+                      Total amount to receive, including the service
+                      <br /> fee. It takes at least 2~5 minutes to receive{" "}
+                      <br /> (depending on the L2 sequencer).
+                    </span>
                   }
                   style={{
-                    width: "289px",
+                    width: "268px",
                     height: "70px",
                     tooltipLineHeight: "normal",
                     py: "10px",

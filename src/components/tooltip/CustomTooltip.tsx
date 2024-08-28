@@ -4,12 +4,6 @@ import React, { CSSProperties, ReactNode, useState } from "react";
 import QuestionIcon from "assets/icons/question.svg";
 import GrayQuestionIcon from "assets/icons/questionGray.svg";
 import TooltipArrow from "assets/icons/tooltipArrow.svg";
-import { atom, useRecoilState } from "recoil";
-
-const tooltipStatus = atom<boolean>({
-  key: "tooltipStatus",
-  default: false,
-});
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
@@ -24,7 +18,7 @@ export default function CustomTooltip(props: {
     tooltipLineHeight?: string;
   };
 }) {
-  const [isOpen, setIsOpen] = useRecoilState<boolean>(tooltipStatus);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <Tooltip
@@ -76,6 +70,11 @@ export default function CustomTooltip(props: {
         onMouseLeave={() => setIsOpen(false)}
       >
         {props.content}
+        {isOpen && (
+          <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
+            <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
+          </Box>
+        )}
       </Box>
     </Tooltip>
   );
@@ -96,8 +95,6 @@ export const CustomTooltipWithQuestion = (props: {
   };
   containerSyle?: CSSProperties;
 }) => {
-  const [isOpen, setIsOpen] = useRecoilState<boolean>(tooltipStatus);
-
   return (
     <Box pos={"relative"} style={props.containerSyle}>
       <CustomTooltip
@@ -110,11 +107,6 @@ export const CustomTooltipWithQuestion = (props: {
         tooltipLabel={props.tooltipLabel}
         style={props.style}
       />
-      {isOpen && (
-        <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
-          <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
-        </Box>
-      )}
     </Box>
   );
 };
