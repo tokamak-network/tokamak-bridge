@@ -369,7 +369,7 @@ export const useRequestHistoryData = () => {
     CT_Request_History[] | [] | null
   >(null);
   const { data: l2Data } = useCrossTradeData_L2({
-    isHistory: false,
+    isHistory: true,
   });
   const { data: l1Data } = useCrossTradeData_L1({
     isHistory: true,
