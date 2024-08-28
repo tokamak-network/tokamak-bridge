@@ -67,6 +67,7 @@ export default function CustomTooltip(props: {
       <Box
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
+        width={"16px"}
       >
         {props.content}
       </Box>
