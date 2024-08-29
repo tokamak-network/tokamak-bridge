@@ -1,5 +1,4 @@
 import { TokenBalance } from "./../../graphql/data/__generated__/types-and-hooks";
-import { TxSort, ActionSort } from "@/types/tx/txType";
 import { TxSort, ActionSort, ThanosDepositType } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo } from "react";
