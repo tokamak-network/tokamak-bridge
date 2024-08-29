@@ -235,7 +235,7 @@ export default function CTConfirmHistoryFooter(props: {
           if (typeof hash === "string") {
             return (
               <TransactionItem
-                title={isCancelCompleted ? "Refund" : key}
+                title={isCancelCompleted ? "refund" : key}
                 isActive={isActive}
                 txHash={hash}
                 isError={isError}

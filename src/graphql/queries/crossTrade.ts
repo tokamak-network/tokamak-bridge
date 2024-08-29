@@ -49,6 +49,12 @@ export const FETCH_PROVIDE_LIST_L1_ACCOUNT = gql`
       blockTimestamp
       transactionHash
     }
+    l1CancelCTs (orderBy: blockTimestamp, orderDirection: desc) {
+      _saleCount
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
   } 
 `;
 

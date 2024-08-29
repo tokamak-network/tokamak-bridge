@@ -28,8 +28,6 @@ export default function CTOptionInput(props: CTInputProps) {
     return _inputValue;
   }, [_inputValue, isFocused]);
 
-  console.log("isFocused", isFocused);
-
   return (
     <>
       <Flex w={"189px"}>

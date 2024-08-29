@@ -1,6 +1,7 @@
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import {
   T_FETCH_CancelCTs,
+  T_FETCH_CancelCTs_L1,
   T_FETCH_EditCTs,
   T_FETCH_ProvideCTs_L1,
   T_FETCH_ProviderClaimCTs,
@@ -85,7 +86,7 @@ export const getEditCTTransaction = (params: {
 };
 
 export const getCancelCTTransaction = (params: {
-  cancelCTs: T_FETCH_CancelCTs;
+  cancelCTs: T_FETCH_CancelCTs | T_FETCH_CancelCTs_L1;
   saleCount: string;
 }) => {
   const { cancelCTs, saleCount } = params;
@@ -131,11 +132,19 @@ export const getRequestStatus = (params: {
 export const getRequestBlockTimestamp = (parmas: {
   status: CT_REQUEST | CT_REQUEST_CANCEL;
   requestData: T_FETCH_REQUEST_LIST_L2;
+  l1CancelCTs: T_FETCH_CancelCTs_L1;
   cancelCTs: T_FETCH_CancelCTs;
   providerClaimCTs: T_FETCH_ProviderClaimCTs;
   editCTs: T_FETCH_EditCTs;
 }): CT_REQUEST_HISTORY_blockTimestamps | undefined => {
-  const { status, requestData, cancelCTs, providerClaimCTs, editCTs } = parmas;
+  const {
+    status,
+    requestData,
+    cancelCTs,
+    l1CancelCTs,
+    providerClaimCTs,
+    editCTs,
+  } = parmas;
 
   const requestBlockTimestamp = Number(requestData.blockTimestamp);
 
@@ -255,11 +264,19 @@ export const getRequestBlockTimestamp = (parmas: {
 export const getRequestTransactionHash = (parmas: {
   status: CT_REQUEST | CT_REQUEST_CANCEL;
   requestData: T_FETCH_REQUEST_LIST_L2;
+  l1CancelCTs: T_FETCH_CancelCTs_L1;
   cancelCTs: T_FETCH_CancelCTs;
   providerClaimCTs: T_FETCH_ProviderClaimCTs;
   editCTs: T_FETCH_EditCTs;
 }): CT_REQUEST_HISTORY_transactionHashes | undefined => {
-  const { status, requestData, cancelCTs, providerClaimCTs, editCTs } = parmas;
+  const {
+    status,
+    requestData,
+    l1CancelCTs,
+    cancelCTs,
+    providerClaimCTs,
+    editCTs,
+  } = parmas;
   const requestTransactionHash = requestData.transactionHash;
   if (isInCT_REQUEST(status)) {
     const isUpdatedFee = isRequestEdited({
@@ -321,7 +338,7 @@ export const getRequestTransactionHash = (parmas: {
     switch (status) {
       case CT_REQUEST_CANCEL.Refund: {
         const cancelCT = getCancelCTTransaction({
-          cancelCTs,
+          cancelCTs: l1CancelCTs,
           saleCount: requestData._saleCount,
         });
         if (isUpdatedFee) {
@@ -343,9 +360,14 @@ export const getRequestTransactionHash = (parmas: {
       }
       case CT_REQUEST_CANCEL.Completed: {
         const cancelCT = getCancelCTTransaction({
+          cancelCTs: l1CancelCTs,
+          saleCount: requestData._saleCount,
+        });
+        const completed = getCancelCTTransaction({
           cancelCTs,
           saleCount: requestData._saleCount,
         });
+
         if (isUpdatedFee) {
           const editHistory = getEditCTTransaction({
             editCTs,
@@ -356,13 +378,13 @@ export const getRequestTransactionHash = (parmas: {
             request: requestTransactionHash,
             updateFee,
             cancelRequest: cancelCT[0].transactionHash,
-            completed: cancelCT[0].transactionHash,
+            completed: completed[0].transactionHash,
           };
         }
         return {
           request: requestTransactionHash,
           cancelRequest: cancelCT[0].transactionHash,
-          completed: cancelCT[0].transactionHash,
+          completed: completed[0].transactionHash,
         };
       }
     }
