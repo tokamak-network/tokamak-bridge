@@ -125,7 +125,7 @@ export default function CTProvider({
       );
     }, [address, crossTradeData.requester]);
 
-    const isDisabled = status;
+    const isDisabled = isInRelay;
     const bgColor =
       isDisabled || isInRelay
         ? "#23242B"

@@ -27,6 +27,8 @@ import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState } from "recoil";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { useAccount } from "wagmi";
+import useConnectWallet from "@/hooks/account/useConnectWallet";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -57,6 +59,8 @@ export default function CTConfirmCrossTradeFooter(
   } = props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { isConnectedToMainNetwork, chainName } = useConnectedNetwork();
+  const { isConnected } = useAccount();
+  const { connectToWallet } = useConnectWallet();
   const blockExplorer = getBlockExplorerUrl(
     isConnectedToMainNetwork
       ? SupportedChainId.TITAN
@@ -73,10 +77,20 @@ export default function CTConfirmCrossTradeFooter(
   const { connectedToLayer1 } = useConnectedNetwork();
 
   const btnDisabled = useMemo(() => {
+    if (!isConnected) {
+      return !provideConfirmed;
+    }
     if (!isApproved) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
     return !isChecked.firstChecked || !isChecked.secondChecked;
-  }, [isProvide, isChecked, provideConfirmed, isApproved, connectedToLayer1]);
+  }, [
+    isProvide,
+    isChecked,
+    provideConfirmed,
+    isApproved,
+    connectedToLayer1,
+    isConnected,
+  ]);
 
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
@@ -368,7 +382,7 @@ export default function CTConfirmCrossTradeFooter(
         )}
         <Button
           isDisabled={btnDisabled}
-          onClick={requestCrossTrade}
+          onClick={isConnected ? requestCrossTrade : () => connectToWallet()}
           sx={{
             backgroundColor: !btnDisabled ? "#007AFF" : "#17181D",
             color: !btnDisabled ? "#FFFFFF" : "#8E8E92",
@@ -383,7 +397,9 @@ export default function CTConfirmCrossTradeFooter(
           }}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-            {!connectedToLayer1
+            {!isConnected
+              ? "Connect Wallet"
+              : !connectedToLayer1
               ? "Wrong Network "
               : isProvide
               ? "Provide"
