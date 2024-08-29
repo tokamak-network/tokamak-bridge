@@ -42,7 +42,8 @@ export function limitDecimals(
 export function toParseNumber(amount: bigint | string, decimals: number) {
   if (isNaN(Number(amount.toString()))) return undefined;
   const amountWithLimitedDecimals = limitDecimals(amount.toString(), decimals);
-  return ethers.utils.parseUnits(amountWithLimitedDecimals, decimals);
+  if (amountWithLimitedDecimals)
+    return ethers.utils.parseUnits(amountWithLimitedDecimals, decimals);
 }
 
 export function formatUnits(amount?: string, decimals?: number) {
