@@ -11,6 +11,7 @@ import {
   HISTORY_SORT,
   CT_ACTION,
   CT_PROVIDE,
+  CT_REQUEST,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
@@ -69,28 +70,29 @@ export default function CTProvider({
 
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
-  const openUpdateModal = useCallback(() => {
+
+  const openUpdateModal = () => {
     onCloseCTConfirmModal();
-    // onOpenCTUpdateFeeModal({
-    //     category: HISTORY_SORT.CROSS_TRADE,
-    //     action: CT_ACTION.PROVIDE,
-    //     status: CT_PROVIDE.Provide,
-    //     inNetwork,
-    //     outNetwork,
-    //     inToken,
-    //     outToken,
-    //     blockTimestamps: {
-    //       provide: 0,
-    //     },
-    //     transactionHashes: {
-    //       provide: "",
-    //     },
-    //     serviceFee,
-    //   },
-    //   isProvide: true,
-    //   subgraphData,
-    // });
-  }, []);
+    onOpenCTUpdateFeeModal({
+      category: HISTORY_SORT.CROSS_TRADE,
+      action: CT_ACTION.REQUEST,
+      status: CT_REQUEST.Request,
+      inNetwork,
+      outNetwork,
+      inToken,
+      outToken,
+      blockTimestamps: {
+        request: 0,
+      },
+      transactionHashes: {
+        request: "",
+      },
+      isCanceled: false,
+      isUpdateFee: false,
+      serviceFee,
+      L2_subgraphData: subgraphData,
+    });
+  };
 
   const renderButton = () => {
     // if (status === STATUS.COUNTDOWN && blockTimestamps) {
@@ -165,7 +167,7 @@ export default function CTProvider({
           opacity: 1,
         }}
         cursor={"pointer"}
-        onClick={openProvideModal}
+        onClick={isCreatedByUser ? openUpdateModal : openProvideModal}
       >
         <Text
           fontWeight={600}
