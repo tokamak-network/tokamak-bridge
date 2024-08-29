@@ -123,6 +123,25 @@ const TransactionItem = (props: TransactionItemProps) => {
             }
           />
         )}
+        {_title === "Refund" && (
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
+            style={{
+              width: "223px",
+              height: "53px",
+              tooltipLineHeight: "normal",
+              px: "8px",
+              py: "10px",
+            }}
+            tooltipLabel={
+              <span>
+                The refund takes at least 2~5 minutes
+                <br />
+                (depending on the L2 sequencer).{" "}
+              </span>
+            }
+          />
+        )}
       </Flex>
       <Flex>
         {!isActive && (txHash !== undefined || txHash !== "") && (

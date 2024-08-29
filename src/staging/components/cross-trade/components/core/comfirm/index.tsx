@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
@@ -84,6 +84,15 @@ export default function CTModal() {
 
   const { provideCT, requestRegisteredToken } = useCrossTradeContract();
 
+  const requester = useMemo(() => {
+    if (ctConfirmModal.type === ModalType.Trade) {
+      return ctConfirmModal.subgraphData?._requester;
+    }
+    if (ctConfirmModal.type === ModalType.History) {
+      return ctConfirmModal.txData?.L1_subgraphData?._requester;
+    }
+  }, [ctConfirmModal]);
+
   return (
     <Modal
       isOpen={ctConfirmModal.isOpen}
@@ -99,7 +108,9 @@ export default function CTModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {isProvide ? "Provide" : modalTitles[ctConfirmModal.type]}
+            {isProvide && ctConfirmModal.type === ModalType.Trade
+              ? "Confirm Provide"
+              : modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
@@ -113,7 +124,7 @@ export default function CTModal() {
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
             txData={ctConfirmModal.txData}
-            requester={ctConfirmModal.txData?.L1_subgraphData?._requester}
+            requester={requester}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">

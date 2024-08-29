@@ -369,10 +369,10 @@ export const useRequestHistoryData = () => {
     CT_Request_History[] | [] | null
   >(null);
   const { data: l2Data } = useCrossTradeData_L2({
-    isHistory: false,
+    isHistory: true,
   });
   const { data: l1Data } = useCrossTradeData_L1({
-    isHistory: false,
+    isHistory: true,
   });
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
@@ -432,6 +432,7 @@ export const useRequestHistoryData = () => {
           providerClaimCTs,
           editCTs,
         });
+
         const ctAmount = isUpdateFee
           ? BigInt(editCT._ctAmount)
           : BigInt(_ctAmount);
@@ -468,6 +469,7 @@ export const useRequestHistoryData = () => {
       });
 
       const result = trimedData.filter((data) => data !== null);
+
       setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);

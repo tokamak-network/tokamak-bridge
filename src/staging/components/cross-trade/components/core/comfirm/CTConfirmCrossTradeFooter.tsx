@@ -72,7 +72,8 @@ export default function CTConfirmCrossTradeFooter(
     tokenSymbol: txData?.inToken.symbol as string,
   });
 
-  const { isApproved, isLoading, callApprove } = useApprove("Cross Trade");
+  const { isApproved, isLoading, isRevokeForUSDT, callApprove } =
+    useApprove("Cross Trade");
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
 
@@ -375,7 +376,9 @@ export default function CTConfirmCrossTradeFooter(
               <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
             ) : (
               <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                {`${"Approve"} ${inToken?.tokenSymbol}`}
+                {`${isRevokeForUSDT ? "Revoke" : "Approve"} ${
+                  inToken?.tokenSymbol
+                }`}
               </Text>
             )}
           </Button>
@@ -399,7 +402,7 @@ export default function CTConfirmCrossTradeFooter(
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             {!isConnected
               ? "Connect Wallet"
-              : !connectedToLayer1
+              : isProvide && !connectedToLayer1
               ? "Wrong Network "
               : isProvide
               ? "Provide"

@@ -30,6 +30,7 @@ import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
 import { trimAddress } from "@/utils/trim";
 import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 interface TransactionDetailProps {
   title: string;
@@ -273,7 +274,8 @@ export default function CTConfirmDetail({
 
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
-  const isProvide = isInCT_Provide(status);
+  const isProvide = isInCT_Provide(status) && modalType === "trade";
+  const commonProvideStyle = isInCT_Provide(status);
   const isCanceled = getCancelValueFromCTRequestHistory(txData);
   const updateFee = ableToUpdateFee(txData);
   const { tokenPriceWithAmount: inTokenPrice } = useGetMarketPrice({
@@ -362,7 +364,7 @@ export default function CTConfirmDetail({
             isCompleted={isCompleted}
           />
         )}
-        {isProvide && <FeeDetail title="Send to" txHash={requester} />}
+        {commonProvideStyle && <FeeDetail title="Send to" txHash={requester} />}
         {modalType === ModalType.Trade && (
           <FeeDetail
             title="Network fee"

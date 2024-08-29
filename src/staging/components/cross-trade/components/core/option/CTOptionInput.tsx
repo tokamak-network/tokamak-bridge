@@ -19,12 +19,6 @@ export default function CTOptionInput(props: CTInputProps) {
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
-  const handleFocus = () => {
-    setIsFocused(true);
-  };
-  const handleBlur = () => {
-    setIsFocused(false);
-  };
 
   const inputValue = useMemo(() => {
     if (isFocused) return _inputValue;
@@ -79,7 +73,7 @@ export default function CTOptionInput(props: CTInputProps) {
               boxShadow: "0 0 0 0.1px #59628D",
             }}
           />
-          {inputValue && (
+          {inputValue && !isFocused && (
             <InputRightElement height={"34px"} mr={"8px"}>
               <Text
                 fontSize={"12px"}
