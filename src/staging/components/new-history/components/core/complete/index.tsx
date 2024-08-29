@@ -118,7 +118,7 @@ export default function Complete(transaction: TransactionHistory) {
         alignItems={"center"}
         px={"12px"}
         py={"4px"}
-        my={"4px"}
+        mt={"4px"}
         borderRadius={"6px"}
         borderWidth={"1px"}
         borderColor={

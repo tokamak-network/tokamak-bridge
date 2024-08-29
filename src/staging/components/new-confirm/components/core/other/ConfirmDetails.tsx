@@ -37,7 +37,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     return null;
   }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: transactionHistory.inToken.symbol as string,
+    tokenName: transactionHistory.inToken.name as string,
     amount: formatUnits(
       transactionHistory.inToken.amount,
       transactionHistory.inToken.decimals
@@ -133,7 +133,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                   ? inNetwork?.chainId ?? SupportedChainId.MAINNET
                   : outNetwork?.chainId ?? SupportedChainId.MAINNET
               ]
-            }/token/${getTokenAddressByChainId(
+            }/address/${getTokenAddressByChainId(
               isInNetwork
                 ? (transactionHistory.inToken.symbol as string)
                 : (transactionHistory.outToken.symbol as string),

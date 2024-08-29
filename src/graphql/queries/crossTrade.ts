@@ -49,6 +49,12 @@ export const FETCH_PROVIDE_LIST_L1_ACCOUNT = gql`
       blockTimestamp
       transactionHash
     }
+    l1CancelCTs (orderBy: blockTimestamp, orderDirection: desc) {
+      _saleCount
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
   } 
 `;
 
@@ -102,7 +108,7 @@ export const FETCH_REQUEST_LIST_L2_ACCOUNT = gql`
       blockTimestamp 
       transactionHash
     }
-    providerClaimCTs(orderBy: blockTimestamp, orderDirection: desc,where: {_provider: $account})
+    providerClaimCTs(orderBy: blockTimestamp, orderDirection: desc)
     {
       _saleCount
       _provider

@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
@@ -18,7 +18,10 @@ import CTConfirmCrossTradeFooter, {
   ContractWrite,
 } from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
-import { isInCT_Provide } from "@/staging/types/transaction";
+import {
+  isInCT_Provide,
+  isInCT_REQUEST_CANCEL,
+} from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 
@@ -36,6 +39,7 @@ export default function CTModal() {
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
     onCloseCTConfirmModal();
+    console.log("ctConfirmModal.txData", ctConfirmModal.txData);
     onOpenCTUpdateFeeModal(ctConfirmModal.txData);
   };
 
@@ -57,10 +61,17 @@ export default function CTModal() {
   const isProvide = ctConfirmModal?.txData
     ? isInCT_Provide(ctConfirmModal.txData.status)
     : false;
+  const isCanceled =
+    ctConfirmModal?.txData &&
+    isInCT_REQUEST_CANCEL(ctConfirmModal.txData.status);
 
   const modalTitles = {
     [ModalType.Trade]: "Confirm Request",
-    [ModalType.History]: isProvide ? "Provide" : "Request",
+    [ModalType.History]: isProvide
+      ? "Provide"
+      : isCanceled
+      ? "Cancel"
+      : "Request",
   };
 
   useEffect(() => {
@@ -72,6 +83,15 @@ export default function CTModal() {
   }, [ctConfirmModal]);
 
   const { provideCT, requestRegisteredToken } = useCrossTradeContract();
+
+  const requester = useMemo(() => {
+    if (ctConfirmModal.type === ModalType.Trade) {
+      return ctConfirmModal.subgraphData?._requester;
+    }
+    if (ctConfirmModal.type === ModalType.History) {
+      return ctConfirmModal.txData?.L1_subgraphData?._requester;
+    }
+  }, [ctConfirmModal]);
 
   return (
     <Modal
@@ -88,7 +108,9 @@ export default function CTModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {isProvide ? "Confirm Provide" : modalTitles[ctConfirmModal.type]}
+            {isProvide && ctConfirmModal.type === ModalType.Trade
+              ? "Confirm Provide"
+              : modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
@@ -102,7 +124,7 @@ export default function CTModal() {
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
             txData={ctConfirmModal.txData}
-            requester={ctConfirmModal.subgraphData?._requester}
+            requester={requester}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">

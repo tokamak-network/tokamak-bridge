@@ -124,45 +124,6 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
   {
-    tokenName: "Dooropen",
-    tokenSymbol: "DOC",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
-      TITAN: null,
-      SEPOLIA: SEPOLIA_CONTRACTS.DOC_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.DOC_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.DOC_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-  },
-  {
-    tokenName: "Dragons of Midgard",
-    tokenSymbol: "AURA",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
-      TITAN: null,
-      SEPOLIA: SEPOLIA_CONTRACTS.AURA_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.AURA_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.AURA_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-  },
-  {
-    tokenName: "LYDA",
-    tokenSymbol: "LYDA",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
-      TITAN: null,
-      SEPOLIA: SEPOLIA_CONTRACTS.LYDA_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.LYDA_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.LYDA_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-  },
-  {
     tokenName: "USD Coin",
     tokenSymbol: "USDC",
     address: {

@@ -91,7 +91,7 @@ export default function AccountHistory() {
           fontSize={13}
           fontWeight={400}
           color={isDeposit ? "none" : "#A0A3AD"}
-          bg={isDeposit ? "#007AFF" : "none"}
+          bg={isDeposit ? "#007AFF" : "#15161D"}
           border={isDeposit ? "none" : "1px solid #313442"}
           lineHeight={"32px"}
           _hover={{}}
@@ -107,7 +107,7 @@ export default function AccountHistory() {
           fontSize={13}
           fontWeight={400}
           color={!isDeposit ? "none" : "#A0A3AD"}
-          bg={!isDeposit ? "#007AFF" : "none"}
+          bg={!isDeposit ? "#007AFF" : "#15161D"}
           border={!isDeposit ? "none" : "1px solid #313442"}
           lineHeight={"32px"}
           _hover={{}}
@@ -174,7 +174,7 @@ export default function AccountHistory() {
               py={isOnOfficialStandard ? "9px" : "10px"}
               cursor={"pointer"}
               color={isOnOfficialStandard ? "#007AFF" : "#565B72"}
-              borderBottomColor={isOnOfficialStandard ? "#007AFF" : "#565B72"}
+              borderBottomColor={isOnOfficialStandard ? "#007AFF" : "#313442"}
               borderBottomWidth={isOnOfficialStandard ? "2px" : "1px"}
               onClick={() => {
                 setSelectedTransactionCategory(Action.Deposit);
@@ -191,7 +191,7 @@ export default function AccountHistory() {
               py={isOnCrossTrade ? "9px" : "10px"}
               cursor={"pointer"}
               color={isOnCrossTrade ? "#007AFF" : "#565B72"}
-              borderBottomColor={isOnCrossTrade ? "#007AFF" : "#565B72"}
+              borderBottomColor={isOnCrossTrade ? "#007AFF" : "#313442"}
               borderBottomWidth={isOnCrossTrade ? "2px" : "1px"}
               onClick={() => {
                 setSelectedTransactionCategory(CT_ACTION.REQUEST);

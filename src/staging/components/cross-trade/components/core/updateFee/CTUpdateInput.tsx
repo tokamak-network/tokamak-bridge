@@ -30,7 +30,7 @@ export default function CTUpdateInput(
   props: CTInputProps & AdditionalDetailProps
 ) {
   const {
-    inputValue,
+    inputValue: _inputValue,
     inputWarningCheck,
     onInputChange,
     onInputFocus,
@@ -42,6 +42,14 @@ export default function CTUpdateInput(
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
+
+  const inputValue = useMemo(() => {
+    if (isFocused) return _inputValue;
+    if (_inputValue.length > 12) {
+      return `${_inputValue.slice(0, 15)}...`;
+    }
+    return _inputValue;
+  }, [_inputValue, isFocused]);
 
   const handleBoxClick = () => {
     if (inputRef.current) {

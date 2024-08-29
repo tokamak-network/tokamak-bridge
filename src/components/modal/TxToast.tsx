@@ -61,11 +61,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   }, [txSort, isToken0, otherLayerChainInfo?.chainId, network]);
 
   const noNeedToShowAmount = useMemo(() => {
-    return (
-      txSort === "Revoke" ||
-      txSort === "UpdateFee" ||
-      txSort === "CancelRequest"
-    );
+    return txSort === "Revoke" || txSort === "UpdateFee";
   }, [txSort]);
 
   if (
@@ -150,7 +146,13 @@ function ToastIcon(props: TransactionToastProp) {
   }, [txSort]);
 
   if (hasArrow) {
-    return <Image src={ARROW_ICON} alt={"ARROW_ICON"} />;
+    return (
+      <Image
+        src={ARROW_ICON}
+        alt={"ARROW_ICON"}
+        style={{ marginBottom: "6px" }}
+      />
+    );
   }
   if (hasPlus) {
     return <Image src={PLUS_ICON} alt={"PLUS_ICON"} />;

@@ -1,3 +1,4 @@
+import { TokenBalance } from "./../../graphql/data/__generated__/types-and-hooks";
 import { TxSort, ActionSort, ThanosDepositType } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo } from "react";
@@ -900,9 +901,8 @@ export function useTx(params: {
 
         case "CancelRequest": {
           const result = CrossTradeProxyL1_I.parseLog(logs[logs.length - 1]);
-          console.log(result);
           const { args } = result;
-          const { _l1token } = args;
+          const { _l1token, _totalAmount } = args;
 
           return setTxData({
             [hash]: {
@@ -912,7 +912,7 @@ export function useTx(params: {
               tokenData: [
                 {
                   tokenAddress: _l1token,
-                  amount: BigInt(0),
+                  amount: _totalAmount.toBigInt(),
                 },
               ],
               network: connectedChainId,
