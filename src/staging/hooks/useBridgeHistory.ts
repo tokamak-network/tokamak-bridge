@@ -382,6 +382,7 @@ export const useRequestHistoryData = () => {
       const cancelCTs = l2Data.cancelCTs;
       const providerClaimCTs = l2Data.providerClaimCTs;
       const editCTs = l1Data.editCTs;
+      const l1CancelCTs = l1Data.l1CancelCTs;
 
       const trimedData = requestCTs.map((requestData) => {
         const {
@@ -415,6 +416,7 @@ export const useRequestHistoryData = () => {
         const blockTimestamps = getRequestBlockTimestamp({
           status,
           requestData,
+          l1CancelCTs,
           cancelCTs,
           providerClaimCTs,
           editCTs,
@@ -428,6 +430,7 @@ export const useRequestHistoryData = () => {
         const transactionHashes = getRequestTransactionHash({
           status,
           requestData,
+          l1CancelCTs,
           cancelCTs,
           providerClaimCTs,
           editCTs,
@@ -467,6 +470,8 @@ export const useRequestHistoryData = () => {
         };
         return result;
       });
+
+      console.log("trimedData", trimedData);
 
       const result = trimedData.filter((data) => data !== null);
 

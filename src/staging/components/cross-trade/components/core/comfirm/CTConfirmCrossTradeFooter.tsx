@@ -99,8 +99,8 @@ export default function CTConfirmCrossTradeFooter(
   const approveBtnDisabled = useMemo(() => {
     return isLoading
       ? true
-      : isApproved || mode === "Withdraw"
-      ? !isChecked
+      : mode === "Withdraw"
+      ? !isChecked.firstChecked || !isChecked.secondChecked
       : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 

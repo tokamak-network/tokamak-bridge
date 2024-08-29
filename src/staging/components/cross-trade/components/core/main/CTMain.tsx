@@ -41,9 +41,12 @@ export default function CTMain() {
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const { address } = useAccount();
-  const [isSortedDescending, setIsSortedDescending] = useState<boolean | null>(
-    null
-  );
+  const [isDescSortedProvide, setIsDescSortedProvide] = useState<
+    boolean | null
+  >(null);
+  const [isDescSortedReceive, setIsDescSortedReceive] = useState<
+    boolean | null
+  >(null);
   const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[] | null>(null);
 
@@ -54,8 +57,8 @@ export default function CTMain() {
   }, [requestList]);
 
   useEffect(() => {
-    if (isSortedDescending === null) return;
-    if (isSortedDescending) {
+    if (isDescSortedProvide === null) return;
+    if (isDescSortedProvide) {
       return setData(
         (prevData) =>
           prevData && [
@@ -63,7 +66,7 @@ export default function CTMain() {
           ]
       );
     }
-    if (!isSortedDescending) {
+    if (!isDescSortedProvide) {
       return setData(
         (prevData) =>
           prevData && [
@@ -71,7 +74,27 @@ export default function CTMain() {
           ]
       );
     }
-  }, [isSortedDescending]);
+  }, [isDescSortedProvide]);
+
+  useEffect(() => {
+    if (isDescSortedReceive === null) return;
+    if (isDescSortedReceive) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort((a, b) => b.recevingUSD - a.recevingUSD),
+          ]
+      );
+    }
+    if (!isDescSortedReceive) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort((a, b) => a.recevingUSD - b.recevingUSD),
+          ]
+      );
+    }
+  }, [isDescSortedReceive]);
 
   const [displayedItems, setDisplayedItems] = useState<CrossTradeData[]>([]);
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
@@ -132,32 +155,33 @@ export default function CTMain() {
               <Flex
                 alignItems="center"
                 cursor={"pointer"}
-                onClick={() =>
-                  setIsSortedDescending(
-                    isSortedDescending !== null ? !isSortedDescending : true
-                  )
-                }
+                onClick={() => {
+                  setIsDescSortedReceive(null);
+                  setIsDescSortedProvide(
+                    isDescSortedProvide !== null ? !isDescSortedProvide : true
+                  );
+                }}
               >
-                {isSortedDescending !== null && (
+                {isDescSortedProvide !== null && (
                   <Flex
                     justifyContent={"center"}
                     alignItems={"center"}
                     style={{
-                      transform: isSortedDescending
+                      transform: isDescSortedProvide
                         ? "rotate(360deg)"
                         : "rotate(180deg)",
                     }}
+                    mr="4px"
                   >
                     <Image src={Polygon} alt={"Polygon"} />
                   </Flex>
                 )}
                 <Text
-                  ml="4px"
                   fontWeight={"500"}
                   fontSize={"13px"}
                   lineHeight={"18px"}
                   letterSpacing={0}
-                  color={isSortedDescending !== null ? "#fff" : "#A0A3AD"}
+                  color={isDescSortedProvide !== null ? "#fff" : "#A0A3AD"}
                 >
                   Provide
                 </Text>
@@ -169,13 +193,37 @@ export default function CTMain() {
               </Flex>
             </Th>
             <Th textTransform="none" minW={"210px"} maxW={"210px"}>
-              <Flex alignItems="center">
+              <Flex
+                alignItems="center"
+                cursor={"pointer"}
+                onClick={() => {
+                  setIsDescSortedProvide(null);
+                  setIsDescSortedReceive(
+                    isDescSortedReceive !== null ? !isDescSortedReceive : true
+                  );
+                }}
+              >
+                {isDescSortedReceive !== null && (
+                  <Flex
+                    ml="4px"
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    style={{
+                      transform: isDescSortedReceive
+                        ? "rotate(360deg)"
+                        : "rotate(180deg)",
+                    }}
+                    mr="4px"
+                  >
+                    <Image src={Polygon} alt={"Polygon"} />
+                  </Flex>
+                )}
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}
                   lineHeight={"18px"}
-                  color={"#A0A3AD"}
                   letterSpacing={0}
+                  color={isDescSortedReceive !== null ? "#fff" : "#A0A3AD"}
                 >
                   Receive
                 </Text>

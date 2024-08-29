@@ -61,11 +61,7 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   }, [txSort, isToken0, otherLayerChainInfo?.chainId, network]);
 
   const noNeedToShowAmount = useMemo(() => {
-    return (
-      txSort === "Revoke" ||
-      txSort === "UpdateFee" ||
-      txSort === "CancelRequest"
-    );
+    return txSort === "Revoke" || txSort === "UpdateFee";
   }, [txSort]);
 
   if (

@@ -87,7 +87,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             lineHeight={"33px"}
             color={"#007AFF"}
           >
-            {`${inToken?.parsedAmount} ${inToken?.tokenSymbol}`}
+            {`${formatNumber(inToken?.parsedAmount)} ${inToken?.tokenSymbol}`}
           </Text>
         </Box>
         <Text fontSize={12} color={"#007AFF"}>

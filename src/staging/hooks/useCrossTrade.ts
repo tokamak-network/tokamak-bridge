@@ -124,6 +124,13 @@ export type T_provideCTs_L1 = {
   transactionHash: string;
 };
 export type T_FETCH_ProvideCTs_L1 = T_provideCTs_L1[];
+export type T_CancelCT_L1 = {
+  _saleCount: string;
+  blockNumber: string;
+  blockTimestamp: string;
+  transactionHash: string;
+};
+export type T_FETCH_CancelCTs_L1 = T_CancelCT_L1[];
 
 export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
   const { isHistory } = parmas;
@@ -133,6 +140,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
   const { data, loading, error } = useQuery<{
     editCTs: T_FETCH_EditCTs;
     provideCTs: T_FETCH_ProvideCTs_L1;
+    l1CancelCTs: T_FETCH_CancelCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
     pollInterval: 13000,
     client: L1_CLIENT,

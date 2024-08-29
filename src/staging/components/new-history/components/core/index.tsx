@@ -27,7 +27,7 @@ const NoAcitivityComponent = () => {
       h={"640px"}
     >
       <Image src={NoAcitivity} alt={"noActivityIcon"}></Image>
-      <Text>No activity yet</Text>
+      <Text color={"#E3F3FF"}>No activity yet</Text>
     </Flex>
   );
 };
