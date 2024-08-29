@@ -166,7 +166,24 @@ export const getRequestBlockTimestamp = (parmas: {
           editCTs,
           saleCount: requestData._saleCount,
         });
-        if (isUpdatedFee) return undefined;
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) =>
+            Number(edit.blockTimestamp)
+          );
+          const providerClaimCT = getTransaction_providerClaimCT({
+            providerClaimCTs,
+            saleCount: requestData._saleCount,
+          });
+          return {
+            request: requestBlockTimestamp,
+            updateFee,
+            completed: Number(providerClaimCT.blockTimestamp),
+          };
+        }
         const providerClaimCT = getTransaction_providerClaimCT({
           providerClaimCTs,
           saleCount: requestData._saleCount,
@@ -269,7 +286,22 @@ export const getRequestTransactionHash = (parmas: {
         };
       }
       case CT_REQUEST.Completed: {
-        if (isUpdatedFee) return undefined;
+        if (isUpdatedFee) {
+          const editHistory = getEditCTTransaction({
+            editCTs,
+            saleCount: requestData._saleCount,
+          });
+          const updateFee = editHistory.map((edit) => edit.transactionHash);
+          const providerClaimCT = getTransaction_providerClaimCT({
+            providerClaimCTs,
+            saleCount: requestData._saleCount,
+          });
+          return {
+            request: requestTransactionHash,
+            updateFee,
+            completed: providerClaimCT.transactionHash,
+          };
+        }
         const providerClaimCT = getTransaction_providerClaimCT({
           providerClaimCTs,
           saleCount: requestData._saleCount,

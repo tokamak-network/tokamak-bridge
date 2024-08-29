@@ -22,7 +22,11 @@ import CTUpdateButton from "./CTUpdateButton";
 import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import { formatUnits, toParseNumber } from "@/utils/trim/convertNumber";
+import {
+  formatUnits,
+  limitDecimals,
+  toParseNumber,
+} from "@/utils/trim/convertNumber";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
@@ -53,9 +57,13 @@ export default function CTFeeUpdateModal() {
   ) => {
     if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
+    const valueWithDecilas = limitDecimals(
+      value,
+      ctUpdateFeeModal.txData?.inToken.decimals
+    );
 
-    if (!isNaN(Number(value))) {
-      setInputValue(value);
+    if (valueWithDecilas) {
+      setInputValue(valueWithDecilas);
     }
   };
 
