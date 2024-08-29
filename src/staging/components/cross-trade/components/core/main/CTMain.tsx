@@ -26,6 +26,7 @@ import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import GradientSpinner from "@/components/ui/GradientSpinner";
+import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
 
 {
   /** 
@@ -40,9 +41,12 @@ export default function CTMain() {
   const [offset, setOffset] = useState(0);
   const [loading, setLoading] = useState(false);
   const { address } = useAccount();
-  const [isSortedDescending, setIsSortedDescending] = useState<boolean | null>(
-    null
-  );
+  const [isDescSortedProvide, setIsDescSortedProvide] = useState<
+    boolean | null
+  >(null);
+  const [isDescSortedReceive, setIsDescSortedReceive] = useState<
+    boolean | null
+  >(null);
   const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[] | null>(null);
 
@@ -53,8 +57,8 @@ export default function CTMain() {
   }, [requestList]);
 
   useEffect(() => {
-    if (isSortedDescending === null) return;
-    if (isSortedDescending) {
+    if (isDescSortedProvide === null) return;
+    if (isDescSortedProvide) {
       return setData(
         (prevData) =>
           prevData && [
@@ -62,7 +66,7 @@ export default function CTMain() {
           ]
       );
     }
-    if (!isSortedDescending) {
+    if (!isDescSortedProvide) {
       return setData(
         (prevData) =>
           prevData && [
@@ -70,7 +74,27 @@ export default function CTMain() {
           ]
       );
     }
-  }, [isSortedDescending]);
+  }, [isDescSortedProvide]);
+
+  useEffect(() => {
+    if (isDescSortedReceive === null) return;
+    if (isDescSortedReceive) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort((a, b) => b.recevingUSD - a.recevingUSD),
+          ]
+      );
+    }
+    if (!isDescSortedReceive) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort((a, b) => a.recevingUSD - b.recevingUSD),
+          ]
+      );
+    }
+  }, [isDescSortedReceive]);
 
   const [displayedItems, setDisplayedItems] = useState<CrossTradeData[]>([]);
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
@@ -115,9 +139,11 @@ export default function CTMain() {
       borderRadius={"16px"}
       border={"1px solid #313442"}
       overflow="hidden"
+      pos={"sticky"}
+      top={500}
     >
       <Table variant={"unstyled"} w="100%" h="100%">
-        <Thead>
+        <Thead pos={"sticky"} top={0} zIndex={10000}>
           <Tr
             sx={{
               "& th": { pl: "20px", py: "10px", pr: "auto" },
@@ -125,66 +151,104 @@ export default function CTMain() {
               letterSpacing: 0,
             }}
           >
-            <Th textTransform="none">
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex
                 alignItems="center"
                 cursor={"pointer"}
-                onClick={() =>
-                  setIsSortedDescending(
-                    isSortedDescending !== null ? !isSortedDescending : true
-                  )
-                }
+                onClick={() => {
+                  setIsDescSortedReceive(null);
+                  setIsDescSortedProvide(
+                    isDescSortedProvide !== null ? !isDescSortedProvide : true
+                  );
+                }}
               >
-                {isSortedDescending !== null && (
+                {isDescSortedProvide !== null && (
                   <Flex
                     justifyContent={"center"}
                     alignItems={"center"}
                     style={{
-                      transform: isSortedDescending
+                      transform: isDescSortedProvide
                         ? "rotate(360deg)"
                         : "rotate(180deg)",
                     }}
+                    mr="4px"
                   >
                     <Image src={Polygon} alt={"Polygon"} />
                   </Flex>
                 )}
                 <Text
-                  ml="4px"
                   fontWeight={"500"}
                   fontSize={"13px"}
                   lineHeight={"18px"}
-                  color={"#FFFFFF"}
                   letterSpacing={0}
+                  color={isDescSortedProvide !== null ? "#fff" : "#A0A3AD"}
                 >
                   Provide
                 </Text>
-                <Tooltip
+                <CustomTooltipWithQuestion
+                  isGrayIcon={true}
                   tooltipLabel={"Total amount to pay."}
-                  style={{ marginLeft: "2px" }}
+                  containerSyle={{ marginLeft: "2px" }}
                 />
               </Flex>
             </Th>
-            <Th textTransform="none">
-              <Flex alignItems="center">
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
+              <Flex
+                alignItems="center"
+                cursor={"pointer"}
+                onClick={() => {
+                  setIsDescSortedProvide(null);
+                  setIsDescSortedReceive(
+                    isDescSortedReceive !== null ? !isDescSortedReceive : true
+                  );
+                }}
+              >
+                {isDescSortedReceive !== null && (
+                  <Flex
+                    ml="4px"
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    style={{
+                      transform: isDescSortedReceive
+                        ? "rotate(360deg)"
+                        : "rotate(180deg)",
+                    }}
+                    mr="4px"
+                  >
+                    <Image src={Polygon} alt={"Polygon"} />
+                  </Flex>
+                )}
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}
                   lineHeight={"18px"}
-                  color={"#A0A3AD"}
                   letterSpacing={0}
+                  color={isDescSortedReceive !== null ? "#fff" : "#A0A3AD"}
                 >
                   Receive
                 </Text>
-                <Tooltip
+                <CustomTooltipWithQuestion
+                  isGrayIcon={true}
                   tooltipLabel={
-                    "Total amount to receive, including the service fee. It takes at least 2~5 minutes to receive (depending on the L2 sequencer)."
+                    <span>
+                      Total amount to receive, including the service
+                      <br /> fee. It takes at least 2~5 minutes to receive{" "}
+                      <br /> (depending on the L2 sequencer).
+                    </span>
                   }
-                  style={{ marginLeft: "2px" }}
+                  style={{
+                    width: "268px",
+                    height: "70px",
+                    tooltipLineHeight: "normal",
+                    py: "10px",
+                    px: "8px",
+                  }}
+                  containerSyle={{ marginLeft: "2px" }}
                 />
               </Flex>
             </Th>
-            <Th textTransform="none">
-              <Flex ml={"9px"}>
+            <Th textTransform="none" minW={"140px"} maxW={"140px"} p={0}>
+              <Flex>
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}

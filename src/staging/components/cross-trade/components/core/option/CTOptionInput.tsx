@@ -8,7 +8,7 @@ import {
 import { CTWarning } from "@/staging/components/cross-trade/components/CTWarning";
 import { CTInputProps } from "@/staging/components/cross-trade/types";
 import { WarningType } from "@/staging/components/cross-trade/types";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 export default function CTOptionInput(props: CTInputProps) {
   const {
@@ -18,12 +18,15 @@ export default function CTOptionInput(props: CTInputProps) {
     inTokenSymbol,
   } = props;
 
+  const [isFocused, setIsFocused] = useState(false);
+
   const inputValue = useMemo(() => {
+    if (isFocused) return _inputValue;
     if (_inputValue.length > 12) {
       return `${_inputValue.slice(0, 12)}...`;
     }
     return _inputValue;
-  }, [_inputValue]);
+  }, [_inputValue, isFocused]);
 
   return (
     <>
@@ -46,6 +49,10 @@ export default function CTOptionInput(props: CTInputProps) {
             fontWeight={600}
             lineHeight={"26px"}
             placeholder="Enter amount"
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+            onBlur={() => setIsFocused(false)}
             onChange={onInputChange}
             value={inputValue}
             color={
@@ -64,7 +71,7 @@ export default function CTOptionInput(props: CTInputProps) {
               boxShadow: "0 0 0 0.1px #59628D",
             }}
           />
-          {inputValue && (
+          {inputValue && !isFocused && (
             <InputRightElement height={"34px"} mr={"8px"}>
               <Text
                 fontSize={"12px"}

@@ -369,7 +369,7 @@ export const useRequestHistoryData = () => {
     CT_Request_History[] | [] | null
   >(null);
   const { data: l2Data } = useCrossTradeData_L2({
-    isHistory: false,
+    isHistory: true,
   });
   const { data: l1Data } = useCrossTradeData_L1({
     isHistory: true,
@@ -382,6 +382,7 @@ export const useRequestHistoryData = () => {
       const cancelCTs = l2Data.cancelCTs;
       const providerClaimCTs = l2Data.providerClaimCTs;
       const editCTs = l1Data.editCTs;
+      const l1CancelCTs = l1Data.l1CancelCTs;
 
       const trimedData = requestCTs.map((requestData) => {
         const {
@@ -415,6 +416,7 @@ export const useRequestHistoryData = () => {
         const blockTimestamps = getRequestBlockTimestamp({
           status,
           requestData,
+          l1CancelCTs,
           cancelCTs,
           providerClaimCTs,
           editCTs,
@@ -428,10 +430,12 @@ export const useRequestHistoryData = () => {
         const transactionHashes = getRequestTransactionHash({
           status,
           requestData,
+          l1CancelCTs,
           cancelCTs,
           providerClaimCTs,
           editCTs,
         });
+
         const ctAmount = isUpdateFee
           ? BigInt(editCT._ctAmount)
           : BigInt(_ctAmount);
@@ -467,7 +471,10 @@ export const useRequestHistoryData = () => {
         return result;
       });
 
+      console.log("trimedData", trimedData);
+
       const result = trimedData.filter((data) => data !== null);
+
       setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);
@@ -547,6 +554,7 @@ export const useProvideData = () => {
           transactionHashes,
           serviceFee,
           errorMessage: getProvideErrorMessage(status, blockTimestamps),
+          L1_subgraphData: provideCT,
         };
       });
 

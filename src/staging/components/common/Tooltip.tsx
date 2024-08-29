@@ -4,6 +4,7 @@ import Image from "next/image";
 import { CSSProperties } from "react";
 import QUESTION_ICON from "assets/icons/ct/tip_ct.svg";
 import QUESTION_ICON_WHITE from "assets/icons/ct/tip_ct_white.svg";
+import TooltipArrow from "assets/icons/tooltipArrow.svg";
 import QUESTION_ICON_BLUE from "assets/icons/ct/tip_ct_blue.svg";
 
 export function Tooltip(props: {
@@ -14,7 +15,7 @@ export function Tooltip(props: {
   const { tooltipLabel, style, type = "grey" } = props;
 
   return (
-    <Box style={style}>
+    <Box style={style} pos={"relative"}>
       <CTCustomTooltip
         content={
           <Flex>
@@ -35,6 +36,9 @@ export function Tooltip(props: {
           tooltipLineHeight: "18px",
         }}
       />
+      <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
+        <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
+      </Box>
     </Box>
   );
 }

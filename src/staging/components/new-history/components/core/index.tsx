@@ -27,7 +27,7 @@ const NoAcitivityComponent = () => {
       h={"640px"}
     >
       <Image src={NoAcitivity} alt={"noActivityIcon"}></Image>
-      <Text>No activity yet</Text>
+      <Text color={"#E3F3FF"}>No activity yet</Text>
     </Flex>
   );
 };
@@ -87,21 +87,23 @@ export default function AccountHistoryNew() {
       {!historyData && <LoadingSpinner />}
       {historyData?.length === 0 && <NoAcitivityComponent />}
       {historyData?.map((transaction, index) => {
+        const isCompleted =
+          transaction.status === Status.Completed ||
+          transaction.status === CT_REQUEST.Completed ||
+          transaction.status === CT_REQUEST_CANCEL.Completed ||
+          transaction.status === CT_PROVIDE.Completed;
         return (
           <Box
             key={`${transaction.action}-${index}`}
             w={"336px"}
             px={"12px"}
-            py={"8px"}
+            py={isCompleted ? "6px" : "8px"}
             borderRadius={"8px"}
-            border={"1px solid #313442"}
+            border={isCompleted ? "none" : "1px solid #313442"}
             bg={"#15161D"}
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
-            {transaction.status === Status.Completed ||
-            transaction.status === CT_REQUEST.Completed ||
-            transaction.status === CT_REQUEST_CANCEL.Completed ||
-            transaction.status === CT_PROVIDE.Completed ? (
+            {isCompleted ? (
               <Complete {...transaction} />
             ) : (
               <Pending transaction={transaction} />

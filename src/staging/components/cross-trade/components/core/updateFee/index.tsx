@@ -22,7 +22,11 @@ import CTUpdateButton from "./CTUpdateButton";
 import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import { formatUnits, toParseNumber } from "@/utils/trim/convertNumber";
+import {
+  formatUnits,
+  limitDecimals,
+  toParseNumber,
+} from "@/utils/trim/convertNumber";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
@@ -30,10 +34,6 @@ import { BigNumber } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
-
-// 데이터 셋을 선언만 하면, 참고 해서 서버 작업
-// 데이터 셋 타입파일을 만든다.
-// 타입을 맞추고, 타입에 맞게 데이터셋을 뽑는다.
 
 export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
@@ -57,9 +57,13 @@ export default function CTFeeUpdateModal() {
   ) => {
     if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
+    const valueWithDecilas = limitDecimals(
+      value,
+      ctUpdateFeeModal.txData?.inToken.decimals
+    );
 
-    if (!isNaN(Number(value))) {
-      setInputValue(value);
+    if (valueWithDecilas) {
+      setInputValue(valueWithDecilas);
     }
   };
 
@@ -242,6 +246,14 @@ export default function CTFeeUpdateModal() {
       return cancelRequest();
   }, [activeButton, editFee, cancelRequest]);
 
+  const btnIsDisabled = useMemo(() => {
+    return (
+      !activeConfirmButton ||
+      !connectedToLayer1 ||
+      inputWarningCheck === WarningType.Critical
+    );
+  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
+
   return (
     <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
       <ModalOverlay />
@@ -352,18 +364,12 @@ export default function CTFeeUpdateModal() {
             height={"48px"}
             borderRadius={"8px"}
             sx={{
-              backgroundColor:
-                activeConfirmButton && connectedToLayer1
-                  ? "#007AFF"
-                  : "#17181D",
-              color:
-                activeConfirmButton && connectedToLayer1
-                  ? "#FFFFFF"
-                  : "#8E8E92",
+              backgroundColor: !btnIsDisabled ? "#007AFF" : "#17181D",
+              color: !btnIsDisabled ? "#FFFFFF" : "#8E8E92",
             }}
             _hover={{}}
             onClick={handleConfirm}
-            isDisabled={!activeConfirmButton || !connectedToLayer1}
+            isDisabled={btnIsDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
               {!connectedToLayer1

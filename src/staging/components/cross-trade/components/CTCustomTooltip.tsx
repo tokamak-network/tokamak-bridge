@@ -25,19 +25,18 @@ export default function CTCustomTooltip(props: {
   return (
     <Tooltip
       p={0}
-      placement='top'
+      placement="top"
       defaultIsOpen={false}
       isOpen={isOpen}
       zIndex={10000}
-      flex={1}
       label={
         <Box
           w={"100%"}
           bgColor={"#383A49"}
-          borderRadius={"4px"}
           fontWeight={400}
           color={"#fff"}
           pos={"relative"}
+          borderRadius={"4px"}
           {...props.style}
         >
           <Text fontWeight={400} fontSize={"12px"} lineHeight={"18px"}>

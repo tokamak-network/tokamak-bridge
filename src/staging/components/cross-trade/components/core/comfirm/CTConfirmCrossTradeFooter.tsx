@@ -27,6 +27,8 @@ import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 import { useRecoilState } from "recoil";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { useAccount } from "wagmi";
+import useConnectWallet from "@/hooks/account/useConnectWallet";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -57,6 +59,8 @@ export default function CTConfirmCrossTradeFooter(
   } = props;
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { isConnectedToMainNetwork, chainName } = useConnectedNetwork();
+  const { isConnected } = useAccount();
+  const { connectToWallet } = useConnectWallet();
   const blockExplorer = getBlockExplorerUrl(
     isConnectedToMainNetwork
       ? SupportedChainId.TITAN
@@ -68,22 +72,35 @@ export default function CTConfirmCrossTradeFooter(
     tokenSymbol: txData?.inToken.symbol as string,
   });
 
-  const { isApproved, isLoading, callApprove } = useApprove("Cross Trade");
+  const { isApproved, isLoading, isRevokeForUSDT, callApprove } =
+    useApprove("Cross Trade");
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
 
   const btnDisabled = useMemo(() => {
+    if (!isConnected) {
+      return !provideConfirmed;
+    }
     if (!isApproved) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
     return !isChecked.firstChecked || !isChecked.secondChecked;
-  }, [isProvide, isChecked, provideConfirmed, isApproved, connectedToLayer1]);
+  }, [
+    isProvide,
+    isChecked,
+    provideConfirmed,
+    isApproved,
+    connectedToLayer1,
+    isConnected,
+  ]);
 
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
 
   const approveBtnDisabled = useMemo(() => {
-    return isApproved || isLoading || mode === "Withdraw"
-      ? !isChecked
+    return isLoading
+      ? true
+      : mode === "Withdraw"
+      ? !isChecked.firstChecked || !isChecked.secondChecked
       : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 
@@ -103,7 +120,7 @@ export default function CTConfirmCrossTradeFooter(
   }, [inTokenInfo]);
 
   const { setModalOpen } = useTxConfirmModal();
-  // const { provideCT, requestRegisteredToken } = useCrossTradeContract();
+
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
@@ -211,7 +228,7 @@ export default function CTConfirmCrossTradeFooter(
       {!isProvide && (
         <Flex flexDir={"column"} rowGap={"8px"} mt={"5px"}>
           <Text
-            color={isChecked ? "#FFFFFF" : "#A0A3AD"}
+            color={"#A0A3AD"}
             fontWeight={600}
             fontSize={13}
             lineHeight={"20px"}
@@ -297,7 +314,7 @@ export default function CTConfirmCrossTradeFooter(
                 style={{
                   fontWeight: 600,
                   color: "#DB00FF",
-                  marginRight: "2px",
+                  marginRight: "3px",
                 }}
               >
                 Warning:
@@ -342,27 +359,33 @@ export default function CTConfirmCrossTradeFooter(
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
-            sx={{
-              backgroundColor: !approveBtnDisabled ? "#007AFF" : "#17181D",
-              color: !approveBtnDisabled ? "#FFFFFF" : "#8E8E92",
-            }}
             width="full"
             height={"48px"}
             borderRadius={"8px"}
             _hover={{}}
+            sx={{
+              backgroundColor: !approveBtnDisabled ? "#007AFF" : "#17181D",
+              color: !approveBtnDisabled ? "#FFFFFF" : "#8E8E92",
+            }}
+            _disabled={{
+              backgroundColor: "#17181D",
+              color: "#8E8E92",
+            }}
           >
             {isLoading ? (
               <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
             ) : (
               <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                {`${"Approve"} ${inToken?.tokenSymbol}`}
+                {`${isRevokeForUSDT ? "Revoke" : "Approve"} ${
+                  inToken?.tokenSymbol
+                }`}
               </Text>
             )}
           </Button>
         )}
         <Button
           isDisabled={btnDisabled}
-          onClick={requestCrossTrade}
+          onClick={isConnected ? requestCrossTrade : () => connectToWallet()}
           sx={{
             backgroundColor: !btnDisabled ? "#007AFF" : "#17181D",
             color: !btnDisabled ? "#FFFFFF" : "#8E8E92",
@@ -371,9 +394,19 @@ export default function CTConfirmCrossTradeFooter(
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}
+          _disabled={{
+            backgroundColor: "#17181D",
+            color: "#8E8E92",
+          }}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-            {isProvide ? "Provide" : "Request"}
+            {!isConnected
+              ? "Connect Wallet"
+              : isProvide && !connectedToLayer1
+              ? "Wrong Network "
+              : isProvide
+              ? "Provide"
+              : "Request"}
           </Text>
         </Button>
       </Flex>
