@@ -37,7 +37,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     return null;
   }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: transactionHistory.inToken.symbol as string,
+    tokenName: transactionHistory.inToken.name as string,
     amount: formatUnits(
       transactionHistory.inToken.amount,
       transactionHistory.inToken.decimals

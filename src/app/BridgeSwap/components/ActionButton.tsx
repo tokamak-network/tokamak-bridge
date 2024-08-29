@@ -30,7 +30,7 @@ export default function ActionButton() {
   const { isConnected } = useAccount();
   const { mode, isReady } = useRecoilValue(actionMode);
   const { isApproved } = useApprove();
-  const { isNotSupportForSwap } = useBridgeSupport();
+  const { isNotSupportForSwap, isNotSupportForBridge } = useBridgeSupport();
   const [isLoading] = useIsLoading();
 
   const [isDisabled, setIsDisabled] = useState<boolean>(true);
@@ -54,6 +54,7 @@ export default function ActionButton() {
         !isReady ||
         // isApproved === false ||
         (mode === "Swap" && isLoading) ||
+        (mode === "Deposit" && isNotSupportForBridge) ||
         isNotSupportForSwap ||
         isBalanceOver ||
         txPending ||
