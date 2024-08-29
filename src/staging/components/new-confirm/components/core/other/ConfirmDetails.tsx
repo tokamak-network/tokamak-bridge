@@ -133,7 +133,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                   ? inNetwork?.chainId ?? SupportedChainId.MAINNET
                   : outNetwork?.chainId ?? SupportedChainId.MAINNET
               ]
-            }/token/${getTokenAddressByChainId(
+            }/address/${getTokenAddressByChainId(
               isInNetwork
                 ? (transactionHistory.inToken.symbol as string)
                 : (transactionHistory.outToken.symbol as string),
