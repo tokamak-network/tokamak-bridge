@@ -1,7 +1,10 @@
 import { Resolved } from "@/types/activity/history";
 import { StateBatchAppended } from "@/utils/history/getCurrentStatus";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { T_FETCH_REQUEST_LIST_L2 } from "../hooks/useCrossTrade";
+import {
+  T_FETCH_REQUEST_LIST_L2,
+  T_provideCTs_L1,
+} from "../hooks/useCrossTrade";
 
 export enum HISTORY_SORT {
   STANDARD,
@@ -76,6 +79,7 @@ export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;
   status: CT_Status;
   serviceFee: BigInt;
+  L1_subgraphData: T_provideCTs_L1;
   L2_subgraphData?: T_FETCH_REQUEST_LIST_L2;
 }
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {

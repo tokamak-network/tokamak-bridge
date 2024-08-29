@@ -112,7 +112,7 @@ export default function CTModal() {
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
             txData={ctConfirmModal.txData}
-            requester={ctConfirmModal.txData?.L2_subgraphData?._requester}
+            requester={ctConfirmModal.txData?.L1_subgraphData?._requester}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">
