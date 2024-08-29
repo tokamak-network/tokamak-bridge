@@ -79,7 +79,7 @@ export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;
   status: CT_Status;
   serviceFee: BigInt;
-  L1_subgraphData: T_provideCTs_L1;
+  L1_subgraphData?: T_provideCTs_L1;
   L2_subgraphData?: T_FETCH_REQUEST_LIST_L2;
 }
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
