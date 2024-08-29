@@ -39,6 +39,7 @@ export default function CTModal() {
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
     onCloseCTConfirmModal();
+    console.log("ctConfirmModal.txData", ctConfirmModal.txData);
     onOpenCTUpdateFeeModal(ctConfirmModal.txData);
   };
 

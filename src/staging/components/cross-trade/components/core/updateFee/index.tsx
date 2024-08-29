@@ -31,10 +31,6 @@ import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 
-// 데이터 셋을 선언만 하면, 참고 해서 서버 작업
-// 데이터 셋 타입파일을 만든다.
-// 타입을 맞추고, 타입에 맞게 데이터셋을 뽑는다.
-
 export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
   //Button props
@@ -242,6 +238,14 @@ export default function CTFeeUpdateModal() {
       return cancelRequest();
   }, [activeButton, editFee, cancelRequest]);
 
+  const btnIsDisabled = useMemo(() => {
+    return (
+      !activeConfirmButton ||
+      !connectedToLayer1 ||
+      inputWarningCheck === WarningType.Critical
+    );
+  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
+
   return (
     <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
       <ModalOverlay />
@@ -352,18 +356,12 @@ export default function CTFeeUpdateModal() {
             height={"48px"}
             borderRadius={"8px"}
             sx={{
-              backgroundColor:
-                activeConfirmButton && connectedToLayer1
-                  ? "#007AFF"
-                  : "#17181D",
-              color:
-                activeConfirmButton && connectedToLayer1
-                  ? "#FFFFFF"
-                  : "#8E8E92",
+              backgroundColor: !btnIsDisabled ? "#007AFF" : "#17181D",
+              color: !btnIsDisabled ? "#FFFFFF" : "#8E8E92",
             }}
             _hover={{}}
             onClick={handleConfirm}
-            isDisabled={!activeConfirmButton || !connectedToLayer1}
+            isDisabled={btnIsDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
               {!connectedToLayer1
