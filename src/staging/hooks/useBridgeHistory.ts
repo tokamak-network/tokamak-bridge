@@ -369,10 +369,10 @@ export const useRequestHistoryData = () => {
     CT_Request_History[] | [] | null
   >(null);
   const { data: l2Data } = useCrossTradeData_L2({
-    isHistory: true,
+    isHistory: false,
   });
   const { data: l1Data } = useCrossTradeData_L1({
-    isHistory: true,
+    isHistory: false,
   });
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
@@ -547,6 +547,7 @@ export const useProvideData = () => {
           transactionHashes,
           serviceFee,
           errorMessage: getProvideErrorMessage(status, blockTimestamps),
+          L1_subgraphData: provideCT,
         };
       });
 

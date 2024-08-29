@@ -18,7 +18,10 @@ import CTConfirmCrossTradeFooter, {
   ContractWrite,
 } from "./CTConfirmCrossTradeFooter";
 import CTConfirmHistoryFooter from "./CTConfirmHistoryFooter";
-import { isInCT_Provide } from "@/staging/types/transaction";
+import {
+  isInCT_Provide,
+  isInCT_REQUEST_CANCEL,
+} from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 
@@ -57,10 +60,17 @@ export default function CTModal() {
   const isProvide = ctConfirmModal?.txData
     ? isInCT_Provide(ctConfirmModal.txData.status)
     : false;
+  const isCanceled =
+    ctConfirmModal?.txData &&
+    isInCT_REQUEST_CANCEL(ctConfirmModal.txData.status);
 
   const modalTitles = {
     [ModalType.Trade]: "Confirm Request",
-    [ModalType.History]: isProvide ? "Provide" : "Request",
+    [ModalType.History]: isProvide
+      ? "Provide"
+      : isCanceled
+      ? "Cancel"
+      : "Request",
   };
 
   useEffect(() => {
@@ -88,7 +98,7 @@ export default function CTModal() {
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {isProvide ? "Confirm Provide" : modalTitles[ctConfirmModal.type]}
+            {isProvide ? "Provide" : modalTitles[ctConfirmModal.type]}
           </Text>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
@@ -102,7 +112,7 @@ export default function CTModal() {
             modalType={ctConfirmModal.type}
             onPencilClick={handlePencilClick}
             txData={ctConfirmModal.txData}
-            requester={ctConfirmModal.subgraphData?._requester}
+            requester={ctConfirmModal.txData?.L1_subgraphData?._requester}
           />
         </ModalBody>
         <ModalFooter p={0} display="block">

@@ -26,7 +26,8 @@ export default function CustomTooltip(props: {
       defaultIsOpen={false}
       isOpen={isOpen}
       bg={"transparent"}
-      zIndex={1000000}
+      zIndex={10000}
+      pos={"relative"}
       label={
         <Box
           w={"100%"}
@@ -68,6 +69,7 @@ export default function CustomTooltip(props: {
       <Box
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
+        pos={"relative"}
       >
         {props.content}
         {isOpen && (

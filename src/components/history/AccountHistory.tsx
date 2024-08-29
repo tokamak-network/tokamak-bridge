@@ -91,7 +91,7 @@ export default function AccountHistory() {
           fontSize={13}
           fontWeight={400}
           color={isDeposit ? "none" : "#A0A3AD"}
-          bg={isDeposit ? "#007AFF" : "none"}
+          bg={isDeposit ? "#007AFF" : "#15161D"}
           border={isDeposit ? "none" : "1px solid #313442"}
           lineHeight={"32px"}
           _hover={{}}
