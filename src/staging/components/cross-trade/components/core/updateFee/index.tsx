@@ -58,13 +58,18 @@ export default function CTFeeUpdateModal() {
   ) => {
     if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
-    const valueWithDecilas = limitDecimals(
-      value,
-      ctUpdateFeeModal.txData?.inToken.decimals
-    );
+    const regex = /^\d*\.?\d*$/;
+    if (regex.test(value)) {
+      const valueWithDecimals = limitDecimals(
+        value,
+        ctUpdateFeeModal.txData?.inToken.decimals
+      );
 
-    if (valueWithDecilas) {
-      setInputValue(valueWithDecilas);
+      if (valueWithDecimals !== undefined) {
+        setInputValue(valueWithDecimals);
+      } else {
+        setInputValue(value);
+      }
     }
   };
 
