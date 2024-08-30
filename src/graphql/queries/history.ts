@@ -88,15 +88,22 @@ export const FETCH_USER_TRANSACTIONS_L1_TITAN = gql`
 export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
   query FetchUserTransactions(
     $formattedAddress: String!
-    $L1Bridge: String!
+    $L1StandardBridge: String!
+    $L1UsdcBridge: String!
     $account: String!
+    $remoteToken: String!
   ) {
     sentMessages(
       where: {
+        sender_in: [$L1StandardBridge, $L1UsdcBridge]
         message_contains: $formattedAddress
-        sender: $L1Bridge
-        target: "0x4200000000000000000000000000000000000010"
+        target_in: [
+          "0x4200000000000000000000000000000000000010"
+          "0x4200000000000000000000000000000000000775"
+        ]
       }
+      orderBy: blockTimestamp
+      orderDirection: desc
     ) {
       blockNumber
       blockTimestamp
@@ -151,20 +158,20 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       id
       transactionHash
     }
-    sentMessages(
-      where: {
-        message_contains: $formattedAddress
-        target: $L1Bridge
-        sender: "0x4200000000000000000000000000000000000010"
-      }
+    erc20BridgeInitiateds(
+      where: { remoteToken: $remoteToken, from: $account }
+      orderBy: blockTimestamp
+      orderDirection: desc
     ) {
+      id
+      localToken
+      remoteToken
+      from
+      to
+      amount
+      extraData
       blockNumber
       blockTimestamp
-      gasLimit
-      message
-      messageNonce
-      sender
-      target
       transactionHash
     }
   }

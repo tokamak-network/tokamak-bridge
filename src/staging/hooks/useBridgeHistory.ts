@@ -61,6 +61,7 @@ import {
   getProvideStatus,
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
+import { getDecodeThanosLog } from "@/utils/history/getDecodeThanosLog";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -154,22 +155,10 @@ export const useSubgraph = () => {
   } = useQuery(FETCH_USER_TRANSACTIONS_L1_THANOS, {
     variables: {
       formattedAddress: formatAddress(address),
-      L1Bridge: L1StandardBridgeForThanos,
+      L1StandardBridge: L1StandardBridgeForThanos,
+      L1UsdcBridge: L1USDCBridgeForThanos,
       account: address,
-    },
-    pollInterval: 13000,
-    client: L1_CLIENT[1],
-  });
-
-  const {
-    data: _l1ThanosUSDCData,
-    loading: _l1ThanosUSDCLoading,
-    error: _l1ThanosUSDCError,
-  } = useQuery(FETCH_USER_TRANSACTIONS_L1_THANOS, {
-    variables: {
-      formattedAddress: formatAddress(address),
-      L1Bridge: L1USDCBridgeForThanos,
-      account: address,
+      remoteToken: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
     },
     pollInterval: 13000,
     client: L1_CLIENT[1],
@@ -185,9 +174,6 @@ export const useSubgraph = () => {
     if (_l1ThanosError) {
       errorHandler(_l1ThanosError);
     }
-    if (_l1ThanosUSDCError) {
-      errorHandler(_l1ThanosUSDCError);
-    }
   }, [_l1TitanError, _l2TitanError]);
 
   return {
@@ -197,9 +183,6 @@ export const useSubgraph = () => {
     l1ThanosData: _l1ThanosData,
     l1ThanosLoading: _l1ThanosLoading,
     l1Thanoserror: _l1ThanosError,
-    l1ThanosUSDCData: _l1ThanosUSDCData,
-    l1ThanosUSDCLoading: _l1ThanosUSDCLoading,
-    l1ThanosUSDCerror: _l1ThanosUSDCError,
     l2TitanData: _l2Titan,
   };
 };
@@ -223,6 +206,8 @@ export const useWithdrawData = () => {
             sender: sentMessage.sender,
             message: sentMessage.message,
             messageNonce: sentMessage.messageNonce,
+            gasLimit: sentMessage.gasLimit,
+            transactionHash: sentMessage.transactionHash,
           };
 
           const { currentStatus, stateBatchAppended, relayedMessageTx } =
@@ -315,8 +300,14 @@ export const useWithdrawData = () => {
 };
 
 export const useDepositData = () => {
-  const [depositHistory, setDepositHistory] = useState<
+  const [titanDepositHistory, setTitanDepositHistory] = useState<
     DepositTransactionHistory[] | [] | null
+  >(null);
+  const [thanosDepositHistory, setThanosDepositHistory] = useState<
+    DepositTransactionHistory[] | [] | null
+  >(null);
+  const [depositHistory, setDepositHistory] = useState<
+    DepositTransactionHistory[] | null
   >(null);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { l1TitanData, l1ThanosData } = useSubgraph();
@@ -332,9 +323,16 @@ export const useDepositData = () => {
             sender: sentMessage.sender,
             message: sentMessage.message,
             messageNonce: sentMessage.messageNonce,
+            gasLimit: sentMessage.gasLimit,
+            transactionHash: sentMessage.transactionHash,
           };
           const { currentStatus, relayedMessageTx } =
-            await getCurrentDepositStatus(resolved, isConnectedToMainNetwork);
+            await getCurrentDepositStatus(
+              resolved,
+              isConnectedToMainNetwork,
+              "Titan",
+              "0"
+            );
 
           const l1TxReceipt = await L1Provider.getTransactionReceipt(
             sentMessage.transactionHash
@@ -391,21 +389,118 @@ export const useDepositData = () => {
         if (!(tx instanceof Error) && tx !== undefined && tx !== null)
           return tx;
       });
+      if (filteredResult) return setTitanDepositHistory(filteredResult);
+      return setTitanDepositHistory([]);
+    }
+  }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
+
+  const fetchThanosData = useCallback(async () => {
+    if (l1ThanosData && isConnectedToMainNetwork !== undefined && L1Provider) {
+      const erc20BridgeInitiateds = l1ThanosData.erc20BridgeInitiateds;
+      const l1SentMessges = l1ThanosData.sentMessages;
+      const result: DepositTransactionHistory[] = await Promise.all(
+        l1SentMessges.map(async (sentMessage: SentMessages) => {
+          const resolved: Resolved = {
+            target: sentMessage.target,
+            sender: sentMessage.sender,
+            message: sentMessage.message,
+            messageNonce: sentMessage.messageNonce,
+            gasLimit: sentMessage.gasLimit,
+            transactionHash: sentMessage.transactionHash,
+          };
+          const erc20BridgeInitiated = erc20BridgeInitiateds.find(
+            (item: any) => item.transactionHash === sentMessage.transactionHash
+          );
+          const { currentStatus, relayedMessageTx } =
+            await getCurrentDepositStatus(
+              resolved,
+              isConnectedToMainNetwork,
+              "Thanos",
+              erc20BridgeInitiated?.amount ?? "0"
+            );
+          const l1TxReceipt = await L1Provider.getTransactionReceipt(
+            sentMessage.transactionHash
+          );
+
+          //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
+          if (!l1TxReceipt || !currentStatus) {
+            new Error(`Invalid transaction (${sentMessage.transactionHash})`);
+            return;
+          }
+          const { l1TokenAddress, l2TokenAddress, amount } = getDecodeThanosLog(
+            l1TxReceipt.logs
+          );
+
+          const { l1Token, l2Token } = getTransactionToken(
+            l1TokenAddress,
+            l2TokenAddress,
+            amount,
+            true
+          );
+
+          const status = getStatus(currentStatus);
+          const { blockTimestamps, transactionHashes } = getTransaction({
+            currentStatus,
+            sentMessage,
+            relayMessage: relayedMessageTx,
+          });
+
+          if (blockTimestamps instanceof Error) {
+            return;
+          }
+
+          const result: DepositTransactionHistory = {
+            category: HISTORY_SORT.STANDARD,
+            action: Action.Deposit,
+            status: status,
+            inNetwork: SupportedChainId.MAINNET,
+            outNetwork: SupportedChainId.THANOS_SEPOLIA,
+            inToken: l2Token,
+            outToken: l1Token,
+            blockTimestamps,
+            transactionHashes,
+          };
+          return result;
+        })
+      );
+
+      const filteredResult = result.filter((tx) => {
+        if (!(tx instanceof Error) && tx !== undefined && tx !== null)
+          return tx;
+      });
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-      if (sortedResult) return setDepositHistory(sortedResult);
-      return setDepositHistory([]);
+      if (sortedResult) return setThanosDepositHistory(sortedResult);
+      return setThanosDepositHistory([]);
     }
-  }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
+  }, [l1ThanosData, isConnectedToMainNetwork, L1Provider]);
+
+  const getAllDepositeData = useCallback(async () => {
+    if (titanDepositHistory && thanosDepositHistory) {
+      const totalDepositResult = [
+        ...(titanDepositHistory ?? []),
+        ...(thanosDepositHistory ?? []),
+      ].sort(
+        (currentTx, previousTx) =>
+          previousTx.blockTimestamps.initialCompletedTimestamp -
+          currentTx.blockTimestamps.initialCompletedTimestamp
+      );
+      setDepositHistory(totalDepositResult);
+    }
+  }, [titanDepositHistory, thanosDepositHistory]);
 
   useEffect(() => {
     fetchTitanData().catch((error) => {
       console.error("Error in fetching deposit data", error);
     });
-  }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
+    fetchThanosData().catch((error) => {
+      console.error("Error in fetching deposit data", error);
+    });
+    getAllDepositeData();
+  }, [fetchTitanData, fetchThanosData, getAllDepositeData]);
 
   return { depositHistory };
 };
@@ -516,8 +611,6 @@ export const useRequestHistoryData = () => {
         };
         return result;
       });
-
-      console.log("trimedData", trimedData);
 
       const result = trimedData.filter((data) => data !== null);
 

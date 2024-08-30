@@ -26,6 +26,9 @@ const CHAIN_SUBGRAPH_URL: Record<number, string[]> = {
   [SupportedChainId.TITAN_SEPOLIA]: [
     process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY as string,
   ],
+  [SupportedChainId.THANOS_SEPOLIA]: [
+    process.env.NEXT_PUBLIC_SUBGRAPH_THANOS_HISTORY as string,
+  ],
 };
 
 const httpLink: Record<number, HttpLink[]> = {

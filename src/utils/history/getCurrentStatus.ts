@@ -2,9 +2,11 @@ import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
 import { Resolved } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { hashCrossChainMessage } from "@tokamak-network/titan-sdk";
+import { hashCrossDomainMessagev1 } from "@tokamak-network/core-utils";
 import axios from "axios";
-import { BigNumber, Bytes } from "ethers";
+import { BigNumber, Bytes, ethers } from "ethers";
 import { stat } from "fs";
+import abi from "@/constant/abis/L2CrossDomainMessenger.json";
 
 export type CurrentStatus = 0 | 1 | 2 | 3 | 4;
 export type CurrentDepositStatus = 0 | 4;
@@ -32,7 +34,8 @@ const subgraphQueryURL_SEPOLIA =
 const subgraphQueryURL_TITAN = process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY;
 const subgraphQueryURL_TITAN_SEPOLIA =
   process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY;
-
+const subgraphQueryURL_THANOS_SEPOLIA =
+  process.env.NEXT_PUBLIC_SUBGRAPH_THANOS_HISTORY;
 /**
  *
  * @param l2BlockNumber
@@ -140,23 +143,36 @@ export const getCurretStatus = async (
 
 export const getCurrentDepositStatus = async (
   resolved: Resolved,
-  isConnectedToMainnetwork: boolean
+  isConnectedToMainnetwork: boolean,
+  L2Chain: "Titan" | "Thanos",
+  amount: string
 ): Promise<{
   currentStatus: CurrentDepositStatus;
   relayedMessageTx?: RelayMessage;
 }> => {
-  const msgHash = hashCrossChainMessage({
-    sender: resolved.sender,
-    target: resolved.target,
-    message: resolved.message,
-    messageNonce: BigNumber.from(resolved.messageNonce),
-    minGasLimit: BigNumber.from(0),
-    value: BigNumber.from(0),
-  });
+  const msgHash =
+    L2Chain === "Thanos"
+      ? hashCrossDomainMessagev1(
+          BigNumber.from(resolved.messageNonce),
+          resolved.sender,
+          resolved.target,
+          BigNumber.from(amount),
+          BigNumber.from(resolved.gasLimit),
+          resolved.message
+        )
+      : hashCrossChainMessage({
+          sender: resolved.sender,
+          target: resolved.target,
+          message: resolved.message,
+          messageNonce: BigNumber.from(resolved.messageNonce),
+          minGasLimit: BigNumber.from(0),
+          value: BigNumber.from(0),
+        });
   const subgraphQueryURL = isConnectedToMainnetwork
     ? subgraphQueryURL_TITAN
-    : subgraphQueryURL_TITAN_SEPOLIA;
-
+    : L2Chain === "Titan"
+    ? subgraphQueryURL_TITAN_SEPOLIA
+    : subgraphQueryURL_THANOS_SEPOLIA;
   const resMesHash = await axios.post(`${subgraphQueryURL}`, {
     query: `
         query GetRelayedMessages($msgHash: String!) {

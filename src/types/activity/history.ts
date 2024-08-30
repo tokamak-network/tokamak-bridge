@@ -118,6 +118,8 @@ export type Resolved = {
   sender: string;
   message: string;
   messageNonce: BigInt;
+  gasLimit: string;
+  transactionHash: string;
 };
 
 export type FullWithTx = Erc20Type &
