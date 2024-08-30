@@ -289,6 +289,7 @@ export default function CTMain() {
             </Tr>
           )}
           {!isLoading &&
+            !isConnectedToMainNetwork &&
             displayedItems?.map((item, index) => {
               //Decided not to show the request is already done with providing liquidity because countdown does not needed.
               if (item.isProvided) return null;

@@ -19,7 +19,6 @@ export default function CTOptionInput(props: CTInputProps) {
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
-
   const inputValue = useMemo(() => {
     if (isFocused) return _inputValue;
     if (_inputValue.length > 12) {
