@@ -27,6 +27,7 @@ import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
+import useConnectedNetwork from "@/hooks/network";
 
 {
   /** 
@@ -100,6 +101,7 @@ export default function CTMain() {
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
   const observer = useRef<IntersectionObserver | null>(null);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   //will be refactored to controll fetch data with it to save traffics
   useEffect(() => {
@@ -264,6 +266,28 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
+          {isConnectedToMainNetwork && (
+            <Tr
+              key={0}
+              sx={{
+                "& td": { pl: "20px", py: "16px", pr: "auto" },
+                borderBottom: "1px solid #23242B",
+              }}
+              textAlign={"center"}
+            >
+              <Td
+                colSpan={4}
+                style={{
+                  textAlign: "center",
+                  height: "144px",
+                  lineHeight: "144px",
+                  color: "#E3F3FF",
+                }}
+              >
+                <Box>Not available on Ethereum and Titan mainnet</Box>
+              </Td>
+            </Tr>
+          )}
           {!isLoading &&
             displayedItems?.map((item, index) => {
               //Decided not to show the request is already done with providing liquidity because countdown does not needed.
