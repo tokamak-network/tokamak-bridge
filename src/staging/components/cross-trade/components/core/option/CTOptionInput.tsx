@@ -33,7 +33,6 @@ export default function CTOptionInput(props: CTInputProps) {
       <Flex w={"189px"}>
         <InputGroup my={"4px"}>
           <Input
-            autoFocus
             w={"189px"}
             h={"34px"}
             px="12px"
