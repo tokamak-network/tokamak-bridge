@@ -389,8 +389,8 @@ export const useDepositData = () => {
         if (!(tx instanceof Error) && tx !== undefined && tx !== null)
           return tx;
       });
-      if (filteredResult) return setTitanDepositHistory(filteredResult);
-      return setTitanDepositHistory([]);
+      if (filteredResult.length > 0) setTitanDepositHistory(filteredResult);
+      setTitanDepositHistory([]);
     }
   }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
 
@@ -496,11 +496,17 @@ export const useDepositData = () => {
     fetchTitanData().catch((error) => {
       console.error("Error in fetching deposit data", error);
     });
+  }, [fetchTitanData]);
+
+  useEffect(() => {
     fetchThanosData().catch((error) => {
       console.error("Error in fetching deposit data", error);
     });
+  }, [fetchThanosData]);
+
+  useEffect(() => {
     getAllDepositeData();
-  }, [fetchTitanData, fetchThanosData, getAllDepositeData]);
+  }, [getAllDepositeData]);
 
   return { depositHistory };
 };
