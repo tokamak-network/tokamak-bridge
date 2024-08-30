@@ -62,6 +62,8 @@ export default function CTUpdateInput(
     setIsFocused(false);
   };
 
+  console.log("recommendValue : ", recommendValue);
+
   const refreshButtonActive = useMemo(() => {
     if (recommendValue && inputValue && recommendValue === inputValue)
       return true;

@@ -34,6 +34,7 @@ import { BigNumber } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 
 export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
@@ -92,16 +93,20 @@ export default function CTFeeUpdateModal() {
   }, [ctUpdateFeeModal.txData?.L2_subgraphData?._totalAmount]);
 
   const tokenAddress =
-    ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
-  const { recommendedFee: recommendValue } = useRecommendFee({
-    totalAmount: Number(
-      formatUnits(
-        totalAmount?.toString(),
-        ctUpdateFeeModal.txData?.inToken.decimals
-      )
-    ),
-    tokenAddress,
-  });
+    ctUpdateFeeModal.txData?.L2_subgraphData?._l2token &&
+    isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
+      ? "0x4200000000000000000000000000000000000006"
+      : ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
+  const { recommendedCtAmount: recommendValue, recommendedFee } =
+    useRecommendFee({
+      totalAmount: Number(
+        formatUnits(
+          totalAmount?.toString(),
+          ctUpdateFeeModal.txData?.inToken.decimals
+        )
+      ),
+      tokenAddress,
+    });
 
   useEffect(() => {
     if (recommendValue) {
