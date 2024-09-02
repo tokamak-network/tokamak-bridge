@@ -89,7 +89,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           CT_Request_TransactionData.blockTimestamps.provide,
-          3,
+          TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
