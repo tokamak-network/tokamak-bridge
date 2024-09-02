@@ -400,6 +400,7 @@ export const useRequestHistoryData = () => {
         const status = getRequestStatus({
           requestData,
           cancelCTs,
+          l1CancelCTs,
           providerClaimCTs,
           editCTs,
         });
