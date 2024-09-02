@@ -21,7 +21,6 @@ import {
   isRequestProvidedOnL1,
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
-import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import { getCTTokenPrice } from "../utils/getCTTokenPrice";
 
 const getApolloClient = (chainId: number) => {
@@ -142,7 +141,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
     provideCTs: T_FETCH_ProvideCTs_L1;
     l1CancelCTs: T_FETCH_CancelCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
-    pollInterval: 13000,
+    pollInterval: 12000,
     client: L1_CLIENT,
     variables: isHistory
       ? {
@@ -164,7 +163,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     cancelCTs: T_FETCH_CancelCTs;
     providerClaimCTs: T_FETCH_ProviderClaimCTs;
   }>(isHistory ? FETCH_REQUEST_LIST_L2_ACCOUNT : FETCH_REQUEST_LIST_L2, {
-    pollInterval: 13000,
+    pollInterval: 12000,
     client: L2_CLIENT,
     variables: isHistory
       ? {
@@ -212,7 +211,11 @@ export const useRequestData = (): {
 
         const result: CrossTradeData[] = datas.map((item) => {
           //  will be refactor with split functions
-          const tokenInfo = getSupportedTokenForCT(item._l2token);
+          const tokenInfo = getSupportedTokenForCT(
+            isZeroAddress(item._l2token)
+              ? "0x4200000000000000000000000000000000000006"
+              : item._l2token
+          );
           const isETH = isZeroAddress(item._l2token);
 
           const isCanceled = isRequestCanceled({
@@ -318,7 +321,9 @@ export const useRequestData = (): {
             isInRelay,
           };
         });
-        const trimedResult = result.filter((item) => item.isCanceled === false);
+        const trimedResult = result.filter(
+          (item) => !item.isCanceled && item.recevingUSD > item.providingUSD
+        );
         setIsLoading(false);
         return setRequestList(trimedResult);
       }

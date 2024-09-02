@@ -20,7 +20,6 @@ import {
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import TokenDetail from "@/staging/components/cross-trade/components/core/main/TokenDetail";
 import CTProvider from "@/staging/components/cross-trade/components/core/main/CTMainProvider";
-import { Tooltip } from "@/staging/components/common/Tooltip";
 import Image from "next/image";
 import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";

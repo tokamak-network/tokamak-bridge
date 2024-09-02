@@ -400,6 +400,7 @@ export const useRequestHistoryData = () => {
         const status = getRequestStatus({
           requestData,
           cancelCTs,
+          l1CancelCTs,
           providerClaimCTs,
           editCTs,
         });
@@ -471,10 +472,7 @@ export const useRequestHistoryData = () => {
         return result;
       });
 
-      console.log("trimedData", trimedData);
-
       const result = trimedData.filter((data) => data !== null);
-
       setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);

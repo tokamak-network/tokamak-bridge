@@ -67,14 +67,13 @@ export function getRemainTime(transactionData: TransactionHistory): number {
     }
     case TransactionStatus.REQUEST_CANCEL: {
       const CT_Request_TransactionData = transactionData as CT_Request_History;
-
       if (
         isInCT_REQUEST_CANCEL(CT_Request_TransactionData.status) &&
-        CT_Request_TransactionData.blockTimestamps.refund
+        CT_Request_TransactionData.blockTimestamps.cancelRequest
       ) {
         const timeValue = calculateInitialTime(
           statusValue,
-          CT_Request_TransactionData.blockTimestamps.refund,
+          CT_Request_TransactionData.blockTimestamps.cancelRequest,
           TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST,
           Boolean(transactionData.errorMessage)
         );
@@ -90,7 +89,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           CT_Request_TransactionData.blockTimestamps.provide,
-          TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
+          3,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
