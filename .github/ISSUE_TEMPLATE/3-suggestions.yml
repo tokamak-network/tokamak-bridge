@@ -1,0 +1,32 @@
+name: Cross Trade - Suggestion
+description: Make suggestions for Cross Trade service, such as UX/UI, features, etc.
+title: "[Cross Trade - Suggestion]: "
+labels: ["public test: cross trade"]
+assignees:
+  - suahnkim,monica-tokamak
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report! Not all suggestions can be reflected, but we will take your considerations into account.
+  - type: dropdown
+    id: feature
+    attributes:
+      label: What is your recommendation for?
+      multiple: true
+      options:
+        - Cross Trade Request UI
+        - Cross Trade Provide UI
+        - Cross Trade Liquidity page
+        - Cross Trade history tab
+        - Cross Trade Settings (fees, etc)
+        - Others
+  - type: textarea
+    id: suggestions
+    attributes:
+      label: Explain your suggestion
+      description: You can upload image to explain your suggestion. 
+      placeholder: Tell us what you see!
+      value: "Describe the suggestion and what kind of impact it will have"
+    validations:
+      required: true
