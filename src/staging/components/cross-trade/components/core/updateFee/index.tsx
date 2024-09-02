@@ -102,16 +102,15 @@ export default function CTFeeUpdateModal() {
     isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
       ? "0x4200000000000000000000000000000000000006"
       : ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
-  const { recommendedCtAmount: recommendValue, recommendedFee } =
-    useRecommendFee({
-      totalAmount: Number(
-        formatUnits(
-          totalAmount?.toString(),
-          ctUpdateFeeModal.txData?.inToken.decimals
-        )
-      ),
-      tokenAddress,
-    });
+  const { recommendedFee: recommendValue } = useRecommendFee({
+    totalAmount: Number(
+      formatUnits(
+        totalAmount?.toString(),
+        ctUpdateFeeModal.txData?.inToken.decimals
+      )
+    ),
+    tokenAddress,
+  });
 
   useEffect(() => {
     if (recommendValue) {

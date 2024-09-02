@@ -430,7 +430,6 @@ export const getRequestErrorMessage = (
   if (isInCT_REQUEST_CANCEL(status)) {
     const _blockTimestamp =
       blockTimestamp as CT_REQUEST_HISTORY_blockTimestamps;
-    console.log("_blockTimestamp", _blockTimestamp);
     if (_blockTimestamp.cancelRequest) {
       const isPassedCancelWaitingTime =
         _blockTimestamp.cancelRequest + 300 < Math.floor(Date.now() / 1000);
