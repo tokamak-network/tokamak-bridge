@@ -51,8 +51,6 @@ export default function CTMain() {
   const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[] | null>(null);
 
-  console.log("requestList", requestList);
-
   useEffect(() => {
     if (requestList) {
       setData(requestList);
