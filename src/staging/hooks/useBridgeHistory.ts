@@ -400,7 +400,9 @@ export const useDepositData = () => {
           return tx;
       });
       if (filteredResult) {
-        const newTitanDipositHistory = { ...titanSepoliaDipositHistory };
+        const newTitanDipositHistory = {
+          ...titanSepoliaDipositHistory,
+        };
         newTitanDipositHistory.latestBlockNumber =
           (l1TitanData?.sentMessages?.length ?? 0) > 0
             ? l1TitanData.sentMessages[0].blockNumber
@@ -486,7 +488,6 @@ export const useDepositData = () => {
           return result;
         })
       );
-
       const filteredResult = result.filter((tx) => {
         if (!(tx instanceof Error) && tx !== undefined && tx !== null)
           return tx;
@@ -497,7 +498,9 @@ export const useDepositData = () => {
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
       if (sortedResult) {
-        const newThanosDipositHistory = { ...thanosSepoliaDipositHistory };
+        const newThanosDipositHistory = {
+          ...thanosSepoliaDipositHistory,
+        };
         newThanosDipositHistory.latestBlockNumber =
           (l1ThanosData?.sentMessages?.length ?? 0) > 0
             ? l1ThanosData.sentMessages[0].blockNumber
@@ -792,7 +795,7 @@ const updatedHistory = (
   legacyHistory: DepositTransactionHistory[] | null,
   historyToUpdate: DepositTransactionHistory[]
 ) => {
-  if (historyToUpdate.length === 0) return legacyHistory;
+  if (historyToUpdate.length === 0) return legacyHistory ?? [];
   const firstBlocktimeStampToUpdate =
     historyToUpdate[historyToUpdate.length - 1].blockTimestamps;
 
