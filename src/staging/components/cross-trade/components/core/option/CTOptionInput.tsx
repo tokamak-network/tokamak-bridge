@@ -19,7 +19,6 @@ export default function CTOptionInput(props: CTInputProps) {
   } = props;
 
   const [isFocused, setIsFocused] = useState(false);
-
   const inputValue = useMemo(() => {
     if (isFocused) return _inputValue;
     if (_inputValue.length > 12) {
@@ -33,7 +32,6 @@ export default function CTOptionInput(props: CTInputProps) {
       <Flex w={"189px"}>
         <InputGroup my={"4px"}>
           <Input
-            autoFocus
             w={"189px"}
             h={"34px"}
             px="12px"

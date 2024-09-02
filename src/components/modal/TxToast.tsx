@@ -16,6 +16,12 @@ import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
+import {
+  selectedTab,
+  selectedTransactionCategory,
+} from "@/recoil/history/transaction";
+import { CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
+import { useRouter } from "next/navigation";
 
 type TransactionToastProp = TxInterface;
 
@@ -167,13 +173,41 @@ function TransactionToast(props: TransactionToastProp) {
   const [historyTabOpen, setHistoryTabOpen] =
     useRecoilState(accountDrawerStatus);
 
-  const needToOpenHistoryTab = txSort === "Deposit" || txSort === "Withdraw";
+  const needToOpenHistoryTab = useMemo(
+    () =>
+      txSort === "Deposit" ||
+      txSort === "Withdraw" ||
+      txSort === "Request" ||
+      txSort === "Provide",
+    [txSort]
+  );
 
+  const [, setSelectedTab] = useRecoilState(selectedTab);
+  const [, setSelectedTransactionCategory] = useRecoilState(
+    selectedTransactionCategory
+  );
+  const nativeToHistoryTab = () => setHistoryTabOpen(true);
+  const navigateToCrossTrade = () => setSelectedTab(HISTORY_SORT.CROSS_TRADE);
+  const isForCrossTrade = txSort === "Request" || txSort === "Provide";
+  const router = useRouter();
+  const openHistoryTab = () => {
+    nativeToHistoryTab();
+    if (isForCrossTrade) {
+      navigateToCrossTrade();
+      if (txSort === "Request") {
+        router.push(`/pools`);
+        return setSelectedTransactionCategory(CT_ACTION.REQUEST);
+      }
+      if (txSort === "Provide") {
+        return setSelectedTransactionCategory(CT_ACTION.PROVIDE);
+      }
+    }
+  };
   const clickTitle = useCallback(() => {
     needToOpenHistoryTab
-      ? setHistoryTabOpen(true)
+      ? openHistoryTab()
       : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
-  }, [props, blockExplorer, needToOpenHistoryTab]);
+  }, [props, blockExplorer, needToOpenHistoryTab, openHistoryTab]);
 
   useEffect(() => {
     if (historyTabOpen) toast.closeAll();

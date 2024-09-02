@@ -31,7 +31,7 @@ import CTOptionStandardDetail from "./CTOptionStandardDetail";
 import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
@@ -144,6 +144,7 @@ export default function CTOptionModal() {
     }
   };
 
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
@@ -215,8 +216,9 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {activeMainButtonValue === ButtonTypeMain.Standard ? (
-            // <CTOptionDisabledDetail />
+          {isConnectedToMainNetwork ? (
+            <CTOptionDisabledDetail />
+          ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             <CTOptionCrossDetail
               // cross, official 관련 props
               activeMainButtonValue={activeMainButtonValue}
