@@ -5,13 +5,17 @@ export const FETCH_USER_TRANSACTIONS_L1_TITAN = gql`
     $formattedAddress: String!
     $L1Bridge: String!
     $account: String!
+    $blockNumber: String!
   ) {
     sentMessages(
       where: {
         message_contains: $formattedAddress
         sender: $L1Bridge
         target: "0x4200000000000000000000000000000000000010"
+        blockNumber_gt: $blockNumber
       }
+      orderBy: blockTimestamp
+      orderDirection: desc
     ) {
       blockNumber
       blockTimestamp
@@ -66,22 +70,22 @@ export const FETCH_USER_TRANSACTIONS_L1_TITAN = gql`
       id
       transactionHash
     }
-    sentMessages(
-      where: {
-        message_contains: $formattedAddress
-        target: $L1Bridge
-        sender: "0x4200000000000000000000000000000000000010"
-      }
-    ) {
-      blockNumber
-      blockTimestamp
-      gasLimit
-      message
-      messageNonce
-      sender
-      target
-      transactionHash
-    }
+    # sentMessages(
+    #   where: {
+    #     message_contains: $formattedAddress
+    #     target: $L1Bridge
+    #     sender: "0x4200000000000000000000000000000000000010"
+    #   }
+    # ) {
+    #   blockNumber
+    #   blockTimestamp
+    #   gasLimit
+    #   message
+    #   messageNonce
+    #   sender
+    #   target
+    #   transactionHash
+    # }
   }
 `;
 
@@ -92,6 +96,7 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
     $L1UsdcBridge: String!
     $account: String!
     $remoteToken: String!
+    $blockNumber: String!
   ) {
     sentMessages(
       where: {
@@ -101,9 +106,11 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
           "0x4200000000000000000000000000000000000010"
           "0x4200000000000000000000000000000000000775"
         ]
+        blockNumber_gt: $blockNumber
       }
-      orderBy: blockTimestamp
+      orderBy: blockNumber
       orderDirection: desc
+      first: 10
     ) {
       blockNumber
       blockTimestamp
@@ -114,7 +121,9 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       target
       transactionHash
     }
-    erc20DepositInitiateds(where: { from: $account }) {
+    erc20DepositInitiateds(
+      where: { from: $account, blockNumber_gt: $blockNumber }
+    ) {
       id
       l1Token
       l2Token
@@ -126,7 +135,9 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       blockTimestamp
       transactionHash
     }
-    erc20WithdrawalFinalizeds(where: { from: $account }) {
+    erc20WithdrawalFinalizeds(
+      where: { from: $account, blockNumber_gt: $blockNumber }
+    ) {
       id
       l1Token
       l2Token
@@ -138,7 +149,9 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       blockTimestamp
       transactionHash
     }
-    ethdepositInitiateds(where: { from: $account }) {
+    ethdepositInitiateds(
+      where: { from: $account, blockNumber_gt: $blockNumber }
+    ) {
       from
       extraData
       amount
@@ -148,7 +161,9 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       id
       transactionHash
     }
-    ethwithdrawalFinalizeds(where: { from: $account }) {
+    ethwithdrawalFinalizeds(
+      where: { from: $account, blockNumber_gt: $blockNumber }
+    ) {
       amount
       extraData
       from
@@ -159,8 +174,12 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       transactionHash
     }
     erc20BridgeInitiateds(
-      where: { remoteToken: $remoteToken, from: $account }
-      orderBy: blockTimestamp
+      where: {
+        remoteToken: $remoteToken
+        from: $account
+        blockNumber_gt: $blockNumber
+      }
+      orderBy: blockNumber
       orderDirection: desc
     ) {
       id

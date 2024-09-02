@@ -9,7 +9,7 @@ import { stat } from "fs";
 import abi from "@/constant/abis/L2CrossDomainMessenger.json";
 
 export type CurrentStatus = 0 | 1 | 2 | 3 | 4;
-export type CurrentDepositStatus = 0 | 4;
+export type CurrentDepositStatus = 0 | 3 | 4;
 export type StateBatchAppended = {
   blockNumber: BigInt | number;
   blockTimestamp: number;
@@ -199,5 +199,5 @@ export const getCurrentDepositStatus = async (
 
     return { currentStatus: 4, relayedMessageTx };
   }
-  return { currentStatus: 0, relayedMessageTx: undefined };
+  return { currentStatus: 3, relayedMessageTx: undefined };
 };

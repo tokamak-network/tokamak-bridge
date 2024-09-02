@@ -7,7 +7,7 @@ export function useCountdown(initialTime: string, errorType?: boolean) {
   );
 
   useEffect(() => {
-    if (!errorType && (time === "00 : 00" || time === "00 : 00 : 00")) return;
+    if (!errorType && (time === "00 : 01" || time === "00 : 00 : 01")) return;
 
     const countdown = setInterval(() => {
       const timeParts = time.split(" : ").map(Number);

@@ -1,3 +1,5 @@
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+
 // index.tsx
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
@@ -13,4 +15,10 @@ export const TRANSACTION_CONSTANTS = {
     CANCEL_REQUEST: 300,
     RETURN_LIQUIDITY: 300,
   },
+};
+
+export const getTransactionConstants = (chain: SupportedChainId) => {
+  if (chain === SupportedChainId.THANOS_SEPOLIA) {
+    return { ...TRANSACTION_CONSTANTS, DEPOSIT: { INITIAL_MINUTES: 1.5 } };
+  } else return TRANSACTION_CONSTANTS;
 };

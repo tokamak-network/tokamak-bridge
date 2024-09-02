@@ -28,6 +28,13 @@ export enum Status {
   Finalize = "Finalize",
   Completed = "Completed",
 }
+
+export enum ProgressStatus {
+  Done = "Done",
+  Doing = "Doing",
+  Todo = "Todo",
+}
+
 export enum CT_REQUEST {
   Request = "CT_REQ_REQUEST",
   UpdateFee = "CT_REQ_UPDATE_FEE",
@@ -110,6 +117,12 @@ export interface DepositTransactionHistory extends BaseTransactionHistory {
     initialTransactionHash: string;
     finalizedTransactionHash?: string;
   };
+}
+
+export interface CurrentDepositTransaction {
+  latestBlockNumber: string;
+  latestRelayedBlockNumber?: string;
+  history: DepositTransactionHistory[] | null;
 }
 
 export type CT_REQUEST_HISTORY_blockTimestamps = {

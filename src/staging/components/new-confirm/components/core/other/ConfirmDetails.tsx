@@ -31,7 +31,6 @@ interface ConfirmDetailProps {
 
 export default function ConfirmDetails(props: ConfirmDetailProps) {
   const { isInNetwork, transactionHistory } = props;
-  const { inNetwork, outNetwork } = useInOutNetwork();
 
   if (!transactionHistory) {
     return null;
@@ -130,14 +129,16 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
             href={`${
               BLOCKEXPLORER_CONSTANTS[
                 isInNetwork
-                  ? inNetwork?.chainId ?? SupportedChainId.MAINNET
-                  : outNetwork?.chainId ?? SupportedChainId.MAINNET
+                  ? transactionHistory?.inNetwork ?? SupportedChainId.MAINNET
+                  : transactionHistory?.outNetwork ?? SupportedChainId.MAINNET
               ]
             }/address/${getTokenAddressByChainId(
               isInNetwork
                 ? (transactionHistory.inToken.symbol as string)
                 : (transactionHistory.outToken.symbol as string),
-              isInNetwork ? inNetwork?.chainId : outNetwork?.chainId
+              isInNetwork
+                ? transactionHistory.inNetwork
+                : transactionHistory.outNetwork
             )}`}
           >
             <TokenSymbol
