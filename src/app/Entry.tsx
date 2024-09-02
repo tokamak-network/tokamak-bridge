@@ -13,7 +13,8 @@ import Footer from "@/components/footer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
 /**
- * test commit to build for new test site domain
+ * test domain building commit
+ * test.app.bridge.tokamak.network
  * 2024-08-30
  */
 
