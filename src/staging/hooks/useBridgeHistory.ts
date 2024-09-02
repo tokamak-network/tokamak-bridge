@@ -471,10 +471,7 @@ export const useRequestHistoryData = () => {
         return result;
       });
 
-      console.log("trimedData", trimedData);
-
       const result = trimedData.filter((data) => data !== null);
-
       setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);

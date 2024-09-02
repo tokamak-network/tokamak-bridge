@@ -21,7 +21,6 @@ import {
   isRequestProvidedOnL1,
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
-import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import { getCTTokenPrice } from "../utils/getCTTokenPrice";
 
 const getApolloClient = (chainId: number) => {
@@ -212,7 +211,11 @@ export const useRequestData = (): {
 
         const result: CrossTradeData[] = datas.map((item) => {
           //  will be refactor with split functions
-          const tokenInfo = getSupportedTokenForCT(item._l2token);
+          const tokenInfo = getSupportedTokenForCT(
+            isZeroAddress(item._l2token)
+              ? "0x4200000000000000000000000000000000000006"
+              : item._l2token
+          );
           const isETH = isZeroAddress(item._l2token);
 
           const isCanceled = isRequestCanceled({
