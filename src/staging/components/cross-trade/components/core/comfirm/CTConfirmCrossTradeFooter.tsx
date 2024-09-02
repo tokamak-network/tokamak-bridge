@@ -29,6 +29,7 @@ import { formatUnits } from "@/utils/trim/convertNumber";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useAccount } from "wagmi";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -76,12 +77,13 @@ export default function CTConfirmCrossTradeFooter(
     useApprove("Cross Trade");
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
+  const { isBalanceOver } = useInputBalanceCheck();
 
   const btnDisabled = useMemo(() => {
     if (!isConnected) {
       return !provideConfirmed;
     }
-    if (!isApproved) return true;
+    if (!isApproved || isBalanceOver) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
     return !isChecked.firstChecked || !isChecked.secondChecked;
   }, [
@@ -91,7 +93,19 @@ export default function CTConfirmCrossTradeFooter(
     isApproved,
     connectedToLayer1,
     isConnected,
+    isBalanceOver,
   ]);
+  const buttonName = useMemo(() => {
+    return !isConnected
+      ? "Connect Wallet"
+      : isProvide && !connectedToLayer1
+      ? "Wrong Network "
+      : isProvide
+      ? isBalanceOver
+        ? "Insufficient Balance"
+        : "Provide"
+      : "Request";
+  }, [isConnected, isProvide, connectedToLayer1, isBalanceOver]);
 
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
@@ -400,13 +414,7 @@ export default function CTConfirmCrossTradeFooter(
           }}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-            {!isConnected
-              ? "Connect Wallet"
-              : isProvide && !connectedToLayer1
-              ? "Wrong Network "
-              : isProvide
-              ? "Provide"
-              : "Request"}
+            {buttonName}
           </Text>
         </Button>
       </Flex>
