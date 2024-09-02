@@ -11,22 +11,25 @@ import commafy from "@/utils/trim/commafy";
 interface TokenDetailProps {
   token?: Token;
   network?: number;
+  isProvide?: boolean;
+  providingUSD?: number;
+  recevingUSD?: number;
   profit?: Profit;
 }
 
 export default function TokenDetail(props: TokenDetailProps) {
-  const { token, network, profit } = props;
+  const { token, network, profit, isProvide, providingUSD, recevingUSD } =
+    props;
 
   const formattedAmount = token
     ? convertNumber(token.amount, token.decimals)
     : profit?.amount;
 
   const symbol = token ? token.symbol : profit?.symbol;
-
-  const { tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: token?.name,
-    amount: formatUnits(token?.amount, token?.decimals),
-  });
+  const tokenPriceWithAmount = useMemo(() => {
+    if (isProvide) return providingUSD;
+    return recevingUSD;
+  }, [isProvide, providingUSD, recevingUSD]);
 
   const priceOrPercent = useMemo(() => {
     if (token) {
@@ -36,7 +39,7 @@ export default function TokenDetail(props: TokenDetailProps) {
   }, [tokenPriceWithAmount, profit?.percent]);
 
   return (
-    <Flex>
+    <Flex columnGap={"13px"}>
       {network && token && (
         <TokenSymbolWithNetwork
           tokenSymbol={token.symbol}
@@ -47,7 +50,7 @@ export default function TokenDetail(props: TokenDetailProps) {
           symbolH={32}
         />
       )}
-      <Box ml="10px">
+      <Box>
         <Flex alignItems={"center"}>
           <Text
             fontWeight={500}

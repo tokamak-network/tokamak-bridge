@@ -11,6 +11,7 @@ import {
   HISTORY_SORT,
   CT_ACTION,
   CT_PROVIDE,
+  CT_REQUEST,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
@@ -40,6 +41,7 @@ export default function CTProvider({
     inToken,
     outToken,
     serviceFee,
+    isInRelay,
   } = crossTradeData;
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
@@ -68,28 +70,29 @@ export default function CTProvider({
 
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
-  const openUpdateModal = useCallback(() => {
+
+  const openUpdateModal = () => {
     onCloseCTConfirmModal();
-    // onOpenCTUpdateFeeModal({
-    //     category: HISTORY_SORT.CROSS_TRADE,
-    //     action: CT_ACTION.PROVIDE,
-    //     status: CT_PROVIDE.Provide,
-    //     inNetwork,
-    //     outNetwork,
-    //     inToken,
-    //     outToken,
-    //     blockTimestamps: {
-    //       provide: 0,
-    //     },
-    //     transactionHashes: {
-    //       provide: "",
-    //     },
-    //     serviceFee,
-    //   },
-    //   isProvide: true,
-    //   subgraphData,
-    // });
-  }, []);
+    onOpenCTUpdateFeeModal({
+      category: HISTORY_SORT.CROSS_TRADE,
+      action: CT_ACTION.REQUEST,
+      status: CT_REQUEST.Request,
+      inNetwork,
+      outNetwork,
+      inToken,
+      outToken,
+      blockTimestamps: {
+        request: 0,
+      },
+      transactionHashes: {
+        request: "",
+      },
+      isCanceled: false,
+      isUpdateFee: false,
+      serviceFee,
+      L2_subgraphData: subgraphData,
+    });
+  };
 
   const renderButton = () => {
     // if (status === STATUS.COUNTDOWN && blockTimestamps) {
@@ -124,17 +127,19 @@ export default function CTProvider({
       );
     }, [address, crossTradeData.requester]);
 
-    const isDisabled = status;
-    const bgColor = isDisabled
-      ? "#23242B"
-      : isCreatedByUser
-      ? "none"
-      : "#007AFF";
-    const textColor = isDisabled
-      ? "#A0A3AD"
-      : isCreatedByUser
-      ? "#DB00FF"
-      : "#FFFFFF";
+    const isDisabled = isInRelay;
+    const bgColor =
+      isDisabled || isInRelay
+        ? "#23242B"
+        : isCreatedByUser
+        ? "none"
+        : "#007AFF";
+    const textColor =
+      isDisabled || isInRelay
+        ? "#A0A3AD"
+        : isCreatedByUser
+        ? "#DB00FF"
+        : "#FFFFFF";
 
     return (
       <Button
@@ -147,7 +152,13 @@ export default function CTProvider({
         flexShrink={0}
         borderRadius={"6px"}
         bg={bgColor}
-        border={isCreatedByUser ? "1px solid var(--X-Trade, #DB00FF);" : "none"}
+        border={
+          isInRelay
+            ? "none"
+            : isCreatedByUser
+            ? "1px solid var(--X-Trade, #DB00FF);"
+            : "none"
+        }
         isDisabled={isDisabled}
         _active={{}}
         _hover={{}}
@@ -156,7 +167,7 @@ export default function CTProvider({
           opacity: 1,
         }}
         cursor={"pointer"}
-        onClick={openProvideModal}
+        onClick={isCreatedByUser ? openUpdateModal : openProvideModal}
       >
         <Text
           fontWeight={600}
@@ -164,7 +175,7 @@ export default function CTProvider({
           lineHeight={"16.5px"}
           color={textColor}
         >
-          {isCreatedByUser ? "Edit" : "Provide"}
+          {isInRelay ? "Provided" : isCreatedByUser ? "Edit" : "Provide"}
         </Text>
       </Button>
     );

@@ -43,7 +43,8 @@ export const getSupportedTokenForCT = (tokenAddress: string) => {
       //need to refactor index later
       //it's only for test demo now
       return isIncluded &&
-        supportedAddresses[4]?.toLocaleLowerCase() === tokenAddress
+        supportedAddresses[4]?.toLocaleLowerCase() ===
+          tokenAddress.toLocaleLowerCase()
         ? token
         : null;
     })

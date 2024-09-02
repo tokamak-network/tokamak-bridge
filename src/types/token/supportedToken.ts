@@ -6,7 +6,6 @@ import {
   THANOS_SEPOLIA_CONTRACTS,
   TITAN_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
-import { ZERO_ADDRESS } from "@/constant/misc";
 
 type SupportedMainTokenNames =
   | "Tokamak Network Token"
@@ -51,10 +50,10 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "ETH",
     address: {
       MAINNET: "",
-      TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
+      TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       SEPOLIA: "",
       THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
+      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: [

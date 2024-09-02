@@ -39,11 +39,7 @@ import {
   getTransaction,
   getTransactionToken,
 } from "@/utils/history/getTransaction";
-import {
-  useCrossTradeData_L1,
-  useRequestData,
-  useCrossTradeData_L2,
-} from "./useCrossTrade";
+import { useCrossTradeData_L1, useCrossTradeData_L2 } from "./useCrossTrade";
 import {
   getEditCTTransaction,
   getProvideErrorMessage,
@@ -227,7 +223,7 @@ export const useWithdrawData = () => {
           });
 
           if (blockTimestamps instanceof Error) {
-            return;
+            return new Error("Invalid transaction");
           }
 
           const result: WithdrawTransactionHistory = {
@@ -250,7 +246,7 @@ export const useWithdrawData = () => {
       );
 
       const filteredResult = result.filter(
-        (tx) => !(tx instanceof Error) || tx !== undefined
+        (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
@@ -346,14 +342,14 @@ export const useDepositData = () => {
       );
 
       const filteredResult = result.filter((tx) => {
-        if (!(tx instanceof Error) || tx !== undefined) return tx;
+        if (!(tx instanceof Error) && tx !== undefined && tx !== null)
+          return tx;
       });
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
     }
@@ -386,6 +382,7 @@ export const useRequestHistoryData = () => {
       const cancelCTs = l2Data.cancelCTs;
       const providerClaimCTs = l2Data.providerClaimCTs;
       const editCTs = l1Data.editCTs;
+      const l1CancelCTs = l1Data.l1CancelCTs;
 
       const trimedData = requestCTs.map((requestData) => {
         const {
@@ -403,6 +400,7 @@ export const useRequestHistoryData = () => {
         const status = getRequestStatus({
           requestData,
           cancelCTs,
+          l1CancelCTs,
           providerClaimCTs,
           editCTs,
         });
@@ -419,6 +417,7 @@ export const useRequestHistoryData = () => {
         const blockTimestamps = getRequestBlockTimestamp({
           status,
           requestData,
+          l1CancelCTs,
           cancelCTs,
           providerClaimCTs,
           editCTs,
@@ -432,10 +431,12 @@ export const useRequestHistoryData = () => {
         const transactionHashes = getRequestTransactionHash({
           status,
           requestData,
+          l1CancelCTs,
           cancelCTs,
           providerClaimCTs,
           editCTs,
         });
+
         const ctAmount = isUpdateFee
           ? BigInt(editCT._ctAmount)
           : BigInt(_ctAmount);
@@ -551,14 +552,13 @@ export const useProvideData = () => {
           transactionHashes,
           serviceFee,
           errorMessage: getProvideErrorMessage(status, blockTimestamps),
+          L1_subgraphData: provideCT,
         };
       });
 
       setProvideHistory(trimedData);
     }
   }, [l1Data, l2Data]);
-
-  console.log("provideHistory", provideHistory);
 
   return { provideHistory };
 };

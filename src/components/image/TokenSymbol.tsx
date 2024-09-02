@@ -13,6 +13,7 @@ import SYMBOL_LYDA from "assets/tokens/lyda.svg";
 import SYMBOL_USDC from "assets/tokens/usdc.svg";
 import SYMBOL_USDT from "assets/tokens/usdt.svg";
 import SYMBOL_NOSYMBOL from "assets/tokens/noSymbol.svg";
+import { motion } from "framer-motion";
 
 export default function ImageSymbol(props: {
   ImgFile: ImageFileType;
@@ -20,18 +21,29 @@ export default function ImageSymbol(props: {
   h?: number;
 }) {
   return (
-    <Flex
-      w={`${props.w ?? 96}px`}
-      maxW={`${props.w ?? 96}px`}
-      h={`${props.h ?? 96}px `}
-      maxH={`${props.h ?? 96}px `}
+    <motion.div
+      initial={{
+        width: `${props.w ?? 86}px`,
+        maxWidth: `${props.w ?? 86}px`,
+        height: `${props.h ?? 86}px`,
+        maxHeight: `${props.h ?? 86}px`,
+      }}
+      animate={{
+        width: `${props.w ?? 86}px`,
+        maxWidth: `${props.w ?? 86}px`,
+        height: `${props.h ?? 86}px`,
+        maxHeight: `${props.h ?? 86}px`,
+      }}
+      transition={{ duration: 0.5 }}
     >
-      <Image
-        src={props.ImgFile}
-        alt={"img"}
-        style={{ width: `100%`, height: `100%` }}
-      />
-    </Flex>
+      <Flex style={{ width: `100%`, height: `100%` }}>
+        <Image
+          src={props.ImgFile}
+          alt={"img"}
+          style={{ width: `100%`, height: `100%` }}
+        />
+      </Flex>
+    </motion.div>
   );
 }
 

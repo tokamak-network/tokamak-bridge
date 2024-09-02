@@ -17,6 +17,9 @@ jobs:
       OWNER: victor
       ENV: ${{ inputs.environment }}
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      DEPLOYMENT_MODE: ${{ inputs.environment == 'production' && '--prod' || '' }}
 
     steps:
       #INSTALL NODEJS
@@ -24,16 +27,16 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: "21"
-      #INSTALL VERCEL CLI IN SERVER.
+          node-version: "20"
+      # INSTALL VERCEL CLI IN SERVER.
       - name: Install Vercel CLI
-        run: yarn global add vercel
-      #PULL VERCEL ENV
-      - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=${{env.ENV}} --token=${{ env.VERCEL_TOKEN }}
-      #INSTALL DEPENDENCIES
+        run: npm install -g vercel
+      # INSTALL DEPENDENCIES
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: npm install
+      # PULL VERCEL ENV
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
       # DEPLOY TO VERCEL
       - name: Deploy to Vercel
-        run: vercel --prod --confirm --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}
+        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}

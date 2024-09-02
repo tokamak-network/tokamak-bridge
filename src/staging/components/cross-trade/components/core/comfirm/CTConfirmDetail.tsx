@@ -1,4 +1,4 @@
-import { Box, HStack, Flex, Center, Text } from "@chakra-ui/react";
+import { Box, HStack, Flex, Center, Text, Link } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import Pencil from "assets/icons/ct/pencil.svg";
@@ -15,15 +15,22 @@ import {
   isInCT_Provide,
   isInCT_REQUEST,
 } from "@/staging/types/transaction";
-import { sub } from "date-fns";
 import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { LinkContainer } from "@/staging/components/common/LinkContainer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
-import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import CustomTooltip, {
+  CustomTooltipWithQuestion,
+} from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/questionGray.svg";
+import formatNumber from "@/staging/utils/formatNumbers";
+import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
+import { trimAddress } from "@/utils/trim";
+import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
+import { useGetMode } from "@/hooks/mode/useGetMode";
 
 interface TransactionDetailProps {
   title: string;
@@ -82,16 +89,22 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
         >
           {title}
         </Text>
-        <CustomTooltip
-          content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
-          tooltipLabel={tooltipMessage}
-          style={{
-            px: "8px",
-            py: "10px",
-            tooltipLineHeight: "15x",
-            height: "normal",
-          }}
-        />
+        {!isCanceled && (
+          <CustomTooltipWithQuestion
+            // tooltipLabel={
+            //   <Image src={QuestionIcon} alt={"QuestionIcon"}></Image>
+            // }
+            isGrayIcon={true}
+            tooltipLabel={tooltipMessage}
+            style={{
+              px: "8px",
+              py: "10px",
+              tooltipLineHeight: "15x",
+              height: "normal",
+            }}
+            containerSyle={{ marginLeft: "2px" }}
+          />
+        )}
       </Flex>
       <Box>
         <Flex justifyContent={"space-between"} alignItems={"center"}>
@@ -142,12 +155,14 @@ interface FeeDetailProps {
   modalType?: ModalType;
   onPencilClick?: () => void;
   isCompleted?: boolean;
+  txHash?: string;
 }
 
 interface CTConfirmDetailProps {
   modalType: ModalType;
   txData: CT_History | null;
   onPencilClick: () => void;
+  requester?: string;
 }
 
 const FeeDetail: React.FC<FeeDetailProps> = ({
@@ -159,23 +174,39 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   inNetwork,
   outNetwork,
   isCompleted,
+  txHash,
 }) => {
+  const { ethereumExplorer } = useBlockExplorer();
   return (
     <HStack
       justify="space-between"
       lineHeight={"18px"}
-      mt={title === "Service fee" || title === "Network fee" ? "6px" : "0"}
+      mt={
+        title === "Service fee" ||
+        title === "Network fee" ||
+        title === "Send to"
+          ? "6px"
+          : "0"
+      }
     >
       <Flex alignItems="center">
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
           {title}
         </Text>
         {title == "Service fee" && (
-          <Tooltip
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
             tooltipLabel={
               "The service fee incentivizes the liquidity provider to accept the request. The amount received on L1 is calculated after deducting this fee."
             }
-            style={{ marginLeft: "2px" }}
+            style={{
+              width: "288px",
+              height: "70px",
+              py: "10px",
+              px: "8px",
+              tooltipLineHeight: "normal",
+            }}
+            containerSyle={{ marginLeft: "2px" }}
           />
         )}
       </Flex>
@@ -193,6 +224,19 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
             networkH={14}
             networkW={14}
           />
+        ) : title === "Send to" ? (
+          <Link
+            fontSize={12}
+            href={`${ethereumExplorer}/address/${txHash}`}
+            isExternal={true}
+          >
+            {trimAddress({
+              address: txHash,
+              firstChar: 6,
+              lastChar: 6,
+              dots: "...",
+            })}
+          </Link>
         ) : (
           <>
             {title == "Service fee" &&
@@ -224,13 +268,14 @@ export default function CTConfirmDetail({
   modalType,
   onPencilClick,
   txData,
+  requester,
 }: CTConfirmDetailProps) {
   if (txData === null) return null;
 
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
-  const isProvide = isInCT_Provide(status);
-  const isRequest = isInCT_REQUEST(status);
+  const isProvide = isInCT_Provide(status) && modalType === "trade";
+  const commonProvideStyle = isInCT_Provide(status);
   const isCanceled = getCancelValueFromCTRequestHistory(txData);
   const updateFee = ableToUpdateFee(txData);
   const { tokenPriceWithAmount: inTokenPrice } = useGetMarketPrice({
@@ -244,21 +289,21 @@ export default function CTConfirmDetail({
 
   const sendTokenInfo = {
     title: isProvide ? "Provide" : isCanceled ? "Refund" : "Request",
-    mainValue: `${convertNumber(inToken.amount, inToken.decimals)} ${
-      inToken.symbol
-    }`,
+    mainValue: `${formatNumber(
+      convertNumber(inToken.amount, inToken.decimals)
+    )} ${inToken.symbol}`,
     subValue: `$${commafy(inTokenPrice)}`,
-    chainId: isProvide ? outNetwork : inNetwork,
+    chainId: isProvide && modalType === "trade" ? outNetwork : inNetwork,
     tokenSymbol: inToken.symbol,
     tokenAddress: inToken.address,
   };
   const outTokenInfo = {
     title: "Receive",
-    mainValue: `${convertNumber(outToken.amount, outToken.decimals)} ${
-      outToken.symbol
-    }`,
+    mainValue: `${formatNumber(
+      convertNumber(outToken.amount, outToken.decimals)
+    )} ${outToken.symbol}`,
     subValue: `$${commafy(outTokenPrice)}`,
-    chainId: isProvide ? inNetwork : outNetwork,
+    chainId: isProvide && modalType === "trade" ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,
     tokenAddress: outToken.address,
   };
@@ -270,6 +315,11 @@ export default function CTConfirmDetail({
     amount: serviceFee,
     tokenName: inToken.name,
   });
+  const { estimatedGasFeeUSD, estimatedGasFeeETH } = useCrossTradeGasFee(
+    isProvide
+      ? CTTransactionType.provideCT
+      : CTTransactionType.requestRegisteredToken
+  );
 
   return (
     <Box
@@ -304,7 +354,7 @@ export default function CTConfirmDetail({
             outNetwork={isProvide ? inNetwork : outNetwork}
           />
         )}
-        {!isCanceled && (updateFee || isProvide) && (
+        {!isCanceled && updateFee && !isProvide && (
           <FeeDetail
             title="Service fee"
             mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}
@@ -314,11 +364,12 @@ export default function CTConfirmDetail({
             isCompleted={isCompleted}
           />
         )}
+        {commonProvideStyle && <FeeDetail title="Send to" txHash={requester} />}
         {modalType === ModalType.Trade && (
           <FeeDetail
             title="Network fee"
-            mainAmount="0.16 ETH"
-            subAmount="$0.43"
+            mainAmount={`${formatNumber(estimatedGasFeeETH)} ETH`}
+            subAmount={`$${commafy(estimatedGasFeeUSD)}`}
           />
         )}
       </Box>

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
   Box,
   Text,
@@ -17,10 +17,11 @@ import { WarningType } from "@/staging/components/cross-trade/types";
 import { TransactionToken } from "@/staging/types/transaction";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
+import useCTRecommend from "../../../hooks/useCTRecommend";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
-  recommendValue: string;
+  recommendValue?: string;
   onRecommendRefresh: () => void;
   tokenInfo: TransactionToken;
 }
@@ -29,7 +30,7 @@ export default function CTUpdateInput(
   props: CTInputProps & AdditionalDetailProps
 ) {
   const {
-    inputValue,
+    inputValue: _inputValue,
     inputWarningCheck,
     onInputChange,
     onInputFocus,
@@ -42,6 +43,14 @@ export default function CTUpdateInput(
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
+  const inputValue = useMemo(() => {
+    if (isFocused) return _inputValue;
+    if (_inputValue.length > 12) {
+      return `${_inputValue.slice(0, 15)}...`;
+    }
+    return _inputValue;
+  }, [_inputValue, isFocused]);
+
   const handleBoxClick = () => {
     if (inputRef.current) {
       // onfocus 트리거
@@ -52,6 +61,12 @@ export default function CTUpdateInput(
   const handleBlur = () => {
     setIsFocused(false);
   };
+
+  const refreshButtonActive = useMemo(() => {
+    if (recommendValue && _inputValue && recommendValue === _inputValue)
+      return true;
+    return false;
+  }, [_inputValue, recommendValue, recommendCheck]);
 
   return (
     <>
@@ -81,7 +96,7 @@ export default function CTUpdateInput(
             }}
             cursor="pointer"
           >
-            {recommendCheck ? (
+            {refreshButtonActive ? (
               <Image src={CTReCircle} alt={"CTReCircle"} />
             ) : (
               <Image src={CTReCirclePurple} alt={"CTReCirclePurple"} />
@@ -137,7 +152,7 @@ export default function CTUpdateInput(
       <Box mt={"8px"}>
         {inputWarningCheck == WarningType.Critical ? (
           <CTWarning
-            label={"text will be changed"}
+            label={"Service fee is too high. Invalid request."}
             type={inputWarningCheck}
             groupStyle={{
               height: "16px",
@@ -151,7 +166,7 @@ export default function CTUpdateInput(
           />
         ) : inputWarningCheck == WarningType.Normal ? (
           <CTWarning
-            label={"text will be changed"}
+            label={"Service fee is low. May take long time"}
             type={inputWarningCheck}
             groupStyle={{
               height: "16px",

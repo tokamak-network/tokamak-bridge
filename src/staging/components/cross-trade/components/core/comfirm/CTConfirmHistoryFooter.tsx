@@ -1,19 +1,20 @@
-import { Box, Text, Flex, Center, Link } from "@chakra-ui/react";
-import ThanosSymbol_bg from "assets/icons/ct/thanos_symbol_bg_white.svg";
+import { Box, Text, Flex, Link } from "@chakra-ui/react";
 import txlink from "@/assets/icons/ct/txlink.svg";
 import Image from "next/image";
 import CTTimeline from "./CTTimeLine";
-import { CT_History, isInCT_REQUEST } from "@/staging/types/transaction";
+import {
+  CT_History,
+  isInCT_REQUEST,
+  isInCT_REQUEST_CANCEL,
+} from "@/staging/types/transaction";
 import { useMemo } from "react";
-import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
-import useConnectedNetwork from "@/hooks/network";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import { ErrorRollupComponent } from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
+import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
 
 interface TransactionItemProps {
   title: string;
@@ -25,7 +26,7 @@ interface TransactionItemProps {
 }
 
 const TransactionItem = (props: TransactionItemProps) => {
-  const { title, isActive, txHash, isError, blockTimestamp, txData } = props;
+  const { title, isActive, txHash, isError, txData } = props;
   const isOnError = isActive && isError;
 
   const _title = useMemo(() => {
@@ -95,14 +96,53 @@ const TransactionItem = (props: TransactionItemProps) => {
 
   return (
     <Flex justifyContent={"space-between"}>
-      <Text
-        fontWeight={600}
-        fontSize={"15px"}
-        lineHeight={"20px"}
-        color={isActive ? "#FFFFFF" : "#A0A3AD"}
-      >
-        {_title}
-      </Text>
+      <Flex columnGap={"2px"} alignItems={"center"}>
+        <Text
+          fontWeight={600}
+          fontSize={"15px"}
+          lineHeight={"20px"}
+          color={isActive ? "#FFFFFF" : "#A0A3AD"}
+        >
+          {_title}
+        </Text>
+        {_title === "Receive" && (
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
+            style={{
+              width: "223px",
+              height: "53px",
+              tooltipLineHeight: "normal",
+              px: "8px",
+              py: "10px",
+            }}
+            tooltipLabel={
+              <span>
+                It take at least 2~5 minutes to receive <br />
+                (depending on the L2 sequencer).{" "}
+              </span>
+            }
+          />
+        )}
+        {_title === "Refund" && (
+          <CustomTooltipWithQuestion
+            isGrayIcon={true}
+            style={{
+              width: "223px",
+              height: "53px",
+              tooltipLineHeight: "normal",
+              px: "8px",
+              py: "10px",
+            }}
+            tooltipLabel={
+              <span>
+                The refund takes at least 2~5 minutes
+                <br />
+                (depending on the L2 sequencer).{" "}
+              </span>
+            }
+          />
+        )}
+      </Flex>
       <Flex>
         {!isActive && (txHash !== undefined || txHash !== "") && (
           <Flex cursor={"pointer"}>
@@ -190,10 +230,12 @@ export default function CTConfirmHistoryFooter(props: {
             key !== "return"
           )
             return null;
+          const isCancelCompleted =
+            isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
             return (
               <TransactionItem
-                title={key}
+                title={isCancelCompleted ? "refund" : key}
                 isActive={isActive}
                 txHash={hash}
                 isError={isError}

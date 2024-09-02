@@ -8,15 +8,30 @@ import {
 import { CTWarning } from "@/staging/components/cross-trade/components/CTWarning";
 import { CTInputProps } from "@/staging/components/cross-trade/types";
 import { WarningType } from "@/staging/components/cross-trade/types";
+import { useMemo, useState } from "react";
 
 export default function CTOptionInput(props: CTInputProps) {
-  const { inputValue, inputWarningCheck, onInputChange, inTokenSymbol } = props;
+  const {
+    inputValue: _inputValue,
+    inputWarningCheck,
+    onInputChange,
+    inTokenSymbol,
+  } = props;
+
+  const [isFocused, setIsFocused] = useState(false);
+  const inputValue = useMemo(() => {
+    if (isFocused) return _inputValue;
+    if (_inputValue.length > 12) {
+      return `${_inputValue.slice(0, 12)}...`;
+    }
+    return _inputValue;
+  }, [_inputValue, isFocused]);
+
   return (
     <>
       <Flex w={"189px"}>
         <InputGroup my={"4px"}>
           <Input
-            autoFocus
             w={"189px"}
             h={"34px"}
             px="12px"
@@ -32,6 +47,10 @@ export default function CTOptionInput(props: CTInputProps) {
             fontWeight={600}
             lineHeight={"26px"}
             placeholder="Enter amount"
+            onFocus={() => {
+              setIsFocused(true);
+            }}
+            onBlur={() => setIsFocused(false)}
             onChange={onInputChange}
             value={inputValue}
             color={
@@ -50,7 +69,7 @@ export default function CTOptionInput(props: CTInputProps) {
               boxShadow: "0 0 0 0.1px #59628D",
             }}
           />
-          {inputValue && (
+          {inputValue && !isFocused && (
             <InputRightElement height={"34px"} mr={"8px"}>
               <Text
                 fontSize={"12px"}
@@ -69,7 +88,7 @@ export default function CTOptionInput(props: CTInputProps) {
           label={"Service fee is too high. Invalid request."}
           type={inputWarningCheck}
           groupStyle={{
-            height: "14px",
+            height: "16px",
           }}
           style={{
             fontWeight: 400,
@@ -83,7 +102,7 @@ export default function CTOptionInput(props: CTInputProps) {
           label={"Service fee is low. May take long time."}
           type={inputWarningCheck}
           groupStyle={{
-            height: "14px",
+            height: "16px",
           }}
           style={{
             fontWeight: 400,

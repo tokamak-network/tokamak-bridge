@@ -11,30 +11,30 @@ import {
   ModalFooter,
   Checkbox,
 } from "@chakra-ui/react";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import {
   WarningType,
   UpdateFeeButtonType,
 } from "@/staging/components/cross-trade/types";
 import CloseButton from "@/components/button/CloseButton";
 import useCTUpdateFee from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
-import useCTRecommend from "@/staging/components/cross-trade/hooks/useCTRecommend";
 import CTUpdateButton from "./CTUpdateButton";
 import CTUpdateFeeDetail from "./CTUpdateFeeDetail";
 import CTRefundDetail from "./CTRefundDetail";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import { toParseNumber } from "@/utils/trim/convertNumber";
 import {
-  useCancelRequest,
-  useEditFee,
-} from "@/staging/hooks/useCrossTradeContracts";
+  formatUnits,
+  limitDecimals,
+  toParseNumber,
+} from "@/utils/trim/convertNumber";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import useConnectedNetwork from "@/hooks/network";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { BigNumber } from "ethers";
-
-// 데이터 셋을 선언만 하면, 참고 해서 서버 작업
-// 데이터 셋 타입파일을 만든다.
-// 타입을 맞추고, 타입에 맞게 데이터셋을 뽑는다.
+import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import { useRecoilState } from "recoil";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 
 export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
@@ -52,48 +52,104 @@ export default function CTFeeUpdateModal() {
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
-  // usestate memo 대체 하는 경우도 존재, useefect 지양하는경우도 존재.(쓰더라도 짧게)
-  // 반복문, usehook안에서 hook은 돌리면 안된다. //메모리 문재
-  const recommendValue = useCTRecommend(recommendCheck);
 
-  // 리프래시 버튼 누를 때, recommend 값 초기화
-  const handleRefreshRecommend = () => {
-    // 호이스팅
-    setInputValue("");
-    setRecommendCheck(true);
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement> | string
+  ) => {
+    if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
-    setInputValue(value);
+    const regex = /^\d*\.?\d*$/;
+    if (regex.test(value)) {
+      const valueWithDecimals = limitDecimals(
+        value,
+        ctUpdateFeeModal.txData?.inToken.decimals
+      );
+
+      if (valueWithDecimals !== undefined) {
+        setInputValue(valueWithDecimals);
+      } else {
+        setInputValue(value);
+      }
+    }
   };
 
   const handleInputFocus = (e: React.FocusEvent<HTMLInputElement>) => {
     // 사용자의 입력 필드에 포커스가 맞춰지면, 추천 체크를 제거한다.
-    setRecommendCheck(false);
   };
 
-  // input이 변경될 때, 값이 있으면 rightElement를 보여준다.
-  // 현재 1일때 red warning, 2일때, yellow warning, 3일때 통과
-  // 123 밖에 입력이 안됨
-  // useEffect(() => {
-  //   switch (inputValue) {
-  //     case "1":
-  //       setInputWarningCheck(WarningType.Critical);
-  //       break;
-  //     case "2":
-  //       setInputWarningCheck(WarningType.Normal);
-  //       break;
-  //     default:
-  //       setInputWarningCheck("");
-  //   }
-  // }, [inputValue]);
+  const inputParsedAmount = useMemo(() => {
+    if (ctUpdateFeeModal.txData?.inToken.decimals && inputValue !== "") {
+      return toParseNumber(
+        inputValue,
+        ctUpdateFeeModal.txData.inToken.decimals
+      );
+    }
+  }, [inputValue, ctUpdateFeeModal.txData?.inToken.decimals]);
+
+  const totalAmount = useMemo(() => {
+    if (
+      ctUpdateFeeModal.txData?.L2_subgraphData?._totalAmount &&
+      ctUpdateFeeModal.txData?.inToken.decimals
+    ) {
+      return BigNumber.from(
+        ctUpdateFeeModal.txData.L2_subgraphData._totalAmount
+      );
+    }
+  }, [ctUpdateFeeModal.txData?.L2_subgraphData?._totalAmount]);
+
+  const tokenAddress =
+    ctUpdateFeeModal.txData?.L2_subgraphData?._l2token &&
+    isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
+      ? "0x4200000000000000000000000000000000000006"
+      : ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
+  const { recommendedCtAmount: recommendValue, recommendedFee } =
+    useRecommendFee({
+      totalAmount: Number(
+        formatUnits(
+          totalAmount?.toString(),
+          ctUpdateFeeModal.txData?.inToken.decimals
+        )
+      ),
+      tokenAddress,
+    });
+
+  useEffect(() => {
+    if (recommendValue) {
+      setInputValue(recommendValue.toString());
+    }
+  }, [recommendValue]);
+
+  const handleRefreshRecommend = useCallback(() => {
+    if (recommendValue) {
+      setInputValue(recommendValue.toString());
+      setRecommendCheck(true);
+    }
+  }, [recommendValue]);
+
+  const isInputOver = useMemo(() => {
+    if (inputParsedAmount && totalAmount) {
+      return inputParsedAmount.gt(totalAmount);
+    }
+  }, [inputParsedAmount, totalAmount]);
+
+  const isLessThanRecommendedFee = useMemo(() => {
+    if (inputValue && recommendValue) {
+      return Number(inputParsedAmount) < Number(recommendValue);
+    }
+  }, [inputValue, recommendValue]);
+
+  useEffect(() => {
+    if (isInputOver) return setInputWarningCheck(WarningType.Critical);
+    if (isLessThanRecommendedFee)
+      return setInputWarningCheck(WarningType.Normal);
+    return setInputWarningCheck("");
+  }, [isInputOver, isLessThanRecommendedFee]);
 
   //check box
   const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setIsChecked(e.target.checked);
+    setIsChecked(!isChecked);
 
   const activeConfirmButton =
     activeButton === UpdateFeeButtonType.Update
@@ -101,6 +157,7 @@ export default function CTFeeUpdateModal() {
         !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
   const { connectedToLayer1 } = useConnectedNetwork();
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
 
   const resetAllStates = () => {
     setRecommendCheck(true);
@@ -109,10 +166,16 @@ export default function CTFeeUpdateModal() {
     setInputWarningCheck("");
     setIsChecked(false);
     onCloseCTUpdateFeeModal();
+    setIsOpen(false);
   };
 
-  const { write: _editFee } = useEditFee();
-  const { write: _cancelRequest } = useCancelRequest();
+  useEffect(() => {
+    resetAllStates();
+  }, []);
+
+  const { editFee: _editFee, cancelRequest: _cancelRequest } =
+    useCrossTradeContract();
+
   const editFee = useCallback(() => {
     try {
       if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
@@ -129,6 +192,9 @@ export default function CTFeeUpdateModal() {
           inputValue,
           ctUpdateFeeModal.txData.inToken.decimals
         );
+
+        if (!editAmount) return console.error("editAmount is undefined");
+
         const _editedctAmount = BigNumber.from(_totalAmount).sub(editAmount);
         const params = [
           _l1token,
@@ -180,6 +246,7 @@ export default function CTFeeUpdateModal() {
       _cancelRequest({
         args: params,
       });
+      resetAllStates();
     }
   }, [ctUpdateFeeModal.txData, _cancelRequest]);
 
@@ -188,6 +255,14 @@ export default function CTFeeUpdateModal() {
     if (activeButton === UpdateFeeButtonType.CancelRequest)
       return cancelRequest();
   }, [activeButton, editFee, cancelRequest]);
+
+  const btnIsDisabled = useMemo(() => {
+    return (
+      !activeConfirmButton ||
+      !connectedToLayer1 ||
+      inputWarningCheck === WarningType.Critical
+    );
+  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
 
   return (
     <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
@@ -219,8 +294,7 @@ export default function CTFeeUpdateModal() {
               activeButton={activeButton}
               setActiveButton={setActiveButton}
             />
-            {activeButton == UpdateFeeButtonType.Update && <WrongNetwork />}
-
+            <WrongNetwork style={{ marginTop: "12px" }} />
             {activeButton == UpdateFeeButtonType.Update &&
             ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail
@@ -231,7 +305,7 @@ export default function CTFeeUpdateModal() {
                 onInputFocus={handleInputFocus}
                 // input 관련 recommend 관련 props
                 recommendCheck={recommendCheck}
-                recommendValue={recommendValue}
+                recommendValue={recommendValue?.toString()}
                 //새로 고침 props
                 onRecommendRefresh={handleRefreshRecommend}
                 txData={ctUpdateFeeModal.txData}
@@ -243,9 +317,13 @@ export default function CTFeeUpdateModal() {
         </ModalBody>
         <ModalFooter p={0} display="block">
           {activeButton == UpdateFeeButtonType.CancelRequest && (
-            <Flex flexDir={"column"} justifyContent={"flex-start"}>
+            <Flex
+              flexDir={"column"}
+              justifyContent={"flex-start"}
+              mt={"16px"}
+              rowGap={"8px"}
+            >
               <Text
-                mt={"5px"}
                 color={isChecked ? "#FFFFFF" : "#A0A3AD"}
                 fontWeight={600}
                 fontSize={13}
@@ -254,26 +332,30 @@ export default function CTFeeUpdateModal() {
               >
                 I understand
               </Text>
-              <Checkbox
-                isChecked={false}
-                onChange={() => {}}
-                icon={<CheckCustomIcon />}
-                sx={{
-                  ".chakra-checkbox__control": {
-                    borderWidth: "1px",
-                    borderColor: "#A0A3AD",
-                    _focus: {
-                      boxShadow: "none",
+              <Flex columnGap={"12px"}>
+                <Checkbox
+                  isChecked={isChecked}
+                  onChange={handleCheckboxChange}
+                  icon={<CheckCustomIcon />}
+                  sx={{
+                    ".chakra-checkbox__control": {
+                      borderWidth: "1px",
+                      borderColor: "#A0A3AD",
+                      _focus: {
+                        boxShadow: "none",
+                      },
                     },
-                  },
-                  _checked: {
-                    "& .chakra-checkbox__control": {
-                      borderColor: "#FFFFFF",
+                    _checked: {
+                      "& .chakra-checkbox__control": {
+                        borderColor: "#FFFFFF",
+                      },
                     },
-                  },
-                }}
-                colorScheme="#A0A3AD"
-              >
+                  }}
+                  colorScheme="#A0A3AD"
+                  display={"flex"}
+                  alignItems={"flex-start"}
+                  mt={"3px"}
+                ></Checkbox>
                 <Text
                   color={isChecked ? "#FFFFFF" : "#A0A3AD"}
                   fontWeight={400}
@@ -283,7 +365,7 @@ export default function CTFeeUpdateModal() {
                   refund may take at least 2~5 minutes <br />
                   (depending on L2 sequencer).
                 </Text>
-              </Checkbox>
+              </Flex>
             </Flex>
           )}
           <Button
@@ -292,24 +374,18 @@ export default function CTFeeUpdateModal() {
             height={"48px"}
             borderRadius={"8px"}
             sx={{
-              backgroundColor:
-                activeConfirmButton && connectedToLayer1
-                  ? "#007AFF"
-                  : "#17181D",
-              color:
-                activeConfirmButton && connectedToLayer1
-                  ? "#FFFFFF"
-                  : "#8E8E92",
+              backgroundColor: !btnIsDisabled ? "#007AFF" : "#17181D",
+              color: !btnIsDisabled ? "#FFFFFF" : "#8E8E92",
             }}
             _hover={{}}
             onClick={handleConfirm}
-            isDisabled={!activeConfirmButton || !connectedToLayer1}
+            isDisabled={btnIsDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
-              {activeButton == UpdateFeeButtonType.Update
-                ? !connectedToLayer1
-                  ? "Wrong Network"
-                  : "Update"
+              {!connectedToLayer1
+                ? "Wrong Network"
+                : activeButton == UpdateFeeButtonType.Update
+                ? "Update"
                 : "Cancel"}
             </Text>
           </Button>

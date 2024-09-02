@@ -9,7 +9,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import {
@@ -31,8 +31,10 @@ import CTOptionStandardDetail from "./CTOptionStandardDetail";
 import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
+import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import commafy from "@/utils/trim/commafy";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -52,20 +54,42 @@ export default function CTOptionModal() {
     setActiveSubButtonValue(value);
   };
 
-  // CTOptionInput 관련 state 및 function Start @Robert
+  const { inToken } = useInOutTokens();
+  const { recommendedCtAmount, recommendedFee } = useRecommendFee({
+    tokenAddress: inToken?.tokenAddress ?? "0x",
+    totalAmount: Number(inToken?.parsedAmount),
+  });
+
   const [serviceFee, setServiceFee] = useState<string | undefined>(undefined);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    // if (/^[123\s]*$/.test(value)) {
-    setServiceFee(value);
-    // }
+    const regex = new RegExp(`^\\d*\\.?\\d{0,${inToken?.decimals}}$`);
+
+    if (regex.test(value)) {
+      setServiceFee(value);
+    }
   };
 
   const handleConfirm = useHandleConfirm();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
-  const { inToken } = useInOutTokens();
   const { inNetwork, outNetwork } = useInOutNetwork();
+  const serviceFeeValue = useMemo(() => {
+    if (activeSubButtonValue === ButtonTypeSub.Recommend && recommendedFee) {
+      return recommendedFee.toString();
+    }
+
+    if (activeSubButtonValue === ButtonTypeSub.Advanced) {
+      return serviceFee;
+    }
+  }, [recommendedFee, serviceFee]);
+
+  useEffect(() => {
+    if (ctOptionModal && recommendedFee) {
+      setServiceFee(recommendedFee.toString());
+    }
+  }, [recommendedFee, ctOptionModal]);
+
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return handleConfirm(Action.Withdraw, Status.Initiate);
@@ -77,12 +101,12 @@ export default function CTOptionModal() {
       outNetwork &&
       inToken.amountBN &&
       inToken.address[outNetwork.chainName] !== null &&
-      serviceFee
+      serviceFeeValue
     ) {
       const ctAmount =
         BigInt(inToken.amountBN.toString()) -
         BigInt(
-          ethers.utils.parseUnits(serviceFee, inToken.decimals).toString()
+          ethers.utils.parseUnits(serviceFeeValue, inToken.decimals).toString()
         );
       return onOpenCTConfirmModal({
         type: ModalType.Trade,
@@ -92,7 +116,7 @@ export default function CTOptionModal() {
           isCanceled: false,
           status: CT_REQUEST.Request,
           serviceFee: ethers.utils
-            .parseUnits(serviceFee, inToken.decimals)
+            .parseUnits(serviceFeeValue, inToken.decimals)
             .toBigInt(),
           blockTimestamps: {
             request: 0,
@@ -122,43 +146,59 @@ export default function CTOptionModal() {
     }
   };
 
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
-  useEffect(() => {
+
+  const serviceFeeIsNotOver = useMemo(() => {
     if (inToken?.parsedAmount) {
-      const serviceFeeIsNotOver =
-        Number(inToken.parsedAmount) - Number(serviceFee);
-      if (serviceFeeIsNotOver < 0)
+      return Number(inToken.parsedAmount) - Number(serviceFee) <= 0;
+    }
+  }, [inToken?.parsedAmount, serviceFee]);
+
+  const isLessThanRecommendedFee = useMemo(() => {
+    if (serviceFee && recommendedFee) {
+      return Number(serviceFee) < Number(recommendedFee);
+    }
+  }, [serviceFee, recommendedFee]);
+
+  useEffect(() => {
+    {
+      if (serviceFeeIsNotOver)
         return setInputWarningCheck(WarningType.Critical);
+      if (isLessThanRecommendedFee)
+        return setInputWarningCheck(WarningType.Normal);
       return setInputWarningCheck("");
     }
-    // switch (serviceFee) {
-    //   case "1":
-    //     setInputWarningCheck(WarningType.Critical);
-    //     break;
-    //   case "2":
-    //     setInputWarningCheck(WarningType.Normal);
-    //     break;
-    //   default:
-    //     setInputWarningCheck("");
-    // }
-  }, [serviceFee, inToken]);
+  }, [serviceFeeIsNotOver, isLessThanRecommendedFee]);
 
   useEffect(() => {
     if (ctOptionModal) {
-      setServiceFee(undefined);
       setInputWarningCheck("");
       setActiveSubButtonValue(ButtonTypeSub.Recommend);
     }
   }, [ctOptionModal]);
 
-  const shouldShowEnterAmount =
-    activeSubButtonValue === ButtonTypeSub.Recommend ||
-    (activeSubButtonValue === ButtonTypeSub.Advanced &&
-      (serviceFee === "" ||
+  const btnDisabled = useMemo(() => {
+    if (activeSubButtonValue === ButtonTypeSub.Recommend) {
+      return !recommendedCtAmount || !recommendedFee;
+    }
+
+    if (activeSubButtonValue === ButtonTypeSub.Advanced) {
+      return (
+        serviceFee === "" ||
         serviceFee === undefined ||
-        inputWarningCheck === WarningType.Critical));
+        inputWarningCheck === WarningType.Critical
+      );
+    }
+  }, [
+    activeSubButtonValue,
+    serviceFee,
+    inputWarningCheck,
+    recommendedCtAmount,
+    recommendedFee,
+  ]);
 
   return (
     <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
@@ -178,8 +218,9 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {activeMainButtonValue === ButtonTypeMain.Standard ? (
-            // <CTOptionDisabledDetail />
+          {isConnectedToMainNetwork ? (
+            <CTOptionDisabledDetail />
+          ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             <CTOptionCrossDetail
               // cross, official 관련 props
               activeMainButtonValue={activeMainButtonValue}
@@ -191,6 +232,7 @@ export default function CTOptionModal() {
               inputValue={serviceFee ?? ""}
               inputWarningCheck={inputWarningCheck}
               onInputChange={handleInputChange}
+              recommnededFee={recommendedCtAmount}
             />
           ) : (
             <CTOptionCrossDetail
@@ -204,6 +246,7 @@ export default function CTOptionModal() {
               inputValue={serviceFee ?? ""}
               inputWarningCheck={inputWarningCheck}
               onInputChange={handleInputChange}
+              recommnededFee={recommendedCtAmount}
             />
           )}
           <CTOptionStandardDetail
@@ -219,17 +262,17 @@ export default function CTOptionModal() {
             height={"48px"}
             borderRadius={"8px"}
             sx={{
-              backgroundColor: shouldShowEnterAmount ? "#17181D" : "#007AFF",
-              color: shouldShowEnterAmount ? "#8E8E92" : "#FFFFFF",
+              backgroundColor: btnDisabled ? "#17181D" : "#007AFF",
+              color: btnDisabled ? "#8E8E92" : "#FFFFFF",
             }}
             _hover={{}}
             _active={{}}
             _focus={{}}
             onClick={handleClickConfirm}
-            isDisabled={shouldShowEnterAmount}
+            isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {shouldShowEnterAmount ? "Enter amount" : "Next"}
+              {"Next"}
             </Text>
           </Button>
         </ModalFooter>

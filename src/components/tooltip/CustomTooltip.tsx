@@ -1,5 +1,9 @@
 import { Box, Text, Tooltip } from "@chakra-ui/react";
-import { ReactNode, useState } from "react";
+import Image from "next/image";
+import React, { CSSProperties, ReactNode, useState } from "react";
+import QuestionIcon from "assets/icons/question.svg";
+import GrayQuestionIcon from "assets/icons/questionGray.svg";
+import TooltipArrow from "assets/icons/tooltipArrow.svg";
 
 export default function CustomTooltip(props: {
   content: string | ReactNode;
@@ -23,6 +27,7 @@ export default function CustomTooltip(props: {
       isOpen={isOpen}
       bg={"transparent"}
       zIndex={10000}
+      pos={"relative"}
       label={
         <Box
           w={"100%"}
@@ -59,14 +64,51 @@ export default function CustomTooltip(props: {
           ></Box>
         </Box>
       }
-      placement='top'
+      placement="top"
     >
       <Box
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
+        pos={"relative"}
       >
         {props.content}
+        {isOpen && (
+          <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
+            <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
+          </Box>
+        )}
       </Box>
     </Tooltip>
   );
 }
+
+export const CustomTooltipWithQuestion = (props: {
+  isGrayIcon?: boolean;
+  tooltipLabel: string | ReactNode;
+  style?: {
+    width?: string;
+    maxW?: string;
+    bgColor?: string;
+    height?: string;
+    px?: string;
+    py?: string;
+    ml?: string;
+    tooltipLineHeight?: string;
+  };
+  containerSyle?: CSSProperties;
+}) => {
+  return (
+    <Box pos={"relative"} style={props.containerSyle}>
+      <CustomTooltip
+        content={
+          <Image
+            src={props.isGrayIcon ? GrayQuestionIcon : QuestionIcon}
+            alt={"QuestionIcon"}
+          ></Image>
+        }
+        tooltipLabel={props.tooltipLabel}
+        style={props.style}
+      />
+    </Box>
+  );
+};

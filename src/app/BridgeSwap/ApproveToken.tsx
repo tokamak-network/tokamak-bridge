@@ -16,7 +16,9 @@ import ConfirmedImage from "assets/icons/confirm/success.svg";
 import commafy from "@/utils/trim/commafy";
 import { ethers } from "ethers";
 import { useMemo } from "react";
-import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import CustomTooltip, {
+  CustomTooltipWithQuestion,
+} from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/question.svg";
 
 export default function ApproveToken() {
@@ -89,8 +91,8 @@ export default function ApproveToken() {
         </Text>
         {isRevokeForUSDT && !isApproved && (
           <Flex ml={"-5px"}>
-            <CustomTooltip
-              content={<Image src={QuestionIcon} alt={"QuestionIcon"}></Image>}
+            <CustomTooltipWithQuestion
+              isGrayIcon={true}
               tooltipLabel={
                 <Flex
                   w={"240px"}
@@ -109,7 +111,7 @@ export default function ApproveToken() {
                 </Flex>
               }
               style={{ px: "-5px", tooltipLineHeight: "15x", height: "45px" }}
-            ></CustomTooltip>
+            ></CustomTooltipWithQuestion>
           </Flex>
         )}
       </Flex>
