@@ -22,6 +22,7 @@ import {
 } from "@/recoil/history/transaction";
 import { CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useRouter } from "next/navigation";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 type TransactionToastProp = TxInterface;
 
@@ -203,10 +204,15 @@ function TransactionToast(props: TransactionToastProp) {
       }
     }
   };
+  const { closeModal } = useTxConfirmModal();
   const clickTitle = useCallback(() => {
-    needToOpenHistoryTab
-      ? openHistoryTab()
-      : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+    try {
+      needToOpenHistoryTab
+        ? openHistoryTab()
+        : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+    } finally {
+      closeModal();
+    }
   }, [props, blockExplorer, needToOpenHistoryTab, openHistoryTab]);
 
   useEffect(() => {

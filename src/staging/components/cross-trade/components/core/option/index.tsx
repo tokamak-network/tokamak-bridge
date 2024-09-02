@@ -64,7 +64,9 @@ export default function CTOptionModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (/^\d*\.?\d*$/.test(value)) {
+    const regex = new RegExp(`^\\d*\\.?\\d{0,${inToken?.decimals}}$`);
+
+    if (regex.test(value)) {
       setServiceFee(value);
     }
   };
@@ -83,10 +85,10 @@ export default function CTOptionModal() {
   }, [recommendedFee, serviceFee]);
 
   useEffect(() => {
-    if (recommendedFee) {
+    if (ctOptionModal && recommendedFee) {
       setServiceFee(recommendedFee.toString());
     }
-  }, [recommendedFee]);
+  }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
