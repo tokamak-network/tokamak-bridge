@@ -142,7 +142,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
     provideCTs: T_FETCH_ProvideCTs_L1;
     l1CancelCTs: T_FETCH_CancelCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
-    pollInterval: 13000,
+    pollInterval: 12000,
     client: L1_CLIENT,
     variables: isHistory
       ? {
@@ -164,7 +164,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     cancelCTs: T_FETCH_CancelCTs;
     providerClaimCTs: T_FETCH_ProviderClaimCTs;
   }>(isHistory ? FETCH_REQUEST_LIST_L2_ACCOUNT : FETCH_REQUEST_LIST_L2, {
-    pollInterval: 13000,
+    pollInterval: 12000,
     client: L2_CLIENT,
     variables: isHistory
       ? {
@@ -318,7 +318,9 @@ export const useRequestData = (): {
             isInRelay,
           };
         });
-        const trimedResult = result.filter((item) => item.isCanceled === false);
+        const trimedResult = result.filter(
+          (item) => !item.isCanceled && item.recevingUSD > item.providingUSD
+        );
         setIsLoading(false);
         return setRequestList(trimedResult);
       }
