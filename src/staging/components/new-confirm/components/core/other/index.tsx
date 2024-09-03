@@ -54,7 +54,7 @@ export default function DepositWithdrawConfirmModal() {
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
   const networkChainId = transactionData?.outNetwork || THANOS_SEPOLIA_CHAIN_ID;
-  const inNetworkCHainId =
+  const inNetworkChainId =
     transactionData?.inNetwork || SupportedChainId.MAINNET;
 
   const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
@@ -253,7 +253,7 @@ export default function DepositWithdrawConfirmModal() {
                 </Text>
                 <Link
                   target="_blank"
-                  href={`${BLOCKEXPLORER_CONSTANTS[inNetworkCHainId]}/address/${address}`}
+                  href={`${BLOCKEXPLORER_CONSTANTS[inNetworkChainId]}/address/${address}`}
                 >
                   <Text
                     fontWeight={600}
