@@ -1,5 +1,5 @@
 name: Cross Trade - Frontend & Backend Bugs
-description: Report frontend & backend bugs for Cross Trade service
+description: Public test reporting, until September 13th, 2024. Report frontend & backend bugs for Cross Trade service (up to 3,300 TON reward per issue)
 title: "[Cross Trade - Frontend & Backend bugs]: "
 labels: ["public test: cross trade"]
 assignees:

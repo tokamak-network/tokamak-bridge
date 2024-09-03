@@ -1,6 +1,6 @@
 name: Cross Trade - Contract Bugs
-description: Contract bugs for Cross Trade service
-title: "[Cross Trade - Contract Båugs]: "
+description: Public test reporting, until September 13th, 2024. Report contract bugs for Cross Trade service (up to 3,300 TON reward per issue)
+title: "[Cross Trade - Contract Bugs]: "
 labels: ["public test: cross trade"]
 assignees:
   - zzooppii

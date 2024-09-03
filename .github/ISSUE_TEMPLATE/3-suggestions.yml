@@ -1,5 +1,5 @@
 name: Cross Trade - Suggestion
-description: Make suggestions for Cross Trade service, such as UX/UI, features, etc.
+description: Public test reporting, until September 13th, 2024. Make suggestions for Cross Trade service, such as UX/UI, features, etc. (up to 10 TON reward per issue)
 title: "[Cross Trade - Suggestion]: "
 labels: ["public test: cross trade"]
 assignees:
@@ -18,7 +18,7 @@ body:
         - Cross Trade Request UI
         - Cross Trade Provide UI
         - Cross Trade Liquidity page
-        - Cross Trade history tab
+        - Cross Trade History tab
         - Cross Trade Settings (fees, etc)
         - Others
   - type: textarea
