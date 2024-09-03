@@ -50,11 +50,12 @@ export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const transactionData = depositWithdrawConfirmModal.transaction;
-
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
   const networkChainId = transactionData?.outNetwork || THANOS_SEPOLIA_CHAIN_ID;
+  const inNetworkChainId =
+    transactionData?.inNetwork || SupportedChainId.MAINNET;
 
   const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
 
@@ -252,9 +253,7 @@ export default function DepositWithdrawConfirmModal() {
                 </Text>
                 <Link
                   target="_blank"
-                  href={`${
-                    BLOCKEXPLORER_CONSTANTS[SupportedChainId.MAINNET]
-                  }/address/${address}`}
+                  href={`${BLOCKEXPLORER_CONSTANTS[inNetworkChainId]}/address/${address}`}
                 >
                   <Text
                     fontWeight={600}
@@ -305,10 +304,7 @@ export default function DepositWithdrawConfirmModal() {
             <>
               <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
                 <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  Estimated Time of Arrival: ~1 day
-                </Text>
-                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  Estimated Time of Arrival: ~1 day
+                  text will be changed
                 </Text>
               </Box>
               {isButtonVisible && (

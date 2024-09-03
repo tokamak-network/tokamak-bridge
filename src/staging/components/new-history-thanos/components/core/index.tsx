@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { Flex, Box, Text, useStatStyles } from "@chakra-ui/react";
+import React, { useMemo } from "react";
+import { Flex, Box, Text } from "@chakra-ui/react";
 import {
   Action,
   CT_ACTION,
@@ -11,11 +11,8 @@ import {
 import Pending from "@/staging/components/new-history-thanos/components/core/pending";
 import Complete from "@/staging/components/new-history-thanos/components/core/complete";
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
-import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  historyRefetch,
-  selectedTransactionCategory,
-} from "@/recoil/history/transaction";
+import { useRecoilValue } from "recoil";
+import { selectedTransactionCategory } from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
@@ -63,15 +60,6 @@ export default function AccountHistoryNew() {
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
-  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
-  useEffect(() => {
-    const renderTimer = setInterval(() => {
-      setRefetchHistory((prev) => !prev);
-    }, 5000);
-    return () => {
-      clearInterval(renderTimer);
-    };
-  }, []);
 
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {
