@@ -308,7 +308,7 @@ export default function CTMain() {
                   <Td sx={{ opacity: rowOpacity }}>
                     <TokenDetail
                       token={item.inToken}
-                      network={item.inNetwork}
+                      network={item.outNetwork}
                       isProvide={true}
                       providingUSD={item.providingUSD}
                     />
@@ -316,7 +316,7 @@ export default function CTMain() {
                   <Td sx={{ opacity: rowOpacity }}>
                     <TokenDetail
                       token={item.outToken}
-                      network={item.outNetwork}
+                      network={item.inNetwork}
                       isProvide={false}
                       recevingUSD={item.recevingUSD}
                     />
