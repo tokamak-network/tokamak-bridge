@@ -217,8 +217,6 @@ export default function CTConfirmHistoryFooter(props: {
   const lastIndex = entries.length - 1;
   const isRequest = isInCT_REQUEST(txData.status);
 
-  console.log(txData.transactionHashes);
-
   const TransactionHistory = useMemo(() => {
     return (
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
