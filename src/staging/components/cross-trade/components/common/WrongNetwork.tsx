@@ -6,8 +6,9 @@ import { useAccount } from "wagmi";
 export function WrongNetwork(props: { style?: CSSProperties }) {
   const { switchToEthereum } = useChangeNetwork();
   const { connectedToLayer1, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { isConnected } = useAccount();
 
-  if (connectedToLayer1) return null;
+  if (!isConnected || connectedToLayer1) return null;
 
   return (
     <Box
@@ -42,10 +43,8 @@ export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
   const { switchToSepolia } = useChangeNetwork();
   const { connectedToLayer1, isConnectedToMainNetwork, isSupportedChain } =
     useConnectedNetwork();
-  const { isConnected } = useAccount();
 
-  if (!isConnected || (!isConnectedToMainNetwork && isSupportedChain))
-    return null;
+  if (!isConnectedToMainNetwork && isSupportedChain) return null;
 
   return (
     <Box
@@ -65,11 +64,12 @@ export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
         fontSize={"12px"}
         lineHeight={"18px"}
         color={"#fff"}
-        onClick={switchToSepolia}
         cursor={"pointer"}
       >
         Please switch to{" "}
-        <span style={{ textDecoration: "underline" }}>{"Sepolia"}</span>
+        <span style={{ textDecoration: "underline" }} onClick={switchToSepolia}>
+          {"Sepolia"}
+        </span>
         <br />
         <span>
           Only use while connected to Sepolia or Titan Sepolia—not on mainnet.

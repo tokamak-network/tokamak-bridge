@@ -128,17 +128,17 @@ export const useChangeNetwork = (chainId?: number) => {
     if (isConnectedToMainNetwork)
       return switchNetworkAsync?.(SupportedChainId.MAINNET);
     switchNetworkAsync?.(SupportedChainId.SEPOLIA);
-  }, [isConnectedToMainNetwork]);
+  }, [switchNetworkAsync, isConnectedToMainNetwork]);
 
   const switchToTitan = useCallback(() => {
     if (isConnectedToMainNetwork)
       return switchNetworkAsync?.(SupportedChainId.TITAN);
     switchNetworkAsync?.(SupportedChainId.TITAN_SEPOLIA);
-  }, [isConnectedToMainNetwork]);
+  }, [switchNetworkAsync, isConnectedToMainNetwork]);
 
   const switchToSepolia = useCallback(() => {
     switchNetworkAsync?.(SupportedChainId.SEPOLIA);
-  }, [isConnectedToMainNetwork]);
+  }, [switchNetworkAsync]);
 
   return {
     switchNetworkWithChainId,
