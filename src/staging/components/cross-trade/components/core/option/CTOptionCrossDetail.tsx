@@ -47,11 +47,11 @@ export default function CTOptionCrossDetail(
   // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
   // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
   // const isDisabledRecommend = props.inputValue === "1";
-  const isDisabledRecommend = false;
+  const isDisabledRecommend = props.recommnededFee === undefined ? true : false;
   const { inToken } = useInOutTokens();
 
   const receiveTokenValue = useMemo(() => {
-    if (isRecommendActive) return props.recommnededFee;
+    if (isRecommendActive && !isDisabledRecommend) return props.recommnededFee;
 
     const inputValue = props.inputValue;
     if (
@@ -63,7 +63,7 @@ export default function CTOptionCrossDetail(
       return result;
     }
     return inToken?.parsedAmount;
-  }, [props.inputValue, inToken, isRecommendActive]);
+  }, [props.inputValue, inToken, isRecommendActive, isDisabledRecommend]);
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
     amount: receiveTokenValue as string,
