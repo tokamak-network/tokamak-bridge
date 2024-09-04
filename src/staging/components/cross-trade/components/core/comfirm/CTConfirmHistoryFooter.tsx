@@ -217,6 +217,8 @@ export default function CTConfirmHistoryFooter(props: {
   const lastIndex = entries.length - 1;
   const isRequest = isInCT_REQUEST(txData.status);
 
+  console.log(txData.transactionHashes);
+
   const TransactionHistory = useMemo(() => {
     return (
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
@@ -224,12 +226,12 @@ export default function CTConfirmHistoryFooter(props: {
           const isActive = isCompleted ? false : lastIndex === index;
           //@ts-ignore
           const blockTimestamp = txData.blockTimestamps[key];
-          if (
-            (hash === "" || hash === undefined) &&
-            key !== "waitForReceive" &&
-            key !== "return"
-          )
-            return null;
+          // if (
+          //   (hash === "" || hash === undefined) &&
+          //   key !== "waitForReceive" &&
+          //   key !== "return"
+          // )
+          //   return null;
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
@@ -244,7 +246,7 @@ export default function CTConfirmHistoryFooter(props: {
               />
             );
           }
-          return hash.map((tx, index) => {
+          return hash?.map((tx, index) => {
             const isActiveOnUpdateFee = isActive && index === hash.length - 1;
             if (tx === "" || tx === undefined) return null;
             return (
