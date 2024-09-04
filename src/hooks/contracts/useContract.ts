@@ -31,9 +31,11 @@ export default function useContract() {
     : SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA;
   const L2BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? TOKAMAK_CONTRACTS.L2Bridge
-    : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
-    ? THANOS_SEPOLIA_CONTRACTS.L2Bridge
-    : TITAN_SEPOLIA_CONTRACTS.L2Bridge;
+    : outNetwork?.chainId !== SupportedChainId["THANOS_SEPOLIA"]
+    ? TITAN_SEPOLIA_CONTRACTS.L2Bridge
+    : inToken?.tokenSymbol === "USDC"
+    ? THANOS_SEPOLIA_CONTRACTS.L2USDCBridge
+    : THANOS_SEPOLIA_CONTRACTS.L2StandardBridge;
 
   const WTON_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.WTON_ADDRESS

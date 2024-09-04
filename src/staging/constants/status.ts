@@ -4,6 +4,8 @@ import {
   CT_REQUEST_CANCEL,
   Status,
 } from "@/staging/types/transaction";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export const STATUS_CONFIG = {
   WITHDRAW: [Status.Initiate, Status.Rollup, Status.Finalize],
@@ -39,4 +41,16 @@ export const STATUS_CONFIG = {
     CT_REQUEST_CANCEL.Refund,
   ],
   PROVIDE: [CT_PROVIDE.Provide, CT_PROVIDE.Return],
+};
+
+export const getStatusConfig = (
+  inNetwork: SupportedChainId,
+  outNetwork: SupportedChainId
+) => {
+  if (isThanosChain(inNetwork) || isThanosChain(outNetwork))
+    return {
+      ...STATUS_CONFIG,
+      WITHDRAW: [Status.Initiate, Status.Prove, Status.Finalize],
+    };
+  return STATUS_CONFIG;
 };

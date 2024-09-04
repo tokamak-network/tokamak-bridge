@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Flex,
@@ -20,7 +20,7 @@ import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import ConfirmDetails from "@/staging/components/new-confirm/components/core/other/ConfirmDetails";
-import { STATUS_CONFIG } from "@/staging/constants/status";
+import { getStatusConfig, STATUS_CONFIG } from "@/staging/constants/status";
 import StatusComponent from "@/staging/components/new-confirm/components/core/other/StatusComponent";
 import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
@@ -109,10 +109,15 @@ export default function DepositWithdrawConfirmModal() {
 
   const lineType = getLineType(transactionData);
 
+  const statusConfig = getStatusConfig(
+    transactionData.inNetwork,
+    transactionData.outNetwork
+  );
+
   const statuses: Status[] =
     transactionData.action === Action.Withdraw
-      ? STATUS_CONFIG.WITHDRAW
-      : STATUS_CONFIG.DEPOSIT;
+      ? statusConfig.WITHDRAW
+      : statusConfig.DEPOSIT;
 
   {
     /**

@@ -1,4 +1,5 @@
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 // index.tsx
 export const TRANSACTION_CONSTANTS = {
@@ -18,7 +19,7 @@ export const TRANSACTION_CONSTANTS = {
 };
 
 export const getTransactionConstants = (chain: SupportedChainId) => {
-  if (chain === SupportedChainId.THANOS_SEPOLIA) {
+  if (isThanosChain(chain)) {
     return { ...TRANSACTION_CONSTANTS, DEPOSIT: { INITIAL_MINUTES: 1.5 } };
   } else return TRANSACTION_CONSTANTS;
 };

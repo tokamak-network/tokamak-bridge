@@ -9,6 +9,7 @@ import {
   ProgressStatus,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export enum TransactionStatus {
   WithdrawRollup = 1,
@@ -61,9 +62,7 @@ export const getDipositWithdrawStatues = (
     case Action.Withdraw:
       return [
         Status.Initiate,
-        chain === SupportedChainId.THANOS_SEPOLIA
-          ? Status.Prove
-          : Status.Rollup,
+        isThanosChain(chain) ? Status.Prove : Status.Rollup,
         Status.Finalize,
       ];
   }

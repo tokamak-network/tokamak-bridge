@@ -35,6 +35,8 @@ import { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -215,7 +217,9 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {activeMainButtonValue === ButtonTypeMain.Standard ? (
+          {isThanosChain(inNetwork?.chainId) ? (
+            <CTOptionDisabledDetail />
+          ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             // <CTOptionDisabledDetail />
             <CTOptionCrossDetail
               // cross, official 관련 props
