@@ -322,7 +322,10 @@ export const useRequestData = (): {
           };
         });
         const trimedResult = result.filter(
-          (item) => !item.isCanceled && item.recevingUSD > item.providingUSD
+          (item) =>
+            !item.isCanceled &&
+            item.recevingUSD > item.providingUSD &&
+            !item.isProvided
         );
         setIsLoading(false);
         return setRequestList(trimedResult);
