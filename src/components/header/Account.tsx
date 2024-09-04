@@ -1,7 +1,7 @@
 import { Center, Text } from "@chakra-ui/layout";
 import { Flex, Spinner } from "@chakra-ui/react";
 import Image from "next/image";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
@@ -18,9 +18,11 @@ import {
   thanosSepoliaDepositHistory,
   titanSepoliaDepositHistory,
 } from "@/recoil/history/transaction";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
+  const { chain } = useNetwork();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   const txPending = useRecoilValue(txPendingStatus);
@@ -49,7 +51,7 @@ export default function Account() {
       latestRelayedBlockNumber: "0",
       history: null,
     });
-  }, [address, isConnected]);
+  }, [address, isConnected, chain]);
 
   return (
     <Center
