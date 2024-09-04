@@ -136,5 +136,14 @@ export const useChangeNetwork = (chainId?: number) => {
     switchNetworkAsync?.(SupportedChainId.TITAN_SEPOLIA);
   }, [isConnectedToMainNetwork]);
 
-  return { switchNetworkWithChainId, switchToEthereum, switchToTitan };
+  const switchToSepolia = useCallback(() => {
+    switchNetworkAsync?.(SupportedChainId.SEPOLIA);
+  }, [isConnectedToMainNetwork]);
+
+  return {
+    switchNetworkWithChainId,
+    switchToEthereum,
+    switchToTitan,
+    switchToSepolia,
+  };
 };
