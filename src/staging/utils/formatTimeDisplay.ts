@@ -1,6 +1,6 @@
 export function formatTimeDisplay(finalTime: number): string {
   if (finalTime <= 0) {
-    return "00 : 00";
+    return "00 : 01";
   }
 
   const hours = Math.floor(finalTime / 3600);

@@ -36,9 +36,11 @@ export function Tooltip(props: {
           tooltipLineHeight: "18px",
         }}
       />
-      <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
-        <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
-      </Box>
+      {!type && (
+        <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
+          <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
+        </Box>
+      )}
     </Box>
   );
 }
