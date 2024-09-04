@@ -36,7 +36,7 @@ jobs:
         run: npm install
       # PULL VERCEL ENV
       - name: Pull Vercel Environment Information
-        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
+        run: vercel pull --yes --environment=Development --token=${{ env.VERCEL_TOKEN }}
       # DEPLOY TO VERCEL
       - name: Deploy to Vercel
-        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }} --target=${{ env.ENV}}
+        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }} --target=Development
