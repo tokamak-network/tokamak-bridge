@@ -25,8 +25,6 @@ const useRequestRegisteredToken = () => {
     });
   const { inToken } = useInOutTokens();
 
-  console.log("isLoading", isLoading);
-
   const {} = useTx({
     hash: data?.hash,
     txSort: "Request",
@@ -161,7 +159,6 @@ export const useCrossTradeContract = () => {
       _isEditError ||
       _isCancelError
     ) {
-      setIsOpen(true);
       setModalOpen("error");
     }
   }, [
