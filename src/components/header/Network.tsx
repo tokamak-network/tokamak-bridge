@@ -89,7 +89,7 @@ const ValueContainer = (props: {
             }}
           />
           {isConnected && !isConnectedToMainNetwork && (
-            <Text>{capitalizeFirstChar(selectedOption.chainName)}</Text>
+            <Text>{convertNetworkName(selectedOption.chainName)}</Text>
           )}
         </Center>
       </Flex>
