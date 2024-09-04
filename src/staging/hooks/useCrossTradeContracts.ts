@@ -132,11 +132,41 @@ export const useCrossTradeContract = () => {
     write: _requestRegisteredToken,
     isLoading: _isResisteredTokenLoading,
     data: _resisteredTokenData,
+    isError: _isrequestRegisteredTokenError,
   } = useRequestRegisteredToken();
-  const { write: _provideCT, isLoading: _isProvideLoading } = useProvideCT();
-  const { write: _editFee, isLoading: _isEditLoading } = useEditFee();
-  const { write: _cancelRequest, isLoading: _isCancelLoading } =
-    useCancelRequest();
+  const {
+    write: _provideCT,
+    isLoading: _isProvideLoading,
+    isError: _isProvideError,
+  } = useProvideCT();
+  const {
+    write: _editFee,
+    isLoading: _isEditLoading,
+    isError: _isEditError,
+  } = useEditFee();
+  const {
+    write: _cancelRequest,
+    isLoading: _isCancelLoading,
+    isError: _isCancelError,
+  } = useCancelRequest();
+
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+
+  useEffect(() => {
+    if (
+      _isrequestRegisteredTokenError ||
+      _isProvideError ||
+      _isEditError ||
+      _isCancelError
+    ) {
+      setModalOpen("error");
+    }
+  }, [
+    _isrequestRegisteredTokenError,
+    _isProvideError,
+    _isEditError,
+    _isCancelError,
+  ]);
 
   return {
     requestRegisteredToken: _requestRegisteredToken,

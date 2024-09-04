@@ -358,6 +358,7 @@ export const getRequestTransactionHash = (parmas: {
         return {
           request: requestTransactionHash,
           cancelRequest: cancelCT[0].transactionHash,
+          refund: undefined,
         };
       }
       case CT_REQUEST_CANCEL.Completed: {
