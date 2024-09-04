@@ -6,6 +6,7 @@ import {
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 //getConfirmType.ts
 const getLineType = (transactionData: TransactionHistory): number => {
@@ -82,7 +83,7 @@ const getWaitMessage = (
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? "Wait 6 hours"
+        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : ""}6 hours`
         : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${

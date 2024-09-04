@@ -13,7 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import { Action, Status, GasCostData } from "@/staging/types/transaction";
+import {
+  Action,
+  Status,
+  GasCostData,
+  CT_ACTION,
+} from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
@@ -130,14 +135,19 @@ export default function DepositWithdrawConfirmModal() {
      * - For DEPOSIT (length 2): One ConditionalBox component is inserted between the StatusComponent elements.
      */
   }
-  const renderStatusComponents = (statuses: Status[]) => {
+  const renderStatusComponents = (
+    statuses: Status[],
+    action: Action | CT_ACTION
+  ) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
       const waitMessage = getWaitMessage(
         lineType,
         index,
-        transactionData.outNetwork
+        action === Action.Deposit
+          ? transactionData.outNetwork
+          : transactionData.inNetwork
       );
 
       return (
@@ -284,7 +294,9 @@ export default function DepositWithdrawConfirmModal() {
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"}>{renderStatusComponents(statuses)}</Box>
+              <Box ml={"10px"}>
+                {renderStatusComponents(statuses, transactionData.action)}
+              </Box>
             </Flex>
           </Box>
         </ModalBody>

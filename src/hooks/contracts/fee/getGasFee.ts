@@ -171,44 +171,13 @@ export function useGasFee() {
             const l2Provider = isThanosChain(inNetwork.chainId)
               ? asL2ThanosProvider(provider)
               : asL2TitanProvider(provider);
-
-            // if (isETH) {
-            //   const tx = await withdrawContract.populateTransaction.withdraw(
-            //     predeploys.OVM_ETH,
-            //     parsedAmount,
-            //     1_300_000,
-            //     "0x"
-            //   );
-            //   const estimateTotalGasCost =
-            //     await l2Provider.estimateTotalGasCost({ ...tx, from: address });
-            //   return estimateTotalGasCost;
-            // }
             if (isThanosChain(inNetwork.chainId)) {
-              const crossDomainMessenger = new thanosSDK.CrossChainMessenger({
-                bedrock: true,
-                l1ChainId: SupportedChainId.SEPOLIA,
-                l2ChainId: SupportedChainId.THANOS_SEPOLIA,
-                l1SignerOrProvider: provider,
-                l2SignerOrProvider: provider.getSigner(),
-              });
               const signer = provider.getSigner();
-              const tx = await crossDomainMessenger.estimateGas.withdrawETH(
-                parsedAmount
-              );
-              // const tx = {
-              //   to: "0x1000000000000000000000000000000000000000",
-              //   value: ethers.utils.parseEther("0.01"),
-              //   type: 2,
-              //   maxFeePerGas: ethers.BigNumber.from("0x0f433c"),
-              //   maxPriorityFeePerGas: ethers.BigNumber.from("0x0f433c"),
-              //   gasPrice: await signer.getGasPrice(),
-              //   gasLimit: ethers.BigNumber.from("0x5208"),
-              //   nonce: await signer.getTransactionCount(),
-              //   chainId: SupportedChainId.THANOS_SEPOLIA,
-              // };
-              console.log(tx);
-
-              // Sign the transaction
+              const tx = await signer.populateTransaction({
+                to: "0x1000000000000000000000000000000000000000",
+                value: ethers.BigNumber.from(parsedAmount.toString()),
+                gasPrice: await provider.getGasPrice(),
+              });
               const estimateTotalGasCost =
                 await l2Provider.estimateTotalGasCost(tx);
               return estimateTotalGasCost;

@@ -39,7 +39,6 @@ export default function Account() {
     : "Connect Wallet";
 
   useEffect(() => {
-    console.log("asdf");
     setThanosSepoliaDipositHistory({
       latestBlockNumber: "0",
       latestRelayedBlockNumber: "0",
