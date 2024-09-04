@@ -39,4 +39,4 @@ jobs:
         run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
       # DEPLOY TO VERCEL
       - name: Deploy to Vercel
-        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }} --env=${{ env.ENV}}
+        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }} --target=${{ env.ENV}}
