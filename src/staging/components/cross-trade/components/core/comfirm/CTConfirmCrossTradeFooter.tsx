@@ -81,7 +81,7 @@ export default function CTConfirmCrossTradeFooter(
 
   const btnDisabled = useMemo(() => {
     if (!isConnected) {
-      return !provideConfirmed;
+      return false;
     }
     if (!isApproved || isBalanceOver) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
@@ -313,7 +313,7 @@ export default function CTConfirmCrossTradeFooter(
           </Checkbox>
         </Flex>
       )}
-      {isProvide && (
+      {isProvide && isConnected && (
         <Grid
           textAlign={"center"}
           w={"364px"}
