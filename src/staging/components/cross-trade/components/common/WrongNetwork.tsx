@@ -1,6 +1,7 @@
 import useConnectedNetwork, { useChangeNetwork } from "@/hooks/network";
 import { Box, Text } from "@chakra-ui/react";
 import { CSSProperties } from "react";
+import { useAccount } from "wagmi";
 
 export function WrongNetwork(props: { style?: CSSProperties }) {
   const { switchToEthereum } = useChangeNetwork();
@@ -38,11 +39,13 @@ export function WrongNetwork(props: { style?: CSSProperties }) {
 }
 
 export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
-  const { switchToEthereum } = useChangeNetwork();
+  const { switchToSepolia } = useChangeNetwork();
   const { connectedToLayer1, isConnectedToMainNetwork, isSupportedChain } =
     useConnectedNetwork();
+  const { isConnected } = useAccount();
 
-  if (!isConnectedToMainNetwork && isSupportedChain) return null;
+  if (!isConnected || (!isConnectedToMainNetwork && isSupportedChain))
+    return null;
 
   return (
     <Box
@@ -62,7 +65,7 @@ export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
         fontSize={"12px"}
         lineHeight={"18px"}
         color={"#fff"}
-        onClick={switchToEthereum}
+        onClick={switchToSepolia}
         cursor={"pointer"}
       >
         Please switch to{" "}
