@@ -13,6 +13,11 @@ import { actionMethodStatus } from "@/recoil/modal/atom";
 
 import HISTORYICON from "assets/icons/header/history.svg";
 import WALLET_ICON from "assets/icons/wallet.svg";
+import { useEffect } from "react";
+import {
+  thanosSepoliaDepositHistory,
+  titanSepoliaDepositHistory,
+} from "@/recoil/history/transaction";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
@@ -22,12 +27,30 @@ export default function Account() {
   const { headerMobileView: mobileView } = useMediaView();
   const [actionOptionStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
+  const [thanosSepoliaDipositHistory, setThanosSepoliaDipositHistory] =
+    useRecoilState(thanosSepoliaDepositHistory);
+  const [titanSepoliaDipositHistory, setTitanSepoliaDipositHistory] =
+    useRecoilState(titanSepoliaDepositHistory);
 
   const buttonText = isConnected
     ? trimAddress({ address })
     : mobileView
     ? "Connect"
     : "Connect Wallet";
+
+  useEffect(() => {
+    console.log("asdf");
+    setThanosSepoliaDipositHistory({
+      latestBlockNumber: "0",
+      latestRelayedBlockNumber: "0",
+      history: null,
+    });
+    setTitanSepoliaDipositHistory({
+      latestBlockNumber: "0",
+      latestRelayedBlockNumber: "0",
+      history: null,
+    });
+  }, [address, isConnected]);
 
   return (
     <Center
