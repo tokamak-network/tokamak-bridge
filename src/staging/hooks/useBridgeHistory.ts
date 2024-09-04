@@ -417,7 +417,12 @@ export const useDepositData = () => {
   }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
 
   const fetchThanosData = useCallback(async () => {
-    if (l1ThanosData && isConnectedToMainNetwork !== undefined && L1Provider) {
+    if (
+      l1ThanosData &&
+      isConnectedToMainNetwork !== undefined &&
+      !isConnectedToMainNetwork &&
+      L1Provider
+    ) {
       const erc20BridgeInitiateds = l1ThanosData.erc20BridgeInitiateds;
       const l1SentMessges = l1ThanosData.sentMessages;
       let latestRelayedBlockNumber =
@@ -534,14 +539,25 @@ export const useDepositData = () => {
   }, [titanSepoliaDipositHistory, thanosSepoliaDipositHistory]);
 
   useEffect(() => {
+    if (isConnectedToMainNetwork) {
+      setThanosSepoliaDipositHistory((prev) => {
+        return {
+          ...prev,
+          history: [],
+        };
+      });
+    }
+  }, [isConnectedToMainNetwork, setThanosSepoliaDipositHistory]);
+
+  useEffect(() => {
     fetchTitanData().catch((error) => {
-      console.error("Error in fetching deposit data", error);
+      console.error("Error in fetching titan deposit data", error);
     });
   }, [fetchTitanData]);
 
   useEffect(() => {
     fetchThanosData().catch((error) => {
-      console.error("Error in fetching deposit data", error);
+      console.error("Error in fetching thanos deposit data", error);
     });
   }, [fetchThanosData]);
 

@@ -37,7 +37,9 @@ const NoAcitivityComponent = () => {
 };
 
 const LoadingSpinner = () => {
-  const components = new Array(4).fill(null).map((_, index) => <LoadingTx />);
+  const components = new Array(4)
+    .fill(null)
+    .map((_, index) => <LoadingTx key={index} />);
 
   return <>{components}</>;
 };

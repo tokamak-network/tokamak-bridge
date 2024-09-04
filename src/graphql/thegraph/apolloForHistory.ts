@@ -15,6 +15,7 @@ import { ChainId } from "@uniswap/sdk-core";
 const CHAIN_SUBGRAPH_URL: Record<number, string[]> = {
   [SupportedChainId.MAINNET]: [
     process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY as string,
+    process.env.NEXT_PUBLIC_SUBGRAPH_ETHEREUM_HISTORY as string,
   ],
   [SupportedChainId.TITAN]: [
     process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY as string,
