@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { CSSProperties, ReactNode, useState } from "react";
 import QuestionIcon from "assets/icons/question.svg";
 import GrayQuestionIcon from "assets/icons/questionGray.svg";
+import BlueQuestionIcon from "assets/icons/questionBlue.svg";
 import TooltipArrow from "assets/icons/tooltipArrow.svg";
 
 export default function CustomTooltip(props: {
@@ -84,6 +85,7 @@ export default function CustomTooltip(props: {
 
 export const CustomTooltipWithQuestion = (props: {
   isGrayIcon?: boolean;
+  isBlueIcon?: boolean;
   tooltipLabel: string | ReactNode;
   style?: {
     width?: string;
@@ -102,7 +104,13 @@ export const CustomTooltipWithQuestion = (props: {
       <CustomTooltip
         content={
           <Image
-            src={props.isGrayIcon ? GrayQuestionIcon : QuestionIcon}
+            src={
+              props.isGrayIcon
+                ? GrayQuestionIcon
+                : props.isBlueIcon
+                ? BlueQuestionIcon
+                : QuestionIcon
+            }
             alt={"QuestionIcon"}
           ></Image>
         }
