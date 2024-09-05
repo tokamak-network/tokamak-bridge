@@ -22,9 +22,9 @@ const getTokenInfo = (tokenAddress: string) => {
           decimals: token.decimals,
         };
       }
-      return null;
     }
   }
+  return null;
   throw new Error(`Token address(${tokenAddress}) not found`);
 };
 
