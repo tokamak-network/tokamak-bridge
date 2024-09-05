@@ -22,6 +22,7 @@ const getTokenInfo = (tokenAddress: string) => {
           decimals: token.decimals,
         };
       }
+      return null;
     }
   }
   throw new Error(`Token address(${tokenAddress}) not found`);
@@ -32,8 +33,9 @@ export const getTransactionToken = (
   l2TokenAddress: string,
   amount: string,
   isL1: boolean
-): { l1Token: TransactionToken; l2Token: TransactionToken } => {
+): { l1Token: TransactionToken | null; l2Token: TransactionToken | null } => {
   const tokenInfo = getTokenInfo(isL1 ? l1TokenAddress : l2TokenAddress);
+  if (tokenInfo === null) return { l1Token: null, l2Token: null };
   const l2Token: TransactionToken = {
     ...tokenInfo,
     address: l2TokenAddress,

@@ -256,6 +256,7 @@ export const useWithdrawData = () => {
             amount,
             false
           );
+          if (!l1Token || !l2Token) return;
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
@@ -368,6 +369,7 @@ export const useDepositData = () => {
             amount,
             true
           );
+          if (!l1Token || !l2Token) return;
 
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
@@ -467,6 +469,7 @@ export const useDepositData = () => {
             amount,
             true
           );
+          if (!l1Token || !l2Token) return;
 
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
