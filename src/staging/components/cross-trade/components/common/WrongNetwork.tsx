@@ -1,12 +1,14 @@
 import useConnectedNetwork, { useChangeNetwork } from "@/hooks/network";
 import { Box, Text } from "@chakra-ui/react";
 import { CSSProperties } from "react";
+import { useAccount } from "wagmi";
 
 export function WrongNetwork(props: { style?: CSSProperties }) {
   const { switchToEthereum } = useChangeNetwork();
   const { connectedToLayer1, isConnectedToMainNetwork } = useConnectedNetwork();
+  const { isConnected } = useAccount();
 
-  if (connectedToLayer1) return null;
+  if (!isConnected || connectedToLayer1) return null;
 
   return (
     <Box
@@ -38,7 +40,7 @@ export function WrongNetwork(props: { style?: CSSProperties }) {
 }
 
 export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
-  const { switchToEthereum } = useChangeNetwork();
+  const { switchToSepolia } = useChangeNetwork();
   const { connectedToLayer1, isConnectedToMainNetwork, isSupportedChain } =
     useConnectedNetwork();
 
@@ -62,11 +64,14 @@ export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
         fontSize={"12px"}
         lineHeight={"18px"}
         color={"#fff"}
-        onClick={switchToEthereum}
-        cursor={"pointer"}
       >
         Please switch to{" "}
-        <span style={{ textDecoration: "underline" }}>{"Sepolia"}</span>
+        <span
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+          onClick={switchToSepolia}
+        >
+          {"Sepolia"}
+        </span>
         <br />
         <span>
           Only use while connected to Sepolia or Titan Sepolia—not on mainnet.

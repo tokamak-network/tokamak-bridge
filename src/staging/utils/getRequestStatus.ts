@@ -353,12 +353,13 @@ export const getRequestTransactionHash = (parmas: {
             request: requestTransactionHash,
             updateFee,
             cancelRequest: cancelCT[0].transactionHash,
+            refund: "0x",
           };
         }
         return {
           request: requestTransactionHash,
           cancelRequest: cancelCT[0].transactionHash,
-          refund: undefined,
+          refund: "0x",
         };
       }
       case CT_REQUEST_CANCEL.Completed: {

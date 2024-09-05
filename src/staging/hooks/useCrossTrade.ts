@@ -195,7 +195,7 @@ export const useRequestData = (): {
       if (data && _l1Data) {
         const datas = data.requestCTs;
         const providerClaimCTs = data.providerClaimCTs;
-        const cancelCTs = data.cancelCTs;
+        const cancelCTs = _l1Data.l1CancelCTs;
         const editCTs = _l1Data.editCTs;
         const provideCTs = _l1Data.provideCTs;
 
@@ -322,7 +322,10 @@ export const useRequestData = (): {
           };
         });
         const trimedResult = result.filter(
-          (item) => !item.isCanceled && item.recevingUSD > item.providingUSD
+          (item) =>
+            !item.isCanceled &&
+            item.recevingUSD > item.providingUSD &&
+            !item.isProvided
         );
         setIsLoading(false);
         return setRequestList(trimedResult);
