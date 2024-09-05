@@ -203,6 +203,7 @@ function TransactionToast(props: TransactionToastProp) {
       if (txSort === "Provide") {
         return setSelectedTransactionCategory(CT_ACTION.PROVIDE);
       }
+      return setSelectedTransactionCategory(CT_ACTION.REQUEST);
     }
   };
   const { closeModal } = useTxConfirmModal();

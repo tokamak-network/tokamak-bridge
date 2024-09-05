@@ -409,11 +409,13 @@ export default function CTConfirmCrossTradeFooter(
                 }`}
               </Text>
             )}
-            <TooltipForRevoke
-              isGrayIcon={approveBtnDisabled ? true : false}
-              isBlueIcon={!approveBtnDisabled ? true : false}
-              style={{ marginLeft: "2px" }}
-            />
+            {isRevokeForUSDT && (
+              <TooltipForRevoke
+                isGrayIcon={approveBtnDisabled ? true : false}
+                isBlueIcon={!approveBtnDisabled ? true : false}
+                style={{ marginLeft: "2px" }}
+              />
+            )}
           </Button>
         )}
         <Button
