@@ -378,8 +378,17 @@ export default function CTConfirmCrossTradeFooter(
             borderRadius={"8px"}
             _hover={{}}
             sx={{
-              backgroundColor: !approveBtnDisabled ? "#007AFF" : "#17181D",
-              color: !approveBtnDisabled ? "#FFFFFF" : "#8E8E92",
+              backgroundColor: isRevokeForUSDT
+                ? "#17181D"
+                : !approveBtnDisabled
+                ? "#007AFF"
+                : "#17181D",
+              color: isRevokeForUSDT
+                ? "#007AFF"
+                : !approveBtnDisabled
+                ? "#FFFFFF"
+                : "#8E8E92",
+              border: !isLoading && isRevokeForUSDT ? "1px solid #007AFF" : "",
             }}
             _disabled={{
               backgroundColor: "#17181D",
