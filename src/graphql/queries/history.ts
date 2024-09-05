@@ -110,7 +110,6 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       }
       orderBy: blockNumber
       orderDirection: desc
-      first: 10
     ) {
       blockNumber
       blockTimestamp
