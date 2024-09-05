@@ -127,7 +127,7 @@ export default function CTFeeUpdateModal() {
 
   const isInputOver = useMemo(() => {
     if (inputParsedAmount && totalAmount) {
-      return inputParsedAmount.gt(totalAmount);
+      return inputParsedAmount.gte(totalAmount);
     }
   }, [inputParsedAmount, totalAmount]);
 

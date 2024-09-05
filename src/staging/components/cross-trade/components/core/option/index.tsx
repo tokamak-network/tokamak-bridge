@@ -85,7 +85,7 @@ export default function CTOptionModal() {
   }, [recommendedFee, serviceFee]);
 
   useEffect(() => {
-    if (ctOptionModal && recommendedFee) {
+    if (ctOptionModal && recommendedFee !== undefined) {
       setServiceFee(recommendedFee.toString());
     }
   }, [recommendedFee, ctOptionModal]);

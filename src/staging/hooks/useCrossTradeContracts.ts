@@ -150,7 +150,7 @@ export const useCrossTradeContract = () => {
     isError: _isCancelError,
   } = useCancelRequest();
 
-  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { setModalOpen } = useTxConfirmModal();
 
   useEffect(() => {
     if (

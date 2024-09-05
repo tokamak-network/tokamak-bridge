@@ -64,10 +64,12 @@ export function SwitchToTestNetwork(props: { style?: CSSProperties }) {
         fontSize={"12px"}
         lineHeight={"18px"}
         color={"#fff"}
-        cursor={"pointer"}
       >
         Please switch to{" "}
-        <span style={{ textDecoration: "underline" }} onClick={switchToSepolia}>
+        <span
+          style={{ textDecoration: "underline", cursor: "pointer" }}
+          onClick={switchToSepolia}
+        >
           {"Sepolia"}
         </span>
         <br />
