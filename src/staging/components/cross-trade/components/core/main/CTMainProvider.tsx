@@ -101,7 +101,7 @@ export default function CTProvider({
     //     TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
     //   );
     //   const isZeroTime = remainTime <= 0;
-    //   const timeDisplay = isZeroTime
+    //   const {time: timeDisplay} = isZeroTime
     //     ? "00 : 00"
     //     : useCountdown(formatTimeDisplay(remainTime));
 

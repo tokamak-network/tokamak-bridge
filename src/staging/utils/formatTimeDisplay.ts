@@ -1,8 +1,4 @@
 export function formatTimeDisplay(finalTime: number): string {
-  if (finalTime <= 0) {
-    return "00 : 01";
-  }
-
   const hours = Math.floor(finalTime / 3600);
   const minutes = Math.floor((finalTime % 3600) / 60);
   const seconds = finalTime % 60;

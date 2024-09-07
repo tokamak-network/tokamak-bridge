@@ -36,10 +36,7 @@ import { getCurrentProgressStatus } from "../../../utils/historyStatus";
 import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import LampIcon from "@/assets/icons/lamp.svg";
-import {
-  useBridgeHistory,
-  useDepositData,
-} from "@/staging/hooks/useBridgeHistory";
+import GetHelp from "@/components/ui/GetHelp";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -132,7 +129,6 @@ export default function StatusComponent(
     transactionData.outNetwork ?? SupportedChainId.THANOS_SEPOLIA
   );
   const isActive = transactionData.status === label;
-  const { depositHistory } = useDepositData();
 
   // Countdown is needed only for the following conditions
   const shouldCountdown =
@@ -155,9 +151,10 @@ export default function StatusComponent(
 
   // console.log(initialTimeDisplay);
   // Output variable
-  const timeDisplay = shouldCountdown
-    ? useCountdown(initialTimeDisplay, Boolean(transactionData.errorMessage))
-    : initialTimeDisplay;
+  const remainTime = getRemainTime(transactionData);
+  const { time: timeDisplay, isCountDown } = shouldCountdown
+    ? useCountdown(remainTime, Boolean(transactionData.errorMessage))
+    : { time: initialTimeDisplay, isCountDown: true };
 
   // Calendar start time
   const startDate = useMemo(() => {
@@ -281,7 +278,7 @@ export default function StatusComponent(
           fontWeight={progressStatus === ProgressStatus.Doing ? 600 : 400}
           lineHeight={"22px"}
           color={
-            isError || timeDisplay === "00 : 01"
+            !isCountDown
               ? "#DD3A44"
               : progressStatus === ProgressStatus.Doing
               ? "#FFFFFF"
@@ -292,7 +289,7 @@ export default function StatusComponent(
         >
           {timeDisplay}
         </Text>
-        {timeDisplay === "00 : 01" && <Image src={LampIcon} alt="Lamp"></Image>}
+        {!isCountDown && <GetHelp />}
       </Flex>
     </Flex>
   );

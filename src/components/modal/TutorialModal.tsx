@@ -19,6 +19,7 @@ import step4 from "assets/image/tutorial/step4.svg";
 import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { GoogleFormURL } from "@/constant/url";
 
 const steps = [
   {
@@ -154,7 +155,7 @@ export default function TutorialModal() {
                   from our team by filling out this google{" "}
                   <Link
                     style={{ color: "#007AFF", textDecoration: "underline" }}
-                    href="https://docs.google.com/forms/u/1/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/viewform?usp=send_form"
+                    href={GoogleFormURL}
                     isExternal
                   >
                     form

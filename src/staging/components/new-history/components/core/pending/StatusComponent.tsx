@@ -143,9 +143,12 @@ export default function StatusComponent(
       );
 
   // Output variable
-  const timeDisplay = shouldCountdown
-    ? useCountdown(initialTimeDisplay, Boolean(transactionData.errorMessage))
-    : initialTimeDisplay;
+  const { time: timeDisplay, isCountDown } = shouldCountdown
+    ? useCountdown(
+        getRemainTime(transactionData),
+        Boolean(transactionData.errorMessage)
+      )
+    : { time: initialTimeDisplay, isCountDown: true };
 
   // Calendar start time
   const startDate = useMemo(() => {

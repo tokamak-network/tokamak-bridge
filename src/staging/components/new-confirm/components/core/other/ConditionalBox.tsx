@@ -16,6 +16,7 @@ import { useCountdown } from "@/staging/hooks/useCountdown";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
+import GetHelp from "@/components/ui/GetHelp";
 
 interface ConditionalBoxProps {
   type: "wait" | "timer" | "box";
@@ -26,10 +27,9 @@ interface ConditionalBoxProps {
 export default function ConditionalBox(props: ConditionalBoxProps) {
   const { type, transactionData, waitMessage } = props;
   const remainTime = getRemainTime(transactionData);
-  const isZeroTime = remainTime <= 1;
 
-  const timeDisplay = useCountdown(
-    formatTimeDisplay(remainTime),
+  const { time: timeDisplay, isCountDown } = useCountdown(
+    remainTime,
     Boolean(transactionData.errorMessage)
   );
 
@@ -52,24 +52,20 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
   if (type === "timer") {
     const isTimeOver =
       transactionData.status === Status.Finalize &&
-      isZeroTime &&
       transactionData.action === Action.Deposit;
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
 
     const refreshRollup =
       transactionData.status === Status.Rollup &&
-      isZeroTime &&
       transactionData.action === Action.Withdraw;
 
     const calendarButton =
       transactionData.status === Status.Finalize &&
-      !isZeroTime &&
       transactionData.action === Action.Withdraw;
 
     const claimReadyButton =
       transactionData.status === Status.Finalize &&
-      isZeroTime &&
       transactionData.action === Action.Withdraw;
 
     if (claimReadyButton) {
@@ -114,13 +110,13 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
             fontWeight={600}
             fontSize="11px"
             lineHeight="22px"
-            color={errorRollup || isTimeOver ? "#DD3A44" : "#FFFFFF"}
+            color={errorRollup || !isCountDown ? "#DD3A44" : "#FFFFFF"}
             whiteSpace="nowrap"
             overflow="hidden"
           >
             {timeDisplay}
           </Text>
-          {(errorRollup || isTimeOver) && (
+          {(errorRollup || !isCountDown) && (
             <Flex
               w={"18px"}
               h={"18px"}
@@ -128,7 +124,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
               justifyContent={"center"}
               cursor={"pointer"}
             >
-              <Image src={Lightbulb} alt={"Lightbulb"} />
+              <GetHelp />
             </Flex>
           )}
           {refreshRollup && (

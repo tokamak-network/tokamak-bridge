@@ -1,4 +1,4 @@
-import React, { use, useCallback, useMemo } from "react";
+import React, { use, useCallback, useEffect, useMemo } from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import TokenPair from "@/staging/components/new-history-thanos/components/TokenPair";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
@@ -24,10 +24,15 @@ import { convertNumber } from "@/utils/trim/convertNumber";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { ModalType } from "@/staging/components/cross-trade/types";
+import { depositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
+import useDepositWithdrawConfirmModalUpdate from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModalUpdate";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
   const { isOnOfficialStandard } = useHistoryTab();
+  const { onOpenDepositWithdrawConfirmModal } =
+    useDepositWithdrawConfirmModal();
 
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {
@@ -54,12 +59,14 @@ export default function Complete(transaction: TransactionHistory) {
     return null;
   }, [transactionData]);
 
-  const { onOpenDepositWithdrawConfirmModal } =
-    useDepositWithdrawConfirmModal();
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
   const openModal = useCallback(() => {
-    if (transactionData.category === HISTORY_SORT.STANDARD) {
+    if (
+      transactionData.category === HISTORY_SORT.STANDARD &&
+      (isDepositTransactionHistory(transactionData) ||
+        isWithdrawTransactionHistory(transactionData))
+    ) {
       onOpenDepositWithdrawConfirmModal(transactionData);
     }
     if (transactionData.category === HISTORY_SORT.CROSS_TRADE) {

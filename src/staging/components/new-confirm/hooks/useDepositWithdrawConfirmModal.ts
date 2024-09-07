@@ -1,5 +1,8 @@
 import { depositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
-import { TransactionHistory } from "@/staging/types/transaction";
+import {
+  StandardHistory,
+  TransactionHistory,
+} from "@/staging/types/transaction";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
 
@@ -7,9 +10,7 @@ export default function useDepositWithdrawConfirm() {
   const [depositWithdrawConfirmModal, setDepositWithdrawConfirmModal] =
     useRecoilState(depositWithdrawConfirmModalStatus);
 
-  const onOpenDepositWithdrawConfirmModal = (
-    transaction: TransactionHistory
-  ) => {
+  const onOpenDepositWithdrawConfirmModal = (transaction: StandardHistory) => {
     setDepositWithdrawConfirmModal({ isOpen: true, transaction: transaction });
   };
 
