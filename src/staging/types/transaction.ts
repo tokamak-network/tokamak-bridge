@@ -23,8 +23,10 @@ export enum CT_ACTION {
 
 export enum Status {
   Initiate = "Initiate",
+  Initiated = "Initiated",
   Rollup = "Rollup",
   Prove = "Prove",
+  Proved = "Proved",
   Finalize = "Finalize",
   Completed = "Completed",
 }
@@ -95,11 +97,13 @@ export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   blockTimestamps: {
     initialCompletedTimestamp: number;
     rollupCompletedTimestamp?: number;
+    proveCompletedTimestamp?: number;
     finalizedCompletedTimestamp?: number;
   };
   transactionHashes: {
     initialTransactionHash: string;
     rollupTransactionHash?: string;
+    proveTransactionHash?: string;
     finalizedTransactionHash?: string;
   };
   resolved: Resolved;

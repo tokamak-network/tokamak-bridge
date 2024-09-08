@@ -62,20 +62,24 @@ export const getDipositWithdrawStatues = (
     case Action.Withdraw:
       return [
         Status.Initiate,
+        Status.Initiated,
         isThanosChain(chain) ? Status.Prove : Status.Rollup,
+        Status.Proved,
         Status.Finalize,
+        Status.Completed,
       ];
   }
 };
 
 export const getCurrentProgressStatus = (
   actionType: Action,
-  completedStatus: Status,
-  status: Status,
+  currentStatus: Status,
+  statusToCompare: Status,
   chain: SupportedChainId
 ): ProgressStatus => {
   const statuses = getDipositWithdrawStatues(actionType, chain);
-  const diff = statuses.indexOf(status) - statuses.indexOf(completedStatus);
+  const diff =
+    statuses.indexOf(statusToCompare) - statuses.indexOf(currentStatus);
   return diff === 0
     ? ProgressStatus.Doing
     : diff > 0
