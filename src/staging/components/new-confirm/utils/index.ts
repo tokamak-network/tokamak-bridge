@@ -22,8 +22,14 @@ export const isActionDisabled = (status: Status | CT_Status) => {
   return status === Status.Initiated || status === Status.Proved;
 };
 
-export const getBridgeL2ChainId = (tx: TransactionHistory) => {
+export const getBridgeL2ChainId = (tx?: TransactionHistory | null) => {
+  if (!tx) return null;
   return tx.action === Action.Deposit ? tx.outNetwork : tx.inNetwork;
+};
+
+export const getBridgeL1ChainId = (tx?: TransactionHistory) => {
+  if (!tx) return null;
+  return tx.action === Action.Deposit ? tx.inNetwork : tx.outNetwork;
 };
 
 export const getLineConfig = (tx: TransactionHistory) => {
@@ -71,7 +77,7 @@ export const getNextStatus = (label: Status | CT_Status) => {
 export const getDepositWithdrawWaitMessage = (
   status: Status,
   action: Action,
-  L2ChainId: SupportedChainId
+  L2ChainId: SupportedChainId | null
 ) => {
   if (action === Action.Withdraw) {
     switch (status) {

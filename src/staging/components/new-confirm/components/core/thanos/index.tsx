@@ -18,6 +18,7 @@ import {
   Status,
   GasCostData,
   CT_ACTION,
+  DepositWithdrawType,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirm from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
@@ -53,6 +54,19 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { TransactionInfo } from "./TransactionInfo";
 import BridgeStatusComponent from "./BridgeStatus";
 import BridgeActionButtonComponent from "./BridgeActionButton";
+import { useThanosSDK } from "@/staging/hooks/useThanosSDK";
+import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
+import { useTx } from "@/hooks/tx/useTx";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import useCTOption from "@/staging/components/cross-trade/hooks/useCTOptionModal";
+import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
+
+type TxInfoType = {
+  l1ChainId: SupportedChainId | null;
+  l2ChainId: SupportedChainId | null;
+  l1TokenAddress: string;
+  l2TokenAddress: string;
+};
 
 export default function ThanosDepositWithdrawConfirmModal() {
   const {
@@ -63,13 +77,113 @@ export default function ThanosDepositWithdrawConfirmModal() {
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
-
+  const [txHash, setTxHash] = useState<string | undefined>(undefined);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  const { setModalOpen, setIsOpen } = useTxConfirmModal();
+  const { onCloseCTOptionModal } = useCTOption();
+  const [txInfo, setTxInfo] = useState<TxInfoType | null>(null);
 
   const toDisplayConfirmBox = transactionData?.status === Status.Initiate;
 
+  useEffect(() => {
+    if (
+      !transactionData ||
+      !transactionData?.inToken ||
+      !transactionData.outToken ||
+      !transactionData.inNetwork ||
+      !transactionData.outNetwork
+    )
+      return;
+    const l1ChainId = getBridgeL1ChainId(transactionData);
+
+    const l2ChainId = getBridgeL2ChainId(transactionData);
+
+    const inTokenAddress = getTokenAddressByChainId(
+      transactionData.inToken.symbol,
+      transactionData.inNetwork
+    );
+    const outTokenAddress = getTokenAddressByChainId(
+      transactionData.inToken.symbol,
+      transactionData.outNetwork
+    );
+
+    setTxInfo({
+      l1ChainId,
+      l2ChainId,
+      l1TokenAddress:
+        transactionData.action === Action.Deposit
+          ? inTokenAddress
+          : outTokenAddress,
+      l2TokenAddress:
+        transactionData.action === Action.Deposit
+          ? outTokenAddress
+          : inTokenAddress,
+    });
+  }, [transactionData]);
+
   const handleConfirmCheck = (e: React.ChangeEvent<HTMLInputElement>) =>
     setIsConfirmed(e.target.checked);
+
+  const { crossChainMessenger: thanosCM } = useThanosSDK(
+    txInfo?.l1ChainId ?? null,
+    txInfo?.l2ChainId ?? null
+  );
+
+  const {} = useTx({
+    hash: txHash as `0x${string}`,
+    txSort:
+      transactionData?.action === Action.Withdraw ? "Withdraw" : "Deposit",
+    L2Chain: txInfo?.l2ChainId ?? SupportedChainId.THANOS_SEPOLIA,
+    inToken: transactionData?.inToken.symbol,
+  });
+
+  // need to update when we decide to use this component for Titan
+  const handleActionClick = useCallback(() => {
+    if (transactionData?.action === Action.Withdraw) {
+      onCloseCTOptionModal();
+      onCloseThanosDepositWithdrawConfirmModal();
+      setIsOpen(true);
+      setModalOpen("confirming");
+      if (!thanosCM) return;
+      const performWithdraw = async () => {
+        try {
+          let result;
+          switch (transactionData.withdrawType) {
+            case DepositWithdrawType.ETH:
+              result = await thanosCM.withdrawETH(transactionData.amount);
+              break;
+            case DepositWithdrawType.NativeToken:
+              result = await thanosCM.withdrawNativeToken(
+                transactionData.amount
+              );
+              break;
+            case DepositWithdrawType.ERC20:
+              result = await thanosCM.withdrawERC20(
+                txInfo?.l1TokenAddress,
+                txInfo?.l2TokenAddress,
+                transactionData.amount
+              );
+              break;
+          }
+
+          // Now `result` holds the transaction response, check if it has a hash
+          if (result && result.hash) {
+            setTxHash(result.hash);
+            const withdrawalTx = await result.wait();
+            return withdrawalTx; // Return the transaction receipt
+          } else {
+            throw new Error(
+              "Withdrawal transaction failed to generate a hash."
+            );
+          }
+        } catch (error) {
+          setModalOpen("error");
+          console.error(error);
+        }
+      };
+      performWithdraw();
+    }
+  }, [transactionData, thanosCM]);
 
   const { isApproved } = useApprove();
 
@@ -136,6 +250,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
               tx={transactionData}
               isConfirmed={isConfirmed}
               toolTip={"Text will be changed"}
+              onClick={handleActionClick}
             />
           </Flex>
         </ModalFooter>

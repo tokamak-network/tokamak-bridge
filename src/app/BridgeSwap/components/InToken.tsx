@@ -6,7 +6,7 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function InToken() {

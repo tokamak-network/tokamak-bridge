@@ -66,11 +66,11 @@ export const thanos_sepolia = {
   blockExplorers: {
     etherscan: {
       name: "BlockScout",
-      url: "https://explorer.thanos-sepolia-test.tokamak.network",
+      url: "https://explorer.thanos-sepolia.tokamak.network",
     },
     default: {
       name: "BlockScout",
-      url: "https://explorer.thanos-sepolia-test.tokamak.network",
+      url: "https://explorer.thanos-sepolia.tokamak.network",
     },
   },
 } as const satisfies Chain;

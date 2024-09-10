@@ -84,7 +84,6 @@ const MobileInToken = () => {
         inNetwork: selectedInNetwork,
         outNetwork: selectedOutNetwork,
       });
-
       setSelectedInToken(null);
       setSelectedOutToken(null);
       return;

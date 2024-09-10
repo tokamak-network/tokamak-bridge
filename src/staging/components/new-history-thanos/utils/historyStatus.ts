@@ -75,8 +75,9 @@ export const getCurrentProgressStatus = (
   actionType: Action,
   currentStatus: Status,
   statusToCompare: Status,
-  chain: SupportedChainId
-): ProgressStatus => {
+  chain: SupportedChainId | null
+): ProgressStatus | null => {
+  if (!chain) return null;
   const statuses = getDipositWithdrawStatues(actionType, chain);
   const diff =
     statuses.indexOf(statusToCompare) - statuses.indexOf(currentStatus);

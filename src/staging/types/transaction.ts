@@ -5,6 +5,8 @@ import {
   T_FETCH_REQUEST_LIST_L2,
   T_provideCTs_L1,
 } from "../hooks/useCrossTrade";
+import { NumberLike } from "@tokamak-network/thanos-sdk";
+import { BigNumber } from "ethers";
 
 export enum HISTORY_SORT {
   STANDARD,
@@ -65,6 +67,13 @@ export interface TransactionToken {
   decimals: number;
 }
 
+export enum DepositWithdrawType {
+  ETH = "ETH",
+  NativeToken = "NativeToken",
+  ERC20 = "ERC20",
+  USDC = "USDC",
+}
+
 export enum ERROR_CODE {
   ROLLUP_NOT_COMPLETED,
   CT_REFUND_NOT_COMPLETED,
@@ -94,6 +103,8 @@ export interface BaseCTTransactionHistory extends I_TransactionHistory {
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;
   status: Status;
+  amount?: BigNumber;
+  withdrawType?: DepositWithdrawType;
   blockTimestamps: {
     initialCompletedTimestamp: number;
     rollupCompletedTimestamp?: number;

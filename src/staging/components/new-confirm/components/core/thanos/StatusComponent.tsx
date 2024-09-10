@@ -9,11 +9,16 @@ import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GasStationWhiteSymbol from "assets/icons/confirm/gas-station-white.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { Box, Flex, Text, Link } from "@chakra-ui/react";
-import React, { useCallback } from "react";
-import { getBridgeL2ChainId, getNextStatus } from "../../../utils";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  getBridgeL1ChainId,
+  getBridgeL2ChainId,
+  getNextStatus,
+} from "../../../utils";
 import Image from "next/image";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import PendingComponent from "./Pending";
+import { useThanosSDK } from "@/staging/hooks/useThanosSDK";
 
 interface StatusComponentProps {
   tx: TransactionHistory;
@@ -94,6 +99,20 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     nextStatus,
     getBridgeL2ChainId(tx)
   );
+  const [initiateGasEstimation, setInitiateGasEstimation] = useState<number>(0);
+  const { estimateGas, crossChainMessenger } = useThanosSDK(
+    getBridgeL1ChainId(tx),
+    getBridgeL2ChainId(tx)
+  );
+
+  //estimage initiate Gas by SDK
+  useEffect(() => {
+    const getEstimatedGas = async () => {
+      return 0;
+    };
+    if (label === Status.Initiate && estimateGas) {
+    }
+  }, [estimateGas, label]);
   return (
     <Box>
       <Flex flexDir={"column"} gap={"1px"}>
@@ -133,7 +152,11 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
         )}
       </Flex>
       {!isLast && (
-        <PendingComponent pendingStatus={pendingStatus} label={label} tx={tx} />
+        <PendingComponent
+          pendingStatus={pendingStatus ?? ProgressStatus.Todo}
+          label={label}
+          tx={tx}
+        />
       )}
     </Box>
   );

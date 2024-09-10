@@ -37,13 +37,14 @@ import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
 
   // CTConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
-    useState<ButtonTypeMain>(ButtonTypeMain.Cross);
+    useState<ButtonTypeMain>(ButtonTypeMain.Standard);
 
   const [activeSubButtonValue, setActiveSubButtonValue] =
     useState<ButtonTypeSub>(ButtonTypeSub.Recommend);
@@ -57,6 +58,7 @@ export default function CTOptionModal() {
   };
 
   const { inToken } = useInOutTokens();
+  const { isNotSupportForBridge } = useBridgeSupport();
   const { recommendedCtAmount, recommendedFee } = useRecommendFee({
     tokenAddress: inToken?.tokenAddress ?? "0x",
     totalAmount: Number(inToken?.parsedAmount),
@@ -180,16 +182,21 @@ export default function CTOptionModal() {
   }, [ctOptionModal]);
 
   const btnDisabled = useMemo(() => {
-    if (activeSubButtonValue === ButtonTypeSub.Recommend) {
-      return !recommendedCtAmount || !recommendedFee;
-    }
+    if (activeMainButtonValue === ButtonTypeMain.Cross) {
+      if (activeSubButtonValue === ButtonTypeSub.Recommend) {
+        return !recommendedCtAmount || !recommendedFee;
+      }
 
-    if (activeSubButtonValue === ButtonTypeSub.Advanced) {
-      return (
-        serviceFee === "" ||
-        serviceFee === undefined ||
-        inputWarningCheck === WarningType.Critical
-      );
+      if (activeSubButtonValue === ButtonTypeSub.Advanced) {
+        return (
+          serviceFee === "" ||
+          serviceFee === undefined ||
+          inputWarningCheck === WarningType.Critical
+        );
+      }
+    } else if (activeMainButtonValue === ButtonTypeMain.Standard) {
+      // Check it out if the token is available to withdraw
+      return isNotSupportForBridge;
     }
   }, [
     activeSubButtonValue,
@@ -197,6 +204,10 @@ export default function CTOptionModal() {
     inputWarningCheck,
     recommendedCtAmount,
     recommendedFee,
+    inToken,
+    isNotSupportForBridge,
+    ctOptionModal,
+    activeMainButtonValue,
   ]);
 
   return (

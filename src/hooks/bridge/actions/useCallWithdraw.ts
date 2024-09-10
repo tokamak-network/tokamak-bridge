@@ -45,9 +45,7 @@ export default function useCallWithdraw(functionName: string) {
   const {} = useTx({
     hash: data?.hash,
     txSort: "Withdraw",
-    L2Chain: isThanosChain(inNetwork?.chainId)
-      ? SupportedL2ChainId.THANOS_SEPOLIA
-      : SupportedL2ChainId.TITAN,
+    L2Chain: inNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA,
     inToken: inToken?.tokenSymbol,
   });
 
