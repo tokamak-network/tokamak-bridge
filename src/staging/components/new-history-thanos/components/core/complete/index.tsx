@@ -33,6 +33,7 @@ export default function Complete(transaction: TransactionHistory) {
   const { isOnOfficialStandard } = useHistoryTab();
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
+  const {} = useDepositWithdrawConfirmModalUpdate(transactionData);
 
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {

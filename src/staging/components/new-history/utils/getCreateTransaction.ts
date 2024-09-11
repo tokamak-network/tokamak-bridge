@@ -6,6 +6,7 @@ import {
   DepositTransactionHistory,
   TransactionHistory,
   HISTORY_SORT,
+  StandardHistory,
 } from "@/staging/types/transaction";
 
 import { Resolved } from "@/types/activity/history";
@@ -96,7 +97,7 @@ export function createTransaction(
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
   finalizedTransactionHash?: string
-): TransactionHistory {
+): StandardHistory {
   if (action === Action.Withdraw) {
     return createWithdrawTransaction(
       status,

@@ -153,7 +153,11 @@ export default function StatusComponent(
   // Output variable
   const remainTime = getRemainTime(transactionData);
   const { time: timeDisplay, isCountDown } = shouldCountdown
-    ? useCountdown(remainTime, Boolean(transactionData.errorMessage))
+    ? useCountdown(
+        remainTime,
+        Boolean(transactionData.errorMessage),
+        transactionData
+      )
     : { time: initialTimeDisplay, isCountDown: true };
 
   // Calendar start time

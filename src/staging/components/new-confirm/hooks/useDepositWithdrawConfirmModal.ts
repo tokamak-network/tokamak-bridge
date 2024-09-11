@@ -15,7 +15,10 @@ export default function useDepositWithdrawConfirm() {
   };
 
   const onCloseDepositWithdrawConfirmModal = useCallback(() => {
-    setDepositWithdrawConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    setDepositWithdrawConfirmModal((prev) => ({
+      transaction: undefined,
+      isOpen: false,
+    }));
   }, []);
 
   return {

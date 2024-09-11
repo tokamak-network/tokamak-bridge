@@ -22,16 +22,13 @@ interface ConditionalBoxProps {
   type: "wait" | "timer" | "box";
   transactionData: TransactionHistory;
   waitMessage?: string | undefined;
+  timeDisplay: string;
+  isCountDown: boolean;
 }
 
 export default function ConditionalBox(props: ConditionalBoxProps) {
-  const { type, transactionData, waitMessage } = props;
-  const remainTime = getRemainTime(transactionData);
-
-  const { time: timeDisplay, isCountDown } = useCountdown(
-    remainTime,
-    Boolean(transactionData.errorMessage)
-  );
+  const { type, transactionData, waitMessage, timeDisplay, isCountDown } =
+    props;
 
   if (type === "wait") {
     return (

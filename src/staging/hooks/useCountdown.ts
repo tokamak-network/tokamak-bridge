@@ -1,9 +1,21 @@
 import { useState, useEffect } from "react";
 import { formatTimeDisplay } from "../utils/formatTimeDisplay";
+import { TransactionHistory } from "../types/transaction";
 
-export function useCountdown(initialTime: number, errorType?: boolean) {
-  const [isCountDown, setIsCountDown] = useState(initialTime > 0);
+export function useCountdown(
+  initialTime: number,
+  errorType?: boolean,
+  tx?: TransactionHistory
+) {
+  const [isCountDown, setIsCountDown] = useState(
+    Number.isNaN(initialTime) ? false : initialTime > 0
+  );
   const [time, setTime] = useState<number>(Math.abs(initialTime));
+
+  useEffect(() => {
+    setTime(Math.abs(initialTime));
+    setIsCountDown(initialTime > 0);
+  }, [tx]);
 
   useEffect(() => {
     const countdown = setInterval(() => {
@@ -19,7 +31,6 @@ export function useCountdown(initialTime: number, errorType?: boolean) {
         setTime((prev) => prev + 1);
       }
     }, 1000);
-
     return () => clearInterval(countdown);
   }, [isCountDown]);
 
