@@ -47,6 +47,7 @@ const LoadingSpinner = () => {
 export default function AccountHistoryNew() {
   const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
     useBridgeHistory();
+  console.log(withdrawHistory);
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );

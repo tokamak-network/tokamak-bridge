@@ -14,7 +14,7 @@ import {
   CT_PROVIDE_HISTORY_blockTimestamps,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history-thanos/components/core/pending/StatusComponent";
-import { STATUS_CONFIG } from "@/staging/constants/status";
+import { getStatusConfig, STATUS_CONFIG } from "@/staging/constants/status";
 
 const getStatusHandler = (params: {
   status: Action | CT_ACTION;
@@ -113,12 +113,16 @@ export default function PendingFooter(params: {
         ?.length
     : 0;
 
-  const statuses = getStatusHandler({
-    status,
-    isCanceled,
-    isUpdateFee,
-    hasMultipleUpdateFees,
-  });
+  const statuses =
+    status === Action.Withdraw
+      ? getStatusConfig(transactionData.inNetwork, transactionData.outNetwork)
+          .WITHDRAW
+      : getStatusHandler({
+          status,
+          isCanceled,
+          isUpdateFee,
+          hasMultipleUpdateFees,
+        });
   return (
     <>
       {statuses.map((statusKey, index) => {

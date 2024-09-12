@@ -140,6 +140,11 @@ export interface CurrentDepositTransaction {
   history: DepositTransactionHistory[] | null;
 }
 
+export interface CurrentWithdrawTransaction {
+  latestBlockNumber: string;
+  history: WithdrawTransactionHistory[] | null;
+}
+
 export type CT_REQUEST_HISTORY_blockTimestamps = {
   request: number;
   updateFee?: number[];

@@ -232,3 +232,42 @@ export const FETCH_USER_TRANSACTIONS_L2 = gql`
     }
   }
 `;
+
+export const FETCH_USER_TRANSACTIONS_L2_THANOS = gql`
+  query FetchUserTransactions(
+    $formattedAddress: String!
+    $L1StandardBridge: String!
+    $account: String!
+    $blockNumber: String!
+  ) {
+    sentMessages(
+      where: {
+        message_contains: $formattedAddress
+        target: $L1StandardBridge
+        sender: "0x4200000000000000000000000000000000000010"
+        blockNumber_gt: $blockNumber
+      }
+    ) {
+      blockNumber
+      blockTimestamp
+      gasLimit
+      message
+      messageNonce
+      sender
+      target
+      transactionHash
+    }
+    depositFinalizeds(where: { from: $account }) {
+      id
+      l1Token
+      l2Token
+      from
+      amount
+      extraData
+      to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+  }
+`;

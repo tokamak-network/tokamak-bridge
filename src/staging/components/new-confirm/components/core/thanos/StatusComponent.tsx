@@ -2,6 +2,7 @@ import { getCurrentProgressStatus } from "@/staging/components/new-history-thano
 import {
   Action,
   ProgressStatus,
+  StandardHistory,
   Status,
   TransactionHistory,
 } from "@/staging/types/transaction";
@@ -9,7 +10,7 @@ import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GasStationWhiteSymbol from "assets/icons/confirm/gas-station-white.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { Box, Flex, Text, Link } from "@chakra-ui/react";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   getBridgeL1ChainId,
   getBridgeL2ChainId,
@@ -19,6 +20,7 @@ import Image from "next/image";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import PendingComponent from "./Pending";
 import { useThanosSDK } from "@/staging/hooks/useThanosSDK";
+import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
 
 interface StatusComponentProps {
   tx: TransactionHistory;
@@ -85,11 +87,17 @@ const TxLinkComponent: React.FC<TxLinkComponentProps> = ({ link }) => {
 
 const StatusComponent: React.FC<StatusComponentProps> = (props) => {
   const { tx, label, isLast } = props;
+  const l1ChainId = useMemo(() => {
+    return getBridgeL1ChainId(tx);
+  }, [tx]);
+  const l2ChainId = useMemo(() => {
+    return getBridgeL2ChainId(tx);
+  }, [tx]);
   const progressStuatus = getCurrentProgressStatus(
     tx.action as Action,
     tx.status as Status,
     label,
-    getBridgeL2ChainId(tx)
+    l2ChainId
   );
   const gasCostUS = 30.63;
   const nextStatus = getNextStatus(label);
@@ -97,12 +105,12 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     tx.action as Action,
     tx.status as Status,
     nextStatus,
-    getBridgeL2ChainId(tx)
+    l2ChainId
   );
   const [initiateGasEstimation, setInitiateGasEstimation] = useState<number>(0);
   const { estimateGas, crossChainMessenger } = useThanosSDK(
-    getBridgeL1ChainId(tx),
-    getBridgeL2ChainId(tx)
+    l1ChainId,
+    l2ChainId
   );
 
   //estimage initiate Gas by SDK
@@ -113,6 +121,21 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     if (label === Status.Initiate && estimateGas) {
     }
   }, [estimateGas, label]);
+
+  const txLink = useMemo(() => {
+    if (progressStuatus === ProgressStatus.Done && l1ChainId && l2ChainId) {
+      switch (label) {
+        case Status.Initiate:
+          const baseUrl = getBlockExplorerUrl(
+            tx.action === Action.Deposit ? l1ChainId : l2ChainId
+          );
+          return `${baseUrl}/tx/${
+            (tx as StandardHistory).transactionHashes.initialTransactionHash
+          }`;
+      }
+    }
+    return "";
+  }, [progressStuatus]);
   return (
     <Box>
       <Flex flexDir={"column"} gap={"1px"}>
@@ -128,7 +151,7 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
             {label}
           </Text>
           {progressStuatus === ProgressStatus.Done ? (
-            <TxLinkComponent link="" />
+            <TxLinkComponent link={txLink} />
           ) : (
             <GasDisplayComponent
               isActive={progressStuatus === ProgressStatus.Doing}

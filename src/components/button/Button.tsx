@@ -7,10 +7,11 @@ interface ButtonComponentProps {
   toolTip?: string;
   disabled?: boolean;
   onClick?: () => void;
+  fontSize?: number;
 }
 
 const ButtonComponent: React.FC<ButtonComponentProps> = (props) => {
-  const { content, toolTip, disabled, onClick } = props;
+  const { content, toolTip, disabled, onClick, fontSize } = props;
   return (
     <Button
       width={"100%"}
@@ -23,7 +24,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = (props) => {
     >
       <Flex gap={"2px"} alignItems={"center"}>
         <Text
-          fontSize={"16px"}
+          fontSize={`${fontSize ?? 16}px`}
           fontWeight={600}
           lineHeight={"normal"}
           color={disabled ? "#8E8E92" : "white"}

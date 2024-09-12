@@ -40,6 +40,8 @@ import {
   useBridgeHistory,
   useDepositData,
 } from "@/staging/hooks/useBridgeHistory";
+import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
+import ActionButtonComponent from "./actionButton";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -125,18 +127,26 @@ export default function StatusComponent(
   const { label, transactionData, blockTimestamp, updateFeeCount, openModal } =
     props;
   const action = transactionData.action;
+  const status = transactionData.status;
   const progressStatus = getCurrentProgressStatus(
     action as Action,
     transactionData.status as Status,
     label as Status,
-    transactionData.outNetwork ?? SupportedChainId.THANOS_SEPOLIA
+    getBridgeL2ChainId(transactionData)
   );
   const isActive = transactionData.status === label;
   const { depositHistory } = useDepositData();
 
   // Countdown is needed only for the following conditions
   const shouldCountdown =
-    label === Status.Finalize && progressStatus === ProgressStatus.Doing;
+    (action === Action.Deposit &&
+      label === Status.Finalize &&
+      progressStatus === ProgressStatus.Doing) ||
+    (label === Status.Prove && status === Status.Initiated) ||
+    (label === Status.Finalize && status === Status.Proved);
+
+  const readyForStatus = action === Action.Withdraw && label === status;
+
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
@@ -275,25 +285,31 @@ export default function StatusComponent(
           {statusTitle}
         </Text>
       </Flex>
-      <Flex alignItems="center" gap={"2px"}>
-        <Text
-          fontSize={"11px"}
-          fontWeight={progressStatus === ProgressStatus.Doing ? 600 : 400}
-          lineHeight={"22px"}
-          color={
-            isError || timeDisplay === "00 : 01"
-              ? "#DD3A44"
-              : progressStatus === ProgressStatus.Doing
-              ? "#FFFFFF"
-              : "#A0A3AD"
-          }
-          cursor={!isActive ? "pointer" : "default"}
-          onClick={!isActive ? openModal : undefined}
-        >
-          {timeDisplay}
-        </Text>
-        {timeDisplay === "00 : 01" && <Image src={LampIcon} alt="Lamp"></Image>}
-      </Flex>
+      {readyForStatus ? (
+        <ActionButtonComponent status={status} tx={transactionData} />
+      ) : (
+        <Flex alignItems="center" gap={"2px"}>
+          <Text
+            fontSize={"11px"}
+            fontWeight={progressStatus === ProgressStatus.Doing ? 600 : 400}
+            lineHeight={"22px"}
+            color={
+              isError || timeDisplay === "00 : 01"
+                ? "#DD3A44"
+                : progressStatus === ProgressStatus.Doing
+                ? "#FFFFFF"
+                : "#A0A3AD"
+            }
+            cursor={!isActive ? "pointer" : "default"}
+            onClick={!isActive ? openModal : undefined}
+          >
+            {timeDisplay}
+          </Text>
+          {timeDisplay === "00 : 01" && (
+            <Image src={LampIcon} alt="Lamp"></Image>
+          )}
+        </Flex>
+      )}
     </Flex>
   );
 }

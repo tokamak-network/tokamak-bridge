@@ -59,6 +59,14 @@ const httpLink: Record<number, HttpLink[]> = {
         uri: uri,
       })
   ),
+  [SupportedChainId.THANOS_SEPOLIA]: CHAIN_SUBGRAPH_URL[
+    SupportedChainId.THANOS_SEPOLIA
+  ].map(
+    (uri) =>
+      new HttpLink({
+        uri: uri,
+      })
+  ),
 };
 // This middleware will allow us to dynamically update the uri for the requests based off chainId
 // For more information: https://www.apollographql.com/docs/react/networking/advanced-http-networking/
@@ -103,6 +111,19 @@ const apolloClient_Titan_Sepolia = httpLink[SupportedChainId.TITAN_SEPOLIA].map(
     })
 );
 
+const apolloClient_Thanos_Sepolia = httpLink[
+  SupportedChainId.THANOS_SEPOLIA
+].map(
+  (link, index) =>
+    new ApolloClient({
+      cache: new InMemoryCache(),
+      link: concat(
+        authMiddleware(SupportedChainId.THANOS_SEPOLIA, index),
+        link
+      ),
+    })
+);
+
 export const subgraphApolloClientsForHistory: Record<
   number,
   ApolloClient<NormalizedCacheObject>[]
@@ -111,4 +132,5 @@ export const subgraphApolloClientsForHistory: Record<
   [SupportedChainId.TITAN]: apolloClient_Titan,
   [SupportedChainId.SEPOLIA]: apolloClient_Sepolia,
   [SupportedChainId.TITAN_SEPOLIA]: apolloClient_Titan_Sepolia,
+  [SupportedChainId.THANOS_SEPOLIA]: apolloClient_Thanos_Sepolia,
 };
