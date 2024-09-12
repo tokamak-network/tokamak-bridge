@@ -2,7 +2,11 @@ import {
   depositWithdrawConfirmModalStatus,
   thanosDepositWithdrawConfirmModalStatus,
 } from "@/recoil/modal/atom";
-import { Action, TransactionHistory } from "@/staging/types/transaction";
+import {
+  Action,
+  TransactionHistory,
+  StandardHistory,
+} from "@/staging/types/transaction";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -31,12 +35,15 @@ export default function useDepositWithdrawConfirm() {
     } else
       setDepositWithdrawConfirmModal({
         isOpen: true,
-        transaction: transaction,
+        transaction: transaction as StandardHistory,
       });
   };
 
   const onCloseDepositWithdrawConfirmModal = useCallback(() => {
-    setDepositWithdrawConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    setDepositWithdrawConfirmModal((prev) => ({
+      transaction: undefined,
+      isOpen: false,
+    }));
   }, []);
 
   const onCloseThanosDepositWithdrawConfirmModal = useCallback(() => {

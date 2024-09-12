@@ -77,8 +77,10 @@ const TransactionItem = (props: TransactionItemProps) => {
 
   const needToShowTimeDisplay =
     (title === "refund" || title === "return") && isActive;
-  const initialTimeDisplay = formatTimeDisplay(getRemainTime(txData));
-  const timeDisplay = useCountdown(initialTimeDisplay, Boolean(isOnError));
+  const { time: timeDisplay } = useCountdown(
+    getRemainTime(txData),
+    Boolean(isOnError)
+  );
 
   const CountdownComponent = useMemo(() => {
     if (!needToShowTimeDisplay) return null;

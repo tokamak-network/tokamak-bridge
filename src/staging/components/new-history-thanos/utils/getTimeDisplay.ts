@@ -20,8 +20,9 @@ import {
 import { utcToZonedTime } from "date-fns-tz";
 
 // status 별로 변수 넣는 함수
-export function getRemainTime(transactionData: TransactionHistory): number {
+export function getRemainTime(transactionData?: TransactionHistory): number {
   // 상태 별 number
+  if (!transactionData) return NaN;
   const action = transactionData.action;
   if (action === Action.Deposit) {
     const expectedTimes = getTransactionConstants(transactionData.outNetwork);

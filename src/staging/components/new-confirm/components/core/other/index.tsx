@@ -50,6 +50,8 @@ import ConfirmCheckboxComponent from "./ConfirmCheckbox";
 import InitiateButton from "@/staging/components/new-confirm/components/core/other/InitiateButton";
 import ApproveButton from "./ApproveButton";
 import { useApprove } from "@/hooks/token/useApproval";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
+import { useCountdown } from "@/staging/hooks/useCountdown";
 
 export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
@@ -108,6 +110,15 @@ export default function DepositWithdrawConfirmModal() {
     return {};
   }, [transactionData, totalGasCost, gasCostUS, withdrawCost]);
 
+  const remainTime = useMemo(() => {
+    return getRemainTime(transactionData);
+  }, [transactionData]);
+  const { time: timeDisplay, isCountDown } = useCountdown(
+    remainTime,
+    false,
+    transactionData
+  );
+
   if (!transactionData) {
     return null;
   }
@@ -162,6 +173,8 @@ export default function DepositWithdrawConfirmModal() {
           (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
                 <ConditionalBox
+                  isCountDown={isCountDown}
+                  timeDisplay={timeDisplay}
                   type={typeValue}
                   transactionData={transactionData}
                   waitMessage={waitMessage}

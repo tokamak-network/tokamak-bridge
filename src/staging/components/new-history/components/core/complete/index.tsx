@@ -16,6 +16,7 @@ import {
   isInCT_Provide,
   CT_PROVIDE_HISTORY_blockTimestamps,
   isInCT_REQUEST_CANCEL,
+  StandardHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
@@ -60,7 +61,7 @@ export default function Complete(transaction: TransactionHistory) {
 
   const openModal = useCallback(() => {
     if (transactionData.category === HISTORY_SORT.STANDARD) {
-      onOpenDepositWithdrawConfirmModal(transactionData);
+      onOpenDepositWithdrawConfirmModal(transactionData as StandardHistory);
     }
     if (transactionData.category === HISTORY_SORT.CROSS_TRADE) {
       onOpenCTConfirmModal({

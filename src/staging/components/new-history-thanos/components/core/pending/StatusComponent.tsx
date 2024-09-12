@@ -36,6 +36,7 @@ import { getCurrentProgressStatus } from "../../../utils/historyStatus";
 import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import LampIcon from "@/assets/icons/lamp.svg";
+import GetHelp from "@/components/ui/GetHelp";
 import {
   useBridgeHistory,
   useDepositData,
@@ -135,7 +136,6 @@ export default function StatusComponent(
     getBridgeL2ChainId(transactionData)
   );
   const isActive = transactionData.status === label;
-  const { depositHistory } = useDepositData();
 
   // Countdown is needed only for the following conditions
   const shouldCountdown =
@@ -165,9 +165,14 @@ export default function StatusComponent(
 
   // console.log(initialTimeDisplay);
   // Output variable
-  const timeDisplay = shouldCountdown
-    ? useCountdown(initialTimeDisplay, Boolean(transactionData.errorMessage))
-    : initialTimeDisplay;
+  const remainTime = getRemainTime(transactionData);
+  const { time: timeDisplay, isCountDown } = shouldCountdown
+    ? useCountdown(
+        remainTime,
+        Boolean(transactionData.errorMessage),
+        transactionData
+      )
+    : { time: initialTimeDisplay, isCountDown: true };
 
   // Calendar start time
   const startDate = useMemo(() => {

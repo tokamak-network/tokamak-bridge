@@ -19,7 +19,7 @@ export const TRANSACTION_CONSTANTS = {
 };
 
 export const getTransactionConstants = (chain: SupportedChainId) => {
-  if (isThanosChain(chain)) {
-    return { ...TRANSACTION_CONSTANTS, DEPOSIT: { INITIAL_MINUTES: 1.5 } };
+  if (chain === SupportedChainId.THANOS_SEPOLIA) {
+    return { ...TRANSACTION_CONSTANTS, DEPOSIT: { INITIAL_MINUTES: 2 } };
   } else return TRANSACTION_CONSTANTS;
 };
