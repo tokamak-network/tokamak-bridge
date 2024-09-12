@@ -7,8 +7,8 @@ export function useCountdown(
   errorType?: boolean,
   tx?: TransactionHistory
 ) {
-  const [isCountDown, setIsCountDown] = useState(
-    Number.isNaN(initialTime) ? false : initialTime > 0
+  const [isCountDown, setIsCountDown] = useState<boolean>(
+    initialTime > 0 ? true : false
   );
   const [time, setTime] = useState<number>(Math.abs(initialTime));
 

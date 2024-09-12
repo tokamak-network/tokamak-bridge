@@ -22,7 +22,7 @@ import { utcToZonedTime } from "date-fns-tz";
 // status 별로 변수 넣는 함수
 export function getRemainTime(transactionData?: TransactionHistory): number {
   // 상태 별 number
-  if (!transactionData) return NaN;
+  if (!transactionData) return 0;
   const action = transactionData.action;
   if (action === Action.Deposit) {
     const expectedTimes = getTransactionConstants(transactionData.outNetwork);
@@ -31,6 +31,16 @@ export function getRemainTime(transactionData?: TransactionHistory): number {
       expectedTimes.DEPOSIT.INITIAL_MINUTES
     );
     return timeValue;
+  } else if (action === Action.Withdraw) {
+    const expectedTimes = getTransactionConstants(transactionData.inNetwork);
+    const expectedTime = transactionData.blockTimestamps.proveCompletedTimestamp
+      ? expectedTimes.WITHDRAW.CHALLENGE_PERIOD
+      : expectedTimes.WITHDRAW.INITIAL_MINUTES;
+    const originTimestamp = transactionData.blockTimestamps
+      .proveCompletedTimestamp
+      ? transactionData.blockTimestamps.proveCompletedTimestamp
+      : transactionData.blockTimestamps.initialCompletedTimestamp;
+    return calculateDepositPendingTime(originTimestamp, expectedTime);
   }
   return 0;
 }

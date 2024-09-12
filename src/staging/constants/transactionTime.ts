@@ -8,7 +8,8 @@ export const TRANSACTION_CONSTANTS = {
   },
   WITHDRAW: {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)
-    ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
+    ROLLUP_DAYS: 7,
+    CHALLENGE_PERIOD: 7, // Duration of the rollup state for withdrawal (in days)
   },
   CROSS_TRADE: {
     PROVIDE: 900, //15 minutes in seconds
@@ -20,6 +21,10 @@ export const TRANSACTION_CONSTANTS = {
 
 export const getTransactionConstants = (chain: SupportedChainId) => {
   if (chain === SupportedChainId.THANOS_SEPOLIA) {
-    return { ...TRANSACTION_CONSTANTS, DEPOSIT: { INITIAL_MINUTES: 2 } };
+    return {
+      ...TRANSACTION_CONSTANTS,
+      DEPOSIT: { INITIAL_MINUTES: 2 },
+      WITHDRAW: { INITIAL_MINUTES: 60, CHALLENGE_PERIOD: 7 },
+    };
   } else return TRANSACTION_CONSTANTS;
 };

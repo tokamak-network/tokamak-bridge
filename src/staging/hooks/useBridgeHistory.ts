@@ -239,9 +239,6 @@ export const useWithdrawData = () => {
   >(null);
 
   const { l2TitanData, l2ThanosData } = useSubgraph();
-  useEffect(() => {
-    console.log(l2ThanosData);
-  }, [l2ThanosData]);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider, ThanosProvider } = useProvier();
   const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
@@ -391,8 +388,9 @@ export const useWithdrawData = () => {
             initialTransactionHash: sentMessage.transactionHash,
           };
 
-          if (blockTimestamps instanceof Error) {
-            return new Error("Invalid transaction");
+          if (blockTimestamps instanceof Error || !l1Token || !l2Token) {
+            console.log("Invalid transaction");
+            return;
           }
 
           const result: WithdrawTransactionHistory = {
@@ -434,7 +432,6 @@ export const useWithdrawData = () => {
           thanosSepWithdrawHistory.history,
           sortedResult
         ) as WithdrawTransactionHistory[];
-        console.log(newThanosWithdrawHistory);
         setThanosSepoliaWithdrawHistory(newThanosWithdrawHistory);
       }
     }

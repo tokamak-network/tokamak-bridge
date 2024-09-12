@@ -36,6 +36,7 @@ const BridgeStatusComponent: React.FC<BridgeStatusComponentProps> = (props) => {
           {Array.from({ length: statuses.length }, (_, index) => {
             return (
               <StatusComponent
+                key={index}
                 tx={tx}
                 label={statuses[index]}
                 isLast={index === statuses.length - 1}

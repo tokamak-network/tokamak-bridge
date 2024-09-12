@@ -147,9 +147,10 @@ export default function StatusComponent(
 
   const readyForStatus = action === Action.Withdraw && label === status;
 
+  const remainTime = getRemainTime(transactionData);
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-      formatTimeDisplay(getRemainTime(transactionData))
+      formatTimeDisplay(remainTime)
     : // If not active and status is Finalized, display empty value
     progressStatus === ProgressStatus.Todo
     ? ""
@@ -163,16 +164,12 @@ export default function StatusComponent(
         )
       );
 
-  // console.log(initialTimeDisplay);
-  // Output variable
-  const remainTime = getRemainTime(transactionData);
-  const { time: timeDisplay, isCountDown } = shouldCountdown
-    ? useCountdown(
-        remainTime,
-        Boolean(transactionData.errorMessage),
-        transactionData
-      )
-    : { time: initialTimeDisplay, isCountDown: true };
+  const { time, isCountDown } = useCountdown(
+    remainTime,
+    Boolean(transactionData.errorMessage),
+    transactionData
+  );
+  const timeDisplay = shouldCountdown ? time : initialTimeDisplay;
 
   // Calendar start time
   const startDate = useMemo(() => {
@@ -276,7 +273,11 @@ export default function StatusComponent(
       <Flex alignItems="center">
         <Circle
           size="6px"
-          bg={progressStatus === ProgressStatus.Todo ? "#A0A3AD" : "#007AFF"}
+          bg={
+            progressStatus === ProgressStatus.Todo && !shouldCountdown
+              ? "#A0A3AD"
+              : "#007AFF"
+          }
         />
         <Text
           ml={"6px"}
@@ -284,7 +285,9 @@ export default function StatusComponent(
           fontWeight={600}
           lineHeight={"22px"}
           color={
-            progressStatus === ProgressStatus.Doing ? "#FFFFFF" : "#A0A3AD"
+            progressStatus === ProgressStatus.Doing || shouldCountdown
+              ? "#FFFFFF"
+              : "#A0A3AD"
           }
         >
           {statusTitle}
@@ -296,12 +299,16 @@ export default function StatusComponent(
         <Flex alignItems="center" gap={"2px"}>
           <Text
             fontSize={"11px"}
-            fontWeight={progressStatus === ProgressStatus.Doing ? 600 : 400}
+            fontWeight={
+              progressStatus === ProgressStatus.Doing || shouldCountdown
+                ? 600
+                : 400
+            }
             lineHeight={"22px"}
             color={
-              isError || timeDisplay === "00 : 01"
+              isError || (!isCountDown && shouldCountdown)
                 ? "#DD3A44"
-                : progressStatus === ProgressStatus.Doing
+                : progressStatus === ProgressStatus.Doing || shouldCountdown
                 ? "#FFFFFF"
                 : "#A0A3AD"
             }
@@ -310,9 +317,7 @@ export default function StatusComponent(
           >
             {timeDisplay}
           </Text>
-          {timeDisplay === "00 : 01" && (
-            <Image src={LampIcon} alt="Lamp"></Image>
-          )}
+          {!isCountDown && shouldCountdown && <GetHelp />}
         </Flex>
       )}
     </Flex>

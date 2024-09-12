@@ -28,7 +28,6 @@ import { Tooltip } from "@/staging/components/common/Tooltip";
 import ConfirmDetails from "@/staging/components/new-confirm/components/core/other/ConfirmDetails";
 import { getStatusConfig, STATUS_CONFIG } from "@/staging/constants/status";
 import StatusComponent from "@/staging/components/new-confirm/components/core/other/StatusComponent";
-import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
 import {
