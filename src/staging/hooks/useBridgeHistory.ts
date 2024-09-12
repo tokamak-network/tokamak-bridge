@@ -116,7 +116,8 @@ const errorHandler = (error: ApolloError) => {
 };
 
 export const useSubgraph = () => {
-  const { address } = useAccount();
+  // const { address } = useAccount();
+  const address = "0x942d6ac7A6702Bb1852676f3f22AeE38bD442E4C";
   const { L1_CLIENT, L2_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [thanosSepoliaDipositHistory, setThanosSepoliaDipositHistory] =
