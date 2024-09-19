@@ -71,7 +71,7 @@ const CTTimeline = ({
   />;
 
   return (
-    <VStack mt={"6px"} spacing={0} align="center">
+    <VStack mt={"6px"} spacing={0} align="center" overflow={"auto"}>
       {RenderTimeline}
     </VStack>
   );

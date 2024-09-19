@@ -241,7 +241,7 @@ export default function CTConfirmCrossTradeFooter(
     <Grid mt={"3px"}>
       {/** Check Box */}
       {!isProvide && (
-        <Flex flexDir={"column"} rowGap={"8px"} mt={"5px"}>
+        <Flex w={"100%"} flexDir={"column"} rowGap={"8px"} mt={"5px"}>
           <Text
             color={"#A0A3AD"}
             fontWeight={600}
