@@ -5,6 +5,7 @@ import { CTTransactionType } from "@/types/crossTrade/contracts";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useMemo } from "react";
+import { Decimal } from "decimal.js";
 
 export const useRecommendFee = (params: {
   totalAmount: number;
@@ -24,10 +25,15 @@ export const useRecommendFee = (params: {
   }, [hasRecomendFee]);
 
   const additionalFee = useMemo(() => {
-    if (totalAmount && additionalFeeRatio) {
-      return (totalAmount * additionalFeeRatio) / 100;
+    if (totalAmount && additionalFeeRatio && tokenInfo?.decimals) {
+      const totalAmountDecimal = new Decimal(totalAmount.toString());
+      const additionalFeeRatioDecimal = new Decimal(
+        additionalFeeRatio.toString()
+      );
+      const fee = totalAmountDecimal.mul(additionalFeeRatioDecimal).div(100);
+      return fee.toFixed(tokenInfo.decimals);
     }
-  }, [totalAmount, additionalFeeRatio]);
+  }, [totalAmount, additionalFeeRatio, tokenInfo?.decimals]);
 
   const { tokenPriceWithAmount: serviceFee } = useGetMarketPrice({
     tokenName: "ethereum",
@@ -39,16 +45,21 @@ export const useRecommendFee = (params: {
 
   const recommendedFee = useMemo(() => {
     if (serviceFee && additionalFee && tokenInfo?.decimals) {
-      const sum = serviceFee + additionalFee;
-      return Number(sum.toFixed(tokenInfo.decimals));
+      const additionalFeeWithDecimals = new Decimal(additionalFee.toString());
+      const serviceFeeWithDecimals = new Decimal(serviceFee.toString());
+      const sum = additionalFeeWithDecimals.plus(serviceFeeWithDecimals);
+      return sum.toFixed(tokenInfo.decimals);
     }
   }, [serviceFee, additionalFee, tokenInfo?.decimals]);
 
   const recommendedCtAmount = useMemo(() => {
-    if (totalAmount && recommendedFee) {
-      return totalAmount - recommendedFee;
+    if (totalAmount && recommendedFee && tokenInfo?.decimals) {
+      const totalAmountDecimals = new Decimal(totalAmount.toString());
+      const recommendedFeeDecimal = new Decimal(recommendedFee.toString());
+      const result = totalAmountDecimals.minus(recommendedFeeDecimal);
+      return result.toFixed(tokenInfo?.decimals);
     }
-  }, [totalAmount, recommendedFee]);
+  }, [totalAmount, recommendedFee, tokenInfo?.decimals]);
 
   return { recommendedCtAmount, recommendedFee };
 };
