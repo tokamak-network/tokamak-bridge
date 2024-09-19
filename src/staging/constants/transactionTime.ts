@@ -24,7 +24,7 @@ export const getTransactionConstants = (chain: SupportedChainId) => {
     return {
       ...TRANSACTION_CONSTANTS,
       DEPOSIT: { INITIAL_MINUTES: 2 },
-      WITHDRAW: { INITIAL_MINUTES: 60, CHALLENGE_PERIOD: 7 },
+      WITHDRAW: { INITIAL_MINUTES: 60, CHALLENGE_PERIOD: 0.5 },
     };
   } else return TRANSACTION_CONSTANTS;
 };

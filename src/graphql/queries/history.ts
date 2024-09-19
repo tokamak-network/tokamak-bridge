@@ -237,14 +237,12 @@ export const FETCH_USER_TRANSACTIONS_L2_THANOS = gql`
     $formattedAddress: String!
     $L1StandardBridge: String!
     $account: String!
-    $blockNumber: String!
   ) {
     sentMessages(
       where: {
         message_contains: $formattedAddress
         target: $L1StandardBridge
         sender: "0x4200000000000000000000000000000000000010"
-        blockNumber_gt: $blockNumber
       }
     ) {
       blockNumber

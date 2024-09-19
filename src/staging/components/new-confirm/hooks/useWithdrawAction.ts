@@ -13,6 +13,8 @@ import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import { thanosSepoliaWithdrawHistory } from "@/recoil/history/transaction";
+import { useProvier } from "@/hooks/provider/useProvider";
+import { thanosDepositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
 const thanosSDK = require("@tokamak-network/thanos-sdk");
 
 export const useWithdrawAction = () => {
@@ -23,12 +25,20 @@ export const useWithdrawAction = () => {
   const [, setTxPending] = useRecoilState(txPendingStatus);
   const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
     useRecoilState(thanosSepoliaWithdrawHistory);
+  const { L1Provider } = useProvier();
+  const [
+    thanosDepositWithdrawConfirmModal,
+    setThanosDepositWithdrawConfirmModal,
+  ] = useRecoilState(thanosDepositWithdrawConfirmModalStatus);
+
   const updateWithdrawHistory = (
     transactionData: WithdrawTransactionHistory,
     status: Status,
-    txReceipt: any
+    txHash: string,
+    blockTimestamp: number
   ) => {
     const oldHistory = { ...thanosSepWithdrawHistory };
+    console.log(transactionData, oldHistory.history);
     if (!oldHistory.history) return;
     const newTransactionList = oldHistory.history.map(
       (tx: WithdrawTransactionHistory) => {
@@ -43,14 +53,18 @@ export const useWithdrawAction = () => {
             status: Status.Proved,
             transactionHashes: {
               ...tx.transactionHashes,
-              proveTransactionHash: txReceipt.transactionHash,
+              proveTransactionHash: txHash,
             },
             blockTimestamps: {
               ...tx.blockTimestamps,
-              proveCompletedTimestamp: txReceipt.blockTimestamp,
+              proveCompletedTimestamp: blockTimestamp,
             },
           };
           console.log(newTx);
+          setThanosDepositWithdrawConfirmModal((prev) => ({
+            ...prev,
+            transaction: newTx,
+          }));
           return newTx;
         }
         if (status === Status.Finalize) {
@@ -59,14 +73,18 @@ export const useWithdrawAction = () => {
             status: Status.Completed,
             transactionHashes: {
               ...tx.transactionHashes,
-              finalizedTransactionHash: txReceipt.transactionHash,
+              finalizedTransactionHash: txHash,
             },
             blockTimestamps: {
               ...tx.blockTimestamps,
-              finalizedCompletedTimestamp: txReceipt.blockTimestamp,
+              finalizedCompletedTimestamp: blockTimestamp,
             },
           };
           console.log(newTx);
+          setThanosDepositWithdrawConfirmModal((prev) => ({
+            ...prev,
+            transaction: newTx,
+          }));
           return newTx;
         }
         return tx;
@@ -103,12 +121,16 @@ export const useWithdrawAction = () => {
               tx.transactionHashes.initialTransactionHash
             );
             console.log(proveTx);
-            const proveReceipt = await proveTx.wait(3);
-            console.log(
-              "Proved transaction hash (on L1):",
-              proveReceipt.transactionHash
+            const proveReceipt = await proveTx.wait();
+            const block = await L1Provider.getBlock(proveReceipt.blockNumber);
+            const blockTimestamp = block.timestamp;
+            console.log("Proved transaction hash (on L1):", blockTimestamp);
+            updateWithdrawHistory(
+              tx,
+              Status.Prove,
+              proveReceipt.transactionHash,
+              blockTimestamp
             );
-            updateWithdrawHistory(tx, Status.Prove, proveReceipt);
           } else if (tx.status === Status.Finalize) {
             if (!tx.transactionHashes?.initialTransactionHash) return; // Thanos Cross domain messenger is not available.
             setTxPending(true);
@@ -117,11 +139,17 @@ export const useWithdrawAction = () => {
             );
             console.log(finalizeTxResponse);
             const finalizeTxReceipt = await finalizeTxResponse.wait();
-            console.log(
-              "Finalized transaction hash (on L1):",
-              finalizeTxReceipt.transactionHash
+            const block = await L1Provider.getBlock(
+              finalizeTxReceipt.blockNumber
             );
-            updateWithdrawHistory(tx, Status.Finalize, finalizeTxReceipt);
+            const blockTimestamp = block.timestamp;
+            console.log("Finalized transaction hash (on L1):", blockTimestamp);
+            updateWithdrawHistory(
+              tx,
+              Status.Finalize,
+              finalizeTxReceipt.transactionHash,
+              blockTimestamp
+            );
           }
           setTxPending(false);
         } catch (error) {
@@ -131,7 +159,13 @@ export const useWithdrawAction = () => {
         }
       }
     },
-    [isConnected, chain, switchNetwork]
+    [
+      isConnected,
+      chain,
+      switchNetwork,
+      thanosSepWithdrawHistory,
+      thanosDepositWithdrawConfirmModal,
+    ]
   );
   return { handleWithdrawTxAction };
 };

@@ -17,12 +17,12 @@ export const getBridgeActionButtonContent = (
   if (status === Status.Initiated && action === Action.Deposit) return null;
   if (status === Status.Initiated) return "Prove";
   if (status === Status.Prove) {
-    return tx.outNetwork === currentChainId ? "Prove" : "Switch Network";
+    return tx.outNetwork === currentChainId ? "Prove" : "Switch";
   }
   if (status === Status.Rollup) return "Rollup";
   if (status === Status.Proved) return "Finalize";
   if (status === Status.Finalize) {
-    return tx.outNetwork === currentChainId ? "Finalize" : "Switch Network";
+    return tx.outNetwork === currentChainId ? "Finalize" : "Switch";
   }
   return null;
 };
@@ -105,7 +105,9 @@ export const getDepositWithdrawWaitMessage = (
           ? "Wait 1 hour"
           : "";
       case Status.Prove:
-        return "Wait 7 days";
+        return L2ChainId === SupportedChainId.THANOS_SEPOLIA
+          ? "Wait 12 seconds"
+          : "Wait 7 days";
       case Status.Rollup:
         return "Wait 7 days";
       default:

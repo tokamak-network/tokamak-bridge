@@ -81,6 +81,8 @@ import {
 } from "../components/new-confirm/utils";
 import { getThanosMessageStatus } from "../utils/getMessageStatus";
 import { GET_withdrawalProvens_withdrawalFinalizeds } from "@/graphql/data/queries";
+import { transactionData } from "@/recoil/global/transaction";
+import { thanosDepositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -202,7 +204,6 @@ export const useSubgraph = () => {
       formattedAddress: formatAddress(address),
       L1StandardBridge: L1StandardBridgeForThanos,
       account: address,
-      blockNumber: thanosSepWithdrawHistory.latestBlockNumber,
     },
     pollInterval: 5000,
     client: L2_THANOS_CLIENT[0],
@@ -267,6 +268,10 @@ export const useWithdrawData = () => {
   const { L2Provider, ThanosProvider } = useProvier();
   const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
     useRecoilState(thanosSepoliaWithdrawHistory);
+  const [
+    thanosDepositWithdrawConfirmModal,
+    setThanosDepositWithdrawConfirmModal,
+  ] = useRecoilState(thanosDepositWithdrawConfirmModalStatus);
 
   const fetchData = useCallback(async () => {
     if (l2TitanData && isConnectedToMainNetwork !== undefined && L2Provider) {
@@ -371,7 +376,7 @@ export const useWithdrawData = () => {
       l1ThanosOptimismPortal
     ) {
       const l2SentMessges = l2ThanosData.sentMessages;
-
+      console.log(l2SentMessges);
       const { withdrawalProvens, withdrawalFinalizeds } =
         l1ThanosOptimismPortal;
       const result: WithdrawTransactionHistory[] = await Promise.all(
@@ -448,7 +453,15 @@ export const useWithdrawData = () => {
             transactionHashes,
             resolved,
           };
-
+          if (
+            (thanosDepositWithdrawConfirmModal.transaction as StandardHistory)
+              ?.transactionHashes.initialTransactionHash ===
+            sentMessage.transactionHash
+          )
+            setThanosDepositWithdrawConfirmModal((prev) => ({
+              ...prev,
+              transaction: result,
+            }));
           return result;
         })
       );
@@ -465,6 +478,7 @@ export const useWithdrawData = () => {
       if (sortedResult) {
         const newThanosWithdrawHistory = {
           ...thanosSepWithdrawHistory,
+          transactionData: [],
         };
         newThanosWithdrawHistory.latestBlockNumber =
           (l2ThanosData?.sentMessages?.length ?? 0) > 0
