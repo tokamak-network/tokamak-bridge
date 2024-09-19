@@ -238,7 +238,7 @@ export default function CTConfirmCrossTradeFooter(
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken, provideCT]);
 
   return (
-    <Grid mt={"3px"}>
+    <Grid mt={"3px"} w={"100%"}>
       {/** Check Box */}
       {!isProvide && (
         <Flex w={"100%"} flexDir={"column"} rowGap={"8px"} mt={"5px"}>
