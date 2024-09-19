@@ -30,7 +30,7 @@ export const getThanosMessageStatus = async (
     case 5:
       return Status.Finalize;
     case 6:
-      Status.Completed;
+      return Status.Completed;
     default:
       return Status.Initiate;
   }

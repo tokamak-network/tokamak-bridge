@@ -13,6 +13,7 @@ import {
   HISTORY_SORT,
   isDepositTransactionHistory,
   isWithdrawTransactionHistory,
+  Status,
   TransactionHistory,
 } from "@/staging/types/transaction";
 import PendingFooter from "./PendingFooter";
@@ -32,7 +33,6 @@ export default function Pending(props: PendingProps) {
     useDepositWithdrawConfirmModal();
 
   const transactionData = transaction;
-
   const title = useMemo(() => {
     switch (transactionData.action) {
       case Action.Withdraw:

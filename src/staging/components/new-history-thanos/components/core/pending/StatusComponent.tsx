@@ -155,14 +155,7 @@ export default function StatusComponent(
     progressStatus === ProgressStatus.Todo
     ? ""
     : // Otherwise, display formatted date as all are completed
-      formatDateToYMD(
-        Number(
-          isWithdrawTransactionHistory(transactionData) ||
-            isDepositTransactionHistory(transactionData)
-            ? transactionData.blockTimestamps.initialCompletedTimestamp
-            : blockTimestamp ?? 0
-        )
-      );
+      formatDateToYMD(Number(blockTimestamp ?? 0));
 
   const { time, isCountDown } = useCountdown(
     remainTime,

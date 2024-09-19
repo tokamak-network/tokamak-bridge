@@ -268,5 +268,24 @@ export const FETCH_USER_TRANSACTIONS_L2_THANOS = gql`
       blockTimestamp
       transactionHash
     }
+    messagePasseds(
+      where: {
+        sender: "0x4200000000000000000000000000000000000007"
+        target: "0x9d28a920206281b4a56aef8bc1c515cc4c656d3f"
+        data_contains: $formattedAddress
+      }
+    ) {
+      id
+      nonce
+      sender
+      target
+      value
+      gasLimit
+      data
+      withdrawalHash
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
   }
 `;

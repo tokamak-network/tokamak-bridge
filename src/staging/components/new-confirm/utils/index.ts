@@ -8,13 +8,22 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getCurrentProgressStatus } from "../../new-history-thanos/utils/historyStatus";
 import { isThanosChain, isTitanChain } from "@/utils/network/checkNetwork";
 
-export const getBridgeActionButtonContent = (tx: TransactionHistory) => {
+export const getBridgeActionButtonContent = (
+  tx: TransactionHistory,
+  currentChainId?: number
+) => {
   const { action, status, inNetwork, outNetwork } = tx;
   if (status === Status.Initiate) return "Initiate";
   if (status === Status.Initiated && action === Action.Deposit) return null;
-  if (status === Status.Initiated || status === Status.Prove) return "Prove";
+  if (status === Status.Initiated) return "Prove";
+  if (status === Status.Prove) {
+    return tx.outNetwork === currentChainId ? "Prove" : "Switch Network";
+  }
   if (status === Status.Rollup) return "Rollup";
-  if (status === Status.Proved || status === Status.Finalize) return "Finalize";
+  if (status === Status.Proved) return "Finalize";
+  if (status === Status.Finalize) {
+    return tx.outNetwork === currentChainId ? "Finalize" : "Switch Network";
+  }
   return null;
 };
 
@@ -54,9 +63,17 @@ export const getLineConfig = (tx: TransactionHistory) => {
     case Status.Proved:
       completedIndex = 1;
       currentIndex = 2;
+      break;
     case Status.Finalize:
       completedIndex = 2;
       currentIndex = 2;
+      break;
+    case Status.Completed:
+      completedIndex = 2;
+      currentIndex = 2;
+      break;
+    default:
+      break;
   }
   return { pointCount, currentIndex, completedIndex };
 };

@@ -5,6 +5,7 @@ import {
   StandardHistory,
   Status,
   TransactionHistory,
+  WithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import GasStationSymbol from "assets/icons/confirm/gas-station.svg";
 import GasStationWhiteSymbol from "assets/icons/confirm/gas-station-white.svg";
@@ -124,13 +125,22 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
 
   const txLink = useMemo(() => {
     if (progressStuatus === ProgressStatus.Done && l1ChainId && l2ChainId) {
+      const l1Url = getBlockExplorerUrl(l1ChainId);
+      const l2Url = getBlockExplorerUrl(l2ChainId);
       switch (label) {
         case Status.Initiate:
-          const baseUrl = getBlockExplorerUrl(
-            tx.action === Action.Deposit ? l1ChainId : l2ChainId
-          );
-          return `${baseUrl}/tx/${
+          return `${tx.action === Action.Deposit ? l1Url : l2Url}/tx/${
             (tx as StandardHistory).transactionHashes.initialTransactionHash
+          }`;
+        case Status.Prove:
+          return `${l1Url}/tx/${
+            (tx as WithdrawTransactionHistory).transactionHashes
+              .proveTransactionHash
+          }`;
+        case Status.Finalize:
+          return `${l1Url}/tx/${
+            (tx as WithdrawTransactionHistory).transactionHashes
+              .finalizedTransactionHash
           }`;
       }
     }

@@ -28,7 +28,7 @@ const TimeLineComponent: React.FC<TimelineComponentProps> = (props) => {
             : ProgressStatus.Todo;
         const lineHeight = lineStatus === ProgressStatus.Done ? 62 : 90;
         return (
-          <Flex flexDir={"column"}>
+          <Flex flexDir={"column"} key={index}>
             <Flex
               zIndex={2}
               width={"20px"}

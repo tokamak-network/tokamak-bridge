@@ -38,6 +38,7 @@ export default function Complete(transaction: TransactionHistory) {
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;
+      // return transactionData.blockTimestamps.finalizedCompletedTimestamp;
     }
     if (isDepositTransactionHistory(transactionData)) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;

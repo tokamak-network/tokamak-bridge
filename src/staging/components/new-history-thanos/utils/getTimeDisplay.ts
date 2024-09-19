@@ -7,6 +7,7 @@ import {
   isInCT_Provide,
   CT_Provide_History,
   Action,
+  Status,
 } from "@/staging/types/transaction";
 import {
   getTransactionConstants,
@@ -24,6 +25,7 @@ export function getRemainTime(transactionData?: TransactionHistory): number {
   // 상태 별 number
   if (!transactionData) return 0;
   const action = transactionData.action;
+  const status = transactionData.status;
   if (action === Action.Deposit) {
     const expectedTimes = getTransactionConstants(transactionData.outNetwork);
     const timeValue = calculateDepositPendingTime(

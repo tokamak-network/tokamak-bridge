@@ -11,7 +11,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import {
   Action,
@@ -19,6 +19,8 @@ import {
   GasCostData,
   CT_ACTION,
   DepositWithdrawType,
+  StandardHistory,
+  WithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirm from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
@@ -59,6 +61,7 @@ import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import useCTOption from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
+import { useWithdrawAction } from "../../../hooks/useWithdrawAction";
 
 type TxInfoType = {
   l1ChainId: SupportedChainId | null;
@@ -81,6 +84,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { onCloseCTOptionModal } = useCTOption();
   const [txInfo, setTxInfo] = useState<TxInfoType | null>(null);
+  const { chain } = useNetwork();
 
   const toDisplayConfirmBox = transactionData?.status === Status.Initiate;
 
@@ -128,6 +132,8 @@ export default function ThanosDepositWithdrawConfirmModal() {
     txInfo?.l2ChainId ?? null
   );
 
+  const { handleWithdrawTxAction } = useWithdrawAction();
+
   const {} = useTx({
     hash: txHash as `0x${string}`,
     txSort:
@@ -139,11 +145,6 @@ export default function ThanosDepositWithdrawConfirmModal() {
   // need to update when we decide to use this component for Titan
   const handleActionClick = useCallback(() => {
     if (transactionData?.action === Action.Withdraw) {
-      onCloseCTOptionModal();
-      onCloseThanosDepositWithdrawConfirmModal();
-      setIsOpen(true);
-      setModalOpen("confirming");
-      if (!thanosCM) return;
       const performWithdraw = async () => {
         try {
           let result;
@@ -180,9 +181,20 @@ export default function ThanosDepositWithdrawConfirmModal() {
           console.error(error);
         }
       };
-      performWithdraw();
+      if (transactionData.status === Status.Initiate) {
+        onCloseCTOptionModal();
+        onCloseThanosDepositWithdrawConfirmModal();
+        setIsOpen(true);
+        setModalOpen("confirming");
+        if (!thanosCM) return;
+        performWithdraw();
+      } else if (
+        transactionData.status === Status.Prove ||
+        transactionData.status === Status.Finalize
+      )
+        handleWithdrawTxAction(transactionData as WithdrawTransactionHistory);
     }
-  }, [transactionData, thanosCM]);
+  }, [transactionData, thanosCM, chain, address]);
 
   const { isApproved } = useApprove();
 
@@ -239,11 +251,13 @@ export default function ThanosDepositWithdrawConfirmModal() {
               >
                 {statusDescription}
               </Text>
-              <ConfirmCheckboxComponent
-                isChecked={isConfirmed}
-                onClickCheckbox={handleConfirmCheck}
-                content={confirmMessage}
-              />
+              {transactionData.status === Status.Initiate && (
+                <ConfirmCheckboxComponent
+                  isChecked={isConfirmed}
+                  onClickCheckbox={handleConfirmCheck}
+                  content={confirmMessage}
+                />
+              )}
             </Flex>
             <BridgeActionButtonComponent
               tx={transactionData}
