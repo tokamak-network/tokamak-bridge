@@ -85,7 +85,7 @@ function calculateInitialTime(
   return totalTime;
 }
 
-const calculateDepositPendingTime = (
+export const calculateDepositPendingTime = (
   blockTimestamp: number,
   expectedTime: number
 ) => {

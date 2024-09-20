@@ -79,7 +79,10 @@ import {
   getBridgeL1ChainId,
   getBridgeL2ChainId,
 } from "../components/new-confirm/utils";
-import { getThanosMessageStatus } from "../utils/getMessageStatus";
+import {
+  getThanosMessageStatuaWithSubgraph,
+  getThanosMessageStatus,
+} from "../utils/getMessageStatus";
 import { GET_withdrawalProvens_withdrawalFinalizeds } from "@/graphql/data/queries";
 import { transactionData } from "@/recoil/global/transaction";
 import { thanosDepositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
@@ -417,10 +420,15 @@ export const useWithdrawData = () => {
           const l1ChainId = SupportedChainId.SEPOLIA; // need to change when binding main net
 
           const l2ChainId = SupportedChainId.THANOS_SEPOLIA; // need to change when binding main net
-          const status = await getThanosMessageStatus(
-            l1ChainId,
-            l2ChainId,
-            sentMessage.transactionHash
+          // const status = await getThanosMessageStatus(
+          //   l1ChainId,
+          //   l2ChainId,
+          //   sentMessage.transactionHash
+          // );
+          const status = await getThanosMessageStatuaWithSubgraph(
+            withdrawalProvens,
+            withdrawalFinalizeds,
+            messagePassed.withdrawalHash
           );
           // const status = Status.Initiate;
 

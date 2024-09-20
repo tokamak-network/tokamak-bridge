@@ -250,3 +250,13 @@ export interface GasCostData {
   depositInitiateGasCostText?: string;
   depositGasCostUS?: string;
 }
+
+export interface WithrawalProvenOrFinalized {
+  id: number;
+  withdrawalHash: string;
+  from: string;
+  to: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
+}

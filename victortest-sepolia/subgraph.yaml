@@ -1,0 +1,32 @@
+specVersion: 1.0.0
+indexerHints:
+  prune: auto
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: L2OutputOracle
+    network: sepolia
+    source:
+      address: "0x4900729d127ee376906d6B7B1b88A936ab802211"
+      abi: L2OutputOracle
+      startBlock: 6098314
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Initialized
+        - OutputProposed
+        - OutputsDeleted
+      abis:
+        - name: L2OutputOracle
+          file: ./abis/L2OutputOracle.json
+      eventHandlers:
+        - event: Initialized(uint8)
+          handler: handleInitialized
+        - event: OutputProposed(indexed bytes32,indexed uint256,indexed uint256,uint256)
+          handler: handleOutputProposed
+        - event: OutputsDeleted(indexed uint256,indexed uint256)
+          handler: handleOutputsDeleted
+      file: ./src/l-2-output-oracle.ts
