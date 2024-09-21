@@ -110,22 +110,6 @@ export const supportedTokens: SupportedTokens_T = [
     isNativeCurrency: null,
     availableForThanosBridge: false,
   },
-
-  {
-    tokenName: "TONStarter",
-    tokenSymbol: "TOS",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
-      SEPOLIA: SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-    availableForBirdge: true,
-    availableForThanosBridge: false,
-  },
   {
     tokenName: "USD Coin",
     tokenSymbol: "USDC",
