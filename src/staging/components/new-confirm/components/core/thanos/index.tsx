@@ -62,6 +62,8 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import useCTOption from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
 import { useWithdrawAction } from "../../../hooks/useWithdrawAction";
+import { isThanosChain } from "@/utils/network/checkNetwork";
+import SwitchNetworkWarningComponent from "./SwitchNetworkWarning";
 
 type TxInfoType = {
   l1ChainId: SupportedChainId | null;
@@ -206,6 +208,17 @@ export default function ThanosDepositWithdrawConfirmModal() {
   const confirmMessage = "Text will be changed.";
   const statusDescription = "Text will be changed.";
 
+  const isDisbleForAction = useMemo(() => {
+    if (!transactionData) return true;
+    if (
+      transactionData.status === Status.Prove ||
+      transactionData.status === Status.Finalize
+    ) {
+      if (chain?.id !== transactionData.outNetwork) return true;
+    }
+    return false;
+  }, [chain, transactionData]);
+
   if (!transactionData) {
     return null;
   }
@@ -235,8 +248,15 @@ export default function ThanosDepositWithdrawConfirmModal() {
           <CloseButton onClick={onCloseThanosDepositWithdrawConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          <TransactionInfo tx={transactionData} address={address} />
-          <BridgeStatusComponent tx={transactionData} />
+          <Flex flexDir={"column"} gap={"12px"}>
+            {isDisbleForAction && (
+              <SwitchNetworkWarningComponent
+                chainId={SupportedChainId.SEPOLIA}
+              />
+            )}
+            <TransactionInfo tx={transactionData} address={address} />
+            <BridgeStatusComponent tx={transactionData} />
+          </Flex>
         </ModalBody>
         <ModalFooter p={0} display="block">
           <Flex gap={"12px"} flexDir={"column"}>
@@ -264,6 +284,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
               isConfirmed={isConfirmed}
               toolTip={"Text will be changed"}
               onClick={handleActionClick}
+              disabled={isDisbleForAction}
             />
           </Flex>
         </ModalFooter>

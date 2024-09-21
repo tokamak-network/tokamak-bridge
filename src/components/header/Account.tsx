@@ -59,7 +59,7 @@ export default function Account() {
       latestBlockNumber: "0",
       history: null,
     });
-  }, [address, isConnected, chain]);
+  }, [address, isConnected]);
 
   return (
     <Center

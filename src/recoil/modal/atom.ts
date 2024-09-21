@@ -136,3 +136,8 @@ export const swapConfirmModalStatus = atom<boolean>({
   key: "swapConfirmModalStatus",
   default: false,
 });
+
+export const pendingTransactionHashes = atom<string[]>({
+  key: "pendingTransactionHashes",
+  default: [],
+});

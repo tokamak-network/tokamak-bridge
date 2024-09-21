@@ -46,7 +46,8 @@ export const getThanosMessageStatus = async (
 export const getThanosMessageStatuaWithSubgraph = async (
   withdrawalProvens: WithrawalProvenOrFinalized[],
   withdrawalFinalizeds: WithrawalProvenOrFinalized[],
-  withdrawalHash: string
+  withdrawalHash: string,
+  isPublished: boolean
 ) => {
   const challengePeriod = getTransactionConstants(
     SupportedChainId.THANOS_SEPOLIA
@@ -68,6 +69,6 @@ export const getThanosMessageStatuaWithSubgraph = async (
     );
     return remainTime <= 0 ? Status.Finalize : Status.Proved;
   } else {
-    return Status.Prove;
+    return isPublished ? Status.Prove : Status.Initiated;
   }
 };

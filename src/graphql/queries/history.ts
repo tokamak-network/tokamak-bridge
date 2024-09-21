@@ -192,6 +192,16 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       blockTimestamp
       transactionHash
     }
+    outputProposeds(first: 1, orderBy: l2BlockNumber, orderDirection: desc) {
+      id
+      outputRoot
+      l2OutputIndex
+      l2BlockNumber
+      l1Timestamp
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
   }
 `;
 

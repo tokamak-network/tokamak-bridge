@@ -25,7 +25,7 @@ const BridgeStatusComponent: React.FC<BridgeStatusComponentProps> = (props) => {
       ? statusConfig.WITHDRAW
       : statusConfig.DEPOSIT;
   return (
-    <Box my={"12px"} px={"20px"} py={"16px"} borderRadius={"8px"} bg="#15161D">
+    <Box mb={"12px"} px={"20px"} py={"16px"} borderRadius={"8px"} bg="#15161D">
       <Flex>
         <TimeLineComponent
           pointCount={pointCount}

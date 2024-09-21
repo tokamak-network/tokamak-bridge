@@ -54,7 +54,7 @@ export default function AccountHistoryNew() {
   useEffect(() => {
     const renderTimer = setInterval(() => {
       setRefetchHistory((prev) => !prev);
-    }, 10000);
+    }, 5000);
     return () => {
       clearInterval(renderTimer);
     };

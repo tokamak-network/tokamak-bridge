@@ -1,5 +1,6 @@
 import ButtonComponent from "@/components/button/Button";
 import { txPendingStatus } from "@/recoil/global/transaction";
+import { pendingTransactionHashes } from "@/recoil/modal/atom";
 import { useWithdrawAction } from "@/staging/components/new-confirm/hooks/useWithdrawAction";
 import { getBridgeActionButtonContent } from "@/staging/components/new-confirm/utils";
 import {
@@ -21,17 +22,21 @@ const ActionButtonComponent: React.FC<ActionButtonComponentProps> = ({
   tx,
 }) => {
   const { handleWithdrawTxAction } = useWithdrawAction();
-  const { chain } = useNetwork();
-  const buttonContent = getBridgeActionButtonContent(tx, chain?.id);
-  const [pendingStatus, setTxPending] = useRecoilState(txPendingStatus);
+  const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
+    pendingTransactionHashes
+  );
+  const pendingStatus = pendingTxHashes.includes(
+    (tx as WithdrawTransactionHistory).transactionHashes.initialTransactionHash
+  );
   const disabled = pendingStatus;
   return (
     <Button
       borderRadius={"4px"}
-      bgColor={disabled ? "#17181D !important" : "#007AFF !important"}
+      bgColor={disabled ? "#0F0F12 !important" : "#007AFF !important"}
       py={"8px"}
       px={"10px"}
-      maxWidth={"62px"}
+      maxWidth={"60px"}
+      minWidth={"60px"}
       maxHeight={"22px"}
       isDisabled={disabled}
       onClick={() => {
@@ -40,12 +45,12 @@ const ActionButtonComponent: React.FC<ActionButtonComponentProps> = ({
     >
       {!pendingStatus ? (
         <Text
-          fontSize={`12px`}
+          fontSize={`11px`}
           fontWeight={600}
           lineHeight={"normal"}
           color={"white"}
         >
-          {buttonContent}
+          {status}
         </Text>
       ) : (
         <Spinner

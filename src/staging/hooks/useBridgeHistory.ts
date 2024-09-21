@@ -265,8 +265,10 @@ export const useWithdrawData = () => {
   const [withdrawHistory, setWithdrawHistory] = useState<
     WithdrawTransactionHistory[] | [] | null
   >(null);
+  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
 
-  const { l2TitanData, l2ThanosData, l1ThanosOptimismPortal } = useSubgraph();
+  const { l2TitanData, l2ThanosData, l1ThanosOptimismPortal, l1ThanosData } =
+    useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider, ThanosProvider } = useProvier();
   const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
@@ -376,10 +378,12 @@ export const useWithdrawData = () => {
       l2ThanosData &&
       isConnectedToMainNetwork !== undefined &&
       ThanosProvider &&
-      l1ThanosOptimismPortal
+      l1ThanosOptimismPortal &&
+      l1ThanosData
     ) {
       const l2SentMessges = l2ThanosData.sentMessages;
-      console.log(l2SentMessges);
+      const latestL2OutputBlockNumber =
+        l1ThanosData.outputProposeds[0].l2BlockNumber;
       const { withdrawalProvens, withdrawalFinalizeds } =
         l1ThanosOptimismPortal;
       const result: WithdrawTransactionHistory[] = await Promise.all(
@@ -420,15 +424,12 @@ export const useWithdrawData = () => {
           const l1ChainId = SupportedChainId.SEPOLIA; // need to change when binding main net
 
           const l2ChainId = SupportedChainId.THANOS_SEPOLIA; // need to change when binding main net
-          // const status = await getThanosMessageStatus(
-          //   l1ChainId,
-          //   l2ChainId,
-          //   sentMessage.transactionHash
-          // );
+
           const status = await getThanosMessageStatuaWithSubgraph(
             withdrawalProvens,
             withdrawalFinalizeds,
-            messagePassed.withdrawalHash
+            messagePassed.withdrawalHash,
+            sentMessage.blockNumber <= latestL2OutputBlockNumber
           );
           // const status = Status.Initiate;
 
@@ -504,6 +505,8 @@ export const useWithdrawData = () => {
     isConnectedToMainNetwork,
     ThanosProvider,
     l1ThanosOptimismPortal,
+    l1ThanosData,
+    refetchHistory,
   ]);
 
   // useEffect(() => {
@@ -521,6 +524,7 @@ export const useWithdrawData = () => {
     isConnectedToMainNetwork,
     ThanosProvider,
     l1ThanosOptimismPortal,
+    refetchHistory,
   ]);
 
   return { withdrawHistory: thanosSepWithdrawHistory.history };

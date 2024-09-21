@@ -12,13 +12,14 @@ interface BridgeActionButtonComponentProps {
   isConfirmed: boolean;
   onClick?: () => void;
   toolTip?: string;
+  disabled?: boolean;
 }
 
 const BridgeActionButtonComponent: React.FC<
   BridgeActionButtonComponentProps
-> = ({ isConfirmed, onClick, toolTip, tx }) => {
+> = ({ isConfirmed, onClick, toolTip, tx, disabled }) => {
   const { chain } = useNetwork();
-  const buttonContent = getBridgeActionButtonContent(tx, chain?.id);
+  const buttonContent = getBridgeActionButtonContent(tx);
   const isDisabled = !isConfirmed || isActionDisabled(tx.status);
   const [pendingStatus, setTxPending] = useRecoilState(txPendingStatus);
   return (
@@ -27,7 +28,7 @@ const BridgeActionButtonComponent: React.FC<
         <ButtonComponent
           content={buttonContent}
           onClick={onClick}
-          disabled={isDisabled || pendingStatus}
+          disabled={isDisabled || pendingStatus || disabled}
           toolTip={toolTip}
           pendingStatus={pendingStatus}
         />
