@@ -147,7 +147,9 @@ export default function StatusComponent(
 
   const readyForStatus = action === Action.Withdraw && label === status;
 
-  const remainTime = getRemainTime(transactionData);
+  const remainTime = useMemo(() => {
+    return getRemainTime(transactionData);
+  }, [transactionData.status]);
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
       formatTimeDisplay(remainTime)

@@ -15,9 +15,10 @@ export function useCountdown(
   useEffect(() => {
     setTime(Math.abs(initialTime));
     setIsCountDown(initialTime > 0);
-  }, [tx]);
+  }, [tx?.status]);
 
   useEffect(() => {
+    console.log("yes");
     const countdown = setInterval(() => {
       if (isCountDown) {
         setTime((prev) => {
