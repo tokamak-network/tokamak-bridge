@@ -1,8 +1,0 @@
-{
-  "sepolia": {
-    "L2OutputOracle": {
-      "address": "0x4900729d127ee376906d6B7B1b88A936ab802211",
-      "startBlock": 6098314
-    }
-  }
-}

@@ -1,12 +1,15 @@
 import {
   Action,
   CT_Status,
+  DepositWithdrawType,
   Status,
   TransactionHistory,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getCurrentProgressStatus } from "../../new-history-thanos/utils/historyStatus";
 import { isThanosChain, isTitanChain } from "@/utils/network/checkNetwork";
+import { GasEstimateConstantType } from "../types";
+import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
 export const getBridgeActionButtonContent = (tx: TransactionHistory) => {
   const { action, status } = tx;
@@ -106,4 +109,50 @@ export const getDepositWithdrawWaitMessage = (
     }
   }
   return "";
+};
+
+export const getEstimatedWithdrawalFeeConstant = (
+  chainId: SupportedChainId | null,
+  type: DepositWithdrawType
+): Partial<Record<Status, number>> | null => {
+  if (chainId === SupportedChainId.THANOS_SEPOLIA) {
+    switch (type) {
+      case DepositWithdrawType.ETH:
+        return {
+          Initiate: 0.001,
+          Prove: 0.02,
+          Finalize: 0.02,
+        };
+      case DepositWithdrawType.ERC20:
+        return {
+          Initiate: 0.0001,
+          Prove: 0.01,
+          Finalize: 0.01,
+        };
+      case DepositWithdrawType.NativeToken:
+        return {
+          Initiate: 0.0003,
+          Prove: 0.01,
+          Finalize: 0.01,
+        };
+      default:
+        return {
+          Initiate: 0.01,
+          Prove: 0.01,
+          Finalize: 0.01,
+        };
+    }
+  }
+  return null;
+};
+
+export const getDepositWithdrawType = (tokenSymbol: string) => {
+  if (tokenSymbol === "ETH") return DepositWithdrawType.ETH;
+  if (tokenSymbol === "TON") return DepositWithdrawType.NativeToken;
+  return DepositWithdrawType.ERC20;
+};
+
+export const getNativeToken = (chainId: SupportedChainId | null) => {
+  if (isThanosChain(chainId)) return "TON";
+  else return "ETH";
 };

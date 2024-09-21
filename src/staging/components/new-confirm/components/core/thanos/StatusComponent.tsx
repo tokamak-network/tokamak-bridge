@@ -15,6 +15,9 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   getBridgeL1ChainId,
   getBridgeL2ChainId,
+  getDepositWithdrawType,
+  getEstimatedWithdrawalFeeConstant,
+  getNativeToken,
   getNextStatus,
 } from "../../../utils";
 import Image from "next/image";
@@ -22,6 +25,8 @@ import TxLink from "@/assets/icons/confirm/link.svg";
 import PendingComponent from "./Pending";
 import { useThanosSDK } from "@/staging/hooks/useThanosSDK";
 import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import commafy from "@/utils/trim/commafy";
 
 interface StatusComponentProps {
   tx: TransactionHistory;
@@ -30,7 +35,7 @@ interface StatusComponentProps {
 }
 
 interface GasDisplayComponentProps {
-  value: number;
+  value: number | null;
   symbol: string;
   isActive: boolean;
 }
@@ -55,7 +60,7 @@ const GasDisplayComponent: React.FC<GasDisplayComponentProps> = ({
         fontWeight={400}
         lineHeight={"20px"}
         color={isActive ? "white" : "#A0A3AD"}
-      >{`${value} ${symbol}`}</Text>
+      >{`${value ?? "NA"} ${symbol}`}</Text>
     </Flex>
   );
 };
@@ -100,7 +105,12 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     label,
     l2ChainId
   );
-  const gasCostUS = 30.63;
+
+  const { tokenMarketPrice } = useGetMarketPrice({
+    tokenName: label === Status.Initiate ? "TON" : "ETH",
+  });
+
+  const [gasEstimation, setGasEstimation] = useState<number | null>(0);
   const nextStatus = getNextStatus(label);
   const pendingStatus = getCurrentProgressStatus(
     tx.action as Action,
@@ -114,12 +124,25 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     l2ChainId
   );
 
+  const gasCostUS = useMemo(() => {
+    if (tokenMarketPrice && gasEstimation) {
+      return `$${commafy(tokenMarketPrice * gasEstimation, 2)}`;
+    }
+    return "NA";
+  }, [tokenMarketPrice, tx, label]);
+
   //estimage initiate Gas by SDK
   useEffect(() => {
     const getEstimatedGas = async () => {
       return 0;
     };
-    if (label === Status.Initiate && estimateGas) {
+    if (pendingStatus === ProgressStatus.Todo) {
+      const fee = getEstimatedWithdrawalFeeConstant(
+        l2ChainId,
+        getDepositWithdrawType(tx.inToken.symbol)
+      );
+      if (!fee) setGasEstimation(null);
+      else setGasEstimation(fee[tx.status as Status] ?? null);
     }
   }, [estimateGas, label]);
 
@@ -165,8 +188,10 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
           ) : (
             <GasDisplayComponent
               isActive={progressStuatus === ProgressStatus.Doing}
-              value={0.0099}
-              symbol="TON"
+              value={gasEstimation}
+              symbol={
+                label === Status.Initiate ? getNativeToken(l2ChainId) : "ETH"
+              }
             />
           )}
         </Flex>
@@ -178,7 +203,7 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
             lineHeight={"normal"}
             color={"#A0A3AD"}
           >
-            {`$${gasCostUS}`}
+            {`${gasCostUS}`}
           </Text>
         ) : (
           <Box height={"17px"} />

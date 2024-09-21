@@ -86,6 +86,7 @@ import {
 import { GET_withdrawalProvens_withdrawalFinalizeds } from "@/graphql/data/queries";
 import { transactionData } from "@/recoil/global/transaction";
 import { thanosDepositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
+import useDepositWithdrawConfirm from "../components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -462,15 +463,6 @@ export const useWithdrawData = () => {
             transactionHashes,
             resolved,
           };
-          if (
-            (thanosDepositWithdrawConfirmModal.transaction as StandardHistory)
-              ?.transactionHashes.initialTransactionHash ===
-            sentMessage.transactionHash
-          )
-            setThanosDepositWithdrawConfirmModal((prev) => ({
-              ...prev,
-              transaction: result,
-            }));
           return result;
         })
       );
@@ -483,7 +475,17 @@ export const useWithdrawData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-
+      const updatedTxOnConfirmModal = sortedResult.find(
+        (tx) =>
+          tx.transactionHashes.initialTransactionHash ===
+          (thanosDepositWithdrawConfirmModal.transaction as StandardHistory)
+            ?.transactionHashes.initialTransactionHash
+      );
+      if (updatedTxOnConfirmModal && thanosDepositWithdrawConfirmModal.isOpen)
+        setThanosDepositWithdrawConfirmModal((prev) => ({
+          ...prev,
+          transaction: updatedTxOnConfirmModal,
+        }));
       if (sortedResult) {
         const newThanosWithdrawHistory = {
           ...thanosSepWithdrawHistory,
@@ -507,6 +509,7 @@ export const useWithdrawData = () => {
     l1ThanosOptimismPortal,
     l1ThanosData,
     refetchHistory,
+    thanosDepositWithdrawConfirmModal.transaction,
   ]);
 
   // useEffect(() => {

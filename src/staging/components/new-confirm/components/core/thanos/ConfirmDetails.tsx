@@ -99,7 +99,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
         </Flex>
       </Box>
       <Box>
-        <Flex gap={"8px"} alignItems={"center"}>
+        <Flex gap={"8px"} alignItems={"center"} justifyContent={"right"}>
           <FormatNumber
             style={{
               fontWeight: 600,

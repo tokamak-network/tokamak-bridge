@@ -1,4 +1,7 @@
-import { TransactionHistory } from "@/staging/types/transaction";
+import {
+  StandardHistory,
+  TransactionHistory,
+} from "@/staging/types/transaction";
 import React from "react";
 import { getBridgeActionButtonContent, isActionDisabled } from "../../../utils";
 import ButtonComponent from "@/components/button/Button";
@@ -6,6 +9,7 @@ import { Box } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { txPendingStatus } from "@/recoil/global/transaction";
 import { useNetwork } from "wagmi";
+import { pendingTransactionHashes } from "@/recoil/modal/atom";
 
 interface BridgeActionButtonComponentProps {
   tx: TransactionHistory;
@@ -21,7 +25,12 @@ const BridgeActionButtonComponent: React.FC<
   const { chain } = useNetwork();
   const buttonContent = getBridgeActionButtonContent(tx);
   const isDisabled = !isConfirmed || isActionDisabled(tx.status);
-  const [pendingStatus, setTxPending] = useRecoilState(txPendingStatus);
+  const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
+    pendingTransactionHashes
+  );
+  const pendingStatus = pendingTxHashes.includes(
+    (tx as StandardHistory).transactionHashes.initialTransactionHash
+  );
   return (
     <Box>
       {buttonContent ? (
