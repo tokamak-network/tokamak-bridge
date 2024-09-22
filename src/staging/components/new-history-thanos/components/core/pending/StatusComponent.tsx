@@ -17,6 +17,7 @@ import {
   isInCT_REQUEST_CANCEL,
   ERROR_CODE,
   ProgressStatus,
+  StandardHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
@@ -32,7 +33,10 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 import { useFinalize } from "@/hooks/history/useFinalize";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
-import { getCurrentProgressStatus } from "../../../utils/historyStatus";
+import {
+  getCurrentProgressStatus,
+  shouldShowCalendarButton,
+} from "../../../utils/historyStatus";
 import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import LampIcon from "@/assets/icons/lamp.svg";
@@ -43,6 +47,11 @@ import {
 } from "@/staging/hooks/useBridgeHistory";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 import ActionButtonComponent from "./actionButton";
+import { CountDownComponent } from "./countDown";
+import {
+  bookGoogleEvent,
+  getCalendarDetailsFromTx,
+} from "../../../utils/googleCalendar";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -166,30 +175,6 @@ export default function StatusComponent(
   );
   const timeDisplay = shouldCountdown ? time : initialTimeDisplay;
 
-  // Calendar start time
-  const startDate = useMemo(() => {
-    if (
-      // Use type guard as rollup exists only for withdraw condition
-      isWithdrawTransactionHistory(transactionData) &&
-      transactionData.blockTimestamps.rollupCompletedTimestamp
-    ) {
-      return new Date(
-        // Calculate rollup 7 days
-        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
-          convertTimeToMinutes(
-            TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
-            "days",
-            0
-          ) *
-            60) *
-          1000
-      );
-    }
-    return null;
-  }, [transactionData]);
-
-  const { handleCalendarClick } = useCalendar(startDate);
-
   // If error message exists and status is rollup, time increases and color turns red
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
   const errorRefund =
@@ -210,11 +195,18 @@ export default function StatusComponent(
       transactionData.action === Action.Deposit);
 
   // Display calendar button
-  const calendarButton =
-    label === Status.Finalize &&
-    timeDisplay !== "00 : 00" &&
-    isActive &&
-    transactionData.action === Action.Withdraw;
+  const isCalendar = shouldShowCalendarButton(
+    transactionData as StandardHistory,
+    label as Status
+  );
+
+  const handleCalendarButtonClick = () => {
+    const calendarConfig = getCalendarDetailsFromTx(
+      transactionData as StandardHistory,
+      label as Status
+    );
+    bookGoogleEvent(calendarConfig);
+  };
 
   // Show claim button when Finalized status is complete
   const claimReadyButton =
@@ -290,30 +282,31 @@ export default function StatusComponent(
       </Flex>
       {readyForStatus ? (
         <ActionButtonComponent status={status} tx={transactionData} />
+      ) : shouldCountdown ? (
+        <CountDownComponent
+          time={timeDisplay}
+          isCountDown={isCountDown}
+          handleCalendarButtonClick={
+            isCalendar ? handleCalendarButtonClick : undefined
+          }
+        />
       ) : (
-        <Flex alignItems="center" gap={"2px"}>
-          <Text
-            fontSize={"11px"}
-            fontWeight={
-              progressStatus === ProgressStatus.Doing || shouldCountdown
-                ? 600
-                : 400
-            }
-            lineHeight={"22px"}
-            color={
-              isError || (!isCountDown && shouldCountdown)
-                ? "#DD3A44"
-                : progressStatus === ProgressStatus.Doing || shouldCountdown
-                ? "#FFFFFF"
-                : "#A0A3AD"
-            }
-            cursor={!isActive ? "pointer" : "default"}
-            onClick={!isActive ? openModal : undefined}
-          >
-            {timeDisplay}
-          </Text>
-          {!isCountDown && shouldCountdown && <GetHelp />}
-        </Flex>
+        <Text
+          fontSize={"11px"}
+          fontWeight={progressStatus === ProgressStatus.Doing ? 600 : 400}
+          lineHeight={"22px"}
+          color={
+            isError
+              ? "#DD3A44"
+              : progressStatus === ProgressStatus.Doing || shouldCountdown
+              ? "#FFFFFF"
+              : "#A0A3AD"
+          }
+          cursor={!isActive ? "pointer" : "default"}
+          onClick={!isActive ? openModal : undefined}
+        >
+          {timeDisplay}
+        </Text>
       )}
     </Flex>
   );

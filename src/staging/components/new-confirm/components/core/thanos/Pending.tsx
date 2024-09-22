@@ -1,6 +1,7 @@
 import {
   Action,
   ProgressStatus,
+  StandardHistory,
   Status,
   TransactionHistory,
 } from "@/staging/types/transaction";
@@ -13,6 +14,12 @@ import {
 import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import GetHelp from "@/components/ui/GetHelp";
+import { CountDownComponent } from "@/staging/components/new-history-thanos/components/core/pending/countDown";
+import {
+  bookGoogleEvent,
+  getCalendarDetailsFromTx,
+} from "@/staging/components/new-history-thanos/utils/googleCalendar";
+import { shouldShowCalendarButton } from "@/staging/components/new-history-thanos/utils/historyStatus";
 
 interface PendingComponentProps {
   pendingStatus: ProgressStatus;
@@ -26,8 +33,8 @@ interface TodoPendingComponentProps {
 
 interface DoingPendingComponentProps {
   timeDisplay: string;
-  status: Status;
   isCountdown: boolean;
+  handleCalendarClick?: () => void;
 }
 
 const TodoPendingComponent: React.FC<TodoPendingComponentProps> = ({
@@ -47,32 +54,16 @@ const TodoPendingComponent: React.FC<TodoPendingComponentProps> = ({
 
 const DoingPendingComponent: React.FC<DoingPendingComponentProps> = ({
   timeDisplay,
-  status,
   isCountdown,
+  handleCalendarClick,
 }) => {
   return (
     <Flex h={"28px"} pl="12px" py="3px" borderRadius="4px" bg="#1F2128">
-      <Flex gap={"2px"} alignItems={"center"}>
-        <Text
-          color={isCountdown ? "white" : "#DD3A44"}
-          fontSize={"11px"}
-          fontWeight={600}
-          lineHeight={"normal"}
-        >
-          {timeDisplay}
-        </Text>
-        {!isCountdown && (
-          <Flex
-            w={"18px"}
-            h={"18px"}
-            ml={"2px"}
-            justifyContent={"center"}
-            cursor={"pointer"}
-          >
-            <GetHelp />
-          </Flex>
-        )}
-      </Flex>
+      <CountDownComponent
+        time={timeDisplay}
+        isCountDown={isCountdown}
+        handleCalendarButtonClick={handleCalendarClick}
+      />
     </Flex>
   );
 };
@@ -108,6 +99,17 @@ const PendingComponent: React.FC<PendingComponentProps> = ({
     false,
     tx
   );
+  const isCalendar = shouldShowCalendarButton(
+    tx as StandardHistory,
+    label as Status
+  );
+  const handleCalendarButtonClick = () => {
+    const calendarConfig = getCalendarDetailsFromTx(
+      tx as StandardHistory,
+      label as Status
+    );
+    bookGoogleEvent(calendarConfig);
+  };
   return (
     <Box mt={`${mt}px`} mb={`${mb}px`}>
       {pendingStatus === ProgressStatus.Todo ? (
@@ -115,8 +117,10 @@ const PendingComponent: React.FC<PendingComponentProps> = ({
       ) : pendingStatus === ProgressStatus.Doing ? (
         <DoingPendingComponent
           timeDisplay={timeDisplay}
-          status={label}
           isCountdown={isCountDown}
+          handleCalendarClick={
+            isCalendar ? handleCalendarButtonClick : undefined
+          }
         />
       ) : (
         <></>

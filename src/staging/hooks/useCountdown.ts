@@ -18,7 +18,6 @@ export function useCountdown(
   }, [tx?.status]);
 
   useEffect(() => {
-    console.log("yes");
     const countdown = setInterval(() => {
       if (isCountDown) {
         setTime((prev) => {

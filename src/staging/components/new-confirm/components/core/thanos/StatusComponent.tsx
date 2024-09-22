@@ -142,7 +142,7 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
         getDepositWithdrawType(tx.inToken.symbol)
       );
       if (!fee) setGasEstimation(null);
-      else setGasEstimation(fee[tx.status as Status] ?? null);
+      else setGasEstimation(fee[label] ?? null);
     }
   }, [estimateGas, label]);
 

@@ -7,6 +7,7 @@ import {
   CT_REQUEST_CANCEL,
   CT_PROVIDE,
   ProgressStatus,
+  StandardHistory,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
@@ -86,4 +87,14 @@ export const getCurrentProgressStatus = (
     : diff > 0
     ? ProgressStatus.Todo
     : ProgressStatus.Done;
+};
+
+export const shouldShowCalendarButton = (
+  tx: StandardHistory,
+  label: Status
+) => {
+  if (tx.action === Action.Deposit) return false;
+  const l2ChainId = tx.inNetwork;
+  if (isThanosChain(l2ChainId) && label === Status.Initiate) return true;
+  return false;
 };
