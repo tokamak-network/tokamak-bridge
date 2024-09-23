@@ -49,7 +49,7 @@ export const TransactionInfo: React.FC<TransactionInfoProps> = (props) => {
           </Text>
           <Flex>
             <NetworkSymbol
-              networkI={tx.outNetwork}
+              networkI={bridgeChainId}
               networkH={16}
               networkW={16}
             />
