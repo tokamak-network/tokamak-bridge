@@ -29,7 +29,11 @@ import { TransactionInfo } from "./TransactionInfo";
 import BridgeStatusComponent from "./BridgeStatus";
 import BridgeActionButtonComponent from "./BridgeActionButton";
 import { useThanosSDK } from "@/staging/hooks/useThanosSDK";
-import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
+import {
+  getBridgeActionButtonContent,
+  getBridgeL1ChainId,
+  getBridgeL2ChainId,
+} from "../../../utils";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import useCTOption from "@/staging/components/cross-trade/hooks/useCTOptionModal";
@@ -199,6 +203,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
   if (!transactionData) {
     return null;
   }
+  const buttonContent = getBridgeActionButtonContent(transactionData);
 
   return (
     <Modal
@@ -256,13 +261,15 @@ export default function ThanosDepositWithdrawConfirmModal() {
                 />
               )}
             </Flex>
-            <BridgeActionButtonComponent
-              tx={transactionData}
-              isConfirmed={isConfirmed}
-              toolTip={"Text will be changed"}
-              onClick={handleActionClick}
-              disabled={isDisbleForAction}
-            />
+            {buttonContent && (
+              <BridgeActionButtonComponent
+                tx={transactionData}
+                isConfirmed={isConfirmed}
+                toolTip={"Text will be changed"}
+                onClick={handleActionClick}
+                disabled={isDisbleForAction}
+              />
+            )}
           </Flex>
         </ModalFooter>
       </ModalContent>
