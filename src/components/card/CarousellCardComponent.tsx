@@ -1,10 +1,11 @@
 import {
+  CardOverlay,
   getTokenCardStyle,
   useCarrousellAnimation,
 } from "@/hooks/tokenCard/useCarrousellAnimation";
 import { SupportedTokens_T, TokenInfo } from "@/types/token/supportedToken";
 import { motion } from "framer-motion";
-import TokenCard from "./TokenCard";
+import TokenCard from "@/componenets/token/TokenCard";
 import { Dispatch, SetStateAction, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
@@ -39,7 +40,7 @@ const getSymbolSize = (
 
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
-  currentIndex: number | null;
+  currentIndex: number;
   index: number;
   filteredTokenList: SupportedTokens_T;
   waitCondition: any;
@@ -55,7 +56,6 @@ export default function CarousellCardComponent<T>(props: {
     isHover,
     setIsHover,
   } = props;
-
   const maxIndex = filteredTokenList.length - 1;
 
   const {
@@ -68,10 +68,35 @@ export default function CarousellCardComponent<T>(props: {
     outRightControl,
     waitControl,
   } = useCarrousellAnimation({ currentIndex, index });
+
+  const getZIndex = (currentIndex: number, index: number) => {
+    const circularIndex =
+      (index + filteredTokenList.length) % filteredTokenList.length;
+    const distance = Math.abs(currentIndex - circularIndex);
+    const circularDistance = Math.min(
+      distance,
+      filteredTokenList.length - distance
+    );
+    switch (circularDistance) {
+      case 0:
+        return CardOverlay.Center;
+      case 1:
+        return CardOverlay.Side;
+      case 2:
+        return CardOverlay.End;
+      default:
+        return;
+    }
+  };
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
   const styleCode = useMemo(() => {
-    return getTokenCardStyle(index, maxIndex);
-  }, [filteredTokenList]);
+    const style = getTokenCardStyle(index, maxIndex);
+    const zIndex = getZIndex(currentIndex, index);
+    if (zIndex) {
+      (style as any).zIndex = zIndex;
+    }
+    return style;
+  }, [filteredTokenList, currentIndex]);
 
   const size =
     getSymbolSize(index, currentIndex, maxIndex) === 118
@@ -87,7 +112,6 @@ export default function CarousellCardComponent<T>(props: {
     setHandUiOpened(true);
     return true;
   }, [handUiOpened]);
-
   return (
     <motion.div
       key={`${index}_${tokenData.tokenName}_${filteredTokenList.length}`}
@@ -95,7 +119,7 @@ export default function CarousellCardComponent<T>(props: {
       style={styleCode}
       transition={{ duration: 0.5 }}
       initial={{ opacity: 0 }}
-      whileHover={{ zIndex: 200 }}
+      whileHover={{ zIndex: 200, scale: 1.05 }}
       animate={
         maxIndex < 6
           ? index === 0
@@ -125,9 +149,7 @@ export default function CarousellCardComponent<T>(props: {
           ? outLeftControl
           : waitControl
       }
-      onMouseEnter={() =>
-        outLeftControl || outRightControl ? null : setIsHover(index)
-      }
+      onMouseEnter={() => setIsHover(index)}
       onMouseLeave={() => setIsHover(null)}
     >
       <TokenCard
@@ -151,6 +173,10 @@ export default function CarousellCardComponent<T>(props: {
               ? `drop-shadow(0px 0px 20px rgba(255, 255, 255, 0.25))`
               : undefined,
           opacity: isHover !== null ? (isHover === index ? 0.9 : 0.5) : 0.85,
+          boxShadow:
+            isHover === index
+              ? "0px 0px 20px rgba(255, 255, 255, 0.25)"
+              : "none",
         }}
         type={size}
         requireCall={requireCall}

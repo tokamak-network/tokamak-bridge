@@ -1,5 +1,5 @@
 import { useAnimation } from "framer-motion";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { useGetTokenList } from "./useGetTokenList";
 
 type LocationType =

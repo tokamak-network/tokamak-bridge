@@ -1,4 +1,4 @@
-import TokenCard from "@/components/card/TokenCard";
+import TokenCard from "@/components/token/TokenCard";
 import NetworkDropdown from "@/components/dropdown/Index";
 import SearchToken from "@/components/search/SearchToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";

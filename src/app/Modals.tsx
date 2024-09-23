@@ -1,4 +1,4 @@
-import { SelectCardModal } from "@/components/card/SelectCard";
+import { SelectCardModal } from "@/components/card/SelectCardModal";
 import ActionConfirmModal from "@/components/modal/ActionConfirmModal";
 import Confirmation from "@/components/modal/Confirmation";
 import TutorialModal from "@/components/modal/TutorialModal";

@@ -1,4 +1,4 @@
-import TokenCard from "@/components/card/TokenCard";
+import TokenCard from "@/components/token/TokenCard";
 import SearchToken from "@/components/search/SearchToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
