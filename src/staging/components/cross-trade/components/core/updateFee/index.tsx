@@ -35,6 +35,7 @@ import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
+import { useAccount } from "wagmi";
 
 export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
@@ -263,8 +264,26 @@ export default function CTFeeUpdateModal() {
     );
   }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
 
+  const {address} = useAccount()
+
+  const requester = useMemo(() => {
+    return ctUpdateFeeModal.txData?.L2_subgraphData?._requester;
+  }, [ctUpdateFeeModal.txData?.L2_subgraphData?._requester]);
+
+  const isRequester = useMemo(() => {
+    if(requester && address){
+      return requester.toLowerCase() === address.toLowerCase()
+    }
+    return false
+  }, [requester, address]);
+
+
   return (
-    <Modal isOpen={ctUpdateFeeModal.isOpen} onClose={resetAllStates} isCentered>
+    <Modal
+      isOpen={ctUpdateFeeModal.isOpen && isRequester}
+      onClose={resetAllStates}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent
         bg="#1F2128"
