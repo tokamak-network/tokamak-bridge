@@ -134,7 +134,6 @@ export default function TokenCard(props: TokenCardProps) {
   } = props;
   const layer = Math.abs(level ?? 3);
   const [agreeToAdd, setAgreeToAdd] = useState<boolean>(false);
-
   const tokenData = useTokenBalance(tokenInfo, requireCall, watch);
   const thisTokenIsETH = isETH(tokenInfo);
   const theme = useTheme();
@@ -175,7 +174,6 @@ export default function TokenCard(props: TokenCardProps) {
     }
     return amountOut;
   }, [mode, inTokenInfo, amountOut]);
-
   const { tokenPriceWithAmount: outTokenWithPrice } = useGetMarketPrice({
     //make it not able to fetch when token is not defined
     tokenName: isPrice ? (outTokenInfo?.tokenName as string) : undefined,
@@ -462,7 +460,7 @@ export default function TokenCard(props: TokenCardProps) {
                   </>
                 ) : (
                   <Text fontWeight={700} fontSize={18}>
-                    {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                    trimAmount
                   </Text>
                 )}
               </>
