@@ -7,26 +7,22 @@ import {
   TITAN_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
 
-type SupportedMainTokenNames =
-  | "Tokamak Network Token"
-  | "Wrapped TON"
-  | "TONStarter"
-  | "ETH";
-type SupportedEcosystemTokenNames = "Dooropen" | "AURA" | "LYDA";
+type SupportedMainTokenNames = "Tokamak Network Token" | "Wrapped TON" | "ETH";
+// type SupportedEcosystemTokenNames = "Dooropen" | "AURA" | "LYDA";
 type SupportedStableTokenNames = "USD//C";
 
 export type SupportedTokenNames =
   | SupportedMainTokenNames
-  | SupportedEcosystemTokenNames
+  // | SupportedEcosystemTokenNames
   | SupportedStableTokenNames;
 
-type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH";
-type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
+type SupportedMainTokens = "TON" | "WTON" | "ETH";
+// type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
 type SupportedStableTokens = "USDC";
 
 export type SupportedTokenSymbol =
   | SupportedMainTokens
-  | SupportedEcosystemTokens
+  // | SupportedEcosystemTokens
   | SupportedStableTokens;
 
 export type TokenInfo = {
@@ -38,8 +34,8 @@ export type TokenInfo = {
   decimals: number;
   isNativeCurrency: SupportedChainId[] | null;
   availableForBirdge?: boolean;
-  isNew?: boolean
-  isLiked?: 'true' | 'false' | 'none' | String | string;
+  isNew?: boolean;
+  isLiked?: "true" | "false" | "none" | String | string;
 };
 
 export type SupportedTokens_T = TokenInfo[];
@@ -102,60 +98,6 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN_SEPOLIA: null,
     },
     decimals: 27,
-    isNativeCurrency: null,
-  },
-
-  {
-    tokenName: "TONStarter",
-    tokenSymbol: "TOS",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
-      SEPOLIA: SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-    availableForBirdge: true,
-  },
-  {
-    tokenName: "Dooropen",
-    tokenSymbol: "DOC",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.DOC_ADDRESS,
-      TITAN: null,
-      SEPOLIA: SEPOLIA_CONTRACTS.DOC_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.DOC_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.DOC_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-  },
-  {
-    tokenName: "Dragons of Midgard",
-    tokenSymbol: "AURA",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.AURA_ADDRESS,
-      TITAN: null,
-      SEPOLIA: SEPOLIA_CONTRACTS.AURA_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.AURA_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.AURA_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-  },
-  {
-    tokenName: "LYDA",
-    tokenSymbol: "LYDA",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.LYDA_ADDRESS,
-      TITAN: null,
-      SEPOLIA: SEPOLIA_CONTRACTS.LYDA_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.LYDA_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.LYDA_ADDRESS,
-    },
-    decimals: 18,
     isNativeCurrency: null,
   },
   {
