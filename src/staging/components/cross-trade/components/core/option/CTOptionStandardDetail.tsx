@@ -12,6 +12,8 @@ import { CTTransactionType } from "@/types/crossTrade/contracts";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useGetEstimatedTotalGasFee } from "@/staging/hooks/useStandardWithdrawGasFee";
+import { useInOutNetwork } from "@/hooks/network";
 
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -22,8 +24,10 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const isStandardActive =
     props.activeMainButtonValue === ButtonTypeMain.Standard;
   const { inToken } = useInOutTokens();
-  const { estimatedGasFeeUSD } = useCrossTradeGasFee(
-    CTTransactionType.strandardWithdrawERC20
+  const { inNetwork } = useInOutNetwork();
+  const { totalCost } = useGetEstimatedTotalGasFee(
+    inNetwork!.chainId,
+    inToken!.tokenSymbol as string
   );
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
@@ -112,7 +116,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             color={"#007AFF"}
             textAlign="center"
           >
-            ${commafy(estimatedGasFeeUSD)}
+            {`$${totalCost ? commafy(totalCost) : "NA"}`}
           </Text>
           <Text
             mt={"1.5px"}
