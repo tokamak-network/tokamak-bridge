@@ -1,6 +1,6 @@
 // StatusComponent.tsx
 import React, { useEffect, useMemo } from "react";
-import { Flex, Text, Circle, Button } from "@chakra-ui/react";
+import { Flex, Text, Circle, Button, Box } from "@chakra-ui/react";
 import {
   TransactionHistory,
   Action,
@@ -283,13 +283,15 @@ export default function StatusComponent(
       {readyForStatus ? (
         <ActionButtonComponent status={status} tx={transactionData} />
       ) : shouldCountdown ? (
-        <CountDownComponent
-          time={timeDisplay}
-          isCountDown={isCountDown}
-          handleCalendarButtonClick={
-            isCalendar ? handleCalendarButtonClick : undefined
-          }
-        />
+        <Box onClick={openModal}>
+          <CountDownComponent
+            time={timeDisplay}
+            isCountDown={isCountDown}
+            handleCalendarButtonClick={
+              isCalendar ? handleCalendarButtonClick : undefined
+            }
+          />
+        </Box>
       ) : (
         <Text
           fontSize={"11px"}
