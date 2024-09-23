@@ -83,7 +83,7 @@ export default function AddMoreLiquidity() {
             tokenInfo={token1Info}
             hasInput={false}
             inNetwork={true}
-            type="small"
+            level={2}
           />
           <Flex w={"186px"} mt="16px">
             {deposit1Disabled ? (
@@ -110,7 +110,7 @@ export default function AddMoreLiquidity() {
             tokenInfo={token0Info}
             hasInput={false}
             inNetwork={true}
-            type="small"
+            level={2}
           />
           <Flex w={"186px"} mt="16px">
             {!deposit0Disabled && (
