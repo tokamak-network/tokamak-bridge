@@ -13,12 +13,16 @@ import {
 import Pending from "@/staging/components/new-history-thanos/components/core/pending";
 import Complete from "@/staging/components/new-history-thanos/components/core/complete";
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
-import { useRecoilValue } from "recoil";
-import { selectedTransactionCategory } from "@/recoil/history/transaction";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  historyRefetch,
+  selectedTransactionCategory,
+} from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
 import LoadingTx from "@/components/history/LoadingTx";
+import { pendingTransactionHashes } from "@/recoil/modal/atom";
 
 const NoAcitivityComponent = () => {
   return (
@@ -49,7 +53,15 @@ export default function AccountHistoryNew() {
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
-
+  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
+  useEffect(() => {
+    const renderTimer = setInterval(() => {
+      setRefetchHistory((prev) => !prev);
+    }, 5000);
+    return () => {
+      clearInterval(renderTimer);
+    };
+  }, []);
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {
       case Action.Deposit:

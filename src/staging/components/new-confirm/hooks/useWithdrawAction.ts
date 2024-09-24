@@ -36,6 +36,68 @@ export const useWithdrawAction = () => {
     setThanosDepositWithdrawConfirmModal,
   ] = useRecoilState(thanosDepositWithdrawConfirmModalStatus);
 
+  const updateWithdrawHistory = (
+    transactionData: WithdrawTransactionHistory,
+    status: Status,
+    txHash: string,
+    blockTimestamp: number
+  ) => {
+    const oldHistory = { ...thanosSepWithdrawHistory };
+    if (!oldHistory.history) return;
+    const newTransactionList = oldHistory.history.map(
+      (tx: WithdrawTransactionHistory) => {
+        if (
+          tx.transactionHashes.initialTransactionHash !==
+          transactionData.transactionHashes.initialTransactionHash
+        )
+          return tx;
+        if (status === Status.Prove) {
+          const newTx = {
+            ...tx,
+            status: Status.Proved,
+            transactionHashes: {
+              ...tx.transactionHashes,
+              proveTransactionHash: txHash,
+            },
+            blockTimestamps: {
+              ...tx.blockTimestamps,
+              proveCompletedTimestamp: blockTimestamp,
+            },
+          };
+          setThanosDepositWithdrawConfirmModal((prev) => ({
+            ...prev,
+            transaction: newTx,
+          }));
+          return newTx;
+        }
+        if (status === Status.Finalize) {
+          const newTx = {
+            ...tx,
+            status: Status.Completed,
+            transactionHashes: {
+              ...tx.transactionHashes,
+              finalizedTransactionHash: txHash,
+            },
+            blockTimestamps: {
+              ...tx.blockTimestamps,
+              finalizedCompletedTimestamp: blockTimestamp,
+            },
+          };
+          setThanosDepositWithdrawConfirmModal((prev) => ({
+            ...prev,
+            transaction: newTx,
+          }));
+          return newTx;
+        }
+        return tx;
+      }
+    );
+    setThanosSepoliaWithdrawHistory({
+      history: newTransactionList,
+      latestBlockNumber: oldHistory.latestBlockNumber,
+    });
+  };
+
   const handleWithdrawTxAction = useCallback(
     async (tx: WithdrawTransactionHistory) => {
       if (!isConnected) connectToWallet();
@@ -65,13 +127,19 @@ export const useWithdrawAction = () => {
               tx.transactionHashes.initialTransactionHash
             );
             const proveReceipt = await proveTx.wait();
+            const block = await L1Provider.getBlock(proveReceipt.blockNumber);
+            const blockTimestamp = block.timestamp;
+            updateWithdrawHistory(
+              tx,
+              Status.Prove,
+              proveReceipt.transactionHash,
+              blockTimestamp
+            );
             setPendingTxHashes((prev) =>
               [...prev].filter(
                 (hash) => hash !== tx.transactionHashes.initialTransactionHash
               )
             );
-            const block = await L1Provider.getBlock(proveReceipt.blockNumber);
-            const blockTimestamp = block.timestamp;
           } else if (tx.status === Status.Finalize) {
             if (!tx.transactionHashes?.initialTransactionHash) return; // Thanos Cross domain messenger is not available.
             setPendingTxHashes((prev) => [
@@ -82,15 +150,21 @@ export const useWithdrawAction = () => {
               tx.transactionHashes?.initialTransactionHash
             );
             const finalizeTxReceipt = await finalizeTxResponse.wait();
+            const block = await L1Provider.getBlock(
+              finalizeTxReceipt.blockNumber
+            );
+            const blockTimestamp = block.timestamp;
+            updateWithdrawHistory(
+              tx,
+              Status.Finalize,
+              finalizeTxReceipt.transactionHash,
+              blockTimestamp
+            );
             setPendingTxHashes((prev) =>
               [...prev].filter(
                 (hash) => hash !== tx.transactionHashes.initialTransactionHash
               )
             );
-            const block = await L1Provider.getBlock(
-              finalizeTxReceipt.blockNumber
-            );
-            const blockTimestamp = block.timestamp;
           }
         } catch (error) {
           console.log(`Error occured while transaction proving.${error}`);

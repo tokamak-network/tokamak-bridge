@@ -85,7 +85,10 @@ import {
 } from "../utils/getMessageStatus";
 import { GET_withdrawalProvens_withdrawalFinalizeds } from "@/graphql/data/queries";
 import { transactionData } from "@/recoil/global/transaction";
-import { thanosDepositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
+import {
+  pendingTransactionHashes,
+  thanosDepositWithdrawConfirmModalStatus,
+} from "@/recoil/modal/atom";
 import useDepositWithdrawConfirm from "../components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 
 const getApolloClient = (chainId: number) => {
@@ -278,6 +281,9 @@ export const useWithdrawData = () => {
     thanosDepositWithdrawConfirmModal,
     setThanosDepositWithdrawConfirmModal,
   ] = useRecoilState(thanosDepositWithdrawConfirmModalStatus);
+  const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
+    pendingTransactionHashes
+  );
 
   const fetchData = useCallback(async () => {
     if (l2TitanData && isConnectedToMainNetwork !== undefined && L2Provider) {
@@ -519,6 +525,7 @@ export const useWithdrawData = () => {
   // }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
 
   useEffect(() => {
+    if (pendingTxHashes.length > 0) return;
     fetchThanosData().catch((error) => {
       console.error("Error in fetching withdraw data", error);
     });
