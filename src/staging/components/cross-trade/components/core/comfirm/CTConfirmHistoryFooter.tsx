@@ -263,7 +263,7 @@ export default function CTConfirmHistoryFooter(props: {
   }, [txData, keyLength, isCompleted]);
 
   return (
-    <>
+    <Flex w={"100%"} flexDir={"column"}>
       <Box
         mt={"16px"}
         bg="#15161D"
@@ -271,6 +271,7 @@ export default function CTConfirmHistoryFooter(props: {
         px={"20px"}
         border={"1px, 1px, 0px, 1px"}
         borderRadius={"8px"}
+        w={"100%"}
       >
         <Flex>
           <Box width={"auto"}>
@@ -280,13 +281,13 @@ export default function CTConfirmHistoryFooter(props: {
         </Flex>
       </Box>
       {isRequest && (
-        <Box mt={"12px"} pb={"4px"}>
+        <Box w={"100%"} mt={"12px"} pb={"4px"}>
           <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
             Tip: Update the service fee to reflect significant <br /> change in
             L1 gas price.
           </Text>
         </Box>
       )}
-    </>
+    </Flex>
   );
 }
