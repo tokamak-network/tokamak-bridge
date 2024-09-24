@@ -264,19 +264,24 @@ export default function CTFeeUpdateModal() {
     );
   }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
 
-  const {address} = useAccount()
+  const { address } = useAccount();
 
   const requester = useMemo(() => {
     return ctUpdateFeeModal.txData?.L2_subgraphData?._requester;
   }, [ctUpdateFeeModal.txData?.L2_subgraphData?._requester]);
 
   const isRequester = useMemo(() => {
-    if(requester && address){
-      return requester.toLowerCase() === address.toLowerCase()
+    if (requester && address) {
+      return requester.toLowerCase() === address.toLowerCase();
     }
-    return false
+    return false;
   }, [requester, address]);
 
+  useEffect(() => {
+    if (!isRequester) {
+      resetAllStates();
+    }
+  }, [isRequester]);
 
   return (
     <Modal
