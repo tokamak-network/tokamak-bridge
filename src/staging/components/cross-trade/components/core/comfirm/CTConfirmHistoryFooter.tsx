@@ -7,7 +7,7 @@ import {
   isInCT_REQUEST,
   isInCT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
@@ -15,6 +15,8 @@ import { ErrorRollupComponent } from "@/staging/components/new-history/component
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
+import { useTimeOver } from "@/hooks/time/useTimeOver";
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 
 interface TransactionItemProps {
   title: string;
@@ -26,7 +28,8 @@ interface TransactionItemProps {
 }
 
 const TransactionItem = (props: TransactionItemProps) => {
-  const { title, isActive, txHash, isError, txData } = props;
+  const { title, isActive, txHash, isError, txData, blockTimestamp } = props;
+
   const isOnError = isActive && isError;
 
   const _title = useMemo(() => {
@@ -78,7 +81,16 @@ const TransactionItem = (props: TransactionItemProps) => {
   const needToShowTimeDisplay =
     (title === "refund" || title === "return") && isActive;
   const initialTimeDisplay = formatTimeDisplay(getRemainTime(txData));
-  const timeDisplay = useCountdown(initialTimeDisplay, Boolean(isOnError));
+  const { isTimeOver } = useTimeOver({
+    timeStamp: Number(blockTimestamp),
+    //refund and return have same timeBuffer as 300s
+    timeBuffer: TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
+    needToCheck: needToShowTimeDisplay,
+  });
+  const timeDisplay = useCountdown(
+    initialTimeDisplay,
+    Boolean(isOnError) || isTimeOver
+  );
 
   const CountdownComponent = useMemo(() => {
     if (!needToShowTimeDisplay) return null;
@@ -87,12 +99,12 @@ const TransactionItem = (props: TransactionItemProps) => {
         fontWeight={400}
         fontSize={"13px"}
         lineHeight={"20px"}
-        color={isOnError ? "#DD3A44" : "#fff"}
+        color={isOnError || isTimeOver ? "#DD3A44" : "#fff"}
       >
         {timeDisplay}
       </Text>
     );
-  }, [timeDisplay, needToShowTimeDisplay]);
+  }, [timeDisplay, needToShowTimeDisplay, isTimeOver]);
 
   return (
     <Flex justifyContent={"space-between"}>
@@ -222,14 +234,14 @@ export default function CTConfirmHistoryFooter(props: {
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
           const isActive = isCompleted ? false : lastIndex === index;
+          console.log("txData.blockTimestamps", txData.blockTimestamps);
           //@ts-ignore
-          const blockTimestamp = txData.blockTimestamps[key];
-          // if (
-          //   (hash === "" || hash === undefined) &&
-          //   key !== "waitForReceive" &&
-          //   key !== "return"
-          // )
-          //   return null;
+          const blockTimestamp =
+            key === "refund"
+              ? //@ts-ignore
+                txData.blockTimestamps["cancelRequest"]
+              : //@ts-ignore
+                txData.blockTimestamps[key];
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
@@ -247,12 +259,16 @@ export default function CTConfirmHistoryFooter(props: {
           return hash?.map((tx, index) => {
             const isActiveOnUpdateFee = isActive && index === hash.length - 1;
             if (tx === "" || tx === undefined) return null;
+
+            console.log("key", key);
+
             return (
               <TransactionItem
                 title={key}
                 isActive={isActiveOnUpdateFee}
                 txHash={tx}
                 isError={isError}
+                blockTimestamp={blockTimestamp}
                 txData={txData}
               />
             );
