@@ -104,10 +104,7 @@ const PendingComponent: React.FC<PendingComponentProps> = ({
     label as Status
   );
   const handleCalendarButtonClick = () => {
-    const calendarConfig = getCalendarDetailsFromTx(
-      tx as StandardHistory,
-      label as Status
-    );
+    const calendarConfig = getCalendarDetailsFromTx(tx as StandardHistory);
     bookGoogleEvent(calendarConfig);
   };
   return (

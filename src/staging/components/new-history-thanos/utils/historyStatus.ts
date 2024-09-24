@@ -95,6 +95,6 @@ export const shouldShowCalendarButton = (
 ) => {
   if (tx.action === Action.Deposit) return false;
   const l2ChainId = tx.inNetwork;
-  if (isThanosChain(l2ChainId) && label === Status.Initiate) return true;
+  if (isThanosChain(l2ChainId) && tx.status === Status.Initiated) return true;
   return false;
 };

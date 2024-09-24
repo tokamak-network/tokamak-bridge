@@ -202,8 +202,7 @@ export default function StatusComponent(
 
   const handleCalendarButtonClick = () => {
     const calendarConfig = getCalendarDetailsFromTx(
-      transactionData as StandardHistory,
-      label as Status
+      transactionData as StandardHistory
     );
     bookGoogleEvent(calendarConfig);
   };

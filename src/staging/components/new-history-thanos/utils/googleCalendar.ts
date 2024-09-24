@@ -25,15 +25,15 @@ interface CalendarEventDetails {
   options?: ("Google" | "Apple" | "iCal" | "Microsoft365")[];
 }
 
-export const getCalendarDetailsFromTx = (
-  tx: StandardHistory,
-  label: Status
-) => {
-  const name = label === Status.Prove ? PROVE_EVENT_NAME : FINALIZE_EVENT_NAME;
-  const des = label === Status.Prove ? PROVE_DESCRIPTION : FINALIZE_DESCRIPTION;
-  const period = label === Status.Prove ? 1 : 7 * 24;
+export const getCalendarDetailsFromTx = (tx: StandardHistory) => {
+  const status = tx.status;
+  const name =
+    status === Status.Initiated ? PROVE_EVENT_NAME : FINALIZE_EVENT_NAME;
+  const des =
+    status === Status.Initiated ? PROVE_DESCRIPTION : FINALIZE_DESCRIPTION;
+  const period = status === Status.Initiated ? 1 : 7 * 24;
   const blockTimestamp =
-    label === Status.Prove
+    status === Status.Initiated
       ? tx.blockTimestamps.initialCompletedTimestamp
       : (tx as WithdrawTransactionHistory).blockTimestamps
           .proveCompletedTimestamp;
