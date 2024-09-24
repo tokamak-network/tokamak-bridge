@@ -260,8 +260,6 @@ export default function CTConfirmHistoryFooter(props: {
             const isActiveOnUpdateFee = isActive && index === hash.length - 1;
             if (tx === "" || tx === undefined) return null;
 
-            console.log("key", key);
-
             return (
               <TransactionItem
                 title={key}
