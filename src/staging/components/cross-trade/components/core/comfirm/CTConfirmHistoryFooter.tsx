@@ -234,7 +234,6 @@ export default function CTConfirmHistoryFooter(props: {
       <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
           const isActive = isCompleted ? false : lastIndex === index;
-          console.log("txData.blockTimestamps", txData.blockTimestamps);
           //@ts-ignore
           const blockTimestamp =
             key === "refund"
@@ -277,9 +276,30 @@ export default function CTConfirmHistoryFooter(props: {
   }, [txData, keyLength, isCompleted]);
 
   return (
-    <Flex w={"100%"} flexDir={"column"}>
+    <Flex
+      w={"100%"}
+      flexDir={"column"}
+      maxH={"272px"}
+      overflow={"auto"}
+      overflowY={"auto"}
+      borderLeftRadius={"8px"}
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+          borderTopRightRadius: "8px",
+          borderBottomRightRadius: "8px",
+          backgroundColor: "#15161D",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#343741",
+          borderRadius: "3px",
+        },
+      }}
+    >
       <Box
-        mt={"16px"}
         bg="#15161D"
         py={"16px"}
         px={"20px"}

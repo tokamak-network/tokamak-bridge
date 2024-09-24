@@ -473,10 +473,9 @@ export const useRequestHistoryData = () => {
         return result;
       });
 
-      const result = trimedData.filter((data) => data !== null);
-      // const result = [mock_cancelRequest];
+      // const result = trimedData.filter((data) => data !== null);
+      const result = [mock_cancelRequest];
       //@ts-ignore
-      //
       setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);
