@@ -90,6 +90,7 @@ import {
   thanosDepositWithdrawConfirmModalStatus,
 } from "@/recoil/modal/atom";
 import useDepositWithdrawConfirm from "../components/new-confirm/hooks/useDepositWithdrawConfirmModal";
+import { getSortedTxHistory, getSortedTxListByDate } from "../utils/history";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -226,7 +227,7 @@ export const useSubgraph = () => {
     variables: { withdrawalHashes: withdrawalHashes },
     pollInterval: 1000,
     client: L1_CLIENT[1],
-    skip: withdrawalHashes.length === 0,
+    // skip: !_l2Thanos?.messagePassed,
   });
 
   useEffect(() => {
@@ -476,11 +477,9 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
-      const sortedResult = filteredResult.sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
+      const sortedResult = getSortedTxHistory(
+        filteredResult
+      ) as WithdrawTransactionHistory[];
       const updatedTxOnConfirmModal = sortedResult.find(
         (tx) =>
           tx.transactionHashes.initialTransactionHash ===
@@ -495,16 +494,8 @@ export const useWithdrawData = () => {
       if (sortedResult) {
         const newThanosWithdrawHistory = {
           ...thanosSepWithdrawHistory,
-          transactionData: [],
         };
-        newThanosWithdrawHistory.latestBlockNumber =
-          (l2ThanosData?.sentMessages?.length ?? 0) > 0
-            ? l2ThanosData.sentMessages[0].blockNumber
-            : newThanosWithdrawHistory.latestBlockNumber;
-        newThanosWithdrawHistory.history = updatedHistory(
-          thanosSepWithdrawHistory.history,
-          sortedResult
-        ) as WithdrawTransactionHistory[];
+        newThanosWithdrawHistory.history = sortedResult;
         setThanosSepoliaWithdrawHistory(newThanosWithdrawHistory);
       }
     }

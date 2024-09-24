@@ -36,7 +36,7 @@ export function getRemainTime(transactionData?: TransactionHistory): number {
   } else if (action === Action.Withdraw) {
     const expectedTimes = getTransactionConstants(transactionData.inNetwork);
     const expectedTime = transactionData.blockTimestamps.proveCompletedTimestamp
-      ? expectedTimes.WITHDRAW.CHALLENGE_PERIOD
+      ? expectedTimes.WITHDRAW.PROVE
       : expectedTimes.WITHDRAW.INITIAL_MINUTES;
     const originTimestamp = transactionData.blockTimestamps
       .proveCompletedTimestamp
