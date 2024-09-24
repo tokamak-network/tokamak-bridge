@@ -90,8 +90,8 @@ const getWaitMessage = (
       chainId === SupportedChainId.TITAN ||
       chainId === SupportedChainId.TITAN_SEPOLIA
         ? 5
-        : 1
-    } min`,
+        : "1 ~ 2"
+    } mins`,
   };
   return waitMessageMap[lineType] || undefined;
 };
