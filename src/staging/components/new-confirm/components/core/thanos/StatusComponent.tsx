@@ -205,9 +205,9 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
           >
             {`${gasCostUS}`}
           </Text>
-        ) : (
+        ) : !isLast ? (
           <Box height={"17px"} />
-        )}
+        ) : null}
       </Flex>
       {!isLast && (
         <PendingComponent
