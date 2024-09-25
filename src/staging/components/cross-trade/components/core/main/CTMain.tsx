@@ -47,6 +47,9 @@ export default function CTMain() {
   const [isDescSortedReceive, setIsDescSortedReceive] = useState<
     boolean | null
   >(null);
+  const [isDescSortedProfit, setIsDescSortedProfit] = useState<boolean | null>(
+    null
+  );
   const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[] | null>(null);
 
@@ -95,6 +98,30 @@ export default function CTMain() {
       );
     }
   }, [isDescSortedReceive]);
+
+  useEffect(() => {
+    if (isDescSortedProfit === null) return;
+    if (isDescSortedProfit) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort(
+              (a, b) => Number(b.profit.percent) - Number(a.profit.percent)
+            ),
+          ]
+      );
+    }
+    if (!isDescSortedProfit) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort(
+              (a, b) => Number(a.profit.percent) - Number(b.profit.percent)
+            ),
+          ]
+      );
+    }
+  }, [isDescSortedProfit]);
 
   const [displayedItems, setDisplayedItems] = useState<CrossTradeData[]>([]);
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
@@ -158,6 +185,7 @@ export default function CTMain() {
                 cursor={"pointer"}
                 onClick={() => {
                   setIsDescSortedReceive(null);
+                  setIsDescSortedProfit(null);
                   setIsDescSortedProvide(
                     isDescSortedProvide !== null ? !isDescSortedProvide : true
                   );
@@ -199,6 +227,7 @@ export default function CTMain() {
                 cursor={"pointer"}
                 onClick={() => {
                   setIsDescSortedProvide(null);
+                  setIsDescSortedProfit(null);
                   setIsDescSortedReceive(
                     isDescSortedReceive !== null ? !isDescSortedReceive : true
                   );
@@ -249,7 +278,30 @@ export default function CTMain() {
               </Flex>
             </Th>
             <Th textTransform="none" minW={"140px"} maxW={"140px"} p={0}>
-              <Flex>
+              <Flex
+                cursor={"pointer"}
+                onClick={() => {
+                  setIsDescSortedProvide(null);
+                  setIsDescSortedReceive(null);
+                  setIsDescSortedProfit(
+                    isDescSortedProfit !== null ? !isDescSortedProfit : true
+                  );
+                }}
+              >
+                {isDescSortedProfit !== null && (
+                  <Flex
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    style={{
+                      transform: isDescSortedProfit
+                        ? "rotate(360deg)"
+                        : "rotate(180deg)",
+                    }}
+                    mr="4px"
+                  >
+                    <Image src={Polygon} alt={"Polygon"} />
+                  </Flex>
+                )}
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}

@@ -1,7 +1,5 @@
 import { NetworkSymbol } from "../image/NetworkSymbol";
 import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
-import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
-
 import {
   SupportedChainId,
   SupportedChainProperties,
