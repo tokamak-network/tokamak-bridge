@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import RecoilRootWrapper from "@/app/BridgeSwap/components/RecoilWrapper";
 import { WagmiProviders } from "@/providers/wagmiProvider";
 import Entry from "./Entry";
+import TrackAnalytics from "@/components/trackAnalytics";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://bridge.tokamak.network"),
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRootWrapper>
           <WagmiProviders>
+            <TrackAnalytics />
             <Entry children={children} />
           </WagmiProviders>
         </RecoilRootWrapper>
