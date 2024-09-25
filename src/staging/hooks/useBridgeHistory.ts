@@ -477,7 +477,7 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
-      const sortedResult = getSortedTxHistory(
+      const sortedResult = getSortedTxListByDate(
         filteredResult
       ) as WithdrawTransactionHistory[];
       const updatedTxOnConfirmModal = sortedResult.find(
@@ -749,15 +749,11 @@ export const useDepositData = () => {
       titanSepoliaDipositHistory.history &&
       thanosSepoliaDipositHistory.history
     ) {
-      const totalDepositResult = [
+      const totalDepositResult = getSortedTxListByDate([
         ...(titanSepoliaDipositHistory.history ?? []),
         ...(thanosSepoliaDipositHistory.history ?? []),
-      ].sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
-      setDepositHistory(totalDepositResult);
+      ]);
+      setDepositHistory(totalDepositResult as DepositTransactionHistory[]);
     }
   }, [titanSepoliaDipositHistory, thanosSepoliaDipositHistory]);
 

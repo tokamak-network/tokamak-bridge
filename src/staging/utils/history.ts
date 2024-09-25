@@ -20,7 +20,10 @@ export const getSortedTxListByDate = (transactions: StandardHistory[]) => {
   return transactions.sort((a, b) => {
     // Get the latest timestamp for transaction a
     const latestA = isDepositTransactionHistory(a)
-      ? a.blockTimestamps.initialCompletedTimestamp
+      ? Math.max(
+          a.blockTimestamps.initialCompletedTimestamp,
+          a.blockTimestamps?.finalizedCompletedTimestamp ?? 0
+        )
       : Math.max(
           a.blockTimestamps.initialCompletedTimestamp,
           a.blockTimestamps.rollupCompletedTimestamp ?? 0,
@@ -30,7 +33,10 @@ export const getSortedTxListByDate = (transactions: StandardHistory[]) => {
 
     // Get the latest timestamp for transaction b
     const latestB = isDepositTransactionHistory(b)
-      ? b.blockTimestamps.initialCompletedTimestamp
+      ? Math.max(
+          b.blockTimestamps.initialCompletedTimestamp,
+          b.blockTimestamps?.finalizedCompletedTimestamp ?? 0
+        )
       : Math.max(
           b.blockTimestamps.initialCompletedTimestamp,
           b.blockTimestamps?.rollupCompletedTimestamp ?? 0,
