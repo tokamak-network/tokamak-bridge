@@ -327,7 +327,6 @@ export default function Header() {
           <Account />
           {/* <AccountModal /> */}
         </Flex>
-
         {!menuView && (
           <Flex
             w={!mobileView ? "48px" : "32px"}
