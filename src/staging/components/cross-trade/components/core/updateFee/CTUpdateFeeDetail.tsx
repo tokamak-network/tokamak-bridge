@@ -57,6 +57,70 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
     }
   }, [receivedAmount, tokenInfo]);
 
+  const isReceiveAmountOver = useMemo(() => {
+    if (receivedAmount) {
+      return Number(receivedAmount) < 0;
+    }
+  }, [receivedAmount]);
+
+  const ReceiveNotOverComp = useMemo(() => {
+    return (
+      <Flex>
+        <Text
+          color={"#FFFFFF"}
+          fontSize={"12px"}
+          fontWeight={600}
+          lineHeight={"18px"}
+        >
+          {formatNumber(receivedAmount) ?? "-"} {tokenInfo?.symbol}
+        </Text>
+        <Flex
+          ml={"6px"}
+          px={"4px"}
+          borderRadius={"4px"}
+          alignItems={"center"}
+          bg={"#DB00FF"}
+        >
+          <Text
+            color={"#FFFFFF"}
+            fontSize={"10px"}
+            fontWeight={500}
+            lineHeight={"18px"}
+          >
+            {formatNumber(receviedRatio) ?? "-"}
+          </Text>
+          <Text
+            color={"#FFFFFF"}
+            fontSize={"10px"}
+            fontWeight={400}
+            lineHeight={"18px"}
+            mx="1px"
+          >
+            %
+          </Text>
+        </Flex>
+      </Flex>
+    );
+  }, [receivedAmount, receviedRatio, tokenInfo?.symbol]);
+
+  const ReceiveOverComp = useMemo(() => {
+    return (
+      <Text
+        fontSize={12}
+        fontWeight={600}
+        lineHeight={"18px"}
+        color={"#DB00FF"}
+      >
+        Reduce the service fee
+      </Text>
+    );
+  }, []);
+
+  const ReceiveAmountComp = useMemo(() => {
+    if (isReceiveAmountOver) return ReceiveOverComp;
+    return ReceiveNotOverComp;
+  }, [ReceiveNotOverComp, ReceiveOverComp, isReceiveAmountOver]);
+
   return (
     <Flex
       justifyContent="space-between"
@@ -70,44 +134,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
       >
         {title}
       </Text>
-      {type == FeeDetailType.Receive && (
-        <Flex>
-          <Text
-            color={"#FFFFFF"}
-            fontSize={"12px"}
-            fontWeight={600}
-            lineHeight={"18px"}
-          >
-            {formatNumber(receivedAmount) ?? "-"} {tokenInfo?.symbol}
-          </Text>
-          <Flex
-            ml={"6px"}
-            px={"4px"}
-            borderRadius={"4px"}
-            alignItems={"center"}
-            bg={"#DB00FF"}
-          >
-            <Text
-              color={"#FFFFFF"}
-              fontSize={"10px"}
-              fontWeight={500}
-              lineHeight={"18px"}
-            >
-              {formatNumber(receviedRatio) ?? "-"}
-            </Text>
-            <Text
-              color={"#FFFFFF"}
-              fontSize={"10px"}
-              fontWeight={400}
-              lineHeight={"18px"}
-              mx="1px"
-            >
-              %
-            </Text>
-          </Flex>
-        </Flex>
-      )}
-
+      {type == FeeDetailType.Receive && ReceiveAmountComp}
       {type == FeeDetailType.Network && (
         <Flex>
           <Image src={GasStationSymbol} alt={"GasStationSymbol"} />

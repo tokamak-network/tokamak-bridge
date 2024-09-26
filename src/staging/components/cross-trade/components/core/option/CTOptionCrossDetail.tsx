@@ -73,6 +73,13 @@ export default function CTOptionCrossDetail(
     CTTransactionType.requestRegisteredToken
   );
 
+  const receiveIsLessThanZero = Number(receiveTokenValue) < 0;
+
+  const receiveValueOnUI = useMemo(() => {
+    if (receiveIsLessThanZero) return "Reduce the service fee";
+    return `${formatNumber(receiveTokenValue)} ${inToken?.tokenSymbol}`;
+  }, [receiveIsLessThanZero, receiveTokenValue, inToken?.tokenSymbol]);
+
   return (
     <Flex
       alignItems="center"
@@ -119,25 +126,29 @@ export default function CTOptionCrossDetail(
               fontSize={"10px"}
               lineHeight={"20px"}
               color={"#A0A3AD"}
+              h={"20px"}
             >
               Receive
             </Text>
           </Flex>
           <Text
             fontWeight={600}
-            fontSize={24}
-            lineHeight={"33px"}
+            fontSize={receiveIsLessThanZero ? 18 : 24}
+            h={receiveIsLessThanZero ? "27px" : "36px"}
+            lineHeight={receiveIsLessThanZero ? "27px" : "36px"}
             color={"#DB00FF"}
           >
-            {`${formatNumber(receiveTokenValue)} ${inToken?.tokenSymbol}`}
+            {receiveValueOnUI}
           </Text>
-          <Text fontSize={12} color={"#DB00FF"}>
-            {`$${
-              Number(tokenPriceWithAmount) < 0
-                ? 0
-                : commafy(tokenPriceWithAmount)
-            }`}
-          </Text>
+          {!receiveIsLessThanZero && (
+            <Text fontSize={12} color={"#DB00FF"}>
+              {`$${
+                Number(tokenPriceWithAmount) < 0
+                  ? 0
+                  : commafy(tokenPriceWithAmount)
+              }`}
+            </Text>
+          )}
         </Box>
         <Box mt={"12px"}>
           <Flex>

@@ -21,6 +21,7 @@ import { useAccount } from "wagmi";
 import { useCallback, useMemo } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import { useTimeOver } from "@/hooks/time/useTimeOver";
 interface CTProviderProps {
   // status: number;
   status: boolean;
@@ -94,38 +95,44 @@ export default function CTProvider({
     });
   };
 
-  const renderButton = () => {
-    // if (status === STATUS.COUNTDOWN && blockTimestamps) {
-    //   const remainTime = calculateInitialCountdown(
-    //     blockTimestamps,
-    //     TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
-    //   );
-    //   const isZeroTime = remainTime <= 0;
-    //   const timeDisplay = isZeroTime
-    //     ? "00 : 00"
-    //     : useCountdown(formatTimeDisplay(remainTime));
+  const { isTimeOver } = useTimeOver({
+    timeStamp: blockTimestamps,
+    //15mins
+    timeBuffer: 180,
+    needToCheck: true,
+  });
+  const { address } = useAccount();
+  const isCreatedByUser = useMemo(() => {
+    return (
+      address?.toLocaleLowerCase() ===
+      crossTradeData.requester?.toLocaleLowerCase()
+    );
+  }, [address, crossTradeData.requester]);
 
-    //   return (
-    //     <Flex justifyContent={"center"}>
-    //       <Text
-    //         fontWeight={600}
-    //         fontSize={"11px"}
-    //         lineHeight={"16.5px"}
-    //         color={"#DB00FF"}
-    //       >
-    //         {timeDisplay}
-    //       </Text>
-    //     </Flex>
-    //   );
-    // }
-
-    const { address } = useAccount();
-    const isCreatedByUser = useMemo(() => {
-      return (
-        address?.toLocaleLowerCase() ===
-        crossTradeData.requester?.toLocaleLowerCase()
+  const ProvidingButton = () => {
+    if (!isTimeOver) {
+      const remainTime = calculateInitialCountdown(
+        blockTimestamps,
+        TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
       );
-    }, [address, crossTradeData.requester]);
+      const isZeroTime = remainTime <= 0;
+      const timeDisplay = isZeroTime
+        ? "00 : 00"
+        : useCountdown(formatTimeDisplay(remainTime));
+
+      return (
+        <Flex justifyContent={"center"}>
+          <Text
+            fontWeight={600}
+            fontSize={"11px"}
+            lineHeight={"16.5px"}
+            color={"#DB00FF"}
+          >
+            {timeDisplay}
+          </Text>
+        </Flex>
+      );
+    }
 
     const isDisabled = isInRelay;
     const bgColor =
@@ -181,5 +188,5 @@ export default function CTProvider({
     );
   };
 
-  return <>{renderButton()}</>;
+  return <ProvidingButton />;
 }

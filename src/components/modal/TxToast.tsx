@@ -92,8 +92,11 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
          */}
         <TokenSymbolWithNetwork
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
+          networkSymbolW={16}
+          networkSymbolH={16}
+          bottom={-0.5}
+          right={-0.5}
           chainId={targetChainId}
-          bottom={0}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
           {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
@@ -116,7 +119,10 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         <TokenSymbolWithNetwork
           tokenSymbol={symbol}
           chainId={targetChainId}
-          bottom={0}
+          networkSymbolW={16}
+          networkSymbolH={16}
+          bottom={-0.5}
+          right={-0.5}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
           {noNeedToShowAmount ? "" : trimAmount(convertParsedAmount)} {symbol}
@@ -203,6 +209,7 @@ function TransactionToast(props: TransactionToastProp) {
       if (txSort === "Provide") {
         return setSelectedTransactionCategory(CT_ACTION.PROVIDE);
       }
+      return setSelectedTransactionCategory(CT_ACTION.REQUEST);
     }
   };
   const { closeModal } = useTxConfirmModal();

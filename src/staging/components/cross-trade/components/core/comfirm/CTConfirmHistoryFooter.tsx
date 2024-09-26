@@ -7,7 +7,7 @@ import {
   isInCT_REQUEST,
   isInCT_REQUEST_CANCEL,
 } from "@/staging/types/transaction";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { isFinalStatus } from "../../../utils/getStatus";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
@@ -15,6 +15,8 @@ import { ErrorRollupComponent } from "@/staging/components/new-history/component
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
 import { useBlockExplorer } from "@/hooks/network/useBlockExplorer";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
+import { useTimeOver } from "@/hooks/time/useTimeOver";
+import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 
 interface TransactionItemProps {
   title: string;
@@ -26,7 +28,8 @@ interface TransactionItemProps {
 }
 
 const TransactionItem = (props: TransactionItemProps) => {
-  const { title, isActive, txHash, isError, txData } = props;
+  const { title, isActive, txHash, isError, txData, blockTimestamp } = props;
+
   const isOnError = isActive && isError;
 
   const _title = useMemo(() => {
@@ -78,7 +81,16 @@ const TransactionItem = (props: TransactionItemProps) => {
   const needToShowTimeDisplay =
     (title === "refund" || title === "return") && isActive;
   const initialTimeDisplay = formatTimeDisplay(getRemainTime(txData));
-  const timeDisplay = useCountdown(initialTimeDisplay, Boolean(isOnError));
+  const { isTimeOver } = useTimeOver({
+    timeStamp: Number(blockTimestamp),
+    //refund and return have same timeBuffer as 300s
+    timeBuffer: TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
+    needToCheck: needToShowTimeDisplay,
+  });
+  const timeDisplay = useCountdown(
+    initialTimeDisplay,
+    Boolean(isOnError) || isTimeOver
+  );
 
   const CountdownComponent = useMemo(() => {
     if (!needToShowTimeDisplay) return null;
@@ -87,12 +99,12 @@ const TransactionItem = (props: TransactionItemProps) => {
         fontWeight={400}
         fontSize={"13px"}
         lineHeight={"20px"}
-        color={isOnError ? "#DD3A44" : "#fff"}
+        color={isOnError || isTimeOver ? "#DD3A44" : "#fff"}
       >
         {timeDisplay}
       </Text>
     );
-  }, [timeDisplay, needToShowTimeDisplay]);
+  }, [timeDisplay, needToShowTimeDisplay, isTimeOver]);
 
   return (
     <Flex justifyContent={"space-between"}>
@@ -223,13 +235,12 @@ export default function CTConfirmHistoryFooter(props: {
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
           const isActive = isCompleted ? false : lastIndex === index;
           //@ts-ignore
-          const blockTimestamp = txData.blockTimestamps[key];
-          // if (
-          //   (hash === "" || hash === undefined) &&
-          //   key !== "waitForReceive" &&
-          //   key !== "return"
-          // )
-          //   return null;
+          const blockTimestamp =
+            key === "refund"
+              ? //@ts-ignore
+                txData.blockTimestamps["cancelRequest"]
+              : //@ts-ignore
+                txData.blockTimestamps[key];
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
@@ -247,12 +258,14 @@ export default function CTConfirmHistoryFooter(props: {
           return hash?.map((tx, index) => {
             const isActiveOnUpdateFee = isActive && index === hash.length - 1;
             if (tx === "" || tx === undefined) return null;
+
             return (
               <TransactionItem
                 title={key}
                 isActive={isActiveOnUpdateFee}
                 txHash={tx}
                 isError={isError}
+                blockTimestamp={blockTimestamp}
                 txData={txData}
               />
             );
@@ -263,14 +276,36 @@ export default function CTConfirmHistoryFooter(props: {
   }, [txData, keyLength, isCompleted]);
 
   return (
-    <>
+    <Flex
+      w={"100%"}
+      flexDir={"column"}
+      maxH={"272px"}
+      overflow={"auto"}
+      overflowY={"auto"}
+      borderLeftRadius={"8px"}
+      css={{
+        "&::-webkit-scrollbar": {
+          width: "6px",
+        },
+        "&::-webkit-scrollbar-track": {
+          background: "transparent",
+          borderTopRightRadius: "8px",
+          borderBottomRightRadius: "8px",
+          backgroundColor: "#15161D",
+        },
+        "&::-webkit-scrollbar-thumb": {
+          background: "#343741",
+          borderRadius: "3px",
+        },
+      }}
+    >
       <Box
-        mt={"16px"}
         bg="#15161D"
         py={"16px"}
         px={"20px"}
         border={"1px, 1px, 0px, 1px"}
         borderRadius={"8px"}
+        w={"100%"}
       >
         <Flex>
           <Box width={"auto"}>
@@ -280,13 +315,13 @@ export default function CTConfirmHistoryFooter(props: {
         </Flex>
       </Box>
       {isRequest && (
-        <Box mt={"12px"} pb={"4px"}>
+        <Box w={"100%"} mt={"12px"} pb={"4px"}>
           <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
             Tip: Update the service fee to reflect significant <br /> change in
             L1 gas price.
           </Text>
         </Box>
       )}
-    </>
+    </Flex>
   );
 }

@@ -25,19 +25,24 @@ const Footer = () => {
     >
       <Text fontSize={pcView ? 14 : 12} color={"#A0A3AD"}>
         Copyright © {dayjs().year()}{" "}
-        <span style={{ color: "#007AFF" }}>Tokamak Network</span> All Rights
-        Reserved.
+        <span
+          style={{ color: "#007AFF", cursor: "pointer" }}
+          onClick={() => window.open("https://www.tokamak.network/")}
+        >
+          Tokamak Network
+        </span>{" "}
+        All Rights Reserved.
       </Text>
     </Flex>
   ) : (
     // When in mobile view, there is no footer.
     // A box is placed to maintain the background color while scrolling with a finger. @Robert
     <Box
-      position='fixed'
-      top='0'
-      right='0'
-      bottom='0'
-      left='0'
+      position="fixed"
+      top="0"
+      right="0"
+      bottom="0"
+      left="0"
       zIndex={-1}
       bg={"#0F0F12"}
     ></Box>

@@ -16,7 +16,16 @@ export const mock_cancelRequest = {
   },
   action: 0,
   blockTimestamps: {
-    cancelRequest: Math.floor(Date.now() / 1000),
+    cancelRequest: Math.floor(Date.now() / 1000) - 280,
+    update: [
+      Math.floor(Date.now() / 1000) - 60,
+      Math.floor(Date.now() / 1000) - 120,
+      Math.floor(Date.now() / 1000) - 160,
+      Math.floor(Date.now() / 1000) - 240,
+      Math.floor(Date.now() / 1000) - 300,
+      Math.floor(Date.now() / 1000) - 360,
+      Math.floor(Date.now() / 1000) - 420,
+    ],
     refund: undefined,
     request: 1725425942,
   },
@@ -46,6 +55,15 @@ export const mock_cancelRequest = {
   transactionHashes: {
     request:
       "0xece1a37f48b4222e8ae8e1ce98a03bfcba4c99472dd86ae0b43add017da76d38",
+    update: [
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+      "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
+    ],
     cancelRequest:
       "0xf0f4c75de1b0227fecfdf5c3749af882b58523a332d4cdb8e964458fce00180f",
     refund: "0x",

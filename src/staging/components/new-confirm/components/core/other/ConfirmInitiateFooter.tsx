@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
-import { Tooltip } from "@/staging/components/common/Tooltip";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
+import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
 interface ConfirmInitiateFooterProps {
   onCloseDepositWithdrawConfirmModal: () => void;
   onClick: () => void;
@@ -87,11 +87,17 @@ export default function ConfirmInitiateFooter(
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             Initiate
           </Text>
-          <Tooltip
+          {/* <Tooltip
             tooltipLabel={"text will be changed"}
             style={{ marginLeft: "2px" }}
             type={isChecked ? "white" : "grey"}
-          />
+          /> */}
+          <Box maxW={"16px"} maxH={"16px"} ml={"2px"}>
+            <CustomTooltipWithQuestion
+              tooltipLabel={"text will be changed"}
+              isGrayIcon={!isChecked}
+            ></CustomTooltipWithQuestion>
+          </Box>
         </Button>
       </Box>
     </Box>

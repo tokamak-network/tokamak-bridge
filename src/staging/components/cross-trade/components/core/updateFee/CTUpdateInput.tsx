@@ -17,7 +17,6 @@ import { WarningType } from "@/staging/components/cross-trade/types";
 import { TransactionToken } from "@/staging/types/transaction";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
-import useCTRecommend from "../../../hooks/useCTRecommend";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;

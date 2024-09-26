@@ -30,6 +30,7 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useAccount } from "wagmi";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
+import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -237,10 +238,10 @@ export default function CTConfirmCrossTradeFooter(
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken, provideCT]);
 
   return (
-    <Grid mt={"3px"}>
+    <Grid mt={"3px"} w={"100%"}>
       {/** Check Box */}
       {!isProvide && (
-        <Flex flexDir={"column"} rowGap={"8px"} mt={"5px"}>
+        <Flex w={"100%"} flexDir={"column"} rowGap={"8px"} mt={"5px"}>
           <Text
             color={"#A0A3AD"}
             fontWeight={600}
@@ -369,7 +370,7 @@ export default function CTConfirmCrossTradeFooter(
       )}
       {/** Confirm Button */}
       <Flex flexDir={"column"} rowGap={"12px"} mt={"12px"}>
-        {!isApproved && (
+        {!isApproved && !isBalanceOver && (
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
@@ -388,12 +389,16 @@ export default function CTConfirmCrossTradeFooter(
                 : !approveBtnDisabled
                 ? "#FFFFFF"
                 : "#8E8E92",
-              border: !isLoading && isRevokeForUSDT ? "1px solid #007AFF" : "",
+              border:
+                !isLoading && isRevokeForUSDT && !approveBtnDisabled
+                  ? "1px solid #007AFF"
+                  : "",
             }}
             _disabled={{
               backgroundColor: "#17181D",
               color: "#8E8E92",
             }}
+            _active={{}}
           >
             {isLoading ? (
               <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />
@@ -403,6 +408,13 @@ export default function CTConfirmCrossTradeFooter(
                   inToken?.tokenSymbol
                 }`}
               </Text>
+            )}
+            {isRevokeForUSDT && (
+              <TooltipForRevoke
+                isGrayIcon={approveBtnDisabled ? true : false}
+                isBlueIcon={!approveBtnDisabled ? true : false}
+                style={{ marginLeft: "2px" }}
+              />
             )}
           </Button>
         )}
