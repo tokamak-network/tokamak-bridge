@@ -15,7 +15,6 @@ import {
   Tr,
   Th,
   Td,
-  Center,
 } from "@chakra-ui/react";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import TokenDetail from "@/staging/components/cross-trade/components/core/main/TokenDetail";
