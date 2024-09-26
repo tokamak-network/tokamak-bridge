@@ -28,6 +28,7 @@ import {
 import Warning from "assets/icons/white_warning.svg";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo & { isNew?: boolean };
@@ -139,13 +140,23 @@ export default function TokenCard(props: TokenCardProps) {
   const tokenData = useTokenBalance(tokenInfo, requireCall, watch);
   const thisTokenIsETH = isETH(tokenInfo);
   const theme = useTheme();
+  const [, setSearchToken] = useRecoilState(searchTokenStatus);
 
   const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;
-  const addNewCard = useCallback(() => {
-    addNewToken(tokenInfo);
-    return setAgreeToAdd(true);
-  }, [agreeToAdd]);
+  const addNewCard = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+      addNewToken(tokenInfo);
+      return setAgreeToAdd(true);
+    },
+    [agreeToAdd]
+  );
+
+  const cancelAddNewCard = (event: React.MouseEvent<HTMLParagraphElement>) => {
+    event.stopPropagation();
+    setSearchToken(null);
+  };
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(
@@ -246,7 +257,7 @@ export default function TokenCard(props: TokenCardProps) {
         justifyContent={"space-between"}
         cursor={"pointer"}
         boxSizing={"border-box"}
-        onClick={notAdded ? addNewCard : onClick}
+        onClick={notAdded ? () => {} : onClick}
         fontFamily={theme.fonts.Quicksand}
         initial={{
           padding: `${
@@ -421,11 +432,17 @@ export default function TokenCard(props: TokenCardProps) {
               fontSize={16}
               bgColor={"#007AFF"}
               fontWeight={600}
-              onClick={() => addNewCard}
+              onClick={addNewCard}
             >
               I Understand
             </Button>
-            <Text fontSize={16} fontWeight={400} color={"#fff"}>
+
+            <Text
+              fontSize={16}
+              fontWeight={400}
+              color={"#fff"}
+              onClick={cancelAddNewCard}
+            >
               Cancel
             </Text>
           </Flex>

@@ -74,7 +74,7 @@ export default function CarousellCardComponent<T>(props: {
         }`,
         top: 268,
       }}
-      transition={{ duration: 0.5 }}
+      transition={{ duration: 0.35 }}
       whileHover={{
         zIndex: 4,
         boxShadow: `0px 0px 20px 0px ${tokenColor}`,

@@ -30,6 +30,7 @@ import CloseIcon from "assets/icons/close.svg";
 import SearchIcon from "assets/icons/search.svg";
 import CancelIcon from "assets/icons/close.svg";
 import { isIOS } from "react-device-detect";
+import { debounce } from "@/utils/debounce";
 
 export function SelectCardButton(props: { field: Field }) {
   const { field } = props;
@@ -84,11 +85,23 @@ const SearchToken = () => {
       }
     }, 20);
   }, []);
-
+  const performSearch = (query: string): void => {
+    if (query === "") {
+      return setSearchToken(null);
+    }
+    if (connectedChainId) {
+      return setSearchToken({
+        nameOrAdd: query,
+        chainId: connectedChainId,
+      });
+    }
+  };
+  const debouncedSearch = useCallback(debounce(performSearch, 300), []);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const value = e.target.value;
     setSearchValue(value);
+    debouncedSearch(value);
   };
 
   const handleFocus = () => {
@@ -105,18 +118,17 @@ const SearchToken = () => {
       ref?.current?.blur();
     }
   };
-
-  useEffect(() => {
-    if (searchValue === "") {
-      return setSearchToken(null);
-    }
-    if (connectedChainId) {
-      return setSearchToken({
-        nameOrAdd: searchValue,
-        chainId: connectedChainId,
-      });
-    }
-  }, [searchValue]);
+  // useEffect(() => {
+  //   if (searchValue === "") {
+  //     return setSearchToken(null);
+  //   }
+  //   if (connectedChainId) {
+  //     return setSearchToken({
+  //       nameOrAdd: searchValue,
+  //       chainId: connectedChainId,
+  //     });
+  //   }
+  // }, [searchValue]);
 
   return (
     <Flex
