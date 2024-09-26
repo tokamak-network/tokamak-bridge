@@ -7,6 +7,7 @@ import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCustomTooltip";
 import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
+import { formatProfit } from "@/staging/utils/formatProfit";
 
 interface TokenDetailProps {
   token?: Token;
@@ -35,7 +36,7 @@ export default function TokenDetail(props: TokenDetailProps) {
     if (token) {
       return tokenPriceWithAmount ? `$${commafy(tokenPriceWithAmount)}` : "NA";
     }
-    return `${profit?.percent}%`;
+    return `${formatProfit(profit?.percent)}%`;
   }, [tokenPriceWithAmount, profit?.percent]);
 
   return (

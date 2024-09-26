@@ -126,7 +126,7 @@ export default function CTModal() {
             requester={requester}
           />
         </ModalBody>
-        <ModalFooter p={0}>
+        <ModalFooter className="test" pt={"20px"} px={0} pb={0}>
           {ctConfirmModal.type == ModalType.Trade ? (
             <CTConfirmCrossTradeFooter
               isChecked={isChecked}

@@ -236,7 +236,8 @@ export const useRequestData = (): {
             : BigInt(item._ctAmount);
           const profitAmount = BigInt(item._totalAmount) - ctAmount;
           const profitRatio =
-            (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
+            (Number(profitAmount) / Number(BigInt(item._totalAmount))) * 100;
+
           const isProvided = isRequestProvided({
             providerClaimCTs,
             saleCount: item._saleCount,
@@ -307,7 +308,8 @@ export const useRequestData = (): {
             profit: {
               amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
-              percent: profitRatio.toString(),
+              percent:
+                profitAmount === BigInt(0) ? "0" : profitRatio.toFixed(30),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),

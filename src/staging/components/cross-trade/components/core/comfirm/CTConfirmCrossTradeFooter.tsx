@@ -370,7 +370,7 @@ export default function CTConfirmCrossTradeFooter(
       )}
       {/** Confirm Button */}
       <Flex flexDir={"column"} rowGap={"12px"} mt={"12px"}>
-        {!isApproved && (
+        {!isApproved && !isBalanceOver && (
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
