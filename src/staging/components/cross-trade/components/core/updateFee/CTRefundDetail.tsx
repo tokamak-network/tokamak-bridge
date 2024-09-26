@@ -16,9 +16,10 @@ export default function CTRefundDetail(props: { txData: CT_History | null }) {
   if (!txData) return null;
   const { inToken, inNetwork } = txData;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const tokenAmount = txData.L2_subgraphData?._totalAmount;
   const { tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: inToken.name,
-    amount: formatUnits(inToken?.amount, inToken.decimals),
+    amount: formatUnits(tokenAmount, inToken.decimals),
   });
 
   return (
@@ -35,7 +36,7 @@ export default function CTRefundDetail(props: { txData: CT_History | null }) {
         <Box>
           <Flex justifyContent={"space-between"} alignItems={"center"}>
             <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
-              {formatNumber(formatUnits(inToken?.amount, inToken.decimals))}{" "}
+              {formatNumber(formatUnits(tokenAmount, inToken.decimals))}{" "}
               {inToken?.symbol}
             </Text>
             <TokenSymbolWithNetwork

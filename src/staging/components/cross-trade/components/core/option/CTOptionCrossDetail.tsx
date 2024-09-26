@@ -47,11 +47,11 @@ export default function CTOptionCrossDetail(
   // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
   // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
   // const isDisabledRecommend = props.inputValue === "1";
-  const isDisabledRecommend = false;
+  const isDisabledRecommend = props.recommnededFee === undefined ? true : false;
   const { inToken } = useInOutTokens();
 
   const receiveTokenValue = useMemo(() => {
-    if (isRecommendActive) return props.recommnededFee;
+    if (isRecommendActive && !isDisabledRecommend) return props.recommnededFee;
 
     const inputValue = props.inputValue;
     if (
@@ -63,7 +63,7 @@ export default function CTOptionCrossDetail(
       return result;
     }
     return inToken?.parsedAmount;
-  }, [props.inputValue, inToken, isRecommendActive]);
+  }, [props.inputValue, inToken, isRecommendActive, isDisabledRecommend]);
 
   const { tokenPriceWithAmount } = useGetMarketPrice({
     amount: receiveTokenValue as string,
@@ -72,6 +72,13 @@ export default function CTOptionCrossDetail(
   const { estimatedGasFeeUSD } = useCrossTradeGasFee(
     CTTransactionType.requestRegisteredToken
   );
+
+  const receiveIsLessThanZero = Number(receiveTokenValue) < 0;
+
+  const receiveValueOnUI = useMemo(() => {
+    if (receiveIsLessThanZero) return "Reduce the service fee";
+    return `${formatNumber(receiveTokenValue)} ${inToken?.tokenSymbol}`;
+  }, [receiveIsLessThanZero, receiveTokenValue, inToken?.tokenSymbol]);
 
   return (
     <Flex
@@ -119,25 +126,29 @@ export default function CTOptionCrossDetail(
               fontSize={"10px"}
               lineHeight={"20px"}
               color={"#A0A3AD"}
+              h={"20px"}
             >
               Receive
             </Text>
           </Flex>
           <Text
             fontWeight={600}
-            fontSize={24}
-            lineHeight={"33px"}
+            fontSize={receiveIsLessThanZero ? 18 : 24}
+            h={receiveIsLessThanZero ? "27px" : "36px"}
+            lineHeight={receiveIsLessThanZero ? "27px" : "36px"}
             color={"#DB00FF"}
           >
-            {`${formatNumber(receiveTokenValue)} ${inToken?.tokenSymbol}`}
+            {receiveValueOnUI}
           </Text>
-          <Text fontSize={12} color={"#DB00FF"}>
-            {`$${
-              Number(tokenPriceWithAmount) < 0
-                ? 0
-                : commafy(tokenPriceWithAmount)
-            }`}
-          </Text>
+          {!receiveIsLessThanZero && (
+            <Text fontSize={12} color={"#DB00FF"}>
+              {`$${
+                Number(tokenPriceWithAmount) < 0
+                  ? 0
+                  : commafy(tokenPriceWithAmount)
+              }`}
+            </Text>
+          )}
         </Box>
         <Box mt={"12px"}>
           <Flex>

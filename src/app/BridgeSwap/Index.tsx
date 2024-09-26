@@ -2,6 +2,7 @@ import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
 import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
+import { SwitchToTestNetwork } from "@/staging/components/cross-trade/components/common/WrongNetwork";
 
 export default function BridgeSwap() {
   return (
@@ -22,6 +23,9 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
+        <SwitchToTestNetwork
+          style={{ marginTop: "55px", marginBottom: "14px" }}
+        />
         <Swap />
         <Details />
       </Flex>

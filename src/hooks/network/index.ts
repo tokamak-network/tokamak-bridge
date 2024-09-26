@@ -89,7 +89,7 @@ export default function useConnectedNetwork() {
 
       return supportedChain
         .filter((chain) => chain.isTestnet)
-        .filter((chain) => chain.chainId !== 111551118080);
+        .filter((chain) => chain.chainId !== 111551119090);
     }
   }, [chainInfo]);
 
@@ -128,13 +128,22 @@ export const useChangeNetwork = (chainId?: number) => {
     if (isConnectedToMainNetwork)
       return switchNetworkAsync?.(SupportedChainId.MAINNET);
     switchNetworkAsync?.(SupportedChainId.SEPOLIA);
-  }, [isConnectedToMainNetwork]);
+  }, [switchNetworkAsync, isConnectedToMainNetwork]);
 
   const switchToTitan = useCallback(() => {
     if (isConnectedToMainNetwork)
       return switchNetworkAsync?.(SupportedChainId.TITAN);
     switchNetworkAsync?.(SupportedChainId.TITAN_SEPOLIA);
-  }, [isConnectedToMainNetwork]);
+  }, [switchNetworkAsync, isConnectedToMainNetwork]);
 
-  return { switchNetworkWithChainId, switchToEthereum, switchToTitan };
+  const switchToSepolia = useCallback(() => {
+    switchNetworkAsync?.(SupportedChainId.SEPOLIA);
+  }, [switchNetworkAsync]);
+
+  return {
+    switchNetworkWithChainId,
+    switchToEthereum,
+    switchToTitan,
+    switchToSepolia,
+  };
 };

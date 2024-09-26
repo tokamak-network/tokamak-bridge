@@ -56,6 +56,7 @@ import {
   getProvideStatus,
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
+import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -214,6 +215,7 @@ export const useWithdrawData = () => {
             amount,
             false
           );
+          if (!l1Token || !l2Token) return;
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
@@ -314,6 +316,8 @@ export const useDepositData = () => {
             amount,
             true
           );
+
+          if (!l1Token || !l2Token) return;
 
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
@@ -472,7 +476,9 @@ export const useRequestHistoryData = () => {
         return result;
       });
 
-      const result = trimedData.filter((data) => data !== null);
+      // const result = trimedData.filter((data) => data !== null);
+      const result = [mock_cancelRequest];
+      //@ts-ignore
       setRequestHistory(result as CT_Request_History[]);
     }
   }, [l1Data, l2Data, isConnectedToMainNetwork]);

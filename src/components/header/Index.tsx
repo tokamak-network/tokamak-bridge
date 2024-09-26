@@ -96,19 +96,19 @@ const CustomMenuItem = (props: {
     <MenuItem
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      target='_blank'
+      target="_blank"
       as={"a"}
       href={link}
       h={"18px"}
       marginBottom={"16px"}
       padding={"0px"}
       // border={'1px solid red'}
-      bg='#0F0F12'
+      bg="#0F0F12"
       _focus={{ background: "0F0F12" }}
       _hover={{ bg: "none", color: "#2a72e5" }}
     >
-      <Flex mr='9px'>
-        <Image src={hover ? hoverIcon : icon} alt='icon' />
+      <Flex mr="9px">
+        <Image src={hover ? hoverIcon : icon} alt="icon" />
       </Flex>
       <Text
         fontSize={
@@ -252,13 +252,13 @@ export default function Header() {
                   // width={"24px"}
                   transform={menuState === true ? "rotate(180deg)" : ""}
                 >
-                  <Image src={arrow} alt='icon_arrow' />
+                  <Image src={arrow} alt="icon_arrow" />
                 </Flex>
               </Flex>
             </MenuButton>
             <MenuList
               onMouseLeave={() => setMenuState(false)}
-              bg='#0F0F12'
+              bg="#0F0F12"
               mt={"17px"}
               border={"1px solid #313442"}
               style={{
@@ -270,23 +270,23 @@ export default function Header() {
               }}
             >
               <CustomMenuItem
-                link='https://docs.tokamak.network/home/02-service-guide/tokamak-bridge'
-                title='User Guide'
+                link="https://docs.tokamak.network/home/02-service-guide/tokamak-bridge"
+                title="User Guide"
                 icon={userguide}
                 hoverIcon={userGuideHover}
               />
               <CustomMenuItem
-                link='https://forms.gle/GLY1PZq4BH4RqZY79'
-                title='Get Help'
+                link="https://forms.gle/GLY1PZq4BH4RqZY79"
+                title="Get Help"
                 icon={lightbulb}
                 hoverIcon={lightbulbHover}
               />
-              <Flex w='100%' alignItems={"center"} mb={"16px"}>
-                <Flex w='24px' h='1px' bg={"#757893"} mr='10px'></Flex>
+              <Flex w="100%" alignItems={"center"} mb={"16px"}>
+                <Flex w="24px" h="1px" bg={"#757893"} mr="10px"></Flex>
                 <Text color={"#757893"} fontSize={"12px"}>
                   COMMUNITY
                 </Text>
-                <Flex w='24px' h='1px' bg={"#757893"} ml='10px'></Flex>
+                <Flex w="24px" h="1px" bg={"#757893"} ml="10px"></Flex>
               </Flex>
               {menuLinks.map((link: any) => {
                 return (
@@ -327,7 +327,6 @@ export default function Header() {
           <Account />
           {/* <AccountModal /> */}
         </Flex>
-
         {!menuView && (
           <Flex
             w={!mobileView ? "48px" : "32px"}
@@ -343,7 +342,7 @@ export default function Header() {
             }}
           >
             <Image
-              alt='hamburger'
+              alt="hamburger"
               src={!mobileView ? big_hamburger : hamburger}
             />
           </Flex>

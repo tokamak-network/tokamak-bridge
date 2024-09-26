@@ -195,7 +195,7 @@ export const useRequestData = (): {
       if (data && _l1Data) {
         const datas = data.requestCTs;
         const providerClaimCTs = data.providerClaimCTs;
-        const cancelCTs = data.cancelCTs;
+        const cancelCTs = _l1Data.l1CancelCTs;
         const editCTs = _l1Data.editCTs;
         const provideCTs = _l1Data.provideCTs;
 
@@ -236,7 +236,8 @@ export const useRequestData = (): {
             : BigInt(item._ctAmount);
           const profitAmount = BigInt(item._totalAmount) - ctAmount;
           const profitRatio =
-            (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
+            (Number(profitAmount) / Number(BigInt(item._totalAmount))) * 100;
+
           const isProvided = isRequestProvided({
             providerClaimCTs,
             saleCount: item._saleCount,
@@ -307,7 +308,8 @@ export const useRequestData = (): {
             profit: {
               amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
-              percent: profitRatio.toString(),
+              percent:
+                profitAmount === BigInt(0) ? "0" : profitRatio.toFixed(30),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),
@@ -322,7 +324,10 @@ export const useRequestData = (): {
           };
         });
         const trimedResult = result.filter(
-          (item) => !item.isCanceled && item.recevingUSD > item.providingUSD
+          (item) =>
+            !item.isCanceled &&
+            item.recevingUSD >= item.providingUSD &&
+            !item.isProvided
         );
         setIsLoading(false);
         return setRequestList(trimedResult);

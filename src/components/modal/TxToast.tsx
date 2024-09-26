@@ -27,7 +27,7 @@ import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 type TransactionToastProp = TxInterface;
 
 function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
-  const { tokenData, isToken0, network, txSort, actionSort } = props;
+  const { tokenData, isToken0, network, txSort } = props;
 
   if (
     tokenData === undefined ||
@@ -92,8 +92,11 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
          */}
         <TokenSymbolWithNetwork
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
+          networkSymbolW={16}
+          networkSymbolH={16}
+          bottom={-0.5}
+          right={-0.5}
           chainId={targetChainId}
-          bottom={0}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
           {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
@@ -116,7 +119,10 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         <TokenSymbolWithNetwork
           tokenSymbol={symbol}
           chainId={targetChainId}
-          bottom={0}
+          networkSymbolW={16}
+          networkSymbolH={16}
+          bottom={-0.5}
+          right={-0.5}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
           {noNeedToShowAmount ? "" : trimAmount(convertParsedAmount)} {symbol}
@@ -174,13 +180,14 @@ function TransactionToast(props: TransactionToastProp) {
   const [historyTabOpen, setHistoryTabOpen] =
     useRecoilState(accountDrawerStatus);
 
+  const isForCrossTrade =
+    txSort === "Request" ||
+    txSort === "Provide" ||
+    txSort === "CancelRequest" ||
+    txSort === "UpdateFee";
   const needToOpenHistoryTab = useMemo(
-    () =>
-      txSort === "Deposit" ||
-      txSort === "Withdraw" ||
-      txSort === "Request" ||
-      txSort === "Provide",
-    [txSort]
+    () => txSort === "Deposit" || txSort === "Withdraw" || isForCrossTrade,
+    [txSort, isForCrossTrade]
   );
 
   const [, setSelectedTab] = useRecoilState(selectedTab);
@@ -189,7 +196,7 @@ function TransactionToast(props: TransactionToastProp) {
   );
   const nativeToHistoryTab = () => setHistoryTabOpen(true);
   const navigateToCrossTrade = () => setSelectedTab(HISTORY_SORT.CROSS_TRADE);
-  const isForCrossTrade = txSort === "Request" || txSort === "Provide";
+
   const router = useRouter();
   const openHistoryTab = () => {
     nativeToHistoryTab();
@@ -202,6 +209,7 @@ function TransactionToast(props: TransactionToastProp) {
       if (txSort === "Provide") {
         return setSelectedTransactionCategory(CT_ACTION.PROVIDE);
       }
+      return setSelectedTransactionCategory(CT_ACTION.REQUEST);
     }
   };
   const { closeModal } = useTxConfirmModal();
