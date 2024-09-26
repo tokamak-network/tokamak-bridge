@@ -52,13 +52,14 @@ type TokenCardProps = {
   };
 };
 
-const TopLine = (props: { layer: number }) => {
+const TopLine = (props: { layer: number; notAdded: boolean }) => {
   return (
     <Box
       w={"332px"}
       h={"231.17px"}
       top={"-40px"}
       left={"-40px"}
+      opacity={props.notAdded ? 0.1 : 1}
       pos={"absolute"}
     >
       <Box
@@ -213,7 +214,7 @@ export default function TokenCard(props: TokenCardProps) {
     <Flex
       bg={
         notAdded
-          ? "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), rgb(98, 126, 234);"
+          ? "#383b44"
           : `linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColor(
               tokenInfo?.tokenSymbol
             )};`
@@ -222,7 +223,7 @@ export default function TokenCard(props: TokenCardProps) {
       h={typeof h === "string" ? h : `${h ? h + "px" : "100%"}`}
       opacity={
         isNew || isDark
-          ? 0.25
+          ? 1
           : isHover === undefined || isHover === null || isHover === level
           ? 0.9
           : 0.5
@@ -238,7 +239,7 @@ export default function TokenCard(props: TokenCardProps) {
         h={"100%"}
         borderRadius={"16px"}
         border={`${layer === 0 ? 4 : 3}px solid ${
-          notAdded ? "rgb(98, 126, 234)" : tokenColor(tokenInfo?.tokenSymbol)
+          notAdded ? "#292f45" : tokenColor(tokenInfo?.tokenSymbol)
         }`}
         pos={"relative"}
         flexDir={"column"}
@@ -248,14 +249,18 @@ export default function TokenCard(props: TokenCardProps) {
         onClick={notAdded ? addNewCard : onClick}
         fontFamily={theme.fonts.Quicksand}
         initial={{
-          padding: `${PADDING_SIZE[layer] || (pcView ? 16 : 8)}px`,
+          padding: `${
+            notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
+          }px`,
         }}
         animate={{
-          padding: `${PADDING_SIZE[layer] || (pcView ? 16 : 8)}px`,
+          padding: `${
+            notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
+          }px`,
         }}
         transition="0.5 linear"
       >
-        <TopLine layer={layer} />
+        <TopLine layer={layer} notAdded={notAdded ? true : false} />
         {notAdded ? (
           <Flex flexDirection={"column"}>
             <Flex
@@ -276,16 +281,23 @@ export default function TokenCard(props: TokenCardProps) {
                 isName={true}
                 style={{
                   fontSize: `${FONT_SIZE[layer]?.name ?? 18}px`,
+                  color: "#ffffff",
                 }}
               />
               <Flex
                 p={"8px 10px"}
-                alignSelf={"flex-start"}
                 fontSize={"16px"}
                 bg={"#1F2128"}
                 color={"#fff"}
                 borderRadius={"6px"}
-                gap={"2px"}
+                zIndex={100}
+                gap={"4px"}
+                width={"74px"}
+                fontWeight={600}
+                opacity={0.5}
+                justifyContent={"center"}
+                alignItems={"center"}
+                height={"32px"}
               >
                 Add
                 <Image src={Warning} alt="warning" />
@@ -297,6 +309,7 @@ export default function TokenCard(props: TokenCardProps) {
                 isName={false}
                 style={{
                   fontSize: `${FONT_SIZE[layer]?.symbol ?? 14}px`,
+                  color: "#ffffff",
                 }}
               />
             </Flex>
@@ -385,19 +398,28 @@ export default function TokenCard(props: TokenCardProps) {
         )}
         {notAdded ? (
           <Flex flexDir={"column"} alignItems={"center"}>
-            <Text fontSize={12} color={"#fff"} w={"100%"}>
+            <Text
+              fontSize={"14px"}
+              textAlign={"center"}
+              fontStyle={"normal"}
+              fontWeight={400}
+              lineHeight={"normal"}
+              color={"#fff"}
+              w={"216px"}
+            >
               This token isn’t traded on leading U.S. centralized exchanges or
               frequently swapped on Tokamak Network. Always conduct your own
               research before trading.
             </Text>
             <Button
               w={"100%"}
-              h={"40px"}
+              h={"48px"}
               my={"20px"}
-              bg={"#007AFF"}
+              bg={"#030303"}
               _hover={{}}
               _active={{}}
               fontSize={16}
+              bgColor={"#007AFF"}
               fontWeight={600}
               onClick={() => addNewCard}
             >
