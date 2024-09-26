@@ -22,6 +22,9 @@ type SelectOption = SupportedChainProperties & {
 };
 
 const formatVariableName = (variable: string) => {
+  if (!variable.includes("_")) {
+    return variable.charAt(0).toUpperCase() + variable.slice(1).toLowerCase();
+  }
   return variable?.replace(/([A-Z]+)_([A-Z]+)/g, (_, p1, p2) => {
     return (
       p1.charAt(0) +
