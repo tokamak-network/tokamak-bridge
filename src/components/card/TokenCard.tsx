@@ -72,7 +72,7 @@ const TopLine = (props: { layer: number; notAdded: boolean }) => {
         position={"relative"}
         initial={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
         animate={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
-        transition="0.5 linear"
+        transition="0.2 linear"
       ></Box>
       <Box
         as={motion.div}
@@ -86,7 +86,7 @@ const TopLine = (props: { layer: number; notAdded: boolean }) => {
         pos={"relative"}
         initial={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
         animate={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
-        transition="0.5 linear"
+        transition="0.2 linear"
       ></Box>
     </Box>
   );
@@ -107,7 +107,7 @@ const TokenTitle = (props: {
       {...props.style}
       initial={{ fontSize: props.style?.fontSize }}
       animate={{ fontSize: props.style?.fontSize }}
-      transition="0.3 linear"
+      transition="0.2 linear"
     >
       {props.tokenName}
     </Text>
@@ -269,7 +269,7 @@ export default function TokenCard(props: TokenCardProps) {
             notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
           }px`,
         }}
-        transition="0.5 linear"
+        transition="0.2 linear"
       >
         <TopLine layer={layer} notAdded={notAdded ? true : false} />
         {notAdded ? (
@@ -392,7 +392,7 @@ export default function TokenCard(props: TokenCardProps) {
               marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
               marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
             }}
-            transition="0.5 linear"
+            transition="0.2 linear"
           >
             <TokenSymbol
               w={
@@ -481,7 +481,7 @@ export default function TokenCard(props: TokenCardProps) {
                       animate={{
                         fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
                       }}
-                      transition="0.3 linear"
+                      transition="0.2 linear"
                     >
                       balance:{" "}
                     </Text>
@@ -494,7 +494,7 @@ export default function TokenCard(props: TokenCardProps) {
                       animate={{
                         fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
                       }}
-                      transition="0.3 linear"
+                      transition="0.2 linear"
                     >
                       {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
                     </Text>

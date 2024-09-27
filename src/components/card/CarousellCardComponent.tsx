@@ -1,7 +1,7 @@
 import { TokenInfo } from "@/types/token/supportedToken";
 import { motion } from "framer-motion";
 import TokenCard from "./TokenCard";
-import { Dispatch, SetStateAction, useMemo } from "react";
+import { Dispatch, SetStateAction, useEffect, useMemo } from "react";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
