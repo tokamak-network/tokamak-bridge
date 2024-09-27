@@ -96,7 +96,7 @@ const SearchToken = () => {
       });
     }
   };
-  const debouncedSearch = useCallback(debounce(performSearch, 300), []);
+  const debouncedSearch = useCallback(debounce(performSearch, 100), []);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const value = e.target.value;
@@ -116,6 +116,12 @@ const SearchToken = () => {
   const onKeyDown = (e: any) => {
     if (e.key === "Enter" && mobileView) {
       ref?.current?.blur();
+    }
+    if (e.key === "Enter") {
+      const value = e.target.value;
+      e.preventDefault();
+      setSearchValue(value);
+      debouncedSearch(value);
     }
   };
   // useEffect(() => {
