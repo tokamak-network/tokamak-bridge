@@ -231,7 +231,7 @@ export default function CTConfirmHistoryFooter(props: {
 
   const TransactionHistory = useMemo(() => {
     return (
-      <Flex flexDir={"column"} ml={"18px"} flex={1} rowGap={"24px"}>
+      <Flex flexDir={"column"} mt={"20px"} ml={"18px"} flex={1} rowGap={"24px"}>
         {Object.entries(txData.transactionHashes).map(([key, hash], index) => {
           const isActive = isCompleted ? false : lastIndex === index;
           //@ts-ignore

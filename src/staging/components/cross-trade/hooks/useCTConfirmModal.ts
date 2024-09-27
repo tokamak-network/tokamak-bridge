@@ -16,7 +16,13 @@ export default function useCTConfirm() {
     subgraphData?: T_FETCH_REQUEST_LIST_L2;
   }) => {
     const { type, txData, isProvide, subgraphData } = params;
-    setCTConfirmModal({ isOpen: true, type, txData, isProvide, subgraphData });
+    setCTConfirmModal({
+      isOpen: true,
+      type,
+      txData,
+      isProvide,
+      subgraphData,
+    });
   };
 
   const onCloseCTConfirmModal = useCallback(() => {

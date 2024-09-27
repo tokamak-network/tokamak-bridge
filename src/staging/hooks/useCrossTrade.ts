@@ -178,6 +178,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
 export const useRequestData = (): {
   requestList: CrossTradeData[] | null;
   isLoading: boolean;
+  l2RelayQueue: string[] | undefined;
 } => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { data, error, loading } = useCrossTradeData_L2({ isHistory: false });
@@ -348,6 +349,13 @@ export const useRequestData = (): {
     _l1Loading,
   ]);
 
+  const l2RelayQueue = useMemo(() => {
+    if (requestList)
+      return requestList
+        .filter((item) => item.isInRelay)
+        .map((item) => item.subgraphData._saleCount);
+  }, [requestList]);
+
   useEffect(() => {
     fetchRequestList();
   }, [fetchRequestList]);
@@ -358,5 +366,5 @@ export const useRequestData = (): {
     }
   }, [error]);
 
-  return { requestList, isLoading };
+  return { requestList, isLoading, l2RelayQueue };
 };

@@ -18,7 +18,7 @@ import { ModalType } from "../../../types";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import { useAccount } from "wagmi";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
@@ -69,7 +69,7 @@ export default function CTProvider({
       subgraphData,
     });
 
-  const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
+  const { onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
 
   const openUpdateModal = () => {
@@ -98,8 +98,9 @@ export default function CTProvider({
   const { isTimeOver } = useTimeOver({
     timeStamp: blockTimestamps,
     //15mins
-    timeBuffer: 180,
+    timeBuffer: TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE,
     needToCheck: true,
+    defaultValue: true,
   });
   const { address } = useAccount();
   const isCreatedByUser = useMemo(() => {
