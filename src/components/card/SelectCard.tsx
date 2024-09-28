@@ -73,7 +73,7 @@ const SearchToken = () => {
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [selectedInToken] = useRecoilState(selectedInTokenStatus);
 
@@ -96,7 +96,7 @@ const SearchToken = () => {
       });
     }
   };
-  const debouncedSearch = useCallback(debounce(performSearch, 100), []);
+  const debouncedSearch = useCallback(debounce(performSearch, 200), []);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const value = e.target.value;

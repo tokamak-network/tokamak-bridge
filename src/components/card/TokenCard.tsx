@@ -28,7 +28,10 @@ import {
 import Warning from "assets/icons/white_warning.svg";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { searchTokenStatus } from "@/recoil/card/selectCard/searchToken";
+import {
+  IsSearchToken,
+  searchTokenStatus,
+} from "@/recoil/card/selectCard/searchToken";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo & { isNew?: boolean };
@@ -54,6 +57,7 @@ type TokenCardProps = {
 };
 
 const TopLine = (props: { layer: number; notAdded: boolean }) => {
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   return (
     <Box
       w={"332px"}
@@ -72,7 +76,7 @@ const TopLine = (props: { layer: number; notAdded: boolean }) => {
         position={"relative"}
         initial={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
         animate={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
-        transition="0.2 linear"
+        transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       ></Box>
       <Box
         as={motion.div}
@@ -86,7 +90,7 @@ const TopLine = (props: { layer: number; notAdded: boolean }) => {
         pos={"relative"}
         initial={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
         animate={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
-        transition="0.2 linear"
+        transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       ></Box>
     </Box>
   );
@@ -97,6 +101,8 @@ const TokenTitle = (props: {
   isName: boolean;
   style?: TextProps;
 }) => {
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+
   return (
     <Text
       as={motion.span}
@@ -107,7 +113,7 @@ const TokenTitle = (props: {
       {...props.style}
       initial={{ fontSize: props.style?.fontSize }}
       animate={{ fontSize: props.style?.fontSize }}
-      transition="0.2 linear"
+      transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
     >
       {props.tokenName}
     </Text>
@@ -174,6 +180,7 @@ export default function TokenCard(props: TokenCardProps) {
   const { mode } = useGetMode();
 
   const pcView = window.matchMedia("(min-width: 1200px)").matches;
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
 
   const outAmount = useMemo(() => {
     if (
@@ -269,7 +276,7 @@ export default function TokenCard(props: TokenCardProps) {
             notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
           }px`,
         }}
-        transition="0.2 linear"
+        transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       >
         <TopLine layer={layer} notAdded={notAdded ? true : false} />
         {notAdded ? (
@@ -392,7 +399,7 @@ export default function TokenCard(props: TokenCardProps) {
               marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
               marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
             }}
-            transition="0.2 linear"
+            transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
           >
             <TokenSymbol
               w={
@@ -481,20 +488,20 @@ export default function TokenCard(props: TokenCardProps) {
                       animate={{
                         fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
                       }}
-                      transition="0.2 linear"
+                      transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
                     >
-                      balance:{" "}
+                      balance:{""}
                     </Text>
                     <Text
                       as={motion.span}
                       fontWeight={700}
                       initial={{
-                        fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
+                        fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
                       }}
                       animate={{
                         fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
                       }}
-                      transition="0.2 linear"
+                      transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
                     >
                       {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
                     </Text>

@@ -6,6 +6,8 @@ import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useRecoilState } from "recoil";
 import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
 import { CARD_SIZE, TOP, TRANSLATE } from "@/constant/carousel";
+import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
+import { IsSearchToken } from "@/recoil/card/selectCard/searchToken";
 
 export default function CarousellCardComponent<T>(props: {
   tokenData: TokenInfo & { isNew?: boolean };
@@ -33,7 +35,7 @@ export default function CarousellCardComponent<T>(props: {
   const layer = Math.abs(level);
 
   const { onCloseTokenModal, setSelectedToken } = useTokenModal();
-
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   return (
     <motion.div
       style={{
@@ -46,7 +48,7 @@ export default function CarousellCardComponent<T>(props: {
         opacity: 0,
         zIndex: 0,
         transform: `${
-          firstOpenModal
+          firstOpenModal || isTokenSearch
             ? `rotate(0deg) translate(0, 0)`
             : level === 2
             ? "rotate(-10deg) translate(-790px, 200px)"
@@ -68,13 +70,15 @@ export default function CarousellCardComponent<T>(props: {
         opacity: 0,
         zIndex: 0,
         transform: `${
-          level === 2
+          isTokenSearch
+            ? `rotate(0deg) translate(0, 0)`
+            : level === 2
             ? "rotate(-10deg) translate(-790px, 200px)"
             : "rotate(10deg) translate(790px, 200px)"
         }`,
         top: 268,
       }}
-      transition={{ duration: 0.35 }}
+      transition={{ duration: isTokenSearch ? 0.1 : 0.5 }}
       whileHover={{
         zIndex: 4,
         boxShadow: `0px 0px 20px 0px ${tokenColor}`,
