@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
+import { Box, Checkbox, Button, Text, Flex } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
@@ -21,40 +21,27 @@ export default function ConfirmInitiateFooter(
     <Box>
       {/** Check Box */}
       <Box>
-        <Text
-          color={isChecked ? "#FFFFFF" : "#A0A3AD"}
-          fontWeight={600}
-          fontSize={"13px"}
-          lineHeight={"20px"}
-          letterSpacing={"0.01em"}
-        >
-          Estimated Time of Arrival:{" "}
-          <span style={{ color: isChecked ? "#FFFFFF" : "#A0A3AD" }}>
-            ~1 day
-          </span>
-        </Text>
-
-        <Checkbox
-          mt={"6px"}
-          isChecked={isChecked}
-          onChange={handleCheckboxChange}
-          icon={<CheckCustomIcon />}
-          sx={{
-            ".chakra-checkbox__control": {
-              borderWidth: "1px",
-              borderColor: "#A0A3AD",
-              _focus: {
-                boxShadow: "none",
+        <Flex columnGap={"12px"}>
+          <Checkbox
+            isChecked={isChecked}
+            onChange={handleCheckboxChange}
+            icon={<CheckCustomIcon />}
+            sx={{
+              ".chakra-checkbox__control": {
+                borderWidth: "1px",
+                borderColor: "#A0A3AD",
+                _focus: {
+                  boxShadow: "none",
+                },
               },
-            },
-            _checked: {
-              "& .chakra-checkbox__control": {
-                borderColor: "#FFFFFF",
+              _checked: {
+                "& .chakra-checkbox__control": {
+                  borderColor: "#FFFFFF",
+                },
               },
-            },
-          }}
-          colorScheme="#A0A3AD"
-        >
+            }}
+            colorScheme="#A0A3AD"
+          ></Checkbox>
           <Text
             color={isChecked ? "#FFFFFF" : "#A0A3AD"}
             fontWeight={400}
@@ -62,9 +49,10 @@ export default function ConfirmInitiateFooter(
             lineHeight={"20px"}
             letterSpacing={"0.01em"}
           >
-            text will be changed
+            I understand that I have to send a transaction <br /> on Ethereum to
+            "Claim" my withdraw after 7 days.
           </Text>
-        </Checkbox>
+        </Flex>
       </Box>
       {/** Confirm Button */}
       <Box mt={"12px"}>
