@@ -276,29 +276,7 @@ export default function CTConfirmHistoryFooter(props: {
   }, [txData, keyLength, isCompleted]);
 
   return (
-    <Flex
-      w={"100%"}
-      flexDir={"column"}
-      maxH={"272px"}
-      overflow={"auto"}
-      overflowY={"auto"}
-      borderLeftRadius={"8px"}
-      css={{
-        "&::-webkit-scrollbar": {
-          width: "6px",
-        },
-        "&::-webkit-scrollbar-track": {
-          background: "transparent",
-          borderTopRightRadius: "8px",
-          borderBottomRightRadius: "8px",
-          backgroundColor: "#15161D",
-        },
-        "&::-webkit-scrollbar-thumb": {
-          background: "#343741",
-          borderRadius: "3px",
-        },
-      }}
-    >
+    <Flex w={"100%"} flexDir={"column"}>
       <Box
         bg="#15161D"
         py={"16px"}
@@ -306,6 +284,26 @@ export default function CTConfirmHistoryFooter(props: {
         border={"1px, 1px, 0px, 1px"}
         borderRadius={"8px"}
         w={"100%"}
+        mt={"20px"}
+        maxH={"272px"}
+        overflow={"auto"}
+        overflowY={"auto"}
+        borderLeftRadius={"8px"}
+        css={{
+          "&::-webkit-scrollbar": {
+            width: "6px",
+          },
+          "&::-webkit-scrollbar-track": {
+            background: "transparent",
+            borderTopRightRadius: "8px",
+            borderBottomRightRadius: "8px",
+            backgroundColor: "#15161D",
+          },
+          "&::-webkit-scrollbar-thumb": {
+            background: "#343741",
+            borderRadius: "3px",
+          },
+        }}
       >
         <Flex>
           <Box width={"auto"}>

@@ -90,6 +90,19 @@ export const ctConfirmModalStatus = atom<CTConfirmModalType>({
   },
 });
 
+export const ctRefreshModalStatus = atom<{
+  isOpen: boolean;
+  saleCount: string | undefined;
+  txData: CT_History | undefined;
+}>({
+  key: "ctRefreshModalStatus",
+  default: {
+    isOpen: false,
+    saleCount: undefined,
+    txData: undefined,
+  },
+});
+
 export const ctOptionModalStatus = atom<boolean>({
   key: "ctOptionModalStatus",
   default: false,
