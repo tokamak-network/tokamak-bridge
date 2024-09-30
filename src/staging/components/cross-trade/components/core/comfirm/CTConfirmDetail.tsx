@@ -35,6 +35,7 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 interface TransactionDetailProps {
   title: string;
   mainValue: string;
+  rawValue: string;
   subValue: string;
   chainId: number;
   tokenSymbol: string;
@@ -46,6 +47,7 @@ interface TransactionDetailProps {
 const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
   title,
   mainValue,
+  rawValue,
   subValue,
   chainId,
   tokenSymbol,
@@ -108,9 +110,22 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
       </Flex>
       <Box>
         <Flex justifyContent={"space-between"} alignItems={"center"}>
-          <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
-            {mainValue}
-          </Text>
+          <Box
+            display={"flex"}
+            columnGap={"10px"}
+            fontSize={"32px"}
+            fontWeight={600}
+            lineHeight={"48px"}
+          >
+            <CustomTooltip
+              content={<Text>{mainValue}</Text>}
+              tooltipLabel={rawValue}
+              style={{
+                top: "10px",
+              }}
+            ></CustomTooltip>
+            <Text>{tokenSymbol}</Text>
+          </Box>
           <Center width="32px" height="32px">
             <LinkContainer
               chainId={chainId}
@@ -291,7 +306,8 @@ export default function CTConfirmDetail({
     title: isProvide ? "Provide" : isCanceled ? "Refund" : "Request",
     mainValue: `${formatNumber(
       convertNumber(inToken.amount, inToken.decimals)
-    )} ${inToken.symbol}`,
+    )}`,
+    rawValue: convertNumber(inToken.amount, inToken.decimals),
     subValue: `$${commafy(inTokenPrice)}`,
     chainId: isProvide && modalType === "trade" ? outNetwork : inNetwork,
     tokenSymbol: inToken.symbol,
@@ -301,7 +317,8 @@ export default function CTConfirmDetail({
     title: "Receive",
     mainValue: `${formatNumber(
       convertNumber(outToken.amount, outToken.decimals)
-    )} ${outToken.symbol}`,
+    )}`,
+    rawValue: convertNumber(outToken.amount, outToken.decimals),
     subValue: `$${commafy(outTokenPrice)}`,
     chainId: isProvide && modalType === "trade" ? inNetwork : outNetwork,
     tokenSymbol: outToken.symbol,

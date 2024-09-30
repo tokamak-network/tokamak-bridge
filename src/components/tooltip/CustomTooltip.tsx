@@ -14,6 +14,7 @@ export default function CustomTooltip(props: {
     maxW?: string;
     bgColor?: string;
     height?: string;
+    top?: string;
     px?: string;
     py?: string;
     tooltipLineHeight?: string;
