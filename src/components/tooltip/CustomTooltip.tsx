@@ -18,8 +18,10 @@ export default function CustomTooltip(props: {
     py?: string;
     tooltipLineHeight?: string;
   };
+  needArrow?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const arrowNeeded = props.needArrow ?? true;
 
   return (
     <Tooltip
@@ -73,7 +75,7 @@ export default function CustomTooltip(props: {
         pos={"relative"}
       >
         {props.content}
-        {isOpen && (
+        {arrowNeeded && isOpen && (
           <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
             <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
           </Box>
