@@ -15,7 +15,10 @@ import { CT_History } from "@/staging/types/transaction";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { isETH } from "@/utils/token/isETH";
 import { ZERO_ADDRESS } from "@/constant/misc";
-import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
+import {
+  T_FETCH_REQUEST_LIST_L2,
+  useRequestData,
+} from "@/staging/hooks/useCrossTrade";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useApprove } from "@/hooks/token/useApproval";
@@ -31,6 +34,7 @@ import { useAccount } from "wagmi";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
+import { WarningText } from "@/components/ui/WarningText";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -79,11 +83,19 @@ export default function CTConfirmCrossTradeFooter(
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
+  const { l2RelayQueue } = useRequestData();
+  const isInRelay = useMemo(() => {
+    if (l2RelayQueue && subgraphData?._saleCount) {
+      return l2RelayQueue.includes(subgraphData._saleCount);
+    }
+    return false;
+  }, [l2RelayQueue, subgraphData?._saleCount]);
 
   const btnDisabled = useMemo(() => {
     if (!isConnected) {
       return false;
     }
+    if (isInRelay) return false;
     if (!isApproved || isBalanceOver) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
     return !isChecked.firstChecked || !isChecked.secondChecked;
@@ -95,6 +107,7 @@ export default function CTConfirmCrossTradeFooter(
     connectedToLayer1,
     isConnected,
     isBalanceOver,
+    isInRelay,
   ]);
   const buttonName = useMemo(() => {
     return !isConnected
@@ -102,11 +115,13 @@ export default function CTConfirmCrossTradeFooter(
       : isProvide && !connectedToLayer1
       ? "Wrong Network "
       : isProvide
-      ? isBalanceOver
+      ? isInRelay
+        ? "Go to home"
+        : isBalanceOver
         ? "Insufficient Balance"
         : "Provide"
       : "Request";
-  }, [isConnected, isProvide, connectedToLayer1, isBalanceOver]);
+  }, [isConnected, isProvide, connectedToLayer1, isBalanceOver, isInRelay]);
 
   const { inToken } = useInOutTokens();
   const inTokenIsETH = isETH(inToken);
@@ -134,8 +149,8 @@ export default function CTConfirmCrossTradeFooter(
       });
   }, [inTokenInfo]);
 
+  //call a contract call
   const { setModalOpen } = useTxConfirmModal();
-
   const requestCrossTrade = useCallback(() => {
     if (!txData) return new Error("txData is not defined");
     try {
@@ -238,7 +253,7 @@ export default function CTConfirmCrossTradeFooter(
   }, [isProvide, inTokenIsETH, txData, requestRegisteredToken, provideCT]);
 
   return (
-    <Grid mt={"3px"} w={"100%"}>
+    <Grid mt={"3px"} w={"100%"} rowGap={"12px"} marginTop={"12px"}>
       {/** Check Box */}
       {!isProvide && (
         <Flex w={"100%"} flexDir={"column"} rowGap={"8px"} mt={"5px"}>
@@ -314,7 +329,7 @@ export default function CTConfirmCrossTradeFooter(
           </Checkbox>
         </Flex>
       )}
-      {isProvide && isConnected && (
+      {isProvide && isConnected && !isInRelay && (
         <Grid
           textAlign={"center"}
           w={"364px"}
@@ -350,7 +365,7 @@ export default function CTConfirmCrossTradeFooter(
               before providing liquidity.
             </Text>
           </Flex>
-          {!provideConfirmed ? (
+          {!provideConfirmed && !isInRelay ? (
             <Center>
               <Button
                 w={"200px"}
@@ -368,9 +383,18 @@ export default function CTConfirmCrossTradeFooter(
           ) : null}
         </Grid>
       )}
+
       {/** Confirm Button */}
-      <Flex flexDir={"column"} rowGap={"12px"} mt={"12px"}>
-        {!isApproved && !isBalanceOver && (
+      <Flex flexDir={"column"} rowGap={"12px"}>
+        {/** Warning Text */}
+        {isInRelay && (
+          <WarningText
+            label="This request has been already provided."
+            iconStyle={{ width: 14, height: 14 }}
+            style={{ fontSize: 11, columnGap: "6px" }}
+          />
+        )}
+        {!isApproved && !isBalanceOver && !isInRelay && (
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
@@ -409,7 +433,7 @@ export default function CTConfirmCrossTradeFooter(
                 }`}
               </Text>
             )}
-            {isRevokeForUSDT && (
+            {isRevokeForUSDT && !isInRelay && (
               <TooltipForRevoke
                 isGrayIcon={approveBtnDisabled ? true : false}
                 isBlueIcon={!approveBtnDisabled ? true : false}
@@ -422,8 +446,13 @@ export default function CTConfirmCrossTradeFooter(
           isDisabled={btnDisabled}
           onClick={isConnected ? requestCrossTrade : () => connectToWallet()}
           sx={{
-            backgroundColor: !btnDisabled ? "#007AFF" : "#17181D",
-            color: !btnDisabled ? "#FFFFFF" : "#8E8E92",
+            backgroundColor: isInRelay
+              ? "transparent"
+              : !btnDisabled
+              ? "#007AFF"
+              : "#17181D",
+            color: isInRelay ? "#007AFF" : !btnDisabled ? "#FFFFFF" : "#8E8E92",
+            border: isInRelay ? "1px solid #007AFF" : "",
           }}
           width="full"
           height={"48px"}

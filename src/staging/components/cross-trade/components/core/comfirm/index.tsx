@@ -9,7 +9,7 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import CloseButton from "@/components/button/CloseButton";
@@ -24,6 +24,9 @@ import {
 } from "@/staging/types/transaction";
 import { WrongNetwork } from "../../common/WrongNetwork";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
+import { useRequestData } from "@/staging/hooks/useCrossTrade";
+import { ctRefreshModalStatus } from "@/recoil/modal/atom";
+import { useRecoilState } from "recoil";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
@@ -92,9 +95,44 @@ export default function CTModal() {
     }
   }, [ctConfirmModal]);
 
+  //logic for refresh modal
+  const saleCount = ctConfirmModal.subgraphData?._saleCount;
+  const { requestDataBySaleCount } = useRequestData(saleCount);
+  const isServiceFeeUpdated = useMemo(() => {
+    if (ctConfirmModal.txData?.serviceFee && requestDataBySaleCount) {
+      return (
+        ctConfirmModal.txData.serviceFee !== requestDataBySaleCount.serviceFee
+      );
+    }
+    return false;
+  }, [ctConfirmModal.txData?.serviceFee, requestDataBySaleCount]);
+  const [refreshOpen, setRefreshOpen] = useRecoilState(ctRefreshModalStatus);
+  const isFirstOpen = useRef(true);
+
+  useEffect(() => {
+    // if (isFirstOpen.current) {
+    //   isFirstOpen.current = false;
+    //   return;
+    // }
+    if (
+      // isFirstOpen.current === false &&
+      isServiceFeeUpdated &&
+      saleCount &&
+      ctConfirmModal.txData
+    ) {
+      return setRefreshOpen({
+        isOpen: true,
+        saleCount,
+        txData: ctConfirmModal.txData,
+      });
+    }
+  }, [isServiceFeeUpdated, saleCount, ctConfirmModal]);
+
+  console.log("ctConfirmModal", ctConfirmModal);
+
   return (
     <Modal
-      isOpen={ctConfirmModal.isOpen}
+      isOpen={ctConfirmModal.isOpen && !refreshOpen.isOpen}
       onClose={onCloseCTConfirmModal}
       isCentered
     >
@@ -126,7 +164,7 @@ export default function CTModal() {
             requester={requester}
           />
         </ModalBody>
-        <ModalFooter className="test" pt={"20px"} px={0} pb={0}>
+        <ModalFooter p={0}>
           {ctConfirmModal.type == ModalType.Trade ? (
             <CTConfirmCrossTradeFooter
               isChecked={isChecked}

@@ -6,14 +6,21 @@ import { CSSProperties } from "react";
 
 type WarningTextProps = {
   label: string;
+  iconStyle?: CSSProperties;
   style?: CSSProperties;
 };
 
 export function WarningText(props: WarningTextProps) {
-  const { label } = props;
+  const { label, iconStyle, style } = props;
   return (
-    <Flex color={"#F9C03E"} fontSize={12} columnGap={"10px"}>
-      <Image src={WARNING_ICON} alt={"WARNING_ICON"} />
+    <Flex
+      color={"#F9C03E"}
+      fontSize={12}
+      columnGap={"10px"}
+      alignItems={"center"}
+      style={style}
+    >
+      <Image src={WARNING_ICON} alt={"WARNING_ICON"} style={iconStyle} />
       <Text>{label}</Text>
     </Flex>
   );
