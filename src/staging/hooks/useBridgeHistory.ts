@@ -57,6 +57,7 @@ import {
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
 import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
+import { l2Provider } from "@/config/l2Provider";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -192,8 +193,13 @@ export const useWithdrawData = () => {
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-          if (l2TxReceipt.logs[3] === undefined || !currentStatus) {
-            return new Error("Invalid transaction");
+          if (
+            l2TxReceipt.logs[3] === undefined ||
+            currentStatus === undefined
+          ) {
+            return new Error(
+              "Invalid transaction with l2TxReceipt.logs[3] or currentStatus"
+            );
           }
 
           const logs = utils.defaultAbiCoder.decode(
@@ -213,8 +219,12 @@ export const useWithdrawData = () => {
             l1TokenAddress,
             l2TokenAddress,
             amount,
-            false
+            false,
+            isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA
           );
+
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
@@ -224,7 +234,7 @@ export const useWithdrawData = () => {
           });
 
           if (blockTimestamps instanceof Error) {
-            return new Error("Invalid transaction");
+            return new Error("Invalid transaction with blockTimestamps");
           }
 
           const result: WithdrawTransactionHistory = {
@@ -313,7 +323,10 @@ export const useDepositData = () => {
             l1TokenAddress,
             l2TokenAddress,
             amount,
-            true
+            true,
+            isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA
           );
 
           const status = getStatus(currentStatus);
