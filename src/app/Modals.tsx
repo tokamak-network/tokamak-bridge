@@ -12,6 +12,7 @@ import SwapConfirmModal from "@/staging/components/new-confirm/components/core/s
 import CTOptionModal from "@/staging/components/cross-trade/components/core/option";
 import CTModal from "@/staging/components/cross-trade/components/core/comfirm";
 import CTFeeUpdateModal from "@/staging/components/cross-trade/components/core/updateFee";
+import ThanosDepositWithdrawConfirmModal from "@/staging/components/new-confirm/components/core/thanos";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -30,15 +31,14 @@ export default function Modals() {
       <TutorialModal />
       <ActionOptionModal />
       <SwapSettingModal />
-
       {/**new confirm modal @Robert */}
       {/*
        * <ConfirmWithdraw />
        * <ActionConfirmModal />
        */}
       <DepositWithdrawConfirmModal />
+      <ThanosDepositWithdrawConfirmModal />
       <SwapConfirmModal />
-
       {/* <CTComingModal /> */}
       <CTOptionModal />
       <CTModal />

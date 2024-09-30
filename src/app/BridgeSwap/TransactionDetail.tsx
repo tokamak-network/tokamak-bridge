@@ -485,7 +485,7 @@ const Title = (props: {
             Time to Deposit
           </Text>
           <Text fontSize={"14px"} fontWeight={"600"}>
-            ~1 minutes
+            1~2 minutes
           </Text>
         </Flex>
         <Flex justifyContent={"space-between"}>

@@ -16,7 +16,7 @@ import { useGasFee } from "./fee/getGasFee";
 import { Hash } from "viem";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { BigNumber } from "ethers";
-import { isThanosSepolia } from "@/utils/network/checkNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 import { isTON } from "@/utils/token/checkToken";
 
 export default function useCallBridgeSwapAction() {
@@ -81,7 +81,7 @@ export default function useCallBridgeSwapAction() {
             });
           }
           // deposit TON to Thanos
-          if (isThanosSepolia(outNetwork) && isTON(inToken)) {
+          if (isThanosChain(outNetwork.chainId) && isTON(inToken)) {
             return _depositNativeToken_contract({
               //@ts-ignore
               args: [parsedAmount as bigint, 200000, "0x"],

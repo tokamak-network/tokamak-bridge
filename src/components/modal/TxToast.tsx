@@ -16,6 +16,8 @@ import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
+import { selectedTransactionCategory } from "@/recoil/history/transaction";
+import { Action, Status } from "@/staging/types/transaction";
 
 type TransactionToastProp = TxInterface;
 
@@ -166,13 +168,22 @@ function TransactionToast(props: TransactionToastProp) {
   const { blockExplorer } = useConnectedNetwork();
   const [historyTabOpen, setHistoryTabOpen] =
     useRecoilState(accountDrawerStatus);
+  const [selectedTxCategory, setSeletedTxCategory] = useRecoilState(
+    selectedTransactionCategory
+  );
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
 
   const needToOpenHistoryTab = txSort === "Deposit" || txSort === "Withdraw";
 
   const clickTitle = useCallback(() => {
-    needToOpenHistoryTab
-      ? setHistoryTabOpen(true)
-      : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+    if (needToOpenHistoryTab) {
+      setIsOpen(true);
+      setSeletedTxCategory(
+        txSort === "Deposit" ? Action.Deposit : Action.Withdraw
+      );
+    } else {
+      window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+    }
   }, [props, blockExplorer, needToOpenHistoryTab]);
 
   useEffect(() => {

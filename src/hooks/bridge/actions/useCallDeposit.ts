@@ -7,7 +7,10 @@ import { useTx } from "@/hooks/tx/useTx";
 import useContract from "@/hooks/contracts/useContract";
 import { useInOutNetwork } from "@/hooks/network";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
-import { SupportedL2ChainId } from "@/types/network/supportedNetwork";
+import {
+  SupportedChainId,
+  SupportedL2ChainId,
+} from "@/types/network/supportedNetwork";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function useCallDeposit(functionName: string) {
@@ -46,10 +49,7 @@ export default function useCallDeposit(functionName: string) {
   const {} = useTx({
     hash: data?.hash,
     txSort: "Deposit",
-    L2Chain:
-      outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID
-        ? SupportedL2ChainId.THANOS_SEPOLIA
-        : SupportedL2ChainId.TITAN,
+    L2Chain: outNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA,
     inToken: inToken?.tokenSymbol,
   });
 

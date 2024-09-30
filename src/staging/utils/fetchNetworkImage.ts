@@ -2,6 +2,7 @@ import EthNetworkSymbol from "@/assets/icons/newHistory/eth-n-symbol.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import ThanosNetworkSymbol from "@/assets/icons/newHistory/thanos-n-symbol.svg";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 const fetchNetworkImage = (network: number) => {
   if (
@@ -10,7 +11,7 @@ const fetchNetworkImage = (network: number) => {
   ) {
     return { src: EthNetworkSymbol, alt: "EthNetworkSymbol" };
   }
-  if (network === SupportedChainId.THANOS_SEPOLIA) {
+  if (isThanosChain(network)) {
     return { src: ThanosNetworkSymbol, alt: "ThanosNetworkSymbol" };
   }
   return { src: TitanNetworkSymbol, alt: "TitanNetworkSymbol" };

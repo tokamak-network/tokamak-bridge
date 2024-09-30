@@ -2,6 +2,7 @@ import {
   Action,
   CT_ACTION,
   CurrentDepositTransaction,
+  CurrentWithdrawTransaction,
   DepositTransactionHistory,
   HISTORY_SORT,
 } from "@/staging/types/transaction";
@@ -27,6 +28,14 @@ export const thanosSepoliaDepositHistory = atom<CurrentDepositTransaction>({
   default: {
     latestBlockNumber: "0",
     latestRelayedBlockNumber: "0",
+    history: null,
+  },
+});
+
+export const thanosSepoliaWithdrawHistory = atom<CurrentWithdrawTransaction>({
+  key: "thanosSepoliaWithdrawHistory",
+  default: {
+    latestBlockNumber: "0",
     history: null,
   },
 });

@@ -6,16 +6,23 @@ import {
   CT_PROVIDE,
   CT_REQUEST,
   CT_REQUEST_CANCEL,
+  isDepositTransactionHistory,
+  isWithdrawTransactionHistory,
   Status,
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history-thanos/components/core/pending";
 import Complete from "@/staging/components/new-history-thanos/components/core/complete";
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
-import { useRecoilValue } from "recoil";
-import { selectedTransactionCategory } from "@/recoil/history/transaction";
+import { useRecoilState, useRecoilValue } from "recoil";
+import {
+  historyRefetch,
+  selectedTransactionCategory,
+} from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
+import LoadingTx from "@/components/history/LoadingTx";
+import { pendingTransactionHashes } from "@/recoil/modal/atom";
 
 const NoAcitivityComponent = () => {
   return (
@@ -33,23 +40,9 @@ const NoAcitivityComponent = () => {
 };
 
 const LoadingSpinner = () => {
-  const components = new Array(5).fill(null).map((_, index) => (
-    <Box
-      key={`${Math.random()}_${index}`}
-      w={"336px"}
-      px={"12px"}
-      py={"8px"}
-      borderRadius={"8px"}
-      border={"1px solid #313442"}
-      bg={"#15161D"}
-    >
-      <Flex key={index} w={"336px"} h={"78px"}>
-        <Box w={"92%"}>
-          <GradientSpinner minW="50%" />
-        </Box>
-      </Flex>
-    </Box>
-  ));
+  const components = new Array(4)
+    .fill(null)
+    .map((_, index) => <LoadingTx key={index} />);
 
   return <>{components}</>;
 };
@@ -60,7 +53,15 @@ export default function AccountHistoryNew() {
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
-
+  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
+  useEffect(() => {
+    const renderTimer = setInterval(() => {
+      setRefetchHistory((prev) => !prev);
+    }, 5000);
+    return () => {
+      clearInterval(renderTimer);
+    };
+  }, []);
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {
       case Action.Deposit:
@@ -81,7 +82,6 @@ export default function AccountHistoryNew() {
     requestHistory,
     provideHistory,
   ]);
-
   return (
     <Flex flexDirection="column" gap="2" h={"100%"}>
       {!historyData && <LoadingSpinner />}
@@ -92,9 +92,14 @@ export default function AccountHistoryNew() {
           transaction.status === CT_REQUEST.Completed ||
           transaction.status === CT_REQUEST_CANCEL.Completed ||
           transaction.status === CT_PROVIDE.Completed;
+        const key =
+          isDepositTransactionHistory(transaction) ||
+          isWithdrawTransactionHistory(transaction)
+            ? transaction.transactionHashes.initialTransactionHash
+            : index;
         return (
           <Box
-            key={`${transaction.action}-${index}`}
+            key={`${transaction.action}-${key}`}
             w={"336px"}
             px={"12px"}
             py={isCompleted ? "6px" : "8px"}

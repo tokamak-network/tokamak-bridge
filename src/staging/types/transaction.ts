@@ -5,6 +5,8 @@ import {
   T_FETCH_REQUEST_LIST_L2,
   T_provideCTs_L1,
 } from "../hooks/useCrossTrade";
+import { NumberLike } from "@tokamak-network/thanos-sdk";
+import { BigNumber } from "ethers";
 
 export enum HISTORY_SORT {
   STANDARD,
@@ -23,8 +25,10 @@ export enum CT_ACTION {
 
 export enum Status {
   Initiate = "Initiate",
+  Initiated = "Initiated",
   Rollup = "Rollup",
   Prove = "Prove",
+  Proved = "Proved",
   Finalize = "Finalize",
   Completed = "Completed",
 }
@@ -63,6 +67,13 @@ export interface TransactionToken {
   decimals: number;
 }
 
+export enum DepositWithdrawType {
+  ETH = "ETH",
+  NativeToken = "NativeToken",
+  ERC20 = "ERC20",
+  USDC = "USDC",
+}
+
 export enum ERROR_CODE {
   ROLLUP_NOT_COMPLETED,
   CT_REFUND_NOT_COMPLETED,
@@ -92,14 +103,18 @@ export interface BaseCTTransactionHistory extends I_TransactionHistory {
 export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   action: Action.Withdraw;
   status: Status;
+  amount?: BigNumber;
+  withdrawType?: DepositWithdrawType;
   blockTimestamps: {
     initialCompletedTimestamp: number;
     rollupCompletedTimestamp?: number;
+    proveCompletedTimestamp?: number;
     finalizedCompletedTimestamp?: number;
   };
   transactionHashes: {
     initialTransactionHash: string;
     rollupTransactionHash?: string;
+    proveTransactionHash?: string;
     finalizedTransactionHash?: string;
   };
   resolved: Resolved;
@@ -123,6 +138,11 @@ export interface CurrentDepositTransaction {
   latestBlockNumber: string;
   latestRelayedBlockNumber?: string;
   history: DepositTransactionHistory[] | null;
+}
+
+export interface CurrentWithdrawTransaction {
+  latestBlockNumber: string;
+  history: WithdrawTransactionHistory[] | null;
 }
 
 export type CT_REQUEST_HISTORY_blockTimestamps = {
@@ -229,4 +249,14 @@ export interface GasCostData {
   withdrawClaimGasCostUS?: string;
   depositInitiateGasCostText?: string;
   depositGasCostUS?: string;
+}
+
+export interface WithrawalProvenOrFinalized {
+  id: number;
+  withdrawalHash: string;
+  from: string;
+  to: string;
+  blockNumber: number;
+  blockTimestamp: number;
+  transactionHash: string;
 }

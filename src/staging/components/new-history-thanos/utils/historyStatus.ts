@@ -7,8 +7,10 @@ import {
   CT_REQUEST_CANCEL,
   CT_PROVIDE,
   ProgressStatus,
+  StandardHistory,
 } from "@/staging/types/transaction";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export enum TransactionStatus {
   WithdrawRollup = 1,
@@ -61,25 +63,38 @@ export const getDipositWithdrawStatues = (
     case Action.Withdraw:
       return [
         Status.Initiate,
-        chain === SupportedChainId.THANOS_SEPOLIA
-          ? Status.Prove
-          : Status.Rollup,
+        Status.Initiated,
+        isThanosChain(chain) ? Status.Prove : Status.Rollup,
+        Status.Proved,
         Status.Finalize,
+        Status.Completed,
       ];
   }
 };
 
 export const getCurrentProgressStatus = (
   actionType: Action,
-  completedStatus: Status,
-  status: Status,
-  chain: SupportedChainId
-): ProgressStatus => {
+  currentStatus: Status,
+  statusToCompare: Status,
+  chain: SupportedChainId | null
+): ProgressStatus | null => {
+  if (!chain) return null;
   const statuses = getDipositWithdrawStatues(actionType, chain);
-  const diff = statuses.indexOf(status) - statuses.indexOf(completedStatus);
+  const diff =
+    statuses.indexOf(statusToCompare) - statuses.indexOf(currentStatus);
   return diff === 0
     ? ProgressStatus.Doing
     : diff > 0
     ? ProgressStatus.Todo
     : ProgressStatus.Done;
+};
+
+export const shouldShowCalendarButton = (
+  tx: StandardHistory,
+  label: Status
+) => {
+  if (tx.action === Action.Deposit) return false;
+  const l2ChainId = tx.inNetwork;
+  if (isThanosChain(l2ChainId) && tx.status === Status.Initiated) return true;
+  return false;
 };

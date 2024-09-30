@@ -9,11 +9,12 @@ import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import { supportedTokens } from "@/types/token/supportedToken";
 import commafy from "@/utils/trim/commafy";
 import { predeploys } from "@eth-optimism/contracts";
-import { BigNumber, ethers } from "ethers";
+import { BigNumber, ethers, Signer } from "ethers";
 import { useEffect, useMemo, useState } from "react";
 import { useAccount, useFeeData } from "wagmi";
 import { TOKAMAK_CONTRACTS } from "@/constant/contracts";
-import L2BridgeAbi from "@/abis/L2StandardBridge.json";
+import L2TitanBridgeAbi from "@/abis/L2StandardBridge.json";
+import L2ThanosStandardBridgeAbi from "@/abis/L2ThanosStandardBridge.json";
 import useConnectedNetwork from "@/hooks/network";
 import useWrap from "@/hooks/swap/useTonWrap";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
@@ -21,10 +22,20 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { isETH as checkIsETH } from "@/utils/token/isETH";
-import { asL2Provider } from "@tokamak-network/titan-sdk";
+import {
+  asL2Provider as asL2TitanProvider,
+  estimateTotalGasCost,
+} from "@tokamak-network/titan-sdk";
+import { asL2Provider as asL2ThanosProvider } from "@tokamak-network/thanos-sdk";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
-import { isThanosSepolia } from "@/utils/network/checkNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 import { isTON } from "@/utils/token/checkToken";
+import useContract from "../useContract";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { chainId } from "@/types/wagmi";
+const thanosSDK = require("@tokamak-network/thanos-sdk");
+import { getL1Provider } from "@/config/l1Provider";
+import { getProvider } from "@/config/getProvider";
 
 export function useGasFee() {
   const { address } = useAccount();
@@ -47,6 +58,7 @@ export function useGasFee() {
   const { estimatedGasUsage: wrapUnwrapGasUsage } = useWrap();
   const { isBalanceOver } = useInputBalanceCheck();
   const { isApproved } = useApprove();
+  const { L2BRIDGE_CONTRACT } = useContract();
   // const { estimatedGasUsageGwei } = useAmountOut();
 
   const swapGasUseEstimate = useMemo(() => {
@@ -71,7 +83,7 @@ export function useGasFee() {
       return wrapUnwrapGasUsage;
     }
   }, [wrapUnwrapGasUsage, mode]);
-
+  const { L1Provider } = useProvier();
   useEffect(() => {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
@@ -113,7 +125,7 @@ export function useGasFee() {
               ).toBigInt();
             }
             // deposite TON to thanos
-            if (isThanosSepolia(outNetwork) && isTON(inToken)) {
+            if (isThanosChain(outNetwork.chainId) && isTON(inToken)) {
               const estimatedGasUsage =
                 await _depositNativeToken_contract.estimateGas.depositNativeToken(
                   {
@@ -148,23 +160,26 @@ export function useGasFee() {
             if (isBalanceOver || !isApproved || !provider) {
               return 1400000;
             }
-
+            const L2BridgeAbi = isThanosChain(inNetwork.chainId)
+              ? L2ThanosStandardBridgeAbi
+              : L2TitanBridgeAbi;
             const withdrawContract = new ethers.Contract(
-              TOKAMAK_CONTRACTS.L2Bridge,
+              L2BRIDGE_CONTRACT,
               L2BridgeAbi,
               provider
             );
-            const l2Provider = asL2Provider(provider);
-
-            if (isETH) {
-              const tx = await withdrawContract.populateTransaction.withdraw(
-                predeploys.OVM_ETH,
-                parsedAmount,
-                1_300_000,
-                "0x"
-              );
+            const l2Provider = isThanosChain(inNetwork.chainId)
+              ? asL2ThanosProvider(provider)
+              : asL2TitanProvider(provider);
+            if (isThanosChain(inNetwork.chainId)) {
+              const signer = provider.getSigner();
+              const tx = await signer.populateTransaction({
+                to: "0x1000000000000000000000000000000000000000",
+                value: ethers.BigNumber.from(parsedAmount.toString()),
+                gasPrice: await provider.getGasPrice(),
+              });
               const estimateTotalGasCost =
-                await l2Provider.estimateTotalGasCost({ ...tx, from: address });
+                await l2Provider.estimateTotalGasCost(tx);
               return estimateTotalGasCost;
             }
             const tx = await withdrawContract.populateTransaction.withdraw(
@@ -173,9 +188,11 @@ export function useGasFee() {
               0,
               "0x"
             );
-            const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
-              { ...tx, from: address }
-            );
+            console.log(tx);
+            const estimateTotalGasCost = await l2Provider.estimateTotalGasCost({
+              ...tx,
+              from: address,
+            });
             return estimateTotalGasCost;
           default:
             return;

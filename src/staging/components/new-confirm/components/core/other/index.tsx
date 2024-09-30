@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Flex,
@@ -13,14 +13,19 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import { Action, Status, GasCostData } from "@/staging/types/transaction";
+import {
+  Action,
+  Status,
+  GasCostData,
+  CT_ACTION,
+} from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import ConfirmDetails from "@/staging/components/new-confirm/components/core/other/ConfirmDetails";
-import { STATUS_CONFIG } from "@/staging/constants/status";
+import { getStatusConfig, STATUS_CONFIG } from "@/staging/constants/status";
 import StatusComponent from "@/staging/components/new-confirm/components/core/other/StatusComponent";
 import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
@@ -120,10 +125,15 @@ export default function DepositWithdrawConfirmModal() {
 
   const lineType = getLineType(transactionData);
 
+  const statusConfig = getStatusConfig(
+    transactionData.inNetwork,
+    transactionData.outNetwork
+  );
+
   const statuses: Status[] =
     transactionData.action === Action.Withdraw
-      ? STATUS_CONFIG.WITHDRAW
-      : STATUS_CONFIG.DEPOSIT;
+      ? statusConfig.WITHDRAW
+      : statusConfig.DEPOSIT;
 
   {
     /**
@@ -136,14 +146,19 @@ export default function DepositWithdrawConfirmModal() {
      * - For DEPOSIT (length 2): One ConditionalBox component is inserted between the StatusComponent elements.
      */
   }
-  const renderStatusComponents = (statuses: Status[]) => {
+  const renderStatusComponents = (
+    statuses: Status[],
+    action: Action | CT_ACTION
+  ) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
       const waitMessage = getWaitMessage(
         lineType,
         index,
-        transactionData.outNetwork
+        action === Action.Deposit
+          ? transactionData.outNetwork
+          : transactionData.inNetwork
       );
 
       return (
@@ -292,7 +307,9 @@ export default function DepositWithdrawConfirmModal() {
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"}>{renderStatusComponents(statuses)}</Box>
+              <Box ml={"10px"}>
+                {renderStatusComponents(statuses, transactionData.action)}
+              </Box>
             </Flex>
           </Box>
         </ModalBody>

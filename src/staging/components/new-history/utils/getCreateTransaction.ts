@@ -7,14 +7,31 @@ import {
   TransactionHistory,
   HISTORY_SORT,
   StandardHistory,
+  DepositWithdrawType,
 } from "@/staging/types/transaction";
 
 import { Resolved } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { BigNumber } from "ethers";
+
+export const getDepositWithdrawTransactionType = (symbol: string) => {
+  switch (symbol) {
+    case "ETH":
+      return DepositWithdrawType.ETH;
+    case "TON":
+      return DepositWithdrawType.NativeToken;
+    case "USDC":
+      return DepositWithdrawType.USDC;
+    default:
+      return DepositWithdrawType.ERC20;
+  }
+};
 
 // Withdraw 트랜잭션 생성 함수
 export function createWithdrawTransaction(
   status: Status,
+  amount: string,
+  symbol: string,
   inNetwork: SupportedChainId,
   outNetwork: SupportedChainId,
   inToken: TransactionToken,
@@ -30,6 +47,8 @@ export function createWithdrawTransaction(
 ): WithdrawTransactionHistory {
   return {
     action: Action.Withdraw,
+    amount: BigNumber.from(amount),
+    withdrawType: getDepositWithdrawTransactionType(symbol),
     status,
     category: HISTORY_SORT.STANDARD,
     inNetwork,
@@ -101,6 +120,8 @@ export function createTransaction(
   if (action === Action.Withdraw) {
     return createWithdrawTransaction(
       status,
+      inToken.amount,
+      inToken.symbol,
       inNetwork,
       outNetwork,
       inToken,

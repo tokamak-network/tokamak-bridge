@@ -79,6 +79,7 @@ export const supportedTokens: SupportedTokens_T = [
     },
     decimals: 18,
     isNativeCurrency: null,
+    availableForThanosBridge: false,
   },
   {
     tokenName: "Tokamak Network",
@@ -87,7 +88,7 @@ export const supportedTokens: SupportedTokens_T = [
       MAINNET: MAINNET_CONTRACTS.TON_ADDRESS,
       TITAN: TOKAMAK_CONTRACTS.TON_ADDRESS,
       SEPOLIA: SEPOLIA_CONTRACTS.TON_ADDRESS,
-      THANOS_SEPOLIA: ZERO_ADDRESS,
+      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
       TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
     },
     decimals: 18,
@@ -107,21 +108,7 @@ export const supportedTokens: SupportedTokens_T = [
     },
     decimals: 27,
     isNativeCurrency: null,
-  },
-
-  {
-    tokenName: "TONStarter",
-    tokenSymbol: "TOS",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
-      SEPOLIA: SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-    availableForBirdge: true,
+    availableForThanosBridge: false,
   },
   {
     tokenName: "USD Coin",

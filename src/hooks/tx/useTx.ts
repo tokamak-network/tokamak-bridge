@@ -6,6 +6,7 @@ import { useWaitForTransaction } from "wagmi";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L1ThanosUSDCBridgeAbi from "@/constant/abis/L1USDCBridge.json";
+import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import WTON_ABI from "@/abis/WTON.json";
@@ -41,12 +42,16 @@ import {
 import { L2ChainID } from "@tokamak-network/titan-sdk";
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 import InToken from "@/app/BridgeSwap/components/InToken";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 const getInterface = () => {
   const l1TitanBridgeI = new ethers.utils.Interface(L1TitanBridgeAbi);
   const l1ThanosBridgeI = new ethers.utils.Interface(L1ThanosBridgeAbi);
   const l1ThanosUSDCBridgeI = new ethers.utils.Interface(L1ThanosUSDCBridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
+  const l2ThanosStandardBridgeI = new ethers.utils.Interface(
+    L2ThanosStandardBridgeAbi
+  );
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const USDT_I = new ethers.utils.Interface(USDTAbi);
@@ -77,6 +82,7 @@ const getInterface = () => {
     USDT_I,
     CrossTradeProxyL1_I,
     CrossTradeProxyL2_I,
+    l2ThanosStandardBridgeI,
   };
 };
 
@@ -243,7 +249,7 @@ export function useTx(params: {
   tokenAddress?: `0x${string}`;
   tokenOutAddress?: `0x${string}`;
   actionSort?: ActionSort;
-  L2Chain?: SupportedL2ChainId;
+  L2Chain?: SupportedChainId;
   inToken?: string | String | undefined;
 }) {
   const {
@@ -370,6 +376,7 @@ export function useTx(params: {
         ETHSwapperI,
         CrossTradeProxyL1_I,
         CrossTradeProxyL2_I,
+        l2ThanosStandardBridgeI,
       } = getInterface();
       setModalOpen("confirmed");
 
@@ -593,8 +600,8 @@ export function useTx(params: {
         //bridge
         case "Deposit": {
           if (
-            L2Chain === SupportedL2ChainId.TITAN ||
-            L2Chain === SupportedL2ChainId.TITAN_SEPOLIA
+            L2Chain === SupportedChainId.TITAN ||
+            L2Chain === SupportedChainId.TITAN_SEPOLIA
           ) {
             const result = l1TitanBridgeI.parseLog(logs[logs.length - 1]);
             const { args } = result;
@@ -643,7 +650,7 @@ export function useTx(params: {
                 actionSort,
               },
             });
-          } else if (L2Chain === SupportedL2ChainId.THANOS_SEPOLIA) {
+          } else if (L2Chain === SupportedChainId.THANOS_SEPOLIA) {
             const depositType: ThanosDepositType =
               inToken === "USDC"
                 ? "USDC"
@@ -692,6 +699,44 @@ export function useTx(params: {
         }
 
         case "Withdraw": {
+          if (isThanosChain(L2Chain)) {
+            const depositType: ThanosDepositType =
+              inToken === "USDC"
+                ? "USDC"
+                : logs.length === 7
+                ? "ERC20"
+                : logs.length === 5
+                ? "NativeToken"
+                : "ETH";
+            const result = l2ThanosStandardBridgeI.parseLog(
+              depositType === "ERC20"
+                ? logs[2]
+                : depositType === "NativeToken"
+                ? logs[0]
+                : logs[2]
+            );
+            const { args } = result;
+            const { l1Token, l2Token, amount } = args;
+            return setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: l2Token,
+                    amount: amount,
+                  },
+                  {
+                    tokenAddress: l2Token,
+                    amount: amount,
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            });
+          }
           const result = l2BridgeI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           const { _l1Token, _l2Token, _amount } = args;

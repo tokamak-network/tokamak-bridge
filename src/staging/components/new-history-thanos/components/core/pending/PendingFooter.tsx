@@ -12,9 +12,11 @@ import {
   CT_REQUEST_CANCEL,
   CT_PROVIDE,
   CT_PROVIDE_HISTORY_blockTimestamps,
+  isDepositTransactionHistory,
+  isWithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history-thanos/components/core/pending/StatusComponent";
-import { STATUS_CONFIG } from "@/staging/constants/status";
+import { getStatusConfig, STATUS_CONFIG } from "@/staging/constants/status";
 
 const getStatusHandler = (params: {
   status: Action | CT_ACTION;
@@ -90,6 +92,19 @@ const getBlockTimestamp = (
     if (blockTimestamps.return) return blockTimestamps.return;
   }
 
+  if (isDepositTransactionHistory(transaction))
+    return transaction.blockTimestamps.initialCompletedTimestamp;
+  if (isWithdrawTransactionHistory(transaction)) {
+    if (statusKey === Status.Initiate)
+      return transaction.blockTimestamps.initialCompletedTimestamp;
+    if (statusKey === Status.Prove)
+      return transaction.blockTimestamps?.proveCompletedTimestamp ?? 0;
+    if (statusKey === Status.Rollup)
+      return transaction.blockTimestamps?.rollupCompletedTimestamp ?? 0;
+    if (statusKey === Status.Finalize)
+      return transaction.blockTimestamps?.finalizedCompletedTimestamp ?? 0;
+  }
+
   return undefined;
 };
 
@@ -113,12 +128,16 @@ export default function PendingFooter(params: {
         ?.length
     : 0;
 
-  const statuses = getStatusHandler({
-    status,
-    isCanceled,
-    isUpdateFee,
-    hasMultipleUpdateFees,
-  });
+  const statuses =
+    status === Action.Withdraw
+      ? getStatusConfig(transactionData.inNetwork, transactionData.outNetwork)
+          .WITHDRAW
+      : getStatusHandler({
+          status,
+          isCanceled,
+          isUpdateFee,
+          hasMultipleUpdateFees,
+        });
   return (
     <>
       {statuses.map((statusKey, index) => {

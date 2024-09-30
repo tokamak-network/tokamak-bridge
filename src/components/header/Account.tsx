@@ -16,6 +16,7 @@ import WALLET_ICON from "assets/icons/wallet.svg";
 import { useEffect } from "react";
 import {
   thanosSepoliaDepositHistory,
+  thanosSepoliaWithdrawHistory,
   titanSepoliaDepositHistory,
 } from "@/recoil/history/transaction";
 import useConnectedNetwork from "@/hooks/network";
@@ -34,6 +35,9 @@ export default function Account() {
   const [titanSepoliaDipositHistory, setTitanSepoliaDipositHistory] =
     useRecoilState(titanSepoliaDepositHistory);
 
+  const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
+    useRecoilState(thanosSepoliaWithdrawHistory);
+
   const buttonText = isConnected
     ? trimAddress({ address })
     : mobileView
@@ -51,7 +55,11 @@ export default function Account() {
       latestRelayedBlockNumber: "0",
       history: null,
     });
-  }, [address, isConnected, chain]);
+    setThanosSepoliaWithdrawHistory({
+      latestBlockNumber: "0",
+      history: null,
+    });
+  }, [address, isConnected]);
 
   return (
     <Center

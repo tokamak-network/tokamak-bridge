@@ -18,6 +18,11 @@ export function useProvier() {
     return getProvider(supportedChain[4]);
   }, [isConnectedToMainNetwork]);
 
+  const ThanosProvider = useMemo(() => {
+    if (isConnectedToMainNetwork) return getProvider(supportedChain[3]);
+    return getProvider(supportedChain[3]);
+  }, [isConnectedToMainNetwork]);
+
   const otherLayerProvider = useMemo(() => {
     //Ethereum or Titan
     if (isConnectedToMainNetwork) {
@@ -37,5 +42,11 @@ export function useProvier() {
     return _provider;
   }, [window.ethereum, connectedChainId, layer]);
 
-  return { provider, L1Provider, L2Provider, otherLayerProvider };
+  return {
+    provider,
+    L1Provider,
+    L2Provider,
+    otherLayerProvider,
+    ThanosProvider,
+  };
 }

@@ -1,6 +1,6 @@
 // StatusComponent.tsx
 import React, { useEffect, useMemo } from "react";
-import { Flex, Text, Circle, Button } from "@chakra-ui/react";
+import { Flex, Text, Circle, Button, Box } from "@chakra-ui/react";
 import {
   TransactionHistory,
   Action,
@@ -17,6 +17,7 @@ import {
   isInCT_REQUEST_CANCEL,
   ERROR_CODE,
   ProgressStatus,
+  StandardHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
@@ -32,11 +33,25 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 import { useFinalize } from "@/hooks/history/useFinalize";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
-import { getCurrentProgressStatus } from "../../../utils/historyStatus";
+import {
+  getCurrentProgressStatus,
+  shouldShowCalendarButton,
+} from "../../../utils/historyStatus";
 import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import LampIcon from "@/assets/icons/lamp.svg";
 import GetHelp from "@/components/ui/GetHelp";
+import {
+  useBridgeHistory,
+  useDepositData,
+} from "@/staging/hooks/useBridgeHistory";
+import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
+import ActionButtonComponent from "./actionButton";
+import { CountDownComponent } from "./countDown";
+import {
+  bookGoogleEvent,
+  getCalendarDetailsFromTx,
+} from "../../../utils/googleCalendar";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -122,67 +137,43 @@ export default function StatusComponent(
   const { label, transactionData, blockTimestamp, updateFeeCount, openModal } =
     props;
   const action = transactionData.action;
+  const status = transactionData.status;
   const progressStatus = getCurrentProgressStatus(
     action as Action,
     transactionData.status as Status,
     label as Status,
-    transactionData.outNetwork ?? SupportedChainId.THANOS_SEPOLIA
+    getBridgeL2ChainId(transactionData)
   );
   const isActive = transactionData.status === label;
 
   // Countdown is needed only for the following conditions
   const shouldCountdown =
-    label === Status.Finalize && progressStatus === ProgressStatus.Doing;
+    (action === Action.Deposit &&
+      label === Status.Finalize &&
+      progressStatus === ProgressStatus.Doing) ||
+    (label === Status.Prove && status === Status.Initiated) ||
+    (label === Status.Finalize && status === Status.Proved);
+
+  const readyForStatus = action === Action.Withdraw && label === status;
+
+  const remainTime = useMemo(() => {
+    return getRemainTime(transactionData);
+  }, [transactionData.status]);
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-      formatTimeDisplay(getRemainTime(transactionData))
+      formatTimeDisplay(remainTime)
     : // If not active and status is Finalized, display empty value
     progressStatus === ProgressStatus.Todo
     ? ""
     : // Otherwise, display formatted date as all are completed
-      formatDateToYMD(
-        Number(
-          isWithdrawTransactionHistory(transactionData) ||
-            isDepositTransactionHistory(transactionData)
-            ? transactionData.blockTimestamps.initialCompletedTimestamp
-            : blockTimestamp ?? 0
-        )
-      );
+      formatDateToYMD(Number(blockTimestamp ?? 0));
 
-  // console.log(initialTimeDisplay);
-  // Output variable
-  const remainTime = getRemainTime(transactionData);
-  const { time: timeDisplay, isCountDown } = shouldCountdown
-    ? useCountdown(
-        remainTime,
-        Boolean(transactionData.errorMessage),
-        transactionData
-      )
-    : { time: initialTimeDisplay, isCountDown: true };
-
-  // Calendar start time
-  const startDate = useMemo(() => {
-    if (
-      // Use type guard as rollup exists only for withdraw condition
-      isWithdrawTransactionHistory(transactionData) &&
-      transactionData.blockTimestamps.rollupCompletedTimestamp
-    ) {
-      return new Date(
-        // Calculate rollup 7 days
-        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
-          convertTimeToMinutes(
-            TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
-            "days",
-            0
-          ) *
-            60) *
-          1000
-      );
-    }
-    return null;
-  }, [transactionData]);
-
-  const { handleCalendarClick } = useCalendar(startDate);
+  const { time, isCountDown } = useCountdown(
+    remainTime,
+    Boolean(transactionData.errorMessage),
+    transactionData
+  );
+  const timeDisplay = shouldCountdown ? time : initialTimeDisplay;
 
   // If error message exists and status is rollup, time increases and color turns red
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
@@ -204,11 +195,17 @@ export default function StatusComponent(
       transactionData.action === Action.Deposit);
 
   // Display calendar button
-  const calendarButton =
-    label === Status.Finalize &&
-    timeDisplay !== "00 : 00" &&
-    isActive &&
-    transactionData.action === Action.Withdraw;
+  const isCalendar = shouldShowCalendarButton(
+    transactionData as StandardHistory,
+    label as Status
+  );
+
+  const handleCalendarButtonClick = () => {
+    const calendarConfig = getCalendarDetailsFromTx(
+      transactionData as StandardHistory
+    );
+    bookGoogleEvent(calendarConfig);
+  };
 
   // Show claim button when Finalized status is complete
   const claimReadyButton =
@@ -262,7 +259,11 @@ export default function StatusComponent(
       <Flex alignItems="center">
         <Circle
           size="6px"
-          bg={progressStatus === ProgressStatus.Todo ? "#A0A3AD" : "#007AFF"}
+          bg={
+            progressStatus === ProgressStatus.Todo && !shouldCountdown
+              ? "#A0A3AD"
+              : "#007AFF"
+          }
         />
         <Text
           ml={"6px"}
@@ -270,21 +271,35 @@ export default function StatusComponent(
           fontWeight={600}
           lineHeight={"22px"}
           color={
-            progressStatus === ProgressStatus.Doing ? "#FFFFFF" : "#A0A3AD"
+            progressStatus === ProgressStatus.Doing || shouldCountdown
+              ? "#FFFFFF"
+              : "#A0A3AD"
           }
         >
           {statusTitle}
         </Text>
       </Flex>
-      <Flex alignItems="center" gap={"2px"}>
+      {readyForStatus ? (
+        <ActionButtonComponent status={status} tx={transactionData} />
+      ) : shouldCountdown ? (
+        <Box onClick={openModal}>
+          <CountDownComponent
+            time={timeDisplay}
+            isCountDown={isCountDown}
+            handleCalendarButtonClick={
+              isCalendar ? handleCalendarButtonClick : undefined
+            }
+          />
+        </Box>
+      ) : (
         <Text
           fontSize={"11px"}
           fontWeight={progressStatus === ProgressStatus.Doing ? 600 : 400}
           lineHeight={"22px"}
           color={
-            !isCountDown
+            isError
               ? "#DD3A44"
-              : progressStatus === ProgressStatus.Doing
+              : progressStatus === ProgressStatus.Doing || shouldCountdown
               ? "#FFFFFF"
               : "#A0A3AD"
           }
@@ -293,8 +308,7 @@ export default function StatusComponent(
         >
           {timeDisplay}
         </Text>
-        {!isCountDown && <GetHelp />}
-      </Flex>
+      )}
     </Flex>
   );
 }

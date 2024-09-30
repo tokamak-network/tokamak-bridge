@@ -192,6 +192,16 @@ export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
       blockTimestamp
       transactionHash
     }
+    outputProposeds(first: 1, orderBy: l2BlockNumber, orderDirection: desc) {
+      id
+      outputRoot
+      l2OutputIndex
+      l2BlockNumber
+      l1Timestamp
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
   }
 `;
 
@@ -225,6 +235,62 @@ export const FETCH_USER_TRANSACTIONS_L2 = gql`
       _amount
       _data
       _to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+  }
+`;
+
+export const FETCH_USER_TRANSACTIONS_L2_THANOS = gql`
+  query FetchUserTransactions(
+    $formattedAddress: String!
+    $L1StandardBridge: String!
+    $account: String!
+  ) {
+    sentMessages(
+      where: {
+        message_contains: $formattedAddress
+        target: $L1StandardBridge
+        sender: "0x4200000000000000000000000000000000000010"
+      }
+    ) {
+      blockNumber
+      blockTimestamp
+      gasLimit
+      message
+      messageNonce
+      sender
+      target
+      transactionHash
+    }
+    depositFinalizeds(where: { from: $account }) {
+      id
+      l1Token
+      l2Token
+      from
+      amount
+      extraData
+      to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+    messagePasseds(
+      where: {
+        sender: "0x4200000000000000000000000000000000000007"
+        target: "0x9d28a920206281b4a56aef8bc1c515cc4c656d3f"
+        data_contains: $formattedAddress
+      }
+    ) {
+      id
+      nonce
+      sender
+      target
+      value
+      gasLimit
+      data
+      withdrawalHash
       blockNumber
       blockTimestamp
       transactionHash

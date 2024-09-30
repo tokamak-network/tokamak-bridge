@@ -4,6 +4,7 @@ import { useInOutTokens } from "../token/useInOutTokens";
 import { useGetMode } from "../mode/useGetMode";
 import { useSmartRouter } from "../uniswap/useSmartRouter";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export default function useBridgeSupport() {
   const { inToken } = useInOutTokens();
@@ -12,12 +13,11 @@ export default function useBridgeSupport() {
   const { routeNotFounded } = useSmartRouter();
 
   const isOnBridge = mode === "Deposit" || mode === "Withdraw";
-  const isSupported =
-    outNetwork?.chainId === SupportedChainId.THANOS_SEPOLIA
-      ? inToken?.availableForThanosBridge ?? false
-      : inToken === null
-      ? true
-      : inToken?.availableForBirdge ?? false;
+  const isSupported = isThanosChain(outNetwork?.chainId)
+    ? inToken?.availableForThanosBridge ?? false
+    : inToken === null
+    ? true
+    : inToken?.availableForBirdge ?? false;
   return {
     isNotSupportForBridge: isOnBridge ? !isSupported : false,
     isNotSupportForSwap: routeNotFounded,
