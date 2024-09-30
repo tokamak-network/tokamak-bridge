@@ -74,7 +74,6 @@ export default function CustomTooltip(props: {
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
         pos={"relative"}
-        width={"16px"}
       >
         {props.content}
         {arrowNeeded && isOpen && (

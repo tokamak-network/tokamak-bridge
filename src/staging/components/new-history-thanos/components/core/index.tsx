@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import {
   Action,
@@ -12,6 +12,8 @@ import {
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history-thanos/components/core/pending";
 import Complete from "@/staging/components/new-history-thanos/components/core/complete";
+import LegacyPending from "@/staging/components/new-history/components/core/pending";
+import LegacyComplete from "@/staging/components/new-history/components/core/complete";
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
@@ -54,6 +56,12 @@ export default function AccountHistoryNew() {
     selectedTransactionCategory
   );
   const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
+  const isCrossTradyHistory = useMemo(() => {
+    return (
+      _selectedTransactionCategory === CT_ACTION.REQUEST ||
+      _selectedTransactionCategory === CT_ACTION.PROVIDE
+    );
+  }, [_selectedTransactionCategory]);
   useEffect(() => {
     const renderTimer = setInterval(() => {
       setRefetchHistory((prev) => !prev);
@@ -109,7 +117,13 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              <Complete {...transaction} />
+              isCrossTradyHistory ? (
+                <LegacyComplete {...transaction} />
+              ) : (
+                <Complete {...transaction} />
+              )
+            ) : isCrossTradyHistory ? (
+              <LegacyPending transaction={transaction} />
             ) : (
               <Pending transaction={transaction} />
             )}
