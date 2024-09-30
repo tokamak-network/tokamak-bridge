@@ -8,6 +8,7 @@ import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCusto
 import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
 import { formatProfit } from "@/staging/utils/formatProfit";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 interface TokenDetailProps {
   token?: Token;
@@ -59,7 +60,7 @@ export default function TokenDetail(props: TokenDetailProps) {
             lineHeight={"21px"}
             color={"#FFFFFF"}
           ></Text>
-          <CTCustomTooltip
+          <CustomTooltip
             content={formatNumber(formattedAmount)}
             tooltipLabel={`${formattedAmount} ${symbol}`}
             style={{
@@ -68,12 +69,7 @@ export default function TokenDetail(props: TokenDetailProps) {
               py: "5px",
               tooltipLineHeight: "18px",
             }}
-            contentStyle={{
-              fontWeight: 500,
-              fontSize: "14px",
-              lineHeight: "21px",
-              color: "#FFFFFF",
-            }}
+            needArrow={false}
           />
           <Text
             ml={"4px"}

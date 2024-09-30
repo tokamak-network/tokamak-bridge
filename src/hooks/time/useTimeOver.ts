@@ -4,9 +4,10 @@ export function useTimeOver(props: {
   timeStamp: number;
   timeBuffer: number;
   needToCheck: boolean;
+  defaultValue?: boolean;
 }) {
-  const { timeStamp, timeBuffer, needToCheck } = props;
-  const [isTimeOver, setIsTimeOver] = useState(false);
+  const { timeStamp, timeBuffer, needToCheck, defaultValue } = props;
+  const [isTimeOver, setIsTimeOver] = useState(defaultValue || false);
 
   useEffect(() => {
     const interval = setInterval(() => {
