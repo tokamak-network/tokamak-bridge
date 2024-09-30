@@ -31,7 +31,7 @@ import CTOptionStandardDetail from "./CTOptionStandardDetail";
 import CTOptionDisabledDetail from "./CTOptionDisabledDetail";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { useInOutNetwork } from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
@@ -68,7 +68,9 @@ export default function CTOptionModal() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    if (/^\d*\.?\d*$/.test(value)) {
+    const regex = new RegExp(`^\\d*\\.?\\d{0,${inToken?.decimals}}$`);
+
+    if (regex.test(value)) {
       setServiceFee(value);
     }
   };
@@ -87,10 +89,10 @@ export default function CTOptionModal() {
   }, [recommendedFee, serviceFee]);
 
   useEffect(() => {
-    if (recommendedFee) {
+    if (ctOptionModal && recommendedFee !== undefined) {
       setServiceFee(recommendedFee.toString());
     }
-  }, [recommendedFee]);
+  }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
@@ -148,6 +150,7 @@ export default function CTOptionModal() {
     }
   };
 
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
@@ -228,7 +231,7 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {isThanosChain(inNetwork?.chainId) ? (
+          {isThanosChain(inNetwork?.chainId) || isConnectedToMainNetwork ? (
             <CTOptionDisabledDetail />
           ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             // <CTOptionDisabledDetail />

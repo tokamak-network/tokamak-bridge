@@ -5,14 +5,23 @@ import GasStationSymbol from "assets/icons/ct/gas_station_ct.svg";
 import TitanNetworkSymbol from "@/assets/icons/newHistory/titan-n-symbol.svg";
 import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
 import { CT_History } from "@/staging/types/transaction";
-import { formatUnits } from "@/utils/trim/convertNumber";
+import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import useConnectedNetwork from "@/hooks/network";
+import formatNumber from "@/staging/utils/formatNumbers";
+import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import commafy from "@/utils/trim/commafy";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 export default function CTRefundDetail(props: { txData: CT_History | null }) {
   const { txData } = props;
   if (!txData) return null;
   const { inToken, inNetwork } = txData;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const tokenAmount = txData.L2_subgraphData?._totalAmount;
+  const { tokenPriceWithAmount } = useGetMarketPrice({
+    tokenName: inToken.name,
+    amount: formatUnits(tokenAmount, inToken.decimals),
+  });
 
   return (
     <Box mt={"16px"}>
@@ -25,12 +34,30 @@ export default function CTRefundDetail(props: { txData: CT_History | null }) {
         >
           Refund
         </Text>
-
         <Box>
           <Flex justifyContent={"space-between"} alignItems={"center"}>
-            <Text fontSize={"32px"} fontWeight={600} lineHeight={"48px"}>
-              {formatUnits(inToken?.amount, inToken.decimals)} {inToken?.symbol}
-            </Text>
+            <Box
+              display={"flex"}
+              columnGap={"10px"}
+              fontSize={"32px"}
+              fontWeight={600}
+              lineHeight={"48px"}
+            >
+              <CustomTooltip
+                content={
+                  <Text>
+                    {formatNumber(formatUnits(tokenAmount, inToken.decimals))}{" "}
+                  </Text>
+                }
+                tooltipLabel={
+                  tokenAmount && convertNumber(tokenAmount, inToken.decimals)
+                }
+                style={{
+                  top: "10px",
+                }}
+              ></CustomTooltip>
+              <Text>{inToken?.symbol}</Text>
+            </Box>
             <TokenSymbolWithNetwork
               tokenSymbol={inToken?.symbol}
               chainId={inNetwork}
@@ -50,8 +77,8 @@ export default function CTRefundDetail(props: { txData: CT_History | null }) {
           py={"1px"}
           color={"#E3E4C0"}
         >
-          <span style={{ fontSize: "11px", lineHeight: "16.5px" }}>(</span>
-          $99.00
+          <span style={{ fontSize: "11px", lineHeight: "16.5px" }}>(</span>$
+          {commafy(tokenPriceWithAmount)}
           <span style={{ fontSize: "11px", lineHeight: "16.5px" }}>)</span>
         </Text>
       </Box>

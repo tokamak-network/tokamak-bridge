@@ -1,5 +1,5 @@
 // StatusComponent.tsx
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Flex, Text, Circle, Button } from "@chakra-ui/react";
 import {
   TransactionHistory,
@@ -31,6 +31,7 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 import { useFinalize } from "@/hooks/history/useFinalize";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
+import { useTimeOver } from "@/hooks/time/useTimeOver";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -142,11 +143,19 @@ export default function StatusComponent(
         )
       );
 
+  const { isTimeOver } = useTimeOver({
+    timeStamp: Number(blockTimestamp),
+    //refund and return have same timeBuffer as 300s
+    timeBuffer: TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
+    needToCheck: shouldCountdown,
+  });
+
   // Output variable
   const { time: timeDisplay, isCountDown } = shouldCountdown
     ? useCountdown(
         getRemainTime(transactionData),
-        Boolean(transactionData.errorMessage)
+
+        Boolean(transactionData.errorMessage) || isTimeOver
       )
     : { time: initialTimeDisplay, isCountDown: true };
 
@@ -177,8 +186,9 @@ export default function StatusComponent(
   // If error message exists and status is rollup, time increases and color turns red
   const errorRollup = transactionData.errorMessage && label === Status.Rollup;
   const errorRefund =
-    transactionData.errorMessage === ERROR_CODE.CT_REFUND_NOT_COMPLETED &&
-    label === CT_REQUEST_CANCEL.Refund;
+    (transactionData.errorMessage === ERROR_CODE.CT_REFUND_NOT_COMPLETED &&
+      label === CT_REQUEST_CANCEL.Refund) ||
+    isTimeOver;
   const errorReturnLiquidity =
     transactionData.errorMessage === ERROR_CODE.CT_LIQUIDITY_NOT_RETURNED &&
     label === CT_PROVIDE.Return;

@@ -17,7 +17,6 @@ import { WarningType } from "@/staging/components/cross-trade/types";
 import { TransactionToken } from "@/staging/types/transaction";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
-import useCTRecommend from "../../../hooks/useCTRecommend";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
@@ -63,10 +62,10 @@ export default function CTUpdateInput(
   };
 
   const refreshButtonActive = useMemo(() => {
-    if (recommendValue && inputValue && recommendValue === inputValue)
+    if (recommendValue && _inputValue && recommendValue === _inputValue)
       return true;
     return false;
-  }, [inputValue, recommendValue, recommendCheck]);
+  }, [_inputValue, recommendValue, recommendCheck]);
 
   return (
     <>
