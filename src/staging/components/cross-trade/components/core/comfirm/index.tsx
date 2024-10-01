@@ -128,7 +128,7 @@ export default function CTModal() {
     }
   }, [isServiceFeeUpdated, saleCount, ctConfirmModal]);
 
-  console.log("ctConfirmModal", ctConfirmModal);
+  // console.log("ctConfirmModal", ctConfirmModal);
 
   return (
     <Modal

@@ -27,6 +27,8 @@ import { useThanosSDK } from "@/staging/hooks/useThanosSDK";
 import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import commafy from "@/utils/trim/commafy";
+import { useThanosGasFee } from "@/staging/hooks/useThanosGasFee";
+import { TransactionFeeType } from "../../../types";
 
 interface StatusComponentProps {
   tx: TransactionHistory;
@@ -105,12 +107,18 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     label,
     l2ChainId
   );
+  const { getGasEstimation } = useThanosGasFee();
 
   const { tokenMarketPrice } = useGetMarketPrice({
-    tokenName: label === Status.Initiate ? "TON" : "ETH",
+    tokenName:
+      label === Status.Initiate && tx.action === Action.Withdraw
+        ? "TON"
+        : "ETH",
   });
 
-  const [gasEstimation, setGasEstimation] = useState<number | null>(0);
+  const [gasEstimation, setGasEstimation] = useState<TransactionFeeType | null>(
+    null
+  );
   const nextStatus = getNextStatus(label);
   const pendingStatus = getCurrentProgressStatus(
     tx.action as Action,
@@ -118,33 +126,36 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     nextStatus,
     l2ChainId
   );
-  const [initiateGasEstimation, setInitiateGasEstimation] = useState<number>(0);
-  const { estimateGas, crossChainMessenger } = useThanosSDK(
-    l1ChainId,
-    l2ChainId
-  );
 
   const gasCostUS = useMemo(() => {
     if (tokenMarketPrice && gasEstimation) {
-      return `$${commafy(tokenMarketPrice * gasEstimation, 2)}`;
+      return `$${commafy(tokenMarketPrice * gasEstimation.amount, 2)}`;
     }
     return "NA";
   }, [tokenMarketPrice, tx, label]);
 
   //estimage initiate Gas by SDK
   useEffect(() => {
-    const getEstimatedGas = async () => {
-      return 0;
+    const getEstimatedThanosGasFee = async () => {
+      const estimatedGas = await getGasEstimation(tx as StandardHistory);
+      return estimatedGas;
     };
-    if (pendingStatus === ProgressStatus.Todo) {
-      const fee = getEstimatedWithdrawalFeeConstant(
-        l2ChainId,
-        getDepositWithdrawType(tx.inToken.symbol)
-      );
-      if (!fee) setGasEstimation(null);
-      else setGasEstimation(fee[label] ?? null);
+    const fee = getEstimatedWithdrawalFeeConstant(
+      l2ChainId,
+      getDepositWithdrawType(tx.inToken.symbol)
+    );
+    if (!fee) setGasEstimation(null);
+    else setGasEstimation(fee[label] ?? null);
+    if (progressStuatus === ProgressStatus.Doing) {
+      getEstimatedThanosGasFee()
+        .then((gasFee) => {
+          setGasEstimation(gasFee);
+        })
+        .catch((e) => {
+          return;
+        });
     }
-  }, [estimateGas, label]);
+  }, [tx, label]);
 
   const txLink = useMemo(() => {
     if (progressStuatus === ProgressStatus.Done && l1ChainId && l2ChainId) {
@@ -188,7 +199,7 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
           ) : (
             <GasDisplayComponent
               isActive={progressStuatus === ProgressStatus.Doing}
-              value={gasEstimation}
+              value={gasEstimation?.amount ?? null}
               symbol={
                 label === Status.Initiate ? getNativeToken(l2ChainId) : "ETH"
               }

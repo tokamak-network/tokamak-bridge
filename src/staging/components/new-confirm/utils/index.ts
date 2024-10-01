@@ -8,7 +8,7 @@ import {
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getCurrentProgressStatus } from "../../new-history-thanos/utils/historyStatus";
 import { isThanosChain, isTitanChain } from "@/utils/network/checkNetwork";
-import { GasEstimateConstantType } from "../types";
+import { GasEstimateConstantType, TransactionFeeType } from "../types";
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
 export const getBridgeActionButtonContent = (tx: TransactionHistory) => {
@@ -114,32 +114,32 @@ export const getDepositWithdrawWaitMessage = (
 export const getEstimatedWithdrawalFeeConstant = (
   chainId: SupportedChainId | null,
   type: DepositWithdrawType
-): Partial<Record<Status, number>> | null => {
+): Partial<Record<Status, TransactionFeeType>> | null => {
   if (chainId === SupportedChainId.THANOS_SEPOLIA) {
     switch (type) {
       case DepositWithdrawType.ETH:
         return {
-          Initiate: 0.001,
-          Prove: 0.02,
-          Finalize: 0.02,
+          Initiate: { amount: 0.001, tokenSymbol: "TON" },
+          Prove: { amount: 0.02 },
+          Finalize: { amount: 0.02 },
         };
       case DepositWithdrawType.ERC20:
         return {
-          Initiate: 0.0001,
-          Prove: 0.01,
-          Finalize: 0.01,
+          Initiate: { amount: 0.0001, tokenSymbol: "TON" },
+          Prove: { amount: 0.01 },
+          Finalize: { amount: 0.01 },
         };
       case DepositWithdrawType.NativeToken:
         return {
-          Initiate: 0.0003,
-          Prove: 0.01,
-          Finalize: 0.01,
+          Initiate: { amount: 0.0003, tokenSymbol: "TON" },
+          Prove: { amount: 0.01 },
+          Finalize: { amount: 0.01 },
         };
       default:
         return {
-          Initiate: 0.01,
-          Prove: 0.01,
-          Finalize: 0.01,
+          Initiate: { amount: 0.001, tokenSymbol: "TON" },
+          Prove: { amount: 0.01 },
+          Finalize: { amount: 0.01 },
         };
     }
   }

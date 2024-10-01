@@ -19,17 +19,17 @@ export const useGetEstimatedTotalGasFee = (
 
   const { tokenPriceWithAmount: initiateCost } = useGetMarketPrice({
     tokenName: "TON",
-    amount: fee ? fee[Status.Initiate] : 0,
+    amount: fee ? fee[Status.Initiate]?.amount : 0,
   });
 
   const { tokenPriceWithAmount: proveCost } = useGetMarketPrice({
     tokenName: "ethereum",
-    amount: fee ? fee[Status.Prove] : 0,
+    amount: fee ? fee[Status.Prove]?.amount : 0,
   });
 
   const { tokenPriceWithAmount: finalizeCost } = useGetMarketPrice({
     tokenName: "ethereum",
-    amount: fee ? fee[Status.Finalize] : 0,
+    amount: fee ? fee[Status.Finalize]?.amount : 0,
   });
 
   const totalCost = useMemo(() => {
