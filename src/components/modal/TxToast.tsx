@@ -16,13 +16,19 @@ import { accountDrawerStatus } from "@/recoil/modal/atom";
 import Image from "next/image";
 import { useRecoilState } from "recoil";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
-import { selectedTransactionCategory } from "@/recoil/history/transaction";
+import {
+  selectedTab,
+  selectedTransactionCategory,
+} from "@/recoil/history/transaction";
+import { CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
+import { useRouter } from "next/navigation";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { Action, Status } from "@/staging/types/transaction";
 
 type TransactionToastProp = TxInterface;
 
 function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
-  const { tokenData, isToken0, network, txSort, actionSort } = props;
+  const { tokenData, isToken0, network, txSort } = props;
 
   if (
     tokenData === undefined ||
@@ -87,8 +93,11 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
          */}
         <TokenSymbolWithNetwork
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
+          networkSymbolW={16}
+          networkSymbolH={16}
+          bottom={-0.5}
+          right={-0.5}
           chainId={targetChainId}
-          bottom={0}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"}>
           {trimAmount(convertParsedAmount)} {symbol === "WETH" ? "WETH" : "ETH"}
@@ -111,7 +120,10 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         <TokenSymbolWithNetwork
           tokenSymbol={symbol}
           chainId={targetChainId}
-          bottom={0}
+          networkSymbolW={16}
+          networkSymbolH={16}
+          bottom={-0.5}
+          right={-0.5}
         />
         <Text fontSize={11} fontWeight={400} textAlign={"center"} w={"94px"}>
           {noNeedToShowAmount ? "" : trimAmount(convertParsedAmount)} {symbol}
@@ -173,8 +185,39 @@ function TransactionToast(props: TransactionToastProp) {
   );
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
 
-  const needToOpenHistoryTab = txSort === "Deposit" || txSort === "Withdraw";
+  const isForCrossTrade =
+    txSort === "Request" ||
+    txSort === "Provide" ||
+    txSort === "CancelRequest" ||
+    txSort === "UpdateFee";
+  const needToOpenHistoryTab = useMemo(
+    () => txSort === "Deposit" || txSort === "Withdraw" || isForCrossTrade,
+    [txSort, isForCrossTrade]
+  );
 
+  const [, setSelectedTab] = useRecoilState(selectedTab);
+  const [, setSelectedTransactionCategory] = useRecoilState(
+    selectedTransactionCategory
+  );
+  const nativeToHistoryTab = () => setHistoryTabOpen(true);
+  const navigateToCrossTrade = () => setSelectedTab(HISTORY_SORT.CROSS_TRADE);
+
+  const router = useRouter();
+  const openHistoryTab = () => {
+    nativeToHistoryTab();
+    if (isForCrossTrade) {
+      navigateToCrossTrade();
+      if (txSort === "Request") {
+        router.push(`/pools`);
+        return setSelectedTransactionCategory(CT_ACTION.REQUEST);
+      }
+      if (txSort === "Provide") {
+        return setSelectedTransactionCategory(CT_ACTION.PROVIDE);
+      }
+      return setSelectedTransactionCategory(CT_ACTION.REQUEST);
+    }
+  };
+  const { closeModal } = useTxConfirmModal();
   const clickTitle = useCallback(() => {
     if (needToOpenHistoryTab) {
       setIsOpen(true);
@@ -183,8 +226,15 @@ function TransactionToast(props: TransactionToastProp) {
       );
     } else {
       window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+      try {
+        needToOpenHistoryTab
+          ? openHistoryTab()
+          : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
+      } finally {
+        closeModal();
+      }
     }
-  }, [props, blockExplorer, needToOpenHistoryTab]);
+  }, [props, blockExplorer, needToOpenHistoryTab, openHistoryTab]);
 
   useEffect(() => {
     if (historyTabOpen) toast.closeAll();

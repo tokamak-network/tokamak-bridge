@@ -1,5 +1,5 @@
 .scroll-hidden::-webkit-scrollbar {
-  display: none;
+  display: none; /* Chrome, Safari and Opera */
 }
 
 /* Hide scrollbar for IE, Edge and Firefox */

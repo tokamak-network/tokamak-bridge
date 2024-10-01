@@ -130,6 +130,7 @@ export default function AccountHistory() {
       variant="clickThrough"
       trapFocus={false}
       useInert={true}
+      blockScrollOnMount={false}
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}

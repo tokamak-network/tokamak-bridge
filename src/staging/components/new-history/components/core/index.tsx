@@ -16,9 +16,9 @@ import {
   historyRefetch,
   selectedTransactionCategory,
 } from "@/recoil/history/transaction";
-import GradientSpinner from "@/components/ui/GradientSpinner";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
+import GradientSpinner from "@/components/ui/GradientSpinner";
 import LoadingTx from "@/components/history/LoadingTx";
 
 const NoAcitivityComponent = () => {
@@ -36,7 +36,7 @@ const NoAcitivityComponent = () => {
   );
 };
 
-const LoadingSpinner = () => {
+const LoadingTxSpinners = () => {
   const components = new Array(4)
     .fill(null)
     .map((_, index) => <LoadingTx key={index} />);
@@ -83,7 +83,7 @@ export default function AccountHistoryNew() {
 
   return (
     <Flex flexDirection="column" gap="2" h={"100%"}>
-      {!historyData && <LoadingSpinner />}
+      {!historyData && <LoadingTxSpinners />}
       {historyData?.length === 0 && <NoAcitivityComponent />}
       {historyData?.map((transaction, index) => {
         const isCompleted =

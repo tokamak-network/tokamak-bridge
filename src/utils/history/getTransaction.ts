@@ -25,7 +25,6 @@ const getTokenInfo = (tokenAddress: string) => {
     }
   }
   return null;
-  throw new Error(`Token address(${tokenAddress}) not found`);
 };
 
 export const getTransactionToken = (

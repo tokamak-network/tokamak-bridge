@@ -21,7 +21,6 @@ import {
   isRequestProvidedOnL1,
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
-import { fetchMarketPrice } from "@/utils/price/fetchMarketPrice";
 import { getCTTokenPrice } from "../utils/getCTTokenPrice";
 
 const getApolloClient = (chainId: number) => {
@@ -142,7 +141,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
     provideCTs: T_FETCH_ProvideCTs_L1;
     l1CancelCTs: T_FETCH_CancelCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
-    pollInterval: 13000,
+    pollInterval: 5000,
     client: L1_CLIENT,
     variables: isHistory
       ? {
@@ -164,7 +163,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     cancelCTs: T_FETCH_CancelCTs;
     providerClaimCTs: T_FETCH_ProviderClaimCTs;
   }>(isHistory ? FETCH_REQUEST_LIST_L2_ACCOUNT : FETCH_REQUEST_LIST_L2, {
-    pollInterval: 13000,
+    pollInterval: 5000,
     client: L2_CLIENT,
     variables: isHistory
       ? {
@@ -176,9 +175,13 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
   return { data, loading, error };
 };
 
-export const useRequestData = (): {
+export const useRequestData = (
+  saleCount?: string
+): {
   requestList: CrossTradeData[] | null;
   isLoading: boolean;
+  l2RelayQueue: string[] | undefined;
+  requestDataBySaleCount: CrossTradeData | undefined;
 } => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { data, error, loading } = useCrossTradeData_L2({ isHistory: false });
@@ -196,7 +199,7 @@ export const useRequestData = (): {
       if (data && _l1Data) {
         const datas = data.requestCTs;
         const providerClaimCTs = data.providerClaimCTs;
-        const cancelCTs = data.cancelCTs;
+        const cancelCTs = _l1Data.l1CancelCTs;
         const editCTs = _l1Data.editCTs;
         const provideCTs = _l1Data.provideCTs;
 
@@ -212,7 +215,11 @@ export const useRequestData = (): {
 
         const result: CrossTradeData[] = datas.map((item) => {
           //  will be refactor with split functions
-          const tokenInfo = getSupportedTokenForCT(item._l2token);
+          const tokenInfo = getSupportedTokenForCT(
+            isZeroAddress(item._l2token)
+              ? "0x4200000000000000000000000000000000000006"
+              : item._l2token
+          );
           const isETH = isZeroAddress(item._l2token);
 
           const isCanceled = isRequestCanceled({
@@ -233,7 +240,8 @@ export const useRequestData = (): {
             : BigInt(item._ctAmount);
           const profitAmount = BigInt(item._totalAmount) - ctAmount;
           const profitRatio =
-            (profitAmount * BigInt(100)) / BigInt(item._totalAmount);
+            (Number(profitAmount) / Number(BigInt(item._totalAmount))) * 100;
+
           const isProvided = isRequestProvided({
             providerClaimCTs,
             saleCount: item._saleCount,
@@ -304,7 +312,8 @@ export const useRequestData = (): {
             profit: {
               amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
-              percent: profitRatio.toString(),
+              percent:
+                profitAmount === BigInt(0) ? "0" : profitRatio.toFixed(30),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),
@@ -318,7 +327,12 @@ export const useRequestData = (): {
             isInRelay,
           };
         });
-        const trimedResult = result.filter((item) => item.isCanceled === false);
+        const trimedResult = result.filter(
+          (item) =>
+            !item.isCanceled &&
+            item.recevingUSD >= item.providingUSD &&
+            !item.isProvided
+        );
         setIsLoading(false);
         return setRequestList(trimedResult);
       }
@@ -338,6 +352,21 @@ export const useRequestData = (): {
     _l1Loading,
   ]);
 
+  const l2RelayQueue = useMemo(() => {
+    if (requestList)
+      return requestList
+        .filter((item) => item.isInRelay)
+        .map((item) => item.subgraphData._saleCount);
+  }, [requestList]);
+
+  const requestDataBySaleCount = useMemo(() => {
+    if (requestList && saleCount) {
+      return requestList.find(
+        (item) => item.subgraphData._saleCount === saleCount
+      );
+    }
+  }, [requestList, saleCount]);
+
   useEffect(() => {
     fetchRequestList();
   }, [fetchRequestList]);
@@ -348,5 +377,5 @@ export const useRequestData = (): {
     }
   }, [error]);
 
-  return { requestList, isLoading };
+  return { requestList, isLoading, l2RelayQueue, requestDataBySaleCount };
 };

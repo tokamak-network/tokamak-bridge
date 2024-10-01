@@ -15,18 +15,17 @@ import {
   Tr,
   Th,
   Td,
-  Center,
 } from "@chakra-ui/react";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import TokenDetail from "@/staging/components/cross-trade/components/core/main/TokenDetail";
 import CTProvider from "@/staging/components/cross-trade/components/core/main/CTMainProvider";
-import { Tooltip } from "@/staging/components/common/Tooltip";
 import Image from "next/image";
 import Polygon from "assets/icons/ct/polygon.svg";
 import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
+import useConnectedNetwork from "@/hooks/network";
 
 {
   /** 
@@ -47,6 +46,9 @@ export default function CTMain() {
   const [isDescSortedReceive, setIsDescSortedReceive] = useState<
     boolean | null
   >(null);
+  const [isDescSortedProfit, setIsDescSortedProfit] = useState<boolean | null>(
+    null
+  );
   const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[] | null>(null);
 
@@ -96,10 +98,35 @@ export default function CTMain() {
     }
   }, [isDescSortedReceive]);
 
+  useEffect(() => {
+    if (isDescSortedProfit === null) return;
+    if (isDescSortedProfit) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort(
+              (a, b) => Number(b.profit.percent) - Number(a.profit.percent)
+            ),
+          ]
+      );
+    }
+    if (!isDescSortedProfit) {
+      return setData(
+        (prevData) =>
+          prevData && [
+            ...prevData.sort(
+              (a, b) => Number(a.profit.percent) - Number(b.profit.percent)
+            ),
+          ]
+      );
+    }
+  }, [isDescSortedProfit]);
+
   const [displayedItems, setDisplayedItems] = useState<CrossTradeData[]>([]);
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
   const observer = useRef<IntersectionObserver | null>(null);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   //will be refactored to controll fetch data with it to save traffics
   useEffect(() => {
@@ -157,6 +184,7 @@ export default function CTMain() {
                 cursor={"pointer"}
                 onClick={() => {
                   setIsDescSortedReceive(null);
+                  setIsDescSortedProfit(null);
                   setIsDescSortedProvide(
                     isDescSortedProvide !== null ? !isDescSortedProvide : true
                   );
@@ -198,6 +226,7 @@ export default function CTMain() {
                 cursor={"pointer"}
                 onClick={() => {
                   setIsDescSortedProvide(null);
+                  setIsDescSortedProfit(null);
                   setIsDescSortedReceive(
                     isDescSortedReceive !== null ? !isDescSortedReceive : true
                   );
@@ -248,7 +277,30 @@ export default function CTMain() {
               </Flex>
             </Th>
             <Th textTransform="none" minW={"140px"} maxW={"140px"} p={0}>
-              <Flex>
+              <Flex
+                cursor={"pointer"}
+                onClick={() => {
+                  setIsDescSortedProvide(null);
+                  setIsDescSortedReceive(null);
+                  setIsDescSortedProfit(
+                    isDescSortedProfit !== null ? !isDescSortedProfit : true
+                  );
+                }}
+              >
+                {isDescSortedProfit !== null && (
+                  <Flex
+                    justifyContent={"center"}
+                    alignItems={"center"}
+                    style={{
+                      transform: isDescSortedProfit
+                        ? "rotate(360deg)"
+                        : "rotate(180deg)",
+                    }}
+                    mr="4px"
+                  >
+                    <Image src={Polygon} alt={"Polygon"} />
+                  </Flex>
+                )}
                 <Text
                   fontWeight={"500"}
                   fontSize={"13px"}
@@ -264,7 +316,30 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
+          {isConnectedToMainNetwork && (
+            <Tr
+              key={0}
+              sx={{
+                "& td": { pl: "20px", py: "16px", pr: "auto" },
+                borderBottom: "1px solid #23242B",
+              }}
+              textAlign={"center"}
+            >
+              <Td
+                colSpan={4}
+                style={{
+                  textAlign: "center",
+                  height: "144px",
+                  lineHeight: "144px",
+                  color: "#E3F3FF",
+                }}
+              >
+                <Box>Not available on Ethereum and Titan mainnet</Box>
+              </Td>
+            </Tr>
+          )}
           {!isLoading &&
+            !isConnectedToMainNetwork &&
             displayedItems?.map((item, index) => {
               //Decided not to show the request is already done with providing liquidity because countdown does not needed.
               if (item.isProvided) return null;
@@ -284,7 +359,7 @@ export default function CTMain() {
                   <Td sx={{ opacity: rowOpacity }}>
                     <TokenDetail
                       token={item.inToken}
-                      network={item.inNetwork}
+                      network={item.outNetwork}
                       isProvide={true}
                       providingUSD={item.providingUSD}
                     />
@@ -292,7 +367,7 @@ export default function CTMain() {
                   <Td sx={{ opacity: rowOpacity }}>
                     <TokenDetail
                       token={item.outToken}
-                      network={item.outNetwork}
+                      network={item.inNetwork}
                       isProvide={false}
                       recevingUSD={item.recevingUSD}
                     />

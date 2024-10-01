@@ -7,6 +7,8 @@ import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import CTCustomTooltip from "@/staging/components/cross-trade/components/CTCustomTooltip";
 import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
+import { formatProfit } from "@/staging/utils/formatProfit";
+import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
 interface TokenDetailProps {
   token?: Token;
@@ -35,7 +37,7 @@ export default function TokenDetail(props: TokenDetailProps) {
     if (token) {
       return tokenPriceWithAmount ? `$${commafy(tokenPriceWithAmount)}` : "NA";
     }
-    return `${profit?.percent}%`;
+    return `${formatProfit(profit?.percent)}%`;
   }, [tokenPriceWithAmount, profit?.percent]);
 
   return (
@@ -58,7 +60,7 @@ export default function TokenDetail(props: TokenDetailProps) {
             lineHeight={"21px"}
             color={"#FFFFFF"}
           ></Text>
-          <CTCustomTooltip
+          <CustomTooltip
             content={formatNumber(formattedAmount)}
             tooltipLabel={`${formattedAmount} ${symbol}`}
             style={{
@@ -67,12 +69,7 @@ export default function TokenDetail(props: TokenDetailProps) {
               py: "5px",
               tooltipLineHeight: "18px",
             }}
-            contentStyle={{
-              fontWeight: 500,
-              fontSize: "14px",
-              lineHeight: "21px",
-              color: "#FFFFFF",
-            }}
+            needArrow={false}
           />
           <Text
             ml={"4px"}

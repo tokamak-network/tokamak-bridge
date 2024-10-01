@@ -12,6 +12,12 @@ import Drawers from "./Drawers";
 import Footer from "@/components/footer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 
+/**
+ * test domain building commit
+ * test.app.bridge.tokamak.network
+ * 2024-08-30
+ */
+
 const GlobalComponents = () => {
   return (
     <>

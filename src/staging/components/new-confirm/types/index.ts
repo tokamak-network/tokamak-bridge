@@ -3,3 +3,8 @@ export type GasEstimateConstantType = {
   Prove: number;
   Finalize: number;
 };
+
+export interface TransactionFeeType {
+  amount: number;
+  tokenSymbol?: string;
+}

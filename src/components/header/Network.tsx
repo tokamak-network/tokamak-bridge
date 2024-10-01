@@ -1,8 +1,5 @@
-import ImageSymbol, { TokenSymbol } from "@/components/image/TokenSymbol";
 import { NetworkSymbol } from "../image/NetworkSymbol";
 import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
-import { capitalizeFirstChar } from "@/utils/trim/capitalizeChar";
-
 import {
   SupportedChainId,
   SupportedChainProperties,
@@ -16,14 +13,27 @@ import useConnectedNetwork from "@/hooks/network";
 import { useAccount, useSwitchNetwork } from "wagmi";
 import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import Select from "react-select";
-import AccoridonArrowImg from "assets/icons/accordionArrow.svg";
-import NetworkCircle from "assets/icons/networkCircle.svg";
 import { Overlay_Index } from "@/types/style/overlayIndex";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
   label: SupportedChainProperties["chainName"];
+};
+
+const formatVariableName = (variable: string) => {
+  if (!variable.includes("_")) {
+    return variable.charAt(0).toUpperCase() + variable.slice(1).toLowerCase();
+  }
+  return variable?.replace(/([A-Z]+)_([A-Z]+)/g, (_, p1, p2) => {
+    return (
+      p1.charAt(0) +
+      p1.slice(1).toLowerCase() +
+      " " +
+      p2.charAt(0) +
+      p2.slice(1).toLowerCase()
+    );
+  });
 };
 
 const customStyles = (maxHeight: string, maxWidth: string) => {
@@ -122,14 +132,10 @@ const ValueContainer = (props: {
 export default function Network() {
   // const { inNetwork, height, width, isPool } = props;
   const [network, setNetwork] = useRecoilState(networkStatus);
-  const { switchNetworkAsync, isError, switchNetwork } = useSwitchNetwork();
+  const { isError, switchNetwork } = useSwitchNetwork();
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const {
-    connectedChainId,
-    isConnectedToMainNetwork,
-    chainName,
-    isSupportedChain,
-  } = useConnectedNetwork();
+  const { connectedChainId, isConnectedToMainNetwork, isSupportedChain } =
+    useConnectedNetwork();
   const { isConnected } = useAccount();
 
   // const inNetwork = true;
@@ -359,14 +365,6 @@ export default function Network() {
   }
 
   return (
-    // <Center className="header-right-common" w={"48px"} h={"48px"} _hover={{bg:'#313442'}}>
-    //   <NetworkSymbol
-    //     network={connectedChainId ?? 1}
-    //     w={24}
-    //     h={24}
-    //     isCircle={true}
-    //   />
-    // </Center>
     <Box ref={wrapperRef}>
       <Select
         options={optionsList}
