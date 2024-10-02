@@ -41,7 +41,7 @@ export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const transactionData = depositWithdrawConfirmModal.transaction;
-
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
@@ -135,7 +135,6 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   return (
     <Modal
