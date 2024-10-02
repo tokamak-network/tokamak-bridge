@@ -11,7 +11,7 @@ import { getWithdarwCalldata } from "@/utils/history/getWithdrawCalldata";
 import { WithdrawTransactionHistory } from "@/staging/types/transaction";
 
 export const useFinalize = (params?: WithdrawTransactionHistory) => {
-  const { isConnectedToMainNetwork, layer } = useConnectedNetwork();
+  const { isConnectedToMainNetwork, isLayer2 } = useConnectedNetwork();
   const { switchNetworkAsync } = useSwitchNetwork();
   const { L1MESSENGER_CONTRACT } = useContract();
   const { setModalOpen } = useTxConfirmModal();
@@ -33,10 +33,20 @@ export const useFinalize = (params?: WithdrawTransactionHistory) => {
 
   const callToFinalize = useCallback(async () => {
     try {
-      if (!isConnectedToMainNetwork)
+      if (isConnectedToMainNetwork === undefined)
         throw new Error("Not connected to any network");
       if (!L1Provider || !L2Provider) throw new Error("Provider not found");
       if (!params) throw new Error("params not found");
+
+      if (isLayer2) {
+        const chainId = isConnectedToMainNetwork
+          ? SupportedChainId.MAINNET
+          : SupportedChainId.SEPOLIA;
+        const res = await switchNetworkAsync?.(chainId);
+
+        //if user cancel or fail the network switch
+        if (!res) return;
+      }
 
       const { resolved, stateBatchAppended, blockNumber } = params;
 
@@ -58,16 +68,6 @@ export const useFinalize = (params?: WithdrawTransactionHistory) => {
         isConnectedToMainNetwork,
       });
 
-      if (layer !== "L1") {
-        const chainId = isConnectedToMainNetwork
-          ? SupportedChainId.MAINNET
-          : SupportedChainId.SEPOLIA;
-        const res = await switchNetworkAsync?.(chainId);
-
-        //if user cancel or fail the network switch
-        if (!res) return;
-      }
-
       write({
         args: [
           resolved.target,
@@ -83,7 +83,14 @@ export const useFinalize = (params?: WithdrawTransactionHistory) => {
       console.error("Error in callToFinalize", error);
       setModalOpen("error");
     }
-  }, [L1Provider, L2Provider, isConnectedToMainNetwork, layer, params, write]);
+  }, [
+    L1Provider,
+    L2Provider,
+    isConnectedToMainNetwork,
+    isLayer2,
+    params,
+    write,
+  ]);
 
   return { callToFinalize };
 };

@@ -35,12 +35,13 @@ import {
   getWaitMessage,
 } from "@/staging/components/new-confirm/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const transactionData = depositWithdrawConfirmModal.transaction;
-
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
@@ -196,7 +197,9 @@ export default function DepositWithdrawConfirmModal() {
                     lineHeight={"18px"}
                     color={"#FFFFFF"}
                   >
-                    Titan Standard bridge
+                    {isConnectedToMainNetwork
+                      ? "Titan Standard bridge"
+                      : "Titan Sepolia Standard bridge"}
                   </Text>
                 </Flex>
               </Flex>

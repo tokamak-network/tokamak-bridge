@@ -17,6 +17,7 @@ import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import commafy from "@/utils/trim/commafy";
+import { formatNetworkName } from "@/utils/network/convertNetworkName";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
@@ -30,8 +31,8 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     return null;
   }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: transactionHistory.inToken.symbol as string,
-    amount: formatUnits(
+    tokenName: transactionHistory.inToken.name as string,
+    amount: convertNumber(
       transactionHistory.inToken.amount,
       transactionHistory.inToken.decimals
     ),
@@ -51,7 +52,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
   const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
 
   const displayNetworkName =
-    chainName === "MAINNET" ? "Ethereum" : capitalizeFirstLetter(chainName);
+    chainName === "MAINNET" ? "Ethereum" : formatNetworkName(chainName);
 
   const tokenAddress = isInNetwork
     ? transactionHistory.inToken.address

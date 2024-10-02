@@ -526,7 +526,7 @@ const Title = (props: {
       >
         {isLoading ? (
           <Box w={"100%"} h={"20px"} mb={"5px"}>
-            <GradientSpinner />
+            <GradientSpinner h={"100%"} borderWidth={0} />
           </Box>
         ) : (
           <Flex>
