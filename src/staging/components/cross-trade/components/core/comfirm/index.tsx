@@ -106,20 +106,10 @@ export default function CTModal() {
     }
     return false;
   }, [ctConfirmModal.txData?.serviceFee, requestDataBySaleCount]);
-  const [refreshOpen, setRefreshOpen] = useRecoilState(ctRefreshModalStatus);
-  const isFirstOpen = useRef(true);
 
+  const [refreshOpen, setRefreshOpen] = useRecoilState(ctRefreshModalStatus);
   useEffect(() => {
-    // if (isFirstOpen.current) {
-    //   isFirstOpen.current = false;
-    //   return;
-    // }
-    if (
-      // isFirstOpen.current === false &&
-      isServiceFeeUpdated &&
-      saleCount &&
-      ctConfirmModal.txData
-    ) {
+    if (isServiceFeeUpdated && saleCount && ctConfirmModal.txData) {
       return setRefreshOpen({
         isOpen: true,
         saleCount,

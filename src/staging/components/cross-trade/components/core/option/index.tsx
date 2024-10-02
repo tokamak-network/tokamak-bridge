@@ -35,6 +35,7 @@ import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
+import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -200,6 +201,8 @@ export default function CTOptionModal() {
     recommendedFee,
   ]);
 
+  const { isWhiteListToken } = useWhiteListToken();
+
   return (
     <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
       <ModalOverlay />
@@ -218,7 +221,7 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {isConnectedToMainNetwork ? (
+          {isConnectedToMainNetwork || !isWhiteListToken ? (
             <CTOptionDisabledDetail />
           ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             <CTOptionCrossDetail
