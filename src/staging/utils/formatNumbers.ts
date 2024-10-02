@@ -93,11 +93,21 @@ function formatNumber(
     return commafy(Math.floor(num).toString());
   })();
 
+  // We deiced to display 4 decimal points if the number has more value after 4 decimals points
   if (formattedNumber.includes(".")) {
     const [integerPart, decimalPart] = formattedNumber.split(".");
+
+    //check if the number has more value after 4 decimal points
+    const decimalPartForRawValue = String(value).split(".")[1];
+    const afterFourthDecimal = decimalPartForRawValue?.slice(4);
+    const hasNonZeroAfterFourthDecimal = /[1-9]/.test(afterFourthDecimal);
+    if (hasNonZeroAfterFourthDecimal) {
+      return formattedNumber;
+    }
     if (/^0+$/.test(decimalPart.replace(/,/g, ""))) {
       return integerPart;
     }
+    return formattedNumber;
   }
 
   return formattedNumber;
