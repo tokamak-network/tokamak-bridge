@@ -325,8 +325,8 @@ export const useDepositData = () => {
             amount,
             true,
             isConnectedToMainNetwork
-              ? SupportedChainId.TITAN
-              : SupportedChainId.TITAN_SEPOLIA
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA
           );
 
           const status = getStatus(currentStatus);
