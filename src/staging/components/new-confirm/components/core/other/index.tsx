@@ -35,6 +35,7 @@ import {
   getWaitMessage,
 } from "@/staging/components/new-confirm/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
@@ -134,6 +135,7 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   return (
     <Modal
@@ -196,7 +198,9 @@ export default function DepositWithdrawConfirmModal() {
                     lineHeight={"18px"}
                     color={"#FFFFFF"}
                   >
-                    Titan Standard bridge
+                    {isConnectedToMainNetwork
+                      ? "Titan Standard bridge"
+                      : "Titan Sepolia Standard bridge"}
                   </Text>
                 </Flex>
               </Flex>

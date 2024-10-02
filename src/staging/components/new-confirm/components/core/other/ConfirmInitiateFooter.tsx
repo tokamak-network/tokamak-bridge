@@ -80,12 +80,6 @@ export default function ConfirmInitiateFooter(
             style={{ marginLeft: "2px" }}
             type={isChecked ? "white" : "grey"}
           /> */}
-          <Box maxW={"16px"} maxH={"16px"} ml={"2px"}>
-            <CustomTooltipWithQuestion
-              tooltipLabel={"text will be changed"}
-              isGrayIcon={!isChecked}
-            ></CustomTooltipWithQuestion>
-          </Box>
         </Button>
       </Box>
     </Box>
