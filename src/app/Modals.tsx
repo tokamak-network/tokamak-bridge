@@ -13,6 +13,7 @@ import CTOptionModal from "@/staging/components/cross-trade/components/core/opti
 import CTModal from "@/staging/components/cross-trade/components/core/comfirm";
 import CTFeeUpdateModal from "@/staging/components/cross-trade/components/core/updateFee";
 import { CTRefresh } from "@/staging/components/cross-trade/components/core/comfirm/CTRefresh";
+import { CTBetaWarning } from "@/staging/components/cross-trade/components/core/comfirm/CTBetaWarning";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -40,7 +41,7 @@ export default function Modals() {
       <DepositWithdrawConfirmModal />
       <SwapConfirmModal />
 
-      {/* <CTComingModal /> */}
+      {/* Cross Trade */}
       <CTOptionModal />
       <CTModal />
       <CTFeeUpdateModal />

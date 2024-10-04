@@ -41,6 +41,7 @@ type TradeConfirmationProps = {
   isChecked: {
     firstChecked: boolean;
     secondChecked: boolean;
+    thirdChecked: boolean;
   };
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirm: () => void;
@@ -98,7 +99,11 @@ export default function CTConfirmCrossTradeFooter(
     if (isInRelay) return false;
     if (!isApproved || isBalanceOver) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
-    return !isChecked.firstChecked || !isChecked.secondChecked;
+    return (
+      !isChecked.firstChecked ||
+      !isChecked.secondChecked ||
+      !isChecked.thirdChecked
+    );
   }, [
     isProvide,
     isChecked,
@@ -130,7 +135,9 @@ export default function CTConfirmCrossTradeFooter(
     return isLoading
       ? true
       : mode === "Withdraw"
-      ? !isChecked.firstChecked || !isChecked.secondChecked
+      ? !isChecked.firstChecked ||
+        !isChecked.secondChecked ||
+        !isChecked.thirdChecked
       : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 
@@ -324,7 +331,38 @@ export default function CTConfirmCrossTradeFooter(
               lineHeight={"20px"}
               letterSpacing={"0.01em"}
             >
-              the request can be edited from L1
+              the request can be edited from L1, and
+            </Text>
+          </Checkbox>
+          <Checkbox
+            isChecked={isChecked.thirdChecked}
+            id={"thirdChecked"}
+            onChange={onCheckboxChange}
+            icon={<CheckCustomIcon />}
+            sx={{
+              ".chakra-checkbox__control": {
+                borderWidth: "1px",
+                borderColor: "#A0A3AD",
+                _focus: {
+                  boxShadow: "none",
+                },
+              },
+              _checked: {
+                "& .chakra-checkbox__control": {
+                  borderColor: "#FFFFFF",
+                },
+              },
+            }}
+            colorScheme="#A0A3AD"
+          >
+            <Text
+              color={isChecked.thirdChecked ? "#FFFFFF" : "#A0A3AD"}
+              fontWeight={400}
+              fontSize={12}
+              lineHeight={"20px"}
+              letterSpacing={"0.01em"}
+            >
+              Cross Trade is in a beta testing phase
             </Text>
           </Checkbox>
         </Flex>

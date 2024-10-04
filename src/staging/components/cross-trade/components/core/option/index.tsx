@@ -36,6 +36,7 @@ import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
 import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -147,7 +148,7 @@ export default function CTOptionModal() {
     }
   };
 
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
@@ -202,6 +203,14 @@ export default function CTOptionModal() {
   ]);
 
   const { isWhiteListToken } = useWhiteListToken();
+  // const isSupportedNetworkForCT = useMemo(
+  //   () =>
+  //     (connectedChainId &&
+  //       connectedChainId === SupportedChainId.TITAN_SEPOLIA) ||
+  //     connectedChainId === SupportedChainId.TITAN,
+  //   [connectedChainId]
+  // );
+  const isSupportedNetworkForCT = true;
 
   return (
     <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
@@ -221,7 +230,7 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {isConnectedToMainNetwork || !isWhiteListToken ? (
+          {!isSupportedNetworkForCT || !isWhiteListToken ? (
             <CTOptionDisabledDetail />
           ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             <CTOptionCrossDetail
