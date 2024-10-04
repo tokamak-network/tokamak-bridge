@@ -83,7 +83,7 @@ export default function CTOptionModal() {
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return serviceFee;
     }
-  }, [recommendedFee, serviceFee]);
+  }, [recommendedFee, serviceFee, activeSubButtonValue]);
 
   useEffect(() => {
     if (ctOptionModal && recommendedFee !== undefined) {
