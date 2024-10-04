@@ -43,6 +43,9 @@ export default function CTProvider({
     outToken,
     serviceFee,
     isInRelay,
+    isUpdateFee,
+    initialCTAmount,
+    editedCTAmount,
   } = crossTradeData;
   const { onOpenCTConfirmModal } = useCTConfirmModal();
 
@@ -67,6 +70,11 @@ export default function CTProvider({
       },
       isProvide: true,
       subgraphData,
+      forConfirmProviding: {
+        isUpdateFee,
+        initialCTAmount,
+        editedCTAmount,
+      },
     });
 
   const { onCloseCTConfirmModal } = useFxConfirmModal();

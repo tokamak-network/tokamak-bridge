@@ -32,4 +32,7 @@ export interface CrossTradeData {
   isInRelay: boolean;
   serviceFee: BigInt;
   isCanceled: boolean;
+  isUpdateFee: boolean;
+  initialCTAmount: string;
+  editedCTAmount: bigint;
 }

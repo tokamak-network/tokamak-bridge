@@ -7,6 +7,7 @@ import {
   ModalFooter,
   Box,
   Text,
+  Flex,
 } from "@chakra-ui/react";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import React, { useEffect, useMemo, useRef, useState } from "react";
@@ -27,17 +28,24 @@ import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import { ctRefreshModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
+import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { BetaIcon } from "../../common/BetaIcon";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
+
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<{
     firstChecked: boolean;
     secondChecked: boolean;
+    thirdChecked: boolean;
   }>({
     firstChecked: false,
     secondChecked: false,
+    thirdChecked: false,
   });
+  const {} = useConnectedNetwork();
 
   // pencil 클릭시 업데이트
   const handlePencilClick = () => {
@@ -47,7 +55,11 @@ export default function CTModal() {
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id } = e.target;
-    if (id === "firstChecked" || id === "secondChecked") {
+    if (
+      id === "firstChecked" ||
+      id === "secondChecked" ||
+      id === "thirdChecked"
+    ) {
       setIsChecked({ ...isChecked, [id]: !isChecked[id] });
     }
   };
@@ -56,6 +68,7 @@ export default function CTModal() {
     setIsChecked({
       firstChecked: false,
       secondChecked: false,
+      thirdChecked: false,
     });
     onCloseCTConfirmModal();
   };
@@ -81,6 +94,7 @@ export default function CTModal() {
       return setIsChecked({
         firstChecked: false,
         secondChecked: false,
+        thirdChecked: false,
       });
   }, [ctConfirmModal]);
 
@@ -106,20 +120,10 @@ export default function CTModal() {
     }
     return false;
   }, [ctConfirmModal.txData?.serviceFee, requestDataBySaleCount]);
-  const [refreshOpen, setRefreshOpen] = useRecoilState(ctRefreshModalStatus);
-  const isFirstOpen = useRef(true);
 
+  const [refreshOpen, setRefreshOpen] = useRecoilState(ctRefreshModalStatus);
   useEffect(() => {
-    // if (isFirstOpen.current) {
-    //   isFirstOpen.current = false;
-    //   return;
-    // }
-    if (
-      // isFirstOpen.current === false &&
-      isServiceFeeUpdated &&
-      saleCount &&
-      ctConfirmModal.txData
-    ) {
+    if (isServiceFeeUpdated && saleCount && ctConfirmModal.txData) {
       return setRefreshOpen({
         isOpen: true,
         saleCount,
@@ -128,9 +132,28 @@ export default function CTModal() {
     }
   }, [isServiceFeeUpdated, saleCount, ctConfirmModal]);
 
+  const { isConnectedToTestNetwork, connectedChainId } = useConnectedNetwork();
+  const isNetworkValid = useMemo(() => {
+    if (
+      ctConfirmModal.txData?.outNetwork &&
+      isConnectedToTestNetwork !== undefined
+    ) {
+      const requiredChainId = ctConfirmModal.txData?.outNetwork;
+      const isMainNetwork = requiredChainId === SupportedChainId.MAINNET;
+      if (isMainNetwork) return !isConnectedToTestNetwork;
+      const isTestNetwork = requiredChainId === SupportedChainId.SEPOLIA;
+      if (isTestNetwork) return isConnectedToTestNetwork;
+    }
+    return true;
+  }, [
+    isConnectedToTestNetwork,
+    ctConfirmModal.txData?.outNetwork,
+    connectedChainId,
+  ]);
+
   return (
     <Modal
-      isOpen={ctConfirmModal.isOpen && !refreshOpen.isOpen}
+      isOpen={ctConfirmModal.isOpen && !refreshOpen.isOpen && isNetworkValid}
       onClose={onCloseCTConfirmModal}
       isCentered
     >
@@ -142,11 +165,14 @@ export default function CTModal() {
         borderRadius={"16px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
-          <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
-            {isProvide && ctConfirmModal.type === ModalType.Trade
-              ? "Confirm Provide"
-              : modalTitles[ctConfirmModal.type]}
-          </Text>
+          <Flex>
+            <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
+              {isProvide && ctConfirmModal.type === ModalType.Trade
+                ? "Confirm Provide"
+                : modalTitles[ctConfirmModal.type]}
+            </Text>
+            <BetaIcon marginLeft={"8px"} />
+          </Flex>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
           <CloseButton onClick={onCloseCTConfirmModal} />
@@ -173,6 +199,7 @@ export default function CTModal() {
               subgraphData={ctConfirmModal.subgraphData}
               provideCT={provideCT as ContractWrite}
               requestRegisteredToken={requestRegisteredToken as ContractWrite}
+              forConfirmProviding={ctConfirmModal.forConfirmProviding}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />

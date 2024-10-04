@@ -24,6 +24,7 @@ import {
 } from "@/recoil/history/transaction";
 import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
+import { BetaIcon } from "@/staging/components/cross-trade/components/common/BetaIcon";
 
 export default function AccountHistory() {
   const [isOpen, setIsOpen] = useRecoilState(accountDrawerStatus);
@@ -199,7 +200,15 @@ export default function AccountHistory() {
                 setSelectedTab(HISTORY_SORT.CROSS_TRADE);
               }}
             >
-              Cross Trade
+              <Flex
+                w={"100%"}
+                columnGap={"6px"}
+                justifyContent={"center"}
+                alignItems={"center"}
+              >
+                <Text>Cross Trade</Text>
+                <BetaIcon />
+              </Flex>
             </Box>
           </Flex>
           {subCategoryButtons}

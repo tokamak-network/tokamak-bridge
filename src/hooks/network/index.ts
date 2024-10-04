@@ -40,8 +40,12 @@ export default function useConnectedNetwork() {
           supportedChain.filter((e) => e.chainId === chain.id)[0]?.layer ??
           null,
         isConnectedToMainNetwork:
-          chain.id === SupportedChainId["MAINNET"] ||
-          chain.id === SupportedChainId["TITAN"],
+          chain.id === SupportedChainId.MAINNET ||
+          chain.id === SupportedChainId.TITAN,
+        isConnectedToTestNetwork:
+          chain.id === SupportedChainId.SEPOLIA ||
+          chain.id === SupportedChainId.TITAN_SEPOLIA ||
+          chain.id === SupportedChainId.THANOS_SEPOLIA,
         blockExplorer: chain.blockExplorers?.default.url,
       };
     }
@@ -57,8 +61,12 @@ export default function useConnectedNetwork() {
           supportedChain.filter((e) => e.chainId === inNetwork.chainId)[0]
             ?.layer ?? null,
         isConnectedToMainNetwork:
-          inNetwork.chainId === SupportedChainId["MAINNET"] ||
-          inNetwork.chainId === SupportedChainId["TITAN"],
+          inNetwork.chainId === SupportedChainId.MAINNET ||
+          inNetwork.chainId === SupportedChainId.TITAN,
+        isConnectedToTestNetwork:
+          inNetwork.chainId === SupportedChainId.SEPOLIA ||
+          inNetwork.chainId === SupportedChainId.TITAN_SEPOLIA ||
+          inNetwork.chainId === SupportedChainId.THANOS_SEPOLIA,
         blockExplorer: "",
       };
     }
@@ -89,7 +97,7 @@ export default function useConnectedNetwork() {
 
       return supportedChain
         .filter((chain) => chain.isTestnet)
-        .filter((chain) => chain.chainId !== 111551119090);
+        .filter((chain) => chain.chainId !== SupportedChainId.THANOS_SEPOLIA);
     }
   }, [chainInfo]);
 

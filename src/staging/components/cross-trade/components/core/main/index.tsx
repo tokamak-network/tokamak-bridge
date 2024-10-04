@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
@@ -8,6 +8,7 @@ import ImagePoolBox from "@/staging/components/cross-trade/components/core/comin
 import CTMain from "@/staging/components/cross-trade/components/core/main/CTMain";
 import { ATOM_pool_page, ButtonType_Pools } from "@/recoil/pool/pages";
 import { useRecoilState } from "recoil";
+import { BetaIcon } from "../../common/BetaIcon";
 
 interface CrossTradeButtonProps {
   type: ButtonType_Pools;
@@ -68,6 +69,11 @@ export default function CrossTrade() {
       </Text>
     </Button>
   );
+
+  //Initial state when the page is loaded
+  useEffect(() => {
+    setActiveButton(ButtonType_Pools.CROSS_TRADE);
+  }, []);
 
   return (
     <Flex
@@ -148,9 +154,14 @@ export default function CrossTrade() {
                 color={"#FFFFFF"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                {ButtonType_Pools.CROSS_TRADE === activeButton
-                  ? "Cross Trade Bridge Pool"
-                  : "Uniswap V3 pool"}
+                <Flex columnGap={"8px"}>
+                  {ButtonType_Pools.CROSS_TRADE === activeButton
+                    ? "Cross Trade Bridge Pool"
+                    : "Uniswap V3 pool"}
+                  {ButtonType_Pools.CROSS_TRADE === activeButton && (
+                    <BetaIcon />
+                  )}
+                </Flex>
               </Text>
               <Text
                 fontWeight={400}
