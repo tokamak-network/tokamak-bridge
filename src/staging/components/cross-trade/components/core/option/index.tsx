@@ -213,7 +213,7 @@ export default function CTOptionModal() {
       <ModalOverlay />
       <ModalContent
         mb={mobileView ? 0 : "auto"}
-        alignSelf='flex-end'
+        alignSelf={mobileView ? "flex-end" : "center"}
         width={"404px"}
         bg='#1F2128'
         p={"20px"}

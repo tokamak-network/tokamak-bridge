@@ -8,6 +8,7 @@ import {
   Box,
   Text,
 } from "@chakra-ui/react";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
@@ -29,6 +30,7 @@ import { ctRefreshModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 
 export default function CTModal() {
+  const { mobileView } = useMediaView();
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<{
@@ -132,12 +134,15 @@ export default function CTModal() {
     <Modal
       isOpen={ctConfirmModal.isOpen && !refreshOpen.isOpen}
       onClose={onCloseCTConfirmModal}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
     >
       <ModalOverlay />
       <ModalContent
+        mb={mobileView ? 0 : "auto"}
+        alignSelf={mobileView ? "flex-end" : "center"}
         width={"404px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
       >
