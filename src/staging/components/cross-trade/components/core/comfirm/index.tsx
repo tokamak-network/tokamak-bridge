@@ -34,6 +34,7 @@ import { BetaIcon } from "../../common/BetaIcon";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
+
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
   const [isChecked, setIsChecked] = useState<{
     firstChecked: boolean;
@@ -130,17 +131,24 @@ export default function CTModal() {
     }
   }, [isServiceFeeUpdated, saleCount, ctConfirmModal]);
 
-  const { isConnectedToTestNetwork } = useConnectedNetwork();
+  const { isConnectedToTestNetwork, connectedChainId } = useConnectedNetwork();
   const isNetworkValid = useMemo(() => {
-    if (ctConfirmModal.txData?.outNetwork && isConnectedToTestNetwork) {
+    if (
+      ctConfirmModal.txData?.outNetwork &&
+      isConnectedToTestNetwork !== undefined
+    ) {
       const requiredChainId = ctConfirmModal.txData?.outNetwork;
       const isMainNetwork = requiredChainId === SupportedChainId.MAINNET;
       if (isMainNetwork) return !isConnectedToTestNetwork;
       const isTestNetwork = requiredChainId === SupportedChainId.SEPOLIA;
       if (isTestNetwork) return isConnectedToTestNetwork;
     }
-    return false;
-  }, [isConnectedToTestNetwork, ctConfirmModal.txData?.outNetwork]);
+    return true;
+  }, [
+    isConnectedToTestNetwork,
+    ctConfirmModal.txData?.outNetwork,
+    connectedChainId,
+  ]);
 
   return (
     <Modal
@@ -190,6 +198,7 @@ export default function CTModal() {
               subgraphData={ctConfirmModal.subgraphData}
               provideCT={provideCT as ContractWrite}
               requestRegisteredToken={requestRegisteredToken as ContractWrite}
+              forConfirmProviding={ctConfirmModal.forConfirmProviding}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />

@@ -115,7 +115,8 @@ export default function CTMain() {
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
   const observer = useRef<IntersectionObserver | null>(null);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { isConnectedToMainNetwork, isConnectedToTestNetwork } =
+    useConnectedNetwork();
 
   //will be refactored to controll fetch data with it to save traffics
   useEffect(() => {
@@ -305,7 +306,7 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {isLoading && (
+          {isLoading && isConnectedToTestNetwork && (
             <Tr
               key={0}
               sx={{

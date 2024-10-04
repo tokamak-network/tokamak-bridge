@@ -42,6 +42,10 @@ export default function useConnectedNetwork() {
         isConnectedToMainNetwork:
           chain.id === SupportedChainId.MAINNET ||
           chain.id === SupportedChainId.TITAN,
+        isConnectedToTestNetwork:
+          chain.id === SupportedChainId.SEPOLIA ||
+          chain.id === SupportedChainId.TITAN_SEPOLIA ||
+          chain.id === SupportedChainId.THANOS_SEPOLIA,
         blockExplorer: chain.blockExplorers?.default.url,
       };
     }
