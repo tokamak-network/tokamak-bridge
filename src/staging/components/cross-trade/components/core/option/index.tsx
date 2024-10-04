@@ -9,6 +9,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useState, useEffect, useCallback, useMemo } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
@@ -37,6 +38,8 @@ import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import commafy from "@/utils/trim/commafy";
 
 export default function CTOptionModal() {
+  const { mobileView } = useMediaView();
+
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
 
   // CTConfirmDetail button 관련 state 및 function Start @Robert
@@ -201,11 +204,18 @@ export default function CTOptionModal() {
   ]);
 
   return (
-    <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
+    <Modal
+      isOpen={ctOptionModal}
+      onClose={onCloseCTOptionModal}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent
+        mb={mobileView ? 0 : "auto"}
+        alignSelf='flex-end'
         width={"404px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
       >
@@ -255,10 +265,10 @@ export default function CTOptionModal() {
             handleButtonMainClick={handleButtonMainClick}
           />
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter p={0} display='block'>
           <Button
             mt={"12px"}
-            width="full"
+            width='full'
             height={"48px"}
             borderRadius={"8px"}
             sx={{
