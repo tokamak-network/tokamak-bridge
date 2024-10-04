@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
@@ -68,6 +68,11 @@ export default function CrossTrade() {
       </Text>
     </Button>
   );
+
+  //Initial state when the page is loaded
+  useEffect(() => {
+    setActiveButton(ButtonType_Pools.CROSS_TRADE);
+  }, []);
 
   return (
     <Flex
