@@ -68,6 +68,7 @@ export default function CTModal() {
     setIsChecked({
       firstChecked: false,
       secondChecked: false,
+      thirdChecked: false,
     });
     onCloseCTConfirmModal();
   };
