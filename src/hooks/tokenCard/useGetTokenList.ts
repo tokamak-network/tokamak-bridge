@@ -40,7 +40,8 @@ export function useGetTokenList() {
       return result.length > 1 ? [result[0]] : [{ ...result[0], isNew: true }];
     }
     //in case searching token with symbol name
-    if (searchedTokenName?.nameOrAdd && tokenListForSelectedNetwork) {``
+    if (searchedTokenName?.nameOrAdd && tokenListForSelectedNetwork) {
+      ``;
       // const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
       //remove duplicated value when a user search it with an address
       return tokenListForSelectedNetwork.filter((token) => {

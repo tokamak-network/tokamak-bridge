@@ -36,7 +36,7 @@ export type SupportedTokens_T = TokenInfo[];
 
 export const supportedTokens: SupportedTokens_T = [
   {
-    tokenName: "ETH",
+    tokenName: "Ethereum",
     tokenSymbol: "ETH",
     address: {
       MAINNET: "",
@@ -55,7 +55,7 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
   {
-    tokenName: "WETH",
+    tokenName: "Wrapped Ethereum",
     tokenSymbol: "WETH",
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,

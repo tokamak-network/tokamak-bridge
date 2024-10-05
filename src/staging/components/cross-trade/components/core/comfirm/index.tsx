@@ -128,8 +128,6 @@ export default function CTModal() {
     }
   }, [isServiceFeeUpdated, saleCount, ctConfirmModal]);
 
-  console.log("ctConfirmModal", ctConfirmModal);
-
   return (
     <Modal
       isOpen={ctConfirmModal.isOpen && !refreshOpen.isOpen}
