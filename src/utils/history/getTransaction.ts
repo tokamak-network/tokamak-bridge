@@ -11,11 +11,24 @@ import {
 } from "./getCurrentStatus";
 import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
 import { SentMessages } from "@/types/activity/history";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { OVM_ETH_BRIDGE } from "@/constant/contracts";
 
-const getTokenInfo = (tokenAddress: string) => {
+const getTokenInfo = (tokenAddress: string, chainId: number) => {
+  if (tokenAddress === OVM_ETH_BRIDGE) {
+    return {
+      name: "ETH",
+      symbol: "ETH",
+      decimals: 18,
+    };
+  }
+
   for (const token of supportedTokens) {
     for (const [network, address] of Object.entries(token.address)) {
-      if (address?.toLowerCase() === tokenAddress.toLowerCase()) {
+      if (
+        address?.toLowerCase() === tokenAddress.toLowerCase() &&
+        SupportedChainId[network as keyof typeof SupportedChainId] === chainId
+      ) {
         return {
           name: token.tokenName as string,
           symbol: token.tokenSymbol as string,
@@ -24,17 +37,20 @@ const getTokenInfo = (tokenAddress: string) => {
       }
     }
   }
-  return null;
+  throw new Error(`Token address(${tokenAddress}) not found`);
 };
 
 export const getTransactionToken = (
   l1TokenAddress: string,
   l2TokenAddress: string,
   amount: string,
-  isL1: boolean
-): { l1Token: TransactionToken | null; l2Token: TransactionToken | null } => {
-  const tokenInfo = getTokenInfo(isL1 ? l1TokenAddress : l2TokenAddress);
-  if (tokenInfo === null) return { l1Token: null, l2Token: null };
+  isL1: boolean,
+  chainId: number
+): { l1Token: TransactionToken; l2Token: TransactionToken } => {
+  const tokenInfo = getTokenInfo(
+    isL1 ? l1TokenAddress : l2TokenAddress,
+    chainId
+  );
   const l2Token: TransactionToken = {
     ...tokenInfo,
     address: l2TokenAddress,

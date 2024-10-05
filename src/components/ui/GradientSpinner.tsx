@@ -23,7 +23,7 @@ export default function GradientSpinner(props: FlexProps) {
       h={{ base: "73px", lg: "160px" }}
       w={{ baes: "100%", lg: "100%" }}
       borderRadius={"8px"}
-      border={"1px solid #313442"}
+      // border={"1px solid #313442"}
       bg={"#15161D"}
       flexDir={"column"}
       {...props}
