@@ -498,7 +498,7 @@ export default function CTConfirmCrossTradeFooter(
                 }`}
               </Text>
             )}
-            {isRevokeForUSDT && !isInRelay && (
+            {isRevokeForUSDT && !isInRelay && !isLoading && (
               <TooltipForRevoke
                 isGrayIcon={approveBtnDisabled ? true : false}
                 isBlueIcon={!approveBtnDisabled ? true : false}
