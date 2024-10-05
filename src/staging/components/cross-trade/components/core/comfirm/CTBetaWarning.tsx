@@ -65,6 +65,7 @@ export const CTBetaWarning = () => {
           <Button
             w={"100%"}
             borderRadius={"8px"}
+            h={"48px"}
             bgColor={"#DB00FF"}
             _hover={{}}
             _active={{}}

@@ -15,9 +15,17 @@ export default function CTOptionDisabledDetail() {
       bg={"#17181D"}
     >
       <Box>
-        <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-          Cross Trade Bridge
-        </Text>
+        <Flex>
+          <Text
+            fontWeight={600}
+            fontSize={"16px"}
+            lineHeight={"24px"}
+            mr={"2px"}
+          >
+            Cross Trade Bridge
+          </Text>
+          <BetaIcon marginLeft={"4px"} marginRight={"2px"} />
+        </Flex>
         <Box
           mt={"13px"}
           bg={"#3C2D31"}
