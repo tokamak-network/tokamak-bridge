@@ -36,7 +36,9 @@ import {
 import { Resolved, SentMessages } from "@/types/activity/history";
 import {
   getCurrentDepositStatus,
+  getCurrentThanosDepositStatus,
   getCurretStatus,
+  getThanosDepositMsgHashes,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { utils } from "ethers";
@@ -83,7 +85,11 @@ import {
   getThanosMessageStatuaWithSubgraph,
   getThanosMessageStatus,
 } from "../utils/getMessageStatus";
-import { GET_withdrawalProvens_withdrawalFinalizeds } from "@/graphql/data/queries";
+import {
+  GET_RelayedMessages,
+  GET_SentMessageExtensions,
+  GET_withdrawalProvens_withdrawalFinalizeds,
+} from "@/graphql/data/queries";
 import { transactionData } from "@/recoil/global/transaction";
 import {
   pendingTransactionHashes,
@@ -204,6 +210,42 @@ export const useSubgraph = () => {
     pollInterval: 5000,
     client: L1_CLIENT[1],
   });
+  const l1ThanosDepositSentMessages = !_l1ThanosData
+    ? null
+    : _l1ThanosData?.sentMessages ?? [];
+  const l1ThanosDepositTxHashes = !l1ThanosDepositSentMessages
+    ? null
+    : l1ThanosDepositSentMessages.map((msg: any) => msg.transactionHash);
+  const {
+    data: _l1ThanosSentMessageExtensionsData,
+    loading: _l1ThanosSentMessageExtensionsLoading,
+    error: _l1ThanosSentMessageExtensionsError,
+  } = useQuery(GET_SentMessageExtensions, {
+    variables: {
+      transactionHashes: l1ThanosDepositTxHashes,
+      blockNumber: thanosSepoliaDipositHistory.latestRelayedBlockNumber,
+    },
+    pollInterval: 5000,
+    client: L1_CLIENT[1],
+    skip: !l1ThanosDepositTxHashes,
+  });
+  const l1ThanosDepositMessageHashes = getThanosDepositMsgHashes(
+    l1ThanosDepositSentMessages,
+    _l1ThanosSentMessageExtensionsData?.sentMessageExtension1S ?? []
+  );
+  const {
+    data: _l2ThanosRelayedMessageData,
+    loading: _l2ThanosRelayedMessageLoading,
+    error: _l2ThanosRelayedMessageError,
+  } = useQuery(GET_RelayedMessages, {
+    variables: {
+      msgHashes: l1ThanosDepositMessageHashes,
+    },
+    pollInterval: 5000,
+    client: L2_THANOS_CLIENT[0],
+    skip: !l1ThanosDepositMessageHashes,
+  });
+
   const {
     data: _l2Thanos,
     loading: _l2ThanosLoading,
@@ -247,13 +289,20 @@ export const useSubgraph = () => {
     if (_l1ThanosOptimismPortalError) {
       errorHandler(_l1ThanosOptimismPortalError);
     }
+    if (_l1ThanosSentMessageExtensionsError) {
+      errorHandler(_l1ThanosSentMessageExtensionsError);
+    }
+    if (_l2ThanosRelayedMessageError) {
+      errorHandler(_l2ThanosRelayedMessageError);
+    }
   }, [
     _l1TitanError,
     _l2TitanError,
     _l2ThanosError,
     _l1ThanosOptimismPortalError,
+    _l1ThanosSentMessageExtensionsError,
+    _l2ThanosRelayedMessageError,
   ]);
-
   return {
     l1TitanData: _l1TitanData,
     l1TitanLoading: _l1TitanLoading,
@@ -264,6 +313,8 @@ export const useSubgraph = () => {
     l2TitanData: _l2Titan,
     l2ThanosData: _l2Thanos,
     l1ThanosOptimismPortal: _l1ThanosOptimismPortal,
+    l1ThanosSentMsgExtensions: _l1ThanosSentMessageExtensionsData,
+    l2ThanosRelayedMessages: _l2ThanosRelayedMessageData,
   };
 };
 
@@ -542,7 +593,12 @@ export const useDepositData = () => {
   >(null);
   const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { l1TitanData, l1ThanosData } = useSubgraph();
+  const {
+    l1TitanData,
+    l1ThanosData,
+    l2ThanosRelayedMessages,
+    l1ThanosSentMsgExtensions,
+  } = useSubgraph();
   const { L1Provider } = useProvier();
 
   const fetchTitanData = useCallback(async () => {
@@ -644,10 +700,13 @@ export const useDepositData = () => {
       l1ThanosData &&
       isConnectedToMainNetwork !== undefined &&
       !isConnectedToMainNetwork &&
-      L1Provider
+      L1Provider &&
+      l2ThanosRelayedMessages &&
+      l1ThanosSentMsgExtensions
     ) {
-      const erc20BridgeInitiateds = l1ThanosData.erc20BridgeInitiateds;
       const l1SentMessges = l1ThanosData.sentMessages;
+      const relayedMessages = l2ThanosRelayedMessages.relayedMessages;
+      const msgExtentions = l1ThanosSentMsgExtensions.sentMessageExtension1S;
       let latestRelayedBlockNumber =
         thanosSepoliaDipositHistory.latestRelayedBlockNumber ?? "0";
       const result: DepositTransactionHistory[] = await Promise.all(
@@ -660,15 +719,14 @@ export const useDepositData = () => {
             gasLimit: sentMessage.gasLimit,
             transactionHash: sentMessage.transactionHash,
           };
-          const erc20BridgeInitiated = erc20BridgeInitiateds.find(
-            (item: any) => item.transactionHash === sentMessage.transactionHash
+          const msgExt = msgExtentions.find(
+            (msg: any) => msg.transactionHash === resolved.transactionHash
           );
           const { currentStatus, relayedMessageTx } =
-            await getCurrentDepositStatus(
+            getCurrentThanosDepositStatus(
               resolved,
-              isConnectedToMainNetwork,
-              "Thanos",
-              erc20BridgeInitiated?.amount ?? "0"
+              msgExt.value,
+              relayedMessages
             );
           const l1TxReceipt = await L1Provider.getTransactionReceipt(
             sentMessage.transactionHash
@@ -743,7 +801,13 @@ export const useDepositData = () => {
         setThanosSepoliaDipositHistory(newThanosDipositHistory);
       }
     }
-  }, [l1ThanosData, isConnectedToMainNetwork, L1Provider, refetchHistory]);
+  }, [
+    l1ThanosData,
+    isConnectedToMainNetwork,
+    L1Provider,
+    refetchHistory,
+    l2ThanosRelayedMessages,
+  ]);
 
   const getAllDepositeData = useCallback(async () => {
     if (

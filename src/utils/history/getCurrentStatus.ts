@@ -141,6 +141,36 @@ export const getCurretStatus = async (
   return { currentStatus: 0, stateBatchAppended: undefined };
 };
 
+export const getMsgHash = (msg: any, value: string) => {
+  return hashCrossDomainMessagev1(
+    BigNumber.from(msg.messageNonce),
+    msg.sender,
+    msg.target,
+    BigNumber.from(value),
+    BigNumber.from(msg.gasLimit),
+    msg.message
+  );
+};
+
+export const getThanosDepositMsgHashes = (
+  sentMessages: any[],
+  messageExtensions: any[]
+) => {
+  if (
+    !sentMessages ||
+    !messageExtensions ||
+    sentMessages.length !== messageExtensions.length
+  )
+    return null;
+  return sentMessages.map((msg: any) => {
+    const value = messageExtensions.find(
+      (ext: any) => ext.transactionHash === msg.transactionHash
+    )?.value;
+    if (!value) return;
+    return getMsgHash(msg, value);
+  });
+};
+
 export const getCurrentDepositStatus = async (
   resolved: Resolved,
   isConnectedToMainnetwork: boolean,
@@ -200,4 +230,17 @@ export const getCurrentDepositStatus = async (
     return { currentStatus: 4, relayedMessageTx };
   }
   return { currentStatus: 3, relayedMessageTx: undefined };
+};
+
+export const getCurrentThanosDepositStatus = (
+  resolved: Resolved,
+  value: string,
+  relayedMessages: any[]
+): { currentStatus: CurrentDepositStatus; relayedMessageTx?: RelayMessage } => {
+  const msgHash = getMsgHash(resolved, value);
+  const relayedMsg = relayedMessages.find(
+    (msg: any) => msg.msgHash === msgHash
+  );
+  if (!relayedMsg) return { currentStatus: 3, relayedMessageTx: undefined };
+  else return { currentStatus: 4, relayedMessageTx: relayedMsg };
 };

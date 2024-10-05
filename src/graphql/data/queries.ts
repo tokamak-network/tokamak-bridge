@@ -129,3 +129,36 @@ export const GET_withdrawalProvens_withdrawalFinalizeds = gql`
     }
   }
 `;
+
+export const GET_SentMessageExtensions = gql`
+  query GET_SentMessageExtensions(
+    $transactionHashes: [String!]!
+    $blockNumber: String!
+  ) {
+    sentMessageExtension1S(
+      where: {
+        transactionHash_in: $transactionHashes
+        blockNumber_gt: $blockNumber
+      }
+    ) {
+      id
+      sender
+      value
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+  }
+`;
+
+export const GET_RelayedMessages = gql`
+  query RelayedMessages($msgHashes: [String!]!) {
+    relayedMessages(where: { msgHash_in: $msgHashes }) {
+      id
+      msgHash
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+  }
+`;
