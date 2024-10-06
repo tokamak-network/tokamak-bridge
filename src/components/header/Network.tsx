@@ -14,26 +14,14 @@ import { useAccount, useSwitchNetwork } from "wagmi";
 import { SetStateAction, useEffect, useMemo, useRef, useState } from "react";
 import Select from "react-select";
 import { Overlay_Index } from "@/types/style/overlayIndex";
-import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import {
+  convertNetworkName,
+  formatNetworkName,
+} from "@/utils/network/convertNetworkName";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
   label: SupportedChainProperties["chainName"];
-};
-
-const formatVariableName = (variable: string) => {
-  if (!variable.includes("_")) {
-    return variable.charAt(0).toUpperCase() + variable.slice(1).toLowerCase();
-  }
-  return variable?.replace(/([A-Z]+)_([A-Z]+)/g, (_, p1, p2) => {
-    return (
-      p1.charAt(0) +
-      p1.slice(1).toLowerCase() +
-      " " +
-      p2.charAt(0) +
-      p2.slice(1).toLowerCase()
-    );
-  });
 };
 
 const customStyles = (maxHeight: string, maxWidth: string) => {

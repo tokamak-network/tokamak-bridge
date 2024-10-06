@@ -13,6 +13,7 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import { TokenInfo } from "types/token/supportedToken";
 import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
+import commafy from "@/utils/trim/commafy";
 
 interface Token {
   chainId: number;
@@ -33,16 +34,14 @@ interface ConfirmDetailProps {
 export default function ConfirmDetails(props: ConfirmDetailProps) {
   const { isInNetwork, inToken } = props;
 
-  console.log(inToken);
-
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
-    tokenName: inToken?.tokenSymbol as string,
+    tokenName: inToken?.tokenName as string,
     amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
   });
 
   const marketPrice = useMemo(() => {
     if (tokenPriceWithAmount) {
-      return `$${tokenPriceWithAmount}`;
+      return `$${commafy(tokenPriceWithAmount)}`;
     }
     return "NA";
   }, [tokenPriceWithAmount]);
@@ -86,7 +85,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                 tokenSymbol={inToken?.tokenSymbol}
               />
               <Link
-                target='_blank'
+                target="_blank"
                 href={
                   inToken?.token.chainId
                     ? `${

@@ -42,6 +42,7 @@ import {
   getWaitMessage,
 } from "@/staging/components/new-confirm/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
+import useConnectedNetwork from "@/hooks/network";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 import Link from "next/link";
@@ -57,6 +58,7 @@ export default function DepositWithdrawConfirmModal() {
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
   const transactionData = depositWithdrawConfirmModal.transaction;
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
