@@ -23,7 +23,6 @@ import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 export default function Warning() {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
-  console.log("isNotSupportForBridge", isNotSupportForBridge);
   const { inToken, outToken } = useInOutTokens();
   const { isBalanceOver } = useInputBalanceCheck();
   const { mode } = useGetMode();
