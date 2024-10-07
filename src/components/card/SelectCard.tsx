@@ -124,17 +124,6 @@ const SearchToken = () => {
       debouncedSearch(value);
     }
   };
-  // useEffect(() => {
-  //   if (searchValue === "") {
-  //     return setSearchToken(null);
-  //   }
-  //   if (connectedChainId) {
-  //     return setSearchToken({
-  //       nameOrAdd: searchValue,
-  //       chainId: connectedChainId,
-  //     });
-  //   }
-  // }, [searchValue]);
 
   return (
     <Flex

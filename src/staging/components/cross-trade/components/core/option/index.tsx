@@ -9,7 +9,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import {
@@ -34,10 +34,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
-import commafy from "@/utils/trim/commafy";
 import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
-import useAddTokenToStorage from "@/hooks/storage/useAddTokenToStorage";
 
 export default function CTOptionModal() {
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
@@ -92,8 +89,6 @@ export default function CTOptionModal() {
       setServiceFee(recommendedFee.toString());
     }
   }, [recommendedFee, ctOptionModal]);
-
-  const { storedTokenList } = useAddTokenToStorage();
 
   const handleClickConfirm = () => {
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
@@ -197,10 +192,7 @@ export default function CTOptionModal() {
         inputWarningCheck === WarningType.Critical
       );
     }
-    if (storedTokenList.find((tx) => tx.address === inToken?.address))
-      return true;
   }, [
-    storedTokenList,
     activeSubButtonValue,
     serviceFee,
     inputWarningCheck,
