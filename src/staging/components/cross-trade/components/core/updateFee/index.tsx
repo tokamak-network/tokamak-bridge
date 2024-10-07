@@ -37,6 +37,7 @@ import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { useAccount } from "wagmi";
 import { BetaIcon } from "../../common/BetaIcon";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
@@ -283,10 +284,32 @@ export default function CTFeeUpdateModal() {
       resetAllStates();
     }
   }, [isRequester]);
+  const { isConnectedToTestNetwork, connectedChainId } = useConnectedNetwork();
+  const isNetworkValid = useMemo(() => {
+    if (
+      ctUpdateFeeModal.txData?.outNetwork &&
+      isConnectedToTestNetwork !== undefined
+    ) {
+      const requiredChainId = ctUpdateFeeModal.txData?.outNetwork;
+      const isMainNetwork = requiredChainId === SupportedChainId.MAINNET;
+      if (isMainNetwork) return !isConnectedToTestNetwork;
+      const isTestNetwork = requiredChainId === SupportedChainId.SEPOLIA;
+      if (isTestNetwork) return isConnectedToTestNetwork;
+    }
+    return true;
+  }, [
+    isConnectedToTestNetwork,
+    ctUpdateFeeModal.txData?.outNetwork,
+    connectedChainId,
+  ]);
+
+  useEffect(() => {
+    if (isNetworkValid) return resetAllStates;
+  }, [isNetworkValid]);
 
   return (
     <Modal
-      isOpen={ctUpdateFeeModal.isOpen && isRequester}
+      isOpen={ctUpdateFeeModal.isOpen && isRequester && isNetworkValid}
       onClose={resetAllStates}
       isCentered
     >

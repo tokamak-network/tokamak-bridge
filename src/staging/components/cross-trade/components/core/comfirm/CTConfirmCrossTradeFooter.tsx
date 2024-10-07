@@ -167,13 +167,18 @@ export default function CTConfirmCrossTradeFooter(
     if (!txData) return new Error("txData is not defined");
     try {
       if (isProvide) {
-        if (!subgraphData) return new Error("subgraphData is not defined");
+        if (!subgraphData) return console.error("subgraphData is not defined");
         if (!forConfirmProviding)
-          return new Error("forConfirmProviding data is not defined");
+          return console.error("forConfirmProviding data is not defined");
+
         const { isUpdateFee, initialCTAmount, editedCTAmount } =
           forConfirmProviding;
         const _editedAmount = isUpdateFee ? editedCTAmount : 0;
+
         if (isZeroAddress(subgraphData._l1token)) {
+          const msgValue = isUpdateFee
+            ? editedCTAmount
+            : BigInt(subgraphData._ctAmount);
           console.log(
             "--provideCT params--",
             ZERO_ADDRESS,
@@ -187,7 +192,7 @@ export default function CTConfirmCrossTradeFooter(
             500000,
             subgraphData._hashValue,
             {
-              value: BigInt(subgraphData._ctAmount),
+              value: msgValue,
             }
           );
           return provideCT({
