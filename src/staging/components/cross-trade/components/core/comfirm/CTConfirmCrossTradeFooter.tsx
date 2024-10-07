@@ -208,7 +208,7 @@ export default function CTConfirmCrossTradeFooter(
               500000,
               subgraphData._hashValue,
             ],
-            value: BigInt(subgraphData._ctAmount),
+            value: msgValue,
           });
         }
         console.log("--provideCT params--", {
