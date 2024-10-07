@@ -152,6 +152,14 @@ export default function CTModal() {
     ctConfirmModal.txData?.outNetwork,
     connectedChainId,
   ]);
+  const { l2RelayQueue } = useRequestData();
+  const isInRelay = useMemo(() => {
+    const subgraphData = ctConfirmModal.subgraphData;
+    if (l2RelayQueue && subgraphData?._saleCount) {
+      return l2RelayQueue.includes(subgraphData._saleCount);
+    }
+    return false;
+  }, [l2RelayQueue, ctConfirmModal.subgraphData]);
 
   const { address, connector } = useAccount();
   const [previousAddress, setPreviousAddress] = useState<Hash | null>(null);
@@ -191,7 +199,7 @@ export default function CTModal() {
           <CloseButton onClick={onCloseCTConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          {isProvide && ctConfirmModal.type !== "history" && (
+          {isProvide && ctConfirmModal.type !== "history" && !isInRelay && (
             <WrongNetwork style={{ marginBottom: "12px" }} />
           )}
           <CTConfirmDetail
@@ -213,6 +221,7 @@ export default function CTModal() {
               provideCT={provideCT as ContractWrite}
               requestRegisteredToken={requestRegisteredToken as ContractWrite}
               forConfirmProviding={ctConfirmModal.forConfirmProviding}
+              isInRelay={isInRelay}
             />
           ) : (
             <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />

@@ -35,6 +35,7 @@ import useConnectWallet from "@/hooks/account/useConnectWallet";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
 import { WarningText } from "@/components/ui/WarningText";
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -55,6 +56,7 @@ type TradeConfirmationProps = {
     initialCTAmount: string;
     editedCTAmount: bigint;
   };
+  isInRelay?: boolean;
 };
 
 export default function CTConfirmCrossTradeFooter(
@@ -69,6 +71,7 @@ export default function CTConfirmCrossTradeFooter(
     provideCT,
     requestRegisteredToken,
     forConfirmProviding,
+    isInRelay,
   } = props;
 
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
@@ -91,14 +94,6 @@ export default function CTConfirmCrossTradeFooter(
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
-  const { l2RelayQueue } = useRequestData();
-  const isInRelay = useMemo(() => {
-    if (l2RelayQueue && subgraphData?._saleCount) {
-      return l2RelayQueue.includes(subgraphData._saleCount);
-    }
-    return false;
-  }, [l2RelayQueue, subgraphData?._saleCount]);
-
   const btnDisabled = useMemo(() => {
     if (!isConnected) {
       return false;
@@ -124,8 +119,8 @@ export default function CTConfirmCrossTradeFooter(
   const buttonName = useMemo(() => {
     return !isConnected
       ? "Connect Wallet"
-      : isProvide && !connectedToLayer1
-      ? "Wrong Network "
+      : isProvide && !connectedToLayer1 && !isInRelay
+      ? "Wrong Network"
       : isProvide
       ? isInRelay
         ? "Go to home"
@@ -165,7 +160,10 @@ export default function CTConfirmCrossTradeFooter(
 
   //call a contract call
   const { setModalOpen } = useTxConfirmModal();
+  const { onCloseCTConfirmModal } = useFxConfirmModal();
+
   const requestCrossTrade = useCallback(() => {
+    if (isInRelay) return onCloseCTConfirmModal();
     if (!txData) return new Error("txData is not defined");
     try {
       if (isProvide) {
@@ -284,6 +282,7 @@ export default function CTConfirmCrossTradeFooter(
     requestRegisteredToken,
     provideCT,
     forConfirmProviding,
+    isInRelay,
   ]);
 
   return (
