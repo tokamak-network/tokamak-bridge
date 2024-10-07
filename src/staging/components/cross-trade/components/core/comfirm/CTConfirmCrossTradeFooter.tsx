@@ -35,12 +35,14 @@ import useConnectWallet from "@/hooks/account/useConnectWallet";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
 import { WarningText } from "@/components/ui/WarningText";
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
   isChecked: {
     firstChecked: boolean;
     secondChecked: boolean;
+    thirdChecked: boolean;
   };
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirm: () => void;
@@ -49,6 +51,12 @@ type TradeConfirmationProps = {
   subgraphData?: T_FETCH_REQUEST_LIST_L2;
   provideCT: ContractWrite;
   requestRegisteredToken: ContractWrite;
+  forConfirmProviding?: {
+    isUpdateFee: boolean;
+    initialCTAmount: string;
+    editedCTAmount: bigint;
+  };
+  isInRelay?: boolean;
 };
 
 export default function CTConfirmCrossTradeFooter(
@@ -62,7 +70,10 @@ export default function CTConfirmCrossTradeFooter(
     subgraphData,
     provideCT,
     requestRegisteredToken,
+    forConfirmProviding,
+    isInRelay,
   } = props;
+
   const [provideConfirmed, setProvideConfirmed] = useState<boolean>(false);
   const { isConnectedToMainNetwork, chainName } = useConnectedNetwork();
   const { isConnected } = useAccount();
@@ -83,14 +94,6 @@ export default function CTConfirmCrossTradeFooter(
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
-  const { l2RelayQueue } = useRequestData();
-  const isInRelay = useMemo(() => {
-    if (l2RelayQueue && subgraphData?._saleCount) {
-      return l2RelayQueue.includes(subgraphData._saleCount);
-    }
-    return false;
-  }, [l2RelayQueue, subgraphData?._saleCount]);
-
   const btnDisabled = useMemo(() => {
     if (!isConnected) {
       return false;
@@ -98,7 +101,11 @@ export default function CTConfirmCrossTradeFooter(
     if (isInRelay) return false;
     if (!isApproved || isBalanceOver) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
-    return !isChecked.firstChecked || !isChecked.secondChecked;
+    return (
+      !isChecked.firstChecked ||
+      !isChecked.secondChecked ||
+      !isChecked.thirdChecked
+    );
   }, [
     isProvide,
     isChecked,
@@ -112,8 +119,8 @@ export default function CTConfirmCrossTradeFooter(
   const buttonName = useMemo(() => {
     return !isConnected
       ? "Connect Wallet"
-      : isProvide && !connectedToLayer1
-      ? "Wrong Network "
+      : isProvide && !connectedToLayer1 && !isInRelay
+      ? "Wrong Network"
       : isProvide
       ? isInRelay
         ? "Go to home"
@@ -130,7 +137,9 @@ export default function CTConfirmCrossTradeFooter(
     return isLoading
       ? true
       : mode === "Withdraw"
-      ? !isChecked.firstChecked || !isChecked.secondChecked
+      ? !isChecked.firstChecked ||
+        !isChecked.secondChecked ||
+        !isChecked.thirdChecked
       : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 
@@ -151,12 +160,25 @@ export default function CTConfirmCrossTradeFooter(
 
   //call a contract call
   const { setModalOpen } = useTxConfirmModal();
+  const { onCloseCTConfirmModal } = useFxConfirmModal();
+
   const requestCrossTrade = useCallback(() => {
+    if (isInRelay) return onCloseCTConfirmModal();
     if (!txData) return new Error("txData is not defined");
     try {
       if (isProvide) {
-        if (!subgraphData) return new Error("subgraphData is not defined");
+        if (!subgraphData) return console.error("subgraphData is not defined");
+        if (!forConfirmProviding)
+          return console.error("forConfirmProviding data is not defined");
+
+        const { isUpdateFee, initialCTAmount, editedCTAmount } =
+          forConfirmProviding;
+        const _editedAmount = isUpdateFee ? editedCTAmount : 0;
+
         if (isZeroAddress(subgraphData._l1token)) {
+          const msgValue = isUpdateFee
+            ? editedCTAmount
+            : BigInt(subgraphData._ctAmount);
           console.log(
             "--provideCT params--",
             ZERO_ADDRESS,
@@ -164,12 +186,13 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._requester,
             subgraphData._totalAmount,
             subgraphData._ctAmount,
+            _editedAmount,
             subgraphData._saleCount,
             subgraphData._l2chainId,
             500000,
             subgraphData._hashValue,
             {
-              value: BigInt(subgraphData._ctAmount),
+              value: msgValue,
             }
           );
           return provideCT({
@@ -179,12 +202,13 @@ export default function CTConfirmCrossTradeFooter(
               subgraphData._requester,
               subgraphData._totalAmount,
               subgraphData._ctAmount,
+              _editedAmount,
               subgraphData._saleCount,
               subgraphData._l2chainId,
               500000,
               subgraphData._hashValue,
             ],
-            value: BigInt(subgraphData._ctAmount),
+            value: msgValue,
           });
         }
         console.log("--provideCT params--", {
@@ -193,6 +217,7 @@ export default function CTConfirmCrossTradeFooter(
           _requester: subgraphData._requester,
           _totalAmount: subgraphData._totalAmount,
           _ctAmount: subgraphData._ctAmount,
+          _editedAmount: _editedAmount,
           _saleCount: subgraphData._saleCount,
           _l2chainId: subgraphData._l2chainId,
           _minGasLimit: 500000,
@@ -205,6 +230,7 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._requester,
             subgraphData._totalAmount,
             subgraphData._ctAmount,
+            _editedAmount,
             subgraphData._saleCount,
             subgraphData._l2chainId,
             500000,
@@ -212,6 +238,10 @@ export default function CTConfirmCrossTradeFooter(
           ],
         });
       }
+
+      /**
+       * For Request Cross Trade below:
+       */
 
       const ctAmount =
         BigInt(txData.inToken.amount) - BigInt(txData.serviceFee.toString());
@@ -250,7 +280,15 @@ export default function CTConfirmCrossTradeFooter(
       console.log(e);
       setModalOpen("error");
     }
-  }, [isProvide, inTokenIsETH, txData, requestRegisteredToken, provideCT]);
+  }, [
+    isProvide,
+    inTokenIsETH,
+    txData,
+    requestRegisteredToken,
+    provideCT,
+    forConfirmProviding,
+    isInRelay,
+  ]);
 
   return (
     <Grid mt={"3px"} w={"100%"} rowGap={"12px"} marginTop={"12px"}>
@@ -324,7 +362,38 @@ export default function CTConfirmCrossTradeFooter(
               lineHeight={"20px"}
               letterSpacing={"0.01em"}
             >
-              the request can be edited from L1
+              the request can be edited from L1, and
+            </Text>
+          </Checkbox>
+          <Checkbox
+            isChecked={isChecked.thirdChecked}
+            id={"thirdChecked"}
+            onChange={onCheckboxChange}
+            icon={<CheckCustomIcon />}
+            sx={{
+              ".chakra-checkbox__control": {
+                borderWidth: "1px",
+                borderColor: "#A0A3AD",
+                _focus: {
+                  boxShadow: "none",
+                },
+              },
+              _checked: {
+                "& .chakra-checkbox__control": {
+                  borderColor: "#FFFFFF",
+                },
+              },
+            }}
+            colorScheme="#A0A3AD"
+          >
+            <Text
+              color={isChecked.thirdChecked ? "#FFFFFF" : "#A0A3AD"}
+              fontWeight={400}
+              fontSize={12}
+              lineHeight={"20px"}
+              letterSpacing={"0.01em"}
+            >
+              Cross Trade is in a beta testing phase
             </Text>
           </Checkbox>
         </Flex>
@@ -433,7 +502,7 @@ export default function CTConfirmCrossTradeFooter(
                 }`}
               </Text>
             )}
-            {isRevokeForUSDT && !isInRelay && (
+            {isRevokeForUSDT && !isInRelay && !isLoading && (
               <TooltipForRevoke
                 isGrayIcon={approveBtnDisabled ? true : false}
                 isBlueIcon={!approveBtnDisabled ? true : false}

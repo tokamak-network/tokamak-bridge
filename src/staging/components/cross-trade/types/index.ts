@@ -14,6 +14,11 @@ export type CTConfirmModalType = {
   txData: CT_History | null;
   isProvide?: boolean;
   subgraphData?: T_FETCH_REQUEST_LIST_L2;
+  forConfirmProviding?: {
+    isUpdateFee: boolean;
+    initialCTAmount: string;
+    editedCTAmount: bigint;
+  };
 };
 
 export enum WarningType {

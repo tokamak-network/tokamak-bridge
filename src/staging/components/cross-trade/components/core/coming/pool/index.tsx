@@ -1,7 +1,5 @@
-import Image from "next/image";
 import { useState } from "react";
 import { Box, Text, Flex, Button } from "@chakra-ui/react";
-
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import ScrolltoTopButton from "@/staging/components/cross-trade/components/ScrolltoTopButton";
