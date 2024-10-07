@@ -31,6 +31,8 @@ import { useRecoilState } from "recoil";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { BetaIcon } from "../../common/BetaIcon";
+import { useAccount } from "wagmi";
+import { Hash } from "viem";
 
 export default function CTModal() {
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
@@ -150,6 +152,17 @@ export default function CTModal() {
     ctConfirmModal.txData?.outNetwork,
     connectedChainId,
   ]);
+
+  const { address, connector } = useAccount();
+  const [previousAddress, setPreviousAddress] = useState<Hash | null>(null);
+  useEffect(() => {
+    if (previousAddress !== null && previousAddress !== address && address) {
+      setPreviousAddress(address);
+      return onCloseCTConfirmModal();
+    }
+    if (address) return setPreviousAddress(address);
+    setPreviousAddress(null);
+  }, [address, connector]);
 
   return (
     <Modal
