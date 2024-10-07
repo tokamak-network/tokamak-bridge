@@ -5,6 +5,7 @@ import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import fetchNetworkImage from "@/staging/utils/fetchNetworkImage";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import { convertNetworkName } from "@/utils/network/convertNetworkName";
 
 type TokenPairProp = {
   networkI?: number;
@@ -76,7 +77,7 @@ export default function CTNetworkTransition(props: TokenPairProp) {
   const displayNetworkNameOut =
     chainNameOut === "MAINNET"
       ? "Ethereum"
-      : capitalizeFirstLetter(chainNameOut);
+      : convertNetworkName(chainNameOut as keyof typeof SupportedChainId);
 
   return (
     <Flex alignItems="center">

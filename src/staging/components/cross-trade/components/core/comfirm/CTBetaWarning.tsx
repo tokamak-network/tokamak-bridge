@@ -25,7 +25,7 @@ export const CTBetaWarning = () => {
         bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
-        h={"306px"}
+        h={"228px"}
       >
         <ModalBody
           p={0}
@@ -40,27 +40,9 @@ export const CTBetaWarning = () => {
             Warning
           </Text>
           <Text fontSize={16} fontWeight={400} lineHeight={"26px"} w={"356px"}>
-            Cross trade is currently in beta testing. We <br /> advise against
-            providing large amounts
-            <br /> of liquidity for cross trade at this time. <br />
-            If you encounter any technical issues,
-            <br /> please notify us through{" "}
-            <Link
-              isExternal={true}
-              href="https://github.com/tokamak-network/tokamak-bridge/issues"
-              textDecor={"underline"}
-            >
-              Github issues{" "}
-            </Link>
-            or
-            <br /> our{" "}
-            <Link
-              isExternal={true}
-              href="https://docs.google.com/forms/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/formResponse"
-              textDecor={"underline"}
-            >
-              help form.
-            </Link>
+            Cross trade beta testing is in progress. <br />
+            Refrain from providing large amounts of <br />
+            liquidity, as it may result in financial losses.
           </Text>
           <Button
             w={"100%"}
