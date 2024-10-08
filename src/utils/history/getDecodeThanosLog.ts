@@ -22,6 +22,8 @@ export const getDecodeThanosLog = (
     switch (logs.length) {
       case 13:
         return "NativeToken";
+      case 23:
+        return "StakeTON";
       case 6:
         return "ERC20";
       case 5:
@@ -36,6 +38,8 @@ export const getDecodeThanosLog = (
       : l1ThanosBridgeI.parseLog(
           depositType === "NativeToken"
             ? logs[3]
+            : depositType === "StakeTON"
+            ? logs[11]
             : depositType === "ETH"
             ? logs[0]
             : logs[1]

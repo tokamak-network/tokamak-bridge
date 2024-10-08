@@ -131,7 +131,8 @@ const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.removeLiquidity;
       });
-    case "Approve" || "Revoke":
+    case "Approve":
+    case "Revoke":
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.approve;
       });

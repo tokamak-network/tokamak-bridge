@@ -746,7 +746,6 @@ export const useDepositData = () => {
               Number(latestRelayedBlockNumber),
               Number(sentMessage.blockNumber)
             ).toString();
-
           const { l1TokenAddress, l2TokenAddress, amount } = getDecodeThanosLog(
             l1TxReceipt.logs
           );
