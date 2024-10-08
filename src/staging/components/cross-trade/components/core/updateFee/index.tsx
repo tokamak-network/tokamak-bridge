@@ -295,10 +295,10 @@ export default function CTFeeUpdateModal() {
       <ModalOverlay />
       <ModalContent
         mb={mobileView ? 0 : "auto"}
-        alignSelf='flex-end'
+        alignSelf={mobileView ? "flex-end" : "center"}
+        borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         bg='#1F2128'
         p={"20px"}
-        borderRadius={"16px"}
         width={mobileView ? "100%" : "404px"}
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>

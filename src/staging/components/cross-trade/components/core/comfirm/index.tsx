@@ -141,10 +141,10 @@ export default function CTModal() {
       <ModalContent
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
+        borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={"404px"}
         bg='#1F2128'
         p={"20px"}
-        borderRadius={"16px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
