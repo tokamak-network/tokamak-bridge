@@ -8,27 +8,17 @@ import {
   TITAN_SEPOLIA_CONTRACTS,
 } from "@/contracts/index";
 
-type SupportedMainTokenNames =
-  | "Tokamak Network Token"
-  | "Wrapped TON"
-  | "TONStarter"
-  | "ETH";
-type SupportedEcosystemTokenNames = "Dooropen" | "AURA" | "LYDA";
+type SupportedMainTokenNames = "Tokamak Network Token" | "Wrapped TON" | "ETH";
 type SupportedStableTokenNames = "USD//C";
 
 export type SupportedTokenNames =
   | SupportedMainTokenNames
-  | SupportedEcosystemTokenNames
   | SupportedStableTokenNames;
 
 type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH";
-type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
 type SupportedStableTokens = "USDC";
 
-export type SupportedTokenSymbol =
-  | SupportedMainTokens
-  | SupportedEcosystemTokens
-  | SupportedStableTokens;
+export type SupportedTokenSymbol = SupportedMainTokens | SupportedStableTokens;
 
 export type TokenInfo = {
   tokenName: SupportedTokenNames | String | string;
@@ -47,7 +37,7 @@ export type SupportedTokens_T = TokenInfo[];
 
 export const supportedTokens: SupportedTokens_T = [
   {
-    tokenName: "ETH",
+    tokenName: "Ethereum",
     tokenSymbol: "ETH",
     address: {
       MAINNET: "",
@@ -66,7 +56,7 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
   {
-    tokenName: "WETH",
+    tokenName: "Wrapped Ethereum",
     tokenSymbol: "WETH",
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,

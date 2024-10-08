@@ -152,7 +152,7 @@ export default function CTModal() {
     ctConfirmModal.txData?.outNetwork,
     connectedChainId,
   ]);
-  
+
   const { l2RelayQueue } = useRequestData();
   const isInRelay = useMemo(() => {
     const subgraphData = ctConfirmModal.subgraphData;
