@@ -4,6 +4,8 @@ import CTOptionDisabledOptionSubBg from "@/assets/image/BridgeSwap/ct/ctOptionBu
 import CTOptionalDisabledOptionBg from "@/assets/image/BridgeSwap/ct/ctOptionBg.png";
 import questionIcon from "@/assets/icons/questionGray.svg";
 import Image from "next/image";
+import CTOptionDisabledOptionBg from "@/assets/image/BridgeSwap/ct/ctOptionDisabledOptionBg.png";
+import { BetaIcon } from "../../common/BetaIcon";
 
 export default function CTOptionDisabledDetail() {
   return (
@@ -18,17 +20,22 @@ export default function CTOptionDisabledDetail() {
       backgroundImage={`url('${CTOptionalDisabledOptionBg.src}')`}
     >
       <Box>
-        <Flex gap={"2px"}>
-          <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+        <Flex>
+          <Text
+            fontWeight={600}
+            fontSize={"16px"}
+            lineHeight={"24px"}
+            mr={"2px"}
+          >
             Cross Trade Bridge
           </Text>
-          <Image src={questionIcon} alt="" />
+          <BetaIcon marginLeft={"4px"} marginRight={"2px"} />
         </Flex>
         <Box
           mt={"13px"}
           bg={"#3C2D31"}
           borderRadius={"8px"}
-          // backgroundImage={`url('${CTOptionDisabledOptionSubBg.src}')`}
+          backgroundImage={`url('${CTOptionDisabledOptionBg.src}')`}
           backgroundSize="cover"
           backgroundRepeat="no-repeat"
           gap={"8px"}
@@ -77,6 +84,35 @@ export default function CTOptionDisabledDetail() {
           </Text>
         </Box>
       </Box>
+      <Circle
+        size="72px"
+        border="1px solid #DB00FF"
+        bg="#15161D"
+        pb={"8px"}
+        pt={"6px"}
+      >
+        <Box>
+          <Text
+            fontWeight={600}
+            fontSize={"16px"}
+            lineHeight={"24px"}
+            color={"#DB00FF"}
+            textAlign="center"
+          >
+            $0.16
+          </Text>
+          <Text
+            mt={"1.5px"}
+            fontWeight={400}
+            fontSize={"8px"}
+            lineHeight={"12px"}
+            color={"#DB00FF"}
+            textAlign="center"
+          >
+            Network fee
+          </Text>
+        </Box>
+      </Circle>
     </Flex>
   );
 }

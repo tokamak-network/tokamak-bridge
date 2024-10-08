@@ -9,7 +9,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import {
@@ -34,6 +34,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
 import commafy from "@/utils/trim/commafy";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
@@ -86,7 +87,7 @@ export default function CTOptionModal() {
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return serviceFee;
     }
-  }, [recommendedFee, serviceFee]);
+  }, [recommendedFee, serviceFee, activeSubButtonValue]);
 
   useEffect(() => {
     if (ctOptionModal && recommendedFee !== undefined) {
@@ -150,7 +151,7 @@ export default function CTOptionModal() {
     }
   };
 
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
@@ -213,6 +214,16 @@ export default function CTOptionModal() {
     activeMainButtonValue,
   ]);
 
+  const { isWhiteListToken } = useWhiteListToken();
+  // const isSupportedNetworkForCT = useMemo(
+  //   () =>
+  //     (connectedChainId &&
+  //       connectedChainId === SupportedChainId.TITAN_SEPOLIA) ||
+  //     connectedChainId === SupportedChainId.TITAN,
+  //   [connectedChainId]
+  // );
+  const isSupportedNetworkForCT = true;
+
   return (
     <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
       <ModalOverlay />
@@ -231,7 +242,7 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {isThanosChain(inNetwork?.chainId) || isConnectedToMainNetwork ? (
+          {!isSupportedNetworkForCT || !isWhiteListToken ? (
             <CTOptionDisabledDetail />
           ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             // <CTOptionDisabledDetail />

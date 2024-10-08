@@ -542,7 +542,12 @@
         },
         {
           "internalType": "uint256",
-          "name": "_l2chainId",
+          "name": "_startChainId",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_endChainId",
           "type": "uint256"
         }
       ],
@@ -554,7 +559,7 @@
           "type": "bytes32"
         }
       ],
-      "stateMutability": "view",
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -698,6 +703,11 @@
         },
         {
           "internalType": "uint256",
+          "name": "_editedAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
           "name": "_salecount",
           "type": "uint256"
         },
@@ -718,59 +728,6 @@
         }
       ],
       "name": "provideCT",
-      "outputs": [],
-      "stateMutability": "payable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_l1token",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_l2token",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_requestor",
-          "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_totalAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_initialctAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_salecount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_l2chainId",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint32",
-          "name": "_minGasLimit",
-          "type": "uint32"
-        },
-        {
-          "internalType": "bytes32",
-          "name": "_hash",
-          "type": "bytes32"
-        }
-      ],
-      "name": "provideTest",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"

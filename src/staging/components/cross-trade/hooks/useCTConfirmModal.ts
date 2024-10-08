@@ -14,14 +14,21 @@ export default function useCTConfirm() {
     txData: CT_History;
     isProvide?: boolean;
     subgraphData?: T_FETCH_REQUEST_LIST_L2;
+    forConfirmProviding?: {
+      isUpdateFee: boolean;
+      initialCTAmount: string;
+      editedCTAmount: bigint;
+    };
   }) => {
-    const { type, txData, isProvide, subgraphData } = params;
+    const { type, txData, isProvide, subgraphData, forConfirmProviding } =
+      params;
     setCTConfirmModal({
       isOpen: true,
       type,
       txData,
       isProvide,
       subgraphData,
+      forConfirmProviding,
     });
   };
 

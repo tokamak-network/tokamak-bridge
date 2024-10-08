@@ -325,6 +325,9 @@ export const useRequestData = (
             serviceFee: BigInt(profitAmount.toString()),
             isCanceled,
             isInRelay,
+            isUpdateFee: isUpdated,
+            initialCTAmount: item._ctAmount,
+            editedCTAmount: ctAmount,
           };
         });
         const trimedResult = result.filter(

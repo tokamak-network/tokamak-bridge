@@ -27,6 +27,7 @@ import Image from "next/image";
 import QuestionIcon from "assets/icons/question.svg";
 import { useCrossTradeGasFee } from "@/staging/hooks/useCrossTradeGasFee";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
+import { BetaIcon } from "../../common/BetaIcon";
 
 interface AdditionalCrossProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -93,14 +94,17 @@ export default function CTOptionCrossDetail(
     >
       <Box>
         <Flex alignItems={"center"}>
-          <Text
-            fontWeight={600}
-            fontSize={"16px"}
-            lineHeight={"24px"}
-            mr={"2px"}
-          >
-            Cross Trade Bridge
-          </Text>
+          <Flex>
+            <Text
+              fontWeight={600}
+              fontSize={"16px"}
+              lineHeight={"24px"}
+              mr={"2px"}
+            >
+              Cross Trade Bridge
+            </Text>
+            <BetaIcon marginLeft={"4px"} marginRight={"2px"} />
+          </Flex>
           <CustomTooltipWithQuestion
             isGrayIcon={true}
             tooltipLabel={

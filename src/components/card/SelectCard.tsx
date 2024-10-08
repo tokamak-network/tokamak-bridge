@@ -30,6 +30,7 @@ import CloseIcon from "assets/icons/close.svg";
 import SearchIcon from "assets/icons/searchGray.svg";
 import CancelIcon from "assets/icons/close.svg";
 import { isIOS } from "react-device-detect";
+import { debounce } from "@/utils/debounce";
 
 export function SelectCardButton(props: { field: Field }) {
   const { field } = props;
@@ -72,7 +73,7 @@ const SearchToken = () => {
   const { connectedChainId } = useConnectedNetwork();
   const ref = useRef<HTMLInputElement>(null);
   const [searchValue, setSearchValue] = useState<string>("");
-  const [, setTokenSearch] = useRecoilState(IsSearchToken);
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   const [isInputAmount, setIsInputAmount] = useRecoilState(isInputTokenAmount);
   const [selectedInToken] = useRecoilState(selectedInTokenStatus);
 
@@ -84,11 +85,23 @@ const SearchToken = () => {
       }
     }, 20);
   }, []);
-
+  const performSearch = (query: string): void => {
+    if (query === "") {
+      return setSearchToken(null);
+    }
+    if (connectedChainId) {
+      return setSearchToken({
+        nameOrAdd: query,
+        chainId: connectedChainId,
+      });
+    }
+  };
+  const debouncedSearch = useCallback(debounce(performSearch, 200), []);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     const value = e.target.value;
     setSearchValue(value);
+    debouncedSearch(value);
   };
 
   const handleFocus = () => {
@@ -104,19 +117,13 @@ const SearchToken = () => {
     if (e.key === "Enter" && mobileView) {
       ref?.current?.blur();
     }
+    if (e.key === "Enter") {
+      const value = e.target.value;
+      e.preventDefault();
+      setSearchValue(value);
+      debouncedSearch(value);
+    }
   };
-
-  useEffect(() => {
-    if (searchValue === "") {
-      return setSearchToken(null);
-    }
-    if (connectedChainId) {
-      return setSearchToken({
-        nameOrAdd: searchValue,
-        chainId: connectedChainId,
-      });
-    }
-  }, [searchValue]);
 
   return (
     <Flex
