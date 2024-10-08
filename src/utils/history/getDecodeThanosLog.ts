@@ -6,50 +6,38 @@ import { providers, utils } from "ethers";
 import L1ThanosUSDCBridgeAbi from "@/constant/abis/L1USDCBridge.json";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import { ethers } from "ethers";
-import { ThanosDepositType } from "@/types/tx/txType";
+import {
+  ERC20DepositInitiatedTopicHash,
+  ETHDepositInitiatedTopicHash,
+} from "@/staging/constants/topicHash";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
 
 const l1ThanosUSDCBridgeI = new ethers.utils.Interface(L1ThanosUSDCBridgeAbi);
 const l1ThanosBridgeI = new ethers.utils.Interface(L1ThanosBridgeAbi);
 
-export const getDecodeThanosLog = (
-  logs: providers.Log[]
+export const getDecodedDepositLog = (
+  logs: providers.Log[],
+  iFace: utils.Interface,
+  chainId: SupportedChainId
 ): {
   l1TokenAddress: string;
   l2TokenAddress: string;
   amount: string;
-} => {
-  const depositType: ThanosDepositType = (() => {
-    switch (logs.length) {
-      case 13:
-        return "NativeToken";
-      case 23:
-        return "StakeTON";
-      case 6:
-        return "ERC20";
-      case 5:
-        return logs[1].topics.length === 4 ? "USDC" : "ETH";
-      default:
-        return "ERC20";
-    }
-  })();
-  const result =
-    depositType === "USDC"
-      ? l1ThanosUSDCBridgeI.parseLog(logs[4])
-      : l1ThanosBridgeI.parseLog(
-          depositType === "NativeToken"
-            ? logs[3]
-            : depositType === "StakeTON"
-            ? logs[11]
-            : depositType === "ETH"
-            ? logs[0]
-            : logs[1]
-        );
-  const { args } = result;
-  const { l1Token, l2Token, amount } = args;
+} | null => {
+  const log = logs.find(
+    (log: any) =>
+      log.topics[0] === ERC20DepositInitiatedTopicHash ||
+      log.topics[0] === ETHDepositInitiatedTopicHash
+  );
+  if (!log) return null;
+  const parsedLog = iFace.parseLog(log);
+  const { args } = parsedLog;
+  const { l1Token, l2Token, _l1Token, _l2Token, amount, _amount } = args;
   return {
-    l1TokenAddress: depositType === "ETH" ? "" : l1Token,
+    l1TokenAddress: l1Token ?? _l1Token ?? "",
     l2TokenAddress:
-      depositType === "ETH" ? THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS : l2Token,
-    amount: amount.toString(),
+      l2Token ?? _l2Token ?? getTokenAddressByChainId("ETH", chainId),
+    amount: amount ? amount.toString() : _amount.toString(),
   };
 };

@@ -65,7 +65,7 @@ import {
   getProvideStatus,
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
-import { getDecodeThanosLog } from "@/utils/history/getDecodeThanosLog";
+import { getDecodedDepositLog } from "@/utils/history/getDecodeThanosLog";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   historyRefetch,
@@ -95,6 +95,9 @@ import useDepositWithdrawConfirm from "../components/new-confirm/hooks/useDeposi
 import { getSortedTxHistory, getSortedTxListByDate } from "../utils/history";
 import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
 import { l2Provider } from "@/config/l2Provider";
+import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
+import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
+import { ethers } from "ethers";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -638,13 +641,17 @@ export const useDepositData = () => {
             return;
           }
 
-          const logIndex = l1TxReceipt.logs.length - 1;
-          const isERC20Deposit = logIndex > 2;
-          const log = l1TxReceipt.logs[logIndex];
-          const { l1TokenAddress, l2TokenAddress, amount } = getDecodeLog(
-            isERC20Deposit,
-            log
+          const parsedLog = getDecodedDepositLog(
+            l1TxReceipt.logs,
+            new ethers.utils.Interface(L1TitanBridgeAbi),
+            isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA
           );
+
+          if (!parsedLog) return;
+
+          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
 
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
@@ -746,16 +753,21 @@ export const useDepositData = () => {
               Number(latestRelayedBlockNumber),
               Number(sentMessage.blockNumber)
             ).toString();
-          const { l1TokenAddress, l2TokenAddress, amount } = getDecodeThanosLog(
-            l1TxReceipt.logs
+          const parsedLog = getDecodedDepositLog(
+            l1TxReceipt.logs,
+            new ethers.utils.Interface(L1ThanosBridgeAbi),
+            SupportedChainId.THANOS_SEPOLIA
           );
-
+          if (!parsedLog) return;
+          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
             l2TokenAddress,
             amount,
             true,
-            SupportedChainId.SEPOLIA
+            isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA
           );
           if (!l1Token || !l2Token) return;
 
