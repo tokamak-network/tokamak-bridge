@@ -36,8 +36,10 @@ import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { useAccount } from "wagmi";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function CTFeeUpdateModal() {
+  const { mobileView } = useMediaView();
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
   //Button props
   const [activeButton, setActiveButton] = useState<UpdateFeeButtonType>(
@@ -287,14 +289,17 @@ export default function CTFeeUpdateModal() {
     <Modal
       isOpen={ctUpdateFeeModal.isOpen && isRequester}
       onClose={resetAllStates}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
     >
       <ModalOverlay />
       <ModalContent
-        bg="#1F2128"
+        mb={mobileView ? 0 : "auto"}
+        alignSelf='flex-end'
+        bg='#1F2128'
         p={"20px"}
         borderRadius={"16px"}
-        width={"404px"}
+        width={mobileView ? "100%" : "404px"}
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"normal"}>
@@ -306,8 +311,8 @@ export default function CTFeeUpdateModal() {
         </Box>
         <ModalBody p={0}>
           <Box
-            width={"364px"}
-            bg="#15161D"
+            width={mobileView ? "100%" : "364px"}
+            bg='#15161D'
             px={"16px"}
             py={"16px"}
             borderRadius={"8px"}
@@ -316,6 +321,7 @@ export default function CTFeeUpdateModal() {
             <CTUpdateButton
               activeButton={activeButton}
               setActiveButton={setActiveButton}
+              isMobile={mobileView}
             />
             <WrongNetwork style={{ marginTop: "12px" }} />
             {activeButton == UpdateFeeButtonType.Update &&
@@ -338,7 +344,7 @@ export default function CTFeeUpdateModal() {
             )}
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter p={0} display='block'>
           {activeButton == UpdateFeeButtonType.CancelRequest && (
             <Flex
               flexDir={"column"}
@@ -374,7 +380,7 @@ export default function CTFeeUpdateModal() {
                       },
                     },
                   }}
-                  colorScheme="#A0A3AD"
+                  colorScheme='#A0A3AD'
                   display={"flex"}
                   alignItems={"flex-start"}
                   mt={"3px"}
@@ -393,7 +399,7 @@ export default function CTFeeUpdateModal() {
           )}
           <Button
             mt={"16px"}
-            width="full"
+            width='full'
             height={"48px"}
             borderRadius={"8px"}
             sx={{
@@ -414,7 +420,8 @@ export default function CTFeeUpdateModal() {
           </Button>
           {activeButton == UpdateFeeButtonType.Update && (
             <Text mt={"16px"} fontSize={13} fontWeight={400}>
-              Tip: Updating or canceling requests takes place on L1 <br />
+              Tip: Updating or canceling requests takes place on L1{" "}
+              {!mobileView && <br />}
               to avoid race conditions.
             </Text>
           )}
