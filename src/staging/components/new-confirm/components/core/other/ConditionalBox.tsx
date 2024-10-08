@@ -28,7 +28,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
 
   if (type === "wait") {
     return (
-      <Box w={"305.5px"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
+      <Box w={"100%"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
         <Flex alignItems='center'>
           <Text
             fontWeight={400}
