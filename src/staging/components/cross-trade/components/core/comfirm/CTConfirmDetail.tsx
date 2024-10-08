@@ -303,7 +303,11 @@ export default function CTConfirmDetail({
   });
 
   const sendTokenInfo = {
-    title: isProvide ? "Provide" : isCanceled ? "Refund" : "Request",
+    title: isInCT_Provide(status)
+      ? "Provide"
+      : isCanceled
+      ? "Refund"
+      : "Request",
     mainValue: `${formatNumber(
       convertNumber(inToken.amount, inToken.decimals)
     )}`,

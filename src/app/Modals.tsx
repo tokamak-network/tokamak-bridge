@@ -13,6 +13,7 @@ import CTOptionModal from "@/staging/components/cross-trade/components/core/opti
 import CTModal from "@/staging/components/cross-trade/components/core/comfirm";
 import CTFeeUpdateModal from "@/staging/components/cross-trade/components/core/updateFee";
 import { CTRefresh } from "@/staging/components/cross-trade/components/core/comfirm/CTRefresh";
+import { CTBetaWarning } from "@/staging/components/cross-trade/components/core/comfirm/CTBetaWarning";
 import ThanosDepositWithdrawConfirmModal from "@/staging/components/new-confirm/components/core/thanos";
 
 export default function Modals() {
@@ -40,7 +41,8 @@ export default function Modals() {
       <DepositWithdrawConfirmModal />
       <ThanosDepositWithdrawConfirmModal />
       <SwapConfirmModal />
-      {/* <CTComingModal /> */}
+
+      {/* Cross Trade */}
       <CTOptionModal />
       <CTModal />
       <CTFeeUpdateModal />

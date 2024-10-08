@@ -98,21 +98,19 @@ export default function Warning() {
     if (inToken?.tokenAddress === TOKAMAK_CONTRACTS.WETH_ADDRESS)
       return (
         <WarningText
-          label={`Cannot withdraw WETH to ${
-            isConnectedToMainNetwork ? "Ethereum" : "Goerli"
-          }. Unwrap to ETH and withdraw.`}
+          label={`Cannot withdraw WETH to ${convertNetworkName(
+            outNetwork?.chainName
+          )}. Unwrap to ETH and withdraw.`}
         />
       );
-    if (inToken)
-      return (
-        <WarningText
-          label={`Cannot deposit/withdraw ${inToken?.tokenName} to ${
-            NetworkDisplayName[
-              outNetwork?.chainName ?? SupportedChainId.THANOS_SEPOLIA
-            ]
-          }`}
-        />
-      );
+
+    return (
+      <WarningText
+        label={`Cannot withdraw ${inToken?.tokenSymbol} to ${convertNetworkName(
+          outNetwork?.chainName
+        )}.`}
+      />
+    );
   }
 
   if (mode === "Swap" && isNotSupportForSwap) {
