@@ -27,7 +27,7 @@ import {
   getCurretStatus,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import { getDecodeLog } from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
@@ -54,6 +54,8 @@ import {
 } from "../utils/getProvideStatus";
 import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
 import { l2Provider } from "@/config/l2Provider";
+import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
+import { getDecodedDepositLog } from "@/utils/history/getDecodedDepositLog";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -220,7 +222,7 @@ export const useWithdrawData = () => {
               ? SupportedChainId.TITAN
               : SupportedChainId.TITAN_SEPOLIA
           );
-
+          if (!l1Token || !l2Token) return;
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
@@ -307,13 +309,17 @@ export const useDepositData = () => {
             return;
           }
 
-          const logIndex = l1TxReceipt.logs.length - 1;
-          const isERC20Deposit = logIndex > 2;
-          const log = l1TxReceipt.logs[logIndex];
-          const { l1TokenAddress, l2TokenAddress, amount } = getDecodeLog(
-            isERC20Deposit,
-            log
+          const parsedLog = getDecodedDepositLog(
+            l1TxReceipt.logs,
+            new ethers.utils.Interface(L1TitanBridgeAbi),
+            isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA
           );
+
+          if (!parsedLog) return;
+
+          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
 
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
@@ -324,6 +330,7 @@ export const useDepositData = () => {
               ? SupportedChainId.MAINNET
               : SupportedChainId.SEPOLIA
           );
+          if (!l1Token || !l2Token) return;
 
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
