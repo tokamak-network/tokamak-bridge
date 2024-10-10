@@ -17,7 +17,7 @@ interface CrossTradeButtonProps {
 }
 
 export default function CrossTrade() {
-  const { poolTabletView, poolMobileView } = useMediaView();
+  const { poolTabletView, poolMobileView, mobileView } = useMediaView();
   const dynamicWidth = poolMobileView
     ? "90%"
     : poolTabletView
@@ -76,12 +76,12 @@ export default function CrossTrade() {
       h={"100%"}
       w={"100%"}
     >
-      <Box w="full">
+      <Box w='full'>
         <Flex
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"center"}
-          alignItems="center"
+          alignItems='center'
         >
           <Box width={dynamicWidth}>
             <Text
@@ -127,10 +127,10 @@ export default function CrossTrade() {
           pt={poolMobileView ? "24px" : "32px"}
           mt={poolMobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection="column"
+          flexDirection='column'
           justifyContent={"flex-start"}
-          alignItems="center"
-          h={"90%"}
+          alignItems='center'
+          h={mobileView ? "85%" : "90%"}
         >
           <Box width={dynamicWidth}>
             <Box
@@ -166,11 +166,11 @@ export default function CrossTrade() {
               </Text>
             </Box>
             {ButtonType_Pools.CROSS_TRADE === activeButton ? (
-              <Flex width="full" justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 <CTMain />
               </Flex>
             ) : (
-              <Flex width="full" justifyContent={"center"}>
+              <Flex width='full' justifyContent={"center"}>
                 {poolMobileView ? (
                   <ImagePoolBox isMobile={true} />
                 ) : poolTabletView ? (
