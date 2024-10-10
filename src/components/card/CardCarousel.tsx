@@ -10,6 +10,7 @@ import { AnimatePresence } from "framer-motion";
 import { tokenColor } from "@/utils/carousel/tokenColorCode";
 import { useRecoilState } from "recoil";
 import { handUiOpenedStatus } from "@/recoil/card/selectCard/handUiOpen";
+import { IsSearchToken } from "@/recoil/card/selectCard/searchToken";
 
 export const CardCarrousel = () => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -36,7 +37,6 @@ export const CardCarrousel = () => {
 
   const requireCall = useMemo(() => {
     if (handUiOpened) return false;
-    setHandUiOpened(true);
     return true;
   }, [handUiOpened]);
 

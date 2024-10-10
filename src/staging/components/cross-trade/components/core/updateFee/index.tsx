@@ -37,6 +37,8 @@ import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { BetaIcon } from "../../common/BetaIcon";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export default function CTFeeUpdateModal() {
   const { mobileView } = useMediaView();
@@ -284,10 +286,32 @@ export default function CTFeeUpdateModal() {
       resetAllStates();
     }
   }, [isRequester]);
+  const { isConnectedToTestNetwork, connectedChainId } = useConnectedNetwork();
+  const isNetworkValid = useMemo(() => {
+    if (
+      ctUpdateFeeModal.txData?.outNetwork &&
+      isConnectedToTestNetwork !== undefined
+    ) {
+      const requiredChainId = ctUpdateFeeModal.txData?.outNetwork;
+      const isMainNetwork = requiredChainId === SupportedChainId.MAINNET;
+      if (isMainNetwork) return !isConnectedToTestNetwork;
+      const isTestNetwork = requiredChainId === SupportedChainId.SEPOLIA;
+      if (isTestNetwork) return isConnectedToTestNetwork;
+    }
+    return true;
+  }, [
+    isConnectedToTestNetwork,
+    ctUpdateFeeModal.txData?.outNetwork,
+    connectedChainId,
+  ]);
+
+  useEffect(() => {
+    if (isNetworkValid) return resetAllStates;
+  }, [isNetworkValid]);
 
   return (
     <Modal
-      isOpen={ctUpdateFeeModal.isOpen && isRequester}
+      isOpen={ctUpdateFeeModal.isOpen && isRequester && isNetworkValid}
       onClose={resetAllStates}
       motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
@@ -302,9 +326,12 @@ export default function CTFeeUpdateModal() {
         width={mobileView ? "100%" : "404px"}
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
-          <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"normal"}>
-            Edit Request
-          </Text>
+          <Flex columnGap={"8px"}>
+            <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"normal"}>
+              Edit Request
+            </Text>
+            <BetaIcon />
+          </Flex>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
           <CloseButton onClick={resetAllStates} />

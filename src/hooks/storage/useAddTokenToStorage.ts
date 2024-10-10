@@ -6,21 +6,30 @@ import { mobileLocalStoredTokenList } from "@/recoil/mobile/atom";
 
 export default function useAddTokenToStorage() {
   const [storedValue, setValue] = useLocalStorage("tokens", []);
-  const [storedTokenList, setStoredTokenList] = useRecoilState(mobileLocalStoredTokenList);
+  const [storedTokenList, setStoredTokenList] = useRecoilState(
+    mobileLocalStoredTokenList
+  );
 
   useEffect(() => {
     setStoredTokenList(storedValue);
   }, [storedValue, setStoredTokenList]);
 
-  const addNewToken = useCallback((newTokenValue: TokenInfo) => {
-    if (storedValue.some((token: TokenInfo) => token.address === newTokenValue.address)) {
-      return;
-    }
+  const addNewToken = useCallback(
+    (newTokenValue: TokenInfo) => {
+      if (
+        storedValue.some(
+          (token: TokenInfo) => token.address === newTokenValue.address
+        )
+      ) {
+        return;
+      }
 
-    const newValue = [...storedValue, { ...newTokenValue, isNew: false }];
-    setValue(newValue);
-    setStoredTokenList(newValue);
-  }, [storedValue, setValue, setStoredTokenList]);
+      const newValue = [...storedValue, { ...newTokenValue, isNew: false }];
+      setValue(newValue);
+      setStoredTokenList(newValue);
+    },
+    [storedValue, setValue, setStoredTokenList]
+  );
 
   return { storedTokenList, addNewToken };
 }

@@ -10,7 +10,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import {
@@ -35,7 +35,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
-import commafy from "@/utils/trim/commafy";
+import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
 
 export default function CTOptionModal() {
   const { mobileView } = useMediaView();
@@ -85,7 +85,7 @@ export default function CTOptionModal() {
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return serviceFee;
     }
-  }, [recommendedFee, serviceFee]);
+  }, [recommendedFee, serviceFee, activeSubButtonValue]);
 
   useEffect(() => {
     if (ctOptionModal && recommendedFee !== undefined) {
@@ -149,7 +149,7 @@ export default function CTOptionModal() {
     }
   };
 
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { connectedChainId } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
@@ -203,6 +203,16 @@ export default function CTOptionModal() {
     recommendedFee,
   ]);
 
+  const { isWhiteListToken } = useWhiteListToken();
+  // const isSupportedNetworkForCT = useMemo(
+  //   () =>
+  //     (connectedChainId &&
+  //       connectedChainId === SupportedChainId.TITAN_SEPOLIA) ||
+  //     connectedChainId === SupportedChainId.TITAN,
+  //   [connectedChainId]
+  // );
+  const isSupportedNetworkForCT = true;
+
   return (
     <Modal
       isOpen={ctOptionModal}
@@ -228,7 +238,7 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {isConnectedToMainNetwork ? (
+          {!isSupportedNetworkForCT || !isWhiteListToken ? (
             <CTOptionDisabledDetail />
           ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             <CTOptionCrossDetail

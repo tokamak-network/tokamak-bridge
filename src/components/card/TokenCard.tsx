@@ -28,6 +28,10 @@ import {
 import Warning from "assets/icons/white_warning.svg";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import {
+  IsSearchToken,
+  searchTokenStatus,
+} from "@/recoil/card/selectCard/searchToken";
 
 type TokenCardProps = {
   tokenInfo: TokenInfo & { isNew?: boolean };
@@ -52,13 +56,15 @@ type TokenCardProps = {
   };
 };
 
-const TopLine = (props: { layer: number }) => {
+const TopLine = (props: { layer: number; notAdded: boolean }) => {
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
   return (
     <Box
       w={"332px"}
       h={"231.17px"}
       top={"-40px"}
       left={"-40px"}
+      opacity={props.notAdded ? 0.1 : 1}
       pos={"absolute"}
     >
       <Box
@@ -70,7 +76,7 @@ const TopLine = (props: { layer: number }) => {
         position={"relative"}
         initial={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
         animate={{ top: `${LINE_STYLE[props.layer]?.thin.marginTop || 40}px` }}
-        transition="0.5 linear"
+        transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       ></Box>
       <Box
         as={motion.div}
@@ -84,7 +90,7 @@ const TopLine = (props: { layer: number }) => {
         pos={"relative"}
         initial={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
         animate={{ top: `${LINE_STYLE[props.layer]?.thick.marginTop || 48}px` }}
-        transition="0.5 linear"
+        transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       ></Box>
     </Box>
   );
@@ -95,6 +101,8 @@ const TokenTitle = (props: {
   isName: boolean;
   style?: TextProps;
 }) => {
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+
   return (
     <Text
       as={motion.span}
@@ -105,7 +113,7 @@ const TokenTitle = (props: {
       {...props.style}
       initial={{ fontSize: props.style?.fontSize }}
       animate={{ fontSize: props.style?.fontSize }}
-      transition="0.3 linear"
+      transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
     >
       {props.tokenName}
     </Text>
@@ -138,13 +146,23 @@ export default function TokenCard(props: TokenCardProps) {
   const tokenData = useTokenBalance(tokenInfo, requireCall, watch);
   const thisTokenIsETH = isETH(tokenInfo);
   const theme = useTheme();
+  const [, setSearchToken] = useRecoilState(searchTokenStatus);
 
   const { addNewToken } = useAddTokenToStorage();
   const notAdded = isNew && agreeToAdd === false;
-  const addNewCard = useCallback(() => {
-    addNewToken(tokenInfo);
-    return setAgreeToAdd(true);
-  }, [agreeToAdd]);
+  const addNewCard = useCallback(
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      event.stopPropagation();
+      addNewToken(tokenInfo);
+      return setAgreeToAdd(true);
+    },
+    [agreeToAdd]
+  );
+
+  const cancelAddNewCard = (event: React.MouseEvent<HTMLParagraphElement>) => {
+    event.stopPropagation();
+    setSearchToken(null);
+  };
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(
@@ -162,6 +180,7 @@ export default function TokenCard(props: TokenCardProps) {
   const { mode } = useGetMode();
 
   const pcView = window.matchMedia("(min-width: 1200px)").matches;
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
 
   const outAmount = useMemo(() => {
     if (
@@ -213,7 +232,7 @@ export default function TokenCard(props: TokenCardProps) {
     <Flex
       bg={
         notAdded
-          ? "linear-gradient(0deg, rgba(0, 0, 0, 0.10) 0%, rgba(0, 0, 0, 0.10) 100%), linear-gradient(0deg, rgba(255, 255, 255, 0.80) 0%, rgba(255, 255, 255, 0.80) 100%), rgb(98, 126, 234);"
+          ? "#383b44"
           : `linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColor(
               tokenInfo?.tokenSymbol
             )};`
@@ -222,7 +241,7 @@ export default function TokenCard(props: TokenCardProps) {
       h={typeof h === "string" ? h : `${h ? h + "px" : "100%"}`}
       opacity={
         isNew || isDark
-          ? 0.25
+          ? 1
           : isHover === undefined || isHover === null || isHover === level
           ? 0.9
           : 0.5
@@ -238,24 +257,28 @@ export default function TokenCard(props: TokenCardProps) {
         h={"100%"}
         borderRadius={"16px"}
         border={`${layer === 0 ? 4 : 3}px solid ${
-          notAdded ? "rgb(98, 126, 234)" : tokenColor(tokenInfo?.tokenSymbol)
+          notAdded ? "#292f45" : tokenColor(tokenInfo?.tokenSymbol)
         }`}
         pos={"relative"}
         flexDir={"column"}
         justifyContent={"space-between"}
         cursor={"pointer"}
         boxSizing={"border-box"}
-        onClick={notAdded ? addNewCard : onClick}
+        onClick={notAdded ? () => {} : onClick}
         fontFamily={theme.fonts.Quicksand}
         initial={{
-          padding: `${PADDING_SIZE[layer] || (pcView ? 16 : 8)}px`,
+          padding: `${
+            notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
+          }px`,
         }}
         animate={{
-          padding: `${PADDING_SIZE[layer] || (pcView ? 16 : 8)}px`,
+          padding: `${
+            notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
+          }px`,
         }}
-        transition="0.5 linear"
+        transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       >
-        <TopLine layer={layer} />
+        <TopLine layer={layer} notAdded={notAdded ? true : false} />
         {notAdded ? (
           <Flex flexDirection={"column"}>
             <Flex
@@ -276,16 +299,23 @@ export default function TokenCard(props: TokenCardProps) {
                 isName={true}
                 style={{
                   fontSize: `${FONT_SIZE[layer]?.name ?? 18}px`,
+                  color: "#ffffff",
                 }}
               />
               <Flex
                 p={"8px 10px"}
-                alignSelf={"flex-start"}
                 fontSize={"16px"}
                 bg={"#1F2128"}
                 color={"#fff"}
                 borderRadius={"6px"}
-                gap={"2px"}
+                zIndex={100}
+                gap={"4px"}
+                width={"74px"}
+                fontWeight={600}
+                opacity={0.5}
+                justifyContent={"center"}
+                alignItems={"center"}
+                height={"32px"}
               >
                 Add
                 <Image src={Warning} alt="warning" />
@@ -297,6 +327,7 @@ export default function TokenCard(props: TokenCardProps) {
                 isName={false}
                 style={{
                   fontSize: `${FONT_SIZE[layer]?.symbol ?? 14}px`,
+                  color: "#ffffff",
                 }}
               />
             </Flex>
@@ -368,7 +399,7 @@ export default function TokenCard(props: TokenCardProps) {
               marginLeft: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
               marginTop: `-${PADDING_SIZE[layer] ?? (pcView ? 16 : 8)}px`,
             }}
-            transition="0.5 linear"
+            transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
           >
             <TokenSymbol
               w={
@@ -385,25 +416,40 @@ export default function TokenCard(props: TokenCardProps) {
         )}
         {notAdded ? (
           <Flex flexDir={"column"} alignItems={"center"}>
-            <Text fontSize={12} color={"#fff"} w={"100%"}>
+            <Text
+              fontSize={"14px"}
+              textAlign={"center"}
+              fontStyle={"normal"}
+              fontWeight={400}
+              lineHeight={"normal"}
+              color={"#fff"}
+              w={"216px"}
+            >
               This token isn’t traded on leading U.S. centralized exchanges or
               frequently swapped on Tokamak Network. Always conduct your own
               research before trading.
             </Text>
             <Button
               w={"100%"}
-              h={"40px"}
+              h={"48px"}
               my={"20px"}
-              bg={"#007AFF"}
+              bg={"#030303"}
               _hover={{}}
               _active={{}}
               fontSize={16}
+              bgColor={"#007AFF"}
               fontWeight={600}
-              onClick={() => addNewCard}
+              onClick={addNewCard}
             >
               I Understand
             </Button>
-            <Text fontSize={16} fontWeight={400} color={"#fff"}>
+
+            <Text
+              fontSize={16}
+              fontWeight={400}
+              color={"#fff"}
+              onClick={cancelAddNewCard}
+            >
               Cancel
             </Text>
           </Flex>
@@ -442,20 +488,20 @@ export default function TokenCard(props: TokenCardProps) {
                       animate={{
                         fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
                       }}
-                      transition="0.3 linear"
+                      transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
                     >
-                      balance:{" "}
+                      balance:{""}
                     </Text>
                     <Text
                       as={motion.span}
                       fontWeight={700}
                       initial={{
-                        fontSize: `${BALANCE_FONT_SIZE[layer]?.title ?? 16}px`,
+                        fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
                       }}
                       animate={{
                         fontSize: `${BALANCE_FONT_SIZE[layer]?.value ?? 16}px`,
                       }}
-                      transition="0.3 linear"
+                      transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
                     >
                       {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
                     </Text>

@@ -1,10 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useCallback,
-  useMemo,
-  useRef,
-} from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import {
   Flex,
   Text,
@@ -21,7 +15,6 @@ import TokenDetail from "@/staging/components/cross-trade/components/core/main/T
 import CTProvider from "@/staging/components/cross-trade/components/core/main/CTMainProvider";
 import Image from "next/image";
 import Polygon from "assets/icons/ct/polygon.svg";
-import { useAccount } from "wagmi";
 import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
@@ -48,10 +41,6 @@ export default function CTMain() {
 
   /** mobileview end */
 
-  const LIMIT = 50;
-  const [offset, setOffset] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const { address } = useAccount();
   const [isDescSortedProvide, setIsDescSortedProvide] = useState<
     boolean | null
   >(null);
@@ -138,7 +127,8 @@ export default function CTMain() {
   const [itemsToShow, setItemsToShow] = useState<number | undefined>(10);
   const observer = useRef<IntersectionObserver | null>(null);
   const [viewportHeight, setViewportHeight] = useState(window.innerHeight);
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { isConnectedToMainNetwork, isConnectedToTestNetwork } =
+    useConnectedNetwork();
 
   //will be refactored to controll fetch data with it to save traffics
   useEffect(() => {
@@ -441,6 +431,38 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
+          {isLoading && isConnectedToTestNetwork && (
+            <Tr
+              key={0}
+              sx={{
+                "& td": { pl: "20px", py: "16px", pr: "auto" },
+                borderBottom: "1px solid #23242B",
+              }}
+              textAlign={"center"}
+            >
+              <Td
+                colSpan={4}
+                style={{
+                  height: "288px",
+                  color: "#E3F3FF",
+                }}
+              >
+                <GradientSpinner h={"14px"} mb={"12px"} />
+                <GradientSpinner h={"14px"} mb={"32px"} />
+                <GradientSpinner h={"14px"} mb={"12px"} />
+                <GradientSpinner h={"14px"} />
+                <Flex h={"17px"} mb={"14px"}>
+                  <GradientSpinner />
+                </Flex>
+                <Flex h={"17px"} mb={"32px"}>
+                  <GradientSpinner />
+                </Flex>
+                <Flex h={"17px"} mb={"14px"}>
+                  <GradientSpinner />
+                </Flex>
+              </Td>
+            </Tr>
+          )}
           {isConnectedToMainNetwork && (
             <Tr
               key={0}
@@ -530,37 +552,6 @@ export default function CTMain() {
                 }}
               >
                 <Box>No active requests</Box>
-              </Td>
-            </Tr>
-          )}
-          {isLoading && (
-            <Tr
-              key={0}
-              sx={{
-                "& td": { pl: "20px", py: "16px", pr: "auto" },
-                borderBottom: "1px solid #23242B",
-              }}
-              textAlign={"center"}
-            >
-              <Td
-                colSpan={4}
-                style={{
-                  height: "288px",
-                  color: "#E3F3FF",
-                }}
-              >
-                <Flex h={"17px"} mb={"14px"}>
-                  <GradientSpinner />
-                </Flex>
-                <Flex h={"17px"} mb={"32px"}>
-                  <GradientSpinner />
-                </Flex>
-                <Flex h={"17px"} mb={"14px"}>
-                  <GradientSpinner />
-                </Flex>
-                <Flex h={"17px"} mb={"122px"}>
-                  <GradientSpinner />
-                </Flex>
               </Td>
             </Tr>
           )}

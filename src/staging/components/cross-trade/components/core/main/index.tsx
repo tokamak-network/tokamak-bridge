@@ -1,6 +1,6 @@
 import Image from "next/image";
-import { useState } from "react";
-import { Box, Text, Flex, Button } from "@chakra-ui/react";
+import { useEffect, useState } from "react";
+import { Box, Text, Flex, Button, Link } from "@chakra-ui/react";
 import YourPools from "@/pools/YourPools";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import ScrolltoTopButton from "@/staging/components/cross-trade/components/ScrolltoTopButton";
@@ -8,6 +8,7 @@ import ImagePoolBox from "@/staging/components/cross-trade/components/core/comin
 import CTMain from "@/staging/components/cross-trade/components/core/main/CTMain";
 import { ATOM_pool_page, ButtonType_Pools } from "@/recoil/pool/pages";
 import { useRecoilState } from "recoil";
+import { BetaIcon } from "../../common/BetaIcon";
 
 interface CrossTradeButtonProps {
   type: ButtonType_Pools;
@@ -68,6 +69,11 @@ export default function CrossTrade() {
       </Text>
     </Button>
   );
+
+  //Initial state when the page is loaded
+  useEffect(() => {
+    setActiveButton(ButtonType_Pools.CROSS_TRADE);
+  }, []);
 
   return (
     <Flex
@@ -141,6 +147,45 @@ export default function CrossTrade() {
               w={"100%"}
               zIndex={1000}
             >
+              {ButtonType_Pools.CROSS_TRADE === activeButton && (
+                <Text
+                  bgColor={"#313442"}
+                  px={"16px"}
+                  py={"12px"}
+                  borderRadius={"8px"}
+                  mb={"24px"}
+                  fontSize={12}
+                  fontWeight={400}
+                >
+                  Cross trade bridge features available through this website are
+                  in beta and subject to testing, further development, and
+                  changes and is therefore provided "as is" without any
+                  warranties. Use of any of the features available through this
+                  website is done so entirely at your own risk. <br />
+                  Report using
+                  <Link
+                    isExternal={true}
+                    color={"#DB00FF"}
+                    fontWeight={600}
+                    href="https://github.com/tokamak-network/tokamak-bridge/issues"
+                    textDecor={"underline"}
+                    mx={"4px"}
+                  >
+                    Github issues
+                  </Link>
+                  or
+                  <Link
+                    ml={"4px"}
+                    isExternal={true}
+                    color={"#DB00FF"}
+                    fontWeight={600}
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/formResponse"
+                    textDecor={"underline"}
+                  >
+                    help form.
+                  </Link>
+                </Text>
+              )}
               <Text
                 fontWeight={500}
                 fontSize={poolMobileView ? "20px" : "30px"}
@@ -148,9 +193,14 @@ export default function CrossTrade() {
                 color={"#FFFFFF"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                {ButtonType_Pools.CROSS_TRADE === activeButton
-                  ? "Cross Trade Bridge Pool"
-                  : "Uniswap V3 pool"}
+                <Flex columnGap={"8px"}>
+                  {ButtonType_Pools.CROSS_TRADE === activeButton
+                    ? "Cross Trade Bridge Pool"
+                    : "Uniswap V3 pool"}
+                  {ButtonType_Pools.CROSS_TRADE === activeButton && (
+                    <BetaIcon />
+                  )}
+                </Flex>
               </Text>
               <Text
                 fontWeight={400}

@@ -8,14 +8,6 @@ export const tokenColor = (symbol?: String) => {
       return "#007AFF";
     case "WTON":
       return "#007AFF";
-    case "TOS":
-      return "#007AFF";
-    case "DOC":
-      return "#9e9e9e";
-    case "AURA":
-      return "#CB1000";
-    case "LYDA":
-      return "#4361EE";
     case "USDC":
       return "#2775CA";
     case "USDT":
