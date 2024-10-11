@@ -338,7 +338,7 @@ export default function CTMain() {
               </Td>
             </Tr>
           )}
-          {isConnectedToMainNetwork && (
+          {!isLoading && data?.length === 0 && (
             <Tr
               key={0}
               sx={{
@@ -356,7 +356,7 @@ export default function CTMain() {
                   color: "#E3F3FF",
                 }}
               >
-                <Box>Not available on Ethereum and Titan mainnet</Box>
+                <Box>No active requests</Box>
               </Td>
             </Tr>
           )}
@@ -408,28 +408,6 @@ export default function CTMain() {
                 </Tr>
               );
             })}
-          {!isLoading && data?.length === 0 && (
-            <Tr
-              key={0}
-              sx={{
-                "& td": { pl: "20px", py: "16px", pr: "auto" },
-                borderBottom: "1px solid #23242B",
-              }}
-              textAlign={"center"}
-            >
-              <Td
-                colSpan={4}
-                style={{
-                  textAlign: "center",
-                  height: "144px",
-                  lineHeight: "144px",
-                  color: "#E3F3FF",
-                }}
-              >
-                <Box>No active requests</Box>
-              </Td>
-            </Tr>
-          )}
         </Tbody>
       </Table>
     </Box>
