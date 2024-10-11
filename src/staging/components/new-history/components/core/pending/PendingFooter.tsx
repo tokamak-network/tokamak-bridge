@@ -120,7 +120,7 @@ export default function PendingFooter(params: {
     isCanceled,
     isUpdateFee,
     hasMultipleUpdateFees,
-  });
+  }) as HISTORY_TRANSACTION_STATUS[];
 
   const filteredStatuses = mobileView
     ? statuses.filter((statusKey) => statusKey === transactionData.status)
