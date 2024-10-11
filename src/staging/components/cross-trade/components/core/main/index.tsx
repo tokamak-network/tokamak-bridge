@@ -195,7 +195,11 @@ export default function CrossTrade() {
                 color={"#FFFFFF"}
                 textAlign={poolMobileView ? "center" : undefined}
               >
-                <Flex columnGap={"8px"}>
+                <Flex
+                  columnGap={"8px"}
+                  justifyContent={mobileView ? "center" : ""}
+                  alignItems={mobileView ? "center" : ""}
+                >
                   {ButtonType_Pools.CROSS_TRADE === activeButton
                     ? "Cross Trade Requests"
                     : "Uniswap V3 pool"}
