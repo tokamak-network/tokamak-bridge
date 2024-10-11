@@ -28,7 +28,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
 
   if (type === "wait") {
     return (
-      <Box w={"305.5px"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
+      <Box w={"100%"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
         <Flex alignItems='center'>
           <Text
             fontWeight={400}
@@ -75,7 +75,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       transactionData.action === Action.Withdraw;
 
     if (claimReadyButton) {
-      return <Box w={"305.5px"} mt='3px' mb='21px' py='3px' bg='#15161D'></Box>;
+      return <Box w={"100%"} mt='3px' mb='21px' py='3px' bg='#15161D'></Box>;
     }
 
     const startDate = useMemo(() => {
@@ -101,12 +101,11 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
 
     return (
       <Box
-        w={"305.5px"}
+        w={"100%"}
         h={"28px"}
         mt='3px'
         mb='21px'
         pl='12px'
-        pr='210px'
         py='3px'
         borderRadius='4px'
         bg='#1F2128'
@@ -161,5 +160,5 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     );
   }
   // Box type
-  return <Box w={"305.5px"} mt='3px' mb='21px' py='3px' bg='#15161D' />;
+  return <Box w={"100%"} mt='3px' mb='21px' py='3px' bg='#15161D' />;
 }
