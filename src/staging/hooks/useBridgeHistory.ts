@@ -342,8 +342,8 @@ export const useDepositData = () => {
             status: status,
             inNetwork: SupportedChainId.MAINNET,
             outNetwork: SupportedChainId.TITAN,
-            inToken: l2Token,
-            outToken: l1Token,
+            inToken: l1Token,
+            outToken: l2Token,
             blockTimestamps,
             transactionHashes,
           };
