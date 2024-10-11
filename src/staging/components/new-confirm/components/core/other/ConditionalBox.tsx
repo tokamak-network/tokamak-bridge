@@ -106,7 +106,6 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
         mt='3px'
         mb='21px'
         pl='12px'
-        pr='210px'
         py='3px'
         borderRadius='4px'
         bg='#1F2128'
