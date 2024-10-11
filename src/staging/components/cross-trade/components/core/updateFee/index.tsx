@@ -327,7 +327,11 @@ export default function CTFeeUpdateModal() {
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
           <Flex columnGap={"8px"}>
-            <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"normal"}>
+            <Text
+              fontSize={mobileView ? "16px" : "20px"}
+              fontWeight={"500"}
+              lineHeight={mobileView ? "24px" : "normal"}
+            >
               Edit Request
             </Text>
             <BetaIcon />
