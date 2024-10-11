@@ -154,7 +154,7 @@ export default function DepositWithdrawConfirmModal() {
         bg='#1F2128'
         p={"20px"}
         {...(mobileView && {
-          maxHeight: "calc(100vh - 64px)",
+          maxHeight: "calc(100vh - 80px)",
           overflowY: "auto",
         })}
       >
