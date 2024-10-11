@@ -108,9 +108,9 @@ export default function TokenMobileCard(props: TokenCardProps) {
 
   return (
     <Flex
-      width='auto'
+      width="auto"
       maxWidth={"250px"}
-      height='auto'
+      height="auto"
       bg={`linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColorCode};`}
       border={`3px solid ${tokenColorCode} `}
       borderRadius={"16px"}
@@ -124,8 +124,8 @@ export default function TokenMobileCard(props: TokenCardProps) {
       fontFamily={theme.fonts.Quicksand}
     >
       <TopLine mainSchemCol={tokenColorCode} />
-      <HStack justifyContent='space-between' width='100%' px={4} py={2}>
-        <Box width='50%'>
+      <HStack justifyContent="space-between" width="100%" px={4} py={2}>
+        <Box width="50%">
           <Text
             fontWeight={700}
             fontSize={20}
@@ -133,7 +133,7 @@ export default function TokenMobileCard(props: TokenCardProps) {
             color={"#222222"}
             isTruncated={false}
             lineHeight={"tight"}
-            textAlign='left'
+            textAlign="left"
           >
             {thisTokenIsETH
               ? "Ethereum"
@@ -147,7 +147,7 @@ export default function TokenMobileCard(props: TokenCardProps) {
           fontSize={16}
           zIndex={100}
           color={"#222222"}
-          textAlign='right'
+          textAlign="right"
         >
           {tokenInfo?.tokenSymbol ?? "TOK"}
         </Text>

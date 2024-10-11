@@ -72,7 +72,7 @@ export const searchTokenList = selector<SupportedTokens_T>({
   key: "searchTokenListSelector",
   get: ({ get }) => {
     const searchedToken = get(searchTokenSelector);
-    
+
     if (searchedToken) {
       // const { matchedKey } = getKeyByValue(
       //   SupportedChainId,
@@ -89,7 +89,6 @@ export const IsSearchToken = atom<Boolean>({
   key: "isSearchToken",
   default: false,
 });
-
 export const isInputTokenAmount = atom<Boolean>({
   key: "isInputToken",
   default: false,

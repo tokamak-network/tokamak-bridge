@@ -36,6 +36,7 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
 import { WarningText } from "@/components/ui/WarningText";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -290,6 +291,8 @@ export default function CTConfirmCrossTradeFooter(
     isInRelay,
   ]);
 
+  const { mobileView } = useMediaView();
+
   return (
     <Grid mt={"3px"} w={"100%"} rowGap={"12px"} marginTop={"12px"}>
       {/** Check Box */}
@@ -323,7 +326,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme="#A0A3AD"
+            colorScheme='#A0A3AD'
           >
             <Text
               color={isChecked.firstChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -353,7 +356,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme="#A0A3AD"
+            colorScheme='#A0A3AD'
           >
             <Text
               color={isChecked.secondChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -384,7 +387,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme="#A0A3AD"
+            colorScheme='#A0A3AD'
           >
             <Text
               color={isChecked.thirdChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -401,7 +404,7 @@ export default function CTConfirmCrossTradeFooter(
       {isProvide && isConnected && !isInRelay && (
         <Grid
           textAlign={"center"}
-          w={"364px"}
+          w={mobileView ? "100%" : "364px"}
           p={"16px"}
           border={"1px solid #DB00FF"}
           borderRadius={"8px"}
@@ -458,7 +461,7 @@ export default function CTConfirmCrossTradeFooter(
         {/** Warning Text */}
         {isInRelay && (
           <WarningText
-            label="This request has been already provided."
+            label='This request has been already provided.'
             iconStyle={{ width: 14, height: 14 }}
             style={{ fontSize: 11, columnGap: "6px" }}
           />
@@ -467,7 +470,7 @@ export default function CTConfirmCrossTradeFooter(
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
-            width="full"
+            width='full'
             height={"48px"}
             borderRadius={"8px"}
             _hover={{}}
@@ -523,7 +526,7 @@ export default function CTConfirmCrossTradeFooter(
             color: isInRelay ? "#007AFF" : !btnDisabled ? "#FFFFFF" : "#8E8E92",
             border: isInRelay ? "1px solid #007AFF" : "",
           }}
-          width="full"
+          width='full'
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}

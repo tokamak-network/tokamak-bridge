@@ -9,7 +9,8 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useState, useEffect, useCallback, useMemo } from "react";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useState, useEffect, useMemo } from "react";
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import CloseButton from "@/components/button/CloseButton";
 import {
@@ -34,11 +35,11 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
-import commafy from "@/utils/trim/commafy";
 import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export default function CTOptionModal() {
+  const { mobileView } = useMediaView();
+
   const { ctOptionModal, onCloseCTOptionModal } = useFxOptionModal();
 
   // CTConfirmDetail button 관련 state 및 function Start @Robert
@@ -93,6 +94,9 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
+    if (mobileView) {
+      onCloseCTOptionModal();
+    }
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return handleConfirm(Action.Withdraw, Status.Initiate);
     }
@@ -213,16 +217,27 @@ export default function CTOptionModal() {
   const isSupportedNetworkForCT = true;
 
   return (
-    <Modal isOpen={ctOptionModal} onClose={onCloseCTOptionModal} isCentered>
+    <Modal
+      isOpen={ctOptionModal}
+      onClose={onCloseCTOptionModal}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
+      isCentered
+    >
       <ModalOverlay />
       <ModalContent
+        mb={mobileView ? 0 : "auto"}
+        alignSelf={mobileView ? "flex-end" : "center"}
+        borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={"404px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={"20px"}
-        borderRadius={"16px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
-          <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
+          <Text
+            fontSize={mobileView ? "16px" : "20px"}
+            fontWeight={"500"}
+            lineHeight={mobileView ? "24px" : "30px"}
+          >
             Withdraw Option
           </Text>
         </ModalHeader>
@@ -267,10 +282,10 @@ export default function CTOptionModal() {
             handleButtonMainClick={handleButtonMainClick}
           />
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter p={0} display='block'>
           <Button
             mt={"12px"}
-            width="full"
+            width='full'
             height={"48px"}
             borderRadius={"8px"}
             sx={{
