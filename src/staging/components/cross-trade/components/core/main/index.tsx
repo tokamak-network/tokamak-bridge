@@ -117,7 +117,7 @@ export default function CrossTrade() {
               isActive={ButtonType_Pools.CROSS_TRADE === activeButton}
               onClick={() => setActiveButton(ButtonType_Pools.CROSS_TRADE)}
             >
-              Cross Trade Bridge Pool
+              Cross Trade Requests
             </CrossTradeButton>
             <CrossTradeButton
               type={ButtonType_Pools.UNISWAP_POOL}
@@ -197,7 +197,7 @@ export default function CrossTrade() {
               >
                 <Flex columnGap={"8px"}>
                   {ButtonType_Pools.CROSS_TRADE === activeButton
-                    ? "Cross Trade Bridge Pool"
+                    ? "Cross Trade Requests"
                     : "Uniswap V3 pool"}
                   {ButtonType_Pools.CROSS_TRADE === activeButton && (
                     <BetaIcon />
@@ -213,7 +213,7 @@ export default function CrossTrade() {
                 textAlign={poolMobileView ? "center" : undefined}
               >
                 {ButtonType_Pools.CROSS_TRADE === activeButton
-                  ? "Provide liquidity for cross trade, which helps users move tokens between layers and earn fees."
+                  ? "Provide liquidity for a cross trade request and receive it back on L2 with a service fee."
                   : "Add liquidity to a pool, and earn a swap fee based on the trading volume."}
               </Text>
             </Box>
