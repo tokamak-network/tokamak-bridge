@@ -190,6 +190,10 @@ export default function CTModal() {
         width={"404px"}
         bg='#1F2128'
         p={"20px"}
+        {...(mobileView && {
+          maxHeight: "calc(100vh - 64px)",
+          overflowY: "auto",
+        })}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Flex>

@@ -94,6 +94,9 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
+    if (mobileView) {
+      onCloseCTOptionModal();
+    }
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return handleConfirm(Action.Withdraw, Status.Initiate);
     }

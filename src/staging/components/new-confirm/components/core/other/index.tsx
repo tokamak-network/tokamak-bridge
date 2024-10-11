@@ -153,6 +153,10 @@ export default function DepositWithdrawConfirmModal() {
         width={mobileView ? "100%" : "404px"}
         bg='#1F2128'
         p={"20px"}
+        {...(mobileView && {
+          maxHeight: "calc(100vh - 64px)",
+          overflowY: "auto",
+        })}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
