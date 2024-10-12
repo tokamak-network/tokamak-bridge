@@ -3,17 +3,26 @@ import { useEffect, useState } from "react";
 
 export default function ScrolltoTopButton() {
   const [showTopBtn, setShowTopBtn] = useState(false);
+  const [lastScrollY, setLastScrollY] = useState(0);
 
   useEffect(() => {
     const handleScroll = () => {
-      setShowTopBtn(window.scrollY > 100);
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < lastScrollY && currentScrollY > 100) {
+        setShowTopBtn(true);
+      } else {
+        setShowTopBtn(false);
+      }
+
+      setLastScrollY(currentScrollY);
     };
 
     window.addEventListener("scroll", handleScroll);
     return () => {
       window.removeEventListener("scroll", handleScroll);
     };
-  }, []);
+  }, [lastScrollY]);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -46,7 +55,5 @@ export default function ScrolltoTopButton() {
         Top
       </Text>
     </Button>
-  ) : (
-    <></>
-  );
+  ) : null;
 }

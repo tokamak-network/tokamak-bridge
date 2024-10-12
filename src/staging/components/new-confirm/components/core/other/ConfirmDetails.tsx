@@ -3,17 +3,12 @@ import Image from "next/image";
 import { useMemo } from "react";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import {
-  TransactionHistory,
-  Status,
-  Action,
-} from "@/staging/types/transaction";
+import { TransactionHistory } from "@/staging/types/transaction";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
-import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
+import { convertNumber } from "@/utils/trim/convertNumber";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import {
   NetworkDisplayName,
