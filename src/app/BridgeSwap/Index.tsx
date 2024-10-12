@@ -24,9 +24,9 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
-        <SwitchToTestNetwork
+        {/* <SwitchToTestNetwork
           style={{ marginTop: "55px", marginBottom: "14px" }}
-        />
+        /> */}
         <Swap />
         <Details />
       </Flex>

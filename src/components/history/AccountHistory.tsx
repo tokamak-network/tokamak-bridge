@@ -124,11 +124,11 @@ export default function AccountHistory() {
   return (
     <Drawer
       isOpen={isOpen && address !== undefined}
-      placement="right"
+      placement='right'
       onClose={() => {
         setIsOpen(false);
       }}
-      variant="clickThrough"
+      variant='clickThrough'
       trapFocus={false}
       useInert={true}
       blockScrollOnMount={false}
@@ -151,18 +151,18 @@ export default function AccountHistory() {
         </Box>
       )}
       <DrawerContent
-        px="12px"
-        pb="0px"
+        px='12px'
+        pb='0px'
         mt={{ base: "64px", lg: "0px" }}
         minW={{ base: "100%", lg: "360px" }}
         maxW={{ base: "100%", lg: "360px" }}
         bgColor={"#1F2128"}
         rounded={{ base: "16px 16px 0px 0px", lg: "0" }}
       >
-        <Flex direction="column" height="100%" overflow="hidden">
+        <Flex direction='column' height='100%' overflow='hidden'>
           {!mobileView && <AccountContainer />}
           <Flex
-            w={"336px"}
+            w={mobileView ? "100%" : "336px"}
             h={"40px"}
             alignItems={"center"}
             justifyContent={"center"}
@@ -212,24 +212,26 @@ export default function AccountHistory() {
             </Box>
           </Flex>
           {subCategoryButtons}
-          <Flex mt={{ base: "0px", lg: "12px" }} flex="1" overflow="hidden">
+          <Flex mt={{ base: "0px", lg: "12px" }} flex='1' overflow='hidden'>
             <Box
-              flex="1"
-              overflowY="auto"
-              css={{
-                "&::-webkit-scrollbar": {
-                  width: "6px",
-                },
-                "&::-webkit-scrollbar-track": {
-                  background: "transparent",
-                  borderRadius: "4px",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  background: "#343741",
-                  borderRadius: "3px",
-                },
-              }}
-              mr="-6px"
+              flex='1'
+              overflowY='auto'
+              css={
+                !mobileView && {
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "transparent",
+                    borderRadius: "4px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#343741",
+                    borderRadius: "3px",
+                  },
+                }
+              }
+              mr='-6px'
             >
               <AccountHistoryNew />
             </Box>
@@ -243,7 +245,7 @@ export default function AccountHistory() {
           pos={"absolute"}
           left={"-72px"}
           height={"100%"}
-          bg="transparent"
+          bg='transparent'
           justifyContent={"center"}
           // border={"1px solid red"}
           // w={"72px"}

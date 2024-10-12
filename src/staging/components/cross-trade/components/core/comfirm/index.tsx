@@ -9,6 +9,7 @@ import {
   Text,
   Flex,
 } from "@chakra-ui/react";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
@@ -35,6 +36,7 @@ import { useAccount } from "wagmi";
 import { Hash } from "viem";
 
 export default function CTModal() {
+  const { mobileView } = useMediaView();
   const { ctConfirmModal, onCloseCTConfirmModal } = useFxConfirmModal();
 
   const { onOpenCTUpdateFeeModal } = useCTUpdateFeeModal();
@@ -177,18 +179,29 @@ export default function CTModal() {
     <Modal
       isOpen={ctConfirmModal.isOpen && !refreshOpen.isOpen && isNetworkValid}
       onClose={onCloseCTConfirmModal}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
     >
       <ModalOverlay />
       <ModalContent
+        mb={mobileView ? 0 : "auto"}
+        alignSelf={mobileView ? "flex-end" : "center"}
+        borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={"404px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={"20px"}
-        borderRadius={"16px"}
+        {...(mobileView && {
+          maxHeight: "calc(100vh - 80px)",
+          overflowY: "auto",
+        })}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Flex>
-            <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
+            <Text
+              fontSize={mobileView ? "16px" : "20px"}
+              fontWeight={"500"}
+              lineHeight={mobileView ? "24px" : "30px"}
+            >
               {isProvide && ctConfirmModal.type === ModalType.Trade
                 ? "Confirm Provide"
                 : modalTitles[ctConfirmModal.type]}

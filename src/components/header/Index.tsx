@@ -44,11 +44,11 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 
 const menuList = [
   {
-    title: "BRIDGE & SWAP",
+    title: "Bridge & Swap",
     link: "/",
   },
   {
-    title: "POOLS",
+    title: "Liquidity",
     link: "/pools",
   },
 ];
@@ -245,7 +245,7 @@ export default function Header() {
               flexDir={"row"}
             >
               <Flex>
-                <Text>MORE</Text>
+                <Text>More</Text>
                 <Flex
                   marginLeft={"4px"}
                   height={"24px"}
