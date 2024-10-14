@@ -92,6 +92,8 @@ export interface I_TransactionHistory {
 export interface BaseTransactionHistory extends I_TransactionHistory {
   action: Action;
   status: Status;
+  fromAddress?: string;
+  toAddress?: string;
 }
 export interface BaseCTTransactionHistory extends I_TransactionHistory {
   action: CT_ACTION;

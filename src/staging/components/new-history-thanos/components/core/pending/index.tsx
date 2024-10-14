@@ -22,6 +22,9 @@ import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import useCTConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { ModalType } from "@/staging/components/cross-trade/types";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
+import ArrowIcon from "@/assets/icons/newHistory/small-arrow-gray.svg";
+import { useAccount } from "wagmi";
+import { trimAddress } from "@/utils/trim";
 
 interface PendingProps {
   transaction: TransactionHistory;
@@ -29,10 +32,15 @@ interface PendingProps {
 
 export default function Pending(props: PendingProps) {
   const { transaction } = props;
+  const { address } = useAccount();
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
 
   const transactionData = transaction;
+  const isExternalBridge =
+    (transactionData.action === Action.Deposit ||
+      transactionData.action === Action.Withdraw) &&
+    transactionData?.fromAddress !== transactionData?.toAddress;
   const title = useMemo(() => {
     switch (transactionData.action) {
       case Action.Withdraw:
@@ -71,8 +79,41 @@ export default function Pending(props: PendingProps) {
         >
           {title}
         </Text>
-        <Flex cursor={"pointer"} onClick={openModal}>
-          <Image src={TxLink} alt={"TxLink"} />
+        <Flex gap={"8px"}>
+          {isExternalBridge && (
+            <Flex gap={"3px"}>
+              <Text
+                color={"#A0A3AD"}
+                fontSize={"11px"}
+                fontWeight={400}
+                lineHeight={"22px"}
+              >
+                {transactionData?.fromAddress === address
+                  ? "This address"
+                  : trimAddress({
+                      address: transactionData?.fromAddress,
+                      firstChar: 6,
+                    })}
+              </Text>
+              <Image src={ArrowIcon} alt={"arrow icon"} />
+              <Text
+                color={"#A0A3AD"}
+                fontSize={"11px"}
+                fontWeight={400}
+                lineHeight={"22px"}
+              >
+                {transactionData?.toAddress === address
+                  ? "This address"
+                  : trimAddress({
+                      address: transactionData?.toAddress,
+                      firstChar: 6,
+                    })}
+              </Text>
+            </Flex>
+          )}
+          <Flex cursor={"pointer"} onClick={openModal}>
+            <Image src={TxLink} alt={"TxLink"} />
+          </Flex>
         </Flex>
       </Flex>
       <Flex

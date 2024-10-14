@@ -658,7 +658,8 @@ export const useDepositData = () => {
 
           if (!parsedLog) return;
 
-          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
+          const { l1TokenAddress, l2TokenAddress, amount, from, to } =
+            parsedLog;
 
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
@@ -692,6 +693,8 @@ export const useDepositData = () => {
             outToken: l2Token,
             blockTimestamps,
             transactionHashes,
+            fromAddress: from,
+            toAddress: to,
           };
           return result;
         })
@@ -766,7 +769,8 @@ export const useDepositData = () => {
             SupportedChainId.THANOS_SEPOLIA
           );
           if (!parsedLog) return;
-          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
+          const { l1TokenAddress, l2TokenAddress, amount, from, to } =
+            parsedLog;
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
             l2TokenAddress,
@@ -799,6 +803,8 @@ export const useDepositData = () => {
             outToken: l1Token,
             blockTimestamps,
             transactionHashes,
+            fromAddress: from,
+            toAddress: to,
           };
           return result;
         })

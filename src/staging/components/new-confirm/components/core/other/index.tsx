@@ -18,6 +18,7 @@ import {
   Status,
   GasCostData,
   CT_ACTION,
+  StandardHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
@@ -54,13 +55,18 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
+import Image from "next/image";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
 
-  const transactionData = depositWithdrawConfirmModal.transaction;
+  const transactionData =
+    depositWithdrawConfirmModal.transaction as StandardHistory;
+  const isStandardBridge =
+    transactionData?.toAddress === transactionData?.fromAddress;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
@@ -251,33 +257,41 @@ export default function DepositWithdrawConfirmModal() {
                 transactionHistory={transactionData}
               />
             </Box>
-            <Box borderTop="1px solid #313442" mt={"16px"} pt={"16px"}>
-              <Flex justifyContent={"space-between"} alignItems={"center"}>
-                <Text
-                  fontWeight={400}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#A0A3AD"}
-                >
-                  Bridge
-                </Text>
-                <Flex>
-                  <NetworkSymbol
-                    networkI={transactionData.outNetwork}
-                    networkH={16}
-                    networkW={16}
-                  />
+            <Flex
+              borderTop="1px solid #313442"
+              mt={"16px"}
+              pt={"16px"}
+              flexDir={"column"}
+              gap={"6px"}
+            >
+              {isStandardBridge && (
+                <Flex justifyContent={"space-between"} alignItems={"center"}>
                   <Text
-                    ml={"4px"}
-                    fontWeight={500}
+                    fontWeight={400}
                     fontSize={"12px"}
                     lineHeight={"18px"}
-                    color={"#FFFFFF"}
+                    color={"#A0A3AD"}
                   >
-                    {`${displayNetworkName} Standard Bridge`}
+                    Bridge
                   </Text>
+                  <Flex>
+                    <NetworkSymbol
+                      networkI={transactionData.outNetwork}
+                      networkH={16}
+                      networkW={16}
+                    />
+                    <Text
+                      ml={"4px"}
+                      fontWeight={500}
+                      fontSize={"12px"}
+                      lineHeight={"18px"}
+                      color={"#FFFFFF"}
+                    >
+                      {`${displayNetworkName} Standard Bridge`}
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Flex>
+              )}
               <Flex
                 mt={"6px"}
                 justifyContent={"space-between"}
@@ -293,24 +307,56 @@ export default function DepositWithdrawConfirmModal() {
                     ? "Withdraw"
                     : "Deposit"}
                   {/** Add a space */ " "}
-                  to
+                  {isStandardBridge && "to"}
                 </Text>
                 <Link
                   target="_blank"
                   href={`${BLOCKEXPLORER_CONSTANTS[inNetworkChainId]}/address/${address}`}
                 >
-                  <Text
-                    fontWeight={600}
-                    fontSize={"12px"}
-                    lineHeight={"18px"}
-                    color={"#FFFFFF"}
-                    cursor={"pointer"}
-                  >
-                    {trimAddress({ address: address, firstChar: 6 })}
-                  </Text>
+                  {isStandardBridge ? (
+                    <Text
+                      fontWeight={600}
+                      fontSize={"12px"}
+                      lineHeight={"18px"}
+                      color={"#FFFFFF"}
+                      cursor={"pointer"}
+                    >
+                      {trimAddress({ address: address, firstChar: 6 })}
+                    </Text>
+                  ) : (
+                    <Flex gap={"4px"}>
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={
+                          transactionData?.fromAddress === address ? 400 : 700
+                        }
+                      >
+                        {transactionData?.fromAddress === address
+                          ? "This address"
+                          : trimAddress({
+                              address: transactionData?.fromAddress,
+                              firstChar: 6,
+                            })}
+                      </Text>
+                      <Image src={ArrowIcon} alt="Arrow Icon" />
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={
+                          transactionData?.toAddress === address ? 400 : 700
+                        }
+                      >
+                        {transactionData?.toAddress === address
+                          ? "This address"
+                          : trimAddress({
+                              address: transactionData?.toAddress,
+                              firstChar: 6,
+                            })}
+                      </Text>
+                    </Flex>
+                  )}
                 </Link>
               </Flex>
-            </Box>
+            </Flex>
           </Box>
           <Box
             my={"12px"}
@@ -319,11 +365,11 @@ export default function DepositWithdrawConfirmModal() {
             borderRadius={"8px"}
             bg="#15161D"
           >
-            <Flex>
+            <Flex gap={"10px"}>
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"}>
+              <Box width={"calc(100% - 20px)"}>
                 {renderStatusComponents(statuses, transactionData.action)}
               </Box>
             </Flex>

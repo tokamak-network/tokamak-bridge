@@ -104,13 +104,14 @@ export default function Warning() {
         />
       );
 
-    return (
-      <WarningText
-        label={`Cannot withdraw ${inToken?.tokenSymbol} to ${convertNetworkName(
-          outNetwork?.chainName
-        )}.`}
-      />
-    );
+    if (inToken)
+      return (
+        <WarningText
+          label={`Cannot deposit/withdraw ${
+            inToken?.tokenSymbol
+          } to ${convertNetworkName(outNetwork?.chainName)}.`}
+        />
+      );
   }
 
   if (mode === "Swap" && isNotSupportForSwap) {
