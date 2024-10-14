@@ -292,11 +292,7 @@ export default function DepositWithdrawConfirmModal() {
                   </Flex>
                 </Flex>
               )}
-              <Flex
-                mt={"6px"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
+              <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text
                   fontWeight={400}
                   fontSize={"12px"}
