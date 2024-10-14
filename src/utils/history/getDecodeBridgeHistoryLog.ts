@@ -26,9 +26,10 @@ export const getDecodedStandardBridgeLog = (
   to?: string;
 } | null => {
   const log = logs.find(
-    (log: any) => log.topics[0] === ERC20DepositInitiatedTopicHash //||
-    // log.topics[0] === ETHDepositInitiatedTopicHash ||
-    // log.topics[0] === WithdrawalInitiatedTopicHash
+    (log: any) =>
+      log.topics[0] === ERC20DepositInitiatedTopicHash ||
+      log.topics[0] === ETHDepositInitiatedTopicHash ||
+      log.topics[0] === WithdrawalInitiatedTopicHash
   );
   if (!log) return null;
   const parsedLog = iFace.parseLog(log);
