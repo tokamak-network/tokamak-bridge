@@ -162,7 +162,7 @@ export default function AccountHistory() {
         <Flex direction="column" height="100%" overflow="hidden">
           {!mobileView && <AccountContainer />}
           <Flex
-            w={"336px"}
+            w={mobileView ? "100%" : "336px"}
             h={"40px"}
             alignItems={"center"}
             justifyContent={"center"}
@@ -216,19 +216,21 @@ export default function AccountHistory() {
             <Box
               flex="1"
               overflowY="auto"
-              css={{
-                "&::-webkit-scrollbar": {
-                  width: "6px",
-                },
-                "&::-webkit-scrollbar-track": {
-                  background: "transparent",
-                  borderRadius: "4px",
-                },
-                "&::-webkit-scrollbar-thumb": {
-                  background: "#343741",
-                  borderRadius: "3px",
-                },
-              }}
+              css={
+                !mobileView && {
+                  "&::-webkit-scrollbar": {
+                    width: "6px",
+                  },
+                  "&::-webkit-scrollbar-track": {
+                    background: "transparent",
+                    borderRadius: "4px",
+                  },
+                  "&::-webkit-scrollbar-thumb": {
+                    background: "#343741",
+                    borderRadius: "3px",
+                  },
+                }
+              }
               mr="-6px"
             >
               <AccountHistoryNew />

@@ -19,6 +19,13 @@ import { useRequestData } from "@/staging/hooks/useCrossTrade";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import { CustomTooltipWithQuestion } from "@/components/tooltip/CustomTooltip";
 import useConnectedNetwork from "@/hooks/network";
+import useMediaView from "@/hooks/mediaView/useMediaView";
+import TokenSymbolWithNetwork from "@/components/image/TokenSymbolWithNetwork";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
+import { convertNumber } from "@/utils/trim/convertNumber";
+import { formatProfit } from "@/staging/utils/formatProfit";
 
 {
   /** 
@@ -29,6 +36,11 @@ import useConnectedNetwork from "@/hooks/network";
   */
 }
 export default function CTMain() {
+  /** mobileview start */
+  const { mobileView } = useMediaView();
+
+  /** mobileview end */
+
   const [isDescSortedProvide, setIsDescSortedProvide] = useState<
     boolean | null
   >(null);
@@ -149,7 +161,111 @@ export default function CTMain() {
     if (node) observer.current.observe(node);
   }, []);
 
-  return (
+  return mobileView ? (
+    <Flex direction="column" width="100%" height="100%" padding="0">
+      {displayedItems?.map((item, index) => {
+        if (item.isProvided) return null;
+        const status = item.isProvided;
+
+        const formattedAmount = convertNumber(
+          item.outToken.amount,
+          item.outToken.decimals,
+        );
+
+        const chainNameIn =
+          getKeyByValue(SupportedChainId, item.inNetwork) || "";
+        const chainNameOut =
+          getKeyByValue(SupportedChainId, item.outNetwork) || "";
+
+        const displayNetworkNameIn =
+          chainNameIn === "MAINNET"
+            ? "Ethereum"
+            : chainNameIn === "TITAN_SEPOLIA"
+              ? "Titan Sepolia"
+              : capitalizeFirstLetter(chainNameIn);
+
+        const displayNetworkNameOut =
+          chainNameOut === "MAINNET"
+            ? "Ethereum"
+            : chainNameOut === "TITAN_SEPOLIA"
+              ? "Titan Sepolia"
+              : capitalizeFirstLetter(chainNameOut);
+
+        return (
+          <Box
+            w="100%"
+            h="100%"
+            py={"12px"}
+            borderBottom={"1px solid #313442"}
+            ref={index === displayedItems.length - 1 ? lastItemRef : null}
+          >
+            <Flex justifyContent="space-between" alignItems={"center"}>
+              <Flex alignItems={"center"}>
+                <Box>
+                  <TokenSymbolWithNetwork
+                    tokenSymbol={item.outToken.symbol}
+                    chainId={item.inNetwork}
+                    networkSymbolW={18}
+                    networkSymbolH={18}
+                    symbolW={40}
+                    symbolH={40}
+                    right={0}
+                    bottom={0}
+                  />
+                </Box>
+                <Flex direction={"column"} ml="12px">
+                  <Text
+                    fontSize="13px"
+                    fontWeight={400}
+                    lineHeight="19.5px"
+                    color="#A0A3AD"
+                  >
+                    Receive on {displayNetworkNameIn}
+                  </Text>
+                  <Flex alignItems={"center"}>
+                    <Text
+                      fontSize="16px"
+                      fontWeight={600}
+                      lineHeight="24px"
+                      color="#FFFFFF"
+                      mr="3px"
+                    >
+                      {formattedAmount} {item.outToken.symbol}
+                    </Text>
+                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
+                      (
+                    </Text>
+                    <Text fontSize="16px" fontWeight={400} lineHeight="24px">
+                      +{formatProfit(item.profit?.percent)}%
+                    </Text>
+                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
+                      )
+                    </Text>
+                  </Flex>
+                  <Text
+                    fontSize="13px"
+                    fontWeight={500}
+                    lineHeight="19.5px"
+                    color="#DB00FF"
+                  >
+                    Provide on {displayNetworkNameOut}
+                  </Text>
+                </Flex>
+              </Flex>
+              <Box>
+                <CTProvider
+                  status={status}
+                  crossTradeData={item}
+                  subgraphData={item.subgraphData}
+                  serviceFee={item.serviceFee}
+                />
+              </Box>
+            </Flex>
+          </Box>
+        );
+      })}
+    </Flex>
+  ) : (
     <Box
       w="100%"
       h="100%"
@@ -306,7 +422,7 @@ export default function CTMain() {
           </Tr>
         </Thead>
         <Tbody>
-          {isLoading && isConnectedToTestNetwork && (
+          {isLoading && (
             <Tr
               key={0}
               sx={{
@@ -338,7 +454,7 @@ export default function CTMain() {
               </Td>
             </Tr>
           )}
-          {isConnectedToMainNetwork && (
+          {!isLoading && data?.length === 0 && (
             <Tr
               key={0}
               sx={{
@@ -356,12 +472,11 @@ export default function CTMain() {
                   color: "#E3F3FF",
                 }}
               >
-                <Box>Not available on Ethereum and Titan mainnet</Box>
+                <Box>No active requests</Box>
               </Td>
             </Tr>
           )}
           {!isLoading &&
-            !isConnectedToMainNetwork &&
             displayedItems?.map((item, index) => {
               //Decided not to show the request is already done with providing liquidity because countdown does not needed.
               if (item.isProvided) return null;
@@ -408,28 +523,6 @@ export default function CTMain() {
                 </Tr>
               );
             })}
-          {!isLoading && data?.length === 0 && (
-            <Tr
-              key={0}
-              sx={{
-                "& td": { pl: "20px", py: "16px", pr: "auto" },
-                borderBottom: "1px solid #23242B",
-              }}
-              textAlign={"center"}
-            >
-              <Td
-                colSpan={4}
-                style={{
-                  textAlign: "center",
-                  height: "144px",
-                  lineHeight: "144px",
-                  color: "#E3F3FF",
-                }}
-              >
-                <Box>No active requests</Box>
-              </Td>
-            </Tr>
-          )}
         </Tbody>
       </Table>
     </Box>

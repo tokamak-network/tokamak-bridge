@@ -7,6 +7,7 @@ interface ToggleButtonProps {
   onClick: () => void;
   label: UpdateFeeButtonType;
   marginLeft?: string;
+  isMobile: boolean;
 }
 
 function ToggleButton({
@@ -14,9 +15,10 @@ function ToggleButton({
   onClick,
   label,
   marginLeft = "0",
+  isMobile,
 }: ToggleButtonProps) {
   const buttonStyle = {
-    width: "162px",
+    width: isMobile ? "100%" : "162px",
     height: "32px",
     bg: isActive ? "#DB00FF" : "transparent",
     borderRadius: "16px",
@@ -42,15 +44,17 @@ function ToggleButton({
 interface CTUpdateButtonProps {
   activeButton: UpdateFeeButtonType;
   setActiveButton: React.Dispatch<React.SetStateAction<UpdateFeeButtonType>>;
+  isMobile: boolean;
 }
 
 export default function CTUpdateButton({
   activeButton,
   setActiveButton,
+  isMobile,
 }: CTUpdateButtonProps) {
   return (
     <Flex
-      width="332px"
+      width={isMobile ? "100%" : "332px"}
       bg="#1F2128"
       border="1px solid #DB00FF"
       borderRadius="32px"
@@ -59,12 +63,14 @@ export default function CTUpdateButton({
         isActive={activeButton === UpdateFeeButtonType.Update}
         onClick={() => setActiveButton(UpdateFeeButtonType.Update)}
         label={UpdateFeeButtonType.Update}
+        isMobile={isMobile}
       />
       <ToggleButton
         isActive={activeButton === UpdateFeeButtonType.CancelRequest}
         onClick={() => setActiveButton(UpdateFeeButtonType.CancelRequest)}
         label={UpdateFeeButtonType.CancelRequest}
         marginLeft="8px"
+        isMobile={isMobile}
       />
     </Flex>
   );

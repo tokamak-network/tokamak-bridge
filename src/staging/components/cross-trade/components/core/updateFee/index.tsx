@@ -36,10 +36,12 @@ import { useRecoilState } from "recoil";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { isZeroAddress } from "@/utils/contract/isZeroAddress";
 import { useAccount } from "wagmi";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 import { BetaIcon } from "../../common/BetaIcon";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export default function CTFeeUpdateModal() {
+  const { mobileView } = useMediaView();
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
   //Button props
   const [activeButton, setActiveButton] = useState<UpdateFeeButtonType>(
@@ -311,18 +313,25 @@ export default function CTFeeUpdateModal() {
     <Modal
       isOpen={ctUpdateFeeModal.isOpen && isRequester && isNetworkValid}
       onClose={resetAllStates}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
     >
       <ModalOverlay />
       <ModalContent
+        mb={mobileView ? 0 : "auto"}
+        alignSelf={mobileView ? "flex-end" : "center"}
+        borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         bg="#1F2128"
         p={"20px"}
-        borderRadius={"16px"}
-        width={"404px"}
+        width={mobileView ? "100%" : "404px"}
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
           <Flex columnGap={"8px"}>
-            <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"normal"}>
+            <Text
+              fontSize={mobileView ? "16px" : "20px"}
+              fontWeight={"500"}
+              lineHeight={mobileView ? "24px" : "normal"}
+            >
               Edit Request
             </Text>
             <BetaIcon />
@@ -333,7 +342,7 @@ export default function CTFeeUpdateModal() {
         </Box>
         <ModalBody p={0}>
           <Box
-            width={"364px"}
+            width={mobileView ? "100%" : "364px"}
             bg="#15161D"
             px={"16px"}
             py={"16px"}
@@ -343,6 +352,7 @@ export default function CTFeeUpdateModal() {
             <CTUpdateButton
               activeButton={activeButton}
               setActiveButton={setActiveButton}
+              isMobile={mobileView}
             />
             <WrongNetwork style={{ marginTop: "12px" }} />
             {activeButton == UpdateFeeButtonType.Update &&
@@ -441,7 +451,8 @@ export default function CTFeeUpdateModal() {
           </Button>
           {activeButton == UpdateFeeButtonType.Update && (
             <Text mt={"16px"} fontSize={13} fontWeight={400}>
-              Tip: Updating or canceling requests takes place on L1 <br />
+              Tip: Updating or canceling requests takes place on L1{" "}
+              {!mobileView && <br />}
               to avoid race conditions.
             </Text>
           )}

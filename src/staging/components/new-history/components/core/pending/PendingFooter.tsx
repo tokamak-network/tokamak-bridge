@@ -15,6 +15,7 @@ import {
 } from "@/staging/types/transaction";
 import StatusComponent from "@/staging/components/new-history/components/core/pending/StatusComponent";
 import { STATUS_CONFIG } from "@/staging/constants/status";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const getStatusHandler = (params: {
   status: Action | CT_ACTION;
@@ -97,6 +98,7 @@ export default function PendingFooter(params: {
   transaction: TransactionHistory;
   openModal: () => void;
 }) {
+  const { mobileView } = useMediaView();
   const { transaction, openModal } = params;
   const transactionData = transaction;
   const status = transactionData.action;
@@ -118,14 +120,18 @@ export default function PendingFooter(params: {
     isCanceled,
     isUpdateFee,
     hasMultipleUpdateFees,
-  });
+  }) as HISTORY_TRANSACTION_STATUS[];
+
+  const filteredStatuses = mobileView
+    ? statuses.filter((statusKey) => statusKey === transactionData.status)
+    : statuses;
 
   return (
     <>
-      {statuses.map((statusKey, index) => {
+      {filteredStatuses.map((statusKey) => {
         return (
           <StatusComponent
-            key={index}
+            key={`${transactionData.action}-${statusKey}`}
             label={statusKey}
             transactionData={transactionData}
             blockTimestamp={getBlockTimestamp(

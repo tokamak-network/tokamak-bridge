@@ -13,12 +13,11 @@ import {
   CT_PROVIDE,
   CT_REQUEST,
 } from "@/staging/types/transaction";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { ModalType } from "../../../types";
 import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
 import { CrossTradeData } from "@/staging/types/crossTrade";
 import { useAccount } from "wagmi";
-import { useCallback, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpdateFeeModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
@@ -119,7 +118,7 @@ export default function CTProvider({
   }, [address, crossTradeData.requester]);
 
   const ProvidingButton = () => {
-    if (!isTimeOver) {
+    if (!isTimeOver && !isCreatedByUser) {
       const remainTime = calculateInitialCountdown(
         blockTimestamps,
         TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE,

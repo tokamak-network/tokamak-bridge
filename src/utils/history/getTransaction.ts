@@ -15,7 +15,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { OVM_ETH_BRIDGE } from "@/constant/contracts";
 
 const getTokenInfo = (tokenAddress: string, chainId: number) => {
-  if (tokenAddress === OVM_ETH_BRIDGE) {
+  if (tokenAddress === OVM_ETH_BRIDGE || tokenAddress === "") {
     return {
       name: "ETH",
       symbol: "ETH",

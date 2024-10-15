@@ -36,10 +36,13 @@ import {
 } from "@/staging/components/new-confirm/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
 import useConnectedNetwork from "@/hooks/network";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export default function DepositWithdrawConfirmModal() {
+  const { mobileView } = useMediaView();
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
+
   const transactionData = depositWithdrawConfirmModal.transaction;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { address } = useAccount();
@@ -140,17 +143,28 @@ export default function DepositWithdrawConfirmModal() {
     <Modal
       isOpen={depositWithdrawConfirmModal.isOpen}
       onClose={onCloseDepositWithdrawConfirmModal}
+      motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
     >
       <ModalOverlay />
       <ModalContent
-        width={"404px"}
+        mb={mobileView ? 0 : "auto"}
+        alignSelf={mobileView ? "flex-end" : "center"}
+        borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
+        width={mobileView ? "100%" : "404px"}
         bg="#1F2128"
         p={"20px"}
-        borderRadius={"16px"}
+        {...(mobileView && {
+          maxHeight: "calc(100vh - 80px)",
+          overflowY: "auto",
+        })}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
-          <Text fontSize={"20px"} fontWeight={"500"} lineHeight={"30px"}>
+          <Text
+            fontSize={mobileView ? "16px" : "20px"}
+            fontWeight={"500"}
+            lineHeight={mobileView ? "24px" : "30px"}
+          >
             Confirm{" "}
             {transactionData?.action === Action.Withdraw
               ? "Withdraw"
@@ -242,7 +256,9 @@ export default function DepositWithdrawConfirmModal() {
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"}>{renderStatusComponents(statuses)}</Box>
+              <Box ml={"10px"} maxWidth="100%" width="100%">
+                {renderStatusComponents(statuses)}
+              </Box>
             </Flex>
           </Box>
         </ModalBody>

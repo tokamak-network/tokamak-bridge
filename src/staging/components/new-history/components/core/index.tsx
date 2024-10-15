@@ -16,6 +16,7 @@ import { selectedTransactionCategory } from "@/recoil/history/transaction";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
 import GradientSpinner from "@/components/ui/GradientSpinner";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const NoAcitivityComponent = () => {
   return (
@@ -33,8 +34,9 @@ const NoAcitivityComponent = () => {
 };
 
 const LoadingTxSpinners = () => {
+  const { mobileView } = useMediaView();
   return (
-    <Flex w={"336px"} flexDir={"column"} rowGap={"8px"}>
+    <Flex w={mobileView ? "100%" : "336px"} flexDir={"column"} rowGap={"8px"}>
       <GradientSpinner />
       <GradientSpinner />
       <GradientSpinner />
@@ -43,6 +45,7 @@ const LoadingTxSpinners = () => {
 };
 
 export default function AccountHistoryNew() {
+  const { mobileView } = useMediaView();
   const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
     useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
@@ -71,7 +74,12 @@ export default function AccountHistoryNew() {
   ]);
 
   return (
-    <Flex flexDirection="column" gap="2" h={"100%"}>
+    <Flex
+      w={mobileView ? "calc(100% - 8px)" : "336px"}
+      flexDirection="column"
+      gap="2"
+      h={"100%"}
+    >
       {!historyData && <LoadingTxSpinners />}
       {historyData?.length === 0 && <NoAcitivityComponent />}
       {historyData?.map((transaction, index) => {
@@ -80,10 +88,10 @@ export default function AccountHistoryNew() {
           transaction.status === CT_REQUEST.Completed ||
           transaction.status === CT_REQUEST_CANCEL.Completed ||
           transaction.status === CT_PROVIDE.Completed;
+
         return (
           <Box
             key={`${transaction.action}-${index}`}
-            w={"336px"}
             px={"12px"}
             py={isCompleted ? "6px" : "8px"}
             borderRadius={"8px"}

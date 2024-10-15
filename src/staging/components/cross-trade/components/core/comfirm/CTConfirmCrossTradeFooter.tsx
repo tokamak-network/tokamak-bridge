@@ -36,6 +36,7 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
 import { WarningText } from "@/components/ui/WarningText";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
 type TradeConfirmationProps = {
@@ -290,6 +291,8 @@ export default function CTConfirmCrossTradeFooter(
     isInRelay,
   ]);
 
+  const { mobileView } = useMediaView();
+
   return (
     <Grid mt={"3px"} w={"100%"} rowGap={"12px"} marginTop={"12px"}>
       {/** Check Box */}
@@ -401,7 +404,7 @@ export default function CTConfirmCrossTradeFooter(
       {isProvide && isConnected && !isInRelay && (
         <Grid
           textAlign={"center"}
-          w={"364px"}
+          w={mobileView ? "100%" : "364px"}
           p={"16px"}
           border={"1px solid #DB00FF"}
           borderRadius={"8px"}
