@@ -27,8 +27,8 @@ const TokenPairTitle = (props: {
   const { page } = props;
   const { info } = usePositionInfo();
 
-  if (!info) return null;
   const { token0Symbol, token1Symbol } = useConvertWETH();
+  if (!info) return null;
 
   const isBigFont = page === "increaseLiquidity" || page === "removeLiquidity";
 
@@ -55,11 +55,6 @@ export default function Range(props: {
 }) {
   const { page, estimatedGas, style } = props;
   const { info } = usePositionInfo();
-
-  if (!info) return null;
-
-  const { inRange, token0Amount, token1Amount, fee, token0, token1, isClosed } =
-    info;
   const { amount0Removed, amount1Removed } = useRemoveLiquidity();
   const { poolModal } = usePreview();
   const { token0ParsedAmount, token1ParsedAmount } = useIncreaseAmount();
@@ -67,80 +62,93 @@ export default function Range(props: {
   const modalStatus = useRecoilValue(poolModalStatus);
 
   const token0CurrentAmount = useMemo(() => {
-    return page === "addLiquidity" ||
-      modalStatus === "increaseLiquidity" ||
-      modalStatus === "removeLiquidity"
-      ? undefined
-      : smallNumberFormmater({
-          amount: Number(token0Amount.toString()),
-          trimed: true,
-          trimedDecimals: 13,
-        });
-  }, [page, modalStatus, token0Amount]);
+    if (info) {
+      return page === "addLiquidity" ||
+        modalStatus === "increaseLiquidity" ||
+        modalStatus === "removeLiquidity"
+        ? undefined
+        : smallNumberFormmater({
+            amount: Number(info.token0Amount.toString()),
+            trimed: true,
+            trimedDecimals: 13,
+          });
+    } else return undefined;
+  }, [page, modalStatus, info?.token0Amount]);
   const alter0Amount = useMemo(() => {
-    return page === "addLiquidity"
-      ? (token0ParsedAmount ?? "0.00")
-      : modalStatus === "increaseLiquidity"
-        ? smallNumberFormmater({
-            amount: inToken?.parsedAmount?.toString(),
-            decimals: 6,
-            trimed: false,
-            removeComma: true,
-          })
-        : modalStatus === "removeLiquidity"
+    if (info)
+      return page === "addLiquidity"
+        ? (token0ParsedAmount ?? "0.00")
+        : modalStatus === "increaseLiquidity"
           ? smallNumberFormmater({
-              amount: amount0Removed?.toString(),
+              amount: inToken?.parsedAmount?.toString(),
               decimals: 6,
-              minimumValue: 0.000001,
+              trimed: false,
+              removeComma: true,
             })
-          : undefined;
+          : modalStatus === "removeLiquidity"
+            ? smallNumberFormmater({
+                amount: amount0Removed?.toString(),
+                decimals: 6,
+                minimumValue: 0.000001,
+              })
+            : undefined;
+    return undefined;
   }, [page, modalStatus, token0ParsedAmount, amount0Removed]);
   const token1CurrentAmount = useMemo(() => {
-    return page === "addLiquidity" ||
-      modalStatus === "increaseLiquidity" ||
-      modalStatus === "removeLiquidity"
-      ? undefined
-      : smallNumberFormmater({
-          amount: Number(token1Amount.toString()),
-          trimed: true,
-          trimedDecimals: 13,
-        });
-  }, [page, modalStatus, token1Amount]);
+    if (info)
+      return page === "addLiquidity" ||
+        modalStatus === "increaseLiquidity" ||
+        modalStatus === "removeLiquidity"
+        ? undefined
+        : smallNumberFormmater({
+            amount: Number(info.token1Amount.toString()),
+            trimed: true,
+            trimedDecimals: 13,
+          });
+    return undefined;
+  }, [page, modalStatus, info?.token1Amount]);
   const alter1Amount = useMemo(() => {
-    return page === "addLiquidity"
-      ? (token1ParsedAmount ?? "0.00")
-      : modalStatus === "increaseLiquidity"
-        ? smallNumberFormmater({
-            amount: outToken?.parsedAmount?.toString(),
-            decimals: 6,
-            trimed: false,
-            removeComma: true,
-          })
-        : modalStatus === "removeLiquidity"
+    if (info)
+      return page === "addLiquidity"
+        ? (token1ParsedAmount ?? "0.00")
+        : modalStatus === "increaseLiquidity"
           ? smallNumberFormmater({
-              amount: amount1Removed?.toString(),
+              amount: outToken?.parsedAmount?.toString(),
               decimals: 6,
-              minimumValue: 0.000001,
+              trimed: false,
+              removeComma: true,
             })
-          : undefined;
+          : modalStatus === "removeLiquidity"
+            ? smallNumberFormmater({
+                amount: amount1Removed?.toString(),
+                decimals: 6,
+                minimumValue: 0.000001,
+              })
+            : undefined;
+    return undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   const alter0AmountForTooltip = useMemo(() => {
-    return page === "addLiquidity" || page === "increaseLiquidity"
-      ? inToken?.parsedAmount?.toString()
-      : page === "removeLiquidity"
-        ? amount0Removed?.toString()
-        : undefined;
+    if (info)
+      return page === "addLiquidity" || page === "increaseLiquidity"
+        ? inToken?.parsedAmount?.toString()
+        : page === "removeLiquidity"
+          ? amount0Removed?.toString()
+          : undefined;
+    return undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   const alter1AmountForTooltip = useMemo(() => {
-    return page === "addLiquidity" || page === "increaseLiquidity"
-      ? outToken?.parsedAmount?.toString()
-      : page === "removeLiquidity"
-        ? amount1Removed?.toString()
-        : undefined;
+    if (info)
+      return page === "addLiquidity" || page === "increaseLiquidity"
+        ? outToken?.parsedAmount?.toString()
+        : page === "removeLiquidity"
+          ? amount1Removed?.toString()
+          : undefined;
+    return undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
-
+  if (!info) return null;
+  const { inRange, fee, token0, token1, isClosed } = info;
   return (
     <Flex
       w="364px"

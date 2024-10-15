@@ -215,11 +215,8 @@ const analyzeTransactionHashes = (txData: {
   return { nestedArrayLengthSum: 0, nonNestedKeyLength: 0, entries: [] };
 };
 
-export default function CTConfirmHistoryFooter(props: {
-  txData: CT_History | null;
-}) {
+export default function CTConfirmHistoryFooter(props: { txData: CT_History }) {
   const { txData } = props;
-  if (txData === null) return null;
 
   const isCompleted = isFinalStatus(txData.status);
   const { nestedArrayLengthSum, nonNestedKeyLength, entries } =

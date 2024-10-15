@@ -116,17 +116,15 @@ export default function CTProvider({
       crossTradeData.requester?.toLocaleLowerCase()
     );
   }, [address, crossTradeData.requester]);
-
+  const remainTime = calculateInitialCountdown(
+    blockTimestamps,
+    TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE,
+  );
+  const isZeroTime = remainTime <= 0;
+  const timeCountDown = useCountdown(formatTimeDisplay(remainTime));
   const ProvidingButton = () => {
     if (!isTimeOver && !isCreatedByUser) {
-      const remainTime = calculateInitialCountdown(
-        blockTimestamps,
-        TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE,
-      );
-      const isZeroTime = remainTime <= 0;
-      const timeDisplay = isZeroTime
-        ? "00 : 00"
-        : useCountdown(formatTimeDisplay(remainTime));
+      const timeDisplay = isZeroTime ? "00 : 00" : timeCountDown;
 
       return (
         <Flex justifyContent={"center"}>

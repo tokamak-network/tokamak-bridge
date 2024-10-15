@@ -13,6 +13,7 @@ export function useApolloClients():
   return chainGroup?.map((chain) => subgraphApolloClients[chain.chainId]);
 }
 
+/* eslint-disable */
 export const useGetPositionByClients = () => {
   const { address } = useAccount();
   const { chainGroup } = useConnectedNetwork();

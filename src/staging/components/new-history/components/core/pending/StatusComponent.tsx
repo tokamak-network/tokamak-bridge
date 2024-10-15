@@ -149,14 +149,12 @@ export default function StatusComponent(
     timeBuffer: TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
     needToCheck: shouldCountdown,
   });
-
+  const timeCountDown = useCountdown(
+    initialTimeDisplay,
+    Boolean(transactionData.errorMessage) || isTimeOver,
+  );
   // Output variable
-  const timeDisplay = shouldCountdown
-    ? useCountdown(
-        initialTimeDisplay,
-        Boolean(transactionData.errorMessage) || isTimeOver,
-      )
-    : initialTimeDisplay;
+  const timeDisplay = shouldCountdown ? timeCountDown : initialTimeDisplay;
 
   // Calendar start time
   const startDate = useMemo(() => {

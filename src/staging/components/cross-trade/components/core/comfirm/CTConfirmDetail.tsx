@@ -175,7 +175,7 @@ interface FeeDetailProps {
 
 interface CTConfirmDetailProps {
   modalType: ModalType;
-  txData: CT_History | null;
+  txData: CT_History;
   onPencilClick: () => void;
   requester?: string;
 }
@@ -285,8 +285,6 @@ export default function CTConfirmDetail({
   txData,
   requester,
 }: CTConfirmDetailProps) {
-  if (txData === null) return null;
-
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
   const isProvide = isInCT_Provide(status) && modalType === "trade";

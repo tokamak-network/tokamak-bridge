@@ -16,15 +16,12 @@ import { formatNetworkName } from "@/utils/network/convertNetworkName";
 
 interface ConfirmDetailProps {
   isInNetwork: boolean;
-  transactionHistory: TransactionHistory | undefined;
+  transactionHistory: TransactionHistory;
 }
 
 export default function ConfirmDetails(props: ConfirmDetailProps) {
   const { isInNetwork, transactionHistory } = props;
 
-  if (!transactionHistory) {
-    return null;
-  }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: transactionHistory.inToken.name as string,
     amount: convertNumber(

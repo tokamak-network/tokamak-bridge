@@ -22,10 +22,34 @@ interface ConditionalBoxProps {
   transactionData: TransactionHistory;
   waitMessage?: string | undefined;
 }
-
 export default function ConditionalBox(props: ConditionalBoxProps) {
   const { type, transactionData, waitMessage } = props;
+  const startDate = useMemo(() => {
+    if (
+      isWithdrawTransactionHistory(transactionData) &&
+      transactionData.blockTimestamps.rollupCompletedTimestamp
+    ) {
+      return new Date(
+        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
+          convertTimeToMinutes(
+            TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
+            "days",
+            0,
+          ) *
+            60) *
+          1000,
+      );
+    }
+    return null;
+  }, [transactionData]);
 
+  const { handleCalendarClick } = useCalendar(startDate);
+  const remainTime = getRemainTime(transactionData);
+  const isZeroTime = remainTime <= 0;
+  const timeCountdown = useCountdown(
+    formatTimeDisplay(remainTime),
+    Boolean(transactionData.errorMessage),
+  );
   if (type === "wait") {
     return (
       <Box w={"305.5px"} h={"28px"} mt="3px" mb="21px" py="3px" bg="#15161D">
@@ -42,16 +66,9 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       </Box>
     );
   }
-  if (type === "timer") {
-    const remainTime = getRemainTime(transactionData);
-    const isZeroTime = remainTime <= 0;
 
-    const timeDisplay = isZeroTime
-      ? "00 : 00"
-      : useCountdown(
-          formatTimeDisplay(remainTime),
-          Boolean(transactionData.errorMessage),
-        );
+  if (type === "timer") {
+    const timeDisplay = isZeroTime ? "00 : 00" : timeCountdown;
 
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
@@ -77,28 +94,6 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     if (claimReadyButton) {
       return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D"></Box>;
     }
-
-    const startDate = useMemo(() => {
-      if (
-        isWithdrawTransactionHistory(transactionData) &&
-        transactionData.blockTimestamps.rollupCompletedTimestamp
-      ) {
-        return new Date(
-          (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
-            convertTimeToMinutes(
-              TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
-              "days",
-              0,
-            ) *
-              60) *
-            1000,
-        );
-      }
-      return null;
-    }, [transactionData]);
-
-    const { handleCalendarClick } = useCalendar(startDate);
-
     return (
       <Box
         w={"100%"}

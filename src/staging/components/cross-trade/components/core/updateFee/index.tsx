@@ -371,7 +371,9 @@ export default function CTFeeUpdateModal() {
                 txData={ctUpdateFeeModal.txData}
               />
             ) : (
-              <CTRefundDetail txData={ctUpdateFeeModal.txData} />
+              ctUpdateFeeModal.txData && (
+                <CTRefundDetail txData={ctUpdateFeeModal.txData} />
+              )
             )}
           </Box>
         </ModalBody>

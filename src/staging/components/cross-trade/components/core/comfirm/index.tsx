@@ -216,12 +216,14 @@ export default function CTModal() {
           {isProvide && ctConfirmModal.type !== "history" && !isInRelay && (
             <WrongNetwork style={{ marginBottom: "12px" }} />
           )}
-          <CTConfirmDetail
-            modalType={ctConfirmModal.type}
-            onPencilClick={handlePencilClick}
-            txData={ctConfirmModal.txData}
-            requester={requester}
-          />
+          {ctConfirmModal.txData && (
+            <CTConfirmDetail
+              modalType={ctConfirmModal.type}
+              onPencilClick={handlePencilClick}
+              txData={ctConfirmModal.txData}
+              requester={requester}
+            />
+          )}
         </ModalBody>
         <ModalFooter p={0}>
           {ctConfirmModal.type == ModalType.Trade ? (
@@ -238,7 +240,9 @@ export default function CTModal() {
               isInRelay={isInRelay}
             />
           ) : (
-            <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />
+            ctConfirmModal.txData && (
+              <CTConfirmHistoryFooter txData={ctConfirmModal.txData} />
+            )
           )}
         </ModalFooter>
       </ModalContent>
