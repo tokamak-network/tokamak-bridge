@@ -192,7 +192,6 @@ export const useRequestData = (
   } = useCrossTradeData_L1({ isHistory: false });
   const [requestList, setRequestList] = useState<CrossTradeData[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
   const fetchRequestList = useCallback(async () => {
     try {
       if (error || _l1Error) return null;
@@ -330,6 +329,7 @@ export const useRequestData = (
             editedCTAmount: ctAmount,
           };
         });
+
         const trimedResult = result.filter(
           (item) =>
             !item.isCanceled &&
