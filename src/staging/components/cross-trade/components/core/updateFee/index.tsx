@@ -324,6 +324,10 @@ export default function CTFeeUpdateModal() {
         bg='#1F2128'
         p={"20px"}
         width={mobileView ? "100%" : "404px"}
+        {...(mobileView && {
+          maxHeight: "calc(100vh - 80px)",
+          overflowY: "auto",
+        })}
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
           <Flex columnGap={"8px"}>
