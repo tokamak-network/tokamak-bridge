@@ -138,8 +138,8 @@ export default function TokenMobileCard(props: TokenCardProps) {
             {thisTokenIsETH
               ? "Ethereum"
               : tokenInfo?.tokenSymbol === "WETH"
-              ? "Wrapped Ethereum"
-              : tokenInfo?.tokenName ?? "TOKEN"}
+                ? "Wrapped Ethereum"
+                : (tokenInfo?.tokenName ?? "TOKEN")}
           </Text>
         </Box>
         <Text

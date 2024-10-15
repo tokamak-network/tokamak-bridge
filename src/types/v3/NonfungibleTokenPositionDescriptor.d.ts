@@ -32,38 +32,38 @@ interface NonfungibleTokenPositionDescriptorInterface
   encodeFunctionData(functionFragment: "WETH9", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "flipRatio",
-    values: [string, string, BigNumberish]
+    values: [string, string, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: "nativeCurrencyLabel",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "nativeCurrencyLabelBytes",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "tokenRatioPriority",
-    values: [string, BigNumberish]
+    values: [string, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: "tokenURI",
-    values: [string, BigNumberish]
+    values: [string, BigNumberish],
   ): string;
 
   decodeFunctionResult(functionFragment: "WETH9", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "flipRatio", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nativeCurrencyLabel",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "nativeCurrencyLabelBytes",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "tokenRatioPriority",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "tokenURI", data: BytesLike): Result;
 
@@ -76,26 +76,26 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -108,7 +108,7 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: NonfungibleTokenPositionDescriptorInterface;
@@ -120,7 +120,7 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
       token0: string,
       token1: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[boolean]>;
 
     nativeCurrencyLabel(overrides?: CallOverrides): Promise<[string]>;
@@ -130,13 +130,13 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
     tokenRatioPriority(
       token: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[BigNumber]>;
 
     tokenURI(
       positionManager: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[string]>;
   };
 
@@ -146,7 +146,7 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
     token0: string,
     token1: string,
     chainId: BigNumberish,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<boolean>;
 
   nativeCurrencyLabel(overrides?: CallOverrides): Promise<string>;
@@ -156,13 +156,13 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
   tokenRatioPriority(
     token: string,
     chainId: BigNumberish,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<BigNumber>;
 
   tokenURI(
     positionManager: string,
     tokenId: BigNumberish,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<string>;
 
   callStatic: {
@@ -172,7 +172,7 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
       token0: string,
       token1: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<boolean>;
 
     nativeCurrencyLabel(overrides?: CallOverrides): Promise<string>;
@@ -182,13 +182,13 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
     tokenRatioPriority(
       token: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     tokenURI(
       positionManager: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<string>;
   };
 
@@ -201,7 +201,7 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
       token0: string,
       token1: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     nativeCurrencyLabel(overrides?: CallOverrides): Promise<BigNumber>;
@@ -211,13 +211,13 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
     tokenRatioPriority(
       token: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     tokenURI(
       positionManager: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
 
@@ -228,27 +228,27 @@ export class NonfungibleTokenPositionDescriptor extends BaseContract {
       token0: string,
       token1: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     nativeCurrencyLabel(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     nativeCurrencyLabelBytes(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     tokenRatioPriority(
       token: string,
       chainId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     tokenURI(
       positionManager: string,
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };
 }

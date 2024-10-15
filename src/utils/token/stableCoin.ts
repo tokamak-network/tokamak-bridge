@@ -30,10 +30,10 @@ export function isUSDT(tokenAddress: string, chainId: number) {
 
 export const isStableCoin = (tokenAddress: string) => {
   const isUSDT = Object.values(USDT_ADDRESS_BY_CHAINID).some(
-    (tokenAddress) => tokenAddress !== undefined
+    (tokenAddress) => tokenAddress !== undefined,
   );
   const isUSDC = Object.values(USDC_ADDRESS_BY_CHAINID).some(
-    (tokenAddress) => tokenAddress !== undefined
+    (tokenAddress) => tokenAddress !== undefined,
   );
   return isUSDT || isUSDC;
 };

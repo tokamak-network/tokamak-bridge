@@ -545,7 +545,7 @@ export class UniversalRouter__factory extends ContractFactory {
       pairInitCodeHash: BytesLike;
       poolInitCodeHash: BytesLike;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UniversalRouter> {
     return super.deploy(params, overrides || {}) as Promise<UniversalRouter>;
   }
@@ -572,7 +572,7 @@ export class UniversalRouter__factory extends ContractFactory {
       pairInitCodeHash: BytesLike;
       poolInitCodeHash: BytesLike;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(params, overrides || {});
   }
@@ -589,7 +589,7 @@ export class UniversalRouter__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UniversalRouter {
     return new Contract(address, _abi, signerOrProvider) as UniversalRouter;
   }

@@ -1245,26 +1245,26 @@ export class NonfungiblePositionManager__factory extends ContractFactory {
     _factory: string,
     _WETH9: string,
     _tokenDescriptor_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<NonfungiblePositionManager> {
     return super.deploy(
       _factory,
       _WETH9,
       _tokenDescriptor_,
-      overrides || {}
+      overrides || {},
     ) as Promise<NonfungiblePositionManager>;
   }
   getDeployTransaction(
     _factory: string,
     _WETH9: string,
     _tokenDescriptor_: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _factory,
       _WETH9,
       _tokenDescriptor_,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): NonfungiblePositionManager {
@@ -1280,12 +1280,12 @@ export class NonfungiblePositionManager__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): NonfungiblePositionManager {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as NonfungiblePositionManager;
   }
 }

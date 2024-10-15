@@ -52,10 +52,12 @@ export default function DepositTx(props: { tx: FullWithTx }) {
           style={{ textDecoration: "none" }}
         >
           <Flex columnGap={"4px"} align={"center"}>
-            <Text fontSize={"14px"} fontWeight={600} color={tx.l2txHash ? "#A0A3AD" : ""}>
-              {
-                tx.l2txHash ? "Deposit Completed" : "Deposit"
-              }
+            <Text
+              fontSize={"14px"}
+              fontWeight={600}
+              color={tx.l2txHash ? "#A0A3AD" : ""}
+            >
+              {tx.l2txHash ? "Deposit Completed" : "Deposit"}
             </Text>
           </Flex>
         </Link>
@@ -67,10 +69,13 @@ export default function DepositTx(props: { tx: FullWithTx }) {
         >
           <Flex align={"center"} columnGap={"4px"}>
             <Text fontSize={"12px"}>
-              {commafy(ethers.utils.formatUnits(
-                tx._amount === undefined ? "0" : tx._amount.toString(),
-                token?.decimals
-              ), 2)}{" "}
+              {commafy(
+                ethers.utils.formatUnits(
+                  tx._amount === undefined ? "0" : tx._amount.toString(),
+                  token?.decimals,
+                ),
+                2,
+              )}{" "}
               {(token?.symbol as string) || " ETH"}
             </Text>
             <Image alt="link" src={LinkIcon} />

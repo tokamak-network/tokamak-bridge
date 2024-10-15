@@ -134,12 +134,12 @@ const ActionMethodItem = ({
 
   const fromIcon = useMemo(
     () => (from === 1 || from === 11155111 ? ETH_CIRCLE : TITAN_CIRCLE),
-    [from]
+    [from],
   );
 
   const toIcon = useMemo(
     () => (to === 55004 || to === 55007 ? TITAN_CIRCLE : ETH_CIRCLE),
-    [to]
+    [to],
   );
 
   return (

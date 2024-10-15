@@ -22,7 +22,7 @@ import { useGetMode } from "../mode/useGetMode";
 export default function useTokenModal() {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const [mobileTokenModal, setMobileTokenModal] = useRecoilState(
-    mobileTokenModalStatus
+    mobileTokenModalStatus,
   );
 
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
@@ -31,11 +31,11 @@ export default function useTokenModal() {
   const { inNetwork, outNetwork } = useInOutNetwork();
   const [, setIsOutputAmount] = useRecoilState(isOutputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
 
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
   const { chainName, connectedChainId } = useConnectedNetwork();
   const isInTokenOpen = tokenModal?.isOpen === "INPUT";
@@ -74,7 +74,7 @@ export default function useTokenModal() {
       tokenData: TokenInfo & {
         isNew?: boolean | undefined;
       },
-      isMobile?: boolean
+      isMobile?: boolean,
     ) => {
       if (chainName && connectedChainId) {
         const isDuplicated = isInTokenOpen
@@ -87,12 +87,12 @@ export default function useTokenModal() {
           isInTokenOpen && isETH(tokenData)
             ? isWETH(selectedOutToken, chainName)
             : isInTokenOpen && isWETH(tokenData, chainName)
-            ? isETH(selectedOutToken)
-            : !isInTokenOpen && isETH(tokenData)
-            ? isWETH(selectedInToken, chainName)
-            : !isInTokenOpen && isWETH(tokenData, chainName)
-            ? isETH(selectedInToken)
-            : false;
+              ? isETH(selectedOutToken)
+              : !isInTokenOpen && isETH(tokenData)
+                ? isWETH(selectedInToken, chainName)
+                : !isInTokenOpen && isWETH(tokenData, chainName)
+                  ? isETH(selectedInToken)
+                  : false;
 
         //remove if same token is selected at other side
         if (isDuplicated || (isETHPair && mode === "Pool")) {
@@ -131,7 +131,7 @@ export default function useTokenModal() {
       tokenModal,
       connectedChainId,
       mode,
-    ]
+    ],
   );
 
   return {

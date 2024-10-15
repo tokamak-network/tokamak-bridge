@@ -5,7 +5,7 @@ import {
 
 function checkIfTokenAddressExists(
   tokenAddress: string,
-  address: Object
+  address: Object,
 ): string | null {
   for (const [network, contractAddress] of Object.entries(address)) {
     if (
@@ -37,7 +37,7 @@ export const getSupportedTokenForCT = (tokenAddress: string) => {
     .map((token) => {
       const supportedAddresses = Object.values(token.address);
       const isIncluded = supportedAddresses.some(
-        (address) => address?.toLowerCase() === tokenAddress.toLowerCase()
+        (address) => address?.toLowerCase() === tokenAddress.toLowerCase(),
       );
 
       //need to refactor index later

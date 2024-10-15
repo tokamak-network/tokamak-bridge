@@ -206,26 +206,26 @@ export class PairFlash__factory extends ContractFactory {
     _swapRouter: string,
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<PairFlash> {
     return super.deploy(
       _swapRouter,
       _factory,
       _WETH9,
-      overrides || {}
+      overrides || {},
     ) as Promise<PairFlash>;
   }
   getDeployTransaction(
     _swapRouter: string,
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _swapRouter,
       _factory,
       _WETH9,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): PairFlash {
@@ -241,7 +241,7 @@ export class PairFlash__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): PairFlash {
     return new Contract(address, _abi, signerOrProvider) as PairFlash;
   }

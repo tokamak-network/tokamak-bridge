@@ -2,7 +2,7 @@ function commafy(
   num: number | string | undefined | null,
   decilamPoint?: number,
   removeComma?: boolean,
-  defaultValue?: string
+  defaultValue?: string,
 ) {
   const defaultDecilamPoint = decilamPoint ?? 2;
   if (num === undefined || num === null) {
@@ -44,7 +44,7 @@ export function commafyWithUndefined(
   num: number | string | undefined | null,
   decilamPoint?: number,
   removeComma?: boolean,
-  defaultValueIsUndefined?: boolean
+  defaultValueIsUndefined?: boolean,
 ) {
   const defaultDecilamPoint = decilamPoint ?? 2;
   if (num === undefined || num === null) {

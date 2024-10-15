@@ -46,7 +46,7 @@ export default function Confirmation() {
       connectedChainId
     ) {
       router.push(
-        `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`
+        `/pools/${txLog.logs.tokenId.toString()}?chainId=${connectedChainId}`,
       );
     }
     closeModal();
@@ -61,7 +61,7 @@ export default function Confirmation() {
   ]);
 
   const subModeValue = Object.keys(subMode).filter(
-    (key) => subMode[key as keyof typeof subMode] === true
+    (key) => subMode[key as keyof typeof subMode] === true,
   );
 
   return (
@@ -89,10 +89,10 @@ export default function Confirmation() {
             {isConfirming
               ? `Confirming`
               : isConfirmed
-              ? "Transaction Confirmed!"
-              : isError
-              ? "Transaction Failed"
-              : null}
+                ? "Transaction Confirmed!"
+                : isError
+                  ? "Transaction Failed"
+                  : null}
           </Text>
           <Flex pos={"relative"} w={"100%"} justifyContent={"center"}>
             {isConfirming ? (

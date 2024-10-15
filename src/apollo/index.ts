@@ -45,4 +45,3 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 //     link: concat(authMiddleware(chainId), httpLink),
 //     cache: new InMemoryCache(),
 //   });
-

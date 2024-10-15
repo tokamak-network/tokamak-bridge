@@ -29,8 +29,8 @@ const getStatusHandler = (params: {
     [CT_ACTION.REQUEST]: isCanceled
       ? STATUS_CONFIG.REQUEST_CANCEL
       : isUpdateFee
-      ? STATUS_CONFIG.REQUEST_UPDATE_FEE
-      : STATUS_CONFIG.REQUEST,
+        ? STATUS_CONFIG.REQUEST_UPDATE_FEE
+        : STATUS_CONFIG.REQUEST,
     [CT_ACTION.PROVIDE]: STATUS_CONFIG.PROVIDE,
   };
   return actionHandlers[status];
@@ -39,7 +39,7 @@ const getStatusHandler = (params: {
 const getBlockTimestamp = (
   transaction: TransactionHistory,
   statusKey: HISTORY_TRANSACTION_STATUS,
-  isUpdateFee: boolean
+  isUpdateFee: boolean,
 ) => {
   if (
     statusKey === CT_REQUEST.Request &&
@@ -131,7 +131,7 @@ export default function PendingFooter(params: {
             blockTimestamp={getBlockTimestamp(
               transactionData,
               statusKey,
-              isUpdateFee
+              isUpdateFee,
             )}
             updateFeeCount={updateFeeCount}
             openModal={openModal}

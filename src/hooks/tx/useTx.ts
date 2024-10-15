@@ -42,11 +42,11 @@ const getInterface = () => {
   const USDT_I = new ethers.utils.Interface(USDTAbi);
   const WTON_I = new ethers.utils.Interface(WTON_ABI.abi);
   const nonFungiblePositionManagerI = new ethers.utils.Interface(
-    NONFUNGIBLE_POSITION_MANAGER_ABI
+    NONFUNGIBLE_POSITION_MANAGER_ABI,
   );
   const UniswapV3PoolI = new ethers.utils.Interface(UniswapV3Pool);
   const L1CrossDomainMessengerI = new ethers.utils.Interface(
-    L1CrossDomainMessengerAbi
+    L1CrossDomainMessengerAbi,
   );
   const ETHSwapperI = new ethers.utils.Interface(WethABi);
   const CrossTradeProxyL1_I = new ethers.utils.Interface(L1CrossTradeAbi.abi);
@@ -76,13 +76,13 @@ const getEventSignature = () => {
     unwrap: ethers.utils.id("Unwrap(address,uint256)"),
     approve: ethers.utils.id("Approval(address,address,uint256)"),
     addLiquidity: ethers.utils.id(
-      "IncreaseLiquidity(uint256,uint128,uint256,uint256)"
+      "IncreaseLiquidity(uint256,uint128,uint256,uint256)",
     ),
     increaseLiquidity: ethers.utils.id(
-      "IncreaseLiquidity(uint256,uint128,uint256,uint256)"
+      "IncreaseLiquidity(uint256,uint128,uint256,uint256)",
     ),
     removeLiquidity: ethers.utils.id(
-      "Collect(uint256,address,uint256,uint256)"
+      "Collect(uint256,address,uint256,uint256)",
     ),
   };
 };
@@ -143,10 +143,10 @@ const getWETHUnwrapEvent = (logs: Log<bigint, number>[]) => {
 const getTokenAddress = (
   tokenAddress: `0x${string}` | undefined,
   chainId: number,
-  isETH: boolean
+  isETH: boolean,
 ) => {
   const WETHAddress = getWETHAddressByChainId(chainId);
-  return isETH && WETHAddress === tokenAddress ? "ETH" : tokenAddress ?? "0x";
+  return isETH && WETHAddress === tokenAddress ? "ETH" : (tokenAddress ?? "0x");
 };
 
 export function useTransaction() {
@@ -303,7 +303,7 @@ export function useTx(params: {
         const { nonFungiblePositionManagerI } = getInterface();
 
         const result = nonFungiblePositionManagerI.parseLog(
-          logs[logs.length - 1]
+          logs[logs.length - 1],
         );
         const { args } = result;
         setTxLog({
@@ -371,7 +371,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount0.toBigInt(),
                   },
@@ -379,7 +379,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenOutAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount1.toBigInt(),
                   },
@@ -412,7 +412,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount0.toBigInt(),
                   },
@@ -420,7 +420,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenOutAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount1.toBigInt(),
                   },
@@ -456,7 +456,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount0.toBigInt(),
                   },
@@ -464,7 +464,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenOutAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount1.toBigInt(),
                   },
@@ -504,7 +504,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenAddress,
                       connectedChainId,
-                      isETH || isWETH
+                      isETH || isWETH,
                     ),
                     amount: transferedValue.toBigInt(),
                   },
@@ -512,7 +512,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenOutAddress,
                       connectedChainId,
-                      isETH || isWETH
+                      isETH || isWETH,
                     ),
                     amount: amount1.toBigInt(),
                   },
@@ -546,7 +546,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount0.toBigInt(),
                   },
@@ -554,7 +554,7 @@ export function useTx(params: {
                     tokenAddress: getTokenAddress(
                       tokenOutAddress,
                       connectedChainId,
-                      isETH
+                      isETH,
                     ),
                     amount: amount1.toBigInt(),
                   },

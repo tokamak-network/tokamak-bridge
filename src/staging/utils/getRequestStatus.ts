@@ -163,7 +163,7 @@ export const getRequestBlockTimestamp = (parmas: {
             saleCount: requestData._saleCount,
           });
           const updateFee = editHistory.map((edit) =>
-            Number(edit.blockTimestamp)
+            Number(edit.blockTimestamp),
           );
           return {
             request: requestBlockTimestamp,
@@ -183,7 +183,7 @@ export const getRequestBlockTimestamp = (parmas: {
             saleCount: requestData._saleCount,
           });
           const updateFee = editHistory.map((edit) =>
-            Number(edit.blockTimestamp)
+            Number(edit.blockTimestamp),
           );
           const providerClaimCT = getTransaction_providerClaimCT({
             providerClaimCTs,
@@ -411,7 +411,7 @@ export const getTokenInfo = (parmas: {
   const { requestData, ctAmount, _editedctAmount, isL1Token } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
   const tokenInfo = getSupportedTokenForCT(
-    isL1Token ? requestData._l1token : requestData._l2token
+    isL1Token ? requestData._l1token : requestData._l2token,
   );
 
   return {
@@ -419,7 +419,7 @@ export const getTokenInfo = (parmas: {
     name: isETH ? "ETH" : (tokenInfo?.tokenName as string),
     symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
     amount: ctAmount
-      ? _editedctAmount ?? requestData._ctAmount
+      ? (_editedctAmount ?? requestData._ctAmount)
       : requestData._totalAmount,
     decimals: isETH ? 18 : (tokenInfo?.decimals as number),
   };
@@ -427,7 +427,7 @@ export const getTokenInfo = (parmas: {
 
 export const getRequestErrorMessage = (
   status: CT_REQUEST_STATUSES,
-  blockTimestamp: CT_REQUEST_HISTORY_blockTimestamps
+  blockTimestamp: CT_REQUEST_HISTORY_blockTimestamps,
 ) => {
   if (isInCT_REQUEST_CANCEL(status)) {
     const _blockTimestamp =
@@ -446,7 +446,7 @@ export const getRequestErrorMessage = (
 
 export const getProvideErrorMessage = (
   status: CT_PROVIDE,
-  blockTimestamp: CT_PROVIDE_HISTORY_blockTimestamps
+  blockTimestamp: CT_PROVIDE_HISTORY_blockTimestamps,
 ) => {
   if (isInCT_Provide(status)) {
     const _blockTimestamp =

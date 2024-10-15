@@ -28,7 +28,7 @@ export function usePoolData(poolAddress: string | undefined) {
         const poolContract = new ethers.Contract(
           poolAddress,
           IUniswapV3PoolABI.abi,
-          provider
+          provider,
         );
 
         const [liquidity, slot0] = await Promise.all([
@@ -78,7 +78,7 @@ class PoolCache {
     tokenA: Token,
     tokenB: Token,
     fee: FeeAmount,
-    layer: "L1" | "L2" | undefined
+    layer: "L1" | "L2" | undefined,
   ): string {
     if (this.addresses.length > this.MAX_ENTRIES) {
       this.addresses = this.addresses.slice(0, this.MAX_ENTRIES / 2);
@@ -112,7 +112,7 @@ class PoolCache {
     fee: FeeAmount,
     sqrtPriceX96: BigintIsh,
     liquidity: BigintIsh,
-    tick: number
+    tick: number,
   ): Pool {
     if (this.pools.length > this.MAX_ENTRIES) {
       this.pools = this.pools.slice(0, this.MAX_ENTRIES / 2);
@@ -125,7 +125,7 @@ class PoolCache {
         pool.fee === fee &&
         JSBI.EQ(pool.sqrtRatioX96, sqrtPriceX96) &&
         JSBI.EQ(pool.liquidity, liquidity) &&
-        pool.tickCurrent === tick
+        pool.tickCurrent === tick,
     );
     if (found) return found;
 
@@ -139,8 +139,8 @@ export function usePools(
   poolKeys: [
     Currency | undefined,
     Currency | undefined,
-    FeeAmount | undefined
-  ][]
+    FeeAmount | undefined,
+  ][],
 ) {
   // : [PoolState, Pool | null][]
   const { connectedChainId } = useConnectedNetwork();
@@ -172,7 +172,8 @@ export function usePools(
 
     return poolTokens.map(
       (value) =>
-        value && PoolCache.getPoolAddress(v3CoreFactoryAddress, ...value, layer)
+        value &&
+        PoolCache.getPoolAddress(v3CoreFactoryAddress, ...value, layer),
     );
   }, [chainId, poolTokens, layer, connectedChainId]);
 
@@ -201,7 +202,7 @@ export function usePools(
           fee,
           slot0.sqrtPriceX96,
           liquidity,
-          slot0.tick
+          slot0.tick,
         );
         return [PoolState.EXISTS, pool];
       } catch (error) {
@@ -215,7 +216,7 @@ export function usePools(
 export function usePool(
   token0?: Currency | Token,
   token1?: Currency | Token,
-  fee?: FeeAmount
+  fee?: FeeAmount,
 ): [PoolState, Pool | null] {
   const { inToken, outToken } = useInOutTokens();
   const { feeTier } = useGetFeeTier();
@@ -223,12 +224,12 @@ export function usePool(
   const poolKeys: [
     Currency | undefined,
     Currency | undefined,
-    FeeAmount | undefined
+    FeeAmount | undefined,
   ][] = useMemo(
     () => [
       [token0 ?? inToken?.token, token1 ?? outToken?.token, fee ?? feeTier],
     ],
-    [token0, token1, fee, inToken, outToken, feeTier]
+    [token0, token1, fee, inToken, outToken, feeTier],
   );
 
   //@ts-ignore

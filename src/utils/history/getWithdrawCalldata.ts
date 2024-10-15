@@ -50,14 +50,14 @@ export const getWithdarwCalldata = async (params: {
       ? MAINNET_CONTRACTS.StateCommitmentChain
       : SEPOLIA_CONTRACTS.StateCommitmentChain,
     StateCommitmentChainAbi,
-    provider
+    provider,
   );
 
   //step 2
   const [stateRoots] =
     StateCommitmentChain_CONTRACT.interface.decodeFunctionData(
       "appendStateBatch",
-      hashData.data
+      hashData.data,
     );
 
   const stateRootBatch = {
@@ -79,9 +79,9 @@ export const getWithdarwCalldata = async (params: {
         sentMessageEvent.target,
         sentMessageEvent.sender,
         sentMessageEvent.message,
-        BigNumber.from(sentMessageEvent.messageNonce)
-      ) + remove0x(predeploys.L2CrossDomainMessenger)
-    ) + "00".repeat(32)
+        BigNumber.from(sentMessageEvent.messageNonce),
+      ) + remove0x(predeploys.L2CrossDomainMessenger),
+    ) + "00".repeat(32),
   );
 
   //step4
@@ -89,7 +89,7 @@ export const getWithdarwCalldata = async (params: {
     l2Provider as ethers.providers.JsonRpcProvider,
     Number(l2BlcokNumber),
     predeploys.OVM_L2ToL1MessagePasser,
-    messageSlot
+    messageSlot,
   );
 
   const messageTxIndex = l2BlcokNumber - 1;
@@ -115,7 +115,7 @@ export const getWithdarwCalldata = async (params: {
       index: stateRoot.stateRootIndexInBatch,
       siblings: makeMerkleTreeProof(
         stateRoot.batch.stateRoots,
-        stateRoot.stateRootIndexInBatch
+        stateRoot.stateRootIndexInBatch,
       ),
     },
     stateTrieWitness: toHexString(RLP.encode(stateTrieProof.accountProof)),

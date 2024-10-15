@@ -87,7 +87,7 @@ export const txDataStatus = atom<{ [txHash: string]: TxInterface } | undefined>(
   {
     key: "txDataStatus",
     default: undefined,
-  }
+  },
 );
 
 export const txDataSelector = selector({

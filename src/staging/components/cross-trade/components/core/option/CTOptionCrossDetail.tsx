@@ -37,7 +37,7 @@ interface AdditionalCrossProps {
 }
 
 export default function CTOptionCrossDetail(
-  props: AdditionalCrossProps & CTInputProps
+  props: AdditionalCrossProps & CTInputProps,
 ) {
   const isCrossActive = props.activeMainButtonValue === ButtonTypeMain.Cross;
   const isRecommendActive =
@@ -71,7 +71,7 @@ export default function CTOptionCrossDetail(
     tokenName: inToken?.tokenName as string,
   });
   const { estimatedGasFeeUSD } = useCrossTradeGasFee(
-    CTTransactionType.requestRegisteredToken
+    CTTransactionType.requestRegisteredToken,
   );
 
   const receiveIsLessThanZero = Number(receiveTokenValue) < 0;
@@ -161,8 +161,8 @@ export default function CTOptionCrossDetail(
                 isRecommendActive
                   ? "99px"
                   : isDisabledRecommend
-                  ? "116px"
-                  : "98px"
+                    ? "116px"
+                    : "98px"
               }
               height="26px"
               padding="4px 10px"

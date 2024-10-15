@@ -18,7 +18,7 @@ export function useRemoveLiquidity() {
   const amount0Removed = useMemo(() => {
     if (rawPositionInfo.token0RemainedAmount && removePercent) {
       const token0AmountBigNumber = ethers.BigNumber.from(
-        rawPositionInfo.token0RemainedAmount
+        rawPositionInfo.token0RemainedAmount,
       );
 
       const removePercentBigNumber = ethers.BigNumber.from(removePercent * 100);
@@ -39,7 +39,7 @@ export function useRemoveLiquidity() {
   const amount1Removed = useMemo(() => {
     if (rawPositionInfo.token1remainedAmount && removePercent) {
       const token1AmountBigNumber = ethers.BigNumber.from(
-        rawPositionInfo.token1remainedAmount
+        rawPositionInfo.token1remainedAmount,
       );
       const removePercentBigNumber = ethers.BigNumber.from(removePercent * 100);
 

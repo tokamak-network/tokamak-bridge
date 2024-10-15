@@ -49,7 +49,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
           props.tx === undefined || props.tx === null ? "inProgress" : "done"
         }
         check={check(
-          props.tx === undefined || props.tx === null ? "inProgress" : "done"
+          props.tx === undefined || props.tx === null ? "inProgress" : "done",
         )}
       />
       <Dots
@@ -61,19 +61,19 @@ export default function TimelineComponent(props: { tx: TxType }) {
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 2
-            ? "inProgress"
-            : props.tx.currentStatus > 2
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+                ? "done"
+                : "todo"
         }
         check={check(
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 2
-            ? "inProgress"
-            : props.tx.currentStatus > 2
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+                ? "done"
+                : "todo",
         )}
         timeStamp={tx ? Number(tx.l2timeStamp) : undefined}
       />
@@ -82,20 +82,20 @@ export default function TimelineComponent(props: { tx: TxType }) {
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 2
-            ? "inProgress"
-            : props.tx.currentStatus > 2
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 2
+                ? "done"
+                : "todo"
         }
         color={
           check(
             !props.tx
               ? "todo"
               : props.tx.currentStatus === 2
-              ? "inProgress"
-              : props.tx.currentStatus > 2
-              ? "done"
-              : "todo"
+                ? "inProgress"
+                : props.tx.currentStatus > 2
+                  ? "done"
+                  : "todo",
           ).color
         }
       />
@@ -104,20 +104,20 @@ export default function TimelineComponent(props: { tx: TxType }) {
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 4
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+                ? "done"
+                : "todo"
         }
         timeStamp={tx ? Number(tx.timeReadyForRelay) : 0}
         check={check(
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 4
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+                ? "done"
+                : "todo",
         )}
       />
       <Dots
@@ -125,20 +125,20 @@ export default function TimelineComponent(props: { tx: TxType }) {
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 4
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+                ? "done"
+                : "todo"
         }
         color={
           check(
             !props.tx
               ? "todo"
               : props.tx.currentStatus === 4
-              ? "inProgress"
-              : props.tx.currentStatus > 4
-              ? "done"
-              : "todo"
+                ? "inProgress"
+                : props.tx.currentStatus > 4
+                  ? "done"
+                  : "todo",
           ).color
         }
       />
@@ -147,19 +147,19 @@ export default function TimelineComponent(props: { tx: TxType }) {
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 5
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+                ? "done"
+                : "todo"
         }
         check={check(
           !props.tx
             ? "todo"
             : props.tx.currentStatus === 5
-            ? "inProgress"
-            : props.tx.currentStatus > 4
-            ? "done"
-            : "todo"
+              ? "inProgress"
+              : props.tx.currentStatus > 4
+                ? "done"
+                : "todo",
         )}
       />
     </Flex>

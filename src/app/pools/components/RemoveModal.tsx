@@ -34,7 +34,7 @@ export default function RemoveModal() {
     const fetchData = async () => {
       const gasData = await estimateGasToRemove(
         info?.id,
-        removeLiquidityPercentage
+        removeLiquidityPercentage,
       );
       return setEstimatedGasUsageValue(gasData);
     };

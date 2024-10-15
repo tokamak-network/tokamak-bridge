@@ -12,7 +12,7 @@ import {
 import { TokenInfo } from "@/types/token/supportedToken";
 
 export function getWETHAddress(
-  chainName: SupportedChainProperties["chainName"]
+  chainName: SupportedChainProperties["chainName"],
 ) {
   const wethAddress: { [K in SupportedChainProperties["chainName"]]: string } =
     {
@@ -44,14 +44,14 @@ export function isETH(token: TokenInfo | null) {
       SupportedChainId.MAINNET ||
         SupportedChainId.SEPOLIA ||
         SupportedChainId.TITAN ||
-        SupportedChainId.TITAN_SEPOLIA
+        SupportedChainId.TITAN_SEPOLIA,
     ) ?? false
   );
 }
 
 export function isWETH(
   token: TokenInfo | null,
-  chainName: SupportedChainProperties["chainName"] | undefined
+  chainName: SupportedChainProperties["chainName"] | undefined,
 ) {
   if (token === null || chainName === undefined) return false;
   return (

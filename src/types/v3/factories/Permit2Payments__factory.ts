@@ -44,7 +44,7 @@ export class Permit2Payments__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): Permit2Payments {
     return new Contract(address, _abi, signerOrProvider) as Permit2Payments;
   }

@@ -31,9 +31,9 @@ export function useTicks() {
         data?.asToken0.length === 1
           ? Number(data?.asToken0[0].tick)
           : data?.asToken1.length === 1
-          ? Number(data?.asToken1[0].tick)
-          : undefined,
+            ? Number(data?.asToken1[0].tick)
+            : undefined,
     }),
-    [data, error, loading]
+    [data, error, loading],
   );
 }

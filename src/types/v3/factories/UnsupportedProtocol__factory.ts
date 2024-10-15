@@ -30,12 +30,12 @@ export class UnsupportedProtocol__factory extends ContractFactory {
   }
 
   deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UnsupportedProtocol> {
     return super.deploy(overrides || {}) as Promise<UnsupportedProtocol>;
   }
   getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }
@@ -52,7 +52,7 @@ export class UnsupportedProtocol__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UnsupportedProtocol {
     return new Contract(address, _abi, signerOrProvider) as UnsupportedProtocol;
   }

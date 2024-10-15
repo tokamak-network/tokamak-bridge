@@ -26,7 +26,7 @@ interface AdditionalDetailProps {
 }
 
 export default function CTUpdateInput(
-  props: CTInputProps & AdditionalDetailProps
+  props: CTInputProps & AdditionalDetailProps,
 ) {
   const {
     inputValue: _inputValue,

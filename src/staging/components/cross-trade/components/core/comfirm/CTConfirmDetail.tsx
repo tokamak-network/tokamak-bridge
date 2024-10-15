@@ -306,10 +306,10 @@ export default function CTConfirmDetail({
     title: isInCT_Provide(status)
       ? "Provide"
       : isCanceled
-      ? "Refund"
-      : "Request",
+        ? "Refund"
+        : "Request",
     mainValue: `${formatNumber(
-      convertNumber(inToken.amount, inToken.decimals)
+      convertNumber(inToken.amount, inToken.decimals),
     )}`,
     rawValue: convertNumber(inToken.amount, inToken.decimals),
     subValue: `$${commafy(inTokenPrice)}`,
@@ -320,7 +320,7 @@ export default function CTConfirmDetail({
   const outTokenInfo = {
     title: "Receive",
     mainValue: `${formatNumber(
-      convertNumber(outToken.amount, outToken.decimals)
+      convertNumber(outToken.amount, outToken.decimals),
     )}`,
     rawValue: convertNumber(outToken.amount, outToken.decimals),
     subValue: `$${commafy(outTokenPrice)}`,
@@ -339,7 +339,7 @@ export default function CTConfirmDetail({
   const { estimatedGasFeeUSD, estimatedGasFeeETH } = useCrossTradeGasFee(
     isProvide
       ? CTTransactionType.provideCT
-      : CTTransactionType.requestRegisteredToken
+      : CTTransactionType.requestRegisteredToken,
   );
 
   return (

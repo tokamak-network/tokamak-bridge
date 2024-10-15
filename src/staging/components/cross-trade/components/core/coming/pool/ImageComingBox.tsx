@@ -18,8 +18,8 @@ export default function ImageComingBox(props: ImageBoxProp) {
 
   return (
     <Box
-      position='relative'
-      overflow='hidden'
+      position="relative"
+      overflow="hidden"
       width={boxWidth}
       height={boxHeight}
       borderRadius={`0px 0px 16px 16px`}
@@ -27,7 +27,7 @@ export default function ImageComingBox(props: ImageBoxProp) {
       <Box zIndex={1}>
         <Image
           src={isMobile ? CTComingCrossMobile : CTComingCross}
-          alt='CTComingCrossMobile'
+          alt="CTComingCrossMobile"
           style={{
             width: boxWidth,
             height: boxHeight,
@@ -35,41 +35,41 @@ export default function ImageComingBox(props: ImageBoxProp) {
         />
       </Box>
       <Box
-        position='absolute'
+        position="absolute"
         top={"58%"}
         width={boxGraWidth}
         height={boxGraHeight}
-        bgImage='linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)'
-        bgPos='-0.488px -410px'
-        bgSize='100.132% 231.41%'
-        bgRepeat='no-repeat'
-        backdropFilter='auto'
-        backdropBlur='2.5px'
+        bgImage="linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)"
+        bgPos="-0.488px -410px"
+        bgSize="100.132% 231.41%"
+        bgRepeat="no-repeat"
+        backdropFilter="auto"
+        backdropBlur="2.5px"
         zIndex={2}
       />
       <Box
-        position='absolute'
+        position="absolute"
         top={"75%"}
         width={boxGraWidth}
         height={boxGraHeight}
         bgImage={
           "linear-gradient(180deg, rgba(23, 24, 29, 0.00) -18.91%, #17181D 100%)"
         }
-        backdropFilter='auto'
-        backdropBlur='1.5px'
+        backdropFilter="auto"
+        backdropBlur="1.5px"
         opacity={0.5}
         zIndex={3}
       />
       <Box
-        position='absolute'
+        position="absolute"
         top={isMobile ? "65%" : "95%"}
         left={"50%"}
         width={boxGraWidth}
         height={boxGraHeight}
-        transform='translate(-50%, -50%) rotate(87.874deg)'
-        bgImage='conic-gradient(from 0deg at 56.11% 59.69%, #267BEB 0deg, #50AF95 48.75000178813934deg, #EA62DC 93.74999642372131deg, #000 140.625deg, #A40000 183.75000715255737deg, #DCFF04 230.625deg, #4361EE 271.8749928474426deg, #DB00FF 315deg, #8000FF 360deg)'
+        transform="translate(-50%, -50%) rotate(87.874deg)"
+        bgImage="conic-gradient(from 0deg at 56.11% 59.69%, #267BEB 0deg, #50AF95 48.75000178813934deg, #EA62DC 93.74999642372131deg, #000 140.625deg, #A40000 183.75000715255737deg, #DCFF04 230.625deg, #4361EE 271.8749928474426deg, #DB00FF 315deg, #8000FF 360deg)"
         opacity={0.25}
-        filter='blur(110px)'
+        filter="blur(110px)"
         zIndex={4}
       />
     </Box>

@@ -128,12 +128,12 @@ export class IPeripheryPaymentsWithFee__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IPeripheryPaymentsWithFee {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as IPeripheryPaymentsWithFee;
   }
 }

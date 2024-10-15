@@ -28,13 +28,13 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
 
   if (type === "wait") {
     return (
-      <Box w={"305.5px"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
-        <Flex alignItems='center'>
+      <Box w={"305.5px"} h={"28px"} mt="3px" mb="21px" py="3px" bg="#15161D">
+        <Flex alignItems="center">
           <Text
             fontWeight={400}
-            fontSize='11px'
-            lineHeight='18px'
-            color='#59628D'
+            fontSize="11px"
+            lineHeight="18px"
+            color="#59628D"
           >
             {waitMessage}
           </Text>
@@ -50,7 +50,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       ? "00 : 00"
       : useCountdown(
           formatTimeDisplay(remainTime),
-          Boolean(transactionData.errorMessage)
+          Boolean(transactionData.errorMessage),
         );
 
     const errorRollup =
@@ -75,7 +75,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       transactionData.action === Action.Withdraw;
 
     if (claimReadyButton) {
-      return <Box w={"305.5px"} mt='3px' mb='21px' py='3px' bg='#15161D'></Box>;
+      return <Box w={"305.5px"} mt="3px" mb="21px" py="3px" bg="#15161D"></Box>;
     }
 
     const startDate = useMemo(() => {
@@ -88,10 +88,10 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
             convertTimeToMinutes(
               TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
               "days",
-              0
+              0,
             ) *
               60) *
-            1000
+            1000,
         );
       }
       return null;
@@ -103,22 +103,22 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       <Box
         w={"305.5px"}
         h={"28px"}
-        mt='3px'
-        mb='21px'
-        pl='12px'
-        pr='210px'
-        py='3px'
-        borderRadius='4px'
-        bg='#1F2128'
+        mt="3px"
+        mb="21px"
+        pl="12px"
+        pr="210px"
+        py="3px"
+        borderRadius="4px"
+        bg="#1F2128"
       >
-        <Flex alignItems='center' w='100px'>
+        <Flex alignItems="center" w="100px">
           <Text
             fontWeight={600}
-            fontSize='11px'
-            lineHeight='22px'
+            fontSize="11px"
+            lineHeight="22px"
             color={errorRollup ? "#DD3A44" : "#FFFFFF"}
-            whiteSpace='nowrap'
-            overflow='hidden'
+            whiteSpace="nowrap"
+            overflow="hidden"
           >
             {timeDisplay}
           </Text>
@@ -161,5 +161,5 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     );
   }
   // Box type
-  return <Box w={"305.5px"} mt='3px' mb='21px' py='3px' bg='#15161D' />;
+  return <Box w={"305.5px"} mt="3px" mb="21px" py="3px" bg="#15161D" />;
 }

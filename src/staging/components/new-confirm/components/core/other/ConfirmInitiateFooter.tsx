@@ -9,7 +9,7 @@ interface ConfirmInitiateFooterProps {
 }
 
 export default function ConfirmInitiateFooter(
-  props: ConfirmInitiateFooterProps
+  props: ConfirmInitiateFooterProps,
 ) {
   const { onCloseDepositWithdrawConfirmModal, onClick } = props;
   const [isChecked, setIsChecked] = useState<boolean>(false);

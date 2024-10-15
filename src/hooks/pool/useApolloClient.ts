@@ -30,7 +30,7 @@ export const useGetPositionByClients = () => {
       client,
       fetchPolicy: "cache-and-network",
       nextFetchPolicy: "cache-first",
-    })
+    }),
   );
 
   return { datas: response };

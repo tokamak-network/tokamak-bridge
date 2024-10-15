@@ -63,14 +63,14 @@ export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
     if (tokenMarketPrice && estimatedGasFeeETH) {
       const precision = 1e18; // Adjust this value based on the required precision
       const bi_estimatedGasFee = JSBI.BigInt(
-        Math.round(Number(estimatedGasFeeETH) * precision)
+        Math.round(Number(estimatedGasFeeETH) * precision),
       );
       const bi_tokenMarketPrice = JSBI.BigInt(
-        Math.round(Number(tokenMarketPrice) * precision)
+        Math.round(Number(tokenMarketPrice) * precision),
       );
       const resultWithWei = JSBI.divide(
         JSBI.multiply(bi_estimatedGasFee, bi_tokenMarketPrice),
-        JSBI.BigInt(precision)
+        JSBI.BigInt(precision),
       );
       const result = formatUnits(resultWithWei.toString(), 18);
       return result.toString();

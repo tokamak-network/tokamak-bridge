@@ -154,7 +154,7 @@ export function usePoolInfo() {
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
           pool?.token0Price,
-          inverted ? priceLower.invert() : priceUpper
+          inverted ? priceLower.invert() : priceUpper,
         )
       : undefined;
   }, [pool, priceLower, priceUpper, inverted]);
@@ -174,7 +174,7 @@ export function usePoolInfo() {
         ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[fee])
         : undefined,
     }),
-    [fee]
+    [fee],
   );
 
   const ticksAtLimit = useMemo(
@@ -182,15 +182,15 @@ export function usePoolInfo() {
       [Bound.LOWER]: fee && tickLower === tickSpaceLimits.LOWER,
       [Bound.UPPER]: fee && tickUpper === tickSpaceLimits.UPPER,
     }),
-    [tickSpaceLimits, tickLower, tickUpper, fee]
+    [tickSpaceLimits, tickLower, tickUpper, fee],
   );
 
   // single deposit only if price is out of range
   const deposit0Disabled = Boolean(
-    typeof tickUpper === "number" && info && tickCurrent >= tickUpper
+    typeof tickUpper === "number" && info && tickCurrent >= tickUpper,
   );
   const deposit1Disabled = Boolean(
-    typeof tickLower === "number" && info && tickCurrent < tickLower
+    typeof tickLower === "number" && info && tickCurrent < tickLower,
   );
 
   return {

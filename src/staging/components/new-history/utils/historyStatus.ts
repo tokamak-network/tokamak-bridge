@@ -20,7 +20,7 @@ export enum TransactionStatus {
 
 export const getStatusValue = (
   action: Action | CT_ACTION,
-  status: Status | CT_Status
+  status: Status | CT_Status,
 ): number => {
   if (action === Action.Withdraw) {
     switch (status) {

@@ -22,14 +22,14 @@ export function getGasCostText(totalGasCost: string | null | undefined) {
 
 export function gasUsdFormatter(
   price: number | undefined,
-  displayMinimumValue?: number | string
+  displayMinimumValue?: number | string,
 ) {
   return price !== undefined
     ? price === 0
-      ? displayMinimumValue ?? `$0.00`
+      ? (displayMinimumValue ?? `$0.00`)
       : price < 0.01
-      ? `< $0.01`
-      : `$${commafy(price, 2)}`
+        ? `< $0.01`
+        : `$${commafy(price, 2)}`
     : undefined;
 }
 
@@ -62,12 +62,12 @@ export function smallNumberFormmater(params: {
     typeof amount === "string"
       ? Number(amount.replaceAll(",", ""))
       : Number(amount),
-    minimumValue
+    minimumValue,
   );
 
   return isBiggerThanMinimum
     ? trimed
       ? trimAmountForFormatter(amount.toString())
       : commafy(amount, decimals ?? 6, removeComma, "0.00")
-    : displayMinimumValue ?? "0.000000...";
+    : (displayMinimumValue ?? "0.000000...");
 }

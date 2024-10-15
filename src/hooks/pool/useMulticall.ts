@@ -45,7 +45,7 @@ function isValidMethodArgs(x: unknown): x is MethodArgs | undefined {
     x === undefined ||
     (Array.isArray(x) &&
       x.every(
-        (xi) => isMethodArg(xi) || (Array.isArray(xi) && xi.every(isMethodArg))
+        (xi) => isMethodArg(xi) || (Array.isArray(xi) && xi.every(isMethodArg)),
       ))
   );
 }
@@ -57,7 +57,7 @@ export function useSingleContractMultipleData(
   contract: Contract | null | undefined,
   methodName: string,
   callInputs: OptionalMethodInputs[],
-  options?: Partial<ListenerOptionsWithGas>
+  options?: Partial<ListenerOptionsWithGas>,
 ) {
   // : CallState[]
   const { gasRequired } = options ?? {};
@@ -65,7 +65,7 @@ export function useSingleContractMultipleData(
   // Create ethers function fragment
   const fragment = useMemo(
     () => contract?.interface?.getFunction(methodName),
-    [contract, methodName]
+    [contract, methodName],
   );
 
   // Get encoded call data. Note can't use useCallData below b.c. this is  for a list of CallInputs
@@ -74,7 +74,7 @@ export function useSingleContractMultipleData(
     return callInputs.map<string | undefined>((callInput) =>
       isValidMethodArgs(callInput)
         ? contract.interface.encodeFunctionData(fragment, callInput)
-        : undefined
+        : undefined,
     );
   }, [callInputs, contract, fragment]);
 

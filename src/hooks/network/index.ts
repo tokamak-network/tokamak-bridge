@@ -54,7 +54,7 @@ export default function useConnectedNetwork() {
       return {
         connectedChainId: inNetwork.chainId,
         isSupportedChain: Object.values(SupportedChainId).includes(
-          inNetwork.chainId
+          inNetwork.chainId,
         ),
         chainName: inNetwork.chainName,
         layer:

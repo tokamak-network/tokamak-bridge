@@ -202,7 +202,7 @@ export default function NetworkDropdown(props: {
 
   //for react-select from this line
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
-    null
+    null,
   );
 
   const selectedOutOption = useMemo(() => {

@@ -13,19 +13,19 @@ export interface CoreCrossChainMessage {
 }
 
 export const encodeCrossChainMessage = (
-  message: CoreCrossChainMessage
+  message: CoreCrossChainMessage,
 ): string => {
   return getContractInterface("L2CrossDomainMessenger").encodeFunctionData(
     "relayMessage",
-    [message.target, message.sender, message.message, message.messageNonce]
+    [message.target, message.sender, message.message, message.messageNonce],
   );
 };
 
 export const hashCrossChainMessage = (
-  message: CoreCrossChainMessage
+  message: CoreCrossChainMessage,
 ): string => {
   return ethers.utils.solidityKeccak256(
     ["bytes"],
-    [encodeCrossChainMessage(message)]
+    [encodeCrossChainMessage(message)],
   );
 };

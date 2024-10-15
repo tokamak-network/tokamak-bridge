@@ -23,7 +23,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
     props.activeMainButtonValue === ButtonTypeMain.Standard;
   const { inToken } = useInOutTokens();
   const { estimatedGasFeeUSD } = useCrossTradeGasFee(
-    CTTransactionType.strandardWithdrawERC20
+    CTTransactionType.strandardWithdrawERC20,
   );
 
   const { tokenPriceWithAmount } = useGetMarketPrice({

@@ -184,7 +184,7 @@ export default function Network() {
 
   //for react-select from this line
   const [selectedOption, setSelectedOption] = useState<SelectOption | null>(
-    null
+    null,
   );
 
   const selectedOutOption = useMemo(() => {

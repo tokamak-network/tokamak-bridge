@@ -50,8 +50,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
     (tokenIndex === 1 && txSort === "Wrap"
       ? 18
       : tokenIndex === 1 && txSort === "Unwrap"
-      ? 27
-      : decimals) ?? 18
+        ? 27
+        : decimals) ?? 18,
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
@@ -187,12 +187,12 @@ function TransactionToast(props: TransactionToastProp) {
     txSort === "UpdateFee";
   const needToOpenHistoryTab = useMemo(
     () => txSort === "Deposit" || txSort === "Withdraw" || isForCrossTrade,
-    [txSort, isForCrossTrade]
+    [txSort, isForCrossTrade],
   );
 
   const [, setSelectedTab] = useRecoilState(selectedTab);
   const [, setSelectedTransactionCategory] = useRecoilState(
-    selectedTransactionCategory
+    selectedTransactionCategory,
   );
   const nativeToHistoryTab = () => setHistoryTabOpen(true);
   const navigateToCrossTrade = () => setSelectedTab(HISTORY_SORT.CROSS_TRADE);

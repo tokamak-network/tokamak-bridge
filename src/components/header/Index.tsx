@@ -174,14 +174,14 @@ export default function Header() {
   const { mode } = useGetMode();
 
   const handleMenuButtonhover = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
     setMenuState(true);
   };
 
   const handleMenuButtonClick = (
-    event: React.MouseEvent<HTMLButtonElement, MouseEvent>
+    event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
   ) => {
     event.preventDefault();
     !menuState && setMenuState(!menuState);

@@ -58,10 +58,10 @@ export default function MobileTokenInput(props: {
     defaultValue,
   } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const { amountOut } = useAmountOut();
@@ -82,7 +82,7 @@ export default function MobileTokenInput(props: {
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
-    18
+    18,
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const { mobileView } = useMediaView();
@@ -125,11 +125,11 @@ export default function MobileTokenInput(props: {
         }
         const parsedAmountOut = ethers.utils.parseUnits(
           value,
-          selectedOutToken?.decimals
+          selectedOutToken?.decimals,
         );
         const parsedAmountIn = ethers.utils.parseUnits(
           value,
-          selectedInToken?.decimals
+          selectedInToken?.decimals,
         );
         setSelectedInToken({
           ...selectedInToken,
@@ -155,7 +155,7 @@ export default function MobileTokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedInToken.decimals
+        selectedInToken.decimals,
       );
 
       return setSelectedInToken({
@@ -176,7 +176,7 @@ export default function MobileTokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
 
       return setSelectedOutToken({
@@ -332,10 +332,10 @@ export default function MobileTokenInput(props: {
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-      ? isFocused
-        ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : defaultValue || "";
+        ? isFocused
+          ? String(selectedOutToken?.parsedAmount)
+          : trimAmount(selectedOutToken?.parsedAmount, 8)
+        : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -396,7 +396,7 @@ export default function MobileTokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
       return setSelectedOutToken({
         ...selectedOutToken,
@@ -498,8 +498,8 @@ export default function MobileTokenInput(props: {
                     mobileView && isBalanceOver
                       ? "#DD3A44"
                       : mobileView && !inToken
-                      ? "#A0A3AD !important"
-                      : "#FFFFFF"
+                        ? "#A0A3AD !important"
+                        : "#FFFFFF"
                   }
                   fontSize={"16px"}
                   fontWeight={600}

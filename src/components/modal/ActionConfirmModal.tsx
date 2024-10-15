@@ -304,11 +304,11 @@ export default function ActionConfirmModal() {
                 mode === "Withdraw"
                   ? !isWithdrawConfirmed
                   : mode === "Swap" &&
-                    (isLoading ||
-                      routingPath === null ||
-                      routingPath === undefined)
-                  ? true
-                  : false
+                      (isLoading ||
+                        routingPath === null ||
+                        routingPath === undefined)
+                    ? true
+                    : false
               }
               _disabled={{
                 color: "#8E8E92",

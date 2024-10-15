@@ -112,7 +112,7 @@ const FinalizeButtonComponent = (props: {
 };
 
 export default function StatusComponent(
-  props: TransactionStatusComponentProps
+  props: TransactionStatusComponentProps,
 ) {
   const { label, transactionData, blockTimestamp, updateFeeCount, openModal } =
     props;
@@ -130,18 +130,18 @@ export default function StatusComponent(
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
-    (!isActive && label === Status.Finalize) ||
-      (isActive && label === CT_REQUEST.WaitForReceive)
-    ? ""
-    : // Otherwise, display formatted date as all are completed
-      formatDateToYMD(
-        Number(
-          isWithdrawTransactionHistory(transactionData) ||
-            isDepositTransactionHistory(transactionData)
-            ? transactionData.blockTimestamps.initialCompletedTimestamp
-            : blockTimestamp ?? 0
-        )
-      );
+      (!isActive && label === Status.Finalize) ||
+        (isActive && label === CT_REQUEST.WaitForReceive)
+      ? ""
+      : // Otherwise, display formatted date as all are completed
+        formatDateToYMD(
+          Number(
+            isWithdrawTransactionHistory(transactionData) ||
+              isDepositTransactionHistory(transactionData)
+              ? transactionData.blockTimestamps.initialCompletedTimestamp
+              : (blockTimestamp ?? 0),
+          ),
+        );
 
   const { isTimeOver } = useTimeOver({
     timeStamp: Number(blockTimestamp),
@@ -154,7 +154,7 @@ export default function StatusComponent(
   const timeDisplay = shouldCountdown
     ? useCountdown(
         initialTimeDisplay,
-        Boolean(transactionData.errorMessage) || isTimeOver
+        Boolean(transactionData.errorMessage) || isTimeOver,
       )
     : initialTimeDisplay;
 
@@ -171,10 +171,10 @@ export default function StatusComponent(
           convertTimeToMinutes(
             TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
             "days",
-            0
+            0,
           ) *
             60) *
-          1000
+          1000,
       );
     }
     return null;
@@ -265,8 +265,8 @@ export default function StatusComponent(
             !isActive && label === Status.Finalize
               ? "#A0A3AD"
               : isOnOfficialStandard
-              ? "#007AFF"
-              : "#DB00FF"
+                ? "#007AFF"
+                : "#DB00FF"
           }
         />
         <Text

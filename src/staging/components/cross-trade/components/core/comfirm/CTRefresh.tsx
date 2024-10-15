@@ -17,7 +17,7 @@ export const CTRefresh = () => {
     useRecoilState(ctRefreshModalStatus);
   const { onOpenCTConfirmModal } = useCTConfirmModal();
   const { requestDataBySaleCount } = useRequestData(
-    refreshModalStatus.saleCount
+    refreshModalStatus.saleCount,
   );
 
   const openProvideModal = () => {

@@ -34,7 +34,8 @@ export function useGetTokenList() {
       // const tokenListAll = [...tokenListForSelectedNetwork, ...storedTokenList];
 
       const result = tokenListForSelectedNetwork.filter(
-        (token) => token.address[chainName] === tokenSelector.address[chainName]
+        (token) =>
+          token.address[chainName] === tokenSelector.address[chainName],
       );
       //remove duplicated value when a user search it with an address
       return result.length > 1 ? [result[0]] : [{ ...result[0], isNew: true }];

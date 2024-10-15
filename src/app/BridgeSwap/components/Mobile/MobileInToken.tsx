@@ -26,7 +26,7 @@ import {
 const MobileInToken = () => {
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(
-    mobileTokenModalStatus
+    mobileTokenModalStatus,
   );
   const { inToken } = useInOutTokens();
   const network = useConnectedNetwork();

@@ -14,7 +14,7 @@ export function useSettingValue() {
 
   const initialDeadline = Number(txSettingValue.deadline) * 60;
   const [deadlineBySeconds, setDeadlineInSeconds] = useState(
-    Math.floor(Date.now() / 1000) + initialDeadline
+    Math.floor(Date.now() / 1000) + initialDeadline,
   );
 
   useEffect(() => {

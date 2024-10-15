@@ -103,7 +103,7 @@ const BRUSH_EXTENT_MARGIN_PX = 2;
 const compare = (
   a: [number, number],
   b: [number, number],
-  xScale: ScaleLinear<number, number>
+  xScale: ScaleLinear<number, number>,
 ): boolean => {
   // normalize pixels to 1 decimals
   const aNorm = a.map((x) => xScale(x).toFixed(1));
@@ -157,7 +157,7 @@ export const Brush = ({
 
       const scaled = (selection as [number, number]).map(xScale.invert) as [
         number,
-        number
+        number,
       ];
 
       if (type === "end" && !compare(brushExtent, scaled, xScale)) {
@@ -167,7 +167,7 @@ export const Brush = ({
 
       setLocalBrushExtent(scaled);
     },
-    [xScale, brushExtent, setBrushExtent]
+    [xScale, brushExtent, setBrushExtent],
   );
 
   // keep local and external brush extent in sync
@@ -223,7 +223,7 @@ export const Brush = ({
 
     brushBehavior.current.move(
       select(brushRef.current) as any,
-      brushExtent.map(xScale) as any
+      brushExtent.map(xScale) as any,
     );
   }, [brushExtent, xScale]);
 
@@ -296,7 +296,7 @@ export const Brush = ({
                 id={"test"}
                 transform={`translate(${Math.max(
                   0,
-                  xScale(localBrushExtent[0])
+                  xScale(localBrushExtent[0]),
                 )}, 0), scale(${flipWestHandle ? "-1" : "1"}, 1)`}
               >
                 <g>
@@ -335,7 +335,7 @@ export const Brush = ({
             {eastHandleInView ? (
               <g
                 transform={`translate(${xScale(
-                  localBrushExtent[1]
+                  localBrushExtent[1],
                 )}, 0), scale(${flipEastHandle ? "-1" : "1"}, 1)`}
               >
                 <g>
@@ -393,6 +393,6 @@ export const Brush = ({
       westHandleColor,
       westHandleInView,
       xScale,
-    ]
+    ],
   );
 };

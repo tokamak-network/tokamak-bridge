@@ -136,14 +136,14 @@ const MaintenanceBanner = () => {
 
   return isBannerStatus !== "Hidden" ? (
     <Flex
-      h='61px'
-      w='560px'
+      h="61px"
+      w="560px"
       bg={isBannerStatus === "Pending" ? "#F9C03E" : "#DD3A44"}
       borderRadius={"5px"}
       justifyContent={"space-between"}
       alignItems={"center"}
       color={isBannerStatus === "Pending" ? "#0F0F12" : "#fff"}
-      p='16px'
+      p="16px"
       mb={"10px"}
     >
       <Flex flexDir={"column"}>

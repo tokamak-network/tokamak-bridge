@@ -35,7 +35,7 @@ export const getStatus = (item: CrossTradeData): number => {
 
 export function calculateInitialCountdown(
   blockTimestamps: number,
-  countdownDuration: number
+  countdownDuration: number,
 ): number {
   const currentTimeUTC = new Date();
   const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -45,7 +45,7 @@ export function calculateInitialCountdown(
 
   const zoneTime = utcToZonedTime(
     new Date(blockTimestamps * 1000),
-    currentTimeZone
+    currentTimeZone,
   );
   const adjustedBlockTimestamp = Math.floor(zoneTime.getTime() / 1000);
 

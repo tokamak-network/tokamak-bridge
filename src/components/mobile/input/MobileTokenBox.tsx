@@ -32,10 +32,10 @@ export default function MobileTokenBox(props: {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
@@ -48,7 +48,7 @@ export default function MobileTokenBox(props: {
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
-    18
+    18,
   );
   const {
     inToken: inTokenFromHook,

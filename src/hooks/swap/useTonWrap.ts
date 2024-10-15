@@ -91,7 +91,7 @@ export default function useWrap() {
       if (inToken && inToken.amountBN && provider) {
         const calldata = WrapContract.interface.encodeFunctionData(
           "swapFromTON",
-          [inToken.amountBN]
+          [inToken.amountBN],
         );
         const estimateGas = await provider.estimateGas({
           to: WrapContract.address,
@@ -111,7 +111,7 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, WrapContract, provider]
+    [inToken, WrapContract, provider],
   );
 
   const unwrapWTON = useCallback(
@@ -119,7 +119,7 @@ export default function useWrap() {
       if (inToken && inToken.amountBN && provider) {
         const calldata = WrapContract.interface.encodeFunctionData(
           "swapToTON",
-          [inToken.amountBN]
+          [inToken.amountBN],
         );
 
         const estimateGas = await provider.estimateGas({
@@ -140,7 +140,7 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, WrapContract, provider]
+    [inToken, WrapContract, provider],
   );
 
   const wrapETH = useCallback(
@@ -192,7 +192,7 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, ETHWrapContract, provider, isLayer2]
+    [inToken, ETHWrapContract, provider, isLayer2],
   );
 
   const unwrapWETH = useCallback(
@@ -204,7 +204,7 @@ export default function useWrap() {
         if (isLayer2) {
           const calldata = ETHWrapContract.interface.encodeFunctionData(
             "withdraw",
-            [inToken.amountBN]
+            [inToken.amountBN],
           );
           const l2Provider = asL2Provider(provider);
           const txData = {
@@ -218,7 +218,7 @@ export default function useWrap() {
           estimatedGasForL2 = calculateGasMargin(estimatedGasForL2);
         } else {
           estimateGas = await ETHWrapContract.estimateGas.withdraw(
-            inToken.amountBN
+            inToken.amountBN,
           );
         }
         const estimateGasWithBuffer = calculateGasMargin(estimateGas);
@@ -239,7 +239,7 @@ export default function useWrap() {
         }
       }
     },
-    [inToken, ETHWrapContract, provider, isLayer2]
+    [inToken, ETHWrapContract, provider, isLayer2],
   );
 
   useEffect(() => {
@@ -248,12 +248,12 @@ export default function useWrap() {
         mode === "Wrap"
           ? await wrapTON(true)
           : mode === "Unwrap"
-          ? await unwrapWTON(true)
-          : mode === "ETH-Wrap"
-          ? await wrapETH(true)
-          : mode === "ETH-Unwrap"
-          ? await unwrapWETH(true)
-          : undefined;
+            ? await unwrapWTON(true)
+            : mode === "ETH-Wrap"
+              ? await wrapETH(true)
+              : mode === "ETH-Unwrap"
+                ? await unwrapWETH(true)
+                : undefined;
       if (estimatedGas) setEstimatedGasUsage(estimatedGas);
     };
 

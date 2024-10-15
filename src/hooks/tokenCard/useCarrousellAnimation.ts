@@ -111,17 +111,17 @@ export const getLocation = (index: number, maxIndex: number): LocationType => {
     return index === 0
       ? locations[2]
       : index === 1
-      ? locations[1]
-      : index === 2
-      ? locations[3]
-      : index === 3
-      ? locations[0]
-      : locations[4];
+        ? locations[1]
+        : index === 2
+          ? locations[3]
+          : index === 3
+            ? locations[0]
+            : locations[4];
   }
 
   return maxIndex > 5 && maxIndex === index
     ? "outLeft"
-    : locations[index] ?? "wait";
+    : (locations[index] ?? "wait");
 };
 
 export const getTokenCardStyle = (index: number, maxIndex: number) => {

@@ -1,9 +1,5 @@
 import { SettingContainer } from "../Setting";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-} from "@chakra-ui/react";
+import { Modal, ModalOverlay, ModalContent } from "@chakra-ui/react";
 
 import { swapSettingStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
@@ -11,7 +7,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const SwapSettingModal = () => {
   const [settingStatus, setSettingStatus] = useRecoilState(swapSettingStatus);
-  const {mobileView} = useMediaView();
+  const { mobileView } = useMediaView();
 
   return (
     <Modal

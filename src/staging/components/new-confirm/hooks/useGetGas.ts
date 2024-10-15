@@ -17,13 +17,13 @@ const useRelayGas = (gasLimit: number, chainId: number) => {
         const gasCost = gasLimit * Number(gasPrice);
         const parsedTotalGasCost = ethers.utils.formatUnits(
           gasCost.toString(),
-          "ether"
+          "ether",
         );
         setTotalGasCost(parsedTotalGasCost);
         if (tokenMarketPrice) {
           const usTotal = commafy(
             Number(tokenMarketPrice) * Number(parsedTotalGasCost),
-            2
+            2,
           );
           setUsGasCost(usTotal);
         }

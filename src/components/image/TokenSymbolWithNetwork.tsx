@@ -16,7 +16,7 @@ type TokenSymbolWithNetworkProp = {
 };
 
 export default function TokenSymbolWithNetwork(
-  props: TokenSymbolWithNetworkProp
+  props: TokenSymbolWithNetworkProp,
 ) {
   const {
     tokenSymbol,

@@ -11,7 +11,7 @@ export default function useBridgeSupport() {
 
   const isOnBridge = mode === "Deposit" || mode === "Withdraw";
   const isSupported =
-    inToken === null ? true : inToken?.availableForBirdge ?? false;
+    inToken === null ? true : (inToken?.availableForBirdge ?? false);
 
   return {
     isNotSupportForBridge: isOnBridge ? !isSupported : false,

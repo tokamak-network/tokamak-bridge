@@ -12,7 +12,7 @@ import JSBI from "jsbi";
 export function tryParsePrice(
   baseToken?: Token,
   quoteToken?: Token,
-  value?: string
+  value?: string,
 ) {
   if (!baseToken || !quoteToken || !value) {
     return undefined;
@@ -32,9 +32,9 @@ export function tryParsePrice(
     quoteToken,
     JSBI.multiply(
       JSBI.BigInt(10 ** decimals),
-      JSBI.BigInt(10 ** baseToken.decimals)
+      JSBI.BigInt(10 ** baseToken.decimals),
     ),
-    JSBI.multiply(withoutDecimals, JSBI.BigInt(10 ** quoteToken.decimals))
+    JSBI.multiply(withoutDecimals, JSBI.BigInt(10 ** quoteToken.decimals)),
   );
 }
 
@@ -42,7 +42,7 @@ export function tryParseTick(
   baseToken?: Token,
   quoteToken?: Token,
   feeAmount?: FeeAmount,
-  value?: string
+  value?: string,
 ): number | undefined {
   if (!baseToken || !quoteToken || !feeAmount || !value) {
     return undefined;

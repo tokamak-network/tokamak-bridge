@@ -217,7 +217,7 @@ export class IUniversalRouter__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IUniversalRouter {
     return new Contract(address, _abi, signerOrProvider) as IUniversalRouter;
   }

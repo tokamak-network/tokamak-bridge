@@ -21,7 +21,7 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
   return (
     <>
       <Flex
-        justifyContent='space-between'
+        justifyContent="space-between"
         my={type == ConfirmDetailType.MinReceived ? "6px" : ""}
       >
         <Text
@@ -38,8 +38,8 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
               type === ConfirmDetailType.Rate
                 ? "172px"
                 : type === ConfirmDetailType.MinReceived
-                ? "100px"
-                : "115px"
+                  ? "100px"
+                  : "115px"
             }
             h={"18px"}
           >

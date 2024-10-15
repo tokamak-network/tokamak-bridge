@@ -65,12 +65,12 @@ export default function PoolList() {
               positions.length < 5
                 ? 5 - positions.length
                 : positions.length % 3 === 1
-                ? 1
-                : positions.length % 3 === 2
-                ? 0
-                : 2,
+                  ? 1
+                  : positions.length % 3 === 2
+                    ? 0
+                    : 2,
           },
-          (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />
+          (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />,
         )}
     </Grid>
   );

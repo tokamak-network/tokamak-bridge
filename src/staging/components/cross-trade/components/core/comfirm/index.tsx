@@ -87,8 +87,8 @@ export default function CTModal() {
     [ModalType.History]: isProvide
       ? "Provide"
       : isCanceled
-      ? "Cancel"
-      : "Request",
+        ? "Cancel"
+        : "Request",
   };
 
   useEffect(() => {

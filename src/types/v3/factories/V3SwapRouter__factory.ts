@@ -99,7 +99,7 @@ export class V3SwapRouter__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): V3SwapRouter {
     return new Contract(address, _abi, signerOrProvider) as V3SwapRouter;
   }

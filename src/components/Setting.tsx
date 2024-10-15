@@ -141,10 +141,10 @@ export const SettingContainer = ({
         value === ""
           ? ""
           : newValue
-          ? newValue
-          : id === "slippage"
-          ? prev.slippage
-          : prev.deadline.toString(),
+            ? newValue
+            : id === "slippage"
+              ? prev.slippage
+              : prev.deadline.toString(),
     }));
   };
 

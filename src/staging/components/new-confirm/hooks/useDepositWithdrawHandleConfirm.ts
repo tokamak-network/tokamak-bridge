@@ -38,7 +38,7 @@ export const useHandleConfirm = () => {
       inNetwork.chainId,
       outNetwork.chainId,
       inTransactionToken,
-      outTransactionToken
+      outTransactionToken,
     );
 
     onOpenDepositWithdrawConfirmModal(transaction);

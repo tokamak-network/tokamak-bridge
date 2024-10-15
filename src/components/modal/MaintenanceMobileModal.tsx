@@ -18,7 +18,7 @@ interface MaintenanceMobileModalProps {
 }
 
 export default function MaintenanceMobileModal(
-  props: MaintenanceMobileModalProps
+  props: MaintenanceMobileModalProps,
 ) {
   const { isOpen, onClose, modalType, remainingTime, maintenanceTimeText } =
     props;
@@ -46,7 +46,7 @@ export default function MaintenanceMobileModal(
       >
         <Flex
           w={"320px"}
-          h='auto'
+          h="auto"
           bgColor={"#1f2128"}
           borderRadius={"16px"}
           flexDir={"column"}
@@ -81,7 +81,7 @@ export default function MaintenanceMobileModal(
           <Box>
             <Text fontSize={"11px"} fontWeight={400} textAlign={"center"}>
               Maintenance scheduled from{" "}
-              <Box as='span' fontWeight={700}>
+              <Box as="span" fontWeight={700}>
                 {maintenanceTimeText}
               </Box>
             </Text>
@@ -90,7 +90,7 @@ export default function MaintenanceMobileModal(
             </Text>
           </Box>
           <Button
-            w='full'
+            w="full"
             h={"48px"}
             bgColor={"#007AFF"}
             color={"white"}

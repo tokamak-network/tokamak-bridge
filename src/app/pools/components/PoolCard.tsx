@@ -123,14 +123,14 @@ export default function PoolCard(props: PoolCardDetail) {
     token0FeeMarketValue,
     2,
     undefined,
-    "0.00"
+    "0.00",
   )})`;
 
   const token1FeeValueForTooltip = `($${commafy(
     token1FeeMarketValue,
     2,
     undefined,
-    "0.00"
+    "0.00",
   )})`;
 
   const feeValue = useMemo(() => {
@@ -210,7 +210,7 @@ export default function PoolCard(props: PoolCardDetail) {
                 <Text maxW={"120px"} textAlign={"right"} overflow={"hidden"}>
                   {gasUsdFormatter(
                     Number(feeValue?.replaceAll(",", "")),
-                    "< $0.01"
+                    "< $0.01",
                   )}
                 </Text>
               ) : hasFee ? (

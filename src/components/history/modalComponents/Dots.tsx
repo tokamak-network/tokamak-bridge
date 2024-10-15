@@ -1,6 +1,5 @@
 import { Flex } from "@chakra-ui/react";
 
-
 const Dots = (props: { progress: string; color: string }) => {
   const { progress, color } = props;
 

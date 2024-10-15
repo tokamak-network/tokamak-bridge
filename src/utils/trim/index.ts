@@ -17,7 +17,7 @@ export function trimAddress(args: {
 
 export function trimAmountForFormatter(
   amount: string | null | undefined,
-  decimalPlaces?: number
+  decimalPlaces?: number,
 ) {
   if (amount === null || amount === undefined) {
     return "";
@@ -26,7 +26,7 @@ export function trimAmountForFormatter(
   const lowerThanMinimum = Number(amount.replaceAll(",", "")) < 0.000001;
   const lowerThanInteger = Number(amount.replaceAll(",", "")) < 1;
 
-  const decimals = decimalPlaces ?? lowerThanMinimum ? 6 : 9;
+  const decimals = (decimalPlaces ?? lowerThanMinimum) ? 6 : 9;
 
   if (amount.length < decimals) {
     return commafy(amount, 2);
@@ -41,7 +41,7 @@ export function trimAmountForFormatter(
 
 export function trimAmount(
   amount: string | null | undefined,
-  decimalPlaces?: number
+  decimalPlaces?: number,
 ) {
   if (amount === null || amount === undefined) {
     return "";

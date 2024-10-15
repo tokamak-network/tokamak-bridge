@@ -106,7 +106,7 @@ export default function CTOptionModal() {
       const ctAmount =
         BigInt(inToken.amountBN.toString()) -
         BigInt(
-          ethers.utils.parseUnits(serviceFeeValue, inToken.decimals).toString()
+          ethers.utils.parseUnits(serviceFeeValue, inToken.decimals).toString(),
         );
       return onOpenCTConfirmModal({
         type: ModalType.Trade,
@@ -148,7 +148,7 @@ export default function CTOptionModal() {
 
   const { connectedChainId } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
-    ""
+    "",
   );
 
   const serviceFeeIsNotOver = useMemo(() => {

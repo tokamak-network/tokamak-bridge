@@ -128,7 +128,7 @@ export default function ChartWrapper({
         }
       }
     },
-    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit, poolState]
+    [isSorted, onLeftRangeInput, onRightRangeInput, ticksAtLimit, poolState],
   );
 
   interactive = interactive && Boolean(formattedData?.length);
@@ -163,7 +163,7 @@ export default function ChartWrapper({
         ? `${format(Math.abs(percent) > 1 ? ".2~s" : ".2~f")(percent)}%`
         : "";
     },
-    [isSorted, price, ticksAtLimit]
+    [isSorted, price, ticksAtLimit],
   );
 
   const isUninitialized =

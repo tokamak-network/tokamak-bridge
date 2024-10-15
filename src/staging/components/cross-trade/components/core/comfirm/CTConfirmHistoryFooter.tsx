@@ -89,7 +89,7 @@ const TransactionItem = (props: TransactionItemProps) => {
   });
   const timeDisplay = useCountdown(
     initialTimeDisplay,
-    Boolean(isOnError) || isTimeOver
+    Boolean(isOnError) || isTimeOver,
   );
 
   const CountdownComponent = useMemo(() => {

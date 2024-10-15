@@ -4,7 +4,7 @@ import { useCallback } from "react";
 
 export default function useSwapConfirm() {
   const [swapConfirmModal, setSwapConfirmModal] = useRecoilState(
-    swapConfirmModalStatus
+    swapConfirmModalStatus,
   );
 
   const onOpenSwapConfirmModal = () => {

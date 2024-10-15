@@ -7,7 +7,7 @@ import { mostSignificantBit } from "./mostSignificantBit";
 function mulShift(val: JSBI, mulBy: string): JSBI {
   return JSBI.signedRightShift(
     JSBI.multiply(val, JSBI.BigInt(mulBy)),
-    JSBI.BigInt(128)
+    JSBI.BigInt(128),
   );
 }
 
@@ -36,7 +36,7 @@ export abstract class TickMath {
    * The sqrt ratio corresponding to the maximum tick that could be used on any pool.
    */
   public static MAX_SQRT_RATIO: JSBI = JSBI.BigInt(
-    "1461446703485210103287273052203988822378723970342"
+    "1461446703485210103287273052203988822378723970342",
   );
 
   /**
@@ -48,7 +48,7 @@ export abstract class TickMath {
       tick >= TickMath.MIN_TICK &&
         tick <= TickMath.MAX_TICK &&
         Number.isInteger(tick),
-      "TICK"
+      "TICK",
     );
     const absTick: number = tick < 0 ? tick * -1 : tick;
 
@@ -112,7 +112,7 @@ export abstract class TickMath {
     invariant(
       JSBI.greaterThanOrEqual(sqrtRatioX96, TickMath.MIN_SQRT_RATIO) &&
         JSBI.lessThan(sqrtRatioX96, TickMath.MAX_SQRT_RATIO),
-      "SQRT_RATIO"
+      "SQRT_RATIO",
     );
 
     const sqrtRatioX128 = JSBI.leftShift(sqrtRatioX96, JSBI.BigInt(32));
@@ -128,7 +128,7 @@ export abstract class TickMath {
 
     let log_2: JSBI = JSBI.leftShift(
       JSBI.subtract(JSBI.BigInt(msb), JSBI.BigInt(128)),
-      JSBI.BigInt(64)
+      JSBI.BigInt(64),
     );
 
     for (let i = 0; i < 14; i++) {
@@ -140,35 +140,35 @@ export abstract class TickMath {
 
     const log_sqrt10001 = JSBI.multiply(
       log_2,
-      JSBI.BigInt("255738958999603826347141")
+      JSBI.BigInt("255738958999603826347141"),
     );
 
     const tickLow = JSBI.toNumber(
       JSBI.signedRightShift(
         JSBI.subtract(
           log_sqrt10001,
-          JSBI.BigInt("3402992956809132418596140100660247210")
+          JSBI.BigInt("3402992956809132418596140100660247210"),
         ),
-        JSBI.BigInt(128)
-      )
+        JSBI.BigInt(128),
+      ),
     );
     const tickHigh = JSBI.toNumber(
       JSBI.signedRightShift(
         JSBI.add(
           log_sqrt10001,
-          JSBI.BigInt("291339464771989622907027621153398088495")
+          JSBI.BigInt("291339464771989622907027621153398088495"),
         ),
-        JSBI.BigInt(128)
-      )
+        JSBI.BigInt(128),
+      ),
     );
 
     return tickLow === tickHigh
       ? tickLow
       : JSBI.lessThanOrEqual(
-          TickMath.getSqrtRatioAtTick(tickHigh),
-          sqrtRatioX96
-        )
-      ? tickHigh
-      : tickLow;
+            TickMath.getSqrtRatioAtTick(tickHigh),
+            sqrtRatioX96,
+          )
+        ? tickHigh
+        : tickLow;
   }
 }

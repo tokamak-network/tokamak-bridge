@@ -76,7 +76,7 @@ export default function SelectTokenModal() {
 
     order.forEach((symbol) => {
       const index = remainingTokens.findIndex(
-        (token) => token.tokenSymbol === symbol
+        (token) => token.tokenSymbol === symbol,
       );
       if (index > -1) {
         orderedTokens.push(remainingTokens[index]);
@@ -120,7 +120,7 @@ export default function SelectTokenModal() {
           const token = orderedTokens.find(
             (token) =>
               token.tokenName === like.tokenName &&
-              token.tokenSymbol === like.tokenSymbol
+              token.tokenSymbol === like.tokenSymbol,
           );
           return token ? { ...token, isLiked: "true" } : null;
         })
@@ -132,8 +132,8 @@ export default function SelectTokenModal() {
             !likeList.some(
               (like) =>
                 like.tokenName === token.tokenName &&
-                like.tokenSymbol === token.tokenSymbol
-            )
+                like.tokenSymbol === token.tokenSymbol,
+            ),
         )
         .map((token) => ({ ...token, isLiked: "false" }));
       return [...(likedTokens as TokenInfo[]), ...unlikedTokens];
@@ -154,14 +154,14 @@ export default function SelectTokenModal() {
   const [, setTokenAmountStatus] = useRecoilState(selectedTokenAmountStatus);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(
-    mobileTokenModalStatus
+    mobileTokenModalStatus,
   );
 
   const [, setSearchToken] = useRecoilState(searchTokenStatus);
@@ -186,7 +186,7 @@ export default function SelectTokenModal() {
 
   const calculateChainValues = async (
     from: Number | undefined,
-    to: Number | undefined
+    to: Number | undefined,
   ) => {
     const inValue: SupportedChainProperties["chainId"] = Number(from);
     const outValue: SupportedChainProperties["chainId"] = Number(to);
@@ -229,12 +229,12 @@ export default function SelectTokenModal() {
     ) {
       await calculateChainValues(
         network.otherLayerChainInfo?.chainId,
-        network.otherLayerChainInfo?.chainId
+        network.otherLayerChainInfo?.chainId,
       );
     } else if (mode === "Withdraw" || mode === "Deposit") {
       await calculateChainValues(
         networkStatusValue.outNetwork?.chainId,
-        networkStatusValue.inNetwork?.chainId
+        networkStatusValue.inNetwork?.chainId,
       );
     }
   };
@@ -270,15 +270,15 @@ export default function SelectTokenModal() {
       tokenData.tokenName === "ETH"
         ? "Ethereum"
         : tokenData.tokenName === "WETH"
-        ? "Wrapped Ethereum"
-        : tokenData.tokenName;
+          ? "Wrapped Ethereum"
+          : tokenData.tokenName;
     const mainLabel = tokenData.tokenSymbol;
     const subLabel = displayTokenName;
     const amount = tokeninfo?.data.balanceBN.formatted || "0.0";
 
     //like handler
     const handleStarClick = (
-      event: React.MouseEvent<HTMLDivElement, MouseEvent>
+      event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     ) => {
       event.stopPropagation();
       toggleLike(tokenData);
@@ -299,13 +299,13 @@ export default function SelectTokenModal() {
     return (
       <HStack
         spacing={4}
-        justifyContent='space-between'
-        w='full'
-        alignItems='center'
+        justifyContent="space-between"
+        w="full"
+        alignItems="center"
         px={4}
         py={"6px"}
         _hover={{ bg: "#313442", px: 4, borderRadius: "8px" }}
-        cursor='pointer'
+        cursor="pointer"
         onClick={() => {
           try {
             // If a change has occurred in the existing token, reset it to zero
@@ -328,7 +328,7 @@ export default function SelectTokenModal() {
                 } else {
                   console.error(
                     "Provided value cannot be converted to a number:",
-                    number
+                    number,
                   );
                   return "0";
                 }
@@ -378,7 +378,7 @@ export default function SelectTokenModal() {
       >
         <HStack spacing={3}>
           <TokenSymbol w={36} h={36} tokenType={mainLabel} />
-          <VStack alignItems='flex-start' spacing={0}>
+          <VStack alignItems="flex-start" spacing={0}>
             <Text fontSize={"16px"} fontWeight={600} noOfLines={1}>
               {mainLabel}
             </Text>
@@ -392,8 +392,8 @@ export default function SelectTokenModal() {
             </Text>
           </VStack>
         </HStack>
-        <HStack justifyContent='flex-end'>
-          <Text fontSize={"16px"} fontWeight={600} textAlign='right' pr='2'>
+        <HStack justifyContent="flex-end">
+          <Text fontSize={"16px"} fontWeight={600} textAlign="right" pr="2">
             {formatAmount(amount)}
           </Text>
           {tokenData.isLiked !== "none" && (
@@ -412,34 +412,34 @@ export default function SelectTokenModal() {
     <Modal
       isOpen={(isInTokenOpen || isOutTokenOpen) && mobileTokenOpen}
       onClose={handleClose}
-      motionPreset='slideInBottom'
+      motionPreset="slideInBottom"
     >
       <ModalOverlay />
       <ModalContent
-        alignSelf='flex-end'
+        alignSelf="flex-end"
         mb={"0px"}
-        bg='#222225'
-        height='85vh'
-        overflow='hidden'
+        bg="#222225"
+        height="85vh"
+        overflow="hidden"
         px={"16px"}
         borderRadius={"24px 24px 0px 0px"}
       >
         <ModalHeader
-          display='flex'
-          justifyContent='space-between'
-          alignItems='center'
-          fontSize='md'
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
+          fontSize="md"
           pl={1}
         >
           Select token
           <ModalCloseButton />
         </ModalHeader>
         <MobileSearchInput searchValue={searchValue} onChange={onChange} />
-        <HStack justifyContent='space-between' px={2} pt={3}>
-          <Text fontSize='12' fontWeight='500' color='#A0A3AD'>
+        <HStack justifyContent="space-between" px={2} pt={3}>
+          <Text fontSize="12" fontWeight="500" color="#A0A3AD">
             Token
           </Text>
-          <HStack spacing='2'>
+          <HStack spacing="2">
             <Flex
               w={"32px"}
               h={"32px"}
@@ -462,7 +462,7 @@ export default function SelectTokenModal() {
               }
             >
               <Flex w={"20px"} h={"20px"} borderRadius={"0px 6px 0px 6px"}>
-                <Image alt='eth' src={ETHIcon} />
+                <Image alt="eth" src={ETHIcon} />
               </Flex>
             </Flex>
             <Flex
@@ -489,14 +489,14 @@ export default function SelectTokenModal() {
               }
             >
               <Flex w={"20px"} h={"20px"} borderRadius={"0px 6px 0px 6px"}>
-                <Image alt='titan' src={TitanIcon} />
+                <Image alt="titan" src={TitanIcon} />
               </Flex>
             </Flex>
           </HStack>
         </HStack>
 
         <ModalBody
-          overflowY='auto'
+          overflowY="auto"
           py={4}
           px={0}
           sx={{
@@ -509,15 +509,15 @@ export default function SelectTokenModal() {
                 ? "40px 66px 86px"
                 : "",
           }}
-          maxHeight='calc(70vh - 4rem)'
+          maxHeight="calc(70vh - 4rem)"
         >
           {filteredTokenList.length === 1 && filteredTokenList[0].isNew ? (
             <Flex
-              direction='column'
-              justify='center'
-              align='center'
-              maxH='calc(100vh - [HeaderHeight]px)'
-              overflowY='scroll'
+              direction="column"
+              justify="center"
+              align="center"
+              maxH="calc(100vh - [HeaderHeight]px)"
+              overflowY="scroll"
               sx={{
                 "::-webkit-scrollbar": {
                   display: "none",

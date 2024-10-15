@@ -51,8 +51,8 @@ export default function CarousellCardComponent<T>(props: {
           firstOpenModal || isTokenSearch
             ? `rotate(0deg) translate(0, 0)`
             : level === 2
-            ? "rotate(-10deg) translate(-790px, 200px)"
-            : "rotate(10deg) translate(790px, 200px)"
+              ? "rotate(-10deg) translate(-790px, 200px)"
+              : "rotate(10deg) translate(790px, 200px)"
         }`,
         top: 268,
       }}
@@ -73,8 +73,8 @@ export default function CarousellCardComponent<T>(props: {
           isTokenSearch
             ? `rotate(0deg) translate(0, 0)`
             : level === 2
-            ? "rotate(-10deg) translate(-790px, 200px)"
-            : "rotate(10deg) translate(790px, 200px)"
+              ? "rotate(-10deg) translate(-790px, 200px)"
+              : "rotate(10deg) translate(790px, 200px)"
         }`,
         top: 268,
       }}

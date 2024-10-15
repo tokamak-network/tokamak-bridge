@@ -34,7 +34,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     tokenName: transactionHistory.inToken.name as string,
     amount: convertNumber(
       transactionHistory.inToken.amount,
-      transactionHistory.inToken.decimals
+      transactionHistory.inToken.decimals,
     ),
   });
 
@@ -121,11 +121,11 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
                   isInNetwork
                     ? convertNumber(
                         transactionHistory.inToken.amount,
-                        transactionHistory.inToken.decimals
+                        transactionHistory.inToken.decimals,
                       )
                     : convertNumber(
                         transactionHistory.outToken.amount,
-                        transactionHistory.outToken.decimals
+                        transactionHistory.outToken.decimals,
                       )
                 }
                 tokenSymbol={

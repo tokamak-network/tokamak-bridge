@@ -111,12 +111,12 @@ export class UniswapInterfaceMulticall__factory extends ContractFactory {
   }
 
   deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UniswapInterfaceMulticall> {
     return super.deploy(overrides || {}) as Promise<UniswapInterfaceMulticall>;
   }
   getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }
@@ -133,12 +133,12 @@ export class UniswapInterfaceMulticall__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UniswapInterfaceMulticall {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as UniswapInterfaceMulticall;
   }
 }

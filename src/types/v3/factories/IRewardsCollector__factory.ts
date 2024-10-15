@@ -32,7 +32,7 @@ export class IRewardsCollector__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IRewardsCollector {
     return new Contract(address, _abi, signerOrProvider) as IRewardsCollector;
   }

@@ -79,21 +79,21 @@ export default function Range(props: {
   }, [page, modalStatus, token0Amount]);
   const alter0Amount = useMemo(() => {
     return page === "addLiquidity"
-      ? token0ParsedAmount ?? "0.00"
+      ? (token0ParsedAmount ?? "0.00")
       : modalStatus === "increaseLiquidity"
-      ? smallNumberFormmater({
-          amount: inToken?.parsedAmount?.toString(),
-          decimals: 6,
-          trimed: false,
-          removeComma: true,
-        })
-      : modalStatus === "removeLiquidity"
-      ? smallNumberFormmater({
-          amount: amount0Removed?.toString(),
-          decimals: 6,
-          minimumValue: 0.000001,
-        })
-      : undefined;
+        ? smallNumberFormmater({
+            amount: inToken?.parsedAmount?.toString(),
+            decimals: 6,
+            trimed: false,
+            removeComma: true,
+          })
+        : modalStatus === "removeLiquidity"
+          ? smallNumberFormmater({
+              amount: amount0Removed?.toString(),
+              decimals: 6,
+              minimumValue: 0.000001,
+            })
+          : undefined;
   }, [page, modalStatus, token0ParsedAmount, amount0Removed]);
   const token1CurrentAmount = useMemo(() => {
     return page === "addLiquidity" ||
@@ -108,37 +108,37 @@ export default function Range(props: {
   }, [page, modalStatus, token1Amount]);
   const alter1Amount = useMemo(() => {
     return page === "addLiquidity"
-      ? token1ParsedAmount ?? "0.00"
+      ? (token1ParsedAmount ?? "0.00")
       : modalStatus === "increaseLiquidity"
-      ? smallNumberFormmater({
-          amount: outToken?.parsedAmount?.toString(),
-          decimals: 6,
-          trimed: false,
-          removeComma: true,
-        })
-      : modalStatus === "removeLiquidity"
-      ? smallNumberFormmater({
-          amount: amount1Removed?.toString(),
-          decimals: 6,
-          minimumValue: 0.000001,
-        })
-      : undefined;
+        ? smallNumberFormmater({
+            amount: outToken?.parsedAmount?.toString(),
+            decimals: 6,
+            trimed: false,
+            removeComma: true,
+          })
+        : modalStatus === "removeLiquidity"
+          ? smallNumberFormmater({
+              amount: amount1Removed?.toString(),
+              decimals: 6,
+              minimumValue: 0.000001,
+            })
+          : undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   const alter0AmountForTooltip = useMemo(() => {
     return page === "addLiquidity" || page === "increaseLiquidity"
       ? inToken?.parsedAmount?.toString()
       : page === "removeLiquidity"
-      ? amount0Removed?.toString()
-      : undefined;
+        ? amount0Removed?.toString()
+        : undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   const alter1AmountForTooltip = useMemo(() => {
     return page === "addLiquidity" || page === "increaseLiquidity"
       ? outToken?.parsedAmount?.toString()
       : page === "removeLiquidity"
-      ? amount1Removed?.toString()
-      : undefined;
+        ? amount1Removed?.toString()
+        : undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
   return (

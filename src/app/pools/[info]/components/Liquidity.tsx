@@ -108,14 +108,14 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
             return router.push(
               remove
                 ? `/pools/remove/${info.id}?chainId=${info.chainId}`
-                : `/pools/increase/${info.id}?chainId=${info.chainId}`
+                : `/pools/increase/${info.id}?chainId=${info.chainId}`,
             );
           }
         }
         return router.push(
           remove
             ? `/pools/remove/${info.id}?chainId=${info.chainId}`
-            : `/pools/increase/${info.id}?chainId=${info.chainId}`
+            : `/pools/increase/${info.id}?chainId=${info.chainId}`,
         );
       }
     },
@@ -125,7 +125,7 @@ export default function Liquidity(props: { info: PoolCardDetail | undefined }) {
       connectedChainId,
       otherLayerChainInfo,
       switchNetworkAsync,
-    ]
+    ],
   );
 
   // const actionDisabled = info?.owner !== address;

@@ -56,10 +56,10 @@ export default function TokenInput(props: {
     defaultValue,
   } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const { amountOut } = useAmountOut();
@@ -76,7 +76,7 @@ export default function TokenInput(props: {
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
-    18
+    18,
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const { mobileView } = useMediaView();
@@ -122,11 +122,11 @@ export default function TokenInput(props: {
         }
         const parsedAmountOut = ethers.utils.parseUnits(
           value,
-          selectedOutToken?.decimals
+          selectedOutToken?.decimals,
         );
         const parsedAmountIn = ethers.utils.parseUnits(
           value,
-          selectedInToken?.decimals
+          selectedInToken?.decimals,
         );
         setSelectedInToken({
           ...selectedInToken,
@@ -152,7 +152,7 @@ export default function TokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedInToken.decimals
+        selectedInToken.decimals,
       );
 
       return setSelectedInToken({
@@ -174,7 +174,7 @@ export default function TokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
 
       return setSelectedOutToken({
@@ -195,7 +195,7 @@ export default function TokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
 
       return setSelectedOutToken({
@@ -242,13 +242,13 @@ export default function TokenInput(props: {
           const buffer = Number(totalGasCost) * 2;
           const parsedAmount =
             Number(
-              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
+              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", ""),
             ) - buffer;
           const isMinus = parsedAmount <= 0;
 
           const amountBN = ethers.utils.parseUnits(
             isMinus ? "0" : parsedAmount.toString(),
-            18
+            18,
           );
           // if (switchable && selectedOutToken) {
           //   setSelectedOutToken({
@@ -324,7 +324,7 @@ export default function TokenInput(props: {
         }
         const parsedAmount = ethers.utils.parseUnits(
           dependentAmount,
-          selectedOutToken.decimals
+          selectedOutToken.decimals,
         );
 
         return setSelectedOutToken({
@@ -343,7 +343,7 @@ export default function TokenInput(props: {
         }
         const parsedAmount = ethers.utils.parseUnits(
           dependentAmount,
-          selectedInToken.decimals
+          selectedInToken.decimals,
         );
 
         return setSelectedInToken({
@@ -384,10 +384,10 @@ export default function TokenInput(props: {
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-      ? isFocused
-        ? String(selectedOutToken?.parsedAmount)
-        : trimAmount(selectedOutToken?.parsedAmount, 8)
-      : defaultValue || "";
+        ? isFocused
+          ? String(selectedOutToken?.parsedAmount)
+          : trimAmount(selectedOutToken?.parsedAmount, 8)
+        : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -448,7 +448,7 @@ export default function TokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
       return setSelectedOutToken({
         ...selectedOutToken,
@@ -461,12 +461,12 @@ export default function TokenInput(props: {
   useEffect(() => {
     if (inToken && selectedInToken && tokenData) {
       return setIsMax(
-        tokenData.data.balanceBN.value === selectedInToken.amountBN
+        tokenData.data.balanceBN.value === selectedInToken.amountBN,
       );
     }
     if (!inToken && selectedOutToken && tokenData) {
       return setIsMax(
-        tokenData.data.balanceBN.value === selectedOutToken.amountBN
+        tokenData.data.balanceBN.value === selectedOutToken.amountBN,
       );
     }
   }, [selectedInToken, selectedOutToken, inToken, tokenData]);
@@ -544,8 +544,8 @@ export default function TokenInput(props: {
                     mobileView && isBalanceOver
                       ? "#DD3A44"
                       : mobileView && !inToken
-                      ? "#A0A3AD !important"
-                      : "#FFFFFF"
+                        ? "#A0A3AD !important"
+                        : "#FFFFFF"
                   }
                   fontSize={{ base: 22, lg: 28 }}
                   fontWeight={{ base: 500, lg: 600 }}

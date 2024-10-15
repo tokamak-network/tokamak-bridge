@@ -30,34 +30,34 @@ interface TokenValidatorInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "batchValidate",
-    values: [string[], string[], BigNumberish]
+    values: [string[], string[], BigNumberish],
   ): string;
   encodeFunctionData(functionFragment: "factoryV2", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "positionManager",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "uniswapV2Call",
-    values: [string, BigNumberish, BigNumberish, BytesLike]
+    values: [string, BigNumberish, BigNumberish, BytesLike],
   ): string;
   encodeFunctionData(
     functionFragment: "validate",
-    values: [string, string[], BigNumberish]
+    values: [string, string[], BigNumberish],
   ): string;
 
   decodeFunctionResult(
     functionFragment: "batchValidate",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "factoryV2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "positionManager",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "uniswapV2Call",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "validate", data: BytesLike): Result;
 
@@ -70,26 +70,26 @@ export class TokenValidator extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -102,7 +102,7 @@ export class TokenValidator extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: TokenValidatorInterface;
@@ -112,7 +112,7 @@ export class TokenValidator extends BaseContract {
       tokens: string[],
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     factoryV2(overrides?: CallOverrides): Promise<[string]>;
@@ -124,14 +124,14 @@ export class TokenValidator extends BaseContract {
       amount0: BigNumberish,
       arg2: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[void]>;
 
     validate(
       token: string,
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
   };
 
@@ -139,7 +139,7 @@ export class TokenValidator extends BaseContract {
     tokens: string[],
     baseTokens: string[],
     amountToBorrow: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   factoryV2(overrides?: CallOverrides): Promise<string>;
@@ -151,14 +151,14 @@ export class TokenValidator extends BaseContract {
     amount0: BigNumberish,
     arg2: BigNumberish,
     data: BytesLike,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<void>;
 
   validate(
     token: string,
     baseTokens: string[],
     amountToBorrow: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -166,7 +166,7 @@ export class TokenValidator extends BaseContract {
       tokens: string[],
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<number[]>;
 
     factoryV2(overrides?: CallOverrides): Promise<string>;
@@ -178,14 +178,14 @@ export class TokenValidator extends BaseContract {
       amount0: BigNumberish,
       arg2: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
 
     validate(
       token: string,
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<number>;
   };
 
@@ -196,7 +196,7 @@ export class TokenValidator extends BaseContract {
       tokens: string[],
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     factoryV2(overrides?: CallOverrides): Promise<BigNumber>;
@@ -208,14 +208,14 @@ export class TokenValidator extends BaseContract {
       amount0: BigNumberish,
       arg2: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     validate(
       token: string,
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
   };
 
@@ -224,7 +224,7 @@ export class TokenValidator extends BaseContract {
       tokens: string[],
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     factoryV2(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -236,14 +236,14 @@ export class TokenValidator extends BaseContract {
       amount0: BigNumberish,
       arg2: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     validate(
       token: string,
       baseTokens: string[],
       amountToBorrow: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
   };
 }

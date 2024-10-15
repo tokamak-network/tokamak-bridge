@@ -19,12 +19,12 @@ export function useIncreaseAmount() {
         ? dependentAmount?.quotient
         : inToken?.amountBN
       : invertPrice
-      ? deposit1Disabled
-        ? 0
-        : outToken?.amountBN
-      : deposit0Disabled
-      ? 0
-      : dependentAmount?.quotient;
+        ? deposit1Disabled
+          ? 0
+          : outToken?.amountBN
+        : deposit0Disabled
+          ? 0
+          : dependentAmount?.quotient;
   }, [
     invertPrice,
     dependentAmount,
@@ -40,12 +40,12 @@ export function useIncreaseAmount() {
         ? dependentAmount?.quotient
         : outToken?.amountBN
       : invertPrice
-      ? deposit0Disabled
-        ? 0
-        : inToken?.amountBN
-      : deposit1Disabled
-      ? 0
-      : dependentAmount?.quotient;
+        ? deposit0Disabled
+          ? 0
+          : inToken?.amountBN
+        : deposit1Disabled
+          ? 0
+          : dependentAmount?.quotient;
   }, [
     invertPrice,
     dependentAmount,
@@ -60,7 +60,7 @@ export function useIncreaseAmount() {
       const result = ethers.utils
         .formatUnits(
           token0Input?.toString(),
-          invertPrice ? outToken?.decimals : inToken?.decimals
+          invertPrice ? outToken?.decimals : inToken?.decimals,
         )
         .toString();
       return smallNumberFormmater({
@@ -77,7 +77,7 @@ export function useIncreaseAmount() {
       const result = ethers.utils
         .formatUnits(
           token1Input?.toString(),
-          invertPrice ? inToken?.decimals : outToken?.decimals
+          invertPrice ? inToken?.decimals : outToken?.decimals,
         )
         .toString();
       return smallNumberFormmater({

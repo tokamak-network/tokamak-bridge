@@ -57,10 +57,10 @@ export default function RangeInput(props: RangeInputProps) {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
   const lastFocused = useRecoilValue(lastFocusedInput);
 
@@ -108,7 +108,7 @@ export default function RangeInput(props: RangeInputProps) {
       setLocalValue(inputValue);
       // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
-    [isMinPrice]
+    [isMinPrice],
   );
 
   const onFocusHandler = useCallback(
@@ -116,7 +116,7 @@ export default function RangeInput(props: RangeInputProps) {
       setIsFocused(true);
       setUseLocalValue(true);
     },
-    []
+    [],
   );
 
   const value = useMemo(() => {
@@ -137,8 +137,8 @@ export default function RangeInput(props: RangeInputProps) {
           ? pricesAtTicks?.UPPER?.invert().toSignificant(6)
           : pricesAtTicks?.LOWER?.toSignificant(6)
         : invertPrice
-        ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
-        : pricesAtTicks?.UPPER?.toSignificant(6);
+          ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
+          : pricesAtTicks?.UPPER?.toSignificant(6);
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice, notExistPool]);
 
@@ -148,7 +148,7 @@ export default function RangeInput(props: RangeInputProps) {
       setUseLocalValue(false);
       return isMinPrice ? setMinPrice(localValue) : setMaxPrice(localValue);
     },
-    [localValue, notExistPool, invertPrice]
+    [localValue, notExistPool, invertPrice],
   );
 
   const [, setMinPriceForAddModal] = useRecoilState(minPriceForAddModal);
@@ -206,12 +206,12 @@ export default function RangeInput(props: RangeInputProps) {
               ticksAtLimit.LOWER
                 ? () => {}
                 : isMinPrice
-                ? invertPrice
-                  ? onIncreaseUpper
-                  : onDecreaseLower
-                : invertPrice
-                ? onIncreaseLower
-                : onDecreaseUpper
+                  ? invertPrice
+                    ? onIncreaseUpper
+                    : onDecreaseLower
+                  : invertPrice
+                    ? onIncreaseLower
+                    : onDecreaseUpper
             }
           >
             <Image src={REMOVE_ICON} alt={"REMOVE_ICON"} />
@@ -251,8 +251,8 @@ export default function RangeInput(props: RangeInputProps) {
                   ? onDecreaseUpper
                   : onIncreaseLower
                 : invertPrice
-                ? onDecreaseLower
-                : onIncreaseUpper
+                  ? onDecreaseLower
+                  : onIncreaseUpper
             }
           >
             <Image src={ADD_ICON} alt={"ADD_ICON"} />
