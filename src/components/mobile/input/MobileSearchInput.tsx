@@ -13,10 +13,9 @@ export default function MobileSearchInput({
 }: MobileSearchInputProps) {
   return (
     <InputGroup>
-      <InputLeftElement
-        pointerEvents="none"
-        children={<SearchIcon color="gray.300" />}
-      />
+      <InputLeftElement pointerEvents="none">
+        <SearchIcon color="gray.300" />
+      </InputLeftElement>
       <Input
         type="text"
         value={searchValue}

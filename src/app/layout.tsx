@@ -33,7 +33,7 @@ export default function RootLayout({
       <body style={{ maxHeight: "100vh", margin: 0, padding: 0 }}>
         <RecoilRootWrapper>
           <WagmiProviders>
-            <Entry children={children} />
+            <Entry>{children}</Entry>
           </WagmiProviders>
         </RecoilRootWrapper>
       </body>

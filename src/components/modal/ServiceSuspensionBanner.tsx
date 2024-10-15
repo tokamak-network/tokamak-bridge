@@ -22,6 +22,7 @@ const ServiceSuspensionBanner = () => {
         <a
           href={"https://twitter.com/Tokamak_Network"}
           target="_blank"
+          rel="noreferrer"
           style={{
             fontWeight: "bold",
             textDecoration: "underline",

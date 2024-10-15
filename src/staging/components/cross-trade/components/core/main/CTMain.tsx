@@ -193,6 +193,7 @@ export default function CTMain() {
 
         return (
           <Box
+            key={index}
             w="100%"
             h="100%"
             py={"12px"}

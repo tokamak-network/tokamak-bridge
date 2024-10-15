@@ -118,7 +118,7 @@ const CarouselCard = React.memo((props) => {
     )
   );
 });
-
+CarouselCard.displayName = "CarouselCard";
 export function CardCarouselMobile() {
   const ref: any = React.useRef();
   const { filteredTokenList } = useGetTokenList();

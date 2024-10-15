@@ -421,9 +421,9 @@ export default function CTConfirmCrossTradeFooter(
               >
                 Warning:
               </span>
-              Tokamak Bridge can't guarantee this
+              Tokamak Bridge can&apos;t guarantee this
             </Text>
-            <Text>request’s validity or compensate for lost funds.</Text>
+            <Text>request&apos;s validity or compensate for lost funds.</Text>
             <Text>
               <Link
                 ml={"2px"}

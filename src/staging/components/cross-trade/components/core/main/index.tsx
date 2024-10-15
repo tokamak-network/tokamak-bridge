@@ -160,9 +160,9 @@ export default function CrossTrade() {
                 >
                   Cross trade bridge features available through this website are
                   in beta and subject to testing, further development, and
-                  changes and is therefore provided "as is" without any
-                  warranties. Use of any of the features available through this
-                  website is done so entirely at your own risk.{" "}
+                  changes and is therefore provided &quot;as is&quot; without
+                  any warranties. Use of any of the features available through
+                  this website is done so entirely at your own risk.{" "}
                   {!mobileView && <br />}
                   Report using
                   <Link
