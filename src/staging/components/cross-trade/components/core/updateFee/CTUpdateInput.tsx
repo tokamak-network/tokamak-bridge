@@ -17,6 +17,7 @@ import { WarningType } from "@/staging/components/cross-trade/types";
 import { TransactionToken } from "@/staging/types/transaction";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
@@ -39,16 +40,20 @@ export default function CTUpdateInput(
     tokenInfo,
   } = props;
 
+  const { mobileView } = useMediaView();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const inputValue = useMemo(() => {
+    const maxLength = mobileView ? 9 : 12;
+    const sliceEnd = mobileView ? 12 : 15;
+
     if (isFocused) return _inputValue;
-    if (_inputValue.length > 12) {
-      return `${_inputValue.slice(0, 15)}...`;
+    if (_inputValue.length > maxLength) {
+      return `${_inputValue.slice(0, sliceEnd)}...`;
     }
     return _inputValue;
-  }, [_inputValue, isFocused]);
+  }, [_inputValue, isFocused, mobileView]);
 
   const handleBoxClick = () => {
     if (inputRef.current) {
@@ -76,9 +81,9 @@ export default function CTUpdateInput(
         borderRadius={"8px"}
         border={isFocused ? "1px solid #59628D" : "1px solid #313442"}
         onClick={handleBoxClick}
-        cursor="pointer"
+        cursor='pointer'
       >
-        <Flex justifyContent="space-between">
+        <Flex justifyContent='space-between'>
           <Text
             lineHeight={"18px"}
             fontWeight={500}
@@ -93,7 +98,7 @@ export default function CTUpdateInput(
               //상위 onclick에 이벤트 버블링 안되게 막음
               event.stopPropagation();
             }}
-            cursor="pointer"
+            cursor='pointer'
           >
             {refreshButtonActive ? (
               <Image src={CTReCircle} alt={"CTReCircle"} />
@@ -105,9 +110,9 @@ export default function CTUpdateInput(
         <InputGroup mt={"4px"} height={"38px"}>
           <Input
             ref={inputRef}
-            type="text"
-            pattern="[012]"
-            width={"260px"}
+            type='text'
+            pattern='[012]'
+            width={"100%"}
             pl={0}
             fontWeight={600}
             fontSize={"24px"}
