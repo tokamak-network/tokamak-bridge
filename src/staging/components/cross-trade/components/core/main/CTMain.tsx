@@ -164,6 +164,25 @@ export default function CTMain() {
 
   return mobileView ? (
     <Flex direction='column' width='100%' height='100%' padding='0'>
+      {displayedItems.length === 0 && (
+        <Flex
+          justifyContent='center'
+          alignItems='center'
+          height='100%'
+          flexDirection='column'
+          mt={"16px"}
+        >
+          <Text
+            fontSize='14px'
+            color='#E3F3FF'
+            fontWeight='400'
+            lineHeight={"21px"}
+          >
+            No active requests
+          </Text>
+        </Flex>
+      )}
+
       {displayedItems?.map((item, index) => {
         if (item.isProvided) return null;
         const status = item.isProvided;
