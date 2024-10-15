@@ -187,6 +187,9 @@ export default function CTOptionModal() {
   }, [ctOptionModal]);
 
   const btnDisabled = useMemo(() => {
+    if (activeMainButtonValue === ButtonTypeMain.Standard) {
+      return false;
+    }
     if (activeSubButtonValue === ButtonTypeSub.Recommend) {
       return !recommendedCtAmount || !recommendedFee;
     }
@@ -199,6 +202,7 @@ export default function CTOptionModal() {
       );
     }
   }, [
+    activeMainButtonValue,
     activeSubButtonValue,
     serviceFee,
     inputWarningCheck,
