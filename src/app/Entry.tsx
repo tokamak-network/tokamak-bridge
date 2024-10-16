@@ -9,9 +9,12 @@ import { Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
 import Footer from "@/components/footer";
-import { Suspense, lazy } from "react";
+import dynamic from "next/dynamic";
 
-const LazyHeader = lazy(() => import("@/components/header/Index"));
+const DynamicHeader = dynamic(() => import("@/components/header/Index"), {
+  loading: () => <></>,
+  ssr: false,
+});
 
 /**
  * test domain building commit
@@ -54,9 +57,7 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ChakraProvidersForNextJs>
           <Flex flexDir={"column"} h={"100vh"}>
-            <Suspense fallback={<></>}>
-              <LazyHeader />
-            </Suspense>
+            <DynamicHeader />
             <Flex flexDir={"column"} flexGrow={1}>
               <Flex
                 justifyContent={"center"}
