@@ -47,8 +47,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
     (tokenIndex === 1 && txSort === "Wrap"
       ? 18
       : tokenIndex === 1 && txSort === "Unwrap"
-        ? 27
-        : decimals) ?? 18,
+      ? 27
+      : decimals) ?? 18,
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 

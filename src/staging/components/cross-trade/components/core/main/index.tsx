@@ -22,8 +22,8 @@ export default function CrossTrade() {
   const dynamicWidth = poolMobileView
     ? "90%"
     : poolTabletView
-      ? "536px"
-      : "672px";
+    ? "536px"
+    : "672px";
 
   const [activeButton, setActiveButton] =
     useRecoilState<ButtonType_Pools>(ATOM_pool_page);
@@ -39,8 +39,8 @@ export default function CrossTrade() {
         poolMobileView
           ? "0"
           : type === ButtonType_Pools.UNISWAP_POOL
-            ? "16px"
-            : "0"
+          ? "16px"
+          : "0"
       }
       mt={
         poolMobileView

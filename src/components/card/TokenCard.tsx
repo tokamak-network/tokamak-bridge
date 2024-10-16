@@ -243,8 +243,8 @@ export default function TokenCard(props: TokenCardProps) {
         isNew || isDark
           ? 1
           : isHover === undefined || isHover === null || isHover === level
-            ? 0.9
-            : 0.5
+          ? 0.9
+          : 0.5
       }
       {...style}
       overflow={"hidden"}
@@ -291,10 +291,10 @@ export default function TokenCard(props: TokenCardProps) {
                   thisTokenIsETH
                     ? "Ethereum"
                     : tokenInfo?.tokenSymbol === "WETH"
-                      ? "Wrapped Ethereum"
-                      : tokenInfo?.tokenName === "Tokamak Network Token"
-                        ? "Tokamak Network"
-                        : (tokenInfo?.tokenName ?? "TOKEN")
+                    ? "Wrapped Ethereum"
+                    : tokenInfo?.tokenName === "Tokamak Network Token"
+                    ? "Tokamak Network"
+                    : tokenInfo?.tokenName ?? "TOKEN"
                 }
                 isName={true}
                 style={{
@@ -341,10 +341,10 @@ export default function TokenCard(props: TokenCardProps) {
                     thisTokenIsETH
                       ? "Ethereum"
                       : tokenInfo?.tokenSymbol === "WETH"
-                        ? "Wrapped Ethereum"
-                        : tokenInfo?.tokenName === "Tokamak Network Token"
-                          ? "Tokamak Network"
-                          : (tokenInfo?.tokenName ?? "TOKEN")
+                      ? "Wrapped Ethereum"
+                      : tokenInfo?.tokenName === "Tokamak Network Token"
+                      ? "Tokamak Network"
+                      : tokenInfo?.tokenName ?? "TOKEN"
                   }
                   isName={true}
                   style={{
@@ -375,8 +375,8 @@ export default function TokenCard(props: TokenCardProps) {
                   {thisTokenIsETH
                     ? "Ethereum"
                     : tokenInfo?.tokenSymbol === "WETH"
-                      ? "Wrapped Ethereum"
-                      : (tokenInfo?.tokenName ?? "TOKEN")}
+                    ? "Wrapped Ethereum"
+                    : tokenInfo?.tokenName ?? "TOKEN"}
                 </Text>
               </Flex>
             )}

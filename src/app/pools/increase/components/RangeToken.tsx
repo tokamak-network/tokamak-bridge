@@ -51,8 +51,8 @@ export default function RangeToken(props: {
           {!alterAmount || page === "addLiquidity" || alterAmount === "-"
             ? ""
             : page === "removeLiquidity"
-              ? "-"
-              : "+"}
+            ? "-"
+            : "+"}
         </Text>
         {alterAmountForTooltip ? (
           <CustomTooltip

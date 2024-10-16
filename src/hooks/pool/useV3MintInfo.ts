@@ -163,24 +163,14 @@ export function useV3MintInfo() {
         (invertPrice && isAtMaxTick) || (!invertPrice && isAtMinTick)
           ? tickSpaceLimits[Bound.LOWER]
           : invertPrice
-            ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
-            : tryParseTick(
-                token0,
-                token1,
-                feeAmount,
-                minPriceInput?.toString(),
-              ),
+          ? tryParseTick(token1, token0, feeAmount, maxPriceInput?.toString())
+          : tryParseTick(token0, token1, feeAmount, minPriceInput?.toString()),
       [Bound.UPPER]:
         (!invertPrice && isAtMaxTick) || (invertPrice && isAtMinTick)
           ? tickSpaceLimits[Bound.UPPER]
           : invertPrice
-            ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
-            : tryParseTick(
-                token0,
-                token1,
-                feeAmount,
-                maxPriceInput?.toString(),
-              ),
+          ? tryParseTick(token1, token0, feeAmount, minPriceInput?.toString())
+          : tryParseTick(token0, token1, feeAmount, maxPriceInput?.toString()),
     };
   }, [
     // existingPosition,
@@ -268,8 +258,8 @@ export function useV3MintInfo() {
     lastFocused === "LeftInput" && inToken?.parsedAmount
       ? tryParseCurrencyAmount(inToken?.parsedAmount, inToken?.token)
       : lastFocused === "RightInput" && outToken?.parsedAmount
-        ? tryParseCurrencyAmount(outToken?.parsedAmount, outToken?.token)
-        : undefined;
+      ? tryParseCurrencyAmount(outToken?.parsedAmount, outToken?.token)
+      : undefined;
 
   const dependentAmount: CurrencyAmount<Currency> | undefined = useMemo(() => {
     // we wrap the currencies just to get the price in terms of the other token

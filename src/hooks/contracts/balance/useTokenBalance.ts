@@ -33,7 +33,7 @@ export default function useTokenBalance(
       (isETH && chainName !== "THANOS_SEPOLIA") ||
       (chainName === "THANOS_SEPOLIA" && tokenInfo?.tokenSymbol === "TON")
         ? undefined
-        : ((tokenAddress as "0x${string}") ?? null),
+        : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
     staleTime: isLayer2 ? 2000 : 5000,
     // enabled: requireCall,

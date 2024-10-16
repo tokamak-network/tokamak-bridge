@@ -121,14 +121,14 @@ export default function CTConfirmCrossTradeFooter(
     return !isConnected
       ? "Connect Wallet"
       : isProvide && !connectedToLayer1 && !isInRelay
-        ? "Wrong Network"
-        : isProvide
-          ? isInRelay
-            ? "Go to home"
-            : isBalanceOver
-              ? "Insufficient Balance"
-              : "Provide"
-          : "Request";
+      ? "Wrong Network"
+      : isProvide
+      ? isInRelay
+        ? "Go to home"
+        : isBalanceOver
+        ? "Insufficient Balance"
+        : "Provide"
+      : "Request";
   }, [isConnected, isProvide, connectedToLayer1, isBalanceOver, isInRelay]);
 
   const { inToken } = useInOutTokens();
@@ -138,10 +138,10 @@ export default function CTConfirmCrossTradeFooter(
     return isLoading
       ? true
       : mode === "Withdraw"
-        ? !isChecked.firstChecked ||
-          !isChecked.secondChecked ||
-          !isChecked.thirdChecked
-        : !provideConfirmed;
+      ? !isChecked.firstChecked ||
+        !isChecked.secondChecked ||
+        !isChecked.thirdChecked
+      : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 
   //set inTokenInfo for useApprove hook
@@ -478,13 +478,13 @@ export default function CTConfirmCrossTradeFooter(
               backgroundColor: isRevokeForUSDT
                 ? "#17181D"
                 : !approveBtnDisabled
-                  ? "#007AFF"
-                  : "#17181D",
+                ? "#007AFF"
+                : "#17181D",
               color: isRevokeForUSDT
                 ? "#007AFF"
                 : !approveBtnDisabled
-                  ? "#FFFFFF"
-                  : "#8E8E92",
+                ? "#FFFFFF"
+                : "#8E8E92",
               border:
                 !isLoading && isRevokeForUSDT && !approveBtnDisabled
                   ? "1px solid #007AFF"
@@ -521,8 +521,8 @@ export default function CTConfirmCrossTradeFooter(
             backgroundColor: isInRelay
               ? "transparent"
               : !btnDisabled
-                ? "#007AFF"
-                : "#17181D",
+              ? "#007AFF"
+              : "#17181D",
             color: isInRelay ? "#007AFF" : !btnDisabled ? "#FFFFFF" : "#8E8E92",
             border: isInRelay ? "1px solid #007AFF" : "",
           }}

@@ -248,12 +248,12 @@ export default function useWrap() {
         mode === "Wrap"
           ? await wrapTON(true)
           : mode === "Unwrap"
-            ? await unwrapWTON(true)
-            : mode === "ETH-Wrap"
-              ? await wrapETH(true)
-              : mode === "ETH-Unwrap"
-                ? await unwrapWETH(true)
-                : undefined;
+          ? await unwrapWTON(true)
+          : mode === "ETH-Wrap"
+          ? await wrapETH(true)
+          : mode === "ETH-Unwrap"
+          ? await unwrapWETH(true)
+          : undefined;
       if (estimatedGas) setEstimatedGasUsage(estimatedGas);
     };
 

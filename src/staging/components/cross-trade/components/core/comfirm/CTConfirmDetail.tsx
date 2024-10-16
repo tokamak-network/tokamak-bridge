@@ -304,8 +304,8 @@ export default function CTConfirmDetail({
     title: isInCT_Provide(status)
       ? "Provide"
       : isCanceled
-        ? "Refund"
-        : "Request",
+      ? "Refund"
+      : "Request",
     mainValue: `${formatNumber(
       convertNumber(inToken.amount, inToken.decimals),
     )}`,

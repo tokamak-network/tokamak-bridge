@@ -332,10 +332,10 @@ export default function MobileTokenInput(props: {
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-        ? isFocused
-          ? String(selectedOutToken?.parsedAmount)
-          : trimAmount(selectedOutToken?.parsedAmount, 8)
-        : defaultValue || "";
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
+      : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -498,8 +498,8 @@ export default function MobileTokenInput(props: {
                     mobileView && isBalanceOver
                       ? "#DD3A44"
                       : mobileView && !inToken
-                        ? "#A0A3AD !important"
-                        : "#FFFFFF"
+                      ? "#A0A3AD !important"
+                      : "#FFFFFF"
                   }
                   fontSize={"16px"}
                   fontWeight={600}

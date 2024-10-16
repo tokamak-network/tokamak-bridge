@@ -33,15 +33,15 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
             ? "0"
             : pricesAtTicks.UPPER?.invert().toSignificant()
           : _ticksAtLimit.LOWER
-            ? "0"
-            : pricesAtTicks.LOWER?.toSignificant(),
+          ? "0"
+          : pricesAtTicks.LOWER?.toSignificant(),
         maxPrice: manuallyInverted
           ? _ticksAtLimit.UPPER
             ? "∞"
             : pricesAtTicks.LOWER?.invert().toSignificant()
           : _ticksAtLimit.UPPER
-            ? "∞"
-            : pricesAtTicks.UPPER?.toSignificant(),
+          ? "∞"
+          : pricesAtTicks.UPPER?.toSignificant(),
       };
     }
   }, [info, manuallyInverted, subMode, _ticksAtLimit, pricesAtTicks]);
@@ -52,16 +52,14 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
         ? priceToAdd?.minPrice
         : priceToAdd?.maxPrice
       : isMinPrice &&
-          ((!inverted && ticksAtLimit?.LOWER) ||
-            (inverted && ticksAtLimit.UPPER))
-        ? 0
-        : !isMinPrice &&
-            ((!inverted && ticksAtLimit?.UPPER) ||
-              (inverted && ticksAtLimit.LOWER))
-          ? "∞"
-          : isMinPrice
-            ? priceLower?.toSignificant(6)
-            : priceUpper?.toSignificant(6);
+        ((!inverted && ticksAtLimit?.LOWER) || (inverted && ticksAtLimit.UPPER))
+      ? 0
+      : !isMinPrice &&
+        ((!inverted && ticksAtLimit?.UPPER) || (inverted && ticksAtLimit.LOWER))
+      ? "∞"
+      : isMinPrice
+      ? priceLower?.toSignificant(6)
+      : priceUpper?.toSignificant(6);
 
   return (
     <Flex
@@ -86,8 +84,8 @@ export const PriceInfo = (props: { isMinPrice: boolean }) => {
                   ? tokenPairForInfo?.token1Symbol
                   : tokenPairForInfo?.token0Symbol
                 : manuallyInverted
-                  ? tokenPairForInfo?.token0Symbol
-                  : tokenPairForInfo?.token1Symbol
+                ? tokenPairForInfo?.token0Symbol
+                : tokenPairForInfo?.token1Symbol
             } at this price.`}
           />
         </Box>

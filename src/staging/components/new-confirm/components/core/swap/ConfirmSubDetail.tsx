@@ -38,8 +38,8 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
               type === ConfirmDetailType.Rate
                 ? "172px"
                 : type === ConfirmDetailType.MinReceived
-                  ? "100px"
-                  : "115px"
+                ? "100px"
+                : "115px"
             }
             h={"18px"}
           >

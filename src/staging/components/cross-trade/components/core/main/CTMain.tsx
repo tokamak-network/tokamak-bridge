@@ -181,15 +181,15 @@ export default function CTMain() {
           chainNameIn === "MAINNET"
             ? "Ethereum"
             : chainNameIn === "TITAN_SEPOLIA"
-              ? "Titan Sepolia"
-              : capitalizeFirstLetter(chainNameIn);
+            ? "Titan Sepolia"
+            : capitalizeFirstLetter(chainNameIn);
 
         const displayNetworkNameOut =
           chainNameOut === "MAINNET"
             ? "Ethereum"
             : chainNameOut === "TITAN_SEPOLIA"
-              ? "Titan Sepolia"
-              : capitalizeFirstLetter(chainNameOut);
+            ? "Titan Sepolia"
+            : capitalizeFirstLetter(chainNameOut);
 
         return (
           <Box

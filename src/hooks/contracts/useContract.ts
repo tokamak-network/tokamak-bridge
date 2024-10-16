@@ -23,13 +23,13 @@ export default function useContract() {
   const L1BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
     : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
-      ? SEPOLIA_CONTRACTS.L1Bridge
-      : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
+    ? SEPOLIA_CONTRACTS.L1Bridge
+    : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
   const L2BRIDGE_CONTRACT = isConnectedToMainNetwork
     ? TOKAMAK_CONTRACTS.L2Bridge
     : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
-      ? THANOS_SEPOLIA_CONTRACTS.L2Bridge
-      : TITAN_SEPOLIA_CONTRACTS.L2Bridge;
+    ? THANOS_SEPOLIA_CONTRACTS.L2Bridge
+    : TITAN_SEPOLIA_CONTRACTS.L2Bridge;
 
   const WTON_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.WTON_ADDRESS
@@ -38,8 +38,8 @@ export default function useContract() {
   const L1MESSENGER_CONTRACT = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Messenger
     : outNetwork?.chainId === SupportedChainId["THANOS_SEPOLIA"]
-      ? SEPOLIA_CONTRACTS.L1Messenger
-      : SEPOLIA_CONTRACTS.L1Messenger_TITAN_SEPOLIA;
+    ? SEPOLIA_CONTRACTS.L1Messenger
+    : SEPOLIA_CONTRACTS.L1Messenger_TITAN_SEPOLIA;
 
   const L1CrossTrade_CONTRACT = isConnectedToMainNetwork
     ? L1_ETHEREUM_CT

@@ -185,10 +185,10 @@ export function TokenInputForLiquidity(props: {
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-        ? isFocused
-          ? String(selectedOutToken?.parsedAmount)
-          : trimAmount(selectedOutToken?.parsedAmount, 8)
-        : "";
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
+      : "";
   }, [inToken, selectedInToken, selectedOutToken, isFocused]);
 
   const { tokenPriceWithAmount: token0PriceWiwhtAmount } = useGetMarketPrice({

@@ -123,7 +123,7 @@ type AssetActivity {
 }
 
 union AssetChange =
-  | TokenTransfer
+    TokenTransfer
   | NftTransfer
   | TokenApproval
   | NftApproval

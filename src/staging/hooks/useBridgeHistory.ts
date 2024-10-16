@@ -432,11 +432,12 @@ export const useRequestHistoryData = () => {
           providerClaimCTs,
           editCTs,
         });
-        const inToken = getTokenInfo({ requestData });
+        const inToken = getTokenInfo({ requestData, isConnectedToMainNetwork });
         const outToken = getTokenInfo({
           requestData,
           ctAmount: true,
           _editedctAmount: isUpdateFee ? editCT._ctAmount : undefined,
+          isConnectedToMainNetwork,
         });
         const transactionHashes = getRequestTransactionHash({
           status,
@@ -538,9 +539,11 @@ export const useProvideData = () => {
         const inToken = getTokenInfo({
           requestData: provideCT,
           ctAmount: true,
+          isConnectedToMainNetwork,
         });
         const outToken = getTokenInfo({
           requestData: provideCT,
+          isConnectedToMainNetwork,
         });
         const transactionHashes = getProvideTransactionHash({
           status,

@@ -101,8 +101,8 @@ export function useGetAmountForLiquidity() {
     lastFocused === "LeftInput" && inToken?.parsedAmount
       ? tryParseCurrencyAmount(inToken?.parsedAmount, inToken?.token)
       : lastFocused === "RightInput" && outToken?.parsedAmount
-        ? tryParseCurrencyAmount(outToken?.parsedAmount, outToken?.token)
-        : undefined;
+      ? tryParseCurrencyAmount(outToken?.parsedAmount, outToken?.token)
+      : undefined;
 
   const dependentAmount: CurrencyAmount<Currency> | undefined = useMemo(() => {
     // we wrap the currencies just to get the price in terms of the other token

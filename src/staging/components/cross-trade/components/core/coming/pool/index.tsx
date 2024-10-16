@@ -23,8 +23,8 @@ export default function ComingPool() {
   const dynamicWidth = poolMobileView
     ? "90%"
     : poolTabletView
-      ? "536px"
-      : "672px";
+    ? "536px"
+    : "672px";
 
   const [activeButton, setActiveButton] = useState<PoolButtonType>(
     PoolButtonType.Coming,

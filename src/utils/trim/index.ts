@@ -26,7 +26,7 @@ export function trimAmountForFormatter(
   const lowerThanMinimum = Number(amount.replaceAll(",", "")) < 0.000001;
   const lowerThanInteger = Number(amount.replaceAll(",", "")) < 1;
 
-  const decimals = (decimalPlaces ?? lowerThanMinimum) ? 6 : 9;
+  const decimals = decimalPlaces ?? lowerThanMinimum ? 6 : 9;
 
   if (amount.length < decimals) {
     return commafy(amount, 2);

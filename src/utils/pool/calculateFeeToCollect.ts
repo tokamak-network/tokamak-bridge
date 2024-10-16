@@ -62,8 +62,9 @@ export async function calculateFeeToCollect(params: {
   const tokenOwed0 = tokenOweds[0];
   const tokenOwed1 = tokenOweds[1];
 
-  const positionInfo =
-    await NonfungiblePositionManagerContract.positions(tokenId);
+  const positionInfo = await NonfungiblePositionManagerContract.positions(
+    tokenId,
+  );
   const tokenOwed0Already = positionInfo.tokensOwed0;
   const tokenOwed1Already = positionInfo.tokensOwed1;
 

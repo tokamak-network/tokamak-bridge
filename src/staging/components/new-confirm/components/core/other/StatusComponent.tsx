@@ -53,8 +53,8 @@ export default function StatusComponent(props: StatusComponentProps) {
       return label === Status.Initiate
         ? gasCostData?.withdrawInitiateGasCostText
         : label === Status.Finalize
-          ? gasCostData?.withdrawClaimGasCostText
-          : undefined;
+        ? gasCostData?.withdrawClaimGasCostText
+        : undefined;
     } else {
       return gasCostData?.depositInitiateGasCostText;
     }
@@ -65,8 +65,8 @@ export default function StatusComponent(props: StatusComponentProps) {
       return label === Status.Initiate
         ? gasCostData?.withdrawInitiateGasCostUS
         : label === Status.Finalize
-          ? gasCostData?.withdrawClaimGasCostUS
-          : undefined;
+        ? gasCostData?.withdrawClaimGasCostUS
+        : undefined;
     } else {
       return gasCostData?.depositGasCostUS;
     }
@@ -86,13 +86,13 @@ export default function StatusComponent(props: StatusComponentProps) {
         isDepositTransactionHistory(transactionData))
         ? transactionData.transactionHashes.initialTransactionHash
         : label === Status.Rollup &&
-            isWithdrawTransactionHistory(transactionData)
-          ? transactionData.transactionHashes.rollupTransactionHash || ""
-          : label === Status.Finalize &&
-              (isWithdrawTransactionHistory(transactionData) ||
-                isDepositTransactionHistory(transactionData))
-            ? transactionData.transactionHashes.finalizedTransactionHash || ""
-            : "";
+          isWithdrawTransactionHistory(transactionData)
+        ? transactionData.transactionHashes.rollupTransactionHash || ""
+        : label === Status.Finalize &&
+          (isWithdrawTransactionHistory(transactionData) ||
+            isDepositTransactionHistory(transactionData))
+        ? transactionData.transactionHashes.finalizedTransactionHash || ""
+        : "";
 
     const network =
       label === Status.Initiate

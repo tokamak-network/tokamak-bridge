@@ -111,8 +111,8 @@ function calculateInitialTime(
     statusValue === TransactionStatus.WithdrawFinalized
       ? convertTimeToMinutes(additional, "days", 0) * 60
       : TransactionStatus.REQUEST_CANCEL
-        ? additional
-        : convertTimeToMinutes(additional, "minutes", 0) * 60;
+      ? additional
+      : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
   // Get the current time in the user's local timezone
   const currentTimeUTC = new Date();

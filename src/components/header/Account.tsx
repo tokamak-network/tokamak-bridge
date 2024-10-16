@@ -26,8 +26,8 @@ export default function Account() {
   const buttonText = isConnected
     ? trimAddress({ address })
     : mobileView
-      ? "Connect"
-      : "Connect Wallet";
+    ? "Connect"
+    : "Connect Wallet";
 
   return (
     <Center

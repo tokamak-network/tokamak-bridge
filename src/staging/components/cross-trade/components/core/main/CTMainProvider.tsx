@@ -145,14 +145,14 @@ export default function CTProvider({
       isDisabled || isInRelay
         ? "#23242B"
         : isCreatedByUser
-          ? "none"
-          : "#007AFF";
+        ? "none"
+        : "#007AFF";
     const textColor =
       isDisabled || isInRelay
         ? "#A0A3AD"
         : isCreatedByUser
-          ? "#DB00FF"
-          : "#FFFFFF";
+        ? "#DB00FF"
+        : "#FFFFFF";
 
     return (
       <Button
@@ -169,8 +169,8 @@ export default function CTProvider({
           isInRelay
             ? "none"
             : isCreatedByUser
-              ? "1px solid var(--X-Trade, #DB00FF);"
-              : "none"
+            ? "1px solid var(--X-Trade, #DB00FF);"
+            : "none"
         }
         isDisabled={isDisabled}
         _active={{}}

@@ -89,10 +89,10 @@ export default function Confirmation() {
             {isConfirming
               ? `Confirming`
               : isConfirmed
-                ? "Transaction Confirmed!"
-                : isError
-                  ? "Transaction Failed"
-                  : null}
+              ? "Transaction Confirmed!"
+              : isError
+              ? "Transaction Failed"
+              : null}
           </Text>
           <Flex pos={"relative"} w={"100%"} justifyContent={"center"}>
             {isConfirming ? (

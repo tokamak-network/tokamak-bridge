@@ -169,17 +169,17 @@ export function usePoolMint() {
             noLiquidity && (inIsEth || outIsETH)
               ? [initializePool, calldata, refundETHData]
               : noLiquidity
-                ? [initializePool, calldata]
-                : inIsEth || outIsETH
-                  ? [calldata, refundETHData]
-                  : [calldata];
+              ? [initializePool, calldata]
+              : inIsEth || outIsETH
+              ? [calldata, refundETHData]
+              : [calldata];
 
           // Calculate the total value based on your conditions
           const totalValue = inIsEth
             ? inHexAmount
             : outIsETH
-              ? outHexAmount
-              : value;
+            ? outHexAmount
+            : value;
 
           const txData = {
             to: UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
@@ -402,8 +402,8 @@ export function usePoolContract() {
           const txValue = inIsEth
             ? inHexAmount
             : outIsETH
-              ? outHexAmount
-              : value;
+            ? outHexAmount
+            : value;
           const isLayer2 = Boolean(layer === "L2");
 
           const txData = {

@@ -6,13 +6,19 @@ import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useMemo } from "react";
 import { Decimal } from "decimal.js";
+import { useConnect } from "wagmi";
+import useConnectedNetwork from "@/hooks/network";
 
 export const useRecommendFee = (params: {
   totalAmount: number;
   tokenAddress: string;
 }) => {
   const { totalAmount, tokenAddress } = params;
-  const tokenInfo = getSupportedTokenForCT(tokenAddress);
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const tokenInfo = getSupportedTokenForCT(
+    tokenAddress,
+    isConnectedToMainNetwork,
+  );
 
   const hasRecomendFee =
     tokenInfo?.tokenSymbol &&

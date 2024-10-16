@@ -77,21 +77,21 @@ export default function Range(props: {
   const alter0Amount = useMemo(() => {
     if (info)
       return page === "addLiquidity"
-        ? (token0ParsedAmount ?? "0.00")
+        ? token0ParsedAmount ?? "0.00"
         : modalStatus === "increaseLiquidity"
-          ? smallNumberFormmater({
-              amount: inToken?.parsedAmount?.toString(),
-              decimals: 6,
-              trimed: false,
-              removeComma: true,
-            })
-          : modalStatus === "removeLiquidity"
-            ? smallNumberFormmater({
-                amount: amount0Removed?.toString(),
-                decimals: 6,
-                minimumValue: 0.000001,
-              })
-            : undefined;
+        ? smallNumberFormmater({
+            amount: inToken?.parsedAmount?.toString(),
+            decimals: 6,
+            trimed: false,
+            removeComma: true,
+          })
+        : modalStatus === "removeLiquidity"
+        ? smallNumberFormmater({
+            amount: amount0Removed?.toString(),
+            decimals: 6,
+            minimumValue: 0.000001,
+          })
+        : undefined;
     return undefined;
   }, [page, modalStatus, token0ParsedAmount, amount0Removed]);
   const token1CurrentAmount = useMemo(() => {
@@ -110,21 +110,21 @@ export default function Range(props: {
   const alter1Amount = useMemo(() => {
     if (info)
       return page === "addLiquidity"
-        ? (token1ParsedAmount ?? "0.00")
+        ? token1ParsedAmount ?? "0.00"
         : modalStatus === "increaseLiquidity"
-          ? smallNumberFormmater({
-              amount: outToken?.parsedAmount?.toString(),
-              decimals: 6,
-              trimed: false,
-              removeComma: true,
-            })
-          : modalStatus === "removeLiquidity"
-            ? smallNumberFormmater({
-                amount: amount1Removed?.toString(),
-                decimals: 6,
-                minimumValue: 0.000001,
-              })
-            : undefined;
+        ? smallNumberFormmater({
+            amount: outToken?.parsedAmount?.toString(),
+            decimals: 6,
+            trimed: false,
+            removeComma: true,
+          })
+        : modalStatus === "removeLiquidity"
+        ? smallNumberFormmater({
+            amount: amount1Removed?.toString(),
+            decimals: 6,
+            minimumValue: 0.000001,
+          })
+        : undefined;
     return undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
@@ -133,8 +133,8 @@ export default function Range(props: {
       return page === "addLiquidity" || page === "increaseLiquidity"
         ? inToken?.parsedAmount?.toString()
         : page === "removeLiquidity"
-          ? amount0Removed?.toString()
-          : undefined;
+        ? amount0Removed?.toString()
+        : undefined;
     return undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
 
@@ -143,8 +143,8 @@ export default function Range(props: {
       return page === "addLiquidity" || page === "increaseLiquidity"
         ? outToken?.parsedAmount?.toString()
         : page === "removeLiquidity"
-          ? amount1Removed?.toString()
-          : undefined;
+        ? amount1Removed?.toString()
+        : undefined;
     return undefined;
   }, [page, modalStatus, token1ParsedAmount, amount1Removed]);
   if (!info) return null;

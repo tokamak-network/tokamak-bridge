@@ -87,12 +87,12 @@ export default function useTokenModal() {
           isInTokenOpen && isETH(tokenData)
             ? isWETH(selectedOutToken, chainName)
             : isInTokenOpen && isWETH(tokenData, chainName)
-              ? isETH(selectedOutToken)
-              : !isInTokenOpen && isETH(tokenData)
-                ? isWETH(selectedInToken, chainName)
-                : !isInTokenOpen && isWETH(tokenData, chainName)
-                  ? isETH(selectedInToken)
-                  : false;
+            ? isETH(selectedOutToken)
+            : !isInTokenOpen && isETH(tokenData)
+            ? isWETH(selectedInToken, chainName)
+            : !isInTokenOpen && isWETH(tokenData, chainName)
+            ? isETH(selectedInToken)
+            : false;
 
         //remove if same token is selected at other side
         if (isDuplicated || (isETHPair && mode === "Pool")) {

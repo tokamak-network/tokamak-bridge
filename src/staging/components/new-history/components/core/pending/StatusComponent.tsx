@@ -130,18 +130,18 @@ export default function StatusComponent(
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
-      (!isActive && label === Status.Finalize) ||
-        (isActive && label === CT_REQUEST.WaitForReceive)
-      ? ""
-      : // Otherwise, display formatted date as all are completed
-        formatDateToYMD(
-          Number(
-            isWithdrawTransactionHistory(transactionData) ||
-              isDepositTransactionHistory(transactionData)
-              ? transactionData.blockTimestamps.initialCompletedTimestamp
-              : (blockTimestamp ?? 0),
-          ),
-        );
+    (!isActive && label === Status.Finalize) ||
+      (isActive && label === CT_REQUEST.WaitForReceive)
+    ? ""
+    : // Otherwise, display formatted date as all are completed
+      formatDateToYMD(
+        Number(
+          isWithdrawTransactionHistory(transactionData) ||
+            isDepositTransactionHistory(transactionData)
+            ? transactionData.blockTimestamps.initialCompletedTimestamp
+            : blockTimestamp ?? 0,
+        ),
+      );
 
   const { isTimeOver } = useTimeOver({
     timeStamp: Number(blockTimestamp),
@@ -263,8 +263,8 @@ export default function StatusComponent(
             !isActive && label === Status.Finalize
               ? "#A0A3AD"
               : isOnOfficialStandard
-                ? "#007AFF"
-                : "#DB00FF"
+              ? "#007AFF"
+              : "#DB00FF"
           }
         />
         <Text

@@ -30,7 +30,7 @@ const getApolloClient = (chainId: number) => {
 const useGetApolloClient = () => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const apolloClient = useMemo(() => {
-    if (isConnectedToMainNetwork) {
+    if (isConnectedToMainNetwork || isConnectedToMainNetwork === undefined) {
       return {
         L1_CLIENT: getApolloClient(SupportedChainId.MAINNET),
         L2_CLIENT: getApolloClient(SupportedChainId.TITAN),
@@ -201,11 +201,13 @@ export const useRequestData = (
         const cancelCTs = _l1Data.l1CancelCTs;
         const editCTs = _l1Data.editCTs;
         const provideCTs = _l1Data.provideCTs;
+        const isMainnet =
+          isConnectedToMainNetwork || isConnectedToMainNetwork === undefined;
 
-        const inNetwork = isConnectedToMainNetwork
+        const inNetwork = isMainnet
           ? SupportedChainId.TITAN
           : SupportedChainId.TITAN_SEPOLIA;
-        const outNetwork = isConnectedToMainNetwork
+        const outNetwork = isMainnet
           ? SupportedChainId.MAINNET
           : SupportedChainId.SEPOLIA;
 
@@ -213,13 +215,15 @@ export const useRequestData = (
         const priceList = await getCTTokenPrice();
 
         const result: CrossTradeData[] = datas.map((item) => {
+          const isETH = isZeroAddress(item._l2token);
+
           //  will be refactor with split functions
           const tokenInfo = getSupportedTokenForCT(
-            isZeroAddress(item._l2token)
+            isETH
               ? "0x4200000000000000000000000000000000000006"
               : item._l2token,
+            isMainnet,
           );
-          const isETH = isZeroAddress(item._l2token);
 
           const isCanceled = isRequestCanceled({
             cancelCTs,
@@ -299,6 +303,14 @@ export const useRequestData = (
             outToken.amount,
             outToken.decimals,
           );
+          // console.log(
+          //   "inTokenAmount",
+          //   inTokenAmount,
+          //   marketPrice,
+          //   tokenInfo?.tokenSymbol,
+          //   item._l2token,
+          //   priceList
+          // );
           const providingUSD = Number(inTokenAmount) * Number(marketPrice);
           const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
 

@@ -30,8 +30,8 @@ const getStatusHandler = (params: {
     [CT_ACTION.REQUEST]: isCanceled
       ? STATUS_CONFIG.REQUEST_CANCEL
       : isUpdateFee
-        ? STATUS_CONFIG.REQUEST_UPDATE_FEE
-        : STATUS_CONFIG.REQUEST,
+      ? STATUS_CONFIG.REQUEST_UPDATE_FEE
+      : STATUS_CONFIG.REQUEST,
     [CT_ACTION.PROVIDE]: STATUS_CONFIG.PROVIDE,
   };
   return actionHandlers[status];

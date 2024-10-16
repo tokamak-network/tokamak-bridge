@@ -137,8 +137,8 @@ export default function RangeInput(props: RangeInputProps) {
           ? pricesAtTicks?.UPPER?.invert().toSignificant(6)
           : pricesAtTicks?.LOWER?.toSignificant(6)
         : invertPrice
-          ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
-          : pricesAtTicks?.UPPER?.toSignificant(6);
+        ? pricesAtTicks?.LOWER?.invert().toSignificant(6)
+        : pricesAtTicks?.UPPER?.toSignificant(6);
     }
   }, [pricesAtTicks, ticksAtLimit, isMinPrice, invertPrice, notExistPool]);
 
@@ -206,12 +206,12 @@ export default function RangeInput(props: RangeInputProps) {
               ticksAtLimit.LOWER
                 ? () => {}
                 : isMinPrice
-                  ? invertPrice
-                    ? onIncreaseUpper
-                    : onDecreaseLower
-                  : invertPrice
-                    ? onIncreaseLower
-                    : onDecreaseUpper
+                ? invertPrice
+                  ? onIncreaseUpper
+                  : onDecreaseLower
+                : invertPrice
+                ? onIncreaseLower
+                : onDecreaseUpper
             }
           >
             <Image src={REMOVE_ICON} alt={"REMOVE_ICON"} />
@@ -251,8 +251,8 @@ export default function RangeInput(props: RangeInputProps) {
                   ? onDecreaseUpper
                   : onIncreaseLower
                 : invertPrice
-                  ? onDecreaseLower
-                  : onIncreaseUpper
+                ? onDecreaseLower
+                : onIncreaseUpper
             }
           >
             <Image src={ADD_ICON} alt={"ADD_ICON"} />

@@ -142,8 +142,8 @@ const MobileInToken = () => {
               {mode === "Deposit"
                 ? "Titan"
                 : mode === "Withdraw"
-                  ? "Ethereum"
-                  : "Select Token"}
+                ? "Ethereum"
+                : "Select Token"}
             </Text>
           </Flex>
         )}

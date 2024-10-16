@@ -26,10 +26,10 @@ export function gasUsdFormatter(
 ) {
   return price !== undefined
     ? price === 0
-      ? (displayMinimumValue ?? `$0.00`)
+      ? displayMinimumValue ?? `$0.00`
       : price < 0.01
-        ? `< $0.01`
-        : `$${commafy(price, 2)}`
+      ? `< $0.01`
+      : `$${commafy(price, 2)}`
     : undefined;
 }
 
@@ -69,5 +69,5 @@ export function smallNumberFormmater(params: {
     ? trimed
       ? trimAmountForFormatter(amount.toString())
       : commafy(amount, decimals ?? 6, removeComma, "0.00")
-    : (displayMinimumValue ?? "0.000000...");
+    : displayMinimumValue ?? "0.000000...";
 }

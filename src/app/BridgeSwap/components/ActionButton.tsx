@@ -107,22 +107,22 @@ export default function ActionButton() {
           isConnected === false
             ? () => connetAndDisconntWallet()
             : needToOpenWithdrawModal
-              ? () => onOpenCTOptionModal()
-              : needToOpenDepositModal
-                ? () => handleConfirm(Action.Deposit, Status.Initiate)
-                : needToOpenSwapModal
-                  ? () => onOpenSwapConfirmModal()
-                  : onClick
+            ? () => onOpenCTOptionModal()
+            : needToOpenDepositModal
+            ? () => handleConfirm(Action.Deposit, Status.Initiate)
+            : needToOpenSwapModal
+            ? () => onOpenSwapConfirmModal()
+            : onClick
         }
       >
         {!isConnected && "Connect Wallet"}
         {!isConnected
           ? null
           : isConnected && mode === null
-            ? "Select Network"
-            : mode === "Withdraw"
-              ? "Next"
-              : mode?.replaceAll("ETH-", "")}{" "}
+          ? "Select Network"
+          : mode === "Withdraw"
+          ? "Next"
+          : mode?.replaceAll("ETH-", "")}{" "}
         <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
           {deactivateButton ? "(Service under maintenance)" : ""}
           {/* {'(Service under maintenance)'} */}

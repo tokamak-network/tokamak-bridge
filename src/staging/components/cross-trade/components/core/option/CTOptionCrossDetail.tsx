@@ -161,8 +161,8 @@ export default function CTOptionCrossDetail(
                 isRecommendActive
                   ? "99px"
                   : isDisabledRecommend
-                    ? "116px"
-                    : "98px"
+                  ? "116px"
+                  : "98px"
               }
               height="26px"
               padding="4px 10px"

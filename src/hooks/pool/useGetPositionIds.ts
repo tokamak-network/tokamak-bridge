@@ -327,8 +327,9 @@ export function useGetPositionById(positionId: number, chainId: number) {
         // const batchSize = positionTokenId ? 1 : balance;
         const promises: any[] = [];
         promises.push(async () => {
-          const owner =
-            await NonfungiblePositionManagerContract.ownerOf(positionTokenId);
+          const owner = await NonfungiblePositionManagerContract.ownerOf(
+            positionTokenId,
+          );
 
           const positionInfo =
             await NonfungiblePositionManagerContract.positions(positionTokenId);

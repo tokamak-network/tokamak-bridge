@@ -146,7 +146,7 @@ const getTokenAddress = (
   isETH: boolean,
 ) => {
   const WETHAddress = getWETHAddressByChainId(chainId);
-  return isETH && WETHAddress === tokenAddress ? "ETH" : (tokenAddress ?? "0x");
+  return isETH && WETHAddress === tokenAddress ? "ETH" : tokenAddress ?? "0x";
 };
 
 export function useTransaction() {

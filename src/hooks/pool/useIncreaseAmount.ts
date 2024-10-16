@@ -19,12 +19,12 @@ export function useIncreaseAmount() {
         ? dependentAmount?.quotient
         : inToken?.amountBN
       : invertPrice
-        ? deposit1Disabled
-          ? 0
-          : outToken?.amountBN
-        : deposit0Disabled
-          ? 0
-          : dependentAmount?.quotient;
+      ? deposit1Disabled
+        ? 0
+        : outToken?.amountBN
+      : deposit0Disabled
+      ? 0
+      : dependentAmount?.quotient;
   }, [
     invertPrice,
     dependentAmount,
@@ -40,12 +40,12 @@ export function useIncreaseAmount() {
         ? dependentAmount?.quotient
         : outToken?.amountBN
       : invertPrice
-        ? deposit0Disabled
-          ? 0
-          : inToken?.amountBN
-        : deposit1Disabled
-          ? 0
-          : dependentAmount?.quotient;
+      ? deposit0Disabled
+        ? 0
+        : inToken?.amountBN
+      : deposit1Disabled
+      ? 0
+      : dependentAmount?.quotient;
   }, [
     invertPrice,
     dependentAmount,

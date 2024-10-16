@@ -111,8 +111,8 @@ export const CustomTooltipWithQuestion = (props: {
               props.isGrayIcon
                 ? GrayQuestionIcon
                 : props.isBlueIcon
-                  ? BlueQuestionIcon
-                  : QuestionIcon
+                ? BlueQuestionIcon
+                : QuestionIcon
             }
             alt={"QuestionIcon"}
           ></Image>

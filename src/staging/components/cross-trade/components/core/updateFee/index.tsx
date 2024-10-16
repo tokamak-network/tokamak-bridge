@@ -106,7 +106,7 @@ export default function CTFeeUpdateModal() {
     ctUpdateFeeModal.txData?.L2_subgraphData?._l2token &&
     isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
       ? "0x4200000000000000000000000000000000000006"
-      : (ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x");
+      : ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
   const { recommendedFee: recommendValue } = useRecommendFee({
     totalAmount: Number(
       formatUnits(
@@ -447,8 +447,8 @@ export default function CTFeeUpdateModal() {
               {!connectedToLayer1
                 ? "Wrong Network"
                 : activeButton == UpdateFeeButtonType.Update
-                  ? "Update"
-                  : "Cancel"}
+                ? "Update"
+                : "Cancel"}
             </Text>
           </Button>
           {activeButton == UpdateFeeButtonType.Update && (

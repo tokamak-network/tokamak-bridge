@@ -270,8 +270,8 @@ export default function SelectTokenModal() {
       tokenData.tokenName === "ETH"
         ? "Ethereum"
         : tokenData.tokenName === "WETH"
-          ? "Wrapped Ethereum"
-          : tokenData.tokenName;
+        ? "Wrapped Ethereum"
+        : tokenData.tokenName;
     const mainLabel = tokenData.tokenSymbol;
     const subLabel = displayTokenName;
     const amount = tokeninfo?.data.balanceBN.formatted || "0.0";
