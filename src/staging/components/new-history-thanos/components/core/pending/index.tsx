@@ -81,7 +81,7 @@ export default function Pending(props: PendingProps) {
           >
             {title}
           </Text>
-          <Image src={InfoIcon} alt="info icon" />
+          {isExternalBridge && <Image src={InfoIcon} alt="info icon" />}
         </Flex>
         <Flex gap={"8px"}>
           {isExternalBridge && (
