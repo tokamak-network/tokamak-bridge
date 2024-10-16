@@ -5,12 +5,13 @@ import TxToast from "@/components/modal/TxToast";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { getQueryClient } from "@/client/queryClient";
 import Script from "next/script";
-import Header from "@/components/header/Index";
 import { Flex } from "@chakra-ui/react";
 import Modals from "./Modals";
 import Drawers from "./Drawers";
 import Footer from "@/components/footer";
-import useMediaView from "@/hooks/mediaView/useMediaView";
+import { Suspense, lazy } from "react";
+
+const LazyHeader = lazy(() => import("@/components/header/Index"));
 
 /**
  * test domain building commit
@@ -32,7 +33,7 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
+        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
       ></Script>
       <Script>
         {`window.dataLayer = window.dataLayer || [];
@@ -46,7 +47,6 @@ const GoogleAnalyticsScript = () => {
 
 export default function Entry({ children }: { children: React.ReactNode }) {
   const queryClient = getQueryClient();
-  const { mobileView } = useMediaView();
 
   return (
     <>
@@ -54,7 +54,9 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <QueryClientProvider client={queryClient}>
         <ChakraProvidersForNextJs>
           <Flex flexDir={"column"} h={"100vh"}>
-            <Header />
+            <Suspense fallback={<></>}>
+              <LazyHeader />
+            </Suspense>
             <Flex flexDir={"column"} flexGrow={1}>
               <Flex
                 justifyContent={"center"}
