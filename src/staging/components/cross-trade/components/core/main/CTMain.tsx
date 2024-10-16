@@ -225,8 +225,8 @@ export default function CTMain() {
                   <TokenSymbolWithNetwork
                     tokenSymbol={item.outToken.symbol}
                     chainId={item.inNetwork}
-                    networkSymbolW={20}
-                    networkSymbolH={20}
+                    networkSymbolW={22}
+                    networkSymbolH={22}
                     symbolW={40}
                     symbolH={40}
                     right={0}

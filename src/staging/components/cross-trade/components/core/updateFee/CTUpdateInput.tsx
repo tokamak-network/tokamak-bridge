@@ -45,8 +45,8 @@ export default function CTUpdateInput(
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const inputValue = useMemo(() => {
-    const maxLength = mobileView ? 9 : 12;
-    const sliceEnd = mobileView ? 12 : 15;
+    const maxLength = mobileView ? 10 : 12;
+    const sliceEnd = mobileView ? 13 : 15;
 
     if (isFocused) return _inputValue;
     if (_inputValue.length > maxLength) {
