@@ -6,8 +6,6 @@ import { formatUnits } from "@/utils/trim/convertNumber";
 import useConnectedNetwork from "@/hooks/network";
 import { useFeeData } from "wagmi";
 import JSBI from "jsbi";
-import commafy from "@/utils/trim/commafy";
-import { transactionType } from "viem";
 
 export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
   const estimatedGasUsage = useMemo(() => {
