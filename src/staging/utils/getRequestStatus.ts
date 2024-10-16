@@ -401,6 +401,7 @@ export const getTokenInfo = (parmas: {
   ctAmount?: boolean;
   _editedctAmount?: string;
   isL1Token?: boolean;
+  isConnectedToMainNetwork?: boolean;
 }): {
   address: string;
   name: string;
@@ -408,10 +409,17 @@ export const getTokenInfo = (parmas: {
   amount: string;
   decimals: number;
 } => {
-  const { requestData, ctAmount, _editedctAmount, isL1Token } = parmas;
+  const {
+    requestData,
+    ctAmount,
+    _editedctAmount,
+    isL1Token,
+    isConnectedToMainNetwork,
+  } = parmas;
   const isETH = isZeroAddress(requestData._l2token);
   const tokenInfo = getSupportedTokenForCT(
-    isL1Token ? requestData._l1token : requestData._l2token
+    isL1Token ? requestData._l1token : requestData._l2token,
+    isConnectedToMainNetwork
   );
 
   return {
