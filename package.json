@@ -11,8 +11,8 @@
     "wagmi": "wagmi generate",
     "graphql:build": "graphclient build",
     "prepare": "husky install",
-    "prettier": "prettier --check .",
-    "format": "prettier --write ."
+    "prettier": "prettier --check **/*.{ts,tsx}",
+    "format": "prettier --write **/*.{ts,tsx}"
   },
   "dependencies": {
     "@apollo/client": "^3.7.15",
