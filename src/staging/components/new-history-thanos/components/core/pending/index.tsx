@@ -25,6 +25,7 @@ import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 import ArrowIcon from "@/assets/icons/newHistory/small-arrow-gray.svg";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
+import InfoIcon from "@/assets/icons/info.svg"
 
 interface PendingProps {
   transaction: TransactionHistory;
@@ -46,7 +47,7 @@ export default function Pending(props: PendingProps) {
       case Action.Withdraw:
         return "Withdraw";
       case Action.Deposit:
-        return "Deposit";
+        return isExternalBridge ? "Deposit to" : "Deposit";
       case CT_ACTION.REQUEST:
         return "Request";
       case CT_ACTION.PROVIDE:
@@ -71,17 +72,20 @@ export default function Pending(props: PendingProps) {
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
-        <Text
-          fontWeight={600}
-          fontSize={"14px"}
-          lineHeight={"22px"}
-          color={"#FFFFFF"}
-        >
-          {title}
-        </Text>
+        <Flex gap={"3px"} alignItems={"center"}>
+          <Text
+            fontWeight={600}
+            fontSize={"14px"}
+            lineHeight={"22px"}
+            color={"#FFFFFF"}
+          >
+            {title}
+          </Text>
+          <Image src={InfoIcon} alt="info icon" />
+        </Flex>
         <Flex gap={"8px"}>
           {isExternalBridge && (
-            <Flex gap={"3px"}>
+            <Flex gap={"3px"} alignItems={"center"}>
               <Text
                 color={"#A0A3AD"}
                 fontSize={"11px"}
@@ -91,9 +95,9 @@ export default function Pending(props: PendingProps) {
                 {transactionData?.fromAddress === address
                   ? "This address"
                   : trimAddress({
-                      address: transactionData?.fromAddress,
-                      firstChar: 6,
-                    })}
+                    address: transactionData?.fromAddress,
+                    firstChar: 6,
+                  })}
               </Text>
               <Image src={ArrowIcon} alt={"arrow icon"} />
               <Text
@@ -105,9 +109,9 @@ export default function Pending(props: PendingProps) {
                 {transactionData?.toAddress === address
                   ? "This address"
                   : trimAddress({
-                      address: transactionData?.toAddress,
-                      firstChar: 6,
-                    })}
+                    address: transactionData?.toAddress,
+                    firstChar: 6,
+                  })}
               </Text>
             </Flex>
           )}

@@ -57,6 +57,7 @@ import { useCountdown } from "@/staging/hooks/useCountdown";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
 import Image from "next/image";
+import InfoIcon from "@/assets/icons/info.svg"
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -181,16 +182,16 @@ export default function DepositWithdrawConfirmModal() {
             gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
-          (statuses.length === 3 && index < 2)
+            (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
-                <ConditionalBox
-                  isCountDown={isCountDown}
-                  timeDisplay={timeDisplay}
-                  type={typeValue}
-                  transactionData={transactionData}
-                  waitMessage={waitMessage}
-                />
-              )
+              <ConditionalBox
+                isCountDown={isCountDown}
+                timeDisplay={timeDisplay}
+                type={typeValue}
+                transactionData={transactionData}
+                waitMessage={waitMessage}
+              />
+            )
             : null}
         </React.Fragment>
       );
@@ -293,18 +294,21 @@ export default function DepositWithdrawConfirmModal() {
                 </Flex>
               )}
               <Flex justifyContent={"space-between"} alignItems={"center"}>
-                <Text
-                  fontWeight={400}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#A0A3AD"}
-                >
-                  {transactionData?.action === Action.Withdraw
-                    ? "Withdraw"
-                    : "Deposit"}
-                  {/** Add a space */ " "}
-                  {isStandardBridge && "to"}
-                </Text>
+                <Flex gap={"3px"} alignItems={"center"}>
+                  <Text
+                    fontWeight={400}
+                    fontSize={"12px"}
+                    lineHeight={"18px"}
+                    color={"#A0A3AD"}
+                  >
+                    {transactionData?.action === Action.Withdraw
+                      ? "Withdraw"
+                      : "Deposit"}
+                    {/** Add a space */ " "}
+                    {"to"}
+                  </Text>
+                  {!isStandardBridge && <Image src={InfoIcon} alt="info icon" />}
+                </Flex>
                 <Link
                   target="_blank"
                   href={`${BLOCKEXPLORER_CONSTANTS[inNetworkChainId]}/address/${address}`}
@@ -330,9 +334,9 @@ export default function DepositWithdrawConfirmModal() {
                         {transactionData?.fromAddress === address
                           ? "This address"
                           : trimAddress({
-                              address: transactionData?.fromAddress,
-                              firstChar: 6,
-                            })}
+                            address: transactionData?.fromAddress,
+                            firstChar: 6,
+                          })}
                       </Text>
                       <Image src={ArrowIcon} alt="Arrow Icon" />
                       <Text
@@ -344,9 +348,9 @@ export default function DepositWithdrawConfirmModal() {
                         {transactionData?.toAddress === address
                           ? "This address"
                           : trimAddress({
-                              address: transactionData?.toAddress,
-                              firstChar: 6,
-                            })}
+                            address: transactionData?.toAddress,
+                            firstChar: 6,
+                          })}
                       </Text>
                     </Flex>
                   )}

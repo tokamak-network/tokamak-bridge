@@ -16,6 +16,7 @@ import {
   isInCT_Provide,
   CT_PROVIDE_HISTORY_blockTimestamps,
   isInCT_REQUEST_CANCEL,
+  Action,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
@@ -27,14 +28,19 @@ import { ModalType } from "@/staging/components/cross-trade/types";
 import { depositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState } from "recoil";
 import useDepositWithdrawConfirmModalUpdate from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModalUpdate";
+import InfoIcon from "@/assets/icons/info.svg"
+import Image from "next/image";
 
 export default function Complete(transaction: TransactionHistory) {
   const transactionData = transaction;
   const { isOnOfficialStandard } = useHistoryTab();
   const { onOpenDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
-  const {} = useDepositWithdrawConfirmModalUpdate(transactionData);
-
+  const { } = useDepositWithdrawConfirmModalUpdate(transactionData);
+  const isExternalBridge =
+    (transactionData.action === Action.Deposit ||
+      transactionData.action === Action.Withdraw) &&
+    transactionData?.fromAddress !== transactionData?.toAddress;
   const completedTimestamp = useMemo(() => {
     if (isWithdrawTransactionHistory(transactionData)) {
       return transactionData.blockTimestamps.finalizedCompletedTimestamp;
@@ -86,7 +92,7 @@ export default function Complete(transaction: TransactionHistory) {
       case "Withdraw":
         return "Withdraw";
       case "Deposit":
-        return "Deposit";
+        return isExternalBridge ? "Deposit to" : "Deposit";
       case CT_ACTION.REQUEST:
         return "Request";
       case CT_ACTION.PROVIDE:
@@ -99,21 +105,24 @@ export default function Complete(transaction: TransactionHistory) {
   return (
     <>
       <Flex justifyContent={"space-between"} alignItems={"center"}>
-        <Text
-          fontWeight={500}
-          fontSize={"12px"}
-          lineHeight={"22px"}
-          color={"#A0A3AD"}
-        >
-          {title}{" "}
-          {isCT_Request_Cancel && (
-            <>
-              <span style={{ fontSize: "10px", fontWeight: 400 }}>{"("}</span>
-              <span>Cancel</span>
-              <span style={{ fontSize: "10px", fontWeight: 400 }}>{")"}</span>
-            </>
-          )}
-        </Text>
+        <Flex gap={"3px"} alignItems={"center"}>
+          <Text
+            fontWeight={500}
+            fontSize={"12px"}
+            lineHeight={"22px"}
+            color={"#A0A3AD"}
+          >
+            {title}{" "}
+            {isCT_Request_Cancel && (
+              <>
+                <span style={{ fontSize: "10px", fontWeight: 400 }}>{"("}</span>
+                <span>Cancel</span>
+                <span style={{ fontSize: "10px", fontWeight: 400 }}>{")"}</span>
+              </>
+            )}
+          </Text>
+          {isExternalBridge && <Image src={InfoIcon} alt="info icon" />}
+        </Flex>
         <TokenPair
           networkI={transactionData.inNetwork}
           networkO={isCT_Request_Cancel ? null : transactionData.outNetwork}
