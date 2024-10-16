@@ -3,7 +3,7 @@ import { CTTransactionType } from "@/types/crossTrade/contracts";
 type CrossTradeGasFee = { [key in CTTransactionType]: number };
 
 const crossTradeGasFee: CrossTradeGasFee = {
-  [CTTransactionType.provideCT]: 225000,
+  [CTTransactionType.provideCT]: 315576,
   [CTTransactionType.requestRegisteredToken]: 237514,
   [CTTransactionType.editFee]: 69243,
   [CTTransactionType.cancel]: 198013,

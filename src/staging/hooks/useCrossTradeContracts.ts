@@ -1,13 +1,13 @@
 import useFxOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import useContract from "@/hooks/contracts/useContract";
-import { useContractWrite } from "wagmi";
+import { useContractWrite, usePublicClient } from "wagmi";
 import L1CrossTradeAbi from "@/abis/L1CrossTrade.json";
 import L2CrossTradeAbi from "@/abis/L2CrossTrade.json";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { Hash } from "viem";
+import { getContract, Hash } from "viem";
 import { useEffect } from "react";
 import useCTUpdateFee from "../components/cross-trade/hooks/useCTUpdateFeeModal";
 
@@ -54,6 +54,14 @@ const useProvideCT = () => {
       abi: L1CrossTradeAbi.abi,
       functionName: "provideCT",
     });
+
+  const provider = usePublicClient();
+  const contract = getContract({
+    address: L1CrossTrade_CONTRACT.L1CrossTradeProxy,
+    abi: L1CrossTradeAbi.abi,
+    publicClient: provider,
+  });
+
   const {} = useTx({ hash: data?.hash, txSort: "Provide" });
 
   useEffect(() => {
@@ -65,7 +73,16 @@ const useProvideCT = () => {
     }
   }, [isLoading]);
 
-  return { data, write, isLoading, isSuccess, isError, error, status };
+  return {
+    data,
+    write,
+    contract,
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+    status,
+  };
 };
 
 const useEditFee = () => {
@@ -138,6 +155,7 @@ export const useCrossTradeContract = () => {
     write: _provideCT,
     isLoading: _isProvideLoading,
     isError: _isProvideError,
+    contract: _L1CrossTradeProxyContract,
   } = useProvideCT();
   const {
     write: _editFee,
@@ -173,5 +191,6 @@ export const useCrossTradeContract = () => {
     provideCT: _provideCT,
     editFee: _editFee,
     cancelRequest: _cancelRequest,
+    L1_CROSSTRADE_PROXY_CONTRACT: _L1CrossTradeProxyContract,
   };
 };
