@@ -12,6 +12,10 @@ import { CTTransactionType } from "@/types/crossTrade/contracts";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -22,14 +26,13 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const isStandardActive =
     props.activeMainButtonValue === ButtonTypeMain.Standard;
   const { inToken } = useInOutTokens();
-  const { estimatedGasFeeUSD } = useCrossTradeGasFee(
-    CTTransactionType.strandardWithdrawERC20
-  );
-
   const { tokenPriceWithAmount } = useGetMarketPrice({
     amount: inToken?.parsedAmount as string,
     tokenName: inToken?.tokenName as string,
   });
+
+  const CLAIM_GAS_USED = 1000000;
+  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId.MAINNET);
 
   return (
     <Flex
@@ -112,7 +115,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             color={"#007AFF"}
             textAlign="center"
           >
-            ${commafy(estimatedGasFeeUSD)}
+            ${commafy(withdrawCost.usGasCost)}
           </Text>
           <Text
             mt={"1.5px"}

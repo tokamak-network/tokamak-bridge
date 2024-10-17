@@ -76,8 +76,8 @@ export default function AccountHistoryNew() {
   return (
     <Flex
       w={mobileView ? "calc(100% - 8px)" : "336px"}
-      flexDirection='column'
-      gap='2'
+      flexDirection="column"
+      gap="2"
       h={"100%"}
     >
       {!historyData && <LoadingTxSpinners />}
@@ -88,6 +88,7 @@ export default function AccountHistoryNew() {
           transaction.status === CT_REQUEST.Completed ||
           transaction.status === CT_REQUEST_CANCEL.Completed ||
           transaction.status === CT_PROVIDE.Completed;
+
         return (
           <Box
             key={`${transaction.action}-${index}`}

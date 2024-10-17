@@ -136,7 +136,7 @@ export default function CrossTrade() {
           flexDirection='column'
           justifyContent={"flex-start"}
           alignItems='center'
-          h={mobileView ? "85%" : "90%"}
+          h={"90%"}
         >
           <Box width={dynamicWidth}>
             <Box

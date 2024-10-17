@@ -187,6 +187,9 @@ export default function CTOptionModal() {
   }, [ctOptionModal]);
 
   const btnDisabled = useMemo(() => {
+    if (activeMainButtonValue === ButtonTypeMain.Standard) {
+      return false;
+    }
     if (activeSubButtonValue === ButtonTypeSub.Recommend) {
       return !recommendedCtAmount || !recommendedFee;
     }
@@ -199,6 +202,7 @@ export default function CTOptionModal() {
       );
     }
   }, [
+    activeMainButtonValue,
     activeSubButtonValue,
     serviceFee,
     inputWarningCheck,
@@ -230,7 +234,7 @@ export default function CTOptionModal() {
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={"404px"}
         bg='#1F2128'
-        p={"20px"}
+        p={mobileView ? "12px 12px 16px 12px" : "20px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text
