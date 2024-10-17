@@ -289,6 +289,8 @@ export default function CTConfirmCrossTradeFooter(
          * For Request Cross Trade below:
          */
 
+        if (estimatedGas) return;
+
         const ctAmount =
           BigInt(txData.inToken.amount) - BigInt(txData.serviceFee.toString());
         console.log(

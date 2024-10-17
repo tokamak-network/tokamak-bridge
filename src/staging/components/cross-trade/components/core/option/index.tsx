@@ -94,6 +94,7 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
+    console.log(mobileView);
     if (mobileView) {
       onCloseCTOptionModal();
     }
@@ -233,7 +234,7 @@ export default function CTOptionModal() {
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={"404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
@@ -286,10 +287,10 @@ export default function CTOptionModal() {
             handleButtonMainClick={handleButtonMainClick}
           />
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           <Button
             mt={"12px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{
