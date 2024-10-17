@@ -38,6 +38,7 @@ import Warning from "@/app/BridgeSwap/Warning";
 
 import useAmountModal from "@/hooks/modal/useAmountModal";
 import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
+import commafy from "@/utils/trim/commafy";
 
 export default function MobileTokenInput(props: {
   inToken: boolean;
@@ -449,9 +450,9 @@ export default function MobileTokenInput(props: {
       ) : (
         <Flex
           flexDir={"column"}
-          border="1px solid"
-          borderColor="#59628d"
-          borderRadius="8px"
+          border='1px solid'
+          borderColor='#59628d'
+          borderRadius='8px'
         >
           {/* {mobileView && <Warning />} */}
           <Flex
@@ -474,11 +475,11 @@ export default function MobileTokenInput(props: {
                 {/* <Warning /> */}
                 <Input
                   autoFocus
-                  autoComplete="off"
-                  type="number"
-                  pattern="[0-9]*"
+                  autoComplete='off'
+                  type='number'
+                  pattern='[0-9]*'
                   flexGrow={1}
-                  inputMode="decimal"
+                  inputMode='decimal'
                   id={inToken ? "LeftInput" : "RightInput"}
                   w={"100%"}
                   h={"24px"}
@@ -521,11 +522,9 @@ export default function MobileTokenInput(props: {
                   <GradientSpinner />
                 </Flex>
               ) : (
-                <Text
-                  ml={"5px"}
-                  fontSize={14}
-                  color={"#A0A3AD"}
-                >{`$${marketPrice}`}</Text>
+                <Text ml={"5px"} fontSize={14} color={"#A0A3AD"}>{`$${commafy(
+                  marketPrice
+                )}`}</Text>
               ))}
             {hasMaxButton && !isMax && (
               <Button

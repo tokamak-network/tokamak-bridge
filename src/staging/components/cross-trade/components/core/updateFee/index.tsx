@@ -366,9 +366,13 @@ export default function CTFeeUpdateModal() {
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
-        bg="#1F2128"
-        p={"20px"}
+        bg='#1F2128'
+        p={mobileView ? "12px 12px 16px 12px" : "20px"}
         width={mobileView ? "100%" : "404px"}
+        {...(mobileView && {
+          maxHeight: "calc(100vh - 80px)",
+          overflowY: "auto",
+        })}
       >
         <ModalHeader px={0} pt={0} pb={"16px"}>
           <Flex columnGap={"8px"}>

@@ -37,7 +37,7 @@ export default function ScrolltoTopButton() {
       position='fixed'
       bottom='32px'
       right='32px'
-      zIndex='tooltip'
+      zIndex='1000'
       onClick={scrollToTop}
       borderRadius='8px'
       py={"8px"}
