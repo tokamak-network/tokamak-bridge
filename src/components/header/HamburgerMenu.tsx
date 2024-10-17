@@ -120,8 +120,8 @@ const HamburgerMenu = () => {
           >
             <Image src={LOGO} alt="Logo" />
             <Box padding={"8px"} marginTop={"32px"}>
-              <RouterMenu title="BRIDGE & SWAP" link="/" />
-              <RouterMenu title="POOLS" link="/pools" />
+              <RouterMenu title="Bridge & Swap" link="/" />
+              <RouterMenu title="Liquidity" link="/pools" />
               <CustomMenuItem
                 link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
                 title="User Guide"

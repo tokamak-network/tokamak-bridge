@@ -26,6 +26,7 @@ import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { formatProfit } from "@/staging/utils/formatProfit";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 {
   /** 
@@ -163,6 +164,25 @@ export default function CTMain() {
 
   return mobileView ? (
     <Flex direction="column" width="100%" height="100%" padding="0">
+      {displayedItems.length === 0 && (
+        <Flex
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+          flexDirection="column"
+          mt={"16px"}
+        >
+          <Text
+            fontSize="14px"
+            color="#E3F3FF"
+            fontWeight="400"
+            lineHeight={"21px"}
+          >
+            No active requests
+          </Text>
+        </Flex>
+      )}
+
       {displayedItems?.map((item, index) => {
         if (item.isProvided) return null;
         const status = item.isProvided;
@@ -206,8 +226,8 @@ export default function CTMain() {
                   <TokenSymbolWithNetwork
                     tokenSymbol={item.outToken.symbol}
                     chainId={item.inNetwork}
-                    networkSymbolW={18}
-                    networkSymbolH={18}
+                    networkSymbolW={22}
+                    networkSymbolH={22}
                     symbolW={40}
                     symbolH={40}
                     right={0}
@@ -231,7 +251,7 @@ export default function CTMain() {
                       color="#FFFFFF"
                       mr="3px"
                     >
-                      {formattedAmount} {item.outToken.symbol}
+                      {formatNumber(formattedAmount)} {item.outToken.symbol}
                     </Text>
                     <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
                       (

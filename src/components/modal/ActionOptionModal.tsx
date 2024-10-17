@@ -112,7 +112,7 @@ const ActionMethodItem = ({
             handleClose());
       } else if (
         selectedInNetwork.chainId === connectedChainId &&
-        !(title === "Pools")
+        !(title === "Liquidity")
       ) {
         return (
           setNetwork({
@@ -123,7 +123,7 @@ const ActionMethodItem = ({
         );
       }
     } finally {
-      if (title === "Pools") {
+      if (title === "Liquidity") {
         router.push("pools");
       }
       if (isError) {
@@ -312,7 +312,7 @@ const ActionOptionModal = () => {
             <ActionMethodItem
               from={ethChainId}
               to={titanChainId}
-              title="Pools"
+              title="Liquidity"
               handleClose={closeModal}
             />
           </Flex>

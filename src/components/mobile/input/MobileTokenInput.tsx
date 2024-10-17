@@ -38,6 +38,7 @@ import Warning from "@/app/BridgeSwap/Warning";
 
 import useAmountModal from "@/hooks/modal/useAmountModal";
 import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
+import commafy from "@/utils/trim/commafy";
 
 export default function MobileTokenInput(props: {
   inToken: boolean;
@@ -521,11 +522,9 @@ export default function MobileTokenInput(props: {
                   <GradientSpinner />
                 </Flex>
               ) : (
-                <Text
-                  ml={"5px"}
-                  fontSize={14}
-                  color={"#A0A3AD"}
-                >{`$${marketPrice}`}</Text>
+                <Text ml={"5px"} fontSize={14} color={"#A0A3AD"}>{`$${commafy(
+                  marketPrice,
+                )}`}</Text>
               ))}
             {hasMaxButton && !isMax && (
               <Button

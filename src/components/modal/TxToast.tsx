@@ -23,6 +23,7 @@ import {
 import { CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useRouter } from "next/navigation";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 type TransactionToastProp = TxInterface;
 
@@ -267,6 +268,7 @@ function TransactionToast(props: TransactionToastProp) {
 
   return (
     <WagmiProviders>
+      {/** 조건문을 통해 null로 리턴 */}
       <Flex
         w={"340px"}
         h={"84px"}
@@ -312,8 +314,9 @@ function TransactionToast(props: TransactionToastProp) {
     </WagmiProviders>
   );
 }
-
+// 랜더 트리거, 차크라 토스트 활용,
 function TxToast() {
+  const { mobileView } = useMediaView();
   const toast = useToast();
   const [isToasted, setIsToasted] = useState<string[]>([]);
   const { confirmedTransaction } = useTransaction();
@@ -322,6 +325,8 @@ function TxToast() {
     useRecoilState(accountDrawerStatus);
 
   const makeToast = useMemo(() => {
+    if (mobileView) return null;
+
     confirmedTransaction?.map((transaction) => {
       const txHash = transaction[0];
 

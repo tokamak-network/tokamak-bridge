@@ -22,7 +22,7 @@ import { Button, Flex, Spinner, Text } from "@chakra-ui/react";
 import { useCallback, useMemo } from "react";
 import { useRecoilState } from "recoil";
 import { Hash } from "viem";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import { USDT_ADDRESS_BY_CHAINID } from "@/constant/contracts/tokens";
 import USDT_ABI from "@/constant/abis/USDT.json";

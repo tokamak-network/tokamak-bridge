@@ -100,6 +100,7 @@ export default function CTOptionCrossDetail(
               fontSize={"16px"}
               lineHeight={"24px"}
               mr={"2px"}
+              whiteSpace={"nowrap"}
             >
               Cross Trade Bridge
             </Text>

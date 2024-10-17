@@ -22,6 +22,8 @@ import { tokenModalStatus } from "@/recoil/bridgeSwap/atom";
 import { MAINNET_CONTRACTS } from "@/constant/contracts";
 import useIsTon from "@/hooks/token/useIsTon";
 import { useAccount } from "wagmi";
+import formatNumber from "@/staging/utils/formatNumbers";
+import commafy from "@/utils/trim/commafy";
 
 export default function MobileTokenBox(props: {
   inToken: boolean;
@@ -196,7 +198,7 @@ export default function MobileTokenBox(props: {
             </Text>
           </Box>
           <Text fontSize="sm" color="gray.400">
-            ${marketPrice}
+            ${commafy(marketPrice)}
           </Text>
         </>
       ) : (

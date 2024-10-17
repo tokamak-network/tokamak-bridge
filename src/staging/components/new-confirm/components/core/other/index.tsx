@@ -153,7 +153,7 @@ export default function DepositWithdrawConfirmModal() {
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={mobileView ? "100%" : "404px"}
         bg="#1F2128"
-        p={"20px"}
+        p={mobileView ? "12px 12px 16px 12px" : "20px"}
         {...(mobileView && {
           maxHeight: "calc(100vh - 80px)",
           overflowY: "auto",

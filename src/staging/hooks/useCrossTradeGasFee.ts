@@ -1,3 +1,4 @@
+import { BigNumber } from "ethers";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
 import { useMemo } from "react";
 import { recommendFeeConfig } from "../constants/fee";
@@ -6,26 +7,34 @@ import { formatUnits } from "@/utils/trim/convertNumber";
 import useConnectedNetwork from "@/hooks/network";
 import { useFeeData } from "wagmi";
 import JSBI from "jsbi";
-import commafy from "@/utils/trim/commafy";
-import { transactionType } from "viem";
+import { useRecoilValue } from "recoil";
+import {
+  ATOM_CT_GAS_cancelCT,
+  ATOM_CT_GAS_editCT,
+  ATOM_CT_GAS_provideCT,
+} from "@/recoil/crosstrade/networkFee";
+import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 
 export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
+  const provideCTgasUsage = useRecoilValue(ATOM_CT_GAS_provideCT);
+  const editCTgasUsage = useRecoilValue(ATOM_CT_GAS_editCT);
+  const cancelCTgasUsage = useRecoilValue(ATOM_CT_GAS_cancelCT);
   const estimatedGasUsage = useMemo(() => {
     switch (trasnactionType) {
       case CTTransactionType.provideCT:
-        return recommendFeeConfig.gas[CTTransactionType.provideCT];
+        return provideCTgasUsage;
       case CTTransactionType.requestRegisteredToken:
         return recommendFeeConfig.gas[CTTransactionType.requestRegisteredToken];
       case CTTransactionType.editFee:
-        return recommendFeeConfig.gas[CTTransactionType.editFee];
+        return editCTgasUsage;
       case CTTransactionType.cancel:
-        return recommendFeeConfig.gas[CTTransactionType.cancel];
+        return cancelCTgasUsage;
       case CTTransactionType.strandardWithdrawERC20:
         return recommendFeeConfig.gas[CTTransactionType.strandardWithdrawERC20];
       default:
         return 0;
     }
-  }, [trasnactionType]);
+  }, [trasnactionType, provideCTgasUsage, editCTgasUsage, cancelCTgasUsage]);
 
   const { connectedChainId } = useConnectedNetwork();
   const { data: feeData } = useFeeData({ chainId: connectedChainId });
@@ -34,26 +43,15 @@ export const useCrossTradeGasFee = (trasnactionType: CTTransactionType) => {
     amount: 1,
   });
 
-  //   const estimatedGasFeeETH = useMemo(() => {
-  //     if (feeData && estimatedGasUsage) {
-  //       const { gasPrice } = feeData;
-  //       const gasCost = estimatedGasUsage * Number(gasPrice);
-  //       return formatUnits(gasCost.toString(), 18);
-  //     }
-  //   }, [feeData, estimatedGasUsage]);
-
   const estimatedGasFeeETH = useMemo(() => {
     switch (trasnactionType) {
       case CTTransactionType.requestRegisteredToken: {
         return 0.00014167255;
       }
-      case CTTransactionType.strandardWithdrawERC20: {
-        return 0.000150936101651164 + (60000 + 30) / 1e9;
-      }
       default: {
         if (feeData) {
           const { gasPrice } = feeData;
-          return (estimatedGasUsage * Number(gasPrice)) / 1e18;
+          return (Number(estimatedGasUsage) * Number(gasPrice)) / 1e18;
         }
       }
     }

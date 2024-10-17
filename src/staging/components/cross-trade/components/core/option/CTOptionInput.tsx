@@ -95,6 +95,7 @@ export default function CTOptionInput(props: CTInputProps) {
             fontSize: "11px",
             lineHeight: "14.3px",
             marginLeft: "6px",
+            whiteSpace: "nowrap",
           }}
         />
       ) : inputWarningCheck == WarningType.Normal ? (
@@ -109,6 +110,7 @@ export default function CTOptionInput(props: CTInputProps) {
             fontSize: "11px",
             lineHeight: "14.3px",
             marginLeft: "6px",
+            whiteSpace: "nowrap",
           }}
         />
       ) : null}

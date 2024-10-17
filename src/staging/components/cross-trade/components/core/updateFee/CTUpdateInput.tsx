@@ -17,6 +17,7 @@ import { WarningType } from "@/staging/components/cross-trade/types";
 import { TransactionToken } from "@/staging/types/transaction";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
 import { TokenInfo } from "@/types/token/supportedToken";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 interface AdditionalDetailProps {
   recommendCheck: boolean;
@@ -39,16 +40,20 @@ export default function CTUpdateInput(
     tokenInfo,
   } = props;
 
+  const { mobileView } = useMediaView();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const inputValue = useMemo(() => {
+    const maxLength = mobileView ? 10 : 12;
+    const sliceEnd = mobileView ? 13 : 15;
+
     if (isFocused) return _inputValue;
-    if (_inputValue.length > 12) {
-      return `${_inputValue.slice(0, 15)}...`;
+    if (_inputValue.length > maxLength) {
+      return `${_inputValue.slice(0, sliceEnd)}...`;
     }
     return _inputValue;
-  }, [_inputValue, isFocused]);
+  }, [_inputValue, isFocused, mobileView]);
 
   const handleBoxClick = () => {
     if (inputRef.current) {
@@ -107,7 +112,7 @@ export default function CTUpdateInput(
             ref={inputRef}
             type="text"
             pattern="[012]"
-            width={"260px"}
+            width={"100%"}
             pl={0}
             fontWeight={600}
             fontSize={"24px"}

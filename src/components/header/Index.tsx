@@ -41,6 +41,8 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useAccount } from "wagmi";
 import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { accountDrawerStatus } from "@/recoil/modal/atom";
+import { useRecoilValue } from "recoil";
 
 const menuList = [
   {
@@ -129,7 +131,7 @@ export const menuLinks = [
     hoverIcon: mediumHover,
   },
   {
-    title: "Twitter",
+    title: "X",
     link: "https://twitter.com/tokamak_network",
     icon: twitter,
     hoverIcon: twitterHover,
@@ -172,6 +174,7 @@ export default function Header() {
   const { isSupportedChain } = useConnectedNetwork();
   const router = useRouter();
   const { mode } = useGetMode();
+  const isAccountDrawerOpen = useRecoilValue(accountDrawerStatus);
 
   const handleMenuButtonhover = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -327,7 +330,7 @@ export default function Header() {
           <Account />
           {/* <AccountModal /> */}
         </Flex>
-        {!menuView && (
+        {!menuView && !isAccountDrawerOpen && (
           <Flex
             w={!mobileView ? "48px" : "32px"}
             h={!mobileView ? "48px" : "32px"}
