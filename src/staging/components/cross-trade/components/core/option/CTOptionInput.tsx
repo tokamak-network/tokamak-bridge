@@ -34,19 +34,19 @@ export default function CTOptionInput(props: CTInputProps) {
           <Input
             w={"189px"}
             h={"34px"}
-            px="12px"
-            py="4px"
-            bg="#15161D"
-            type="text"
+            px='12px'
+            py='4px'
+            bg='#15161D'
+            type='text'
             // maxLength={1}
-            pattern="[012]"
-            inputMode="decimal"
+            pattern='[012]'
+            inputMode='decimal'
             border={"1px solid #313442"}
             borderRadius={"4px"}
             fontSize={"16px"}
             fontWeight={600}
             lineHeight={"26px"}
-            placeholder="Enter amount"
+            placeholder='Enter amount'
             onFocus={() => {
               setIsFocused(true);
             }}
@@ -95,6 +95,7 @@ export default function CTOptionInput(props: CTInputProps) {
             fontSize: "11px",
             lineHeight: "14.3px",
             marginLeft: "6px",
+            whiteSpace: "nowrap",
           }}
         />
       ) : inputWarningCheck == WarningType.Normal ? (
@@ -109,6 +110,7 @@ export default function CTOptionInput(props: CTInputProps) {
             fontSize: "11px",
             lineHeight: "14.3px",
             marginLeft: "6px",
+            whiteSpace: "nowrap",
           }}
         />
       ) : null}
