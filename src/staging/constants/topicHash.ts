@@ -1,0 +1,5 @@
+export const ERC20DepositInitiatedTopicHash =
+  "0x718594027abd4eaed59f95162563e0cc6d0e8d5b86b1c7be8b1b0ac3343d0396";
+
+export const ETHDepositInitiatedTopicHash =
+  "0x35d79ab81f2b2017e19afb5c5571778877782d7a8786f5907f93b0f4702f4f23";

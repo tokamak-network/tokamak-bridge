@@ -37,7 +37,7 @@ const getTokenInfo = (tokenAddress: string, chainId: number) => {
       }
     }
   }
-  throw new Error(`Token address(${tokenAddress}) not found`);
+  return null;
 };
 
 export const getTransactionToken = (
@@ -46,11 +46,12 @@ export const getTransactionToken = (
   amount: string,
   isL1: boolean,
   chainId: number
-): { l1Token: TransactionToken; l2Token: TransactionToken } => {
+): { l1Token: TransactionToken | null; l2Token: TransactionToken | null } => {
   const tokenInfo = getTokenInfo(
     isL1 ? l1TokenAddress : l2TokenAddress,
     chainId
   );
+  if (!tokenInfo) return { l1Token: null, l2Token: null };
   const l2Token: TransactionToken = {
     ...tokenInfo,
     address: l2TokenAddress,
