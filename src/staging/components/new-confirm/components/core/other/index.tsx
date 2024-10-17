@@ -246,7 +246,7 @@ export default function DepositWithdrawConfirmModal() {
             </Box>
           </Box>
           <Box
-            my={"12px"}
+            mt={"12px"}
             px={"20px"}
             pt={"16px"}
             borderRadius={"8px"}
@@ -262,7 +262,15 @@ export default function DepositWithdrawConfirmModal() {
             </Flex>
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter
+          p={0}
+          display="block"
+          mt={
+            transactionData.status === Status.Initiate || isButtonVisible
+              ? "12px"
+              : 0
+          }
+        >
           {transactionData.status === Status.Initiate ? (
             <ConfirmInitiateFooter
               onClick={onClick}
@@ -272,14 +280,6 @@ export default function DepositWithdrawConfirmModal() {
             />
           ) : (
             <>
-              <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
-                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  Estimated Time of Arrival: ~1 day
-                </Text>
-                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  Estimated Time of Arrival: ~1 day
-                </Text>
-              </Box>
               {isButtonVisible && (
                 <Button
                   width="full"

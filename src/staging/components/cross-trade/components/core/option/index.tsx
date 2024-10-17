@@ -94,6 +94,7 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
+    console.log(mobileView);
     if (mobileView) {
       onCloseCTOptionModal();
     }
