@@ -151,23 +151,23 @@ export class TokenValidator__factory extends ContractFactory {
   deploy(
     _factoryV2: string,
     _positionManager: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<TokenValidator> {
     return super.deploy(
       _factoryV2,
       _positionManager,
-      overrides || {}
+      overrides || {},
     ) as Promise<TokenValidator>;
   }
   getDeployTransaction(
     _factoryV2: string,
     _positionManager: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _factoryV2,
       _positionManager,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): TokenValidator {
@@ -183,7 +183,7 @@ export class TokenValidator__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): TokenValidator {
     return new Contract(address, _abi, signerOrProvider) as TokenValidator;
   }

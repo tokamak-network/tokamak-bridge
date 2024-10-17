@@ -34,14 +34,14 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   tokenInfo,
 }) => {
   const { estimatedGasFeeETH, estimatedGasFeeUSD } = useCrossTradeGasFee(
-    CTTransactionType.editFee
+    CTTransactionType.editFee,
   );
 
   const receivedAmount = useMemo(() => {
     if (inputValue && tokenInfo) {
       const parsedTotalAmount = formatUnits(
         tokenInfo.amount,
-        tokenInfo.decimals
+        tokenInfo.decimals,
       );
       return Number(parsedTotalAmount) - Number(inputValue);
     }
@@ -51,7 +51,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
     if (inputValue && tokenInfo) {
       const parsedTotalAmount = formatUnits(
         tokenInfo.amount,
-        tokenInfo.decimals
+        tokenInfo.decimals,
       );
       return (Number(receivedAmount) / Number(parsedTotalAmount)) * 100;
     }
@@ -166,7 +166,7 @@ interface AdditionalDetailProps {
 }
 
 export default function CTUpdateFeeDetail(
-  props: CTInputProps & AdditionalDetailProps
+  props: CTInputProps & AdditionalDetailProps,
 ) {
   const { txData } = props;
   // update fee 상세

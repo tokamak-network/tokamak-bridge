@@ -1,7 +1,7 @@
 import commafy from "./commafy";
 
 export function priceFormmater(
-  price: string | number | undefined
+  price: string | number | undefined,
 ): string | "NA" {
   let priceValue = undefined;
 

@@ -20,7 +20,7 @@ export async function getSingleCalldataGasLimit(
   txData: ethers.utils.Deferrable<ethers.providers.TransactionRequest>,
   callData: string,
   isLayer2: boolean,
-  uiValue?: boolean
+  uiValue?: boolean,
 ) {
   if (isLayer2 && uiValue) {
     const l2Provider = asL2Provider(provider);

@@ -1,7 +1,11 @@
-import gql from 'graphql-tag'
+import gql from "graphql-tag";
 
 gql`
-  query TokenPrice($chain: Chain!, $address: String = null, $duration: HistoryDuration!) {
+  query TokenPrice(
+    $chain: Chain!
+    $address: String = null
+    $duration: HistoryDuration!
+  ) {
     token(chain: $chain, address: $address) {
       id
       address
@@ -20,7 +24,7 @@ gql`
       }
     }
   }
-`
+`;
 
 gql`
   query UniswapPrices($contracts: [ContractInput!]!) {
@@ -41,6 +45,6 @@ gql`
       }
     }
   }
-`
+`;
 
-export type { TokenPriceQuery } from './__generated__/types-and-hooks'
+export type { TokenPriceQuery } from "./__generated__/types-and-hooks";

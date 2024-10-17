@@ -1,11 +1,10 @@
 import { atom, selector } from "recoil";
 
 type SearchTx = {
-    id: string
-}
+  id: string;
+};
 
-export const searchTxStatus = atom<SearchTx| null>({
-    key:'searchTxStatus', 
-    default:null
-})
-
+export const searchTxStatus = atom<SearchTx | null>({
+  key: "searchTxStatus",
+  default: null,
+});

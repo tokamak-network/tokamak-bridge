@@ -285,14 +285,14 @@ export class QuoterV2__factory extends ContractFactory {
   deploy(
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<QuoterV2> {
     return super.deploy(_factory, _WETH9, overrides || {}) as Promise<QuoterV2>;
   }
   getDeployTransaction(
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(_factory, _WETH9, overrides || {});
   }
@@ -309,7 +309,7 @@ export class QuoterV2__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): QuoterV2 {
     return new Contract(address, _abi, signerOrProvider) as QuoterV2;
   }

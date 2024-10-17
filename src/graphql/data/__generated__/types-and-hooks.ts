@@ -1,10 +1,16 @@
-import { gql } from '@apollo/client';
-import * as Apollo from '@apollo/client';
+import { gql } from "@apollo/client";
+import * as Apollo from "@apollo/client";
 export type Maybe<T> = T;
 export type InputMaybe<T> = T;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+export type Exact<T extends { [key: string]: unknown }> = {
+  [K in keyof T]: T[K];
+};
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]?: Maybe<T[SubKey]>;
+};
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & {
+  [SubKey in K]: Maybe<T[SubKey]>;
+};
 const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -30,420 +36,423 @@ export type ActivityDetails = SwapOrderDetails | TransactionDetails;
 
 /**   deprecated and replaced with TransactionType, please do not use this */
 export enum ActivityType {
-  Approve = 'APPROVE',
-  Borrow = 'BORROW',
-  Burn = 'BURN',
-  Cancel = 'CANCEL',
-  Claim = 'CLAIM',
-  Deployment = 'DEPLOYMENT',
-  Lend = 'LEND',
-  Mint = 'MINT',
-  Nft = 'NFT',
-  Receive = 'RECEIVE',
-  Repay = 'REPAY',
-  Send = 'SEND',
-  Stake = 'STAKE',
-  Swap = 'SWAP',
-  SwapOrder = 'SWAP_ORDER',
-  Staking = 'Staking',
-  Unknown = 'UNKNOWN',
-  Unstake = 'UNSTAKE',
-  Withdraw = 'WITHDRAW',
-  Market = 'market',
-  Money = 'money'
+  Approve = "APPROVE",
+  Borrow = "BORROW",
+  Burn = "BURN",
+  Cancel = "CANCEL",
+  Claim = "CLAIM",
+  Deployment = "DEPLOYMENT",
+  Lend = "LEND",
+  Mint = "MINT",
+  Nft = "NFT",
+  Receive = "RECEIVE",
+  Repay = "REPAY",
+  Send = "SEND",
+  Stake = "STAKE",
+  Swap = "SWAP",
+  SwapOrder = "SWAP_ORDER",
+  Staking = "Staking",
+  Unknown = "UNKNOWN",
+  Unstake = "UNSTAKE",
+  Withdraw = "WITHDRAW",
+  Market = "market",
+  Money = "money",
 }
 
 export type Amount = IAmount & {
-  readonly __typename?: 'Amount';
+  readonly __typename?: "Amount";
   readonly currency?: Maybe<Currency>;
-  readonly id: Scalars['ID'];
-  readonly value: Scalars['Float'];
+  readonly id: Scalars["ID"];
+  readonly value: Scalars["Float"];
 };
 
 export type AmountChange = {
-  readonly __typename?: 'AmountChange';
+  readonly __typename?: "AmountChange";
   readonly absolute?: Maybe<Amount>;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   readonly percentage?: Maybe<Amount>;
 };
 
 export type AmountInput = {
   readonly currency: Currency;
-  readonly value: Scalars['Float'];
+  readonly value: Scalars["Float"];
 };
 
 export type AssetActivity = {
-  readonly __typename?: 'AssetActivity';
+  readonly __typename?: "AssetActivity";
   /** @deprecated use assetChanges field in details */
   readonly assetChanges: ReadonlyArray<Maybe<AssetChange>>;
   readonly chain: Chain;
   readonly details: ActivityDetails;
   /** @deprecated not required, remove usage */
-  readonly gasUsed?: Maybe<Scalars['Float']>;
-  readonly id: Scalars['ID'];
-  readonly timestamp: Scalars['Int'];
+  readonly gasUsed?: Maybe<Scalars["Float"]>;
+  readonly id: Scalars["ID"];
+  readonly timestamp: Scalars["Int"];
   /** @deprecated use fields from details */
   readonly transaction: Transaction;
   /** @deprecated use type field in details */
   readonly type: ActivityType;
 };
 
-export type AssetChange = NftApproval | NftApproveForAll | NftTransfer | TokenApproval | TokenTransfer;
+export type AssetChange =
+  | NftApproval
+  | NftApproveForAll
+  | NftTransfer
+  | TokenApproval
+  | TokenTransfer;
 
 export enum Chain {
-  Arbitrum = 'ARBITRUM',
-  Avalanche = 'AVALANCHE',
-  Base = 'BASE',
-  Bnb = 'BNB',
-  Celo = 'CELO',
-  Ethereum = 'ETHEREUM',
-  EthereumGoerli = 'ETHEREUM_GOERLI',
-  EthereumSepolia = 'ETHEREUM_SEPOLIA',
-  Optimism = 'OPTIMISM',
-  Polygon = 'POLYGON',
-  UnknownChain = 'UNKNOWN_CHAIN'
+  Arbitrum = "ARBITRUM",
+  Avalanche = "AVALANCHE",
+  Base = "BASE",
+  Bnb = "BNB",
+  Celo = "CELO",
+  Ethereum = "ETHEREUM",
+  EthereumGoerli = "ETHEREUM_GOERLI",
+  EthereumSepolia = "ETHEREUM_SEPOLIA",
+  Optimism = "OPTIMISM",
+  Polygon = "POLYGON",
+  UnknownChain = "UNKNOWN_CHAIN",
 }
 
 export enum CollectionSortableField {
-  Volume = 'VOLUME'
+  Volume = "VOLUME",
 }
 
 export type ContractInput = {
-  readonly address?: InputMaybe<Scalars['String']>;
+  readonly address?: InputMaybe<Scalars["String"]>;
   readonly chain: Chain;
 };
 
 export enum Currency {
-  Aud = 'AUD',
-  Brl = 'BRL',
-  Cad = 'CAD',
-  Eth = 'ETH',
-  Eur = 'EUR',
-  Gbp = 'GBP',
-  Hkd = 'HKD',
-  Idr = 'IDR',
-  Inr = 'INR',
-  Jpy = 'JPY',
-  Matic = 'MATIC',
-  Ngn = 'NGN',
-  Pkr = 'PKR',
-  Rub = 'RUB',
-  Sgd = 'SGD',
-  Thb = 'THB',
-  Try = 'TRY',
-  Uah = 'UAH',
-  Usd = 'USD',
-  Vnd = 'VND'
+  Aud = "AUD",
+  Brl = "BRL",
+  Cad = "CAD",
+  Eth = "ETH",
+  Eur = "EUR",
+  Gbp = "GBP",
+  Hkd = "HKD",
+  Idr = "IDR",
+  Inr = "INR",
+  Jpy = "JPY",
+  Matic = "MATIC",
+  Ngn = "NGN",
+  Pkr = "PKR",
+  Rub = "RUB",
+  Sgd = "SGD",
+  Thb = "THB",
+  Try = "TRY",
+  Uah = "UAH",
+  Usd = "USD",
+  Vnd = "VND",
 }
 
 export type Dimensions = {
-  readonly __typename?: 'Dimensions';
-  readonly height?: Maybe<Scalars['Float']>;
-  readonly id: Scalars['ID'];
-  readonly width?: Maybe<Scalars['Float']>;
+  readonly __typename?: "Dimensions";
+  readonly height?: Maybe<Scalars["Float"]>;
+  readonly id: Scalars["ID"];
+  readonly width?: Maybe<Scalars["Float"]>;
 };
 
 export enum HighLow {
-  High = 'HIGH',
-  Low = 'LOW'
+  High = "HIGH",
+  Low = "LOW",
 }
 
 export enum HistoryDuration {
-  Day = 'DAY',
-  Hour = 'HOUR',
-  Max = 'MAX',
-  Month = 'MONTH',
-  Week = 'WEEK',
-  Year = 'YEAR'
+  Day = "DAY",
+  Hour = "HOUR",
+  Max = "MAX",
+  Month = "MONTH",
+  Week = "WEEK",
+  Year = "YEAR",
 }
 
 export type IAmount = {
   readonly currency?: Maybe<Currency>;
-  readonly value: Scalars['Float'];
+  readonly value: Scalars["Float"];
 };
 
 export type IContract = {
-  readonly address?: Maybe<Scalars['String']>;
+  readonly address?: Maybe<Scalars["String"]>;
   readonly chain: Chain;
 };
 
 export type Image = {
-  readonly __typename?: 'Image';
+  readonly __typename?: "Image";
   readonly dimensions?: Maybe<Dimensions>;
-  readonly id: Scalars['ID'];
-  readonly url: Scalars['String'];
+  readonly id: Scalars["ID"];
+  readonly url: Scalars["String"];
 };
 
 export enum MediaType {
-  Audio = 'AUDIO',
-  Image = 'IMAGE',
-  Raw = 'RAW',
-  Video = 'VIDEO'
+  Audio = "AUDIO",
+  Image = "IMAGE",
+  Raw = "RAW",
+  Video = "VIDEO",
 }
 
 export type NftActivity = {
-  readonly __typename?: 'NftActivity';
-  readonly address: Scalars['String'];
+  readonly __typename?: "NftActivity";
+  readonly address: Scalars["String"];
   readonly asset?: Maybe<NftAsset>;
-  readonly fromAddress: Scalars['String'];
-  readonly id: Scalars['ID'];
-  readonly marketplace?: Maybe<Scalars['String']>;
+  readonly fromAddress: Scalars["String"];
+  readonly id: Scalars["ID"];
+  readonly marketplace?: Maybe<Scalars["String"]>;
   readonly orderStatus?: Maybe<OrderStatus>;
   readonly price?: Maybe<Amount>;
-  readonly quantity?: Maybe<Scalars['Int']>;
-  readonly timestamp: Scalars['Int'];
-  readonly toAddress?: Maybe<Scalars['String']>;
-  readonly tokenId?: Maybe<Scalars['String']>;
-  readonly transactionHash?: Maybe<Scalars['String']>;
+  readonly quantity?: Maybe<Scalars["Int"]>;
+  readonly timestamp: Scalars["Int"];
+  readonly toAddress?: Maybe<Scalars["String"]>;
+  readonly tokenId?: Maybe<Scalars["String"]>;
+  readonly transactionHash?: Maybe<Scalars["String"]>;
   readonly type: NftActivityType;
-  readonly url?: Maybe<Scalars['String']>;
+  readonly url?: Maybe<Scalars["String"]>;
 };
 
 export type NftActivityConnection = {
-  readonly __typename?: 'NftActivityConnection';
+  readonly __typename?: "NftActivityConnection";
   readonly edges: ReadonlyArray<NftActivityEdge>;
   readonly pageInfo: PageInfo;
 };
 
 export type NftActivityEdge = {
-  readonly __typename?: 'NftActivityEdge';
-  readonly cursor: Scalars['String'];
+  readonly __typename?: "NftActivityEdge";
+  readonly cursor: Scalars["String"];
   readonly node: NftActivity;
 };
 
 export type NftActivityFilterInput = {
   readonly activityTypes?: InputMaybe<ReadonlyArray<NftActivityType>>;
-  readonly address?: InputMaybe<Scalars['String']>;
-  readonly tokenId?: InputMaybe<Scalars['String']>;
+  readonly address?: InputMaybe<Scalars["String"]>;
+  readonly tokenId?: InputMaybe<Scalars["String"]>;
 };
 
 export enum NftActivityType {
-  CancelListing = 'CANCEL_LISTING',
-  Listing = 'LISTING',
-  Sale = 'SALE',
-  Transfer = 'TRANSFER'
+  CancelListing = "CANCEL_LISTING",
+  Listing = "LISTING",
+  Sale = "SALE",
+  Transfer = "TRANSFER",
 }
 
 export type NftApproval = {
-  readonly __typename?: 'NftApproval';
-  readonly approvedAddress: Scalars['String'];
+  readonly __typename?: "NftApproval";
+  readonly approvedAddress: Scalars["String"];
   /**   can be erc721, erc1155, noncompliant */
   readonly asset: NftAsset;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   readonly nftStandard: NftStandard;
 };
 
 export type NftApproveForAll = {
-  readonly __typename?: 'NftApproveForAll';
-  readonly approved: Scalars['Boolean'];
+  readonly __typename?: "NftApproveForAll";
+  readonly approved: Scalars["Boolean"];
   /**   can be erc721, erc1155, noncompliant */
   readonly asset: NftAsset;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   readonly nftStandard: NftStandard;
-  readonly operatorAddress: Scalars['String'];
+  readonly operatorAddress: Scalars["String"];
 };
 
 export type NftAsset = {
-  readonly __typename?: 'NftAsset';
-  readonly animationUrl?: Maybe<Scalars['String']>;
+  readonly __typename?: "NftAsset";
+  readonly animationUrl?: Maybe<Scalars["String"]>;
   readonly collection?: Maybe<NftCollection>;
   readonly creator?: Maybe<NftProfile>;
-  readonly description?: Maybe<Scalars['String']>;
-  readonly flaggedBy?: Maybe<Scalars['String']>;
-  readonly id: Scalars['ID'];
+  readonly description?: Maybe<Scalars["String"]>;
+  readonly flaggedBy?: Maybe<Scalars["String"]>;
+  readonly id: Scalars["ID"];
   readonly image?: Maybe<Image>;
   /** @deprecated Field no longer supported */
-  readonly imageUrl?: Maybe<Scalars['String']>;
-  readonly isSpam?: Maybe<Scalars['Boolean']>;
+  readonly imageUrl?: Maybe<Scalars["String"]>;
+  readonly isSpam?: Maybe<Scalars["Boolean"]>;
   readonly listings?: Maybe<NftOrderConnection>;
   readonly mediaType?: Maybe<MediaType>;
-  readonly metadataUrl?: Maybe<Scalars['String']>;
-  readonly name?: Maybe<Scalars['String']>;
+  readonly metadataUrl?: Maybe<Scalars["String"]>;
+  readonly name?: Maybe<Scalars["String"]>;
   readonly nftContract?: Maybe<NftContract>;
   readonly originalImage?: Maybe<Image>;
   /**   TODO: may need to be array to support erc1155 cases. not needed at the moment so will revisit. */
-  readonly ownerAddress?: Maybe<Scalars['String']>;
+  readonly ownerAddress?: Maybe<Scalars["String"]>;
   readonly rarities?: Maybe<ReadonlyArray<NftAssetRarity>>;
   readonly smallImage?: Maybe<Image>;
   /** @deprecated Field no longer supported */
-  readonly smallImageUrl?: Maybe<Scalars['String']>;
-  readonly suspiciousFlag?: Maybe<Scalars['Boolean']>;
+  readonly smallImageUrl?: Maybe<Scalars["String"]>;
+  readonly suspiciousFlag?: Maybe<Scalars["Boolean"]>;
   readonly thumbnail?: Maybe<Image>;
   /** @deprecated Field no longer supported */
-  readonly thumbnailUrl?: Maybe<Scalars['String']>;
-  readonly tokenId: Scalars['String'];
+  readonly thumbnailUrl?: Maybe<Scalars["String"]>;
+  readonly tokenId: Scalars["String"];
   readonly traits?: Maybe<ReadonlyArray<NftAssetTrait>>;
 };
 
-
 export type NftAssetListingsArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  asc?: InputMaybe<Scalars['Boolean']>;
-  before?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars["String"]>;
+  asc?: InputMaybe<Scalars["Boolean"]>;
+  before?: InputMaybe<Scalars["String"]>;
   chain?: InputMaybe<Chain>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
 };
 
 export type NftAssetConnection = {
-  readonly __typename?: 'NftAssetConnection';
+  readonly __typename?: "NftAssetConnection";
   readonly edges: ReadonlyArray<NftAssetEdge>;
   readonly pageInfo: PageInfo;
-  readonly totalCount?: Maybe<Scalars['Int']>;
+  readonly totalCount?: Maybe<Scalars["Int"]>;
 };
 
 export type NftAssetEdge = {
-  readonly __typename?: 'NftAssetEdge';
-  readonly cursor: Scalars['String'];
+  readonly __typename?: "NftAssetEdge";
+  readonly cursor: Scalars["String"];
   readonly node: NftAsset;
 };
 
 export type NftAssetInput = {
-  readonly address: Scalars['String'];
-  readonly tokenId: Scalars['String'];
+  readonly address: Scalars["String"];
+  readonly tokenId: Scalars["String"];
 };
 
 export type NftAssetRarity = {
-  readonly __typename?: 'NftAssetRarity';
-  readonly id: Scalars['ID'];
+  readonly __typename?: "NftAssetRarity";
+  readonly id: Scalars["ID"];
   readonly provider?: Maybe<NftRarityProvider>;
-  readonly rank?: Maybe<Scalars['Int']>;
-  readonly score?: Maybe<Scalars['Float']>;
+  readonly rank?: Maybe<Scalars["Int"]>;
+  readonly score?: Maybe<Scalars["Float"]>;
 };
 
 export enum NftAssetSortableField {
-  Price = 'PRICE',
-  Rarity = 'RARITY'
+  Price = "PRICE",
+  Rarity = "RARITY",
 }
 
 export type NftAssetTrait = {
-  readonly __typename?: 'NftAssetTrait';
-  readonly id: Scalars['ID'];
-  readonly name?: Maybe<Scalars['String']>;
-  readonly rarity?: Maybe<Scalars['Float']>;
-  readonly value?: Maybe<Scalars['String']>;
+  readonly __typename?: "NftAssetTrait";
+  readonly id: Scalars["ID"];
+  readonly name?: Maybe<Scalars["String"]>;
+  readonly rarity?: Maybe<Scalars["Float"]>;
+  readonly value?: Maybe<Scalars["String"]>;
 };
 
 export type NftAssetTraitInput = {
-  readonly name: Scalars['String'];
-  readonly values: ReadonlyArray<Scalars['String']>;
+  readonly name: Scalars["String"];
+  readonly values: ReadonlyArray<Scalars["String"]>;
 };
 
 export type NftAssetsFilterInput = {
-  readonly listed?: InputMaybe<Scalars['Boolean']>;
+  readonly listed?: InputMaybe<Scalars["Boolean"]>;
   readonly marketplaces?: InputMaybe<ReadonlyArray<NftMarketplace>>;
-  readonly maxPrice?: InputMaybe<Scalars['String']>;
-  readonly minPrice?: InputMaybe<Scalars['String']>;
-  readonly tokenIds?: InputMaybe<ReadonlyArray<Scalars['String']>>;
-  readonly tokenSearchQuery?: InputMaybe<Scalars['String']>;
+  readonly maxPrice?: InputMaybe<Scalars["String"]>;
+  readonly minPrice?: InputMaybe<Scalars["String"]>;
+  readonly tokenIds?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+  readonly tokenSearchQuery?: InputMaybe<Scalars["String"]>;
   readonly traits?: InputMaybe<ReadonlyArray<NftAssetTraitInput>>;
 };
 
 export type NftBalance = {
-  readonly __typename?: 'NftBalance';
-  readonly id: Scalars['ID'];
+  readonly __typename?: "NftBalance";
+  readonly id: Scalars["ID"];
   readonly lastPrice?: Maybe<TimestampedAmount>;
   readonly listedMarketplaces?: Maybe<ReadonlyArray<NftMarketplace>>;
   readonly listingFees?: Maybe<ReadonlyArray<Maybe<NftFee>>>;
   readonly ownedAsset?: Maybe<NftAsset>;
-  readonly quantity?: Maybe<Scalars['Int']>;
+  readonly quantity?: Maybe<Scalars["Int"]>;
 };
 
 export type NftBalanceConnection = {
-  readonly __typename?: 'NftBalanceConnection';
+  readonly __typename?: "NftBalanceConnection";
   readonly edges: ReadonlyArray<NftBalanceEdge>;
   readonly pageInfo: PageInfo;
 };
 
 export type NftBalanceEdge = {
-  readonly __typename?: 'NftBalanceEdge';
-  readonly cursor: Scalars['String'];
+  readonly __typename?: "NftBalanceEdge";
+  readonly cursor: Scalars["String"];
   readonly node: NftBalance;
 };
 
 export type NftBalancesFilterInput = {
-  readonly addresses?: InputMaybe<ReadonlyArray<Scalars['String']>>;
+  readonly addresses?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
   readonly assets?: InputMaybe<ReadonlyArray<NftAssetInput>>;
-  readonly filterSpam?: InputMaybe<Scalars['Boolean']>;
+  readonly filterSpam?: InputMaybe<Scalars["Boolean"]>;
 };
 
 export type NftCollection = {
-  readonly __typename?: 'NftCollection';
+  readonly __typename?: "NftCollection";
   readonly bannerImage?: Maybe<Image>;
   /**
    *  TODO: support querying for collection assets here
    * assets(page: Int, pageSize: Int, orderBy: NftAssetSortableField): [NftAsset]
    * @deprecated Field no longer supported
    */
-  readonly bannerImageUrl?: Maybe<Scalars['String']>;
-  readonly collectionId: Scalars['String'];
+  readonly bannerImageUrl?: Maybe<Scalars["String"]>;
+  readonly collectionId: Scalars["String"];
   readonly creator?: Maybe<NftProfile>;
-  readonly description?: Maybe<Scalars['String']>;
-  readonly discordUrl?: Maybe<Scalars['String']>;
-  readonly homepageUrl?: Maybe<Scalars['String']>;
-  readonly id: Scalars['ID'];
+  readonly description?: Maybe<Scalars["String"]>;
+  readonly discordUrl?: Maybe<Scalars["String"]>;
+  readonly homepageUrl?: Maybe<Scalars["String"]>;
+  readonly id: Scalars["ID"];
   readonly image?: Maybe<Image>;
   /** @deprecated Field no longer supported */
-  readonly imageUrl?: Maybe<Scalars['String']>;
-  readonly instagramName?: Maybe<Scalars['String']>;
-  readonly isVerified?: Maybe<Scalars['Boolean']>;
+  readonly imageUrl?: Maybe<Scalars["String"]>;
+  readonly instagramName?: Maybe<Scalars["String"]>;
+  readonly isVerified?: Maybe<Scalars["Boolean"]>;
   readonly markets?: Maybe<ReadonlyArray<NftCollectionMarket>>;
-  readonly name?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars["String"]>;
   readonly nftContracts?: Maybe<ReadonlyArray<NftContract>>;
-  readonly numAssets?: Maybe<Scalars['Int']>;
+  readonly numAssets?: Maybe<Scalars["Int"]>;
   /** @deprecated Field no longer supported */
-  readonly openseaUrl?: Maybe<Scalars['String']>;
+  readonly openseaUrl?: Maybe<Scalars["String"]>;
   readonly traits?: Maybe<ReadonlyArray<NftCollectionTrait>>;
-  readonly twitterName?: Maybe<Scalars['String']>;
+  readonly twitterName?: Maybe<Scalars["String"]>;
 };
-
 
 export type NftCollectionMarketsArgs = {
   currencies: ReadonlyArray<Currency>;
 };
 
 export type NftCollectionBalance = {
-  readonly __typename?: 'NftCollectionBalance';
-  readonly address: Scalars['String'];
-  readonly balance: Scalars['Float'];
-  readonly id: Scalars['ID'];
+  readonly __typename?: "NftCollectionBalance";
+  readonly address: Scalars["String"];
+  readonly balance: Scalars["Float"];
+  readonly id: Scalars["ID"];
   readonly logoImage?: Maybe<Image>;
-  readonly name: Scalars['String'];
+  readonly name: Scalars["String"];
 };
 
 export type NftCollectionBalanceConnection = {
-  readonly __typename?: 'NftCollectionBalanceConnection';
+  readonly __typename?: "NftCollectionBalanceConnection";
   readonly edges: ReadonlyArray<NftCollectionBalanceEdge>;
   readonly pageInfo: PageInfo;
 };
 
 export type NftCollectionBalanceEdge = {
-  readonly __typename?: 'NftCollectionBalanceEdge';
-  readonly cursor: Scalars['String'];
+  readonly __typename?: "NftCollectionBalanceEdge";
+  readonly cursor: Scalars["String"];
   readonly node: NftCollectionBalance;
 };
 
 export type NftCollectionConnection = {
-  readonly __typename?: 'NftCollectionConnection';
+  readonly __typename?: "NftCollectionConnection";
   readonly edges: ReadonlyArray<NftCollectionEdge>;
   readonly pageInfo: PageInfo;
 };
 
 export type NftCollectionEdge = {
-  readonly __typename?: 'NftCollectionEdge';
-  readonly cursor: Scalars['String'];
+  readonly __typename?: "NftCollectionEdge";
+  readonly cursor: Scalars["String"];
   readonly node: NftCollection;
 };
 
 export type NftCollectionMarket = {
-  readonly __typename?: 'NftCollectionMarket';
+  readonly __typename?: "NftCollectionMarket";
   readonly floorPrice?: Maybe<TimestampedAmount>;
   readonly floorPricePercentChange?: Maybe<TimestampedAmount>;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   readonly listings?: Maybe<TimestampedAmount>;
   readonly marketplaces?: Maybe<ReadonlyArray<NftCollectionMarketplace>>;
   readonly nftContracts?: Maybe<ReadonlyArray<NftContract>>;
-  readonly owners?: Maybe<Scalars['Int']>;
+  readonly owners?: Maybe<Scalars["Int"]>;
   readonly percentListed?: Maybe<TimestampedAmount>;
   readonly percentUniqueOwners?: Maybe<TimestampedAmount>;
   readonly sales?: Maybe<TimestampedAmount>;
@@ -454,204 +463,199 @@ export type NftCollectionMarket = {
   readonly volumePercentChange?: Maybe<TimestampedAmount>;
 };
 
-
 export type NftCollectionMarketFloorPricePercentChangeArgs = {
   duration?: InputMaybe<HistoryDuration>;
 };
-
 
 export type NftCollectionMarketMarketplacesArgs = {
   marketplaces?: InputMaybe<ReadonlyArray<NftMarketplace>>;
 };
 
-
 export type NftCollectionMarketSalesArgs = {
   duration?: InputMaybe<HistoryDuration>;
 };
 
-
 export type NftCollectionMarketVolumeArgs = {
   duration?: InputMaybe<HistoryDuration>;
 };
-
 
 export type NftCollectionMarketVolumePercentChangeArgs = {
   duration?: InputMaybe<HistoryDuration>;
 };
 
 export type NftCollectionMarketplace = {
-  readonly __typename?: 'NftCollectionMarketplace';
-  readonly floorPrice?: Maybe<Scalars['Float']>;
-  readonly id: Scalars['ID'];
-  readonly listings?: Maybe<Scalars['Int']>;
+  readonly __typename?: "NftCollectionMarketplace";
+  readonly floorPrice?: Maybe<Scalars["Float"]>;
+  readonly id: Scalars["ID"];
+  readonly listings?: Maybe<Scalars["Int"]>;
   readonly marketplace?: Maybe<NftMarketplace>;
 };
 
 export type NftCollectionTrait = {
-  readonly __typename?: 'NftCollectionTrait';
-  readonly id: Scalars['ID'];
-  readonly name?: Maybe<Scalars['String']>;
+  readonly __typename?: "NftCollectionTrait";
+  readonly id: Scalars["ID"];
+  readonly name?: Maybe<Scalars["String"]>;
   readonly stats?: Maybe<ReadonlyArray<NftCollectionTraitStats>>;
-  readonly values?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly values?: Maybe<ReadonlyArray<Scalars["String"]>>;
 };
 
 export type NftCollectionTraitStats = {
-  readonly __typename?: 'NftCollectionTraitStats';
-  readonly assets?: Maybe<Scalars['Int']>;
-  readonly id: Scalars['ID'];
-  readonly listings?: Maybe<Scalars['Int']>;
-  readonly name?: Maybe<Scalars['String']>;
-  readonly value?: Maybe<Scalars['String']>;
+  readonly __typename?: "NftCollectionTraitStats";
+  readonly assets?: Maybe<Scalars["Int"]>;
+  readonly id: Scalars["ID"];
+  readonly listings?: Maybe<Scalars["Int"]>;
+  readonly name?: Maybe<Scalars["String"]>;
+  readonly value?: Maybe<Scalars["String"]>;
 };
 
 export type NftCollectionsFilterInput = {
-  readonly addresses?: InputMaybe<ReadonlyArray<Scalars['String']>>;
-  readonly nameQuery?: InputMaybe<Scalars['String']>;
+  readonly addresses?: InputMaybe<ReadonlyArray<Scalars["String"]>>;
+  readonly nameQuery?: InputMaybe<Scalars["String"]>;
 };
 
 export type NftContract = IContract & {
-  readonly __typename?: 'NftContract';
-  readonly address: Scalars['String'];
+  readonly __typename?: "NftContract";
+  readonly address: Scalars["String"];
   readonly chain: Chain;
-  readonly id: Scalars['ID'];
-  readonly name?: Maybe<Scalars['String']>;
+  readonly id: Scalars["ID"];
+  readonly name?: Maybe<Scalars["String"]>;
   readonly standard?: Maybe<NftStandard>;
-  readonly symbol?: Maybe<Scalars['String']>;
-  readonly totalSupply?: Maybe<Scalars['Int']>;
+  readonly symbol?: Maybe<Scalars["String"]>;
+  readonly totalSupply?: Maybe<Scalars["Int"]>;
 };
 
 export type NftFee = {
-  readonly __typename?: 'NftFee';
-  readonly basisPoints: Scalars['Int'];
-  readonly id: Scalars['ID'];
-  readonly payoutAddress: Scalars['String'];
+  readonly __typename?: "NftFee";
+  readonly basisPoints: Scalars["Int"];
+  readonly id: Scalars["ID"];
+  readonly payoutAddress: Scalars["String"];
 };
 
 export enum NftMarketplace {
-  Cryptopunks = 'CRYPTOPUNKS',
-  Foundation = 'FOUNDATION',
-  Looksrare = 'LOOKSRARE',
-  Nft20 = 'NFT20',
-  Nftx = 'NFTX',
-  Opensea = 'OPENSEA',
-  Sudoswap = 'SUDOSWAP',
-  X2Y2 = 'X2Y2'
+  Cryptopunks = "CRYPTOPUNKS",
+  Foundation = "FOUNDATION",
+  Looksrare = "LOOKSRARE",
+  Nft20 = "NFT20",
+  Nftx = "NFTX",
+  Opensea = "OPENSEA",
+  Sudoswap = "SUDOSWAP",
+  X2Y2 = "X2Y2",
 }
 
 export type NftOrder = {
-  readonly __typename?: 'NftOrder';
-  readonly address: Scalars['String'];
-  readonly auctionType?: Maybe<Scalars['String']>;
-  readonly createdAt: Scalars['Float'];
-  readonly endAt?: Maybe<Scalars['Float']>;
-  readonly id: Scalars['ID'];
-  readonly maker: Scalars['String'];
+  readonly __typename?: "NftOrder";
+  readonly address: Scalars["String"];
+  readonly auctionType?: Maybe<Scalars["String"]>;
+  readonly createdAt: Scalars["Float"];
+  readonly endAt?: Maybe<Scalars["Float"]>;
+  readonly id: Scalars["ID"];
+  readonly maker: Scalars["String"];
   readonly marketplace: NftMarketplace;
-  readonly marketplaceUrl: Scalars['String'];
-  readonly orderHash?: Maybe<Scalars['String']>;
-  readonly poolPrices?: Maybe<ReadonlyArray<Scalars['String']>>;
+  readonly marketplaceUrl: Scalars["String"];
+  readonly orderHash?: Maybe<Scalars["String"]>;
+  readonly poolPrices?: Maybe<ReadonlyArray<Scalars["String"]>>;
   readonly price: Amount;
-  readonly protocolParameters?: Maybe<Scalars['AWSJSON']>;
-  readonly quantity: Scalars['Int'];
-  readonly startAt: Scalars['Float'];
+  readonly protocolParameters?: Maybe<Scalars["AWSJSON"]>;
+  readonly quantity: Scalars["Int"];
+  readonly startAt: Scalars["Float"];
   readonly status: OrderStatus;
-  readonly taker?: Maybe<Scalars['String']>;
-  readonly tokenId?: Maybe<Scalars['String']>;
+  readonly taker?: Maybe<Scalars["String"]>;
+  readonly tokenId?: Maybe<Scalars["String"]>;
   readonly type: OrderType;
 };
 
 export type NftOrderConnection = {
-  readonly __typename?: 'NftOrderConnection';
+  readonly __typename?: "NftOrderConnection";
   readonly edges: ReadonlyArray<NftOrderEdge>;
   readonly pageInfo: PageInfo;
 };
 
 export type NftOrderEdge = {
-  readonly __typename?: 'NftOrderEdge';
-  readonly cursor: Scalars['String'];
+  readonly __typename?: "NftOrderEdge";
+  readonly cursor: Scalars["String"];
   readonly node: NftOrder;
 };
 
 export type NftProfile = {
-  readonly __typename?: 'NftProfile';
-  readonly address: Scalars['String'];
-  readonly id: Scalars['ID'];
-  readonly isVerified?: Maybe<Scalars['Boolean']>;
+  readonly __typename?: "NftProfile";
+  readonly address: Scalars["String"];
+  readonly id: Scalars["ID"];
+  readonly isVerified?: Maybe<Scalars["Boolean"]>;
   readonly profileImage?: Maybe<Image>;
-  readonly username?: Maybe<Scalars['String']>;
+  readonly username?: Maybe<Scalars["String"]>;
 };
 
 export enum NftRarityProvider {
-  RaritySniper = 'RARITY_SNIPER'
+  RaritySniper = "RARITY_SNIPER",
 }
 
 export type NftRouteResponse = {
-  readonly __typename?: 'NftRouteResponse';
-  readonly calldata: Scalars['String'];
-  readonly id: Scalars['ID'];
+  readonly __typename?: "NftRouteResponse";
+  readonly calldata: Scalars["String"];
+  readonly id: Scalars["ID"];
   readonly route?: Maybe<ReadonlyArray<NftTrade>>;
   readonly sendAmount: TokenAmount;
-  readonly toAddress: Scalars['String'];
+  readonly toAddress: Scalars["String"];
 };
 
 export enum NftStandard {
-  Erc721 = 'ERC721',
-  Erc1155 = 'ERC1155',
-  Noncompliant = 'NONCOMPLIANT'
+  Erc721 = "ERC721",
+  Erc1155 = "ERC1155",
+  Noncompliant = "NONCOMPLIANT",
 }
 
 export type NftTrade = {
-  readonly __typename?: 'NftTrade';
-  readonly amount: Scalars['Int'];
-  readonly contractAddress: Scalars['String'];
-  readonly id: Scalars['ID'];
+  readonly __typename?: "NftTrade";
+  readonly amount: Scalars["Int"];
+  readonly contractAddress: Scalars["String"];
+  readonly id: Scalars["ID"];
   readonly marketplace: NftMarketplace;
   /**   price represents the current price of the NFT, which can be different from quotePrice */
   readonly price: TokenAmount;
   /**   quotePrice represents the last quoted price of the NFT */
   readonly quotePrice?: Maybe<TokenAmount>;
-  readonly tokenId: Scalars['String'];
+  readonly tokenId: Scalars["String"];
   readonly tokenType?: Maybe<NftStandard>;
 };
 
 export type NftTradeInput = {
-  readonly amount: Scalars['Int'];
-  readonly contractAddress: Scalars['String'];
-  readonly id: Scalars['ID'];
+  readonly amount: Scalars["Int"];
+  readonly contractAddress: Scalars["String"];
+  readonly id: Scalars["ID"];
   readonly marketplace: NftMarketplace;
   readonly quotePrice?: InputMaybe<TokenAmountInput>;
-  readonly tokenId: Scalars['String'];
+  readonly tokenId: Scalars["String"];
   readonly tokenType?: InputMaybe<NftStandard>;
 };
 
 export type NftTransfer = {
-  readonly __typename?: 'NftTransfer';
+  readonly __typename?: "NftTransfer";
   readonly asset: NftAsset;
   readonly direction: TransactionDirection;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   readonly nftStandard: NftStandard;
-  readonly recipient: Scalars['String'];
-  readonly sender: Scalars['String'];
+  readonly recipient: Scalars["String"];
+  readonly sender: Scalars["String"];
 };
 
 export enum OrderStatus {
-  Cancelled = 'CANCELLED',
-  Executed = 'EXECUTED',
-  Expired = 'EXPIRED',
-  Valid = 'VALID'
+  Cancelled = "CANCELLED",
+  Executed = "EXECUTED",
+  Expired = "EXPIRED",
+  Valid = "VALID",
 }
 
 export enum OrderType {
-  Listing = 'LISTING',
-  Offer = 'OFFER'
+  Listing = "LISTING",
+  Offer = "OFFER",
 }
 
 export type PageInfo = {
-  readonly __typename?: 'PageInfo';
-  readonly endCursor?: Maybe<Scalars['String']>;
-  readonly hasNextPage?: Maybe<Scalars['Boolean']>;
-  readonly hasPreviousPage?: Maybe<Scalars['Boolean']>;
-  readonly startCursor?: Maybe<Scalars['String']>;
+  readonly __typename?: "PageInfo";
+  readonly endCursor?: Maybe<Scalars["String"]>;
+  readonly hasNextPage?: Maybe<Scalars["Boolean"]>;
+  readonly hasPreviousPage?: Maybe<Scalars["Boolean"]>;
+  readonly startCursor?: Maybe<Scalars["String"]>;
 };
 
 /**   v2 pool parameters as defined by https://github.com/Uniswap/v2-sdk/blob/main/src/entities/pair.ts */
@@ -661,56 +665,54 @@ export type PairInput = {
 };
 
 export type PermitDetailsInput = {
-  readonly amount: Scalars['String'];
-  readonly expiration: Scalars['String'];
-  readonly nonce: Scalars['String'];
-  readonly token: Scalars['String'];
+  readonly amount: Scalars["String"];
+  readonly expiration: Scalars["String"];
+  readonly nonce: Scalars["String"];
+  readonly token: Scalars["String"];
 };
 
 export type PermitInput = {
   readonly details: PermitDetailsInput;
-  readonly sigDeadline: Scalars['String'];
-  readonly signature: Scalars['String'];
-  readonly spender: Scalars['String'];
+  readonly sigDeadline: Scalars["String"];
+  readonly signature: Scalars["String"];
+  readonly spender: Scalars["String"];
 };
 
 /**   v3 pool parameters as defined by https://github.com/Uniswap/v3-sdk/blob/main/src/entities/pool.ts */
 export type PoolInput = {
-  readonly fee: Scalars['Int'];
-  readonly liquidity: Scalars['String'];
-  readonly sqrtRatioX96: Scalars['String'];
-  readonly tickCurrent: Scalars['String'];
+  readonly fee: Scalars["Int"];
+  readonly liquidity: Scalars["String"];
+  readonly sqrtRatioX96: Scalars["String"];
+  readonly tickCurrent: Scalars["String"];
   readonly tokenA: TokenInput;
   readonly tokenB: TokenInput;
 };
 
 export type Portfolio = {
-  readonly __typename?: 'Portfolio';
+  readonly __typename?: "Portfolio";
   readonly assetActivities?: Maybe<ReadonlyArray<Maybe<AssetActivity>>>;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   /**   TODO: (michael.zhang) replace with paginated query */
   readonly nftBalances?: Maybe<ReadonlyArray<Maybe<NftBalance>>>;
-  readonly ownerAddress: Scalars['String'];
+  readonly ownerAddress: Scalars["String"];
   readonly tokenBalances?: Maybe<ReadonlyArray<Maybe<TokenBalance>>>;
   readonly tokensTotalDenominatedValue?: Maybe<Amount>;
   readonly tokensTotalDenominatedValueChange?: Maybe<AmountChange>;
 };
 
-
 export type PortfolioAssetActivitiesArgs = {
   chains?: InputMaybe<ReadonlyArray<Chain>>;
-  includeOffChain?: InputMaybe<Scalars['Boolean']>;
-  page?: InputMaybe<Scalars['Int']>;
-  pageSize?: InputMaybe<Scalars['Int']>;
+  includeOffChain?: InputMaybe<Scalars["Boolean"]>;
+  page?: InputMaybe<Scalars["Int"]>;
+  pageSize?: InputMaybe<Scalars["Int"]>;
 };
-
 
 export type PortfolioTokensTotalDenominatedValueChangeArgs = {
   duration?: InputMaybe<HistoryDuration>;
 };
 
 export type Query = {
-  readonly __typename?: 'Query';
+  readonly __typename?: "Query";
   readonly convert?: Maybe<Amount>;
   readonly nftActivity?: Maybe<NftActivityConnection>;
   readonly nftAssets?: Maybe<NftAssetConnection>;
@@ -727,214 +729,199 @@ export type Query = {
   readonly topTokens?: Maybe<ReadonlyArray<Maybe<Token>>>;
 };
 
-
 export type QueryConvertArgs = {
   fromAmount: AmountInput;
   toCurrency: Currency;
 };
 
-
 export type QueryNftActivityArgs = {
-  after?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars["String"]>;
   chain?: InputMaybe<Chain>;
   filter?: InputMaybe<NftActivityFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars["Int"]>;
 };
 
-
 export type QueryNftAssetsArgs = {
-  address: Scalars['String'];
-  after?: InputMaybe<Scalars['String']>;
-  asc?: InputMaybe<Scalars['Boolean']>;
-  before?: InputMaybe<Scalars['String']>;
+  address: Scalars["String"];
+  after?: InputMaybe<Scalars["String"]>;
+  asc?: InputMaybe<Scalars["Boolean"]>;
+  before?: InputMaybe<Scalars["String"]>;
   chain?: InputMaybe<Chain>;
   filter?: InputMaybe<NftAssetsFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
   orderBy?: InputMaybe<NftAssetSortableField>;
 };
 
-
 export type QueryNftBalancesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars["String"]>;
+  before?: InputMaybe<Scalars["String"]>;
   chain?: InputMaybe<Chain>;
   filter?: InputMaybe<NftBalancesFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  ownerAddress: Scalars['String'];
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  ownerAddress: Scalars["String"];
 };
-
 
 export type QueryNftCollectionBalancesArgs = {
-  after?: InputMaybe<Scalars['String']>;
-  before?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars["String"]>;
+  before?: InputMaybe<Scalars["String"]>;
   chain?: InputMaybe<Chain>;
-  first?: InputMaybe<Scalars['Int']>;
-  last?: InputMaybe<Scalars['Int']>;
-  ownerAddress: Scalars['String'];
+  first?: InputMaybe<Scalars["Int"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  ownerAddress: Scalars["String"];
 };
-
 
 export type QueryNftCollectionsArgs = {
-  after?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars["String"]>;
   chain?: InputMaybe<Chain>;
   filter?: InputMaybe<NftCollectionsFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars["Int"]>;
 };
-
 
 export type QueryNftRouteArgs = {
   chain?: InputMaybe<Chain>;
   nftTrades: ReadonlyArray<NftTradeInput>;
-  senderAddress: Scalars['String'];
+  senderAddress: Scalars["String"];
   tokenTrades?: InputMaybe<ReadonlyArray<TokenTradeInput>>;
 };
-
 
 export type QueryPortfoliosArgs = {
   chains?: InputMaybe<ReadonlyArray<Chain>>;
   lookupTokens?: InputMaybe<ReadonlyArray<ContractInput>>;
-  ownerAddresses: ReadonlyArray<Scalars['String']>;
+  ownerAddresses: ReadonlyArray<Scalars["String"]>;
 };
-
 
 export type QuerySearchTokensArgs = {
   chains?: InputMaybe<ReadonlyArray<Chain>>;
-  searchQuery: Scalars['String'];
+  searchQuery: Scalars["String"];
 };
-
 
 export type QueryTokenArgs = {
-  address?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<Scalars["String"]>;
   chain: Chain;
 };
-
 
 export type QueryTokenProjectsArgs = {
   contracts: ReadonlyArray<ContractInput>;
 };
 
-
 export type QueryTokensArgs = {
   contracts: ReadonlyArray<ContractInput>;
 };
 
-
 export type QueryTopCollectionsArgs = {
-  after?: InputMaybe<Scalars['String']>;
+  after?: InputMaybe<Scalars["String"]>;
   chains?: InputMaybe<ReadonlyArray<Chain>>;
-  cursor?: InputMaybe<Scalars['String']>;
+  cursor?: InputMaybe<Scalars["String"]>;
   duration?: InputMaybe<HistoryDuration>;
-  first?: InputMaybe<Scalars['Int']>;
-  limit?: InputMaybe<Scalars['Int']>;
+  first?: InputMaybe<Scalars["Int"]>;
+  limit?: InputMaybe<Scalars["Int"]>;
   orderBy?: InputMaybe<CollectionSortableField>;
 };
-
 
 export type QueryTopTokensArgs = {
   chain?: InputMaybe<Chain>;
   orderBy?: InputMaybe<TokenSortableField>;
-  page?: InputMaybe<Scalars['Int']>;
-  pageSize?: InputMaybe<Scalars['Int']>;
+  page?: InputMaybe<Scalars["Int"]>;
+  pageSize?: InputMaybe<Scalars["Int"]>;
 };
 
 export enum SafetyLevel {
-  Blocked = 'BLOCKED',
-  MediumWarning = 'MEDIUM_WARNING',
-  StrongWarning = 'STRONG_WARNING',
-  Verified = 'VERIFIED'
+  Blocked = "BLOCKED",
+  MediumWarning = "MEDIUM_WARNING",
+  StrongWarning = "STRONG_WARNING",
+  Verified = "VERIFIED",
 }
 
 export type SwapOrderDetails = {
-  readonly __typename?: 'SwapOrderDetails';
-  readonly hash: Scalars['String'];
-  readonly id: Scalars['ID'];
+  readonly __typename?: "SwapOrderDetails";
+  readonly hash: Scalars["String"];
+  readonly id: Scalars["ID"];
   readonly inputToken: Token;
-  readonly inputTokenQuantity: Scalars['String'];
-  readonly offerer: Scalars['String'];
+  readonly inputTokenQuantity: Scalars["String"];
+  readonly offerer: Scalars["String"];
   readonly outputToken: Token;
-  readonly outputTokenQuantity: Scalars['String'];
+  readonly outputTokenQuantity: Scalars["String"];
   readonly status: SwapOrderStatus;
 };
 
 export enum SwapOrderStatus {
-  Error = 'ERROR',
-  Expired = 'EXPIRED',
-  InsufficientFunds = 'INSUFFICIENT_FUNDS',
-  Open = 'OPEN'
+  Error = "ERROR",
+  Expired = "EXPIRED",
+  InsufficientFunds = "INSUFFICIENT_FUNDS",
+  Open = "OPEN",
 }
 
 export type TimestampedAmount = IAmount & {
-  readonly __typename?: 'TimestampedAmount';
+  readonly __typename?: "TimestampedAmount";
   readonly currency?: Maybe<Currency>;
-  readonly id: Scalars['ID'];
-  readonly timestamp: Scalars['Int'];
-  readonly value: Scalars['Float'];
+  readonly id: Scalars["ID"];
+  readonly timestamp: Scalars["Int"];
+  readonly value: Scalars["Float"];
 };
 
 export type Token = IContract & {
-  readonly __typename?: 'Token';
-  readonly address?: Maybe<Scalars['String']>;
+  readonly __typename?: "Token";
+  readonly address?: Maybe<Scalars["String"]>;
   readonly chain: Chain;
-  readonly decimals?: Maybe<Scalars['Int']>;
-  readonly id: Scalars['ID'];
+  readonly decimals?: Maybe<Scalars["Int"]>;
+  readonly id: Scalars["ID"];
   readonly market?: Maybe<TokenMarket>;
-  readonly name?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars["String"]>;
   readonly project?: Maybe<TokenProject>;
   readonly standard?: Maybe<TokenStandard>;
-  readonly symbol?: Maybe<Scalars['String']>;
+  readonly symbol?: Maybe<Scalars["String"]>;
 };
-
 
 export type TokenMarketArgs = {
   currency?: InputMaybe<Currency>;
 };
 
 export type TokenAmount = {
-  readonly __typename?: 'TokenAmount';
+  readonly __typename?: "TokenAmount";
   readonly currency: Currency;
-  readonly id: Scalars['ID'];
-  readonly value: Scalars['String'];
+  readonly id: Scalars["ID"];
+  readonly value: Scalars["String"];
 };
 
 export type TokenAmountInput = {
-  readonly amount: Scalars['String'];
+  readonly amount: Scalars["String"];
   readonly token: TokenInput;
 };
 
 export type TokenApproval = {
-  readonly __typename?: 'TokenApproval';
-  readonly approvedAddress: Scalars['String'];
+  readonly __typename?: "TokenApproval";
+  readonly approvedAddress: Scalars["String"];
   /**   can be erc20 or native */
   readonly asset: Token;
-  readonly id: Scalars['ID'];
-  readonly quantity: Scalars['String'];
+  readonly id: Scalars["ID"];
+  readonly quantity: Scalars["String"];
   readonly tokenStandard: TokenStandard;
 };
 
 export type TokenBalance = {
-  readonly __typename?: 'TokenBalance';
-  readonly blockNumber?: Maybe<Scalars['Int']>;
-  readonly blockTimestamp?: Maybe<Scalars['Int']>;
+  readonly __typename?: "TokenBalance";
+  readonly blockNumber?: Maybe<Scalars["Int"]>;
+  readonly blockTimestamp?: Maybe<Scalars["Int"]>;
   readonly denominatedValue?: Maybe<Amount>;
-  readonly id: Scalars['ID'];
-  readonly ownerAddress: Scalars['String'];
-  readonly quantity?: Maybe<Scalars['Float']>;
+  readonly id: Scalars["ID"];
+  readonly ownerAddress: Scalars["String"];
+  readonly quantity?: Maybe<Scalars["Float"]>;
   readonly token?: Maybe<Token>;
   readonly tokenProjectMarket?: Maybe<TokenProjectMarket>;
 };
 
 export type TokenInput = {
-  readonly address: Scalars['String'];
-  readonly chainId: Scalars['Int'];
-  readonly decimals: Scalars['Int'];
-  readonly isNative: Scalars['Boolean'];
+  readonly address: Scalars["String"];
+  readonly chainId: Scalars["Int"];
+  readonly decimals: Scalars["Int"];
+  readonly isNative: Scalars["Boolean"];
 };
 
 export type TokenMarket = {
-  readonly __typename?: 'TokenMarket';
-  readonly id: Scalars['ID'];
+  readonly __typename?: "TokenMarket";
+  readonly id: Scalars["ID"];
   readonly price?: Maybe<Amount>;
   readonly priceHighLow?: Maybe<Amount>;
   readonly priceHistory?: Maybe<ReadonlyArray<Maybe<TimestampedAmount>>>;
@@ -944,55 +931,50 @@ export type TokenMarket = {
   readonly volume?: Maybe<Amount>;
 };
 
-
 export type TokenMarketPriceHighLowArgs = {
   duration: HistoryDuration;
   highLow: HighLow;
 };
 
-
 export type TokenMarketPriceHistoryArgs = {
   duration: HistoryDuration;
 };
 
-
 export type TokenMarketPricePercentChangeArgs = {
   duration: HistoryDuration;
 };
-
 
 export type TokenMarketVolumeArgs = {
   duration: HistoryDuration;
 };
 
 export type TokenProject = {
-  readonly __typename?: 'TokenProject';
-  readonly description?: Maybe<Scalars['String']>;
-  readonly homepageUrl?: Maybe<Scalars['String']>;
-  readonly id: Scalars['ID'];
-  readonly isSpam?: Maybe<Scalars['Boolean']>;
+  readonly __typename?: "TokenProject";
+  readonly description?: Maybe<Scalars["String"]>;
+  readonly homepageUrl?: Maybe<Scalars["String"]>;
+  readonly id: Scalars["ID"];
+  readonly isSpam?: Maybe<Scalars["Boolean"]>;
   readonly logo?: Maybe<Image>;
   /** @deprecated use logo */
-  readonly logoUrl?: Maybe<Scalars['String']>;
+  readonly logoUrl?: Maybe<Scalars["String"]>;
   readonly markets?: Maybe<ReadonlyArray<Maybe<TokenProjectMarket>>>;
-  readonly name?: Maybe<Scalars['String']>;
+  readonly name?: Maybe<Scalars["String"]>;
   readonly safetyLevel?: Maybe<SafetyLevel>;
   /** @deprecated use logo */
   readonly smallLogo?: Maybe<Image>;
-  readonly spamCode?: Maybe<Scalars['Int']>;
+  readonly spamCode?: Maybe<Scalars["Int"]>;
   readonly tokens: ReadonlyArray<Token>;
-  readonly twitterName?: Maybe<Scalars['String']>;
+  readonly twitterName?: Maybe<Scalars["String"]>;
 };
-
 
 export type TokenProjectMarketsArgs = {
   currencies: ReadonlyArray<Currency>;
 };
 
 export type TokenProjectMarket = {
-  readonly __typename?: 'TokenProjectMarket';
+  readonly __typename?: "TokenProjectMarket";
   readonly currency: Currency;
-  readonly id: Scalars['ID'];
+  readonly id: Scalars["ID"];
   readonly marketCap?: Maybe<Amount>;
   readonly price?: Maybe<Amount>;
   readonly priceHigh52w?: Maybe<Amount>;
@@ -1004,38 +986,35 @@ export type TokenProjectMarket = {
   readonly tokenProject: TokenProject;
 };
 
-
 export type TokenProjectMarketPriceHighLowArgs = {
   duration: HistoryDuration;
   highLow: HighLow;
 };
 
-
 export type TokenProjectMarketPriceHistoryArgs = {
   duration: HistoryDuration;
 };
-
 
 export type TokenProjectMarketPricePercentChangeArgs = {
   duration: HistoryDuration;
 };
 
 export enum TokenSortableField {
-  MarketCap = 'MARKET_CAP',
-  Popularity = 'POPULARITY',
-  TotalValueLocked = 'TOTAL_VALUE_LOCKED',
-  Volume = 'VOLUME'
+  MarketCap = "MARKET_CAP",
+  Popularity = "POPULARITY",
+  TotalValueLocked = "TOTAL_VALUE_LOCKED",
+  Volume = "VOLUME",
 }
 
 export enum TokenStandard {
-  Erc20 = 'ERC20',
-  Native = 'NATIVE'
+  Erc20 = "ERC20",
+  Native = "NATIVE",
 }
 
 export type TokenTradeInput = {
   readonly permit?: InputMaybe<PermitInput>;
   readonly routes?: InputMaybe<TokenTradeRoutesInput>;
-  readonly slippageToleranceBasisPoints?: InputMaybe<Scalars['Int']>;
+  readonly slippageToleranceBasisPoints?: InputMaybe<Scalars["Int"]>;
   readonly tokenAmount: TokenAmountInput;
 };
 
@@ -1053,18 +1032,18 @@ export type TokenTradeRoutesInput = {
 };
 
 export enum TokenTradeType {
-  ExactInput = 'EXACT_INPUT',
-  ExactOutput = 'EXACT_OUTPUT'
+  ExactInput = "EXACT_INPUT",
+  ExactOutput = "EXACT_OUTPUT",
 }
 
 export type TokenTransfer = {
-  readonly __typename?: 'TokenTransfer';
+  readonly __typename?: "TokenTransfer";
   readonly asset: Token;
   readonly direction: TransactionDirection;
-  readonly id: Scalars['ID'];
-  readonly quantity: Scalars['String'];
-  readonly recipient: Scalars['String'];
-  readonly sender: Scalars['String'];
+  readonly id: Scalars["ID"];
+  readonly quantity: Scalars["String"];
+  readonly recipient: Scalars["String"];
+  readonly sender: Scalars["String"];
   readonly tokenStandard: TokenStandard;
   readonly transactedValue?: Maybe<Amount>;
 };
@@ -1075,487 +1054,2161 @@ export type TradePoolInput = {
 };
 
 export type Transaction = {
-  readonly __typename?: 'Transaction';
-  readonly blockNumber: Scalars['Int'];
-  readonly from: Scalars['String'];
-  readonly gasLimit?: Maybe<Scalars['Float']>;
-  readonly hash: Scalars['String'];
-  readonly id: Scalars['ID'];
-  readonly maxFeePerGas?: Maybe<Scalars['Float']>;
-  readonly nonce: Scalars['Int'];
+  readonly __typename?: "Transaction";
+  readonly blockNumber: Scalars["Int"];
+  readonly from: Scalars["String"];
+  readonly gasLimit?: Maybe<Scalars["Float"]>;
+  readonly hash: Scalars["String"];
+  readonly id: Scalars["ID"];
+  readonly maxFeePerGas?: Maybe<Scalars["Float"]>;
+  readonly nonce: Scalars["Int"];
   readonly status: TransactionStatus;
-  readonly to: Scalars['String'];
+  readonly to: Scalars["String"];
 };
 
 export type TransactionDetails = {
-  readonly __typename?: 'TransactionDetails';
+  readonly __typename?: "TransactionDetails";
   readonly assetChanges: ReadonlyArray<Maybe<AssetChange>>;
-  readonly from: Scalars['String'];
-  readonly hash: Scalars['String'];
-  readonly id: Scalars['ID'];
-  readonly nonce: Scalars['Int'];
+  readonly from: Scalars["String"];
+  readonly hash: Scalars["String"];
+  readonly id: Scalars["ID"];
+  readonly nonce: Scalars["Int"];
   readonly status: TransactionStatus;
-  readonly to: Scalars['String'];
+  readonly to: Scalars["String"];
   readonly type: TransactionType;
 };
 
 export enum TransactionDirection {
-  In = 'IN',
-  Out = 'OUT',
-  Self = 'SELF'
+  In = "IN",
+  Out = "OUT",
+  Self = "SELF",
 }
 
 export enum TransactionStatus {
-  Confirmed = 'CONFIRMED',
-  Failed = 'FAILED',
-  Pending = 'PENDING'
+  Confirmed = "CONFIRMED",
+  Failed = "FAILED",
+  Pending = "PENDING",
 }
 
 export enum TransactionType {
-  Approve = 'APPROVE',
-  Borrow = 'BORROW',
-  Cancel = 'CANCEL',
-  Claim = 'CLAIM',
-  Deployment = 'DEPLOYMENT',
-  Lend = 'LEND',
-  Mint = 'MINT',
-  Receive = 'RECEIVE',
-  Repay = 'REPAY',
-  Send = 'SEND',
-  Stake = 'STAKE',
-  Swap = 'SWAP',
-  SwapOrder = 'SWAP_ORDER',
-  Unknown = 'UNKNOWN',
-  Unstake = 'UNSTAKE',
-  Withdraw = 'WITHDRAW'
+  Approve = "APPROVE",
+  Borrow = "BORROW",
+  Cancel = "CANCEL",
+  Claim = "CLAIM",
+  Deployment = "DEPLOYMENT",
+  Lend = "LEND",
+  Mint = "MINT",
+  Receive = "RECEIVE",
+  Repay = "REPAY",
+  Send = "SEND",
+  Stake = "STAKE",
+  Swap = "SWAP",
+  SwapOrder = "SWAP_ORDER",
+  Unknown = "UNKNOWN",
+  Unstake = "UNSTAKE",
+  Withdraw = "WITHDRAW",
 }
 
 export type RecentlySearchedAssetsQueryVariables = Exact<{
-  collectionAddresses: ReadonlyArray<Scalars['String']> | Scalars['String'];
+  collectionAddresses: ReadonlyArray<Scalars["String"]> | Scalars["String"];
   contracts: ReadonlyArray<ContractInput> | ContractInput;
 }>;
 
-
-export type RecentlySearchedAssetsQuery = { readonly __typename?: 'Query', readonly nftCollections?: { readonly __typename?: 'NftCollectionConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftCollectionEdge', readonly node: { readonly __typename?: 'NftCollection', readonly collectionId: string, readonly isVerified?: boolean, readonly name?: string, readonly numAssets?: number, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly address: string }>, readonly markets?: ReadonlyArray<{ readonly __typename?: 'NftCollectionMarket', readonly floorPrice?: { readonly __typename?: 'TimestampedAmount', readonly currency?: Currency, readonly value: number } }> } }> }, readonly tokens?: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly decimals?: number, readonly name?: string, readonly chain: Chain, readonly standard?: TokenStandard, readonly address?: string, readonly symbol?: string, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly pricePercentChange?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly volume24H?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency } }, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly logoUrl?: string, readonly safetyLevel?: SafetyLevel } }> };
+export type RecentlySearchedAssetsQuery = {
+  readonly __typename?: "Query";
+  readonly nftCollections?: {
+    readonly __typename?: "NftCollectionConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftCollectionEdge";
+      readonly node: {
+        readonly __typename?: "NftCollection";
+        readonly collectionId: string;
+        readonly isVerified?: boolean;
+        readonly name?: string;
+        readonly numAssets?: number;
+        readonly image?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly nftContracts?: ReadonlyArray<{
+          readonly __typename?: "NftContract";
+          readonly address: string;
+        }>;
+        readonly markets?: ReadonlyArray<{
+          readonly __typename?: "NftCollectionMarket";
+          readonly floorPrice?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly currency?: Currency;
+            readonly value: number;
+          };
+        }>;
+      };
+    }>;
+  };
+  readonly tokens?: ReadonlyArray<{
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly decimals?: number;
+    readonly name?: string;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly address?: string;
+    readonly symbol?: string;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly price?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly pricePercentChange?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+      readonly volume24H?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+    };
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly logoUrl?: string;
+      readonly safetyLevel?: SafetyLevel;
+    };
+  }>;
+};
 
 export type SearchTokensQueryVariables = Exact<{
-  searchQuery: Scalars['String'];
+  searchQuery: Scalars["String"];
 }>;
 
-
-export type SearchTokensQuery = { readonly __typename?: 'Query', readonly searchTokens?: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly decimals?: number, readonly name?: string, readonly chain: Chain, readonly standard?: TokenStandard, readonly address?: string, readonly symbol?: string, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly pricePercentChange?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly volume24H?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency } }, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly logoUrl?: string, readonly safetyLevel?: SafetyLevel } }> };
+export type SearchTokensQuery = {
+  readonly __typename?: "Query";
+  readonly searchTokens?: ReadonlyArray<{
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly decimals?: number;
+    readonly name?: string;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly address?: string;
+    readonly symbol?: string;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly price?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly pricePercentChange?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+      readonly volume24H?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+    };
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly logoUrl?: string;
+      readonly safetyLevel?: SafetyLevel;
+    };
+  }>;
+};
 
 export type TokenQueryVariables = Exact<{
   chain: Chain;
-  address?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<Scalars["String"]>;
 }>;
 
-
-export type TokenQuery = { readonly __typename?: 'Query', readonly token?: { readonly __typename?: 'Token', readonly id: string, readonly decimals?: number, readonly name?: string, readonly chain: Chain, readonly address?: string, readonly symbol?: string, readonly standard?: TokenStandard, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly totalValueLocked?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly volume24H?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly priceHigh52W?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly priceLow52W?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number } }, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly description?: string, readonly homepageUrl?: string, readonly twitterName?: string, readonly logoUrl?: string, readonly tokens: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly chain: Chain, readonly address?: string }> } } };
+export type TokenQuery = {
+  readonly __typename?: "Query";
+  readonly token?: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly decimals?: number;
+    readonly name?: string;
+    readonly chain: Chain;
+    readonly address?: string;
+    readonly symbol?: string;
+    readonly standard?: TokenStandard;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly totalValueLocked?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly price?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly volume24H?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly priceHigh52W?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+      readonly priceLow52W?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+    };
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly description?: string;
+      readonly homepageUrl?: string;
+      readonly twitterName?: string;
+      readonly logoUrl?: string;
+      readonly tokens: ReadonlyArray<{
+        readonly __typename?: "Token";
+        readonly id: string;
+        readonly chain: Chain;
+        readonly address?: string;
+      }>;
+    };
+  };
+};
 
 export type TokenPriceQueryVariables = Exact<{
   chain: Chain;
-  address?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<Scalars["String"]>;
   duration: HistoryDuration;
 }>;
 
-
-export type TokenPriceQuery = { readonly __typename?: 'Query', readonly token?: { readonly __typename?: 'Token', readonly id: string, readonly address?: string, readonly chain: Chain, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly priceHistory?: ReadonlyArray<{ readonly __typename?: 'TimestampedAmount', readonly id: string, readonly timestamp: number, readonly value: number }> } } };
+export type TokenPriceQuery = {
+  readonly __typename?: "Query";
+  readonly token?: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly address?: string;
+    readonly chain: Chain;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly price?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+      readonly priceHistory?: ReadonlyArray<{
+        readonly __typename?: "TimestampedAmount";
+        readonly id: string;
+        readonly timestamp: number;
+        readonly value: number;
+      }>;
+    };
+  };
+};
 
 export type UniswapPricesQueryVariables = Exact<{
   contracts: ReadonlyArray<ContractInput> | ContractInput;
 }>;
 
-
-export type UniswapPricesQuery = { readonly __typename?: 'Query', readonly tokens?: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly address?: string, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly markets?: ReadonlyArray<{ readonly __typename?: 'TokenProjectMarket', readonly id: string, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number } }> } }> };
+export type UniswapPricesQuery = {
+  readonly __typename?: "Query";
+  readonly tokens?: ReadonlyArray<{
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly address?: string;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly markets?: ReadonlyArray<{
+        readonly __typename?: "TokenProjectMarket";
+        readonly id: string;
+        readonly price?: {
+          readonly __typename?: "Amount";
+          readonly id: string;
+          readonly value: number;
+        };
+      }>;
+    };
+  }>;
+};
 
 export type TokenSpotPriceQueryVariables = Exact<{
   chain: Chain;
-  address?: InputMaybe<Scalars['String']>;
+  address?: InputMaybe<Scalars["String"]>;
 }>;
 
-
-export type TokenSpotPriceQuery = { readonly __typename?: 'Query', readonly token?: { readonly __typename?: 'Token', readonly id: string, readonly address?: string, readonly chain: Chain, readonly name?: string, readonly symbol?: string, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly markets?: ReadonlyArray<{ readonly __typename?: 'TokenProjectMarket', readonly id: string, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number } }> } } };
+export type TokenSpotPriceQuery = {
+  readonly __typename?: "Query";
+  readonly token?: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly address?: string;
+    readonly chain: Chain;
+    readonly name?: string;
+    readonly symbol?: string;
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly markets?: ReadonlyArray<{
+        readonly __typename?: "TokenProjectMarket";
+        readonly id: string;
+        readonly price?: {
+          readonly __typename?: "Amount";
+          readonly id: string;
+          readonly value: number;
+        };
+      }>;
+    };
+  };
+};
 
 export type TopTokens100QueryVariables = Exact<{
   duration: HistoryDuration;
   chain: Chain;
 }>;
 
-
-export type TopTokens100Query = { readonly __typename?: 'Query', readonly topTokens?: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly chain: Chain, readonly address?: string, readonly symbol?: string, readonly standard?: TokenStandard, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly totalValueLocked?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly pricePercentChange?: { readonly __typename?: 'Amount', readonly id: string, readonly currency?: Currency, readonly value: number }, readonly volume?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency } }, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly logoUrl?: string } }> };
+export type TopTokens100Query = {
+  readonly __typename?: "Query";
+  readonly topTokens?: ReadonlyArray<{
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly name?: string;
+    readonly chain: Chain;
+    readonly address?: string;
+    readonly symbol?: string;
+    readonly standard?: TokenStandard;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly totalValueLocked?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly price?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly pricePercentChange?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly currency?: Currency;
+        readonly value: number;
+      };
+      readonly volume?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+    };
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly logoUrl?: string;
+    };
+  }>;
+};
 
 export type TopTokensSparklineQueryVariables = Exact<{
   duration: HistoryDuration;
   chain: Chain;
 }>;
 
-
-export type TopTokensSparklineQuery = { readonly __typename?: 'Query', readonly topTokens?: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly address?: string, readonly chain: Chain, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly priceHistory?: ReadonlyArray<{ readonly __typename?: 'TimestampedAmount', readonly id: string, readonly timestamp: number, readonly value: number }> } }> };
+export type TopTokensSparklineQuery = {
+  readonly __typename?: "Query";
+  readonly topTokens?: ReadonlyArray<{
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly address?: string;
+    readonly chain: Chain;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly priceHistory?: ReadonlyArray<{
+        readonly __typename?: "TimestampedAmount";
+        readonly id: string;
+        readonly timestamp: number;
+        readonly value: number;
+      }>;
+    };
+  }>;
+};
 
 export type TrendingTokensQueryVariables = Exact<{
   chain: Chain;
 }>;
 
+export type TrendingTokensQuery = {
+  readonly __typename?: "Query";
+  readonly topTokens?: ReadonlyArray<{
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly decimals?: number;
+    readonly name?: string;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly address?: string;
+    readonly symbol?: string;
+    readonly market?: {
+      readonly __typename?: "TokenMarket";
+      readonly id: string;
+      readonly price?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+      readonly pricePercentChange?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+      readonly volume24H?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+        readonly currency?: Currency;
+      };
+    };
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly logoUrl?: string;
+      readonly safetyLevel?: SafetyLevel;
+    };
+  }>;
+};
 
-export type TrendingTokensQuery = { readonly __typename?: 'Query', readonly topTokens?: ReadonlyArray<{ readonly __typename?: 'Token', readonly id: string, readonly decimals?: number, readonly name?: string, readonly chain: Chain, readonly standard?: TokenStandard, readonly address?: string, readonly symbol?: string, readonly market?: { readonly __typename?: 'TokenMarket', readonly id: string, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency }, readonly pricePercentChange?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly volume24H?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency } }, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly logoUrl?: string, readonly safetyLevel?: SafetyLevel } }> };
+export type NftAssetPartsFragment = {
+  readonly __typename?: "NftAsset";
+  readonly id: string;
+  readonly name?: string;
+  readonly tokenId: string;
+  readonly nftContract?: {
+    readonly __typename?: "NftContract";
+    readonly id: string;
+    readonly chain: Chain;
+    readonly address: string;
+  };
+  readonly image?: {
+    readonly __typename?: "Image";
+    readonly id: string;
+    readonly url: string;
+  };
+  readonly collection?: {
+    readonly __typename?: "NftCollection";
+    readonly id: string;
+    readonly name?: string;
+  };
+};
 
-export type NftAssetPartsFragment = { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } };
+export type NftTransferPartsFragment = {
+  readonly __typename?: "NftTransfer";
+  readonly id: string;
+  readonly nftStandard: NftStandard;
+  readonly sender: string;
+  readonly recipient: string;
+  readonly direction: TransactionDirection;
+  readonly asset: {
+    readonly __typename?: "NftAsset";
+    readonly id: string;
+    readonly name?: string;
+    readonly tokenId: string;
+    readonly nftContract?: {
+      readonly __typename?: "NftContract";
+      readonly id: string;
+      readonly chain: Chain;
+      readonly address: string;
+    };
+    readonly image?: {
+      readonly __typename?: "Image";
+      readonly id: string;
+      readonly url: string;
+    };
+    readonly collection?: {
+      readonly __typename?: "NftCollection";
+      readonly id: string;
+      readonly name?: string;
+    };
+  };
+};
 
-export type NftTransferPartsFragment = { readonly __typename?: 'NftTransfer', readonly id: string, readonly nftStandard: NftStandard, readonly sender: string, readonly recipient: string, readonly direction: TransactionDirection, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } };
+export type TokenAssetPartsFragment = {
+  readonly __typename?: "Token";
+  readonly id: string;
+  readonly name?: string;
+  readonly symbol?: string;
+  readonly address?: string;
+  readonly decimals?: number;
+  readonly chain: Chain;
+  readonly standard?: TokenStandard;
+  readonly project?: {
+    readonly __typename?: "TokenProject";
+    readonly id: string;
+    readonly isSpam?: boolean;
+    readonly logo?: {
+      readonly __typename?: "Image";
+      readonly id: string;
+      readonly url: string;
+    };
+  };
+};
 
-export type TokenAssetPartsFragment = { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } };
+export type TokenTransferPartsFragment = {
+  readonly __typename?: "TokenTransfer";
+  readonly id: string;
+  readonly tokenStandard: TokenStandard;
+  readonly quantity: string;
+  readonly sender: string;
+  readonly recipient: string;
+  readonly direction: TransactionDirection;
+  readonly asset: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly name?: string;
+    readonly symbol?: string;
+    readonly address?: string;
+    readonly decimals?: number;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly isSpam?: boolean;
+      readonly logo?: {
+        readonly __typename?: "Image";
+        readonly id: string;
+        readonly url: string;
+      };
+    };
+  };
+  readonly transactedValue?: {
+    readonly __typename?: "Amount";
+    readonly id: string;
+    readonly currency?: Currency;
+    readonly value: number;
+  };
+};
 
-export type TokenTransferPartsFragment = { readonly __typename?: 'TokenTransfer', readonly id: string, readonly tokenStandard: TokenStandard, readonly quantity: string, readonly sender: string, readonly recipient: string, readonly direction: TransactionDirection, readonly asset: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly transactedValue?: { readonly __typename?: 'Amount', readonly id: string, readonly currency?: Currency, readonly value: number } };
+export type TokenApprovalPartsFragment = {
+  readonly __typename?: "TokenApproval";
+  readonly id: string;
+  readonly tokenStandard: TokenStandard;
+  readonly approvedAddress: string;
+  readonly quantity: string;
+  readonly asset: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly name?: string;
+    readonly symbol?: string;
+    readonly address?: string;
+    readonly decimals?: number;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly isSpam?: boolean;
+      readonly logo?: {
+        readonly __typename?: "Image";
+        readonly id: string;
+        readonly url: string;
+      };
+    };
+  };
+};
 
-export type TokenApprovalPartsFragment = { readonly __typename?: 'TokenApproval', readonly id: string, readonly tokenStandard: TokenStandard, readonly approvedAddress: string, readonly quantity: string, readonly asset: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } } };
+export type NftApprovalPartsFragment = {
+  readonly __typename?: "NftApproval";
+  readonly id: string;
+  readonly nftStandard: NftStandard;
+  readonly approvedAddress: string;
+  readonly asset: {
+    readonly __typename?: "NftAsset";
+    readonly id: string;
+    readonly name?: string;
+    readonly tokenId: string;
+    readonly nftContract?: {
+      readonly __typename?: "NftContract";
+      readonly id: string;
+      readonly chain: Chain;
+      readonly address: string;
+    };
+    readonly image?: {
+      readonly __typename?: "Image";
+      readonly id: string;
+      readonly url: string;
+    };
+    readonly collection?: {
+      readonly __typename?: "NftCollection";
+      readonly id: string;
+      readonly name?: string;
+    };
+  };
+};
 
-export type NftApprovalPartsFragment = { readonly __typename?: 'NftApproval', readonly id: string, readonly nftStandard: NftStandard, readonly approvedAddress: string, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } };
+export type NftApproveForAllPartsFragment = {
+  readonly __typename?: "NftApproveForAll";
+  readonly id: string;
+  readonly nftStandard: NftStandard;
+  readonly operatorAddress: string;
+  readonly approved: boolean;
+  readonly asset: {
+    readonly __typename?: "NftAsset";
+    readonly id: string;
+    readonly name?: string;
+    readonly tokenId: string;
+    readonly nftContract?: {
+      readonly __typename?: "NftContract";
+      readonly id: string;
+      readonly chain: Chain;
+      readonly address: string;
+    };
+    readonly image?: {
+      readonly __typename?: "Image";
+      readonly id: string;
+      readonly url: string;
+    };
+    readonly collection?: {
+      readonly __typename?: "NftCollection";
+      readonly id: string;
+      readonly name?: string;
+    };
+  };
+};
 
-export type NftApproveForAllPartsFragment = { readonly __typename?: 'NftApproveForAll', readonly id: string, readonly nftStandard: NftStandard, readonly operatorAddress: string, readonly approved: boolean, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } };
+export type TransactionPartsFragment = {
+  readonly __typename?: "Transaction";
+  readonly id: string;
+  readonly blockNumber: number;
+  readonly hash: string;
+  readonly status: TransactionStatus;
+  readonly to: string;
+  readonly from: string;
+  readonly nonce: number;
+};
 
-export type TransactionPartsFragment = { readonly __typename?: 'Transaction', readonly id: string, readonly blockNumber: number, readonly hash: string, readonly status: TransactionStatus, readonly to: string, readonly from: string, readonly nonce: number };
+export type TransactionDetailsPartsFragment = {
+  readonly __typename?: "TransactionDetails";
+  readonly id: string;
+  readonly type: TransactionType;
+  readonly from: string;
+  readonly to: string;
+  readonly hash: string;
+  readonly nonce: number;
+  readonly status: TransactionStatus;
+};
 
-export type TransactionDetailsPartsFragment = { readonly __typename?: 'TransactionDetails', readonly id: string, readonly type: TransactionType, readonly from: string, readonly to: string, readonly hash: string, readonly nonce: number, readonly status: TransactionStatus };
+export type SwapOrderDetailsPartsFragment = {
+  readonly __typename?: "SwapOrderDetails";
+  readonly id: string;
+  readonly offerer: string;
+  readonly hash: string;
+  readonly inputTokenQuantity: string;
+  readonly outputTokenQuantity: string;
+  readonly orderStatus: SwapOrderStatus;
+  readonly inputToken: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly name?: string;
+    readonly symbol?: string;
+    readonly address?: string;
+    readonly decimals?: number;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly isSpam?: boolean;
+      readonly logo?: {
+        readonly __typename?: "Image";
+        readonly id: string;
+        readonly url: string;
+      };
+    };
+  };
+  readonly outputToken: {
+    readonly __typename?: "Token";
+    readonly id: string;
+    readonly name?: string;
+    readonly symbol?: string;
+    readonly address?: string;
+    readonly decimals?: number;
+    readonly chain: Chain;
+    readonly standard?: TokenStandard;
+    readonly project?: {
+      readonly __typename?: "TokenProject";
+      readonly id: string;
+      readonly isSpam?: boolean;
+      readonly logo?: {
+        readonly __typename?: "Image";
+        readonly id: string;
+        readonly url: string;
+      };
+    };
+  };
+};
 
-export type SwapOrderDetailsPartsFragment = { readonly __typename?: 'SwapOrderDetails', readonly id: string, readonly offerer: string, readonly hash: string, readonly inputTokenQuantity: string, readonly outputTokenQuantity: string, readonly orderStatus: SwapOrderStatus, readonly inputToken: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly outputToken: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } } };
-
-export type AssetActivityPartsFragment = { readonly __typename?: 'AssetActivity', readonly id: string, readonly timestamp: number, readonly type: ActivityType, readonly chain: Chain, readonly details: { readonly __typename: 'SwapOrderDetails', readonly id: string, readonly offerer: string, readonly hash: string, readonly inputTokenQuantity: string, readonly outputTokenQuantity: string, readonly orderStatus: SwapOrderStatus, readonly inputToken: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly outputToken: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } } } | { readonly __typename: 'TransactionDetails', readonly id: string, readonly type: TransactionType, readonly from: string, readonly to: string, readonly hash: string, readonly nonce: number, readonly status: TransactionStatus }, readonly assetChanges: ReadonlyArray<{ readonly __typename: 'NftApproval', readonly id: string, readonly nftStandard: NftStandard, readonly approvedAddress: string, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } } | { readonly __typename: 'NftApproveForAll', readonly id: string, readonly nftStandard: NftStandard, readonly operatorAddress: string, readonly approved: boolean, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } } | { readonly __typename: 'NftTransfer', readonly id: string, readonly nftStandard: NftStandard, readonly sender: string, readonly recipient: string, readonly direction: TransactionDirection, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } } | { readonly __typename: 'TokenApproval', readonly id: string, readonly tokenStandard: TokenStandard, readonly approvedAddress: string, readonly quantity: string, readonly asset: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } } } | { readonly __typename: 'TokenTransfer', readonly id: string, readonly tokenStandard: TokenStandard, readonly quantity: string, readonly sender: string, readonly recipient: string, readonly direction: TransactionDirection, readonly asset: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly transactedValue?: { readonly __typename?: 'Amount', readonly id: string, readonly currency?: Currency, readonly value: number } }> };
+export type AssetActivityPartsFragment = {
+  readonly __typename?: "AssetActivity";
+  readonly id: string;
+  readonly timestamp: number;
+  readonly type: ActivityType;
+  readonly chain: Chain;
+  readonly details:
+    | {
+        readonly __typename: "SwapOrderDetails";
+        readonly id: string;
+        readonly offerer: string;
+        readonly hash: string;
+        readonly inputTokenQuantity: string;
+        readonly outputTokenQuantity: string;
+        readonly orderStatus: SwapOrderStatus;
+        readonly inputToken: {
+          readonly __typename?: "Token";
+          readonly id: string;
+          readonly name?: string;
+          readonly symbol?: string;
+          readonly address?: string;
+          readonly decimals?: number;
+          readonly chain: Chain;
+          readonly standard?: TokenStandard;
+          readonly project?: {
+            readonly __typename?: "TokenProject";
+            readonly id: string;
+            readonly isSpam?: boolean;
+            readonly logo?: {
+              readonly __typename?: "Image";
+              readonly id: string;
+              readonly url: string;
+            };
+          };
+        };
+        readonly outputToken: {
+          readonly __typename?: "Token";
+          readonly id: string;
+          readonly name?: string;
+          readonly symbol?: string;
+          readonly address?: string;
+          readonly decimals?: number;
+          readonly chain: Chain;
+          readonly standard?: TokenStandard;
+          readonly project?: {
+            readonly __typename?: "TokenProject";
+            readonly id: string;
+            readonly isSpam?: boolean;
+            readonly logo?: {
+              readonly __typename?: "Image";
+              readonly id: string;
+              readonly url: string;
+            };
+          };
+        };
+      }
+    | {
+        readonly __typename: "TransactionDetails";
+        readonly id: string;
+        readonly type: TransactionType;
+        readonly from: string;
+        readonly to: string;
+        readonly hash: string;
+        readonly nonce: number;
+        readonly status: TransactionStatus;
+      };
+  readonly assetChanges: ReadonlyArray<
+    | {
+        readonly __typename: "NftApproval";
+        readonly id: string;
+        readonly nftStandard: NftStandard;
+        readonly approvedAddress: string;
+        readonly asset: {
+          readonly __typename?: "NftAsset";
+          readonly id: string;
+          readonly name?: string;
+          readonly tokenId: string;
+          readonly nftContract?: {
+            readonly __typename?: "NftContract";
+            readonly id: string;
+            readonly chain: Chain;
+            readonly address: string;
+          };
+          readonly image?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly collection?: {
+            readonly __typename?: "NftCollection";
+            readonly id: string;
+            readonly name?: string;
+          };
+        };
+      }
+    | {
+        readonly __typename: "NftApproveForAll";
+        readonly id: string;
+        readonly nftStandard: NftStandard;
+        readonly operatorAddress: string;
+        readonly approved: boolean;
+        readonly asset: {
+          readonly __typename?: "NftAsset";
+          readonly id: string;
+          readonly name?: string;
+          readonly tokenId: string;
+          readonly nftContract?: {
+            readonly __typename?: "NftContract";
+            readonly id: string;
+            readonly chain: Chain;
+            readonly address: string;
+          };
+          readonly image?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly collection?: {
+            readonly __typename?: "NftCollection";
+            readonly id: string;
+            readonly name?: string;
+          };
+        };
+      }
+    | {
+        readonly __typename: "NftTransfer";
+        readonly id: string;
+        readonly nftStandard: NftStandard;
+        readonly sender: string;
+        readonly recipient: string;
+        readonly direction: TransactionDirection;
+        readonly asset: {
+          readonly __typename?: "NftAsset";
+          readonly id: string;
+          readonly name?: string;
+          readonly tokenId: string;
+          readonly nftContract?: {
+            readonly __typename?: "NftContract";
+            readonly id: string;
+            readonly chain: Chain;
+            readonly address: string;
+          };
+          readonly image?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly collection?: {
+            readonly __typename?: "NftCollection";
+            readonly id: string;
+            readonly name?: string;
+          };
+        };
+      }
+    | {
+        readonly __typename: "TokenApproval";
+        readonly id: string;
+        readonly tokenStandard: TokenStandard;
+        readonly approvedAddress: string;
+        readonly quantity: string;
+        readonly asset: {
+          readonly __typename?: "Token";
+          readonly id: string;
+          readonly name?: string;
+          readonly symbol?: string;
+          readonly address?: string;
+          readonly decimals?: number;
+          readonly chain: Chain;
+          readonly standard?: TokenStandard;
+          readonly project?: {
+            readonly __typename?: "TokenProject";
+            readonly id: string;
+            readonly isSpam?: boolean;
+            readonly logo?: {
+              readonly __typename?: "Image";
+              readonly id: string;
+              readonly url: string;
+            };
+          };
+        };
+      }
+    | {
+        readonly __typename: "TokenTransfer";
+        readonly id: string;
+        readonly tokenStandard: TokenStandard;
+        readonly quantity: string;
+        readonly sender: string;
+        readonly recipient: string;
+        readonly direction: TransactionDirection;
+        readonly asset: {
+          readonly __typename?: "Token";
+          readonly id: string;
+          readonly name?: string;
+          readonly symbol?: string;
+          readonly address?: string;
+          readonly decimals?: number;
+          readonly chain: Chain;
+          readonly standard?: TokenStandard;
+          readonly project?: {
+            readonly __typename?: "TokenProject";
+            readonly id: string;
+            readonly isSpam?: boolean;
+            readonly logo?: {
+              readonly __typename?: "Image";
+              readonly id: string;
+              readonly url: string;
+            };
+          };
+        };
+        readonly transactedValue?: {
+          readonly __typename?: "Amount";
+          readonly id: string;
+          readonly currency?: Currency;
+          readonly value: number;
+        };
+      }
+  >;
+};
 
 export type ActivityQueryVariables = Exact<{
-  account: Scalars['String'];
+  account: Scalars["String"];
 }>;
 
-
-export type ActivityQuery = { readonly __typename?: 'Query', readonly portfolios?: ReadonlyArray<{ readonly __typename?: 'Portfolio', readonly id: string, readonly assetActivities?: ReadonlyArray<{ readonly __typename?: 'AssetActivity', readonly id: string, readonly timestamp: number, readonly type: ActivityType, readonly chain: Chain, readonly details: { readonly __typename: 'SwapOrderDetails', readonly id: string, readonly offerer: string, readonly hash: string, readonly inputTokenQuantity: string, readonly outputTokenQuantity: string, readonly orderStatus: SwapOrderStatus, readonly inputToken: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly outputToken: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } } } | { readonly __typename: 'TransactionDetails', readonly id: string, readonly type: TransactionType, readonly from: string, readonly to: string, readonly hash: string, readonly nonce: number, readonly status: TransactionStatus }, readonly assetChanges: ReadonlyArray<{ readonly __typename: 'NftApproval', readonly id: string, readonly nftStandard: NftStandard, readonly approvedAddress: string, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } } | { readonly __typename: 'NftApproveForAll', readonly id: string, readonly nftStandard: NftStandard, readonly operatorAddress: string, readonly approved: boolean, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } } | { readonly __typename: 'NftTransfer', readonly id: string, readonly nftStandard: NftStandard, readonly sender: string, readonly recipient: string, readonly direction: TransactionDirection, readonly asset: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly chain: Chain, readonly address: string }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly name?: string } } } | { readonly __typename: 'TokenApproval', readonly id: string, readonly tokenStandard: TokenStandard, readonly approvedAddress: string, readonly quantity: string, readonly asset: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } } } | { readonly __typename: 'TokenTransfer', readonly id: string, readonly tokenStandard: TokenStandard, readonly quantity: string, readonly sender: string, readonly recipient: string, readonly direction: TransactionDirection, readonly asset: { readonly __typename?: 'Token', readonly id: string, readonly name?: string, readonly symbol?: string, readonly address?: string, readonly decimals?: number, readonly chain: Chain, readonly standard?: TokenStandard, readonly project?: { readonly __typename?: 'TokenProject', readonly id: string, readonly isSpam?: boolean, readonly logo?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly transactedValue?: { readonly __typename?: 'Amount', readonly id: string, readonly currency?: Currency, readonly value: number } }> }> }> };
+export type ActivityQuery = {
+  readonly __typename?: "Query";
+  readonly portfolios?: ReadonlyArray<{
+    readonly __typename?: "Portfolio";
+    readonly id: string;
+    readonly assetActivities?: ReadonlyArray<{
+      readonly __typename?: "AssetActivity";
+      readonly id: string;
+      readonly timestamp: number;
+      readonly type: ActivityType;
+      readonly chain: Chain;
+      readonly details:
+        | {
+            readonly __typename: "SwapOrderDetails";
+            readonly id: string;
+            readonly offerer: string;
+            readonly hash: string;
+            readonly inputTokenQuantity: string;
+            readonly outputTokenQuantity: string;
+            readonly orderStatus: SwapOrderStatus;
+            readonly inputToken: {
+              readonly __typename?: "Token";
+              readonly id: string;
+              readonly name?: string;
+              readonly symbol?: string;
+              readonly address?: string;
+              readonly decimals?: number;
+              readonly chain: Chain;
+              readonly standard?: TokenStandard;
+              readonly project?: {
+                readonly __typename?: "TokenProject";
+                readonly id: string;
+                readonly isSpam?: boolean;
+                readonly logo?: {
+                  readonly __typename?: "Image";
+                  readonly id: string;
+                  readonly url: string;
+                };
+              };
+            };
+            readonly outputToken: {
+              readonly __typename?: "Token";
+              readonly id: string;
+              readonly name?: string;
+              readonly symbol?: string;
+              readonly address?: string;
+              readonly decimals?: number;
+              readonly chain: Chain;
+              readonly standard?: TokenStandard;
+              readonly project?: {
+                readonly __typename?: "TokenProject";
+                readonly id: string;
+                readonly isSpam?: boolean;
+                readonly logo?: {
+                  readonly __typename?: "Image";
+                  readonly id: string;
+                  readonly url: string;
+                };
+              };
+            };
+          }
+        | {
+            readonly __typename: "TransactionDetails";
+            readonly id: string;
+            readonly type: TransactionType;
+            readonly from: string;
+            readonly to: string;
+            readonly hash: string;
+            readonly nonce: number;
+            readonly status: TransactionStatus;
+          };
+      readonly assetChanges: ReadonlyArray<
+        | {
+            readonly __typename: "NftApproval";
+            readonly id: string;
+            readonly nftStandard: NftStandard;
+            readonly approvedAddress: string;
+            readonly asset: {
+              readonly __typename?: "NftAsset";
+              readonly id: string;
+              readonly name?: string;
+              readonly tokenId: string;
+              readonly nftContract?: {
+                readonly __typename?: "NftContract";
+                readonly id: string;
+                readonly chain: Chain;
+                readonly address: string;
+              };
+              readonly image?: {
+                readonly __typename?: "Image";
+                readonly id: string;
+                readonly url: string;
+              };
+              readonly collection?: {
+                readonly __typename?: "NftCollection";
+                readonly id: string;
+                readonly name?: string;
+              };
+            };
+          }
+        | {
+            readonly __typename: "NftApproveForAll";
+            readonly id: string;
+            readonly nftStandard: NftStandard;
+            readonly operatorAddress: string;
+            readonly approved: boolean;
+            readonly asset: {
+              readonly __typename?: "NftAsset";
+              readonly id: string;
+              readonly name?: string;
+              readonly tokenId: string;
+              readonly nftContract?: {
+                readonly __typename?: "NftContract";
+                readonly id: string;
+                readonly chain: Chain;
+                readonly address: string;
+              };
+              readonly image?: {
+                readonly __typename?: "Image";
+                readonly id: string;
+                readonly url: string;
+              };
+              readonly collection?: {
+                readonly __typename?: "NftCollection";
+                readonly id: string;
+                readonly name?: string;
+              };
+            };
+          }
+        | {
+            readonly __typename: "NftTransfer";
+            readonly id: string;
+            readonly nftStandard: NftStandard;
+            readonly sender: string;
+            readonly recipient: string;
+            readonly direction: TransactionDirection;
+            readonly asset: {
+              readonly __typename?: "NftAsset";
+              readonly id: string;
+              readonly name?: string;
+              readonly tokenId: string;
+              readonly nftContract?: {
+                readonly __typename?: "NftContract";
+                readonly id: string;
+                readonly chain: Chain;
+                readonly address: string;
+              };
+              readonly image?: {
+                readonly __typename?: "Image";
+                readonly id: string;
+                readonly url: string;
+              };
+              readonly collection?: {
+                readonly __typename?: "NftCollection";
+                readonly id: string;
+                readonly name?: string;
+              };
+            };
+          }
+        | {
+            readonly __typename: "TokenApproval";
+            readonly id: string;
+            readonly tokenStandard: TokenStandard;
+            readonly approvedAddress: string;
+            readonly quantity: string;
+            readonly asset: {
+              readonly __typename?: "Token";
+              readonly id: string;
+              readonly name?: string;
+              readonly symbol?: string;
+              readonly address?: string;
+              readonly decimals?: number;
+              readonly chain: Chain;
+              readonly standard?: TokenStandard;
+              readonly project?: {
+                readonly __typename?: "TokenProject";
+                readonly id: string;
+                readonly isSpam?: boolean;
+                readonly logo?: {
+                  readonly __typename?: "Image";
+                  readonly id: string;
+                  readonly url: string;
+                };
+              };
+            };
+          }
+        | {
+            readonly __typename: "TokenTransfer";
+            readonly id: string;
+            readonly tokenStandard: TokenStandard;
+            readonly quantity: string;
+            readonly sender: string;
+            readonly recipient: string;
+            readonly direction: TransactionDirection;
+            readonly asset: {
+              readonly __typename?: "Token";
+              readonly id: string;
+              readonly name?: string;
+              readonly symbol?: string;
+              readonly address?: string;
+              readonly decimals?: number;
+              readonly chain: Chain;
+              readonly standard?: TokenStandard;
+              readonly project?: {
+                readonly __typename?: "TokenProject";
+                readonly id: string;
+                readonly isSpam?: boolean;
+                readonly logo?: {
+                  readonly __typename?: "Image";
+                  readonly id: string;
+                  readonly url: string;
+                };
+              };
+            };
+            readonly transactedValue?: {
+              readonly __typename?: "Amount";
+              readonly id: string;
+              readonly currency?: Currency;
+              readonly value: number;
+            };
+          }
+      >;
+    }>;
+  }>;
+};
 
 export type AssetQueryVariables = Exact<{
-  address: Scalars['String'];
+  address: Scalars["String"];
   orderBy?: InputMaybe<NftAssetSortableField>;
-  asc?: InputMaybe<Scalars['Boolean']>;
+  asc?: InputMaybe<Scalars["Boolean"]>;
   filter?: InputMaybe<NftAssetsFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['String']>;
-  last?: InputMaybe<Scalars['Int']>;
-  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["String"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  before?: InputMaybe<Scalars["String"]>;
 }>;
 
-
-export type AssetQuery = { readonly __typename?: 'Query', readonly nftAssets?: { readonly __typename?: 'NftAssetConnection', readonly totalCount?: number, readonly edges: ReadonlyArray<{ readonly __typename?: 'NftAssetEdge', readonly cursor: string, readonly node: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly tokenId: string, readonly animationUrl?: string, readonly suspiciousFlag?: boolean, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly smallImage?: { readonly __typename?: 'Image', readonly url: string }, readonly collection?: { readonly __typename?: 'NftCollection', readonly name?: string, readonly isVerified?: boolean, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly address: string, readonly standard?: NftStandard }> }, readonly listings?: { readonly __typename?: 'NftOrderConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftOrderEdge', readonly cursor: string, readonly node: { readonly __typename?: 'NftOrder', readonly address: string, readonly createdAt: number, readonly endAt?: number, readonly id: string, readonly maker: string, readonly marketplace: NftMarketplace, readonly marketplaceUrl: string, readonly orderHash?: string, readonly quantity: number, readonly startAt: number, readonly status: OrderStatus, readonly taker?: string, readonly tokenId?: string, readonly type: OrderType, readonly protocolParameters?: any, readonly price: { readonly __typename?: 'Amount', readonly currency?: Currency, readonly value: number } } }> }, readonly rarities?: ReadonlyArray<{ readonly __typename?: 'NftAssetRarity', readonly rank?: number }> } }>, readonly pageInfo: { readonly __typename?: 'PageInfo', readonly endCursor?: string, readonly hasNextPage?: boolean, readonly hasPreviousPage?: boolean, readonly startCursor?: string } } };
+export type AssetQuery = {
+  readonly __typename?: "Query";
+  readonly nftAssets?: {
+    readonly __typename?: "NftAssetConnection";
+    readonly totalCount?: number;
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftAssetEdge";
+      readonly cursor: string;
+      readonly node: {
+        readonly __typename?: "NftAsset";
+        readonly id: string;
+        readonly name?: string;
+        readonly tokenId: string;
+        readonly animationUrl?: string;
+        readonly suspiciousFlag?: boolean;
+        readonly image?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly smallImage?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly collection?: {
+          readonly __typename?: "NftCollection";
+          readonly name?: string;
+          readonly isVerified?: boolean;
+          readonly nftContracts?: ReadonlyArray<{
+            readonly __typename?: "NftContract";
+            readonly address: string;
+            readonly standard?: NftStandard;
+          }>;
+        };
+        readonly listings?: {
+          readonly __typename?: "NftOrderConnection";
+          readonly edges: ReadonlyArray<{
+            readonly __typename?: "NftOrderEdge";
+            readonly cursor: string;
+            readonly node: {
+              readonly __typename?: "NftOrder";
+              readonly address: string;
+              readonly createdAt: number;
+              readonly endAt?: number;
+              readonly id: string;
+              readonly maker: string;
+              readonly marketplace: NftMarketplace;
+              readonly marketplaceUrl: string;
+              readonly orderHash?: string;
+              readonly quantity: number;
+              readonly startAt: number;
+              readonly status: OrderStatus;
+              readonly taker?: string;
+              readonly tokenId?: string;
+              readonly type: OrderType;
+              readonly protocolParameters?: any;
+              readonly price: {
+                readonly __typename?: "Amount";
+                readonly currency?: Currency;
+                readonly value: number;
+              };
+            };
+          }>;
+        };
+        readonly rarities?: ReadonlyArray<{
+          readonly __typename?: "NftAssetRarity";
+          readonly rank?: number;
+        }>;
+      };
+    }>;
+    readonly pageInfo: {
+      readonly __typename?: "PageInfo";
+      readonly endCursor?: string;
+      readonly hasNextPage?: boolean;
+      readonly hasPreviousPage?: boolean;
+      readonly startCursor?: string;
+    };
+  };
+};
 
 export type CollectionQueryVariables = Exact<{
-  addresses: ReadonlyArray<Scalars['String']> | Scalars['String'];
+  addresses: ReadonlyArray<Scalars["String"]> | Scalars["String"];
 }>;
 
-
-export type CollectionQuery = { readonly __typename?: 'Query', readonly nftCollections?: { readonly __typename?: 'NftCollectionConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftCollectionEdge', readonly cursor: string, readonly node: { readonly __typename?: 'NftCollection', readonly collectionId: string, readonly description?: string, readonly discordUrl?: string, readonly homepageUrl?: string, readonly instagramName?: string, readonly isVerified?: boolean, readonly name?: string, readonly numAssets?: number, readonly twitterName?: string, readonly bannerImage?: { readonly __typename?: 'Image', readonly url: string }, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly address: string, readonly chain: Chain, readonly name?: string, readonly standard?: NftStandard, readonly symbol?: string, readonly totalSupply?: number }>, readonly traits?: ReadonlyArray<{ readonly __typename?: 'NftCollectionTrait', readonly name?: string, readonly values?: ReadonlyArray<string>, readonly stats?: ReadonlyArray<{ readonly __typename?: 'NftCollectionTraitStats', readonly name?: string, readonly value?: string, readonly assets?: number, readonly listings?: number }> }>, readonly markets?: ReadonlyArray<{ readonly __typename?: 'NftCollectionMarket', readonly owners?: number, readonly floorPrice?: { readonly __typename?: 'TimestampedAmount', readonly currency?: Currency, readonly value: number }, readonly totalVolume?: { readonly __typename?: 'TimestampedAmount', readonly value: number, readonly currency?: Currency }, readonly listings?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly volume?: { readonly __typename?: 'TimestampedAmount', readonly value: number, readonly currency?: Currency }, readonly volumePercentChange?: { readonly __typename?: 'TimestampedAmount', readonly value: number, readonly currency?: Currency }, readonly floorPricePercentChange?: { readonly __typename?: 'TimestampedAmount', readonly value: number, readonly currency?: Currency }, readonly marketplaces?: ReadonlyArray<{ readonly __typename?: 'NftCollectionMarketplace', readonly marketplace?: NftMarketplace, readonly listings?: number, readonly floorPrice?: number }> }> } }>, readonly pageInfo: { readonly __typename?: 'PageInfo', readonly endCursor?: string, readonly hasNextPage?: boolean, readonly hasPreviousPage?: boolean, readonly startCursor?: string } } };
+export type CollectionQuery = {
+  readonly __typename?: "Query";
+  readonly nftCollections?: {
+    readonly __typename?: "NftCollectionConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftCollectionEdge";
+      readonly cursor: string;
+      readonly node: {
+        readonly __typename?: "NftCollection";
+        readonly collectionId: string;
+        readonly description?: string;
+        readonly discordUrl?: string;
+        readonly homepageUrl?: string;
+        readonly instagramName?: string;
+        readonly isVerified?: boolean;
+        readonly name?: string;
+        readonly numAssets?: number;
+        readonly twitterName?: string;
+        readonly bannerImage?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly image?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly nftContracts?: ReadonlyArray<{
+          readonly __typename?: "NftContract";
+          readonly address: string;
+          readonly chain: Chain;
+          readonly name?: string;
+          readonly standard?: NftStandard;
+          readonly symbol?: string;
+          readonly totalSupply?: number;
+        }>;
+        readonly traits?: ReadonlyArray<{
+          readonly __typename?: "NftCollectionTrait";
+          readonly name?: string;
+          readonly values?: ReadonlyArray<string>;
+          readonly stats?: ReadonlyArray<{
+            readonly __typename?: "NftCollectionTraitStats";
+            readonly name?: string;
+            readonly value?: string;
+            readonly assets?: number;
+            readonly listings?: number;
+          }>;
+        }>;
+        readonly markets?: ReadonlyArray<{
+          readonly __typename?: "NftCollectionMarket";
+          readonly owners?: number;
+          readonly floorPrice?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly currency?: Currency;
+            readonly value: number;
+          };
+          readonly totalVolume?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+            readonly currency?: Currency;
+          };
+          readonly listings?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly volume?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+            readonly currency?: Currency;
+          };
+          readonly volumePercentChange?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+            readonly currency?: Currency;
+          };
+          readonly floorPricePercentChange?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+            readonly currency?: Currency;
+          };
+          readonly marketplaces?: ReadonlyArray<{
+            readonly __typename?: "NftCollectionMarketplace";
+            readonly marketplace?: NftMarketplace;
+            readonly listings?: number;
+            readonly floorPrice?: number;
+          }>;
+        }>;
+      };
+    }>;
+    readonly pageInfo: {
+      readonly __typename?: "PageInfo";
+      readonly endCursor?: string;
+      readonly hasNextPage?: boolean;
+      readonly hasPreviousPage?: boolean;
+      readonly startCursor?: string;
+    };
+  };
+};
 
 export type CollectionSearchQueryVariables = Exact<{
-  query: Scalars['String'];
+  query: Scalars["String"];
 }>;
 
-
-export type CollectionSearchQuery = { readonly __typename?: 'Query', readonly nftCollections?: { readonly __typename?: 'NftCollectionConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftCollectionEdge', readonly cursor: string, readonly node: { readonly __typename?: 'NftCollection', readonly isVerified?: boolean, readonly name?: string, readonly numAssets?: number, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly address: string, readonly chain: Chain, readonly name?: string, readonly symbol?: string, readonly totalSupply?: number }>, readonly markets?: ReadonlyArray<{ readonly __typename?: 'NftCollectionMarket', readonly floorPrice?: { readonly __typename?: 'TimestampedAmount', readonly currency?: Currency, readonly value: number } }> } }>, readonly pageInfo: { readonly __typename?: 'PageInfo', readonly endCursor?: string, readonly hasNextPage?: boolean, readonly hasPreviousPage?: boolean, readonly startCursor?: string } } };
+export type CollectionSearchQuery = {
+  readonly __typename?: "Query";
+  readonly nftCollections?: {
+    readonly __typename?: "NftCollectionConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftCollectionEdge";
+      readonly cursor: string;
+      readonly node: {
+        readonly __typename?: "NftCollection";
+        readonly isVerified?: boolean;
+        readonly name?: string;
+        readonly numAssets?: number;
+        readonly image?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly nftContracts?: ReadonlyArray<{
+          readonly __typename?: "NftContract";
+          readonly address: string;
+          readonly chain: Chain;
+          readonly name?: string;
+          readonly symbol?: string;
+          readonly totalSupply?: number;
+        }>;
+        readonly markets?: ReadonlyArray<{
+          readonly __typename?: "NftCollectionMarket";
+          readonly floorPrice?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly currency?: Currency;
+            readonly value: number;
+          };
+        }>;
+      };
+    }>;
+    readonly pageInfo: {
+      readonly __typename?: "PageInfo";
+      readonly endCursor?: string;
+      readonly hasNextPage?: boolean;
+      readonly hasPreviousPage?: boolean;
+      readonly startCursor?: string;
+    };
+  };
+};
 
 export type DetailsQueryVariables = Exact<{
-  address: Scalars['String'];
-  tokenId: Scalars['String'];
+  address: Scalars["String"];
+  tokenId: Scalars["String"];
 }>;
 
-
-export type DetailsQuery = { readonly __typename?: 'Query', readonly nftAssets?: { readonly __typename?: 'NftAssetConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftAssetEdge', readonly node: { readonly __typename?: 'NftAsset', readonly id: string, readonly name?: string, readonly ownerAddress?: string, readonly tokenId: string, readonly description?: string, readonly animationUrl?: string, readonly suspiciousFlag?: boolean, readonly metadataUrl?: string, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly smallImage?: { readonly __typename?: 'Image', readonly url: string }, readonly originalImage?: { readonly __typename?: 'Image', readonly url: string }, readonly creator?: { readonly __typename?: 'NftProfile', readonly address: string, readonly isVerified?: boolean, readonly profileImage?: { readonly __typename?: 'Image', readonly url: string } }, readonly collection?: { readonly __typename?: 'NftCollection', readonly name?: string, readonly isVerified?: boolean, readonly numAssets?: number, readonly twitterName?: string, readonly discordUrl?: string, readonly homepageUrl?: string, readonly description?: string, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly address: string, readonly standard?: NftStandard }> }, readonly listings?: { readonly __typename?: 'NftOrderConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftOrderEdge', readonly cursor: string, readonly node: { readonly __typename?: 'NftOrder', readonly address: string, readonly createdAt: number, readonly endAt?: number, readonly id: string, readonly maker: string, readonly marketplace: NftMarketplace, readonly marketplaceUrl: string, readonly orderHash?: string, readonly quantity: number, readonly startAt: number, readonly status: OrderStatus, readonly taker?: string, readonly tokenId?: string, readonly type: OrderType, readonly protocolParameters?: any, readonly price: { readonly __typename?: 'Amount', readonly currency?: Currency, readonly value: number } } }> }, readonly rarities?: ReadonlyArray<{ readonly __typename?: 'NftAssetRarity', readonly provider?: NftRarityProvider, readonly rank?: number, readonly score?: number }>, readonly traits?: ReadonlyArray<{ readonly __typename?: 'NftAssetTrait', readonly name?: string, readonly value?: string }> } }> } };
+export type DetailsQuery = {
+  readonly __typename?: "Query";
+  readonly nftAssets?: {
+    readonly __typename?: "NftAssetConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftAssetEdge";
+      readonly node: {
+        readonly __typename?: "NftAsset";
+        readonly id: string;
+        readonly name?: string;
+        readonly ownerAddress?: string;
+        readonly tokenId: string;
+        readonly description?: string;
+        readonly animationUrl?: string;
+        readonly suspiciousFlag?: boolean;
+        readonly metadataUrl?: string;
+        readonly image?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly smallImage?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly originalImage?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly creator?: {
+          readonly __typename?: "NftProfile";
+          readonly address: string;
+          readonly isVerified?: boolean;
+          readonly profileImage?: {
+            readonly __typename?: "Image";
+            readonly url: string;
+          };
+        };
+        readonly collection?: {
+          readonly __typename?: "NftCollection";
+          readonly name?: string;
+          readonly isVerified?: boolean;
+          readonly numAssets?: number;
+          readonly twitterName?: string;
+          readonly discordUrl?: string;
+          readonly homepageUrl?: string;
+          readonly description?: string;
+          readonly image?: {
+            readonly __typename?: "Image";
+            readonly url: string;
+          };
+          readonly nftContracts?: ReadonlyArray<{
+            readonly __typename?: "NftContract";
+            readonly address: string;
+            readonly standard?: NftStandard;
+          }>;
+        };
+        readonly listings?: {
+          readonly __typename?: "NftOrderConnection";
+          readonly edges: ReadonlyArray<{
+            readonly __typename?: "NftOrderEdge";
+            readonly cursor: string;
+            readonly node: {
+              readonly __typename?: "NftOrder";
+              readonly address: string;
+              readonly createdAt: number;
+              readonly endAt?: number;
+              readonly id: string;
+              readonly maker: string;
+              readonly marketplace: NftMarketplace;
+              readonly marketplaceUrl: string;
+              readonly orderHash?: string;
+              readonly quantity: number;
+              readonly startAt: number;
+              readonly status: OrderStatus;
+              readonly taker?: string;
+              readonly tokenId?: string;
+              readonly type: OrderType;
+              readonly protocolParameters?: any;
+              readonly price: {
+                readonly __typename?: "Amount";
+                readonly currency?: Currency;
+                readonly value: number;
+              };
+            };
+          }>;
+        };
+        readonly rarities?: ReadonlyArray<{
+          readonly __typename?: "NftAssetRarity";
+          readonly provider?: NftRarityProvider;
+          readonly rank?: number;
+          readonly score?: number;
+        }>;
+        readonly traits?: ReadonlyArray<{
+          readonly __typename?: "NftAssetTrait";
+          readonly name?: string;
+          readonly value?: string;
+        }>;
+      };
+    }>;
+  };
+};
 
 export type NftActivityQueryVariables = Exact<{
   filter?: InputMaybe<NftActivityFilterInput>;
-  after?: InputMaybe<Scalars['String']>;
-  first?: InputMaybe<Scalars['Int']>;
+  after?: InputMaybe<Scalars["String"]>;
+  first?: InputMaybe<Scalars["Int"]>;
 }>;
 
-
-export type NftActivityQuery = { readonly __typename?: 'Query', readonly nftActivity?: { readonly __typename?: 'NftActivityConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftActivityEdge', readonly node: { readonly __typename?: 'NftActivity', readonly id: string, readonly address: string, readonly tokenId?: string, readonly type: NftActivityType, readonly marketplace?: string, readonly fromAddress: string, readonly toAddress?: string, readonly transactionHash?: string, readonly orderStatus?: OrderStatus, readonly quantity?: number, readonly url?: string, readonly timestamp: number, readonly asset?: { readonly __typename?: 'NftAsset', readonly id: string, readonly metadataUrl?: string, readonly name?: string, readonly suspiciousFlag?: boolean, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly smallImage?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly rarities?: ReadonlyArray<{ readonly __typename?: 'NftAssetRarity', readonly id: string, readonly provider?: NftRarityProvider, readonly rank?: number, readonly score?: number }>, readonly nftContract?: { readonly __typename?: 'NftContract', readonly id: string, readonly standard?: NftStandard }, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string } } }, readonly price?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number } } }>, readonly pageInfo: { readonly __typename?: 'PageInfo', readonly endCursor?: string, readonly hasNextPage?: boolean, readonly hasPreviousPage?: boolean, readonly startCursor?: string } } };
+export type NftActivityQuery = {
+  readonly __typename?: "Query";
+  readonly nftActivity?: {
+    readonly __typename?: "NftActivityConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftActivityEdge";
+      readonly node: {
+        readonly __typename?: "NftActivity";
+        readonly id: string;
+        readonly address: string;
+        readonly tokenId?: string;
+        readonly type: NftActivityType;
+        readonly marketplace?: string;
+        readonly fromAddress: string;
+        readonly toAddress?: string;
+        readonly transactionHash?: string;
+        readonly orderStatus?: OrderStatus;
+        readonly quantity?: number;
+        readonly url?: string;
+        readonly timestamp: number;
+        readonly asset?: {
+          readonly __typename?: "NftAsset";
+          readonly id: string;
+          readonly metadataUrl?: string;
+          readonly name?: string;
+          readonly suspiciousFlag?: boolean;
+          readonly image?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly smallImage?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly rarities?: ReadonlyArray<{
+            readonly __typename?: "NftAssetRarity";
+            readonly id: string;
+            readonly provider?: NftRarityProvider;
+            readonly rank?: number;
+            readonly score?: number;
+          }>;
+          readonly nftContract?: {
+            readonly __typename?: "NftContract";
+            readonly id: string;
+            readonly standard?: NftStandard;
+          };
+          readonly collection?: {
+            readonly __typename?: "NftCollection";
+            readonly id: string;
+            readonly image?: {
+              readonly __typename?: "Image";
+              readonly id: string;
+              readonly url: string;
+            };
+          };
+        };
+        readonly price?: {
+          readonly __typename?: "Amount";
+          readonly id: string;
+          readonly value: number;
+        };
+      };
+    }>;
+    readonly pageInfo: {
+      readonly __typename?: "PageInfo";
+      readonly endCursor?: string;
+      readonly hasNextPage?: boolean;
+      readonly hasPreviousPage?: boolean;
+      readonly startCursor?: string;
+    };
+  };
+};
 
 export type NftBalanceQueryVariables = Exact<{
-  ownerAddress: Scalars['String'];
+  ownerAddress: Scalars["String"];
   filter?: InputMaybe<NftBalancesFilterInput>;
-  first?: InputMaybe<Scalars['Int']>;
-  after?: InputMaybe<Scalars['String']>;
-  last?: InputMaybe<Scalars['Int']>;
-  before?: InputMaybe<Scalars['String']>;
+  first?: InputMaybe<Scalars["Int"]>;
+  after?: InputMaybe<Scalars["String"]>;
+  last?: InputMaybe<Scalars["Int"]>;
+  before?: InputMaybe<Scalars["String"]>;
 }>;
 
-
-export type NftBalanceQuery = { readonly __typename?: 'Query', readonly nftBalances?: { readonly __typename?: 'NftBalanceConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftBalanceEdge', readonly node: { readonly __typename?: 'NftBalance', readonly listedMarketplaces?: ReadonlyArray<NftMarketplace>, readonly ownedAsset?: { readonly __typename?: 'NftAsset', readonly id: string, readonly animationUrl?: string, readonly description?: string, readonly flaggedBy?: string, readonly name?: string, readonly ownerAddress?: string, readonly suspiciousFlag?: boolean, readonly tokenId: string, readonly collection?: { readonly __typename?: 'NftCollection', readonly id: string, readonly isVerified?: boolean, readonly name?: string, readonly twitterName?: string, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly id: string, readonly address: string, readonly chain: Chain, readonly name?: string, readonly standard?: NftStandard, readonly symbol?: string, readonly totalSupply?: number }>, readonly markets?: ReadonlyArray<{ readonly __typename?: 'NftCollectionMarket', readonly id: string, readonly floorPrice?: { readonly __typename?: 'TimestampedAmount', readonly id: string, readonly value: number } }> }, readonly image?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly originalImage?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly smallImage?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly thumbnail?: { readonly __typename?: 'Image', readonly id: string, readonly url: string }, readonly listings?: { readonly __typename?: 'NftOrderConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftOrderEdge', readonly node: { readonly __typename?: 'NftOrder', readonly createdAt: number, readonly marketplace: NftMarketplace, readonly endAt?: number, readonly price: { readonly __typename?: 'Amount', readonly id: string, readonly value: number, readonly currency?: Currency } } }> } }, readonly listingFees?: ReadonlyArray<{ readonly __typename?: 'NftFee', readonly id: string, readonly payoutAddress: string, readonly basisPoints: number }>, readonly lastPrice?: { readonly __typename?: 'TimestampedAmount', readonly id: string, readonly currency?: Currency, readonly timestamp: number, readonly value: number } } }>, readonly pageInfo: { readonly __typename?: 'PageInfo', readonly endCursor?: string, readonly hasNextPage?: boolean, readonly hasPreviousPage?: boolean, readonly startCursor?: string } } };
+export type NftBalanceQuery = {
+  readonly __typename?: "Query";
+  readonly nftBalances?: {
+    readonly __typename?: "NftBalanceConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftBalanceEdge";
+      readonly node: {
+        readonly __typename?: "NftBalance";
+        readonly listedMarketplaces?: ReadonlyArray<NftMarketplace>;
+        readonly ownedAsset?: {
+          readonly __typename?: "NftAsset";
+          readonly id: string;
+          readonly animationUrl?: string;
+          readonly description?: string;
+          readonly flaggedBy?: string;
+          readonly name?: string;
+          readonly ownerAddress?: string;
+          readonly suspiciousFlag?: boolean;
+          readonly tokenId: string;
+          readonly collection?: {
+            readonly __typename?: "NftCollection";
+            readonly id: string;
+            readonly isVerified?: boolean;
+            readonly name?: string;
+            readonly twitterName?: string;
+            readonly image?: {
+              readonly __typename?: "Image";
+              readonly id: string;
+              readonly url: string;
+            };
+            readonly nftContracts?: ReadonlyArray<{
+              readonly __typename?: "NftContract";
+              readonly id: string;
+              readonly address: string;
+              readonly chain: Chain;
+              readonly name?: string;
+              readonly standard?: NftStandard;
+              readonly symbol?: string;
+              readonly totalSupply?: number;
+            }>;
+            readonly markets?: ReadonlyArray<{
+              readonly __typename?: "NftCollectionMarket";
+              readonly id: string;
+              readonly floorPrice?: {
+                readonly __typename?: "TimestampedAmount";
+                readonly id: string;
+                readonly value: number;
+              };
+            }>;
+          };
+          readonly image?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly originalImage?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly smallImage?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly thumbnail?: {
+            readonly __typename?: "Image";
+            readonly id: string;
+            readonly url: string;
+          };
+          readonly listings?: {
+            readonly __typename?: "NftOrderConnection";
+            readonly edges: ReadonlyArray<{
+              readonly __typename?: "NftOrderEdge";
+              readonly node: {
+                readonly __typename?: "NftOrder";
+                readonly createdAt: number;
+                readonly marketplace: NftMarketplace;
+                readonly endAt?: number;
+                readonly price: {
+                  readonly __typename?: "Amount";
+                  readonly id: string;
+                  readonly value: number;
+                  readonly currency?: Currency;
+                };
+              };
+            }>;
+          };
+        };
+        readonly listingFees?: ReadonlyArray<{
+          readonly __typename?: "NftFee";
+          readonly id: string;
+          readonly payoutAddress: string;
+          readonly basisPoints: number;
+        }>;
+        readonly lastPrice?: {
+          readonly __typename?: "TimestampedAmount";
+          readonly id: string;
+          readonly currency?: Currency;
+          readonly timestamp: number;
+          readonly value: number;
+        };
+      };
+    }>;
+    readonly pageInfo: {
+      readonly __typename?: "PageInfo";
+      readonly endCursor?: string;
+      readonly hasNextPage?: boolean;
+      readonly hasPreviousPage?: boolean;
+      readonly startCursor?: string;
+    };
+  };
+};
 
 export type NftUniversalRouterAddressQueryVariables = Exact<{
   chain?: InputMaybe<Chain>;
 }>;
 
-
-export type NftUniversalRouterAddressQuery = { readonly __typename?: 'Query', readonly nftRoute?: { readonly __typename?: 'NftRouteResponse', readonly toAddress: string } };
+export type NftUniversalRouterAddressQuery = {
+  readonly __typename?: "Query";
+  readonly nftRoute?: {
+    readonly __typename?: "NftRouteResponse";
+    readonly toAddress: string;
+  };
+};
 
 export type NftRouteQueryVariables = Exact<{
   chain?: InputMaybe<Chain>;
-  senderAddress: Scalars['String'];
+  senderAddress: Scalars["String"];
   nftTrades: ReadonlyArray<NftTradeInput> | NftTradeInput;
   tokenTrades?: InputMaybe<ReadonlyArray<TokenTradeInput> | TokenTradeInput>;
 }>;
 
-
-export type NftRouteQuery = { readonly __typename?: 'Query', readonly nftRoute?: { readonly __typename?: 'NftRouteResponse', readonly id: string, readonly calldata: string, readonly toAddress: string, readonly route?: ReadonlyArray<{ readonly __typename?: 'NftTrade', readonly amount: number, readonly contractAddress: string, readonly id: string, readonly marketplace: NftMarketplace, readonly tokenId: string, readonly tokenType?: NftStandard, readonly price: { readonly __typename?: 'TokenAmount', readonly id: string, readonly currency: Currency, readonly value: string }, readonly quotePrice?: { readonly __typename?: 'TokenAmount', readonly id: string, readonly currency: Currency, readonly value: string } }>, readonly sendAmount: { readonly __typename?: 'TokenAmount', readonly id: string, readonly currency: Currency, readonly value: string } } };
+export type NftRouteQuery = {
+  readonly __typename?: "Query";
+  readonly nftRoute?: {
+    readonly __typename?: "NftRouteResponse";
+    readonly id: string;
+    readonly calldata: string;
+    readonly toAddress: string;
+    readonly route?: ReadonlyArray<{
+      readonly __typename?: "NftTrade";
+      readonly amount: number;
+      readonly contractAddress: string;
+      readonly id: string;
+      readonly marketplace: NftMarketplace;
+      readonly tokenId: string;
+      readonly tokenType?: NftStandard;
+      readonly price: {
+        readonly __typename?: "TokenAmount";
+        readonly id: string;
+        readonly currency: Currency;
+        readonly value: string;
+      };
+      readonly quotePrice?: {
+        readonly __typename?: "TokenAmount";
+        readonly id: string;
+        readonly currency: Currency;
+        readonly value: string;
+      };
+    }>;
+    readonly sendAmount: {
+      readonly __typename?: "TokenAmount";
+      readonly id: string;
+      readonly currency: Currency;
+      readonly value: string;
+    };
+  };
+};
 
 export type TrendingCollectionsQueryVariables = Exact<{
-  size?: InputMaybe<Scalars['Int']>;
+  size?: InputMaybe<Scalars["Int"]>;
   timePeriod?: InputMaybe<HistoryDuration>;
 }>;
 
-
-export type TrendingCollectionsQuery = { readonly __typename?: 'Query', readonly topCollections?: { readonly __typename?: 'NftCollectionConnection', readonly edges: ReadonlyArray<{ readonly __typename?: 'NftCollectionEdge', readonly node: { readonly __typename?: 'NftCollection', readonly name?: string, readonly isVerified?: boolean, readonly nftContracts?: ReadonlyArray<{ readonly __typename?: 'NftContract', readonly address: string, readonly totalSupply?: number }>, readonly image?: { readonly __typename?: 'Image', readonly url: string }, readonly bannerImage?: { readonly __typename?: 'Image', readonly url: string }, readonly markets?: ReadonlyArray<{ readonly __typename?: 'NftCollectionMarket', readonly owners?: number, readonly floorPrice?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly totalVolume?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly volume?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly volumePercentChange?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly floorPricePercentChange?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly sales?: { readonly __typename?: 'TimestampedAmount', readonly value: number }, readonly listings?: { readonly __typename?: 'TimestampedAmount', readonly value: number } }> } }> } };
+export type TrendingCollectionsQuery = {
+  readonly __typename?: "Query";
+  readonly topCollections?: {
+    readonly __typename?: "NftCollectionConnection";
+    readonly edges: ReadonlyArray<{
+      readonly __typename?: "NftCollectionEdge";
+      readonly node: {
+        readonly __typename?: "NftCollection";
+        readonly name?: string;
+        readonly isVerified?: boolean;
+        readonly nftContracts?: ReadonlyArray<{
+          readonly __typename?: "NftContract";
+          readonly address: string;
+          readonly totalSupply?: number;
+        }>;
+        readonly image?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly bannerImage?: {
+          readonly __typename?: "Image";
+          readonly url: string;
+        };
+        readonly markets?: ReadonlyArray<{
+          readonly __typename?: "NftCollectionMarket";
+          readonly owners?: number;
+          readonly floorPrice?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly totalVolume?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly volume?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly volumePercentChange?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly floorPricePercentChange?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly sales?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+          readonly listings?: {
+            readonly __typename?: "TimestampedAmount";
+            readonly value: number;
+          };
+        }>;
+      };
+    }>;
+  };
+};
 
 export type PortfolioBalancesQueryVariables = Exact<{
-  ownerAddress: Scalars['String'];
+  ownerAddress: Scalars["String"];
   chains: ReadonlyArray<Chain> | Chain;
 }>;
 
-
-export type PortfolioBalancesQuery = { readonly __typename?: 'Query', readonly portfolios?: ReadonlyArray<{ readonly __typename?: 'Portfolio', readonly id: string, readonly tokensTotalDenominatedValue?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly tokensTotalDenominatedValueChange?: { readonly __typename?: 'AmountChange', readonly absolute?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly percentage?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number } }, readonly tokenBalances?: ReadonlyArray<{ readonly __typename?: 'TokenBalance', readonly id: string, readonly quantity?: number, readonly denominatedValue?: { readonly __typename?: 'Amount', readonly id: string, readonly currency?: Currency, readonly value: number }, readonly tokenProjectMarket?: { readonly __typename?: 'TokenProjectMarket', readonly id: string, readonly pricePercentChange?: { readonly __typename?: 'Amount', readonly id: string, readonly value: number }, readonly tokenProject: { readonly __typename?: 'TokenProject', readonly id: string, readonly logoUrl?: string, readonly isSpam?: boolean } }, readonly token?: { readonly __typename?: 'Token', readonly id: string, readonly chain: Chain, readonly address?: string, readonly name?: string, readonly symbol?: string, readonly standard?: TokenStandard, readonly decimals?: number } }> }> };
+export type PortfolioBalancesQuery = {
+  readonly __typename?: "Query";
+  readonly portfolios?: ReadonlyArray<{
+    readonly __typename?: "Portfolio";
+    readonly id: string;
+    readonly tokensTotalDenominatedValue?: {
+      readonly __typename?: "Amount";
+      readonly id: string;
+      readonly value: number;
+    };
+    readonly tokensTotalDenominatedValueChange?: {
+      readonly __typename?: "AmountChange";
+      readonly absolute?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+      readonly percentage?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly value: number;
+      };
+    };
+    readonly tokenBalances?: ReadonlyArray<{
+      readonly __typename?: "TokenBalance";
+      readonly id: string;
+      readonly quantity?: number;
+      readonly denominatedValue?: {
+        readonly __typename?: "Amount";
+        readonly id: string;
+        readonly currency?: Currency;
+        readonly value: number;
+      };
+      readonly tokenProjectMarket?: {
+        readonly __typename?: "TokenProjectMarket";
+        readonly id: string;
+        readonly pricePercentChange?: {
+          readonly __typename?: "Amount";
+          readonly id: string;
+          readonly value: number;
+        };
+        readonly tokenProject: {
+          readonly __typename?: "TokenProject";
+          readonly id: string;
+          readonly logoUrl?: string;
+          readonly isSpam?: boolean;
+        };
+      };
+      readonly token?: {
+        readonly __typename?: "Token";
+        readonly id: string;
+        readonly chain: Chain;
+        readonly address?: string;
+        readonly name?: string;
+        readonly symbol?: string;
+        readonly standard?: TokenStandard;
+        readonly decimals?: number;
+      };
+    }>;
+  }>;
+};
 
 export const TransactionPartsFragmentDoc = gql`
-    fragment TransactionParts on Transaction {
-  id
-  blockNumber
-  hash
-  status
-  to
-  from
-  nonce
-}
-    `;
-export const TransactionDetailsPartsFragmentDoc = gql`
-    fragment TransactionDetailsParts on TransactionDetails {
-  id
-  type
-  from
-  to
-  hash
-  nonce
-  status
-}
-    `;
-export const TokenAssetPartsFragmentDoc = gql`
-    fragment TokenAssetParts on Token {
-  id
-  name
-  symbol
-  address
-  decimals
-  chain
-  standard
-  project {
+  fragment TransactionParts on Transaction {
     id
-    isSpam
-    logo {
+    blockNumber
+    hash
+    status
+    to
+    from
+    nonce
+  }
+`;
+export const TransactionDetailsPartsFragmentDoc = gql`
+  fragment TransactionDetailsParts on TransactionDetails {
+    id
+    type
+    from
+    to
+    hash
+    nonce
+    status
+  }
+`;
+export const TokenAssetPartsFragmentDoc = gql`
+  fragment TokenAssetParts on Token {
+    id
+    name
+    symbol
+    address
+    decimals
+    chain
+    standard
+    project {
+      id
+      isSpam
+      logo {
+        id
+        url
+      }
+    }
+  }
+`;
+export const SwapOrderDetailsPartsFragmentDoc = gql`
+  fragment SwapOrderDetailsParts on SwapOrderDetails {
+    id
+    offerer
+    hash
+    orderStatus: status
+    inputToken {
+      ...TokenAssetParts
+    }
+    inputTokenQuantity
+    outputToken {
+      ...TokenAssetParts
+    }
+    outputTokenQuantity
+  }
+  ${TokenAssetPartsFragmentDoc}
+`;
+export const TokenTransferPartsFragmentDoc = gql`
+  fragment TokenTransferParts on TokenTransfer {
+    id
+    asset {
+      ...TokenAssetParts
+    }
+    tokenStandard
+    quantity
+    sender
+    recipient
+    direction
+    transactedValue {
+      id
+      currency
+      value
+    }
+  }
+  ${TokenAssetPartsFragmentDoc}
+`;
+export const NftAssetPartsFragmentDoc = gql`
+  fragment NFTAssetParts on NftAsset {
+    id
+    name
+    nftContract {
+      id
+      chain
+      address
+    }
+    tokenId
+    image {
       id
       url
     }
+    collection {
+      id
+      name
+    }
   }
-}
-    `;
-export const SwapOrderDetailsPartsFragmentDoc = gql`
-    fragment SwapOrderDetailsParts on SwapOrderDetails {
-  id
-  offerer
-  hash
-  orderStatus: status
-  inputToken {
-    ...TokenAssetParts
-  }
-  inputTokenQuantity
-  outputToken {
-    ...TokenAssetParts
-  }
-  outputTokenQuantity
-}
-    ${TokenAssetPartsFragmentDoc}`;
-export const TokenTransferPartsFragmentDoc = gql`
-    fragment TokenTransferParts on TokenTransfer {
-  id
-  asset {
-    ...TokenAssetParts
-  }
-  tokenStandard
-  quantity
-  sender
-  recipient
-  direction
-  transactedValue {
-    id
-    currency
-    value
-  }
-}
-    ${TokenAssetPartsFragmentDoc}`;
-export const NftAssetPartsFragmentDoc = gql`
-    fragment NFTAssetParts on NftAsset {
-  id
-  name
-  nftContract {
-    id
-    chain
-    address
-  }
-  tokenId
-  image {
-    id
-    url
-  }
-  collection {
-    id
-    name
-  }
-}
-    `;
+`;
 export const NftTransferPartsFragmentDoc = gql`
-    fragment NFTTransferParts on NftTransfer {
-  id
-  asset {
-    ...NFTAssetParts
+  fragment NFTTransferParts on NftTransfer {
+    id
+    asset {
+      ...NFTAssetParts
+    }
+    nftStandard
+    sender
+    recipient
+    direction
   }
-  nftStandard
-  sender
-  recipient
-  direction
-}
-    ${NftAssetPartsFragmentDoc}`;
+  ${NftAssetPartsFragmentDoc}
+`;
 export const TokenApprovalPartsFragmentDoc = gql`
-    fragment TokenApprovalParts on TokenApproval {
-  id
-  asset {
-    ...TokenAssetParts
+  fragment TokenApprovalParts on TokenApproval {
+    id
+    asset {
+      ...TokenAssetParts
+    }
+    tokenStandard
+    approvedAddress
+    quantity
   }
-  tokenStandard
-  approvedAddress
-  quantity
-}
-    ${TokenAssetPartsFragmentDoc}`;
+  ${TokenAssetPartsFragmentDoc}
+`;
 export const NftApprovalPartsFragmentDoc = gql`
-    fragment NFTApprovalParts on NftApproval {
-  id
-  asset {
-    ...NFTAssetParts
+  fragment NFTApprovalParts on NftApproval {
+    id
+    asset {
+      ...NFTAssetParts
+    }
+    nftStandard
+    approvedAddress
   }
-  nftStandard
-  approvedAddress
-}
-    ${NftAssetPartsFragmentDoc}`;
+  ${NftAssetPartsFragmentDoc}
+`;
 export const NftApproveForAllPartsFragmentDoc = gql`
-    fragment NFTApproveForAllParts on NftApproveForAll {
-  id
-  asset {
-    ...NFTAssetParts
+  fragment NFTApproveForAllParts on NftApproveForAll {
+    id
+    asset {
+      ...NFTAssetParts
+    }
+    nftStandard
+    operatorAddress
+    approved
   }
-  nftStandard
-  operatorAddress
-  approved
-}
-    ${NftAssetPartsFragmentDoc}`;
+  ${NftAssetPartsFragmentDoc}
+`;
 export const AssetActivityPartsFragmentDoc = gql`
-    fragment AssetActivityParts on AssetActivity {
-  id
-  timestamp
-  type
-  chain
-  details {
-    __typename
-    ... on TransactionDetails {
-      ...TransactionDetailsParts
+  fragment AssetActivityParts on AssetActivity {
+    id
+    timestamp
+    type
+    chain
+    details {
+      __typename
+      ... on TransactionDetails {
+        ...TransactionDetailsParts
+      }
+      ... on SwapOrderDetails {
+        ...SwapOrderDetailsParts
+      }
     }
-    ... on SwapOrderDetails {
-      ...SwapOrderDetailsParts
+    assetChanges {
+      __typename
+      ... on TokenTransfer {
+        ...TokenTransferParts
+      }
+      ... on NftTransfer {
+        ...NFTTransferParts
+      }
+      ... on TokenApproval {
+        ...TokenApprovalParts
+      }
+      ... on NftApproval {
+        ...NFTApprovalParts
+      }
+      ... on NftApproveForAll {
+        ...NFTApproveForAllParts
+      }
     }
   }
-  assetChanges {
-    __typename
-    ... on TokenTransfer {
-      ...TokenTransferParts
-    }
-    ... on NftTransfer {
-      ...NFTTransferParts
-    }
-    ... on TokenApproval {
-      ...TokenApprovalParts
-    }
-    ... on NftApproval {
-      ...NFTApprovalParts
-    }
-    ... on NftApproveForAll {
-      ...NFTApproveForAllParts
-    }
-  }
-}
-    ${TransactionDetailsPartsFragmentDoc}
-${SwapOrderDetailsPartsFragmentDoc}
-${TokenTransferPartsFragmentDoc}
-${NftTransferPartsFragmentDoc}
-${TokenApprovalPartsFragmentDoc}
-${NftApprovalPartsFragmentDoc}
-${NftApproveForAllPartsFragmentDoc}`;
+  ${TransactionDetailsPartsFragmentDoc}
+  ${SwapOrderDetailsPartsFragmentDoc}
+  ${TokenTransferPartsFragmentDoc}
+  ${NftTransferPartsFragmentDoc}
+  ${TokenApprovalPartsFragmentDoc}
+  ${NftApprovalPartsFragmentDoc}
+  ${NftApproveForAllPartsFragmentDoc}
+`;
 export const RecentlySearchedAssetsDocument = gql`
-    query RecentlySearchedAssets($collectionAddresses: [String!]!, $contracts: [ContractInput!]!) {
-  nftCollections(filter: {addresses: $collectionAddresses}) {
-    edges {
-      node {
-        collectionId
-        image {
-          url
-        }
-        isVerified
-        name
-        numAssets
-        nftContracts {
-          address
-        }
-        markets(currencies: ETH) {
-          floorPrice {
-            currency
-            value
+  query RecentlySearchedAssets(
+    $collectionAddresses: [String!]!
+    $contracts: [ContractInput!]!
+  ) {
+    nftCollections(filter: { addresses: $collectionAddresses }) {
+      edges {
+        node {
+          collectionId
+          image {
+            url
+          }
+          isVerified
+          name
+          numAssets
+          nftContracts {
+            address
+          }
+          markets(currencies: ETH) {
+            floorPrice {
+              currency
+              value
+            }
           }
         }
       }
     }
-  }
-  tokens(contracts: $contracts) {
-    id
-    decimals
-    name
-    chain
-    standard
-    address
-    symbol
-    market(currency: USD) {
+    tokens(contracts: $contracts) {
       id
-      price {
+      decimals
+      name
+      chain
+      standard
+      address
+      symbol
+      market(currency: USD) {
         id
-        value
-        currency
+        price {
+          id
+          value
+          currency
+        }
+        pricePercentChange(duration: DAY) {
+          id
+          value
+        }
+        volume24H: volume(duration: DAY) {
+          id
+          value
+          currency
+        }
       }
-      pricePercentChange(duration: DAY) {
+      project {
         id
-        value
-      }
-      volume24H: volume(duration: DAY) {
-        id
-        value
-        currency
+        logoUrl
+        safetyLevel
       }
     }
-    project {
-      id
-      logoUrl
-      safetyLevel
-    }
   }
-}
-    `;
+`;
 
 /**
  * __useRecentlySearchedAssetsQuery__
@@ -1574,52 +3227,75 @@ export const RecentlySearchedAssetsDocument = gql`
  *   },
  * });
  */
-export function useRecentlySearchedAssetsQuery(baseOptions: Apollo.QueryHookOptions<RecentlySearchedAssetsQuery, RecentlySearchedAssetsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<RecentlySearchedAssetsQuery, RecentlySearchedAssetsQueryVariables>(RecentlySearchedAssetsDocument, options);
-      }
-export function useRecentlySearchedAssetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<RecentlySearchedAssetsQuery, RecentlySearchedAssetsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<RecentlySearchedAssetsQuery, RecentlySearchedAssetsQueryVariables>(RecentlySearchedAssetsDocument, options);
-        }
-export type RecentlySearchedAssetsQueryHookResult = ReturnType<typeof useRecentlySearchedAssetsQuery>;
-export type RecentlySearchedAssetsLazyQueryHookResult = ReturnType<typeof useRecentlySearchedAssetsLazyQuery>;
-export type RecentlySearchedAssetsQueryResult = Apollo.QueryResult<RecentlySearchedAssetsQuery, RecentlySearchedAssetsQueryVariables>;
+export function useRecentlySearchedAssetsQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    RecentlySearchedAssetsQuery,
+    RecentlySearchedAssetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    RecentlySearchedAssetsQuery,
+    RecentlySearchedAssetsQueryVariables
+  >(RecentlySearchedAssetsDocument, options);
+}
+export function useRecentlySearchedAssetsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    RecentlySearchedAssetsQuery,
+    RecentlySearchedAssetsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    RecentlySearchedAssetsQuery,
+    RecentlySearchedAssetsQueryVariables
+  >(RecentlySearchedAssetsDocument, options);
+}
+export type RecentlySearchedAssetsQueryHookResult = ReturnType<
+  typeof useRecentlySearchedAssetsQuery
+>;
+export type RecentlySearchedAssetsLazyQueryHookResult = ReturnType<
+  typeof useRecentlySearchedAssetsLazyQuery
+>;
+export type RecentlySearchedAssetsQueryResult = Apollo.QueryResult<
+  RecentlySearchedAssetsQuery,
+  RecentlySearchedAssetsQueryVariables
+>;
 export const SearchTokensDocument = gql`
-    query SearchTokens($searchQuery: String!) {
-  searchTokens(searchQuery: $searchQuery) {
-    id
-    decimals
-    name
-    chain
-    standard
-    address
-    symbol
-    market(currency: USD) {
+  query SearchTokens($searchQuery: String!) {
+    searchTokens(searchQuery: $searchQuery) {
       id
-      price {
+      decimals
+      name
+      chain
+      standard
+      address
+      symbol
+      market(currency: USD) {
         id
-        value
-        currency
+        price {
+          id
+          value
+          currency
+        }
+        pricePercentChange(duration: DAY) {
+          id
+          value
+        }
+        volume24H: volume(duration: DAY) {
+          id
+          value
+          currency
+        }
       }
-      pricePercentChange(duration: DAY) {
+      project {
         id
-        value
+        logoUrl
+        safetyLevel
       }
-      volume24H: volume(duration: DAY) {
-        id
-        value
-        currency
-      }
-    }
-    project {
-      id
-      logoUrl
-      safetyLevel
     }
   }
-}
-    `;
+`;
 
 /**
  * __useSearchTokensQuery__
@@ -1637,68 +3313,91 @@ export const SearchTokensDocument = gql`
  *   },
  * });
  */
-export function useSearchTokensQuery(baseOptions: Apollo.QueryHookOptions<SearchTokensQuery, SearchTokensQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<SearchTokensQuery, SearchTokensQueryVariables>(SearchTokensDocument, options);
-      }
-export function useSearchTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<SearchTokensQuery, SearchTokensQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<SearchTokensQuery, SearchTokensQueryVariables>(SearchTokensDocument, options);
-        }
-export type SearchTokensQueryHookResult = ReturnType<typeof useSearchTokensQuery>;
-export type SearchTokensLazyQueryHookResult = ReturnType<typeof useSearchTokensLazyQuery>;
-export type SearchTokensQueryResult = Apollo.QueryResult<SearchTokensQuery, SearchTokensQueryVariables>;
+export function useSearchTokensQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    SearchTokensQuery,
+    SearchTokensQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<SearchTokensQuery, SearchTokensQueryVariables>(
+    SearchTokensDocument,
+    options,
+  );
+}
+export function useSearchTokensLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    SearchTokensQuery,
+    SearchTokensQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<SearchTokensQuery, SearchTokensQueryVariables>(
+    SearchTokensDocument,
+    options,
+  );
+}
+export type SearchTokensQueryHookResult = ReturnType<
+  typeof useSearchTokensQuery
+>;
+export type SearchTokensLazyQueryHookResult = ReturnType<
+  typeof useSearchTokensLazyQuery
+>;
+export type SearchTokensQueryResult = Apollo.QueryResult<
+  SearchTokensQuery,
+  SearchTokensQueryVariables
+>;
 export const TokenDocument = gql`
-    query Token($chain: Chain!, $address: String = null) {
-  token(chain: $chain, address: $address) {
-    id
-    decimals
-    name
-    chain
-    address
-    symbol
-    standard
-    market(currency: USD) {
+  query Token($chain: Chain!, $address: String = null) {
+    token(chain: $chain, address: $address) {
       id
-      totalValueLocked {
+      decimals
+      name
+      chain
+      address
+      symbol
+      standard
+      market(currency: USD) {
         id
-        value
-        currency
+        totalValueLocked {
+          id
+          value
+          currency
+        }
+        price {
+          id
+          value
+          currency
+        }
+        volume24H: volume(duration: DAY) {
+          id
+          value
+          currency
+        }
+        priceHigh52W: priceHighLow(duration: YEAR, highLow: HIGH) {
+          id
+          value
+        }
+        priceLow52W: priceHighLow(duration: YEAR, highLow: LOW) {
+          id
+          value
+        }
       }
-      price {
+      project {
         id
-        value
-        currency
-      }
-      volume24H: volume(duration: DAY) {
-        id
-        value
-        currency
-      }
-      priceHigh52W: priceHighLow(duration: YEAR, highLow: HIGH) {
-        id
-        value
-      }
-      priceLow52W: priceHighLow(duration: YEAR, highLow: LOW) {
-        id
-        value
-      }
-    }
-    project {
-      id
-      description
-      homepageUrl
-      twitterName
-      logoUrl
-      tokens {
-        id
-        chain
-        address
+        description
+        homepageUrl
+        twitterName
+        logoUrl
+        tokens {
+          id
+          chain
+          address
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTokenQuery__
@@ -1717,38 +3416,55 @@ export const TokenDocument = gql`
  *   },
  * });
  */
-export function useTokenQuery(baseOptions: Apollo.QueryHookOptions<TokenQuery, TokenQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TokenQuery, TokenQueryVariables>(TokenDocument, options);
-      }
-export function useTokenLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenQuery, TokenQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TokenQuery, TokenQueryVariables>(TokenDocument, options);
-        }
+export function useTokenQuery(
+  baseOptions: Apollo.QueryHookOptions<TokenQuery, TokenQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<TokenQuery, TokenQueryVariables>(
+    TokenDocument,
+    options,
+  );
+}
+export function useTokenLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<TokenQuery, TokenQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<TokenQuery, TokenQueryVariables>(
+    TokenDocument,
+    options,
+  );
+}
 export type TokenQueryHookResult = ReturnType<typeof useTokenQuery>;
 export type TokenLazyQueryHookResult = ReturnType<typeof useTokenLazyQuery>;
-export type TokenQueryResult = Apollo.QueryResult<TokenQuery, TokenQueryVariables>;
+export type TokenQueryResult = Apollo.QueryResult<
+  TokenQuery,
+  TokenQueryVariables
+>;
 export const TokenPriceDocument = gql`
-    query TokenPrice($chain: Chain!, $address: String = null, $duration: HistoryDuration!) {
-  token(chain: $chain, address: $address) {
-    id
-    address
-    chain
-    market(currency: USD) {
+  query TokenPrice(
+    $chain: Chain!
+    $address: String = null
+    $duration: HistoryDuration!
+  ) {
+    token(chain: $chain, address: $address) {
       id
-      price {
+      address
+      chain
+      market(currency: USD) {
         id
-        value
-      }
-      priceHistory(duration: $duration) {
-        id
-        timestamp
-        value
+        price {
+          id
+          value
+        }
+        priceHistory(duration: $duration) {
+          id
+          timestamp
+          value
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTokenPriceQuery__
@@ -1768,37 +3484,58 @@ export const TokenPriceDocument = gql`
  *   },
  * });
  */
-export function useTokenPriceQuery(baseOptions: Apollo.QueryHookOptions<TokenPriceQuery, TokenPriceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TokenPriceQuery, TokenPriceQueryVariables>(TokenPriceDocument, options);
-      }
-export function useTokenPriceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenPriceQuery, TokenPriceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TokenPriceQuery, TokenPriceQueryVariables>(TokenPriceDocument, options);
-        }
+export function useTokenPriceQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    TokenPriceQuery,
+    TokenPriceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<TokenPriceQuery, TokenPriceQueryVariables>(
+    TokenPriceDocument,
+    options,
+  );
+}
+export function useTokenPriceLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TokenPriceQuery,
+    TokenPriceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<TokenPriceQuery, TokenPriceQueryVariables>(
+    TokenPriceDocument,
+    options,
+  );
+}
 export type TokenPriceQueryHookResult = ReturnType<typeof useTokenPriceQuery>;
-export type TokenPriceLazyQueryHookResult = ReturnType<typeof useTokenPriceLazyQuery>;
-export type TokenPriceQueryResult = Apollo.QueryResult<TokenPriceQuery, TokenPriceQueryVariables>;
+export type TokenPriceLazyQueryHookResult = ReturnType<
+  typeof useTokenPriceLazyQuery
+>;
+export type TokenPriceQueryResult = Apollo.QueryResult<
+  TokenPriceQuery,
+  TokenPriceQueryVariables
+>;
 export const UniswapPricesDocument = gql`
-    query UniswapPrices($contracts: [ContractInput!]!) {
-  tokens(contracts: $contracts) {
-    id
-    address
-    chain
-    standard
-    project {
+  query UniswapPrices($contracts: [ContractInput!]!) {
+    tokens(contracts: $contracts) {
       id
-      markets(currencies: [USD]) {
+      address
+      chain
+      standard
+      project {
         id
-        price {
+        markets(currencies: [USD]) {
           id
-          value
+          price {
+            id
+            value
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useUniswapPricesQuery__
@@ -1816,38 +3553,61 @@ export const UniswapPricesDocument = gql`
  *   },
  * });
  */
-export function useUniswapPricesQuery(baseOptions: Apollo.QueryHookOptions<UniswapPricesQuery, UniswapPricesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<UniswapPricesQuery, UniswapPricesQueryVariables>(UniswapPricesDocument, options);
-      }
-export function useUniswapPricesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<UniswapPricesQuery, UniswapPricesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<UniswapPricesQuery, UniswapPricesQueryVariables>(UniswapPricesDocument, options);
-        }
-export type UniswapPricesQueryHookResult = ReturnType<typeof useUniswapPricesQuery>;
-export type UniswapPricesLazyQueryHookResult = ReturnType<typeof useUniswapPricesLazyQuery>;
-export type UniswapPricesQueryResult = Apollo.QueryResult<UniswapPricesQuery, UniswapPricesQueryVariables>;
+export function useUniswapPricesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    UniswapPricesQuery,
+    UniswapPricesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<UniswapPricesQuery, UniswapPricesQueryVariables>(
+    UniswapPricesDocument,
+    options,
+  );
+}
+export function useUniswapPricesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    UniswapPricesQuery,
+    UniswapPricesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<UniswapPricesQuery, UniswapPricesQueryVariables>(
+    UniswapPricesDocument,
+    options,
+  );
+}
+export type UniswapPricesQueryHookResult = ReturnType<
+  typeof useUniswapPricesQuery
+>;
+export type UniswapPricesLazyQueryHookResult = ReturnType<
+  typeof useUniswapPricesLazyQuery
+>;
+export type UniswapPricesQueryResult = Apollo.QueryResult<
+  UniswapPricesQuery,
+  UniswapPricesQueryVariables
+>;
 export const TokenSpotPriceDocument = gql`
-    query TokenSpotPrice($chain: Chain!, $address: String = null) {
-  token(chain: $chain, address: $address) {
-    id
-    address
-    chain
-    name
-    symbol
-    project {
+  query TokenSpotPrice($chain: Chain!, $address: String = null) {
+    token(chain: $chain, address: $address) {
       id
-      markets(currencies: [USD]) {
+      address
+      chain
+      name
+      symbol
+      project {
         id
-        price {
+        markets(currencies: [USD]) {
           id
-          value
+          price {
+            id
+            value
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTokenSpotPriceQuery__
@@ -1866,56 +3626,79 @@ export const TokenSpotPriceDocument = gql`
  *   },
  * });
  */
-export function useTokenSpotPriceQuery(baseOptions: Apollo.QueryHookOptions<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>(TokenSpotPriceDocument, options);
-      }
-export function useTokenSpotPriceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>(TokenSpotPriceDocument, options);
-        }
-export type TokenSpotPriceQueryHookResult = ReturnType<typeof useTokenSpotPriceQuery>;
-export type TokenSpotPriceLazyQueryHookResult = ReturnType<typeof useTokenSpotPriceLazyQuery>;
-export type TokenSpotPriceQueryResult = Apollo.QueryResult<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>;
+export function useTokenSpotPriceQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    TokenSpotPriceQuery,
+    TokenSpotPriceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>(
+    TokenSpotPriceDocument,
+    options,
+  );
+}
+export function useTokenSpotPriceLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TokenSpotPriceQuery,
+    TokenSpotPriceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<TokenSpotPriceQuery, TokenSpotPriceQueryVariables>(
+    TokenSpotPriceDocument,
+    options,
+  );
+}
+export type TokenSpotPriceQueryHookResult = ReturnType<
+  typeof useTokenSpotPriceQuery
+>;
+export type TokenSpotPriceLazyQueryHookResult = ReturnType<
+  typeof useTokenSpotPriceLazyQuery
+>;
+export type TokenSpotPriceQueryResult = Apollo.QueryResult<
+  TokenSpotPriceQuery,
+  TokenSpotPriceQueryVariables
+>;
 export const TopTokens100Document = gql`
-    query TopTokens100($duration: HistoryDuration!, $chain: Chain!) {
-  topTokens(pageSize: 100, page: 1, chain: $chain, orderBy: VOLUME) {
-    id
-    name
-    chain
-    address
-    symbol
-    standard
-    market(currency: USD) {
+  query TopTokens100($duration: HistoryDuration!, $chain: Chain!) {
+    topTokens(pageSize: 100, page: 1, chain: $chain, orderBy: VOLUME) {
       id
-      totalValueLocked {
+      name
+      chain
+      address
+      symbol
+      standard
+      market(currency: USD) {
         id
-        value
-        currency
+        totalValueLocked {
+          id
+          value
+          currency
+        }
+        price {
+          id
+          value
+          currency
+        }
+        pricePercentChange(duration: $duration) {
+          id
+          currency
+          value
+        }
+        volume(duration: $duration) {
+          id
+          value
+          currency
+        }
       }
-      price {
+      project {
         id
-        value
-        currency
+        logoUrl
       }
-      pricePercentChange(duration: $duration) {
-        id
-        currency
-        value
-      }
-      volume(duration: $duration) {
-        id
-        value
-        currency
-      }
-    }
-    project {
-      id
-      logoUrl
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTopTokens100Query__
@@ -1934,34 +3717,57 @@ export const TopTokens100Document = gql`
  *   },
  * });
  */
-export function useTopTokens100Query(baseOptions: Apollo.QueryHookOptions<TopTokens100Query, TopTokens100QueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TopTokens100Query, TopTokens100QueryVariables>(TopTokens100Document, options);
-      }
-export function useTopTokens100LazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopTokens100Query, TopTokens100QueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TopTokens100Query, TopTokens100QueryVariables>(TopTokens100Document, options);
-        }
-export type TopTokens100QueryHookResult = ReturnType<typeof useTopTokens100Query>;
-export type TopTokens100LazyQueryHookResult = ReturnType<typeof useTopTokens100LazyQuery>;
-export type TopTokens100QueryResult = Apollo.QueryResult<TopTokens100Query, TopTokens100QueryVariables>;
+export function useTopTokens100Query(
+  baseOptions: Apollo.QueryHookOptions<
+    TopTokens100Query,
+    TopTokens100QueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<TopTokens100Query, TopTokens100QueryVariables>(
+    TopTokens100Document,
+    options,
+  );
+}
+export function useTopTokens100LazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TopTokens100Query,
+    TopTokens100QueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<TopTokens100Query, TopTokens100QueryVariables>(
+    TopTokens100Document,
+    options,
+  );
+}
+export type TopTokens100QueryHookResult = ReturnType<
+  typeof useTopTokens100Query
+>;
+export type TopTokens100LazyQueryHookResult = ReturnType<
+  typeof useTopTokens100LazyQuery
+>;
+export type TopTokens100QueryResult = Apollo.QueryResult<
+  TopTokens100Query,
+  TopTokens100QueryVariables
+>;
 export const TopTokensSparklineDocument = gql`
-    query TopTokensSparkline($duration: HistoryDuration!, $chain: Chain!) {
-  topTokens(pageSize: 100, page: 1, chain: $chain, orderBy: VOLUME) {
-    id
-    address
-    chain
-    market(currency: USD) {
+  query TopTokensSparkline($duration: HistoryDuration!, $chain: Chain!) {
+    topTokens(pageSize: 100, page: 1, chain: $chain, orderBy: VOLUME) {
       id
-      priceHistory(duration: $duration) {
+      address
+      chain
+      market(currency: USD) {
         id
-        timestamp
-        value
+        priceHistory(duration: $duration) {
+          id
+          timestamp
+          value
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTopTokensSparklineQuery__
@@ -1980,52 +3786,75 @@ export const TopTokensSparklineDocument = gql`
  *   },
  * });
  */
-export function useTopTokensSparklineQuery(baseOptions: Apollo.QueryHookOptions<TopTokensSparklineQuery, TopTokensSparklineQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TopTokensSparklineQuery, TopTokensSparklineQueryVariables>(TopTokensSparklineDocument, options);
-      }
-export function useTopTokensSparklineLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopTokensSparklineQuery, TopTokensSparklineQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TopTokensSparklineQuery, TopTokensSparklineQueryVariables>(TopTokensSparklineDocument, options);
-        }
-export type TopTokensSparklineQueryHookResult = ReturnType<typeof useTopTokensSparklineQuery>;
-export type TopTokensSparklineLazyQueryHookResult = ReturnType<typeof useTopTokensSparklineLazyQuery>;
-export type TopTokensSparklineQueryResult = Apollo.QueryResult<TopTokensSparklineQuery, TopTokensSparklineQueryVariables>;
+export function useTopTokensSparklineQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    TopTokensSparklineQuery,
+    TopTokensSparklineQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    TopTokensSparklineQuery,
+    TopTokensSparklineQueryVariables
+  >(TopTokensSparklineDocument, options);
+}
+export function useTopTokensSparklineLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TopTokensSparklineQuery,
+    TopTokensSparklineQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    TopTokensSparklineQuery,
+    TopTokensSparklineQueryVariables
+  >(TopTokensSparklineDocument, options);
+}
+export type TopTokensSparklineQueryHookResult = ReturnType<
+  typeof useTopTokensSparklineQuery
+>;
+export type TopTokensSparklineLazyQueryHookResult = ReturnType<
+  typeof useTopTokensSparklineLazyQuery
+>;
+export type TopTokensSparklineQueryResult = Apollo.QueryResult<
+  TopTokensSparklineQuery,
+  TopTokensSparklineQueryVariables
+>;
 export const TrendingTokensDocument = gql`
-    query TrendingTokens($chain: Chain!) {
-  topTokens(pageSize: 4, page: 1, chain: $chain, orderBy: VOLUME) {
-    id
-    decimals
-    name
-    chain
-    standard
-    address
-    symbol
-    market(currency: USD) {
+  query TrendingTokens($chain: Chain!) {
+    topTokens(pageSize: 4, page: 1, chain: $chain, orderBy: VOLUME) {
       id
-      price {
+      decimals
+      name
+      chain
+      standard
+      address
+      symbol
+      market(currency: USD) {
         id
-        value
-        currency
+        price {
+          id
+          value
+          currency
+        }
+        pricePercentChange(duration: DAY) {
+          id
+          value
+        }
+        volume24H: volume(duration: DAY) {
+          id
+          value
+          currency
+        }
       }
-      pricePercentChange(duration: DAY) {
+      project {
         id
-        value
+        logoUrl
+        safetyLevel
       }
-      volume24H: volume(duration: DAY) {
-        id
-        value
-        currency
-      }
-    }
-    project {
-      id
-      logoUrl
-      safetyLevel
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTrendingTokensQuery__
@@ -2043,27 +3872,51 @@ export const TrendingTokensDocument = gql`
  *   },
  * });
  */
-export function useTrendingTokensQuery(baseOptions: Apollo.QueryHookOptions<TrendingTokensQuery, TrendingTokensQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TrendingTokensQuery, TrendingTokensQueryVariables>(TrendingTokensDocument, options);
-      }
-export function useTrendingTokensLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TrendingTokensQuery, TrendingTokensQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TrendingTokensQuery, TrendingTokensQueryVariables>(TrendingTokensDocument, options);
-        }
-export type TrendingTokensQueryHookResult = ReturnType<typeof useTrendingTokensQuery>;
-export type TrendingTokensLazyQueryHookResult = ReturnType<typeof useTrendingTokensLazyQuery>;
-export type TrendingTokensQueryResult = Apollo.QueryResult<TrendingTokensQuery, TrendingTokensQueryVariables>;
+export function useTrendingTokensQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    TrendingTokensQuery,
+    TrendingTokensQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<TrendingTokensQuery, TrendingTokensQueryVariables>(
+    TrendingTokensDocument,
+    options,
+  );
+}
+export function useTrendingTokensLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TrendingTokensQuery,
+    TrendingTokensQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<TrendingTokensQuery, TrendingTokensQueryVariables>(
+    TrendingTokensDocument,
+    options,
+  );
+}
+export type TrendingTokensQueryHookResult = ReturnType<
+  typeof useTrendingTokensQuery
+>;
+export type TrendingTokensLazyQueryHookResult = ReturnType<
+  typeof useTrendingTokensLazyQuery
+>;
+export type TrendingTokensQueryResult = Apollo.QueryResult<
+  TrendingTokensQuery,
+  TrendingTokensQueryVariables
+>;
 export const ActivityDocument = gql`
-    query Activity($account: String!) {
-  portfolios(ownerAddresses: [$account]) {
-    id
-    assetActivities(pageSize: 100, page: 1, includeOffChain: true) {
-      ...AssetActivityParts
+  query Activity($account: String!) {
+    portfolios(ownerAddresses: [$account]) {
+      id
+      assetActivities(pageSize: 100, page: 1, includeOffChain: true) {
+        ...AssetActivityParts
+      }
     }
   }
-}
-    ${AssetActivityPartsFragmentDoc}`;
+  ${AssetActivityPartsFragmentDoc}
+`;
 
 /**
  * __useActivityQuery__
@@ -2081,92 +3934,119 @@ export const ActivityDocument = gql`
  *   },
  * });
  */
-export function useActivityQuery(baseOptions: Apollo.QueryHookOptions<ActivityQuery, ActivityQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<ActivityQuery, ActivityQueryVariables>(ActivityDocument, options);
-      }
-export function useActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<ActivityQuery, ActivityQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<ActivityQuery, ActivityQueryVariables>(ActivityDocument, options);
-        }
+export function useActivityQuery(
+  baseOptions: Apollo.QueryHookOptions<ActivityQuery, ActivityQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<ActivityQuery, ActivityQueryVariables>(
+    ActivityDocument,
+    options,
+  );
+}
+export function useActivityLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    ActivityQuery,
+    ActivityQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<ActivityQuery, ActivityQueryVariables>(
+    ActivityDocument,
+    options,
+  );
+}
 export type ActivityQueryHookResult = ReturnType<typeof useActivityQuery>;
-export type ActivityLazyQueryHookResult = ReturnType<typeof useActivityLazyQuery>;
-export type ActivityQueryResult = Apollo.QueryResult<ActivityQuery, ActivityQueryVariables>;
+export type ActivityLazyQueryHookResult = ReturnType<
+  typeof useActivityLazyQuery
+>;
+export type ActivityQueryResult = Apollo.QueryResult<
+  ActivityQuery,
+  ActivityQueryVariables
+>;
 export const AssetDocument = gql`
-    query Asset($address: String!, $orderBy: NftAssetSortableField, $asc: Boolean, $filter: NftAssetsFilterInput, $first: Int, $after: String, $last: Int, $before: String) {
-  nftAssets(
-    address: $address
-    orderBy: $orderBy
-    asc: $asc
-    filter: $filter
-    first: $first
-    after: $after
-    last: $last
-    before: $before
+  query Asset(
+    $address: String!
+    $orderBy: NftAssetSortableField
+    $asc: Boolean
+    $filter: NftAssetsFilterInput
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
   ) {
-    edges {
-      node {
-        id
-        name
-        image {
-          url
-        }
-        smallImage {
-          url
-        }
-        tokenId
-        animationUrl
-        suspiciousFlag
-        collection {
+    nftAssets(
+      address: $address
+      orderBy: $orderBy
+      asc: $asc
+      filter: $filter
+      first: $first
+      after: $after
+      last: $last
+      before: $before
+    ) {
+      edges {
+        node {
+          id
           name
-          isVerified
-          nftContracts {
-            address
-            standard
+          image {
+            url
           }
-        }
-        listings(first: 1) {
-          edges {
-            node {
+          smallImage {
+            url
+          }
+          tokenId
+          animationUrl
+          suspiciousFlag
+          collection {
+            name
+            isVerified
+            nftContracts {
               address
-              createdAt
-              endAt
-              id
-              maker
-              marketplace
-              marketplaceUrl
-              orderHash
-              price {
-                currency
-                value
-              }
-              quantity
-              startAt
-              status
-              taker
-              tokenId
-              type
-              protocolParameters
+              standard
             }
-            cursor
+          }
+          listings(first: 1) {
+            edges {
+              node {
+                address
+                createdAt
+                endAt
+                id
+                maker
+                marketplace
+                marketplaceUrl
+                orderHash
+                price {
+                  currency
+                  value
+                }
+                quantity
+                startAt
+                status
+                taker
+                tokenId
+                type
+                protocolParameters
+              }
+              cursor
+            }
+          }
+          rarities {
+            rank
           }
         }
-        rarities {
-          rank
-        }
+        cursor
       }
-      cursor
-    }
-    totalCount
-    pageInfo {
-      endCursor
-      hasNextPage
-      hasPreviousPage
-      startCursor
+      totalCount
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useAssetQuery__
@@ -2191,98 +4071,111 @@ export const AssetDocument = gql`
  *   },
  * });
  */
-export function useAssetQuery(baseOptions: Apollo.QueryHookOptions<AssetQuery, AssetQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<AssetQuery, AssetQueryVariables>(AssetDocument, options);
-      }
-export function useAssetLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<AssetQuery, AssetQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<AssetQuery, AssetQueryVariables>(AssetDocument, options);
-        }
+export function useAssetQuery(
+  baseOptions: Apollo.QueryHookOptions<AssetQuery, AssetQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<AssetQuery, AssetQueryVariables>(
+    AssetDocument,
+    options,
+  );
+}
+export function useAssetLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<AssetQuery, AssetQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<AssetQuery, AssetQueryVariables>(
+    AssetDocument,
+    options,
+  );
+}
 export type AssetQueryHookResult = ReturnType<typeof useAssetQuery>;
 export type AssetLazyQueryHookResult = ReturnType<typeof useAssetLazyQuery>;
-export type AssetQueryResult = Apollo.QueryResult<AssetQuery, AssetQueryVariables>;
+export type AssetQueryResult = Apollo.QueryResult<
+  AssetQuery,
+  AssetQueryVariables
+>;
 export const CollectionDocument = gql`
-    query Collection($addresses: [String!]!) {
-  nftCollections(filter: {addresses: $addresses}) {
-    edges {
-      cursor
-      node {
-        bannerImage {
-          url
-        }
-        collectionId
-        description
-        discordUrl
-        homepageUrl
-        image {
-          url
-        }
-        instagramName
-        isVerified
-        name
-        numAssets
-        twitterName
-        nftContracts {
-          address
-          chain
+  query Collection($addresses: [String!]!) {
+    nftCollections(filter: { addresses: $addresses }) {
+      edges {
+        cursor
+        node {
+          bannerImage {
+            url
+          }
+          collectionId
+          description
+          discordUrl
+          homepageUrl
+          image {
+            url
+          }
+          instagramName
+          isVerified
           name
-          standard
-          symbol
-          totalSupply
-        }
-        traits {
-          name
-          values
-          stats {
+          numAssets
+          twitterName
+          nftContracts {
+            address
+            chain
             name
-            value
-            assets
-            listings
+            standard
+            symbol
+            totalSupply
           }
-        }
-        markets(currencies: ETH) {
-          floorPrice {
-            currency
-            value
+          traits {
+            name
+            values
+            stats {
+              name
+              value
+              assets
+              listings
+            }
           }
-          owners
-          totalVolume {
-            value
-            currency
-          }
-          listings {
-            value
-          }
-          volume(duration: DAY) {
-            value
-            currency
-          }
-          volumePercentChange(duration: DAY) {
-            value
-            currency
-          }
-          floorPricePercentChange(duration: DAY) {
-            value
-            currency
-          }
-          marketplaces {
-            marketplace
-            listings
-            floorPrice
+          markets(currencies: ETH) {
+            floorPrice {
+              currency
+              value
+            }
+            owners
+            totalVolume {
+              value
+              currency
+            }
+            listings {
+              value
+            }
+            volume(duration: DAY) {
+              value
+              currency
+            }
+            volumePercentChange(duration: DAY) {
+              value
+              currency
+            }
+            floorPricePercentChange(duration: DAY) {
+              value
+              currency
+            }
+            marketplaces {
+              marketplace
+              listings
+              floorPrice
+            }
           }
         }
       }
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-      hasPreviousPage
-      startCursor
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useCollectionQuery__
@@ -2300,53 +4193,74 @@ export const CollectionDocument = gql`
  *   },
  * });
  */
-export function useCollectionQuery(baseOptions: Apollo.QueryHookOptions<CollectionQuery, CollectionQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CollectionQuery, CollectionQueryVariables>(CollectionDocument, options);
-      }
-export function useCollectionLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionQuery, CollectionQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CollectionQuery, CollectionQueryVariables>(CollectionDocument, options);
-        }
+export function useCollectionQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CollectionQuery,
+    CollectionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<CollectionQuery, CollectionQueryVariables>(
+    CollectionDocument,
+    options,
+  );
+}
+export function useCollectionLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CollectionQuery,
+    CollectionQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<CollectionQuery, CollectionQueryVariables>(
+    CollectionDocument,
+    options,
+  );
+}
 export type CollectionQueryHookResult = ReturnType<typeof useCollectionQuery>;
-export type CollectionLazyQueryHookResult = ReturnType<typeof useCollectionLazyQuery>;
-export type CollectionQueryResult = Apollo.QueryResult<CollectionQuery, CollectionQueryVariables>;
+export type CollectionLazyQueryHookResult = ReturnType<
+  typeof useCollectionLazyQuery
+>;
+export type CollectionQueryResult = Apollo.QueryResult<
+  CollectionQuery,
+  CollectionQueryVariables
+>;
 export const CollectionSearchDocument = gql`
-    query CollectionSearch($query: String!) {
-  nftCollections(filter: {nameQuery: $query}) {
-    edges {
-      cursor
-      node {
-        image {
-          url
-        }
-        isVerified
-        name
-        numAssets
-        nftContracts {
-          address
-          chain
+  query CollectionSearch($query: String!) {
+    nftCollections(filter: { nameQuery: $query }) {
+      edges {
+        cursor
+        node {
+          image {
+            url
+          }
+          isVerified
           name
-          symbol
-          totalSupply
-        }
-        markets(currencies: ETH) {
-          floorPrice {
-            currency
-            value
+          numAssets
+          nftContracts {
+            address
+            chain
+            name
+            symbol
+            totalSupply
+          }
+          markets(currencies: ETH) {
+            floorPrice {
+              currency
+              value
+            }
           }
         }
       }
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-      hasPreviousPage
-      startCursor
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useCollectionSearchQuery__
@@ -2364,102 +4278,128 @@ export const CollectionSearchDocument = gql`
  *   },
  * });
  */
-export function useCollectionSearchQuery(baseOptions: Apollo.QueryHookOptions<CollectionSearchQuery, CollectionSearchQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<CollectionSearchQuery, CollectionSearchQueryVariables>(CollectionSearchDocument, options);
-      }
-export function useCollectionSearchLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<CollectionSearchQuery, CollectionSearchQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<CollectionSearchQuery, CollectionSearchQueryVariables>(CollectionSearchDocument, options);
-        }
-export type CollectionSearchQueryHookResult = ReturnType<typeof useCollectionSearchQuery>;
-export type CollectionSearchLazyQueryHookResult = ReturnType<typeof useCollectionSearchLazyQuery>;
-export type CollectionSearchQueryResult = Apollo.QueryResult<CollectionSearchQuery, CollectionSearchQueryVariables>;
+export function useCollectionSearchQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    CollectionSearchQuery,
+    CollectionSearchQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<CollectionSearchQuery, CollectionSearchQueryVariables>(
+    CollectionSearchDocument,
+    options,
+  );
+}
+export function useCollectionSearchLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    CollectionSearchQuery,
+    CollectionSearchQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    CollectionSearchQuery,
+    CollectionSearchQueryVariables
+  >(CollectionSearchDocument, options);
+}
+export type CollectionSearchQueryHookResult = ReturnType<
+  typeof useCollectionSearchQuery
+>;
+export type CollectionSearchLazyQueryHookResult = ReturnType<
+  typeof useCollectionSearchLazyQuery
+>;
+export type CollectionSearchQueryResult = Apollo.QueryResult<
+  CollectionSearchQuery,
+  CollectionSearchQueryVariables
+>;
 export const DetailsDocument = gql`
-    query Details($address: String!, $tokenId: String!) {
-  nftAssets(address: $address, filter: {listed: false, tokenIds: [$tokenId]}) {
-    edges {
-      node {
-        id
-        name
-        ownerAddress
-        image {
-          url
-        }
-        smallImage {
-          url
-        }
-        originalImage {
-          url
-        }
-        tokenId
-        description
-        animationUrl
-        suspiciousFlag
-        creator {
-          address
-          profileImage {
-            url
-          }
-          isVerified
-        }
-        collection {
+  query Details($address: String!, $tokenId: String!) {
+    nftAssets(
+      address: $address
+      filter: { listed: false, tokenIds: [$tokenId] }
+    ) {
+      edges {
+        node {
+          id
           name
-          isVerified
-          numAssets
-          twitterName
-          discordUrl
-          homepageUrl
+          ownerAddress
           image {
             url
           }
-          nftContracts {
-            address
-            standard
+          smallImage {
+            url
           }
+          originalImage {
+            url
+          }
+          tokenId
           description
-        }
-        listings(first: 1) {
-          edges {
-            node {
-              address
-              createdAt
-              endAt
-              id
-              maker
-              marketplace
-              marketplaceUrl
-              orderHash
-              price {
-                currency
-                value
-              }
-              quantity
-              startAt
-              status
-              taker
-              tokenId
-              type
-              protocolParameters
+          animationUrl
+          suspiciousFlag
+          creator {
+            address
+            profileImage {
+              url
             }
-            cursor
+            isVerified
           }
-        }
-        rarities {
-          provider
-          rank
-          score
-        }
-        metadataUrl
-        traits {
-          name
-          value
+          collection {
+            name
+            isVerified
+            numAssets
+            twitterName
+            discordUrl
+            homepageUrl
+            image {
+              url
+            }
+            nftContracts {
+              address
+              standard
+            }
+            description
+          }
+          listings(first: 1) {
+            edges {
+              node {
+                address
+                createdAt
+                endAt
+                id
+                maker
+                marketplace
+                marketplaceUrl
+                orderHash
+                price {
+                  currency
+                  value
+                }
+                quantity
+                startAt
+                status
+                taker
+                tokenId
+                type
+                protocolParameters
+              }
+              cursor
+            }
+          }
+          rarities {
+            provider
+            rank
+            score
+          }
+          metadataUrl
+          traits {
+            name
+            value
+          }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useDetailsQuery__
@@ -2478,80 +4418,100 @@ export const DetailsDocument = gql`
  *   },
  * });
  */
-export function useDetailsQuery(baseOptions: Apollo.QueryHookOptions<DetailsQuery, DetailsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<DetailsQuery, DetailsQueryVariables>(DetailsDocument, options);
-      }
-export function useDetailsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DetailsQuery, DetailsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<DetailsQuery, DetailsQueryVariables>(DetailsDocument, options);
-        }
+export function useDetailsQuery(
+  baseOptions: Apollo.QueryHookOptions<DetailsQuery, DetailsQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<DetailsQuery, DetailsQueryVariables>(
+    DetailsDocument,
+    options,
+  );
+}
+export function useDetailsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    DetailsQuery,
+    DetailsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<DetailsQuery, DetailsQueryVariables>(
+    DetailsDocument,
+    options,
+  );
+}
 export type DetailsQueryHookResult = ReturnType<typeof useDetailsQuery>;
 export type DetailsLazyQueryHookResult = ReturnType<typeof useDetailsLazyQuery>;
-export type DetailsQueryResult = Apollo.QueryResult<DetailsQuery, DetailsQueryVariables>;
+export type DetailsQueryResult = Apollo.QueryResult<
+  DetailsQuery,
+  DetailsQueryVariables
+>;
 export const NftActivityDocument = gql`
-    query NftActivity($filter: NftActivityFilterInput, $after: String, $first: Int) {
-  nftActivity(filter: $filter, after: $after, first: $first) {
-    edges {
-      node {
-        id
-        address
-        tokenId
-        asset {
+  query NftActivity(
+    $filter: NftActivityFilterInput
+    $after: String
+    $first: Int
+  ) {
+    nftActivity(filter: $filter, after: $after, first: $first) {
+      edges {
+        node {
           id
-          metadataUrl
-          image {
+          address
+          tokenId
+          asset {
             id
-            url
-          }
-          smallImage {
-            id
-            url
-          }
-          name
-          rarities {
-            id
-            provider
-            rank
-            score
-          }
-          suspiciousFlag
-          nftContract {
-            id
-            standard
-          }
-          collection {
-            id
+            metadataUrl
             image {
               id
               url
             }
+            smallImage {
+              id
+              url
+            }
+            name
+            rarities {
+              id
+              provider
+              rank
+              score
+            }
+            suspiciousFlag
+            nftContract {
+              id
+              standard
+            }
+            collection {
+              id
+              image {
+                id
+                url
+              }
+            }
           }
+          type
+          marketplace
+          fromAddress
+          toAddress
+          transactionHash
+          price {
+            id
+            value
+          }
+          orderStatus
+          quantity
+          url
+          timestamp
         }
-        type
-        marketplace
-        fromAddress
-        toAddress
-        transactionHash
-        price {
-          id
-          value
-        }
-        orderStatus
-        quantity
-        url
-        timestamp
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
       }
     }
-    pageInfo {
-      endCursor
-      hasNextPage
-      hasPreviousPage
-      startCursor
-    }
   }
-}
-    `;
+`;
 
 /**
  * __useNftActivityQuery__
@@ -2571,118 +4531,146 @@ export const NftActivityDocument = gql`
  *   },
  * });
  */
-export function useNftActivityQuery(baseOptions?: Apollo.QueryHookOptions<NftActivityQuery, NftActivityQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NftActivityQuery, NftActivityQueryVariables>(NftActivityDocument, options);
-      }
-export function useNftActivityLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftActivityQuery, NftActivityQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NftActivityQuery, NftActivityQueryVariables>(NftActivityDocument, options);
-        }
+export function useNftActivityQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    NftActivityQuery,
+    NftActivityQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<NftActivityQuery, NftActivityQueryVariables>(
+    NftActivityDocument,
+    options,
+  );
+}
+export function useNftActivityLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    NftActivityQuery,
+    NftActivityQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<NftActivityQuery, NftActivityQueryVariables>(
+    NftActivityDocument,
+    options,
+  );
+}
 export type NftActivityQueryHookResult = ReturnType<typeof useNftActivityQuery>;
-export type NftActivityLazyQueryHookResult = ReturnType<typeof useNftActivityLazyQuery>;
-export type NftActivityQueryResult = Apollo.QueryResult<NftActivityQuery, NftActivityQueryVariables>;
+export type NftActivityLazyQueryHookResult = ReturnType<
+  typeof useNftActivityLazyQuery
+>;
+export type NftActivityQueryResult = Apollo.QueryResult<
+  NftActivityQuery,
+  NftActivityQueryVariables
+>;
 export const NftBalanceDocument = gql`
-    query NftBalance($ownerAddress: String!, $filter: NftBalancesFilterInput, $first: Int, $after: String, $last: Int, $before: String) {
-  nftBalances(
-    ownerAddress: $ownerAddress
-    filter: $filter
-    first: $first
-    after: $after
-    last: $last
-    before: $before
+  query NftBalance(
+    $ownerAddress: String!
+    $filter: NftBalancesFilterInput
+    $first: Int
+    $after: String
+    $last: Int
+    $before: String
   ) {
-    edges {
-      node {
-        ownedAsset {
-          id
-          animationUrl
-          collection {
+    nftBalances(
+      ownerAddress: $ownerAddress
+      filter: $filter
+      first: $first
+      after: $after
+      last: $last
+      before: $before
+    ) {
+      edges {
+        node {
+          ownedAsset {
             id
-            isVerified
+            animationUrl
+            collection {
+              id
+              isVerified
+              image {
+                id
+                url
+              }
+              name
+              twitterName
+              nftContracts {
+                id
+                address
+                chain
+                name
+                standard
+                symbol
+                totalSupply
+              }
+              markets(currencies: ETH) {
+                id
+                floorPrice {
+                  id
+                  value
+                }
+              }
+            }
+            description
+            flaggedBy
             image {
               id
               url
             }
+            originalImage {
+              id
+              url
+            }
             name
-            twitterName
-            nftContracts {
+            ownerAddress
+            smallImage {
               id
-              address
-              chain
-              name
-              standard
-              symbol
-              totalSupply
+              url
             }
-            markets(currencies: ETH) {
+            suspiciousFlag
+            tokenId
+            thumbnail {
               id
-              floorPrice {
-                id
-                value
-              }
+              url
             }
-          }
-          description
-          flaggedBy
-          image {
-            id
-            url
-          }
-          originalImage {
-            id
-            url
-          }
-          name
-          ownerAddress
-          smallImage {
-            id
-            url
-          }
-          suspiciousFlag
-          tokenId
-          thumbnail {
-            id
-            url
-          }
-          listings(first: 1) {
-            edges {
-              node {
-                price {
-                  id
-                  value
-                  currency
+            listings(first: 1) {
+              edges {
+                node {
+                  price {
+                    id
+                    value
+                    currency
+                  }
+                  createdAt
+                  marketplace
+                  endAt
                 }
-                createdAt
-                marketplace
-                endAt
               }
             }
           }
-        }
-        listedMarketplaces
-        listingFees {
-          id
-          payoutAddress
-          basisPoints
-        }
-        lastPrice {
-          id
-          currency
-          timestamp
-          value
+          listedMarketplaces
+          listingFees {
+            id
+            payoutAddress
+            basisPoints
+          }
+          lastPrice {
+            id
+            currency
+            timestamp
+            value
+          }
         }
       }
-    }
-    pageInfo {
-      endCursor
-      hasNextPage
-      hasPreviousPage
-      startCursor
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useNftBalanceQuery__
@@ -2705,24 +4693,45 @@ export const NftBalanceDocument = gql`
  *   },
  * });
  */
-export function useNftBalanceQuery(baseOptions: Apollo.QueryHookOptions<NftBalanceQuery, NftBalanceQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NftBalanceQuery, NftBalanceQueryVariables>(NftBalanceDocument, options);
-      }
-export function useNftBalanceLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftBalanceQuery, NftBalanceQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NftBalanceQuery, NftBalanceQueryVariables>(NftBalanceDocument, options);
-        }
-export type NftBalanceQueryHookResult = ReturnType<typeof useNftBalanceQuery>;
-export type NftBalanceLazyQueryHookResult = ReturnType<typeof useNftBalanceLazyQuery>;
-export type NftBalanceQueryResult = Apollo.QueryResult<NftBalanceQuery, NftBalanceQueryVariables>;
-export const NftUniversalRouterAddressDocument = gql`
-    query NftUniversalRouterAddress($chain: Chain = ETHEREUM) {
-  nftRoute(chain: $chain, senderAddress: "", nftTrades: []) {
-    toAddress
-  }
+export function useNftBalanceQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    NftBalanceQuery,
+    NftBalanceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<NftBalanceQuery, NftBalanceQueryVariables>(
+    NftBalanceDocument,
+    options,
+  );
 }
-    `;
+export function useNftBalanceLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    NftBalanceQuery,
+    NftBalanceQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<NftBalanceQuery, NftBalanceQueryVariables>(
+    NftBalanceDocument,
+    options,
+  );
+}
+export type NftBalanceQueryHookResult = ReturnType<typeof useNftBalanceQuery>;
+export type NftBalanceLazyQueryHookResult = ReturnType<
+  typeof useNftBalanceLazyQuery
+>;
+export type NftBalanceQueryResult = Apollo.QueryResult<
+  NftBalanceQuery,
+  NftBalanceQueryVariables
+>;
+export const NftUniversalRouterAddressDocument = gql`
+  query NftUniversalRouterAddress($chain: Chain = ETHEREUM) {
+    nftRoute(chain: $chain, senderAddress: "", nftTrades: []) {
+      toAddress
+    }
+  }
+`;
 
 /**
  * __useNftUniversalRouterAddressQuery__
@@ -2740,54 +4749,82 @@ export const NftUniversalRouterAddressDocument = gql`
  *   },
  * });
  */
-export function useNftUniversalRouterAddressQuery(baseOptions?: Apollo.QueryHookOptions<NftUniversalRouterAddressQuery, NftUniversalRouterAddressQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NftUniversalRouterAddressQuery, NftUniversalRouterAddressQueryVariables>(NftUniversalRouterAddressDocument, options);
-      }
-export function useNftUniversalRouterAddressLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftUniversalRouterAddressQuery, NftUniversalRouterAddressQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NftUniversalRouterAddressQuery, NftUniversalRouterAddressQueryVariables>(NftUniversalRouterAddressDocument, options);
-        }
-export type NftUniversalRouterAddressQueryHookResult = ReturnType<typeof useNftUniversalRouterAddressQuery>;
-export type NftUniversalRouterAddressLazyQueryHookResult = ReturnType<typeof useNftUniversalRouterAddressLazyQuery>;
-export type NftUniversalRouterAddressQueryResult = Apollo.QueryResult<NftUniversalRouterAddressQuery, NftUniversalRouterAddressQueryVariables>;
-export const NftRouteDocument = gql`
-    query NftRoute($chain: Chain = ETHEREUM, $senderAddress: String!, $nftTrades: [NftTradeInput!]!, $tokenTrades: [TokenTradeInput!]) {
-  nftRoute(
-    chain: $chain
-    senderAddress: $senderAddress
-    nftTrades: $nftTrades
-    tokenTrades: $tokenTrades
-  ) {
-    id
-    calldata
-    route {
-      amount
-      contractAddress
-      id
-      marketplace
-      price {
-        id
-        currency
-        value
-      }
-      quotePrice {
-        id
-        currency
-        value
-      }
-      tokenId
-      tokenType
-    }
-    sendAmount {
-      id
-      currency
-      value
-    }
-    toAddress
-  }
+export function useNftUniversalRouterAddressQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    NftUniversalRouterAddressQuery,
+    NftUniversalRouterAddressQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    NftUniversalRouterAddressQuery,
+    NftUniversalRouterAddressQueryVariables
+  >(NftUniversalRouterAddressDocument, options);
 }
-    `;
+export function useNftUniversalRouterAddressLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    NftUniversalRouterAddressQuery,
+    NftUniversalRouterAddressQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    NftUniversalRouterAddressQuery,
+    NftUniversalRouterAddressQueryVariables
+  >(NftUniversalRouterAddressDocument, options);
+}
+export type NftUniversalRouterAddressQueryHookResult = ReturnType<
+  typeof useNftUniversalRouterAddressQuery
+>;
+export type NftUniversalRouterAddressLazyQueryHookResult = ReturnType<
+  typeof useNftUniversalRouterAddressLazyQuery
+>;
+export type NftUniversalRouterAddressQueryResult = Apollo.QueryResult<
+  NftUniversalRouterAddressQuery,
+  NftUniversalRouterAddressQueryVariables
+>;
+export const NftRouteDocument = gql`
+  query NftRoute(
+    $chain: Chain = ETHEREUM
+    $senderAddress: String!
+    $nftTrades: [NftTradeInput!]!
+    $tokenTrades: [TokenTradeInput!]
+  ) {
+    nftRoute(
+      chain: $chain
+      senderAddress: $senderAddress
+      nftTrades: $nftTrades
+      tokenTrades: $tokenTrades
+    ) {
+      id
+      calldata
+      route {
+        amount
+        contractAddress
+        id
+        marketplace
+        price {
+          id
+          currency
+          value
+        }
+        quotePrice {
+          id
+          currency
+          value
+        }
+        tokenId
+        tokenType
+      }
+      sendAmount {
+        id
+        currency
+        value
+      }
+      toAddress
+    }
+  }
+`;
 
 /**
  * __useNftRouteQuery__
@@ -2808,63 +4845,81 @@ export const NftRouteDocument = gql`
  *   },
  * });
  */
-export function useNftRouteQuery(baseOptions: Apollo.QueryHookOptions<NftRouteQuery, NftRouteQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<NftRouteQuery, NftRouteQueryVariables>(NftRouteDocument, options);
-      }
-export function useNftRouteLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<NftRouteQuery, NftRouteQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<NftRouteQuery, NftRouteQueryVariables>(NftRouteDocument, options);
-        }
+export function useNftRouteQuery(
+  baseOptions: Apollo.QueryHookOptions<NftRouteQuery, NftRouteQueryVariables>,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<NftRouteQuery, NftRouteQueryVariables>(
+    NftRouteDocument,
+    options,
+  );
+}
+export function useNftRouteLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    NftRouteQuery,
+    NftRouteQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<NftRouteQuery, NftRouteQueryVariables>(
+    NftRouteDocument,
+    options,
+  );
+}
 export type NftRouteQueryHookResult = ReturnType<typeof useNftRouteQuery>;
-export type NftRouteLazyQueryHookResult = ReturnType<typeof useNftRouteLazyQuery>;
-export type NftRouteQueryResult = Apollo.QueryResult<NftRouteQuery, NftRouteQueryVariables>;
+export type NftRouteLazyQueryHookResult = ReturnType<
+  typeof useNftRouteLazyQuery
+>;
+export type NftRouteQueryResult = Apollo.QueryResult<
+  NftRouteQuery,
+  NftRouteQueryVariables
+>;
 export const TrendingCollectionsDocument = gql`
-    query TrendingCollections($size: Int, $timePeriod: HistoryDuration) {
-  topCollections(first: $size, duration: $timePeriod) {
-    edges {
-      node {
-        name
-        nftContracts {
-          address
-          totalSupply
-        }
-        image {
-          url
-        }
-        bannerImage {
-          url
-        }
-        isVerified
-        markets(currencies: ETH) {
-          floorPrice {
-            value
+  query TrendingCollections($size: Int, $timePeriod: HistoryDuration) {
+    topCollections(first: $size, duration: $timePeriod) {
+      edges {
+        node {
+          name
+          nftContracts {
+            address
+            totalSupply
           }
-          owners
-          totalVolume {
-            value
+          image {
+            url
           }
-          volume(duration: $timePeriod) {
-            value
+          bannerImage {
+            url
           }
-          volumePercentChange(duration: $timePeriod) {
-            value
-          }
-          floorPricePercentChange(duration: $timePeriod) {
-            value
-          }
-          sales {
-            value
-          }
-          listings {
-            value
+          isVerified
+          markets(currencies: ETH) {
+            floorPrice {
+              value
+            }
+            owners
+            totalVolume {
+              value
+            }
+            volume(duration: $timePeriod) {
+              value
+            }
+            volumePercentChange(duration: $timePeriod) {
+              value
+            }
+            floorPricePercentChange(duration: $timePeriod) {
+              value
+            }
+            sales {
+              value
+            }
+            listings {
+              value
+            }
           }
         }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __useTrendingCollectionsQuery__
@@ -2883,68 +4938,91 @@ export const TrendingCollectionsDocument = gql`
  *   },
  * });
  */
-export function useTrendingCollectionsQuery(baseOptions?: Apollo.QueryHookOptions<TrendingCollectionsQuery, TrendingCollectionsQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<TrendingCollectionsQuery, TrendingCollectionsQueryVariables>(TrendingCollectionsDocument, options);
-      }
-export function useTrendingCollectionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TrendingCollectionsQuery, TrendingCollectionsQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<TrendingCollectionsQuery, TrendingCollectionsQueryVariables>(TrendingCollectionsDocument, options);
-        }
-export type TrendingCollectionsQueryHookResult = ReturnType<typeof useTrendingCollectionsQuery>;
-export type TrendingCollectionsLazyQueryHookResult = ReturnType<typeof useTrendingCollectionsLazyQuery>;
-export type TrendingCollectionsQueryResult = Apollo.QueryResult<TrendingCollectionsQuery, TrendingCollectionsQueryVariables>;
+export function useTrendingCollectionsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    TrendingCollectionsQuery,
+    TrendingCollectionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    TrendingCollectionsQuery,
+    TrendingCollectionsQueryVariables
+  >(TrendingCollectionsDocument, options);
+}
+export function useTrendingCollectionsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    TrendingCollectionsQuery,
+    TrendingCollectionsQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    TrendingCollectionsQuery,
+    TrendingCollectionsQueryVariables
+  >(TrendingCollectionsDocument, options);
+}
+export type TrendingCollectionsQueryHookResult = ReturnType<
+  typeof useTrendingCollectionsQuery
+>;
+export type TrendingCollectionsLazyQueryHookResult = ReturnType<
+  typeof useTrendingCollectionsLazyQuery
+>;
+export type TrendingCollectionsQueryResult = Apollo.QueryResult<
+  TrendingCollectionsQuery,
+  TrendingCollectionsQueryVariables
+>;
 export const PortfolioBalancesDocument = gql`
-    query PortfolioBalances($ownerAddress: String!, $chains: [Chain!]!) {
-  portfolios(ownerAddresses: [$ownerAddress], chains: $chains) {
-    id
-    tokensTotalDenominatedValue {
+  query PortfolioBalances($ownerAddress: String!, $chains: [Chain!]!) {
+    portfolios(ownerAddresses: [$ownerAddress], chains: $chains) {
       id
-      value
-    }
-    tokensTotalDenominatedValueChange(duration: DAY) {
-      absolute {
+      tokensTotalDenominatedValue {
         id
         value
       }
-      percentage {
-        id
-        value
-      }
-    }
-    tokenBalances {
-      id
-      quantity
-      denominatedValue {
-        id
-        currency
-        value
-      }
-      tokenProjectMarket {
-        id
-        pricePercentChange(duration: DAY) {
+      tokensTotalDenominatedValueChange(duration: DAY) {
+        absolute {
           id
           value
         }
-        tokenProject {
+        percentage {
           id
-          logoUrl
-          isSpam
+          value
         }
       }
-      token {
+      tokenBalances {
         id
-        chain
-        address
-        name
-        symbol
-        standard
-        decimals
+        quantity
+        denominatedValue {
+          id
+          currency
+          value
+        }
+        tokenProjectMarket {
+          id
+          pricePercentChange(duration: DAY) {
+            id
+            value
+          }
+          tokenProject {
+            id
+            logoUrl
+            isSpam
+          }
+        }
+        token {
+          id
+          chain
+          address
+          name
+          symbol
+          standard
+          decimals
+        }
       }
     }
   }
-}
-    `;
+`;
 
 /**
  * __usePortfolioBalancesQuery__
@@ -2963,14 +5041,37 @@ export const PortfolioBalancesDocument = gql`
  *   },
  * });
  */
-export function usePortfolioBalancesQuery(baseOptions: Apollo.QueryHookOptions<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useQuery<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>(PortfolioBalancesDocument, options);
-      }
-export function usePortfolioBalancesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>) {
-          const options = {...defaultOptions, ...baseOptions}
-          return Apollo.useLazyQuery<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>(PortfolioBalancesDocument, options);
-        }
-export type PortfolioBalancesQueryHookResult = ReturnType<typeof usePortfolioBalancesQuery>;
-export type PortfolioBalancesLazyQueryHookResult = ReturnType<typeof usePortfolioBalancesLazyQuery>;
-export type PortfolioBalancesQueryResult = Apollo.QueryResult<PortfolioBalancesQuery, PortfolioBalancesQueryVariables>;
+export function usePortfolioBalancesQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    PortfolioBalancesQuery,
+    PortfolioBalancesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    PortfolioBalancesQuery,
+    PortfolioBalancesQueryVariables
+  >(PortfolioBalancesDocument, options);
+}
+export function usePortfolioBalancesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    PortfolioBalancesQuery,
+    PortfolioBalancesQueryVariables
+  >,
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    PortfolioBalancesQuery,
+    PortfolioBalancesQueryVariables
+  >(PortfolioBalancesDocument, options);
+}
+export type PortfolioBalancesQueryHookResult = ReturnType<
+  typeof usePortfolioBalancesQuery
+>;
+export type PortfolioBalancesLazyQueryHookResult = ReturnType<
+  typeof usePortfolioBalancesLazyQuery
+>;
+export type PortfolioBalancesQueryResult = Apollo.QueryResult<
+  PortfolioBalancesQuery,
+  PortfolioBalancesQueryVariables
+>;

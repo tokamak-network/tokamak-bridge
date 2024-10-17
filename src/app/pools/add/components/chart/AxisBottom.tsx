@@ -45,5 +45,5 @@ export const AxisBottom = ({
         <Axis axisGenerator={axisBottom(xScale).ticks(6)} />
       </StyledGroup>
     ),
-    [innerHeight, offset, xScale]
+    [innerHeight, offset, xScale],
   );

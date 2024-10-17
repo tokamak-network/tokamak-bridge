@@ -20,7 +20,7 @@ export function getContract(
   address: string,
   ABI: any,
   provider: JsonRpcProvider,
-  account?: string
+  account?: string,
 ): Contract {
   if (!isAddress(address) || address === ADDRESS_ZERO) {
     throw Error(`Invalid 'address' parameter '${address}'.`);
@@ -29,7 +29,7 @@ export function getContract(
   return new Contract(
     address,
     ABI,
-    getProviderOrSigner(provider, account) as any
+    getProviderOrSigner(provider, account) as any,
   );
 }
 
@@ -37,7 +37,7 @@ export function getContract(
 function useContract<T extends Contract = Contract>(
   addressOrAddressMap: string | { [chainId: number]: string } | undefined,
   ABI: any,
-  withSignerIfPossible = true
+  withSignerIfPossible = true,
 ): T | null {
   const { address: account } = useAccount();
   const { connectedChainId: chainId } = useConnectedNetwork();
@@ -54,7 +54,7 @@ function useContract<T extends Contract = Contract>(
         address,
         ABI,
         provider,
-        withSignerIfPossible && account ? account : undefined
+        withSignerIfPossible && account ? account : undefined,
       );
     } catch (error) {
       console.error("Failed to get contract", error);

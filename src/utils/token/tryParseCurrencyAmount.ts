@@ -8,7 +8,7 @@ import JSBI from "jsbi";
  */
 export default function tryParseCurrencyAmount<T extends Currency>(
   value?: string,
-  currency?: T
+  currency?: T,
 ): CurrencyAmount<T> | undefined {
   if (!value || !currency) {
     return undefined;
@@ -18,7 +18,7 @@ export default function tryParseCurrencyAmount<T extends Currency>(
     if (typedValueParsed !== "0") {
       return CurrencyAmount.fromRawAmount(
         currency,
-        JSBI.BigInt(typedValueParsed)
+        JSBI.BigInt(typedValueParsed),
       );
     }
   } catch (error) {

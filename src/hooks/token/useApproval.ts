@@ -125,7 +125,7 @@ export function useApprove(_mode?: ActionMode) {
       address: tokenAddress,
       abi: USDT_ABI,
       functionName: "approve",
-    }
+    },
   );
 
   const isRevokeForUSDT = useMemo(() => {

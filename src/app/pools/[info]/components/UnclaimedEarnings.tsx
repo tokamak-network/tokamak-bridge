@@ -20,7 +20,7 @@ import { ethers } from "ethers";
 
 export const CollectFeeAsWETH = () => {
   const [collectAsWETH, setCollectAsWETH] = useRecoilState(
-    ATOM_collectWethOption
+    ATOM_collectWethOption,
   );
   const { info } = usePositionInfo();
 
@@ -57,14 +57,14 @@ export default function UnclaimedEarnings(props: {
   const token0Amount = Number(
     ethers.utils.formatUnits(
       info?.token0CollectedFeeBN ?? "0",
-      info?.token0.decimals
-    )
+      info?.token0.decimals,
+    ),
   );
   const token1Amount = Number(
     ethers.utils.formatUnits(
       info?.token1CollectedFeeBN ?? "0",
-      info?.token1.decimals
-    )
+      info?.token1.decimals,
+    ),
   );
 
   const { hasTokenPrice, totalMarketPrice } = usePricePair({
@@ -114,7 +114,7 @@ export default function UnclaimedEarnings(props: {
       }
       return onOpenClaimEarning();
     },
-    [info?.chainId, connectedChainId, otherLayerChainInfo]
+    [info?.chainId, connectedChainId, otherLayerChainInfo],
   );
 
   return (

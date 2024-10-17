@@ -21,7 +21,7 @@ const ETH_ABI = [
  */
 export const getDecodeLog = (
   isErc20Deposit: boolean,
-  log: providers.Log
+  log: providers.Log,
 ): {
   l1TokenAddress: string;
   l2TokenAddress: string;
@@ -32,7 +32,7 @@ export const getDecodeLog = (
     const decodedLog = iface.decodeEventLog(
       "ERC20DepositInitiated",
       log.data,
-      log.topics
+      log.topics,
     );
     const { _l1Token, _l2Token, _amount } = decodedLog;
     return {
@@ -45,7 +45,7 @@ export const getDecodeLog = (
   const decodedLog = iface.decodeEventLog(
     "ETHDepositInitiated",
     log.data,
-    log.topics
+    log.topics,
   );
   /**
      * decodedLog example

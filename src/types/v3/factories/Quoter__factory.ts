@@ -211,14 +211,14 @@ export class Quoter__factory extends ContractFactory {
   deploy(
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<Quoter> {
     return super.deploy(_factory, _WETH9, overrides || {}) as Promise<Quoter>;
   }
   getDeployTransaction(
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(_factory, _WETH9, overrides || {});
   }

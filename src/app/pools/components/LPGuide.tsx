@@ -21,7 +21,7 @@ export default function LPGuide() {
       cursor={"pointer"}
       onClick={() =>
         window.open(
-          "https://docs.tokamak.network/home/02-service-guide/tokamak-bridge/pools"
+          "https://docs.tokamak.network/home/02-service-guide/tokamak-bridge/pools",
         )
       }
     >

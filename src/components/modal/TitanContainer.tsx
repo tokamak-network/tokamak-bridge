@@ -26,7 +26,7 @@ const TitanContainer = (props: { tx: TxType }) => {
   useEffect(() => {
     const getUsdPrice = async () => {
       const marketPrice = await fetchMarketPrice(
-        tx ? tx.inTokenSymbol : (inToken?.tokenName as string)
+        tx ? tx.inTokenSymbol : (inToken?.tokenName as string),
       );
       if (marketPrice) setUsdPrice(marketPrice);
     };

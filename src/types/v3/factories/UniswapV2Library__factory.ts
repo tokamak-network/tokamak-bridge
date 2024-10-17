@@ -31,12 +31,12 @@ export class UniswapV2Library__factory extends ContractFactory {
   }
 
   deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UniswapV2Library> {
     return super.deploy(overrides || {}) as Promise<UniswapV2Library>;
   }
   getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }
@@ -53,7 +53,7 @@ export class UniswapV2Library__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UniswapV2Library {
     return new Contract(address, _abi, signerOrProvider) as UniswapV2Library;
   }

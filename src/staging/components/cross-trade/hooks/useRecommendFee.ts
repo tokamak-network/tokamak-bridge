@@ -14,10 +14,10 @@ export const useRecommendFee = (params: {
   tokenAddress: string;
 }) => {
   const { totalAmount, tokenAddress } = params;
-  const {isConnectedToMainNetwork} = useConnectedNetwork()
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
   const tokenInfo = getSupportedTokenForCT(
     tokenAddress,
-    isConnectedToMainNetwork
+    isConnectedToMainNetwork,
   );
 
   const hasRecomendFee =
@@ -34,7 +34,7 @@ export const useRecommendFee = (params: {
     if (totalAmount && additionalFeeRatio && tokenInfo?.decimals) {
       const totalAmountDecimal = new Decimal(totalAmount.toString());
       const additionalFeeRatioDecimal = new Decimal(
-        additionalFeeRatio.toString()
+        additionalFeeRatio.toString(),
       );
       const fee = totalAmountDecimal.mul(additionalFeeRatioDecimal).div(100);
       return fee.toFixed(tokenInfo.decimals);
@@ -45,7 +45,7 @@ export const useRecommendFee = (params: {
     tokenName: "ethereum",
     amount: formatUnits(
       recommendFeeConfig.gas[CTTransactionType.provideCT].toString(),
-      18
+      18,
     ),
   });
 

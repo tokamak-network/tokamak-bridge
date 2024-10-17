@@ -56,7 +56,7 @@ export default function SwapConfirmModal() {
       <ModalOverlay />
       <ModalContent
         width={"404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
       >
@@ -74,7 +74,7 @@ export default function SwapConfirmModal() {
             py={"12px"}
             border={"1px solid #313442"}
             borderRadius={"8px"}
-            bg='#0F0F12'
+            bg="#0F0F12"
           >
             <Box>
               <ConfirmDetails isInNetwork={true} inToken={inToken} />
@@ -85,7 +85,7 @@ export default function SwapConfirmModal() {
             <ConfirmSubDetail
               type={ConfirmDetailType.Rate}
               tokenValue={`1 ${inToken?.tokenSymbol} = ${formatNumber(
-                outPrice
+                outPrice,
               )} ${outToken?.tokenSymbol}`}
               gasValue={
                 token1PriceWithAmount
@@ -111,10 +111,10 @@ export default function SwapConfirmModal() {
             />
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           <Button
             mt={"12px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{

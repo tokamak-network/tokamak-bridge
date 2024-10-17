@@ -1004,12 +1004,12 @@ export class UniswapV3Pool__factory extends ContractFactory {
   }
 
   deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UniswapV3Pool> {
     return super.deploy(overrides || {}) as Promise<UniswapV3Pool>;
   }
   getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }
@@ -1026,7 +1026,7 @@ export class UniswapV3Pool__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UniswapV3Pool {
     return new Contract(address, _abi, signerOrProvider) as UniswapV3Pool;
   }

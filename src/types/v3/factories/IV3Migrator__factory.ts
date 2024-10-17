@@ -301,7 +301,7 @@ export class IV3Migrator__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IV3Migrator {
     return new Contract(address, _abi, signerOrProvider) as IV3Migrator;
   }

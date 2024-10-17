@@ -82,7 +82,7 @@ export const currentPrice = selector<string | undefined>({
       const currentPrice = tickToPrice(
         quoteTokenStatus,
         quoteTokenStatus,
-        currentTickStatus
+        currentTickStatus,
       );
 
       return currentPrice.toSignificant(6);

@@ -191,7 +191,7 @@ export default function StatusComponent(props: StatusComponentProps) {
       )}
       {isTransaction && (
         <Link
-          target='_blank'
+          target="_blank"
           href={explorerUrl}
           textDecor={"none"}
           _hover={{ textDecor: "none" }}

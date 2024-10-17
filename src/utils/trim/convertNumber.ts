@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 
 export function convertNumber(
   amount: bigint | string,
-  decimals: TokenInfo["decimals"]
+  decimals: TokenInfo["decimals"],
 ) {
   const parsedAmount = ethers.utils.formatUnits(String(amount), decimals);
   return parsedAmount;
@@ -17,7 +17,7 @@ export function convertNumber(
  */
 export function limitDecimals(
   amount: number | string,
-  decimals: number | undefined
+  decimals: number | undefined,
 ): string | undefined {
   if (decimals === undefined || isNaN(Number(amount))) return undefined;
   // 문자열로 변환

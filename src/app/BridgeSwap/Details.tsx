@@ -37,7 +37,7 @@ export function Details() {
       {!mobileView ? (
         <ActionButton />
       ) : (
-        <Flex direction='column' rowGap={"12px"}>
+        <Flex direction="column" rowGap={"12px"}>
           {showWarning && <Warning />}
           <ActionButton />
         </Flex>

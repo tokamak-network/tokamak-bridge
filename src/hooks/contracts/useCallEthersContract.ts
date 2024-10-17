@@ -6,9 +6,7 @@ export function useCallEthersContract(params: {
   abi: ContractInterface;
 }) {
   // console.log(getL1Provider());
-
   // const test = new Contract(
-
   //   getL1TestProvider()
   // );
 }

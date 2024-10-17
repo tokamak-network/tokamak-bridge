@@ -44,7 +44,7 @@ interface IUniswapV3StakerInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "claimReward",
-    values: [string, string, BigNumberish]
+    values: [string, string, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: "createIncentive",
@@ -56,12 +56,12 @@ interface IUniswapV3StakerInterface extends ethers.utils.Interface {
         endTime: BigNumberish;
         refundee: string;
       },
-      BigNumberish
-    ]
+      BigNumberish,
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "deposits",
-    values: [BigNumberish]
+    values: [BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: "endIncentive",
@@ -72,8 +72,8 @@ interface IUniswapV3StakerInterface extends ethers.utils.Interface {
         startTime: BigNumberish;
         endTime: BigNumberish;
         refundee: string;
-      }
-    ]
+      },
+    ],
   ): string;
   encodeFunctionData(functionFragment: "factory", values?: undefined): string;
   encodeFunctionData(
@@ -86,36 +86,36 @@ interface IUniswapV3StakerInterface extends ethers.utils.Interface {
         endTime: BigNumberish;
         refundee: string;
       },
-      BigNumberish
-    ]
+      BigNumberish,
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "incentives",
-    values: [BytesLike]
+    values: [BytesLike],
   ): string;
   encodeFunctionData(
     functionFragment: "maxIncentiveDuration",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "maxIncentiveStartLeadTime",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
-    values: [BytesLike[]]
+    values: [BytesLike[]],
   ): string;
   encodeFunctionData(
     functionFragment: "nonfungiblePositionManager",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "onERC721Received",
-    values: [string, string, BigNumberish, BytesLike]
+    values: [string, string, BigNumberish, BytesLike],
   ): string;
   encodeFunctionData(
     functionFragment: "rewards",
-    values: [string, string]
+    values: [string, string],
   ): string;
   encodeFunctionData(
     functionFragment: "stakeToken",
@@ -127,16 +127,16 @@ interface IUniswapV3StakerInterface extends ethers.utils.Interface {
         endTime: BigNumberish;
         refundee: string;
       },
-      BigNumberish
-    ]
+      BigNumberish,
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "stakes",
-    values: [BigNumberish, BytesLike]
+    values: [BigNumberish, BytesLike],
   ): string;
   encodeFunctionData(
     functionFragment: "transferDeposit",
-    values: [BigNumberish, string]
+    values: [BigNumberish, string],
   ): string;
   encodeFunctionData(
     functionFragment: "unstakeToken",
@@ -148,64 +148,64 @@ interface IUniswapV3StakerInterface extends ethers.utils.Interface {
         endTime: BigNumberish;
         refundee: string;
       },
-      BigNumberish
-    ]
+      BigNumberish,
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "withdrawToken",
-    values: [BigNumberish, string, BytesLike]
+    values: [BigNumberish, string, BytesLike],
   ): string;
 
   decodeFunctionResult(
     functionFragment: "claimReward",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "createIncentive",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "deposits", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "endIncentive",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "factory", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getRewardInfo",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "incentives", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "maxIncentiveDuration",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "maxIncentiveStartLeadTime",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "nonfungiblePositionManager",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "onERC721Received",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "rewards", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stakeToken", data: BytesLike): Result;
   decodeFunctionResult(functionFragment: "stakes", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "transferDeposit",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "unstakeToken",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "withdrawToken",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
 
   events: {
@@ -231,26 +231,26 @@ export class IUniswapV3Staker extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -263,7 +263,7 @@ export class IUniswapV3Staker extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IUniswapV3StakerInterface;
@@ -273,7 +273,7 @@ export class IUniswapV3Staker extends BaseContract {
       rewardToken: string,
       to: string,
       amountRequested: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     createIncentive(
@@ -285,12 +285,12 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       reward: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     deposits(
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [string, number, number, number] & {
         owner: string;
@@ -308,7 +308,7 @@ export class IUniswapV3Staker extends BaseContract {
         endTime: BigNumberish;
         refundee: string;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     factory(overrides?: CallOverrides): Promise<[string]>;
@@ -322,12 +322,12 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     incentives(
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
         totalRewardUnclaimed: BigNumber;
@@ -342,7 +342,7 @@ export class IUniswapV3Staker extends BaseContract {
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     nonfungiblePositionManager(overrides?: CallOverrides): Promise<[string]>;
@@ -352,13 +352,13 @@ export class IUniswapV3Staker extends BaseContract {
       from: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     rewards(
       rewardToken: string,
       owner: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[BigNumber] & { rewardsOwed: BigNumber }>;
 
     stakeToken(
@@ -370,13 +370,13 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     stakes(
       tokenId: BigNumberish,
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber] & {
         secondsPerLiquidityInsideInitialX128: BigNumber;
@@ -387,7 +387,7 @@ export class IUniswapV3Staker extends BaseContract {
     transferDeposit(
       tokenId: BigNumberish,
       to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     unstakeToken(
@@ -399,14 +399,14 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     withdrawToken(
       tokenId: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
   };
 
@@ -414,7 +414,7 @@ export class IUniswapV3Staker extends BaseContract {
     rewardToken: string,
     to: string,
     amountRequested: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   createIncentive(
@@ -426,12 +426,12 @@ export class IUniswapV3Staker extends BaseContract {
       refundee: string;
     },
     reward: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   deposits(
     tokenId: BigNumberish,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<
     [string, number, number, number] & {
       owner: string;
@@ -449,7 +449,7 @@ export class IUniswapV3Staker extends BaseContract {
       endTime: BigNumberish;
       refundee: string;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   factory(overrides?: CallOverrides): Promise<string>;
@@ -463,12 +463,12 @@ export class IUniswapV3Staker extends BaseContract {
       refundee: string;
     },
     tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   incentives(
     incentiveId: BytesLike,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<
     [BigNumber, BigNumber, BigNumber] & {
       totalRewardUnclaimed: BigNumber;
@@ -483,7 +483,7 @@ export class IUniswapV3Staker extends BaseContract {
 
   multicall(
     data: BytesLike[],
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   nonfungiblePositionManager(overrides?: CallOverrides): Promise<string>;
@@ -493,13 +493,13 @@ export class IUniswapV3Staker extends BaseContract {
     from: string,
     tokenId: BigNumberish,
     data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   rewards(
     rewardToken: string,
     owner: string,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<BigNumber>;
 
   stakeToken(
@@ -511,13 +511,13 @@ export class IUniswapV3Staker extends BaseContract {
       refundee: string;
     },
     tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   stakes(
     tokenId: BigNumberish,
     incentiveId: BytesLike,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<
     [BigNumber, BigNumber] & {
       secondsPerLiquidityInsideInitialX128: BigNumber;
@@ -528,7 +528,7 @@ export class IUniswapV3Staker extends BaseContract {
   transferDeposit(
     tokenId: BigNumberish,
     to: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   unstakeToken(
@@ -540,14 +540,14 @@ export class IUniswapV3Staker extends BaseContract {
       refundee: string;
     },
     tokenId: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   withdrawToken(
     tokenId: BigNumberish,
     to: string,
     data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -555,7 +555,7 @@ export class IUniswapV3Staker extends BaseContract {
       rewardToken: string,
       to: string,
       amountRequested: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     createIncentive(
@@ -567,12 +567,12 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       reward: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
 
     deposits(
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [string, number, number, number] & {
         owner: string;
@@ -590,7 +590,7 @@ export class IUniswapV3Staker extends BaseContract {
         endTime: BigNumberish;
         refundee: string;
       },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     factory(overrides?: CallOverrides): Promise<string>;
@@ -604,7 +604,7 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber] & {
         reward: BigNumber;
@@ -614,7 +614,7 @@ export class IUniswapV3Staker extends BaseContract {
 
     incentives(
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber, BigNumber] & {
         totalRewardUnclaimed: BigNumber;
@@ -636,13 +636,13 @@ export class IUniswapV3Staker extends BaseContract {
       from: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<string>;
 
     rewards(
       rewardToken: string,
       owner: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     stakeToken(
@@ -654,13 +654,13 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
 
     stakes(
       tokenId: BigNumberish,
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber] & {
         secondsPerLiquidityInsideInitialX128: BigNumber;
@@ -671,7 +671,7 @@ export class IUniswapV3Staker extends BaseContract {
     transferDeposit(
       tokenId: BigNumberish,
       to: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
 
     unstakeToken(
@@ -683,14 +683,14 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
 
     withdrawToken(
       tokenId: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
   };
 
@@ -698,7 +698,7 @@ export class IUniswapV3Staker extends BaseContract {
     DepositTransferred(
       tokenId?: BigNumberish | null,
       oldOwner?: string | null,
-      newOwner?: string | null
+      newOwner?: string | null,
     ): TypedEventFilter<
       [BigNumber, string, string],
       { tokenId: BigNumber; oldOwner: string; newOwner: string }
@@ -710,7 +710,7 @@ export class IUniswapV3Staker extends BaseContract {
       startTime?: null,
       endTime?: null,
       refundee?: null,
-      reward?: null
+      reward?: null,
     ): TypedEventFilter<
       [string, string, BigNumber, BigNumber, string, BigNumber],
       {
@@ -725,7 +725,7 @@ export class IUniswapV3Staker extends BaseContract {
 
     IncentiveEnded(
       incentiveId?: BytesLike | null,
-      refund?: null
+      refund?: null,
     ): TypedEventFilter<
       [string, BigNumber],
       { incentiveId: string; refund: BigNumber }
@@ -733,13 +733,13 @@ export class IUniswapV3Staker extends BaseContract {
 
     RewardClaimed(
       to?: string | null,
-      reward?: null
+      reward?: null,
     ): TypedEventFilter<[string, BigNumber], { to: string; reward: BigNumber }>;
 
     TokenStaked(
       tokenId?: BigNumberish | null,
       incentiveId?: BytesLike | null,
-      liquidity?: null
+      liquidity?: null,
     ): TypedEventFilter<
       [BigNumber, string, BigNumber],
       { tokenId: BigNumber; incentiveId: string; liquidity: BigNumber }
@@ -747,7 +747,7 @@ export class IUniswapV3Staker extends BaseContract {
 
     TokenUnstaked(
       tokenId?: BigNumberish | null,
-      incentiveId?: BytesLike | null
+      incentiveId?: BytesLike | null,
     ): TypedEventFilter<
       [BigNumber, string],
       { tokenId: BigNumber; incentiveId: string }
@@ -759,7 +759,7 @@ export class IUniswapV3Staker extends BaseContract {
       rewardToken: string,
       to: string,
       amountRequested: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     createIncentive(
@@ -771,12 +771,12 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       reward: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     deposits(
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     endIncentive(
@@ -787,7 +787,7 @@ export class IUniswapV3Staker extends BaseContract {
         endTime: BigNumberish;
         refundee: string;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     factory(overrides?: CallOverrides): Promise<BigNumber>;
@@ -801,12 +801,12 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     incentives(
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     maxIncentiveDuration(overrides?: CallOverrides): Promise<BigNumber>;
@@ -815,7 +815,7 @@ export class IUniswapV3Staker extends BaseContract {
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     nonfungiblePositionManager(overrides?: CallOverrides): Promise<BigNumber>;
@@ -825,13 +825,13 @@ export class IUniswapV3Staker extends BaseContract {
       from: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     rewards(
       rewardToken: string,
       owner: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     stakeToken(
@@ -843,19 +843,19 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     stakes(
       tokenId: BigNumberish,
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     transferDeposit(
       tokenId: BigNumberish,
       to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     unstakeToken(
@@ -867,14 +867,14 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     withdrawToken(
       tokenId: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
   };
 
@@ -883,7 +883,7 @@ export class IUniswapV3Staker extends BaseContract {
       rewardToken: string,
       to: string,
       amountRequested: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     createIncentive(
@@ -895,12 +895,12 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       reward: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     deposits(
       tokenId: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     endIncentive(
@@ -911,7 +911,7 @@ export class IUniswapV3Staker extends BaseContract {
         endTime: BigNumberish;
         refundee: string;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     factory(overrides?: CallOverrides): Promise<PopulatedTransaction>;
@@ -925,29 +925,29 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     incentives(
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     maxIncentiveDuration(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     maxIncentiveStartLeadTime(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     multicall(
       data: BytesLike[],
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     nonfungiblePositionManager(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     onERC721Received(
@@ -955,13 +955,13 @@ export class IUniswapV3Staker extends BaseContract {
       from: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     rewards(
       rewardToken: string,
       owner: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     stakeToken(
@@ -973,19 +973,19 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     stakes(
       tokenId: BigNumberish,
       incentiveId: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     transferDeposit(
       tokenId: BigNumberish,
       to: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     unstakeToken(
@@ -997,14 +997,14 @@ export class IUniswapV3Staker extends BaseContract {
         refundee: string;
       },
       tokenId: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     withdrawToken(
       tokenId: BigNumberish,
       to: string,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
   };
 }

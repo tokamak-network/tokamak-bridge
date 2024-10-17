@@ -111,7 +111,7 @@ export default function Pending(props: PendingProps) {
                 }}
                 value={convertNumber(
                   transactionData.inToken.amount,
-                  transactionData.inToken.decimals
+                  transactionData.inToken.decimals,
                 )}
               />
               <Box w="4px" /> {/** space bar */}

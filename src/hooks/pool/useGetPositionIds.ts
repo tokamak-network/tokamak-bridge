@@ -37,7 +37,7 @@ import { useGetPositionByClients } from "./useApolloClient";
 
 export const makePositionDatas = async (
   positionData: any[],
-  chainId: number
+  chainId: number,
 ) => {
   const positions: PoolCardDetail[] = [];
   const batchSize = positionData.length;
@@ -51,7 +51,7 @@ export const makePositionDatas = async (
   const NonfungiblePositionManagerContract = new ethers.Contract(
     UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
     NONFUNGIBLE_POSITION_MANAGER_ABI,
-    provider
+    provider,
   );
 
   for (let i = 0; i < batchSize; i++) {
@@ -75,7 +75,7 @@ export const makePositionDatas = async (
           lowersqrtPriceSub,
           uppersqrtPriceSub,
           liquiditySub,
-          false
+          false,
         );
         amount1 = JSBI.BigInt(0);
       } else if (slot0TickSub < tickUpperSub) {
@@ -83,13 +83,13 @@ export const makePositionDatas = async (
           sqrtPriceSub,
           uppersqrtPriceSub,
           liquiditySub,
-          false
+          false,
         );
         amount1 = SqrtPriceMath.getAmount1Delta(
           lowersqrtPriceSub,
           sqrtPriceSub,
           liquiditySub,
-          false
+          false,
         );
       } else {
         amount0 = JSBI.BigInt(0);
@@ -97,12 +97,12 @@ export const makePositionDatas = async (
           lowersqrtPriceSub,
           uppersqrtPriceSub,
           liquiditySub,
-          false
+          false,
         );
       }
       const isClosed = JSBI.equal(
         JSBI.add(amount0 as JSBI, amount1 as JSBI),
-        JSBI.BigInt(0)
+        JSBI.BigInt(0),
       );
 
       const token0Amount =
@@ -189,14 +189,14 @@ export const makePositionDatas = async (
           token0.id,
           Number(token0.decimals),
           token0.symbol === "WETH" ? "ETH" : token0.symbol,
-          token0.name
+          token0.name,
         ),
         token1: new Token(
           chainId,
           token1.id,
           Number(token1.decimals),
           token1.symbol === "WETH" ? "ETH" : token1.symbol,
-          token1.name
+          token1.name,
         ),
         rawData: position,
       };
@@ -245,13 +245,13 @@ export function useGetPositionIds(): {
                 if (position?.data?.positions) {
                   return makePositionDatas(
                     position.data.positions,
-                    chainGroup[index].chainId ?? 0
+                    chainGroup[index].chainId ?? 0,
                   );
                 }
-              })
+              }),
             );
             const sortedPositions = sortPositions(
-              positions.filter((position) => position !== undefined).flat()
+              positions.filter((position) => position !== undefined).flat(),
             );
             return setPositions(sortedPositions);
           }
@@ -298,7 +298,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
     PoolCardDetail[] | undefined
   >(ATOM_positionForInfo);
   const [, setIsLoading] = useRecoilState<boolean>(
-    ATOM_positionForInfo_loading
+    ATOM_positionForInfo_loading,
   );
 
   const provider = useMemo(() => {
@@ -316,7 +316,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
         const NonfungiblePositionManagerContract = new ethers.Contract(
           UNISWAP_CONTRACT.NONFUNGIBLE_POSITION_MANAGER,
           NONFUNGIBLE_POSITION_MANAGER_ABI,
-          provider
+          provider,
         );
         // Get number of positions
         // const balance: number =
@@ -328,7 +328,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
         const promises: any[] = [];
         promises.push(async () => {
           const owner = await NonfungiblePositionManagerContract.ownerOf(
-            positionTokenId
+            positionTokenId,
           );
 
           const positionInfo =
@@ -340,12 +340,12 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const token0Contract = new ethers.Contract(
             token0,
             ERC20_ABI.abi,
-            provider
+            provider,
           );
           const token1Contract = new ethers.Contract(
             token1,
             ERC20_ABI.abi,
-            provider
+            provider,
           );
 
           const [
@@ -369,14 +369,14 @@ export function useGetPositionById(positionId: number, chainId: number) {
             token0,
             token0Decimals,
             token0Symbol === "WETH" ? "ETH" : token0Symbol,
-            token0Name
+            token0Name,
           );
           const tokenB = new Token(
             chainId,
             token1,
             token1Decimals,
             token1Symbol === "WETH" ? "ETH" : token1Symbol,
-            token1Name
+            token1Name,
           );
 
           const currentPoolAddress = computePoolAddress({
@@ -391,7 +391,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
           const POOL_CONTRACT = new ethers.Contract(
             currentPoolAddress,
             IUniswapV3PoolABI.abi,
-            provider
+            provider,
           );
 
           const slot = await POOL_CONTRACT.slot0();
@@ -425,21 +425,21 @@ export function useGetPositionById(positionId: number, chainId: number) {
                   deadline: Math.floor(Date.now() / 1000) + 60 * 20,
                   amount0Min: 0,
                   amount1Min: 0,
-                }
+                },
               );
 
           const token0Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
                 remainedTokens?.amount0.toString(),
-                token0Decimals
+                token0Decimals,
               );
 
           const token1Amount = hasNoLiquidity
             ? "0"
             : ethers.utils.formatUnits(
                 remainedTokens?.amount1.toString(),
-                token1Decimals
+                token1Decimals,
               );
 
           const WETH_ADDRESS = getWETHAddressByChainId(chainId);
@@ -519,7 +519,7 @@ export function useGetPositionById(positionId: number, chainId: number) {
       }
       return undefined;
     },
-    [layer, provider, chainId, blockNumber]
+    [layer, provider, chainId, blockNumber],
   );
 
   const txPending = useRecoilValue(txPendingStatus);
@@ -583,7 +583,7 @@ export function usePositionInfo() {
   const { positionId, chainIdParam } = useGetPositionIdFromPath();
   const { positions } = useGetPositionById(
     Number(positionId),
-    Number(chainIdParam)
+    Number(chainIdParam),
   );
 
   const existingPositionInfo = positions ? positions[0] : undefined;

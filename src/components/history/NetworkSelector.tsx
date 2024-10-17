@@ -31,40 +31,6 @@ type SelectOption = {
   networkImage: any;
 };
 
-const customStyles = (maxHeight: string) => {
-  const { isConnectedToMainNetwork } = useConnectedNetwork();
-
-  return {
-    control: (styles: any) => ({
-      ...styles,
-      width: "100%",
-      maxHeight: `${maxHeight} !important`,
-      minHeight: `${maxHeight} !important`,
-      backgroundColor: "#15161D",
-      cursor: "pointer",
-      color: "#fff",
-      border: "none",
-      borderRadius: "6px",
-    }),
-    menu: (styles: any) => ({
-      margin: "0px",
-      marginTop: "4px",
-      background: "#1F2128",
-      minWidth: isConnectedToMainNetwork
-        ? "136px !important"
-        : "156px !important",
-      maxWidth: isConnectedToMainNetwork
-        ? "136px !important"
-        : "156px !important",
-      borderRadius: "6px",
-      position: "absolute",
-      border: "1px solid #313442",
-      padding: "8px",
-      zIndex: Overlay_Index.AlwaysTop,
-    }),
-  };
-};
-
 const ValueContainer = (props: {
   selectedOption: SelectOption;
   isOpen: boolean;
@@ -131,6 +97,38 @@ export default function NetworkSelector(props: {
     networkImage: undefined,
   });
   const [isOpen, setIsOpen] = useState<boolean>(false);
+
+  const customStyles = (maxHeight: string) => {
+    return {
+      control: (styles: any) => ({
+        ...styles,
+        width: "100%",
+        maxHeight: `${maxHeight} !important`,
+        minHeight: `${maxHeight} !important`,
+        backgroundColor: "#15161D",
+        cursor: "pointer",
+        color: "#fff",
+        border: "none",
+        borderRadius: "6px",
+      }),
+      menu: (styles: any) => ({
+        margin: "0px",
+        marginTop: "4px",
+        background: "#1F2128",
+        minWidth: isConnectedToMainNetwork
+          ? "136px !important"
+          : "156px !important",
+        maxWidth: isConnectedToMainNetwork
+          ? "136px !important"
+          : "156px !important",
+        borderRadius: "6px",
+        position: "absolute",
+        border: "1px solid #313442",
+        padding: "8px",
+        zIndex: Overlay_Index.AlwaysTop,
+      }),
+    };
+  };
 
   const onChange = async (data: SelectOption) => {
     try {

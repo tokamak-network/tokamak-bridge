@@ -216,7 +216,7 @@ export class IQuoterV2__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IQuoterV2 {
     return new Contract(address, _abi, signerOrProvider) as IQuoterV2;
   }

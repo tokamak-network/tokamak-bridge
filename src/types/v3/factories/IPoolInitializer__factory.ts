@@ -53,7 +53,7 @@ export class IPoolInitializer__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IPoolInitializer {
     return new Contract(address, _abi, signerOrProvider) as IPoolInitializer;
   }

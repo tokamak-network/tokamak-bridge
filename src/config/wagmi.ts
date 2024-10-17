@@ -14,7 +14,7 @@ import {
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
   [mainnet, titan, titan_sepolia, sepolia, thanos_sepolia],
-  [publicProvider()]
+  [publicProvider()],
 );
 
 export const config = createConfig({

@@ -12,7 +12,7 @@ export default function useIsTon() {
       const isTON = inToken.tokenAddress?.includes(
         isConnectedToMainNetwork
           ? MAINNET_CONTRACTS.TON_ADDRESS
-          : SEPOLIA_CONTRACTS.TON_ADDRESS
+          : SEPOLIA_CONTRACTS.TON_ADDRESS,
       );
       return isTON;
     }
@@ -23,7 +23,7 @@ export default function useIsTon() {
       const isTON = outToken.tokenAddress.includes(
         isConnectedToMainNetwork
           ? MAINNET_CONTRACTS.TON_ADDRESS
-          : SEPOLIA_CONTRACTS.TON_ADDRESS
+          : SEPOLIA_CONTRACTS.TON_ADDRESS,
       );
       return isTON;
     }

@@ -68,7 +68,7 @@ export default function SetPriceRange() {
         price={
           priceInfo
             ? parseFloat(
-                (invertPrice ? priceInfo.invert() : priceInfo).toSignificant(8)
+                (invertPrice ? priceInfo.invert() : priceInfo).toSignificant(8),
               )
             : undefined
         }

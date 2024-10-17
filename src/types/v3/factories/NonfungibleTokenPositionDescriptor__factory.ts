@@ -157,19 +157,19 @@ const _bytecode =
 export class NonfungibleTokenPositionDescriptor__factory extends ContractFactory {
   constructor(
     linkLibraryAddresses: NonfungibleTokenPositionDescriptorLibraryAddresses,
-    signer?: Signer
+    signer?: Signer,
   ) {
     super(
       _abi,
       NonfungibleTokenPositionDescriptor__factory.linkBytecode(
-        linkLibraryAddresses
+        linkLibraryAddresses,
       ),
-      signer
+      signer,
     );
   }
 
   static linkBytecode(
-    linkLibraryAddresses: NonfungibleTokenPositionDescriptorLibraryAddresses
+    linkLibraryAddresses: NonfungibleTokenPositionDescriptorLibraryAddresses,
   ): string {
     let linkedBytecode = _bytecode;
 
@@ -179,7 +179,7 @@ export class NonfungibleTokenPositionDescriptor__factory extends ContractFactory
         "contracts/libraries/NFTDescriptor.sol:NFTDescriptor"
       ]
         .replace(/^0x/, "")
-        .toLowerCase()
+        .toLowerCase(),
     );
 
     return linkedBytecode;
@@ -188,23 +188,23 @@ export class NonfungibleTokenPositionDescriptor__factory extends ContractFactory
   deploy(
     _WETH9: string,
     _nativeCurrencyLabelBytes: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<NonfungibleTokenPositionDescriptor> {
     return super.deploy(
       _WETH9,
       _nativeCurrencyLabelBytes,
-      overrides || {}
+      overrides || {},
     ) as Promise<NonfungibleTokenPositionDescriptor>;
   }
   getDeployTransaction(
     _WETH9: string,
     _nativeCurrencyLabelBytes: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _WETH9,
       _nativeCurrencyLabelBytes,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): NonfungibleTokenPositionDescriptor {
@@ -217,17 +217,17 @@ export class NonfungibleTokenPositionDescriptor__factory extends ContractFactory
   static readonly abi = _abi;
   static createInterface(): NonfungibleTokenPositionDescriptorInterface {
     return new utils.Interface(
-      _abi
+      _abi,
     ) as NonfungibleTokenPositionDescriptorInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): NonfungibleTokenPositionDescriptor {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as NonfungibleTokenPositionDescriptor;
   }
 }

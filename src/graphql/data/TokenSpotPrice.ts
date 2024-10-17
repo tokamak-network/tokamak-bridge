@@ -1,4 +1,4 @@
-import gql from 'graphql-tag'
+import gql from "graphql-tag";
 
 gql`
   query TokenSpotPrice($chain: Chain!, $address: String = null) {
@@ -20,4 +20,4 @@ gql`
       }
     }
   }
-`
+`;

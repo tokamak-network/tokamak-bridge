@@ -1083,14 +1083,14 @@ export class SwapRouter02__factory extends ContractFactory {
     factoryV3: string,
     _positionManager: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<SwapRouter02> {
     return super.deploy(
       _factoryV2,
       factoryV3,
       _positionManager,
       _WETH9,
-      overrides || {}
+      overrides || {},
     ) as Promise<SwapRouter02>;
   }
   getDeployTransaction(
@@ -1098,14 +1098,14 @@ export class SwapRouter02__factory extends ContractFactory {
     factoryV3: string,
     _positionManager: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _factoryV2,
       factoryV3,
       _positionManager,
       _WETH9,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): SwapRouter02 {
@@ -1121,7 +1121,7 @@ export class SwapRouter02__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): SwapRouter02 {
     return new Contract(address, _abi, signerOrProvider) as SwapRouter02;
   }

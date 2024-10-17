@@ -3,7 +3,7 @@ type Func<T extends any[]> = (...args: T) => void;
 function debounce<T extends any[]>(
   func: Func<T>,
   wait: number,
-  immediate = false
+  immediate = false,
 ): Func<T> {
   let timeout: NodeJS.Timeout | null = null;
 

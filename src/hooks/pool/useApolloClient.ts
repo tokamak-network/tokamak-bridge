@@ -13,6 +13,7 @@ export function useApolloClients():
   return chainGroup?.map((chain) => subgraphApolloClients[chain.chainId]);
 }
 
+/* eslint-disable */
 export const useGetPositionByClients = () => {
   const { address } = useAccount();
   const { chainGroup } = useConnectedNetwork();
@@ -30,7 +31,7 @@ export const useGetPositionByClients = () => {
       client,
       fetchPolicy: "cache-and-network",
       nextFetchPolicy: "cache-first",
-    })
+    }),
   );
 
   return { datas: response };

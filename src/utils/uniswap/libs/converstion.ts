@@ -2,7 +2,7 @@ import { BigNumber, ethers } from "ethers";
 
 export function fromReadableAmount(
   amount: number,
-  decimals: number
+  decimals: number,
 ): BigNumber {
   return ethers.utils.parseUnits(amount.toString(), decimals);
 }

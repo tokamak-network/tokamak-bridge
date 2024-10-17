@@ -17,24 +17,24 @@ const fetchPrice = async (tokenName: string, isEcosystemToken: boolean) => {
     switch (tokenName) {
       case "tonstarter":
         const response = await fetch(
-          "https://price.api.tokamak.network/tosprice"
+          "https://price.api.tokamak.network/tosprice",
         );
         return response;
       case "dooropen": {
         const response = await fetch(
-          "https://price.api.tokamak.network/docprice"
+          "https://price.api.tokamak.network/docprice",
         );
         return response;
       }
       case "aura": {
         const response = await fetch(
-          "https://price.api.tokamak.network/auraprice"
+          "https://price.api.tokamak.network/auraprice",
         );
         return response;
       }
       case "lyda": {
         const response = await fetch(
-          "https://price.api.tokamak.network/lydaprice"
+          "https://price.api.tokamak.network/lydaprice",
         );
         return response;
       }
@@ -60,7 +60,7 @@ export async function GET(request: NextRequest): Promise<NextResponse> {
 
     const data = await response.json();
     return NextResponse.json(
-      isEcosystemToken ? [{ current_price: data }] : data
+      isEcosystemToken ? [{ current_price: data }] : data,
     );
   } catch (error) {
     return NextResponse.json({ message: error }, { status: 500 });

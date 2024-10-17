@@ -54,7 +54,7 @@ export const ApproveButton = (props: { isInToken: boolean }) => {
       address: tokenAddress,
       abi: USDT_ABI,
       functionName: "approve",
-    }
+    },
   );
   const { data: usdtApproveData, write: USDT_APPROVE } = useContractWrite({
     address: tokenAddress,

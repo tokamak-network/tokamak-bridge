@@ -13,7 +13,7 @@ export default function NetworkSymbol(props: TokenPairProp) {
   const inNetwork = fetchNetworkImage(networkI);
 
   return (
-    <Flex alignItems='center'>
+    <Flex alignItems="center">
       <Flex
         w={networkW}
         maxW={`${networkW}px`}

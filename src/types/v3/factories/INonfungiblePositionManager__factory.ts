@@ -1008,12 +1008,12 @@ export class INonfungiblePositionManager__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): INonfungiblePositionManager {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as INonfungiblePositionManager;
   }
 }

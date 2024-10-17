@@ -40,7 +40,7 @@ const getStatusHandler = (params: {
 const getBlockTimestamp = (
   transaction: TransactionHistory,
   statusKey: HISTORY_TRANSACTION_STATUS,
-  isUpdateFee: boolean
+  isUpdateFee: boolean,
 ) => {
   if (
     statusKey === CT_REQUEST.Request &&
@@ -137,7 +137,7 @@ export default function PendingFooter(params: {
             blockTimestamp={getBlockTimestamp(
               transactionData,
               statusKey,
-              isUpdateFee
+              isUpdateFee,
             )}
             updateFeeCount={updateFeeCount}
             openModal={openModal}

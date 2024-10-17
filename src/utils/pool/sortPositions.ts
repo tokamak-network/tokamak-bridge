@@ -42,7 +42,7 @@ export function sortPositions(positions: PoolCardDetail[]) {
       }
 
       return 0;
-    }
+    },
   );
   return sortedResult;
 }

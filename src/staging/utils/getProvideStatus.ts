@@ -33,7 +33,7 @@ export const isProvideCompleted = (params: {
 }) => {
   const { providerClaimCTs, saleCount } = params;
   return providerClaimCTs.some(
-    (providerClaimCT) => providerClaimCT._saleCount === saleCount
+    (providerClaimCT) => providerClaimCT._saleCount === saleCount,
   );
 };
 
@@ -43,7 +43,7 @@ export const getL2TransactionsBySaleCount = (params: {
 }) => {
   const { saleCount, transactions } = params;
   const result = transactions.filter(
-    (transaction) => transaction._saleCount === saleCount
+    (transaction) => transaction._saleCount === saleCount,
   );
   return result ? result[0] : null;
 };

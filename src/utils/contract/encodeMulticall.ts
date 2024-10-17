@@ -15,7 +15,7 @@ export function encodeMulticall(params: {
   // Encode the function call data
   const encodedCallData = contract.interface.encodeFunctionData(
     functionName,
-    functionParams
+    functionParams,
   );
 
   return {

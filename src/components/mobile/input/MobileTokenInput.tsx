@@ -59,10 +59,10 @@ export default function MobileTokenInput(props: {
     defaultValue,
   } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const { amountOut } = useAmountOut();
@@ -83,7 +83,7 @@ export default function MobileTokenInput(props: {
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
-    18
+    18,
   );
   const tokenData = useTokenBalance(inToken ? inTokenInfo : outTokenInfo);
   const { mobileView } = useMediaView();
@@ -126,11 +126,11 @@ export default function MobileTokenInput(props: {
         }
         const parsedAmountOut = ethers.utils.parseUnits(
           value,
-          selectedOutToken?.decimals
+          selectedOutToken?.decimals,
         );
         const parsedAmountIn = ethers.utils.parseUnits(
           value,
-          selectedInToken?.decimals
+          selectedInToken?.decimals,
         );
         setSelectedInToken({
           ...selectedInToken,
@@ -156,7 +156,7 @@ export default function MobileTokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedInToken.decimals
+        selectedInToken.decimals,
       );
 
       return setSelectedInToken({
@@ -177,7 +177,7 @@ export default function MobileTokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
 
       return setSelectedOutToken({
@@ -397,7 +397,7 @@ export default function MobileTokenInput(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         value,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
       return setSelectedOutToken({
         ...selectedOutToken,
@@ -450,9 +450,9 @@ export default function MobileTokenInput(props: {
       ) : (
         <Flex
           flexDir={"column"}
-          border='1px solid'
-          borderColor='#59628d'
-          borderRadius='8px'
+          border="1px solid"
+          borderColor="#59628d"
+          borderRadius="8px"
         >
           {/* {mobileView && <Warning />} */}
           <Flex
@@ -475,11 +475,11 @@ export default function MobileTokenInput(props: {
                 {/* <Warning /> */}
                 <Input
                   autoFocus
-                  autoComplete='off'
-                  type='number'
-                  pattern='[0-9]*'
+                  autoComplete="off"
+                  type="number"
+                  pattern="[0-9]*"
                   flexGrow={1}
-                  inputMode='decimal'
+                  inputMode="decimal"
                   id={inToken ? "LeftInput" : "RightInput"}
                   w={"100%"}
                   h={"24px"}
@@ -523,7 +523,7 @@ export default function MobileTokenInput(props: {
                 </Flex>
               ) : (
                 <Text ml={"5px"} fontSize={14} color={"#A0A3AD"}>{`$${commafy(
-                  marketPrice
+                  marketPrice,
                 )}`}</Text>
               ))}
             {hasMaxButton && !isMax && (

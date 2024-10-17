@@ -14,7 +14,7 @@ import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
 export const getDecodedDepositLog = (
   logs: providers.Log[],
   iFace: utils.Interface,
-  chainId: SupportedChainId
+  chainId: SupportedChainId,
 ): {
   l1TokenAddress: string;
   l2TokenAddress: string;
@@ -23,7 +23,7 @@ export const getDecodedDepositLog = (
   const log = logs.find(
     (log: any) =>
       log.topics[0] === ERC20DepositInitiatedTopicHash ||
-      log.topics[0] === ETHDepositInitiatedTopicHash
+      log.topics[0] === ETHDepositInitiatedTopicHash,
   );
   if (!log) return null;
   const parsedLog = iFace.parseLog(log);

@@ -55,7 +55,7 @@ export async function createTrade(): Promise<TokenTrade> {
     CurrentConfig.tokens.poolFee,
     poolInfo.sqrtPriceX96.toString(),
     poolInfo.liquidity.toString(),
-    poolInfo.tick
+    poolInfo.tick,
   );
 
   console.log("**pool**");
@@ -64,7 +64,7 @@ export async function createTrade(): Promise<TokenTrade> {
   const swapRoute = new Route(
     [pool],
     CurrentConfig.tokens.in,
-    CurrentConfig.tokens.out
+    CurrentConfig.tokens.out,
   );
 
   console.log("**swapRoute**");
@@ -87,12 +87,12 @@ export async function createTrade(): Promise<TokenTrade> {
       CurrentConfig.tokens.in,
       fromReadableAmount(
         CurrentConfig.tokens.amountIn,
-        CurrentConfig.tokens.in.decimals
-      ).toString()
+        CurrentConfig.tokens.in.decimals,
+      ).toString(),
     ),
     outputAmount: CurrencyAmount.fromRawAmount(
       CurrentConfig.tokens.out,
-      JSBI.BigInt(amountOut)
+      JSBI.BigInt(amountOut),
     ),
     tradeType: TradeType.EXACT_INPUT,
   });
@@ -101,7 +101,7 @@ export async function createTrade(): Promise<TokenTrade> {
 }
 
 export async function executeTrade(
-  trade: TokenTrade
+  trade: TokenTrade,
 ): Promise<TransactionState> {
   const walletAddress = getWalletAddress();
   const provider = getL1Provider();
@@ -156,10 +156,10 @@ async function getOutputQuote(route: Route<Currency, Currency>) {
       CurrentConfig.tokens.in,
       fromReadableAmount(
         CurrentConfig.tokens.amountIn,
-        CurrentConfig.tokens.in.decimals
-      ).toString()
+        CurrentConfig.tokens.in.decimals,
+      ).toString(),
     ),
-    TradeType.EXACT_INPUT
+    TradeType.EXACT_INPUT,
     // {
     //   useQuoterV2: true,
     // }
@@ -180,7 +180,7 @@ async function getOutputQuote(route: Route<Currency, Currency>) {
 }
 
 export async function getTokenTransferApproval(
-  token: Token
+  token: Token,
 ): Promise<TransactionState> {
   const provider = getL1Provider();
   const address = "0x8c595DA827F4182bC0E3917BccA8e654DF8223E1";
@@ -194,15 +194,15 @@ export async function getTokenTransferApproval(
     const tokenContract = new ethers.Contract(
       token.address,
       ERC20_ABI.abi,
-      provider
+      provider,
     );
 
     const transaction = await tokenContract.populateTransaction.approve(
       SWAP_ROUTER_ADDRESS,
       fromReadableAmount(
         TOKEN_AMOUNT_TO_APPROVE_FOR_TRANSFER,
-        token.decimals
-      ).toString()
+        token.decimals,
+      ).toString(),
     );
 
     return sendTransaction({

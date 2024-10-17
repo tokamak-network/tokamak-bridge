@@ -156,7 +156,7 @@ export default function TokenCard(props: TokenCardProps) {
       addNewToken(tokenInfo);
       return setAgreeToAdd(true);
     },
-    [agreeToAdd]
+    [agreeToAdd],
   );
 
   const cancelAddNewCard = (event: React.MouseEvent<HTMLParagraphElement>) => {
@@ -166,7 +166,7 @@ export default function TokenCard(props: TokenCardProps) {
 
   const [inTokenInfo] = useRecoilState(selectedInTokenStatus);
   const [outTokenInfo, setOutTokenInfo] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
   const { amountOut } = useAmountOut();
 
@@ -217,7 +217,7 @@ export default function TokenCard(props: TokenCardProps) {
       const roundedValue = Number(value).toFixed(outTokenInfo.decimals);
       const parsedAmount = ethers.utils.parseUnits(
         roundedValue,
-        outTokenInfo.decimals
+        outTokenInfo.decimals,
       );
       ////////////////////
 
@@ -234,7 +234,7 @@ export default function TokenCard(props: TokenCardProps) {
         notAdded
           ? "#383b44"
           : `linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColor(
-              tokenInfo?.tokenSymbol
+              tokenInfo?.tokenSymbol,
             )};`
       }
       w={typeof w === "string" ? w : `${w ? w + "px" : "100%"}`}

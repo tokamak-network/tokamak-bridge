@@ -145,7 +145,7 @@ export const supportedTokensForCT = supportedTokens.filter(
     token.tokenSymbol === "TON" ||
     token.tokenSymbol === "TOS" ||
     token.tokenSymbol === "USDC" ||
-    token.tokenSymbol === "USDT"
+    token.tokenSymbol === "USDT",
 );
 
 export const L1_SEPOLIA_TokenWhitelistForCT = {

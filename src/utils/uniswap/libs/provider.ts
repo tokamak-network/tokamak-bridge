@@ -7,7 +7,7 @@ import { getL2Provider } from "@/config/l2Provider";
 
 // Single copies of provider and wallet
 const mainnetProvider = new ethers.providers.JsonRpcProvider(
-  CurrentConfig.rpc.mainnet
+  CurrentConfig.rpc.mainnet,
 );
 const wallet = createWallet();
 
@@ -44,7 +44,7 @@ export function getWalletAddress(): string | null {
 }
 
 export async function sendTransaction(
-  transaction: ethers.providers.TransactionRequest
+  transaction: ethers.providers.TransactionRequest,
 ): Promise<TransactionState> {
   if (CurrentConfig.env === Environment.WALLET_EXTENSION) {
     return sendTransactionViaExtension(transaction);
@@ -94,12 +94,12 @@ function createBrowserExtensionProvider(): ethers.providers.Web3Provider | null 
 
 // Transacting with a wallet extension via a Web3 Provider
 async function sendTransactionViaExtension(
-  transaction: ethers.providers.TransactionRequest
+  transaction: ethers.providers.TransactionRequest,
 ): Promise<TransactionState> {
   try {
     const receipt = await browserExtensionProvider?.send(
       "eth_sendTransaction",
-      [transaction]
+      [transaction],
     );
     if (receipt) {
       return TransactionState.Sent;
@@ -113,7 +113,7 @@ async function sendTransactionViaExtension(
 }
 
 async function sendTransactionViaWallet(
-  transaction: ethers.providers.TransactionRequest
+  transaction: ethers.providers.TransactionRequest,
 ): Promise<TransactionState> {
   if (transaction.value) {
     transaction.value = BigNumber.from(transaction.value);

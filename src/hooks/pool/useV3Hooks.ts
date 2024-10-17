@@ -42,13 +42,13 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        tickLower - TICK_SPACINGS[feeAmount]
+        tickLower - TICK_SPACINGS[feeAmount],
       );
 
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
 
@@ -63,12 +63,12 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        pool.tickCurrent - TICK_SPACINGS[feeAmount]
+        pool.tickCurrent - TICK_SPACINGS[feeAmount],
       );
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     return "";
@@ -79,13 +79,13 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        tickLower + TICK_SPACINGS[feeAmount]
+        tickLower + TICK_SPACINGS[feeAmount],
       );
 
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     // use pool current tick as starting tick if we have pool but no tick input
@@ -99,12 +99,12 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        pool.tickCurrent + TICK_SPACINGS[feeAmount]
+        pool.tickCurrent + TICK_SPACINGS[feeAmount],
       );
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     return "";
@@ -115,12 +115,12 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        tickUpper - TICK_SPACINGS[feeAmount]
+        tickUpper - TICK_SPACINGS[feeAmount],
       );
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     // use pool current tick as starting tick if we have pool but no tick input
@@ -134,12 +134,12 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        pool.tickCurrent - TICK_SPACINGS[feeAmount]
+        pool.tickCurrent - TICK_SPACINGS[feeAmount],
       );
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     return "";
@@ -150,12 +150,12 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        tickUpper + TICK_SPACINGS[feeAmount]
+        tickUpper + TICK_SPACINGS[feeAmount],
       );
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     // use pool current tick as starting tick if we have pool but no tick input
@@ -169,12 +169,12 @@ export function useRangeHopCallbacks() {
       const newPrice = tickToPrice(
         baseToken,
         quoteToken,
-        pool.tickCurrent + TICK_SPACINGS[feeAmount]
+        pool.tickCurrent + TICK_SPACINGS[feeAmount],
       );
       return newPrice.toSignificant(
         sigificantDigits,
         undefined,
-        Rounding.ROUND_UP
+        Rounding.ROUND_UP,
       );
     }
     return "";

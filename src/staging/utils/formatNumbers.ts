@@ -50,7 +50,7 @@ function testcase() {
 
 // formatNumber.ts
 function formatNumber(
-  value: string | number | undefined | null
+  value: string | number | undefined | null,
 ): string | undefined {
   if (value === undefined || value === null) {
     return commafy(value);

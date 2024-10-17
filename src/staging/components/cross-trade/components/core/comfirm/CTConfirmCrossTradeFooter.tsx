@@ -68,7 +68,7 @@ type TradeConfirmationProps = {
 };
 
 export default function CTConfirmCrossTradeFooter(
-  props: TradeConfirmationProps
+  props: TradeConfirmationProps,
 ) {
   const {
     isChecked,
@@ -89,7 +89,7 @@ export default function CTConfirmCrossTradeFooter(
   const blockExplorer = getBlockExplorerUrl(
     isConnectedToMainNetwork
       ? SupportedChainId.TITAN
-      : SupportedChainId.TITAN_SEPOLIA
+      : SupportedChainId.TITAN_SEPOLIA,
   );
   const inTokenInfo = getSupportedTokenInfo({
     tokenAddress: txData?.inToken.address as string,
@@ -161,7 +161,7 @@ export default function CTConfirmCrossTradeFooter(
         amountBN: BigInt(txData.inToken.amount),
         parsedAmount: formatUnits(
           txData.inToken.amount,
-          txData.inToken.decimals
+          txData.inToken.decimals,
         ),
         tokenAddress: txData.outToken.address,
       });
@@ -207,7 +207,7 @@ export default function CTConfirmCrossTradeFooter(
               subgraphData._hashValue,
               {
                 value: msgValue,
-              }
+              },
             );
 
             const args = [
@@ -299,7 +299,7 @@ export default function CTConfirmCrossTradeFooter(
           txData.inToken.address,
           txData.inToken.amount,
           ctAmount,
-          txData.outNetwork
+          txData.outNetwork,
         );
 
         if (inTokenIsETH) {
@@ -338,7 +338,7 @@ export default function CTConfirmCrossTradeFooter(
       forConfirmProviding,
       isInRelay,
       address,
-    ]
+    ],
   );
 
   const { mobileView } = useMediaView();
@@ -475,9 +475,9 @@ export default function CTConfirmCrossTradeFooter(
               >
                 Warning:
               </span>
-              Tokamak Bridge can't guarantee this
+              Tokamak Bridge can&apos;t guarantee this
             </Text>
-            <Text>request’s validity or compensate for lost funds.</Text>
+            <Text>request&apos;s validity or compensate for lost funds.</Text>
             <Text>
               <Link
                 ml={"2px"}

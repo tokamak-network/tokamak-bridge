@@ -7,7 +7,7 @@ import { trimAddress } from "@/utils/trim";
 import copyIcon from "assets/icons/header/copy.svg";
 import off from "assets/icons/header/off.svg";
 import offHover from "assets/icons/header/offHover.svg";
-import { useState,useEffect,useRef  } from "react";
+import { useState, useEffect, useRef } from "react";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import copy from "copy-to-clipboard";
 
@@ -19,7 +19,6 @@ export default function AccountModal() {
   const toast = useToast();
 
   const wrapperRef = useRef(null);
-
 
   const handleCopyToClipboard = () => {
     copy(address !== undefined ? address : "");
@@ -46,7 +45,6 @@ export default function AccountModal() {
     };
   }, []);
 
-
   return (
     <Flex
       mt="4px"
@@ -71,9 +69,11 @@ export default function AccountModal() {
         py="10px"
         justifyContent={"space-between"}
         alignItems={"center"}
-        cursor={'pointer'}
-        onClick={()=>{handleCopyToClipboard()
-          setIsOpen(false)}}
+        cursor={"pointer"}
+        onClick={() => {
+          handleCopyToClipboard();
+          setIsOpen(false);
+        }}
       >
         <Text fontSize={"16px"} fontWeight={"bold"} mr="8px">
           {trimAddress({ address })}

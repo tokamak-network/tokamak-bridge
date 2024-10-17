@@ -14,10 +14,10 @@ import { getWETHAddress, isETH } from "@/utils/token/isETH";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
@@ -41,7 +41,7 @@ export function useInOutTokens() {
                   : (inTokenRecoilValue.address[chainName] as string),
                 inTokenRecoilValue.decimals,
                 inTokenRecoilValue.tokenSymbol as string,
-                inTokenRecoilValue.tokenName as string
+                inTokenRecoilValue.tokenName as string,
               ),
             }
         : null;
@@ -71,7 +71,7 @@ export function useInOutTokens() {
                   : (outTokenRecoilValue.address[chainName] as string),
                 outTokenRecoilValue.decimals,
                 outTokenRecoilValue.tokenSymbol as string,
-                outTokenRecoilValue.tokenName as string
+                outTokenRecoilValue.tokenName as string,
               ),
             }
         : null;
@@ -192,4 +192,3 @@ export function useInOutTokens() {
     initializeOutTokenAmount,
   };
 }
-

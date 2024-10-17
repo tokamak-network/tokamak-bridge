@@ -53,7 +53,7 @@ const apolloClient_Ethereum = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(
     authMiddleware(SupportedChainId.MAINNET),
-    httpLink[SupportedChainId.MAINNET]
+    httpLink[SupportedChainId.MAINNET],
   ),
 });
 
@@ -61,7 +61,7 @@ const apolloClient_Titan = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(
     authMiddleware(SupportedChainId.TITAN),
-    httpLink[SupportedChainId.TITAN]
+    httpLink[SupportedChainId.TITAN],
   ),
 });
 
@@ -69,7 +69,7 @@ const apolloClient_Sepolia = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(
     authMiddleware(SupportedChainId.SEPOLIA),
-    httpLink[SupportedChainId.SEPOLIA]
+    httpLink[SupportedChainId.SEPOLIA],
   ),
 });
 
@@ -77,7 +77,7 @@ const apolloClient_Titan_Sepolia = new ApolloClient({
   cache: new InMemoryCache(),
   link: concat(
     authMiddleware(SupportedChainId.TITAN_SEPOLIA),
-    httpLink[SupportedChainId.TITAN_SEPOLIA]
+    httpLink[SupportedChainId.TITAN_SEPOLIA],
   ),
 });
 

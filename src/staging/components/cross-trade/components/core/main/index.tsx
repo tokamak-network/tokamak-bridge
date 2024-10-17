@@ -82,12 +82,12 @@ export default function CrossTrade() {
       h={"100%"}
       w={"100%"}
     >
-      <Box w='full'>
+      <Box w="full">
         <Flex
           w={"100%"}
-          flexDirection='column'
+          flexDirection="column"
           justifyContent={"center"}
-          alignItems='center'
+          alignItems="center"
         >
           <Box width={dynamicWidth}>
             <Text
@@ -133,9 +133,9 @@ export default function CrossTrade() {
           pt={poolMobileView ? "24px" : "32px"}
           mt={poolMobileView ? "14px" : "16px"}
           w={"100%"}
-          flexDirection='column'
+          flexDirection="column"
           justifyContent={"flex-start"}
-          alignItems='center'
+          alignItems="center"
           h={"90%"}
         >
           <Box width={dynamicWidth}>
@@ -160,16 +160,16 @@ export default function CrossTrade() {
                 >
                   Cross trade bridge features available through this website are
                   in beta and subject to testing, further development, and
-                  changes and is therefore provided "as is" without any
-                  warranties. Use of any of the features available through this
-                  website is done so entirely at your own risk.{" "}
+                  changes and is therefore provided &quot;as is&quot; without
+                  any warranties. Use of any of the features available through
+                  this website is done so entirely at your own risk.{" "}
                   {!mobileView && <br />}
                   Report using
                   <Link
                     isExternal={true}
                     color={"#DB00FF"}
                     fontWeight={600}
-                    href='https://github.com/tokamak-network/tokamak-bridge/issues'
+                    href="https://github.com/tokamak-network/tokamak-bridge/issues"
                     textDecor={"underline"}
                     mx={"4px"}
                   >
@@ -181,7 +181,7 @@ export default function CrossTrade() {
                     isExternal={true}
                     color={"#DB00FF"}
                     fontWeight={600}
-                    href='https://docs.google.com/forms/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/formResponse'
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/formResponse"
                     textDecor={"underline"}
                   >
                     help form.
@@ -222,11 +222,11 @@ export default function CrossTrade() {
               </Text>
             </Box>
             {ButtonType_Pools.CROSS_TRADE === activeButton ? (
-              <Flex width='full' justifyContent={"center"}>
+              <Flex width="full" justifyContent={"center"}>
                 <CTMain />
               </Flex>
             ) : (
-              <Flex width='full' justifyContent={"center"}>
+              <Flex width="full" justifyContent={"center"}>
                 {poolMobileView ? (
                   <ImagePoolBox isMobile={true} />
                 ) : poolTabletView ? (

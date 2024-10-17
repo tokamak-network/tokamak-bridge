@@ -736,14 +736,14 @@ export class UniswapV3Staker__factory extends ContractFactory {
     _nonfungiblePositionManager: string,
     _maxIncentiveStartLeadTime: BigNumberish,
     _maxIncentiveDuration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UniswapV3Staker> {
     return super.deploy(
       _factory,
       _nonfungiblePositionManager,
       _maxIncentiveStartLeadTime,
       _maxIncentiveDuration,
-      overrides || {}
+      overrides || {},
     ) as Promise<UniswapV3Staker>;
   }
   getDeployTransaction(
@@ -751,14 +751,14 @@ export class UniswapV3Staker__factory extends ContractFactory {
     _nonfungiblePositionManager: string,
     _maxIncentiveStartLeadTime: BigNumberish,
     _maxIncentiveDuration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _factory,
       _nonfungiblePositionManager,
       _maxIncentiveStartLeadTime,
       _maxIncentiveDuration,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): UniswapV3Staker {
@@ -774,7 +774,7 @@ export class UniswapV3Staker__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UniswapV3Staker {
     return new Contract(address, _abi, signerOrProvider) as UniswapV3Staker;
   }
