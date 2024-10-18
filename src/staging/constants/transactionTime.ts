@@ -2,9 +2,11 @@
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
     INITIAL_MINUTES: 5, // Initial state time for deposit (in minutes)
+    INITIAL_SECS: 300,
   },
   WITHDRAW: {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)
+    ROLLUP_MINUTES: 360, // Duration of the rollup  (in minutes)
     ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
   },
   CROSS_TRADE: {
