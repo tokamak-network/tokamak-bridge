@@ -102,7 +102,7 @@ export default function ActionButton() {
         _disabled={{}}
         bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
         color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
-        isDisabled={!isConnected ? false : isDisabled}
+        // isDisabled={!isConnected ? false : isDisabled}
         onClick={
           isConnected === false
             ? () => connetAndDisconntWallet()
