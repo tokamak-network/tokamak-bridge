@@ -6,15 +6,22 @@ import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useMemo } from "react";
 import { Decimal } from "decimal.js";
-import { useConnect } from "wagmi";
+import { useConnect, useFeeData } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { parseUnits } from "ethers/lib/utils";
 
 export const useRecommendFee = (params: {
   totalAmount: number;
   tokenAddress: string;
 }) => {
   const { totalAmount, tokenAddress } = params;
-  const {isConnectedToMainNetwork} = useConnectedNetwork()
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { data: feeData } = useFeeData({
+    chainId: isConnectedToMainNetwork
+      ? SupportedChainId.MAINNET
+      : SupportedChainId.SEPOLIA,
+  });
   const tokenInfo = getSupportedTokenForCT(
     tokenAddress,
     isConnectedToMainNetwork
@@ -41,22 +48,41 @@ export const useRecommendFee = (params: {
     }
   }, [totalAmount, additionalFeeRatio, tokenInfo?.decimals]);
 
-  const { tokenPriceWithAmount: serviceFee } = useGetMarketPrice({
+  const estimatedGasFeeETH = useMemo(() => {
+    if (feeData?.gasPrice) {
+      const gasUsage =
+        recommendFeeConfig.gas[CTTransactionType.provideCT].toString();
+      const gasPrice = formatUnits(feeData.gasPrice.toString(), 9);
+      const gasFee =
+        Number(gasUsage) * Number(gasPrice) * Math.pow(10, -9) * 1.25;
+      return gasFee;
+    }
+  }, [feeData, recommendFeeConfig.gas]);
+
+  const { tokenPriceWithAmount: provideCTTxnCost } = useGetMarketPrice({
     tokenName: "ethereum",
-    amount: formatUnits(
-      recommendFeeConfig.gas[CTTransactionType.provideCT].toString(),
-      18
-    ),
+    amount: estimatedGasFeeETH,
   });
 
   const recommendedFee = useMemo(() => {
-    if (serviceFee && additionalFee && tokenInfo?.decimals) {
+    if (provideCTTxnCost && additionalFee && tokenInfo?.decimals) {
       const additionalFeeWithDecimals = new Decimal(additionalFee.toString());
-      const serviceFeeWithDecimals = new Decimal(serviceFee.toString());
-      const sum = additionalFeeWithDecimals.plus(serviceFeeWithDecimals);
+      const provideCTTxnCostWithDecimals = new Decimal(
+        provideCTTxnCost.toString()
+      );
+      const sum = additionalFeeWithDecimals.plus(provideCTTxnCostWithDecimals);
       return sum.toFixed(tokenInfo.decimals);
     }
-  }, [serviceFee, additionalFee, tokenInfo?.decimals]);
+  }, [provideCTTxnCost, additionalFee, tokenInfo?.decimals]);
+
+  console.log("recommendedFee", recommendedFee);
+  console.log(
+    "provideCTTxnCost",
+    provideCTTxnCost,
+    "gasFee",
+    feeData?.gasPrice
+  );
+  console.log("additionalFee", additionalFee?.toString());
 
   const recommendedCtAmount = useMemo(() => {
     if (totalAmount && recommendedFee && tokenInfo?.decimals) {
