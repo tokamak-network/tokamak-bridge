@@ -33,7 +33,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_MINUTES,
+          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
@@ -47,7 +47,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.rollupCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS
+          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS
         );
         return timeValue;
       }
@@ -108,14 +108,13 @@ function calculateInitialTime(
   errorType?: boolean
 ): number {
   const initialTimestamp = Number(blockTimestamp);
-  const countdownDuration =
-    statusValue === TransactionStatus.WithdrawFinalized
-      ? convertTimeToMinutes(additional, "days", 0) * 60
-      : TransactionStatus.REQUEST_CANCEL
-      ? additional
-      : convertTimeToMinutes(additional, "minutes", 0) * 60;
-
-  console.log("countdownDuration", countdownDuration);
+  const countdownDuration = additional;
+  // const countdownDuration =
+  //   statusValue === TransactionStatus.WithdrawFinalized
+  //     ? convertTimeToMinutes(additional, "days", 0) * 60
+  //     : TransactionStatus.REQUEST_CANCEL
+  //     ? additional
+  //     : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
   // Get the current time in the user's local timezone
   const currentTimeUTC = new Date();
@@ -135,7 +134,6 @@ function calculateInitialTime(
   // Calculate the remaining time
   const remainingTime =
     countdownDuration - (currentTimeInSeconds - adjustedBlockTimestamp);
-
   const totalTime = errorType ? Math.abs(remainingTime) : remainingTime;
 
   return totalTime;

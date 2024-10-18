@@ -139,12 +139,13 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
-  if (shouldCountdown && rollupStage) {
-    console.log("*****");
-    console.log(transactionData.status);
-    console.log(getRemainTime(transactionData));
-    console.log(formatTimeDisplay(getRemainTime(transactionData)));
-  }
+  // if (shouldCountdown && rollupStage) {
+  //   console.group();
+  //   console.log(transactionData.status);
+  //   console.log(getRemainTime(transactionData));
+  //   console.log(formatTimeDisplay(getRemainTime(transactionData)));
+  //   console.groupEnd();
+  // }
 
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
