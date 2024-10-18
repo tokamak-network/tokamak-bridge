@@ -94,7 +94,6 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
-    console.log(mobileView);
     if (mobileView) {
       onCloseCTOptionModal();
     }
@@ -159,6 +158,8 @@ export default function CTOptionModal() {
   );
 
   const serviceFeeIsNotOver = useMemo(() => {
+    console.log("***");
+    console.log(inToken?.parsedAmount, serviceFee);
     if (inToken?.parsedAmount) {
       return Number(inToken.parsedAmount) - Number(serviceFee) <= 0;
     }
@@ -178,11 +179,11 @@ export default function CTOptionModal() {
         return setInputWarningCheck(WarningType.Normal);
       return setInputWarningCheck("");
     }
-  }, [serviceFeeIsNotOver, isLessThanRecommendedFee]);
+    // Reset inputWarningCheck when the modal is reopened
+  }, [serviceFeeIsNotOver, isLessThanRecommendedFee, ctOptionModal]);
 
   useEffect(() => {
     if (ctOptionModal) {
-      setInputWarningCheck("");
       setActiveSubButtonValue(ButtonTypeSub.Recommend);
     }
   }, [ctOptionModal]);

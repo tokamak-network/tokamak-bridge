@@ -6,10 +6,9 @@ import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { formatUnits } from "@/utils/trim/convertNumber";
 import { useMemo } from "react";
 import { Decimal } from "decimal.js";
-import { useConnect, useFeeData } from "wagmi";
+import { useFeeData } from "wagmi";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
-import { parseUnits } from "ethers/lib/utils";
 
 export const useRecommendFee = (params: {
   totalAmount: number;
@@ -75,14 +74,14 @@ export const useRecommendFee = (params: {
     }
   }, [provideCTTxnCost, additionalFee, tokenInfo?.decimals]);
 
-  console.log("recommendedFee", recommendedFee);
-  console.log(
-    "provideCTTxnCost",
-    provideCTTxnCost,
-    "gasFee",
-    feeData?.gasPrice
-  );
-  console.log("additionalFee", additionalFee?.toString());
+  // console.log("recommendedFee", recommendedFee);
+  // console.log(
+  //   "provideCTTxnCost",
+  //   provideCTTxnCost,
+  //   "gasFee",
+  //   feeData?.gasPrice
+  // );
+  // console.log("additionalFee", additionalFee?.toString());
 
   const recommendedCtAmount = useMemo(() => {
     if (totalAmount && recommendedFee && tokenInfo?.decimals) {
