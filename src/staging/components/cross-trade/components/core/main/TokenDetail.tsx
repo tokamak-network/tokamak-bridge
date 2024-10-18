@@ -9,6 +9,9 @@ import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
 import { formatProfit } from "@/staging/utils/formatProfit";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
+import { useProvideCTGas } from "../../../hooks/useCTGas";
 
 interface TokenDetailProps {
   token?: Token;
@@ -19,13 +22,48 @@ interface TokenDetailProps {
   profit?: Profit;
 }
 
+const Percentage = (props: { percent: string }) => {
+  const isNegative = props.percent.includes("-");
+  return (
+    <Text
+      fontSize={14}
+      fontWeight={500}
+      color={isNegative ? "#DD3A44" : "#03D187"}
+    >
+      {!isNegative && "+"} {props.percent}%
+    </Text>
+  );
+};
+const USDValue = (props: { usdAmount: string }) => {
+  const isNegative = props.usdAmount.includes("-");
+
+  return (
+    <Text
+      fontSize={11}
+      fontWeight={400}
+      color={isNegative ? "#DD3A44" : "#03D187"}
+    >
+      {isNegative ? "-" : "+"}${props.usdAmount.replaceAll("-", "")}
+    </Text>
+  );
+};
+const NetProfit = (props: { percent: string; usdAmount: string }) => {
+  return (
+    <Flex flexDir={"column"}>
+      <Percentage {...props}></Percentage>
+      <USDValue {...props}></USDValue>
+    </Flex>
+  );
+};
+
 export default function TokenDetail(props: TokenDetailProps) {
   const { token, network, profit, isProvide, providingUSD, recevingUSD } =
     props;
+  const isProfit = profit !== undefined;
 
   const formattedAmount = token
     ? convertNumber(token.amount, token.decimals)
-    : profit?.amount;
+    : commafy(profit?.amount);
 
   const symbol = token ? token.symbol : profit?.symbol;
   const tokenPriceWithAmount = useMemo(() => {
@@ -37,8 +75,12 @@ export default function TokenDetail(props: TokenDetailProps) {
     if (token) {
       return tokenPriceWithAmount ? `$${commafy(tokenPriceWithAmount)}` : "NA";
     }
-    return `${formatProfit(profit?.percent)}%`;
-  }, [tokenPriceWithAmount, profit?.percent]);
+    return `${formatProfit(profit?.percent)}`;
+  }, [token, tokenPriceWithAmount, profit?.percent]);
+
+  if (isProfit) {
+    return <NetProfit percent={priceOrPercent} usdAmount={formattedAmount} />;
+  }
 
   return (
     <Flex columnGap={"13px"}>
@@ -84,27 +126,11 @@ export default function TokenDetail(props: TokenDetailProps) {
         <Flex alignItems={"center"}>
           <Text
             fontWeight={400}
-            fontSize={"9px"}
-            lineHeight={"13.5px"}
-            color={"#A0A3AD"}
-          >
-            (
-          </Text>
-          <Text
-            fontWeight={400}
             fontSize={"11px"}
             lineHeight={"16.5px"}
             color={"#A0A3AD"}
           >
             {priceOrPercent}
-          </Text>
-          <Text
-            fontWeight={400}
-            fontSize={"9px"}
-            lineHeight={"13.5px"}
-            color={"#A0A3AD"}
-          >
-            )
           </Text>
         </Flex>
       </Box>

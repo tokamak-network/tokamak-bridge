@@ -27,6 +27,7 @@ import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { formatProfit } from "@/staging/utils/formatProfit";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useProvideCTGas } from "../../../hooks/useCTGas";
 
 {
   /** 
@@ -163,19 +164,19 @@ export default function CTMain() {
   }, []);
 
   return mobileView ? (
-    <Flex direction='column' width='100%' height='100%' padding='0'>
+    <Flex direction="column" width="100%" height="100%" padding="0">
       {displayedItems.length === 0 && (
         <Flex
-          justifyContent='center'
-          alignItems='center'
-          height='100%'
-          flexDirection='column'
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+          flexDirection="column"
           mt={"16px"}
         >
           <Text
-            fontSize='14px'
-            color='#E3F3FF'
-            fontWeight='400'
+            fontSize="14px"
+            color="#E3F3FF"
+            fontWeight="400"
             lineHeight={"21px"}
           >
             No active requests
@@ -213,13 +214,13 @@ export default function CTMain() {
 
         return (
           <Box
-            w='100%'
-            h='100%'
+            w="100%"
+            h="100%"
             py={"12px"}
             borderBottom={"1px solid #313442"}
             ref={index === displayedItems.length - 1 ? lastItemRef : null}
           >
-            <Flex justifyContent='space-between' alignItems={"center"}>
+            <Flex justifyContent="space-between" alignItems={"center"}>
               <Flex alignItems={"center"}>
                 <Box>
                   <TokenSymbolWithNetwork
@@ -233,40 +234,40 @@ export default function CTMain() {
                     bottom={0}
                   />
                 </Box>
-                <Flex direction={"column"} ml='12px'>
+                <Flex direction={"column"} ml="12px">
                   <Text
-                    fontSize='13px'
+                    fontSize="13px"
                     fontWeight={400}
-                    lineHeight='19.5px'
-                    color='#A0A3AD'
+                    lineHeight="19.5px"
+                    color="#A0A3AD"
                   >
                     Receive on {displayNetworkNameIn}
                   </Text>
                   <Flex alignItems={"center"}>
                     <Text
-                      fontSize='16px'
+                      fontSize="16px"
                       fontWeight={600}
-                      lineHeight='24px'
-                      color='#FFFFFF'
-                      mr='3px'
+                      lineHeight="24px"
+                      color="#FFFFFF"
+                      mr="3px"
                     >
                       {formatNumber(formattedAmount)} {item.outToken.symbol}
                     </Text>
-                    <Text fontSize='13px' fontWeight={400} lineHeight='19.5px'>
+                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
                       (
                     </Text>
-                    <Text fontSize='16px' fontWeight={400} lineHeight='24px'>
+                    <Text fontSize="16px" fontWeight={400} lineHeight="24px">
                       +{formatProfit(item.profit?.percent)}%
                     </Text>
-                    <Text fontSize='13px' fontWeight={400} lineHeight='19.5px'>
+                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
                       )
                     </Text>
                   </Flex>
                   <Text
-                    fontSize='13px'
+                    fontSize="13px"
                     fontWeight={500}
-                    lineHeight='19.5px'
-                    color='#DB00FF'
+                    lineHeight="19.5px"
+                    color="#DB00FF"
                   >
                     Provide on {displayNetworkNameOut}
                   </Text>
@@ -278,6 +279,7 @@ export default function CTMain() {
                   crossTradeData={item}
                   subgraphData={item.subgraphData}
                   serviceFee={item.serviceFee}
+                  isNetaveProfit={item.isNetaveProfit}
                 />
               </Box>
             </Flex>
@@ -287,15 +289,15 @@ export default function CTMain() {
     </Flex>
   ) : (
     <Box
-      w='100%'
-      h='100%'
+      w="100%"
+      h="100%"
       borderRadius={"16px"}
       border={"1px solid #313442"}
-      overflow='hidden'
+      overflow="hidden"
       pos={"sticky"}
       top={500}
     >
-      <Table variant={"unstyled"} w='100%' h='100%'>
+      <Table variant={"unstyled"} w="100%" h="100%">
         <Thead pos={"sticky"} top={0} zIndex={10000}>
           <Tr
             sx={{
@@ -304,9 +306,9 @@ export default function CTMain() {
               letterSpacing: 0,
             }}
           >
-            <Th textTransform='none' minW={"210px"} maxW={"210px"}>
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex
-                alignItems='center'
+                alignItems="center"
                 cursor={"pointer"}
                 onClick={() => {
                   setIsDescSortedReceive(null);
@@ -325,7 +327,7 @@ export default function CTMain() {
                         ? "rotate(360deg)"
                         : "rotate(180deg)",
                     }}
-                    mr='4px'
+                    mr="4px"
                   >
                     <Image src={Polygon} alt={"Polygon"} />
                   </Flex>
@@ -346,9 +348,9 @@ export default function CTMain() {
                 />
               </Flex>
             </Th>
-            <Th textTransform='none' minW={"210px"} maxW={"210px"}>
+            <Th textTransform="none" minW={"210px"} maxW={"210px"}>
               <Flex
-                alignItems='center'
+                alignItems="center"
                 cursor={"pointer"}
                 onClick={() => {
                   setIsDescSortedProvide(null);
@@ -360,7 +362,7 @@ export default function CTMain() {
               >
                 {isDescSortedReceive !== null && (
                   <Flex
-                    ml='4px'
+                    ml="4px"
                     justifyContent={"center"}
                     alignItems={"center"}
                     style={{
@@ -368,7 +370,7 @@ export default function CTMain() {
                         ? "rotate(360deg)"
                         : "rotate(180deg)",
                     }}
-                    mr='4px'
+                    mr="4px"
                   >
                     <Image src={Polygon} alt={"Polygon"} />
                   </Flex>
@@ -402,7 +404,7 @@ export default function CTMain() {
                 />
               </Flex>
             </Th>
-            <Th textTransform='none' minW={"140px"} maxW={"140px"} p={0}>
+            <Th textTransform="none" minW={"140px"} maxW={"140px"} p={0}>
               <Flex
                 cursor={"pointer"}
                 onClick={() => {
@@ -422,7 +424,7 @@ export default function CTMain() {
                         ? "rotate(360deg)"
                         : "rotate(180deg)",
                     }}
-                    mr='4px'
+                    mr="4px"
                   >
                     <Image src={Polygon} alt={"Polygon"} />
                   </Flex>
@@ -434,11 +436,11 @@ export default function CTMain() {
                   color={"#A0A3AD"}
                   letterSpacing={0}
                 >
-                  Profit (%)
+                  Net Profit (%)
                 </Text>
               </Flex>
             </Th>
-            <Th textTransform='none'></Th>
+            <Th textTransform="none"></Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -538,6 +540,7 @@ export default function CTMain() {
                       crossTradeData={item}
                       subgraphData={item.subgraphData}
                       serviceFee={item.serviceFee}
+                      isNetaveProfit={item.isNetaveProfit}
                     />
                   </Td>
                 </Tr>

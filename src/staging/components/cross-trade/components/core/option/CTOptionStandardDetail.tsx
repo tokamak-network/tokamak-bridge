@@ -14,7 +14,9 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
 import { useGetMode } from "@/hooks/mode/useGetMode";
-import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
+import useRelayGas, {
+  useRelayGasCost,
+} from "@/staging/components/new-confirm/hooks/useGetGas";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 interface AdditionalStandardProps {
@@ -30,9 +32,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
     amount: inToken?.parsedAmount as string,
     tokenName: inToken?.tokenName as string,
   });
-
-  const CLAIM_GAS_USED = 1000000;
-  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId.MAINNET);
+  const { withdrawCost } = useRelayGasCost();
 
   return (
     <Flex

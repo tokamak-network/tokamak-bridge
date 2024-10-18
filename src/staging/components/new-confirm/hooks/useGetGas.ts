@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { useFeeData } from "wagmi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 const useRelayGas = (gasLimit: number, chainId: number) => {
   const { data: feeData } = useFeeData({ chainId });
@@ -28,6 +29,13 @@ const useRelayGas = (gasLimit: number, chainId: number) => {
   }, [tokenMarketPrice, totalGasCost]);
 
   return { usGasCost, totalGasCost };
+};
+
+export const useRelayGasCost = () => {
+  const CLAIM_GAS_USED = 1000000;
+  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId.MAINNET);
+
+  return { withdrawCost };
 };
 
 export default useRelayGas;
