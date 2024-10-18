@@ -37,7 +37,7 @@ import {
   getThanosDepositMsgHashes,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import {
   getDecodedValueFromThanosLogs,
   getDecodeLog,
@@ -98,7 +98,6 @@ import { l2Provider } from "@/config/l2Provider";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
-import { ethers } from "ethers";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -944,11 +943,12 @@ export const useRequestHistoryData = () => {
           providerClaimCTs,
           editCTs,
         });
-        const inToken = getTokenInfo({ requestData });
+        const inToken = getTokenInfo({ requestData, isConnectedToMainNetwork });
         const outToken = getTokenInfo({
           requestData,
           ctAmount: true,
           _editedctAmount: isUpdateFee ? editCT._ctAmount : undefined,
+          isConnectedToMainNetwork,
         });
         const transactionHashes = getRequestTransactionHash({
           status,
@@ -1050,9 +1050,11 @@ export const useProvideData = () => {
         const inToken = getTokenInfo({
           requestData: provideCT,
           ctAmount: true,
+          isConnectedToMainNetwork,
         });
         const outToken = getTokenInfo({
           requestData: provideCT,
+          isConnectedToMainNetwork,
         });
         const transactionHashes = getProvideTransactionHash({
           status,

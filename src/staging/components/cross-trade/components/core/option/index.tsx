@@ -99,6 +99,7 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
+    console.log(mobileView);
     if (mobileView) {
       onCloseCTOptionModal();
     }
@@ -192,32 +193,27 @@ export default function CTOptionModal() {
   }, [ctOptionModal]);
 
   const btnDisabled = useMemo(() => {
-    if (activeMainButtonValue === ButtonTypeMain.Cross) {
-      if (activeSubButtonValue === ButtonTypeSub.Recommend) {
-        return !recommendedCtAmount || !recommendedFee;
-      }
+    if (activeMainButtonValue === ButtonTypeMain.Standard) {
+      return false;
+    }
+    if (activeSubButtonValue === ButtonTypeSub.Recommend) {
+      return !recommendedCtAmount || !recommendedFee;
+    }
 
-      if (activeSubButtonValue === ButtonTypeSub.Advanced) {
-        return (
-          serviceFee === "" ||
-          serviceFee === undefined ||
-          inputWarningCheck === WarningType.Critical
-        );
-      }
-    } else if (activeMainButtonValue === ButtonTypeMain.Standard) {
-      // Check it out if the token is available to withdraw
-      return isNotSupportForBridge;
+    if (activeSubButtonValue === ButtonTypeSub.Advanced) {
+      return (
+        serviceFee === "" ||
+        serviceFee === undefined ||
+        inputWarningCheck === WarningType.Critical
+      );
     }
   }, [
+    activeMainButtonValue,
     activeSubButtonValue,
     serviceFee,
     inputWarningCheck,
     recommendedCtAmount,
     recommendedFee,
-    inToken,
-    isNotSupportForBridge,
-    ctOptionModal,
-    activeMainButtonValue,
   ]);
 
   const { isWhiteListToken } = useWhiteListToken();
@@ -243,8 +239,8 @@ export default function CTOptionModal() {
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={"404px"}
-        bg='#1F2128'
-        p={"20px"}
+        bg="#1F2128"
+        p={mobileView ? "12px 12px 16px 12px" : "20px"}
       >
         <ModalHeader px={0} pt={0} pb={"12px"}>
           <Text
@@ -297,10 +293,10 @@ export default function CTOptionModal() {
             handleButtonMainClick={handleButtonMainClick}
           />
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           <Button
             mt={"12px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{

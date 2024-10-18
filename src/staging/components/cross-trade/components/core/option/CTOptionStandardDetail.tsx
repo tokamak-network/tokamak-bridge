@@ -12,6 +12,10 @@ import { CTTransactionType } from "@/types/crossTrade/contracts";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import { useGetMode } from "@/hooks/mode/useGetMode";
+import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useGetEstimatedTotalGasFee } from "@/staging/hooks/useStandardWithdrawGasFee";
 import { useInOutNetwork } from "@/hooks/network";
 
@@ -34,6 +38,9 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
     amount: inToken?.parsedAmount as string,
     tokenName: inToken?.tokenName as string,
   });
+
+  const CLAIM_GAS_USED = 1000000;
+  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId.MAINNET);
 
   return (
     <Flex
@@ -95,9 +102,8 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
           </Text>
         </Box>
         <Text fontSize={12} color={"#007AFF"}>
-          {`$${
-            Number(tokenPriceWithAmount) < 0 ? 0 : commafy(tokenPriceWithAmount)
-          }`}
+          {`$${Number(tokenPriceWithAmount) < 0 ? 0 : commafy(tokenPriceWithAmount)
+            }`}
         </Text>
       </Box>
       <Circle

@@ -219,7 +219,7 @@ export default function DepositWithdrawConfirmModal() {
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={mobileView ? "100%" : "404px"}
         bg="#1F2128"
-        p={"20px"}
+        p={mobileView ? "12px 12px 16px 12px" : "20px"}
         {...(mobileView && {
           maxHeight: "calc(100vh - 80px)",
           overflowY: "auto",
@@ -359,7 +359,7 @@ export default function DepositWithdrawConfirmModal() {
             </Flex>
           </Box>
           <Box
-            my={"12px"}
+            mt={"12px"}
             px={"20px"}
             pt={"16px"}
             borderRadius={"8px"}
@@ -375,7 +375,15 @@ export default function DepositWithdrawConfirmModal() {
             </Flex>
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter
+          p={0}
+          display="block"
+          mt={
+            transactionData.status === Status.Initiate || isButtonVisible
+              ? "12px"
+              : 0
+          }
+        >
           {transactionData.status === Status.Initiate ? (
             <Flex gap={"12px"} flexDir={"column"}>
               <ConfirmCheckboxComponent
@@ -394,11 +402,6 @@ export default function DepositWithdrawConfirmModal() {
             </Flex>
           ) : (
             <>
-              <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
-                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  text will be changed
-                </Text>
-              </Box>
               {isButtonVisible && (
                 <Button
                   width="full"

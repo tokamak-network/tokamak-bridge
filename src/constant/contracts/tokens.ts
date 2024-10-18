@@ -82,8 +82,6 @@ export const getTokenAddressByChainId = (
       return USDC_ADDRESS_BY_CHAINID[chainId];
     case "USDT":
       return USDT_ADDRESS_BY_CHAINID[chainId];
-    case "TOS":
-      return TOS_ADDRESS_BY_CHAINID[chainId];
     default:
       return "";
   }
