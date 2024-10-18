@@ -380,10 +380,8 @@ export const useDepositData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-      // console.log("sortedResult", sortedResult);
-      setDepositHistory(mock_depositRequest as any);
-      // if (sortedResult) return setDepositHistory(sortedResult);
-      // return setDepositHistory([]);
+      if (sortedResult) return setDepositHistory(sortedResult);
+      return setDepositHistory([]);
     }
   }, [l1Data, isConnectedToMainNetwork, L1Provider]);
 
