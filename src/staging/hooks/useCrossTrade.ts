@@ -230,6 +230,7 @@ export const useRequestData = (
               : item._l2token,
             isMainnet
           );
+
           const isCanceled = isRequestCanceled({
             cancelCTs,
             saleCount: item._saleCount,
@@ -260,7 +261,7 @@ export const useRequestData = (
           const txnCostInAmount = marketPrice
             ? new Decimal(txnCost).div(marketPrice)
             : new Decimal(0);
-          const txnCostAmount = txnCostInAmount.toFixed(tokenInfo.decimals);
+          const txnCostAmount = txnCostInAmount.toFixed(tokenInfo?.decimals);
 
           const serviceFee = BigInt(item._totalAmount) - ctAmount;
 
@@ -325,14 +326,6 @@ export const useRequestData = (
             outToken.amount,
             outToken.decimals
           );
-          // console.log(
-          //   "inTokenAmount",
-          //   inTokenAmount,
-          //   marketPrice,
-          //   tokenInfo?.tokenSymbol,
-          //   item._l2token,
-          //   priceList
-          // );
           const providingUSD = Number(inTokenAmount) * Number(marketPrice);
           const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
 
@@ -365,10 +358,7 @@ export const useRequestData = (
         });
 
         const trimedResult = result.filter(
-          (item) =>
-            !item.isCanceled &&
-            item.recevingUSD >= item.providingUSD &&
-            !item.isProvided
+          (item) => !item.isCanceled && !item.isProvided
         );
 
         setIsLoading(false);

@@ -279,6 +279,7 @@ export default function CTMain() {
                   crossTradeData={item}
                   subgraphData={item.subgraphData}
                   serviceFee={item.serviceFee}
+                  isNetaveProfit={item.isNetaveProfit}
                 />
               </Box>
             </Flex>
