@@ -15,7 +15,7 @@ const FixedPoint96Q96 = ethers.BigNumber.from("0x1000000000000000000000000");
 function getLiquidityForAmount1(
   sqrtRatioAX96: JSBI,
   sqrtRatioBX96: JSBI,
-  amount1: BigInt
+  amount1: BigInt,
 ) {
   if (sqrtRatioAX96 > sqrtRatioBX96) {
     let temp;
@@ -26,7 +26,7 @@ function getLiquidityForAmount1(
 
   const param1 = JSBI.multiply(
     JSBI.BigInt(amount1.toString()),
-    JSBI.BigInt(FixedPoint96Q96.toString())
+    JSBI.BigInt(FixedPoint96Q96.toString()),
   );
   const param2 = JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96);
 
@@ -38,7 +38,7 @@ function getLiquidityForAmount1(
 function getLiquidityForAmount0(
   sqrtRatioAX96: JSBI,
   sqrtRatioBX96: JSBI,
-  amount0: any
+  amount0: any,
 ) {
   if (sqrtRatioAX96 > sqrtRatioBX96) {
     let temp;
@@ -50,7 +50,7 @@ function getLiquidityForAmount0(
   const param1 = JSBI.multiply(sqrtRatioAX96, sqrtRatioBX96);
   const intermediate = JSBI.divide(
     param1,
-    JSBI.BigInt(FixedPoint96Q96.toString())
+    JSBI.BigInt(FixedPoint96Q96.toString()),
   );
   const param2 = JSBI.multiply(JSBI.BigInt(amount0.toString()), intermediate);
   const param3 = JSBI.subtract(sqrtRatioBX96, sqrtRatioAX96);
@@ -80,7 +80,7 @@ export function useGetAmountForLiquidity() {
       positionPool.sqrtPriceX96,
       JSBI.BigInt(0),
       positionPool.tickCurrent,
-      []
+      [],
     );
 
   const tickLower = positionPool?.tickLower;
@@ -139,7 +139,7 @@ export function useGetAmountForLiquidity() {
             });
 
       const dependentTokenAmount = wrappedIndependentAmount.currency.equals(
-        poolForPosition.token0
+        poolForPosition.token0,
       )
         ? position.amount1
         : position.amount0;
@@ -147,7 +147,7 @@ export function useGetAmountForLiquidity() {
         dependentCurrency &&
         CurrencyAmount.fromRawAmount(
           dependentCurrency,
-          dependentTokenAmount.quotient
+          dependentTokenAmount.quotient,
         )
       );
     }

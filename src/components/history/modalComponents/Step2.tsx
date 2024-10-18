@@ -27,7 +27,7 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
         const currentTime = new Date();
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
-          startDate
+          startDate,
         );
 
         const elapsedTimeDate = new Date(0);
@@ -35,7 +35,7 @@ function Step2(props: { progress: string; timeStamp?: number; check: any }) {
 
         const formattedTime = format(
           utcToZonedTime(elapsedTimeDate, "UTC"),
-          "HH:mm:ss"
+          "HH:mm:ss",
         );
 
         durationRef.current = formattedTime;

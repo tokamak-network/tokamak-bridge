@@ -29,14 +29,14 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
   const token0Amount = Number(
     ethers.utils.formatUnits(
       info?.token0CollectedFeeBN ?? BigNumber.from(0),
-      info?.token0.decimals
-    )
+      info?.token0.decimals,
+    ),
   );
   const token1Amount = Number(
     ethers.utils.formatUnits(
       info?.token1CollectedFeeBN ?? BigNumber.from(0),
-      info?.token1.decimals
-    )
+      info?.token1.decimals,
+    ),
   );
 
   const { hasTokenPrice, totalMarketPrice, token0Price, token1Price } =
@@ -152,13 +152,13 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                       content={smallNumberFormmater({
                         amount: ethers.utils.formatUnits(
                           info?.token0CollectedFeeBN,
-                          info?.token0.decimals
+                          info?.token0.decimals,
                         ),
                         minimumValue: 0.000001,
                       })}
                       tooltipLabel={ethers.utils.formatUnits(
                         info?.token0CollectedFeeBN,
-                        info?.token0.decimals
+                        info?.token0.decimals,
                       )}
                     />
                   </Text>
@@ -202,13 +202,13 @@ export default function ClaimEarningsModal(props: { info: PoolCardDetail }) {
                       content={smallNumberFormmater({
                         amount: ethers.utils.formatUnits(
                           info?.token1CollectedFeeBN,
-                          info?.token1.decimals
+                          info?.token1.decimals,
                         ),
                         minimumValue: 0.000001,
                       })}
                       tooltipLabel={ethers.utils.formatUnits(
                         info?.token1CollectedFeeBN,
-                        info?.token1.decimals
+                        info?.token1.decimals,
                       )}
                     />
                   </Text>

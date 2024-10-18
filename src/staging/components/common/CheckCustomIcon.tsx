@@ -10,8 +10,8 @@ export default function CheckCustomIcon(props: any) {
   return (
     <>
       {isChecked ? (
-        <Icon viewBox='0 0 10 10' {...rest}>
-          <path fill='currentColor' d={d} />
+        <Icon viewBox="0 0 10 10" {...rest}>
+          <path fill="currentColor" d={d} />
         </Icon>
       ) : null}
     </>

@@ -15,7 +15,7 @@ export function useWhiteListToken() {
       const tokensForThisNetwork = supportedTokensForCt[connectedChainId];
       const isWhiteListToken = Object.values(tokensForThisNetwork).some(
         (token) =>
-          token.address.toLowerCase() === inToken.tokenAddress.toLowerCase()
+          token.address.toLowerCase() === inToken.tokenAddress.toLowerCase(),
       );
       return isWhiteListToken || thisTokenIsETH;
     }

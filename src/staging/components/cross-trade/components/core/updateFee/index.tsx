@@ -51,7 +51,7 @@ export default function CTFeeUpdateModal() {
   const { ctUpdateFeeModal, onCloseCTUpdateFeeModal } = useCTUpdateFee();
   //Button props
   const [activeButton, setActiveButton] = useState<UpdateFeeButtonType>(
-    UpdateFeeButtonType.Update
+    UpdateFeeButtonType.Update,
   );
 
   // Update Fee Recommend 값 사용할지, 그냥 사용할지 확인하는 state
@@ -61,11 +61,11 @@ export default function CTFeeUpdateModal() {
   // CTInput 관련 state 및 function Start @Robert
   const [inputValue, setInputValue] = useState("");
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
-    ""
+    "",
   );
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement> | string
+    e: React.ChangeEvent<HTMLInputElement> | string,
   ) => {
     if (typeof e === "string") return setInputValue(e);
     const { value } = e.target;
@@ -73,7 +73,7 @@ export default function CTFeeUpdateModal() {
     if (regex.test(value)) {
       const valueWithDecimals = limitDecimals(
         value,
-        ctUpdateFeeModal.txData?.inToken.decimals
+        ctUpdateFeeModal.txData?.inToken.decimals,
       );
 
       if (valueWithDecimals !== undefined) {
@@ -92,7 +92,7 @@ export default function CTFeeUpdateModal() {
     if (ctUpdateFeeModal.txData?.inToken.decimals && inputValue !== "") {
       return toParseNumber(
         inputValue,
-        ctUpdateFeeModal.txData.inToken.decimals
+        ctUpdateFeeModal.txData.inToken.decimals,
       );
     }
   }, [inputValue, ctUpdateFeeModal.txData?.inToken.decimals]);
@@ -103,7 +103,7 @@ export default function CTFeeUpdateModal() {
       ctUpdateFeeModal.txData?.inToken.decimals
     ) {
       return BigNumber.from(
-        ctUpdateFeeModal.txData.L2_subgraphData._totalAmount
+        ctUpdateFeeModal.txData.L2_subgraphData._totalAmount,
       );
     }
   }, [ctUpdateFeeModal.txData?.L2_subgraphData?._totalAmount]);
@@ -117,8 +117,8 @@ export default function CTFeeUpdateModal() {
     totalAmount: Number(
       formatUnits(
         totalAmount?.toString(),
-        ctUpdateFeeModal.txData?.inToken.decimals
-      )
+        ctUpdateFeeModal.txData?.inToken.decimals,
+      ),
     ),
     tokenAddress,
   });
@@ -209,7 +209,7 @@ export default function CTFeeUpdateModal() {
           } = ctUpdateFeeModal.txData.L2_subgraphData;
           const editAmount = toParseNumber(
             inputValue,
-            ctUpdateFeeModal.txData.inToken.decimals
+            ctUpdateFeeModal.txData.inToken.decimals,
           );
 
           if (!editAmount) return console.error("editAmount is undefined");
@@ -246,7 +246,7 @@ export default function CTFeeUpdateModal() {
         console.log(e);
       }
     },
-    [_editFee, ctUpdateFeeModal.txData, inputValue]
+    [_editFee, ctUpdateFeeModal.txData, inputValue],
   );
 
   const cancelRequest = useCallback(
@@ -291,7 +291,7 @@ export default function CTFeeUpdateModal() {
         resetAllStates();
       }
     },
-    [ctUpdateFeeModal.txData, _cancelRequest]
+    [ctUpdateFeeModal.txData, _cancelRequest],
   );
 
   useEffect(() => {
@@ -366,7 +366,7 @@ export default function CTFeeUpdateModal() {
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
         width={mobileView ? "100%" : "404px"}
         {...(mobileView && {
@@ -420,7 +420,9 @@ export default function CTFeeUpdateModal() {
                 txData={ctUpdateFeeModal.txData}
               />
             ) : (
-              <CTRefundDetail txData={ctUpdateFeeModal.txData} />
+              ctUpdateFeeModal.txData && (
+                <CTRefundDetail txData={ctUpdateFeeModal.txData} />
+              )
             )}
           </Box>
         </ModalBody>

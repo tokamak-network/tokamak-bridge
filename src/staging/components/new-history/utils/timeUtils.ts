@@ -13,7 +13,7 @@ import { format, fromUnixTime } from "date-fns";
 export const convertTimeToMinutes = (
   time: number,
   unit: "days" | "minutes",
-  additionalMinutes: number = 10
+  additionalMinutes: number = 10,
 ): number => {
   const minutesInADay = 1440;
   let totalMinutes = time;

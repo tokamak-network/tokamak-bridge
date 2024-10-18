@@ -25,7 +25,7 @@ export function createWithdrawTransaction(
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
-  finalizedTransactionHash?: string
+  finalizedTransactionHash?: string,
 ): WithdrawTransactionHistory {
   return {
     action: Action.Withdraw,
@@ -60,7 +60,7 @@ export function createDepositTransaction(
   initialCompletedTimestamp: number,
   initialTransactionHash: string,
   finalizedCompletedTimestamp?: number,
-  finalizedTransactionHash?: string
+  finalizedTransactionHash?: string,
 ): DepositTransactionHistory {
   return {
     action: Action.Deposit,
@@ -95,7 +95,7 @@ export function createTransaction(
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
-  finalizedTransactionHash?: string
+  finalizedTransactionHash?: string,
 ): TransactionHistory {
   if (action === Action.Withdraw) {
     return createWithdrawTransaction(
@@ -111,7 +111,7 @@ export function createTransaction(
       rollupCompletedTimestamp,
       finalizedCompletedTimestamp,
       rollupTransactionHash,
-      finalizedTransactionHash
+      finalizedTransactionHash,
     );
   } else {
     return createDepositTransaction(
@@ -123,7 +123,7 @@ export function createTransaction(
       initialCompletedTimestamp!,
       initialTransactionHash!,
       finalizedCompletedTimestamp,
-      finalizedTransactionHash
+      finalizedTransactionHash,
     );
   }
 }

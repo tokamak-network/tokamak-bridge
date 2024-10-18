@@ -12,10 +12,10 @@ const Timeline = ({ lineType }: { lineType: number }) => {
       case 0:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"1px"}
-              height='82px'
+              height="82px"
               style={{
                 backgroundImage: dashedBackgroundImageGray,
                 backgroundPosition: "bottom",
@@ -23,10 +23,10 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
             <Box
               w={"1px"}
-              height='82px'
+              height="82px"
               style={{
                 backgroundImage: dashedBackgroundImageGray,
                 backgroundPosition: "bottom",
@@ -34,16 +34,16 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
           </>
         );
       case 1:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"1px"}
-              height='82px'
+              height="82px"
               style={{
                 backgroundImage: dashedBackgroundImageBlue,
                 backgroundPosition: "bottom",
@@ -51,10 +51,10 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
             <Box
               w={"1px"}
-              height='82px'
+              height="82px"
               style={{
                 backgroundImage: dashedBackgroundImageGray,
                 backgroundPosition: "bottom",
@@ -62,23 +62,23 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
           </>
         );
       case 2:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"0.5px"}
-              height='59px'
+              height="59px"
               border={"0.5px solid #007AFF"}
-              opacity='0.4'
+              opacity="0.4"
             />
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"1px"}
-              height='84px'
+              height="84px"
               style={{
                 backgroundImage: dashedBackgroundImageBlue,
                 backgroundPosition: "bottom",
@@ -86,37 +86,37 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
           </>
         );
       case 3:
       case 4:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"0.5px"}
-              height='60px'
+              height="60px"
               border={"0.5px solid #007AFF"}
-              opacity='0.4'
+              opacity="0.4"
             />
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"0.5px"}
-              height='60px'
+              height="60px"
               border={"0.5px solid #007AFF"}
-              opacity='0.4'
+              opacity="0.4"
             />
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
           </>
         );
       case 100:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"1px"}
-              height='82px'
+              height="82px"
               style={{
                 backgroundImage: dashedBackgroundImageGray,
                 backgroundPosition: "bottom",
@@ -124,16 +124,16 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
           </>
         );
       case 101:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"1px"}
-              height='82px'
+              height="82px"
               style={{
                 backgroundImage: dashedBackgroundImageBlue,
                 backgroundPosition: "bottom",
@@ -141,20 +141,20 @@ const Timeline = ({ lineType }: { lineType: number }) => {
                 backgroundRepeat: "repeat-y",
               }}
             />
-            <Circle size='8px' bg='#A0A3AD' />
+            <Circle size="8px" bg="#A0A3AD" />
           </>
         );
       case 102:
         return (
           <>
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
             <Box
               w={"0.5px"}
-              height='60px'
-              opacity='0.4'
+              height="60px"
+              opacity="0.4"
               border={"0.5px solid #007AFF"}
             />
-            <Circle size='8px' bg='#007AFF' />
+            <Circle size="8px" bg="#007AFF" />
           </>
         );
       default:
@@ -163,7 +163,7 @@ const Timeline = ({ lineType }: { lineType: number }) => {
   };
 
   return (
-    <VStack mt={"6px"} spacing={0} align='center'>
+    <VStack mt={"6px"} spacing={0} align="center">
       {renderTimeline()}
     </VStack>
   );

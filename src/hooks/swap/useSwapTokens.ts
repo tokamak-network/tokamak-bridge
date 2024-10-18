@@ -49,7 +49,7 @@ export function useAmountOut() {
 
   const txSettingValue = useRecoilValue(uniswapTxSetting);
   const [transactionHash, setTransactionHash] = useState<Hash | undefined>(
-    undefined
+    undefined,
   );
   const [, setModalOpen] = useRecoilState(transactionModalStatus);
   const { slippage } = useSettingValue();
@@ -67,7 +67,7 @@ export function useAmountOut() {
         ) {
           const wei = ethers.utils.formatUnits(
             inToken.amountBN.toString(),
-            "wei"
+            "wei",
           );
           const weiAmount = ethers.BigNumber.from(wei);
           const hexAmount = ethers.utils.hexlify(weiAmount);
@@ -75,20 +75,20 @@ export function useAmountOut() {
             SupportedChainId.MAINNET ||
               SupportedChainId.TITAN ||
               SupportedChainId.TITAN_SEPOLIA ||
-              SupportedChainId.SEPOLIA
+              SupportedChainId.SEPOLIA,
           );
           const isOutETH = outToken.isNativeCurrency?.includes(
             SupportedChainId.MAINNET ||
               SupportedChainId.TITAN ||
               SupportedChainId.TITAN_SEPOLIA ||
-              SupportedChainId.SEPOLIA
+              SupportedChainId.SEPOLIA,
           );
 
           if (isOutETH) {
             const SwapRouterContract = new Contract(
               UNISWAP_CONTRACT.SWAP_ROUTER_ADDRESS2,
               SwapRouterAbi,
-              provider
+              provider,
             );
 
             const callData = getEncodedPath({
@@ -111,7 +111,7 @@ export function useAmountOut() {
                 provider,
                 txData,
                 true,
-                true
+                true,
               );
               return result;
             }
@@ -137,7 +137,7 @@ export function useAmountOut() {
               provider,
               txData,
               true,
-              true
+              true,
             );
             return result;
           }
@@ -166,7 +166,7 @@ export function useAmountOut() {
       provider,
       txSettingValue,
       UNISWAP_CONTRACT,
-    ]
+    ],
   );
 
   const [estimatedGasUsageGwei, setEstimatedGasUsageGwei] = useState<

@@ -89,7 +89,7 @@ const TransactionItem = (props: TransactionItemProps) => {
   });
   const timeDisplay = useCountdown(
     initialTimeDisplay,
-    Boolean(isOnError) || isTimeOver
+    Boolean(isOnError) || isTimeOver,
   );
 
   const CountdownComponent = useMemo(() => {
@@ -215,11 +215,8 @@ const analyzeTransactionHashes = (txData: {
   return { nestedArrayLengthSum: 0, nonNestedKeyLength: 0, entries: [] };
 };
 
-export default function CTConfirmHistoryFooter(props: {
-  txData: CT_History | null;
-}) {
+export default function CTConfirmHistoryFooter(props: { txData: CT_History }) {
   const { txData } = props;
-  if (txData === null) return null;
 
   const isCompleted = isFinalStatus(txData.status);
   const { nestedArrayLengthSum, nonNestedKeyLength, entries } =
@@ -246,6 +243,7 @@ export default function CTConfirmHistoryFooter(props: {
           if (typeof hash === "string") {
             return (
               <TransactionItem
+                key={index}
                 title={isCancelCompleted ? "refund" : key}
                 isActive={isActive}
                 txHash={hash}
@@ -261,6 +259,7 @@ export default function CTConfirmHistoryFooter(props: {
 
             return (
               <TransactionItem
+                key={index}
                 title={key}
                 isActive={isActiveOnUpdateFee}
                 txHash={tx}

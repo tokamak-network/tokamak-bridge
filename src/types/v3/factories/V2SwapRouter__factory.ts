@@ -56,7 +56,7 @@ export class V2SwapRouter__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): V2SwapRouter {
     return new Contract(address, _abi, signerOrProvider) as V2SwapRouter;
   }

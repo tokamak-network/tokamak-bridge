@@ -18,7 +18,7 @@ const sqrtToPrice = (
   sqrt: number,
   decimals0: number,
   decimals1: number,
-  token0IsInput?: boolean
+  token0IsInput?: boolean,
 ) => {
   const numerator = sqrt ** 2;
   const denominator = 2 ** 192;
@@ -35,14 +35,14 @@ const getSqrt = async (
   QUOTER_CONTRACT: any,
   inTokenAddress: string,
   outTokenAddress: string,
-  inTokenAmountBN: any
+  inTokenAmountBN: any,
 ) => {
   const quote = await QUOTER_CONTRACT.callStatic.quoteExactInputSingle(
     inTokenAddress,
     outTokenAddress,
     FeeAmount.MEDIUM,
     inTokenAmountBN,
-    0
+    0,
   );
 
   return quote.toString();

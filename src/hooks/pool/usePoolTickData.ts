@@ -60,7 +60,7 @@ const REFRESH_FREQUENCY = { blocksPerFetch: 2 };
 
 const getActiveTick = (
   tickCurrent: number | undefined,
-  feeAmount: FeeAmount | undefined
+  feeAmount: FeeAmount | undefined,
 ) =>
   tickCurrent && feeAmount
     ? Math.floor(tickCurrent / TICK_SPACINGS[feeAmount]) *
@@ -75,10 +75,10 @@ function useTicksFromTickLens(
   currencyA: Currency | undefined,
   currencyB: Currency | undefined,
   feeAmount: FeeAmount | undefined,
-  numSurroundingTicks: number | undefined = 125
+  numSurroundingTicks: number | undefined = 125,
 ) {
   const [tickDataLatestSynced, setTickDataLatestSynced] = useState<TickData[]>(
-    []
+    [],
   );
 
   const [poolState, pool] = usePool(currencyA, currencyB, feeAmount);
@@ -100,7 +100,7 @@ function useTicksFromTickLens(
           currencyB?.wrapped,
           feeAmount,
           undefined,
-          chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined
+          chainId ? V3_CORE_FACTORY_ADDRESSES_WITH_TITAN[chainId] : undefined,
         )
       : undefined;
 
@@ -111,10 +111,10 @@ function useTicksFromTickLens(
       tickSpacing && activeTick
         ? bitmapIndex(
             activeTick - numSurroundingTicks * tickSpacing,
-            tickSpacing
+            tickSpacing,
           )
         : undefined,
-    [tickSpacing, activeTick, numSurroundingTicks]
+    [tickSpacing, activeTick, numSurroundingTicks],
   );
 
   const maxIndex = useMemo(
@@ -122,10 +122,10 @@ function useTicksFromTickLens(
       tickSpacing && activeTick
         ? bitmapIndex(
             activeTick + numSurroundingTicks * tickSpacing,
-            tickSpacing
+            tickSpacing,
           )
         : undefined,
-    [tickSpacing, activeTick, numSurroundingTicks]
+    [tickSpacing, activeTick, numSurroundingTicks],
   );
 
   const tickLensArgs: [string, number][] = useMemo(
@@ -136,7 +136,7 @@ function useTicksFromTickLens(
             .map((_, i) => i + minIndex)
             .map((wordIndex) => [poolAddress, wordIndex])
         : [],
-    [minIndex, maxIndex, poolAddress]
+    [minIndex, maxIndex, poolAddress],
   );
 
   const useSingleContractMultipleData: any = (...args: any) => {};
@@ -145,7 +145,7 @@ function useTicksFromTickLens(
     tickLensArgs.length > 0 ? tickLens : undefined,
     "getPopulatedTicksInWord",
     tickLensArgs,
-    REFRESH_FREQUENCY
+    REFRESH_FREQUENCY,
   );
 
   const isError = undefined;
@@ -184,9 +184,9 @@ function useTicksFromTickLens(
               };
             }) ?? []),
           ],
-          []
+          [],
         ),
-    [callStates]
+    [callStates],
   );
 
   // reset on input change
@@ -209,7 +209,7 @@ function useTicksFromTickLens(
       isValid,
       tickData: tickDataLatestSynced,
     }),
-    [isLoading, IsSyncing, isError, isValid, tickDataLatestSynced]
+    [isLoading, IsSyncing, isError, isValid, tickDataLatestSynced],
   );
 }
 
@@ -217,7 +217,7 @@ function useTicksFromSubgraph(
   currencyA: Currency | undefined,
   currencyB: Currency | undefined,
   feeAmount: FeeAmount | undefined,
-  skip = 0
+  skip = 0,
 ) {
   const { connectedChainId: chainId } = useConnectedNetwork();
 
@@ -264,7 +264,7 @@ const MAX_THE_GRAPH_TICK_FETCH_VALUE = 1000;
 function useAllV3Ticks(
   currencyA: Currency | undefined,
   currencyB: Currency | undefined,
-  feeAmount: FeeAmount | undefined
+  feeAmount: FeeAmount | undefined,
 ): {
   isLoading: boolean;
   error: unknown;
@@ -277,7 +277,7 @@ function useAllV3Ticks(
   const tickLensTickData = useTicksFromTickLens(
     !useSubgraph ? currencyA : undefined,
     currencyB,
-    feeAmount
+    feeAmount,
   );
 
   const [skipNumber, setSkipNumber] = useState(0);
@@ -290,7 +290,7 @@ function useAllV3Ticks(
     useSubgraph ? currencyA : undefined,
     currencyB,
     feeAmount,
-    skipNumber
+    skipNumber,
   );
 
   useEffect(() => {
@@ -302,7 +302,7 @@ function useAllV3Ticks(
       }
       if (data.ticks.length === MAX_THE_GRAPH_TICK_FETCH_VALUE) {
         setSkipNumber(
-          (skipNumber) => skipNumber + MAX_THE_GRAPH_TICK_FETCH_VALUE
+          (skipNumber) => skipNumber + MAX_THE_GRAPH_TICK_FETCH_VALUE,
         );
       }
     }
@@ -321,7 +321,7 @@ function useAllV3Ticks(
 export function usePoolActiveLiquidity(
   currencyA: Currency | undefined,
   currencyB: Currency | undefined,
-  feeAmount: FeeAmount | undefined
+  feeAmount: FeeAmount | undefined,
 ): {
   isLoading: boolean;
   error: any;
@@ -341,7 +341,7 @@ export function usePoolActiveLiquidity(
   const { isLoading, error, ticks } = useAllV3Ticks(
     currencyA,
     currencyB,
-    feeAmount
+    feeAmount,
   );
 
   return useMemo(() => {
@@ -390,7 +390,7 @@ export function usePoolActiveLiquidity(
           ? JSBI.BigInt(ticks[pivot].liquidityNet)
           : JSBI.BigInt(0),
       price0: tickToPrice(token0, token1, activeTick).toFixed(
-        PRICE_FIXED_DIGITS
+        PRICE_FIXED_DIGITS,
       ),
     };
 
@@ -400,7 +400,7 @@ export function usePoolActiveLiquidity(
       activeTickProcessed,
       ticks,
       pivot,
-      true
+      true,
     );
 
     const previousTicks = computeSurroundingTicks(
@@ -409,7 +409,7 @@ export function usePoolActiveLiquidity(
       activeTickProcessed,
       ticks,
       pivot,
-      false
+      false,
     );
 
     const ticksProcessed = previousTicks

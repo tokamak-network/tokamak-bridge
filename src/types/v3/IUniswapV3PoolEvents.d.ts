@@ -37,7 +37,7 @@ interface IUniswapV3PoolEventsInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "CollectProtocol"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Flash"): EventFragment;
   getEvent(
-    nameOrSignatureOrTopic: "IncreaseObservationCardinalityNext"
+    nameOrSignatureOrTopic: "IncreaseObservationCardinalityNext",
   ): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Initialize"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "Mint"): EventFragment;
@@ -51,26 +51,26 @@ export class IUniswapV3PoolEvents extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -83,7 +83,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: IUniswapV3PoolEventsInterface;
@@ -99,7 +99,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       tickUpper?: BigNumberish | null,
       amount?: null,
       amount0?: null,
-      amount1?: null
+      amount1?: null,
     ): TypedEventFilter<
       [string, number, number, BigNumber, BigNumber, BigNumber],
       {
@@ -118,7 +118,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       tickLower?: BigNumberish | null,
       tickUpper?: BigNumberish | null,
       amount0?: null,
-      amount1?: null
+      amount1?: null,
     ): TypedEventFilter<
       [string, string, number, number, BigNumber, BigNumber],
       {
@@ -135,7 +135,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       sender?: string | null,
       recipient?: string | null,
       amount0?: null,
-      amount1?: null
+      amount1?: null,
     ): TypedEventFilter<
       [string, string, BigNumber, BigNumber],
       {
@@ -152,7 +152,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       amount0?: null,
       amount1?: null,
       paid0?: null,
-      paid1?: null
+      paid1?: null,
     ): TypedEventFilter<
       [string, string, BigNumber, BigNumber, BigNumber, BigNumber],
       {
@@ -167,7 +167,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
 
     IncreaseObservationCardinalityNext(
       observationCardinalityNextOld?: null,
-      observationCardinalityNextNew?: null
+      observationCardinalityNextNew?: null,
     ): TypedEventFilter<
       [number, number],
       {
@@ -178,7 +178,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
 
     Initialize(
       sqrtPriceX96?: null,
-      tick?: null
+      tick?: null,
     ): TypedEventFilter<
       [BigNumber, number],
       { sqrtPriceX96: BigNumber; tick: number }
@@ -191,7 +191,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       tickUpper?: BigNumberish | null,
       amount?: null,
       amount0?: null,
-      amount1?: null
+      amount1?: null,
     ): TypedEventFilter<
       [string, string, number, number, BigNumber, BigNumber, BigNumber],
       {
@@ -209,7 +209,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       feeProtocol0Old?: null,
       feeProtocol1Old?: null,
       feeProtocol0New?: null,
-      feeProtocol1New?: null
+      feeProtocol1New?: null,
     ): TypedEventFilter<
       [number, number, number, number],
       {
@@ -227,7 +227,7 @@ export class IUniswapV3PoolEvents extends BaseContract {
       amount1?: null,
       sqrtPriceX96?: null,
       liquidity?: null,
-      tick?: null
+      tick?: null,
     ): TypedEventFilter<
       [string, string, BigNumber, BigNumber, BigNumber, BigNumber, number],
       {

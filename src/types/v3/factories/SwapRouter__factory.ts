@@ -583,18 +583,18 @@ export class SwapRouter__factory extends ContractFactory {
   deploy(
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<SwapRouter> {
     return super.deploy(
       _factory,
       _WETH9,
-      overrides || {}
+      overrides || {},
     ) as Promise<SwapRouter>;
   }
   getDeployTransaction(
     _factory: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(_factory, _WETH9, overrides || {});
   }
@@ -611,7 +611,7 @@ export class SwapRouter__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): SwapRouter {
     return new Contract(address, _abi, signerOrProvider) as SwapRouter;
   }

@@ -16,7 +16,7 @@ export type PoolData = [
       symbol: string;
       decimals: string;
     };
-  }
+  },
 ];
 
 export type PoolData_Subgraph =

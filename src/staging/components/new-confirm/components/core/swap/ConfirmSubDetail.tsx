@@ -21,7 +21,7 @@ export default function ConfirmSubDetail(props: ConfirmSubDetailProps) {
   return (
     <>
       <Flex
-        justifyContent='space-between'
+        justifyContent="space-between"
         my={type == ConfirmDetailType.MinReceived ? "6px" : ""}
       >
         <Text

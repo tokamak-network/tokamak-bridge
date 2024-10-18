@@ -697,7 +697,7 @@ export class IUniswapV3Staker__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IUniswapV3Staker {
     return new Contract(address, _abi, signerOrProvider) as IUniswapV3Staker;
   }

@@ -36,9 +36,9 @@ const GoogleAnalyticsScript = () => {
     <>
       <Script
         async
-        src='https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK'
+        src="https://www.googletagmanager.com/gtag/js?id=G-WBYF8R92QK"
       ></Script>
-      <Script>
+      <Script id="google-analytics-inline-script">
         {`window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());

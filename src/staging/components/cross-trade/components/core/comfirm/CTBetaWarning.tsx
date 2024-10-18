@@ -24,7 +24,7 @@ export const CTBetaWarning = () => {
       <ModalOverlay />
       <ModalContent
         width={mobileView ? "320px" : "404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
         h={mobileView ? "235px" : "228px"}

@@ -16,7 +16,7 @@ export const WTON = new Token(
   SEPOLIA_CONTRACTS.WTON_ADDRESS,
   27,
   "WTON",
-  "Wrapped TON"
+  "Wrapped TON",
 );
 
 export const GOERLI_TON = new Token(
@@ -24,7 +24,7 @@ export const GOERLI_TON = new Token(
   SEPOLIA_CONTRACTS.TON_ADDRESS,
   18,
   "TON",
-  "Tokamak Network Token"
+  "Tokamak Network Token",
 );
 
 export const DARIUS_TON = new Token(
@@ -32,7 +32,7 @@ export const DARIUS_TON = new Token(
   TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
   18,
   "TON",
-  "Tokamak Network Token"
+  "Tokamak Network Token",
 );
 
 export const GOERLI_TOS = new Token(
@@ -40,7 +40,7 @@ export const GOERLI_TOS = new Token(
   SEPOLIA_CONTRACTS.TOS_ADDRESS,
   18,
   "TOS",
-  "TONStarter Token"
+  "TONStarter Token",
 );
 
 export const DARIUS_TOS = new Token(
@@ -48,7 +48,7 @@ export const DARIUS_TOS = new Token(
   TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
   18,
   "TOS",
-  "TONStarter Token"
+  "TONStarter Token",
 );
 
 export const AURA = new Token(
@@ -56,5 +56,5 @@ export const AURA = new Token(
   SEPOLIA_CONTRACTS.AURA_ADDRESS,
   18,
   "AURA",
-  "AURA"
+  "AURA",
 );

@@ -67,8 +67,8 @@ export default function PoolsMessage() {
           </Text>
           <Text>
             The upcoming integration of the pool functionality to the bridge
-            service will leverage Uniswap v3's concentrated liquidity mechanisms
-            to enable efficient token-swapping operations.
+            service will leverage Uniswap v3&apos;s concentrated liquidity
+            mechanisms to enable efficient token-swapping operations.
           </Text>
         </Flex>
       </Flex>

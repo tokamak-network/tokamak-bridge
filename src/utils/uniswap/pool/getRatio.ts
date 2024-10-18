@@ -3,7 +3,7 @@ import { Currency, Price } from "@uniswap/sdk-core";
 export function getRatio(
   lower: Price<Currency, Currency>,
   current: Price<Currency, Currency>,
-  upper: Price<Currency, Currency>
+  upper: Price<Currency, Currency>,
 ) {
   try {
     if (!current.greaterThan(lower)) {
@@ -21,7 +21,7 @@ export function getRatio(
         ((Math.sqrt(lowerN * upperN) - Math.sqrt(upperN * currentN)) /
           (currentN - Math.sqrt(upperN * currentN)) +
           1)) *
-        100
+        100,
     );
 
     if (ratio < 0 || ratio > 100) {

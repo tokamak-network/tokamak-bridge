@@ -2,11 +2,11 @@
 import { RecoilRoot } from "recoil";
 
 interface RecoilRootWrapperProps {
-	children: React.ReactNode;
+  children: React.ReactNode;
 }
 
 export default function RecoilRootWrapper({
-	children,
+  children,
 }: RecoilRootWrapperProps) {
-	return <RecoilRoot>{children}</RecoilRoot>;
+  return <RecoilRoot>{children}</RecoilRoot>;
 }

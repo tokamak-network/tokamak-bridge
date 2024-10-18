@@ -29,10 +29,10 @@ export default function Swap() {
   const { pcView } = useMediaView();
 
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [outTokenRecoilValue, setOutTokenRecoilValue] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const network = useConnectedNetwork();

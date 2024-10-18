@@ -255,12 +255,12 @@ export class UniswapV3Factory__factory extends ContractFactory {
   }
 
   deploy(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<UniswapV3Factory> {
     return super.deploy(overrides || {}) as Promise<UniswapV3Factory>;
   }
   getDeployTransaction(
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(overrides || {});
   }
@@ -277,7 +277,7 @@ export class UniswapV3Factory__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): UniswapV3Factory {
     return new Contract(address, _abi, signerOrProvider) as UniswapV3Factory;
   }

@@ -41,7 +41,7 @@ const Step3 = (props: { progress: string; timeStamp: number; check: any }) => {
             intervalToDuration({
               start: getTime(timeStamp * 1000),
               end: getTime(nowTime * 1000),
-            })
+            }),
           );
         }
       }, 1000);

@@ -157,7 +157,7 @@ export class IMixedRouteQuoterV1__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IMixedRouteQuoterV1 {
     return new Contract(address, _abi, signerOrProvider) as IMixedRouteQuoterV1;
   }

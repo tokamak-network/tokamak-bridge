@@ -35,11 +35,11 @@ interface MixedRouteQuoterV1Interface extends ethers.utils.Interface {
   encodeFunctionData(functionFragment: "factoryV2", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "quoteExactInput",
-    values: [BytesLike, BigNumberish]
+    values: [BytesLike, BigNumberish],
   ): string;
   encodeFunctionData(
     functionFragment: "quoteExactInputSingleV2",
-    values: [{ tokenIn: string; tokenOut: string; amountIn: BigNumberish }]
+    values: [{ tokenIn: string; tokenOut: string; amountIn: BigNumberish }],
   ): string;
   encodeFunctionData(
     functionFragment: "quoteExactInputSingleV3",
@@ -50,12 +50,12 @@ interface MixedRouteQuoterV1Interface extends ethers.utils.Interface {
         amountIn: BigNumberish;
         fee: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
-      }
-    ]
+      },
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "uniswapV3SwapCallback",
-    values: [BigNumberish, BigNumberish, BytesLike]
+    values: [BigNumberish, BigNumberish, BytesLike],
   ): string;
 
   decodeFunctionResult(functionFragment: "WETH9", data: BytesLike): Result;
@@ -63,19 +63,19 @@ interface MixedRouteQuoterV1Interface extends ethers.utils.Interface {
   decodeFunctionResult(functionFragment: "factoryV2", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "quoteExactInput",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "quoteExactInputSingleV2",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "quoteExactInputSingleV3",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "uniswapV3SwapCallback",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
 
   events: {};
@@ -87,26 +87,26 @@ export class MixedRouteQuoterV1 extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -119,7 +119,7 @@ export class MixedRouteQuoterV1 extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: MixedRouteQuoterV1Interface;
@@ -134,12 +134,12 @@ export class MixedRouteQuoterV1 extends BaseContract {
     quoteExactInput(
       path: BytesLike,
       amountIn: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     quoteExactInputSingleV2(
       params: { tokenIn: string; tokenOut: string; amountIn: BigNumberish },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[BigNumber] & { amountOut: BigNumber }>;
 
     quoteExactInputSingleV3(
@@ -150,14 +150,14 @@ export class MixedRouteQuoterV1 extends BaseContract {
         fee: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       path: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[void]>;
   };
 
@@ -170,12 +170,12 @@ export class MixedRouteQuoterV1 extends BaseContract {
   quoteExactInput(
     path: BytesLike,
     amountIn: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   quoteExactInputSingleV2(
     params: { tokenIn: string; tokenOut: string; amountIn: BigNumberish },
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<BigNumber>;
 
   quoteExactInputSingleV3(
@@ -186,14 +186,14 @@ export class MixedRouteQuoterV1 extends BaseContract {
       fee: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   uniswapV3SwapCallback(
     amount0Delta: BigNumberish,
     amount1Delta: BigNumberish,
     path: BytesLike,
-    overrides?: CallOverrides
+    overrides?: CallOverrides,
   ): Promise<void>;
 
   callStatic: {
@@ -206,7 +206,7 @@ export class MixedRouteQuoterV1 extends BaseContract {
     quoteExactInput(
       path: BytesLike,
       amountIn: BigNumberish,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber[], number[], BigNumber] & {
         amountOut: BigNumber;
@@ -218,7 +218,7 @@ export class MixedRouteQuoterV1 extends BaseContract {
 
     quoteExactInputSingleV2(
       params: { tokenIn: string; tokenOut: string; amountIn: BigNumberish },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     quoteExactInputSingleV3(
@@ -229,7 +229,7 @@ export class MixedRouteQuoterV1 extends BaseContract {
         fee: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [BigNumber, BigNumber, number, BigNumber] & {
         amountOut: BigNumber;
@@ -243,7 +243,7 @@ export class MixedRouteQuoterV1 extends BaseContract {
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       path: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
   };
 
@@ -259,12 +259,12 @@ export class MixedRouteQuoterV1 extends BaseContract {
     quoteExactInput(
       path: BytesLike,
       amountIn: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     quoteExactInputSingleV2(
       params: { tokenIn: string; tokenOut: string; amountIn: BigNumberish },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     quoteExactInputSingleV3(
@@ -275,14 +275,14 @@ export class MixedRouteQuoterV1 extends BaseContract {
         fee: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       path: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
   };
 
@@ -296,12 +296,12 @@ export class MixedRouteQuoterV1 extends BaseContract {
     quoteExactInput(
       path: BytesLike,
       amountIn: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     quoteExactInputSingleV2(
       params: { tokenIn: string; tokenOut: string; amountIn: BigNumberish },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     quoteExactInputSingleV3(
@@ -312,14 +312,14 @@ export class MixedRouteQuoterV1 extends BaseContract {
         fee: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       path: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
   };
 }

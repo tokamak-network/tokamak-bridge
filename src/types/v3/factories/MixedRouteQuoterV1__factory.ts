@@ -245,26 +245,26 @@ export class MixedRouteQuoterV1__factory extends ContractFactory {
     _factory: string,
     _factoryV2: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<MixedRouteQuoterV1> {
     return super.deploy(
       _factory,
       _factoryV2,
       _WETH9,
-      overrides || {}
+      overrides || {},
     ) as Promise<MixedRouteQuoterV1>;
   }
   getDeployTransaction(
     _factory: string,
     _factoryV2: string,
     _WETH9: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _factory,
       _factoryV2,
       _WETH9,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): MixedRouteQuoterV1 {
@@ -280,7 +280,7 @@ export class MixedRouteQuoterV1__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): MixedRouteQuoterV1 {
     return new Contract(address, _abi, signerOrProvider) as MixedRouteQuoterV1;
   }

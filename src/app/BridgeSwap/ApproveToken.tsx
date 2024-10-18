@@ -53,7 +53,7 @@ export default function ApproveToken() {
     confirmedApproveTransaction?.tokenData?.[0]?.amount?.toString()
       ? ethers.utils.formatUnits(
           confirmedApproveTransaction.tokenData[0].amount.toString(),
-          inToken?.token.decimals
+          inToken?.token.decimals,
         )
       : "-";
 

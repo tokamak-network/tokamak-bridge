@@ -34,6 +34,6 @@ export function useTicks() {
           ? Number(data?.asToken1[0].tick)
           : undefined,
     }),
-    [data, error, loading]
+    [data, error, loading],
   );
 }

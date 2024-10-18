@@ -73,7 +73,7 @@ export default function DepositWithdrawConfirmModal() {
         withdrawInitiateGasCostText: formatValue(getGasCostText(totalGasCost)),
         withdrawInitiateGasCostUS: formatValue(gasCostUS),
         withdrawClaimGasCostText: formatValue(
-          getGasCostText(withdrawCost.totalGasCost)
+          getGasCostText(withdrawCost.totalGasCost),
         ),
         withdrawClaimGasCostUS: formatValue(withdrawCost.usGasCost),
       };

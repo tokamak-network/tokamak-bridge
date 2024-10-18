@@ -85,7 +85,7 @@ export function useGasFee() {
             return wrapUnwrapGasEstimate;
           case "Deposit":
             const supportedOutToken = supportedTokens.filter(
-              (token) => token.address === inToken.address
+              (token) => token.address === inToken.address,
             )[0];
             const outTokenAddress =
               supportedOutToken.address[outNetwork.chainName];
@@ -106,7 +106,7 @@ export function useGasFee() {
                 });
 
               return calculateGasMargin(
-                BigNumber.from(estimatedGasUsage)
+                BigNumber.from(estimatedGasUsage),
               ).toBigInt();
             }
 
@@ -124,7 +124,7 @@ export function useGasFee() {
                 ],
               });
             return calculateGasMargin(
-              BigNumber.from(estimatedGasUsage)
+              BigNumber.from(estimatedGasUsage),
             ).toBigInt();
           case "Withdraw":
             // Set the gas limit as default value when insufficient balance or non-approval
@@ -135,7 +135,7 @@ export function useGasFee() {
             const withdrawContract = new ethers.Contract(
               TOKAMAK_CONTRACTS.L2Bridge,
               L2BridgeAbi,
-              provider
+              provider,
             );
             const l2Provider = asL2Provider(provider);
 
@@ -144,7 +144,7 @@ export function useGasFee() {
                 predeploys.OVM_ETH,
                 parsedAmount,
                 1_300_000,
-                "0x"
+                "0x",
               );
               const estimateTotalGasCost =
                 await l2Provider.estimateTotalGasCost({ ...tx, from: address });
@@ -154,10 +154,10 @@ export function useGasFee() {
               inToken.address[inNetwork.chainName],
               parsedAmount,
               0,
-              "0x"
+              "0x",
             );
             const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
-              { ...tx, from: address }
+              { ...tx, from: address },
             );
             return estimateTotalGasCost;
           default:
@@ -175,14 +175,14 @@ export function useGasFee() {
               const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
               const parsedTotalGasCost = ethers.utils.formatUnits(
                 layer === "L2" ? estimatedGasUsage : totalGasCost.toString(),
-                "ether"
+                "ether",
               );
 
               return setTotalGasCost(parsedTotalGasCost);
             } else {
               const totalGas = ethers.utils.formatUnits(
                 estimatedGasUsage.toString(),
-                "ether"
+                "ether",
               );
               return setTotalGasCost(totalGas);
             }

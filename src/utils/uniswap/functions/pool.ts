@@ -34,7 +34,7 @@ export async function getPoolInfo(): Promise<PoolInfo> {
   const poolContract = new ethers.Contract(
     currentPoolAddress,
     IUniswapV3PoolABI.abi,
-    provider
+    provider,
   );
 
   const [token0, token1, fee, tickSpacing, liquidity, slot0] =

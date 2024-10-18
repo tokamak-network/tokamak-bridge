@@ -19,7 +19,7 @@ export function useDensityChartData({
   const { isLoading, error, data } = usePoolActiveLiquidity(
     currencyA,
     currencyB,
-    feeAmount
+    feeAmount,
   );
 
   const formatData = useCallback(() => {

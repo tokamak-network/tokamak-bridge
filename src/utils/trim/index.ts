@@ -17,7 +17,7 @@ export function trimAddress(args: {
 
 export function trimAmountForFormatter(
   amount: string | null | undefined,
-  decimalPlaces?: number
+  decimalPlaces?: number,
 ) {
   if (amount === null || amount === undefined) {
     return "";
@@ -41,7 +41,7 @@ export function trimAmountForFormatter(
 
 export function trimAmount(
   amount: string | null | undefined,
-  decimalPlaces?: number
+  decimalPlaces?: number,
 ) {
   if (amount === null || amount === undefined) {
     return "";

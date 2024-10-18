@@ -56,7 +56,7 @@ export const USDC_ADDRESS_BY_CHAINID: Record<number, string> = {
 
 export const getTokenAddressByChainId = (
   symbol: string,
-  chainId: SupportedChainId | undefined
+  chainId: SupportedChainId | undefined,
 ) => {
   if (!chainId) return "";
   switch (symbol) {

@@ -365,7 +365,7 @@ export class IERC721Permit__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IERC721Permit {
     return new Contract(address, _abi, signerOrProvider) as IERC721Permit;
   }

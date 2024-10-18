@@ -8,7 +8,7 @@ export default function useDepositWithdrawConfirm() {
     useRecoilState(depositWithdrawConfirmModalStatus);
 
   const onOpenDepositWithdrawConfirmModal = (
-    transaction: TransactionHistory
+    transaction: TransactionHistory,
   ) => {
     setDepositWithdrawConfirmModal({ isOpen: true, transaction: transaction });
   };

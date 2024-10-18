@@ -17,7 +17,7 @@ export const CTRefresh = () => {
     useRecoilState(ctRefreshModalStatus);
   const { onOpenCTConfirmModal } = useCTConfirmModal();
   const { requestDataBySaleCount } = useRequestData(
-    refreshModalStatus.saleCount
+    refreshModalStatus.saleCount,
   );
 
   const openProvideModal = () => {
@@ -73,7 +73,7 @@ export const CTRefresh = () => {
           </Text>
           <Text fontSize={16} fontWeight={400}>
             The requester has updated the service fee. Please recheck the
-            "provide" and "receive" amounts.
+            &quot;provide&quot; and &quot;receive&quot; amounts.
           </Text>
           <Button
             w={"100%"}

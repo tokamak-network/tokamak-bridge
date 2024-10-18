@@ -9,12 +9,12 @@ export async function calculateGasLimit(
     | L2Provider<ethers.providers.JsonRpcProvider>,
   tx: ethers.utils.Deferrable<ethers.providers.TransactionRequest>,
   isLayer2: boolean,
-  uiValue?: boolean
+  uiValue?: boolean,
 ) {
   if (isLayer2 && uiValue) {
     const l2Provider = asL2Provider(provider);
     const estimatedGas = await l2Provider.estimateTotalGasCost(
-      tx as TransactionRequest
+      tx as TransactionRequest,
     );
     return calculateGasMargin(estimatedGas);
   }

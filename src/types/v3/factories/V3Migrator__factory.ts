@@ -370,26 +370,26 @@ export class V3Migrator__factory extends ContractFactory {
     _factory: string,
     _WETH9: string,
     _nonfungiblePositionManager: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<V3Migrator> {
     return super.deploy(
       _factory,
       _WETH9,
       _nonfungiblePositionManager,
-      overrides || {}
+      overrides || {},
     ) as Promise<V3Migrator>;
   }
   getDeployTransaction(
     _factory: string,
     _WETH9: string,
     _nonfungiblePositionManager: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): TransactionRequest {
     return super.getDeployTransaction(
       _factory,
       _WETH9,
       _nonfungiblePositionManager,
-      overrides || {}
+      overrides || {},
     );
   }
   attach(address: string): V3Migrator {
@@ -405,7 +405,7 @@ export class V3Migrator__factory extends ContractFactory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): V3Migrator {
     return new Contract(address, _abi, signerOrProvider) as V3Migrator;
   }

@@ -67,7 +67,7 @@ export class IPeripheryPayments__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IPeripheryPayments {
     return new Contract(address, _abi, signerOrProvider) as IPeripheryPayments;
   }

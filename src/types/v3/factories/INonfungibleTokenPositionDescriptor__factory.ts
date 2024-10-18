@@ -40,17 +40,17 @@ export class INonfungibleTokenPositionDescriptor__factory {
   static readonly abi = _abi;
   static createInterface(): INonfungibleTokenPositionDescriptorInterface {
     return new utils.Interface(
-      _abi
+      _abi,
     ) as INonfungibleTokenPositionDescriptorInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): INonfungibleTokenPositionDescriptor {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as INonfungibleTokenPositionDescriptor;
   }
 }
