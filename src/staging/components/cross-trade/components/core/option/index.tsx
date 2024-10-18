@@ -180,8 +180,6 @@ export default function CTOptionModal() {
     // Reset inputWarningCheck when the modal is reopened
   }, [serviceFeeIsNotOver, isLessThanRecommendedFee, ctOptionModal]);
 
-  console.log("inputWarningCheck", inputWarningCheck);
-
   useEffect(() => {
     if (ctOptionModal) {
       setActiveSubButtonValue(ButtonTypeSub.Recommend);

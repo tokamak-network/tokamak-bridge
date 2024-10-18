@@ -129,5 +129,10 @@ export const useRecommendFee = (params: {
     }
   }, [totalAmount, recommendedFeeAmount, tokenInfo?.decimals]);
 
-  return { recommendedCtAmount, recommendedFee: recommendedFeeAmount };
+  return {
+    recommendedCtAmount,
+    recommendedFee: recommendedFeeAmount,
+    estimatedGasFeeETH,
+    provideCTTxnUSDCost: provideCTTxnCost,
+  };
 };

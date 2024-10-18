@@ -22,17 +22,18 @@ import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpd
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
 interface CTProviderProps {
-  // status: number;
   status: boolean;
   crossTradeData: CrossTradeData;
   subgraphData: T_FETCH_REQUEST_LIST_L2;
   serviceFee: BigInt;
+  isNetaveProfit: boolean;
 }
 
 export default function CTProvider({
   status,
   crossTradeData,
   subgraphData,
+  isNetaveProfit,
 }: CTProviderProps) {
   const {
     blockTimestamps,
@@ -142,7 +143,7 @@ export default function CTProvider({
       );
     }
 
-    const isDisabled = isInRelay;
+    const isDisabled = isInRelay || (isNetaveProfit && !isCreatedByUser);
     const bgColor =
       isDisabled || isInRelay
         ? "#23242B"
