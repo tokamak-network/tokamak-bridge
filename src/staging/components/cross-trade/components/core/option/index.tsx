@@ -180,6 +180,8 @@ export default function CTOptionModal() {
     // Reset inputWarningCheck when the modal is reopened
   }, [serviceFeeIsNotOver, isLessThanRecommendedFee, ctOptionModal]);
 
+  console.log("inputWarningCheck", inputWarningCheck);
+
   useEffect(() => {
     if (ctOptionModal) {
       setActiveSubButtonValue(ButtonTypeSub.Recommend);
@@ -191,9 +193,12 @@ export default function CTOptionModal() {
       return false;
     }
     if (activeSubButtonValue === ButtonTypeSub.Recommend) {
-      return !recommendedCtAmount || !recommendedFee;
+      return (
+        !recommendedCtAmount ||
+        !recommendedFee ||
+        inputWarningCheck === WarningType.Critical
+      );
     }
-
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return (
         serviceFee === "" ||

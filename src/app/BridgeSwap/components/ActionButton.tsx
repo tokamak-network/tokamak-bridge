@@ -12,8 +12,6 @@ import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import useIsTon from "@/hooks/token/useIsTon";
-import { confirmWithdrawStats } from "@/recoil/modal/atom";
-import { useRecoilState } from "recoil";
 import { bannerStatus } from "@/recoil/bridgeSwap/atom";
 import { useInOutNetwork } from "@/hooks/network";
 import "@fontsource/poppins/600.css";
@@ -102,7 +100,7 @@ export default function ActionButton() {
         _disabled={{}}
         bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
         color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
-        // isDisabled={!isConnected ? false : isDisabled}
+        isDisabled={!isConnected ? false : isDisabled}
         onClick={
           isConnected === false
             ? () => connetAndDisconntWallet()
