@@ -50,7 +50,7 @@ export class ICryptoPunksMarket__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): ICryptoPunksMarket {
     return new Contract(address, _abi, signerOrProvider) as ICryptoPunksMarket;
   }

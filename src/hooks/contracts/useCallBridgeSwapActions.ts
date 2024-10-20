@@ -47,7 +47,7 @@ export default function useCallBridgeSwapAction() {
     }
     if (inToken && inToken.amountBN && inNetwork && outNetwork) {
       const isETH = inToken.isNativeCurrency?.includes(
-        SupportedChainId.MAINNET
+        SupportedChainId.MAINNET,
       );
       const parsedAmount = inToken.amountBN;
       if (
@@ -64,7 +64,7 @@ export default function useCallBridgeSwapAction() {
       switch (mode) {
         case "Deposit":
           const supportedOutToken = supportedTokens.filter(
-            (token) => token.address === inToken.address
+            (token) => token.address === inToken.address,
           )[0];
           const outTokenAddress =
             supportedOutToken.address[outNetwork.chainName];

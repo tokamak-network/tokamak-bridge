@@ -30,29 +30,26 @@ type TransactionToastProp = TxInterface;
 function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   const { tokenData, isToken0, network, txSort } = props;
 
-  if (
-    tokenData === undefined ||
-    (isToken0 === false &&
-      (tokenData[1] === null || tokenData[1] === undefined))
-  ) {
-    return <Box w={"136px"}></Box>;
-  }
-
   const { otherLayerChainInfo } = useConnectedNetwork();
+
   const tokenIndex = isToken0 ? 0 : 1;
   const { data: symbol } = useErc20Symbol({
-    address: tokenData[tokenIndex].tokenAddress as `0x${string}`,
+    address: tokenData
+      ? (tokenData[tokenIndex].tokenAddress as `0x${string}`)
+      : undefined,
   });
   const { data: decimals } = useErc20Decimals({
-    address: tokenData[tokenIndex].tokenAddress as `0x${string}`,
+    address: tokenData
+      ? (tokenData[tokenIndex].tokenAddress as `0x${string}`)
+      : undefined,
   });
   const parsedAmount = ethers.utils.formatUnits(
-    tokenData[tokenIndex].amount.toString(),
+    tokenData ? tokenData[tokenIndex].amount.toString() : 0,
     (tokenIndex === 1 && txSort === "Wrap"
       ? 18
       : tokenIndex === 1 && txSort === "Unwrap"
       ? 27
-      : decimals) ?? 18
+      : decimals) ?? 18,
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
@@ -71,7 +68,13 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
   const noNeedToShowAmount = useMemo(() => {
     return txSort === "Revoke" || txSort === "UpdateFee";
   }, [txSort]);
-
+  if (
+    tokenData === undefined ||
+    (isToken0 === false &&
+      (tokenData[1] === null || tokenData[1] === undefined))
+  ) {
+    return <Box w={"136px"}></Box>;
+  }
   if (
     symbol === "WETH" ||
     tokenData[tokenIndex].tokenAddress === "ETH" ||
@@ -188,12 +191,12 @@ function TransactionToast(props: TransactionToastProp) {
     txSort === "UpdateFee";
   const needToOpenHistoryTab = useMemo(
     () => txSort === "Deposit" || txSort === "Withdraw" || isForCrossTrade,
-    [txSort, isForCrossTrade]
+    [txSort, isForCrossTrade],
   );
 
   const [, setSelectedTab] = useRecoilState(selectedTab);
   const [, setSelectedTransactionCategory] = useRecoilState(
-    selectedTransactionCategory
+    selectedTransactionCategory,
   );
   const nativeToHistoryTab = () => setHistoryTabOpen(true);
   const navigateToCrossTrade = () => setSelectedTab(HISTORY_SORT.CROSS_TRADE);

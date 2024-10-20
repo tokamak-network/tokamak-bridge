@@ -29,10 +29,10 @@ export function TokenInputForLiquidity(props: {
 }) {
   const { inToken, tokenInfo, otherTokenInfo, tickCurrent, style } = props;
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const { chainName } = useConnectedNetwork();
@@ -149,7 +149,7 @@ export function TokenInputForLiquidity(props: {
 
       const parsedAmount = ethers.utils.parseUnits(
         dependentAmount,
-        selectedOutToken.decimals
+        selectedOutToken.decimals,
       );
 
       return setSelectedOutToken({
@@ -168,7 +168,7 @@ export function TokenInputForLiquidity(props: {
       }
       const parsedAmount = ethers.utils.parseUnits(
         dependentAmount,
-        selectedInToken.decimals
+        selectedInToken.decimals,
       );
 
       return setSelectedInToken({

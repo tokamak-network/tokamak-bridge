@@ -46,7 +46,7 @@ export function useV3MintInfo() {
       outToken?.token?.wrapped,
       pool?.token0.wrapped ?? inToken?.token?.wrapped,
     ],
-    [inToken?.token, outToken?.token, pool?.token0]
+    [inToken?.token, outToken?.token, pool?.token0],
   );
 
   const { subMode } = useGetMode();
@@ -58,7 +58,7 @@ export function useV3MintInfo() {
           ? [tokenA, tokenB]
           : [tokenB, tokenA]
         : [undefined, undefined],
-    [tokenA, tokenB, subMode.add]
+    [tokenA, tokenB, subMode.add],
   );
 
   /*note to parse inputs in reverse
@@ -68,7 +68,7 @@ export function useV3MintInfo() {
   */
   const invertPrice = pool?.token0
     ? Boolean(
-        inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
+        inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0),
       )
     : Boolean(baseToken && token0 && !baseToken.equals(token0));
 
@@ -79,12 +79,12 @@ export function useV3MintInfo() {
       const parsedQuoteAmount = tryParseCurrencyAmount(
         //initiali price
         startPriceTypedValue,
-        invertPrice ? token0 : token1
+        invertPrice ? token0 : token1,
       );
       if (parsedQuoteAmount && token0 && token1) {
         const baseAmount = tryParseCurrencyAmount(
           "1",
-          invertPrice ? token1 : token0
+          invertPrice ? token1 : token0,
         );
         const price =
           baseAmount && parsedQuoteAmount
@@ -92,7 +92,7 @@ export function useV3MintInfo() {
                 baseAmount.currency,
                 parsedQuoteAmount.currency,
                 baseAmount.quotient,
-                parsedQuoteAmount.quotient
+                parsedQuoteAmount.quotient,
               )
             : undefined;
         return (invertPrice ? price?.invert() : price) ?? undefined;
@@ -132,7 +132,7 @@ export function useV3MintInfo() {
         currentSqrt,
         JSBI.BigInt(0),
         currentTick,
-        []
+        [],
       );
     } else {
       return undefined;
@@ -152,7 +152,7 @@ export function useV3MintInfo() {
         ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[feeAmount])
         : undefined,
     }),
-    [feeAmount]
+    [feeAmount],
   );
 
   // parse typed range values and determine closest ticks
@@ -193,14 +193,14 @@ export function useV3MintInfo() {
       [Bound.LOWER]: feeAmount && tickLower === tickSpaceLimits.LOWER,
       [Bound.UPPER]: feeAmount && tickUpper === tickSpaceLimits.UPPER,
     }),
-    [tickSpaceLimits, tickLower, tickUpper, feeAmount]
+    [tickSpaceLimits, tickLower, tickUpper, feeAmount],
   );
 
   // mark invalid range
   const invalidRange = Boolean(
     typeof tickLower === "number" &&
       typeof tickUpper === "number" &&
-      tickLower >= tickUpper
+      tickLower >= tickUpper,
   );
 
   const pricesAtLimit = useMemo(() => {
@@ -226,19 +226,19 @@ export function useV3MintInfo() {
       price &&
       lowerPrice &&
       upperPrice &&
-      (price.lessThan(lowerPrice) || price.greaterThan(upperPrice))
+      (price.lessThan(lowerPrice) || price.greaterThan(upperPrice)),
   );
 
   // single deposit only if price is out of range
   const deposit0Disabled = Boolean(
     typeof tickUpper === "number" &&
       poolForPosition &&
-      poolForPosition.tickCurrent >= tickUpper
+      poolForPosition.tickCurrent >= tickUpper,
   );
   const deposit1Disabled = Boolean(
     typeof tickLower === "number" &&
       poolForPosition &&
-      poolForPosition.tickCurrent <= tickLower
+      poolForPosition.tickCurrent <= tickLower,
   );
 
   const invalidPool = poolState === PoolState.INVALID;
@@ -296,7 +296,7 @@ export function useV3MintInfo() {
             });
 
       const dependentTokenAmount = wrappedIndependentAmount.currency.equals(
-        poolForPosition.token0
+        poolForPosition.token0,
       )
         ? position.amount1
         : position.amount0;
@@ -304,7 +304,7 @@ export function useV3MintInfo() {
         dependentCurrency &&
         CurrencyAmount.fromRawAmount(
           dependentCurrency,
-          dependentTokenAmount.quotient
+          dependentTokenAmount.quotient,
         )
       );
     }

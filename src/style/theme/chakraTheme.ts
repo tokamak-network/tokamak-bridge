@@ -45,7 +45,7 @@ const theme = extendTheme({
             pointerEvents: "none",
             background: "transparent",
           },
-          
+
           dialogContainer: {
             pointerEvents: "none",
             background: "transparent",
@@ -55,7 +55,7 @@ const theme = extendTheme({
           },
           input: {
             pointerEvents: "auto",
-          }
+          },
         },
       },
     },
@@ -102,7 +102,6 @@ const theme = extendTheme({
       ".css-17pwl6t": {
         zIndex: Overlay_Index.OverHeader,
       },
-
     }),
     // Additional overrides for specific components can be added here
     // For example, to reset the button styles
@@ -114,7 +113,7 @@ const theme = extendTheme({
         fontWeight: "normal",
         _hover: { backgroundColor: "none" },
         _active: {},
-        color:'#fff'
+        color: "#fff",
       },
     },
     Input: {

@@ -46,11 +46,11 @@ export const getTransactionToken = (
   l2TokenAddress: string,
   amount: string,
   isL1: boolean,
-  chainId: number
+  chainId: number,
 ): { l1Token: TransactionToken | null; l2Token: TransactionToken | null } => {
   const tokenInfo = getTokenInfo(
     isL1 ? l1TokenAddress : l2TokenAddress,
-    chainId
+    chainId,
   );
   if (!tokenInfo) return { l1Token: null, l2Token: null };
   const l2Token: TransactionToken = {

@@ -11,14 +11,14 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 export default function useTokenBalance(
   tokenInfo: TokenInfo | null,
   requireCall?: boolean,
-  watch?: boolean
+  watch?: boolean,
 ) {
   const { chainName } = useConnectedNetwork();
 
   const isETH = tokenInfo?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET ||
       SupportedChainId.TITAN ||
-      SupportedChainId.SEPOLIA
+      SupportedChainId.SEPOLIA,
   );
   const tokenAddress = chainName && tokenInfo?.address[chainName];
   const { address: accountAddress } = useAccount();
@@ -48,16 +48,16 @@ export default function useTokenBalance(
             ethers.utils.formatUnits(
               //@ts-ignore
               typeof data.value === "bigint" ? data.value : "0",
-              data.decimals as number
-            )
+              data.decimals as number,
+            ),
           ),
           parsedBalanceWithoutCommafied: commafy(
             ethers.utils.formatUnits(
               //@ts-ignore
               typeof data.value === "bigint" ? data.value : "0",
-              data.decimals as number
+              data.decimals as number,
             ),
-            data.decimals as number
+            data.decimals as number,
           ).replaceAll(",", ""),
         },
         error,

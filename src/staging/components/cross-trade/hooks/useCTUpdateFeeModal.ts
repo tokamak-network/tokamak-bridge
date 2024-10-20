@@ -5,7 +5,7 @@ import { CT_History } from "@/staging/types/transaction";
 
 export default function useCTUpdateFee() {
   const [ctUpdateFeeModal, setCTUpdateFeeModal] = useRecoilState(
-    ctUpdateFeeModalStatus
+    ctUpdateFeeModalStatus,
   );
 
   const onOpenCTUpdateFeeModal = (txData: CT_History | null) => {

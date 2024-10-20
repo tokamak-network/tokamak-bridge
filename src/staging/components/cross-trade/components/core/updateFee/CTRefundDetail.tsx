@@ -12,9 +12,8 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import commafy from "@/utils/trim/commafy";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
 
-export default function CTRefundDetail(props: { txData: CT_History | null }) {
+export default function CTRefundDetail(props: { txData: CT_History }) {
   const { txData } = props;
-  if (!txData) return null;
   const { inToken, inNetwork } = txData;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const tokenAmount = txData.L2_subgraphData?._totalAmount;

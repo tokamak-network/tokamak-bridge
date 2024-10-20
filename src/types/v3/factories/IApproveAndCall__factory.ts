@@ -221,7 +221,7 @@ export class IApproveAndCall__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IApproveAndCall {
     return new Contract(address, _abi, signerOrProvider) as IApproveAndCall;
   }

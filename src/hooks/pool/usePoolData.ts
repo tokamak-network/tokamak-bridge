@@ -144,7 +144,7 @@ export function usePriceTickConversion() {
   const quoteToken = pool?.token1;
 
   const invertPrice = Boolean(
-    inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0)
+    inToken?.token && pool?.token0 && !inToken.token.equals(pool.token0),
   );
 
   const currentPrice = useMemo(() => {

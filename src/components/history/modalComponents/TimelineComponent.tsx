@@ -49,7 +49,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
           props.tx === undefined || props.tx === null ? "inProgress" : "done"
         }
         check={check(
-          props.tx === undefined || props.tx === null ? "inProgress" : "done"
+          props.tx === undefined || props.tx === null ? "inProgress" : "done",
         )}
       />
       <Dots
@@ -73,7 +73,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
             ? "inProgress"
             : props.tx.currentStatus > 2
             ? "done"
-            : "todo"
+            : "todo",
         )}
         timeStamp={tx ? Number(tx.l2timeStamp) : undefined}
       />
@@ -95,7 +95,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
               ? "inProgress"
               : props.tx.currentStatus > 2
               ? "done"
-              : "todo"
+              : "todo",
           ).color
         }
       />
@@ -117,7 +117,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
             ? "inProgress"
             : props.tx.currentStatus > 4
             ? "done"
-            : "todo"
+            : "todo",
         )}
       />
       <Dots
@@ -138,7 +138,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
               ? "inProgress"
               : props.tx.currentStatus > 4
               ? "done"
-              : "todo"
+              : "todo",
           ).color
         }
       />
@@ -159,7 +159,7 @@ export default function TimelineComponent(props: { tx: TxType }) {
             ? "inProgress"
             : props.tx.currentStatus > 4
             ? "done"
-            : "todo"
+            : "todo",
         )}
       />
     </Flex>

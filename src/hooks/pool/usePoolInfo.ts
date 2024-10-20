@@ -107,29 +107,20 @@ export function usePoolInfo() {
   const { subMode } = useGetMode();
   const { info } = usePositionInfo();
 
-  if (info === undefined || subMode.add === true) {
-    return {
-      priceLower: undefined,
-      priceUpper: undefined,
-      inverted: undefined,
-      ratio: undefined,
-    };
-  }
-
   const { token0, token1, fee, liquidity, tickLower, tickUpper, tickCurrent } =
-    info;
+    info || {};
 
   // construct Position from details returned
-  const [, pool] = usePool(token0, token1, fee);
+  const [, pool] = usePool(info?.token0, info?.token1, info?.fee);
 
   const position = useMemo(() => {
-    if (pool && liquidity && tickLower && tickUpper) {
+    if (pool && info?.liquidity && info?.tickLower && info?.tickUpper) {
       //trouble
       return new Position({
         pool,
-        liquidity: liquidity.toString(),
-        tickLower,
-        tickUpper,
+        liquidity: liquidity ? liquidity.toString() : "",
+        tickLower: tickLower ?? 0,
+        tickUpper: tickUpper ?? 0,
       });
     }
     return undefined;
@@ -154,7 +145,7 @@ export function usePoolInfo() {
       ? getRatio(
           inverted ? priceUpper.invert() : priceLower,
           pool?.token0Price,
-          inverted ? priceLower.invert() : priceUpper
+          inverted ? priceLower.invert() : priceUpper,
         )
       : undefined;
   }, [pool, priceLower, priceUpper, inverted]);
@@ -174,7 +165,7 @@ export function usePoolInfo() {
         ? nearestUsableTick(TickMath.MAX_TICK, TICK_SPACINGS[fee])
         : undefined,
     }),
-    [fee]
+    [fee],
   );
 
   const ticksAtLimit = useMemo(
@@ -182,15 +173,28 @@ export function usePoolInfo() {
       [Bound.LOWER]: fee && tickLower === tickSpaceLimits.LOWER,
       [Bound.UPPER]: fee && tickUpper === tickSpaceLimits.UPPER,
     }),
-    [tickSpaceLimits, tickLower, tickUpper, fee]
+    [tickSpaceLimits, tickLower, tickUpper, fee],
   );
-
+  if (info === undefined || subMode.add === true) {
+    return {
+      priceLower: undefined,
+      priceUpper: undefined,
+      inverted: undefined,
+      ratio: undefined,
+    };
+  }
   // single deposit only if price is out of range
   const deposit0Disabled = Boolean(
-    typeof tickUpper === "number" && info && tickCurrent >= tickUpper
+    typeof tickUpper === "number" &&
+      info &&
+      tickCurrent &&
+      tickCurrent >= tickUpper,
   );
   const deposit1Disabled = Boolean(
-    typeof tickLower === "number" && info && tickCurrent < tickLower
+    typeof tickLower === "number" &&
+      info &&
+      tickCurrent &&
+      tickCurrent < tickLower,
   );
 
   return {

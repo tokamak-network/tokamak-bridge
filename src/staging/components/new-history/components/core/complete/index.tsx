@@ -145,7 +145,7 @@ export default function Complete(transaction: TransactionHistory) {
                 }}
                 value={convertNumber(
                   transactionData.inToken.amount,
-                  transactionData.inToken.decimals
+                  transactionData.inToken.decimals,
                 )}
               />
               <Box w="4px" /> {/** space bar */}

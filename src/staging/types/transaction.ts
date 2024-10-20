@@ -159,7 +159,7 @@ export type CT_History = CT_Request_History | CT_Provide_History;
 export type TransactionHistory = StandardHistory | CT_History;
 
 export function isWithdrawTransactionHistory(
-  transaction: TransactionHistory
+  transaction: TransactionHistory,
 ): transaction is WithdrawTransactionHistory {
   return (
     transaction.action === Action.Withdraw &&
@@ -171,7 +171,7 @@ export function isWithdrawTransactionHistory(
 }
 
 export function isDepositTransactionHistory(
-  transaction: TransactionHistory
+  transaction: TransactionHistory,
 ): transaction is DepositTransactionHistory {
   return (
     transaction.action === Action.Deposit &&
@@ -187,7 +187,7 @@ export function isInCT_REQUEST(value: HISTORY_TRANSACTION_STATUS): boolean {
 }
 
 export function isInCT_REQUEST_CANCEL(
-  value: HISTORY_TRANSACTION_STATUS
+  value: HISTORY_TRANSACTION_STATUS,
 ): boolean {
   return Object.values(CT_REQUEST_CANCEL).includes(value as CT_REQUEST_CANCEL);
 }
@@ -197,7 +197,7 @@ export function isInCT_Provide(value: HISTORY_TRANSACTION_STATUS): boolean {
 }
 
 export function getCancelValueFromCTRequestHistory(
-  object: any
+  object: any,
 ): object is CT_Request_History {
   return (object as CT_Request_History).isCanceled;
 }

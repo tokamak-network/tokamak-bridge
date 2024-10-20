@@ -35,7 +35,7 @@ export function Chart({
       height - margins.top - margins.bottom,
       width - margins.left - margins.right,
     ],
-    [width, height, margins]
+    [width, height, margins],
   );
 
   const { xScale, yScale } = useMemo(() => {
@@ -95,7 +95,7 @@ export function Chart({
               current * zoomLevels.initialMin,
               current * zoomLevels.initialMax,
             ] as [number, number],
-            "reset"
+            "reset",
           );
         }}
         showResetButton={

@@ -12,7 +12,7 @@ import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 const Step4 = (props: { progress: string; check: any }) => {
   const { check } = props;
   const [relayGasCost, setRelayGasCost] = useState<string | undefined>(
-    undefined
+    undefined,
   );
 
   const { data: feeData } = useFeeData({
@@ -27,12 +27,12 @@ const Step4 = (props: { progress: string; check: any }) => {
       const gasCost = gasLimit * Number(gasPrice);
       const parsedTotalGasCost = ethers.utils.formatUnits(
         gasCost.toString(),
-        "ether"
+        "ether",
       );
 
       const usTotal = commafy(
         Number(tokenMarketPrice) * Number(parsedTotalGasCost),
-        2
+        2,
       );
       setRelayGasCost(usTotal);
 
@@ -42,12 +42,12 @@ const Step4 = (props: { progress: string; check: any }) => {
         const gasCost = gasLimit * Number(gasPrice);
         const parsedTotalGasCost = ethers.utils.formatUnits(
           gasCost.toString(),
-          "ether"
+          "ether",
         );
 
         const usTotal = commafy(
           Number(tokenMarketPrice) * Number(parsedTotalGasCost),
-          2
+          2,
         );
         setRelayGasCost(usTotal);
       }, 12000);

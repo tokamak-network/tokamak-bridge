@@ -27,7 +27,7 @@ export default function ComingPool() {
     : "672px";
 
   const [activeButton, setActiveButton] = useState<PoolButtonType>(
-    PoolButtonType.Coming
+    PoolButtonType.Coming,
   );
 
   const PoolComingButton = ({

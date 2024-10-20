@@ -49,7 +49,7 @@ export default function AccountHistoryNew() {
   const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
     useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
-    selectedTransactionCategory
+    selectedTransactionCategory,
   );
 
   const historyData = useMemo(() => {

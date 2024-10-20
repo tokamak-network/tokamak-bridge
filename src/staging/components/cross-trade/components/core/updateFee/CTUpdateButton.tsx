@@ -31,7 +31,7 @@ function ToggleButton({
     <Button {...buttonStyle} _active={{}} onClick={onClick}>
       <Text
         color={isActive ? "#FFFFFF" : "#A0A3AD"}
-        fontSize='12px'
+        fontSize="12px"
         fontWeight={400}
         lineHeight={"18px"}
       >
@@ -55,9 +55,9 @@ export default function CTUpdateButton({
   return (
     <Flex
       width={isMobile ? "100%" : "332px"}
-      bg='#1F2128'
-      border='1px solid #DB00FF'
-      borderRadius='32px'
+      bg="#1F2128"
+      border="1px solid #DB00FF"
+      borderRadius="32px"
     >
       <ToggleButton
         isActive={activeButton === UpdateFeeButtonType.Update}
@@ -69,7 +69,7 @@ export default function CTUpdateButton({
         isActive={activeButton === UpdateFeeButtonType.CancelRequest}
         onClick={() => setActiveButton(UpdateFeeButtonType.CancelRequest)}
         label={UpdateFeeButtonType.CancelRequest}
-        marginLeft='8px'
+        marginLeft="8px"
         isMobile={isMobile}
       />
     </Flex>

@@ -134,7 +134,7 @@ export const CurrentPriceInfo = () => {
       const currentPrice = tickToPrice(
         info.token0,
         info.token1,
-        info.tickCurrent
+        info.tickCurrent,
       );
       return manuallyInverted
         ? currentPrice.invert().toSignificant(info.token1.decimals)
@@ -200,7 +200,7 @@ export const CurrentPriceInfo = () => {
 
 export function PriceRangeInfo() {
   const [manuallyInverted, setManuallyInverted] = useRecoilState(
-    ATOM_manuallyInverted
+    ATOM_manuallyInverted,
   );
   const { poolModal } = usePreview();
 

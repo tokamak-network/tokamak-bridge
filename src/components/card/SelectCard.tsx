@@ -190,7 +190,7 @@ export function SelectCardModal() {
   const [isTokenSearch] = useRecoilState(IsSearchToken);
   const ref = useRef<HTMLInputElement>(null);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [isInputAmount] = useRecoilState(isInputTokenAmount);
   const [isOutputAmount] = useRecoilState(isOutputTokenAmount);

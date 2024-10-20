@@ -28,24 +28,24 @@ interface UniswapInterfaceMulticallInterface extends ethers.utils.Interface {
 
   encodeFunctionData(
     functionFragment: "getCurrentBlockTimestamp",
-    values?: undefined
+    values?: undefined,
   ): string;
   encodeFunctionData(
     functionFragment: "getEthBalance",
-    values: [string]
+    values: [string],
   ): string;
   encodeFunctionData(
     functionFragment: "multicall",
-    values: [{ target: string; gasLimit: BigNumberish; callData: BytesLike }[]]
+    values: [{ target: string; gasLimit: BigNumberish; callData: BytesLike }[]],
   ): string;
 
   decodeFunctionResult(
     functionFragment: "getCurrentBlockTimestamp",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "getEthBalance",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(functionFragment: "multicall", data: BytesLike): Result;
 
@@ -58,26 +58,26 @@ export class UniswapInterfaceMulticall extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -90,24 +90,24 @@ export class UniswapInterfaceMulticall extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: UniswapInterfaceMulticallInterface;
 
   functions: {
     getCurrentBlockTimestamp(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[BigNumber] & { timestamp: BigNumber }>;
 
     getEthBalance(
       addr: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<[BigNumber] & { balance: BigNumber }>;
 
     multicall(
       calls: { target: string; gasLimit: BigNumberish; callData: BytesLike }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
   };
 
@@ -117,7 +117,7 @@ export class UniswapInterfaceMulticall extends BaseContract {
 
   multicall(
     calls: { target: string; gasLimit: BigNumberish; callData: BytesLike }[],
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -127,7 +127,7 @@ export class UniswapInterfaceMulticall extends BaseContract {
 
     multicall(
       calls: { target: string; gasLimit: BigNumberish; callData: BytesLike }[],
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<
       [
         BigNumber,
@@ -135,7 +135,7 @@ export class UniswapInterfaceMulticall extends BaseContract {
           success: boolean;
           gasUsed: BigNumber;
           returnData: string;
-        })[]
+        })[],
       ] & {
         blockNumber: BigNumber;
         returnData: ([boolean, BigNumber, string] & {
@@ -156,23 +156,23 @@ export class UniswapInterfaceMulticall extends BaseContract {
 
     multicall(
       calls: { target: string; gasLimit: BigNumberish; callData: BytesLike }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
   };
 
   populateTransaction: {
     getCurrentBlockTimestamp(
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     getEthBalance(
       addr: string,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<PopulatedTransaction>;
 
     multicall(
       calls: { target: string; gasLimit: BigNumberish; callData: BytesLike }[],
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
   };
 }

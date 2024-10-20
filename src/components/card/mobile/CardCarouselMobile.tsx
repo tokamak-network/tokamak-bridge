@@ -38,7 +38,7 @@ const CarouselCard = React.memo((props) => {
   const [isOutputAmount, setIsOutputAmount] =
     useRecoilState(isOutputTokenAmount);
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const { chainName } = useConnectedNetwork();
   const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
@@ -118,7 +118,7 @@ const CarouselCard = React.memo((props) => {
     )
   );
 });
-
+CarouselCard.displayName = "CarouselCard";
 export function CardCarouselMobile() {
   const ref: any = React.useRef();
   const { filteredTokenList } = useGetTokenList();

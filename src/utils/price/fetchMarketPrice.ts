@@ -6,7 +6,7 @@ import {
 import { ApolloClient, InMemoryCache } from "@apollo/client";
 
 export async function fetchMarketPrice(
-  tokenId: string
+  tokenId: string,
 ): Promise<number | undefined> {
   try {
     const tokenName = changeTokenNameForAPI(tokenId);

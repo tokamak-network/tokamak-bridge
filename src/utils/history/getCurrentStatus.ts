@@ -49,7 +49,7 @@ const subgraphQueryURL_TITAN_SEPOLIA =
 export const getCurretStatus = async (
   l2BlockNumber: number,
   resolved: Resolved,
-  isConnectedToMainnetwork: boolean
+  isConnectedToMainnetwork: boolean,
 ): Promise<{
   currentStatus: CurrentStatus;
   stateBatchAppended?: StateBatchAppended;
@@ -140,7 +140,7 @@ export const getCurretStatus = async (
 
 export const getCurrentDepositStatus = async (
   resolved: Resolved,
-  isConnectedToMainnetwork: boolean
+  isConnectedToMainnetwork: boolean,
 ): Promise<{
   currentStatus: CurrentDepositStatus;
   relayedMessageTx?: RelayMessage;

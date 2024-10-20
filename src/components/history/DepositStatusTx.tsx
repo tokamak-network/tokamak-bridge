@@ -30,11 +30,11 @@ export default function DepositStatusTx(props: {
         const currentTime = new Date(Date.now());
         const elapsedTimeInSeconds = differenceInSeconds(
           currentTime,
-          startDate
+          startDate,
         );
         const formattedTime = format(
           new Date(elapsedTimeInSeconds * 1000),
-          "mm:ss"
+          "mm:ss",
         );
         setDuration(formattedTime);
       }, 1000);
@@ -92,7 +92,7 @@ export default function DepositStatusTx(props: {
             cursor={"pointer"}
             color={mobileView ? "#A0A3AD" : ""}
             _hover={{
-              textDecoration: mobileView ? "none" : "underline"
+              textDecoration: mobileView ? "none" : "underline",
             }}
           >
             {mobileView ? "Deposit" : `${layer}: Completed`}
@@ -122,7 +122,10 @@ export default function DepositStatusTx(props: {
           >
             <Flex fontSize={"11px"}>
               <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-                <Flex gap="4px" >Transaction<Image alt="txmove" src={txMove} /></Flex>
+                <Flex gap="4px">
+                  Transaction
+                  <Image alt="txmove" src={txMove} />
+                </Flex>
               </Text>
               {!mobileView && (
                 <Text ml="3px" color={"#A0A3AD"}>

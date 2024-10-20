@@ -57,10 +57,10 @@ export default function RangeInput(props: RangeInputProps) {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
   const lastFocused = useRecoilValue(lastFocusedInput);
 
@@ -108,7 +108,7 @@ export default function RangeInput(props: RangeInputProps) {
       setLocalValue(inputValue);
       // return isMinPrice ? setMinPrice(inputValue) : setMaxPrice(inputValue);
     },
-    [isMinPrice]
+    [isMinPrice],
   );
 
   const onFocusHandler = useCallback(
@@ -116,7 +116,7 @@ export default function RangeInput(props: RangeInputProps) {
       setIsFocused(true);
       setUseLocalValue(true);
     },
-    []
+    [],
   );
 
   const value = useMemo(() => {
@@ -148,7 +148,7 @@ export default function RangeInput(props: RangeInputProps) {
       setUseLocalValue(false);
       return isMinPrice ? setMinPrice(localValue) : setMaxPrice(localValue);
     },
-    [localValue, notExistPool, invertPrice]
+    [localValue, notExistPool, invertPrice],
   );
 
   const [, setMinPriceForAddModal] = useRecoilState(minPriceForAddModal);

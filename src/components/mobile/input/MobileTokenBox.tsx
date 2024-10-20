@@ -34,10 +34,10 @@ export default function MobileTokenBox(props: {
   const [isFocused, setIsFocused] = useState<boolean>(false);
 
   const [selectedInToken, setSelectedInToken] = useRecoilState(
-    selectedInTokenStatus
+    selectedInTokenStatus,
   );
   const [selectedOutToken, setSelectedOutToken] = useRecoilState(
-    selectedOutTokenStatus
+    selectedOutTokenStatus,
   );
 
   const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
@@ -50,7 +50,7 @@ export default function MobileTokenBox(props: {
   const { dependentAmount: _dependentAmount } = useV3MintInfo();
   const dependentAmount = _dependentAmount?.toSignificant(
     // inToken ? inTokenInfo?.decimals : outTokenInfo?.decimals
-    18
+    18,
   );
   const {
     inToken: inTokenFromHook,
@@ -181,46 +181,46 @@ export default function MobileTokenBox(props: {
   return (
     <Flex
       visibility={visibilityTypeState ? "visible" : "hidden"}
-      direction='column'
+      direction="column"
       ml={inToken ? "" : "5"}
       mr={inToken ? "5" : ""}
-      mt='2'
-      w='148px'
-      h='84px'
+      mt="2"
+      w="148px"
+      h="84px"
       cursor={inToken ? "pointer" : "default"} // 조건에 따른 cursor 스타일 설정
       onClick={inToken ? handleClick : undefined} // 조건에 따라 onClick 핸들러 설정
     >
       {visibilityTypeState && valueProp ? (
         <>
-          <Box bg='#1F2128' p='2' rounded='md' w='full' mb='1'>
-            <Text fontSize='md' fontWeight='bold' color='white'>
+          <Box bg="#1F2128" p="2" rounded="md" w="full" mb="1">
+            <Text fontSize="md" fontWeight="bold" color="white">
               {valueProp}
             </Text>
           </Box>
-          <Text fontSize='sm' color='gray.400'>
+          <Text fontSize="sm" color="gray.400">
             ${commafy(marketPrice)}
           </Text>
         </>
       ) : (
         <>
           <Box
-            p='5'
-            rounded='md'
-            w='full'
-            bgSize='200% 100%'
-            mb='1'
-            bgGradient='linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)'
+            p="5"
+            rounded="md"
+            w="full"
+            bgSize="200% 100%"
+            mb="1"
+            bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
             borderRadius={"8px"}
             animation={`${useIsMoibleLoading} 10s linear infinite`}
           />
           <Box
-            bg='#1F2128'
-            p='2'
-            rounded='md'
-            w='full'
-            bgSize='200% 100%'
-            mb='1'
-            bgGradient='linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)'
+            bg="#1F2128"
+            p="2"
+            rounded="md"
+            w="full"
+            bgSize="200% 100%"
+            mb="1"
+            bgGradient="linear(to-r, #2b2f42 8%, #2b2f42 38%, #1c1d25 54%)"
             borderRadius={"8px"}
             animation={`${useIsMoibleLoading} 10s linear infinite`}
           />

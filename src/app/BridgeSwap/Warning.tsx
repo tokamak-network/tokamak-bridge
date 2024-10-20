@@ -75,7 +75,7 @@ export default function Warning() {
       return (
         <WarningText
           label={`Cannot deposit WETH to ${convertNetworkName(
-            outNetwork?.chainName
+            outNetwork?.chainName,
           )}. Unwrap to ETH and deposit.`}
         />
       );
@@ -94,7 +94,7 @@ export default function Warning() {
       return (
         <WarningText
           label={`Cannot withdraw WETH to ${convertNetworkName(
-            outNetwork?.chainName
+            outNetwork?.chainName,
           )}. Unwrap to ETH and withdraw.`}
         />
       );
@@ -102,7 +102,7 @@ export default function Warning() {
     return (
       <WarningText
         label={`Cannot withdraw ${inToken?.tokenSymbol} to ${convertNetworkName(
-          outNetwork?.chainName
+          outNetwork?.chainName,
         )}.`}
       />
     );

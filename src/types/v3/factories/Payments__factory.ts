@@ -36,7 +36,7 @@ export class Payments__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): Payments {
     return new Contract(address, _abi, signerOrProvider) as Payments;
   }

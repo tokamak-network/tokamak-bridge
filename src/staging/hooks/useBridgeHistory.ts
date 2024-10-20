@@ -89,8 +89,8 @@ const errorHandler = (error: ApolloError) => {
     if (error.graphQLErrors.length > 0) {
       error.graphQLErrors.forEach(({ message, locations, path }) =>
         console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-        )
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+        ),
       );
     }
 
@@ -184,11 +184,11 @@ export const useWithdrawData = () => {
             await getCurretStatus(
               Number(sentMessage.blockNumber),
               resolved,
-              isConnectedToMainNetwork
+              isConnectedToMainNetwork,
             );
 
           const l2TxReceipt = await L2Provider.getTransactionReceipt(
-            sentMessage.transactionHash
+            sentMessage.transactionHash,
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
@@ -197,21 +197,21 @@ export const useWithdrawData = () => {
             currentStatus === undefined
           ) {
             return new Error(
-              "Invalid transaction with l2TxReceipt.logs[3] or currentStatus"
+              "Invalid transaction with l2TxReceipt.logs[3] or currentStatus",
             );
           }
 
           const logs = utils.defaultAbiCoder.decode(
             ["address", "uint256", "bytes"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
+            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data,
           );
           const l1TokenAddress = utils.defaultAbiCoder.decode(
             ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
+            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1],
           )[0];
           const l2TokenAddress = utils.defaultAbiCoder.decode(
             ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
+            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2],
           )[0];
           const amount = BigInt(logs[1]).toString();
           const { l1Token, l2Token } = getTransactionToken(
@@ -221,7 +221,7 @@ export const useWithdrawData = () => {
             false,
             isConnectedToMainNetwork
               ? SupportedChainId.TITAN
-              : SupportedChainId.TITAN_SEPOLIA
+              : SupportedChainId.TITAN_SEPOLIA,
           );
           if (!l1Token || !l2Token) return;
           const status = getStatus(currentStatus);
@@ -252,16 +252,16 @@ export const useWithdrawData = () => {
           };
 
           return result;
-        })
+        }),
       );
 
       const filteredResult = result.filter(
-        (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
+        (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null,
       );
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
           previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
+          currentTx.blockTimestamps.initialCompletedTimestamp,
       );
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
@@ -301,13 +301,13 @@ export const useDepositData = () => {
             await getCurrentDepositStatus(resolved, isConnectedToMainNetwork);
 
           const l1TxReceipt = await L1Provider.getTransactionReceipt(
-            sentMessage.transactionHash
+            sentMessage.transactionHash,
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
           if (!l1TxReceipt) {
             console.error(
-              `Invalid transaction (${sentMessage.transactionHash} with l1TxReceipt)`
+              `Invalid transaction (${sentMessage.transactionHash} with l1TxReceipt)`,
             );
             return;
           }
@@ -317,7 +317,7 @@ export const useDepositData = () => {
             new ethers.utils.Interface(L1TitanBridgeAbi),
             isConnectedToMainNetwork
               ? SupportedChainId.TITAN
-              : SupportedChainId.TITAN_SEPOLIA
+              : SupportedChainId.TITAN_SEPOLIA,
           );
 
           if (!parsedLog) {
@@ -334,12 +334,12 @@ export const useDepositData = () => {
             true,
             isConnectedToMainNetwork
               ? SupportedChainId.MAINNET
-              : SupportedChainId.SEPOLIA
+              : SupportedChainId.SEPOLIA,
           );
 
           if (!l1Token || !l2Token) {
             console.error(
-              `Invalid transaction with {!l1Token || !l2Token} Error`
+              `Invalid transaction with {!l1Token || !l2Token} Error`,
             );
             return;
           }
@@ -368,7 +368,7 @@ export const useDepositData = () => {
             transactionHashes,
           };
           return result;
-        })
+        }),
       );
 
       const filteredResult = result.filter((tx) => {
@@ -378,7 +378,7 @@ export const useDepositData = () => {
       const sortedResult = filteredResult.sort(
         (currentTx, previousTx) =>
           previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
+          currentTx.blockTimestamps.initialCompletedTimestamp,
       );
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);

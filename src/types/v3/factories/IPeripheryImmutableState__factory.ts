@@ -45,12 +45,12 @@ export class IPeripheryImmutableState__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): IPeripheryImmutableState {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
+      signerOrProvider,
     ) as IPeripheryImmutableState;
   }
 }

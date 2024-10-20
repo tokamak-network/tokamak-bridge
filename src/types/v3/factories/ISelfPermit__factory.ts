@@ -168,7 +168,7 @@ export class ISelfPermit__factory {
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): ISelfPermit {
     return new Contract(address, _abi, signerOrProvider) as ISelfPermit;
   }

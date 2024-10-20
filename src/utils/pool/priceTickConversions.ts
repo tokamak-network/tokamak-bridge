@@ -14,7 +14,7 @@ import { TickMath } from "./tickMath";
 export function tickToPrice(
   baseToken: Token,
   quoteToken: Token,
-  tick: number
+  tick: number,
 ): Price<Token, Token> {
   const sqrtRatioX96 = TickMath.getSqrtRatioAtTick(tick);
 

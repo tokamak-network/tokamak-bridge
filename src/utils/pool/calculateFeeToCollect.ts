@@ -14,16 +14,16 @@ export async function calculateFeeToCollect(params: {
   const liquiditySub = JSBI.BigInt(position.liquidity);
 
   const feeGrowthOutside0Lower = JSBI.BigInt(
-    position.tickLower.feeGrowthOutside0X128
+    position.tickLower.feeGrowthOutside0X128,
   );
   const feeGrowthOutside1Lower = JSBI.BigInt(
-    position.tickLower.feeGrowthOutside1X128
+    position.tickLower.feeGrowthOutside1X128,
   );
   const feeGrowthOutside0Upper = JSBI.BigInt(
-    position.tickUpper.feeGrowthOutside0X128
+    position.tickUpper.feeGrowthOutside0X128,
   );
   const feeGrowthOutside1Upper = JSBI.BigInt(
-    position.tickUpper.feeGrowthOutside1X128
+    position.tickUpper.feeGrowthOutside1X128,
   );
   const feeGrowthGlobal0X128 = JSBI.BigInt(position.pool.feeGrowthGlobal0X128);
   const feeGrowthGlobal1X128 = JSBI.BigInt(position.pool.feeGrowthGlobal1X128);
@@ -41,15 +41,15 @@ export async function calculateFeeToCollect(params: {
     tickUpperSub,
     slot0TickSub,
     feeGrowthGlobal0X128,
-    feeGrowthGlobal1X128
+    feeGrowthGlobal1X128,
   );
   const feeGrowthInside0X128 = feeGrowthInside[0];
   const feeGrowthInside1X128 = feeGrowthInside[1];
   const feeGrowthInside0LastX128 = JSBI.BigInt(
-    position.feeGrowthInside0LastX128
+    position.feeGrowthInside0LastX128,
   );
   const feeGrowthInside1LastX128 = JSBI.BigInt(
-    position.feeGrowthInside1LastX128
+    position.feeGrowthInside1LastX128,
   );
 
   const tokenOweds = PositionLibrary.getTokensOwed(
@@ -57,13 +57,13 @@ export async function calculateFeeToCollect(params: {
     feeGrowthInside1LastX128,
     liquiditySub,
     feeGrowthInside0X128,
-    feeGrowthInside1X128
+    feeGrowthInside1X128,
   );
   const tokenOwed0 = tokenOweds[0];
   const tokenOwed1 = tokenOweds[1];
 
   const positionInfo = await NonfungiblePositionManagerContract.positions(
-    tokenId
+    tokenId,
   );
   const tokenOwed0Already = positionInfo.tokensOwed0;
   const tokenOwed1Already = positionInfo.tokensOwed1;

@@ -24,7 +24,7 @@ export const useRecommendFee = (params: {
   });
   const tokenInfo = getSupportedTokenForCT(
     tokenAddress,
-    isConnectedToMainNetwork
+    isConnectedToMainNetwork,
   );
 
   const hasRecomendFee =
@@ -51,10 +51,10 @@ export const useRecommendFee = (params: {
 
       const gasFeeDecimal = new Decimal(gasFee);
       const standardWithdrawGasCostDecimal = new Decimal(
-        standardWithdrawGasCost
+        standardWithdrawGasCost,
       );
       const isGasFeeLessThanOrEqual = gasFeeDecimal.lessThanOrEqualTo(
-        standardWithdrawGasCostDecimal
+        standardWithdrawGasCostDecimal,
       );
       return isGasFeeLessThanOrEqual;
     }
@@ -73,7 +73,7 @@ export const useRecommendFee = (params: {
     if (totalTokenAmountInUSD && additionalFeeRatio && tokenInfo?.decimals) {
       const totalAmountDecimal = new Decimal(totalTokenAmountInUSD.toString());
       const additionalFeeRatioDecimal = new Decimal(
-        additionalFeeRatio.toString()
+        additionalFeeRatio.toString(),
       );
       const fee = totalAmountDecimal.mul(additionalFeeRatioDecimal).div(100);
       return fee.toString();
@@ -104,7 +104,7 @@ export const useRecommendFee = (params: {
     if (provideCTTxnCost && additionalFee && tokenInfo?.decimals) {
       const additionalFeeWithDecimals = new Decimal(additionalFee.toString());
       const provideCTTxnCostWithDecimals = new Decimal(
-        provideCTTxnCost.toString()
+        provideCTTxnCost.toString(),
       );
       const sum = additionalFeeWithDecimals.plus(provideCTTxnCostWithDecimals);
       return sum.toString();
@@ -121,7 +121,7 @@ export const useRecommendFee = (params: {
     if (totalAmount && recommendedFeeAmount && tokenInfo?.decimals) {
       const totalAmountDecimals = new Decimal(totalAmount.toString());
       const recommendedFeeDecimal = new Decimal(
-        recommendedFeeAmount.toString()
+        recommendedFeeAmount.toString(),
       );
       const result = totalAmountDecimals.minus(recommendedFeeDecimal);
 

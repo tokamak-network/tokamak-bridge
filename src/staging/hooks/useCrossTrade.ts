@@ -59,8 +59,8 @@ const errorHandler = (error: ApolloError) => {
     if (error.graphQLErrors.length > 0) {
       error.graphQLErrors.forEach(({ message, locations, path }) =>
         console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
-        )
+          `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`,
+        ),
       );
     }
 
@@ -181,7 +181,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
 };
 
 export const useRequestData = (
-  saleCount?: string
+  saleCount?: string,
 ): {
   requestList: CrossTradeData[] | null;
   isLoading: boolean;
@@ -228,7 +228,7 @@ export const useRequestData = (
             isETH
               ? "0x4200000000000000000000000000000000000006"
               : item._l2token,
-            isMainnet
+            isMainnet,
           );
 
           const isCanceled = isRequestCanceled({
@@ -267,14 +267,14 @@ export const useRequestData = (
 
           const formmatedProfitAmount = formatUnits(
             serviceFee.toString(),
-            tokenInfo?.decimals
+            tokenInfo?.decimals,
           );
 
           const profitAmount =
             Number(formmatedProfitAmount) - Number(txnCostAmount);
           const provideAmount = formatUnits(
             ctAmount.toString(),
-            tokenInfo?.decimals
+            tokenInfo?.decimals,
           );
 
           const profitRatio = (profitAmount / Number(provideAmount)) * 100;
@@ -324,7 +324,7 @@ export const useRequestData = (
           const inTokenAmount = formatUnits(inToken.amount, inToken.decimals);
           const outTokenAmount = formatUnits(
             outToken.amount,
-            outToken.decimals
+            outToken.decimals,
           );
           const providingUSD = Number(inTokenAmount) * Number(marketPrice);
           const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
@@ -358,7 +358,7 @@ export const useRequestData = (
         });
 
         const trimedResult = result.filter(
-          (item) => !item.isCanceled && !item.isProvided
+          (item) => !item.isCanceled && !item.isProvided,
         );
 
         setIsLoading(false);
@@ -392,7 +392,7 @@ export const useRequestData = (
   const requestDataBySaleCount = useMemo(() => {
     if (requestList && saleCount) {
       return requestList.find(
-        (item) => item.subgraphData._saleCount === saleCount
+        (item) => item.subgraphData._saleCount === saleCount,
       );
     }
   }, [requestList, saleCount]);

@@ -84,7 +84,7 @@ export function useTransactionDetail() {
 
   const inputAmount = `${commafy(
     inToken?.parsedAmount?.replaceAll(",", ""),
-    4
+    4,
   )} ${inToken?.tokenSymbol}`;
 
   const depositPropsData: DepositDetailProp[] | null = useMemo(() => {

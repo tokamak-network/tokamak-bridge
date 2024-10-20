@@ -14,8 +14,8 @@ export default function ImagePoolBox(props: ImageBoxProp) {
 
   return (
     <Box
-      position='relative'
-      overflow='hidden'
+      position="relative"
+      overflow="hidden"
       border={"1px solid #313442"}
       borderRadius={"16px"}
       width={isMobile ? undefined : "536px"}
@@ -24,7 +24,7 @@ export default function ImagePoolBox(props: ImageBoxProp) {
       <Box zIndex={1}>
         <Image
           src={isMobile ? PoolComing : PoolComingTablet}
-          alt='CTComingCrossMobile'
+          alt="CTComingCrossMobile"
           style={{
             width: isMobile ? undefined : "536px",
             height: isMobile
@@ -36,28 +36,28 @@ export default function ImagePoolBox(props: ImageBoxProp) {
         />
       </Box>
       <Box
-        position='absolute'
+        position="absolute"
         top={0}
         left={0}
-        width='100%'
-        height='100%'
+        width="100%"
+        height="100%"
         bg={"#17181D"}
         opacity={0.9}
         zIndex={2} // Ensure this is below the text layer
       />
       <Box
         width={isMobile ? "181px" : "100%"}
-        position='absolute'
-        top='50%'
-        left='50%'
-        transform='translate(-50%, -50%)'
+        position="absolute"
+        top="50%"
+        left="50%"
+        transform="translate(-50%, -50%)"
         zIndex={3} // Ensure this is above the overlay but below the text
-        textAlign='center'
+        textAlign="center"
       >
         <Text
-          fontSize='16px'
-          fontWeight='500'
-          color='#FFFFFF'
+          fontSize="16px"
+          fontWeight="500"
+          color="#FFFFFF"
           lineHeight={"24px"}
         >
           Uniswap v3 pool is available from 1024 px

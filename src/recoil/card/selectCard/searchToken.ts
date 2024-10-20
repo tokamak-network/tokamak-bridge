@@ -35,7 +35,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
           const tokenContract = new ethers.Contract(
             nameOrAdd,
             ERC20_ABI.abi,
-            getProvider(inNetwork)
+            getProvider(inNetwork),
           );
           const [tokenName, tokenSymbol, decimals] = await Promise.all([
             tokenContract.name(),

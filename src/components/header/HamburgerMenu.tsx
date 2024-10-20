@@ -30,7 +30,7 @@ const CustomMenuItem = (props: {
   return (
     <Flex
       align={"center"}
-      target='_blank'
+      target="_blank"
       as={"a"}
       href={link}
       h={"40px"}
@@ -40,11 +40,11 @@ const CustomMenuItem = (props: {
       _hover={{ bg: "#313442" }}
       borderRadius={"8px"}
     >
-      <Flex mr='9px'>
+      <Flex mr="9px">
         <Image
           width={title === "User Guide" || title === "Get Help" ? 24 : 18}
           src={icon}
-          alt='icon'
+          alt="icon"
         />
       </Flex>
       <Text
@@ -88,7 +88,7 @@ const HamburgerMenu = () => {
   return (
     <Drawer
       isOpen={isHamburgerOpen}
-      placement='right'
+      placement="right"
       onClose={() => {
         setHamburgerOpen(false);
       }}
@@ -118,28 +118,28 @@ const HamburgerMenu = () => {
             flexDir={"column"}
             padding={"32px 21px"}
           >
-            <Image src={LOGO} alt='Logo' />
+            <Image src={LOGO} alt="Logo" />
             <Box padding={"8px"} marginTop={"32px"}>
-              <RouterMenu title='Bridge & Swap' link='/' />
-              <RouterMenu title='Liquidity' link='/pools' />
+              <RouterMenu title="Bridge & Swap" link="/" />
+              <RouterMenu title="Liquidity" link="/pools" />
               <CustomMenuItem
-                link='https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge'
-                title='User Guide'
+                link="https://tokamaknetwork.gitbook.io/home/02-service-guide/tokamak-bridge"
+                title="User Guide"
                 icon={userguide}
                 hoverIcon={userGuideHover}
               />
               <CustomMenuItem
-                link='https://forms.gle/GLY1PZq4BH4RqZY79'
-                title='Get Help'
+                link="https://forms.gle/GLY1PZq4BH4RqZY79"
+                title="Get Help"
                 icon={lightbulb}
                 hoverIcon={lightbulbHover}
               />
-              <Flex w='100%' alignItems={"center"} mt={"8px"} mb={"8px"}>
-                <Flex w='52px' h='1px' bg={"#757893"} mr='10px'></Flex>
+              <Flex w="100%" alignItems={"center"} mt={"8px"} mb={"8px"}>
+                <Flex w="52px" h="1px" bg={"#757893"} mr="10px"></Flex>
                 <Text color={"#757893"} fontSize={"12px"}>
                   COMMUNITY
                 </Text>
-                <Flex w='52px' h='1px' bg={"#757893"} ml='10px'></Flex>
+                <Flex w="52px" h="1px" bg={"#757893"} ml="10px"></Flex>
               </Flex>
               {menuLinks.map((link: any) => {
                 return (

@@ -15,7 +15,7 @@ const useRelayGas = (gasLimit: number, chainId: number) => {
       const gasCost = gasLimit * Number(gasPrice);
       const parsedTotalGasCost = ethers.utils.formatUnits(
         gasCost.toString(),
-        "ether"
+        "ether",
       );
       return parsedTotalGasCost;
     }

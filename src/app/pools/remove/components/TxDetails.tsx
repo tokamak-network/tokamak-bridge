@@ -48,7 +48,7 @@ const Title = (props: {
       if (removeLiquidityPercentage === 0 || info === undefined) return;
       const gasData = await estimateGasToRemove(
         info?.id,
-        removeLiquidityPercentage
+        removeLiquidityPercentage,
       );
       setEstimatedGasUsage(gasData);
     };
@@ -190,7 +190,7 @@ const Content = (props: {
             <ContentTitle
               title="Liquidity to be removed"
               amount={gasUsdFormatter(
-                Number(totalRemovedMarketPrice?.replaceAll(",", ""))
+                Number(totalRemovedMarketPrice?.replaceAll(",", "")),
               )}
             />
             <ContentSub
@@ -215,7 +215,7 @@ const Content = (props: {
             <ContentTitle
               title="Earned fees"
               amount={gasUsdFormatter(
-                Number(totalMarketPrice?.replaceAll(",", ""))
+                Number(totalMarketPrice?.replaceAll(",", "")),
               )}
             />
             <ContentSub

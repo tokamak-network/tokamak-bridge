@@ -23,7 +23,7 @@ export async function quote(): Promise<string> {
   const quoterContract = new ethers.Contract(
     QUOTER_CONTRACT_ADDRESS,
     Quoter.abi,
-    provider
+    provider,
   );
 
   const poolConstants = await getPoolConstants();
@@ -32,7 +32,7 @@ export async function quote(): Promise<string> {
     "poolConstants : ",
     poolConstants.token0,
     poolConstants.token1,
-    poolConstants.fee
+    poolConstants.fee,
   );
 
   const quotedAmountOut = await quoterContract.callStatic.quoteExactInputSingle(
@@ -41,9 +41,9 @@ export async function quote(): Promise<string> {
     poolConstants.fee,
     fromReadableAmount(
       CurrentConfig.tokens.amountIn,
-      CurrentConfig.tokens.in.decimals
+      CurrentConfig.tokens.in.decimals,
     ).toString(),
-    0
+    0,
   );
 
   const quotedAmountOut2 =
@@ -53,9 +53,9 @@ export async function quote(): Promise<string> {
       poolConstants.fee,
       fromReadableAmount(
         CurrentConfig.tokens.amountIn,
-        CurrentConfig.tokens.in.decimals
+        CurrentConfig.tokens.in.decimals,
       ).toString(),
-      0
+      0,
     );
 
   console.log("quotedAmountOut : ", quotedAmountOut.toString());
@@ -83,7 +83,7 @@ async function getPoolConstants(): Promise<{
   const poolContract = new ethers.Contract(
     currentPoolAddress,
     IUniswapV3PoolABI.abi,
-    provider
+    provider,
   );
 
   const [token0, token1, fee] = await Promise.all([

@@ -60,7 +60,7 @@ export function useIncreaseAmount() {
       const result = ethers.utils
         .formatUnits(
           token0Input?.toString(),
-          invertPrice ? outToken?.decimals : inToken?.decimals
+          invertPrice ? outToken?.decimals : inToken?.decimals,
         )
         .toString();
       return smallNumberFormmater({
@@ -77,7 +77,7 @@ export function useIncreaseAmount() {
       const result = ethers.utils
         .formatUnits(
           token1Input?.toString(),
-          invertPrice ? inToken?.decimals : outToken?.decimals
+          invertPrice ? inToken?.decimals : outToken?.decimals,
         )
         .toString();
       return smallNumberFormmater({

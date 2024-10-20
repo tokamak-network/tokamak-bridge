@@ -22,7 +22,7 @@ export function getGasCostText(totalGasCost: string | null | undefined) {
 
 export function gasUsdFormatter(
   price: number | undefined,
-  displayMinimumValue?: number | string
+  displayMinimumValue?: number | string,
 ) {
   return price !== undefined
     ? price === 0
@@ -62,7 +62,7 @@ export function smallNumberFormmater(params: {
     typeof amount === "string"
       ? Number(amount.replaceAll(",", ""))
       : Number(amount),
-    minimumValue
+    minimumValue,
   );
 
   return isBiggerThanMinimum

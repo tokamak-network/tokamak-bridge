@@ -175,7 +175,7 @@ interface FeeDetailProps {
 
 interface CTConfirmDetailProps {
   modalType: ModalType;
-  txData: CT_History | null;
+  txData: CT_History;
   onPencilClick: () => void;
   requester?: string;
 }
@@ -285,8 +285,6 @@ export default function CTConfirmDetail({
   txData,
   requester,
 }: CTConfirmDetailProps) {
-  if (txData === null) return null;
-
   const { inToken, outToken, inNetwork, outNetwork, status } = txData;
   const isCompleted = isFinalStatus(status);
   const isProvide = isInCT_Provide(status) && modalType === "trade";
@@ -309,7 +307,7 @@ export default function CTConfirmDetail({
       ? "Refund"
       : "Request",
     mainValue: `${formatNumber(
-      convertNumber(inToken.amount, inToken.decimals)
+      convertNumber(inToken.amount, inToken.decimals),
     )}`,
     rawValue: convertNumber(inToken.amount, inToken.decimals),
     subValue: `$${commafy(inTokenPrice)}`,
@@ -320,7 +318,7 @@ export default function CTConfirmDetail({
   const outTokenInfo = {
     title: "Receive",
     mainValue: `${formatNumber(
-      convertNumber(outToken.amount, outToken.decimals)
+      convertNumber(outToken.amount, outToken.decimals),
     )}`,
     rawValue: convertNumber(outToken.amount, outToken.decimals),
     subValue: `$${commafy(outTokenPrice)}`,
@@ -339,7 +337,7 @@ export default function CTConfirmDetail({
   const { estimatedGasFeeUSD, estimatedGasFeeETH } = useCrossTradeGasFee(
     isProvide
       ? CTTransactionType.provideCT
-      : CTTransactionType.requestRegisteredToken
+      : CTTransactionType.requestRegisteredToken,
   );
 
   return (

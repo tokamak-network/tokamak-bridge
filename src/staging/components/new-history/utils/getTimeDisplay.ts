@@ -20,7 +20,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
   // 상태 별 number
   const statusValue = getStatusValue(
     transactionData.action,
-    transactionData.status
+    transactionData.status,
   );
 
   // 상수를 통해 정해진 시간을 추가해준다.
@@ -34,7 +34,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
           TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS,
-          Boolean(transactionData.errorMessage)
+          Boolean(transactionData.errorMessage),
         );
         return timeValue;
       }
@@ -47,7 +47,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.rollupCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS
+          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS,
         );
         return timeValue;
       }
@@ -60,7 +60,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
-          TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_SECS
+          TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_SECS,
         );
 
         return timeValue;
@@ -76,7 +76,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
           statusValue,
           CT_Request_TransactionData.blockTimestamps.cancelRequest,
           TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST,
-          Boolean(transactionData.errorMessage)
+          Boolean(transactionData.errorMessage),
         );
         return timeValue;
       }
@@ -91,7 +91,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
           statusValue,
           CT_Request_TransactionData.blockTimestamps.provide,
           TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
-          Boolean(transactionData.errorMessage)
+          Boolean(transactionData.errorMessage),
         );
         return timeValue;
       }
@@ -105,7 +105,7 @@ function calculateInitialTime(
   statusValue: number,
   blockTimestamp: number,
   additional: number,
-  errorType?: boolean
+  errorType?: boolean,
 ): number {
   const initialTimestamp = Number(blockTimestamp);
   const countdownDuration = additional;
@@ -127,7 +127,7 @@ function calculateInitialTime(
   // Convert blockTimestamp to the user's current timezone
   const zoneTime = utcToZonedTime(
     new Date(initialTimestamp * 1000),
-    currentTimeZone
+    currentTimeZone,
   );
   const adjustedBlockTimestamp = Math.floor(zoneTime.getTime() / 1000);
 

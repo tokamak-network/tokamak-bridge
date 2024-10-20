@@ -50,7 +50,7 @@ export default function CTMain() {
     boolean | null
   >(null);
   const [isDescSortedProfit, setIsDescSortedProfit] = useState<boolean | null>(
-    null
+    null,
   );
   const { requestList, isLoading } = useRequestData();
   const [data, setData] = useState<CrossTradeData[] | null>(null);
@@ -68,7 +68,7 @@ export default function CTMain() {
         (prevData) =>
           prevData && [
             ...prevData.sort((a, b) => b.providingUSD - a.providingUSD),
-          ]
+          ],
       );
     }
     if (!isDescSortedProvide) {
@@ -76,7 +76,7 @@ export default function CTMain() {
         (prevData) =>
           prevData && [
             ...prevData.sort((a, b) => a.providingUSD - b.providingUSD),
-          ]
+          ],
       );
     }
   }, [isDescSortedProvide]);
@@ -88,7 +88,7 @@ export default function CTMain() {
         (prevData) =>
           prevData && [
             ...prevData.sort((a, b) => b.recevingUSD - a.recevingUSD),
-          ]
+          ],
       );
     }
     if (!isDescSortedReceive) {
@@ -96,7 +96,7 @@ export default function CTMain() {
         (prevData) =>
           prevData && [
             ...prevData.sort((a, b) => a.recevingUSD - b.recevingUSD),
-          ]
+          ],
       );
     }
   }, [isDescSortedReceive]);
@@ -108,9 +108,9 @@ export default function CTMain() {
         (prevData) =>
           prevData && [
             ...prevData.sort(
-              (a, b) => Number(b.profit.percent) - Number(a.profit.percent)
+              (a, b) => Number(b.profit.percent) - Number(a.profit.percent),
             ),
-          ]
+          ],
       );
     }
     if (!isDescSortedProfit) {
@@ -118,9 +118,9 @@ export default function CTMain() {
         (prevData) =>
           prevData && [
             ...prevData.sort(
-              (a, b) => Number(a.profit.percent) - Number(b.profit.percent)
+              (a, b) => Number(a.profit.percent) - Number(b.profit.percent),
             ),
-          ]
+          ],
       );
     }
   }, [isDescSortedProfit]);
@@ -190,7 +190,7 @@ export default function CTMain() {
 
         const formattedAmount = convertNumber(
           item.outToken.amount,
-          item.outToken.decimals
+          item.outToken.decimals,
         );
 
         const chainNameIn =
@@ -214,6 +214,7 @@ export default function CTMain() {
 
         return (
           <Box
+            key={index}
             w="100%"
             h="100%"
             py={"12px"}
@@ -314,7 +315,7 @@ export default function CTMain() {
                   setIsDescSortedReceive(null);
                   setIsDescSortedProfit(null);
                   setIsDescSortedProvide(
-                    isDescSortedProvide !== null ? !isDescSortedProvide : true
+                    isDescSortedProvide !== null ? !isDescSortedProvide : true,
                   );
                 }}
               >
@@ -356,7 +357,7 @@ export default function CTMain() {
                   setIsDescSortedProvide(null);
                   setIsDescSortedProfit(null);
                   setIsDescSortedReceive(
-                    isDescSortedReceive !== null ? !isDescSortedReceive : true
+                    isDescSortedReceive !== null ? !isDescSortedReceive : true,
                   );
                 }}
               >
@@ -411,7 +412,7 @@ export default function CTMain() {
                   setIsDescSortedProvide(null);
                   setIsDescSortedReceive(null);
                   setIsDescSortedProfit(
-                    isDescSortedProfit !== null ? !isDescSortedProfit : true
+                    isDescSortedProfit !== null ? !isDescSortedProfit : true,
                   );
                 }}
               >

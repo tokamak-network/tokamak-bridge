@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -16,24 +20,60 @@
     "incremental": true,
     "baseUrl": "./src",
     "paths": {
-      "@/*": ["./*"],
-      "@/utils/*": ["utils/*"],
-      "@/components/*": ["components/*"],
-      "@/hooks/*": ["hooks/*"],
-      "@/types/*": ["types/*"],
-      "@/graphql/*": ["graphql/*"],
-      "@/config/*": ["config/*"],
-      "@/app/*": ["app/*"],
-      "@/page/*": ["page/*"],
-      "@/pages/*": ["pages/*"],
-      "@/bridgeSwap/*": ["app/BridgeSwap/*"],
-      "@/abis/*": ["constant/abis/*"],
-      "@/css/*": ["css/*"],
-      "@/contracts/*": ["constant/contracts/*"],
-      "@/bridgeComponent/*": ["app/BridgeSwap/components/*"],
-      "@/pools/*": ["app/pools/*"],
-      "@/constant/": ["constant"],
-      "@/staging/": ["staging/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/utils/*": [
+        "utils/*"
+      ],
+      "@/components/*": [
+        "components/*"
+      ],
+      "@/hooks/*": [
+        "hooks/*"
+      ],
+      "@/types/*": [
+        "types/*"
+      ],
+      "@/graphql/*": [
+        "graphql/*"
+      ],
+      "@/config/*": [
+        "config/*"
+      ],
+      "@/app/*": [
+        "app/*"
+      ],
+      "@/page/*": [
+        "page/*"
+      ],
+      "@/pages/*": [
+        "pages/*"
+      ],
+      "@/bridgeSwap/*": [
+        "app/BridgeSwap/*"
+      ],
+      "@/abis/*": [
+        "constant/abis/*"
+      ],
+      "@/css/*": [
+        "css/*"
+      ],
+      "@/contracts/*": [
+        "constant/contracts/*"
+      ],
+      "@/bridgeComponent/*": [
+        "app/BridgeSwap/components/*"
+      ],
+      "@/pools/*": [
+        "app/pools/*"
+      ],
+      "@/constant/": [
+        "constant"
+      ],
+      "@/staging/": [
+        "staging/*"
+      ]
     },
     "plugins": [
       {
@@ -48,5 +88,7 @@
     ".next/types/**/*.ts",
     "types/*.d.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

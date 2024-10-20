@@ -70,7 +70,7 @@ export default function PoolList() {
                 ? 0
                 : 2,
           },
-          (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />
+          (_, index) => <EmptyCard key={index} noSpinner={!isLoading} />,
         )}
     </Grid>
   );

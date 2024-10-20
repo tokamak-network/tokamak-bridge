@@ -22,19 +22,43 @@ interface ConditionalBoxProps {
   transactionData: TransactionHistory;
   waitMessage?: string | undefined;
 }
-
 export default function ConditionalBox(props: ConditionalBoxProps) {
   const { type, transactionData, waitMessage } = props;
+  const startDate = useMemo(() => {
+    if (
+      isWithdrawTransactionHistory(transactionData) &&
+      transactionData.blockTimestamps.rollupCompletedTimestamp
+    ) {
+      return new Date(
+        (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
+          convertTimeToMinutes(
+            TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
+            "days",
+            0,
+          ) *
+            60) *
+          1000,
+      );
+    }
+    return null;
+  }, [transactionData]);
 
+  const { handleCalendarClick } = useCalendar(startDate);
+  const remainTime = getRemainTime(transactionData);
+  const isZeroTime = remainTime <= 0;
+  const timeCountdown = useCountdown(
+    formatTimeDisplay(remainTime),
+    Boolean(transactionData.errorMessage),
+  );
   if (type === "wait") {
     return (
-      <Box w={"100%"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
-        <Flex alignItems='center'>
+      <Box w={"305.5px"} h={"28px"} mt="3px" mb="21px" py="3px" bg="#15161D">
+        <Flex alignItems="center">
           <Text
             fontWeight={400}
-            fontSize='11px'
-            lineHeight='18px'
-            color='#59628D'
+            fontSize="11px"
+            lineHeight="18px"
+            color="#59628D"
           >
             {waitMessage}
           </Text>
@@ -42,16 +66,9 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       </Box>
     );
   }
-  if (type === "timer") {
-    const remainTime = getRemainTime(transactionData);
-    const isZeroTime = remainTime <= 0;
 
-    const timeDisplay = isZeroTime
-      ? "00 : 00"
-      : useCountdown(
-          formatTimeDisplay(remainTime),
-          Boolean(transactionData.errorMessage)
-        );
+  if (type === "timer") {
+    const timeDisplay = isZeroTime ? "00 : 00" : timeCountdown;
 
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
@@ -75,49 +92,27 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       transactionData.action === Action.Withdraw;
 
     if (claimReadyButton) {
-      return <Box w={"100%"} mt='3px' mb='21px' py='3px' bg='#15161D'></Box>;
+      return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D"></Box>;
     }
-
-    const startDate = useMemo(() => {
-      if (
-        isWithdrawTransactionHistory(transactionData) &&
-        transactionData.blockTimestamps.rollupCompletedTimestamp
-      ) {
-        return new Date(
-          (Number(transactionData.blockTimestamps.rollupCompletedTimestamp) +
-            convertTimeToMinutes(
-              TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS,
-              "days",
-              0
-            ) *
-              60) *
-            1000
-        );
-      }
-      return null;
-    }, [transactionData]);
-
-    const { handleCalendarClick } = useCalendar(startDate);
-
     return (
       <Box
         w={"100%"}
         h={"28px"}
-        mt='3px'
-        mb='21px'
-        pl='12px'
-        py='3px'
-        borderRadius='4px'
-        bg='#1F2128'
+        mt="3px"
+        mb="21px"
+        pl="12px"
+        py="3px"
+        borderRadius="4px"
+        bg="#1F2128"
       >
-        <Flex alignItems='center' w='100px'>
+        <Flex alignItems="center" w="100px">
           <Text
             fontWeight={600}
-            fontSize='11px'
-            lineHeight='22px'
+            fontSize="11px"
+            lineHeight="22px"
             color={errorRollup ? "#DD3A44" : "#FFFFFF"}
-            whiteSpace='nowrap'
-            overflow='hidden'
+            whiteSpace="nowrap"
+            overflow="hidden"
           >
             {timeDisplay}
           </Text>
@@ -160,5 +155,5 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     );
   }
   // Box type
-  return <Box w={"100%"} mt='3px' mb='21px' py='3px' bg='#15161D' />;
+  return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D" />;
 }

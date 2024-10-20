@@ -38,8 +38,8 @@ interface ISwapRouterInterface extends ethers.utils.Interface {
         deadline: BigNumberish;
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
-      }
-    ]
+      },
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "exactInputSingle",
@@ -53,8 +53,8 @@ interface ISwapRouterInterface extends ethers.utils.Interface {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
-      }
-    ]
+      },
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "exactOutput",
@@ -65,8 +65,8 @@ interface ISwapRouterInterface extends ethers.utils.Interface {
         deadline: BigNumberish;
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
-      }
-    ]
+      },
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "exactOutputSingle",
@@ -80,30 +80,30 @@ interface ISwapRouterInterface extends ethers.utils.Interface {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
-      }
-    ]
+      },
+    ],
   ): string;
   encodeFunctionData(
     functionFragment: "uniswapV3SwapCallback",
-    values: [BigNumberish, BigNumberish, BytesLike]
+    values: [BigNumberish, BigNumberish, BytesLike],
   ): string;
 
   decodeFunctionResult(functionFragment: "exactInput", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "exactInputSingle",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "exactOutput",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "exactOutputSingle",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
   decodeFunctionResult(
     functionFragment: "uniswapV3SwapCallback",
-    data: BytesLike
+    data: BytesLike,
   ): Result;
 
   events: {};
@@ -115,26 +115,26 @@ export class ISwapRouter extends BaseContract {
   deployed(): Promise<this>;
 
   listeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter?: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): Array<TypedListener<EventArgsArray, EventArgsObject>>;
   off<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   on<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   once<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeListener<EventArgsArray extends Array<any>, EventArgsObject>(
     eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
-    listener: TypedListener<EventArgsArray, EventArgsObject>
+    listener: TypedListener<EventArgsArray, EventArgsObject>,
   ): this;
   removeAllListeners<EventArgsArray extends Array<any>, EventArgsObject>(
-    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>
+    eventFilter: TypedEventFilter<EventArgsArray, EventArgsObject>,
   ): this;
 
   listeners(eventName?: string): Array<Listener>;
@@ -147,7 +147,7 @@ export class ISwapRouter extends BaseContract {
   queryFilter<EventArgsArray extends Array<any>, EventArgsObject>(
     event: TypedEventFilter<EventArgsArray, EventArgsObject>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
+    toBlock?: string | number | undefined,
   ): Promise<Array<TypedEvent<EventArgsArray & EventArgsObject>>>;
 
   interface: ISwapRouterInterface;
@@ -161,7 +161,7 @@ export class ISwapRouter extends BaseContract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     exactInputSingle(
@@ -175,7 +175,7 @@ export class ISwapRouter extends BaseContract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     exactOutput(
@@ -186,7 +186,7 @@ export class ISwapRouter extends BaseContract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     exactOutputSingle(
@@ -200,14 +200,14 @@ export class ISwapRouter extends BaseContract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<ContractTransaction>;
   };
 
@@ -219,7 +219,7 @@ export class ISwapRouter extends BaseContract {
       amountIn: BigNumberish;
       amountOutMinimum: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   exactInputSingle(
@@ -233,7 +233,7 @@ export class ISwapRouter extends BaseContract {
       amountOutMinimum: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   exactOutput(
@@ -244,7 +244,7 @@ export class ISwapRouter extends BaseContract {
       amountOut: BigNumberish;
       amountInMaximum: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   exactOutputSingle(
@@ -258,14 +258,14 @@ export class ISwapRouter extends BaseContract {
       amountInMaximum: BigNumberish;
       sqrtPriceLimitX96: BigNumberish;
     },
-    overrides?: PayableOverrides & { from?: string | Promise<string> }
+    overrides?: PayableOverrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   uniswapV3SwapCallback(
     amount0Delta: BigNumberish,
     amount1Delta: BigNumberish,
     data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> }
+    overrides?: Overrides & { from?: string | Promise<string> },
   ): Promise<ContractTransaction>;
 
   callStatic: {
@@ -277,7 +277,7 @@ export class ISwapRouter extends BaseContract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     exactInputSingle(
@@ -291,7 +291,7 @@ export class ISwapRouter extends BaseContract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     exactOutput(
@@ -302,7 +302,7 @@ export class ISwapRouter extends BaseContract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     exactOutputSingle(
@@ -316,14 +316,14 @@ export class ISwapRouter extends BaseContract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<BigNumber>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides
+      overrides?: CallOverrides,
     ): Promise<void>;
   };
 
@@ -338,7 +338,7 @@ export class ISwapRouter extends BaseContract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     exactInputSingle(
@@ -352,7 +352,7 @@ export class ISwapRouter extends BaseContract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     exactOutput(
@@ -363,7 +363,7 @@ export class ISwapRouter extends BaseContract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     exactOutputSingle(
@@ -377,14 +377,14 @@ export class ISwapRouter extends BaseContract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<BigNumber>;
   };
 
@@ -397,7 +397,7 @@ export class ISwapRouter extends BaseContract {
         amountIn: BigNumberish;
         amountOutMinimum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     exactInputSingle(
@@ -411,7 +411,7 @@ export class ISwapRouter extends BaseContract {
         amountOutMinimum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     exactOutput(
@@ -422,7 +422,7 @@ export class ISwapRouter extends BaseContract {
         amountOut: BigNumberish;
         amountInMaximum: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     exactOutputSingle(
@@ -436,14 +436,14 @@ export class ISwapRouter extends BaseContract {
         amountInMaximum: BigNumberish;
         sqrtPriceLimitX96: BigNumberish;
       },
-      overrides?: PayableOverrides & { from?: string | Promise<string> }
+      overrides?: PayableOverrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
 
     uniswapV3SwapCallback(
       amount0Delta: BigNumberish,
       amount1Delta: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> }
+      overrides?: Overrides & { from?: string | Promise<string> },
     ): Promise<PopulatedTransaction>;
   };
 }
