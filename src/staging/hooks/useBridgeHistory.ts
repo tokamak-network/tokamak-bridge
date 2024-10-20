@@ -39,11 +39,11 @@ import {
 import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers, utils } from "ethers";
 import {
-  getDecodedValueFromThanosLogs,
   getDecodeLog,
 } from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
+  getDepositStatus,
   getStatus,
   getTransaction,
   getTransactionToken,
@@ -642,8 +642,10 @@ export const useDepositData = () => {
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-          if (!l1TxReceipt || !currentStatus) {
-            new Error(`Invalid transaction (${sentMessage.transactionHash})`);
+          if (!l1TxReceipt) {
+            console.error(
+              `Invalid transaction (${sentMessage.transactionHash} with l1TxReceipt)`
+            );
             return;
           }
 
@@ -655,7 +657,10 @@ export const useDepositData = () => {
               : SupportedChainId.TITAN_SEPOLIA
           );
 
-          if (!parsedLog) return;
+          if (!parsedLog) {
+            console.error(`Invalid transaction with parsedLog Error`);
+            return;
+          }
 
           const { l1TokenAddress, l2TokenAddress, amount, from, to } =
             parsedLog;
@@ -669,9 +674,15 @@ export const useDepositData = () => {
               ? SupportedChainId.MAINNET
               : SupportedChainId.SEPOLIA
           );
-          if (!l1Token || !l2Token) return;
 
-          const status = getStatus(currentStatus);
+          if (!l1Token || !l2Token) {
+            console.error(
+              `Invalid transaction with {!l1Token || !l2Token} Error`
+            );
+            return;
+          }
+
+          const status = getDepositStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
             sentMessage,
@@ -679,6 +690,7 @@ export const useDepositData = () => {
           });
 
           if (blockTimestamps instanceof Error) {
+            console.error(`Invalid transaction with blockTimestamps Error`);
             return;
           }
 

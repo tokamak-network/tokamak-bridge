@@ -99,7 +99,6 @@ export default function CTOptionModal() {
   }, [recommendedFee, ctOptionModal]);
 
   const handleClickConfirm = () => {
-    console.log(mobileView);
     if (mobileView) {
       onCloseCTOptionModal();
     }
@@ -183,11 +182,11 @@ export default function CTOptionModal() {
         return setInputWarningCheck(WarningType.Normal);
       return setInputWarningCheck("");
     }
-  }, [serviceFeeIsNotOver, isLessThanRecommendedFee]);
+    // Reset inputWarningCheck when the modal is reopened
+  }, [serviceFeeIsNotOver, isLessThanRecommendedFee, ctOptionModal]);
 
   useEffect(() => {
     if (ctOptionModal) {
-      setInputWarningCheck("");
       setActiveSubButtonValue(ButtonTypeSub.Recommend);
     }
   }, [ctOptionModal]);
@@ -197,9 +196,12 @@ export default function CTOptionModal() {
       return false;
     }
     if (activeSubButtonValue === ButtonTypeSub.Recommend) {
-      return !recommendedCtAmount || !recommendedFee;
+      return (
+        !recommendedCtAmount ||
+        !recommendedFee ||
+        inputWarningCheck === WarningType.Critical
+      );
     }
-
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return (
         serviceFee === "" ||
