@@ -171,12 +171,14 @@ export default function StatusComponent(
     needToCheck: shouldCountdown,
   });
 
+  const countdownTimeDisplay = useCountdown(
+    initialTimeDisplay,
+    Boolean(transactionData.errorMessage) || isTimeOver
+  );
+
   // Output variable
   const timeDisplay = shouldCountdown
-    ? useCountdown(
-        initialTimeDisplay,
-        Boolean(transactionData.errorMessage) || isTimeOver
-      )
+    ? countdownTimeDisplay
     : initialTimeDisplay;
 
   // Calendar start time
