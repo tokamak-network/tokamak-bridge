@@ -100,7 +100,7 @@ export default function CTOptionInput(props: CTInputProps) {
         />
       ) : inputWarningCheck == WarningType.Normal ? (
         <CTWarning
-          label={"Service fee is low. May take long time."}
+          label={"Service fee is low. May not get fulfilled."}
           type={inputWarningCheck}
           groupStyle={{
             height: "16px",

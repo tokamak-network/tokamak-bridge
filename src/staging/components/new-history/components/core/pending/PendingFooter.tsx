@@ -23,7 +23,7 @@ const getStatusHandler = (params: {
   isUpdateFee?: boolean;
   hasMultipleUpdateFees?: boolean;
 }) => {
-  const { status, isCanceled, isUpdateFee, hasMultipleUpdateFees } = params;
+  const { status, isCanceled, isUpdateFee } = params;
   const actionHandlers = {
     [Action.Deposit]: STATUS_CONFIG.DEPOSIT,
     [Action.Withdraw]: STATUS_CONFIG.WITHDRAW,

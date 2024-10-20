@@ -27,6 +27,7 @@ import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { convertNumber } from "@/utils/trim/convertNumber";
 import { formatProfit } from "@/staging/utils/formatProfit";
 import formatNumber from "@/staging/utils/formatNumbers";
+import { useProvideCTGas } from "../../../hooks/useCTGas";
 
 {
   /** 
@@ -279,6 +280,7 @@ export default function CTMain() {
                   crossTradeData={item}
                   subgraphData={item.subgraphData}
                   serviceFee={item.serviceFee}
+                  isNetaveProfit={item.isNetaveProfit}
                 />
               </Box>
             </Flex>
@@ -435,7 +437,7 @@ export default function CTMain() {
                   color={"#A0A3AD"}
                   letterSpacing={0}
                 >
-                  Profit (%)
+                  Net Profit (%)
                 </Text>
               </Flex>
             </Th>
@@ -539,6 +541,7 @@ export default function CTMain() {
                       crossTradeData={item}
                       subgraphData={item.subgraphData}
                       serviceFee={item.serviceFee}
+                      isNetaveProfit={item.isNetaveProfit}
                     />
                   </Td>
                 </Tr>

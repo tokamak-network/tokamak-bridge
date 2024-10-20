@@ -9,6 +9,7 @@ import {
 } from "@/staging/types/transaction";
 
 export enum TransactionStatus {
+  WithdrawInitiate = 0,
   WithdrawRollup = 1,
   WithdrawFinalized = 2,
   WithdrawCompleted = 3,
@@ -24,6 +25,7 @@ export const getStatusValue = (
 ): number => {
   if (action === Action.Withdraw) {
     switch (status) {
+      case Status.Initiate:
       case Status.Rollup:
         return TransactionStatus.WithdrawRollup;
       case Status.Finalize:
