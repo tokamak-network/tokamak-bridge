@@ -14,9 +14,10 @@ import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
 import { SentMessages } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { OVM_ETH_BRIDGE } from "@/constant/contracts";
+import { isThanosChain } from "../network/checkNetwork";
 
 const getTokenInfo = (tokenAddress: string, chainId: number) => {
-  if (tokenAddress === OVM_ETH_BRIDGE || tokenAddress === "") {
+  if ((tokenAddress === OVM_ETH_BRIDGE || tokenAddress === "") && !isThanosChain(chainId)) {
     return {
       name: "ETH",
       symbol: "ETH",
