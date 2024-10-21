@@ -33,7 +33,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.INITIAL_MINUTES,
+          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
@@ -47,7 +47,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.rollupCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS
+          TRANSACTION_CONSTANTS.WITHDRAW.CHALLENGE_SECS
         );
         return timeValue;
       }
@@ -60,8 +60,9 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
-          TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES
+          TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_SECS
         );
+
         return timeValue;
       }
     }
@@ -107,12 +108,13 @@ function calculateInitialTime(
   errorType?: boolean
 ): number {
   const initialTimestamp = Number(blockTimestamp);
-  const countdownDuration =
-    statusValue === TransactionStatus.WithdrawFinalized
-      ? convertTimeToMinutes(additional, "days", 0) * 60
-      : TransactionStatus.REQUEST_CANCEL
-      ? additional
-      : convertTimeToMinutes(additional, "minutes", 0) * 60;
+  const countdownDuration = additional;
+  // const countdownDuration =
+  //   statusValue === TransactionStatus.WithdrawFinalized
+  //     ? convertTimeToMinutes(additional, "days", 0) * 60
+  //     : TransactionStatus.REQUEST_CANCEL
+  //     ? additional
+  //     : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
   // Get the current time in the user's local timezone
   const currentTimeUTC = new Date();

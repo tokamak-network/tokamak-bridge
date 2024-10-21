@@ -83,11 +83,7 @@ const CalenderButtonComponent = (props: {
     </Flex>
   );
 };
-const FinalizeButtonComponent = (props: {
-  transactionData: WithdrawTransactionHistory;
-}) => {
-  const { callToFinalize } = useFinalize(props.transactionData);
-
+const FinalizeButtonComponent = (props: { openModal: () => void }) => {
   return (
     <Button
       w={"60px"}
@@ -102,7 +98,7 @@ const FinalizeButtonComponent = (props: {
       _active={{}}
       _hover={{}}
       _focus={{}}
-      onClick={callToFinalize}
+      onClick={props.openModal}
     >
       <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
         Finalize
@@ -116,12 +112,25 @@ export default function StatusComponent(
 ) {
   const { label, transactionData, blockTimestamp, updateFeeCount, openModal } =
     props;
-  const isActive = transactionData.status === label;
+  const finalizeStage =
+    transactionData.status === Status.Initiate && label === "Finalize";
+  const rollupStage =
+    transactionData.status === Status.Initiate && label === "Rollup";
+
+  const isActive =
+    //for Deposit Finalize
+    (transactionData.status !== Status.Initiate && finalizeStage) ||
+    //for Withdraw Rollup
+    rollupStage ||
+    (transactionData.status === label &&
+      transactionData.status !== Status.Initiate);
 
   // Countdown is needed only for the following conditions
   const shouldCountdown =
     (transactionData.status === Status.Rollup ||
       transactionData.status === Status.Finalize ||
+      finalizeStage ||
+      rollupStage ||
       transactionData.status === CT_REQUEST_CANCEL.Refund ||
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
@@ -130,7 +139,7 @@ export default function StatusComponent(
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
-    (!isActive && label === Status.Finalize) ||
+    (!isActive && label.toString() === "Finalize") ||
       (isActive && label === CT_REQUEST.WaitForReceive)
     ? ""
     : // Otherwise, display formatted date as all are completed
@@ -150,12 +159,14 @@ export default function StatusComponent(
     needToCheck: shouldCountdown,
   });
 
+  const countdownTimeDisplay = useCountdown(
+    initialTimeDisplay,
+    Boolean(transactionData.errorMessage) || isTimeOver
+  );
+
   // Output variable
   const timeDisplay = shouldCountdown
-    ? useCountdown(
-        initialTimeDisplay,
-        Boolean(transactionData.errorMessage) || isTimeOver
-      )
+    ? countdownTimeDisplay
     : initialTimeDisplay;
 
   // Calendar start time
@@ -281,7 +292,7 @@ export default function StatusComponent(
       </Flex>
       <Flex alignItems="center">
         {claimReadyButton ? (
-          <FinalizeButtonComponent transactionData={transactionData} />
+          <FinalizeButtonComponent openModal={openModal} />
         ) : (
           <Text
             fontSize={"11px"}

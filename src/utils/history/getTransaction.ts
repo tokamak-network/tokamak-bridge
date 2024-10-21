@@ -5,6 +5,7 @@ import {
 } from "@/staging/types/transaction";
 import { supportedTokens } from "@/types/token/supportedToken";
 import {
+  CurrentDepositStatus,
   CurrentStatus,
   RelayMessage,
   StateBatchAppended,
@@ -68,14 +69,23 @@ export const getTransactionToken = (
   };
 };
 
+export const getDepositStatus = (currentStatus: CurrentDepositStatus) => {
+  switch (currentStatus) {
+    case 0:
+      return Status.Finalize;
+    case 4:
+      return Status.Completed;
+  }
+};
+
 export const getStatus = (currentStatus: CurrentStatus) => {
   switch (currentStatus) {
     case 0:
-      return Status.Initiate;
-    case 1:
-      return Status.Prove;
-    case 2:
       return Status.Rollup;
+    case 1:
+      return Status.Finalize;
+    case 2:
+      return Status.Finalize;
     case 3:
       return Status.Finalize;
     case 4:
@@ -110,9 +120,6 @@ export const getTransactionTimestamp = (params: {
 
   switch (currentStatus) {
     case 0:
-      return {
-        initialCompletedTimestamp,
-      };
     case 1:
     case 2:
       return {

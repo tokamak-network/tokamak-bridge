@@ -28,9 +28,9 @@ import {
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers, utils } from "ethers";
-import { getDecodeLog } from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
+  getDepositStatus,
   getStatus,
   getTransaction,
   getTransactionToken,
@@ -53,9 +53,10 @@ import {
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
 import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
-import { l2Provider } from "@/config/l2Provider";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import { getDecodedDepositLog } from "@/utils/history/getDecodedDepositLog";
+import { mock_depositRequest } from "@/test/deposit/_mock/mockdata";
+import { mock_withdrawData } from "@/test/withdraw/_mock/mockdata";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -238,9 +239,13 @@ export const useWithdrawData = () => {
           const result: WithdrawTransactionHistory = {
             category: HISTORY_SORT.STANDARD,
             action: Action.Withdraw,
-            status: status,
-            inNetwork: SupportedChainId.TITAN,
-            outNetwork: SupportedChainId.MAINNET,
+            status,
+            inNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA,
+            outNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA,
             inToken: l2Token,
             outToken: l1Token,
             blockNumber: Number(sentMessage.blockNumber),
@@ -262,6 +267,7 @@ export const useWithdrawData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
+      console.log("sortedResult", sortedResult);
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
@@ -304,8 +310,10 @@ export const useDepositData = () => {
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-          if (!l1TxReceipt || !currentStatus) {
-            new Error(`Invalid transaction (${sentMessage.transactionHash})`);
+          if (!l1TxReceipt) {
+            console.error(
+              `Invalid transaction (${sentMessage.transactionHash} with l1TxReceipt)`
+            );
             return;
           }
 
@@ -317,7 +325,10 @@ export const useDepositData = () => {
               : SupportedChainId.TITAN_SEPOLIA
           );
 
-          if (!parsedLog) return;
+          if (!parsedLog) {
+            console.error(`Invalid transaction with parsedLog Error`);
+            return;
+          }
 
           const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
 
@@ -330,9 +341,15 @@ export const useDepositData = () => {
               ? SupportedChainId.MAINNET
               : SupportedChainId.SEPOLIA
           );
-          if (!l1Token || !l2Token) return;
 
-          const status = getStatus(currentStatus);
+          if (!l1Token || !l2Token) {
+            console.error(
+              `Invalid transaction with {!l1Token || !l2Token} Error`
+            );
+            return;
+          }
+
+          const status = getDepositStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
             sentMessage,
@@ -340,6 +357,7 @@ export const useDepositData = () => {
           });
 
           if (blockTimestamps instanceof Error) {
+            console.error(`Invalid transaction with blockTimestamps Error`);
             return;
           }
 

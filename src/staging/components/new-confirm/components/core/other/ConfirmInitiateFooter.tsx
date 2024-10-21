@@ -75,11 +75,6 @@ export default function ConfirmInitiateFooter(
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             Initiate
           </Text>
-          {/* <Tooltip
-            tooltipLabel={"text will be changed"}
-            style={{ marginLeft: "2px" }}
-            type={isChecked ? "white" : "grey"}
-          /> */}
         </Button>
       </Box>
     </Box>
