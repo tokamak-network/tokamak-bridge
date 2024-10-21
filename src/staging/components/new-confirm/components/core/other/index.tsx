@@ -19,6 +19,7 @@ import {
   GasCostData,
   CT_ACTION,
   StandardHistory,
+  isWithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
@@ -55,6 +56,7 @@ import { useApprove } from "@/hooks/token/useApproval";
 import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useFinalize } from "@/hooks/history/useFinalize";
 import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
 import Image from "next/image";
 import InfoIcon from "@/assets/icons/info.svg"
@@ -98,6 +100,11 @@ export default function DepositWithdrawConfirmModal() {
   useEffect(() => {
     setIsConfirmed(false);
   }, [depositWithdrawConfirmModal.isOpen]);
+  const isWithdraw =
+    transactionData && isWithdrawTransactionHistory(transactionData);
+  const { callToFinalize } = useFinalize(
+    isWithdraw ? transactionData : undefined
+  );
 
   const gasCostData: GasCostData = useMemo(() => {
     const formatValue = (value: string | undefined | null) =>
@@ -411,9 +418,9 @@ export default function DepositWithdrawConfirmModal() {
                     backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
                     color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
                   }}
-                  _active={{}}
                   _hover={{}}
                   _focus={{}}
+                  onClick={callToFinalize}
                 >
                   <Flex alignItems={"center"}>
                     <Text
@@ -423,11 +430,6 @@ export default function DepositWithdrawConfirmModal() {
                     >
                       Finalize
                     </Text>
-                    <Tooltip
-                      tooltipLabel={"text will be changed"}
-                      style={{ marginLeft: "2px" }}
-                      type={lineType !== 3 ? "grey" : "white"}
-                    />
                   </Flex>
                 </Button>
               )}

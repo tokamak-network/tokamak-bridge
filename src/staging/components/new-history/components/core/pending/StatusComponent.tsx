@@ -83,11 +83,7 @@ const CalenderButtonComponent = (props: {
     </Flex>
   );
 };
-const FinalizeButtonComponent = (props: {
-  transactionData: WithdrawTransactionHistory;
-}) => {
-  const { callToFinalize } = useFinalize(props.transactionData);
-
+const FinalizeButtonComponent = (props: { openModal: () => void }) => {
   return (
     <Button
       w={"60px"}
@@ -102,7 +98,7 @@ const FinalizeButtonComponent = (props: {
       _active={{}}
       _hover={{}}
       _focus={{}}
-      onClick={callToFinalize}
+      onClick={props.openModal}
     >
       <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
         Finalize
@@ -139,22 +135,14 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
-  // if (shouldCountdown && rollupStage) {
-  //   console.group();
-  //   console.log(transactionData.status);
-  //   console.log(getRemainTime(transactionData));
-  //   console.log(formatTimeDisplay(getRemainTime(transactionData)));
-  //   console.groupEnd();
-  // }
-
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-      formatTimeDisplay(getRemainTime(transactionData))
+    formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
     (!isActive && label.toString() === "Finalize") ||
       (isActive && label === CT_REQUEST.WaitForReceive)
-    ? ""
-    : // Otherwise, display formatted date as all are completed
+      ? ""
+      : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
         Number(
           isWithdrawTransactionHistory(transactionData) ||
@@ -174,10 +162,10 @@ export default function StatusComponent(
   // Output variable
   const { time: timeDisplay, isCountDown } = shouldCountdown
     ? useCountdown(
-        getRemainTime(transactionData),
+      getRemainTime(transactionData),
 
-        Boolean(transactionData.errorMessage) || isTimeOver
-      )
+      Boolean(transactionData.errorMessage) || isTimeOver
+    )
     : { time: initialTimeDisplay, isCountDown: true };
 
   // Calendar start time
@@ -195,8 +183,8 @@ export default function StatusComponent(
             "days",
             0
           ) *
-            60) *
-          1000
+          60) *
+        1000
       );
     }
     return null;
@@ -244,9 +232,8 @@ export default function StatusComponent(
         case CT_REQUEST.Request:
           return "Request";
         case CT_REQUEST.UpdateFee:
-          return `Update ${
-            updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
-          }`;
+          return `Update ${updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
+            }`;
         case CT_REQUEST.WaitForReceive:
           return "Waiting";
         default:
@@ -287,8 +274,8 @@ export default function StatusComponent(
             !isActive && label === Status.Finalize
               ? "#A0A3AD"
               : isOnOfficialStandard
-              ? "#007AFF"
-              : "#DB00FF"
+                ? "#007AFF"
+                : "#DB00FF"
           }
         />
         <Text
@@ -303,7 +290,7 @@ export default function StatusComponent(
       </Flex>
       <Flex alignItems="center">
         {claimReadyButton ? (
-          <FinalizeButtonComponent transactionData={transactionData} />
+          <FinalizeButtonComponent openModal={openModal} />
         ) : (
           <Text
             fontSize={"11px"}

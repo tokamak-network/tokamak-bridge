@@ -411,9 +411,13 @@ export const useWithdrawData = () => {
           const result: WithdrawTransactionHistory = {
             category: HISTORY_SORT.STANDARD,
             action: Action.Withdraw,
-            status: status,
-            inNetwork: SupportedChainId.TITAN,
-            outNetwork: SupportedChainId.MAINNET,
+            status,
+            inNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA,
+            outNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA,
             inToken: l2Token,
             outToken: l1Token,
             blockNumber: Number(sentMessage.blockNumber),
@@ -435,6 +439,7 @@ export const useWithdrawData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
+      console.log("sortedResult", sortedResult);
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);

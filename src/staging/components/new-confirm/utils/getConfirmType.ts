@@ -83,15 +83,14 @@ const getWaitMessage = (
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : ""}6 hours`
+        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}6 hours`
         : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
-    100: `Wait ${
-      chainId === SupportedChainId.TITAN ||
-      chainId === SupportedChainId.TITAN_SEPOLIA
+    100: `Wait ${chainId === SupportedChainId.TITAN ||
+        chainId === SupportedChainId.TITAN_SEPOLIA
         ? 5
         : "1 ~ 2"
-    } mins`,
+      } mins`,
   };
   return waitMessageMap[lineType] || undefined;
 };
