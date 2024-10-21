@@ -13,7 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import { Action, Status, GasCostData } from "@/staging/types/transaction";
+import {
+  Action,
+  Status,
+  GasCostData,
+  isWithdrawTransactionHistory,
+} from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
@@ -37,6 +42,7 @@ import {
 import { getGasCostText } from "@/utils/number/compareNumbers";
 import useConnectedNetwork from "@/hooks/network";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useFinalize } from "@/hooks/history/useFinalize";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -57,6 +63,11 @@ export default function DepositWithdrawConfirmModal() {
    */
   const CLAIM_GAS_USED = 1000000;
   const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+  const isWithdraw =
+    transactionData && isWithdrawTransactionHistory(transactionData);
+  const { callToFinalize } = useFinalize(
+    isWithdraw ? transactionData : undefined
+  );
 
   const gasCostData: GasCostData = useMemo(() => {
     const formatValue = (value: string | undefined | null) =>
@@ -103,6 +114,7 @@ export default function DepositWithdrawConfirmModal() {
      * - For DEPOSIT (length 2): One ConditionalBox component is inserted between the StatusComponent elements.
      */
   }
+
   const renderStatusComponents = (statuses: Status[]) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
@@ -289,9 +301,9 @@ export default function DepositWithdrawConfirmModal() {
                     backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
                     color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
                   }}
-                  _active={{}}
                   _hover={{}}
                   _focus={{}}
+                  onClick={callToFinalize}
                 >
                   <Flex alignItems={"center"}>
                     <Text
@@ -301,11 +313,6 @@ export default function DepositWithdrawConfirmModal() {
                     >
                       Finalize
                     </Text>
-                    <Tooltip
-                      tooltipLabel={"text will be changed"}
-                      style={{ marginLeft: "2px" }}
-                      type={lineType !== 3 ? "grey" : "white"}
-                    />
                   </Flex>
                 </Button>
               )}
