@@ -239,7 +239,7 @@ export const useWithdrawData = () => {
           const result: WithdrawTransactionHistory = {
             category: HISTORY_SORT.STANDARD,
             action: Action.Withdraw,
-            status: status,
+            status,
             inNetwork: SupportedChainId.TITAN,
             outNetwork: SupportedChainId.MAINNET,
             inToken: l2Token,

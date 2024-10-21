@@ -81,11 +81,11 @@ export const getDepositStatus = (currentStatus: CurrentDepositStatus) => {
 export const getStatus = (currentStatus: CurrentStatus) => {
   switch (currentStatus) {
     case 0:
-      return Status.Initiate;
+      return Status.Rollup;
     case 1:
-      return Status.Rollup;
+      return Status.Finalize;
     case 2:
-      return Status.Rollup;
+      return Status.Finalize;
     case 3:
       return Status.Finalize;
     case 4:
@@ -120,9 +120,6 @@ export const getTransactionTimestamp = (params: {
 
   switch (currentStatus) {
     case 0:
-      return {
-        initialCompletedTimestamp,
-      };
     case 1:
     case 2:
       return {

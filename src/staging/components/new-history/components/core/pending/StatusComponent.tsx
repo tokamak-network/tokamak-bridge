@@ -139,7 +139,7 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
-  // if (shouldCountdown && rollupStage) {
+  // if (shouldCountdown && transactionData.status === "Finalize") {
   //   console.group();
   //   console.log(transactionData.status);
   //   console.log(getRemainTime(transactionData));
