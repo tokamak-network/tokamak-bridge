@@ -83,11 +83,7 @@ const CalenderButtonComponent = (props: {
     </Flex>
   );
 };
-const FinalizeButtonComponent = (props: {
-  transactionData: WithdrawTransactionHistory;
-}) => {
-  const { callToFinalize } = useFinalize(props.transactionData);
-
+const FinalizeButtonComponent = (props: { openModal: () => void }) => {
   return (
     <Button
       w={"60px"}
@@ -102,7 +98,7 @@ const FinalizeButtonComponent = (props: {
       _active={{}}
       _hover={{}}
       _focus={{}}
-      onClick={callToFinalize}
+      onClick={props.openModal}
     >
       <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
         Finalize
@@ -139,14 +135,6 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
-  // if (shouldCountdown && rollupStage) {
-  //   console.group();
-  //   console.log(transactionData.status);
-  //   console.log(getRemainTime(transactionData));
-  //   console.log(formatTimeDisplay(getRemainTime(transactionData)));
-  //   console.groupEnd();
-  // }
-
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
       formatTimeDisplay(getRemainTime(transactionData))
@@ -171,12 +159,14 @@ export default function StatusComponent(
     needToCheck: shouldCountdown,
   });
 
+  const countdownTimeDisplay = useCountdown(
+    initialTimeDisplay,
+    Boolean(transactionData.errorMessage) || isTimeOver
+  );
+
   // Output variable
   const timeDisplay = shouldCountdown
-    ? useCountdown(
-        initialTimeDisplay,
-        Boolean(transactionData.errorMessage) || isTimeOver
-      )
+    ? countdownTimeDisplay
     : initialTimeDisplay;
 
   // Calendar start time
@@ -302,7 +292,7 @@ export default function StatusComponent(
       </Flex>
       <Flex alignItems="center">
         {claimReadyButton ? (
-          <FinalizeButtonComponent transactionData={transactionData} />
+          <FinalizeButtonComponent openModal={openModal} />
         ) : (
           <Text
             fontSize={"11px"}

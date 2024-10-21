@@ -47,7 +47,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.rollupCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS
+          TRANSACTION_CONSTANTS.WITHDRAW.CHALLENGE_SECS
         );
         return timeValue;
       }

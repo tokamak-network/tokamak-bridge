@@ -77,7 +77,7 @@ const getWaitMessage = (lineType: number, index: number) => {
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? "Wait 6 hours"
+        ? "Wait up to 6 hours"
         : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_MINUTES} min`,
