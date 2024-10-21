@@ -365,8 +365,12 @@ export const useDepositData = () => {
             category: HISTORY_SORT.STANDARD,
             action: Action.Deposit,
             status: status,
-            inNetwork: SupportedChainId.MAINNET,
-            outNetwork: SupportedChainId.TITAN,
+            inNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA,
+            outNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA,
             inToken: l1Token,
             outToken: l2Token,
             blockTimestamps,
