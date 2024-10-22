@@ -409,16 +409,14 @@ export const useRequestHistoryData = () => {
   const { data: l2Data } = useCrossTradeData_L2({
     isHistory: true,
   });
-  const { data: l1Data } = useCrossTradeData_L1({
-    isHistory: true,
-  });
+  const { data: l1Data } = useCrossTradeData_L1({});
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   useEffect(() => {
     if (l2Data && l1Data) {
       const requestCTs = l2Data.requestCTs;
       const cancelCTs = l2Data.cancelCTs;
-      const providerClaimCTs = l2Data.providerClaimCTs;
+      const providerClaimCTs = l1Data.provideCTs;
       const editCTs = l1Data.editCTs;
       const l1CancelCTs = l1Data.l1CancelCTs;
 
