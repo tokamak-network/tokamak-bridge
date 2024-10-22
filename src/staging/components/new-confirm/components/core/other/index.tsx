@@ -36,6 +36,8 @@ import {
   NetworkDisplayName,
   SupportedChainId,
 } from "@/types/network/supportedNetwork";
+import { useRelayGasCost } from "@/staging/components/new-confirm/hooks/useGetGas";
+import ConfirmInitiateFooter from "@/staging/components/new-confirm/components/core/other/ConfirmInitiateFooter";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 
 import {
@@ -87,8 +89,9 @@ export default function DepositWithdrawConfirmModal() {
    * Replaced 600000 and 1000000 with gasLimit parameter.
    * Changed fixed chainId to chainId parameter.
    */
-  const CLAIM_GAS_USED = 1000000;
-  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+  // const CLAIM_GAS_USED = 1000000;
+  // const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+  const { withdrawCost } = useRelayGasCost();
 
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
 
@@ -211,6 +214,7 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
+  const btnIsDisabled = lineType !== 3;
 
   return (
     <Modal
@@ -415,12 +419,13 @@ export default function DepositWithdrawConfirmModal() {
                   height={"48px"}
                   borderRadius={"8px"}
                   sx={{
-                    backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
-                    color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
+                    backgroundColor: btnIsDisabled ? "#17181D" : "#007AFF",
+                    color: btnIsDisabled ? "#8E8E92" : "#FFFFFF",
                   }}
                   _hover={{}}
                   _focus={{}}
                   onClick={callToFinalize}
+                  isDisabled={btnIsDisabled}
                 >
                   <Flex alignItems={"center"}>
                     <Text

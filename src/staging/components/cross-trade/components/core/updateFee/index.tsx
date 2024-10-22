@@ -309,9 +309,10 @@ export default function CTFeeUpdateModal() {
     return (
       !activeConfirmButton ||
       !connectedToLayer1 ||
-      inputWarningCheck === WarningType.Critical
+      (activeButton === UpdateFeeButtonType.Update && inputWarningCheck) ===
+        WarningType.Critical
     );
-  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
+  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck, activeButton]);
 
   const { address } = useAccount();
 
@@ -366,7 +367,7 @@ export default function CTFeeUpdateModal() {
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
         width={mobileView ? "100%" : "404px"}
         {...(mobileView && {
