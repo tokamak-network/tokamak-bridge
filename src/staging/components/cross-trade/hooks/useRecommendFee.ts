@@ -113,9 +113,12 @@ export const useRecommendFee = (params: {
 
   const recommendedFeeAmount = useMemo(() => {
     if (recommendedFee && tokenPrice) {
-      return new Decimal(recommendedFee.toString()).div(tokenPrice).toNumber();
+      return new Decimal(recommendedFee.toString())
+        .div(tokenPrice)
+        .toNumber()
+        .toFixed(tokenInfo?.decimals);
     }
-  }, [recommendedFee, tokenPrice]);
+  }, [recommendedFee, tokenPrice, tokenInfo?.decimals]);
 
   const recommendedCtAmount = useMemo(() => {
     if (totalAmount && recommendedFeeAmount && tokenInfo?.decimals) {
