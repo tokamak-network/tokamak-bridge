@@ -29,7 +29,7 @@ import { STATUS_CONFIG } from "@/staging/constants/status";
 import StatusComponent from "@/staging/components/new-confirm/components/core/other/StatusComponent";
 import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
+import { useRelayGasCost } from "@/staging/components/new-confirm/hooks/useGetGas";
 import ConfirmInitiateFooter from "@/staging/components/new-confirm/components/core/other/ConfirmInitiateFooter";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
@@ -61,8 +61,9 @@ export default function DepositWithdrawConfirmModal() {
    * Replaced 600000 and 1000000 with gasLimit parameter.
    * Changed fixed chainId to chainId parameter.
    */
-  const CLAIM_GAS_USED = 1000000;
-  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+  // const CLAIM_GAS_USED = 1000000;
+  // const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+  const { withdrawCost } = useRelayGasCost();
   const isWithdraw =
     transactionData && isWithdrawTransactionHistory(transactionData);
   const { callToFinalize } = useFinalize(
