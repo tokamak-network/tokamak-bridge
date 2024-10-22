@@ -116,11 +116,11 @@ export default function DepositWithdrawConfirmModal() {
      */
   }
 
-  const renderStatusComponents = (statuses: Status[]) => {
+  const renderStatusComponents = (statuses: Status[], isConnectedMainnet: boolean) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
-      const waitMessage = getWaitMessage(lineType, index);
+      const waitMessage = getWaitMessage(lineType, index, isConnectedMainnet);
 
       return (
         <React.Fragment key={index}>
@@ -131,14 +131,14 @@ export default function DepositWithdrawConfirmModal() {
             gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
-          (statuses.length === 3 && index < 2)
+            (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
-                <ConditionalBox
-                  type={typeValue}
-                  transactionData={transactionData}
-                  waitMessage={waitMessage}
-                />
-              )
+              <ConditionalBox
+                type={typeValue}
+                transactionData={transactionData}
+                waitMessage={waitMessage}
+              />
+            )
             : null}
         </React.Fragment>
       );
@@ -271,7 +271,7 @@ export default function DepositWithdrawConfirmModal() {
                 <TimeLine lineType={lineType} />
               </Box>
               <Box ml={"10px"} maxWidth="100%" width="100%">
-                {renderStatusComponents(statuses)}
+                {renderStatusComponents(statuses, isConnectedToMainNetwork ?? false)}
               </Box>
             </Flex>
           </Box>
