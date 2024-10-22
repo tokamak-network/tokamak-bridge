@@ -151,6 +151,7 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
+  const btnIsDisabled = lineType !== 3;
 
   return (
     <Modal
@@ -253,7 +254,7 @@ export default function DepositWithdrawConfirmModal() {
                   lineHeight={"18px"}
                   color={"#FFFFFF"}
                 >
-                  {trimAddress({ address: address, firstChar: 6 })}
+                  {trimAddress({ address, firstChar: 6 })}
                 </Text>
               </Flex>
             </Box>
@@ -299,12 +300,13 @@ export default function DepositWithdrawConfirmModal() {
                   height={"48px"}
                   borderRadius={"8px"}
                   sx={{
-                    backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
-                    color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
+                    backgroundColor: btnIsDisabled ? "#17181D" : "#007AFF",
+                    color: btnIsDisabled ? "#8E8E92" : "#FFFFFF",
                   }}
                   _hover={{}}
                   _focus={{}}
                   onClick={callToFinalize}
+                  isDisabled={btnIsDisabled}
                 >
                   <Flex alignItems={"center"}>
                     <Text
