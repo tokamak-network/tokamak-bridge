@@ -83,7 +83,7 @@ export const getStatus = (currentStatus: CurrentStatus) => {
     case 0:
       return Status.Rollup;
     case 1:
-      return Status.Finalize;
+      return Status.Rollup;
     case 2:
       return Status.Finalize;
     case 3:

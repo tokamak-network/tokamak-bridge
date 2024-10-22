@@ -4,6 +4,7 @@ import { useFeeData } from "wagmi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useConnectedNetwork from "@/hooks/network";
 
 const useRelayGas = (gasLimit: number, chainId: number) => {
   const { data: feeData } = useFeeData({ chainId });
@@ -32,8 +33,14 @@ const useRelayGas = (gasLimit: number, chainId: number) => {
 };
 
 export const useRelayGasCost = () => {
-  const CLAIM_GAS_USED = 1000000;
-  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId.MAINNET);
+  const CLAIM_GAS_USED = 600000 * 1.25;
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const withdrawCost = useRelayGas(
+    CLAIM_GAS_USED,
+    isConnectedToMainNetwork
+      ? SupportedChainId.MAINNET
+      : SupportedChainId.SEPOLIA
+  );
 
   return { withdrawCost };
 };
