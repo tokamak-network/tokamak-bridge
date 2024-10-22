@@ -267,7 +267,6 @@ export const useWithdrawData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-      console.log("sortedResult", sortedResult);
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
@@ -365,8 +364,12 @@ export const useDepositData = () => {
             category: HISTORY_SORT.STANDARD,
             action: Action.Deposit,
             status: status,
-            inNetwork: SupportedChainId.MAINNET,
-            outNetwork: SupportedChainId.TITAN,
+            inNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA,
+            outNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA,
             inToken: l1Token,
             outToken: l2Token,
             blockTimestamps,
@@ -406,16 +409,14 @@ export const useRequestHistoryData = () => {
   const { data: l2Data } = useCrossTradeData_L2({
     isHistory: true,
   });
-  const { data: l1Data } = useCrossTradeData_L1({
-    isHistory: true,
-  });
+  const { data: l1Data } = useCrossTradeData_L1({});
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   useEffect(() => {
     if (l2Data && l1Data) {
       const requestCTs = l2Data.requestCTs;
       const cancelCTs = l2Data.cancelCTs;
-      const providerClaimCTs = l2Data.providerClaimCTs;
+      const providerClaimCTs = l1Data.provideCTs;
       const editCTs = l1Data.editCTs;
       const l1CancelCTs = l1Data.l1CancelCTs;
 
