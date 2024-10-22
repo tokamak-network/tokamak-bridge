@@ -8,7 +8,6 @@ import {
   isWithdrawTransactionHistory,
   isDepositTransactionHistory,
   HISTORY_TRANSACTION_STATUS,
-  WithdrawTransactionHistory,
   CT_REQUEST,
   isInCT_REQUEST,
   isInCT_Provide,
@@ -17,7 +16,6 @@ import {
   isInCT_REQUEST_CANCEL,
   ERROR_CODE,
 } from "@/staging/types/transaction";
-import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
@@ -29,7 +27,6 @@ import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
 import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
-import { useFinalize } from "@/hooks/history/useFinalize";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
 
