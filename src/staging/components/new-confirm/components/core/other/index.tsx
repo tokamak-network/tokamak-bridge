@@ -321,6 +321,12 @@ export default function DepositWithdrawConfirmModal() {
               )}
             </>
           )}
+          <Box w={"100%"} mt={"12px"}>
+            <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+              *This modal doesn't update in real-time.
+              <br /> Please close & reopen it to view the latest data.
+            </Text>
+          </Box>
         </ModalFooter>
       </ModalContent>
     </Modal>
