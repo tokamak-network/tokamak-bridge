@@ -14,6 +14,7 @@ export interface Profit {
   symbol: string;
   percent: string;
   decimals: number;
+  usd: number;
 }
 
 export interface CrossTradeData {

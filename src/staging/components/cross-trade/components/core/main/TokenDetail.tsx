@@ -25,11 +25,16 @@ interface TokenDetailProps {
 const Percentage = (props: { percent: string }) => {
   const isNegative = props.percent.includes("-");
   const isZero = Number(props.percent) === 0;
+
+  if (isZero) console.log(props.percent);
+
   return (
     <Text
       fontSize={14}
       fontWeight={500}
-      color={isZero ? "#fff" : isNegative ? "#DD3A44" : "#03D187"}
+      color={
+        isZero && !isNegative ? "#fff" : isNegative ? "#DD3A44" : "#03D187"
+      }
     >
       {!isNegative && !isZero && "+"} {props.percent}%
     </Text>
@@ -84,7 +89,9 @@ export default function TokenDetail(props: TokenDetailProps) {
   }, [token, tokenPriceWithAmount, profit?.percent]);
 
   if (isProfit) {
-    return <NetProfit percent={priceOrPercent} usdAmount={formattedAmount} />;
+    return (
+      <NetProfit percent={priceOrPercent} usdAmount={commafy(profit.usd)} />
+    );
   }
 
   return (
