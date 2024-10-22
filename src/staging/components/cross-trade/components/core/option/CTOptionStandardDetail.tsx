@@ -32,7 +32,9 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
     amount: inToken?.parsedAmount as string,
     tokenName: inToken?.tokenName as string,
   });
-  const { withdrawCost } = useRelayGasCost();
+  const { withdrawCost } = useRelayGasCost({
+    includeInitiate: true,
+  });
 
   return (
     <Flex

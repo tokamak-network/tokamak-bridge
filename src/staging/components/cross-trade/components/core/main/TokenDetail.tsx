@@ -84,13 +84,7 @@ export default function TokenDetail(props: TokenDetailProps) {
   }, [token, tokenPriceWithAmount, profit?.percent]);
 
   if (isProfit) {
-    const percent = providingUSD
-      ? (Number(formattedAmount) / providingUSD) * 100
-      : "-";
-    const fommatedPercent = formatProfit(percent.toString());
-    return (
-      <NetProfit percent={fommatedPercent ?? "-"} usdAmount={formattedAmount} />
-    );
+    return <NetProfit percent={priceOrPercent} usdAmount={formattedAmount} />;
   }
 
   return (
