@@ -68,7 +68,6 @@ import {
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodeBridgeHistoryLog";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  historyRefetch,
   thanosSepoliaDepositHistory,
   thanosSepoliaWithdrawHistory,
   titanSepoliaDepositHistory,
@@ -149,6 +148,7 @@ const errorHandler = (error: ApolloError) => {
 
 export const useSubgraph = () => {
   const { address } = useAccount();
+  const [pollCount, setPollCount] = useState<number>(0);
   const { L1_CLIENT, L2_CLIENT, L2_THANOS_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const [thanosSepoliaDipositHistory, setThanosSepoliaDipositHistory] =
@@ -166,11 +166,32 @@ export const useSubgraph = () => {
 
   const L1StandardBridgeForThanos = SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA;
   const L1USDCBridgeForThanos = SEPOLIA_CONTRACTS.L1USDCBridge_THANOS_SEPOLIA;
-
+  useEffect(() => {
+    setPollCount(0);
+    const refetchDepositHistory = async () => {
+      refetchL1TitanData();
+      await refetchL1ThanosData();
+      await refetchL1ThanosSentMessageExtensions();
+      await refetchL2ThanosRelayedMessage();
+    }
+    const refetchWithdrawHistory = async () => {
+      refetchL2TitanData();
+      await refetchL1ThanosData();
+      await refetchL2Thanos();
+      await refetchL1ThanosOptimismPortal();
+    }
+    const interval = setInterval(() => {
+      setPollCount(prev => prev + 1);
+      refetchDepositHistory();
+      refetchWithdrawHistory();
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [])
   const {
     data: _l1TitanData,
     loading: _l1TitanLoading,
     error: _l1TitanError,
+    refetch: refetchL1TitanData
   } = useQuery(FETCH_USER_TRANSACTIONS_L1_TITAN, {
     variables: {
       formattedAddress: formatAddress(address),
@@ -178,26 +199,28 @@ export const useSubgraph = () => {
       account: address,
       blockNumber: titanSepoliaDipositHistory.latestBlockNumber,
     },
-    pollInterval: 13000,
+    // pollInterval: 13000,
     client: L1_CLIENT[0],
   });
   const {
     data: _l2Titan,
     loading: _l2TitanLoading,
     error: _l2TitanError,
+    refetch: refetchL2TitanData
   } = useQuery(FETCH_USER_TRANSACTIONS_L2, {
     variables: {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
     },
-    pollInterval: 13000,
+    // pollInterval: 13000,
     client: L2_CLIENT[0],
   });
   const {
     data: _l1ThanosData,
     loading: _l1ThanosLoading,
     error: _l1ThanosError,
+    refetch: refetchL1ThanosData
   } = useQuery(FETCH_USER_TRANSACTIONS_L1_THANOS, {
     variables: {
       formattedAddress: formatAddress(address),
@@ -207,7 +230,7 @@ export const useSubgraph = () => {
       remoteToken: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
       blockNumber: thanosSepoliaDipositHistory.latestRelayedBlockNumber,
     },
-    pollInterval: 5000,
+    // pollInterval: 5000,
     client: L1_CLIENT[1],
   });
   const l1ThanosDepositSentMessages = !_l1ThanosData
@@ -220,12 +243,13 @@ export const useSubgraph = () => {
     data: _l1ThanosSentMessageExtensionsData,
     loading: _l1ThanosSentMessageExtensionsLoading,
     error: _l1ThanosSentMessageExtensionsError,
+    refetch: refetchL1ThanosSentMessageExtensions
   } = useQuery(GET_SentMessageExtensions, {
     variables: {
       transactionHashes: l1ThanosDepositTxHashes,
       blockNumber: thanosSepoliaDipositHistory.latestRelayedBlockNumber,
     },
-    pollInterval: 5000,
+    // pollInterval: 5000,
     client: L1_CLIENT[1],
     skip: !l1ThanosDepositTxHashes,
   });
@@ -237,11 +261,12 @@ export const useSubgraph = () => {
     data: _l2ThanosRelayedMessageData,
     loading: _l2ThanosRelayedMessageLoading,
     error: _l2ThanosRelayedMessageError,
+    refetch: refetchL2ThanosRelayedMessage
   } = useQuery(GET_RelayedMessages, {
     variables: {
       msgHashes: l1ThanosDepositMessageHashes,
     },
-    pollInterval: 5000,
+    // pollInterval: 5000,
     client: L2_THANOS_CLIENT[0],
     skip: !l1ThanosDepositMessageHashes,
   });
@@ -250,13 +275,14 @@ export const useSubgraph = () => {
     data: _l2Thanos,
     loading: _l2ThanosLoading,
     error: _l2ThanosError,
+    refetch: refetchL2Thanos
   } = useQuery(FETCH_USER_TRANSACTIONS_L2_THANOS, {
     variables: {
       formattedAddress: formatAddress(address),
       L1StandardBridge: L1StandardBridgeForThanos,
       account: address,
     },
-    pollInterval: 5000,
+    // pollInterval: 5000,
     client: L2_THANOS_CLIENT[0],
   });
 
@@ -266,9 +292,10 @@ export const useSubgraph = () => {
     data: _l1ThanosOptimismPortal,
     loading: _l1ThanosOptimismPortalLoading,
     error: _l1ThanosOptimismPortalError,
+    refetch: refetchL1ThanosOptimismPortal
   } = useQuery(GET_withdrawalProvens_withdrawalFinalizeds, {
     variables: { withdrawalHashes: withdrawalHashes },
-    pollInterval: 1000,
+    // pollInterval: 1000,
     client: L1_CLIENT[1],
     // skip: !_l2Thanos?.messagePassed,
   });
@@ -315,6 +342,7 @@ export const useSubgraph = () => {
     l1ThanosOptimismPortal: _l1ThanosOptimismPortal,
     l1ThanosSentMsgExtensions: _l1ThanosSentMessageExtensionsData,
     l2ThanosRelayedMessages: _l2ThanosRelayedMessageData,
+    pollCount
   };
 };
 
@@ -322,9 +350,8 @@ export const useWithdrawData = () => {
   const [withdrawHistory, setWithdrawHistory] = useState<
     WithdrawTransactionHistory[] | [] | null
   >(null);
-  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
 
-  const { l2TitanData, l2ThanosData, l1ThanosOptimismPortal, l1ThanosData } =
+  const { l2TitanData, l2ThanosData, l1ThanosOptimismPortal, l1ThanosData, pollCount } =
     useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider, ThanosProvider } = useProvier();
@@ -447,6 +474,7 @@ export const useWithdrawData = () => {
   }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
 
   const fetchThanosData = useCallback(async () => {
+
     if (
       l2ThanosData &&
       isConnectedToMainNetwork !== undefined &&
@@ -577,7 +605,6 @@ export const useWithdrawData = () => {
     ThanosProvider,
     l1ThanosOptimismPortal,
     l1ThanosData,
-    refetchHistory,
     thanosDepositWithdrawConfirmModal.transaction,
   ]);
 
@@ -593,11 +620,10 @@ export const useWithdrawData = () => {
       console.error("Error in fetching withdraw data", error);
     });
   }, [
-    l2ThanosData,
+    fetchThanosData,
+    pollCount,
     isConnectedToMainNetwork,
     ThanosProvider,
-    l1ThanosOptimismPortal,
-    refetchHistory,
   ]);
 
   return { withdrawHistory: thanosSepWithdrawHistory.history };
@@ -611,13 +637,13 @@ export const useDepositData = () => {
   const [depositHistory, setDepositHistory] = useState<
     DepositTransactionHistory[] | null
   >(null);
-  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const {
     l1TitanData,
     l1ThanosData,
     l2ThanosRelayedMessages,
     l1ThanosSentMsgExtensions,
+    pollCount
   } = useSubgraph();
   const { L1Provider } = useProvier();
 
@@ -739,7 +765,7 @@ export const useDepositData = () => {
         setTitanSepoliaDipositHistory(newTitanDipositHistory);
       }
     }
-  }, [l1TitanData, isConnectedToMainNetwork, L1Provider]);
+  }, [l1TitanData, isConnectedToMainNetwork, L1Provider, pollCount]);
 
   const fetchThanosData = useCallback(async () => {
     if (
@@ -859,8 +885,8 @@ export const useDepositData = () => {
     l1ThanosData,
     isConnectedToMainNetwork,
     L1Provider,
-    refetchHistory,
     l2ThanosRelayedMessages,
+    pollCount
   ]);
 
   const getAllDepositeData = useCallback(async () => {
@@ -891,13 +917,13 @@ export const useDepositData = () => {
     fetchTitanData().catch((error) => {
       console.error("Error in fetching titan deposit data", error);
     });
-  }, [fetchTitanData]);
+  }, [fetchTitanData, pollCount]);
 
   useEffect(() => {
     fetchThanosData().catch((error) => {
       console.error("Error in fetching thanos deposit data", error);
     });
-  }, [fetchThanosData]);
+  }, [fetchThanosData, pollCount]);
 
   useEffect(() => {
     getAllDepositeData();

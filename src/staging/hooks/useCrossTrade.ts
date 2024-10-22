@@ -150,8 +150,8 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
     client: L1_CLIENT,
     variables: isHistory
       ? {
-          account: address as string,
-        }
+        account: address as string,
+      }
       : undefined,
   });
 
@@ -172,8 +172,8 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     client: L2_CLIENT,
     variables: isHistory
       ? {
-          account: address,
-        }
+        account: address,
+      }
       : undefined,
   });
 
@@ -291,35 +291,35 @@ export const useRequestData = (
 
           const inToken = isETH
             ? {
-                address: item._l1token,
-                name: "ETH",
-                symbol: "ETH",
-                amount: ctAmount.toString(),
-                decimals: 18,
-              }
+              address: item._l1token,
+              name: "ETH",
+              symbol: "ETH",
+              amount: ctAmount.toString(),
+              decimals: 18,
+            }
             : {
-                address: item._l1token,
-                name: tokenInfo?.tokenName as string,
-                symbol: tokenInfo?.tokenSymbol as string,
-                amount: ctAmount.toString(),
-                decimals: tokenInfo?.decimals as number,
-              };
+              address: item._l1token,
+              name: tokenInfo?.tokenName as string,
+              symbol: tokenInfo?.tokenSymbol as string,
+              amount: ctAmount.toString(),
+              decimals: tokenInfo?.decimals as number,
+            };
 
           const outToken = isETH
             ? {
-                address: item._l2token,
-                name: "ETH",
-                symbol: "ETH",
-                amount: item._totalAmount,
-                decimals: 18,
-              }
+              address: item._l2token,
+              name: "ETH",
+              symbol: "ETH",
+              amount: item._totalAmount,
+              decimals: 18,
+            }
             : {
-                address: item._l2token,
-                name: tokenInfo?.tokenName as string,
-                symbol: tokenInfo?.tokenSymbol as string,
-                amount: item._totalAmount,
-                decimals: tokenInfo?.decimals as number,
-              };
+              address: item._l2token,
+              name: tokenInfo?.tokenName as string,
+              symbol: tokenInfo?.tokenSymbol as string,
+              amount: item._totalAmount,
+              decimals: tokenInfo?.decimals as number,
+            };
 
           const inTokenAmount = formatUnits(inToken.amount, inToken.decimals);
           const outTokenAmount = formatUnits(

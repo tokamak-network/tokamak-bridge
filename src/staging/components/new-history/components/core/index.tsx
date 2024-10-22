@@ -13,7 +13,6 @@ import Complete from "@/staging/components/new-history-thanos/components/core/co
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  historyRefetch,
   selectedTransactionCategory,
 } from "@/recoil/history/transaction";
 import Image from "next/image";
@@ -55,15 +54,7 @@ export default function AccountHistoryNew() {
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
-  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
-  useEffect(() => {
-    const renderTimer = setInterval(() => {
-      setRefetchHistory((prev) => !prev);
-    }, 5000);
-    return () => {
-      clearInterval(renderTimer);
-    };
-  }, []);
+
 
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {

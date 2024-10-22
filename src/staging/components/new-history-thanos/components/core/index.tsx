@@ -17,7 +17,6 @@ import LegacyComplete from "@/staging/components/new-history/components/core/com
 import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  historyRefetch,
   selectedTransactionCategory,
 } from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
@@ -55,21 +54,12 @@ export default function AccountHistoryNew() {
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
-  const [refetchHistory, setRefetchHistory] = useRecoilState(historyRefetch);
   const isCrossTradyHistory = useMemo(() => {
     return (
       _selectedTransactionCategory === CT_ACTION.REQUEST ||
       _selectedTransactionCategory === CT_ACTION.PROVIDE
     );
   }, [_selectedTransactionCategory]);
-  useEffect(() => {
-    const renderTimer = setInterval(() => {
-      setRefetchHistory((prev) => !prev);
-    }, 5000);
-    return () => {
-      clearInterval(renderTimer);
-    };
-  }, []);
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {
       case Action.Deposit:
@@ -102,7 +92,7 @@ export default function AccountHistoryNew() {
           transaction.status === CT_PROVIDE.Completed;
         const key =
           isDepositTransactionHistory(transaction) ||
-          isWithdrawTransactionHistory(transaction)
+            isWithdrawTransactionHistory(transaction)
             ? transaction.transactionHashes.initialTransactionHash
             : index;
         return (
