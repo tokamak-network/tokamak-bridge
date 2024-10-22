@@ -532,7 +532,10 @@ export default function CTMain() {
                     />
                   </Td>
                   <Td sx={{ opacity: rowOpacity }}>
-                    <TokenDetail profit={item.profit} />
+                    <TokenDetail
+                      profit={item.profit}
+                      providingUSD={item.providingUSD}
+                    />
                   </Td>
                   <Td>
                     <CTProvider

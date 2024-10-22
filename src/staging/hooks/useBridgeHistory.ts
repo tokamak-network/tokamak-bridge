@@ -267,7 +267,6 @@ export const useWithdrawData = () => {
           previousTx.blockTimestamps.initialCompletedTimestamp -
           currentTx.blockTimestamps.initialCompletedTimestamp
       );
-      console.log("sortedResult", sortedResult);
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
