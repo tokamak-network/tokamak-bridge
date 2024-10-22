@@ -42,7 +42,7 @@ const useRelayGas = (
   return { usGasCost, totalGasCost };
 };
 
-export const useRelayGasCost = (props: { includeInitiate?: boolean }) => {
+export const useRelayGasCost = (props?: { includeInitiate?: boolean }) => {
   const CLAIM_GAS_USED = 600000 * 1.25;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const withdrawCost = useRelayGas(
