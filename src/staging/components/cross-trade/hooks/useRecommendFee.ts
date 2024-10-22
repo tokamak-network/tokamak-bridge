@@ -48,7 +48,6 @@ export const useRecommendFee = (params: {
       const gasUsage = recommendFeeConfig.gas[CTTransactionType.provideCT];
       const gasPrice = formatUnits(feeData.gasPrice.toString(), 9);
       const gasFee = gasUsage * Number(gasPrice) * Math.pow(10, -9) * 1.25;
-
       const gasFeeDecimal = new Decimal(gasFee);
       const standardWithdrawGasCostDecimal = new Decimal(
         standardWithdrawGasCost
