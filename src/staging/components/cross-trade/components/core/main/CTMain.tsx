@@ -211,6 +211,9 @@ export default function CTMain() {
             : chainNameOut === "TITAN_SEPOLIA"
             ? "Titan Sepolia"
             : capitalizeFirstLetter(chainNameOut);
+        const isNegativeProfit = item.profit?.percent
+          ? Number(item.profit?.percent) < 0
+          : false;
 
         return (
           <Box
@@ -243,7 +246,7 @@ export default function CTMain() {
                   >
                     Receive on {displayNetworkNameIn}
                   </Text>
-                  <Flex alignItems={"center"}>
+                  <Flex alignItems={"center"} columnGap={"6px"}>
                     <Text
                       fontSize="16px"
                       fontWeight={600}
@@ -253,14 +256,14 @@ export default function CTMain() {
                     >
                       {formatNumber(formattedAmount)} {item.outToken.symbol}
                     </Text>
-                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
-                      (
-                    </Text>
-                    <Text fontSize="16px" fontWeight={400} lineHeight="24px">
-                      +{formatProfit(item.profit?.percent)}%
-                    </Text>
-                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
-                      )
+                    <Text
+                      fontSize="16px"
+                      fontWeight={400}
+                      lineHeight="24px"
+                      color={isNegativeProfit ? "#DD3A44" : "#03D187"}
+                    >
+                      {!isNegativeProfit && "+"}
+                      {formatProfit(item.profit?.percent)}%
                     </Text>
                   </Flex>
                   <Text
