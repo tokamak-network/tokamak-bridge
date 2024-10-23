@@ -191,7 +191,7 @@ export default function CTProvider({
           lineHeight={"16.5px"}
           color={textColor}
         >
-          {isInRelay ? "Provided" : isCreatedByUser ? "Edit" : "Provide"}
+          {isInRelay ? "Completed" : isCreatedByUser ? "Edit" : "Provide"}
         </Text>
       </Button>
     );
