@@ -11,7 +11,6 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
-import { txDataStatus } from "@/recoil/global/transaction";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -22,8 +21,7 @@ export function useInOutTokens() {
   );
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
-  const { mode, subMode } = useGetMode();
-  const [, setTxData] = useRecoilState(txDataStatus);
+  const { mode } = useGetMode();
 
   const inToken = useMemo(() => {
     const tokenValue =
@@ -194,3 +192,4 @@ export function useInOutTokens() {
     initializeOutTokenAmount,
   };
 }
+

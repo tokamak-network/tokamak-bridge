@@ -32,7 +32,7 @@ import { sortPositions } from "@/utils/pool/sortPositions";
 import { txHashLog, txPendingStatus } from "@/recoil/global/transaction";
 import { useGetMode } from "../mode/useGetMode";
 import JSBI from "jsbi";
-import { getProvider, providerByChainId } from "@/config/getProvider";
+import { providerByChainId } from "@/config/getProvider";
 import { useGetPositionByClients } from "./useApolloClient";
 
 export const makePositionDatas = async (
@@ -564,12 +564,12 @@ export function useGetPositionById(positionId: number, chainId: number) {
 export function useGetPositionIdFromPath() {
   const pathName = usePathname();
   const positionId = useMemo(() => {
-    return pathName.split("/")[pathName.split("/").length - 1];
+    return pathName?.split("/")[pathName.split("/").length - 1];
   }, [pathName]);
 
   const searchParams = useSearchParams();
   const chainIdParam = useMemo(() => {
-    return searchParams.get("chainId");
+    return searchParams?.get("chainId");
   }, [searchParams]);
 
   const backwardLink = useMemo(() => {

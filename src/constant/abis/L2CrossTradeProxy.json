@@ -1,0 +1,455 @@
+[
+  { "type": "error", "name": "AccessControlBadConfirmation", "inputs": [] },
+  {
+    "type": "error",
+    "name": "AccessControlUnauthorizedAccount",
+    "inputs": [
+      { "type": "address", "name": "account", "internalType": "address" },
+      { "type": "bytes32", "name": "neededRole", "internalType": "bytes32" }
+    ]
+  },
+  {
+    "type": "event",
+    "name": "RoleAdminChanged",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32",
+        "indexed": true
+      },
+      {
+        "type": "bytes32",
+        "name": "previousAdminRole",
+        "internalType": "bytes32",
+        "indexed": true
+      },
+      {
+        "type": "bytes32",
+        "name": "newAdminRole",
+        "internalType": "bytes32",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleGranted",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "internalType": "address",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "sender",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "RoleRevoked",
+    "inputs": [
+      {
+        "type": "bytes32",
+        "name": "role",
+        "internalType": "bytes32",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "account",
+        "internalType": "address",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "sender",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetAliveImplementation",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "impl",
+        "internalType": "address",
+        "indexed": true
+      },
+      {
+        "type": "bool",
+        "name": "alive",
+        "internalType": "bool",
+        "indexed": false
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "SetSelectorImplementation",
+    "inputs": [
+      {
+        "type": "bytes4",
+        "name": "selector",
+        "internalType": "bytes4",
+        "indexed": true
+      },
+      {
+        "type": "address",
+        "name": "impl",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  {
+    "type": "event",
+    "name": "Upgraded",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "implementation",
+        "internalType": "address",
+        "indexed": true
+      }
+    ],
+    "anonymous": false
+  },
+  { "type": "fallback", "stateMutability": "payable" },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
+    "name": "ADMIN_ROLE",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
+    "name": "DEFAULT_ADMIN_ROLE",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
+    "name": "POLICY_ROLE",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "addAdmin",
+    "inputs": [
+      { "type": "address", "name": "account", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "aliveImplementation",
+    "inputs": [{ "type": "address", "name": "", "internalType": "address" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      {
+        "type": "address",
+        "name": "l1CrossTradeContract",
+        "internalType": "address"
+      },
+      { "type": "address", "name": "l1TON", "internalType": "address" }
+    ],
+    "name": "chainData",
+    "inputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "crossDomainMessenger",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address", "name": "l1token", "internalType": "address" },
+      { "type": "address", "name": "l2token", "internalType": "address" },
+      { "type": "address", "name": "requester", "internalType": "address" },
+      { "type": "address", "name": "provider", "internalType": "address" },
+      { "type": "uint256", "name": "totalAmount", "internalType": "uint256" },
+      { "type": "uint256", "name": "ctAmount", "internalType": "uint256" },
+      { "type": "uint256", "name": "chainId", "internalType": "uint256" },
+      { "type": "bytes32", "name": "hashValue", "internalType": "bytes32" }
+    ],
+    "name": "dealData",
+    "inputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bytes32", "name": "", "internalType": "bytes32" }],
+    "name": "getRoleAdmin",
+    "inputs": [{ "type": "bytes32", "name": "role", "internalType": "bytes32" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [
+      { "type": "address", "name": "impl", "internalType": "address" }
+    ],
+    "name": "getSelectorImplementation2",
+    "inputs": [
+      { "type": "bytes4", "name": "_selector", "internalType": "bytes4" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "grantRole",
+    "inputs": [
+      { "type": "bytes32", "name": "role", "internalType": "bytes32" },
+      { "type": "address", "name": "account", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "hasRole",
+    "inputs": [
+      { "type": "bytes32", "name": "role", "internalType": "bytes32" },
+      { "type": "address", "name": "account", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "implementation",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "implementation2",
+    "inputs": [
+      { "type": "uint256", "name": "_index", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "initialize",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "_crossDomainMessenger",
+        "internalType": "address"
+      },
+      { "type": "address", "name": "_legacyERC20", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "isAdmin",
+    "inputs": [
+      { "type": "address", "name": "account", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "legacyERC20ETH",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "pauseProxy",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "proxyImplementation",
+    "inputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "registerCheck",
+    "inputs": [
+      { "type": "uint256", "name": "", "internalType": "uint256" },
+      { "type": "address", "name": "", "internalType": "address" },
+      { "type": "address", "name": "", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "removeAdmin",
+    "inputs": [
+      { "type": "address", "name": "account", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "renounceRole",
+    "inputs": [
+      { "type": "bytes32", "name": "role", "internalType": "bytes32" },
+      {
+        "type": "address",
+        "name": "callerConfirmation",
+        "internalType": "address"
+      }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "revokeRole",
+    "inputs": [
+      { "type": "bytes32", "name": "role", "internalType": "bytes32" },
+      { "type": "address", "name": "account", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "uint256", "name": "", "internalType": "uint256" }],
+    "name": "saleCount",
+    "inputs": []
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "address", "name": "", "internalType": "address" }],
+    "name": "selectorImplementation",
+    "inputs": [{ "type": "bytes4", "name": "", "internalType": "bytes4" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "setAliveImplementation2",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "newImplementation",
+        "internalType": "address"
+      },
+      { "type": "bool", "name": "_alive", "internalType": "bool" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "setChainInfo",
+    "inputs": [
+      { "type": "address", "name": "_l1CrossTrade", "internalType": "address" },
+      {
+        "type": "address",
+        "name": "_l1legacyERC20",
+        "internalType": "address"
+      },
+      { "type": "uint256", "name": "_chainId", "internalType": "uint256" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "setImplementation2",
+    "inputs": [
+      {
+        "type": "address",
+        "name": "newImplementation",
+        "internalType": "address"
+      },
+      { "type": "uint256", "name": "_index", "internalType": "uint256" },
+      { "type": "bool", "name": "_alive", "internalType": "bool" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "setProxyPause",
+    "inputs": [{ "type": "bool", "name": "_pause", "internalType": "bool" }]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "setSelectorImplementations2",
+    "inputs": [
+      { "type": "bytes4[]", "name": "_selectors", "internalType": "bytes4[]" },
+      { "type": "address", "name": "_imp", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "view",
+    "outputs": [{ "type": "bool", "name": "", "internalType": "bool" }],
+    "name": "supportsInterface",
+    "inputs": [
+      { "type": "bytes4", "name": "interfaceId", "internalType": "bytes4" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "transferAdmin",
+    "inputs": [
+      { "type": "address", "name": "newAdmin", "internalType": "address" }
+    ]
+  },
+  {
+    "type": "function",
+    "stateMutability": "nonpayable",
+    "outputs": [],
+    "name": "upgradeTo",
+    "inputs": [{ "type": "address", "name": "impl", "internalType": "address" }]
+  },
+  { "type": "receive", "stateMutability": "payable" }
+]

@@ -5,7 +5,6 @@ import Image from "next/image";
 import { useMemo } from "react";
 import LOCK_ICON from "assets/icons/pool/lock.svg";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
-import { isETH } from "@/utils/token/isETH";
 
 export const OutRangeWarning = () => {
   const { invalidRange } = useV3MintInfo();

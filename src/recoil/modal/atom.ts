@@ -1,5 +1,9 @@
 import { PoolCardDetail } from "@/app/pools/components/PoolCard";
-import { FwConfirmModalType, ModalType } from "@/components/fw/types";
+import {
+  CTConfirmModalType,
+  ModalType,
+} from "@/staging/components/cross-trade/types";
+import { CT_History, TransactionHistory } from "@/staging/types/transaction";
 import { atom } from "recoil";
 
 type withdrawModal = {
@@ -77,20 +81,56 @@ export const swapSettingStatus = atom<boolean>({
   default: false,
 });
 
-export const fwConfirmModalStatus = atom<FwConfirmModalType>({
-  key: "fwConfirmModalStatus",
+export const ctConfirmModalStatus = atom<CTConfirmModalType>({
+  key: "ctConfirmModalStatus",
   default: {
     isOpen: false,
     type: ModalType.Trade,
+    txData: null,
   },
 });
 
-export const fwOptionModalStatus = atom<boolean>({
-  key: "fwOptionModalStatus",
+export const ctRefreshModalStatus = atom<{
+  isOpen: boolean;
+  saleCount: string | undefined;
+  txData: CT_History | undefined;
+}>({
+  key: "ctRefreshModalStatus",
+  default: {
+    isOpen: false,
+    saleCount: undefined,
+    txData: undefined,
+  },
+});
+
+export const ctOptionModalStatus = atom<boolean>({
+  key: "ctOptionModalStatus",
   default: false,
 });
 
-export const fwUpdateFeeModalStatus = atom<boolean>({
-  key: "fwUpdateFeeModalStatus",
+export const ctUpdateFeeModalStatus = atom<{
+  isOpen: boolean;
+  txData: CT_History | null;
+}>({
+  key: "ctUpdateFeeModalStatus",
+  default: {
+    isOpen: false,
+    txData: null,
+  },
+});
+
+export const depositWithdrawConfirmModalStatus = atom<{
+  isOpen: boolean;
+  transaction: TransactionHistory | undefined;
+}>({
+  key: "depositWithdrawConfirmModalStatus",
+  default: {
+    isOpen: false,
+    transaction: undefined,
+  },
+});
+
+export const swapConfirmModalStatus = atom<boolean>({
+  key: "swapConfirmModalStatus",
   default: false,
 });

@@ -526,7 +526,7 @@ const Title = (props: {
       >
         {isLoading ? (
           <Box w={"100%"} h={"20px"} mb={"5px"}>
-            <GradientSpinner />
+            <GradientSpinner h={"100%"} borderWidth={0} />
           </Box>
         ) : (
           <Flex>
@@ -595,7 +595,6 @@ export default function TransactionDetail(props: {
 
   const [isExpanded, setIsExpended] = useState<boolean>(isOpen || mobileView);
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
-  const { isApproved } = useApprove();
 
   const { mode, isReady } = useGetMode();
   const { outToken } = useInOutTokens();
@@ -616,7 +615,8 @@ export default function TransactionDetail(props: {
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
     !isConnected ||
-    (mode === "Swap" && isTONatPair)
+    (mode === "Swap" && isTONatPair) ||
+    mode === "Withdraw"
   ) {
     return null;
   }
@@ -648,9 +648,7 @@ export default function TransactionDetail(props: {
       )}
       {(!mobileView ||
         isOnConfirm ||
-        (mode !== "Deposit" &&
-          mode !== "Withdraw" &&
-          !(isWrapUnwrap && mobileView))) && (
+        (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
         <Content
           isExpanded={isExpanded}
           isOnConfirm={isOnConfirm}

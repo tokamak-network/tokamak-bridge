@@ -1,7 +1,10 @@
 "use client";
 
 import YourPools from "@/pools/YourPools";
-import ComingPools from "@/componenets/fw/coming/pool";
+import { CTBetaWarning } from "@/staging/components/cross-trade/components/core/comfirm/CTBetaWarning";
+import ComingPools from "@/staging/components/cross-trade/components/core/coming/pool";
+import CrossTrade from "@/staging/components/cross-trade/components/core/main";
+
 import { Flex } from "@chakra-ui/react";
 
 export default function Page() {
@@ -10,6 +13,9 @@ export default function Page() {
     // <Flex pt={"134px"} justifyContent={"center"} h={"100%"}>
     //   <YourPools />
     // </Flex>
-    <ComingPools />
+    <>
+      <CrossTrade />
+      <CTBetaWarning />
+    </>
   );
 }

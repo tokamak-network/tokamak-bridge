@@ -34,7 +34,7 @@ export default function Account() {
       className="header-right-common"
       w={mobileView ? "106px" : isConnected ? "174px" : "220px"}
       h={mobileView ? "32px" : "48px"}
-      bg={!isConnected ? "#007AFF" : ""}
+      bg={!isConnected ? "#007AFF !important" : ""}
       columnGap={{ base: "8px", lg: "17px" }}
       fontSize={18}
       fontWeight={500}

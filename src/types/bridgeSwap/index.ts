@@ -9,6 +9,7 @@ export type ActionMode =
   | "Unwrap"
   | "ETH-Wrap"
   | "ETH-Unwrap"
+  | "Cross Trade"
   | null;
 export type InOutNetworks = {
   inNetwork: SupportedChainProperties | null;
@@ -20,5 +21,5 @@ export enum ActionMethod {
   Withdraw = "Withdraw",
   Swap_ETH = "Swap",
   Swap_Titan = "Swap",
-  Pool = "Pool"
+  Pool = "Pool",
 }

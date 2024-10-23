@@ -1,3 +1,4 @@
+import { ZERO_ADDRESS } from "@/constant/misc";
 import { SupportedChainId } from "../network/supportedNetwork";
 import {
   MAINNET_CONTRACTS,
@@ -8,22 +9,16 @@ import {
 } from "@/contracts/index";
 
 type SupportedMainTokenNames = "Tokamak Network Token" | "Wrapped TON" | "ETH";
-// type SupportedEcosystemTokenNames = "Dooropen" | "AURA" | "LYDA";
 type SupportedStableTokenNames = "USD//C";
 
 export type SupportedTokenNames =
   | SupportedMainTokenNames
-  // | SupportedEcosystemTokenNames
   | SupportedStableTokenNames;
 
-type SupportedMainTokens = "TON" | "WTON" | "ETH";
-// type SupportedEcosystemTokens = "DOC" | "AURA" | "LYDA";
+type SupportedMainTokens = "TON" | "TOS" | "WTON" | "ETH";
 type SupportedStableTokens = "USDC";
 
-export type SupportedTokenSymbol =
-  | SupportedMainTokens
-  // | SupportedEcosystemTokens
-  | SupportedStableTokens;
+export type SupportedTokenSymbol = SupportedMainTokens | SupportedStableTokens;
 
 export type TokenInfo = {
   tokenName: SupportedTokenNames | String | string;
@@ -42,14 +37,14 @@ export type SupportedTokens_T = TokenInfo[];
 
 export const supportedTokens: SupportedTokens_T = [
   {
-    tokenName: "ETH",
+    tokenName: "Ethereum",
     tokenSymbol: "ETH",
     address: {
       MAINNET: "",
-      TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
-      SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      SEPOLIA: "",
       THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
+      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
     },
     decimals: 18,
     isNativeCurrency: [
@@ -61,7 +56,7 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
   {
-    tokenName: "WETH",
+    tokenName: "Wrapped Ethereum",
     tokenSymbol: "WETH",
     address: {
       MAINNET: MAINNET_CONTRACTS.WETH_ADDRESS,
@@ -129,3 +124,124 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
   },
 ];
+
+export const supportedTokensForCT = supportedTokens.filter(
+  (token) =>
+    token.tokenSymbol === "ETH" ||
+    token.tokenSymbol === "TON" ||
+    token.tokenSymbol === "TOS" ||
+    token.tokenSymbol === "USDC" ||
+    token.tokenSymbol === "USDT"
+);
+
+export const L1_SEPOLIA_TokenWhitelistForCT = {
+  TON: SEPOLIA_CONTRACTS.TON_ADDRESS,
+  USDT: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+  USDC: SEPOLIA_CONTRACTS.USDC_ADDRESS,
+};
+
+export const L2_TITAN_SEPOLIA_TokenWhitelistForCT = {
+  TON: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
+  USDT: TITAN_SEPOLIA_CONTRACTS.USDT_ADDRESS,
+  USDC: TITAN_SEPOLIA_CONTRACTS.USDC_ADDRESS,
+};
+
+export const supportedTokensForCt: {
+  [key: number]: {
+    [token: string]: {
+      address: string;
+      decimals: number;
+    };
+  };
+} = {
+  [SupportedChainId.MAINNET]: {
+    TON: {
+      address: MAINNET_CONTRACTS.TON_ADDRESS,
+      decimals: 18,
+    },
+    USDC: {
+      address: MAINNET_CONTRACTS.USDC_ADDRESS,
+      decimals: 6,
+    },
+    USDT: {
+      address: MAINNET_CONTRACTS.USDT_ADDRESS,
+      decimals: 6,
+    },
+    ETH: {
+      address: ZERO_ADDRESS,
+      decimals: 18,
+    },
+  },
+  [SupportedChainId.SEPOLIA]: {
+    TON: {
+      address: SEPOLIA_CONTRACTS.TON_ADDRESS,
+      decimals: 18,
+    },
+    USDC: {
+      address: SEPOLIA_CONTRACTS.USDC_ADDRESS,
+      decimals: 6,
+    },
+    USDT: {
+      address: SEPOLIA_CONTRACTS.USDT_ADDRESS,
+      decimals: 6,
+    },
+    ETH: {
+      address: "",
+      decimals: 18,
+    },
+  },
+  [SupportedChainId.TITAN]: {
+    TON: {
+      address: TOKAMAK_CONTRACTS.TON_ADDRESS,
+      decimals: 18,
+    },
+    USDC: {
+      address: TOKAMAK_CONTRACTS.USDC_ADDRESS,
+      decimals: 6,
+    },
+    USDT: {
+      address: TOKAMAK_CONTRACTS.USDT_ADDRESS,
+      decimals: 6,
+    },
+    ETH: {
+      address: TOKAMAK_CONTRACTS.OVM_ETH,
+      decimals: 18,
+    },
+  },
+  [SupportedChainId.TITAN_SEPOLIA]: {
+    TON: {
+      address: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
+      decimals: 18,
+    },
+    USDC: {
+      address: TITAN_SEPOLIA_CONTRACTS.USDC_ADDRESS,
+      decimals: 6,
+    },
+    USDT: {
+      address: TITAN_SEPOLIA_CONTRACTS.USDT_ADDRESS,
+      decimals: 6,
+    },
+    ETH: {
+      address: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
+      decimals: 18,
+    },
+  },
+  [SupportedChainId.THANOS_SEPOLIA]: {
+    TON: {
+      address: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
+      decimals: 18,
+    },
+    USDC: {
+      address: THANOS_SEPOLIA_CONTRACTS.USDC_ADDRESS,
+      decimals: 6,
+    },
+    USDT: {
+      address: THANOS_SEPOLIA_CONTRACTS.USDT_ADDRESS,
+      decimals: 6,
+    },
+    ETH: {
+      address: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
+      decimals: 18,
+    },
+  },
+};

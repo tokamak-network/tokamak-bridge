@@ -2,9 +2,9 @@ import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { supportedChain } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useRecoilValue } from "recoil";
-import { useAccount, useNetwork } from "wagmi";
+import { useAccount, useNetwork, useSwitchNetwork } from "wagmi";
 import { useGetPositionIdFromPath } from "../pool/useGetPositionIds";
 
 export function useInOutNetwork() {
@@ -40,8 +40,12 @@ export default function useConnectedNetwork() {
           supportedChain.filter((e) => e.chainId === chain.id)[0]?.layer ??
           null,
         isConnectedToMainNetwork:
-          chain.id === SupportedChainId["MAINNET"] ||
-          chain.id === SupportedChainId["TITAN"],
+          chain.id === SupportedChainId.MAINNET ||
+          chain.id === SupportedChainId.TITAN,
+        isConnectedToTestNetwork:
+          chain.id === SupportedChainId.SEPOLIA ||
+          chain.id === SupportedChainId.TITAN_SEPOLIA ||
+          chain.id === SupportedChainId.THANOS_SEPOLIA,
         blockExplorer: chain.blockExplorers?.default.url,
       };
     }
@@ -57,8 +61,12 @@ export default function useConnectedNetwork() {
           supportedChain.filter((e) => e.chainId === inNetwork.chainId)[0]
             ?.layer ?? null,
         isConnectedToMainNetwork:
-          inNetwork.chainId === SupportedChainId["MAINNET"] ||
-          inNetwork.chainId === SupportedChainId["TITAN"],
+          inNetwork.chainId === SupportedChainId.MAINNET ||
+          inNetwork.chainId === SupportedChainId.TITAN,
+        isConnectedToTestNetwork:
+          inNetwork.chainId === SupportedChainId.SEPOLIA ||
+          inNetwork.chainId === SupportedChainId.TITAN_SEPOLIA ||
+          inNetwork.chainId === SupportedChainId.THANOS_SEPOLIA,
         blockExplorer: "",
       };
     }
@@ -89,7 +97,7 @@ export default function useConnectedNetwork() {
 
       return supportedChain
         .filter((chain) => chain.isTestnet)
-        .filter((chain) => chain.chainId !== 111551119090);
+        .filter((chain) => chain.chainId !== SupportedChainId.THANOS_SEPOLIA);
     }
   }, [chainInfo]);
 
@@ -97,5 +105,53 @@ export default function useConnectedNetwork() {
     return chainInfo.layer === "L2";
   }, [chainInfo.layer]);
 
-  return { ...chainInfo, otherLayerChainInfo, chainGroup, isLayer2 };
+  const connectedToLayer1 = useMemo(() => {
+    if (chainInfo.connectedChainId) {
+      if (chainInfo.isConnectedToMainNetwork)
+        return chainInfo.connectedChainId === SupportedChainId.MAINNET;
+      return chainInfo.connectedChainId === SupportedChainId.SEPOLIA;
+    }
+    return false;
+  }, [chainInfo.connectedChainId, chainInfo.isConnectedToMainNetwork]);
+
+  return {
+    ...chainInfo,
+    otherLayerChainInfo,
+    chainGroup,
+    isLayer2,
+    connectedToLayer1,
+  };
 }
+
+export const useChangeNetwork = (chainId?: number) => {
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+
+  const { switchNetworkAsync } = useSwitchNetwork();
+
+  const switchNetworkWithChainId = useCallback(() => {
+    if (chainId) switchNetworkAsync?.(chainId);
+  }, [chainId]);
+
+  const switchToEthereum = useCallback(() => {
+    if (isConnectedToMainNetwork)
+      return switchNetworkAsync?.(SupportedChainId.MAINNET);
+    switchNetworkAsync?.(SupportedChainId.SEPOLIA);
+  }, [switchNetworkAsync, isConnectedToMainNetwork]);
+
+  const switchToTitan = useCallback(() => {
+    if (isConnectedToMainNetwork)
+      return switchNetworkAsync?.(SupportedChainId.TITAN);
+    switchNetworkAsync?.(SupportedChainId.TITAN_SEPOLIA);
+  }, [switchNetworkAsync, isConnectedToMainNetwork]);
+
+  const switchToSepolia = useCallback(() => {
+    switchNetworkAsync?.(SupportedChainId.SEPOLIA);
+  }, [switchNetworkAsync]);
+
+  return {
+    switchNetworkWithChainId,
+    switchToEthereum,
+    switchToTitan,
+    switchToSepolia,
+  };
+};

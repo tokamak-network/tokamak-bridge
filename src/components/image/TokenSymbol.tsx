@@ -1,6 +1,6 @@
 import { ImageFileType } from "@/types/style/imageFileType";
 import { TokenInfo } from "types/token/supportedToken";
-import { Box, Flex } from "@chakra-ui/layout";
+import { Box, Flex, Text } from "@chakra-ui/layout";
 import Image from "next/image";
 import SYMBOL_ETH from "assets/tokens/eth.svg";
 import SYMBOL_WETH from "assets/tokens/weth.svg";
@@ -14,12 +14,18 @@ import SYMBOL_USDC from "assets/tokens/usdc.svg";
 import SYMBOL_USDT from "assets/tokens/usdt.svg";
 import SYMBOL_NOSYMBOL from "assets/tokens/noSymbol.svg";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { useRecoilState } from "recoil";
+import { IsSearchToken } from "@/recoil/card/selectCard/searchToken";
 
 export default function ImageSymbol(props: {
   ImgFile: ImageFileType;
   w?: number;
   h?: number;
+  tokenType?: any;
 }) {
+  const [isTokenSearch, setTokenSearch] = useRecoilState(IsSearchToken);
+
   return (
     <motion.div
       initial={{
@@ -37,11 +43,35 @@ export default function ImageSymbol(props: {
       transition={{ duration: 0.5 }}
     >
       <Flex style={{ width: `100%`, height: `100%` }}>
-        <Image
-          src={props.ImgFile}
-          alt={"img"}
-          style={{ width: `100%`, height: `100%` }}
-        />
+        {props.ImgFile !== SYMBOL_NOSYMBOL ? (
+          <Image
+            src={props.ImgFile}
+            alt={"img"}
+            style={{ width: `100%`, height: `100%` }}
+          />
+        ) : (
+          <Box
+            width={`100%`}
+            height={`100%`}
+            borderRadius={"300px"}
+            border={"3px solid #9E9E9E"}
+            background={"#FFF"}
+            justifyContent={"center"}
+            padding={"0px 24px"}
+            display={"flex"}
+            alignItems={"center"}
+            flexShrink={0}
+          >
+            <Text
+              fontSize={"22px"}
+              lineHeight={"normal"}
+              color={"#9E9E9E"}
+              fontWeight={500}
+            >
+              {props.tokenType}
+            </Text>
+          </Box>
+        )}
       </Flex>
     </motion.div>
   );

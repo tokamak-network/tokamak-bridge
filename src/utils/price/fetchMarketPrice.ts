@@ -1,5 +1,4 @@
-import { apolloClient } from "@/apollo";
-import { GET_MARKET_PRICE } from "@/graphql/getMarketPrice";
+import { GET_MARKET_PRICE } from "@/graphql/queries/getMarketPrice";
 import {
   changeTokenNameForAPI,
   trimTokenName,
@@ -11,18 +10,12 @@ export async function fetchMarketPrice(
 ): Promise<number | undefined> {
   try {
     const tokenName = changeTokenNameForAPI(tokenId);
-    const apolloClient = new ApolloClient({
-      uri: process.env.NEXT_PUBLIC_PRICE_API,
-      cache: new InMemoryCache(),
-    });
-    const result = await apolloClient.query({
-      query: GET_MARKET_PRICE,
-      variables: { tokenName: trimTokenName(tokenName) },
-      fetchPolicy: "cache-first",
-    });
-
-    if (result.data.getTokenMarketData.current_price)
-      return result.data.getTokenMarketData.current_price;
+    const response = await fetch(`/api/coingecko?tokenName=${tokenName}`);
+    if (!response.ok) {
+      throw new Error("Failed to fetch the market price");
+    }
+    const result = await response.json();
+    if (result[0].current_price) return result[0].current_price;
     return undefined;
   } catch (e) {
     // console.log("fetchMarketPrice error");

@@ -11,6 +11,10 @@ export function calculateGasMargin(value: BigNumber): BigNumber {
   return value.mul(125).div(100);
 }
 
+export function calculateGasMarginBigInt(value: bigint): bigint {
+  return (value * BigInt(125)) / BigInt(100);
+}
+
 export async function getSingleCalldataGasLimit(
   provider: ethers.providers.JsonRpcProvider,
   txData: ethers.utils.Deferrable<ethers.providers.TransactionRequest>,

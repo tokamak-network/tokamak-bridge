@@ -87,13 +87,7 @@ export default function Confirmation() {
           </Flex>
           <Text mt={"26px"} fontSize={18} mb={"41px"}>
             {isConfirming
-              ? `Confirming ${
-                  subModeValue.length === 1
-                    ? capitalizeFirstChar(subModeValue[0])
-                    : mode === "Pool"
-                    ? "Claim"
-                    : mode
-                }`
+              ? `Confirming`
               : isConfirmed
               ? "Transaction Confirmed!"
               : isError
@@ -132,7 +126,7 @@ export default function Confirmation() {
             {isClaimWaiting ? (
               "Please wait a few seconds for MetaMask popup to appear."
             ) : isConfirming ? (
-              "Please confirm txn. If is not updating, check your wallet."
+              "Please confirm txn. If it's not updating, check your wallet."
             ) : isConfirmed ? (
               <Link
                 href={`${blockExplorer}/tx/${txHash}`}

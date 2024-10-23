@@ -1,10 +1,11 @@
+import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import {
   useErc20Approve,
   useErc20TotalSupply,
   usePrepareErc20Approve,
 } from "@/generated";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractWrite } from "wagmi";
 import { useCallback, useMemo } from "react";
 import { useGetMode } from "../mode/useGetMode";
 import useContract from "@/hooks/contracts/useContract";
@@ -15,15 +16,22 @@ import { useAllowance } from "./useApproveToken";
 import { Hash } from "viem";
 import { useUniswapContracts } from "../uniswap/useUniswapContracts";
 import USDT_ABI from "@/constant/abis/USDT.json";
+import { ActionMode } from "@/types/bridgeSwap";
 
-export function useApprove() {
-  const { mode } = useGetMode();
+export function useApprove(_mode?: ActionMode) {
+  const { mode, subMode } = useGetMode();
   const { inToken } = useInOutTokens();
   const tokenAddress = inToken?.token.address as Hash | undefined;
 
-  const { L1BRIDGE_CONTRACT, WTON_CONTRACT } = useContract();
+  const {
+    L1BRIDGE_CONTRACT,
+    WTON_CONTRACT,
+    L1CrossTrade_CONTRACT,
+    L2CrossTrade_CONTRACT,
+  } = useContract();
   const { UNISWAP_CONTRACT } = useUniswapContracts();
   const { connectedChainId, isLayer2 } = useConnectedNetwork();
+  const { ctConfirmModal } = useFxConfirmModal();
 
   const contractAddress = useMemo(() => {
     switch (mode) {
@@ -34,10 +42,25 @@ export function useApprove() {
       case "Wrap":
       case "Unwrap":
         return WTON_CONTRACT as Hash;
+      case "Withdraw":
+        if (ctConfirmModal.isOpen)
+          return L2CrossTrade_CONTRACT.L2CrossTradeProxy;
+      case "Pool": {
+        if (subMode.ctPools) return L1CrossTrade_CONTRACT.L1CrossTradeProxy;
+        return undefined;
+      }
       default:
         return undefined;
     }
-  }, [mode, L1BRIDGE_CONTRACT, UNISWAP_CONTRACT, WTON_CONTRACT]);
+  }, [
+    mode,
+    subMode,
+    L1BRIDGE_CONTRACT,
+    UNISWAP_CONTRACT,
+    WTON_CONTRACT,
+    L2CrossTrade_CONTRACT.L2CrossTradeProxy,
+    ctConfirmModal.isOpen,
+  ]);
 
   const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
@@ -45,12 +68,14 @@ export function useApprove() {
     token: inToken,
     contractAddress,
   });
+  const { connectedToLayer1 } = useConnectedNetwork();
 
   const isApproved = useMemo(() => {
     switch (mode) {
       case "Deposit":
         return approved;
       case "Withdraw":
+        if (ctConfirmModal.isOpen) return approved;
         return true;
       case "Swap":
         return approved;
@@ -61,10 +86,13 @@ export function useApprove() {
       case "ETH-Wrap":
       case "ETH-Unwrap":
         return true;
+      case "Pool": {
+        if (subMode.ctPools && connectedToLayer1) return approved;
+      }
       default:
-        return false;
+        return true;
     }
-  }, [mode, approved]);
+  }, [mode, subMode, approved, connectedToLayer1]);
 
   const isUSDT = useMemo(() => {
     return connectedChainId
@@ -128,13 +156,13 @@ export function useApprove() {
     hash: isUSDT ? usdtApproveData?.hash : data?.hash,
     txSort: "Approve",
     tokenAddress,
-    actionSort: mode,
+    actionSort: _mode ?? mode,
   });
   const { isLoading: usdtRevokeIsLoading } = useTx({
     hash: usdtRevokeData?.hash,
     txSort: "Revoke",
     tokenAddress,
-    actionSort: mode,
+    actionSort: _mode ?? mode,
   });
 
   const callApprove = useCallback(() => {

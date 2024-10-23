@@ -1,0 +1,42 @@
+name: Deploy to Vercel Workflow
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        description: "The deployment environment (e.g., development, staging, production)"
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      PROJECT: BEE
+      APP: tokamak-bridge-webapp
+      OWNER: victor
+      ENV: ${{ inputs.environment }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      DEPLOYMENT_MODE: ${{ inputs.environment == 'production' && '--prod' || '' }}
+
+    steps:
+      #INSTALL NODEJS
+      - uses: actions/checkout@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: "20"
+      # INSTALL VERCEL CLI IN SERVER.
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      # INSTALL DEPENDENCIES
+      - name: Install dependencies
+        run: npm install
+      # PULL VERCEL ENV
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=development --token=${{ env.VERCEL_TOKEN }}
+      # DEPLOY TO VERCEL
+      - name: Deploy to Vercel
+        run: vercel $DEPLOYMENT_MODE --yes --token=${{ secrets.VERCEL_TOKEN }}
