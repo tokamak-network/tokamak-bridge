@@ -40,6 +40,8 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
 import { ATOM_CT_GAS_provideCT } from "@/recoil/crosstrade/networkFee";
 import { calculateGasMarginBigInt } from "@/utils/txn/calculateGasMargin";
+import { recommendFeeConfig } from "@/staging/constants/fee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
 
 export type ContractWrite = (args: {
   args: any[];
@@ -193,22 +195,22 @@ export default function CTConfirmCrossTradeFooter(
             const msgValue = isUpdateFee
               ? editedCTAmount
               : BigInt(subgraphData._ctAmount);
-            console.log(
-              "--provideCT params--",
-              ZERO_ADDRESS,
-              ZERO_ADDRESS,
-              subgraphData._requester,
-              subgraphData._totalAmount,
-              subgraphData._ctAmount,
-              _editedAmount,
-              subgraphData._saleCount,
-              subgraphData._l2chainId,
-              500000,
-              subgraphData._hashValue,
-              {
-                value: msgValue,
-              }
-            );
+            // console.log(
+            //   "--provideCT params--",
+            //   ZERO_ADDRESS,
+            //   ZERO_ADDRESS,
+            //   subgraphData._requester,
+            //   subgraphData._totalAmount,
+            //   subgraphData._ctAmount,
+            //   _editedAmount,
+            //   subgraphData._saleCount,
+            //   subgraphData._l2chainId,
+            //   500000,
+            //   subgraphData._hashValue,
+            //   {
+            //     value: msgValue,
+            //   }
+            // );
 
             const args = [
               ZERO_ADDRESS,
@@ -242,18 +244,18 @@ export default function CTConfirmCrossTradeFooter(
               gas: estimatedGasUsageWithBuffer,
             });
           }
-          console.log("--provideCT params--", {
-            _l1token: subgraphData._l1token,
-            _l2token: subgraphData._l2token,
-            _requester: subgraphData._requester,
-            _totalAmount: subgraphData._totalAmount,
-            _ctAmount: subgraphData._ctAmount,
-            _editedAmount: _editedAmount,
-            _saleCount: subgraphData._saleCount,
-            _l2chainId: subgraphData._l2chainId,
-            _minGasLimit: 500000,
-            _hashValue: subgraphData._hashValue,
-          });
+          // console.log("--provideCT params--", {
+          //   _l1token: subgraphData._l1token,
+          //   _l2token: subgraphData._l2token,
+          //   _requester: subgraphData._requester,
+          //   _totalAmount: subgraphData._totalAmount,
+          //   _ctAmount: subgraphData._ctAmount,
+          //   _editedAmount: _editedAmount,
+          //   _saleCount: subgraphData._saleCount,
+          //   _l2chainId: subgraphData._l2chainId,
+          //   _minGasLimit: 500000,
+          //   _hashValue: subgraphData._hashValue,
+          // });
 
           const args = [
             subgraphData._l1token,
@@ -293,14 +295,14 @@ export default function CTConfirmCrossTradeFooter(
 
         const ctAmount =
           BigInt(txData.inToken.amount) - BigInt(txData.serviceFee.toString());
-        console.log(
-          "--requestRegisteredToken params--",
-          txData.outToken.address,
-          txData.inToken.address,
-          txData.inToken.amount,
-          ctAmount,
-          txData.outNetwork
-        );
+        // console.log(
+        //   "--requestRegisteredToken params--",
+        //   txData.outToken.address,
+        //   txData.inToken.address,
+        //   txData.inToken.amount,
+        //   ctAmount,
+        //   txData.outNetwork
+        // );
 
         if (inTokenIsETH) {
           return requestRegisteredToken({
@@ -324,6 +326,17 @@ export default function CTConfirmCrossTradeFooter(
           ],
         });
       } catch (e) {
+        const isNetworkFeeError =
+          String(e).includes("Could not find an Account") ||
+          String(e).includes("ContractFunctionExecutionError");
+
+        if (isNetworkFeeError) {
+          const estimatedGasUsageWithBuffer = calculateGasMarginBigInt(
+            BigInt(recommendFeeConfig.gas[CTTransactionType.provideCT] * 1.25)
+          );
+          return setProvideCTGas(estimatedGasUsageWithBuffer);
+        }
+
         console.log("**error**");
         console.log(e);
         setModalOpen("error");

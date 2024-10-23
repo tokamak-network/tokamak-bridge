@@ -12,10 +12,19 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { useRelayGasCost } from "../../new-confirm/hooks/useGetGas";
 
 export const useRecommendFee = (params: {
-  totalAmount: number;
-  tokenAddress: string;
+  totalAmount?: number;
+  tokenAddress?: string;
 }) => {
   const { totalAmount, tokenAddress } = params;
+
+  if (totalAmount === undefined || tokenAddress === undefined)
+    return {
+      recommendedCtAmount: undefined,
+      recommendedFee: undefined,
+      estimatedGasFeeETH: undefined,
+      provideCTTxnUSDCost: undefined,
+    };
+
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { data: feeData } = useFeeData({
     chainId: isConnectedToMainNetwork
