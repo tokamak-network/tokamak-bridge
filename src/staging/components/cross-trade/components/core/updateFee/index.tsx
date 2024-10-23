@@ -472,7 +472,7 @@ export default function CTFeeUpdateModal() {
                   fontSize={12}
                   lineHeight={"20px"}
                 >
-                  refund may take at least 2~5 minutes <br />
+                  refund may take at least 15 minutes <br />
                   (depending on L2 sequencer).
                 </Text>
               </Flex>

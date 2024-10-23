@@ -69,7 +69,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
           return (
             <span>
               Total amount to receive, including the service
-              <br /> fee. It takes at least 2~5 minutes to receive <br />{" "}
+              <br /> fee. It takes at least 15 minutes to receive <br />{" "}
               (depending on the L2 sequencer).
             </span>
           );
