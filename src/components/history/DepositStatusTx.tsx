@@ -92,7 +92,7 @@ export default function DepositStatusTx(props: {
             cursor={"pointer"}
             color={mobileView ? "#A0A3AD" : ""}
             _hover={{
-              textDecoration: mobileView ? "none" : "underline"
+              textDecoration: mobileView ? "none" : "underline",
             }}
           >
             {mobileView ? "Deposit" : `${layer}: Completed`}
@@ -109,7 +109,7 @@ export default function DepositStatusTx(props: {
           </Link>
         ) : (
           <Text fontSize={"11px"} fontWeight={600}>
-            {`${layer}: Wait ~5 min for relay`}
+            {`${layer}: Wait ~15 min for relay`}
           </Text>
         )}
       </Flex>
@@ -122,7 +122,10 @@ export default function DepositStatusTx(props: {
           >
             <Flex fontSize={"11px"}>
               <Text color={mobileView ? "#A0A3AD" : "#FFFFFF"}>
-                <Flex gap="4px" >Transaction<Image alt="txmove" src={txMove} /></Flex>
+                <Flex gap="4px">
+                  Transaction
+                  <Image alt="txmove" src={txMove} />
+                </Flex>
               </Text>
               {!mobileView && (
                 <Text ml="3px" color={"#A0A3AD"}>

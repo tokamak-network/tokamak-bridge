@@ -129,7 +129,7 @@ const TransactionItem = (props: TransactionItemProps) => {
             }}
             tooltipLabel={
               <span>
-                It take at least 2~5 minutes to receive <br />
+                It take at least 15 minutes to receive <br />
                 (depending on the L2 sequencer).{" "}
               </span>
             }
@@ -147,7 +147,7 @@ const TransactionItem = (props: TransactionItemProps) => {
             }}
             tooltipLabel={
               <span>
-                The refund takes at least 2~5 minutes
+                The refund takes at least 15 minutes
                 <br />
                 (depending on the L2 sequencer).{" "}
               </span>

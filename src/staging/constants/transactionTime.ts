@@ -11,11 +11,12 @@ export const TRANSACTION_CONSTANTS = {
     ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
     CHALLENGE_SECS: 604800,
   },
+  // Set to 15sec time-buffer for UI purposes, although the spec is 900 seconds
   CROSS_TRADE: {
-    PROVIDE: 900, //15 minutes in seconds
-    REQUEST: 300,
-    CANCEL_REQUEST: 300,
-    RETURN_LIQUIDITY: 300,
+    PROVIDE: 915, //15 minutes in seconds
+    REQUEST: 915, 
+    CANCEL_REQUEST: 915,
+    RETURN_LIQUIDITY: 915,
   },
 };
 
