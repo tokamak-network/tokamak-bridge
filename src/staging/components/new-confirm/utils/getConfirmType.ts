@@ -4,10 +4,7 @@ import {
   TransactionHistory,
 } from "@/staging/types/transaction";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
-import {
-  TESTNET_TRANSACTION_CONSTANTS,
-  TRANSACTION_CONSTANTS,
-} from "@/staging/constants/transactionTime";
+import { TESTNET_TRANSACTION_CONSTANTS, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { Tr } from "@chakra-ui/react";
 
 //getConfirmType.ts
@@ -77,20 +74,12 @@ const getType = (lineType: number, index: number) => {
   return typeMap[lineType] || undefined;
 };
 
-const getWaitMessage = (
-  lineType: number,
-  index: number,
-  isConnectedToMainNetwork: boolean
-) => {
-  const txConst = isConnectedToMainNetwork
-    ? TRANSACTION_CONSTANTS
-    : TESTNET_TRANSACTION_CONSTANTS;
+const getWaitMessage = (lineType: number, index: number, isConnectedToMainNetwork: boolean) => {
+  const txConst = isConnectedToMainNetwork ? TRANSACTION_CONSTANTS : TESTNET_TRANSACTION_CONSTANTS;
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? `Wait up to ${isConnectedToMainNetwork ? 6 : 12} hours ${
-            isConnectedToMainNetwork ? "20 min" : undefined
-          }`
+        ? `Wait up to ${isConnectedToMainNetwork ? 6 : 12} hours`
         : `Wait ${txConst.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${txConst.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${txConst.DEPOSIT.INITIAL_MINUTES} min`,
