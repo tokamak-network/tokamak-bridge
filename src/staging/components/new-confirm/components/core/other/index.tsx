@@ -95,8 +95,6 @@ export default function DepositWithdrawConfirmModal() {
    * Replaced 600000 and 1000000 with gasLimit parameter.
    * Changed fixed chainId to chainId parameter.
    */
-  // const CLAIM_GAS_USED = 1000000;
-  // const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
   const { withdrawCost } = useRelayGasCost();
 
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
@@ -446,12 +444,14 @@ export default function DepositWithdrawConfirmModal() {
               )}
             </>
           )}
-          <Box w={"100%"} mt={"12px"}>
-            <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-              *This modal doesn't update in real-time.
-              <br /> Please close & reopen it to view the latest data.
-            </Text>
-          </Box>
+          {transactionData.status !== Status.Initiate && (
+            <Box w={"100%"} mt={"12px"}>
+              <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+                *This modal doesn't update in real-time.
+                <br /> Please close & reopen it to view the latest data.
+              </Text>
+            </Box>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>

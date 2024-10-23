@@ -93,7 +93,7 @@ export function useTransactionDetail() {
         ? [
             {
               title: "Time to Deposit",
-              content: "~5 minutes",
+              content: "~15 minutes",
             },
             {
               title: "Network fee",
@@ -124,7 +124,7 @@ export function useTransactionDetail() {
             },
             {
               title: "Time to Deposit",
-              content: "~5 minutes",
+              content: "~15 minutes",
             },
           ];
     }

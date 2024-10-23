@@ -176,7 +176,7 @@ export default function CTConfirmCrossTradeFooter(
 
   const requestCrossTrade = useCallback(
     async (estimatedGas?: boolean) => {
-      if (isInRelay) return onCloseCTConfirmModal();
+      if (isInRelay && estimatedGas === false) return onCloseCTConfirmModal();
       if (!txData) return new Error("txData is not defined");
       try {
         if (isProvide) {
@@ -442,8 +442,6 @@ export default function CTConfirmCrossTradeFooter(
               },
             }}
             colorScheme="#A0A3AD"
-            display={"flex"}
-            alignItems={"flex-start"}
           >
             <Text
               color={isChecked.thirdChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -452,9 +450,7 @@ export default function CTConfirmCrossTradeFooter(
               lineHeight={"20px"}
               letterSpacing={"0.01em"}
             >
-              Cross Trade is in a beta testing phase. L2 state root containing
-              the cross trade request must be rolled up to Ethereum and wait 15
-              minutes for block finality.
+              Cross Trade is in a beta testing phase.
             </Text>
           </Checkbox>
         </Flex>

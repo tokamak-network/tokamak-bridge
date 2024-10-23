@@ -59,7 +59,6 @@ export default function Swap() {
       } else {
         setInTokenRecoilValue(outTokenRecoilValue);
       }
-
       setOutTokenRecoilValue(tempValue);
     } else if (inTokenRecoilValue && !outTokenRecoilValue) {
       setOutTokenRecoilValue(inTokenRecoilValue);
