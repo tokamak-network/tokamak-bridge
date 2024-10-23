@@ -1,8 +1,8 @@
 // index.tsx
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
-    INITIAL_MINUTES: 5, // Initial state time for deposit (in minutes)
-    INITIAL_SECS: 300,
+    INITIAL_MINUTES: 15, // Initial state time for deposit (in minutes)
+    INITIAL_SECS: 900,
   },
   WITHDRAW: {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)
@@ -31,3 +31,4 @@ export const TESTNET_TRANSACTION_CONSTANTS = {
     ROLLUP_SECS: 43200,
   },
 };
+

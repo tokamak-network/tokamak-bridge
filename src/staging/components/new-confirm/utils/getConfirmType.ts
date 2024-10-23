@@ -4,10 +4,7 @@ import {
   TransactionHistory,
 } from "@/staging/types/transaction";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
-import {
-  TESTNET_TRANSACTION_CONSTANTS,
-  TRANSACTION_CONSTANTS,
-} from "@/staging/constants/transactionTime";
+import { TESTNET_TRANSACTION_CONSTANTS, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { Tr } from "@chakra-ui/react";
 
 //getConfirmType.ts
@@ -76,6 +73,7 @@ const getType = (lineType: number, index: number) => {
   };
   return typeMap[lineType] || undefined;
 };
+
 
 const getWaitMessage = (
   lineType: number,
