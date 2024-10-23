@@ -342,6 +342,15 @@ export default function CTConfirmDetail({
       : CTTransactionType.requestRegisteredToken
   );
 
+  const showServiceFee = useMemo(() => {
+    return (
+      !isCanceled &&
+      (updateFee ||
+        (modalType === ModalType.History && !isInCT_Provide(status))) &&
+      !isProvide
+    );
+  }, [isCanceled, updateFee, modalType, status, isProvide]);
+
   return (
     <Box
       bg="#15161D"
@@ -375,7 +384,7 @@ export default function CTConfirmDetail({
             outNetwork={isProvide ? inNetwork : outNetwork}
           />
         )}
-        {!isCanceled && updateFee && !isProvide && (
+        {showServiceFee && (
           <FeeDetail
             title="Service fee"
             mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}

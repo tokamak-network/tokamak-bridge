@@ -20,6 +20,7 @@ interface TokenDetailProps {
   providingUSD?: number;
   recevingUSD?: number;
   profit?: Profit;
+  provideCTTxnCost?: number;
 }
 
 const Percentage = (props: { percent: string }) => {
@@ -55,18 +56,54 @@ const USDValue = (props: { usdAmount: string }) => {
   );
 };
 
-const NetProfit = (props: { percent: string; usdAmount: string }) => {
+const NetProfit = (props: {
+  percent: string;
+  usdAmount: string;
+  provideCTTxnCost?: number;
+}) => {
   return (
-    <Flex flexDir={"column"}>
-      <Percentage {...props}></Percentage>
-      <USDValue {...props}></USDValue>
-    </Flex>
+    <CustomTooltip
+      content={
+        <Flex flexDir={"column"}>
+          <Percentage {...props}></Percentage>
+          <USDValue {...props}></USDValue>
+        </Flex>
+      }
+      tooltipLabel={
+        <Flex alignItems={"center"} h={"100%"}>
+          <Box lineHeight={"normal"} fontSize={12}>
+            <span>Estimated net profit based on transaction</span>
+            <br />
+            {`fee of $
+            ${commafy(props.provideCTTxnCost)}
+            Actual value may differ based on
+           other factors (priority fee, storage refund, etc)`}
+          </Box>
+        </Flex>
+      }
+      needArrow={true}
+      labelStyle={{
+        left: "-17px",
+        width: "291px",
+        height: "74px",
+      }}
+      tooltipArrowStyle={{
+        left: "25px",
+      }}
+    ></CustomTooltip>
   );
 };
 
 export default function TokenDetail(props: TokenDetailProps) {
-  const { token, network, profit, isProvide, providingUSD, recevingUSD } =
-    props;
+  const {
+    token,
+    network,
+    profit,
+    isProvide,
+    providingUSD,
+    recevingUSD,
+    provideCTTxnCost,
+  } = props;
   const isProfit = profit !== undefined;
 
   const formattedAmount = token
@@ -88,7 +125,11 @@ export default function TokenDetail(props: TokenDetailProps) {
 
   if (isProfit) {
     return (
-      <NetProfit percent={priceOrPercent} usdAmount={commafy(profit.usd)} />
+      <NetProfit
+        percent={priceOrPercent}
+        usdAmount={commafy(profit.usd)}
+        provideCTTxnCost={provideCTTxnCost}
+      />
     );
   }
 

@@ -356,6 +356,7 @@ export const useRequestData = (
             initialCTAmount: item._ctAmount,
             editedCTAmount: ctAmount,
             isNetaveProfit: profitRatio.toFixed(30).includes("-"),
+            provideCTTxnCost: txnCost,
           };
         });
 
