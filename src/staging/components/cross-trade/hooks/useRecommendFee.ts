@@ -43,30 +43,32 @@ export const useRecommendFee = (params: {
     withdrawCost: { totalGasCost: standardWithdrawGasCost },
   } = useRelayGasCost();
 
-  const isGasFeeLessThanOrEqual = useMemo(() => {
-    if (feeData?.gasPrice && standardWithdrawGasCost) {
-      const gasUsage = recommendFeeConfig.gas[CTTransactionType.provideCT];
-      const gasPrice = formatUnits(feeData.gasPrice.toString(), 9);
-      const gasFee = gasUsage * Number(gasPrice) * Math.pow(10, -9) * 1.25;
-      const gasFeeDecimal = new Decimal(gasFee);
-      const standardWithdrawGasCostDecimal = new Decimal(
-        standardWithdrawGasCost
-      );
-      const isGasFeeLessThanOrEqual = gasFeeDecimal.lessThanOrEqualTo(
-        standardWithdrawGasCostDecimal
-      );
-      return isGasFeeLessThanOrEqual;
-    }
-  }, [feeData?.gasPrice, standardWithdrawGasCost]);
+  // const isGasFeeLessThanOrEqual = useMemo(() => {
+  //   if (feeData?.gasPrice && standardWithdrawGasCost) {
+  //     const gasUsage = recommendFeeConfig.gas[CTTransactionType.provideCT];
+  //     const gasPrice = formatUnits(feeData.gasPrice.toString(), 9);
+  //     const gasFee = gasUsage * Number(gasPrice) * Math.pow(10, -9) * 1.25;
+  //     const gasFeeDecimal = new Decimal(gasFee);
+  //     const standardWithdrawGasCostDecimal = new Decimal(
+  //       standardWithdrawGasCost
+  //     );
+  //     const isGasFeeLessThanOrEqual = gasFeeDecimal.lessThanOrEqualTo(
+  //       standardWithdrawGasCostDecimal
+  //     );
+  //     return isGasFeeLessThanOrEqual;
+  //   }
+  // }, [feeData?.gasPrice, standardWithdrawGasCost]);
 
   const additionalFeeRatio = useMemo(() => {
     if (hasRecomendFee) {
-      const additionalFee = isGasFeeLessThanOrEqual ? 0 : -0.4;
+      // const additionalFee = isGasFeeLessThanOrEqual ? 0 : -0.4;
+      const additionalFee = 0;
+
       return (
         recommendFeeConfig.fee[tokenInfo?.tokenSymbol as string] - additionalFee
       );
     }
-  }, [hasRecomendFee, isGasFeeLessThanOrEqual]);
+  }, [hasRecomendFee]);
 
   const additionalFee = useMemo(() => {
     if (totalTokenAmountInUSD && additionalFeeRatio && tokenInfo?.decimals) {
@@ -87,12 +89,7 @@ export const useRecommendFee = (params: {
 
       return gasFee;
     }
-  }, [
-    feeData,
-    recommendFeeConfig.gas,
-    standardWithdrawGasCost,
-    isGasFeeLessThanOrEqual,
-  ]);
+  }, [feeData, recommendFeeConfig.gas, standardWithdrawGasCost]);
 
   const { tokenPriceWithAmount: provideCTTxnCost } = useGetMarketPrice({
     tokenName: "ethereum",
