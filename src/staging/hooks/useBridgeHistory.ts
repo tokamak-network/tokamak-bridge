@@ -54,9 +54,11 @@ import {
 } from "../utils/getProvideStatus";
 import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
+import L2TitanStandardBridgeAbi from "@/abis/L2StandardBridge.json";
 import { getDecodedDepositLog } from "@/utils/history/getDecodedDepositLog";
 import { mock_depositRequest } from "@/test/deposit/_mock/mockdata";
 import { mock_withdrawData } from "@/test/withdraw/_mock/mockdata";
+import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodBridgeHistoryLog";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -186,44 +188,51 @@ export const useWithdrawData = () => {
               resolved,
               isConnectedToMainNetwork
             );
-
           const l2TxReceipt = await L2Provider.getTransactionReceipt(
             sentMessage.transactionHash
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
           if (
-            l2TxReceipt.logs[3] === undefined ||
-            currentStatus === undefined
+            !l2TxReceipt
           ) {
-            return new Error(
-              "Invalid transaction with l2TxReceipt.logs[3] or currentStatus"
+            console.log(
+              `Invalid transaction (${sentMessage.transactionHash} with l2 Titan TxReceipt)`
             );
+            return;
           }
 
-          const logs = utils.defaultAbiCoder.decode(
-            ["address", "uint256", "bytes"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
-          );
-          const l1TokenAddress = utils.defaultAbiCoder.decode(
-            ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
-          )[0];
-          const l2TokenAddress = utils.defaultAbiCoder.decode(
-            ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
-          )[0];
-          const amount = BigInt(logs[1]).toString();
-          const { l1Token, l2Token } = getTransactionToken(
-            l1TokenAddress,
-            l2TokenAddress,
-            amount,
-            false,
+          const parsedLog = getDecodedStandardBridgeLog(
+            l2TxReceipt.logs,
+            new ethers.utils.Interface(L2TitanStandardBridgeAbi),
             isConnectedToMainNetwork
               ? SupportedChainId.TITAN
               : SupportedChainId.TITAN_SEPOLIA
           );
-          if (!l1Token || !l2Token) return;
+
+          if (!parsedLog) {
+            console.log(`Invalid transaction with parsedLog Error`);
+            return;
+          }
+
+          const { l1TokenAddress, l2TokenAddress, amount, from, to } =
+            parsedLog;
+          const { l1Token, l2Token } = getTransactionToken(
+            l1TokenAddress.toLowerCase(),
+            l2TokenAddress.toLowerCase(),
+            amount,
+            true,
+            isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA
+          );
+
+          if (!l1Token || !l2Token) {
+            console.error(
+              `Invalid transaction with {!l1Token || !l2Token} Error`
+            );
+            return;
+          }
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
