@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import {
   Action,
@@ -6,6 +6,8 @@ import {
   CT_PROVIDE,
   CT_REQUEST,
   CT_REQUEST_CANCEL,
+  isDepositTransactionHistory,
+  isWithdrawTransactionHistory,
   Status,
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history/components/core/pending";
@@ -88,10 +90,14 @@ export default function AccountHistoryNew() {
           transaction.status === CT_REQUEST.Completed ||
           transaction.status === CT_REQUEST_CANCEL.Completed ||
           transaction.status === CT_PROVIDE.Completed;
-
+        const key =
+          isDepositTransactionHistory(transaction) ||
+            isWithdrawTransactionHistory(transaction)
+            ? transaction.transactionHashes.initialTransactionHash
+            : index;
         return (
           <Box
-            key={`${transaction.action}-${index}`}
+            key={`${transaction.action}-${key}`}
             px={"12px"}
             py={isCompleted ? "6px" : "8px"}
             borderRadius={"8px"}

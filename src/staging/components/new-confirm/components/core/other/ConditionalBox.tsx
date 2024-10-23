@@ -21,10 +21,12 @@ interface ConditionalBoxProps {
   type: "wait" | "timer" | "box";
   transactionData: TransactionHistory;
   waitMessage?: string | undefined;
+  timeDisplay: string;
+  isCountDown: boolean;
 }
 
 export default function ConditionalBox(props: ConditionalBoxProps) {
-  const { type, transactionData, waitMessage } = props;
+  const { type, transactionData, waitMessage, timeDisplay, isCountDown } = props;
 
   if (type === "wait") {
     return (
@@ -45,13 +47,6 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
   if (type === "timer") {
     const remainTime = getRemainTime(transactionData);
     const isZeroTime = remainTime <= 0;
-
-    const timeDisplay = isZeroTime
-      ? "00 : 00"
-      : useCountdown(
-          formatTimeDisplay(remainTime),
-          Boolean(transactionData.errorMessage)
-        );
 
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
@@ -90,8 +85,8 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
               "days",
               0
             ) *
-              60) *
-            1000
+            60) *
+          1000
         );
       }
       return null;
@@ -115,13 +110,13 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
             fontWeight={600}
             fontSize='11px'
             lineHeight='22px'
-            color={errorRollup ? "#DD3A44" : "#FFFFFF"}
+            color={errorRollup || !isCountDown ? "#DD3A44" : "#FFFFFF"}
             whiteSpace='nowrap'
             overflow='hidden'
           >
             {timeDisplay}
           </Text>
-          {errorRollup && (
+          {(errorRollup || !isCountDown) && (
             <Flex
               w={"18px"}
               h={"18px"}
@@ -130,17 +125,6 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
               cursor={"pointer"}
             >
               <Image src={Lightbulb} alt={"Lightbulb"} />
-            </Flex>
-          )}
-          {refreshRollup && (
-            <Flex
-              w={"18px"}
-              h={"18px"}
-              ml={"2px"}
-              justifyContent={"center"}
-              cursor={"pointer"}
-            >
-              <Image src={Refresh} alt={"Refresh"} />
             </Flex>
           )}
           {calendarButton && (
