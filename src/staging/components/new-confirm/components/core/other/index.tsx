@@ -61,8 +61,6 @@ export default function DepositWithdrawConfirmModal() {
    * Replaced 600000 and 1000000 with gasLimit parameter.
    * Changed fixed chainId to chainId parameter.
    */
-  // const CLAIM_GAS_USED = 1000000;
-  // const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
   const { withdrawCost } = useRelayGasCost();
   const isWithdraw =
     transactionData && isWithdrawTransactionHistory(transactionData);
@@ -116,7 +114,10 @@ export default function DepositWithdrawConfirmModal() {
      */
   }
 
-  const renderStatusComponents = (statuses: Status[], isConnectedMainnet: boolean) => {
+  const renderStatusComponents = (
+    statuses: Status[],
+    isConnectedMainnet: boolean
+  ) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
@@ -131,14 +132,14 @@ export default function DepositWithdrawConfirmModal() {
             gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
-            (statuses.length === 3 && index < 2)
+          (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
-              <ConditionalBox
-                type={typeValue}
-                transactionData={transactionData}
-                waitMessage={waitMessage}
-              />
-            )
+                <ConditionalBox
+                  type={typeValue}
+                  transactionData={transactionData}
+                  waitMessage={waitMessage}
+                />
+              )
             : null}
         </React.Fragment>
       );
@@ -271,7 +272,10 @@ export default function DepositWithdrawConfirmModal() {
                 <TimeLine lineType={lineType} />
               </Box>
               <Box ml={"10px"} maxWidth="100%" width="100%">
-                {renderStatusComponents(statuses, isConnectedToMainNetwork ?? false)}
+                {renderStatusComponents(
+                  statuses,
+                  isConnectedToMainNetwork ?? false
+                )}
               </Box>
             </Flex>
           </Box>
@@ -321,12 +325,14 @@ export default function DepositWithdrawConfirmModal() {
               )}
             </>
           )}
-          <Box w={"100%"} mt={"12px"}>
-            <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-              *This modal doesn't update in real-time.
-              <br /> Please close & reopen it to view the latest data.
-            </Text>
-          </Box>
+          {transactionData.status !== Status.Initiate && (
+            <Box w={"100%"} mt={"12px"}>
+              <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+                *This modal doesn't update in real-time.
+                <br /> Please close & reopen it to view the latest data.
+              </Text>
+            </Box>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
