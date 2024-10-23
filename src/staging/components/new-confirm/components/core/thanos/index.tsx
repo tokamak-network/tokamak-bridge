@@ -117,7 +117,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
 
   const { handleWithdrawTxAction } = useWithdrawAction();
 
-  const {} = useTx({
+  const { } = useTx({
     hash: txHash as `0x${string}`,
     txSort:
       transactionData?.action === Action.Withdraw ? "Withdraw" : "Deposit",
@@ -146,6 +146,8 @@ export default function ThanosDepositWithdrawConfirmModal() {
                 txInfo?.l2TokenAddress,
                 transactionData.amount
               );
+              break;
+            default:
               break;
           }
 

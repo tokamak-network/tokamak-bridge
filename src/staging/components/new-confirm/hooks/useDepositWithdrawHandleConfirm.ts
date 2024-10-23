@@ -40,7 +40,6 @@ export const useHandleConfirm = () => {
       inTransactionToken,
       outTransactionToken
     );
-
     onOpenDepositWithdrawConfirmModal(transaction);
   };
 

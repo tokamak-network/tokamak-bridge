@@ -12,7 +12,7 @@ import { providerByChainId } from "@/config/getProvider";
 import { ethers } from "ethers";
 import { useRecoilState } from "recoil";
 import { txPendingStatus } from "@/recoil/global/transaction";
-import { thanosSepoliaWithdrawHistory } from "@/recoil/history/transaction";
+import { thanosWithdrawHistory } from "@/recoil/history/transaction";
 import { useProvier } from "@/hooks/provider/useProvider";
 import {
   pendingTransactionHashes,
@@ -25,8 +25,8 @@ export const useWithdrawAction = () => {
   const { connectToWallet } = useConnectWallet();
   const { chain } = useNetwork();
   const { switchNetwork } = useSwitchNetwork();
-  const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
-    useRecoilState(thanosSepoliaWithdrawHistory);
+  const [thanosWithdrawalHistory, setThanosSepoliaWithdrawHistory] =
+    useRecoilState(thanosWithdrawHistory);
   const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
     pendingTransactionHashes
   );
@@ -42,7 +42,7 @@ export const useWithdrawAction = () => {
     txHash: string,
     blockTimestamp: number
   ) => {
-    const oldHistory = { ...thanosSepWithdrawHistory };
+    const oldHistory = { ...thanosWithdrawalHistory };
     if (!oldHistory.history) return;
     const newTransactionList = oldHistory.history.map(
       (tx: WithdrawTransactionHistory) => {
@@ -181,7 +181,7 @@ export const useWithdrawAction = () => {
       isConnected,
       chain,
       switchNetwork,
-      thanosSepWithdrawHistory,
+      thanosWithdrawalHistory,
       thanosDepositWithdrawConfirmModal,
     ]
   );

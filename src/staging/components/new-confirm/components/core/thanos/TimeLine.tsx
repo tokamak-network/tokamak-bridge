@@ -24,8 +24,8 @@ const TimeLineComponent: React.FC<TimelineComponentProps> = (props) => {
           index < completedIndex
             ? ProgressStatus.Done
             : index < currentIndex
-            ? ProgressStatus.Doing
-            : ProgressStatus.Todo;
+              ? ProgressStatus.Doing
+              : ProgressStatus.Todo;
         const lineHeight = lineStatus === ProgressStatus.Done ? 62 : 90;
         return (
           <Flex flexDir={"column"} key={index}>
@@ -48,7 +48,7 @@ const TimeLineComponent: React.FC<TimelineComponentProps> = (props) => {
                 mt={"10px"}
                 ml={"3.7px"}
                 position={"absolute"}
-                w={"0.6px"}
+                w={"1px"}
                 height={`${lineHeight}px`}
                 border={
                   lineStatus === ProgressStatus.Done
@@ -59,16 +59,16 @@ const TimeLineComponent: React.FC<TimelineComponentProps> = (props) => {
                 style={
                   lineStatus !== ProgressStatus.Done
                     ? {
-                        backgroundImage:
-                          lineStatus === ProgressStatus.Todo
-                            ? dashedBackgroundImageGray
-                            : lineStatus === ProgressStatus.Doing
+                      backgroundImage:
+                        lineStatus === ProgressStatus.Todo
+                          ? dashedBackgroundImageGray
+                          : lineStatus === ProgressStatus.Doing
                             ? dashedBackgroundImageBlue
                             : undefined,
-                        backgroundPosition: "bottom",
-                        backgroundSize: "5px 5px",
-                        backgroundRepeat: "repeat-y",
-                      }
+                      backgroundPosition: "bottom",
+                      backgroundSize: "5px 5px",
+                      backgroundRepeat: "repeat-y",
+                    }
                     : undefined
                 }
               />

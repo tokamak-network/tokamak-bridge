@@ -62,6 +62,7 @@ import { useFinalize } from "@/hooks/history/useFinalize";
 import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
 import Image from "next/image";
 import InfoIcon from "@/assets/icons/info.svg"
+import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -73,14 +74,19 @@ export default function DepositWithdrawConfirmModal() {
   const isStandardBridge =
     transactionData?.toAddress === transactionData?.fromAddress;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const l1ChainId = getBridgeL1ChainId(transactionData);
+  const l2ChainId = getBridgeL2ChainId(transactionData) ?? SupportedChainId.TITAN;
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
-  const networkChainId = transactionData?.outNetwork || THANOS_SEPOLIA_CHAIN_ID;
   const inNetworkChainId =
     transactionData?.inNetwork || SupportedChainId.MAINNET;
 
-  const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
+  const outNetworkChainId =
+    transactionData?.outNetwork || SupportedChainId.MAINNET;
+
+
+  const chainName = getKeyByValue(SupportedChainId, l2ChainId) || "";
 
   const displayNetworkName = NetworkDisplayName[chainName];
   /**
@@ -288,7 +294,7 @@ export default function DepositWithdrawConfirmModal() {
                   </Text>
                   <Flex>
                     <NetworkSymbol
-                      networkI={transactionData.outNetwork}
+                      networkI={l2ChainId}
                       networkH={16}
                       networkW={16}
                     />
@@ -322,7 +328,7 @@ export default function DepositWithdrawConfirmModal() {
                 </Flex>
                 <Link
                   target="_blank"
-                  href={`${BLOCKEXPLORER_CONSTANTS[inNetworkChainId]}/address/${address}`}
+                  href={`${BLOCKEXPLORER_CONSTANTS[outNetworkChainId]}/address/${address}`}
                 >
                   {isStandardBridge ? (
                     <Text

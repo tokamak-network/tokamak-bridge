@@ -155,7 +155,7 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
           return;
         });
     }
-  }, [tx, label]);
+  }, []);
 
   const txLink = useMemo(() => {
     if (progressStuatus === ProgressStatus.Done && l1ChainId && l2ChainId) {
@@ -163,19 +163,16 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
       const l2Url = getBlockExplorerUrl(l2ChainId);
       switch (label) {
         case Status.Initiate:
-          return `${tx.action === Action.Deposit ? l1Url : l2Url}/tx/${
-            (tx as StandardHistory).transactionHashes.initialTransactionHash
-          }`;
+          return `${tx.action === Action.Deposit ? l1Url : l2Url}/tx/${(tx as StandardHistory).transactionHashes.initialTransactionHash
+            }`;
         case Status.Prove:
-          return `${l1Url}/tx/${
-            (tx as WithdrawTransactionHistory).transactionHashes
-              .proveTransactionHash
-          }`;
+          return `${l1Url}/tx/${(tx as WithdrawTransactionHistory).transactionHashes
+            .proveTransactionHash
+            }`;
         case Status.Finalize:
-          return `${l1Url}/tx/${
-            (tx as WithdrawTransactionHistory).transactionHashes
-              .finalizedTransactionHash
-          }`;
+          return `${l1Url}/tx/${(tx as WithdrawTransactionHistory).transactionHashes
+            .finalizedTransactionHash
+            }`;
       }
     }
     return "";

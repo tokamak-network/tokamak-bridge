@@ -23,8 +23,8 @@ export const selectedTransactionCategory = atom<Action | CT_ACTION>({
   default: Action.Deposit,
 });
 
-export const thanosSepoliaDepositHistory = atom<CurrentDepositTransaction>({
-  key: "thanosSepoliaDepositHistory",
+export const thanosDepositHistory = atom<CurrentDepositTransaction>({
+  key: "thanosDepositHistory",
   default: {
     latestBlockNumber: "0",
     latestRelayedBlockNumber: "0",
@@ -32,28 +32,28 @@ export const thanosSepoliaDepositHistory = atom<CurrentDepositTransaction>({
   },
 });
 
-export const thanosSepoliaWithdrawHistory = atom<CurrentWithdrawTransaction>({
-  key: "thanosSepoliaWithdrawHistory",
+export const thanosWithdrawHistory = atom<CurrentWithdrawTransaction>({
+  key: "thanosWithdrawHistory",
   default: {
     latestBlockNumber: "0",
     history: null,
   },
 });
 
-export const titanSepoliaDepositHistory = atom<CurrentDepositTransaction>({
-  key: "titanSepoliaDepositHistory",
+export const titanWithdrawHistory = atom<CurrentWithdrawTransaction>({
+  key: "titanWithdrawHistory",
   default: {
     latestBlockNumber: "0",
     history: null,
-  } as CurrentDepositTransaction,
+  },
 });
 
 export const titanDepositHistory = atom<CurrentDepositTransaction>({
   key: "titanDepositHistory",
   default: {
     latestBlockNumber: "0",
-    history: [],
-  },
+    history: null,
+  } as CurrentDepositTransaction,
 });
 
 export const historyRefetch = atom<boolean>({

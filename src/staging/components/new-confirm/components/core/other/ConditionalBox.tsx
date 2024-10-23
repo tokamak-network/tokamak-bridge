@@ -29,7 +29,6 @@ interface ConditionalBoxProps {
 export default function ConditionalBox(props: ConditionalBoxProps) {
   const { type, transactionData, waitMessage, timeDisplay, isCountDown } =
     props;
-
   if (type === "wait") {
     return (
       <Box w={"100%"} h={"28px"} mt="3px" mb="21px" py="3px" bg="#15161D">
@@ -65,9 +64,9 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       transactionData.status === Status.Finalize &&
       transactionData.action === Action.Withdraw;
 
-    if (claimReadyButton) {
-      return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D"></Box>;
-    }
+    // if (claimReadyButton) {
+    //   return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D"></Box>;
+    // }
 
     const startDate = useMemo(() => {
       if (
@@ -81,8 +80,8 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
               "days",
               0
             ) *
-              60) *
-            1000
+            60) *
+          1000
         );
       }
       return null;

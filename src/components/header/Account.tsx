@@ -15,9 +15,9 @@ import HISTORYICON from "assets/icons/header/history.svg";
 import WALLET_ICON from "assets/icons/wallet.svg";
 import { useEffect } from "react";
 import {
-  thanosSepoliaDepositHistory,
-  thanosSepoliaWithdrawHistory,
-  titanSepoliaDepositHistory,
+  thanosDepositHistory,
+  thanosWithdrawHistory,
+  titanDepositHistory,
 } from "@/recoil/history/transaction";
 import useConnectedNetwork from "@/hooks/network";
 
@@ -30,32 +30,32 @@ export default function Account() {
   const { headerMobileView: mobileView } = useMediaView();
   const [actionOptionStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
-  const [thanosSepoliaDipositHistory, setThanosSepoliaDipositHistory] =
-    useRecoilState(thanosSepoliaDepositHistory);
-  const [titanSepoliaDipositHistory, setTitanSepoliaDipositHistory] =
-    useRecoilState(titanSepoliaDepositHistory);
+  const [thanosDipositHistory, setThanosDipositHistory] =
+    useRecoilState(thanosDepositHistory);
+  const [titanDipositHistory, setTitanDipositHistory] =
+    useRecoilState(titanDepositHistory);
 
-  const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
-    useRecoilState(thanosSepoliaWithdrawHistory);
+  const [thanosSepWithdrawHistory, setThanosWithdrawHistory] =
+    useRecoilState(thanosWithdrawHistory);
 
   const buttonText = isConnected
     ? trimAddress({ address })
     : mobileView
-    ? "Connect"
-    : "Connect Wallet";
+      ? "Connect"
+      : "Connect Wallet";
 
   useEffect(() => {
-    setThanosSepoliaDipositHistory({
+    setThanosDipositHistory({
       latestBlockNumber: "0",
       latestRelayedBlockNumber: "0",
       history: null,
     });
-    setTitanSepoliaDipositHistory({
+    setTitanDipositHistory({
       latestBlockNumber: "0",
       latestRelayedBlockNumber: "0",
       history: null,
     });
-    setThanosSepoliaWithdrawHistory({
+    setThanosWithdrawHistory({
       latestBlockNumber: "0",
       history: null,
     });

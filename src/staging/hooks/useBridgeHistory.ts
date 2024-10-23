@@ -68,9 +68,10 @@ import {
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodeBridgeHistoryLog";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
-  thanosSepoliaDepositHistory,
-  thanosSepoliaWithdrawHistory,
-  titanSepoliaDepositHistory,
+  thanosDepositHistory,
+  thanosWithdrawHistory,
+  titanDepositHistory,
+  titanWithdrawHistory
 } from "@/recoil/history/transaction";
 import {
   getBridgeL1ChainId,
@@ -97,6 +98,7 @@ import { l2Provider } from "@/config/l2Provider";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
+import L2TitanStandardBridgeAbi from "@/constant/abis/L2StandardBridge.json";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -151,14 +153,14 @@ export const useSubgraph = () => {
   const [pollCount, setPollCount] = useState<number>(0);
   const { L1_CLIENT, L2_CLIENT, L2_THANOS_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const [thanosSepoliaDipositHistory, setThanosSepoliaDipositHistory] =
-    useRecoilState(thanosSepoliaDepositHistory);
+  const [thanosDipositHistory, setThanosDipositHistory] =
+    useRecoilState(thanosDepositHistory);
 
-  const [titanSepoliaDipositHistory, setTitanSepoliaDipositHistory] =
-    useRecoilState(titanSepoliaDepositHistory);
+  const [titanDipositHistory, setTitanDipositHistory] =
+    useRecoilState(titanDepositHistory);
 
-  const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
-    useRecoilState(thanosSepoliaWithdrawHistory);
+  const [thanosSepWithdrawHistory, setThanosWithdrawHistory] =
+    useRecoilState(thanosWithdrawHistory);
 
   const L1Bridge = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
@@ -197,7 +199,7 @@ export const useSubgraph = () => {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
-      blockNumber: titanSepoliaDipositHistory.latestBlockNumber,
+      blockNumber: titanDipositHistory.latestRelayedBlockNumber,
     },
     // pollInterval: 13000,
     client: L1_CLIENT[0],
@@ -228,7 +230,7 @@ export const useSubgraph = () => {
       L1UsdcBridge: L1USDCBridgeForThanos,
       account: address,
       remoteToken: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
-      blockNumber: thanosSepoliaDipositHistory.latestRelayedBlockNumber,
+      blockNumber: thanosDipositHistory.latestRelayedBlockNumber,
     },
     // pollInterval: 5000,
     client: L1_CLIENT[1],
@@ -247,7 +249,7 @@ export const useSubgraph = () => {
   } = useQuery(GET_SentMessageExtensions, {
     variables: {
       transactionHashes: l1ThanosDepositTxHashes,
-      blockNumber: thanosSepoliaDipositHistory.latestRelayedBlockNumber,
+      blockNumber: thanosDipositHistory.latestRelayedBlockNumber,
     },
     // pollInterval: 5000,
     client: L1_CLIENT[1],
@@ -347,16 +349,17 @@ export const useSubgraph = () => {
 };
 
 export const useWithdrawData = () => {
-  const [withdrawHistory, setWithdrawHistory] = useState<
-    WithdrawTransactionHistory[] | [] | null
-  >(null);
-
   const { l2TitanData, l2ThanosData, l1ThanosOptimismPortal, l1ThanosData, pollCount } =
     useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider, ThanosProvider } = useProvier();
-  const [thanosSepWithdrawHistory, setThanosSepoliaWithdrawHistory] =
-    useRecoilState(thanosSepoliaWithdrawHistory);
+  const [thanosSepWithdrawHistory, setThanosWithdrawHistory] =
+    useRecoilState(thanosWithdrawHistory);
+  const [titanWithdrawalHistory, setTitanWithdrawHistory] =
+    useRecoilState(titanWithdrawHistory);
+  const [withdrawHistory, setWithdrawHistory] = useState<
+    WithdrawTransactionHistory[] | null
+  >(null);
   const [
     thanosDepositWithdrawConfirmModal,
     setThanosDepositWithdrawConfirmModal,
@@ -365,7 +368,7 @@ export const useWithdrawData = () => {
     pendingTransactionHashes
   );
 
-  const fetchData = useCallback(async () => {
+  const fetchTitanData = useCallback(async () => {
     if (l2TitanData && isConnectedToMainNetwork !== undefined && L2Provider) {
       const l2SentMessges = l2TitanData.sentMessages;
       const result: WithdrawTransactionHistory[] = await Promise.all(
@@ -385,42 +388,35 @@ export const useWithdrawData = () => {
               resolved,
               isConnectedToMainNetwork
             );
-
           const l2TxReceipt = await L2Provider.getTransactionReceipt(
             sentMessage.transactionHash
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
           if (
-            l2TxReceipt.logs[3] === undefined ||
-            currentStatus === undefined
+            !l2TxReceipt
           ) {
-            return new Error(
+            console.error(
               "Invalid transaction with l2TxReceipt.logs[3] or currentStatus"
             );
+            return;
           }
 
-          const logs = utils.defaultAbiCoder.decode(
-            ["address", "uint256", "bytes"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
+          const parsedLog = getDecodedStandardBridgeLog(
+            l2TxReceipt.logs,
+            new ethers.utils.Interface(L2TitanStandardBridgeAbi),
+            isConnectedToMainNetwork ? SupportedChainId.TITAN : SupportedChainId.TITAN_SEPOLIA
           );
-          const l1TokenAddress = utils.defaultAbiCoder.decode(
-            ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
-          )[0];
-          const l2TokenAddress = utils.defaultAbiCoder.decode(
-            ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
-          )[0];
-          const amount = BigInt(logs[1]).toString();
+          if (!parsedLog) return;
+
+          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
+
           const { l1Token, l2Token } = getTransactionToken(
-            l1TokenAddress,
-            l2TokenAddress,
+            l1TokenAddress.toLowerCase(),
+            l2TokenAddress.toLowerCase(),
             amount,
             false,
-            isConnectedToMainNetwork
-              ? SupportedChainId.TITAN
-              : SupportedChainId.TITAN_SEPOLIA
+            isConnectedToMainNetwork ? SupportedChainId.TITAN : SupportedChainId.TITAN_SEPOLIA
           );
           if (!l1Token || !l2Token) return;
           const status = getStatus(currentStatus);
@@ -461,14 +457,16 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
-      const sortedResult = filteredResult.sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
-
-      if (sortedResult) return setWithdrawHistory(sortedResult);
-      return setWithdrawHistory([]);
+      const sortedResult = getSortedTxListByDate(
+        filteredResult
+      ) as WithdrawTransactionHistory[];
+      if (sortedResult) {
+        const newTitanWithdrawHistory = {
+          ...titanWithdrawalHistory,
+        };
+        newTitanWithdrawHistory.history = sortedResult;
+        setTitanWithdrawHistory(newTitanWithdrawHistory);
+      }
     }
   }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
 
@@ -595,7 +593,7 @@ export const useWithdrawData = () => {
           ...thanosSepWithdrawHistory,
         };
         newThanosWithdrawHistory.history = sortedResult;
-        setThanosSepoliaWithdrawHistory(newThanosWithdrawHistory);
+        setThanosWithdrawHistory(newThanosWithdrawHistory);
       }
     }
   }, [
@@ -607,32 +605,44 @@ export const useWithdrawData = () => {
     thanosDepositWithdrawConfirmModal.transaction,
   ]);
 
-  // useEffect(() => {
-  //   fetchData().catch((error) => {
-  //     console.error("Error in fetching withdraw data", error);
-  //   });
-  // }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
+  const getAllWithdrawData = useCallback(async () => {
+    if (
+      titanWithdrawalHistory.history &&
+      thanosSepWithdrawHistory.history
+    ) {
+      const totalWithdrawResult = getSortedTxListByDate([
+        ...(titanWithdrawalHistory.history ?? []),
+        ...(thanosSepWithdrawHistory.history ?? []),
+      ]);
+      setWithdrawHistory(totalWithdrawResult as WithdrawTransactionHistory[]);
+    }
+  }, [titanWithdrawalHistory, thanosSepWithdrawHistory]);
+
+  useEffect(() => {
+    fetchTitanData().catch((error) => {
+      console.error("Error in fetching titan withdraw data", error);
+    });
+  }, [fetchTitanData, pollCount, isConnectedToMainNetwork]);
 
   useEffect(() => {
     if (pendingTxHashes.length > 0) return;
     fetchThanosData().catch((error) => {
-      console.error("Error in fetching withdraw data", error);
+      console.error("Error in fetching thanos withdraw data", error);
     });
-  }, [
-    fetchThanosData,
-    pollCount,
-    isConnectedToMainNetwork,
-    ThanosProvider,
-  ]);
+  }, [fetchThanosData, pollCount, isConnectedToMainNetwork]);
 
-  return { withdrawHistory: thanosSepWithdrawHistory.history };
+  useEffect(() => {
+    getAllWithdrawData();
+  }, [getAllWithdrawData]);
+
+  return { withdrawHistory };
 };
 
 export const useDepositData = () => {
-  const [thanosSepoliaDipositHistory, setThanosSepoliaDipositHistory] =
-    useRecoilState(thanosSepoliaDepositHistory);
-  const [titanSepoliaDipositHistory, setTitanSepoliaDipositHistory] =
-    useRecoilState(titanSepoliaDepositHistory);
+  const [thanosDipositHistory, setThanosDipositHistory] =
+    useRecoilState(thanosDepositHistory);
+  const [titanDipositHistory, setTitanDipositHistory] =
+    useRecoilState(titanDepositHistory);
   const [depositHistory, setDepositHistory] = useState<
     DepositTransactionHistory[] | null
   >(null);
@@ -649,6 +659,8 @@ export const useDepositData = () => {
   const fetchTitanData = useCallback(async () => {
     if (l1TitanData && isConnectedToMainNetwork !== undefined && L1Provider) {
       const l1SentMessges = l1TitanData.sentMessages;
+      let latestRelayedBlockNumber =
+        titanDipositHistory.latestRelayedBlockNumber ?? "0";
       const result: DepositTransactionHistory[] = await Promise.all(
         l1SentMessges.map(async (sentMessage: SentMessages) => {
           const resolved: Resolved = {
@@ -678,6 +690,11 @@ export const useDepositData = () => {
             );
             return;
           }
+          if (currentStatus > 3)
+            latestRelayedBlockNumber = Math.max(
+              Number(latestRelayedBlockNumber),
+              Number(sentMessage.blockNumber)
+            ).toString();
 
           const parsedLog = getDecodedStandardBridgeLog(
             l1TxReceipt.logs,
@@ -749,19 +766,25 @@ export const useDepositData = () => {
         if (!(tx instanceof Error) && tx !== undefined && tx !== null)
           return tx;
       });
+      const sortedResult = filteredResult.sort(
+        (currentTx, previousTx) =>
+          previousTx.blockTimestamps.initialCompletedTimestamp -
+          currentTx.blockTimestamps.initialCompletedTimestamp
+      );
       if (filteredResult) {
         const newTitanDipositHistory = {
-          ...titanSepoliaDipositHistory,
+          ...titanDipositHistory,
         };
         newTitanDipositHistory.latestBlockNumber =
           (l1TitanData?.sentMessages?.length ?? 0) > 0
             ? l1TitanData.sentMessages[0].blockNumber
             : newTitanDipositHistory.latestBlockNumber;
-        newTitanDipositHistory.history = [
-          ...(newTitanDipositHistory.history ?? []),
-          ...filteredResult,
-        ];
-        setTitanSepoliaDipositHistory(newTitanDipositHistory);
+        newTitanDipositHistory.history = updatedHistory(
+          titanDipositHistory.history,
+          sortedResult
+        ) as DepositTransactionHistory[];
+        newTitanDipositHistory.latestRelayedBlockNumber = latestRelayedBlockNumber;
+        setTitanDipositHistory(newTitanDipositHistory);
       }
     }
   }, [l1TitanData, isConnectedToMainNetwork, L1Provider, pollCount]);
@@ -779,7 +802,7 @@ export const useDepositData = () => {
       const relayedMessages = l2ThanosRelayedMessages.relayedMessages;
       const msgExtentions = l1ThanosSentMsgExtensions.sentMessageExtension1S;
       let latestRelayedBlockNumber =
-        thanosSepoliaDipositHistory.latestRelayedBlockNumber ?? "0";
+        thanosDipositHistory.latestRelayedBlockNumber ?? "0";
       const result: DepositTransactionHistory[] = await Promise.all(
         l1SentMessges.map(async (sentMessage: SentMessages) => {
           const resolved: Resolved = {
@@ -865,19 +888,19 @@ export const useDepositData = () => {
       );
       if (sortedResult) {
         const newThanosDipositHistory = {
-          ...thanosSepoliaDipositHistory,
+          ...thanosDipositHistory,
         };
         newThanosDipositHistory.latestBlockNumber =
           (l1ThanosData?.sentMessages?.length ?? 0) > 0
             ? l1ThanosData.sentMessages[0].blockNumber
             : newThanosDipositHistory.latestBlockNumber;
         newThanosDipositHistory.history = updatedHistory(
-          thanosSepoliaDipositHistory.history,
+          thanosDipositHistory.history,
           sortedResult
         ) as DepositTransactionHistory[];
         newThanosDipositHistory.latestRelayedBlockNumber =
           latestRelayedBlockNumber;
-        setThanosSepoliaDipositHistory(newThanosDipositHistory);
+        setThanosDipositHistory(newThanosDipositHistory);
       }
     }
   }, [
@@ -890,27 +913,33 @@ export const useDepositData = () => {
 
   const getAllDepositeData = useCallback(async () => {
     if (
-      titanSepoliaDipositHistory.history &&
-      thanosSepoliaDipositHistory.history
+      titanDipositHistory.history &&
+      thanosDipositHistory.history
     ) {
       const totalDepositResult = getSortedTxListByDate([
-        ...(titanSepoliaDipositHistory.history ?? []),
-        ...(thanosSepoliaDipositHistory.history ?? []),
+        ...(titanDipositHistory.history ?? []),
+        ...(thanosDipositHistory.history ?? []),
       ]);
       setDepositHistory(totalDepositResult as DepositTransactionHistory[]);
     }
-  }, [titanSepoliaDipositHistory, thanosSepoliaDipositHistory]);
+  }, [titanDipositHistory, thanosDipositHistory]);
 
   useEffect(() => {
     if (isConnectedToMainNetwork) {
-      setThanosSepoliaDipositHistory((prev) => {
+      setThanosDipositHistory((prev) => {
+        return {
+          ...prev,
+          history: [],
+        };
+      });
+      setTitanDipositHistory((prev) => {
         return {
           ...prev,
           history: [],
         };
       });
     }
-  }, [isConnectedToMainNetwork, setThanosSepoliaDipositHistory]);
+  }, [isConnectedToMainNetwork, setThanosDipositHistory]);
 
   useEffect(() => {
     fetchTitanData().catch((error) => {

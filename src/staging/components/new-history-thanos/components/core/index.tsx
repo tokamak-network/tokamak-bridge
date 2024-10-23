@@ -24,6 +24,8 @@ import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
 import LoadingTx from "@/components/history/LoadingTx";
 import { pendingTransactionHashes } from "@/recoil/modal/atom";
+import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 const NoAcitivityComponent = () => {
   return (
@@ -95,6 +97,7 @@ export default function AccountHistoryNew() {
             isWithdrawTransactionHistory(transaction)
             ? transaction.transactionHashes.initialTransactionHash
             : index;
+        const l2ChainId = getBridgeL2ChainId(transaction)
         return (
           <Box
             key={`${transaction.action}-${key}`}
@@ -107,12 +110,12 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              isCrossTradyHistory ? (
+              isCrossTradyHistory || !isThanosChain(l2ChainId) ? (
                 <LegacyComplete {...transaction} />
               ) : (
                 <Complete {...transaction} />
               )
-            ) : isCrossTradyHistory ? (
+            ) : isCrossTradyHistory || !isThanosChain(l2ChainId) ? (
               <LegacyPending transaction={transaction} />
             ) : (
               <Pending transaction={transaction} />
