@@ -92,7 +92,6 @@ export default function ThanosDepositWithdrawConfirmModal() {
       transactionData.inToken.symbol,
       transactionData.outNetwork
     );
-
     setTxInfo({
       l1ChainId,
       l2ChainId,
@@ -105,8 +104,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
           ? outTokenAddress
           : inTokenAddress,
     });
-  }, [transactionData]);
-
+  }, [transactionData, address, chain]);
   const handleConfirmCheck = (e: React.ChangeEvent<HTMLInputElement>) =>
     setIsConfirmed(e.target.checked);
 
@@ -179,7 +177,7 @@ export default function ThanosDepositWithdrawConfirmModal() {
       )
         handleWithdrawTxAction(transactionData as WithdrawTransactionHistory);
     }
-  }, [transactionData, thanosCM, chain, address]);
+  }, [transactionData, thanosCM, chain, address, txInfo]);
 
   const { isApproved } = useApprove();
 

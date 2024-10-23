@@ -5,7 +5,7 @@ import { isThanosChain } from "@/utils/network/checkNetwork";
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
     INITIAL_MINUTES: 15, // Initial state time for deposit (in minutes)
-    INITIAL_SECS: 900,
+    INITIAL_SECS: 915, // Set to 915 seconds for UI purposes, although the spec is 900 seconds
   },
   WITHDRAW: {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)

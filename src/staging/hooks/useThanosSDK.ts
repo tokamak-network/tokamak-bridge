@@ -1,4 +1,4 @@
-import { useAccount, useWalletClient } from "wagmi";
+import { useAccount, useNetwork, useWalletClient } from "wagmi";
 const thanosSDK = require("@tokamak-network/thanos-sdk");
 import { ethers } from "ethers";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -14,6 +14,7 @@ export const useThanosSDK = (
   useEffect(() => {
     if (!isConnected) connectToWallet();
   }, [isConnected]);
+  const { chain } = useNetwork();
   const { connectToWallet } = useConnectWallet();
   const [crossChainMessenger, setCrossChainMessenger] = useState<any>(null);
   useEffect(() => {
@@ -28,7 +29,7 @@ export const useThanosSDK = (
       nativeTokenAddress: getTokenAddressByChainId("TON", l1ChainId),
     });
     setCrossChainMessenger(cm);
-  }, [l1ChainId, l2ChainId]);
+  }, [l1ChainId, l2ChainId, chain]);
 
   const estimateGas = useMemo(() => {
     if (!crossChainMessenger) return null;

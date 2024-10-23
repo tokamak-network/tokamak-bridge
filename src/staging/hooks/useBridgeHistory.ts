@@ -395,18 +395,30 @@ export const useWithdrawData = () => {
             new ethers.utils.Interface(L2TitanStandardBridgeAbi),
             isConnectedToMainNetwork ? SupportedChainId.TITAN : SupportedChainId.TITAN_SEPOLIA
           );
-          if (!parsedLog) return;
 
-          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
+          if (!parsedLog) {
+            console.log(`Invalid transaction with parsedLog Error`);
+            return;
+          }
 
+          const { l1TokenAddress, l2TokenAddress, amount, from, to } =
+            parsedLog;
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress.toLowerCase(),
             l2TokenAddress.toLowerCase(),
             amount,
-            false,
-            isConnectedToMainNetwork ? SupportedChainId.TITAN : SupportedChainId.TITAN_SEPOLIA
+            true,
+            isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA
           );
-          if (!l1Token || !l2Token) return;
+
+          if (!l1Token || !l2Token) {
+            console.error(
+              `Invalid transaction with {!l1Token || !l2Token} Error`
+            );
+            return;
+          }
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
