@@ -26,8 +26,6 @@ const Percentage = (props: { percent: string }) => {
   const isNegative = props.percent.includes("-");
   const isZero = Number(props.percent) === 0;
 
-  if (isZero) console.log(props.percent);
-
   return (
     <Text
       fontSize={14}
