@@ -18,7 +18,10 @@ export default function CustomTooltip(props: {
     px?: string;
     py?: string;
     tooltipLineHeight?: string;
+    left?: string;
   };
+  labelStyle?: CSSProperties;
+  tooltipArrowStyle?: CSSProperties;
   needArrow?: boolean;
 }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -47,6 +50,7 @@ export default function CustomTooltip(props: {
           color={"#fff"}
           pos={"relative"}
           {...props.style}
+          style={props.labelStyle}
         >
           <Text
             w={"100%"}
@@ -77,7 +81,13 @@ export default function CustomTooltip(props: {
       >
         {props.content}
         {arrowNeeded && isOpen && (
-          <Box pos={"absolute"} top={"-12px"} left={"4px"} zIndex={100}>
+          <Box
+            pos={"absolute"}
+            top={"-12px"}
+            left={"4px"}
+            zIndex={100}
+            style={props.tooltipArrowStyle}
+          >
             <Image src={TooltipArrow} alt={"TooltipArrow"}></Image>
           </Box>
         )}
