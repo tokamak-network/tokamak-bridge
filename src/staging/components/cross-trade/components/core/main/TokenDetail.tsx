@@ -24,29 +24,39 @@ interface TokenDetailProps {
 
 const Percentage = (props: { percent: string }) => {
   const isNegative = props.percent.includes("-");
+  const isZero = Number(props.percent) === 0;
+
+  if (isZero) console.log(props.percent);
+
   return (
     <Text
       fontSize={14}
       fontWeight={500}
-      color={isNegative ? "#DD3A44" : "#03D187"}
+      color={
+        isZero && !isNegative ? "#fff" : isNegative ? "#DD3A44" : "#03D187"
+      }
     >
-      {!isNegative && "+"} {props.percent}%
+      {!isNegative && !isZero && "+"} {props.percent}%
     </Text>
   );
 };
+
 const USDValue = (props: { usdAmount: string }) => {
   const isNegative = props.usdAmount.includes("-");
+  const isZero = Number(props.usdAmount) === 0;
 
   return (
     <Text
       fontSize={11}
       fontWeight={400}
-      color={isNegative ? "#DD3A44" : "#03D187"}
+      color={isZero ? "#fff" : isNegative ? "#DD3A44" : "#03D187"}
     >
-      {isNegative ? "-" : "+"}${props.usdAmount.replaceAll("-", "")}
+      {isZero ? "" : isNegative ? "-" : "+"}$
+      {props.usdAmount.replaceAll("-", "")}
     </Text>
   );
 };
+
 const NetProfit = (props: { percent: string; usdAmount: string }) => {
   return (
     <Flex flexDir={"column"}>
@@ -79,7 +89,9 @@ export default function TokenDetail(props: TokenDetailProps) {
   }, [token, tokenPriceWithAmount, profit?.percent]);
 
   if (isProfit) {
-    return <NetProfit percent={priceOrPercent} usdAmount={formattedAmount} />;
+    return (
+      <NetProfit percent={priceOrPercent} usdAmount={commafy(profit.usd)} />
+    );
   }
 
   return (

@@ -313,13 +313,19 @@ export default function CTConfirmHistoryFooter(props: {
         </Flex>
       </Box>
       {isRequest && (
-        <Box w={"100%"} mt={"12px"} pb={"4px"}>
+        <Box w={"100%"} mt={"12px"}>
           <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
             Tip: Update the service fee to reflect significant <br /> change in
             L1 gas price.
           </Text>
         </Box>
       )}
+      <Box w={"100%"} mt={"12px"}>
+        <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+          *This modal doesn't update in real-time.
+          <br /> Please close & reopen it to view the latest data.
+        </Text>
+      </Box>
     </Flex>
   );
 }

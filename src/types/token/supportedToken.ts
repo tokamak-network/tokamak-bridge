@@ -130,20 +130,6 @@ export const supportedTokens: SupportedTokens_T = [
     availableForBirdge: true,
     availableForThanosBridge: true,
   },
-  {
-    tokenName: "TONStarter",
-    tokenSymbol: "TOS",
-    address: {
-      MAINNET: MAINNET_CONTRACTS.TOS_ADDRESS,
-      TITAN: TOKAMAK_CONTRACTS.TOS_ADDRESS,
-      SEPOLIA: SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
-    },
-    decimals: 18,
-    isNativeCurrency: null,
-    availableForBirdge: true,
-  },
 ];
 
 export const supportedTokensForCT = supportedTokens.filter(

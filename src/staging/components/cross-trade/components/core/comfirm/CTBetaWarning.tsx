@@ -6,6 +6,7 @@ import {
   Text,
   Button,
   Link,
+  Flex,
 } from "@chakra-ui/react";
 import { useRecoilState } from "recoil";
 import { ctRefreshModalStatus } from "@/recoil/modal/atom";
@@ -24,10 +25,9 @@ export const CTBetaWarning = () => {
       <ModalOverlay />
       <ModalContent
         width={mobileView ? "320px" : "404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
-        h={mobileView ? "235px" : "228px"}
       >
         <ModalBody
           p={0}
@@ -46,10 +46,37 @@ export const CTBetaWarning = () => {
             fontWeight={400}
             lineHeight={mobileView ? "24px" : "26px"}
             w={mobileView ? "100%" : "356px"}
+            textAlign={"left"}
           >
-            {mobileView
-              ? "Cross trade beta testing is in progress. Refrain from providing large amounts of liquidity, as it may result in financial losses."
-              : "Cross trade beta testing is in progress. \nRefrain from providing large amounts of \nliquidity, as it may result in financial losses."}
+            {mobileView ? (
+              <Flex flexDir={"column"} rowGap={"16px"}>
+                <Text>
+                  Cross trade beta testing is in progress. Refrain from
+                  providing large amounts of liquidity, as it may result in
+                  financial losses.
+                </Text>
+                <Text>
+                  L2 state root containing the cross trade request must be
+                  rolled up to Ethereum and wait 15 minutes for block finality.
+                  Our current frontend doesn't verify this, so we advise users
+                  to conduct their own research.
+                </Text>
+              </Flex>
+            ) : (
+              <Flex flexDir={"column"} rowGap={"16px"}>
+                <Text>
+                  Cross trade beta testing is in progress. Refrain from
+                  providing large amounts of liquidity, as it may result in
+                  financial losses.
+                </Text>
+                <Text>
+                  L2 state root containing the cross trade request must be
+                  rolled up to Ethereum and wait 15 minutes for block finality.
+                  Our current frontend doesn't verify this, so we advise users
+                  to conduct their own research.
+                </Text>
+              </Flex>
+            )}
           </Text>
           <Button
             w={"100%"}

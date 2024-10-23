@@ -38,9 +38,6 @@ import {
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers, utils } from "ethers";
-import {
-  getDecodeLog,
-} from "@/utils/history/getDecodeLog";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
   getDepositStatus,
@@ -66,7 +63,7 @@ import {
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodeBridgeHistoryLog";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState } from "recoil";
 import {
   thanosDepositHistory,
   thanosWithdrawHistory,
@@ -74,27 +71,18 @@ import {
   titanWithdrawHistory
 } from "@/recoil/history/transaction";
 import {
-  getBridgeL1ChainId,
-  getBridgeL2ChainId,
-} from "../components/new-confirm/utils";
-import {
   getThanosMessageStatuaWithSubgraph,
-  getThanosMessageStatus,
 } from "../utils/getMessageStatus";
 import {
   GET_RelayedMessages,
   GET_SentMessageExtensions,
   GET_withdrawalProvens_withdrawalFinalizeds,
 } from "@/graphql/data/queries";
-import { transactionData } from "@/recoil/global/transaction";
 import {
   pendingTransactionHashes,
   thanosDepositWithdrawConfirmModalStatus,
 } from "@/recoil/modal/atom";
-import useDepositWithdrawConfirm from "../components/new-confirm/hooks/useDepositWithdrawConfirmModal";
-import { getSortedTxHistory, getSortedTxListByDate } from "../utils/history";
-import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
-import { l2Provider } from "@/config/l2Provider";
+import { getSortedTxListByDate } from "../utils/history";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
@@ -967,16 +955,14 @@ export const useRequestHistoryData = () => {
   const { data: l2Data } = useCrossTradeData_L2({
     isHistory: true,
   });
-  const { data: l1Data } = useCrossTradeData_L1({
-    isHistory: true,
-  });
+  const { data: l1Data } = useCrossTradeData_L1({});
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   useEffect(() => {
     if (l2Data && l1Data) {
       const requestCTs = l2Data.requestCTs;
       const cancelCTs = l2Data.cancelCTs;
-      const providerClaimCTs = l2Data.providerClaimCTs;
+      const providerClaimCTs = l1Data.provideCTs;
       const editCTs = l1Data.editCTs;
       const l1CancelCTs = l1Data.l1CancelCTs;
 

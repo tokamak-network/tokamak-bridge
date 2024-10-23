@@ -278,7 +278,7 @@ export const useRequestData = (
           );
 
           const profitRatio = (profitAmount / Number(provideAmount)) * 100;
-
+          const profitUSD = profitAmount * (marketPrice ?? 0);
           const isProvided = isRequestProvided({
             providerClaimCTs,
             saleCount: item._saleCount,
@@ -328,6 +328,7 @@ export const useRequestData = (
           );
           const providingUSD = Number(inTokenAmount) * Number(marketPrice);
           const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
+          const percent = (profitUSD / providingUSD) * 100;
 
           return {
             requester: item._requester,
@@ -338,7 +339,8 @@ export const useRequestData = (
             profit: {
               amount: profitAmount.toString(),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
-              percent: profitRatio.toFixed(30),
+              usd: profitUSD,
+              percent: percent.toFixed(30),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),

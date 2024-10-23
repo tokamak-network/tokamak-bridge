@@ -4,9 +4,10 @@ import {
   TransactionHistory,
 } from "@/staging/types/transaction";
 import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
-import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
+import { TESTNET_TRANSACTION_CONSTANTS, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { Tr } from "@chakra-ui/react";
 
 //getConfirmType.ts
 const getLineType = (transactionData: TransactionHistory): number => {
@@ -75,6 +76,7 @@ const getType = (lineType: number, index: number) => {
   return typeMap[lineType] || undefined;
 };
 
+
 const getWaitMessage = (
   lineType: number,
   index: number,
@@ -87,9 +89,9 @@ const getWaitMessage = (
         : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${chainId === SupportedChainId.TITAN ||
-        chainId === SupportedChainId.TITAN_SEPOLIA
-        ? 5
-        : "1 ~ 2"
+      chainId === SupportedChainId.TITAN_SEPOLIA
+      ? 5
+      : "1 ~ 2"
       } mins`,
   };
   return waitMessageMap[lineType] || undefined;
