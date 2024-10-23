@@ -6,8 +6,8 @@ export const TRANSACTION_CONSTANTS = {
   },
   WITHDRAW: {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)
-    ROLLUP_MINUTES: 360, // Duration of the rollup  (in minutes)
-    ROLLUP_SECS: 21600,
+    ROLLUP_MINUTES: 380, // Duration of the rollup  (in minutes)
+    ROLLUP_SECS: 22800,
     ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
     CHALLENGE_SECS: 604800,
   },
@@ -29,5 +29,6 @@ export const TESTNET_TRANSACTION_CONSTANTS = {
     ...TRANSACTION_CONSTANTS.WITHDRAW,
     ROLLUP_MINUTES: 720, // Duration of the rollup  (in minutes)
     ROLLUP_SECS: 43200,
-  }
-}
+  },
+};
+
