@@ -176,7 +176,7 @@ export default function CTConfirmCrossTradeFooter(
 
   const requestCrossTrade = useCallback(
     async (estimatedGas?: boolean) => {
-      if (isInRelay) return onCloseCTConfirmModal();
+      if (isInRelay && estimatedGas === false) return onCloseCTConfirmModal();
       if (!txData) return new Error("txData is not defined");
       try {
         if (isProvide) {
