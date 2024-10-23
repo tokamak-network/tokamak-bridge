@@ -59,6 +59,7 @@ import { getDecodedDepositLog } from "@/utils/history/getDecodedDepositLog";
 import { mock_depositRequest } from "@/test/deposit/_mock/mockdata";
 import { mock_withdrawData } from "@/test/withdraw/_mock/mockdata";
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodBridgeHistoryLog";
+import { getSortedTxHistory, getSortedTxListByDate } from "../utils/history";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -271,11 +272,9 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
-      const sortedResult = filteredResult.sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
+      const sortedResult = getSortedTxListByDate(
+        filteredResult
+      ) as WithdrawTransactionHistory[];
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
@@ -392,11 +391,7 @@ export const useDepositData = () => {
         if (!(tx instanceof Error) && tx !== undefined && tx !== null)
           return tx;
       });
-      const sortedResult = filteredResult.sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
+      const sortedResult = getSortedTxListByDate(filteredResult) as DepositTransactionHistory[];
       if (sortedResult) return setDepositHistory(sortedResult);
       return setDepositHistory([]);
     }
