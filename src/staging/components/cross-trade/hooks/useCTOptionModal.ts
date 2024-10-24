@@ -5,12 +5,12 @@ import { useCallback } from "react";
 export default function useCTOption() {
   const [ctOptionModal, setCTOptionModal] = useRecoilState(ctOptionModalStatus);
 
-  const onOpenCTOptionModal = (nextBtnDisabled?: boolean) => {
-    setCTOptionModal({ isOpen: true, nextBtnDisabled });
+  const onOpenCTOptionModal = () => {
+    setCTOptionModal({ isOpen: true });
   };
 
   const onCloseCTOptionModal = useCallback(() => {
-    setCTOptionModal({ isOpen: false, nextBtnDisabled: true });
+    setCTOptionModal({ isOpen: false });
   }, []);
 
   return {
