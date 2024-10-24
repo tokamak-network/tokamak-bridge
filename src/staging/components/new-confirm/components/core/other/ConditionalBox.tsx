@@ -16,6 +16,7 @@ import { useCountdown } from "@/staging/hooks/useCountdown";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
 import Refresh from "@/assets/icons/newHistory/refresh.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
+import GetHelp from "@/components/ui/GetHelp";
 
 interface ConditionalBoxProps {
   type: "wait" | "timer" | "box";
@@ -117,15 +118,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
             {timeDisplay}
           </Text>
           {(errorRollup || !isCountDown) && (
-            <Flex
-              w={"18px"}
-              h={"18px"}
-              ml={"2px"}
-              justifyContent={"center"}
-              cursor={"pointer"}
-            >
-              <Image src={Lightbulb} alt={"Lightbulb"} />
-            </Flex>
+            <GetHelp />
           )}
           {calendarButton && (
             <Flex
