@@ -43,6 +43,8 @@ import { getGasCostText } from "@/utils/number/compareNumbers";
 import useConnectedNetwork from "@/hooks/network";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useFinalize } from "@/hooks/history/useFinalize";
+import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { useCountdown } from "@/staging/hooks/useCountdown";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -66,6 +68,18 @@ export default function DepositWithdrawConfirmModal() {
     transactionData && isWithdrawTransactionHistory(transactionData);
   const { callToFinalize } = useFinalize(
     isWithdraw ? transactionData : undefined
+  );
+
+  const remainTime = useMemo(() => {
+    if (transactionData) {
+      return getRemainTime(transactionData);
+    }
+    return 0;
+  }, [transactionData?.status, depositWithdrawConfirmModal.isOpen]);
+  const { time: timeDisplay, isCountDown } = useCountdown(
+    remainTime,
+    false,
+    transactionData
   );
 
   const gasCostData: GasCostData = useMemo(() => {
@@ -132,14 +146,16 @@ export default function DepositWithdrawConfirmModal() {
             gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
-          (statuses.length === 3 && index < 2)
+            (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
-                <ConditionalBox
-                  type={typeValue}
-                  transactionData={transactionData}
-                  waitMessage={waitMessage}
-                />
-              )
+              <ConditionalBox
+                isCountDown={isCountDown}
+                timeDisplay={timeDisplay}
+                type={typeValue}
+                transactionData={transactionData}
+                waitMessage={waitMessage}
+              />
+            )
             : null}
         </React.Fragment>
       );

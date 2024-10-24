@@ -14,7 +14,7 @@ export const TRANSACTION_CONSTANTS = {
   // Set to 15sec time-buffer for UI purposes, although the spec is 900 seconds
   CROSS_TRADE: {
     PROVIDE: 915, //15 minutes in seconds
-    REQUEST: 915, 
+    REQUEST: 915,
     CANCEL_REQUEST: 915,
     RETURN_LIQUIDITY: 915,
   },
@@ -24,7 +24,7 @@ export const TESTNET_TRANSACTION_CONSTANTS = {
   ...TRANSACTION_CONSTANTS,
   DEPOSIT: {
     INITIAL_MINUTES: 5,
-    INITIAL_SECS: 300,
+    INITIAL_SECS: 315,
   },
   WITHDRAW: {
     ...TRANSACTION_CONSTANTS.WITHDRAW,
