@@ -128,6 +128,10 @@ export default function ActionButton() {
     needToOpenWithdrawModal,
     needToOpenDepositModal,
     needToOpenSwapModal,
+    inToken,
+    outToken,
+    inNetwork,
+    outNetwork
   ]);
 
   return (
@@ -150,10 +154,10 @@ export default function ActionButton() {
         {!isConnected
           ? null
           : isConnected && mode === null
-          ? "Select Network"
-          : mode === "Withdraw"
-          ? "Next"
-          : mode?.replaceAll("ETH-", "")}{" "}
+            ? "Select Network"
+            : mode === "Withdraw"
+              ? "Next"
+              : mode?.replaceAll("ETH-", "")}{" "}
         <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
           {deactivateButton ? "(Service under maintenance)" : ""}
           {/* {'(Service under maintenance)'} */}
