@@ -124,7 +124,9 @@ export default function CTOptionInput(props: CTInputProps) {
             onChange={onInputChange}
             value={inputValue}
             color={
-              inputWarningCheck == WarningType.Critical ? "#DD3A44" : "#FFFFFF"
+              inputWarningCheck == WarningType.Critical && isAdvancedActive
+                ? "#DD3A44"
+                : "#FFFFFF"
             }
             _hover={{}}
             _placeholder={{
