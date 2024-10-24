@@ -103,9 +103,15 @@ export const ctRefreshModalStatus = atom<{
   },
 });
 
-export const ctOptionModalStatus = atom<boolean>({
+export const ctOptionModalStatus = atom<{
+  isOpen: boolean;
+  nextBtnDisabled?: boolean;
+}>({
   key: "ctOptionModalStatus",
-  default: false,
+  default: {
+    isOpen: false,
+    nextBtnDisabled: undefined,
+  },
 });
 
 export const ctUpdateFeeModalStatus = atom<{

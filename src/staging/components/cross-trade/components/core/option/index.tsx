@@ -195,7 +195,10 @@ export default function CTOptionModal() {
     }
   }, [ctOptionModal]);
 
+  const insufficientBalance = ctOptionModal.nextBtnDisabled;
+
   const btnDisabled = useMemo(() => {
+    if (insufficientBalance) return true;
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return false;
     }
@@ -217,13 +220,14 @@ export default function CTOptionModal() {
     recommendedCtAmount,
     recommendedFee,
     isRecommendedFeeOver,
+    insufficientBalance,
   ]);
 
   const { isWhiteListToken } = useWhiteListToken();
 
   return (
     <Modal
-      isOpen={ctOptionModal}
+      isOpen={ctOptionModal.isOpen}
       onClose={onCloseCTOptionModal}
       motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
@@ -304,7 +308,7 @@ export default function CTOptionModal() {
             isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {"Next"}
+              {insufficientBalance ? "Insufficient Balance" : "Next"}
             </Text>
           </Button>
         </ModalFooter>
