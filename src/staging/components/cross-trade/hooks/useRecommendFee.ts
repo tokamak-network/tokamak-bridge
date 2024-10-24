@@ -1,4 +1,3 @@
-import { BigNumber } from "@ethersproject/bignumber";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { recommendFeeConfig } from "@/staging/constants/fee";
 import { CTTransactionType } from "@/types/crossTrade/contracts";
