@@ -154,6 +154,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
           account: address as string,
         }
       : undefined,
+    fetchPolicy: "cache-first",
   });
 
   return { data, loading, error };
@@ -176,6 +177,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
           account: address,
         }
       : undefined,
+    fetchPolicy: "cache-first",
   });
 
   return { data, loading, error };
@@ -199,6 +201,7 @@ export const useRequestData = (
   const [requestList, setRequestList] = useState<CrossTradeData[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { provideCTTxnCost } = useProvideCTGas();
+
   const fetchRequestList = useCallback(async () => {
     try {
       if (error || _l1Error) return null;
