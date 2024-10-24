@@ -105,12 +105,10 @@ export const ctRefreshModalStatus = atom<{
 
 export const ctOptionModalStatus = atom<{
   isOpen: boolean;
-  nextBtnDisabled?: boolean;
 }>({
   key: "ctOptionModalStatus",
   default: {
     isOpen: false,
-    nextBtnDisabled: undefined,
   },
 });
 

@@ -36,6 +36,7 @@ import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export default function CTOptionModal() {
   const { mobileView } = useMediaView();
@@ -195,10 +196,11 @@ export default function CTOptionModal() {
     }
   }, [ctOptionModal]);
 
-  const insufficientBalance = ctOptionModal.nextBtnDisabled;
+  const { isBalanceOver } = useInputBalanceCheck();
+  const { isWhiteListToken } = useWhiteListToken();
 
   const btnDisabled = useMemo(() => {
-    if (insufficientBalance) return true;
+    if (isBalanceOver) return true;
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return false;
     }
@@ -220,10 +222,8 @@ export default function CTOptionModal() {
     recommendedCtAmount,
     recommendedFee,
     isRecommendedFeeOver,
-    insufficientBalance,
+    isBalanceOver,
   ]);
-
-  const { isWhiteListToken } = useWhiteListToken();
 
   return (
     <Modal
@@ -308,7 +308,7 @@ export default function CTOptionModal() {
             isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {insufficientBalance ? "Insufficient Balance" : "Next"}
+              {isBalanceOver ? "Insufficient Balance" : "Next"}
             </Text>
           </Button>
         </ModalFooter>

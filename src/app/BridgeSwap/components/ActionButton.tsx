@@ -118,7 +118,7 @@ export default function ActionButton() {
 
   const buttonAction = useCallback(() => {
     if (!isConnected) return connetAndDisconntWallet();
-    if (needToOpenWithdrawModal) return onOpenCTOptionModal(isDisabled);
+    if (needToOpenWithdrawModal) return onOpenCTOptionModal();
     if (needToOpenDepositModal)
       return handleConfirm(Action.Deposit, Status.Initiate);
     if (needToOpenSwapModal) return onOpenSwapConfirmModal();
