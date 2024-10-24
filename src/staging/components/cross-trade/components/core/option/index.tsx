@@ -152,12 +152,11 @@ export default function CTOptionModal() {
     }
   };
 
-  const { connectedChainId } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
 
-  const serviceFeeIsNotOver = useMemo(() => {
+  const serviceFeeIsOver = useMemo(() => {
     if (inToken?.parsedAmount) {
       return Number(inToken.parsedAmount) - Number(serviceFee) <= 0;
     }
@@ -169,16 +168,26 @@ export default function CTOptionModal() {
     }
   }, [serviceFee, recommendedFee]);
 
+  const isRecommendedFeeOver = useMemo(() => {
+    if (recommendedFee && inToken?.parsedAmount) {
+      return Number(recommendedFee) > Number(inToken.parsedAmount);
+    }
+  }, [recommendedFee, inToken?.parsedAmount]);
+
   useEffect(() => {
     {
-      if (serviceFeeIsNotOver)
-        return setInputWarningCheck(WarningType.Critical);
+      if (serviceFeeIsOver) return setInputWarningCheck(WarningType.Critical);
       if (isLessThanRecommendedFee)
         return setInputWarningCheck(WarningType.Normal);
       return setInputWarningCheck("");
     }
     // Reset inputWarningCheck when the modal is reopened
-  }, [serviceFeeIsNotOver, isLessThanRecommendedFee, ctOptionModal]);
+  }, [
+    serviceFeeIsOver,
+    isLessThanRecommendedFee,
+    ctOptionModal,
+    activeSubButtonValue,
+  ]);
 
   useEffect(() => {
     if (ctOptionModal) {
@@ -186,16 +195,15 @@ export default function CTOptionModal() {
     }
   }, [ctOptionModal]);
 
+  const insufficientBalance = ctOptionModal.nextBtnDisabled;
+
   const btnDisabled = useMemo(() => {
+    if (insufficientBalance) return true;
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return false;
     }
     if (activeSubButtonValue === ButtonTypeSub.Recommend) {
-      return (
-        !recommendedCtAmount ||
-        !recommendedFee ||
-        inputWarningCheck === WarningType.Critical
-      );
+      return !recommendedCtAmount || !recommendedFee || isRecommendedFeeOver;
     }
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return (
@@ -211,21 +219,15 @@ export default function CTOptionModal() {
     inputWarningCheck,
     recommendedCtAmount,
     recommendedFee,
+    isRecommendedFeeOver,
+    insufficientBalance,
   ]);
 
   const { isWhiteListToken } = useWhiteListToken();
-  // const isSupportedNetworkForCT = useMemo(
-  //   () =>
-  //     (connectedChainId &&
-  //       connectedChainId === SupportedChainId.TITAN_SEPOLIA) ||
-  //     connectedChainId === SupportedChainId.TITAN,
-  //   [connectedChainId]
-  // );
-  const isSupportedNetworkForCT = true;
 
   return (
     <Modal
-      isOpen={ctOptionModal}
+      isOpen={ctOptionModal.isOpen}
       onClose={onCloseCTOptionModal}
       motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
@@ -252,7 +254,7 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {!isSupportedNetworkForCT || !isWhiteListToken ? (
+          {!isWhiteListToken ? (
             <CTOptionDisabledDetail />
           ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
             <CTOptionCrossDetail
@@ -306,7 +308,7 @@ export default function CTOptionModal() {
             isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {"Next"}
+              {insufficientBalance ? "Insufficient Balance" : "Next"}
             </Text>
           </Button>
         </ModalFooter>
