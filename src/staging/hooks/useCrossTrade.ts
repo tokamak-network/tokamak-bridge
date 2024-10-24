@@ -24,9 +24,10 @@ import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { getCTTokenPrice } from "../utils/getCTTokenPrice";
 import { useProvideCTGas } from "../components/cross-trade/hooks/useCTGas";
 import commafy from "@/utils/trim/commafy";
-import { parseUnits } from "ethers/lib/utils";
 import Decimal from "decimal.js";
-import { formatNumber } from "@uniswap/conedison/format";
+
+const L1_POLLING_INTERVAL = 13000;
+const L2_POLLING_INTERVAL = 10000;
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -146,7 +147,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
     provideCTs: T_FETCH_ProvideCTs_L1;
     l1CancelCTs: T_FETCH_CancelCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
-    pollInterval: 5000,
+    pollInterval: L1_POLLING_INTERVAL,
     client: L1_CLIENT,
     variables: isHistory
       ? {
@@ -168,7 +169,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     cancelCTs: T_FETCH_CancelCTs;
     providerClaimCTs: T_FETCH_ProviderClaimCTs;
   }>(isHistory ? FETCH_REQUEST_LIST_L2_ACCOUNT : FETCH_REQUEST_LIST_L2, {
-    pollInterval: 5000,
+    pollInterval: L2_POLLING_INTERVAL,
     client: L2_CLIENT,
     variables: isHistory
       ? {
