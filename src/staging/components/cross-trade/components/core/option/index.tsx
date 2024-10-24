@@ -256,20 +256,6 @@ export default function CTOptionModal() {
         <ModalBody p={0}>
           {!isWhiteListToken ? (
             <CTOptionDisabledDetail />
-          ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
-            <CTOptionCrossDetail
-              // cross, official 관련 props
-              activeMainButtonValue={activeMainButtonValue}
-              handleButtonMainClick={handleButtonMainClick}
-              // recommend, Advanced button 관련 props
-              activeSubButtonValue={activeSubButtonValue}
-              handleButtonSubClick={handleButtonSubClick}
-              // input 관련 props
-              inputValue={serviceFee ?? ""}
-              inputWarningCheck={inputWarningCheck}
-              onInputChange={handleInputChange}
-              recommnededFee={recommendedCtAmount}
-            />
           ) : (
             <CTOptionCrossDetail
               // cross, official 관련 props
@@ -282,7 +268,9 @@ export default function CTOptionModal() {
               inputValue={serviceFee ?? ""}
               inputWarningCheck={inputWarningCheck}
               onInputChange={handleInputChange}
-              recommnededFee={recommendedCtAmount}
+              recommendedCTAmount={recommendedCtAmount}
+              recommnededFee={recommendedFee}
+              isAdvancedActive={activeSubButtonValue === ButtonTypeSub.Advanced}
             />
           )}
           <CTOptionStandardDetail
