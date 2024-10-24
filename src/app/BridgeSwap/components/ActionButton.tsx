@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Button } from "@chakra-ui/react";
 import { useRecoilValue } from "recoil";
@@ -31,7 +31,7 @@ export default function ActionButton() {
   const { isNotSupportForSwap } = useBridgeSupport();
   const [isLoading] = useIsLoading();
 
-  const [isDisabled, setIsDisabled] = useState<boolean>(true);
+  // const [isDisabled, setIsDisabled] = useState<boolean>(true);
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const txPending = useRecoilValue(txPendingStatus);
   const { outToken, inToken } = useInOutTokens();
@@ -46,25 +46,21 @@ export default function ActionButton() {
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2"; //checks if the action is L2
 
   const deactivateButton = status === "Active" && isL2; //when the maintenance banner is active, this will disable the action button related to all L2 actions
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const disabled =
-        !isReady ||
-        isApproved === false ||
-        (mode === "Swap" && isLoading) ||
-        isNotSupportForSwap ||
-        isBalanceOver ||
-        txPending ||
-        (mode === "Swap" && outToken === null) ||
-        isInputZero ||
-        (mode === "Swap" && isTONatPair) ||
-        deactivateButton;
-      setIsDisabled(disabled);
-    }, 200);
 
-    return () => {
-      clearTimeout(timeoutId);
-    };
+  const isDisabled = useMemo(() => {
+    if (mode === "Withdraw" || !isConnected) return false;
+    const disabled =
+      !isReady ||
+      isApproved === false ||
+      (mode === "Swap" && isLoading) ||
+      isNotSupportForSwap ||
+      isBalanceOver ||
+      txPending ||
+      (mode === "Swap" && outToken === null) ||
+      isInputZero ||
+      (mode === "Swap" && isTONatPair) ||
+      deactivateButton;
+    return disabled;
   }, [
     isReady,
     isApproved,
@@ -76,16 +72,63 @@ export default function ActionButton() {
     isInputZero,
     mode,
     outToken,
+    isConnected,
   ]);
+
+  // console.log("isDisabled", isDisabled);
+  // console.log(isConnected);
+
+  // useEffect(() => {
+  //   const timeoutId = setTimeout(() => {
+  //     const disabled =
+  //       !isReady ||
+  //       isApproved === false ||
+  //       (mode === "Swap" && isLoading) ||
+  //       isNotSupportForSwap ||
+  //       isBalanceOver ||
+  //       txPending ||
+  //       (mode === "Swap" && outToken === null) ||
+  //       isInputZero ||
+  //       (mode === "Swap" && isTONatPair) ||
+  //       deactivateButton;
+  //     setIsDisabled(disabled);
+  //   }, 200);
+
+  //   return () => {
+  //     clearTimeout(timeoutId);
+  //   };
+  // }, [
+  //   isReady,
+  //   isApproved,
+  //   isLoading,
+  //   isNotSupportForSwap,
+  //   isBalanceOver,
+  //   txPending,
+  //   isTONatPair,
+  //   isInputZero,
+  //   mode,
+  //   outToken,
+  // ]);
+
   const { onClick } = useCallBridgeSwapAction();
   const { connetAndDisconntWallet } = useConnectWallet();
-
-  {
-    /** add coming code  @Robert */
-  }
   const { onOpenCTOptionModal } = useCTOptionModal();
   const handleConfirm = useHandleConfirm();
   const { onOpenSwapConfirmModal } = useSwapConfirmModal();
+
+  const buttonAction = useCallback(() => {
+    if (!isConnected) return connetAndDisconntWallet();
+    if (needToOpenWithdrawModal) return onOpenCTOptionModal();
+    if (needToOpenDepositModal)
+      return handleConfirm(Action.Deposit, Status.Initiate);
+    if (needToOpenSwapModal) return onOpenSwapConfirmModal();
+    return onClick();
+  }, [
+    isConnected,
+    needToOpenWithdrawModal,
+    needToOpenDepositModal,
+    needToOpenSwapModal,
+  ]);
 
   return (
     <>
@@ -100,18 +143,8 @@ export default function ActionButton() {
         _disabled={{}}
         bgColor={!isConnected ? "#007AFF" : isDisabled ? "#17181D" : "#007AFF"}
         color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
-        isDisabled={!isConnected ? false : isDisabled}
-        onClick={
-          isConnected === false
-            ? () => connetAndDisconntWallet()
-            : needToOpenWithdrawModal
-            ? () => onOpenCTOptionModal()
-            : needToOpenDepositModal
-            ? () => handleConfirm(Action.Deposit, Status.Initiate)
-            : needToOpenSwapModal
-            ? () => onOpenSwapConfirmModal()
-            : onClick
-        }
+        isDisabled={isDisabled}
+        onClick={buttonAction}
       >
         {!isConnected && "Connect Wallet"}
         {!isConnected
