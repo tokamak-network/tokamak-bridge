@@ -42,13 +42,11 @@ export default function ActionButton() {
   const needToOpenWithdrawModal = mode === "Withdraw";
   const needToOpenDepositModal = mode === "Deposit";
   const needToOpenSwapModal = mode === "Swap";
-
   const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2"; //checks if the action is L2
-
   const deactivateButton = status === "Active" && isL2; //when the maintenance banner is active, this will disable the action button related to all L2 actions
 
   const isDisabled = useMemo(() => {
-    if (mode === "Withdraw" || !isConnected) return false;
+    if ((mode === "Withdraw" || !isConnected) && !isInputZero) return false;
     const disabled =
       !isReady ||
       isApproved === false ||
@@ -74,9 +72,6 @@ export default function ActionButton() {
     outToken,
     isConnected,
   ]);
-
-  // console.log("isDisabled", isDisabled);
-  // console.log(isConnected);
 
   // useEffect(() => {
   //   const timeoutId = setTimeout(() => {
