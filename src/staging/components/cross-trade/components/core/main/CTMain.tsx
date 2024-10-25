@@ -61,6 +61,10 @@ export default function CTMain() {
     }
   }, [requestList]);
 
+  /**
+   * TO DO: refactor sort process to be moved into a custom hook
+   *
+   */
   useEffect(() => {
     if (isDescSortedProvide === null) return;
     if (isDescSortedProvide) {
