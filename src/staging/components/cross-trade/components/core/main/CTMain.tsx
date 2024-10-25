@@ -61,6 +61,10 @@ export default function CTMain() {
     }
   }, [requestList]);
 
+  /**
+   * TO DO: refactor sort process to be moved into a custom hook
+   *
+   */
   useEffect(() => {
     if (isDescSortedProvide === null) return;
     if (isDescSortedProvide) {
@@ -211,6 +215,9 @@ export default function CTMain() {
             : chainNameOut === "TITAN_SEPOLIA"
             ? "Titan Sepolia"
             : capitalizeFirstLetter(chainNameOut);
+        const isNegativeProfit = item.profit?.percent
+          ? Number(item.profit?.percent) < 0
+          : false;
 
         return (
           <Box
@@ -243,7 +250,7 @@ export default function CTMain() {
                   >
                     Receive on {displayNetworkNameIn}
                   </Text>
-                  <Flex alignItems={"center"}>
+                  <Flex alignItems={"center"} columnGap={"6px"}>
                     <Text
                       fontSize="16px"
                       fontWeight={600}
@@ -253,14 +260,14 @@ export default function CTMain() {
                     >
                       {formatNumber(formattedAmount)} {item.outToken.symbol}
                     </Text>
-                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
-                      (
-                    </Text>
-                    <Text fontSize="16px" fontWeight={400} lineHeight="24px">
-                      +{formatProfit(item.profit?.percent)}%
-                    </Text>
-                    <Text fontSize="13px" fontWeight={400} lineHeight="19.5px">
-                      )
+                    <Text
+                      fontSize="16px"
+                      fontWeight={400}
+                      lineHeight="24px"
+                      color={isNegativeProfit ? "#DD3A44" : "#03D187"}
+                    >
+                      {!isNegativeProfit && "+"}
+                      {formatProfit(item.profit?.percent)}%
                     </Text>
                   </Flex>
                   <Text
@@ -344,7 +351,7 @@ export default function CTMain() {
                 <CustomTooltipWithQuestion
                   isGrayIcon={true}
                   tooltipLabel={"Total amount to pay."}
-                  containerSyle={{ marginLeft: "2px" }}
+                  containerSyle={{ marginLeft: "2px", fontSize: "12px" }}
                 />
               </Flex>
             </Th>
@@ -387,15 +394,15 @@ export default function CTMain() {
                 <CustomTooltipWithQuestion
                   isGrayIcon={true}
                   tooltipLabel={
-                    <span>
+                    <span style={{ fontSize: 12 }}>
                       Total amount to receive, including the service
                       <br /> fee. It takes at least 15 minutes to receive <br />{" "}
                       (depending on the L2 sequencer).
                     </span>
                   }
                   style={{
-                    width: "268px",
-                    height: "70px",
+                    width: "289px",
+                    height: "74px",
                     tooltipLineHeight: "normal",
                     py: "10px",
                     px: "8px",
@@ -436,8 +443,32 @@ export default function CTMain() {
                   color={"#A0A3AD"}
                   letterSpacing={0}
                 >
-                  Net Profit (%)
+                  Net Profit
                 </Text>
+                <CustomTooltipWithQuestion
+                  isGrayIcon={true}
+                  tooltipLabel={
+                    <span style={{ fontSize: 12 }}>
+                      <span style={{ fontWeight: 600 }}>
+                        Net Profit = Receive - Provide - txn fee
+                      </span>
+                      <br />
+                      Net profit for provider is heavily depends on the
+                      <br />
+                      transaction fee, which is a highly volatile value.
+                      <br />
+                      Please double-check it before providing.
+                    </span>
+                  }
+                  style={{
+                    width: "300px",
+                    height: "92px",
+                    tooltipLineHeight: "normal",
+                    py: "10px",
+                    px: "8px",
+                  }}
+                  containerSyle={{ marginLeft: "2px" }}
+                />
               </Flex>
             </Th>
             <Th textTransform="none"></Th>
@@ -535,6 +566,7 @@ export default function CTMain() {
                     <TokenDetail
                       profit={item.profit}
                       providingUSD={item.providingUSD}
+                      provideCTTxnCost={item.provideCTTxnCost}
                     />
                   </Td>
                   <Td>

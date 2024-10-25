@@ -33,6 +33,7 @@ export interface CTInputProps {
   onInputChange: (e: ChangeEvent<HTMLInputElement>) => void;
   onInputFocus?: (e: FocusEvent<HTMLInputElement>) => void;
   recommnededFee?: string;
+  isAdvancedActive?: boolean;
 }
 
 export enum ButtonTypeMain {

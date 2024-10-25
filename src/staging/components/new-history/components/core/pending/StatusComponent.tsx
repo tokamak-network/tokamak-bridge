@@ -29,6 +29,7 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
+import GetHelp from "@/components/ui/GetHelp";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -113,7 +114,6 @@ export default function StatusComponent(
     transactionData.status === Status.Initiate && label === "Finalize";
   const rollupStage =
     transactionData.status === Status.Initiate && label === "Rollup";
-
   const isActive =
     //for Deposit Finalize
     (transactionData.status !== Status.Initiate && finalizeStage) ||
@@ -132,14 +132,18 @@ export default function StatusComponent(
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
 
+  const remainTime = useMemo(() => {
+    return getRemainTime(transactionData);
+  }, [transactionData.status]);
+
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-      formatTimeDisplay(getRemainTime(transactionData))
+    formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
     (!isActive && label.toString() === "Finalize") ||
       (isActive && label === CT_REQUEST.WaitForReceive)
-    ? ""
-    : // Otherwise, display formatted date as all are completed
+      ? ""
+      : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
         Number(
           isWithdrawTransactionHistory(transactionData) ||
@@ -156,14 +160,15 @@ export default function StatusComponent(
     needToCheck: shouldCountdown,
   });
 
-  const countdownTimeDisplay = useCountdown(
-    initialTimeDisplay,
-    Boolean(transactionData.errorMessage) || isTimeOver
+  const { time, isCountDown } = useCountdown(
+    remainTime,
+    Boolean(transactionData.errorMessage),
+    transactionData
   );
 
   // Output variable
   const timeDisplay = shouldCountdown
-    ? countdownTimeDisplay
+    ? time
     : initialTimeDisplay;
 
   // Calendar start time
@@ -181,8 +186,8 @@ export default function StatusComponent(
             "days",
             0
           ) *
-            60) *
-          1000
+          60) *
+        1000
       );
     }
     return null;
@@ -220,7 +225,7 @@ export default function StatusComponent(
   // Show claim button when Finalized status is complete
   const claimReadyButton =
     label === Status.Finalize &&
-    timeDisplay === "00 : 00" &&
+    remainTime < 0 &&
     transactionData.action === Action.Withdraw;
   const { isOnOfficialStandard } = useHistoryTab();
 
@@ -230,9 +235,8 @@ export default function StatusComponent(
         case CT_REQUEST.Request:
           return "Request";
         case CT_REQUEST.UpdateFee:
-          return `Update ${
-            updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
-          }`;
+          return `Update ${updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
+            }`;
         case CT_REQUEST.WaitForReceive:
           return "Waiting";
         default:
@@ -273,8 +277,8 @@ export default function StatusComponent(
             !isActive && label === Status.Finalize
               ? "#A0A3AD"
               : isOnOfficialStandard
-              ? "#007AFF"
-              : "#DB00FF"
+                ? "#007AFF"
+                : "#DB00FF"
           }
         />
         <Text
@@ -295,7 +299,7 @@ export default function StatusComponent(
             fontSize={"11px"}
             fontWeight={400}
             lineHeight={"22px"}
-            color={isError ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
+            color={shouldCountdown && (isError || !isCountDown) ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}
             onClick={!isActive ? openModal : undefined}
           >
@@ -303,8 +307,8 @@ export default function StatusComponent(
           </Text>
         )}
         {isError && <ErrorRollupComponent />}
-        {refreshRollup && <RefreshRollupComponent />}
-        {calendarButton && (
+        {!claimReadyButton && shouldCountdown && !isCountDown && <GetHelp />}
+        {!claimReadyButton && calendarButton && (
           <CalenderButtonComponent handleCalendarClick={handleCalendarClick} />
         )}
       </Flex>

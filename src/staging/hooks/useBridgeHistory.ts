@@ -12,7 +12,7 @@ import {
   WithdrawTransactionHistory,
 } from "../types/transaction";
 import { ApolloError, useQuery } from "@apollo/client";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { subgraphApolloClientsForHistory } from "@/graphql/thegraph/apolloForHistory";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -59,6 +59,9 @@ import { getDecodedDepositLog } from "@/utils/history/getDecodedDepositLog";
 import { mock_depositRequest } from "@/test/deposit/_mock/mockdata";
 import { mock_withdrawData } from "@/test/withdraw/_mock/mockdata";
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodBridgeHistoryLog";
+import { getSortedTxHistory, getSortedTxListByDate } from "../utils/history";
+import { useRecoilState } from "recoil";
+import { depositTxHistory, withdrawTxHistory } from "@/recoil/history/transaction";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -108,37 +111,54 @@ const errorHandler = (error: ApolloError) => {
 
 export const useSubgraph = () => {
   const { address } = useAccount();
+  const [pollCount, setPollCount] = useState<number>(0);
   const { L1_CLIENT, L2_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const L1Bridge = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
     : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
-
+  useEffect(() => {
+    setPollCount(0);
+    const refetchDepositHistory = async () => {
+      refetchL1TitanData();
+    }
+    const refetchWithdrawHistory = async () => {
+      refetchL2TitanData();
+    }
+    const interval = setInterval(() => {
+      setPollCount(prev => prev + 1);
+      refetchDepositHistory();
+      refetchWithdrawHistory();
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [])
   const {
     data: _l1Data,
     loading: _l1Loading,
     error: _l1Error,
+    refetch: refetchL1TitanData
   } = useQuery(FETCH_USER_TRANSACTIONS_L1, {
     variables: {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
     },
-    pollInterval: 13000,
+    // pollInterval: 13000,
     client: L1_CLIENT,
   });
   const {
     data: _l2Data,
     loading: _l2Loading,
     error: _l2Error,
+    refetch: refetchL2TitanData
   } = useQuery(FETCH_USER_TRANSACTIONS_L2, {
     variables: {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
     },
-    pollInterval: 13000,
+    // pollInterval: 13000,
     client: L2_CLIENT,
   });
 
@@ -158,15 +178,14 @@ export const useSubgraph = () => {
     l2Data: _l2Data,
     l2Loading: _l2Loading,
     l2_error: _l2Error,
+    pollCount
   };
 };
 
 export const useWithdrawData = () => {
-  const [withdrawHistory, setWithdrawHistory] = useState<
-    WithdrawTransactionHistory[] | [] | null
-  >(null);
+  const [withdrawHistory, setWithdrawHistory] = useRecoilState(withdrawTxHistory);
 
-  const { l2Data } = useSubgraph();
+  const { l2Data, pollCount } = useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider } = useProvier();
 
@@ -271,11 +290,9 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
-      const sortedResult = filteredResult.sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
+      const sortedResult = getSortedTxListByDate(
+        filteredResult
+      ) as WithdrawTransactionHistory[];
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
@@ -286,17 +303,14 @@ export const useWithdrawData = () => {
     fetchData().catch((error) => {
       console.error("Error in fetching withdraw data", error);
     });
-  }, [l2Data, isConnectedToMainNetwork, L2Provider]);
-
+  }, [l2Data, isConnectedToMainNetwork, L2Provider, pollCount]);
   return { withdrawHistory };
 };
 
 export const useDepositData = () => {
-  const [depositHistory, setDepositHistory] = useState<
-    DepositTransactionHistory[] | [] | null
-  >(null);
+  const [depositHistory, setDepositHistory] = useRecoilState(depositTxHistory)
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { l1Data } = useSubgraph();
+  const { l1Data, pollCount } = useSubgraph();
   const { L1Provider } = useProvier();
 
   const fetchData = useCallback(async () => {
@@ -406,7 +420,7 @@ export const useDepositData = () => {
     fetchData().catch((error) => {
       console.error("Error in fetching deposit data", error);
     });
-  }, [l1Data, isConnectedToMainNetwork, L1Provider]);
+  }, [l1Data, isConnectedToMainNetwork, L1Provider, pollCount]);
 
   return { depositHistory };
 };

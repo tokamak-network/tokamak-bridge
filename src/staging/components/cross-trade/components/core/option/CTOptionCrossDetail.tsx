@@ -34,6 +34,7 @@ interface AdditionalCrossProps {
   handleButtonMainClick: (value: ButtonTypeMain) => void;
   activeSubButtonValue: ButtonTypeSub;
   handleButtonSubClick: (value: ButtonTypeSub) => void;
+  recommendedCTAmount: string | undefined;
 }
 
 export default function CTOptionCrossDetail(
@@ -48,11 +49,13 @@ export default function CTOptionCrossDetail(
   // 현재  props.inputValue가 1일때만 WarningType이 critical일때만, recommend 변경 타입 보여주는걸로 디자인 시연.
   // 추후 price api가 먹통 됬을때 해당 조건 주면 됨
   // const isDisabledRecommend = props.inputValue === "1";
-  const isDisabledRecommend = props.recommnededFee === undefined ? true : false;
+  const isDisabledRecommend =
+    props.recommendedCTAmount === undefined ? true : false;
   const { inToken } = useInOutTokens();
 
   const receiveTokenValue = useMemo(() => {
-    if (isRecommendActive && !isDisabledRecommend) return props.recommnededFee;
+    if (isRecommendActive && !isDisabledRecommend)
+      return props.recommendedCTAmount;
 
     const inputValue = props.inputValue;
     if (
@@ -258,45 +261,14 @@ export default function CTOptionCrossDetail(
             </Button>
           </Flex>
         </Box>
-        {isAdvancedActive && (
-          <Box mt={"12px"}>
-            <Flex alignItems="center">
-              <Text
-                fontWeight={400}
-                fontSize={"10px"}
-                lineHeight={"20px"}
-                color={"#A0A3AD"}
-              >
-                Service fee
-              </Text>
-              <CustomTooltipWithQuestion
-                isGrayIcon={true}
-                tooltipLabel={
-                  <Box fontSize={12}>
-                    <Text>
-                      The service fee incentivizes the liquidity provider
-                    </Text>
-                    <Text>to accept the request. The amount received</Text>
-                    <Text>on L1 is calculated after deducting this fee. </Text>
-                  </Box>
-                }
-                style={{
-                  width: "304px",
-                  height: "74px",
-                  tooltipLineHeight: "18px",
-                  px: "8px",
-                  py: "10px",
-                }}
-              />
-            </Flex>
-            <CTOptionInput
-              inputValue={props.inputValue}
-              inputWarningCheck={props.inputWarningCheck}
-              inTokenSymbol={inToken?.tokenSymbol as string}
-              onInputChange={props.onInputChange}
-            />
-          </Box>
-        )}
+        <CTOptionInput
+          inputValue={props.inputValue}
+          inputWarningCheck={props.inputWarningCheck}
+          inTokenSymbol={inToken?.tokenSymbol as string}
+          onInputChange={props.onInputChange}
+          isAdvancedActive={isAdvancedActive}
+          recommnededFee={props.recommnededFee}
+        />
       </Box>
       {!withdrawalIsTooSmall && (
         <Circle
