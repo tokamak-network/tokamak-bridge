@@ -46,9 +46,9 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     );
   }
   if (type === "timer") {
-    const isTimeOver =
-      transactionData.status === Status.Finalize &&
-      transactionData.action === Action.Deposit;
+    const remainTime = getRemainTime(transactionData);
+    const isZeroTime = remainTime <= 0;
+
     const errorRollup =
       transactionData.errorMessage && transactionData.status === Status.Rollup;
 
@@ -121,17 +121,6 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
               cursor={"pointer"}
             >
               <GetHelp />
-            </Flex>
-          )}
-          {refreshRollup && (
-            <Flex
-              w={"18px"}
-              h={"18px"}
-              ml={"2px"}
-              justifyContent={"center"}
-              cursor={"pointer"}
-            >
-              <Image src={Refresh} alt={"Refresh"} />
             </Flex>
           )}
           {calendarButton && (

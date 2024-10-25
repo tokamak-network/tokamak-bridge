@@ -3,10 +3,10 @@ import {
   Action,
   TransactionHistory,
 } from "@/staging/types/transaction";
-import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
-import { TESTNET_TRANSACTION_CONSTANTS, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { getTransactionConstants, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { Tr } from "@chakra-ui/react";
 
 //getConfirmType.ts
@@ -82,12 +82,13 @@ const getWaitMessage = (
   index: number,
   chainId: SupportedChainId
 ) => {
+  const txConstants = getTransactionConstants(chainId);
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
         ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}6 hours`
-        : `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
-    1: `Wait ${TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_DAYS} days`,
+        : `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
+    1: `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${chainId === SupportedChainId.TITAN ||
       chainId === SupportedChainId.TITAN_SEPOLIA
       ? 5

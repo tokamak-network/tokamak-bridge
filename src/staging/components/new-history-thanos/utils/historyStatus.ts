@@ -85,8 +85,8 @@ export const getCurrentProgressStatus = (
   return diff === 0
     ? ProgressStatus.Doing
     : diff > 0
-    ? ProgressStatus.Todo
-    : ProgressStatus.Done;
+      ? ProgressStatus.Todo
+      : ProgressStatus.Done;
 };
 
 export const shouldShowCalendarButton = (
@@ -95,6 +95,6 @@ export const shouldShowCalendarButton = (
 ) => {
   if (tx.action === Action.Deposit) return false;
   const l2ChainId = tx.inNetwork;
-  if (isThanosChain(l2ChainId) && tx.status === Status.Initiated) return true;
+  if (isThanosChain(l2ChainId) && (tx.status === Status.Initiated || tx.status === Status.Proved)) return true;
   return false;
 };

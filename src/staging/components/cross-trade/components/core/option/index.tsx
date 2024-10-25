@@ -40,6 +40,7 @@ import commafy from "@/utils/trim/commafy";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
+import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export default function CTOptionModal() {
   const { mobileView } = useMediaView();
@@ -157,12 +158,11 @@ export default function CTOptionModal() {
     }
   };
 
-  const { connectedChainId } = useConnectedNetwork();
   const [inputWarningCheck, setInputWarningCheck] = useState<WarningType | "">(
     ""
   );
 
-  const serviceFeeIsNotOver = useMemo(() => {
+  const serviceFeeIsOver = useMemo(() => {
     if (inToken?.parsedAmount) {
       return Number(inToken.parsedAmount) - Number(serviceFee) <= 0;
     }
@@ -174,16 +174,26 @@ export default function CTOptionModal() {
     }
   }, [serviceFee, recommendedFee]);
 
+  const isRecommendedFeeOver = useMemo(() => {
+    if (recommendedFee && inToken?.parsedAmount) {
+      return Number(recommendedFee) > Number(inToken.parsedAmount);
+    }
+  }, [recommendedFee, inToken?.parsedAmount]);
+
   useEffect(() => {
     {
-      if (serviceFeeIsNotOver)
-        return setInputWarningCheck(WarningType.Critical);
+      if (serviceFeeIsOver) return setInputWarningCheck(WarningType.Critical);
       if (isLessThanRecommendedFee)
         return setInputWarningCheck(WarningType.Normal);
       return setInputWarningCheck("");
     }
     // Reset inputWarningCheck when the modal is reopened
-  }, [serviceFeeIsNotOver, isLessThanRecommendedFee, ctOptionModal]);
+  }, [
+    serviceFeeIsOver,
+    isLessThanRecommendedFee,
+    ctOptionModal,
+    activeSubButtonValue,
+  ]);
 
   useEffect(() => {
     if (ctOptionModal) {
@@ -191,16 +201,16 @@ export default function CTOptionModal() {
     }
   }, [ctOptionModal]);
 
+  const { isBalanceOver } = useInputBalanceCheck();
+  const { isWhiteListToken } = useWhiteListToken();
+
   const btnDisabled = useMemo(() => {
+    if (isBalanceOver) return true;
     if (activeMainButtonValue === ButtonTypeMain.Standard) {
       return false;
     }
     if (activeSubButtonValue === ButtonTypeSub.Recommend) {
-      return (
-        !recommendedCtAmount ||
-        !recommendedFee ||
-        inputWarningCheck === WarningType.Critical
-      );
+      return !recommendedCtAmount || !recommendedFee || isRecommendedFeeOver;
     }
     if (activeSubButtonValue === ButtonTypeSub.Advanced) {
       return (
@@ -216,21 +226,13 @@ export default function CTOptionModal() {
     inputWarningCheck,
     recommendedCtAmount,
     recommendedFee,
+    isRecommendedFeeOver,
+    isBalanceOver,
   ]);
-
-  const { isWhiteListToken } = useWhiteListToken();
-  // const isSupportedNetworkForCT = useMemo(
-  //   () =>
-  //     (connectedChainId &&
-  //       connectedChainId === SupportedChainId.TITAN_SEPOLIA) ||
-  //     connectedChainId === SupportedChainId.TITAN,
-  //   [connectedChainId]
-  // );
-  const isSupportedNetworkForCT = true;
 
   return (
     <Modal
-      isOpen={ctOptionModal}
+      isOpen={ctOptionModal.isOpen}
       onClose={onCloseCTOptionModal}
       motionPreset={mobileView ? "slideInBottom" : "scale"}
       isCentered
@@ -257,23 +259,8 @@ export default function CTOptionModal() {
           <CloseButton onClick={onCloseCTOptionModal} />
         </Box>
         <ModalBody p={0}>
-          {!isSupportedNetworkForCT || !isWhiteListToken ? (
+          {!isWhiteListToken ? (
             <CTOptionDisabledDetail />
-          ) : activeMainButtonValue === ButtonTypeMain.Standard ? (
-            // <CTOptionDisabledDetail />
-            <CTOptionCrossDetail
-              // cross, official 관련 props
-              activeMainButtonValue={activeMainButtonValue}
-              handleButtonMainClick={handleButtonMainClick}
-              // recommend, Advanced button 관련 props
-              activeSubButtonValue={activeSubButtonValue}
-              handleButtonSubClick={handleButtonSubClick}
-              // input 관련 props
-              inputValue={serviceFee ?? ""}
-              inputWarningCheck={inputWarningCheck}
-              onInputChange={handleInputChange}
-              recommnededFee={recommendedCtAmount}
-            />
           ) : (
             <CTOptionCrossDetail
               // cross, official 관련 props
@@ -286,7 +273,9 @@ export default function CTOptionModal() {
               inputValue={serviceFee ?? ""}
               inputWarningCheck={inputWarningCheck}
               onInputChange={handleInputChange}
-              recommnededFee={recommendedCtAmount}
+              recommendedCTAmount={recommendedCtAmount}
+              recommnededFee={recommendedFee}
+              isAdvancedActive={activeSubButtonValue === ButtonTypeSub.Advanced}
             />
           )}
           <CTOptionStandardDetail
@@ -312,7 +301,7 @@ export default function CTOptionModal() {
             isDisabled={btnDisabled}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-              {"Next"}
+              {isBalanceOver ? "Insufficient Balance" : "Next"}
             </Text>
           </Button>
         </ModalFooter>

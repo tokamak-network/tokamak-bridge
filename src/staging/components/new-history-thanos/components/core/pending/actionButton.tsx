@@ -15,11 +15,13 @@ import { useNetwork } from "wagmi";
 interface ActionButtonComponentProps {
   status: Status | CT_Status;
   tx: TransactionHistory;
+  openModal: () => void
 }
 
 const ActionButtonComponent: React.FC<ActionButtonComponentProps> = ({
   status,
   tx,
+  openModal
 }) => {
   const { handleWithdrawTxAction } = useWithdrawAction();
   const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
@@ -39,9 +41,7 @@ const ActionButtonComponent: React.FC<ActionButtonComponentProps> = ({
       minWidth={"60px"}
       maxHeight={"22px"}
       isDisabled={disabled}
-      onClick={() => {
-        handleWithdrawTxAction(tx as WithdrawTransactionHistory);
-      }}
+      onClick={openModal}
     >
       {!pendingStatus ? (
         <Text

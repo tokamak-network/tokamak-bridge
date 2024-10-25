@@ -20,7 +20,7 @@ import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 import { useCountdown } from "@/staging/hooks/useCountdown";
-import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import Image from "next/image";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
@@ -29,6 +29,7 @@ import GoogleCalendar from "@/assets/icons/newHistory/googleCalendar.svg";
 import { useCalendar } from "@/staging/hooks/useGoogleCalendar";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
+import GetHelp from "@/components/ui/GetHelp";
 
 type TransactionStatusComponentProps = {
   label: HISTORY_TRANSACTION_STATUS;
@@ -113,7 +114,6 @@ export default function StatusComponent(
     transactionData.status === Status.Initiate && label === "Finalize";
   const rollupStage =
     transactionData.status === Status.Initiate && label === "Rollup";
-
   const isActive =
     //for Deposit Finalize
     (transactionData.status !== Status.Initiate && finalizeStage) ||
@@ -131,6 +131,10 @@ export default function StatusComponent(
       transactionData.status === CT_REQUEST_CANCEL.Refund ||
       transactionData.status === CT_PROVIDE.Return) &&
     isActive;
+
+  const remainTime = useMemo(() => {
+    return getRemainTime(transactionData);
+  }, [transactionData.status]);
 
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
@@ -156,14 +160,16 @@ export default function StatusComponent(
     needToCheck: shouldCountdown,
   });
 
-  // Output variable
-  const { time: timeDisplay, isCountDown } = shouldCountdown
-    ? useCountdown(
-      getRemainTime(transactionData),
+  const { time, isCountDown } = useCountdown(
+    remainTime,
+    Boolean(transactionData.errorMessage),
+    transactionData
+  );
 
-      Boolean(transactionData.errorMessage) || isTimeOver
-    )
-    : { time: initialTimeDisplay, isCountDown: true };
+  // Output variable
+  const timeDisplay = shouldCountdown
+    ? time
+    : initialTimeDisplay;
 
   // Calendar start time
   const startDate = useMemo(() => {
@@ -219,7 +225,7 @@ export default function StatusComponent(
   // Show claim button when Finalized status is complete
   const claimReadyButton =
     label === Status.Finalize &&
-    timeDisplay === "00 : 00" &&
+    remainTime < 0 &&
     transactionData.action === Action.Withdraw;
   const { isOnOfficialStandard } = useHistoryTab();
 
@@ -293,16 +299,15 @@ export default function StatusComponent(
             fontSize={"11px"}
             fontWeight={400}
             lineHeight={"22px"}
-            color={isError ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
+            color={shouldCountdown && (isError || !isCountDown) ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}
             onClick={!isActive ? openModal : undefined}
           >
             {timeDisplay}
           </Text>
         )}
-        {isError && <ErrorRollupComponent />}
-        {refreshRollup && <RefreshRollupComponent />}
-        {calendarButton && (
+        {!claimReadyButton && shouldCountdown && !isCountDown && <GetHelp />}
+        {!claimReadyButton && calendarButton && (
           <CalenderButtonComponent handleCalendarClick={handleCalendarClick} />
         )}
       </Flex>

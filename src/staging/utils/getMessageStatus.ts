@@ -51,7 +51,7 @@ export const getThanosMessageStatuaWithSubgraph = async (
 ) => {
   const challengePeriod = getTransactionConstants(
     SupportedChainId.THANOS_SEPOLIA
-  ).WITHDRAW.CHALLENGE_PERIOD;
+  ).WITHDRAW.CHALLENGE_SECS;
   if (
     withdrawalFinalizeds.map((tx) => tx.withdrawalHash).includes(withdrawalHash)
   )

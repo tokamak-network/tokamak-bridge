@@ -36,7 +36,7 @@ export const getCalendarDetailsFromTx = (tx: StandardHistory) => {
     status === Status.Initiated
       ? tx.blockTimestamps.initialCompletedTimestamp
       : (tx as WithdrawTransactionHistory).blockTimestamps
-          .proveCompletedTimestamp;
+        .proveCompletedTimestamp;
   const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   const originalTime = new Date(Number(blockTimestamp ?? 0) * 1000);

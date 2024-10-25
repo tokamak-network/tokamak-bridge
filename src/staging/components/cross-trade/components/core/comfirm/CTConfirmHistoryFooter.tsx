@@ -238,9 +238,9 @@ export default function CTConfirmHistoryFooter(props: {
           const blockTimestamp =
             key === "refund"
               ? //@ts-ignore
-                txData.blockTimestamps["cancelRequest"]
+              txData.blockTimestamps["cancelRequest"]
               : //@ts-ignore
-                txData.blockTimestamps[key];
+              txData.blockTimestamps[key];
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {

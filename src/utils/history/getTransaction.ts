@@ -119,7 +119,7 @@ export const getTransactionTimestamp = (params: {
 
   const initialCompletedTimestamp = sentMessageTimestamp;
   const rollupCompletedTimestamp =
-    stateBatchTimestamp ?? 0 + TITAN_CHALLENGE_PERIOD;
+    stateBatchTimestamp ? stateBatchTimestamp : undefined;
   const finalizedCompletedTimestamp = relayedMessageTimestamp;
 
   switch (currentStatus) {

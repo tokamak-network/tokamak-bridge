@@ -113,6 +113,18 @@ export default function DepositWithdrawConfirmModal() {
     isWithdraw ? transactionData : undefined
   );
 
+  const remainTime = useMemo(() => {
+    if (transactionData) {
+      return getRemainTime(transactionData);
+    }
+    return 0;
+  }, [transactionData?.status, depositWithdrawConfirmModal.isOpen]);
+  const { time: timeDisplay, isCountDown } = useCountdown(
+    remainTime,
+    false,
+    transactionData
+  );
+
   const gasCostData: GasCostData = useMemo(() => {
     const formatValue = (value: string | undefined | null) =>
       value == null || value === "0" || value === "-" ? "NA" : value;
@@ -135,15 +147,6 @@ export default function DepositWithdrawConfirmModal() {
     }
     return {};
   }, [transactionData, totalGasCost, gasCostUS, withdrawCost]);
-
-  const remainTime = useMemo(() => {
-    return getRemainTime(transactionData);
-  }, [transactionData]);
-  const { time: timeDisplay, isCountDown } = useCountdown(
-    remainTime,
-    false,
-    transactionData
-  );
 
   if (!transactionData) {
     return null;

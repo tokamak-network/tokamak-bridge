@@ -6,11 +6,11 @@ export default function useCTOption() {
   const [ctOptionModal, setCTOptionModal] = useRecoilState(ctOptionModalStatus);
 
   const onOpenCTOptionModal = () => {
-    setCTOptionModal(true);
+    setCTOptionModal({ isOpen: true });
   };
 
   const onCloseCTOptionModal = useCallback(() => {
-    setCTOptionModal(false);
+    setCTOptionModal({ isOpen: false });
   }, []);
 
   return {

@@ -37,4 +37,5 @@ export interface CrossTradeData {
   initialCTAmount: string;
   editedCTAmount: bigint;
   isNetaveProfit: boolean;
+  provideCTTxnCost: number;
 }

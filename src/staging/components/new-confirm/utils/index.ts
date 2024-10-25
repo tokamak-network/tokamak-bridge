@@ -96,8 +96,8 @@ export const getDepositWithdrawWaitMessage = (
         return isThanosChain(L2ChainId)
           ? "Wait 1~6 hours"
           : isTitanChain(L2ChainId)
-          ? "Wait 1 hour"
-          : "";
+            ? "Wait 1 hour"
+            : "";
       case Status.Prove:
         return L2ChainId === SupportedChainId.THANOS_SEPOLIA
           ? "Wait 12 seconds"

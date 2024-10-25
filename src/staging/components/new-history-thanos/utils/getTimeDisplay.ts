@@ -19,6 +19,9 @@ import {
   getStatusValue,
 } from "@/staging/components/new-history-thanos/utils/historyStatus";
 import { utcToZonedTime } from "date-fns-tz";
+import { isThanosChain } from "@/utils/network/checkNetwork";
+import { getBridgeL2ChainId } from "../../new-confirm/utils";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // status 별로 변수 넣는 함수
 export function getRemainTime(transactionData?: TransactionHistory): number {
@@ -26,22 +29,24 @@ export function getRemainTime(transactionData?: TransactionHistory): number {
   if (!transactionData) return 0;
   const action = transactionData.action;
   const status = transactionData.status;
+  const l2ChainId = getBridgeL2ChainId(transactionData);
+  const expectedTimes = getTransactionConstants(l2ChainId ?? SupportedChainId.TITAN);
   if (action === Action.Deposit) {
-    const expectedTimes = getTransactionConstants(transactionData.outNetwork);
     const timeValue = calculateDepositPendingTime(
       transactionData.blockTimestamps.initialCompletedTimestamp,
-      expectedTimes.DEPOSIT.INITIAL_MINUTES
+      expectedTimes.DEPOSIT.INITIAL_SECS
     );
     return timeValue;
   } else if (action === Action.Withdraw) {
-    const expectedTimes = getTransactionConstants(transactionData.inNetwork);
-    const expectedTime = transactionData.blockTimestamps.proveCompletedTimestamp
-      ? expectedTimes.WITHDRAW.PROVE
-      : expectedTimes.WITHDRAW.INITIAL_MINUTES;
+    const expectedTime = transactionData.blockTimestamps.proveCompletedTimestamp || transactionData.blockTimestamps.rollupCompletedTimestamp
+      ? expectedTimes.WITHDRAW.CHALLENGE_SECS :
+      transactionData.blockTimestamps.initialCompletedTimestamp ? expectedTimes.WITHDRAW.ROLLUP_SECS
+        : expectedTimes.WITHDRAW.INITIAL_SECS;
     const originTimestamp = transactionData.blockTimestamps
       .proveCompletedTimestamp
-      ? transactionData.blockTimestamps.proveCompletedTimestamp
-      : transactionData.blockTimestamps.initialCompletedTimestamp;
+      ? transactionData.blockTimestamps.proveCompletedTimestamp :
+      transactionData.blockTimestamps.rollupCompletedTimestamp ? transactionData.blockTimestamps.rollupCompletedTimestamp
+        : transactionData.blockTimestamps.initialCompletedTimestamp;
     return calculateDepositPendingTime(originTimestamp, expectedTime);
   }
   return 0;
@@ -59,8 +64,8 @@ function calculateInitialTime(
     statusValue === TransactionStatus.WithdrawFinalized
       ? convertTimeToMinutes(additional, "days", 0) * 60
       : TransactionStatus.REQUEST_CANCEL
-      ? additional
-      : convertTimeToMinutes(additional, "minutes", 0) * 60;
+        ? additional
+        : convertTimeToMinutes(additional, "minutes", 0) * 60;
 
   // Get the current time in the user's local timezone
   const currentTimeUTC = new Date();
@@ -89,8 +94,7 @@ export const calculateDepositPendingTime = (
   blockTimestamp: number,
   expectedTime: number
 ) => {
-  const countdownDuration =
-    convertTimeToMinutes(expectedTime, "minutes", 0) * 60;
+  const countdownDuration = expectedTime;
   const currentTimeUTC = new Date();
   const currentTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
   const currentTime = utcToZonedTime(currentTimeUTC, currentTimeZone);

@@ -14,7 +14,7 @@ import {
   WithdrawTransactionHistory,
 } from "../types/transaction";
 import { ApolloError, useQuery } from "@apollo/client";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { subgraphApolloClientsForHistory } from "@/graphql/thegraph/apolloForHistory";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";

@@ -15,7 +15,7 @@ export function useCountdown(
   useEffect(() => {
     setTime(Math.abs(initialTime));
     setIsCountDown(initialTime > 0);
-  }, [tx?.status]);
+  }, [tx?.status, initialTime]);
 
   useEffect(() => {
     const countdown = setInterval(() => {
