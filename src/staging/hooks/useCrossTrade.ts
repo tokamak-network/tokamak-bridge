@@ -154,6 +154,7 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
           account: address as string,
         }
       : undefined,
+    fetchPolicy: "cache-first",
   });
 
   return { data, loading, error };
@@ -176,6 +177,7 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
           account: address,
         }
       : undefined,
+    fetchPolicy: "cache-first",
   });
 
   return { data, loading, error };
@@ -199,6 +201,7 @@ export const useRequestData = (
   const [requestList, setRequestList] = useState<CrossTradeData[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { provideCTTxnCost } = useProvideCTGas();
+
   const fetchRequestList = useCallback(async () => {
     try {
       if (error || _l1Error) return null;
@@ -341,7 +344,7 @@ export const useRequestData = (
               amount: profitAmount.toString(),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
               usd: profitUSD,
-              percent: percent.toFixed(30),
+              percent: percent.toFixed(4),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),
@@ -357,11 +360,16 @@ export const useRequestData = (
             initialCTAmount: item._ctAmount,
             editedCTAmount: ctAmount,
             isNetaveProfit: profitRatio.toFixed(30).includes("-"),
+            provideCTTxnCost: txnCost,
           };
         });
 
         const trimedResult = result.filter(
           (item) => !item.isCanceled && !item.isProvided
+        );
+
+        trimedResult.sort(
+          (a, b) => Number(b.profit.percent) - Number(a.profit.percent)
         );
 
         setIsLoading(false);

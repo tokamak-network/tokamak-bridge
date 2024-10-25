@@ -80,7 +80,7 @@ const TransactionItem = (props: TransactionItemProps) => {
 
   const needToShowTimeDisplay =
     (title === "refund" || title === "return") && isActive;
-  const initialTimeDisplay = formatTimeDisplay(getRemainTime(txData));
+  const initialTimeDisplay = getRemainTime(txData);
   const { isTimeOver } = useTimeOver({
     timeStamp: Number(blockTimestamp),
     //refund and return have same timeBuffer as 300s
@@ -101,7 +101,7 @@ const TransactionItem = (props: TransactionItemProps) => {
         lineHeight={"20px"}
         color={isOnError || isTimeOver ? "#DD3A44" : "#fff"}
       >
-        {timeDisplay}
+        {timeDisplay.time}
       </Text>
     );
   }, [timeDisplay, needToShowTimeDisplay, isTimeOver]);
@@ -238,9 +238,9 @@ export default function CTConfirmHistoryFooter(props: {
           const blockTimestamp =
             key === "refund"
               ? //@ts-ignore
-                txData.blockTimestamps["cancelRequest"]
+              txData.blockTimestamps["cancelRequest"]
               : //@ts-ignore
-                txData.blockTimestamps[key];
+              txData.blockTimestamps[key];
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {

@@ -1,92 +1,38 @@
 import { useState, useEffect } from "react";
+import { formatTimeDisplay } from "../utils/formatTimeDisplay";
+import { TransactionHistory } from "../types/transaction";
 
-export function useCountdown(initialTime: string, errorType?: boolean) {
-  const [time, setTime] = useState(initialTime);
-  const [format, setFormat] = useState(
-    initialTime.split(":").length === 3 ? "HH : MM : SS" : "MM : SS"
+export function useCountdown(
+  initialTime: number,
+  errorType?: boolean,
+  tx?: TransactionHistory
+) {
+  const [isCountDown, setIsCountDown] = useState<boolean>(
+    initialTime > 0 ? true : false
   );
+  const [time, setTime] = useState<number>(Math.abs(initialTime));
 
   useEffect(() => {
-    if (!errorType && (time === "00 : 00" || time === "00 : 00 : 00")) return;
+    setTime(Math.abs(initialTime));
+    setIsCountDown(initialTime > 0);
+  }, [tx?.status, initialTime]);
 
+  useEffect(() => {
     const countdown = setInterval(() => {
-      const timeParts = time.split(" : ").map(Number);
-
-      if (timeParts.length === 3) {
-        // HH : MM : SS 형식일 경우
-        const [hours, minutes, seconds] = timeParts;
-        let totalSeconds = hours * 3600 + minutes * 60 + seconds;
-
-        if (!errorType) {
-          totalSeconds -= 1;
-        } else {
-          totalSeconds += 1;
-        }
-
-        const newHours = Math.floor(totalSeconds / 3600);
-        const newMinutes = Math.floor((totalSeconds % 3600) / 60);
-        const newSeconds = totalSeconds % 60;
-
-        if (newHours === 0) {
-          setFormat("MM : SS");
-          setTime(
-            `${String(newMinutes).padStart(2, "0")} : ${String(
-              newSeconds
-            ).padStart(2, "0")}`
-          );
-        } else {
-          const formattedHours = String(newHours).padStart(2, "0");
-          const formattedMinutes = String(newMinutes).padStart(2, "0");
-          const formattedSeconds = String(newSeconds).padStart(2, "0");
-
-          setTime(
-            `${formattedHours} : ${formattedMinutes} : ${formattedSeconds}`
-          );
-        }
-
-        if (!errorType && totalSeconds <= 0) {
-          clearInterval(countdown);
-        }
+      if (isCountDown) {
+        setTime((prev) => {
+          if (prev <= 0) {
+            setIsCountDown(false);
+            return 0; // Stop at 0
+          }
+          return prev - 1;
+        });
       } else {
-        // MM : SS 형식일 경우
-        const [minutes, seconds] = timeParts;
-        let totalSeconds = minutes * 60 + seconds;
-
-        if (!errorType) {
-          totalSeconds -= 1;
-        } else {
-          totalSeconds += 1;
-        }
-
-        const newMinutes = Math.floor(totalSeconds / 60);
-        const newSeconds = totalSeconds % 60;
-
-        if (newMinutes >= 60) {
-          const newHours = Math.floor(newMinutes / 60);
-          const remainingMinutes = newMinutes % 60;
-
-          setFormat("HH : MM : SS");
-          setTime(
-            `${String(newHours).padStart(2, "0")} : ${String(
-              remainingMinutes
-            ).padStart(2, "0")} : ${String(newSeconds).padStart(2, "0")}`
-          );
-        } else {
-          setTime(
-            `${String(newMinutes).padStart(2, "0")} : ${String(
-              newSeconds
-            ).padStart(2, "0")}`
-          );
-        }
-
-        if (!errorType && totalSeconds <= 0) {
-          clearInterval(countdown);
-        }
+        setTime((prev) => prev + 1);
       }
     }, 1000);
-
     return () => clearInterval(countdown);
-  }, [time, errorType]);
+  }, [isCountDown]);
 
-  return time;
+  return { time: formatTimeDisplay(time), isCountDown };
 }

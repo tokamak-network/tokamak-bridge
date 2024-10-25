@@ -36,8 +36,32 @@ const authMiddleware = (chainId: SupportedChainId) =>
     return forward(operation);
   });
 
+const cacheL1 = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        requestCTs: {
+          merge(existing = [], incoming) {
+            return incoming;
+          },
+        },
+        cancelCTs: {
+          merge(existing = [], incoming) {
+            return incoming;
+          },
+        },
+        providerClaimCTs: {
+          merge(existing = [], incoming) {
+            return incoming;
+          },
+        },
+      },
+    },
+  },
+});
+
 const apolloClient_Ethereum = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: cacheL1,
   link: concat(authMiddleware(SupportedChainId.MAINNET), httpLink),
 });
 
@@ -47,7 +71,7 @@ const apolloClient_Titan = new ApolloClient({
 });
 
 const apolloClient_Sepolia = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache: cacheL1,
   link: concat(authMiddleware(SupportedChainId.SEPOLIA), httpLink),
 });
 

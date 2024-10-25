@@ -14,10 +14,10 @@ export const recommendFeeConfig = {
   gas: crossTradeGasFee,
   fee: {
     //percentage of the total amount
-    TON: 0.97534,
-    USDC: 0.53425,
-    USDT: 0.53425,
-    ETH: 0.47671,
+    TON: 6.476712,
+    USDC: 1.385342,
+    USDT: 1.385342,
+    ETH: 1.578767,
   },
 } as {
   gas: CrossTradeGasFee;

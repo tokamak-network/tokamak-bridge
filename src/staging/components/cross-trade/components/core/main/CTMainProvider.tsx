@@ -167,7 +167,7 @@ export default function CTProvider({
         gap={"8px"}
         flexShrink={0}
         borderRadius={"6px"}
-        bg={bgColor}
+        bg={isInRelay ? "none" : bgColor}
         border={
           isInRelay
             ? "none"

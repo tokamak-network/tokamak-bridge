@@ -7,13 +7,15 @@ import {
   isInCT_Provide,
   CT_Provide_History,
 } from "@/staging/types/transaction";
-import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { TESTNET_TRANSACTION_CONSTANTS, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import {
   TransactionStatus,
   getStatusValue,
 } from "@/staging/components/new-history/utils/historyStatus";
 import { utcToZonedTime } from "date-fns-tz";
+import { getBridgeL1ChainId } from "../../new-confirm/utils";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // status 별로 변수 넣는 함수
 export function getRemainTime(transactionData: TransactionHistory): number {
@@ -22,6 +24,8 @@ export function getRemainTime(transactionData: TransactionHistory): number {
     transactionData.action,
     transactionData.status
   );
+  const l1ChainId = getBridgeL1ChainId(transactionData);
+  const txConst = l1ChainId === SupportedChainId.MAINNET ? TRANSACTION_CONSTANTS : TESTNET_TRANSACTION_CONSTANTS;
 
   // 상수를 통해 정해진 시간을 추가해준다.
   switch (statusValue) {
@@ -33,7 +37,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.ROLLUP_SECS,
+          txConst.WITHDRAW.ROLLUP_SECS,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
@@ -47,7 +51,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.rollupCompletedTimestamp,
-          TRANSACTION_CONSTANTS.WITHDRAW.CHALLENGE_SECS
+          txConst.WITHDRAW.CHALLENGE_SECS
         );
         return timeValue;
       }
@@ -60,7 +64,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           transactionData.blockTimestamps.initialCompletedTimestamp,
-          TRANSACTION_CONSTANTS.DEPOSIT.INITIAL_SECS
+          txConst.DEPOSIT.INITIAL_SECS
         );
 
         return timeValue;
@@ -75,7 +79,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           CT_Request_TransactionData.blockTimestamps.cancelRequest,
-          TRANSACTION_CONSTANTS.CROSS_TRADE.CANCEL_REQUEST,
+          txConst.CROSS_TRADE.CANCEL_REQUEST,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
@@ -90,7 +94,7 @@ export function getRemainTime(transactionData: TransactionHistory): number {
         const timeValue = calculateInitialTime(
           statusValue,
           CT_Request_TransactionData.blockTimestamps.provide,
-          TRANSACTION_CONSTANTS.CROSS_TRADE.RETURN_LIQUIDITY,
+          txConst.CROSS_TRADE.RETURN_LIQUIDITY,
           Boolean(transactionData.errorMessage)
         );
         return timeValue;
