@@ -41,10 +41,6 @@ import { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import LampIcon from "@/assets/icons/lamp.svg";
 import GetHelp from "@/components/ui/GetHelp";
-import {
-  useBridgeHistory,
-  useDepositData,
-} from "@/staging/hooks/useBridgeHistory";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 import ActionButtonComponent from "./actionButton";
 import { CountDownComponent } from "./countDown";

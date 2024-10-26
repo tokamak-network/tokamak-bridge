@@ -12,7 +12,6 @@ import {
 } from "@/staging/types/transaction";
 import Pending from "@/staging/components/new-history-thanos/components/core/pending";
 import Complete from "@/staging/components/new-history-thanos/components/core/complete";
-import { useBridgeHistory } from "@/staging/hooks/useBridgeHistory";
 import { useRecoilState, useRecoilValue } from "recoil";
 import {
   selectedTransactionCategory,
@@ -22,6 +21,7 @@ import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import LoadingTx from "@/components/history/LoadingTx";
+import { useBridgeHistory } from "@/staging/hooks/bridge/useBridgeHistory";
 
 const NoAcitivityComponent = () => {
   return (

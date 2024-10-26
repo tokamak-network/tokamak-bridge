@@ -141,15 +141,22 @@ export const getCurretStatus = async (
   return { currentStatus: 0, stateBatchAppended: undefined };
 };
 
-export const getMsgHash = (msg: any, value: string) => {
-  return hashCrossDomainMessagev1(
+export const getMsgHash = (msg: any, value: string, l2Chain: "Titan" | "Thanos",) => {
+  return l2Chain === "Thanos" ? hashCrossDomainMessagev1(
     BigNumber.from(msg.messageNonce),
     msg.sender,
     msg.target,
     BigNumber.from(value),
     BigNumber.from(msg.gasLimit),
     msg.message
-  );
+  ) : hashCrossChainMessage({
+    sender: msg.sender,
+    target: msg.target,
+    message: msg.message,
+    messageNonce: BigNumber.from(msg.messageNonce),
+    minGasLimit: BigNumber.from(0),
+    value: BigNumber.from(0),
+  });
 };
 
 export const getThanosDepositMsgHashes = (
@@ -167,7 +174,7 @@ export const getThanosDepositMsgHashes = (
       (ext: any) => ext.transactionHash === msg.transactionHash
     )?.value;
     if (!value) return;
-    return getMsgHash(msg, value);
+    return getMsgHash(msg, value, "Thanos");
   });
 };
 
@@ -183,26 +190,26 @@ export const getCurrentDepositStatus = async (
   const msgHash =
     L2Chain === "Thanos"
       ? hashCrossDomainMessagev1(
-          BigNumber.from(resolved.messageNonce),
-          resolved.sender,
-          resolved.target,
-          BigNumber.from(amount),
-          BigNumber.from(resolved.gasLimit),
-          resolved.message
-        )
+        BigNumber.from(resolved.messageNonce),
+        resolved.sender,
+        resolved.target,
+        BigNumber.from(amount),
+        BigNumber.from(resolved.gasLimit),
+        resolved.message
+      )
       : hashCrossChainMessage({
-          sender: resolved.sender,
-          target: resolved.target,
-          message: resolved.message,
-          messageNonce: BigNumber.from(resolved.messageNonce),
-          minGasLimit: BigNumber.from(0),
-          value: BigNumber.from(0),
-        });
+        sender: resolved.sender,
+        target: resolved.target,
+        message: resolved.message,
+        messageNonce: BigNumber.from(resolved.messageNonce),
+        minGasLimit: BigNumber.from(0),
+        value: BigNumber.from(0),
+      });
   const subgraphQueryURL = isConnectedToMainnetwork
     ? subgraphQueryURL_TITAN
     : L2Chain === "Titan"
-    ? subgraphQueryURL_TITAN_SEPOLIA
-    : subgraphQueryURL_THANOS_SEPOLIA;
+      ? subgraphQueryURL_TITAN_SEPOLIA
+      : subgraphQueryURL_THANOS_SEPOLIA;
   const resMesHash = await axios.post(`${subgraphQueryURL}`, {
     query: `
         query GetRelayedMessages($msgHash: String!) {
@@ -237,7 +244,7 @@ export const getCurrentThanosDepositStatus = (
   value: string,
   relayedMessages: any[]
 ): { currentStatus: CurrentDepositStatus; relayedMessageTx?: RelayMessage } => {
-  const msgHash = getMsgHash(resolved, value);
+  const msgHash = getMsgHash(resolved, value, "Thanos");
   const relayedMsg = relayedMessages.find(
     (msg: any) => msg.msgHash === msgHash
   );

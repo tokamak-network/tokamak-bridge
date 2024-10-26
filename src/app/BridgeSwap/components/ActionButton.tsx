@@ -49,7 +49,7 @@ export default function ActionButton() {
 
   const isDisabled = useMemo(() => {
     if (mode === "Withdraw" || !isConnected) return false;
-    if (mode === "Deposit" || !isConnected) return false;
+    if ((mode === "Deposit" || !isConnected) && !isInputZero) return false;
     const disabled =
       !isReady ||
       isApproved === false ||
