@@ -154,7 +154,7 @@ export default function TutorialModal() {
                   from our team by filling out this google{" "}
                   <Link
                     style={{ color: "#007AFF", textDecoration: "underline" }}
-                    href="https://docs.google.com/forms/u/1/d/e/1FAIpQLSfCUJjuABK0Locc3Fqwr2W5eHI-Hpj6wiiGceBr1e4q4g9nmg/viewform?usp=send_form"
+                    href="https://docs.google.com/forms/d/e/1FAIpQLSc6pHHABsnIZ2MvcEa57VCtSNTRXHAaFjBLQYf1LbiMB_81OA/viewform"
                     isExternal
                   >
                     form
