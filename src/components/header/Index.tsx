@@ -284,7 +284,7 @@ export default function Header() {
                 hoverIcon={userGuideHover}
               />
               <CustomMenuItem
-                link="https://forms.gle/GLY1PZq4BH4RqZY79"
+                link="https://docs.google.com/forms/d/e/1FAIpQLSc6pHHABsnIZ2MvcEa57VCtSNTRXHAaFjBLQYf1LbiMB_81OA/viewform"
                 title="Get Help"
                 icon={lightbulb}
                 hoverIcon={lightbulbHover}
