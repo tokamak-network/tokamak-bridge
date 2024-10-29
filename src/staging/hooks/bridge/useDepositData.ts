@@ -7,7 +7,7 @@ import { useProvier } from "@/hooks/provider/useProvider";
 import { useThanosSubgraph } from "../subgraph/useThanosSubgraph";
 import useConnectedNetwork from "@/hooks/network";
 import { Resolved, SentMessages } from "@/types/activity/history";
-import { getCurrentDepositStatus, getCurrentThanosDepositStatus } from "@/utils/history/getCurrentStatus";
+import { getCurrentDepositStatus } from "@/utils/history/getCurrentStatus";
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodeBridgeHistoryLog";
 import { ethers } from "ethers";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -35,15 +35,17 @@ export const useDepositData = () => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const {
     l1TitanData,
-    pollCount: pollTitanCount
+    pollCount: pollTitanCount,
+    l2TitanRelayedMessages
   } = useTitanSubgraph();
   const { l1ThanosData, l2ThanosRelayedMessages, l1ThanosSentMsgExtensions, pollCount: pollThanosCount } = useThanosSubgraph();
   const { L1Provider } = useProvier();
 
   const fetchTitanData = useCallback(async () => {
-    if (l1TitanData && isConnectedToMainNetwork !== undefined && L1Provider) {
+    if (l1TitanData && isConnectedToMainNetwork !== undefined && L1Provider && l2TitanRelayedMessages) {
 
       const l1SentMessges = l1TitanData.sentMessages;
+      const relayedMessages = l2TitanRelayedMessages.relayedMessages;
       let latestRelayedBlockNumber =
         titanDipositHistory.latestRelayedBlockNumber ?? "0";
       const result: DepositTransactionHistory[] = await Promise.all(
@@ -57,11 +59,11 @@ export const useDepositData = () => {
             transactionHash: sentMessage.transactionHash,
           };
           const { currentStatus, relayedMessageTx } =
-            await getCurrentDepositStatus(
+            getCurrentDepositStatus(
               resolved,
-              isConnectedToMainNetwork,
-              "Titan",
-              "0"
+              "0",
+              relayedMessages,
+              "Titan"
             );
 
           const l1TxReceipt = await L1Provider.getTransactionReceipt(
@@ -172,7 +174,7 @@ export const useDepositData = () => {
         setTitanDipositHistory(newTitanDipositHistory);
       }
     }
-  }, [l1TitanData, isConnectedToMainNetwork, L1Provider, pollTitanCount]);
+  }, [l1TitanData, isConnectedToMainNetwork, L1Provider, pollTitanCount, l2TitanRelayedMessages]);
 
   const fetchThanosData = useCallback(async () => {
     if (
@@ -202,10 +204,11 @@ export const useDepositData = () => {
             (msg: any) => msg.transactionHash === resolved.transactionHash
           );
           const { currentStatus, relayedMessageTx } =
-            getCurrentThanosDepositStatus(
+            getCurrentDepositStatus(
               resolved,
               msgExt.value,
-              relayedMessages
+              relayedMessages,
+              "Thanos"
             );
           const l1TxReceipt = await L1Provider.getTransactionReceipt(
             sentMessage.transactionHash
@@ -317,14 +320,8 @@ export const useDepositData = () => {
           history: [],
         };
       });
-      setTitanDipositHistory((prev) => {
-        return {
-          ...prev,
-          history: [],
-        };
-      });
     }
-  }, [isConnectedToMainNetwork, setThanosDipositHistory]);
+  }, [isConnectedToMainNetwork, setThanosDipositHistory, setTitanDipositHistory]);
 
   useEffect(() => {
     fetchTitanData().catch((error) => {
@@ -343,5 +340,5 @@ export const useDepositData = () => {
     getAllDepositeData();
   }, [getAllDepositeData]);
 
-  return { depositHistory: thanosDipositHistory.history };
+  return { depositHistory };
 };

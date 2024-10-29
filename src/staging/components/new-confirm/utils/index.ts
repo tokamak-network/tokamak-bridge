@@ -100,7 +100,7 @@ export const getDepositWithdrawWaitMessage = (
             : "";
       case Status.Prove:
         return L2ChainId === SupportedChainId.THANOS_SEPOLIA
-          ? "Wait 12 seconds"
+          ? "Wait 7 days"
           : "Wait 7 days";
       case Status.Rollup:
         return "Wait 7 days";
@@ -115,40 +115,59 @@ export const getEstimatedWithdrawalFeeConstant = (
   chainId: SupportedChainId | null,
   type: DepositWithdrawType
 ): Partial<Record<Status, TransactionFeeType>> | null => {
-  if (chainId === SupportedChainId.THANOS_SEPOLIA) {
+  if (isThanosChain(chainId)) {
     switch (type) {
       case DepositWithdrawType.ETH:
         return {
           Initiate: { amount: 0.001, tokenSymbol: "TON" },
-          Prove: { amount: 0.02 },
-          Finalize: { amount: 0.02 },
+          Prove: { amount: 0.0005 },
+          Finalize: { amount: 0.0005 },
         };
       case DepositWithdrawType.ERC20:
         return {
           Initiate: { amount: 0.0001, tokenSymbol: "TON" },
-          Prove: { amount: 0.01 },
-          Finalize: { amount: 0.01 },
+          Prove: { amount: 0.0005 },
+          Finalize: { amount: 0.0005 },
         };
       case DepositWithdrawType.NativeToken:
         return {
           Initiate: { amount: 0.0003, tokenSymbol: "TON" },
-          Prove: { amount: 0.01 },
-          Finalize: { amount: 0.01 },
+          Prove: { amount: 0.0005 },
+          Finalize: { amount: 0.0005 },
         };
       default:
         return {
           Initiate: { amount: 0.001, tokenSymbol: "TON" },
-          Prove: { amount: 0.01 },
-          Finalize: { amount: 0.01 },
+          Prove: { amount: 0.0005 },
+          Finalize: { amount: 0.0005 },
+        };
+    }
+  }
+  else if (isTitanChain(chainId)) {
+    switch (type) {
+      case DepositWithdrawType.ETH:
+        return {
+          Initiate: { amount: 0.0001, tokenSymbol: "ETH" },
+          Finalize: { amount: 0.0007 },
+        };
+      case DepositWithdrawType.ERC20:
+        return {
+          Initiate: { amount: 0.0001, tokenSymbol: "ETH" },
+          Finalize: { amount: 0.0006 },
+        };
+      default:
+        return {
+          Initiate: { amount: 0.0001, tokenSymbol: "ETH" },
+          Finalize: { amount: 0.0006 },
         };
     }
   }
   return null;
 };
 
-export const getDepositWithdrawType = (tokenSymbol: string) => {
+export const getDepositWithdrawType = (chainId: SupportedChainId | null, tokenSymbol: string) => {
   if (tokenSymbol === "ETH") return DepositWithdrawType.ETH;
-  if (tokenSymbol === "TON") return DepositWithdrawType.NativeToken;
+  if (isThanosChain(chainId) && tokenSymbol === "TON") return DepositWithdrawType.NativeToken;
   return DepositWithdrawType.ERC20;
 };
 

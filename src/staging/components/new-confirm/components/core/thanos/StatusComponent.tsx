@@ -51,6 +51,7 @@ const GasDisplayComponent: React.FC<GasDisplayComponentProps> = ({
   symbol,
   isActive,
 }) => {
+  const displayValue = value === 0 ? "< 0.0001" : value;
   return (
     <Flex gap={"6px"}>
       <Image
@@ -62,7 +63,7 @@ const GasDisplayComponent: React.FC<GasDisplayComponentProps> = ({
         fontWeight={400}
         lineHeight={"20px"}
         color={isActive ? "white" : "#A0A3AD"}
-      >{`${value ?? "NA"} ${symbol}`}</Text>
+      >{`${displayValue ?? "NA"} ${symbol}`}</Text>
     </Flex>
   );
 };
@@ -142,7 +143,7 @@ const StatusComponent: React.FC<StatusComponentProps> = (props) => {
     };
     const fee = getEstimatedWithdrawalFeeConstant(
       l2ChainId,
-      getDepositWithdrawType(tx.inToken.symbol)
+      getDepositWithdrawType(l2ChainId, tx.inToken.symbol)
     );
     if (!fee) setGasEstimation(null);
     else setGasEstimation(fee[label] ?? null);

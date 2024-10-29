@@ -33,7 +33,7 @@ export const useThanosGasFee = () => {
       const l1ChainId = getBridgeL1ChainId(tx);
       const l2ChainId = getBridgeL2ChainId(tx);
       const amount = (tx as WithdrawTransactionHistory).amount;
-      const type = getDepositWithdrawType(tx.inToken.symbol);
+      const type = getDepositWithdrawType(l2ChainId, tx.inToken.symbol);
       if (!isConnected || !l1ChainId || !l2ChainId) return null;
       const l1Provider = providerByChainId[l1ChainId];
       const l2Provider = providerByChainId[l2ChainId];
@@ -52,8 +52,8 @@ export const useThanosGasFee = () => {
       });
       const gasPrice =
         tx.status === Status.Prove ||
-        tx.status === Status.Finalize ||
-        tx.action === Action.Deposit
+          tx.status === Status.Finalize ||
+          tx.action === Action.Deposit
           ? await l1Provider.getGasPrice()
           : await l2Provider.getGasPrice();
 

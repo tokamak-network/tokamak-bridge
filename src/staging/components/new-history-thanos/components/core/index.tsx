@@ -110,12 +110,12 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              isCrossTradyHistory || !isThanosChain(l2ChainId) ? (
+              isCrossTradyHistory || (!isThanosChain(l2ChainId) && transaction.action !== Action.Deposit) ? (
                 <LegacyComplete {...transaction} />
               ) : (
                 <Complete {...transaction} />
               )
-            ) : isCrossTradyHistory || !isThanosChain(l2ChainId) ? (
+            ) : isCrossTradyHistory || (!isThanosChain(l2ChainId) && transaction.action !== Action.Deposit) ? (
               <LegacyPending transaction={transaction} />
             ) : (
               <Pending transaction={transaction} />

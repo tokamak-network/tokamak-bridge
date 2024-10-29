@@ -48,7 +48,7 @@ export default function ActionButton() {
   const deactivateButton = status === "Active" && isL2; //when the maintenance banner is active, this will disable the action button related to all L2 actions
 
   const isDisabled = useMemo(() => {
-    if (mode === "Withdraw" || !isConnected) return false;
+    if ((mode === "Withdraw" || !isConnected) && !isInputZero) return false;
     if ((mode === "Deposit" || !isConnected) && !isInputZero) return false;
     const disabled =
       !isReady ||

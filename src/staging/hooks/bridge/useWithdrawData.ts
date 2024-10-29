@@ -355,5 +355,5 @@ export const useWithdrawData = () => {
     getAllWithdrawData();
   }, [getAllWithdrawData]);
 
-  return { withdrawHistory: thanosSepWithdrawHistory.history };
+  return { withdrawHistory };
 };

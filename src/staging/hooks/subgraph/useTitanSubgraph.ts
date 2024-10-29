@@ -8,6 +8,8 @@ import { MAINNET_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
 import { FETCH_USER_TRANSACTIONS_L1_TITAN, FETCH_USER_TRANSACTIONS_L2 } from "@/graphql/queries/history";
 import { useQuery } from "@apollo/client";
 import { formatAddress } from "@/utils/trim/formatAddress";
+import { getTitanDepositMsgHashes } from "@/utils/history/getCurrentStatus";
+import { GET_RelayedMessages } from "@/graphql/data/queries";
 
 export const useTitanSubgraph = () => {
   const { address } = useAccount();
@@ -26,6 +28,7 @@ export const useTitanSubgraph = () => {
     setPollCount(0);
     const refetchDepositHistory = async () => {
       refetchL1TitanData();
+      refetchL2TitanRelayedMessage();
     }
     const refetchWithdrawHistory = async () => {
       refetchL2TitanData();
@@ -51,6 +54,25 @@ export const useTitanSubgraph = () => {
     },
     client: L1_CLIENT[0],
   });
+
+  const l1TitanDepositSentMessages = !_l1TitanData
+    ? null
+    : _l1TitanData?.sentMessages ?? [];
+  const l1TitanDepositMessageHashes = getTitanDepositMsgHashes(
+    l1TitanDepositSentMessages,
+  );
+  const {
+    data: _l2TitanRelayedMessageData,
+    loading: _l2TitanRelayedMessageLoading,
+    error: _l2TitanRelayedMessageError,
+    refetch: refetchL2TitanRelayedMessage
+  } = useQuery(GET_RelayedMessages, {
+    variables: {
+      msgHashes: l1TitanDepositMessageHashes,
+    },
+    client: L2_TITAN_CLIENT[0],
+    skip: !l1TitanDepositMessageHashes,
+  });
   const {
     data: _l2Titan,
     loading: _l2TitanLoading,
@@ -72,6 +94,9 @@ export const useTitanSubgraph = () => {
     if (_l2TitanError) {
       errorHandler(_l2TitanError);
     }
+    if (_l2TitanRelayedMessageError) {
+      errorHandler(_l2TitanRelayedMessageError);
+    }
   }, [
     _l1TitanError,
     _l2TitanError,
@@ -81,6 +106,7 @@ export const useTitanSubgraph = () => {
     l1TitanLoading: _l1TitanLoading,
     l1Titanerror: _l1TitanError,
     l2TitanData: _l2Titan,
+    l2TitanRelayedMessages: _l2TitanRelayedMessageData,
     pollCount
   };
 };

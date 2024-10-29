@@ -297,7 +297,7 @@ export default function StatusComponent(
         ) : (
           <Text
             fontSize={"11px"}
-            fontWeight={400}
+            fontWeight={shouldCountdown ? 600 : 400}
             lineHeight={"22px"}
             color={shouldCountdown && (isError || !isCountDown) ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}

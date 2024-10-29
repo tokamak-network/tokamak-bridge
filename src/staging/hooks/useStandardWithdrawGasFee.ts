@@ -5,7 +5,7 @@ import {
 } from "../components/new-confirm/utils";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
 import { Status } from "../types/transaction";
-import { isThanosChain } from "@/utils/network/checkNetwork";
+import { isThanosChain, isTitanChain } from "@/utils/network/checkNetwork";
 import { useMemo } from "react";
 
 export const useGetEstimatedTotalGasFee = (
@@ -14,7 +14,7 @@ export const useGetEstimatedTotalGasFee = (
 ) => {
   const fee = getEstimatedWithdrawalFeeConstant(
     l2ChainId,
-    getDepositWithdrawType(tokenSymbol)
+    getDepositWithdrawType(l2ChainId, tokenSymbol)
   );
 
   const { tokenPriceWithAmount: initiateCost } = useGetMarketPrice({
@@ -33,7 +33,7 @@ export const useGetEstimatedTotalGasFee = (
   });
 
   const totalCost = useMemo(() => {
-    if (!isThanosChain(l2ChainId)) return 0.5;
+    if (!isThanosChain(l2ChainId)) return 0.5; // TODO: it should be replace with real total cost of titan withdraw transaction
     if (!initiateCost || !proveCost || !finalizeCost) return null;
     return initiateCost + proveCost + finalizeCost;
   }, [initiateCost, proveCost, finalizeCost]);

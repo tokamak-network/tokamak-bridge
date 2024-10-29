@@ -188,7 +188,6 @@ export function useGasFee() {
               0,
               "0x"
             );
-            console.log(tx);
             const estimateTotalGasCost = await l2Provider.estimateTotalGasCost({
               ...tx,
               from: address,
