@@ -344,7 +344,7 @@ export const useRequestData = (
               amount: profitAmount.toString(),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
               usd: profitUSD,
-              percent: percent.toFixed(30),
+              percent: percent.toFixed(4),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),
@@ -366,6 +366,10 @@ export const useRequestData = (
 
         const trimedResult = result.filter(
           (item) => !item.isCanceled && !item.isProvided
+        );
+
+        trimedResult.sort(
+          (a, b) => Number(b.profit.percent) - Number(a.profit.percent)
         );
 
         setIsLoading(false);

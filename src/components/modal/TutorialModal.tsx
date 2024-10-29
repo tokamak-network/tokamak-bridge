@@ -89,7 +89,7 @@ export default function TutorialModal() {
   const isOpen = false;
 
   return (
-    <Modal onClose={() => {}} isOpen={isOpen} isCentered>
+    <Modal onClose={() => { }} isOpen={isOpen} isCentered>
       <ModalOverlay
         bg={"rgba(0, 0, 0, 0)"}
         mt={bgs[currentStep].px}
