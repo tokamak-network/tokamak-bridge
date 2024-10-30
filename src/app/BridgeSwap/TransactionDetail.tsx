@@ -25,7 +25,6 @@ import GradientSpinner from "@/components/ui/GradientSpinner";
 import useConfirm from "@/hooks/modal/useConfirmModal";
 import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import { useApprove } from "@/hooks/token/useApproval";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 import { useAccount } from "wagmi";
