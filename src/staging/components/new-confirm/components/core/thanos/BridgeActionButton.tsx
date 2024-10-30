@@ -1,5 +1,6 @@
 import {
   StandardHistory,
+  Status,
   TransactionHistory,
 } from "@/staging/types/transaction";
 import React from "react";
@@ -23,7 +24,12 @@ const BridgeActionButtonComponent: React.FC<
   BridgeActionButtonComponentProps
 > = ({ isConfirmed, onClick, toolTip, tx, disabled }) => {
   const { chain } = useNetwork();
-  const buttonContent = getBridgeActionButtonContent(tx);
+  const isWrongNetwork =
+    (tx.status === Status.Prove || tx.status === Status.Finalize) &&
+    chain?.id !== tx.outNetwork;
+  const buttonContent = isWrongNetwork
+    ? "Wrong Network"
+    : getBridgeActionButtonContent(tx);
   const isDisabled = !isConfirmed || isActionDisabled(tx.status);
   const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
     pendingTransactionHashes
@@ -38,7 +44,7 @@ const BridgeActionButtonComponent: React.FC<
           content={buttonContent}
           onClick={onClick}
           disabled={isDisabled || pendingStatus || disabled}
-          toolTip={toolTip}
+          toolTip={isWrongNetwork ? undefined : toolTip}
           pendingStatus={pendingStatus}
         />
       ) : null}
