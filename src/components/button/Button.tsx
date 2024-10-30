@@ -24,6 +24,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = (props) => {
       onClick={onClick}
       opacity={"1 !important"}
       py={"12px"}
+      cursor={"pointer !important"}
     >
       {!pendingStatus ? (
         <Flex gap={"2px"} alignItems={"center"}>

@@ -46,7 +46,7 @@ export default function ApproveButton(props: ApproveButtonProps) {
       isInputZero) &&
     (confirmedApproveTransaction === undefined ||
       confirmedApproveTransaction?.tokenData?.[0]?.tokenAddress.toLowerCase() !==
-        inToken?.tokenAddress.toLowerCase() ||
+      inToken?.tokenAddress.toLowerCase() ||
       isInputZero)
   ) {
     return null;
@@ -73,6 +73,7 @@ export default function ApproveButton(props: ApproveButtonProps) {
             callApprove();
             setIsDrawerOpen(false);
           }}
+          opacity={"1 !important"}
         >
           {isLoading ? (
             <Spinner
@@ -120,7 +121,6 @@ export default function ApproveButton(props: ApproveButtonProps) {
         <Button
           isDisabled={!isConfirmed || isLoading || isRevokeForUSDT}
           sx={{
-            backgroundColor: isConfirmed && !isLoading ? "#007AFF" : "#17181D",
             color: isConfirmed ? "#FFFFFF" : "#8E8E92",
           }}
           width="full"
@@ -131,6 +131,9 @@ export default function ApproveButton(props: ApproveButtonProps) {
             callApprove();
             setIsDrawerOpen(false);
           }}
+          bgColor={!isConfirmed || isLoading || isRevokeForUSDT ? "#17181D !important" : "#007AFF !important"}
+          opacity={"1 !important"}
+          cursor={"pointer !important"}
         >
           {isLoading ? (
             <Spinner

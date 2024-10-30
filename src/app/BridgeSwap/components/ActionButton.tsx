@@ -112,6 +112,7 @@ export default function ActionButton() {
         color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
         isDisabled={isDisabled}
         onClick={buttonAction}
+        cursor={"pointer !important"}
       >
         {!isConnected && "Connect Wallet"}
         {!isConnected

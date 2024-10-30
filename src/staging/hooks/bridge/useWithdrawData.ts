@@ -175,7 +175,6 @@ export const useWithdrawData = () => {
   }, [l2TitanData, isConnectedToMainNetwork, L2Provider]);
 
   const fetchThanosData = useCallback(async () => {
-
     if (
       l2ThanosData &&
       isConnectedToMainNetwork !== undefined &&
@@ -239,7 +238,6 @@ export const useWithdrawData = () => {
             messagePassed.withdrawalHash,
             BigInt(sentMessage.blockNumber) <= BigInt(latestL2OutputBlockNumber)
           );
-          // const status = Status.Initiate;
 
           const blockTimestamps = {
             initialCompletedTimestamp: Number(sentMessage.blockTimestamp),
@@ -280,23 +278,28 @@ export const useWithdrawData = () => {
       const sortedResult = getSortedTxListByDate(
         filteredResult
       ) as WithdrawTransactionHistory[];
-      const updatedTxOnConfirmModal = sortedResult.find(
-        (tx) =>
-          tx.transactionHashes.initialTransactionHash ===
-          (thanosDepositWithdrawConfirmModal.transaction as StandardHistory)
-            ?.transactionHashes.initialTransactionHash
-      );
-      if (updatedTxOnConfirmModal && thanosDepositWithdrawConfirmModal.isOpen)
-        setThanosDepositWithdrawConfirmModal((prev) => ({
-          ...prev,
-          transaction: updatedTxOnConfirmModal,
-        }));
+
+      // Only update modal if status has changed
+      if (thanosDepositWithdrawConfirmModal.isOpen && thanosDepositWithdrawConfirmModal.transaction) {
+        const currentTx = thanosDepositWithdrawConfirmModal.transaction as StandardHistory;
+        const updatedTx = sortedResult.find(tx =>
+          tx.transactionHashes.initialTransactionHash === currentTx.transactionHashes.initialTransactionHash
+        );
+
+        if (updatedTx && updatedTx.status !== currentTx.status) {
+          setThanosDepositWithdrawConfirmModal(prev => ({
+            ...prev,
+            transaction: updatedTx
+          }));
+        }
+      }
+
+      // Update history
       if (sortedResult) {
-        const newThanosWithdrawHistory = {
-          ...thanosSepWithdrawHistory,
-        };
-        newThanosWithdrawHistory.history = sortedResult;
-        setThanosWithdrawHistory(newThanosWithdrawHistory);
+        setThanosWithdrawHistory(prev => ({
+          ...prev,
+          history: sortedResult
+        }));
       }
     }
   }, [
@@ -305,7 +308,8 @@ export const useWithdrawData = () => {
     ThanosProvider,
     l1ThanosOptimismPortal,
     l1ThanosData,
-    thanosDepositWithdrawConfirmModal.transaction,
+    thanosDepositWithdrawConfirmModal.isOpen,
+    thanosDepositWithdrawConfirmModal.transaction
   ]);
   useEffect(() => {
     if (isConnectedToMainNetwork) {

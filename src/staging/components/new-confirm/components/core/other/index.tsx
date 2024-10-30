@@ -425,13 +425,15 @@ export default function DepositWithdrawConfirmModal() {
                   height={"48px"}
                   borderRadius={"8px"}
                   sx={{
-                    backgroundColor: btnIsDisabled ? "#17181D" : "#007AFF",
                     color: btnIsDisabled ? "#8E8E92" : "#FFFFFF",
                   }}
                   _hover={{}}
                   _focus={{}}
+                  bgColor={btnIsDisabled ? "#17181D !important" : "#007AFF !important"}
                   onClick={callToFinalize}
                   isDisabled={btnIsDisabled}
+                  opacity={"1 !important"}
+                  cursor={"pointer !important"}
                 >
                   <Flex alignItems={"center"}>
                     <Text

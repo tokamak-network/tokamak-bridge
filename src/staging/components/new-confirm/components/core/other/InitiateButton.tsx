@@ -29,13 +29,15 @@ export default function InitiateButton(props: InitiateButtonProps) {
           onCloseCTOptionModal();
         }}
         sx={{
-          backgroundColor: isConfirmed && isApproved ? "#007AFF" : "#17181D",
           color: isConfirmed && isApproved ? "#FFFFFF" : "#8E8E92",
         }}
         width="full"
         height={"48px"}
         borderRadius={"8px"}
         _hover={{}}
+        opacity={"1 !important"}
+        cursor={"pointer !important"}
+        bgColor={isConfirmed && isApproved ? "#007AFF !important" : "#17181D !important"}
       >
         <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
           Initiate
