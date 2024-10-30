@@ -22,6 +22,7 @@ const ButtonComponent: React.FC<ButtonComponentProps> = (props) => {
       bgColor={disabled ? "#17181D !important" : "#007AFF !important"}
       isDisabled={disabled}
       onClick={onClick}
+      opacity={"1 !important"}
       py={"12px"}
     >
       {!pendingStatus ? (
