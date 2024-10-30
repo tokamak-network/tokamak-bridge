@@ -68,15 +68,14 @@ export const useRecommendFee = (params: {
   // }, [feeData?.gasPrice, standardWithdrawGasCost]);
 
   const additionalFeeRatio = useMemo(() => {
-    if (hasRecomendFee) {
+    if (hasRecomendFee && tokenInfo?.tokenSymbol) {
       // const additionalFee = isGasFeeLessThanOrEqual ? 0 : -0.4;
       const additionalFee = 0;
-
       return (
-        recommendFeeConfig.fee[tokenInfo?.tokenSymbol as string] - additionalFee
+        recommendFeeConfig.fee[tokenInfo.tokenSymbol as string] - additionalFee
       );
     }
-  }, [hasRecomendFee]);
+  }, [hasRecomendFee, tokenInfo?.tokenSymbol]);
 
   const additionalFee = useMemo(() => {
     if (totalTokenAmountInUSD && additionalFeeRatio && tokenInfo?.decimals) {
