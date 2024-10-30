@@ -33,7 +33,7 @@ export enum SupportedChainIdOnProd {
   TITAN = 55004,
   SEPOLIA = 11155111,
   TITAN_SEPOLIA = 55007,
-  // THANOS_SEPOLIA = 111551119090,
+  THANOS_SEPOLIA = 111551119090,
 }
 
 export const NetworkDisplayName: Partial<

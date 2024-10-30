@@ -68,7 +68,6 @@ export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
-
   const transactionData =
     depositWithdrawConfirmModal.transaction as StandardHistory;
   const isStandardBridge =

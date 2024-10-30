@@ -107,9 +107,8 @@ export default function Warning() {
     if (inToken)
       return (
         <WarningText
-          label={`Cannot deposit/withdraw ${
-            inToken?.tokenSymbol
-          } to ${convertNetworkName(outNetwork?.chainName)}.`}
+          label={`Cannot deposit/withdraw ${inToken?.tokenSymbol
+            } to ${convertNetworkName(outNetwork?.chainName)}.`}
         />
       );
   }
@@ -119,15 +118,6 @@ export default function Warning() {
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
         <Text>Swap route not found on this network</Text>
-      </Flex>
-    );
-  }
-
-  if (isBalanceOver) {
-    return (
-      <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-        <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-        <Text>Insufficient ({inToken?.tokenSymbol}) balance </Text>
       </Flex>
     );
   }

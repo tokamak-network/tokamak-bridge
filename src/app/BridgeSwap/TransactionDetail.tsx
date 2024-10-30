@@ -32,8 +32,10 @@ import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useIsTon from "@/hooks/token/useIsTon";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { supportedChain } from "@/types/network/supportedNetwork";
+import { supportedChain, SupportedChainId } from "@/types/network/supportedNetwork";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
+import { getTransactionConstants } from "@/staging/constants/transactionTime";
+import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -274,7 +276,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
           <Text fontWeight={300}>{title}</Text>
         </Flex>
         <Flex>
-          {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{}</Text>}
+          {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{ }</Text>}
           {gasFee && (
             <Text mr={"27px"} fontWeight={500}>
               {gasFee}
@@ -471,7 +473,9 @@ const Title = (props: {
     const priceStr = price.toString();
     return priceStr.length > 10 ? `${priceStr.slice(0, 10)}...` : priceStr;
   };
-  if (mode === "Deposit" && outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID) {
+
+  const transactionConstant = getTransactionConstants(outNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA);
+  if (mode === "Deposit") {
     return (
       <Flex
         w={"100%"}
@@ -485,7 +489,7 @@ const Title = (props: {
             Time to Deposit
           </Text>
           <Text fontSize={"14px"} fontWeight={"600"}>
-            1~2 minutes
+            {`${transactionConstant.DEPOSIT.INITIAL_MINUTES}~${transactionConstant.DEPOSIT.INITIAL_MINUTES + 1} minutes`}
           </Text>
         </Flex>
         <Flex justifyContent={"space-between"}>
@@ -499,7 +503,7 @@ const Title = (props: {
       </Flex>
     );
   }
-  if (mode === "Deposit" || mode === "Withdraw") {
+  if (mode === "Withdraw") {
     return (
       <Flex
         w={"100%"}
@@ -581,28 +585,28 @@ const Title = (props: {
         {isLoading
           ? null
           : isOpen === false && (
-              <Flex>
-                {(!isExpanded || mobileView) && (
-                  <>
-                    <Image src={GasImg} alt={"gasStation"} />
-                    <Text
-                      fontSize={{ base: 11, lg: 14 }}
-                      fontWeight={400}
-                      color={"#A0A3AD"}
-                      ml={"6px"}
-                      sx={{ mr: mobileView ? 0 : "13px" }}
-                    >
-                      {gasCostUS ? `$${gasCostUS}` : `NA`}
-                    </Text>
-                  </>
-                )}
-                {!mobileView && (
-                  <motion.div animate={arrowControl}>
-                    <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-                  </motion.div>
-                )}
-              </Flex>
-            )}
+            <Flex>
+              {(!isExpanded || mobileView) && (
+                <>
+                  <Image src={GasImg} alt={"gasStation"} />
+                  <Text
+                    fontSize={{ base: 11, lg: 14 }}
+                    fontWeight={400}
+                    color={"#A0A3AD"}
+                    ml={"6px"}
+                    sx={{ mr: mobileView ? 0 : "13px" }}
+                  >
+                    {gasCostUS ? `$${gasCostUS}` : `NA`}
+                  </Text>
+                </>
+              )}
+              {!mobileView && (
+                <motion.div animate={arrowControl}>
+                  <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+                </motion.div>
+              )}
+            </Flex>
+          )}
       </Flex>
     );
   }
@@ -632,8 +636,7 @@ export default function TransactionDetail(props: {
   const { isTONatPair } = useIsTon();
   const { outNetwork } = useInOutNetwork();
 
-  const isThanosDeposit =
-    mode === "Deposit" && outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID;
+  const isDeposit = mode === "Deposit";
 
   const isWrapUnwrap =
     mode === "Wrap" ||
@@ -659,24 +662,24 @@ export default function TransactionDetail(props: {
       w={"100%"}
       // h={isExpanded ? "310px" : "48px"}
       minH={{ base: "40px", lg: "48px" }}
-      bg={isThanosDeposit ? "#100E12" : "#1f2128"}
+      bg={isDeposit ? "#100E12" : "#1f2128"}
       borderRadius={"8px"}
       px={!isMobile ? { base: "16px", lg: "20px" } : ""}
       flexDir={"column"}
       pt={
-        !isMobile && !isThanosDeposit
+        !isMobile && !isDeposit
           ? {
-              base: isExpanded ? "11px" : "11px",
-              lg: isExpanded ? "20px" : "14px",
-            }
+            base: isExpanded ? "11px" : "11px",
+            lg: isExpanded ? "20px" : "14px",
+          }
           : ""
       }
       pb={
-        !isThanosDeposit
+        !isDeposit
           ? {
-              base: isExpanded ? "12px" : "",
-              lg: isExpanded ? "20px" : "",
-            }
+            base: isExpanded ? "12px" : "",
+            lg: isExpanded ? "20px" : "",
+          }
           : ""
       }
     >
@@ -686,12 +689,12 @@ export default function TransactionDetail(props: {
       {(!mobileView ||
         // isOnConfirm ||
         (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
-        <Content
-          isExpanded={isExpanded}
-          isOnConfirm={isOnConfirm}
-          isMobile={isMobile}
-        ></Content>
-      )}
+          <Content
+            isExpanded={isExpanded}
+            isOnConfirm={isOnConfirm}
+            isMobile={isMobile}
+          ></Content>
+        )}
     </Flex>
   );
 }
