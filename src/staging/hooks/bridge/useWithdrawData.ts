@@ -233,12 +233,11 @@ export const useWithdrawData = () => {
           const l1ChainId = SupportedChainId.SEPOLIA; // need to change when binding main net
 
           const l2ChainId = SupportedChainId.THANOS_SEPOLIA; // need to change when binding main net
-
           const status = await getThanosMessageStatuaWithSubgraph(
             withdrawalProvens,
             withdrawalFinalizeds,
             messagePassed.withdrawalHash,
-            sentMessage.blockNumber <= latestL2OutputBlockNumber
+            BigInt(sentMessage.blockNumber) <= BigInt(latestL2OutputBlockNumber)
           );
           // const status = Status.Initiate;
 
