@@ -4,6 +4,7 @@ import {
   SupportedChainId,
   SupportedChainProperties,
   supportedChain,
+  supportedChainOnProd,
 } from "@/types/network/supportedNetwork";
 import { Flex, Box, Text } from "@chakra-ui/layout";
 import Image from "next/image";
@@ -144,7 +145,7 @@ export default function NetworkDropdown(props: {
   const onChange = async (data: SupportedChainProperties) => {
     try {
       const value: SupportedChainProperties["chainId"] = Number(data.chainId);
-      const selectedWork = supportedChain.filter((supportedChain) => {
+      const selectedWork = supportedChainOnProd.filter((supportedChain) => {
         return supportedChain.chainId === value;
       })[0];
 
@@ -190,7 +191,7 @@ export default function NetworkDropdown(props: {
   useEffect(() => {
     if (isConnected === false) {
       if (inNetwork && network?.inNetwork?.chainId) {
-        const connectedNetwork = supportedChain.filter((supportedChain) => {
+        const connectedNetwork = supportedChainOnProd.filter((supportedChain) => {
           return supportedChain.chainId === network?.inNetwork?.chainId;
         })[0];
 
@@ -334,7 +335,7 @@ export default function NetworkDropdown(props: {
     );
   };
 
-  const optionsList = supportedChain
+  const optionsList = supportedChainOnProd
     .filter((chainInfo) => {
       if (
         isConnectedToMainNetwork === true ||

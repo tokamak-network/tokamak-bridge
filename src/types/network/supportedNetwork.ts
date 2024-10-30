@@ -28,6 +28,14 @@ export enum SupportedL2ChainId {
   TITAN_SEPOLIA = 55007,
 }
 
+export enum SupportedChainIdOnProd {
+  MAINNET = 1,
+  TITAN = 55004,
+  SEPOLIA = 11155111,
+  TITAN_SEPOLIA = 55007,
+  // THANOS_SEPOLIA = 111551119090,
+}
+
 export const NetworkDisplayName: Partial<
   Record<string | SupportedChainId, string>
 > = {
@@ -98,6 +106,10 @@ export const supportedChain: SupportedChainProperties[] = [
     isTestnet: true,
   },
 ];
+
+export const supportedChainOnProd = supportedChain.filter((chain: any) =>
+  Object.values(SupportedChainIdOnProd).includes(chain.chainId)
+);
 
 export const isLayer1Chain = (chainId: SupportedChainId): boolean => {
   return (

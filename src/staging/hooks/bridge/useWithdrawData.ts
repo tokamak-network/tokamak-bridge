@@ -6,7 +6,7 @@ import {
   WithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import useConnectedNetwork from "@/hooks/network";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { SupportedChainId, supportedChainOnProd } from "@/types/network/supportedNetwork";
 import { Resolved, SentMessages } from "@/types/activity/history";
 import {
   getCurretStatus,
@@ -330,9 +330,11 @@ export const useWithdrawData = () => {
       thanosSepWithdrawHistory.history
     ) {
 
-      const totalWithdrawResult = getSortedTxListByDate([
+      const totalWithdrawResult = supportedChainOnProd.find((chain) => chain.chainId === SupportedChainId.THANOS_SEPOLIA) ? getSortedTxListByDate([
         ...(titanWithdrawalHistory.history ?? []),
         ...(thanosSepWithdrawHistory.history ?? []),
+      ]) : getSortedTxListByDate([
+        ...(titanWithdrawalHistory.history ?? []),
       ]);
       setWithdrawHistory(totalWithdrawResult as WithdrawTransactionHistory[]);
     }

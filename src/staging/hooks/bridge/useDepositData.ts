@@ -10,7 +10,7 @@ import { Resolved, SentMessages } from "@/types/activity/history";
 import { getCurrentDepositStatus } from "@/utils/history/getCurrentStatus";
 import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodeBridgeHistoryLog";
 import { ethers } from "ethers";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { supportedChain, SupportedChainId, supportedChainOnProd } from "@/types/network/supportedNetwork";
 import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
 import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
 import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
@@ -304,9 +304,11 @@ export const useDepositData = () => {
       titanDipositHistory.history &&
       thanosDipositHistory.history
     ) {
-      const totalDepositResult = getSortedTxListByDate([
+      const totalDepositResult = supportedChainOnProd.find((chain) => chain.chainId === SupportedChainId.THANOS_SEPOLIA) ? getSortedTxListByDate([
         ...(titanDipositHistory.history ?? []),
         ...(thanosDipositHistory.history ?? []),
+      ]) : getSortedTxListByDate([
+        ...(titanDipositHistory.history ?? []),
       ]);
       setDepositHistory(totalDepositResult as DepositTransactionHistory[]);
     }
