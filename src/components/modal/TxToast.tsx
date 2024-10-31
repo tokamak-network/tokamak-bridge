@@ -94,8 +94,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
          */}
         <TokenSymbolWithNetwork
           tokenSymbol={symbol === "WETH" ? "WETH" : "ETH"}
-          networkSymbolW={16}
-          networkSymbolH={16}
+          networkSymbolW={14}
+          networkSymbolH={14}
           bottom={-0.5}
           right={-0.5}
           chainId={targetChainId}
@@ -121,8 +121,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
         <TokenSymbolWithNetwork
           tokenSymbol={symbol}
           chainId={targetChainId}
-          networkSymbolW={16}
-          networkSymbolH={16}
+          networkSymbolW={14}
+          networkSymbolH={14}
           bottom={-0.5}
           right={-0.5}
         />
