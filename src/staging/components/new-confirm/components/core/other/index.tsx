@@ -11,7 +11,7 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import {
   Action,
@@ -63,6 +63,7 @@ import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
 import Image from "next/image";
 import InfoIcon from "@/assets/icons/info.svg"
 import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
+import SwitchNetworkWarningComponent from "../thanos/SwitchNetworkWarning";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -83,6 +84,8 @@ export default function DepositWithdrawConfirmModal() {
 
   const outNetworkChainId =
     transactionData?.outNetwork || SupportedChainId.MAINNET;
+
+  const { chain } = useNetwork();
 
 
   const chainName = getKeyByValue(SupportedChainId, l2ChainId) || "";
@@ -220,8 +223,8 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
-  const btnIsDisabled = lineType !== 3;
-
+  const isWrongNetwork = chain?.id !== l1ChainId;
+  const btnIsDisabled = lineType !== 3 || isWrongNetwork;
   return (
     <Modal
       isOpen={depositWithdrawConfirmModal.isOpen}
@@ -258,6 +261,7 @@ export default function DepositWithdrawConfirmModal() {
           <CloseButton onClick={onCloseDepositWithdrawConfirmModal} />
         </Box>
         <ModalBody p={0}>
+          {isWrongNetwork && <Box mb={"12px"}><SwitchNetworkWarningComponent chainId={l1ChainId ?? SupportedChainId.MAINNET} /></Box>}
           <Box
             px={"16px"}
             py={"12px"}
@@ -441,7 +445,7 @@ export default function DepositWithdrawConfirmModal() {
                       fontSize={"16px"}
                       lineHeight={"24px"}
                     >
-                      Finalize
+                      {isWrongNetwork ? "Wrong Network" : "Finalize"}
                     </Text>
                   </Flex>
                 </Button>
