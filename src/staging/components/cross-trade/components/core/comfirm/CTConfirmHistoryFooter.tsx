@@ -80,7 +80,7 @@ const TransactionItem = (props: TransactionItemProps) => {
 
   const needToShowTimeDisplay =
     (title === "refund" || title === "return") && isActive;
-  const initialTimeDisplay = formatTimeDisplay(getRemainTime(txData));
+  const initialTimeDisplay = getRemainTime(txData);
   const { isTimeOver } = useTimeOver({
     timeStamp: Number(blockTimestamp),
     //refund and return have same timeBuffer as 300s
@@ -101,7 +101,7 @@ const TransactionItem = (props: TransactionItemProps) => {
         lineHeight={"20px"}
         color={isOnError || isTimeOver ? "#DD3A44" : "#fff"}
       >
-        {timeDisplay}
+        {timeDisplay.time}
       </Text>
     );
   }, [timeDisplay, needToShowTimeDisplay, isTimeOver]);
@@ -129,7 +129,7 @@ const TransactionItem = (props: TransactionItemProps) => {
             }}
             tooltipLabel={
               <span>
-                It take at least 2~5 minutes to receive <br />
+                It take at least 15 minutes to receive <br />
                 (depending on the L2 sequencer).{" "}
               </span>
             }
@@ -147,7 +147,7 @@ const TransactionItem = (props: TransactionItemProps) => {
             }}
             tooltipLabel={
               <span>
-                The refund takes at least 2~5 minutes
+                The refund takes at least 15 minutes
                 <br />
                 (depending on the L2 sequencer).{" "}
               </span>
@@ -238,9 +238,9 @@ export default function CTConfirmHistoryFooter(props: {
           const blockTimestamp =
             key === "refund"
               ? //@ts-ignore
-                txData.blockTimestamps["cancelRequest"]
+              txData.blockTimestamps["cancelRequest"]
               : //@ts-ignore
-                txData.blockTimestamps[key];
+              txData.blockTimestamps[key];
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
@@ -313,13 +313,19 @@ export default function CTConfirmHistoryFooter(props: {
         </Flex>
       </Box>
       {isRequest && (
-        <Box w={"100%"} mt={"12px"} pb={"4px"}>
+        <Box w={"100%"} mt={"12px"}>
           <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
             Tip: Update the service fee to reflect significant <br /> change in
             L1 gas price.
           </Text>
         </Box>
       )}
+      <Box w={"100%"} mt={"12px"}>
+        <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+          *This modal doesn't update in real-time.
+          <br /> Please close & reopen it to view the latest data.
+        </Text>
+      </Box>
     </Flex>
   );
 }

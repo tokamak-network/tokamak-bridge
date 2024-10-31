@@ -22,17 +22,18 @@ import useCTUpdateFeeModal from "@/staging/components/cross-trade/hooks/useCTUpd
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import { useTimeOver } from "@/hooks/time/useTimeOver";
 interface CTProviderProps {
-  // status: number;
   status: boolean;
   crossTradeData: CrossTradeData;
   subgraphData: T_FETCH_REQUEST_LIST_L2;
   serviceFee: BigInt;
+  isNetaveProfit: boolean;
 }
 
 export default function CTProvider({
   status,
   crossTradeData,
   subgraphData,
+  isNetaveProfit,
 }: CTProviderProps) {
   const {
     blockTimestamps,
@@ -118,31 +119,31 @@ export default function CTProvider({
   }, [address, crossTradeData.requester]);
 
   const ProvidingButton = () => {
-    if (!isTimeOver && !isCreatedByUser) {
-      const remainTime = calculateInitialCountdown(
-        blockTimestamps,
-        TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
-      );
-      const isZeroTime = remainTime <= 0;
-      const timeDisplay = isZeroTime
-        ? "00 : 00"
-        : useCountdown(formatTimeDisplay(remainTime));
+    // if (!isTimeOver && !isCreatedByUser) {
+    //   const remainTime = calculateInitialCountdown(
+    //     blockTimestamps,
+    //     TRANSACTION_CONSTANTS.CROSS_TRADE.PROVIDE
+    //   );
+    //   const isZeroTime = remainTime <= 0;
+    //   const timeDisplay = isZeroTime
+    //     ? "00 : 00"
+    //     : useCountdown(formatTimeDisplay(remainTime));
 
-      return (
-        <Flex justifyContent={"center"}>
-          <Text
-            fontWeight={600}
-            fontSize={"11px"}
-            lineHeight={"16.5px"}
-            color={"#DB00FF"}
-          >
-            {timeDisplay}
-          </Text>
-        </Flex>
-      );
-    }
+    //   return (
+    //     <Flex justifyContent={"center"}>
+    //       <Text
+    //         fontWeight={600}
+    //         fontSize={"11px"}
+    //         lineHeight={"16.5px"}
+    //         color={"#DB00FF"}
+    //       >
+    //         {timeDisplay}
+    //       </Text>
+    //     </Flex>
+    //   );
+    // }
 
-    const isDisabled = isInRelay;
+    const isDisabled = isInRelay || (isNetaveProfit && !isCreatedByUser);
     const bgColor =
       isDisabled || isInRelay
         ? "#23242B"
@@ -166,7 +167,7 @@ export default function CTProvider({
         gap={"8px"}
         flexShrink={0}
         borderRadius={"6px"}
-        bg={bgColor}
+        bg={isInRelay ? "none" : bgColor}
         border={
           isInRelay
             ? "none"
@@ -190,7 +191,7 @@ export default function CTProvider({
           lineHeight={"16.5px"}
           color={textColor}
         >
-          {isInRelay ? "Provided" : isCreatedByUser ? "Edit" : "Provide"}
+          {isInRelay ? "Completed" : isCreatedByUser ? "Edit" : "Provide"}
         </Text>
       </Button>
     );

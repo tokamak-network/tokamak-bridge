@@ -69,7 +69,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
           return (
             <span>
               Total amount to receive, including the service
-              <br /> fee. It takes at least 2~5 minutes to receive <br />{" "}
+              <br /> fee. It takes at least 15 minutes to receive <br />{" "}
               (depending on the L2 sequencer).
             </span>
           );
@@ -342,6 +342,15 @@ export default function CTConfirmDetail({
       : CTTransactionType.requestRegisteredToken
   );
 
+  const showServiceFee = useMemo(() => {
+    return (
+      !isCanceled &&
+      (updateFee ||
+        (modalType === ModalType.History && !isInCT_Provide(status))) &&
+      !isProvide
+    );
+  }, [isCanceled, updateFee, modalType, status, isProvide]);
+
   return (
     <Box
       bg="#15161D"
@@ -375,7 +384,7 @@ export default function CTConfirmDetail({
             outNetwork={isProvide ? inNetwork : outNetwork}
           />
         )}
-        {!isCanceled && updateFee && !isProvide && (
+        {showServiceFee && (
           <FeeDetail
             title="Service fee"
             mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}

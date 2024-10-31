@@ -39,6 +39,12 @@ import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { BetaIcon } from "../../common/BetaIcon";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  ATOM_CT_GAS_cancelCT,
+  ATOM_CT_GAS_editCT,
+} from "@/recoil/crosstrade/networkFee";
+import { Hash } from "viem";
+import { calculateGasMarginBigInt } from "@/utils/txn/calculateGasMargin";
 
 export default function CTFeeUpdateModal() {
   const { mobileView } = useMediaView();
@@ -177,11 +183,74 @@ export default function CTFeeUpdateModal() {
     resetAllStates();
   }, []);
 
-  const { editFee: _editFee, cancelRequest: _cancelRequest } =
-    useCrossTradeContract();
+  const {
+    editFee: _editFee,
+    cancelRequest: _cancelRequest,
+    L1_CROSSTRADE_PROXY_CONTRACT,
+  } = useCrossTradeContract();
+  const [, setEditGasUsage] = useRecoilState(ATOM_CT_GAS_editCT);
+  const [, setCancelGasUsage] = useRecoilState(ATOM_CT_GAS_cancelCT);
 
-  const editFee = useCallback(() => {
-    try {
+  const editFee = useCallback(
+    async (estimateGas?: boolean) => {
+      try {
+        if (
+          ctUpdateFeeModal.txData &&
+          ctUpdateFeeModal.txData.L2_subgraphData
+        ) {
+          const {
+            _l1token,
+            _l2token,
+            _totalAmount,
+            _ctAmount,
+            _saleCount,
+            _l2chainId,
+            _hashValue,
+          } = ctUpdateFeeModal.txData.L2_subgraphData;
+          const editAmount = toParseNumber(
+            inputValue,
+            ctUpdateFeeModal.txData.inToken.decimals
+          );
+
+          if (!editAmount) return console.error("editAmount is undefined");
+
+          const _editedctAmount = BigNumber.from(_totalAmount).sub(editAmount);
+          const params = [
+            _l1token,
+            _l2token,
+            _totalAmount,
+            _ctAmount,
+            _editedctAmount,
+            _saleCount,
+            _l2chainId,
+            _hashValue,
+          ];
+
+          const estimatedGas =
+            await L1_CROSSTRADE_PROXY_CONTRACT.estimateGas.editFee({
+              //@ts-ignore
+              account: address as Hash,
+              args: params,
+            });
+          const estimatedGasWithBuffer = calculateGasMarginBigInt(estimatedGas);
+
+          if (estimateGas) return setEditGasUsage(estimatedGasWithBuffer);
+
+          _editFee({
+            args: params,
+            gas: estimatedGasWithBuffer,
+          });
+          resetAllStates();
+        }
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    [_editFee, ctUpdateFeeModal.txData, inputValue]
+  );
+
+  const cancelRequest = useCallback(
+    async (estimateGas?: boolean) => {
       if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
         const {
           _l1token,
@@ -192,67 +261,43 @@ export default function CTFeeUpdateModal() {
           _l2chainId,
           _hashValue,
         } = ctUpdateFeeModal.txData.L2_subgraphData;
-        const editAmount = toParseNumber(
-          inputValue,
-          ctUpdateFeeModal.txData.inToken.decimals
-        );
 
-        if (!editAmount) return console.error("editAmount is undefined");
-
-        const _editedctAmount = BigNumber.from(_totalAmount).sub(editAmount);
         const params = [
           _l1token,
           _l2token,
           _totalAmount,
           _ctAmount,
-          _editedctAmount,
           _saleCount,
           _l2chainId,
+          200000,
           _hashValue,
         ];
+        console.log("--cancel params--", params);
 
-        console.log("--editFee params--", params);
+        const estimatedGas =
+          await L1_CROSSTRADE_PROXY_CONTRACT.estimateGas.cancel({
+            //@ts-ignore
+            account: address as Hash,
+            args: params,
+          });
+        const estimatedGasWithBuffer = calculateGasMarginBigInt(estimatedGas);
 
-        _editFee({
+        if (estimateGas) return setCancelGasUsage(estimatedGasWithBuffer);
+
+        _cancelRequest({
           args: params,
+          gas: estimatedGasWithBuffer,
         });
         resetAllStates();
       }
-    } catch (e) {
-      console.log(e);
-    }
-  }, [_editFee, ctUpdateFeeModal.txData, inputValue]);
+    },
+    [ctUpdateFeeModal.txData, _cancelRequest]
+  );
 
-  const cancelRequest = useCallback(() => {
-    if (ctUpdateFeeModal.txData && ctUpdateFeeModal.txData.L2_subgraphData) {
-      const {
-        _l1token,
-        _l2token,
-        _totalAmount,
-        _ctAmount,
-        _saleCount,
-        _l2chainId,
-        _hashValue,
-      } = ctUpdateFeeModal.txData.L2_subgraphData;
-
-      const params = [
-        _l1token,
-        _l2token,
-        _totalAmount,
-        _ctAmount,
-        _saleCount,
-        _l2chainId,
-        200000,
-        _hashValue,
-      ];
-      console.log("--cancel params--", params);
-
-      _cancelRequest({
-        args: params,
-      });
-      resetAllStates();
-    }
-  }, [ctUpdateFeeModal.txData, _cancelRequest]);
+  useEffect(() => {
+    if (activeButton === UpdateFeeButtonType.Update) editFee(true);
+    if (activeButton === UpdateFeeButtonType.CancelRequest) cancelRequest(true);
+  }, [editFee, cancelRequest, activeButton]);
 
   const handleConfirm = useCallback(() => {
     if (activeButton === UpdateFeeButtonType.Update) return editFee();
@@ -264,9 +309,10 @@ export default function CTFeeUpdateModal() {
     return (
       !activeConfirmButton ||
       !connectedToLayer1 ||
-      inputWarningCheck === WarningType.Critical
+      (activeButton === UpdateFeeButtonType.Update && inputWarningCheck) ===
+        WarningType.Critical
     );
-  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck]);
+  }, [activeConfirmButton, connectedToLayer1, inputWarningCheck, activeButton]);
 
   const { address } = useAccount();
 
@@ -321,7 +367,7 @@ export default function CTFeeUpdateModal() {
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
         width={mobileView ? "100%" : "404px"}
         {...(mobileView && {
@@ -347,7 +393,7 @@ export default function CTFeeUpdateModal() {
         <ModalBody p={0}>
           <Box
             width={mobileView ? "100%" : "364px"}
-            bg='#15161D'
+            bg="#15161D"
             px={"16px"}
             py={"16px"}
             borderRadius={"8px"}
@@ -359,7 +405,7 @@ export default function CTFeeUpdateModal() {
               isMobile={mobileView}
             />
             <WrongNetwork style={{ marginTop: "12px" }} />
-            {activeButton == UpdateFeeButtonType.Update &&
+            {activeButton === UpdateFeeButtonType.Update &&
             ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail
                 // input 관련 props
@@ -379,7 +425,7 @@ export default function CTFeeUpdateModal() {
             )}
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter p={0} display="block">
           {activeButton == UpdateFeeButtonType.CancelRequest && (
             <Flex
               flexDir={"column"}
@@ -415,7 +461,7 @@ export default function CTFeeUpdateModal() {
                       },
                     },
                   }}
-                  colorScheme='#A0A3AD'
+                  colorScheme="#A0A3AD"
                   display={"flex"}
                   alignItems={"flex-start"}
                   mt={"3px"}
@@ -426,7 +472,7 @@ export default function CTFeeUpdateModal() {
                   fontSize={12}
                   lineHeight={"20px"}
                 >
-                  refund may take at least 2~5 minutes <br />
+                  refund may take at least 15 minutes <br />
                   (depending on L2 sequencer).
                 </Text>
               </Flex>
@@ -434,7 +480,7 @@ export default function CTFeeUpdateModal() {
           )}
           <Button
             mt={"16px"}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             sx={{

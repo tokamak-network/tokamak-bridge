@@ -13,7 +13,12 @@ import {
 } from "@chakra-ui/react";
 import { useAccount } from "wagmi";
 import { trimAddress } from "@/utils/trim";
-import { Action, Status, GasCostData } from "@/staging/types/transaction";
+import {
+  Action,
+  Status,
+  GasCostData,
+  isWithdrawTransactionHistory,
+} from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import TimeLine from "./TimeLine";
 import CloseButton from "@/components/button/CloseButton";
@@ -24,7 +29,7 @@ import { STATUS_CONFIG } from "@/staging/constants/status";
 import StatusComponent from "@/staging/components/new-confirm/components/core/other/StatusComponent";
 import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
-import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
+import { useRelayGasCost } from "@/staging/components/new-confirm/hooks/useGetGas";
 import ConfirmInitiateFooter from "@/staging/components/new-confirm/components/core/other/ConfirmInitiateFooter";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
@@ -37,6 +42,9 @@ import {
 import { getGasCostText } from "@/utils/number/compareNumbers";
 import useConnectedNetwork from "@/hooks/network";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useFinalize } from "@/hooks/history/useFinalize";
+import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { useCountdown } from "@/staging/hooks/useCountdown";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -55,8 +63,24 @@ export default function DepositWithdrawConfirmModal() {
    * Replaced 600000 and 1000000 with gasLimit parameter.
    * Changed fixed chainId to chainId parameter.
    */
-  const CLAIM_GAS_USED = 1000000;
-  const withdrawCost = useRelayGas(CLAIM_GAS_USED, SupportedChainId["MAINNET"]);
+  const { withdrawCost } = useRelayGasCost();
+  const isWithdraw =
+    transactionData && isWithdrawTransactionHistory(transactionData);
+  const { callToFinalize } = useFinalize(
+    isWithdraw ? transactionData : undefined
+  );
+
+  const remainTime = useMemo(() => {
+    if (transactionData) {
+      return getRemainTime(transactionData);
+    }
+    return 0;
+  }, [transactionData?.status, depositWithdrawConfirmModal.isOpen]);
+  const { time: timeDisplay, isCountDown } = useCountdown(
+    remainTime,
+    false,
+    transactionData
+  );
 
   const gasCostData: GasCostData = useMemo(() => {
     const formatValue = (value: string | undefined | null) =>
@@ -103,11 +127,15 @@ export default function DepositWithdrawConfirmModal() {
      * - For DEPOSIT (length 2): One ConditionalBox component is inserted between the StatusComponent elements.
      */
   }
-  const renderStatusComponents = (statuses: Status[]) => {
+
+  const renderStatusComponents = (
+    statuses: Status[],
+    isConnectedMainnet: boolean
+  ) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
-      const waitMessage = getWaitMessage(lineType, index);
+      const waitMessage = getWaitMessage(lineType, index, isConnectedMainnet);
 
       return (
         <React.Fragment key={index}>
@@ -118,14 +146,16 @@ export default function DepositWithdrawConfirmModal() {
             gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
-          (statuses.length === 3 && index < 2)
+            (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
-                <ConditionalBox
-                  type={typeValue}
-                  transactionData={transactionData}
-                  waitMessage={waitMessage}
-                />
-              )
+              <ConditionalBox
+                isCountDown={isCountDown}
+                timeDisplay={timeDisplay}
+                type={typeValue}
+                transactionData={transactionData}
+                waitMessage={waitMessage}
+              />
+            )
             : null}
         </React.Fragment>
       );
@@ -138,6 +168,7 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
+  const btnIsDisabled = lineType !== 3;
 
   return (
     <Modal
@@ -152,7 +183,7 @@ export default function DepositWithdrawConfirmModal() {
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
         width={mobileView ? "100%" : "404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
         {...(mobileView && {
           maxHeight: "calc(100vh - 80px)",
@@ -180,7 +211,7 @@ export default function DepositWithdrawConfirmModal() {
             py={"12px"}
             border={"1px solid #313442"}
             borderRadius={"8px"}
-            bg='#0F0F12'
+            bg="#0F0F12"
           >
             <Box>
               <ConfirmDetails
@@ -192,7 +223,7 @@ export default function DepositWithdrawConfirmModal() {
                 transactionHistory={transactionData}
               />
             </Box>
-            <Box borderTop='1px solid #313442' mt={"16px"} pt={"16px"}>
+            <Box borderTop="1px solid #313442" mt={"16px"} pt={"16px"}>
               <Flex justifyContent={"space-between"} alignItems={"center"}>
                 <Text
                   fontWeight={400}
@@ -240,29 +271,40 @@ export default function DepositWithdrawConfirmModal() {
                   lineHeight={"18px"}
                   color={"#FFFFFF"}
                 >
-                  {trimAddress({ address: address, firstChar: 6 })}
+                  {trimAddress({ address, firstChar: 6 })}
                 </Text>
               </Flex>
             </Box>
           </Box>
           <Box
-            my={"12px"}
+            mt={"12px"}
             px={"20px"}
             pt={"16px"}
             borderRadius={"8px"}
-            bg='#15161D'
+            bg="#15161D"
           >
             <Flex>
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"} maxWidth='100%' width='100%'>
-                {renderStatusComponents(statuses)}
+              <Box ml={"10px"} maxWidth="100%" width="100%">
+                {renderStatusComponents(
+                  statuses,
+                  isConnectedToMainNetwork ?? false
+                )}
               </Box>
             </Flex>
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display='block'>
+        <ModalFooter
+          p={0}
+          display="block"
+          mt={
+            transactionData.status === Status.Initiate || isButtonVisible
+              ? "12px"
+              : 0
+          }
+        >
           {transactionData.status === Status.Initiate ? (
             <ConfirmInitiateFooter
               onClick={onClick}
@@ -272,26 +314,19 @@ export default function DepositWithdrawConfirmModal() {
             />
           ) : (
             <>
-              <Box mb={isButtonVisible ? "12px" : undefined} pb={"4px"}>
-                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  Estimated Time of Arrival: ~1 day
-                </Text>
-                <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
-                  Estimated Time of Arrival: ~1 day
-                </Text>
-              </Box>
               {isButtonVisible && (
                 <Button
-                  width='full'
+                  width="full"
                   height={"48px"}
                   borderRadius={"8px"}
                   sx={{
-                    backgroundColor: lineType !== 3 ? "#17181D" : "#007AFF",
-                    color: lineType !== 3 ? "#8E8E92" : "#FFFFFF",
+                    backgroundColor: btnIsDisabled ? "#17181D" : "#007AFF",
+                    color: btnIsDisabled ? "#8E8E92" : "#FFFFFF",
                   }}
-                  _active={{}}
                   _hover={{}}
                   _focus={{}}
+                  onClick={callToFinalize}
+                  isDisabled={btnIsDisabled}
                 >
                   <Flex alignItems={"center"}>
                     <Text
@@ -301,15 +336,18 @@ export default function DepositWithdrawConfirmModal() {
                     >
                       Finalize
                     </Text>
-                    <Tooltip
-                      tooltipLabel={"text will be changed"}
-                      style={{ marginLeft: "2px" }}
-                      type={lineType !== 3 ? "grey" : "white"}
-                    />
                   </Flex>
                 </Button>
               )}
             </>
+          )}
+          {transactionData.status !== Status.Initiate && (
+            <Box w={"100%"} mt={"12px"}>
+              <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
+                *This modal doesn't update in real-time.
+                <br /> Please close & reopen it to view the latest data.
+              </Text>
+            </Box>
           )}
         </ModalFooter>
       </ModalContent>

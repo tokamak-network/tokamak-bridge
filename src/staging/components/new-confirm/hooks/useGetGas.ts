@@ -1,39 +1,59 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ethers } from "ethers";
 import { useFeeData } from "wagmi";
 import commafy from "@/utils/trim/commafy";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import useConnectedNetwork from "@/hooks/network";
 
-const useRelayGas = (gasLimit: number, chainId: number) => {
-  const [usGasCost, setUsGasCost] = useState("0");
-  const [totalGasCost, setTotalGasCost] = useState("0");
+const useRelayGas = (
+  gasLimit: number,
+  chainId: number,
+  includeInitiate?: boolean
+) => {
   const { data: feeData } = useFeeData({ chainId });
   const { tokenMarketPrice } = useGetMarketPrice({ tokenName: "ethereum" });
 
-  useEffect(() => {
-    const calculateGasCost = () => {
-      if (feeData) {
-        const { gasPrice } = feeData;
-        const gasCost = gasLimit * Number(gasPrice);
-        const parsedTotalGasCost = ethers.utils.formatUnits(
-          gasCost.toString(),
-          "ether"
-        );
-        setTotalGasCost(parsedTotalGasCost);
-        if (tokenMarketPrice) {
-          const usTotal = commafy(
-            Number(tokenMarketPrice) * Number(parsedTotalGasCost),
-            2
-          );
-          setUsGasCost(usTotal);
-        }
-      }
-    };
+  const totalGasCost = useMemo(() => {
+    if (feeData) {
+      const { gasPrice } = feeData;
+      const gasCost = gasLimit * Number(gasPrice);
+      const parsedTotalGasCost = ethers.utils.formatUnits(
+        gasCost.toString(),
+        "ether"
+      );
+      return parsedTotalGasCost;
+    }
+  }, [feeData]);
 
-    calculateGasCost();
-  }, [feeData, gasLimit, chainId]);
+  /**
+   * TO DO : Make a initiate gas cost (0.000150936101651164) as a constant value in the store
+   */
+  const usGasCost = useMemo(() => {
+    if (tokenMarketPrice && totalGasCost) {
+      const totalGasCostETH = includeInitiate
+        ? Number(totalGasCost) + 0.000150936101651164
+        : Number(totalGasCost);
+      const usTotal = commafy(Number(tokenMarketPrice) * totalGasCostETH);
+      return usTotal;
+    }
+  }, [tokenMarketPrice, totalGasCost, includeInitiate]);
 
   return { usGasCost, totalGasCost };
+};
+
+export const useRelayGasCost = (props?: { includeInitiate?: boolean }) => {
+  const CLAIM_GAS_USED = 600000 * 1.25;
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const withdrawCost = useRelayGas(
+    CLAIM_GAS_USED,
+    isConnectedToMainNetwork
+      ? SupportedChainId.MAINNET
+      : SupportedChainId.SEPOLIA,
+    props?.includeInitiate
+  );
+
+  return { withdrawCost };
 };
 
 export default useRelayGas;

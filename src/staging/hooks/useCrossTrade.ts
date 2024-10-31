@@ -22,6 +22,12 @@ import {
 } from "../utils/getRequestStatus";
 import { getSupportedTokenForCT } from "@/utils/token/getSupportedTokenInfo";
 import { getCTTokenPrice } from "../utils/getCTTokenPrice";
+import { useProvideCTGas } from "../components/cross-trade/hooks/useCTGas";
+import commafy from "@/utils/trim/commafy";
+import Decimal from "decimal.js";
+
+const L1_POLLING_INTERVAL = 13000;
+const L2_POLLING_INTERVAL = 10000;
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForCT[chainId];
@@ -141,13 +147,14 @@ export const useCrossTradeData_L1 = (parmas: { isHistory?: boolean }) => {
     provideCTs: T_FETCH_ProvideCTs_L1;
     l1CancelCTs: T_FETCH_CancelCTs_L1;
   }>(isHistory ? FETCH_PROVIDE_LIST_L1_ACCOUNT : FETCH_PROVIDE_LIST_L1, {
-    pollInterval: 5000,
+    pollInterval: L1_POLLING_INTERVAL,
     client: L1_CLIENT,
     variables: isHistory
       ? {
           account: address as string,
         }
       : undefined,
+    fetchPolicy: "cache-first",
   });
 
   return { data, loading, error };
@@ -163,13 +170,14 @@ export const useCrossTradeData_L2 = (parmas: { isHistory?: boolean }) => {
     cancelCTs: T_FETCH_CancelCTs;
     providerClaimCTs: T_FETCH_ProviderClaimCTs;
   }>(isHistory ? FETCH_REQUEST_LIST_L2_ACCOUNT : FETCH_REQUEST_LIST_L2, {
-    pollInterval: 5000,
+    pollInterval: L2_POLLING_INTERVAL,
     client: L2_CLIENT,
     variables: isHistory
       ? {
           account: address,
         }
       : undefined,
+    fetchPolicy: "cache-first",
   });
 
   return { data, loading, error };
@@ -192,6 +200,8 @@ export const useRequestData = (
   } = useCrossTradeData_L1({ isHistory: false });
   const [requestList, setRequestList] = useState<CrossTradeData[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { provideCTTxnCost } = useProvideCTGas();
+
   const fetchRequestList = useCallback(async () => {
     try {
       if (error || _l1Error) return null;
@@ -238,13 +248,41 @@ export const useRequestData = (
             saleCount: item._saleCount,
           })[0];
 
+          const hasMarketPrice =
+            tokenInfo?.tokenSymbol &&
+            (tokenInfo.tokenSymbol as string) in priceList;
+          const marketPrice = hasMarketPrice
+            ? priceList[tokenInfo.tokenSymbol as keyof typeof priceList]
+            : undefined;
+
           const ctAmount = isUpdated
             ? BigInt(editCT._ctAmount)
             : BigInt(item._ctAmount);
-          const profitAmount = BigInt(item._totalAmount) - ctAmount;
-          const profitRatio =
-            (Number(profitAmount) / Number(BigInt(item._totalAmount))) * 100;
 
+          const txnCost = provideCTTxnCost
+            ? Number(commafy(provideCTTxnCost))
+            : 0;
+          const txnCostInAmount = marketPrice
+            ? new Decimal(txnCost).div(marketPrice)
+            : new Decimal(0);
+          const txnCostAmount = txnCostInAmount.toFixed(tokenInfo?.decimals);
+
+          const serviceFee = BigInt(item._totalAmount) - ctAmount;
+
+          const formmatedProfitAmount = formatUnits(
+            serviceFee.toString(),
+            tokenInfo?.decimals
+          );
+
+          const profitAmount =
+            Number(formmatedProfitAmount) - Number(txnCostAmount);
+          const provideAmount = formatUnits(
+            ctAmount.toString(),
+            tokenInfo?.decimals
+          );
+
+          const profitRatio = (profitAmount / Number(provideAmount)) * 100;
+          const profitUSD = profitAmount * (marketPrice ?? 0);
           const isProvided = isRequestProvided({
             providerClaimCTs,
             saleCount: item._saleCount,
@@ -287,32 +325,14 @@ export const useRequestData = (
                 decimals: tokenInfo?.decimals as number,
               };
 
-          let marketPrice: number | undefined;
-          if (
-            tokenInfo?.tokenSymbol &&
-            (tokenInfo.tokenSymbol as string) in priceList
-          ) {
-            marketPrice =
-              priceList[tokenInfo.tokenSymbol as keyof typeof priceList];
-          } else {
-            marketPrice = undefined;
-          }
-
           const inTokenAmount = formatUnits(inToken.amount, inToken.decimals);
           const outTokenAmount = formatUnits(
             outToken.amount,
             outToken.decimals
           );
-          // console.log(
-          //   "inTokenAmount",
-          //   inTokenAmount,
-          //   marketPrice,
-          //   tokenInfo?.tokenSymbol,
-          //   item._l2token,
-          //   priceList
-          // );
           const providingUSD = Number(inTokenAmount) * Number(marketPrice);
           const recevingUSD = Number(outTokenAmount) * Number(marketPrice);
+          const percent = (profitUSD / providingUSD) * 100;
 
           return {
             requester: item._requester,
@@ -321,10 +341,10 @@ export const useRequestData = (
             inToken,
             outToken,
             profit: {
-              amount: formatUnits(profitAmount.toString(), tokenInfo?.decimals),
+              amount: profitAmount.toString(),
               symbol: isETH ? "ETH" : (tokenInfo?.tokenSymbol as string),
-              percent:
-                profitAmount === BigInt(0) ? "0" : profitRatio.toFixed(30),
+              usd: profitUSD,
+              percent: percent.toFixed(4),
               decimals: tokenInfo?.decimals as number,
             },
             blockTimestamps: Number(item.blockTimestamp),
@@ -333,27 +353,32 @@ export const useRequestData = (
             recevingUSD,
             subgraphData: item,
             isProvided,
-            serviceFee: BigInt(profitAmount.toString()),
+            serviceFee: BigInt(serviceFee),
             isCanceled,
             isInRelay,
             isUpdateFee: isUpdated,
             initialCTAmount: item._ctAmount,
             editedCTAmount: ctAmount,
+            isNetaveProfit: profitRatio.toFixed(30).includes("-"),
+            provideCTTxnCost: txnCost,
           };
         });
 
         const trimedResult = result.filter(
-          (item) =>
-            !item.isCanceled &&
-            item.recevingUSD >= item.providingUSD &&
-            !item.isProvided
+          (item) => !item.isCanceled && !item.isProvided
         );
+
+        trimedResult.sort(
+          (a, b) => Number(b.profit.percent) - Number(a.profit.percent)
+        );
+
         setIsLoading(false);
         return setRequestList(trimedResult);
       }
       setIsLoading(false);
       return null;
     } catch (e) {
+      console.log(e);
     } finally {
       // setIsLoading(false);
     }
@@ -365,6 +390,7 @@ export const useRequestData = (
     _l1Data,
     _l1Error,
     _l1Loading,
+    provideCTTxnCost,
   ]);
 
   const l2RelayQueue = useMemo(() => {

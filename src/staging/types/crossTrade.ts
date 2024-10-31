@@ -14,6 +14,7 @@ export interface Profit {
   symbol: string;
   percent: string;
   decimals: number;
+  usd: number;
 }
 
 export interface CrossTradeData {
@@ -30,9 +31,11 @@ export interface CrossTradeData {
   subgraphData: T_FETCH_REQUEST_LIST_L2;
   isProvided: boolean;
   isInRelay: boolean;
-  serviceFee: BigInt;
+  serviceFee: bigint;
   isCanceled: boolean;
   isUpdateFee: boolean;
   initialCTAmount: string;
   editedCTAmount: bigint;
+  isNetaveProfit: boolean;
+  provideCTTxnCost: number;
 }

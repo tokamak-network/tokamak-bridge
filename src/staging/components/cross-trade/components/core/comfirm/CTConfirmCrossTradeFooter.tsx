@@ -37,8 +37,17 @@ import { TooltipForRevoke } from "@/components/tooltip/RevokeTooltip";
 import { WarningText } from "@/components/ui/WarningText";
 import useFxConfirmModal from "@/staging/components/cross-trade/hooks/useCTConfirmModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { useCrossTradeContract } from "@/staging/hooks/useCrossTradeContracts";
+import { ATOM_CT_GAS_provideCT } from "@/recoil/crosstrade/networkFee";
+import { calculateGasMarginBigInt } from "@/utils/txn/calculateGasMargin";
+import { recommendFeeConfig } from "@/staging/constants/fee";
+import { CTTransactionType } from "@/types/crossTrade/contracts";
 
-export type ContractWrite = (args: { args: any[]; value?: BigInt }) => void;
+export type ContractWrite = (args: {
+  args: any[];
+  value?: BigInt;
+  gas?: bigint;
+}) => void;
 type TradeConfirmationProps = {
   isChecked: {
     firstChecked: boolean;
@@ -51,7 +60,7 @@ type TradeConfirmationProps = {
   isProvide?: boolean;
   subgraphData?: T_FETCH_REQUEST_LIST_L2;
   provideCT: ContractWrite;
-  requestRegisteredToken: ContractWrite;
+  requestRegisteredToken: ContractWrite & { gas?: bigint };
   forConfirmProviding?: {
     isUpdateFee: boolean;
     initialCTAmount: string;
@@ -95,6 +104,7 @@ export default function CTConfirmCrossTradeFooter(
   const { mode } = useGetMode();
   const { connectedToLayer1 } = useConnectedNetwork();
   const { isBalanceOver } = useInputBalanceCheck();
+
   const btnDisabled = useMemo(() => {
     if (!isConnected) {
       return false;
@@ -162,42 +172,47 @@ export default function CTConfirmCrossTradeFooter(
   //call a contract call
   const { setModalOpen } = useTxConfirmModal();
   const { onCloseCTConfirmModal } = useFxConfirmModal();
+  const { L1_CROSSTRADE_PROXY_CONTRACT } = useCrossTradeContract();
+  const { address } = useAccount();
+  const [, setProvideCTGas] = useRecoilState(ATOM_CT_GAS_provideCT);
 
-  const requestCrossTrade = useCallback(() => {
-    if (isInRelay) return onCloseCTConfirmModal();
-    if (!txData) return new Error("txData is not defined");
-    try {
-      if (isProvide) {
-        if (!subgraphData) return console.error("subgraphData is not defined");
-        if (!forConfirmProviding)
-          return console.error("forConfirmProviding data is not defined");
+  const requestCrossTrade = useCallback(
+    async (estimatedGas?: boolean) => {
+      if (isInRelay && estimatedGas === false) return onCloseCTConfirmModal();
+      if (!txData) return new Error("txData is not defined");
+      try {
+        if (isProvide) {
+          if (!subgraphData)
+            return console.error("subgraphData is not defined");
+          if (!forConfirmProviding)
+            return console.error("forConfirmProviding data is not defined");
 
-        const { isUpdateFee, initialCTAmount, editedCTAmount } =
-          forConfirmProviding;
-        const _editedAmount = isUpdateFee ? editedCTAmount : 0;
+          const { isUpdateFee, initialCTAmount, editedCTAmount } =
+            forConfirmProviding;
+          const _editedAmount = isUpdateFee ? editedCTAmount : 0;
 
-        if (isZeroAddress(subgraphData._l1token)) {
-          const msgValue = isUpdateFee
-            ? editedCTAmount
-            : BigInt(subgraphData._ctAmount);
-          console.log(
-            "--provideCT params--",
-            ZERO_ADDRESS,
-            ZERO_ADDRESS,
-            subgraphData._requester,
-            subgraphData._totalAmount,
-            subgraphData._ctAmount,
-            _editedAmount,
-            subgraphData._saleCount,
-            subgraphData._l2chainId,
-            500000,
-            subgraphData._hashValue,
-            {
-              value: msgValue,
-            }
-          );
-          return provideCT({
-            args: [
+          if (isZeroAddress(subgraphData._l1token)) {
+            const msgValue = isUpdateFee
+              ? editedCTAmount
+              : BigInt(subgraphData._ctAmount);
+            // console.log(
+            //   "--provideCT params--",
+            //   ZERO_ADDRESS,
+            //   ZERO_ADDRESS,
+            //   subgraphData._requester,
+            //   subgraphData._totalAmount,
+            //   subgraphData._ctAmount,
+            //   _editedAmount,
+            //   subgraphData._saleCount,
+            //   subgraphData._l2chainId,
+            //   500000,
+            //   subgraphData._hashValue,
+            //   {
+            //     value: msgValue,
+            //   }
+            // );
+
+            const args = [
               ZERO_ADDRESS,
               ZERO_ADDRESS,
               subgraphData._requester,
@@ -208,24 +223,41 @@ export default function CTConfirmCrossTradeFooter(
               subgraphData._l2chainId,
               500000,
               subgraphData._hashValue,
-            ],
-            value: msgValue,
-          });
-        }
-        console.log("--provideCT params--", {
-          _l1token: subgraphData._l1token,
-          _l2token: subgraphData._l2token,
-          _requester: subgraphData._requester,
-          _totalAmount: subgraphData._totalAmount,
-          _ctAmount: subgraphData._ctAmount,
-          _editedAmount: _editedAmount,
-          _saleCount: subgraphData._saleCount,
-          _l2chainId: subgraphData._l2chainId,
-          _minGasLimit: 500000,
-          _hashValue: subgraphData._hashValue,
-        });
-        return provideCT({
-          args: [
+            ];
+
+            const estimatedGasUsage =
+              await L1_CROSSTRADE_PROXY_CONTRACT.estimateGas.provideCT({
+                //@ts-ignore
+                account: address,
+                args,
+                value: msgValue,
+              });
+            const estimatedGasUsageWithBuffer =
+              calculateGasMarginBigInt(estimatedGasUsage);
+
+            if (estimatedGas)
+              return setProvideCTGas(estimatedGasUsageWithBuffer);
+
+            return provideCT({
+              args,
+              value: msgValue,
+              gas: estimatedGasUsageWithBuffer,
+            });
+          }
+          // console.log("--provideCT params--", {
+          //   _l1token: subgraphData._l1token,
+          //   _l2token: subgraphData._l2token,
+          //   _requester: subgraphData._requester,
+          //   _totalAmount: subgraphData._totalAmount,
+          //   _ctAmount: subgraphData._ctAmount,
+          //   _editedAmount: _editedAmount,
+          //   _saleCount: subgraphData._saleCount,
+          //   _l2chainId: subgraphData._l2chainId,
+          //   _minGasLimit: 500000,
+          //   _hashValue: subgraphData._hashValue,
+          // });
+
+          const args = [
             subgraphData._l1token,
             subgraphData._l2token,
             subgraphData._requester,
@@ -236,62 +268,97 @@ export default function CTConfirmCrossTradeFooter(
             subgraphData._l2chainId,
             500000,
             subgraphData._hashValue,
-          ],
-        });
-      }
+          ];
 
-      /**
-       * For Request Cross Trade below:
-       */
+          const estimatedGasUsage =
+            await L1_CROSSTRADE_PROXY_CONTRACT.estimateGas.provideCT({
+              //@ts-ignore
+              account: address,
+              args,
+            });
+          const estimatedGasUsageWithBuffer =
+            calculateGasMarginBigInt(estimatedGasUsage);
 
-      const ctAmount =
-        BigInt(txData.inToken.amount) - BigInt(txData.serviceFee.toString());
-      console.log(
-        "--requestRegisteredToken params--",
-        txData.outToken.address,
-        txData.inToken.address,
-        txData.inToken.amount,
-        ctAmount,
-        txData.outNetwork
-      );
+          if (estimatedGas) return setProvideCTGas(estimatedGasUsageWithBuffer);
 
-      if (inTokenIsETH) {
+          return provideCT({
+            args,
+            gas: estimatedGasUsageWithBuffer,
+          });
+        }
+
+        /**
+         * For Request Cross Trade below:
+         */
+
+        if (estimatedGas) return;
+
+        const ctAmount =
+          BigInt(txData.inToken.amount) - BigInt(txData.serviceFee.toString());
+        // console.log(
+        //   "--requestRegisteredToken params--",
+        //   txData.outToken.address,
+        //   txData.inToken.address,
+        //   txData.inToken.amount,
+        //   ctAmount,
+        //   txData.outNetwork
+        // );
+
+        if (inTokenIsETH) {
+          return requestRegisteredToken({
+            args: [
+              ZERO_ADDRESS,
+              ZERO_ADDRESS,
+              txData.inToken.amount,
+              ctAmount,
+              txData.outNetwork,
+            ],
+            value: BigInt(txData.inToken.amount as string),
+          });
+        }
         return requestRegisteredToken({
           args: [
-            ZERO_ADDRESS,
-            ZERO_ADDRESS,
+            txData.outToken.address,
+            txData.inToken.address,
             txData.inToken.amount,
             ctAmount,
             txData.outNetwork,
           ],
-          value: BigInt(txData.inToken.amount as string),
         });
+      } catch (e) {
+        const isNetworkFeeError =
+          String(e).includes("Could not find an Account") ||
+          String(e).includes("ContractFunctionExecutionError");
+
+        if (isNetworkFeeError) {
+          const estimatedGasUsageWithBuffer = calculateGasMarginBigInt(
+            BigInt(recommendFeeConfig.gas[CTTransactionType.provideCT] * 1.25)
+          );
+          return setProvideCTGas(estimatedGasUsageWithBuffer);
+        }
+
+        console.log("**error**");
+        console.log(e);
+        setModalOpen("error");
       }
-      return requestRegisteredToken({
-        args: [
-          txData.outToken.address,
-          txData.inToken.address,
-          txData.inToken.amount,
-          ctAmount,
-          txData.outNetwork,
-        ],
-      });
-    } catch (e) {
-      console.log("**error**");
-      console.log(e);
-      setModalOpen("error");
-    }
-  }, [
-    isProvide,
-    inTokenIsETH,
-    txData,
-    requestRegisteredToken,
-    provideCT,
-    forConfirmProviding,
-    isInRelay,
-  ]);
+    },
+    [
+      isProvide,
+      inTokenIsETH,
+      txData,
+      requestRegisteredToken,
+      provideCT,
+      forConfirmProviding,
+      isInRelay,
+      address,
+    ]
+  );
 
   const { mobileView } = useMediaView();
+
+  useEffect(() => {
+    requestCrossTrade(true);
+  }, [requestCrossTrade]);
 
   return (
     <Grid mt={"3px"} w={"100%"} rowGap={"12px"} marginTop={"12px"}>
@@ -326,7 +393,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme='#A0A3AD'
+            colorScheme="#A0A3AD"
           >
             <Text
               color={isChecked.firstChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -356,7 +423,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme='#A0A3AD'
+            colorScheme="#A0A3AD"
           >
             <Text
               color={isChecked.secondChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -387,7 +454,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme='#A0A3AD'
+            colorScheme="#A0A3AD"
           >
             <Text
               color={isChecked.thirdChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -396,7 +463,7 @@ export default function CTConfirmCrossTradeFooter(
               lineHeight={"20px"}
               letterSpacing={"0.01em"}
             >
-              Cross Trade is in a beta testing phase
+              Cross Trade is in a beta testing phase.
             </Text>
           </Checkbox>
         </Flex>
@@ -461,7 +528,7 @@ export default function CTConfirmCrossTradeFooter(
         {/** Warning Text */}
         {isInRelay && (
           <WarningText
-            label='This request has been already provided.'
+            label="This request has been already provided."
             iconStyle={{ width: 14, height: 14 }}
             style={{ fontSize: 11, columnGap: "6px" }}
           />
@@ -470,7 +537,7 @@ export default function CTConfirmCrossTradeFooter(
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
-            width='full'
+            width="full"
             height={"48px"}
             borderRadius={"8px"}
             _hover={{}}
@@ -516,7 +583,11 @@ export default function CTConfirmCrossTradeFooter(
         )}
         <Button
           isDisabled={btnDisabled}
-          onClick={isConnected ? requestCrossTrade : () => connectToWallet()}
+          onClick={
+            isConnected
+              ? () => requestCrossTrade(false)
+              : () => connectToWallet()
+          }
           sx={{
             backgroundColor: isInRelay
               ? "transparent"
@@ -526,7 +597,7 @@ export default function CTConfirmCrossTradeFooter(
             color: isInRelay ? "#007AFF" : !btnDisabled ? "#FFFFFF" : "#8E8E92",
             border: isInRelay ? "1px solid #007AFF" : "",
           }}
-          width='full'
+          width="full"
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}

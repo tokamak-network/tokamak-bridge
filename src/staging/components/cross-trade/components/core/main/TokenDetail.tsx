@@ -9,6 +9,9 @@ import { useMemo } from "react";
 import commafy from "@/utils/trim/commafy";
 import { formatProfit } from "@/staging/utils/formatProfit";
 import CustomTooltip from "@/components/tooltip/CustomTooltip";
+import { useRecommendFee } from "../../../hooks/useRecommendFee";
+import { T_FETCH_REQUEST_LIST_L2 } from "@/staging/hooks/useCrossTrade";
+import { useProvideCTGas } from "../../../hooks/useCTGas";
 
 interface TokenDetailProps {
   token?: Token;
@@ -17,15 +20,95 @@ interface TokenDetailProps {
   providingUSD?: number;
   recevingUSD?: number;
   profit?: Profit;
+  provideCTTxnCost?: number;
 }
 
+const Percentage = (props: { percent: string }) => {
+  const isNegative = props.percent.includes("-");
+  const isZero = Number(props.percent) === 0;
+
+  return (
+    <Text
+      fontSize={14}
+      fontWeight={500}
+      color={
+        isZero && !isNegative ? "#fff" : isNegative ? "#DD3A44" : "#03D187"
+      }
+    >
+      {!isNegative && !isZero && "+"} {props.percent}%
+    </Text>
+  );
+};
+
+const USDValue = (props: { usdAmount: string }) => {
+  const isNegative = props.usdAmount.includes("-");
+  const isZero = Number(props.usdAmount) === 0;
+
+  return (
+    <Text
+      fontSize={11}
+      fontWeight={400}
+      color={isZero ? "#fff" : isNegative ? "#DD3A44" : "#03D187"}
+    >
+      {isZero ? "" : isNegative ? "-" : "+"}$
+      {props.usdAmount.replaceAll("-", "")}
+    </Text>
+  );
+};
+
+const NetProfit = (props: {
+  percent: string;
+  usdAmount: string;
+  provideCTTxnCost?: number;
+}) => {
+  return (
+    <CustomTooltip
+      content={
+        <Flex flexDir={"column"}>
+          <Percentage {...props}></Percentage>
+          <USDValue {...props}></USDValue>
+        </Flex>
+      }
+      tooltipLabel={
+        <Flex alignItems={"center"} h={"100%"}>
+          <Box lineHeight={"normal"} fontSize={12}>
+            <span>Estimated net profit based on transaction</span>
+            <br />
+            {`fee of $
+            ${commafy(props.provideCTTxnCost)}
+            Actual value may differ based on
+           other factors (priority fee, storage refund, etc)`}
+          </Box>
+        </Flex>
+      }
+      needArrow={true}
+      labelStyle={{
+        left: "-17px",
+        width: "291px",
+        height: "74px",
+      }}
+      tooltipArrowStyle={{
+        left: "25px",
+      }}
+    ></CustomTooltip>
+  );
+};
+
 export default function TokenDetail(props: TokenDetailProps) {
-  const { token, network, profit, isProvide, providingUSD, recevingUSD } =
-    props;
+  const {
+    token,
+    network,
+    profit,
+    isProvide,
+    providingUSD,
+    recevingUSD,
+    provideCTTxnCost,
+  } = props;
+  const isProfit = profit !== undefined;
 
   const formattedAmount = token
     ? convertNumber(token.amount, token.decimals)
-    : profit?.amount;
+    : commafy(profit?.amount);
 
   const symbol = token ? token.symbol : profit?.symbol;
   const tokenPriceWithAmount = useMemo(() => {
@@ -37,8 +120,18 @@ export default function TokenDetail(props: TokenDetailProps) {
     if (token) {
       return tokenPriceWithAmount ? `$${commafy(tokenPriceWithAmount)}` : "NA";
     }
-    return `${formatProfit(profit?.percent)}%`;
-  }, [tokenPriceWithAmount, profit?.percent]);
+    return `${formatProfit(profit?.percent)}`;
+  }, [token, tokenPriceWithAmount, profit?.percent]);
+
+  if (isProfit) {
+    return (
+      <NetProfit
+        percent={priceOrPercent}
+        usdAmount={commafy(profit.usd)}
+        provideCTTxnCost={provideCTTxnCost}
+      />
+    );
+  }
 
   return (
     <Flex columnGap={"13px"}>
@@ -84,27 +177,11 @@ export default function TokenDetail(props: TokenDetailProps) {
         <Flex alignItems={"center"}>
           <Text
             fontWeight={400}
-            fontSize={"9px"}
-            lineHeight={"13.5px"}
-            color={"#A0A3AD"}
-          >
-            (
-          </Text>
-          <Text
-            fontWeight={400}
             fontSize={"11px"}
             lineHeight={"16.5px"}
             color={"#A0A3AD"}
           >
             {priceOrPercent}
-          </Text>
-          <Text
-            fontWeight={400}
-            fontSize={"9px"}
-            lineHeight={"13.5px"}
-            color={"#A0A3AD"}
-          >
-            )
           </Text>
         </Flex>
       </Box>

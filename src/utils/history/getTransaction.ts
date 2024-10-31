@@ -5,6 +5,7 @@ import {
 } from "@/staging/types/transaction";
 import { supportedTokens } from "@/types/token/supportedToken";
 import {
+  CurrentDepositStatus,
   CurrentStatus,
   RelayMessage,
   StateBatchAppended,
@@ -13,9 +14,10 @@ import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
 import { SentMessages } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { OVM_ETH_BRIDGE } from "@/constant/contracts";
+import { ZERO_ADDRESS } from "@/constant/misc";
 
 const getTokenInfo = (tokenAddress: string, chainId: number) => {
-  if (tokenAddress === OVM_ETH_BRIDGE || tokenAddress === "") {
+  if (tokenAddress === OVM_ETH_BRIDGE || tokenAddress === ZERO_ADDRESS || tokenAddress === "") {
     return {
       name: "ETH",
       symbol: "ETH",
@@ -37,7 +39,7 @@ const getTokenInfo = (tokenAddress: string, chainId: number) => {
       }
     }
   }
-  throw new Error(`Token address(${tokenAddress}) not found`);
+  return null;
 };
 
 export const getTransactionToken = (
@@ -46,11 +48,12 @@ export const getTransactionToken = (
   amount: string,
   isL1: boolean,
   chainId: number
-): { l1Token: TransactionToken; l2Token: TransactionToken } => {
+): { l1Token: TransactionToken | null; l2Token: TransactionToken | null } => {
   const tokenInfo = getTokenInfo(
     isL1 ? l1TokenAddress : l2TokenAddress,
     chainId
   );
+  if (!tokenInfo) return { l1Token: null, l2Token: null };
   const l2Token: TransactionToken = {
     ...tokenInfo,
     address: l2TokenAddress,
@@ -67,14 +70,23 @@ export const getTransactionToken = (
   };
 };
 
+export const getDepositStatus = (currentStatus: CurrentDepositStatus) => {
+  switch (currentStatus) {
+    case 0:
+      return Status.Finalize;
+    case 4:
+      return Status.Completed;
+  }
+};
+
 export const getStatus = (currentStatus: CurrentStatus) => {
   switch (currentStatus) {
     case 0:
-      return Status.Initiate;
-    case 1:
-      return Status.Prove;
-    case 2:
       return Status.Rollup;
+    case 1:
+      return Status.Rollup;
+    case 2:
+      return Status.Finalize;
     case 3:
       return Status.Finalize;
     case 4:
@@ -109,9 +121,6 @@ export const getTransactionTimestamp = (params: {
 
   switch (currentStatus) {
     case 0:
-      return {
-        initialCompletedTimestamp,
-      };
     case 1:
     case 2:
       return {

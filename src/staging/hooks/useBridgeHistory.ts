@@ -12,7 +12,7 @@ import {
   WithdrawTransactionHistory,
 } from "../types/transaction";
 import { ApolloError, useQuery } from "@apollo/client";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { subgraphApolloClientsForHistory } from "@/graphql/thegraph/apolloForHistory";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
@@ -27,10 +27,10 @@ import {
   getCurretStatus,
 } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
-import { utils } from "ethers";
-import { getDecodeLog } from "@/utils/history/getDecodeLog";
+import { ethers, utils } from "ethers";
 import { formatAddress } from "@/utils/trim/formatAddress";
 import {
+  getDepositStatus,
   getStatus,
   getTransaction,
   getTransactionToken,
@@ -53,7 +53,15 @@ import {
   getProvideTransactionHash,
 } from "../utils/getProvideStatus";
 import { mock_cancelRequest } from "@/test/crosstrade/_mock/mockdata";
-import { l2Provider } from "@/config/l2Provider";
+import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
+import L2TitanStandardBridgeAbi from "@/abis/L2StandardBridge.json";
+import { getDecodedDepositLog } from "@/utils/history/getDecodedDepositLog";
+import { mock_depositRequest } from "@/test/deposit/_mock/mockdata";
+import { mock_withdrawData } from "@/test/withdraw/_mock/mockdata";
+import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodBridgeHistoryLog";
+import { getSortedTxHistory, getSortedTxListByDate } from "../utils/history";
+import { useRecoilState } from "recoil";
+import { depositTxHistory, withdrawTxHistory } from "@/recoil/history/transaction";
 
 const getApolloClient = (chainId: number) => {
   return subgraphApolloClientsForHistory[chainId];
@@ -103,37 +111,54 @@ const errorHandler = (error: ApolloError) => {
 
 export const useSubgraph = () => {
   const { address } = useAccount();
+  const [pollCount, setPollCount] = useState<number>(0);
   const { L1_CLIENT, L2_CLIENT } = useGetApolloClient();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const L1Bridge = isConnectedToMainNetwork
     ? MAINNET_CONTRACTS.L1Bridge
     : SEPOLIA_CONTRACTS.L1Bridge_TITAN_SEPOLIA;
-
+  useEffect(() => {
+    setPollCount(0);
+    const refetchDepositHistory = async () => {
+      refetchL1TitanData();
+    }
+    const refetchWithdrawHistory = async () => {
+      refetchL2TitanData();
+    }
+    const interval = setInterval(() => {
+      setPollCount(prev => prev + 1);
+      refetchDepositHistory();
+      refetchWithdrawHistory();
+    }, 12000);
+    return () => clearInterval(interval);
+  }, [])
   const {
     data: _l1Data,
     loading: _l1Loading,
     error: _l1Error,
+    refetch: refetchL1TitanData
   } = useQuery(FETCH_USER_TRANSACTIONS_L1, {
     variables: {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
     },
-    pollInterval: 13000,
+    // pollInterval: 13000,
     client: L1_CLIENT,
   });
   const {
     data: _l2Data,
     loading: _l2Loading,
     error: _l2Error,
+    refetch: refetchL2TitanData
   } = useQuery(FETCH_USER_TRANSACTIONS_L2, {
     variables: {
       formattedAddress: formatAddress(address),
       L1Bridge,
       account: address,
     },
-    pollInterval: 13000,
+    // pollInterval: 13000,
     client: L2_CLIENT,
   });
 
@@ -153,15 +178,14 @@ export const useSubgraph = () => {
     l2Data: _l2Data,
     l2Loading: _l2Loading,
     l2_error: _l2Error,
+    pollCount
   };
 };
 
 export const useWithdrawData = () => {
-  const [withdrawHistory, setWithdrawHistory] = useState<
-    WithdrawTransactionHistory[] | [] | null
-  >(null);
+  const [withdrawHistory, setWithdrawHistory] = useRecoilState(withdrawTxHistory);
 
-  const { l2Data } = useSubgraph();
+  const { l2Data, pollCount } = useSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider } = useProvier();
 
@@ -183,44 +207,51 @@ export const useWithdrawData = () => {
               resolved,
               isConnectedToMainNetwork
             );
-
           const l2TxReceipt = await L2Provider.getTransactionReceipt(
             sentMessage.transactionHash
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
           if (
-            l2TxReceipt.logs[3] === undefined ||
-            currentStatus === undefined
+            !l2TxReceipt
           ) {
-            return new Error(
-              "Invalid transaction with l2TxReceipt.logs[3] or currentStatus"
+            console.log(
+              `Invalid transaction (${sentMessage.transactionHash} with l2 Titan TxReceipt)`
             );
+            return;
           }
 
-          const logs = utils.defaultAbiCoder.decode(
-            ["address", "uint256", "bytes"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.data
-          );
-          const l1TokenAddress = utils.defaultAbiCoder.decode(
-            ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[1]
-          )[0];
-          const l2TokenAddress = utils.defaultAbiCoder.decode(
-            ["address"],
-            l2TxReceipt.logs[3] && l2TxReceipt.logs[3]?.topics[2]
-          )[0];
-          const amount = BigInt(logs[1]).toString();
-          const { l1Token, l2Token } = getTransactionToken(
-            l1TokenAddress,
-            l2TokenAddress,
-            amount,
-            false,
+          const parsedLog = getDecodedStandardBridgeLog(
+            l2TxReceipt.logs,
+            new ethers.utils.Interface(L2TitanStandardBridgeAbi),
             isConnectedToMainNetwork
               ? SupportedChainId.TITAN
               : SupportedChainId.TITAN_SEPOLIA
           );
 
+          if (!parsedLog) {
+            console.log(`Invalid transaction with parsedLog Error`);
+            return;
+          }
+
+          const { l1TokenAddress, l2TokenAddress, amount, from, to } =
+            parsedLog;
+          const { l1Token, l2Token } = getTransactionToken(
+            l1TokenAddress.toLowerCase(),
+            l2TokenAddress.toLowerCase(),
+            amount,
+            true,
+            isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA
+          );
+
+          if (!l1Token || !l2Token) {
+            console.error(
+              `Invalid transaction with {!l1Token || !l2Token} Error`
+            );
+            return;
+          }
           const status = getStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
@@ -236,9 +267,13 @@ export const useWithdrawData = () => {
           const result: WithdrawTransactionHistory = {
             category: HISTORY_SORT.STANDARD,
             action: Action.Withdraw,
-            status: status,
-            inNetwork: SupportedChainId.TITAN,
-            outNetwork: SupportedChainId.MAINNET,
+            status,
+            inNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA,
+            outNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA,
             inToken: l2Token,
             outToken: l1Token,
             blockNumber: Number(sentMessage.blockNumber),
@@ -255,11 +290,9 @@ export const useWithdrawData = () => {
       const filteredResult = result.filter(
         (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
-      const sortedResult = filteredResult.sort(
-        (currentTx, previousTx) =>
-          previousTx.blockTimestamps.initialCompletedTimestamp -
-          currentTx.blockTimestamps.initialCompletedTimestamp
-      );
+      const sortedResult = getSortedTxListByDate(
+        filteredResult
+      ) as WithdrawTransactionHistory[];
 
       if (sortedResult) return setWithdrawHistory(sortedResult);
       return setWithdrawHistory([]);
@@ -270,17 +303,14 @@ export const useWithdrawData = () => {
     fetchData().catch((error) => {
       console.error("Error in fetching withdraw data", error);
     });
-  }, [l2Data, isConnectedToMainNetwork, L2Provider]);
-
+  }, [l2Data, isConnectedToMainNetwork, L2Provider, pollCount]);
   return { withdrawHistory };
 };
 
 export const useDepositData = () => {
-  const [depositHistory, setDepositHistory] = useState<
-    DepositTransactionHistory[] | [] | null
-  >(null);
+  const [depositHistory, setDepositHistory] = useRecoilState(depositTxHistory)
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-  const { l1Data } = useSubgraph();
+  const { l1Data, pollCount } = useSubgraph();
   const { L1Provider } = useProvier();
 
   const fetchData = useCallback(async () => {
@@ -302,18 +332,27 @@ export const useDepositData = () => {
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-          if (!l1TxReceipt || !currentStatus) {
-            new Error(`Invalid transaction (${sentMessage.transactionHash})`);
+          if (!l1TxReceipt) {
+            console.error(
+              `Invalid transaction (${sentMessage.transactionHash} with l1TxReceipt)`
+            );
             return;
           }
 
-          const logIndex = l1TxReceipt.logs.length - 1;
-          const isERC20Deposit = logIndex > 2;
-          const log = l1TxReceipt.logs[logIndex];
-          const { l1TokenAddress, l2TokenAddress, amount } = getDecodeLog(
-            isERC20Deposit,
-            log
+          const parsedLog = getDecodedDepositLog(
+            l1TxReceipt.logs,
+            new ethers.utils.Interface(L1TitanBridgeAbi),
+            isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA
           );
+
+          if (!parsedLog) {
+            console.error(`Invalid transaction with parsedLog Error`);
+            return;
+          }
+
+          const { l1TokenAddress, l2TokenAddress, amount } = parsedLog;
 
           const { l1Token, l2Token } = getTransactionToken(
             l1TokenAddress,
@@ -325,7 +364,14 @@ export const useDepositData = () => {
               : SupportedChainId.SEPOLIA
           );
 
-          const status = getStatus(currentStatus);
+          if (!l1Token || !l2Token) {
+            console.error(
+              `Invalid transaction with {!l1Token || !l2Token} Error`
+            );
+            return;
+          }
+
+          const status = getDepositStatus(currentStatus);
           const { blockTimestamps, transactionHashes } = getTransaction({
             currentStatus,
             sentMessage,
@@ -333,6 +379,7 @@ export const useDepositData = () => {
           });
 
           if (blockTimestamps instanceof Error) {
+            console.error(`Invalid transaction with blockTimestamps Error`);
             return;
           }
 
@@ -340,8 +387,12 @@ export const useDepositData = () => {
             category: HISTORY_SORT.STANDARD,
             action: Action.Deposit,
             status: status,
-            inNetwork: SupportedChainId.MAINNET,
-            outNetwork: SupportedChainId.TITAN,
+            inNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.MAINNET
+              : SupportedChainId.SEPOLIA,
+            outNetwork: isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA,
             inToken: l1Token,
             outToken: l2Token,
             blockTimestamps,
@@ -369,7 +420,7 @@ export const useDepositData = () => {
     fetchData().catch((error) => {
       console.error("Error in fetching deposit data", error);
     });
-  }, [l1Data, isConnectedToMainNetwork, L1Provider]);
+  }, [l1Data, isConnectedToMainNetwork, L1Provider, pollCount]);
 
   return { depositHistory };
 };
@@ -381,16 +432,14 @@ export const useRequestHistoryData = () => {
   const { data: l2Data } = useCrossTradeData_L2({
     isHistory: true,
   });
-  const { data: l1Data } = useCrossTradeData_L1({
-    isHistory: true,
-  });
+  const { data: l1Data } = useCrossTradeData_L1({});
   const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   useEffect(() => {
     if (l2Data && l1Data) {
       const requestCTs = l2Data.requestCTs;
       const cancelCTs = l2Data.cancelCTs;
-      const providerClaimCTs = l2Data.providerClaimCTs;
+      const providerClaimCTs = l1Data.provideCTs;
       const editCTs = l1Data.editCTs;
       const l1CancelCTs = l1Data.l1CancelCTs;
 
