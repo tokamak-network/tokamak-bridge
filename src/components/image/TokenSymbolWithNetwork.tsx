@@ -50,6 +50,7 @@ export default function TokenSymbolWithNetwork(
           w={networkSymbolW ?? 14}
           h={networkSymbolH ?? 14}
           network={chainId}
+          style={{ border: "1px solid #1F2128", borderRadius: "2px" }}
         />
       </Flex>
     </Flex>
