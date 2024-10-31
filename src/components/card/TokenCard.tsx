@@ -456,7 +456,7 @@ export default function TokenCard(props: TokenCardProps) {
               <Flex fontSize={16} color={"#222222"} columnGap={"2px"}>
                 <Text fontWeight={500}>Balance: </Text>
                 <Text fontWeight={700}>
-                  {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 10) || "0.0"}
+                  {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 9) || "0.0"}
                 </Text>
               </Flex>
             </Flex>
@@ -466,7 +466,7 @@ export default function TokenCard(props: TokenCardProps) {
                 <Text fontWeight={500}>Balance </Text>
               </Flex>
               <Text fontWeight={700} fontSize={18} color={"#222222"}>
-                {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 12)}
+                {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 9)}
               </Text>
             </Flex>
           )
@@ -500,12 +500,12 @@ export default function TokenCard(props: TokenCardProps) {
                       }}
                       transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
                     >
-                      {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 10) || "0.0"}
+                      {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 9) || "0.0"}
                     </Text>
                   </>
                 ) : (
                   <Text fontWeight={700} fontSize={18}>
-                    {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                    {trimAmount(tokenData?.data.parsedBalance, 9) || "0.0"}
                   </Text>
                 )}
               </>
@@ -521,8 +521,8 @@ export default function TokenCard(props: TokenCardProps) {
                   textOverflow={"hidden"}
                 >
                   {isInput
-                    ? trimAmount(inTokenInfo?.parsedAmount, 10) || "0"
-                    : trimAmount(outAmount, 10) || "0"}
+                    ? trimAmount(inTokenInfo?.parsedAmount, 9) || "0"
+                    : trimAmount(outAmount, 9) || "0"}
                 </Text>
                 <Text
                   fontFamily={theme.fonts.Quicksand}
