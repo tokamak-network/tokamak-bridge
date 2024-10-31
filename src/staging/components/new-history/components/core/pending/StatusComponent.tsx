@@ -97,6 +97,7 @@ const FinalizeButtonComponent = (props: { openModal: () => void }) => {
       _hover={{}}
       _focus={{}}
       onClick={props.openModal}
+      opacity={"1 !important"}
     >
       <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
         Finalize

@@ -42,6 +42,7 @@ const ActionButtonComponent: React.FC<ActionButtonComponentProps> = ({
       maxHeight={"22px"}
       isDisabled={disabled}
       onClick={openModal}
+      opacity={"1 !important"}
     >
       {!pendingStatus ? (
         <Text

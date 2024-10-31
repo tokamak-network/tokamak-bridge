@@ -138,6 +138,8 @@ export default function ApproveToken() {
               }}
               isDisabled={!isRevokeForUSDT || isLoading}
               _disabled={{ bg: "#15161D", color: "#8E8E92" }}
+              opacity={"1 !important"}
+              cursor={"pointer !important"}
             >
               {"Revoke"}
               {isLoading && isRevokeForUSDT && (
@@ -175,6 +177,7 @@ export default function ApproveToken() {
             isDisabled={isLoading || isRevokeForUSDT}
             _disabled={{ bg: "#15161D", color: "#8E8E92" }}
             cursor={"pointer !important"}
+            opacity={"1 !important"}
           >
             {"Approve"}
           </Button>

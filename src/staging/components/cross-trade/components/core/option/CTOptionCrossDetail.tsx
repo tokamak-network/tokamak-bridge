@@ -165,11 +165,10 @@ export default function CTOptionCrossDetail(
           )}
           {!receiveIsLessThanZero && (
             <Text fontSize={12} color={"#DB00FF"}>
-              {`$${
-                Number(tokenPriceWithAmount) < 0
+              {`$${Number(tokenPriceWithAmount) < 0
                   ? 0
                   : commafy(tokenPriceWithAmount)
-              }`}
+                }`}
             </Text>
           )}
         </Box>
@@ -180,8 +179,8 @@ export default function CTOptionCrossDetail(
                 isRecommendActive
                   ? "99px"
                   : isDisabledRecommend
-                  ? "116px"
-                  : "98px"
+                    ? "116px"
+                    : "98px"
               }
               height="26px"
               padding="4px 10px"
@@ -249,6 +248,7 @@ export default function CTOptionCrossDetail(
               _focus={{}}
               onClick={() => props.handleButtonSubClick(ButtonTypeSub.Advanced)}
               isDisabled={isAdvancedActive}
+              opacity={"1 !important"}
             >
               <Text
                 fontSize={"12px"}

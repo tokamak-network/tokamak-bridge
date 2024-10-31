@@ -74,6 +74,7 @@ export default function ApproveButton(props: ApproveButtonProps) {
             setIsDrawerOpen(false);
           }}
           opacity={"1 !important"}
+          cursor={"pointer !important"}
         >
           {isLoading ? (
             <Spinner

@@ -154,6 +154,7 @@ export const ApproveButton = (props: { isInToken: boolean }) => {
         onClick={callApprove}
         isDisabled={isLoading}
         cursor={"pointer !important"}
+        opacity={"1 !important"}
       >
         {loadingStatus && <Spinner w={"24px"} h={"24px"} color={"#007AFF"} />}
         {!loadingStatus && isRevokeForUSDT && <Text>Revoke USDT</Text>}{" "}
@@ -275,6 +276,7 @@ export default function ActionButton() {
         isDisabled={btnDisabled}
         _disabled={{ bgColor: "#17181D", color: "#8E8E92" }}
         cursor={"pointer !important"}
+        opacity={"1 !important"}
       >
         {buttonName}
       </Button>

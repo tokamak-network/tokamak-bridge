@@ -299,6 +299,8 @@ export default function CTOptionModal() {
             _focus={{}}
             onClick={handleClickConfirm}
             isDisabled={btnDisabled}
+            opacity={"1 !important"}
+            cursor={"pointer !important"}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
               {isBalanceOver ? "Insufficient Balance" : "Next"}
