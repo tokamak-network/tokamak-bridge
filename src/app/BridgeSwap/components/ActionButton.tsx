@@ -131,8 +131,6 @@ export default function ActionButton() {
     connetAndDisconntWallet,
   ]);
 
-  console.log("isDisabled", isDisabled);
-
   return (
     <>
       {/** FW UI test End @Robert*/}
