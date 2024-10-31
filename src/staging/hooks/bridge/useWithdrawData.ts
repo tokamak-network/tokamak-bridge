@@ -326,7 +326,7 @@ export const useWithdrawData = () => {
         };
       });
     }
-  }, [isConnectedToMainNetwork, setThanosWithdrawHistory]);
+  }, [isConnectedToMainNetwork, setThanosWithdrawHistory, setTitanWithdrawHistory]);
   const getAllWithdrawData = useCallback(async () => {
     if (
       titanWithdrawalHistory.history &&
