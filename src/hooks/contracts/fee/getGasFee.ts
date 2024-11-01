@@ -175,7 +175,7 @@ export function useGasFee() {
             const tx = await withdrawContract.populateTransaction.withdraw(
               inToken.address[inNetwork.chainName],
               parsedAmount,
-              0,
+              200000,
               "0x"
             );
             const estimateTotalGasCost = await l2Provider.estimateTotalGasCost({
