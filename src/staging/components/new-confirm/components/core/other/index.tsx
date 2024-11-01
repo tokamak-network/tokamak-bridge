@@ -223,7 +223,7 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
-  const isWrongNetwork = chain?.id !== l1ChainId;
+  const isWrongNetwork = transactionData.action === Action.Withdraw && chain?.id !== l1ChainId && transactionData.status === Status.Finalize;
   const btnIsDisabled = lineType !== 3 || isWrongNetwork;
   return (
     <Modal
