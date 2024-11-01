@@ -32,7 +32,7 @@ const CHAIN_SUBGRAPH_URL: Record<number, string> = {
   //   "https://api.thegraph.com/subgraphs/name/lynnshaoyu/uniswap-v3-avax",
   // "https://api.thegraph.com/subgraphs/name/liqwiz/uniswap-v3-goerli",
   [SupportedChainId.TITAN]:
-    "https://thegraph.titan.tokamak.network/subgraphs/name/tokamak/titan-uniswap-subgraph",
+    "https://graph-node.titan.tokamak.network/subgraphs/name/tokamak/uniswap",
   [SupportedChainId.SEPOLIA]:
     "https://api.studio.thegraph.com/query/49678/tokamak-uniswapv3/version/latest",
   [SupportedChainId.TITAN_SEPOLIA]:
