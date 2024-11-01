@@ -225,17 +225,21 @@ function TransactionToast(props: TransactionToastProp) {
       setSeletedTxCategory(
         txSort === "Deposit" ? Action.Deposit : Action.Withdraw
       );
+      openHistoryTab();
     } else {
       window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
-      try {
-        needToOpenHistoryTab
-          ? openHistoryTab()
-          : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
-      } finally {
-        closeModal();
-      }
+      closeModal();
     }
-  }, [props, blockExplorer, needToOpenHistoryTab, openHistoryTab]);
+  }, [
+    blockExplorer,
+    closeModal,
+    needToOpenHistoryTab,
+    openHistoryTab,
+    setIsOpen,
+    setSeletedTxCategory,
+    transactionHash,
+    txSort
+  ]);
 
   useEffect(() => {
     if (historyTabOpen) toast.closeAll();
