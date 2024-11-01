@@ -1,7 +1,7 @@
 import { Center, Text } from "@chakra-ui/layout";
 import { Flex, Spinner } from "@chakra-ui/react";
 import Image from "next/image";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 
 import useConnectWallet from "@/hooks/account/useConnectWallet";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
@@ -13,21 +13,53 @@ import { actionMethodStatus } from "@/recoil/modal/atom";
 
 import HISTORYICON from "assets/icons/header/history.svg";
 import WALLET_ICON from "assets/icons/wallet.svg";
+import { useEffect } from "react";
+import {
+  thanosDepositHistory,
+  thanosWithdrawHistory,
+  titanDepositHistory,
+} from "@/recoil/history/transaction";
+import useConnectedNetwork from "@/hooks/network";
 
 export default function Account() {
   const { isConnected, address } = useAccount();
+  const { chain } = useNetwork();
   const { connetAndDisconntWallet } = useConnectWallet();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
   const txPending = useRecoilValue(txPendingStatus);
   const { headerMobileView: mobileView } = useMediaView();
   const [actionOptionStatus, setActionMethodStatus] =
     useRecoilState(actionMethodStatus);
+  const [thanosDipositHistory, setThanosDipositHistory] =
+    useRecoilState(thanosDepositHistory);
+  const [titanDipositHistory, setTitanDipositHistory] =
+    useRecoilState(titanDepositHistory);
+
+  const [thanosSepWithdrawHistory, setThanosWithdrawHistory] =
+    useRecoilState(thanosWithdrawHistory);
 
   const buttonText = isConnected
     ? trimAddress({ address })
     : mobileView
-    ? "Connect"
-    : "Connect Wallet";
+      ? "Connect"
+      : "Connect Wallet";
+
+  useEffect(() => {
+    setThanosDipositHistory({
+      latestBlockNumber: "0",
+      latestRelayedBlockNumber: "0",
+      history: null,
+    });
+    setTitanDipositHistory({
+      latestBlockNumber: "0",
+      latestRelayedBlockNumber: "0",
+      history: null,
+    });
+    setThanosWithdrawHistory({
+      latestBlockNumber: "0",
+      history: null,
+    });
+  }, [address, isConnected]);
 
   return (
     <Center

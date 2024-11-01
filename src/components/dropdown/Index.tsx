@@ -4,6 +4,7 @@ import {
   SupportedChainId,
   SupportedChainProperties,
   supportedChain,
+  supportedChainOnProd,
 } from "@/types/network/supportedNetwork";
 import { Flex, Box, Text } from "@chakra-ui/layout";
 import Image from "next/image";
@@ -37,17 +38,18 @@ const customStyles = (maxHeight: string, maxWidth: string) => {
       color: "#fff",
       border: "none",
       borderRadius: "6px",
+      padding: "6px 4px 6px 4px !important",
     }),
     menu: (styles: any) => ({
       margin: "0px",
-      marginTop: "4px",
+      marginTop: "9px",
       background: "#1F2128",
       minWidth: `${maxWidth} !important`,
       maxWidth: `${maxWidth} !important`,
       borderRadius: "6px",
       position: "absolute",
       border: "1px solid #313442",
-      padding: "8px",
+      padding: "8px 0px",
       zIndex: Overlay_Index.AlwaysTop,
     }),
   };
@@ -71,9 +73,10 @@ const ValueContainer = (props: {
         justifyContent={"space-between"}
         alignItems={"center"}
         fontSize={isPool ? 18 : 14}
+        fontWeight={600}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <Flex columnGap={"6px"}>
+        <Flex columnGap={"8px"}>
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
             <Image
               src={selectedOption.networkImage}
@@ -101,6 +104,7 @@ const ValueContainer = (props: {
       justifyContent={"space-between"}
       alignItems={"center"}
       fontSize={isPool ? 18 : 14}
+      fontWeight={600}
       onClick={() => setIsOpen(true)}
     >
       <Flex columnGap={"6px"}>
@@ -141,7 +145,7 @@ export default function NetworkDropdown(props: {
   const onChange = async (data: SupportedChainProperties) => {
     try {
       const value: SupportedChainProperties["chainId"] = Number(data.chainId);
-      const selectedWork = supportedChain.filter((supportedChain) => {
+      const selectedWork = supportedChainOnProd.filter((supportedChain) => {
         return supportedChain.chainId === value;
       })[0];
 
@@ -187,7 +191,7 @@ export default function NetworkDropdown(props: {
   useEffect(() => {
     if (isConnected === false) {
       if (inNetwork && network?.inNetwork?.chainId) {
-        const connectedNetwork = supportedChain.filter((supportedChain) => {
+        const connectedNetwork = supportedChainOnProd.filter((supportedChain) => {
           return supportedChain.chainId === network?.inNetwork?.chainId;
         })[0];
 
@@ -239,7 +243,7 @@ export default function NetworkDropdown(props: {
 
     if (data.layer === "L2") {
       return (
-        <Flex flexDir={"column"} rowGap={"12px"} mt={"4px"}>
+        <Flex flexDir={"column"} rowGap={"6px"}>
           {data.isTOP && (
             <Flex
               w={"100%"}
@@ -272,8 +276,9 @@ export default function NetworkDropdown(props: {
             bgColor={"#1F2128"}
             _hover={{ bgColor: "#313442" }}
             onClick={() => onChange(data)}
+            padding={"6px 12px 6px 12px !important"}
           >
-            <Flex columnGap={"6px"}>
+            <Flex columnGap={"8px"}>
               <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
                 <Image
                   src={data.networkImage}
@@ -307,9 +312,10 @@ export default function NetworkDropdown(props: {
         bgColor={"#1F2128"}
         _hover={{ bgColor: "#313442" }}
         onClick={() => onChange(data)}
-        borderRadius={"6px"}
+        padding={"6px 12px 6px 12px !important"}
+        mb={"8px"}
       >
-        <Flex columnGap={"6px"}>
+        <Flex columnGap={"8px"}>
           <Box w={isPool ? "28px" : "20px"} h={isPool ? "28px" : "20px"}>
             <Image
               src={data.networkImage}
@@ -329,7 +335,7 @@ export default function NetworkDropdown(props: {
     );
   };
 
-  const optionsList = supportedChain
+  const optionsList = supportedChainOnProd
     .filter((chainInfo) => {
       if (
         isConnectedToMainNetwork === true ||
@@ -373,7 +379,7 @@ export default function NetworkDropdown(props: {
             />
           ),
           MenuList: (e) => (
-            <Flex flexDir={"column"} rowGap={"8px"}>
+            <Flex flexDir={"column"} rowGap={"4px"}>
               {e.children}
             </Flex>
           ),

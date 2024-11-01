@@ -10,7 +10,7 @@ import {
 } from "@/staging/types/transaction";
 import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
-import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import { useCountdown } from "@/staging/hooks/useCountdown";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
@@ -27,17 +27,17 @@ interface ConditionalBoxProps {
 }
 
 export default function ConditionalBox(props: ConditionalBoxProps) {
-  const { type, transactionData, waitMessage, timeDisplay, isCountDown } = props;
-
+  const { type, transactionData, waitMessage, timeDisplay, isCountDown } =
+    props;
   if (type === "wait") {
     return (
-      <Box w={"100%"} h={"28px"} mt='3px' mb='21px' py='3px' bg='#15161D'>
-        <Flex alignItems='center'>
+      <Box w={"100%"} h={"28px"} mt="3px" mb="21px" py="3px" bg="#15161D">
+        <Flex alignItems="center">
           <Text
             fontWeight={400}
-            fontSize='11px'
-            lineHeight='18px'
-            color='#59628D'
+            fontSize="11px"
+            lineHeight="18px"
+            color="#59628D"
           >
             {waitMessage}
           </Text>
@@ -53,26 +53,20 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       transactionData.errorMessage && transactionData.status === Status.Rollup;
 
     const refreshRollup =
-      (transactionData.status === Status.Rollup &&
-        isZeroTime &&
-        transactionData.action === Action.Withdraw) ||
-      (transactionData.status === Status.Finalize &&
-        isZeroTime &&
-        transactionData.action === Action.Deposit);
+      transactionData.status === Status.Rollup &&
+      transactionData.action === Action.Withdraw;
 
     const calendarButton =
       transactionData.status === Status.Finalize &&
-      !isZeroTime &&
       transactionData.action === Action.Withdraw;
 
     const claimReadyButton =
       transactionData.status === Status.Finalize &&
-      isZeroTime &&
       transactionData.action === Action.Withdraw;
 
-    if (claimReadyButton) {
-      return <Box w={"100%"} mt='3px' mb='21px' py='3px' bg='#15161D'></Box>;
-    }
+    // if (claimReadyButton) {
+    //   return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D"></Box>;
+    // }
 
     const startDate = useMemo(() => {
       if (
@@ -99,26 +93,35 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
       <Box
         w={"100%"}
         h={"28px"}
-        mt='3px'
-        mb='21px'
-        pl='12px'
-        py='3px'
-        borderRadius='4px'
-        bg='#1F2128'
+        mt="3px"
+        mb="21px"
+        pl="12px"
+        pr="210px"
+        py="3px"
+        borderRadius="4px"
+        bg="#1F2128"
       >
-        <Flex alignItems='center' w='100px'>
+        <Flex alignItems="center" w="100px">
           <Text
             fontWeight={600}
-            fontSize='11px'
-            lineHeight='22px'
+            fontSize="11px"
+            lineHeight="22px"
             color={errorRollup || !isCountDown ? "#DD3A44" : "#FFFFFF"}
-            whiteSpace='nowrap'
-            overflow='hidden'
+            whiteSpace="nowrap"
+            overflow="hidden"
           >
             {timeDisplay}
           </Text>
           {(errorRollup || !isCountDown) && (
-            <GetHelp />
+            <Flex
+              w={"18px"}
+              h={"18px"}
+              ml={"2px"}
+              justifyContent={"center"}
+              cursor={"pointer"}
+            >
+              <GetHelp />
+            </Flex>
           )}
           {calendarButton && (
             <Flex
@@ -137,5 +140,5 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
     );
   }
   // Box type
-  return <Box w={"100%"} mt='3px' mb='21px' py='3px' bg='#15161D' />;
+  return <Box w={"100%"} mt="3px" mb="21px" py="3px" bg="#15161D" />;
 }

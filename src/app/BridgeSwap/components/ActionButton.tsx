@@ -47,9 +47,9 @@ export default function ActionButton() {
 
   const isDisabled = useMemo(() => {
     if ((mode === "Withdraw" || !isConnected) && !isInputZero) return false;
+    if ((mode === "Deposit" || !isConnected) && isInputZero) return true;
     const disabled =
       !isReady ||
-      isApproved === false ||
       (mode === "Swap" && isLoading) ||
       isNotSupportForSwap ||
       isBalanceOver ||
@@ -72,38 +72,6 @@ export default function ActionButton() {
     outToken,
     isConnected,
   ]);
-
-  // useEffect(() => {
-  //   const timeoutId = setTimeout(() => {
-  //     const disabled =
-  //       !isReady ||
-  //       isApproved === false ||
-  //       (mode === "Swap" && isLoading) ||
-  //       isNotSupportForSwap ||
-  //       isBalanceOver ||
-  //       txPending ||
-  //       (mode === "Swap" && outToken === null) ||
-  //       isInputZero ||
-  //       (mode === "Swap" && isTONatPair) ||
-  //       deactivateButton;
-  //     setIsDisabled(disabled);
-  //   }, 200);
-
-  //   return () => {
-  //     clearTimeout(timeoutId);
-  //   };
-  // }, [
-  //   isReady,
-  //   isApproved,
-  //   isLoading,
-  //   isNotSupportForSwap,
-  //   isBalanceOver,
-  //   txPending,
-  //   isTONatPair,
-  //   isInputZero,
-  //   mode,
-  //   outToken,
-  // ]);
 
   const { onClick } = useCallBridgeSwapAction();
   const { connetAndDisconntWallet } = useConnectWallet();
@@ -144,6 +112,7 @@ export default function ActionButton() {
         color={!isConnected ? "fff" : isDisabled ? "#8E8E92" : "#fff"}
         isDisabled={isDisabled}
         onClick={buttonAction}
+        cursor={"pointer !important"}
       >
         {!isConnected && "Connect Wallet"}
         {!isConnected
@@ -152,7 +121,9 @@ export default function ActionButton() {
             ? "Select Network"
             : mode === "Withdraw"
               ? "Next"
-              : mode?.replaceAll("ETH-", "")}{" "}
+              : isBalanceOver
+                ? "Insufficient balance"
+                : mode?.replaceAll("ETH-", "")}{" "}
         <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
           {deactivateButton ? "(Service under maintenance)" : ""}
           {/* {'(Service under maintenance)'} */}

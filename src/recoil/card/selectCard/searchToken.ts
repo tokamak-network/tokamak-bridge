@@ -6,7 +6,10 @@ import {
   TokenInfo,
   supportedTokens,
 } from "@/types/token/supportedToken";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  SupportedChainId,
+  SupportedChainProperties,
+} from "@/types/network/supportedNetwork";
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
 import { getProvider } from "@/config/getProvider";
 
@@ -35,7 +38,7 @@ export const searchTokenSelector = selector<TokenInfo | null>({
           const tokenContract = new ethers.Contract(
             nameOrAdd,
             ERC20_ABI.abi,
-            getProvider(inNetwork)
+            getProvider(inNetwork as SupportedChainProperties)
           );
           const [tokenName, tokenSymbol, decimals] = await Promise.all([
             tokenContract.name(),

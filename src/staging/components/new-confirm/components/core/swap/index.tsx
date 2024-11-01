@@ -133,6 +133,7 @@ export default function SwapConfirmModal() {
               color: "#8E8E92",
               bgColor: "#17181D",
             }}
+            opacity={"1 !important"}
           >
             <Flex alignItems={"center"}>
               <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>

@@ -7,14 +7,14 @@ import {
   isInCT_Provide,
   CT_Provide_History,
 } from "@/staging/types/transaction";
-import { TESTNET_TRANSACTION_CONSTANTS, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import { getTransactionConstants, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import {
   TransactionStatus,
   getStatusValue,
 } from "@/staging/components/new-history/utils/historyStatus";
 import { utcToZonedTime } from "date-fns-tz";
-import { getBridgeL1ChainId } from "../../new-confirm/utils";
+import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../new-confirm/utils";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 // status 별로 변수 넣는 함수
@@ -24,8 +24,8 @@ export function getRemainTime(transactionData: TransactionHistory): number {
     transactionData.action,
     transactionData.status
   );
-  const l1ChainId = getBridgeL1ChainId(transactionData);
-  const txConst = l1ChainId === SupportedChainId.MAINNET ? TRANSACTION_CONSTANTS : TESTNET_TRANSACTION_CONSTANTS;
+  const l2ChainId = getBridgeL2ChainId(transactionData);
+  const txConst = getTransactionConstants(l2ChainId ?? SupportedChainId.MAINNET)
 
   // 상수를 통해 정해진 시간을 추가해준다.
   switch (statusValue) {

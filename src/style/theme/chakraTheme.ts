@@ -45,7 +45,7 @@ const theme = extendTheme({
             pointerEvents: "none",
             background: "transparent",
           },
-          
+
           dialogContainer: {
             pointerEvents: "none",
             background: "transparent",
@@ -55,7 +55,7 @@ const theme = extendTheme({
           },
           input: {
             pointerEvents: "auto",
-          }
+          },
         },
       },
     },
@@ -96,13 +96,12 @@ const theme = extendTheme({
         maxHeight: "248px",
       },
       ".card-empty": {
-        border: "1px dashed #313442",
+        background: `url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' rx='16' ry='16' stroke='%23333' stroke-width='1' stroke-dasharray='12%2c 6' stroke-dashoffset='0' stroke-linecap='square'/%3e%3c/svg%3e")`,
         borderRadius: "16px",
       },
       ".css-17pwl6t": {
         zIndex: Overlay_Index.OverHeader,
       },
-
     }),
     // Additional overrides for specific components can be added here
     // For example, to reset the button styles
@@ -114,7 +113,7 @@ const theme = extendTheme({
         fontWeight: "normal",
         _hover: { backgroundColor: "none" },
         _active: {},
-        color:'#fff'
+        color: "#fff",
       },
     },
     Input: {

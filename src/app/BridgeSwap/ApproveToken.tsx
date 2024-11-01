@@ -43,7 +43,7 @@ export default function ApproveToken() {
       isInputZero) &&
     (confirmedApproveTransaction === undefined ||
       confirmedApproveTransaction?.tokenData?.[0]?.tokenAddress.toLowerCase() !==
-        inToken?.tokenAddress.toLowerCase() ||
+      inToken?.tokenAddress.toLowerCase() ||
       isInputZero)
   ) {
     return null;
@@ -52,17 +52,16 @@ export default function ApproveToken() {
   const parsedAmount =
     confirmedApproveTransaction?.tokenData?.[0]?.amount?.toString()
       ? ethers.utils.formatUnits(
-          confirmedApproveTransaction.tokenData[0].amount.toString(),
-          inToken?.token.decimals
-        )
+        confirmedApproveTransaction.tokenData[0].amount.toString(),
+        inToken?.token.decimals
+      )
       : "-";
 
   const text =
     confirmedApproveTransaction && isApproved
       ? `${commafy(parsedAmount, 4)} ${inToken?.tokenSymbol} has been approved`
-      : `${isRevokeForUSDT ? "Revoke" : "Approve"} ${
-          inToken?.tokenSymbol
-        } for ${capitalizeFirstChar(mode ?? undefined)}`;
+      : `${isRevokeForUSDT ? "Revoke" : "Approve"} ${inToken?.tokenSymbol
+      } for ${capitalizeFirstChar(mode ?? undefined)}`;
 
   const afterApproved = isApproved && confirmedApproveTransaction;
   const beforeApproved = !isLoading && !afterApproved;
@@ -139,6 +138,8 @@ export default function ApproveToken() {
               }}
               isDisabled={!isRevokeForUSDT || isLoading}
               _disabled={{ bg: "#15161D", color: "#8E8E92" }}
+              opacity={"1 !important"}
+              cursor={"pointer !important"}
             >
               {"Revoke"}
               {isLoading && isRevokeForUSDT && (
@@ -175,6 +176,8 @@ export default function ApproveToken() {
             }}
             isDisabled={isLoading || isRevokeForUSDT}
             _disabled={{ bg: "#15161D", color: "#8E8E92" }}
+            cursor={"pointer !important"}
+            opacity={"1 !important"}
           >
             {"Approve"}
           </Button>

@@ -17,7 +17,7 @@ import AccountContainer from "./AccountContainer";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import Account from "../header/Account";
 import { confirmWithdrawStats } from "@/recoil/modal/atom";
-import AccountHistoryNew from "@/staging/components/new-history/components/core";
+import AccountHistoryNew from "@/staging/components/new-history-thanos/components/core";
 import {
   selectedTab,
   selectedTransactionCategory,

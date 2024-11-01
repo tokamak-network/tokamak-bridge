@@ -8,6 +8,7 @@ import {
   TITAN_SEPOLIA_CONTRACTS,
   TOKAMAK_CONTRACTS,
 } from ".";
+import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 import { ZERO_ADDRESS } from "../misc";
 
 export const ETH_ADDRESS_BY_CHAINID: Record<number, string> = {
@@ -30,6 +31,15 @@ export const TON_ADDRESS_BY_CHAINID: Record<number, string> = {
   [SupportedChainId.SEPOLIA]: SEPOLIA_CONTRACTS.TON_ADDRESS,
   [SupportedChainId.TITAN]: TOKAMAK_CONTRACTS.TON_ADDRESS,
   [SupportedChainId.TITAN_SEPOLIA]: TITAN_SEPOLIA_CONTRACTS.TON_ADDRESS,
+  [SupportedChainId.THANOS_SEPOLIA]: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
+};
+
+export const TOS_ADDRESS_BY_CHAINID: Record<number, string> = {
+  [SupportedChainId.MAINNET]: MAINNET_CONTRACTS.TOS_ADDRESS,
+  [SupportedChainId.SEPOLIA]: SEPOLIA_CONTRACTS.TOS_ADDRESS,
+  [SupportedChainId.TITAN]: TOKAMAK_CONTRACTS.TOS_ADDRESS,
+  [SupportedChainId.TITAN_SEPOLIA]: TITAN_SEPOLIA_CONTRACTS.TOS_ADDRESS,
+  [SupportedChainId.THANOS_SEPOLIA]: THANOS_SEPOLIA_CONTRACTS.TOS_ADDRESS,
 };
 
 export const WTON_ADDRESS_BY_CHAINID: Record<number, string> = {

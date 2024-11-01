@@ -3,11 +3,10 @@ import {
   Action,
   TransactionHistory,
 } from "@/staging/types/transaction";
-import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
-import {
-  TESTNET_TRANSACTION_CONSTANTS,
-  TRANSACTION_CONSTANTS,
-} from "@/staging/constants/transactionTime";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
+import { getTransactionConstants, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { Tr } from "@chakra-ui/react";
 
 //getConfirmType.ts
@@ -77,23 +76,24 @@ const getType = (lineType: number, index: number) => {
   return typeMap[lineType] || undefined;
 };
 
+
 const getWaitMessage = (
   lineType: number,
   index: number,
-  isConnectedToMainNetwork: boolean
+  chainId: SupportedChainId
 ) => {
-  const txConst = isConnectedToMainNetwork
-    ? TRANSACTION_CONSTANTS
-    : TESTNET_TRANSACTION_CONSTANTS;
+  const txConstants = getTransactionConstants(chainId);
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? `Wait up to ${isConnectedToMainNetwork ? 6 : 12} hours ${
-            isConnectedToMainNetwork ? "20 min" : ""
-          }`
-        : `Wait ${txConst.WITHDRAW.ROLLUP_DAYS} days`,
-    1: `Wait ${txConst.WITHDRAW.ROLLUP_DAYS} days`,
-    100: `Wait ${txConst.DEPOSIT.INITIAL_MINUTES} min`,
+        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}6 hours`
+        : `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
+    1: `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
+    100: `Wait ${chainId === SupportedChainId.TITAN ||
+      chainId === SupportedChainId.TITAN_SEPOLIA
+      ? 5
+      : "1 ~ 2"
+      } mins`,
   };
   return waitMessageMap[lineType] || undefined;
 };

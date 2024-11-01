@@ -1,4 +1,8 @@
 import { ActionMode } from "@/types/bridgeSwap";
+import {
+  SupportedChainId,
+  SupportedL2ChainId,
+} from "../network/supportedNetwork";
 
 type UniswapTxSort =
   | "Add Liquidity"
@@ -12,6 +16,12 @@ type ETHWrapTxSort = "ETH-Wrap" | "ETH-Unwrap";
 type EtcTxSort = "Approve" | "Revoke";
 type UserHistorySort = "Claim";
 type CrossTradeTxSort = "Request" | "Provide" | "UpdateFee" | "CancelRequest";
+export type ThanosDepositType =
+  | "ETH"
+  | "USDC"
+  | "NativeToken"
+  | "ERC20"
+  | "StakeTON";
 
 export type TxSort =
   | UniswapTxSort
@@ -38,4 +48,5 @@ export interface TxInterface {
   outNetwork?: number;
   isToasted: boolean;
   actionSort?: ActionSort;
+  L2Chain?: SupportedChainId;
 }

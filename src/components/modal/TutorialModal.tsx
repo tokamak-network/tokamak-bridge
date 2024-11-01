@@ -19,6 +19,7 @@ import step4 from "assets/image/tutorial/step4.svg";
 import { useLocalStorage } from "@/hooks/storage/useLocalStorage";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useGetMode } from "@/hooks/mode/useGetMode";
+import { GoogleFormURL } from "@/constant/url";
 
 const steps = [
   {
@@ -88,7 +89,7 @@ export default function TutorialModal() {
   const isOpen = false;
 
   return (
-    <Modal onClose={() => {}} isOpen={isOpen} isCentered>
+    <Modal onClose={() => { }} isOpen={isOpen} isCentered>
       <ModalOverlay
         bg={"rgba(0, 0, 0, 0)"}
         mt={bgs[currentStep].px}
@@ -154,7 +155,7 @@ export default function TutorialModal() {
                   from our team by filling out this google{" "}
                   <Link
                     style={{ color: "#007AFF", textDecoration: "underline" }}
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSc6pHHABsnIZ2MvcEa57VCtSNTRXHAaFjBLQYf1LbiMB_81OA/viewform"
+                    href={GoogleFormURL}
                     isExternal
                   >
                     form

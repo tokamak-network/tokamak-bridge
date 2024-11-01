@@ -19,7 +19,7 @@ export function useGetTokenList() {
   const { mobileView } = useMediaView();
 
   const tokenListForSelectedNetwork = useMemo(() => {
-    const tokenListAll = [...tokenList, ...storedTokenList];
+    const tokenListAll = [...tokenList];
     const chainN = chainName ?? "MAINNET";
     if (chainN) {
       return tokenListAll.filter((token) => {

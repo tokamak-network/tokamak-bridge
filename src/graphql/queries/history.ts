@@ -1,9 +1,115 @@
 import { gql } from "@apollo/client";
 
-export const FETCH_USER_TRANSACTIONS_L1 = gql`
-  query FetchUserTransactions($formattedAddress: String!, $L1Bridge: String!, $account: String!) {
+export const FETCH_USER_TRANSACTIONS_L1_TITAN = gql`
+  query FetchUserTransactions(
+    $formattedAddress: String!
+    $L1Bridge: String!
+    $account: String!
+    $blockNumber: String!
+  ) {
     sentMessages(
-      where: {message_contains: $formattedAddress, sender: $L1Bridge, target: "0x4200000000000000000000000000000000000010"}
+      where: {
+        message_contains: $formattedAddress
+        sender: $L1Bridge
+        target: "0x4200000000000000000000000000000000000010"
+        blockNumber_gt: $blockNumber
+      }
+      orderBy: blockTimestamp
+      orderDirection: desc
+    ) {
+      blockNumber
+      blockTimestamp
+      gasLimit
+      message
+      messageNonce
+      sender
+      target
+      transactionHash
+    }
+    erc20DepositInitiateds(where: { _from: $account }) {
+      id
+      _l1Token
+      _l2Token
+      _from
+      _amount
+      _data
+      _to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+    erc20WithdrawalFinalizeds(where: { _from: $account }) {
+      id
+      _l1Token
+      _l2Token
+      _from
+      _amount
+      _data
+      _to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+    ethdepositInitiateds(where: { _from: $account }) {
+      _from
+      _data
+      _amount
+      _to
+      blockNumber
+      blockTimestamp
+      id
+      transactionHash
+    }
+    ethwithdrawalFinalizeds(where: { _from: $account }) {
+      _amount
+      _data
+      _from
+      _to
+      blockNumber
+      blockTimestamp
+      id
+      transactionHash
+    }
+    # sentMessages(
+    #   where: {
+    #     message_contains: $formattedAddress
+    #     target: $L1Bridge
+    #     sender: "0x4200000000000000000000000000000000000010"
+    #   }
+    # ) {
+    #   blockNumber
+    #   blockTimestamp
+    #   gasLimit
+    #   message
+    #   messageNonce
+    #   sender
+    #   target
+    #   transactionHash
+    # }
+  }
+`;
+
+export const FETCH_USER_TRANSACTIONS_L1_THANOS = gql`
+  query FetchUserTransactions(
+    $formattedAddress: String!
+    $L1StandardBridge: String!
+    $L1UsdcBridge: String!
+    $account: String!
+    $remoteToken: String!
+    $blockNumber: String!
+  ) {
+    sentMessages(
+      where: {
+        sender_in: [$L1StandardBridge, $L1UsdcBridge]
+        message_contains: $formattedAddress
+        target_in: [
+          "0x4200000000000000000000000000000000000010"
+          "0x4200000000000000000000000000000000000775"
+        ]
+        blockNumber_gt: $blockNumber
+      }
+      orderBy: blockNumber
+      orderDirection: desc
     ) {
       blockNumber
       blockTimestamp
@@ -15,76 +121,102 @@ export const FETCH_USER_TRANSACTIONS_L1 = gql`
       transactionHash
     }
     erc20DepositInitiateds(
-      where: {_from: $account}
+      where: { from: $account, blockNumber_gt: $blockNumber }
     ) {
       id
-      _l1Token
-      _l2Token
-      _from
-      _amount
-      _data
-      _to
+      l1Token
+      l2Token
+      from
+      amount
+      extraData
+      to
       blockNumber
       blockTimestamp
       transactionHash
     }
     erc20WithdrawalFinalizeds(
-      where: {_from: $account}
+      where: { from: $account, blockNumber_gt: $blockNumber }
     ) {
       id
-      _l1Token
-      _l2Token
-      _from
-      _amount
-      _data
-      _to
+      l1Token
+      l2Token
+      from
+      amount
+      extraData
+      to
       blockNumber
       blockTimestamp
       transactionHash
     }
     ethdepositInitiateds(
-      where: {_from: $account}
+      where: { from: $account, blockNumber_gt: $blockNumber }
     ) {
-      _from
-      _data
-      _amount
-      _to
+      from
+      extraData
+      amount
+      to
       blockNumber
       blockTimestamp
       id
       transactionHash
     }
     ethwithdrawalFinalizeds(
-      where: {_from: $account}
+      where: { from: $account, blockNumber_gt: $blockNumber }
     ) {
-      _amount
-      _data
-      _from
-      _to
+      amount
+      extraData
+      from
+      to
       blockNumber
       blockTimestamp
       id
       transactionHash
     }
-    sentMessages(
-      where: {message_contains: $formattedAddress, target: $L1Bridge, sender: "0x4200000000000000000000000000000000000010"}
+    erc20BridgeInitiateds(
+      where: {
+        remoteToken: $remoteToken
+        from: $account
+        blockNumber_gt: $blockNumber
+      }
+      orderBy: blockNumber
+      orderDirection: desc
     ) {
+      id
+      localToken
+      remoteToken
+      from
+      to
+      amount
+      extraData
       blockNumber
       blockTimestamp
-      gasLimit
-      message
-      messageNonce
-      sender
-      target
+      transactionHash
+    }
+    outputProposeds(first: 1, orderBy: l2BlockNumber, orderDirection: desc) {
+      id
+      outputRoot
+      l2OutputIndex
+      l2BlockNumber
+      l1Timestamp
+      blockNumber
+      blockTimestamp
       transactionHash
     }
   }
 `;
 
 export const FETCH_USER_TRANSACTIONS_L2 = gql`
-  query FetchUserTransactions($formattedAddress: String!, $L1Bridge: String!, $account: String!) {
+  query FetchUserTransactions(
+    $formattedAddress: String!
+    $L1Bridge: String!
+    $account: String!
+  ) {
     sentMessages(
-      where: {message_contains: $formattedAddress, target: $L1Bridge, sender: "0x4200000000000000000000000000000000000010"}
+      where: {
+        message_contains: $formattedAddress
+        target: $L1Bridge
+        sender: "0x4200000000000000000000000000000000000010"
+      }
     ) {
       blockNumber
       blockTimestamp
@@ -95,9 +227,7 @@ export const FETCH_USER_TRANSACTIONS_L2 = gql`
       target
       transactionHash
     }
-    depositFinalizeds(
-      where: {_from: $account}
-    ) {
+    depositFinalizeds(where: { _from: $account }) {
       id
       _l1Token
       _l2Token
@@ -105,6 +235,62 @@ export const FETCH_USER_TRANSACTIONS_L2 = gql`
       _amount
       _data
       _to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+  }
+`;
+
+export const FETCH_USER_TRANSACTIONS_L2_THANOS = gql`
+  query FetchUserTransactions(
+    $formattedAddress: String!
+    $L1StandardBridge: String!
+    $account: String!
+  ) {
+    sentMessages(
+      where: {
+        message_contains: $formattedAddress
+        target: $L1StandardBridge
+        sender: "0x4200000000000000000000000000000000000010"
+      }
+    ) {
+      blockNumber
+      blockTimestamp
+      gasLimit
+      message
+      messageNonce
+      sender
+      target
+      transactionHash
+    }
+    depositFinalizeds(where: { from: $account }) {
+      id
+      l1Token
+      l2Token
+      from
+      amount
+      extraData
+      to
+      blockNumber
+      blockTimestamp
+      transactionHash
+    }
+    messagePasseds(
+      where: {
+        sender: "0x4200000000000000000000000000000000000007"
+        target: "0x9d28a920206281b4a56aef8bc1c515cc4c656d3f"
+        data_contains: $formattedAddress
+      }
+    ) {
+      id
+      nonce
+      sender
+      target
+      value
+      gasLimit
+      data
+      withdrawalHash
       blockNumber
       blockTimestamp
       transactionHash

@@ -1,5 +1,9 @@
 import { Box, Text, Flex, Circle } from "@chakra-ui/react";
 import FWoptionBg from "@/assets/image/BridgeSwap/ct/ctOptionBg.png";
+import CTOptionDisabledOptionSubBg from "@/assets/image/BridgeSwap/ct/ctOptionButtonBg.png";
+import CTOptionalDisabledOptionBg from "@/assets/image/BridgeSwap/ct/ctOptionBg.png";
+import questionIcon from "@/assets/icons/questionGray.svg";
+import Image from "next/image";
 import CTOptionDisabledOptionBg from "@/assets/image/BridgeSwap/ct/ctOptionDisabledOptionBg.png";
 import { BetaIcon } from "../../common/BetaIcon";
 
@@ -13,6 +17,7 @@ export default function CTOptionDisabledDetail() {
       pb={"15.5px"}
       borderRadius={"8px"}
       bg={"#17181D"}
+      backgroundImage={`url('${CTOptionalDisabledOptionBg.src}')`}
     >
       <Box>
         <Flex>
@@ -29,24 +34,41 @@ export default function CTOptionDisabledDetail() {
         <Box
           mt={"13px"}
           bg={"#3C2D31"}
-          width={"141px"}
-          height={"44px"}
           borderRadius={"8px"}
           backgroundImage={`url('${CTOptionDisabledOptionBg.src}')`}
           backgroundSize="cover"
           backgroundRepeat="no-repeat"
           gap={"8px"}
           px={"16px"}
+          background={"rgba(21, 22, 29, 0.60);"}
           py={"10px"}
+          maxWidth={"max-content"}
+          overflow={"hidden"}
+          position={"relative"}
         >
+          <Text
+            fontWeight={600}
+            fontSize={"22px"}
+            lineHeight={"24px"}
+            color={"#DB00FF"}
+            pos={"absolute"}
+            minWidth={"max-content"}
+            left={0}
+            bottom={"-5px"}
+            filter={"blur(3.5px)"}
+            opacity={"0.5"}
+          >
+            9.988 USDC
+          </Text>
           <Text
             fontWeight={600}
             fontSize={"16px"}
             lineHeight={"24px"}
             color={"#DB00FF"}
             textAlign="center"
+            backdropFilter={"blur(3.5px);"}
           >
-            Not available
+            Coming soon
           </Text>
         </Box>
         <Box mt={"20px"}>

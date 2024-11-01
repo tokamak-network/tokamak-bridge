@@ -1,3 +1,6 @@
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
+
 // index.tsx
 export const TRANSACTION_CONSTANTS = {
   DEPOSIT: {
@@ -6,8 +9,9 @@ export const TRANSACTION_CONSTANTS = {
   },
   WITHDRAW: {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)
-    ROLLUP_MINUTES: 360, // Duration of the rollup  (in minutes)
-    ROLLUP_SECS: 21600,
+    INITIAL_SECS: 675, // Initial state time for withdrawal (in minutes)
+    ROLLUP_MINUTES: 380, // Duration of the rollup  (in minutes)
+    ROLLUP_SECS: 22800,
     ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
     CHALLENGE_SECS: 604800,
   },
@@ -20,15 +24,26 @@ export const TRANSACTION_CONSTANTS = {
   },
 };
 
-export const TESTNET_TRANSACTION_CONSTANTS = {
-  ...TRANSACTION_CONSTANTS,
-  DEPOSIT: {
-    INITIAL_MINUTES: 5,
-    INITIAL_SECS: 315,
-  },
-  WITHDRAW: {
-    ...TRANSACTION_CONSTANTS.WITHDRAW,
-    ROLLUP_MINUTES: 720, // Duration of the rollup  (in minutes)
-    ROLLUP_SECS: 43200,
-  },
+export const getTransactionConstants = (chain: SupportedChainId) => {
+  if (chain === SupportedChainId.THANOS_SEPOLIA) {
+    return {
+      ...TRANSACTION_CONSTANTS,
+      DEPOSIT: { ...TRANSACTION_CONSTANTS.DEPOSIT, INITIAL_MINUTES: 2, INITIAL_SECS: 135 },
+      WITHDRAW: { ...TRANSACTION_CONSTANTS.WITHDRAW, ROLLUP_MINUTES: 60, ROLLUP_SECS: 3615 },
+    };
+  } else if (chain === SupportedChainId.TITAN_SEPOLIA) {
+    return {
+      ...TRANSACTION_CONSTANTS,
+      DEPOSIT: {
+        INITIAL_MINUTES: 5,
+        INITIAL_SECS: 315,
+      },
+      WITHDRAW: {
+        ...TRANSACTION_CONSTANTS.WITHDRAW,
+        ROLLUP_MINUTES: 720, // Duration of the rollup  (in minutes)
+        ROLLUP_SECS: 43200,
+      },
+    }
+  }
+  else return TRANSACTION_CONSTANTS;
 };

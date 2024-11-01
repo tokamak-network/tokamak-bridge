@@ -20,7 +20,7 @@ import { TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
 import { convertTimeToMinutes } from "@/staging/components/new-history/utils/timeUtils";
 import { formatDateToYMD } from "@/staging/components/new-history/utils/timeUtils";
 import { useCountdown } from "@/staging/hooks/useCountdown";
-import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { formatTimeDisplay } from "@/staging/utils/formatTimeDisplay";
 import Image from "next/image";
 import Lightbulb from "@/assets/icons/newHistory/lightbulb.svg";
@@ -97,6 +97,7 @@ const FinalizeButtonComponent = (props: { openModal: () => void }) => {
       _hover={{}}
       _focus={{}}
       onClick={props.openModal}
+      opacity={"1 !important"}
     >
       <Text fontWeight={600} fontSize={"11px"} lineHeight={"16.5px"}>
         Finalize
@@ -297,7 +298,7 @@ export default function StatusComponent(
         ) : (
           <Text
             fontSize={"11px"}
-            fontWeight={400}
+            fontWeight={shouldCountdown ? 600 : 400}
             lineHeight={"22px"}
             color={shouldCountdown && (isError || !isCountDown) ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
             cursor={!isActive ? "pointer" : "default"}
@@ -306,7 +307,6 @@ export default function StatusComponent(
             {timeDisplay}
           </Text>
         )}
-        {isError && <ErrorRollupComponent />}
         {!claimReadyButton && shouldCountdown && !isCountDown && <GetHelp />}
         {!claimReadyButton && calendarButton && (
           <CalenderButtonComponent handleCalendarClick={handleCalendarClick} />

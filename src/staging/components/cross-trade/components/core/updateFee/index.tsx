@@ -110,7 +110,7 @@ export default function CTFeeUpdateModal() {
 
   const tokenAddress =
     ctUpdateFeeModal.txData?.L2_subgraphData?._l2token &&
-    isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
+      isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
       ? "0x4200000000000000000000000000000000000006"
       : ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
   const { recommendedFee: recommendValue } = useRecommendFee({
@@ -164,7 +164,7 @@ export default function CTFeeUpdateModal() {
   const activeConfirmButton =
     activeButton === UpdateFeeButtonType.Update
       ? recommendCheck ||
-        !(inputValue === "" || inputWarningCheck === WarningType.Critical)
+      !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
   const { connectedToLayer1 } = useConnectedNetwork();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
@@ -310,7 +310,7 @@ export default function CTFeeUpdateModal() {
       !activeConfirmButton ||
       !connectedToLayer1 ||
       (activeButton === UpdateFeeButtonType.Update && inputWarningCheck) ===
-        WarningType.Critical
+      WarningType.Critical
     );
   }, [activeConfirmButton, connectedToLayer1, inputWarningCheck, activeButton]);
 
@@ -406,7 +406,7 @@ export default function CTFeeUpdateModal() {
             />
             <WrongNetwork style={{ marginTop: "12px" }} />
             {activeButton === UpdateFeeButtonType.Update &&
-            ctUpdateFeeModal.txData ? (
+              ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail
                 // input 관련 props
                 inputValue={inputValue}
@@ -490,13 +490,15 @@ export default function CTFeeUpdateModal() {
             _hover={{}}
             onClick={handleConfirm}
             isDisabled={btnIsDisabled}
+            opacity={"1 !important"}
+            cursor={"pointer !important"}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"normal"}>
               {!connectedToLayer1
                 ? "Wrong Network"
                 : activeButton == UpdateFeeButtonType.Update
-                ? "Update"
-                : "Cancel"}
+                  ? "Update"
+                  : "Cancel"}
             </Text>
           </Button>
           {activeButton == UpdateFeeButtonType.Update && (

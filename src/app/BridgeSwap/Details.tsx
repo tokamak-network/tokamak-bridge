@@ -22,13 +22,14 @@ export function Details() {
       justify={{ base: "space-between", lg: "normal" }}
       h={{ base: "100%", lg: "fit-content" }}
       w={"100%"}
-      mt={{ sm: "0px", lg: "24px" }}
+      mt={{ sm: "0px", lg: "20px" }}
       rowGap={"10px"}
+      gap={"24px"}
     >
       {mode !== null ? (
         <Flex w={"100%"} flexDir={"column"} rowGap={"10px"}>
           {pcView ? <Warning /> : !showWarning && <Warning />}
-          <ApproveToken />
+          {/* <ApproveToken /> */}
           <TransactionDetail />
         </Flex>
       ) : (

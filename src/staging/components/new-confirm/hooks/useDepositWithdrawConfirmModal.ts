@@ -1,25 +1,63 @@
-import { depositWithdrawConfirmModalStatus } from "@/recoil/modal/atom";
-import { TransactionHistory } from "@/staging/types/transaction";
+import {
+  depositWithdrawConfirmModalStatus,
+  thanosDepositWithdrawConfirmModalStatus,
+} from "@/recoil/modal/atom";
+import {
+  Action,
+  TransactionHistory,
+  StandardHistory,
+} from "@/staging/types/transaction";
 import { useRecoilState } from "recoil";
 import { useCallback } from "react";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export default function useDepositWithdrawConfirm() {
   const [depositWithdrawConfirmModal, setDepositWithdrawConfirmModal] =
     useRecoilState(depositWithdrawConfirmModalStatus);
 
+  const [
+    thanosDepositWithdrawConfirmModal,
+    setThanosDepositWithdrawConfirmModal,
+  ] = useRecoilState(thanosDepositWithdrawConfirmModalStatus);
+
   const onOpenDepositWithdrawConfirmModal = (
     transaction: TransactionHistory
   ) => {
-    setDepositWithdrawConfirmModal({ isOpen: true, transaction: transaction });
+    if (
+      transaction.action === Action.Withdraw &&
+      isThanosChain(transaction.inNetwork)
+    ) {
+      setThanosDepositWithdrawConfirmModal({
+        isOpen: true,
+        transaction: transaction,
+      });
+    } else
+      setDepositWithdrawConfirmModal({
+        isOpen: true,
+        transaction: transaction as StandardHistory,
+      });
   };
 
   const onCloseDepositWithdrawConfirmModal = useCallback(() => {
-    setDepositWithdrawConfirmModal((prev) => ({ ...prev, isOpen: false }));
+    setDepositWithdrawConfirmModal((prev) => ({
+      transaction: undefined,
+      isOpen: false,
+    }));
+  }, []);
+
+  const onCloseThanosDepositWithdrawConfirmModal = useCallback(() => {
+    setThanosDepositWithdrawConfirmModal((prev) => ({
+      ...prev,
+      isOpen: false,
+    }));
   }, []);
 
   return {
     depositWithdrawConfirmModal,
+    thanosDepositWithdrawConfirmModal,
     onOpenDepositWithdrawConfirmModal,
     onCloseDepositWithdrawConfirmModal,
+    onCloseThanosDepositWithdrawConfirmModal,
   };
 }

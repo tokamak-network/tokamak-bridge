@@ -11,6 +11,7 @@ import {
   CT_ACTION,
   CT_History,
   HISTORY_SORT,
+  StandardHistory,
   TransactionHistory,
 } from "@/staging/types/transaction";
 import PendingFooter from "./PendingFooter";
@@ -49,7 +50,7 @@ export default function Pending(props: PendingProps) {
 
   const openModal = useCallback(() => {
     if (transactionData.category === HISTORY_SORT.STANDARD) {
-      return onOpenDepositWithdrawConfirmModal(transactionData);
+      onOpenDepositWithdrawConfirmModal(transactionData as StandardHistory);
     }
     if (transactionData.category === HISTORY_SORT.CROSS_TRADE) {
       return onOpenCTConfirmModal({
