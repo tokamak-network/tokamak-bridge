@@ -30,7 +30,7 @@ export const useWithdrawAction = () => {
   const [pendingTxHashes, setPendingTxHashes] = useRecoilState(
     pendingTransactionHashes
   );
-  const { L1Provider } = useProvier();
+  const { L1Provider, provider: l1Provider } = useProvier();
   const [
     thanosDepositWithdrawConfirmModal,
     setThanosDepositWithdrawConfirmModal,
@@ -107,7 +107,7 @@ export const useWithdrawAction = () => {
       if (chain?.id !== l1ChainId && switchNetwork) {
         await switchNetwork(l1ChainId);
       } else if (chain?.id === l1ChainId) {
-        const l1Provider = new ethers.providers.Web3Provider(window.ethereum);
+        // const l1Provider = new ethers.providers.Web3Provider(window.ethereum);
         const l2Provider = providerByChainId[l2ChainId];
         const cm = new thanosSDK.CrossChainMessenger({
           bedrock: true,
