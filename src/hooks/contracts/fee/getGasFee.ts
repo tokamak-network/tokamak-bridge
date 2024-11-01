@@ -172,17 +172,6 @@ export function useGasFee() {
             const l2Provider = isThanosChain(inNetwork.chainId)
               ? asL2ThanosProvider(provider)
               : asL2TitanProvider(provider);
-            if (isThanosChain(inNetwork.chainId)) {
-              const signer = provider.getSigner();
-              const tx = await signer.populateTransaction({
-                to: "0x1000000000000000000000000000000000000000",
-                value: ethers.BigNumber.from(parsedAmount.toString()),
-                gasPrice: await provider.getGasPrice(),
-              });
-              const estimateTotalGasCost =
-                await l2Provider.estimateTotalGasCost(tx);
-              return estimateTotalGasCost;
-            }
             const tx = await withdrawContract.populateTransaction.withdraw(
               inToken.address[inNetwork.chainName],
               parsedAmount,
