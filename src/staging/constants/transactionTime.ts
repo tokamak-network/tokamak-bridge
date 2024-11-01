@@ -13,7 +13,6 @@ export const TRANSACTION_CONSTANTS = {
     ROLLUP_MINUTES: 380, // Duration of the rollup  (in minutes)
     ROLLUP_SECS: 22800,
     ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
-    PROVE: 0.5,
     CHALLENGE_SECS: 604800,
   },
   // Set to 15sec time-buffer for UI purposes, although the spec is 900 seconds
