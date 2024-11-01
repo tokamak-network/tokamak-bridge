@@ -29,19 +29,20 @@ import {
 import { asL2Provider as asL2ThanosProvider } from "@tokamak-network/thanos-sdk";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 import { isThanosChain } from "@/utils/network/checkNetwork";
-import { isTON } from "@/utils/token/checkToken";
 import useContract from "../useContract";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { chainId } from "@/types/wagmi";
 const thanosSDK = require("@tokamak-network/thanos-sdk");
 import { getL1Provider } from "@/config/l1Provider";
 import { getProvider } from "@/config/getProvider";
+import useIsTon from "@/hooks/token/useIsTon";
 
 export function useGasFee() {
   const { address } = useAccount();
   const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
   const { inNetwork, outNetwork } = useInOutNetwork();
   const { inToken, outToken } = useInOutTokens();
+  const { isTONIn, isTONOut, isTONatPair } = useIsTon();
   const { mode } = useGetMode();
   const { contract: _depositETH_contract } = useCallDeposit("depositETH");
   const { contract: _depositERC20_contract } = useCallDeposit("depositERC20");
@@ -125,7 +126,7 @@ export function useGasFee() {
               ).toBigInt();
             }
             // deposite TON to thanos
-            if (isThanosChain(outNetwork.chainId) && isTON(inToken)) {
+            if (isThanosChain(outNetwork.chainId) && isTONIn) {
               const estimatedGasUsage =
                 await _depositNativeToken_contract.estimateGas.depositNativeToken(
                   {

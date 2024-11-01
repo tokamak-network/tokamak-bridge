@@ -17,7 +17,7 @@ import { Hash } from "viem";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { BigNumber } from "ethers";
 import { isThanosChain } from "@/utils/network/checkNetwork";
-import { isTON } from "@/utils/token/checkToken";
+import useIsTon from "../token/useIsTon";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -43,7 +43,7 @@ export default function useCallBridgeSwapAction() {
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { gasLimit } = useGasFee();
-
+  const { isTONIn } = useIsTon();
   const onClick = useCallback(async () => {
     if (!isConnected) {
       return connectToWallet();
@@ -81,7 +81,7 @@ export default function useCallBridgeSwapAction() {
             });
           }
           // deposit TON to Thanos
-          if (isThanosChain(outNetwork.chainId) && isTON(inToken)) {
+          if (isThanosChain(outNetwork.chainId) && isTONIn) {
             return _depositNativeToken_contract({
               //@ts-ignore
               args: [parsedAmount as bigint, 200000, "0x"],
