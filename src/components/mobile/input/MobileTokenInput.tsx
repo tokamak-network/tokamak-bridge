@@ -438,7 +438,6 @@ export default function MobileTokenInput(props: {
     <Flex
       flexDir={"column"}
       justifyContent={"space-between"}
-      pb={"4px"}
       w={"100%"}
       rowGap={"6px"}
       {...style}
@@ -516,16 +515,6 @@ export default function MobileTokenInput(props: {
                 ></Input>
               </Flex>
             )}
-            {mobileView &&
-              (marketPrice === "0.00" && !inToken ? (
-                <Flex w={"20px"} h={"27px"} mr={"80px"}>
-                  <GradientSpinner />
-                </Flex>
-              ) : (
-                <Text ml={"5px"} fontSize={14} color={"#A0A3AD"}>{`$${commafy(
-                  marketPrice
-                )}`}</Text>
-              ))}
             {hasMaxButton && !isMax && (
               <Button
                 w={"40px"}
@@ -548,6 +537,23 @@ export default function MobileTokenInput(props: {
           </Flex>
         </Flex>
       )}
+      {mobileView &&
+        valueProp && ( // 여기에 market price 관련 코드를 추가
+          <Flex justify='flex-start' mb='4px'>
+            {marketPrice === "0.00" && !inToken ? (
+              <Flex w={"20px"} h={"21px"} mr={"80px"}>
+                <GradientSpinner />
+              </Flex>
+            ) : (
+              <Text
+                fontSize={"14px"}
+                lineHeight={"21px"}
+                fontWeight={400}
+                color={"#A0A3AD"}
+              >{`$${commafy(marketPrice)}`}</Text>
+            )}
+          </Flex>
+        )}
     </Flex>
   );
 }
