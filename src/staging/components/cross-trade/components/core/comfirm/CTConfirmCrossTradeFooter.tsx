@@ -52,7 +52,6 @@ type TradeConfirmationProps = {
   isChecked: {
     firstChecked: boolean;
     secondChecked: boolean;
-    thirdChecked: boolean;
   };
   onCheckboxChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onConfirm: () => void;
@@ -112,11 +111,7 @@ export default function CTConfirmCrossTradeFooter(
     if (isInRelay) return false;
     if (!isApproved || isBalanceOver) return true;
     if (isProvide) return !provideConfirmed || !connectedToLayer1;
-    return (
-      !isChecked.firstChecked ||
-      !isChecked.secondChecked ||
-      !isChecked.thirdChecked
-    );
+    return !isChecked.firstChecked || !isChecked.secondChecked;
   }, [
     isProvide,
     isChecked,
@@ -148,9 +143,7 @@ export default function CTConfirmCrossTradeFooter(
     return isLoading
       ? true
       : mode === "Withdraw"
-      ? !isChecked.firstChecked ||
-        !isChecked.secondChecked ||
-        !isChecked.thirdChecked
+      ? !isChecked.firstChecked || !isChecked.secondChecked
       : !provideConfirmed;
   }, [isApproved, isLoading, provideConfirmed, isChecked, mode]);
 
@@ -366,7 +359,11 @@ export default function CTConfirmCrossTradeFooter(
       {!isProvide && (
         <Flex w={"100%"} flexDir={"column"} rowGap={"8px"} mt={"5px"}>
           <Text
-            color={"#A0A3AD"}
+            color={
+              isChecked.firstChecked && isChecked.secondChecked
+                ? "#FFFFFF"
+                : "#A0A3AD"
+            }
             fontWeight={600}
             fontSize={13}
             lineHeight={"20px"}
@@ -393,7 +390,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme="#A0A3AD"
+            colorScheme='#A0A3AD'
           >
             <Text
               color={isChecked.firstChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -423,7 +420,7 @@ export default function CTConfirmCrossTradeFooter(
                 },
               },
             }}
-            colorScheme="#A0A3AD"
+            colorScheme='#A0A3AD'
           >
             <Text
               color={isChecked.secondChecked ? "#FFFFFF" : "#A0A3AD"}
@@ -432,38 +429,7 @@ export default function CTConfirmCrossTradeFooter(
               lineHeight={"20px"}
               letterSpacing={"0.01em"}
             >
-              the request can be edited from L1, and
-            </Text>
-          </Checkbox>
-          <Checkbox
-            isChecked={isChecked.thirdChecked}
-            id={"thirdChecked"}
-            onChange={onCheckboxChange}
-            icon={<CheckCustomIcon />}
-            sx={{
-              ".chakra-checkbox__control": {
-                borderWidth: "1px",
-                borderColor: "#A0A3AD",
-                _focus: {
-                  boxShadow: "none",
-                },
-              },
-              _checked: {
-                "& .chakra-checkbox__control": {
-                  borderColor: "#FFFFFF",
-                },
-              },
-            }}
-            colorScheme="#A0A3AD"
-          >
-            <Text
-              color={isChecked.thirdChecked ? "#FFFFFF" : "#A0A3AD"}
-              fontWeight={400}
-              fontSize={12}
-              lineHeight={"20px"}
-              letterSpacing={"0.01em"}
-            >
-              Cross Trade is in a beta testing phase.
+              the request can be edited from L1
             </Text>
           </Checkbox>
         </Flex>
@@ -528,7 +494,7 @@ export default function CTConfirmCrossTradeFooter(
         {/** Warning Text */}
         {isInRelay && (
           <WarningText
-            label="This request has been already provided."
+            label='This request has been already provided.'
             iconStyle={{ width: 14, height: 14 }}
             style={{ fontSize: 11, columnGap: "6px" }}
           />
@@ -537,7 +503,7 @@ export default function CTConfirmCrossTradeFooter(
           <Button
             isDisabled={approveBtnDisabled}
             onClick={callApprove}
-            width="full"
+            width='full'
             height={"48px"}
             borderRadius={"8px"}
             _hover={{}}
@@ -597,7 +563,7 @@ export default function CTConfirmCrossTradeFooter(
             color: isInRelay ? "#007AFF" : !btnDisabled ? "#FFFFFF" : "#8E8E92",
             border: isInRelay ? "1px solid #007AFF" : "",
           }}
-          width="full"
+          width='full'
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}
