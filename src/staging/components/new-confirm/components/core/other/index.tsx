@@ -418,14 +418,26 @@ export default function DepositWithdrawConfirmModal() {
         >
           {transactionData.status === Status.Initiate ? (
             <Flex gap={"12px"} flexDir={"column"}>
-              <ConfirmCheckboxComponent
-                isChecked={isConfirmed}
-                onClickCheckbox={handleConfirmCheck}
+              {transactionData.action === Action.Withdraw && (
+                <ConfirmCheckboxComponent
+                  isChecked={isConfirmed}
+                  onClickCheckbox={handleConfirmCheck}
+                />
+              )}
+              <ApproveButton
+                isConfirmed={
+                  transactionData.action === Action.Withdraw
+                    ? isConfirmed
+                    : true
+                }
               />
-              <ApproveButton isConfirmed={isConfirmed} />
               <InitiateButton
                 isApproved={isApproved}
-                isConfirmed={isConfirmed}
+                isConfirmed={
+                  transactionData.action === Action.Withdraw
+                    ? isConfirmed
+                    : true
+                }
                 onClick={onClick}
                 onCloseDepositWithdrawConfirmModal={
                   onCloseDepositWithdrawConfirmModal
