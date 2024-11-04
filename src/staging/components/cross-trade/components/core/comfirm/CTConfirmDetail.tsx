@@ -126,7 +126,7 @@ const CTTransactionDetail: React.FC<TransactionDetailProps> = ({
             ></CustomTooltip>
             <Text>{tokenSymbol}</Text>
           </Box>
-          <Center width="32px" height="32px">
+          <Center width='32px' height='32px'>
             <LinkContainer
               chainId={chainId}
               address={tokenAddress}
@@ -194,7 +194,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
   const { ethereumExplorer } = useBlockExplorer();
   return (
     <HStack
-      justify="space-between"
+      justify='space-between'
       lineHeight={"18px"}
       mt={
         title === "Service fee" ||
@@ -204,18 +204,16 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
           : "0"
       }
     >
-      <Flex alignItems="center">
+      <Flex alignItems='center'>
         <Text fontWeight={400} fontSize={"12px"} color={"#A0A3AD"} mr={"2px"}>
           {title}
         </Text>
         {title == "Service fee" && (
           <CustomTooltipWithQuestion
             isGrayIcon={true}
-            tooltipLabel={
-              "The service fee incentivizes the liquidity provider to accept the request. The amount received on L1 is calculated after deducting this fee."
-            }
+            tooltipLabel={`The service fee incentivizes the liquidity provider\nto accept the request. The amount received\non L1 is calculated after deducting this fee.`}
             style={{
-              width: "288px",
+              width: "304px",
               height: "70px",
               py: "10px",
               px: "8px",
@@ -257,7 +255,7 @@ const FeeDetail: React.FC<FeeDetailProps> = ({
             {title == "Service fee" &&
               modalType === ModalType.History &&
               !isCompleted && (
-                <Flex cursor="pointer" onClick={onPencilClick}>
+                <Flex cursor='pointer' onClick={onPencilClick}>
                   <Image src={Pencil} alt={"Pencil"} />
                 </Flex>
               )}
@@ -353,7 +351,7 @@ export default function CTConfirmDetail({
 
   return (
     <Box
-      bg="#15161D"
+      bg='#15161D'
       px={"20px"}
       py={"16px"}
       border={"1px, 1px, 0px, 1px"}
@@ -369,24 +367,24 @@ export default function CTConfirmDetail({
           <CTTransactionDetail {...outTokenInfo} isProvide={isProvide} />
         )}
       </Flex>
-      <Box mt={"24px"} borderTop="1px solid #313442" pt={"16px"} px={0} pb={0}>
+      <Box mt={"24px"} borderTop='1px solid #313442' pt={"16px"} px={0} pb={0}>
         {isCanceled && (
           <FeeDetail
-            title="Refund network"
+            title='Refund network'
             inNetwork={inNetwork}
             outNetwork={outNetwork}
           />
         )}
         {!isCanceled && (
           <FeeDetail
-            title="Network"
+            title='Network'
             inNetwork={isProvide ? outNetwork : inNetwork}
             outNetwork={isProvide ? inNetwork : outNetwork}
           />
         )}
         {showServiceFee && (
           <FeeDetail
-            title="Service fee"
+            title='Service fee'
             mainAmount={`${commafy(serviceFee)} ${sendTokenInfo.tokenSymbol}`}
             subAmount={`$${commafy(tokenPriceWithAmount)}`}
             modalType={modalType}
@@ -394,10 +392,10 @@ export default function CTConfirmDetail({
             isCompleted={isCompleted}
           />
         )}
-        {commonProvideStyle && <FeeDetail title="Send to" txHash={requester} />}
+        {commonProvideStyle && <FeeDetail title='Send to' txHash={requester} />}
         {modalType === ModalType.Trade && (
           <FeeDetail
-            title="Network fee"
+            title='Network fee'
             mainAmount={`${formatNumber(estimatedGasFeeETH)} ETH`}
             subAmount={`$${commafy(estimatedGasFeeUSD)}`}
           />

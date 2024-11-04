@@ -55,6 +55,7 @@ export default function CustomTooltip(props: {
           <Text
             w={"100%"}
             h={"100%"}
+            whiteSpace='pre-line'
             lineHeight={props.style?.tooltipLineHeight ?? "28px"}
             textAlign={"center"}
             verticalAlign={"center"}
@@ -72,7 +73,7 @@ export default function CustomTooltip(props: {
           ></Box>
         </Box>
       }
-      placement="top"
+      placement='top'
     >
       <Box
         onMouseEnter={() => setIsOpen(true)}
