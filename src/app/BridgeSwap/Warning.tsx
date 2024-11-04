@@ -19,6 +19,11 @@ import {
   WTON_ADDRESS_BY_CHAINID,
 } from "@/constant/contracts/tokens";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import {
+  NetworkDisplayName,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 // import { isETH } from "@/utils/token/isETH";
 
 export default function Warning() {
@@ -99,13 +104,13 @@ export default function Warning() {
         />
       );
 
-    return (
-      <WarningText
-        label={`Cannot withdraw ${inToken?.tokenSymbol} to ${convertNetworkName(
-          outNetwork?.chainName
-        )}.`}
-      />
-    );
+    if (inToken)
+      return (
+        <WarningText
+          label={`Cannot deposit/withdraw ${inToken?.tokenSymbol
+            } to ${convertNetworkName(outNetwork?.chainName)}.`}
+        />
+      );
   }
 
   if (mode === "Swap" && isNotSupportForSwap) {
@@ -113,15 +118,6 @@ export default function Warning() {
       <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
         <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
         <Text>Swap route not found on this network</Text>
-      </Flex>
-    );
-  }
-
-  if (isBalanceOver) {
-    return (
-      <Flex color={"#DD3A44"} fontSize={12} columnGap={"10px"}>
-        <Image src={WARNING_RED_ICON} alt={"WARNING_ICON"} />
-        <Text>Insufficient ({inToken?.tokenSymbol}) balance </Text>
       </Flex>
     );
   }

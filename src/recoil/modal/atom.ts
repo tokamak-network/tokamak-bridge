@@ -3,7 +3,11 @@ import {
   CTConfirmModalType,
   ModalType,
 } from "@/staging/components/cross-trade/types";
-import { CT_History, TransactionHistory } from "@/staging/types/transaction";
+import {
+  CT_History,
+  StandardHistory,
+  TransactionHistory,
+} from "@/staging/types/transaction";
 import { atom } from "recoil";
 
 type withdrawModal = {
@@ -125,9 +129,20 @@ export const ctUpdateFeeModalStatus = atom<{
 
 export const depositWithdrawConfirmModalStatus = atom<{
   isOpen: boolean;
-  transaction: TransactionHistory | undefined;
+  transaction: StandardHistory | undefined;
 }>({
   key: "depositWithdrawConfirmModalStatus",
+  default: {
+    isOpen: false,
+    transaction: undefined,
+  },
+});
+
+export const thanosDepositWithdrawConfirmModalStatus = atom<{
+  isOpen: boolean;
+  transaction: TransactionHistory | undefined;
+}>({
+  key: "thanosDepositWithdrawConfirmModalStatus",
   default: {
     isOpen: false,
     transaction: undefined,
@@ -137,4 +152,9 @@ export const depositWithdrawConfirmModalStatus = atom<{
 export const swapConfirmModalStatus = atom<boolean>({
   key: "swapConfirmModalStatus",
   default: false,
+});
+
+export const pendingTransactionHashes = atom<string[]>({
+  key: "pendingTransactionHashes",
+  default: [],
 });

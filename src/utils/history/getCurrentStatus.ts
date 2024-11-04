@@ -2,12 +2,14 @@ import { TITAN_CHALLENGE_PERIOD } from "@/constant/network/titan";
 import { Resolved } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { hashCrossChainMessage } from "@tokamak-network/titan-sdk";
+import { hashCrossDomainMessagev1 } from "@tokamak-network/core-utils";
 import axios from "axios";
-import { BigNumber, Bytes } from "ethers";
+import { BigNumber, Bytes, ethers } from "ethers";
 import { stat } from "fs";
+import abi from "@/constant/abis/L2CrossDomainMessenger.json";
 
 export type CurrentStatus = 0 | 1 | 2 | 3 | 4;
-export type CurrentDepositStatus = 0 | 4;
+export type CurrentDepositStatus = 0 | 3 | 4;
 export type StateBatchAppended = {
   blockNumber: BigInt | number;
   blockTimestamp: number;
@@ -32,7 +34,8 @@ const subgraphQueryURL_SEPOLIA =
 const subgraphQueryURL_TITAN = process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_HISTORY;
 const subgraphQueryURL_TITAN_SEPOLIA =
   process.env.NEXT_PUBLIC_SUBGRAPH_TITAN_SEPOLIA_HISTORY;
-
+const subgraphQueryURL_THANOS_SEPOLIA =
+  process.env.NEXT_PUBLIC_SUBGRAPH_THANOS_HISTORY;
 /**
  *
  * @param l2BlockNumber
@@ -138,50 +141,126 @@ export const getCurretStatus = async (
   return { currentStatus: 0, stateBatchAppended: undefined };
 };
 
-export const getCurrentDepositStatus = async (
-  resolved: Resolved,
-  isConnectedToMainnetwork: boolean
-): Promise<{
-  currentStatus: CurrentDepositStatus;
-  relayedMessageTx?: RelayMessage;
-}> => {
-  const msgHash = hashCrossChainMessage({
-    sender: resolved.sender,
-    target: resolved.target,
-    message: resolved.message,
-    messageNonce: BigNumber.from(resolved.messageNonce),
+export const getMsgHash = (msg: any, value: string, l2Chain: "Titan" | "Thanos",) => {
+  return l2Chain === "Thanos" ? hashCrossDomainMessagev1(
+    BigNumber.from(msg.messageNonce),
+    msg.sender,
+    msg.target,
+    BigNumber.from(value),
+    BigNumber.from(msg.gasLimit),
+    msg.message
+  ) : hashCrossChainMessage({
+    sender: msg.sender,
+    target: msg.target,
+    message: msg.message,
+    messageNonce: BigNumber.from(msg.messageNonce),
     minGasLimit: BigNumber.from(0),
     value: BigNumber.from(0),
   });
-  const subgraphQueryURL = isConnectedToMainnetwork
-    ? subgraphQueryURL_TITAN
-    : subgraphQueryURL_TITAN_SEPOLIA;
+};
 
-  const resMesHash = await axios.post(`${subgraphQueryURL}`, {
-    query: `
-        query GetRelayedMessages($msgHash: String!) {
-          relayedMessages(where: {msgHash: $msgHash}) {
-            msgHash
-            transactionHash
-            blockTimestamp
-            blockNumber
-          }
-        }
-      `,
-    variables: {
-      msgHash: msgHash,
-    },
+export const getThanosDepositMsgHashes = (
+  sentMessages: any[],
+  messageExtensions: any[]
+) => {
+  if (
+    !sentMessages ||
+    !messageExtensions ||
+    sentMessages.length !== messageExtensions.length
+  )
+    return null;
+  return sentMessages.map((msg: any) => {
+    const value = messageExtensions.find(
+      (ext: any) => ext.transactionHash === msg.transactionHash
+    )?.value;
+    if (!value) return;
+    return getMsgHash(msg, value, "Thanos");
   });
+};
 
-  if (resMesHash?.data?.data?.relayedMessages.length > 0) {
-    const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
-    const relayedMessageTx = {
-      ..._relayedMessageTx,
-      blockNumber: Number(_relayedMessageTx.blockNumber),
-      blockTimestamp: Number(_relayedMessageTx.blockTimestamp),
-    };
+export const getTitanDepositMsgHashes = (
+  sentMessages: any[],
+) => {
+  if (
+    !sentMessages
+  )
+    return null;
+  return sentMessages.map((msg: any) => {
+    return getMsgHash(msg, "0", "Titan");
+  });
+};
 
-    return { currentStatus: 4, relayedMessageTx };
-  }
-  return { currentStatus: 0, relayedMessageTx: undefined };
+// export const getCurrentDepositStatus = async (
+//   resolved: Resolved,
+//   isConnectedToMainnetwork: boolean,
+//   L2Chain: "Titan" | "Thanos",
+//   amount: string
+// ): Promise<{
+//   currentStatus: CurrentDepositStatus;
+//   relayedMessageTx?: RelayMessage;
+// }> => {
+//   const msgHash =
+//     L2Chain === "Thanos"
+//       ? hashCrossDomainMessagev1(
+//         BigNumber.from(resolved.messageNonce),
+//         resolved.sender,
+//         resolved.target,
+//         BigNumber.from(amount),
+//         BigNumber.from(resolved.gasLimit),
+//         resolved.message
+//       )
+//       : hashCrossChainMessage({
+//         sender: resolved.sender,
+//         target: resolved.target,
+//         message: resolved.message,
+//         messageNonce: BigNumber.from(resolved.messageNonce),
+//         minGasLimit: BigNumber.from(0),
+//         value: BigNumber.from(0),
+//       });
+//   const subgraphQueryURL = isConnectedToMainnetwork
+//     ? subgraphQueryURL_TITAN
+//     : L2Chain === "Titan"
+//       ? subgraphQueryURL_TITAN_SEPOLIA
+//       : subgraphQueryURL_THANOS_SEPOLIA;
+//   const resMesHash = await axios.post(`${subgraphQueryURL}`, {
+//     query: `
+//         query GetRelayedMessages($msgHash: String!) {
+//           relayedMessages(where: {msgHash: $msgHash}) {
+//             msgHash
+//             transactionHash
+//             blockTimestamp
+//             blockNumber
+//           }
+//         }
+//       `,
+//     variables: {
+//       msgHash: msgHash,
+//     },
+//   });
+
+//   if (resMesHash?.data?.data?.relayedMessages.length > 0) {
+//     const _relayedMessageTx = resMesHash.data.data.relayedMessages[0];
+//     const relayedMessageTx = {
+//       ..._relayedMessageTx,
+//       blockNumber: Number(_relayedMessageTx.blockNumber),
+//       blockTimestamp: Number(_relayedMessageTx.blockTimestamp),
+//     };
+
+//     return { currentStatus: 4, relayedMessageTx };
+//   }
+//   return { currentStatus: 3, relayedMessageTx: undefined };
+// };
+
+export const getCurrentDepositStatus = (
+  resolved: Resolved,
+  value: string,
+  relayedMessages: any[],
+  l2Chain: "Thanos" | "Titan"
+): { currentStatus: CurrentDepositStatus; relayedMessageTx?: RelayMessage } => {
+  const msgHash = getMsgHash(resolved, value, l2Chain);
+  const relayedMsg = relayedMessages.find(
+    (msg: any) => msg.msgHash === msgHash
+  );
+  if (!relayedMsg) return { currentStatus: 3, relayedMessageTx: undefined };
+  else return { currentStatus: 4, relayedMessageTx: relayedMsg };
 };

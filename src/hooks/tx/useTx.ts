@@ -1,9 +1,12 @@
 import { TokenBalance } from "./../../graphql/data/__generated__/types-and-hooks";
-import { TxSort, ActionSort } from "@/types/tx/txType";
+import { TxSort, ActionSort, ThanosDepositType } from "@/types/tx/txType";
 import { ethers } from "ethers";
 import { useEffect, useMemo } from "react";
 import { useWaitForTransaction } from "wagmi";
-import L1BridgeAbi from "@/abis/L1StandardBridge.json";
+import L1TitanBridgeAbi from "@/abis/L1StandardBridge.json";
+import L1ThanosBridgeAbi from "@/abis/L1ThanosStandardBridge.json";
+import L1ThanosUSDCBridgeAbi from "@/constant/abis/L1USDCBridge.json";
+import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
 import L2BridgeAbi from "@/abis/L2StandardBridge.json";
 import ERC20Abi from "@/abis/erc20.json";
 import WTON_ABI from "@/abis/WTON.json";
@@ -32,11 +35,23 @@ import { useGetMode } from "../mode/useGetMode";
 import useTxConfirmModal from "../modal/useTxConfirmModal";
 import L1CrossTradeAbi from "@/abis/L1CrossTrade.json";
 import L2CrossTradeAbi from "@/abis/L2CrossTrade.json";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  SupportedChainId,
+  SupportedL2ChainId,
+} from "@/types/network/supportedNetwork";
+import { L2ChainID } from "@tokamak-network/titan-sdk";
+import { SupportedTokenSymbol } from "@/types/token/supportedToken";
+import InToken from "@/app/BridgeSwap/components/InToken";
+import { isThanosChain } from "@/utils/network/checkNetwork";
 
 const getInterface = () => {
-  const l1BridgeI = new ethers.utils.Interface(L1BridgeAbi);
+  const l1TitanBridgeI = new ethers.utils.Interface(L1TitanBridgeAbi);
+  const l1ThanosBridgeI = new ethers.utils.Interface(L1ThanosBridgeAbi);
+  const l1ThanosUSDCBridgeI = new ethers.utils.Interface(L1ThanosUSDCBridgeAbi);
   const l2BridgeI = new ethers.utils.Interface(L2BridgeAbi);
+  const l2ThanosStandardBridgeI = new ethers.utils.Interface(
+    L2ThanosStandardBridgeAbi
+  );
   const swapRouterI = new ethers.utils.Interface(UniswapV3PoolAbi);
   const erc20I = new ethers.utils.Interface(ERC20Abi.abi);
   const USDT_I = new ethers.utils.Interface(USDTAbi);
@@ -53,7 +68,9 @@ const getInterface = () => {
   const CrossTradeProxyL2_I = new ethers.utils.Interface(L2CrossTradeAbi.abi);
 
   return {
-    l1BridgeI,
+    l1TitanBridgeI,
+    l1ThanosBridgeI,
+    l1ThanosUSDCBridgeI,
     l2BridgeI,
     swapRouterI,
     erc20I,
@@ -65,6 +82,7 @@ const getInterface = () => {
     USDT_I,
     CrossTradeProxyL1_I,
     CrossTradeProxyL2_I,
+    l2ThanosStandardBridgeI,
   };
 };
 
@@ -113,7 +131,8 @@ const getEvent = (logs: Log<bigint, number>[], txSort: TxSort) => {
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.removeLiquidity;
       });
-    case "Approve" || "Revoke":
+    case "Approve":
+    case "Revoke":
       return logs.filter((log) => {
         return log.topics[0] === eventSignature.approve;
       });
@@ -231,8 +250,18 @@ export function useTx(params: {
   tokenAddress?: `0x${string}`;
   tokenOutAddress?: `0x${string}`;
   actionSort?: ActionSort;
+  L2Chain?: SupportedChainId;
+  inToken?: string | String | undefined;
 }) {
-  const { hash, txSort, tokenAddress, tokenOutAddress, actionSort } = params;
+  const {
+    hash,
+    txSort,
+    tokenAddress,
+    tokenOutAddress,
+    actionSort,
+    L2Chain,
+    inToken,
+  } = params;
   const { connectedChainId, layer } = useConnectedNetwork();
   const { data, isLoading, isSuccess, isError } = useWaitForTransaction({
     hash,
@@ -337,7 +366,9 @@ export function useTx(params: {
     if (isSuccess && data && connectedChainId && hash) {
       const { logs, transactionHash } = data;
       const {
-        l1BridgeI,
+        l1TitanBridgeI,
+        l1ThanosBridgeI,
+        l1ThanosUSDCBridgeI,
         l2BridgeI,
         swapRouterI,
         erc20I,
@@ -346,6 +377,7 @@ export function useTx(params: {
         ETHSwapperI,
         CrossTradeProxyL1_I,
         CrossTradeProxyL2_I,
+        l2ThanosStandardBridgeI,
       } = getInterface();
       setModalOpen("confirmed");
 
@@ -568,11 +600,37 @@ export function useTx(params: {
           return;
         //bridge
         case "Deposit": {
-          const result = l1BridgeI.parseLog(logs[logs.length - 1]);
-          const { args } = result;
-          const { _l1Token, _l2Token, _amount } = args;
+          if (
+            L2Chain === SupportedChainId.TITAN ||
+            L2Chain === SupportedChainId.TITAN_SEPOLIA
+          ) {
+            const result = l1TitanBridgeI.parseLog(logs[logs.length - 1]);
+            const { args } = result;
+            const { _l1Token, _l2Token, _amount } = args;
 
-          if (_l1Token === undefined) {
+            if (_l1Token === undefined) {
+              return setTxData({
+                [hash]: {
+                  transactionHash,
+                  txSort,
+                  transactionState: "success",
+                  tokenData: [
+                    {
+                      tokenAddress: "ETH",
+                      amount: _amount,
+                    },
+                    {
+                      tokenAddress: "ETH",
+                      amount: _amount,
+                    },
+                  ],
+                  network: connectedChainId,
+                  isToasted: false,
+                  actionSort,
+                },
+              });
+            }
+
             return setTxData({
               [hash]: {
                 transactionHash,
@@ -580,11 +638,11 @@ export function useTx(params: {
                 transactionState: "success",
                 tokenData: [
                   {
-                    tokenAddress: "ETH",
+                    tokenAddress: _l1Token,
                     amount: _amount,
                   },
                   {
-                    tokenAddress: "ETH",
+                    tokenAddress: _l1Token,
                     amount: _amount,
                   },
                 ],
@@ -593,31 +651,93 @@ export function useTx(params: {
                 actionSort,
               },
             });
-          }
+          } else if (L2Chain === SupportedChainId.THANOS_SEPOLIA) {
+            const depositType: ThanosDepositType =
+              inToken === "USDC"
+                ? "USDC"
+                : logs.length === 5
+                ? "ETH"
+                : logs.length === 13
+                ? "NativeToken"
+                : "ERC20";
 
-          return setTxData({
-            [hash]: {
-              transactionHash,
-              txSort,
-              transactionState: "success",
-              tokenData: [
-                {
-                  tokenAddress: _l1Token,
-                  amount: _amount,
-                },
-                {
-                  tokenAddress: _l1Token,
-                  amount: _amount,
-                },
-              ],
-              network: connectedChainId,
-              isToasted: false,
-              actionSort,
-            },
-          });
+            const result =
+              inToken === "USDC"
+                ? l1ThanosUSDCBridgeI.parseLog(logs[4])
+                : l1ThanosBridgeI.parseLog(
+                    depositType === "NativeToken"
+                      ? logs[3]
+                      : depositType === "ETH"
+                      ? logs[0]
+                      : logs[1]
+                  );
+            const { args } = result;
+            const { l1Token, l2Token, amount } = args;
+            const L2TokenAddress = depositType === "ETH" ? "ETH" : l1Token;
+            return setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: L2TokenAddress,
+                    amount: amount,
+                  },
+                  {
+                    tokenAddress: L2TokenAddress,
+                    amount: amount,
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+                actionSort,
+                L2Chain,
+              },
+            });
+          }
+          return;
         }
 
         case "Withdraw": {
+          if (isThanosChain(L2Chain)) {
+            const depositType: ThanosDepositType =
+              inToken === "USDC"
+                ? "USDC"
+                : logs.length === 7
+                ? "ERC20"
+                : logs.length === 5
+                ? "NativeToken"
+                : "ETH";
+            const result = l2ThanosStandardBridgeI.parseLog(
+              depositType === "ERC20"
+                ? logs[2]
+                : depositType === "NativeToken"
+                ? logs[0]
+                : logs[2]
+            );
+            const { args } = result;
+            const { l1Token, l2Token, amount } = args;
+            return setTxData({
+              [hash]: {
+                transactionHash,
+                txSort,
+                transactionState: "success",
+                tokenData: [
+                  {
+                    tokenAddress: l2Token,
+                    amount: amount,
+                  },
+                  {
+                    tokenAddress: l2Token,
+                    amount: amount,
+                  },
+                ],
+                network: connectedChainId,
+                isToasted: false,
+              },
+            });
+          }
           const result = l2BridgeI.parseLog(logs[logs.length - 1]);
           const { args } = result;
           const { _l1Token, _l2Token, _amount } = args;

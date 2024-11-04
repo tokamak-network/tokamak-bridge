@@ -36,6 +36,10 @@ import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { ethers } from "ethers";
 import { useRecommendFee } from "../../../hooks/useRecommendFee";
 import { useWhiteListToken } from "@/staging/hooks/useWhiteListToken";
+import commafy from "@/utils/trim/commafy";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { isThanosChain } from "@/utils/network/checkNetwork";
+import useBridgeSupport from "@/hooks/bridge/useBridgeSupport";
 import useInputBalanceCheck from "@/hooks/token/useInputCheck";
 
 export default function CTOptionModal() {
@@ -45,7 +49,7 @@ export default function CTOptionModal() {
 
   // CTConfirmDetail button 관련 state 및 function Start @Robert
   const [activeMainButtonValue, setActiveMainButtonValue] =
-    useState<ButtonTypeMain>(ButtonTypeMain.Cross);
+    useState<ButtonTypeMain>(ButtonTypeMain.Standard);
 
   const [activeSubButtonValue, setActiveSubButtonValue] =
     useState<ButtonTypeSub>(ButtonTypeSub.Recommend);
@@ -59,6 +63,7 @@ export default function CTOptionModal() {
   };
 
   const { inToken } = useInOutTokens();
+  const { isNotSupportForBridge } = useBridgeSupport();
   const { recommendedCtAmount, recommendedFee } = useRecommendFee({
     tokenAddress: inToken?.tokenAddress ?? "0x",
     totalAmount: Number(inToken?.parsedAmount),
@@ -294,6 +299,8 @@ export default function CTOptionModal() {
             _focus={{}}
             onClick={handleClickConfirm}
             isDisabled={btnDisabled}
+            opacity={"1 !important"}
+            cursor={"pointer !important"}
           >
             <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
               {isBalanceOver ? "Insufficient Balance" : "Next"}

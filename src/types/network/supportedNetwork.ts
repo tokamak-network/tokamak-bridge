@@ -1,7 +1,7 @@
 import { ImageFileType } from "../style/imageFileType";
 import NETWORK_ETHEREUM from "assets/icons/network/circle/Ethereum_circle.svg";
-import SYMBOL_TITAN from "assets/icons/network/darius.svg";
-import SYMBOL_THANOS from "assets/icons/network/Thanos.svg";
+import SYMBOL_TITAN from "assets/icons/network/circle/Titan_circle.svg";
+import SYMBOL_THANOS from "assets/icons/network/circle/Thanos_circle.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
@@ -21,6 +21,30 @@ export enum SupportedChainId {
   THANOS_SEPOLIA = 111551119090,
   TITAN_SEPOLIA = 55007,
 }
+
+export enum SupportedL2ChainId {
+  TITAN = 55004,
+  THANOS_SEPOLIA = 111551119090,
+  TITAN_SEPOLIA = 55007,
+}
+
+export enum SupportedChainIdOnProd {
+  MAINNET = 1,
+  TITAN = 55004,
+  SEPOLIA = 11155111,
+  TITAN_SEPOLIA = 55007,
+  THANOS_SEPOLIA = 111551119090,
+}
+
+export const NetworkDisplayName: Partial<
+  Record<string | SupportedChainId, string>
+> = {
+  MAINNET: "Ethereum",
+  TITAN: "Titan",
+  SEPOLIA: "Sepolia",
+  THANOS_SEPOLIA: "Thanos Sepolia",
+  TITAN_SEPOLIA: "Titan Sepolia",
+};
 
 export interface SupportedChainProperties {
   chainId: SupportedChainId;
@@ -82,6 +106,10 @@ export const supportedChain: SupportedChainProperties[] = [
     isTestnet: true,
   },
 ];
+
+export const supportedChainOnProd = supportedChain.filter((chain: any) =>
+  Object.values(SupportedChainIdOnProd).includes(chain.chainId)
+);
 
 export const isLayer1Chain = (chainId: SupportedChainId): boolean => {
   return (

@@ -22,7 +22,7 @@ const GradientSpinner = () => {
 export default function LoadingTx() {
   return (
     <Flex
-      h={{ base: "73px", lg: "160px" }}
+      h={{ base: "73px", lg: "126px" }}
       w={{ baes: "100%", lg: "336px" }}
       borderRadius={"8px"}
       border={"1px solid #313442"}

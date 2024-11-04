@@ -17,7 +17,8 @@ export default function BridgeSwap() {
       <Flex
         flexDir={"column"}
         alignItems={"center"}
-        justifyContent={{ base: "space-between", lg: "center" }}
+        // justifyContent={{ base: "space-between", lg: "center" }}
+        mt={"198px"}
         w={"100%"}
         h={"100%"}
       >

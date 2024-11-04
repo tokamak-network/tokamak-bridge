@@ -71,6 +71,8 @@ export default function ConfirmInitiateFooter(
           height={"48px"}
           borderRadius={"8px"}
           _hover={{}}
+          opacity={"1 !important"}
+          cursor={"pointer !important"}
         >
           <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
             Initiate

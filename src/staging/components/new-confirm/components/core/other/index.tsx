@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Modal,
   Flex,
@@ -11,12 +11,14 @@ import {
   Text,
   Button,
 } from "@chakra-ui/react";
-import { useAccount } from "wagmi";
+import { useAccount, useNetwork } from "wagmi";
 import { trimAddress } from "@/utils/trim";
 import {
   Action,
   Status,
   GasCostData,
+  CT_ACTION,
+  StandardHistory,
   isWithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
@@ -25,13 +27,17 @@ import CloseButton from "@/components/button/CloseButton";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
 import { Tooltip } from "@/staging/components/common/Tooltip";
 import ConfirmDetails from "@/staging/components/new-confirm/components/core/other/ConfirmDetails";
-import { STATUS_CONFIG } from "@/staging/constants/status";
+import { getStatusConfig, STATUS_CONFIG } from "@/staging/constants/status";
 import StatusComponent from "@/staging/components/new-confirm/components/core/other/StatusComponent";
 import ConditionalBox from "@/staging/components/new-confirm/components/core/other/ConditionalBox";
 import { useGasFee } from "@/hooks/contracts/fee/getGasFee";
+import useRelayGas from "@/staging/components/new-confirm/hooks/useGetGas";
+import {
+  NetworkDisplayName,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
 import { useRelayGasCost } from "@/staging/components/new-confirm/hooks/useGetGas";
 import ConfirmInitiateFooter from "@/staging/components/new-confirm/components/core/other/ConfirmInitiateFooter";
-import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
 
 import {
@@ -41,22 +47,50 @@ import {
 } from "@/staging/components/new-confirm/utils/getConfirmType";
 import { getGasCostText } from "@/utils/number/compareNumbers";
 import useConnectedNetwork from "@/hooks/network";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
+import Link from "next/link";
+import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
+import ConfirmCheckboxComponent from "./ConfirmCheckbox";
+import InitiateButton from "@/staging/components/new-confirm/components/core/other/InitiateButton";
+import ApproveButton from "./ApproveButton";
+import { useApprove } from "@/hooks/token/useApproval";
+import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
+import { useCountdown } from "@/staging/hooks/useCountdown";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useFinalize } from "@/hooks/history/useFinalize";
-import { getRemainTime } from "@/staging/components/new-history/utils/getTimeDisplay";
-import { useCountdown } from "@/staging/hooks/useCountdown";
+import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
+import Image from "next/image";
+import InfoIcon from "@/assets/icons/info.svg"
+import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
+import SwitchNetworkWarningComponent from "../thanos/SwitchNetworkWarning";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
   const { depositWithdrawConfirmModal, onCloseDepositWithdrawConfirmModal } =
     useDepositWithdrawConfirmModal();
-
-  const transactionData = depositWithdrawConfirmModal.transaction;
+  const transactionData =
+    depositWithdrawConfirmModal.transaction as StandardHistory;
+  const isStandardBridge =
+    transactionData?.toAddress === transactionData?.fromAddress;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const l1ChainId = getBridgeL1ChainId(transactionData);
+  const l2ChainId = getBridgeL2ChainId(transactionData) ?? SupportedChainId.TITAN;
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
+  const inNetworkChainId =
+    transactionData?.inNetwork || SupportedChainId.MAINNET;
 
+  const outNetworkChainId =
+    transactionData?.outNetwork || SupportedChainId.MAINNET;
+
+  const { chain } = useNetwork();
+
+
+  const chainName = getKeyByValue(SupportedChainId, l2ChainId) || "";
+
+  const displayNetworkName = NetworkDisplayName[chainName];
   /**
    * Lakmi src/components/history/modalComponents/Step4.tsx @Robert
    * Removed interval, added gasLimit parameter.
@@ -64,6 +98,17 @@ export default function DepositWithdrawConfirmModal() {
    * Changed fixed chainId to chainId parameter.
    */
   const { withdrawCost } = useRelayGasCost();
+
+  const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+
+  const handleConfirmCheck = (e: React.ChangeEvent<HTMLInputElement>) =>
+    setIsConfirmed(e.target.checked);
+
+  const { isApproved } = useApprove();
+
+  useEffect(() => {
+    setIsConfirmed(false);
+  }, [depositWithdrawConfirmModal.isOpen]);
   const isWithdraw =
     transactionData && isWithdrawTransactionHistory(transactionData);
   const { callToFinalize } = useFinalize(
@@ -111,10 +156,15 @@ export default function DepositWithdrawConfirmModal() {
 
   const lineType = getLineType(transactionData);
 
+  const statusConfig = getStatusConfig(
+    transactionData.inNetwork,
+    transactionData.outNetwork
+  );
+
   const statuses: Status[] =
     transactionData.action === Action.Withdraw
-      ? STATUS_CONFIG.WITHDRAW
-      : STATUS_CONFIG.DEPOSIT;
+      ? statusConfig.WITHDRAW
+      : statusConfig.DEPOSIT;
 
   {
     /**
@@ -127,15 +177,20 @@ export default function DepositWithdrawConfirmModal() {
      * - For DEPOSIT (length 2): One ConditionalBox component is inserted between the StatusComponent elements.
      */
   }
-
   const renderStatusComponents = (
     statuses: Status[],
-    isConnectedMainnet: boolean
+    action: Action | CT_ACTION
   ) => {
     return statuses.map((statusKey, index) => {
       const lineType = getLineType(transactionData);
       const typeValue = getType(lineType, index);
-      const waitMessage = getWaitMessage(lineType, index, isConnectedMainnet);
+      const waitMessage = getWaitMessage(
+        lineType,
+        index,
+        action === Action.Deposit
+          ? transactionData.outNetwork
+          : transactionData.inNetwork
+      );
 
       return (
         <React.Fragment key={index}>
@@ -168,8 +223,8 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
-  const btnIsDisabled = lineType !== 3;
-
+  const isWrongNetwork = transactionData.action === Action.Withdraw && chain?.id !== l1ChainId && transactionData.status === Status.Finalize;
+  const btnIsDisabled = lineType !== 3 || isWrongNetwork;
   return (
     <Modal
       isOpen={depositWithdrawConfirmModal.isOpen}
@@ -206,6 +261,7 @@ export default function DepositWithdrawConfirmModal() {
           <CloseButton onClick={onCloseDepositWithdrawConfirmModal} />
         </Box>
         <ModalBody p={0}>
+          {isWrongNetwork && <Box mb={"12px"}><SwitchNetworkWarningComponent chainId={l1ChainId ?? SupportedChainId.MAINNET} /></Box>}
           <Box
             px={"16px"}
             py={"12px"}
@@ -223,58 +279,105 @@ export default function DepositWithdrawConfirmModal() {
                 transactionHistory={transactionData}
               />
             </Box>
-            <Box borderTop="1px solid #313442" mt={"16px"} pt={"16px"}>
-              <Flex justifyContent={"space-between"} alignItems={"center"}>
-                <Text
-                  fontWeight={400}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#A0A3AD"}
-                >
-                  Bridge
-                </Text>
-                <Flex>
-                  <NetworkSymbol networkI={55004} networkH={16} networkW={16} />
+            <Flex
+              borderTop="1px solid #313442"
+              mt={"16px"}
+              pt={"16px"}
+              flexDir={"column"}
+              gap={"6px"}
+            >
+              {isStandardBridge && (
+                <Flex justifyContent={"space-between"} alignItems={"center"}>
                   <Text
-                    ml={"4px"}
-                    fontWeight={500}
+                    fontWeight={400}
                     fontSize={"12px"}
                     lineHeight={"18px"}
-                    color={"#FFFFFF"}
+                    color={"#A0A3AD"}
                   >
-                    {isConnectedToMainNetwork
-                      ? "Titan Standard bridge"
-                      : "Titan Sepolia Standard bridge"}
+                    Bridge
                   </Text>
+                  <Flex>
+                    <NetworkSymbol
+                      networkI={l2ChainId}
+                      networkH={16}
+                      networkW={16}
+                    />
+                    <Text
+                      ml={"4px"}
+                      fontWeight={500}
+                      fontSize={"12px"}
+                      lineHeight={"18px"}
+                      color={"#FFFFFF"}
+                    >
+                      {`${displayNetworkName} Standard Bridge`}
+                    </Text>
+                  </Flex>
                 </Flex>
-              </Flex>
-              <Flex
-                mt={"6px"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <Text
-                  fontWeight={400}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#A0A3AD"}
+              )}
+              <Flex justifyContent={"space-between"} alignItems={"center"}>
+                <Flex gap={"3px"} alignItems={"center"}>
+                  <Text
+                    fontWeight={400}
+                    fontSize={"12px"}
+                    lineHeight={"18px"}
+                    color={"#A0A3AD"}
+                  >
+                    {transactionData?.action === Action.Withdraw
+                      ? "Withdraw"
+                      : "Deposit"}
+                    {/** Add a space */ " "}
+                    {"to"}
+                  </Text>
+                  {!isStandardBridge && <Image src={InfoIcon} alt="info icon" />}
+                </Flex>
+                <Link
+                  target="_blank"
+                  href={`${BLOCKEXPLORER_CONSTANTS[outNetworkChainId]}/address/${address}`}
                 >
-                  {transactionData?.action === Action.Withdraw
-                    ? "Withdraw"
-                    : "Deposit"}
-                  {/** Add a space */ " "}
-                  to
-                </Text>
-                <Text
-                  fontWeight={600}
-                  fontSize={"12px"}
-                  lineHeight={"18px"}
-                  color={"#FFFFFF"}
-                >
-                  {trimAddress({ address, firstChar: 6 })}
-                </Text>
+                  {isStandardBridge ? (
+                    <Text
+                      fontWeight={600}
+                      fontSize={"12px"}
+                      lineHeight={"18px"}
+                      color={"#FFFFFF"}
+                      cursor={"pointer"}
+                    >
+                      {trimAddress({ address: address, firstChar: 6 })}
+                    </Text>
+                  ) : (
+                    <Flex gap={"4px"}>
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={
+                          transactionData?.fromAddress === address ? 400 : 700
+                        }
+                      >
+                        {transactionData?.fromAddress === address
+                          ? "This address"
+                          : trimAddress({
+                            address: transactionData?.fromAddress,
+                            firstChar: 6,
+                          })}
+                      </Text>
+                      <Image src={ArrowIcon} alt="Arrow Icon" />
+                      <Text
+                        fontSize={"12px"}
+                        fontWeight={
+                          transactionData?.toAddress === address ? 400 : 700
+                        }
+                      >
+                        {transactionData?.toAddress === address
+                          ? "This address"
+                          : trimAddress({
+                            address: transactionData?.toAddress,
+                            firstChar: 6,
+                          })}
+                      </Text>
+                    </Flex>
+                  )}
+                </Link>
               </Flex>
-            </Box>
+            </Flex>
           </Box>
           <Box
             mt={"12px"}
@@ -283,15 +386,12 @@ export default function DepositWithdrawConfirmModal() {
             borderRadius={"8px"}
             bg="#15161D"
           >
-            <Flex>
+            <Flex gap={"10px"}>
               <Box>
                 <TimeLine lineType={lineType} />
               </Box>
-              <Box ml={"10px"} maxWidth="100%" width="100%">
-                {renderStatusComponents(
-                  statuses,
-                  isConnectedToMainNetwork ?? false
-                )}
+              <Box width={"calc(100% - 20px)"}>
+                {renderStatusComponents(statuses, transactionData.action)}
               </Box>
             </Flex>
           </Box>
@@ -306,12 +406,21 @@ export default function DepositWithdrawConfirmModal() {
           }
         >
           {transactionData.status === Status.Initiate ? (
-            <ConfirmInitiateFooter
-              onClick={onClick}
-              onCloseDepositWithdrawConfirmModal={
-                onCloseDepositWithdrawConfirmModal
-              }
-            />
+            <Flex gap={"12px"} flexDir={"column"}>
+              <ConfirmCheckboxComponent
+                isChecked={isConfirmed}
+                onClickCheckbox={handleConfirmCheck}
+              />
+              <ApproveButton isConfirmed={isConfirmed} />
+              <InitiateButton
+                isApproved={isApproved}
+                isConfirmed={isConfirmed}
+                onClick={onClick}
+                onCloseDepositWithdrawConfirmModal={
+                  onCloseDepositWithdrawConfirmModal
+                }
+              />
+            </Flex>
           ) : (
             <>
               {isButtonVisible && (
@@ -320,13 +429,15 @@ export default function DepositWithdrawConfirmModal() {
                   height={"48px"}
                   borderRadius={"8px"}
                   sx={{
-                    backgroundColor: btnIsDisabled ? "#17181D" : "#007AFF",
                     color: btnIsDisabled ? "#8E8E92" : "#FFFFFF",
                   }}
                   _hover={{}}
                   _focus={{}}
+                  bgColor={btnIsDisabled ? "#17181D !important" : "#007AFF !important"}
                   onClick={callToFinalize}
                   isDisabled={btnIsDisabled}
+                  opacity={"1 !important"}
+                  cursor={"pointer !important"}
                 >
                   <Flex alignItems={"center"}>
                     <Text
@@ -334,7 +445,7 @@ export default function DepositWithdrawConfirmModal() {
                       fontSize={"16px"}
                       lineHeight={"24px"}
                     >
-                      Finalize
+                      {isWrongNetwork ? "Wrong Network" : "Finalize"}
                     </Text>
                   </Flex>
                 </Button>

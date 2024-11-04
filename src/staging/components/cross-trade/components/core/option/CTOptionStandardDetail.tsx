@@ -18,6 +18,8 @@ import useRelayGas, {
   useRelayGasCost,
 } from "@/staging/components/new-confirm/hooks/useGetGas";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
+import { useGetEstimatedTotalGasFee } from "@/staging/hooks/useStandardWithdrawGasFee";
+import { useInOutNetwork } from "@/hooks/network";
 
 interface AdditionalStandardProps {
   activeMainButtonValue: ButtonTypeMain;
@@ -28,6 +30,12 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
   const isStandardActive =
     props.activeMainButtonValue === ButtonTypeMain.Standard;
   const { inToken } = useInOutTokens();
+  const { inNetwork } = useInOutNetwork();
+  const { totalCost } = useGetEstimatedTotalGasFee(
+    inNetwork!.chainId,
+    inToken!.tokenSymbol as string
+  );
+
   const { tokenPriceWithAmount } = useGetMarketPrice({
     amount: inToken?.parsedAmount as string,
     tokenName: inToken?.tokenName as string,
@@ -96,9 +104,8 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
           </Text>
         </Box>
         <Text fontSize={12} color={"#007AFF"}>
-          {`$${
-            Number(tokenPriceWithAmount) < 0 ? 0 : commafy(tokenPriceWithAmount)
-          }`}
+          {`$${Number(tokenPriceWithAmount) < 0 ? 0 : commafy(tokenPriceWithAmount)
+            }`}
         </Text>
       </Box>
       <Circle
@@ -117,7 +124,7 @@ export default function CTOptionStandardDetail(props: AdditionalStandardProps) {
             color={"#007AFF"}
             textAlign="center"
           >
-            ${commafy(withdrawCost.usGasCost)}
+            {`$${totalCost ? commafy(totalCost) : "NA"}`}
           </Text>
           <Text
             mt={"1.5px"}

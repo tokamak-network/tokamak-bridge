@@ -30,10 +30,7 @@ const providers: {
   TITAN_SEPOLIA: TitanSepoliaProvier,
 };
 
-export function getProvider(inNetwork: SupportedChainProperties | null) {
-  if (inNetwork === null) {
-    return;
-  }
+export function getProvider(inNetwork: SupportedChainProperties) {
   return providers[inNetwork.chainName];
 }
 

@@ -61,7 +61,6 @@ export function useApprove(_mode?: ActionMode) {
     L2CrossTrade_CONTRACT.L2CrossTradeProxy,
     ctConfirmModal.isOpen,
   ]);
-
   const { isApproved: approved, allowanceIsBiggerThanZero } = useAllowance({
     inputTokenAmount: inToken?.amountBN,
     tokenAddress,

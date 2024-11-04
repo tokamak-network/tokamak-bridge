@@ -9,6 +9,7 @@ import CTMain from "@/staging/components/cross-trade/components/core/main/CTMain
 import { ATOM_pool_page, ButtonType_Pools } from "@/recoil/pool/pages";
 import { useRecoilState } from "recoil";
 import { BetaIcon } from "../../common/BetaIcon";
+import { GoogleFormURL } from "@/constant/url";
 
 interface CrossTradeButtonProps {
   type: ButtonType_Pools;
@@ -22,8 +23,8 @@ export default function CrossTrade() {
   const dynamicWidth = poolMobileView
     ? "90%"
     : poolTabletView
-    ? "536px"
-    : "672px";
+      ? "536px"
+      : "672px";
 
   const [activeButton, setActiveButton] =
     useRecoilState<ButtonType_Pools>(ATOM_pool_page);
@@ -39,8 +40,8 @@ export default function CrossTrade() {
         poolMobileView
           ? "0"
           : type === ButtonType_Pools.UNISWAP_POOL
-          ? "16px"
-          : "0"
+            ? "16px"
+            : "0"
       }
       mt={
         poolMobileView
@@ -181,7 +182,7 @@ export default function CrossTrade() {
                     isExternal={true}
                     color={"#DB00FF"}
                     fontWeight={600}
-                    href="https://docs.google.com/forms/d/e/1FAIpQLSc6pHHABsnIZ2MvcEa57VCtSNTRXHAaFjBLQYf1LbiMB_81OA/viewform"
+                    href={GoogleFormURL}
                     textDecor={"underline"}
                   >
                     help form.

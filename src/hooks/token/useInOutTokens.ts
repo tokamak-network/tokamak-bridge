@@ -45,7 +45,6 @@ export function useInOutTokens() {
               ),
             }
         : null;
-
     return tokenValue;
   }, [inTokenRecoilValue, connectedChainId, chainName]);
 

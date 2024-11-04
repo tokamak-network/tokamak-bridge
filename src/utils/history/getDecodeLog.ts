@@ -1,5 +1,6 @@
-import { TOKAMAK_CONTRACTS } from "@/constant/contracts";
-import { providers, utils } from "ethers";
+import { TOKAMAK_CONTRACTS, SEPOLIA_CONTRACTS } from "@/constant/contracts";
+import { ethers, providers, utils } from "ethers";
+import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.json";
 
 const ERC20_ABI = [
   "event ERC20DepositInitiated(address indexed _l1Token, address indexed _l2Token, address indexed _from, address _to, uint256 _amount, bytes _data)",
@@ -8,6 +9,9 @@ const ETH_ABI = [
   "event ETHDepositInitiated(address indexed, address indexed, uint256, bytes)",
 ];
 
+const l2ThanosStandardBridgeI = new ethers.utils.Interface(
+  L2ThanosStandardBridgeAbi
+);
 /**
  * Description placeholder
  *
@@ -65,4 +69,24 @@ export const getDecodeLog = (
     l2TokenAddress: TOKAMAK_CONTRACTS.OVM_ETH,
     amount: decodedLog[2].toString(),
   };
+};
+
+export const getDecodedValueFromThanosLogs = (logs: providers.Log[]) => {
+  if (logs.length === 5) {
+    // TON
+    const result = l2ThanosStandardBridgeI.parseLog(logs[0]);
+    const { args } = result;
+    const { l1Token, l2Token, amount } = args;
+    return {
+      l1TokenAddress: SEPOLIA_CONTRACTS.TON_ADDRESS,
+      l2TokenAddress: l2Token,
+      amount,
+    };
+  } else {
+    // length === 7 -> ETH and ERC20s
+    const result = l2ThanosStandardBridgeI.parseLog(logs[2]);
+    const { args } = result;
+    const { l1Token, l2Token, amount } = args;
+    return { l1TokenAddress: l1Token, l2TokenAddress: l2Token, amount };
+  }
 };

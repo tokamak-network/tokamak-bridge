@@ -16,6 +16,8 @@ import { useGasFee } from "./fee/getGasFee";
 import { Hash } from "viem";
 import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { BigNumber } from "ethers";
+import { isThanosChain } from "@/utils/network/checkNetwork";
+import useIsTon from "../token/useIsTon";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -23,7 +25,6 @@ export default function useCallBridgeSwapAction() {
   const { inToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
-
   const {
     write: _depositETH,
     contract: _depositETH_contract,
@@ -31,6 +32,8 @@ export default function useCallBridgeSwapAction() {
   } = useCallDeposit("depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
     useCallDeposit("depositERC20");
+  const { write: _depositNativeToken_contract } =
+    useCallDeposit("depositNativeToken");
   const {
     write: _withdraw,
     isError: _withdrawError,
@@ -40,7 +43,7 @@ export default function useCallBridgeSwapAction() {
   const { wrapTON, unwrapWTON, wrapETH, unwrapWETH } = useWrap();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { gasLimit } = useGasFee();
-
+  const { isTONIn } = useIsTon();
   const onClick = useCallback(async () => {
     if (!isConnected) {
       return connectToWallet();
@@ -77,7 +80,13 @@ export default function useCallBridgeSwapAction() {
               gas: gasLimit,
             });
           }
-
+          // deposit TON to Thanos
+          if (isThanosChain(outNetwork.chainId) && isTONIn) {
+            return _depositNativeToken_contract({
+              //@ts-ignore
+              args: [parsedAmount as bigint, 200000, "0x"],
+            });
+          }
           return _depositERC20({
             args: [
               inToken.address[inNetwork.chainName],
@@ -86,7 +95,7 @@ export default function useCallBridgeSwapAction() {
               200000,
               "0x",
             ],
-            gas: gasLimit,
+            // gas: gasLimit,
           });
         case "Withdraw":
           if (isETH) {

@@ -6,14 +6,16 @@ import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
 import { useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
-import { useMemo } from "react";
+import { useEffect, useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { useAccount, useNetwork } from "wagmi";
+import SelectNetwork from "./SelectNetwork";
 
 export default function InToken() {
   const { inToken } = useInOutTokens();
   const { mode } = useRecoilValue(actionMode);
-  const { onOpenInToken } = useTokenModal();
-
+  const { onOpenInToken, isInTokenOpen, isOutTokenOpen } = useTokenModal();
+  const { isConnected } = useAccount();
   const NetworkSwitcher = useMemo(() => {
     return (
       <Box w={"200px"} h={"32px"}>
@@ -23,55 +25,63 @@ export default function InToken() {
   }, []);
 
   return (
-    <Flex flexDir={"column"} rowGap={"28px"}>
-      <Flex pos={"relative"} h={"54px"}>
-        {mode && (
-          <Text
-            w={"300px"}
-            fontSize={36}
-            fontWeight={"semibold"}
-            pos={"absolute"}
-          >
-            {mode.replaceAll("ETH-", "")}
-          </Text>
-        )}
-      </Flex>
-      <Flex className="card-wrapper" minW={"224px"} minH={"386px"}>
-        {NetworkSwitcher}
-        <Box
-          w={"200px"}
-          h={"248px"}
-          mt={"12px"}
-          mb={"16px"}
-          onClick={onOpenInToken}
-        >
-          {inToken?.tokenName ? (
-            <TokenCard
-              tokenInfo={inToken}
-              hasInput={true}
-              inNetwork={true}
-              forBridge={true}
-              watch={true}
-            />
-          ) : (
-            <Box
-              className="card card-empty"
-              display={"flex"}
-              flexDir={"column"}
-              rowGap={"70px"}
-              w={"100%"}
-              h={"100%"}
+    isConnected ? (
+      <Flex
+        flexDir={"column"}
+        rowGap={"28px"}
+        opacity={isOutTokenOpen && !isInTokenOpen ? 0.05 : 1}
+      >
+        <Flex pos={"relative"} h={"54px"}>
+          {mode && (
+            <Text
+              w={"300px"}
+              fontSize={36}
+              fontWeight={"semibold"}
+              pos={"absolute"}
             >
-              <SearchToken />
-            </Box>
-          )}
-        </Box>
-        <Flex px={"12px"} mb={'-16px'}>
-          {inToken !== null && (
-            <TokenInput inToken={true} hasMaxButton={true} />
+              {mode.replaceAll("ETH-", "")}
+            </Text>
           )}
         </Flex>
+        <Flex className="card-wrapper" minW={"224px"} minH={"386px"}>
+          {NetworkSwitcher}
+          <Box
+            w={"200px"}
+            h={"248px"}
+            mt={"12px"}
+            mb={"16px"}
+            onClick={onOpenInToken}
+          >
+            {inToken?.tokenName ? (
+              <TokenCard
+                tokenInfo={inToken}
+                hasInput={true}
+                inNetwork={true}
+                forBridge={true}
+                watch={true}
+              />
+            ) : (
+              <Box
+                className="card card-empty"
+                display={"flex"}
+                flexDir={"column"}
+                rowGap={"70px"}
+                w={"100%"}
+                h={"100%"}
+              >
+                <SearchToken />
+              </Box>
+            )}
+          </Box>
+          <Flex px={"12px"} mb={"-16px"}>
+            {inToken !== null && (
+              <TokenInput inToken={true} hasMaxButton={true} />
+            )}
+          </Flex>
+        </Flex>
       </Flex>
-    </Flex>
+    ) : (
+      <SelectNetwork />
+    )
   );
 }

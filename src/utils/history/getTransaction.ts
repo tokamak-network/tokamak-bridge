@@ -15,9 +15,10 @@ import { SentMessages } from "@/types/activity/history";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { OVM_ETH_BRIDGE } from "@/constant/contracts";
 import { ZERO_ADDRESS } from "@/constant/misc";
+import { isThanosChain } from "../network/checkNetwork";
 
 const getTokenInfo = (tokenAddress: string, chainId: number) => {
-  if (tokenAddress === OVM_ETH_BRIDGE || tokenAddress === ZERO_ADDRESS || tokenAddress === "") {
+  if ((tokenAddress === OVM_ETH_BRIDGE || tokenAddress === ZERO_ADDRESS || tokenAddress === "") && !isThanosChain(chainId)) {
     return {
       name: "ETH",
       symbol: "ETH",
@@ -56,12 +57,12 @@ export const getTransactionToken = (
   if (!tokenInfo) return { l1Token: null, l2Token: null };
   const l2Token: TransactionToken = {
     ...tokenInfo,
-    address: l2TokenAddress,
+    address: l2TokenAddress.toLowerCase(),
     amount,
   };
   const l1Token: TransactionToken = {
     ...tokenInfo,
-    address: l1TokenAddress,
+    address: l1TokenAddress.toLowerCase(),
     amount,
   };
   return {
@@ -76,6 +77,8 @@ export const getDepositStatus = (currentStatus: CurrentDepositStatus) => {
       return Status.Finalize;
     case 4:
       return Status.Completed;
+    default:
+      return Status.Finalize
   }
 };
 
@@ -116,7 +119,7 @@ export const getTransactionTimestamp = (params: {
 
   const initialCompletedTimestamp = sentMessageTimestamp;
   const rollupCompletedTimestamp =
-    stateBatchTimestamp ?? 0 + TITAN_CHALLENGE_PERIOD;
+    stateBatchTimestamp ? stateBatchTimestamp : undefined;
   const finalizedCompletedTimestamp = relayedMessageTimestamp;
 
   switch (currentStatus) {

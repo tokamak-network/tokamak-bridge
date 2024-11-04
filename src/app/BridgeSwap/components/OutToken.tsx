@@ -80,6 +80,7 @@ export const SearchTokenComponent = () => {
 export default function OutToken() {
   const { mode, swapSection } = useGetMode();
   const { outToken } = useInOutTokens();
+  const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -90,7 +91,11 @@ export default function OutToken() {
   }, []);
 
   return (
-    <Flex flexDir={"column"} rowGap={"28px"}>
+    <Flex
+      flexDir={"column"}
+      rowGap={"28px"}
+      opacity={isInTokenOpen && !isOutTokenOpen ? 0.05 : 1}
+    >
       <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {mode === "Swap" ? "For" : "To"}

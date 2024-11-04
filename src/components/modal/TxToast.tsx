@@ -24,6 +24,7 @@ import { CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useRouter } from "next/navigation";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { Action, Status } from "@/staging/types/transaction";
 
 type TransactionToastProp = TxInterface;
 
@@ -51,8 +52,8 @@ function TxTokenInfo(props: TransactionToastProp & { isToken0: boolean }) {
     (tokenIndex === 1 && txSort === "Wrap"
       ? 18
       : tokenIndex === 1 && txSort === "Unwrap"
-      ? 27
-      : decimals) ?? 18
+        ? 27
+        : decimals) ?? 18
   );
   const convertParsedAmount = parsedAmount.replaceAll("-", "");
 
@@ -180,6 +181,10 @@ function TransactionToast(props: TransactionToastProp) {
   const { blockExplorer } = useConnectedNetwork();
   const [historyTabOpen, setHistoryTabOpen] =
     useRecoilState(accountDrawerStatus);
+  const [selectedTxCategory, setSeletedTxCategory] = useRecoilState(
+    selectedTransactionCategory
+  );
+  const [, setIsOpen] = useRecoilState(accountDrawerStatus);
 
   const isForCrossTrade =
     txSort === "Request" ||
@@ -215,14 +220,26 @@ function TransactionToast(props: TransactionToastProp) {
   };
   const { closeModal } = useTxConfirmModal();
   const clickTitle = useCallback(() => {
-    try {
-      needToOpenHistoryTab
-        ? openHistoryTab()
-        : window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
-    } finally {
+    if (needToOpenHistoryTab) {
+      setIsOpen(true);
+      setSeletedTxCategory(
+        txSort === "Deposit" ? Action.Deposit : Action.Withdraw
+      );
+      openHistoryTab();
+    } else {
+      window.open(`${blockExplorer}/tx/${transactionHash}`, "_blank");
       closeModal();
     }
-  }, [props, blockExplorer, needToOpenHistoryTab, openHistoryTab]);
+  }, [
+    blockExplorer,
+    closeModal,
+    needToOpenHistoryTab,
+    openHistoryTab,
+    setIsOpen,
+    setSeletedTxCategory,
+    transactionHash,
+    txSort
+  ]);
 
   useEffect(() => {
     if (historyTabOpen) toast.closeAll();

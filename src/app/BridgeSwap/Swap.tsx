@@ -21,12 +21,14 @@ import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
 import { useCallback } from "react";
 import useConnectedNetwork from "@/hooks/network";
+import useTokenModal from "@/hooks/modal/useTokenModal";
 
 export default function Swap() {
   const { mode } = useRecoilValue(actionMode);
   const [, setMethodStatus] = useRecoilState(actionMethodStatus);
   const [, setSettingStatus] = useRecoilState(swapSettingStatus);
-  const { pcView } = useMediaView();
+  const { pcView, mobileView } = useMediaView();
+  const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
 
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
     selectedInTokenStatus
@@ -87,6 +89,7 @@ export default function Swap() {
             justifyContent={"center"}
             alignItems={"center"}
             pt={mode === null ? "65px" : "80px"}
+            opacity={isInTokenOpen || isOutTokenOpen ? 0.05 : 1}
           >
             <Flex
               onClick={invertTokenPair}

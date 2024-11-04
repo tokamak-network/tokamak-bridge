@@ -234,8 +234,8 @@ export default function TokenCard(props: TokenCardProps) {
         notAdded
           ? "#383b44"
           : `linear-gradient(0deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)), linear-gradient(0deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.8)), ${tokenColor(
-              tokenInfo?.tokenSymbol
-            )};`
+            tokenInfo?.tokenSymbol
+          )};`
       }
       w={typeof w === "string" ? w : `${w ? w + "px" : "100%"}`}
       h={typeof h === "string" ? h : `${h ? h + "px" : "100%"}`}
@@ -243,8 +243,8 @@ export default function TokenCard(props: TokenCardProps) {
         isNew || isDark
           ? 1
           : isHover === undefined || isHover === null || isHover === level
-          ? 0.9
-          : 0.5
+            ? 0.9
+            : 0.5
       }
       {...style}
       overflow={"hidden"}
@@ -256,25 +256,22 @@ export default function TokenCard(props: TokenCardProps) {
         w={"100%"}
         h={"100%"}
         borderRadius={"16px"}
-        border={`${layer === 0 ? 4 : 3}px solid ${
-          notAdded ? "#292f45" : tokenColor(tokenInfo?.tokenSymbol)
-        }`}
+        border={`${layer === 0 ? 4 : 3}px solid ${notAdded ? "#292f45" : tokenColor(tokenInfo?.tokenSymbol)
+          }`}
         pos={"relative"}
         flexDir={"column"}
         justifyContent={"space-between"}
         cursor={"pointer"}
         boxSizing={"border-box"}
-        onClick={notAdded ? () => {} : onClick}
+        onClick={notAdded ? () => { } : onClick}
         fontFamily={theme.fonts.Quicksand}
         initial={{
-          padding: `${
-            notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
-          }px`,
+          padding: `${notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
+            }px`,
         }}
         animate={{
-          padding: `${
-            notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
-          }px`,
+          padding: `${notAdded ? 19 : PADDING_SIZE[layer] || (pcView ? 16 : 8)
+            }px`,
         }}
         transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
       >
@@ -291,10 +288,10 @@ export default function TokenCard(props: TokenCardProps) {
                   thisTokenIsETH
                     ? "Ethereum"
                     : tokenInfo?.tokenSymbol === "WETH"
-                    ? "Wrapped Ethereum"
-                    : tokenInfo?.tokenName === "Tokamak Network Token"
-                    ? "Tokamak Network"
-                    : tokenInfo?.tokenName ?? "TOKEN"
+                      ? "Wrapped Ethereum"
+                      : tokenInfo?.tokenName === "Tokamak Network Token"
+                        ? "Tokamak Network"
+                        : tokenInfo?.tokenName ?? "TOKEN"
                 }
                 isName={true}
                 style={{
@@ -341,10 +338,10 @@ export default function TokenCard(props: TokenCardProps) {
                     thisTokenIsETH
                       ? "Ethereum"
                       : tokenInfo?.tokenSymbol === "WETH"
-                      ? "Wrapped Ethereum"
-                      : tokenInfo?.tokenName === "Tokamak Network Token"
-                      ? "Tokamak Network"
-                      : tokenInfo?.tokenName ?? "TOKEN"
+                        ? "Wrapped Ethereum"
+                        : tokenInfo?.tokenName === "Tokamak Network Token"
+                          ? "Tokamak Network"
+                          : tokenInfo?.tokenName ?? "TOKEN"
                   }
                   isName={true}
                   style={{
@@ -375,8 +372,8 @@ export default function TokenCard(props: TokenCardProps) {
                   {thisTokenIsETH
                     ? "Ethereum"
                     : tokenInfo?.tokenSymbol === "WETH"
-                    ? "Wrapped Ethereum"
-                    : tokenInfo?.tokenName ?? "TOKEN"}
+                      ? "Wrapped Ethereum"
+                      : tokenInfo?.tokenName ?? "TOKEN"}
                 </Text>
               </Flex>
             )}
@@ -459,7 +456,7 @@ export default function TokenCard(props: TokenCardProps) {
               <Flex fontSize={16} color={"#222222"} columnGap={"2px"}>
                 <Text fontWeight={500}>Balance: </Text>
                 <Text fontWeight={700}>
-                  {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                  {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 9) || "0.0"}
                 </Text>
               </Flex>
             </Flex>
@@ -469,7 +466,7 @@ export default function TokenCard(props: TokenCardProps) {
                 <Text fontWeight={500}>Balance </Text>
               </Flex>
               <Text fontWeight={700} fontSize={18} color={"#222222"}>
-                {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 12)}
+                {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 9)}
               </Text>
             </Flex>
           )
@@ -503,12 +500,12 @@ export default function TokenCard(props: TokenCardProps) {
                       }}
                       transition={`${isTokenSearch ? 0.1 : 0.5} linear`}
                     >
-                      {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                      {trimAmount(tokenData?.data.parsedBalanceWithoutCommafied, 9) || "0.0"}
                     </Text>
                   </>
                 ) : (
                   <Text fontWeight={700} fontSize={18}>
-                    {trimAmount(tokenData?.data.parsedBalance, 10) || "0.0"}
+                    {trimAmount(tokenData?.data.parsedBalance, 9) || "0.0"}
                   </Text>
                 )}
               </>
@@ -524,8 +521,8 @@ export default function TokenCard(props: TokenCardProps) {
                   textOverflow={"hidden"}
                 >
                   {isInput
-                    ? trimAmount(inTokenInfo?.parsedAmount, 10) || "0"
-                    : trimAmount(outAmount, 10) || "0"}
+                    ? trimAmount(inTokenInfo?.parsedAmount, 9) || "0"
+                    : trimAmount(outAmount, 9) || "0"}
                 </Text>
                 <Text
                   fontFamily={theme.fonts.Quicksand}

@@ -4,6 +4,7 @@ import {
   SupportedChainId,
   SupportedChainProperties,
   supportedChain,
+  supportedChainOnProd,
 } from "@/types/network/supportedNetwork";
 import { Center, Flex, Box, Text } from "@chakra-ui/layout";
 import Image from "next/image";
@@ -87,7 +88,7 @@ const ValueContainer = (props: {
             }}
           />
           {isConnected && !isConnectedToMainNetwork && (
-            <Text>{formatNetworkName(selectedOption.chainName)}</Text>
+            <Text>{convertNetworkName(selectedOption.chainName)}</Text>
           )}
         </Center>
       </Flex>
@@ -307,7 +308,7 @@ export default function Network() {
     );
   };
 
-  const optionsList = supportedChain
+  const optionsList = supportedChainOnProd
     .filter((chainInfo) => {
       if (
         isConnectedToMainNetwork === true ||
