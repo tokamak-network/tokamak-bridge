@@ -61,7 +61,7 @@ import useMediaView from "@/hooks/mediaView/useMediaView";
 import { useFinalize } from "@/hooks/history/useFinalize";
 import ArrowIcon from "@/assets/icons/newHistory/small-arrow.svg";
 import Image from "next/image";
-import InfoIcon from "@/assets/icons/info.svg"
+import InfoIcon from "@/assets/icons/info.svg";
 import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
 import SwitchNetworkWarningComponent from "../thanos/SwitchNetworkWarning";
 
@@ -75,7 +75,8 @@ export default function DepositWithdrawConfirmModal() {
     transactionData?.toAddress === transactionData?.fromAddress;
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const l1ChainId = getBridgeL1ChainId(transactionData);
-  const l2ChainId = getBridgeL2ChainId(transactionData) ?? SupportedChainId.TITAN;
+  const l2ChainId =
+    getBridgeL2ChainId(transactionData) ?? SupportedChainId.TITAN;
   const { address } = useAccount();
   const { onClick } = useCallBridgeSwapAction();
   const { totalGasCost, gasCostUS } = useGasFee();
@@ -86,7 +87,6 @@ export default function DepositWithdrawConfirmModal() {
     transactionData?.outNetwork || SupportedChainId.MAINNET;
 
   const { chain } = useNetwork();
-
 
   const chainName = getKeyByValue(SupportedChainId, l2ChainId) || "";
 
@@ -201,16 +201,16 @@ export default function DepositWithdrawConfirmModal() {
             gasCostData={gasCostData}
           />
           {(statuses.length === 2 && index === 0) ||
-            (statuses.length === 3 && index < 2)
+          (statuses.length === 3 && index < 2)
             ? typeValue !== undefined && (
-              <ConditionalBox
-                isCountDown={isCountDown}
-                timeDisplay={timeDisplay}
-                type={typeValue}
-                transactionData={transactionData}
-                waitMessage={waitMessage}
-              />
-            )
+                <ConditionalBox
+                  isCountDown={isCountDown}
+                  timeDisplay={timeDisplay}
+                  type={typeValue}
+                  transactionData={transactionData}
+                  waitMessage={waitMessage}
+                />
+              )
             : null}
         </React.Fragment>
       );
@@ -223,7 +223,10 @@ export default function DepositWithdrawConfirmModal() {
       transactionData.action === Action.Withdraw &&
       transactionData.status === Status.Completed
     );
-  const isWrongNetwork = transactionData.action === Action.Withdraw && chain?.id !== l1ChainId && transactionData.status === Status.Finalize;
+  const isWrongNetwork =
+    transactionData.action === Action.Withdraw &&
+    chain?.id !== l1ChainId &&
+    transactionData.status === Status.Finalize;
   const btnIsDisabled = lineType !== 3 || isWrongNetwork;
   return (
     <Modal
@@ -261,7 +264,13 @@ export default function DepositWithdrawConfirmModal() {
           <CloseButton onClick={onCloseDepositWithdrawConfirmModal} />
         </Box>
         <ModalBody p={0}>
-          {isWrongNetwork && <Box mb={"12px"}><SwitchNetworkWarningComponent chainId={l1ChainId ?? SupportedChainId.MAINNET} /></Box>}
+          {isWrongNetwork && (
+            <Box mb={"12px"}>
+              <SwitchNetworkWarningComponent
+                chainId={l1ChainId ?? SupportedChainId.MAINNET}
+              />
+            </Box>
+          )}
           <Box
             px={"16px"}
             py={"12px"}
@@ -328,7 +337,9 @@ export default function DepositWithdrawConfirmModal() {
                     {/** Add a space */ " "}
                     {"to"}
                   </Text>
-                  {!isStandardBridge && <Image src={InfoIcon} alt="info icon" />}
+                  {!isStandardBridge && (
+                    <Image src={InfoIcon} alt="info icon" />
+                  )}
                 </Flex>
                 <Link
                   target="_blank"
@@ -355,9 +366,9 @@ export default function DepositWithdrawConfirmModal() {
                         {transactionData?.fromAddress === address
                           ? "This address"
                           : trimAddress({
-                            address: transactionData?.fromAddress,
-                            firstChar: 6,
-                          })}
+                              address: transactionData?.fromAddress,
+                              firstChar: 6,
+                            })}
                       </Text>
                       <Image src={ArrowIcon} alt="Arrow Icon" />
                       <Text
@@ -369,9 +380,9 @@ export default function DepositWithdrawConfirmModal() {
                         {transactionData?.toAddress === address
                           ? "This address"
                           : trimAddress({
-                            address: transactionData?.toAddress,
-                            firstChar: 6,
-                          })}
+                              address: transactionData?.toAddress,
+                              firstChar: 6,
+                            })}
                       </Text>
                     </Flex>
                   )}
@@ -433,7 +444,9 @@ export default function DepositWithdrawConfirmModal() {
                   }}
                   _hover={{}}
                   _focus={{}}
-                  bgColor={btnIsDisabled ? "#17181D !important" : "#007AFF !important"}
+                  bgColor={
+                    btnIsDisabled ? "#17181D !important" : "#007AFF !important"
+                  }
                   onClick={callToFinalize}
                   isDisabled={btnIsDisabled}
                   opacity={"1 !important"}
