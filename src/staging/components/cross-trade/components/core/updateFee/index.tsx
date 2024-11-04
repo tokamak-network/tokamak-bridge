@@ -110,7 +110,7 @@ export default function CTFeeUpdateModal() {
 
   const tokenAddress =
     ctUpdateFeeModal.txData?.L2_subgraphData?._l2token &&
-      isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
+    isZeroAddress(ctUpdateFeeModal.txData?.L2_subgraphData?._l2token)
       ? "0x4200000000000000000000000000000000000006"
       : ctUpdateFeeModal.txData?.L2_subgraphData?._l2token ?? "0x";
   const { recommendedFee: recommendValue } = useRecommendFee({
@@ -164,7 +164,7 @@ export default function CTFeeUpdateModal() {
   const activeConfirmButton =
     activeButton === UpdateFeeButtonType.Update
       ? recommendCheck ||
-      !(inputValue === "" || inputWarningCheck === WarningType.Critical)
+        !(inputValue === "" || inputWarningCheck === WarningType.Critical)
       : isChecked;
   const { connectedToLayer1 } = useConnectedNetwork();
   const [, setIsOpen] = useRecoilState(accountDrawerStatus);
@@ -310,7 +310,7 @@ export default function CTFeeUpdateModal() {
       !activeConfirmButton ||
       !connectedToLayer1 ||
       (activeButton === UpdateFeeButtonType.Update && inputWarningCheck) ===
-      WarningType.Critical
+        WarningType.Critical
     );
   }, [activeConfirmButton, connectedToLayer1, inputWarningCheck, activeButton]);
 
@@ -367,7 +367,7 @@ export default function CTFeeUpdateModal() {
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
         width={mobileView ? "100%" : "404px"}
         {...(mobileView && {
@@ -375,7 +375,7 @@ export default function CTFeeUpdateModal() {
           overflowY: "auto",
         })}
       >
-        <ModalHeader px={0} pt={0} pb={"16px"}>
+        <ModalHeader px={0} pt={0} pb={mobileView ? "12px" : "16px"}>
           <Flex columnGap={"8px"}>
             <Text
               fontSize={mobileView ? "16px" : "20px"}
@@ -393,7 +393,7 @@ export default function CTFeeUpdateModal() {
         <ModalBody p={0}>
           <Box
             width={mobileView ? "100%" : "364px"}
-            bg="#15161D"
+            bg='#15161D'
             px={"16px"}
             py={"16px"}
             borderRadius={"8px"}
@@ -406,7 +406,7 @@ export default function CTFeeUpdateModal() {
             />
             <WrongNetwork style={{ marginTop: "12px" }} />
             {activeButton === UpdateFeeButtonType.Update &&
-              ctUpdateFeeModal.txData ? (
+            ctUpdateFeeModal.txData ? (
               <CTUpdateFeeDetail
                 // input 관련 props
                 inputValue={inputValue}
@@ -425,7 +425,7 @@ export default function CTFeeUpdateModal() {
             )}
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display="block">
+        <ModalFooter p={0} display='block'>
           {activeButton == UpdateFeeButtonType.CancelRequest && (
             <Flex
               flexDir={"column"}
@@ -461,7 +461,7 @@ export default function CTFeeUpdateModal() {
                       },
                     },
                   }}
-                  colorScheme="#A0A3AD"
+                  colorScheme='#A0A3AD'
                   display={"flex"}
                   alignItems={"flex-start"}
                   mt={"3px"}
@@ -480,7 +480,7 @@ export default function CTFeeUpdateModal() {
           )}
           <Button
             mt={"16px"}
-            width="full"
+            width='full'
             height={"48px"}
             borderRadius={"8px"}
             sx={{
@@ -497,8 +497,8 @@ export default function CTFeeUpdateModal() {
               {!connectedToLayer1
                 ? "Wrong Network"
                 : activeButton == UpdateFeeButtonType.Update
-                  ? "Update"
-                  : "Cancel"}
+                ? "Update"
+                : "Cancel"}
             </Text>
           </Button>
           {activeButton == UpdateFeeButtonType.Update && (

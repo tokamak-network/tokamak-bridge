@@ -184,11 +184,12 @@ export default function CTModal() {
     >
       <ModalOverlay />
       <ModalContent
+        width={{ base: "100%", md: "404px" }}
+        maxWidth={{ base: "100%", md: "404px" }}
         mb={mobileView ? 0 : "auto"}
         alignSelf={mobileView ? "flex-end" : "center"}
         borderRadius={mobileView ? "16px 16px 0 0" : "16px"}
-        width={"404px"}
-        bg="#1F2128"
+        bg='#1F2128'
         p={mobileView ? "12px 12px 16px 12px" : "20px"}
         {...(mobileView && {
           maxHeight: "calc(100vh - 80px)",
