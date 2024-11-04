@@ -1,4 +1,5 @@
 "use client";
+import { useState, useEffect } from "react";
 import { ChakraProvidersForNextJs } from "@/providers/chakraProvider";
 import "css/scrollbar.css";
 import TxToast from "@/components/modal/TxToast";
@@ -10,6 +11,14 @@ import Modals from "./Modals";
 import Drawers from "./Drawers";
 import Footer from "@/components/footer";
 import dynamic from "next/dynamic";
+
+/**
+ * Import statements for modal control and view state management
+ * These are added to handle the initial loading state and mobile modal behavior @Robert
+ */
+import { actionMethodStatus } from "@/recoil/modal/atom";
+import { useRecoilValue } from "recoil";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const DynamicHeader = dynamic(() => import("@/components/header/Index"), {
   loading: () => <></>,
@@ -49,6 +58,32 @@ const GoogleAnalyticsScript = () => {
 };
 
 export default function Entry({ children }: { children: React.ReactNode }) {
+  /**
+   * State and hooks for controlling initial page visibility
+   * - pageReady: Controls the visibility of main content
+   * - mobileView: Checks if user is on mobile device
+   * - methodStatus: Tracks the state of the action method modal @Robert
+   */
+  const [pageReady, setPageReady] = useState(false);
+  const { mobileView } = useMediaView();
+  const methodStatus = useRecoilValue(actionMethodStatus);
+
+  /**
+   * Effect to manage initial page loading behavior
+   * - On mobile: Shows content only after modal interaction (methodStatus becomes true)
+   * - On desktop: Shows content immediately
+   * This prevents unwanted content flashing before modal appears on mobile @Robert
+   */
+  useEffect(() => {
+    if (mobileView) {
+      if (methodStatus) {
+        setPageReady(true);
+      }
+    } else {
+      setPageReady(true);
+    }
+  }, [mobileView, methodStatus]);
+
   const queryClient = getQueryClient();
 
   return (
@@ -56,7 +91,15 @@ export default function Entry({ children }: { children: React.ReactNode }) {
       <GoogleAnalyticsScript />
       <QueryClientProvider client={queryClient}>
         <ChakraProvidersForNextJs>
-          <Flex flexDir={"column"} h={"100vh"}>
+          <Flex
+            flexDir={"column"}
+            h={"100vh"}
+            style={{
+              visibility: pageReady ? "visible" : "hidden",
+              opacity: pageReady ? 1 : 0,
+              transition: "opacity 0.3s ease-in-out",
+            }}
+          >
             <DynamicHeader />
             <Flex flexDir={"column"} flexGrow={1}>
               <Flex
