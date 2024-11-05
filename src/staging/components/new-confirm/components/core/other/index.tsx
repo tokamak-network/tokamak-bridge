@@ -64,6 +64,7 @@ import Image from "next/image";
 import InfoIcon from "@/assets/icons/info.svg";
 import { getBridgeL1ChainId, getBridgeL2ChainId } from "../../../utils";
 import SwitchNetworkWarningComponent from "../thanos/SwitchNetworkWarning";
+import { isCompositeType } from "graphql";
 
 export default function DepositWithdrawConfirmModal() {
   const { mobileView } = useMediaView();
@@ -418,26 +419,15 @@ export default function DepositWithdrawConfirmModal() {
         >
           {transactionData.status === Status.Initiate ? (
             <Flex gap={"12px"} flexDir={"column"}>
-              {transactionData.action === Action.Withdraw && (
-                <ConfirmCheckboxComponent
-                  isChecked={isConfirmed}
-                  onClickCheckbox={handleConfirmCheck}
-                />
-              )}
-              <ApproveButton
-                isConfirmed={
-                  transactionData.action === Action.Withdraw
-                    ? isConfirmed
-                    : true
-                }
+              <ConfirmCheckboxComponent
+                transactionData={transactionData}
+                isChecked={isConfirmed}
+                onClickCheckbox={handleConfirmCheck}
               />
+              <ApproveButton isConfirmed={isConfirmed} />
               <InitiateButton
                 isApproved={isApproved}
-                isConfirmed={
-                  transactionData.action === Action.Withdraw
-                    ? isConfirmed
-                    : true
-                }
+                isConfirmed={isConfirmed}
                 onClick={onClick}
                 onCloseDepositWithdrawConfirmModal={
                   onCloseDepositWithdrawConfirmModal

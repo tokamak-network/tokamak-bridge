@@ -46,6 +46,11 @@ export default function InitiateButton(props: InitiateButtonProps) {
         <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
           Initiate
         </Text>
+        <Tooltip
+          tooltipLabel={"text will be changed"}
+          style={{ marginLeft: "2px" }}
+          type={isConfirmed && isApproved ? "white" : "grey"}
+        />
       </Button>
     </Box>
   );
