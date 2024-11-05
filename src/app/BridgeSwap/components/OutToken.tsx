@@ -12,6 +12,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import Setting from "@/components/Setting";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
+import { useAccount } from "wagmi";
 
 export const SelectedNetwork = () => {
   const { outNetwork } = useInOutNetwork();
@@ -81,6 +82,7 @@ export default function OutToken() {
   const { mode, swapSection } = useGetMode();
   const { outToken } = useInOutTokens();
   const { isInTokenOpen, isOutTokenOpen } = useTokenModal();
+  const { isConnected } = useAccount();
 
   const NetworkSwitcher = useMemo(() => {
     return (
@@ -98,9 +100,9 @@ export default function OutToken() {
     >
       <Flex justifyContent={"space-between"} alignItems={"center"}>
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
-          {mode === "Swap" ? "For" : "To"}
+          {!isConnected ? "" : mode === "Swap" ? "For" : "To"}
         </Text>
-        {mode === "Swap" && <Setting />}
+        {isConnected && <Setting />}
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>

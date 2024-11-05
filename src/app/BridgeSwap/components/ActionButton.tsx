@@ -46,8 +46,9 @@ export default function ActionButton() {
   const deactivateButton = status === "Active" && isL2; //when the maintenance banner is active, this will disable the action button related to all L2 actions
 
   const isDisabled = useMemo(() => {
-    if ((mode === "Withdraw" || !isConnected) && !isInputZero) return false;
-    if ((mode === "Deposit" || !isConnected) && isInputZero) return true;
+    if (!isConnected) return false;
+    if (mode === "Withdraw" && !isInputZero) return false;
+    if (mode === "Deposit" && isInputZero) return true;
     const disabled =
       !isReady ||
       (mode === "Swap" && isLoading) ||
@@ -70,6 +71,7 @@ export default function ActionButton() {
     isInputZero,
     mode,
     outToken,
+    isConnected,
     isConnected,
   ]);
 
@@ -94,7 +96,8 @@ export default function ActionButton() {
     inToken,
     outToken,
     inNetwork,
-    outNetwork
+    outNetwork,
+    connetAndDisconntWallet,
   ]);
 
   return (
@@ -118,12 +121,12 @@ export default function ActionButton() {
         {!isConnected
           ? null
           : isConnected && mode === null
-            ? "Select Network"
-            : mode === "Withdraw"
-              ? "Next"
-              : isBalanceOver
-                ? "Insufficient balance"
-                : mode?.replaceAll("ETH-", "")}{" "}
+          ? "Select Network"
+          : mode === "Withdraw"
+          ? "Next"
+          : isBalanceOver
+          ? "Insufficient balance"
+          : mode?.replaceAll("ETH-", "")}{" "}
         <span style={{ fontSize: "10px", marginLeft: "3px", marginTop: "3px" }}>
           {deactivateButton ? "(Service under maintenance)" : ""}
           {/* {'(Service under maintenance)'} */}
