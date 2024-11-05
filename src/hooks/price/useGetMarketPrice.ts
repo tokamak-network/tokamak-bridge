@@ -77,9 +77,10 @@ export function useGetMarketPrice(params: {
 
   const tokenPriceWithAmount = useMemo(() => {
     if (tokenMarketPrice && params.amount) {
-      return (
-        Number(data.getTokenMarketData.current_price) * Number(params.amount)
-      );
+      const price = Number(data.getTokenMarketData.current_price);
+      const amount = Number(params.amount) < 0.00001 ? 0.0 : Number(params.amount);
+      const result = price * amount;
+      return result;
     }
     if (tokenMarketPrice && params.amount === 0) {
       return 0;
