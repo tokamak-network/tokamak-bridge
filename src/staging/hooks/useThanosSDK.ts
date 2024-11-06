@@ -11,11 +11,7 @@ export const useThanosSDK = (
   l2ChainId: SupportedChainId | null
 ) => {
   const { address, isConnected } = useAccount();
-  useEffect(() => {
-    if (!isConnected) connectToWallet();
-  }, [isConnected]);
   const { chain } = useNetwork();
-  const { connectToWallet } = useConnectWallet();
   const [crossChainMessenger, setCrossChainMessenger] = useState<any>(null);
   useEffect(() => {
     if (!l1ChainId || !l2ChainId) return;

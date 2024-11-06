@@ -37,7 +37,11 @@ export default function InitiateButton(props: InitiateButtonProps) {
         _hover={{}}
         opacity={"1 !important"}
         cursor={"pointer !important"}
-        bgColor={isConfirmed && isApproved ? "#007AFF !important" : "#17181D !important"}
+        bgColor={
+          isConfirmed && isApproved
+            ? "#007AFF !important"
+            : "#17181D !important"
+        }
       >
         <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
           Initiate

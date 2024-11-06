@@ -3,19 +3,23 @@ import Image from "next/image";
 import { useMemo } from "react";
 import NetworkSymbol from "@/staging/components/new-confirm/components/NetworkSymbol";
 import { TokenSymbol } from "@/components/image/TokenSymbol";
-import { TransactionHistory } from "@/staging/types/transaction";
+import {
+  TransactionHistory,
+  Status,
+  Action,
+} from "@/staging/types/transaction";
 import TxLink from "@/assets/icons/confirm/link.svg";
 import { BLOCKEXPLORER_CONSTANTS } from "@/staging/constants/blockexplorer";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import capitalizeFirstLetter from "@/staging/utils/capitalizeFirstLetter";
 import { FormatNumber } from "@/staging/components/common/FormatNumber";
-import { convertNumber } from "@/utils/trim/convertNumber";
+import { convertNumber, formatUnits } from "@/utils/trim/convertNumber";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import {
   NetworkDisplayName,
   SupportedChainId,
 } from "@/types/network/supportedNetwork";
 import commafy from "@/utils/trim/commafy";
-import { formatNetworkName } from "@/utils/network/convertNetworkName";
 import Link from "next/link";
 import { useInOutNetwork } from "@/hooks/network";
 import { getTokenAddressByChainId } from "@/constant/contracts/tokens";
@@ -33,14 +37,14 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
   }
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: transactionHistory.inToken.name as string,
-    amount: convertNumber(
+    amount: formatUnits(
       transactionHistory.inToken.amount,
       transactionHistory.inToken.decimals
     ),
   });
 
   const marketPrice = useMemo(() => {
-    if (transactionHistory && tokenPriceWithAmount) {
+    if (transactionHistory && tokenPriceWithAmount !== undefined) {
       return `$${commafy(tokenPriceWithAmount)}`;
     }
     return "NA";
@@ -52,8 +56,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
 
   const chainName = getKeyByValue(SupportedChainId, networkChainId) || "";
 
-  const displayNetworkName =
-    chainName === "MAINNET" ? "Ethereum" : formatNetworkName(chainName);
+  const displayNetworkName = NetworkDisplayName[chainName];
 
   const tokenAddress = isInNetwork
     ? transactionHistory.inToken.address
@@ -96,7 +99,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
         </Flex>
       </Box>
       <Box>
-        <Flex gap={"8px"} alignItems={"center"}>
+        <Flex gap={"8px"} alignItems={"center"} justifyContent={"right"}>
           <FormatNumber
             style={{
               fontWeight: 600,

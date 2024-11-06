@@ -50,7 +50,7 @@ export default function ConfirmInitiateFooter(
             letterSpacing={"0.01em"}
           >
             I understand that I have to send a transaction <br /> on Ethereum to
-            "Claim" my withdraw after 7 days.
+            "Finalize" my withdraw after 7 days.
           </Text>
         </Flex>
       </Box>

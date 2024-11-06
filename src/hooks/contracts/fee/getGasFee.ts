@@ -23,6 +23,7 @@ import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { isETH as checkIsETH } from "@/utils/token/isETH";
 import {
+  asL2Provider,
   asL2Provider as asL2TitanProvider,
   estimateTotalGasCost,
 } from "@tokamak-network/titan-sdk";
@@ -161,27 +162,34 @@ export function useGasFee() {
             if (isBalanceOver || !isApproved || !provider) {
               return 1400000;
             }
-            const L2BridgeAbi = isThanosChain(inNetwork.chainId)
-              ? L2ThanosStandardBridgeAbi
-              : L2TitanBridgeAbi;
+
             const withdrawContract = new ethers.Contract(
-              L2BRIDGE_CONTRACT,
-              L2BridgeAbi,
+              TOKAMAK_CONTRACTS.L2Bridge,
+              L2TitanBridgeAbi,
               provider
             );
-            const l2Provider = isThanosChain(inNetwork.chainId)
-              ? asL2ThanosProvider(provider)
-              : asL2TitanProvider(provider);
+            const l2Provider = asL2Provider(provider);
+
+            if (isETH) {
+              const tx = await withdrawContract.populateTransaction.withdraw(
+                predeploys.OVM_ETH,
+                parsedAmount,
+                1_300_000,
+                "0x"
+              );
+              const estimateTotalGasCost =
+                await l2Provider.estimateTotalGasCost({ ...tx, from: address });
+              return estimateTotalGasCost;
+            }
             const tx = await withdrawContract.populateTransaction.withdraw(
               inToken.address[inNetwork.chainName],
               parsedAmount,
-              200000,
+              0,
               "0x"
             );
-            const estimateTotalGasCost = await l2Provider.estimateTotalGasCost({
-              ...tx,
-              from: address,
-            });
+            const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
+              { ...tx, from: address }
+            );
             return estimateTotalGasCost;
           default:
             return;

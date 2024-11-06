@@ -80,8 +80,8 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
               "days",
               0
             ) *
-            60) *
-          1000
+              60) *
+            1000
         );
       }
       return null;
@@ -110,7 +110,7 @@ export default function ConditionalBox(props: ConditionalBoxProps) {
             whiteSpace="nowrap"
             overflow="hidden"
           >
-            {timeDisplay}
+            {`${timeDisplay} ${isCountDown ? "Left" : ""}`}
           </Text>
           {(errorRollup || !isCountDown) && (
             <Flex

@@ -11,6 +11,7 @@ export const TRANSACTION_CONSTANTS = {
     INITIAL_MINUTES: 11, // Initial state time for withdrawal (in minutes)
     INITIAL_SECS: 675, // Initial state time for withdrawal (in minutes)
     ROLLUP_MINUTES: 380, // Duration of the rollup  (in minutes)
+    ROLLUP_HOURS: 6,
     ROLLUP_SECS: 22800,
     ROLLUP_DAYS: 7, // Duration of the rollup state for withdrawal (in days)
     CHALLENGE_SECS: 604800,
@@ -42,6 +43,7 @@ export const getTransactionConstants = (chain: SupportedChainId) => {
         ...TRANSACTION_CONSTANTS.WITHDRAW,
         ROLLUP_MINUTES: 720, // Duration of the rollup  (in minutes)
         ROLLUP_SECS: 43200,
+        ROLLUP_HOURS: 12,
       },
     }
   }

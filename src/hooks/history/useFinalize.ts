@@ -79,6 +79,7 @@ export const useFinalize = (params?: WithdrawTransactionHistory) => {
           resolved.messageNonce,
           proof,
         ],
+        gas: BigInt(750000),
       });
 
       return setModalOpen("confirming");

@@ -86,7 +86,7 @@ const getWaitMessage = (
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}6 hours`
+        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}${txConstants.WITHDRAW.ROLLUP_HOURS} hours 20 mins`
         : `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
     100: `Wait ${chainId === SupportedChainId.TITAN ||

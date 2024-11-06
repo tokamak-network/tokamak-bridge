@@ -32,10 +32,15 @@ import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useIsTon from "@/hooks/token/useIsTon";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
-import { supportedChain, SupportedChainId } from "@/types/network/supportedNetwork";
+import {
+  supportedChain,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 import { getTransactionConstants } from "@/staging/constants/transactionTime";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
+import { trimAmountForFormatter } from "@/utils/trim";
+import commafy from "@/utils/trim/commafy";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -276,7 +281,7 @@ const WrapDetailRow = (props: WrapDetailProp) => {
           <Text fontWeight={300}>{title}</Text>
         </Flex>
         <Flex>
-          {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{ }</Text>}
+          {isLoading ? <GradientSpinner /> : <Text fontWeight={500}>{}</Text>}
           {gasFee && (
             <Text mr={"27px"} fontWeight={500}>
               {gasFee}
@@ -442,7 +447,7 @@ const Title = (props: {
   const { outPrice } = usePriceImpact();
   const [isLoading] = useIsLoading();
   const { isOpen } = useConfirm();
-  const { gasCostUS } = useGasFee();
+  const { gasCostUS, totalGasCost } = useGasFee();
   const { isBalanceOver } = useInputBalanceCheck();
   const { mobileView } = useMediaView();
 
@@ -474,7 +479,9 @@ const Title = (props: {
     return priceStr.length > 10 ? `${priceStr.slice(0, 10)}...` : priceStr;
   };
 
-  const transactionConstant = getTransactionConstants(outNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA);
+  const transactionConstant = getTransactionConstants(
+    outNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA
+  );
   if (mode === "Deposit") {
     return (
       <Flex
@@ -489,16 +496,30 @@ const Title = (props: {
             Time to Deposit
           </Text>
           <Text fontSize={"14px"} fontWeight={"600"}>
-            {`${transactionConstant.DEPOSIT.INITIAL_MINUTES}~${transactionConstant.DEPOSIT.INITIAL_MINUTES + 1} minutes`}
+            {`~${transactionConstant.DEPOSIT.INITIAL_MINUTES} minutes`}
           </Text>
         </Flex>
         <Flex justifyContent={"space-between"}>
           <Text fontSize={"14px"} color={"#A0A3AD"}>
             Network fee
           </Text>
-          <Text fontSize={"14px"} fontWeight={"600"}>
-            {gasCostUS ? `$${gasCostUS}` : `NA`}
-          </Text>
+          <Flex gap={"6px"} alignItems={"center"}>
+            <Image src={GasImg} alt={"gasStation"} />
+            <Flex gap={"4px"} alignItems={"center"}>
+              <Text fontWeight={600}>
+                {totalGasCost
+                  ? `${
+                      Number(totalGasCost) >= 0.0001
+                        ? commafy(totalGasCost, 4)
+                        : "<0.0001"
+                    } ETH`
+                  : `NA`}
+              </Text>
+              <Text fontSize={"14px"} fontWeight={"400"} color={"#A0A3AD"}>
+                {`(${gasCostUS ? `$${gasCostUS}` : `NA`})`}
+              </Text>
+            </Flex>
+          </Flex>
         </Flex>
       </Flex>
     );
@@ -585,28 +606,28 @@ const Title = (props: {
         {isLoading
           ? null
           : isOpen === false && (
-            <Flex>
-              {(!isExpanded || mobileView) && (
-                <>
-                  <Image src={GasImg} alt={"gasStation"} />
-                  <Text
-                    fontSize={{ base: 11, lg: 14 }}
-                    fontWeight={400}
-                    color={"#A0A3AD"}
-                    ml={"6px"}
-                    sx={{ mr: mobileView ? 0 : "13px" }}
-                  >
-                    {gasCostUS ? `$${gasCostUS}` : `NA`}
-                  </Text>
-                </>
-              )}
-              {!mobileView && (
-                <motion.div animate={arrowControl}>
-                  <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-                </motion.div>
-              )}
-            </Flex>
-          )}
+              <Flex>
+                {(!isExpanded || mobileView) && (
+                  <>
+                    <Image src={GasImg} alt={"gasStation"} />
+                    <Text
+                      fontSize={{ base: 11, lg: 14 }}
+                      fontWeight={400}
+                      color={"#A0A3AD"}
+                      ml={"6px"}
+                      sx={{ mr: mobileView ? 0 : "13px" }}
+                    >
+                      {gasCostUS ? `$${gasCostUS}` : `NA`}
+                    </Text>
+                  </>
+                )}
+                {!mobileView && (
+                  <motion.div animate={arrowControl}>
+                    <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
+                  </motion.div>
+                )}
+              </Flex>
+            )}
       </Flex>
     );
   }
@@ -669,17 +690,17 @@ export default function TransactionDetail(props: {
       pt={
         !isMobile && !isDeposit
           ? {
-            base: isExpanded ? "11px" : "11px",
-            lg: isExpanded ? "20px" : "14px",
-          }
+              base: isExpanded ? "11px" : "11px",
+              lg: isExpanded ? "20px" : "14px",
+            }
           : ""
       }
       pb={
         !isDeposit
           ? {
-            base: isExpanded ? "12px" : "",
-            lg: isExpanded ? "20px" : "",
-          }
+              base: isExpanded ? "12px" : "",
+              lg: isExpanded ? "20px" : "",
+            }
           : ""
       }
     >
@@ -689,12 +710,12 @@ export default function TransactionDetail(props: {
       {(!mobileView ||
         // isOnConfirm ||
         (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
-          <Content
-            isExpanded={isExpanded}
-            isOnConfirm={isOnConfirm}
-            isMobile={isMobile}
-          ></Content>
-        )}
+        <Content
+          isExpanded={isExpanded}
+          isOnConfirm={isOnConfirm}
+          isMobile={isMobile}
+        ></Content>
+      )}
     </Flex>
   );
 }
