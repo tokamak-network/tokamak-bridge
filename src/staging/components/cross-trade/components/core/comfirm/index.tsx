@@ -43,9 +43,11 @@ export default function CTModal() {
   const [isChecked, setIsChecked] = useState<{
     firstChecked: boolean;
     secondChecked: boolean;
+    thirdChecked: boolean;
   }>({
     firstChecked: false,
     secondChecked: false,
+    thirdChecked: false,
   });
   const {} = useConnectedNetwork();
 
@@ -57,7 +59,11 @@ export default function CTModal() {
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id } = e.target;
-    if (id === "firstChecked" || id === "secondChecked") {
+    if (
+      id === "firstChecked" ||
+      id === "secondChecked" ||
+      id === "thirdChecked"
+    ) {
       setIsChecked({ ...isChecked, [id]: !isChecked[id] });
     }
   };
@@ -66,6 +72,7 @@ export default function CTModal() {
     setIsChecked({
       firstChecked: false,
       secondChecked: false,
+      thirdChecked: false,
     });
     onCloseCTConfirmModal();
   };
@@ -91,6 +98,7 @@ export default function CTModal() {
       return setIsChecked({
         firstChecked: false,
         secondChecked: false,
+        thirdChecked: false,
       });
   }, [ctConfirmModal]);
 
@@ -199,6 +207,7 @@ export default function CTModal() {
                 ? "Confirm Provide"
                 : modalTitles[ctConfirmModal.type]}
             </Text>
+            <BetaIcon marginLeft={"8px"} />
           </Flex>
         </ModalHeader>
         <Box pos={"absolute"} right={4} top={"15px"}>
