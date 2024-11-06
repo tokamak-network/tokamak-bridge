@@ -6,7 +6,8 @@
 
 ## Checklist
 
-- [ ] Provided a screenshot (only if change is visible in UI)
-- [ ] Provided steps for playback (only if possible).
-- [ ] Provided a change scope in summary
+- [ ] Make sure the functionalities are working as expected
 - [ ] Local build has passed
+- [ ] Provided a change scope in summary
+- [ ] Added custom vercel domain in the PR description
+- [ ] Provided a screenshot (only if change is visible in UI)
