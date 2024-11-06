@@ -1,4 +1,5 @@
 import { SupportedTokenNames } from "@/types/token/supportedToken";
+import Decimal from "decimal.js";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 export const trimTokenName = (tokenName: string | undefined) => {
@@ -77,10 +78,10 @@ export function useGetMarketPrice(params: {
 
   const tokenPriceWithAmount = useMemo(() => {
     if (tokenMarketPrice && params.amount) {
-      const price = Number(data.getTokenMarketData.current_price);
-      const amount = Number(params.amount) < 0.00001 ? 0.0 : Number(params.amount);
-      const result = price * amount;
-      return result;
+      const price = new Decimal(data.getTokenMarketData.current_price);
+      const amount = new Decimal(params.amount);
+      const result = price.times(amount).toNumber();
+      return result > 0.0001 ? result : 0.0;
     }
     if (tokenMarketPrice && params.amount === 0) {
       return 0;

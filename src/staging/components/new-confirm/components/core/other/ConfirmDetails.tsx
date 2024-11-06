@@ -44,7 +44,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
   });
 
   const marketPrice = useMemo(() => {
-    if (transactionHistory && tokenPriceWithAmount) {
+    if (transactionHistory && tokenPriceWithAmount !== undefined) {
       return `$${commafy(tokenPriceWithAmount)}`;
     }
     return "NA";
