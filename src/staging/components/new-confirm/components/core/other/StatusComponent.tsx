@@ -175,7 +175,7 @@ export default function StatusComponent(props: StatusComponentProps) {
                   : "#A0A3AD"
               }
             >
-              {gasCost}
+              {`~ ${gasCost}`}
             </Text>
           </Flex>
           <Text

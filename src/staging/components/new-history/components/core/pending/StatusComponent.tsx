@@ -139,12 +139,12 @@ export default function StatusComponent(
 
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-    formatTimeDisplay(getRemainTime(transactionData))
+      formatTimeDisplay(getRemainTime(transactionData))
     : // If not active and status is Finalized, display empty value
     (!isActive && label.toString() === "Finalize") ||
       (isActive && label === CT_REQUEST.WaitForReceive)
-      ? ""
-      : // Otherwise, display formatted date as all are completed
+    ? ""
+    : // Otherwise, display formatted date as all are completed
       formatDateToYMD(
         Number(
           isWithdrawTransactionHistory(transactionData) ||
@@ -168,9 +168,7 @@ export default function StatusComponent(
   );
 
   // Output variable
-  const timeDisplay = shouldCountdown
-    ? time
-    : initialTimeDisplay;
+  const timeDisplay = shouldCountdown ? time : initialTimeDisplay;
 
   // Calendar start time
   const startDate = useMemo(() => {
@@ -187,8 +185,8 @@ export default function StatusComponent(
             "days",
             0
           ) *
-          60) *
-        1000
+            60) *
+          1000
       );
     }
     return null;
@@ -236,8 +234,9 @@ export default function StatusComponent(
         case CT_REQUEST.Request:
           return "Request";
         case CT_REQUEST.UpdateFee:
-          return `Update ${updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
-            }`;
+          return `Update ${
+            updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
+          }`;
         case CT_REQUEST.WaitForReceive:
           return "Waiting";
         default:
@@ -278,8 +277,8 @@ export default function StatusComponent(
             !isActive && label === Status.Finalize
               ? "#A0A3AD"
               : isOnOfficialStandard
-                ? "#007AFF"
-                : "#DB00FF"
+              ? "#007AFF"
+              : "#DB00FF"
           }
         />
         <Text
@@ -300,9 +299,15 @@ export default function StatusComponent(
             fontSize={"11px"}
             fontWeight={shouldCountdown ? 600 : 400}
             lineHeight={"22px"}
-            color={shouldCountdown && (isError || !isCountDown) ? "#DD3A44" : isActive ? "#FFFFFF" : "#A0A3AD"}
-            cursor={!isActive ? "pointer" : "default"}
-            onClick={!isActive ? openModal : undefined}
+            color={
+              shouldCountdown && (isError || !isCountDown)
+                ? "#DD3A44"
+                : isActive
+                ? "#FFFFFF"
+                : "#A0A3AD"
+            }
+            cursor={"pointer"}
+            onClick={openModal}
           >
             {timeDisplay}
           </Text>

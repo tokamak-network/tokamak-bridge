@@ -14,8 +14,8 @@ import { ZERO_ADDRESS } from "../misc";
 export const ETH_ADDRESS_BY_CHAINID: Record<number, string> = {
   [SupportedChainId.MAINNET]: ZERO_ADDRESS,
   [SupportedChainId.SEPOLIA]: ZERO_ADDRESS,
-  [SupportedChainId.TITAN]: ZERO_ADDRESS,
-  [SupportedChainId.TITAN_SEPOLIA]: ZERO_ADDRESS,
+  [SupportedChainId.TITAN]: TOKAMAK_CONTRACTS.OVM_ETH,
+  [SupportedChainId.TITAN_SEPOLIA]: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
   [SupportedChainId.THANOS_SEPOLIA]: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
 };
 

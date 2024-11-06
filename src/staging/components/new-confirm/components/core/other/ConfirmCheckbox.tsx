@@ -1,29 +1,20 @@
 import React from "react";
 import { Box, Checkbox, Button, Text } from "@chakra-ui/react";
 import CheckCustomIcon from "@/staging/components/common/CheckCustomIcon";
+import { Action, StandardHistory } from "@/staging/types/transaction";
 interface ConfirmCheckboxComponentProps {
   isChecked: boolean;
   onClickCheckbox: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  transactionData: StandardHistory;
 }
 
 export default function ConfirmCheckboxComponent(
   props: ConfirmCheckboxComponentProps
 ) {
-  const { onClickCheckbox, isChecked } = props;
+  const { onClickCheckbox, isChecked, transactionData } = props;
 
   return (
     <Box>
-      <Text
-        color={isChecked ? "#FFFFFF" : "#A0A3AD"}
-        fontWeight={600}
-        fontSize={"13px"}
-        lineHeight={"20px"}
-        letterSpacing={"0.01em"}
-      >
-        Estimated Time of Arrival:{" "}
-        <span style={{ color: isChecked ? "#FFFFFF" : "#A0A3AD" }}>~1 day</span>
-      </Text>
-
       <Checkbox
         mt={"6px"}
         isChecked={isChecked}
@@ -52,7 +43,11 @@ export default function ConfirmCheckboxComponent(
           lineHeight={"20px"}
           letterSpacing={"0.01em"}
         >
-          text will be changed
+          {`${
+            transactionData.action === Action.Withdraw
+              ? `I understand that I have to send a transaction on Ethereum to "Claim" my withdraw after 7 days.`
+              : "Text will be changed."
+          }`}
         </Text>
       </Checkbox>
     </Box>
