@@ -159,7 +159,7 @@ const TransactionItem = (props: TransactionItemProps) => {
         {!isActive && (txHash !== undefined || txHash !== "") && (
           <Flex cursor={"pointer"}>
             <Link
-              target='_blank'
+              target="_blank"
               href={`${blockExplorer}/tx/${txHash}`}
               textDecor={"none"}
               _hover={{ textDecor: "none" }}
@@ -174,7 +174,7 @@ const TransactionItem = (props: TransactionItemProps) => {
               >
                 Transaction
               </Text>
-              <Flex cursor='pointer'>
+              <Flex cursor="pointer">
                 <Image src={txlink} alt={"txlink"} />
               </Flex>
             </Link>
@@ -238,9 +238,9 @@ export default function CTConfirmHistoryFooter(props: {
           const blockTimestamp =
             key === "refund"
               ? //@ts-ignore
-                txData.blockTimestamps["cancelRequest"]
+              txData.blockTimestamps["cancelRequest"]
               : //@ts-ignore
-                txData.blockTimestamps[key];
+              txData.blockTimestamps[key];
           const isCancelCompleted =
             isInCT_REQUEST_CANCEL(txData.status) && key === "completed";
           if (typeof hash === "string") {
@@ -278,7 +278,7 @@ export default function CTConfirmHistoryFooter(props: {
   return (
     <Flex w={"100%"} flexDir={"column"}>
       <Box
-        bg='#15161D'
+        bg="#15161D"
         py={"16px"}
         px={"20px"}
         border={"1px, 1px, 0px, 1px"}
@@ -323,7 +323,7 @@ export default function CTConfirmHistoryFooter(props: {
       <Box w={"100%"} mt={"12px"}>
         <Text fontWeight={400} fontSize={"13px"} lineHeight={"20px"}>
           *This modal doesn't update in real-time.
-          <br /> Close & reopen it to view the latest data.
+          <br /> Please close & reopen it to view the latest data.
         </Text>
       </Box>
     </Flex>
