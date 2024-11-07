@@ -187,6 +187,7 @@ export function useGasFee() {
               0,
               "0x"
             );
+            // TODO: need to check the value to pass to the estimate gas function
             const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
               { ...tx, from: address }
             );

@@ -29,11 +29,11 @@ export default function useCallBridgeSwapAction() {
     write: _depositETH,
     contract: _depositETH_contract,
     isError,
-  } = useCallDeposit("depositETH");
+  } = useCallDeposit("bridgeETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
-    useCallDeposit("depositERC20");
+    useCallDeposit("bridgeERC20");
   const { write: _depositNativeToken_contract } =
-    useCallDeposit("depositNativeToken");
+    useCallDeposit("bridgeNativeToken");
   const {
     write: _withdraw,
     isError: _withdrawError,
