@@ -11,6 +11,8 @@ Visit our website to explore the Tokamak Bridge and start transferring tokens an
 
 - Token Transfers: Move tokens between Titan and Ethereum networks effortlessly.
 - Token Swaps: Utilize Uniswap contracts for secure and efficient token swaps.
+- Cross Trade: Experience quick Layer 2 token withdrawals with our Cross Trade service, optimizing both speed and cost.
+- Liquidity Provision and Management: Support liquidity provision and management through Uniswap Pools, enhancing asset accessibility and liquidity on Tokamak Bridge.
 - Interoperability: Seamlessly interact with different blockchain networks.
 
 ### Getting Started
