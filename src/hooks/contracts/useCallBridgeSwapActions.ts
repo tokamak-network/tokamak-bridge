@@ -25,6 +25,10 @@ export default function useCallBridgeSwapAction() {
   const { inToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
+
+  // TODO: should separate the deposit function's names on two networks: Titan/Thanos
+  // titan: deposit...
+  // thanos: bridge....
   const {
     write: _depositETH,
     contract: _depositETH_contract,

@@ -112,9 +112,10 @@ export function useGasFee() {
             if (isBalanceOver || !isApproved) {
               return 200000;
             }
+            // TODO: use the different functions on two networks
             if (isETH) {
               const estimatedGasUsage =
-                await _depositETH_contract.estimateGas.depositETH({
+                await _depositETH_contract.estimateGas.bridgeETH({
                   //@ts-ignore
                   account: address,
                   args: [200000, "0x"],
@@ -129,7 +130,7 @@ export function useGasFee() {
             // deposite TON to thanos
             if (isThanosChain(outNetwork.chainId) && isTONIn) {
               const estimatedGasUsage =
-                await _depositNativeToken_contract.estimateGas.depositNativeToken(
+                await _depositNativeToken_contract.estimateGas.bridgeNativeToken(
                   {
                     //@ts-ignore
                     account: address,
@@ -142,7 +143,7 @@ export function useGasFee() {
             }
 
             const estimatedGasUsage =
-              await _depositERC20_contract.estimateGas.depositERC20({
+              await _depositERC20_contract.estimateGas.bridgeERC20({
                 //@ts-ignore
                 account: address,
                 //@ts-ignore
