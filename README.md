@@ -9,9 +9,11 @@ Visit our website to explore the Tokamak Bridge and start transferring tokens an
 
 ### Features
 
-- Token Transfers: Move tokens between Titan and Ethereum networks effortlessly.
-- Token Swaps: Utilize Uniswap contracts for secure and efficient token swaps.
-- Interoperability: Seamlessly interact with different blockchain networks.
+- **Bridge**: Deposit and withdraw tokens between Ethereum and Titan
+- **Cross Trade**: Offers a faster, trustless way to withdraw from Titan to Ethereum
+- **Swap**: Exchange tokens using Uniswap v3 on both Ethereum and Titan
+- **Wrap & Unwrap**: ETH and TON can be wrapped to improve interoperability between dApps
+- **Liquidity**: Provide liquidity for Cross Trade and Uniswap v3 to earn fees
 
 ### Getting Started
 
