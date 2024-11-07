@@ -18,6 +18,7 @@ import { calculateGasMargin } from "@/utils/txn/calculateGasMargin";
 import { BigNumber } from "ethers";
 import { isThanosChain } from "@/utils/network/checkNetwork";
 import useIsTon from "../token/useIsTon";
+import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 
 export default function useCallBridgeSwapAction() {
   const { isConnected, address } = useAccount();
@@ -25,15 +26,20 @@ export default function useCallBridgeSwapAction() {
   const { inToken } = useInOutTokens();
   const { mode } = useGetMode();
   const { inNetwork, outNetwork } = useInOutNetwork();
+
+  // TODO: should separate the deposit function's names on two networks: Titan/Thanos
+  // titan: deposit...
+  // thanos: bridge....
+  const isThanos = outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID
   const {
     write: _depositETH,
     contract: _depositETH_contract,
     isError,
-  } = useCallDeposit("depositETH");
+  } = useCallDeposit(isThanos ? "bridgeETH": "depositETH");
   const { write: _depositERC20, isError: _depositERC20Error } =
-    useCallDeposit("depositERC20");
+    useCallDeposit(isThanos ? "bridgeERC20": "depositERC20");
   const { write: _depositNativeToken_contract } =
-    useCallDeposit("depositNativeToken");
+    useCallDeposit(isThanos ? "bridgeNativeToken": "depositNativeToken");
   const {
     write: _withdraw,
     isError: _withdrawError,
