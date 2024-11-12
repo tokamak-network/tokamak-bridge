@@ -1,0 +1,16 @@
+# Ignore the node_modules directory  
+node_modules  
+dist  
+build  
+.next
+.vscode
+
+.git  
+.gitignore  
+
+# Ignore Dockerfile itself if you need  
+Dockerfile  
+
+# Ignore specific files/directories  
+README.md  
+test/  
