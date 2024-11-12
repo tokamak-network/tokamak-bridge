@@ -25,7 +25,10 @@ import {
 import { Action, CT_ACTION, HISTORY_SORT } from "@/staging/types/transaction";
 import { useHistoryTab } from "@/staging/hooks/useHistoryTab";
 import { BetaIcon } from "@/staging/components/cross-trade/components/common/BetaIcon";
-import { ctConfirmModalStatus } from "@/recoil/modal/atom";
+import {
+  ctConfirmModalStatus,
+  depositWithdrawConfirmModalStatus,
+} from "@/recoil/modal/atom";
 import { useRecoilValue } from "recoil";
 
 export default function AccountHistory() {
@@ -38,6 +41,9 @@ export default function AccountHistory() {
   const [_selectedTransactionCategory, setSelectedTransactionCategory] =
     useRecoilState(selectedTransactionCategory);
   const checkConfirmModal = useRecoilValue(ctConfirmModalStatus).isOpen;
+  const checkDepositWithdrawConfirmModal = useRecoilValue(
+    depositWithdrawConfirmModalStatus
+  ).isOpen;
 
   useEffect(() => {
     if (address === undefined) {
@@ -134,7 +140,9 @@ export default function AccountHistory() {
       variant='clickThrough'
       trapFocus={false}
       useInert={true}
-      blockScrollOnMount={!checkConfirmModal ? true : false}
+      blockScrollOnMount={
+        !checkConfirmModal && !checkDepositWithdrawConfirmModal
+      }
     >
       <DrawerOverlay
         bg={{ base: "#000000F0", lg: "none" }}
