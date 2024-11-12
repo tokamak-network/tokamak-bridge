@@ -1,0 +1,12 @@
+version: "3.8"
+
+services:
+  tokamak-bridge-app:
+    build: ./
+    image: tokamak-bridge-app:latest
+    container_name: tokamak-bridge-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - ./.env
+    restart: on-failure
