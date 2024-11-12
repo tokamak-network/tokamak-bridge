@@ -46,7 +46,7 @@ export default function ApproveButton(props: ApproveButtonProps) {
       isInputZero) &&
     (confirmedApproveTransaction === undefined ||
       confirmedApproveTransaction?.tokenData?.[0]?.tokenAddress.toLowerCase() !==
-      inToken?.tokenAddress.toLowerCase() ||
+        inToken?.tokenAddress.toLowerCase() ||
       isInputZero)
   ) {
     return null;
@@ -132,7 +132,11 @@ export default function ApproveButton(props: ApproveButtonProps) {
             callApprove();
             setIsDrawerOpen(false);
           }}
-          bgColor={!isConfirmed || isLoading || isRevokeForUSDT ? "#17181D !important" : "#007AFF !important"}
+          bgColor={
+            !isConfirmed || isLoading || isRevokeForUSDT
+              ? "#17181D !important"
+              : "#007AFF !important"
+          }
           opacity={"1 !important"}
           cursor={"pointer !important"}
         >

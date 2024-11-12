@@ -27,6 +27,9 @@ import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 import useIsLoading from "@/hooks/ui/useIsLoading";
 import { useSmartRouter } from "@/hooks/uniswap/useSmartRouter";
 import useCallBridgeSwapAction from "@/hooks/contracts/useCallBridgeSwapActions";
+import commafy from "@/utils/trim/commafy";
+import ApproveButton from "../other/ApproveButton";
+import { useApprove } from "@/hooks/token/useApproval";
 
 export default function SwapConfirmModal() {
   const { swapConfirmModal, onCloseSwapConfirmModal } = useSwapConfirm();
@@ -38,14 +41,33 @@ export default function SwapConfirmModal() {
   const [isLoading] = useIsLoading();
   const { onClick } = useCallBridgeSwapAction();
   const { routingPath } = useSmartRouter();
+  const { isApproved } = useApprove();
 
   const isLoadingCheck =
     isLoading || routingPath === null || routingPath === undefined;
 
-  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
+  const { tokenPriceWithAmount: token0PriceWithAmount } = useGetMarketPrice({
     tokenName: inToken?.tokenName as string,
-    amount: Number(1),
+    amount: Number(inToken?.parsedAmount),
   });
+
+  const { tokenMarketPrice: token0MarketPrice } = useGetMarketPrice({
+    tokenName: inToken?.tokenName as string,
+  });
+
+  const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
+    tokenName: outToken?.tokenName as string,
+    amount: Number(outToken?.parsedAmount),
+  });
+
+  const deductionPercentage = useMemo(() => {
+    console.log(token0PriceWithAmount);
+    console.log(token1PriceWithAmount);
+    if (token1PriceWithAmount === 0) return "0";
+    const deduction =
+      (token1PriceWithAmount ?? 1) / (token0PriceWithAmount ?? 1) - 1;
+    return commafy(deduction * 100, 2);
+  }, [token0PriceWithAmount, token1PriceWithAmount, inToken, outToken]);
 
   return (
     <Modal
@@ -56,7 +78,7 @@ export default function SwapConfirmModal() {
       <ModalOverlay />
       <ModalContent
         width={"404px"}
-        bg='#1F2128'
+        bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
       >
@@ -74,22 +96,26 @@ export default function SwapConfirmModal() {
             py={"12px"}
             border={"1px solid #313442"}
             borderRadius={"8px"}
-            bg='#0F0F12'
+            bg="#0F0F12"
           >
             <Box>
               <ConfirmDetails isInNetwork={true} inToken={inToken} />
-              <ConfirmDetails isInNetwork={false} inToken={outToken} />
+              <ConfirmDetails
+                isInNetwork={false}
+                inToken={outToken}
+                deductionPercentage={deductionPercentage}
+              />
             </Box>
           </Box>
           <Box mt={"12px"}>
             <ConfirmSubDetail
               type={ConfirmDetailType.Rate}
-              tokenValue={`1 ${inToken?.tokenSymbol} = ${formatNumber(
-                outPrice
-              )} ${outToken?.tokenSymbol}`}
+              tokenValue={`${formatNumber(outPrice)} ${
+                outToken?.tokenSymbol
+              } = 1 ${inToken?.tokenSymbol}`}
               gasValue={
-                token1PriceWithAmount
-                  ? `$${formatNumber(token1PriceWithAmount)}`
+                token0PriceWithAmount
+                  ? `$${formatNumber(token0MarketPrice)}`
                   : "NA"
               }
               isLoading={isLoadingCheck}
@@ -111,36 +137,38 @@ export default function SwapConfirmModal() {
             />
           </Box>
         </ModalBody>
-        <ModalFooter p={0} display='block'>
-          <Button
-            mt={"12px"}
-            width='full'
-            height={"48px"}
-            borderRadius={"8px"}
-            sx={{
-              backgroundColor: "#007AFF",
-              color: "#FFFFFF",
-            }}
-            onClick={() => {
-              onClick();
-              onCloseSwapConfirmModal();
-            }}
-            _active={{}}
-            _hover={{}}
-            _focus={{}}
-            isDisabled={isLoadingCheck ? true : false}
-            _disabled={{
-              color: "#8E8E92",
-              bgColor: "#17181D",
-            }}
-            opacity={"1 !important"}
-          >
-            <Flex alignItems={"center"}>
-              <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
-                Swap
-              </Text>
-            </Flex>
-          </Button>
+        <ModalFooter p={0} display="block">
+          <Flex gap={"12px"} flexDir={"column"} mt={"12px"}>
+            <ApproveButton isConfirmed={true} />
+            <Button
+              width="full"
+              height={"48px"}
+              borderRadius={"8px"}
+              sx={{
+                backgroundColor: "#007AFF",
+                color: "#FFFFFF",
+              }}
+              onClick={() => {
+                onClick();
+                onCloseSwapConfirmModal();
+              }}
+              _active={{}}
+              _hover={{}}
+              _focus={{}}
+              isDisabled={isLoadingCheck || !isApproved ? true : false}
+              _disabled={{
+                color: "#8E8E92",
+                bgColor: "#17181D",
+              }}
+              opacity={"1 !important"}
+            >
+              <Flex alignItems={"center"}>
+                <Text fontWeight={600} fontSize={"16px"} lineHeight={"24px"}>
+                  Swap
+                </Text>
+              </Flex>
+            </Button>
+          </Flex>
         </ModalFooter>
       </ModalContent>
     </Modal>

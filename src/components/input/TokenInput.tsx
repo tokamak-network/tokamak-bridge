@@ -143,7 +143,6 @@ export default function TokenInput(props: {
 
     //This token is inToken
     if (inToken && selectedInToken) {
-
       if (value === "") {
         return setSelectedInToken({
           ...selectedInToken,
@@ -151,7 +150,9 @@ export default function TokenInput(props: {
           parsedAmount: null,
         });
       }
-      const decimalPattern = new RegExp(`^\\d+(\\.\\d{0,${selectedInToken.decimals}})?$`);
+      const decimalPattern = new RegExp(
+        `^\\d+(\\.\\d{0,${selectedInToken.decimals}})?$`
+      );
       if (!decimalPattern.test(value)) return;
       const parsedAmount = ethers.utils.parseUnits(
         value,
@@ -387,10 +388,10 @@ export default function TokenInput(props: {
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-        ? isFocused
-          ? String(selectedOutToken?.parsedAmount)
-          : trimAmount(selectedOutToken?.parsedAmount, 8)
-        : defaultValue || "";
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
+      : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -436,6 +437,14 @@ export default function TokenInput(props: {
       return token1PriceWithAmount;
     }
     return "0.00";
+  }, [token0PriceWithAmount, token1PriceWithAmount, inToken]);
+
+  const deductionPercentage = useMemo(() => {
+    if (mode !== "Swap" || inToken) return 0;
+    if (token1PriceWithAmount === 0) return 0;
+    const deduction =
+      (token1PriceWithAmount ?? 1) / (token0PriceWithAmount ?? 1) - 1;
+    return commafy(deduction * 100, 2);
   }, [token0PriceWithAmount, token1PriceWithAmount, inToken]);
 
   useEffect(() => {
@@ -547,8 +556,8 @@ export default function TokenInput(props: {
                     mobileView && isBalanceOver
                       ? "#DD3A44"
                       : mobileView && !inToken
-                        ? "#A0A3AD !important"
-                        : "#FFFFFF"
+                      ? "#A0A3AD !important"
+                      : "#FFFFFF"
                   }
                   fontSize={{ base: 22, lg: 28 }}
                   fontWeight={{ base: 500, lg: 600 }}
@@ -617,9 +626,19 @@ export default function TokenInput(props: {
             <Warning />
           )
         ) : (
-          <Text fontSize={12} fontWeight={500} color={"#A0A3AD"} opacity={0.8}>
-            {`$${commafy(marketPrice, 2)}`}
-          </Text>
+          <Flex gap={"4px"} alignItems={"center"}>
+            <Text
+              fontSize={12}
+              fontWeight={500}
+              color={"#A0A3AD"}
+              opacity={0.8}
+            >
+              {`$${commafy(marketPrice, 2)}`}
+            </Text>
+            <Text fontWeight={600} color={"#DD3A44"} fontSize={"12px"}>
+              {deductionPercentage ? `(${deductionPercentage}%)` : ""}
+            </Text>
+          </Flex>
         )}
       </Flex>
     </Flex>

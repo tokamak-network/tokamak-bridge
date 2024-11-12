@@ -14,6 +14,12 @@ import { FormatNumber } from "@/staging/components/common/FormatNumber";
 import { TokenInfo } from "types/token/supportedToken";
 import getBlockExplorerUrl from "@/staging/utils/getBlockExplorerUrl";
 import commafy from "@/utils/trim/commafy";
+import { useInOutNetwork } from "@/hooks/network";
+import { getKeyByValue } from "@/utils/ts/getKeyByValue";
+import {
+  NetworkDisplayName,
+  SupportedChainId,
+} from "@/types/network/supportedNetwork";
 
 interface Token {
   chainId: number;
@@ -29,11 +35,19 @@ interface ConfirmDetailProps {
         tokenAddress: string | null;
       })
     | null;
+  deductionPercentage?: string;
 }
 
 export default function ConfirmDetails(props: ConfirmDetailProps) {
-  const { isInNetwork, inToken } = props;
+  const { isInNetwork, inToken, deductionPercentage } = props;
+  const { inNetwork } = useInOutNetwork();
+  const chainName =
+    getKeyByValue(
+      SupportedChainId,
+      inNetwork?.chainId ?? SupportedChainId.MAINNET
+    ) || "";
 
+  const displayNetworkName = NetworkDisplayName[chainName];
   const { tokenPriceWithAmount: tokenPriceWithAmount } = useGetMarketPrice({
     tokenName: inToken?.tokenName as string,
     amount: Number(inToken?.parsedAmount?.replaceAll(",", "")),
@@ -52,7 +66,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
       alignItems={"center"}
       mt={isInNetwork ? undefined : "16px"}
     >
-      <Box>
+      <Flex flexDir={"column"} gap={"4px"}>
         <Text
           fontWeight={500}
           fontSize={"14px"}
@@ -61,55 +75,77 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
         >
           {isInNetwork ? "Sell" : "Receive"}
         </Text>
-      </Box>
+        <Flex gap={"4px"} alignItems={"center"}>
+          <NetworkSymbol
+            networkI={inToken?.token.chainId ?? SupportedChainId.MAINNET}
+            networkW={14}
+            networkH={14}
+          />
+          <Text
+            fontWeight={400}
+            fontSize={"12px"}
+            lineHeight={"18px"}
+            color={"#A0A3AD"}
+          >
+            {displayNetworkName}
+          </Text>
+        </Flex>
+      </Flex>
       <Box>
-        <Flex>
-          <Flex alignItems={"center"}>
+        <Flex gap={"8px"} alignItems={"center"} justifyContent={"right"}>
+          <FormatNumber
+            style={{
+              fontWeight: 600,
+              fontSize: "16px",
+              lineHeight: "24px",
+              color: "#FFFFFF",
+            }}
+            value={inToken?.parsedAmount}
+            tokenSymbol={inToken?.tokenSymbol}
+          />
+          <Link
+            target="_blank"
+            href={
+              inToken?.token.chainId
+                ? `${
+                    getBlockExplorerUrl(inToken?.token.chainId)
+                    /** To be updated with the correct values after the proper type design @Robert */
+                  }/address/${inToken.tokenAddress}`
+                : ""
+            }
+          >
             <TokenSymbol
-              w={24}
-              h={24}
+              w={20}
+              h={20}
               tokenType={inToken?.tokenSymbol as string}
             />
-          </Flex>
-          <Box ml={"8px"}>
-            <Flex>
-              <FormatNumber
-                style={{
-                  marginRight: "6px",
-                  fontWeight: 600,
-                  fontSize: "16px",
-                  lineHeight: "24px",
-                  color: "#FFFFFF",
-                }}
-                value={inToken?.parsedAmount}
-                tokenSymbol={inToken?.tokenSymbol}
-              />
-              <Link
-                target="_blank"
-                href={
-                  inToken?.token.chainId
-                    ? `${
-                        getBlockExplorerUrl(inToken?.token.chainId)
-                        /** To be updated with the correct values after the proper type design @Robert */
-                      }/address/${inToken.tokenAddress}`
-                    : ""
-                }
-                textDecor={"none"}
-                _hover={{ textDecor: "none" }}
-                display={"flex"}
-              >
-                <Image src={TxLink} alt={"TxLink"} />
-              </Link>
-            </Flex>
+          </Link>
+        </Flex>
+        <Flex
+          gap={"4px"}
+          alignItems={"center"}
+          justifyContent={"right"}
+          marginRight={"28px"}
+        >
+          <Text
+            fontWeight={400}
+            fontSize={"12px"}
+            lineHeight={"18px"}
+            color={"#A0A3AD"}
+            textAlign={"right"}
+          >
+            {marketPrice}
+          </Text>
+          {deductionPercentage && (
             <Text
               fontWeight={400}
-              fontSize={"12px"}
               lineHeight={"18px"}
-              color={"#A0A3AD"}
+              color={"#DD3A44"}
+              fontSize={"12px"}
             >
-              {marketPrice}
+              ({deductionPercentage}%)
             </Text>
-          </Box>
+          )}
         </Flex>
       </Box>
     </Flex>

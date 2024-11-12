@@ -39,8 +39,9 @@ import {
 import { THANOS_SEPOLIA_CHAIN_ID } from "@/constant/network/thanos";
 import { getTransactionConstants } from "@/staging/constants/transactionTime";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
-import { trimAmountForFormatter } from "@/utils/trim";
+import { trimAmount, trimAmountForFormatter } from "@/utils/trim";
 import commafy from "@/utils/trim/commafy";
+import { useAmountOut } from "@/hooks/swap/useSwapTokens";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -450,6 +451,7 @@ const Title = (props: {
   const { gasCostUS, totalGasCost } = useGasFee();
   const { isBalanceOver } = useInputBalanceCheck();
   const { mobileView } = useMediaView();
+  const { amountOut, minimumReceived } = useAmountOut();
 
   useEffect(() => {
     if (isExpanded) {
@@ -468,6 +470,10 @@ const Title = (props: {
   const { tokenPriceWithAmount: token1PriceWithAmount } = useGetMarketPrice({
     tokenName: outToken?.tokenName as string,
     amount: Number(isWrapUnwrap ? 1 : outPrice),
+  });
+  const { tokenMarketPrice: token1Price } = useGetMarketPrice({
+    tokenName: inToken?.tokenName as string,
+    amount: 1,
   });
 
   const formatPrice = (price: number | undefined) => {
@@ -574,60 +580,75 @@ const Title = (props: {
         w={"100%"}
         justifyContent={"space-between"}
         alignItems={"center"}
-        cursor={isOpen || mobileView ? "" : "pointer"}
-        onClick={() => !isOpen && !mobileView && setIsExpended(!isExpanded)}
         fontSize={{ base: 12, lg: 14 }}
       >
-        {isLoading ? (
-          <Box w={"100%"} h={"20px"} mb={"5px"}>
-            <GradientSpinner h={"100%"} borderWidth={0} />
-          </Box>
-        ) : (
-          <Flex>
-            <Text>
-              {1} {inToken?.tokenSymbol}
+        <Flex flexDir={"column"} gap={"8px"} width={"100%"}>
+          <Flex justifyContent={"space-between"}>
+            <Text color={"#A0A3AD"} fontWeight={400}>
+              Rate
             </Text>
-            <Text mx={mobileView ? "4px" : "9px"}>=</Text>
-            <Text>
-              {isWrapUnwrap ? 1 : formatPrice(outPrice)} {outToken?.tokenSymbol}
-              {mobileView && (
-                <Text as="span" color="#A0A3AD">
-                  (${token1PriceWithAmount})
+            {isLoading ? (
+              <Box w={"86px"} h={"100%"} borderRadius={"4px"}>
+                <GradientSpinner w={"86px"} h={"23px"} borderRadius={"4px"} />
+              </Box>
+            ) : (
+              <Flex gap={"4px"}>
+                <Text fontWeight={600} lineHeight={"21px"}>
+                  {`${commafy(token1PriceWithAmount?.toString(), 4)} ${
+                    outToken?.tokenSymbol
+                  } = 1 ${inToken?.tokenSymbol}`}
                 </Text>
-              )}
-            </Text>
-            {/* {isOpen === false && (
-              <Text color={"#A0A3AD"} ml={"4px"}>
-                ($1.000)
-              </Text>
-            )} */}
-          </Flex>
-        )}
-        {isLoading
-          ? null
-          : isOpen === false && (
-              <Flex>
-                {(!isExpanded || mobileView) && (
-                  <>
-                    <Image src={GasImg} alt={"gasStation"} />
-                    <Text
-                      fontSize={{ base: 11, lg: 14 }}
-                      fontWeight={400}
-                      color={"#A0A3AD"}
-                      ml={"6px"}
-                      sx={{ mr: mobileView ? 0 : "13px" }}
-                    >
-                      {gasCostUS ? `$${gasCostUS}` : `NA`}
-                    </Text>
-                  </>
-                )}
-                {!mobileView && (
-                  <motion.div animate={arrowControl}>
-                    <Image src={AccoridonArrowImg} alt={"AccoridonArrowImg"} />
-                  </motion.div>
-                )}
+                <Text fontWeight={400} lineHeight={"21px"} color={"#A0A3AD"}>
+                  {`($${commafy(token1Price?.toString(), 2)})`}
+                </Text>
               </Flex>
             )}
+          </Flex>
+          <Flex justifyContent={"space-between"}>
+            <Text color={"#A0A3AD"} fontWeight={400}>
+              Min. received
+            </Text>
+            {isLoading ? (
+              <Box w={"86px"} h={"100%"} borderRadius={"4px"}>
+                <GradientSpinner w={"86px"} h={"23px"} borderRadius={"4px"} />
+              </Box>
+            ) : (
+              <Flex gap={"4px"}>
+                <Text fontWeight={600} lineHeight={"21px"}>
+                  {`${commafy(minimumReceived, 4)} ${outToken?.tokenSymbol}`}
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+          <Flex justifyContent={"space-between"}>
+            <Text color={"#A0A3AD"} fontWeight={400}>
+              Network fee
+            </Text>
+            {isLoading ? (
+              <Box w={"86px"} h={"100%"} borderRadius={"4px"}>
+                <GradientSpinner w={"86px"} h={"23px"} borderRadius={"4px"} />
+              </Box>
+            ) : (
+              <Flex gap={"4px"}>
+                <Image src={GasImg} alt={"gasStation"} />
+                <Text fontWeight={600} lineHeight={"21px"}>
+                  {`${
+                    totalGasCost
+                      ? `${
+                          Number(totalGasCost) >= 0.0001
+                            ? commafy(totalGasCost, 4)
+                            : "<0.0001"
+                        } ETH`
+                      : `NA`
+                  }`}
+                </Text>
+                <Text fontWeight={400} lineHeight={"21px"} color={"#A0A3AD"}>
+                  {`(${gasCostUS ? `$${gasCostUS}` : `NA`})`}
+                </Text>
+              </Flex>
+            )}
+          </Flex>
+        </Flex>
       </Flex>
     );
   }
@@ -657,8 +678,6 @@ export default function TransactionDetail(props: {
   const { isTONatPair } = useIsTon();
   const { outNetwork } = useInOutNetwork();
 
-  const isDeposit = mode === "Deposit";
-
   const isWrapUnwrap =
     mode === "Wrap" ||
     mode === "Unwrap" ||
@@ -681,28 +700,11 @@ export default function TransactionDetail(props: {
   return (
     <Flex
       w={"100%"}
-      // h={isExpanded ? "310px" : "48px"}
       minH={{ base: "40px", lg: "48px" }}
-      bg={isDeposit ? "#100E12" : "#1f2128"}
+      bg={"#100E12"}
       borderRadius={"8px"}
-      px={!isMobile ? { base: "16px", lg: "20px" } : ""}
+      px={!isMobile ? { base: "12px", lg: "12px" } : ""}
       flexDir={"column"}
-      pt={
-        !isMobile && !isDeposit
-          ? {
-              base: isExpanded ? "11px" : "11px",
-              lg: isExpanded ? "20px" : "14px",
-            }
-          : ""
-      }
-      pb={
-        !isDeposit
-          ? {
-              base: isExpanded ? "12px" : "",
-              lg: isExpanded ? "20px" : "",
-            }
-          : ""
-      }
     >
       {!isMobile && (
         <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />

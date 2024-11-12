@@ -60,13 +60,6 @@ export type WrapDetailProp = {
 };
 
 export type SwapDetailProp = {
-  // title?:
-  //   | "Expected output"
-  //   | "Minimum received"
-  //   | "Minimum received after slippage"
-  //   | "Price impact"
-  //   | "Estimated gas fees"
-  //   | "Estimated L2 execution fee (sans L1 fee)";
   title?: string;
   content?: string | undefined;
   gasFee?: string;

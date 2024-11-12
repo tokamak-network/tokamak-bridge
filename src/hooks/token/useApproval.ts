@@ -176,10 +176,10 @@ export function useApprove(_mode?: ActionMode) {
   ]);
 
   return {
-    isApproved,
-    callApprove,
+    isApproved: isApproved,
+    callApprove: callApprove,
     isLoading: isLoading || usdtRevokeIsLoading,
     hash: data?.hash,
-    isRevokeForUSDT,
+    isRevokeForUSDT: isRevokeForUSDT,
   };
 }
