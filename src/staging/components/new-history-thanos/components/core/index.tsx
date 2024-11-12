@@ -15,9 +15,7 @@ import Complete from "@/staging/components/new-history-thanos/components/core/co
 import LegacyPending from "@/staging/components/new-history/components/core/pending";
 import LegacyComplete from "@/staging/components/new-history/components/core/complete";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  selectedTransactionCategory,
-} from "@/recoil/history/transaction";
+import { selectedTransactionCategory } from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
@@ -26,6 +24,7 @@ import { pendingTransactionHashes } from "@/recoil/modal/atom";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 import { isThanosChain } from "@/utils/network/checkNetwork";
 import { useBridgeHistory } from "@/staging/hooks/bridge/useBridgeHistory";
+import useMediaView from "@/hooks/mediaView/useMediaView";
 
 const NoAcitivityComponent = () => {
   return (
@@ -51,6 +50,7 @@ const LoadingSpinner = () => {
 };
 
 export default function AccountHistoryNew() {
+  const { mobileView } = useMediaView();
   const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
     useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
@@ -83,7 +83,7 @@ export default function AccountHistoryNew() {
     provideHistory,
   ]);
   return (
-    <Flex flexDirection="column" gap="2" h={"100%"}>
+    <Flex flexDirection='column' gap='2' h={"100%"}>
       {!historyData && <LoadingSpinner />}
       {historyData?.length === 0 && <NoAcitivityComponent />}
       {historyData?.map((transaction, index) => {
@@ -94,14 +94,14 @@ export default function AccountHistoryNew() {
           transaction.status === CT_PROVIDE.Completed;
         const key =
           isDepositTransactionHistory(transaction) ||
-            isWithdrawTransactionHistory(transaction)
+          isWithdrawTransactionHistory(transaction)
             ? transaction.transactionHashes.initialTransactionHash
             : index;
-        const l2ChainId = getBridgeL2ChainId(transaction)
+        const l2ChainId = getBridgeL2ChainId(transaction);
         return (
           <Box
             key={`${transaction.action}-${key}`}
-            w={"336px"}
+            w={mobileView ? "calc(100% - 8px)" : "336px"}
             px={"12px"}
             py={isCompleted ? "6px" : "8px"}
             borderRadius={"8px"}
@@ -110,12 +110,16 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              isCrossTradyHistory || (!isThanosChain(l2ChainId) && transaction.action !== Action.Deposit) ? (
+              isCrossTradyHistory ||
+              (!isThanosChain(l2ChainId) &&
+                transaction.action !== Action.Deposit) ? (
                 <LegacyComplete {...transaction} />
               ) : (
                 <Complete {...transaction} />
               )
-            ) : isCrossTradyHistory || (!isThanosChain(l2ChainId) && transaction.action !== Action.Deposit) ? (
+            ) : isCrossTradyHistory ||
+              (!isThanosChain(l2ChainId) &&
+                transaction.action !== Action.Deposit) ? (
               <LegacyPending transaction={transaction} />
             ) : (
               <Pending transaction={transaction} />
