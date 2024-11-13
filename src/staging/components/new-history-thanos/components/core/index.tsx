@@ -24,6 +24,7 @@ import { pendingTransactionHashes } from "@/recoil/modal/atom";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 import { isThanosChain } from "@/utils/network/checkNetwork";
 import { useBridgeHistory } from "@/staging/hooks/bridge/useBridgeHistory";
+import { NoHistoryComponent } from "./NoHistoryComponent";
 
 const NoAcitivityComponent = () => {
   return (
@@ -49,50 +50,37 @@ const LoadingSpinner = () => {
 };
 
 export default function AccountHistoryNew() {
-  const { depositHistory, withdrawHistory, requestHistory, provideHistory } =
-    useBridgeHistory();
+  const { withdrawHistory } = useBridgeHistory();
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {
       case Action.Deposit:
-        return depositHistory;
+        return undefined;
       case Action.Withdraw:
         return withdrawHistory;
       case CT_ACTION.REQUEST:
-        return requestHistory;
+        return undefined;
       case CT_ACTION.PROVIDE:
-        return provideHistory;
+        return undefined;
       default:
         return;
     }
-  }, [
-    _selectedTransactionCategory,
-    depositHistory,
-    withdrawHistory,
-    requestHistory,
-    provideHistory,
-  ]);
+  }, [_selectedTransactionCategory, withdrawHistory]);
   return (
     <Flex flexDirection="column" gap="2" h={"100%"}>
-      {!historyData && <LoadingSpinner />}
+      {historyData === undefined && <NoHistoryComponent />}
+      {historyData === null && <LoadingSpinner />}
       {historyData?.length === 0 && <NoAcitivityComponent />}
       {historyData?.map((transaction, index) => {
-        const isCompleted =
-          transaction.status === Status.Completed ||
-          transaction.status === CT_REQUEST.Completed ||
-          transaction.status === CT_REQUEST_CANCEL.Completed ||
-          transaction.status === CT_PROVIDE.Completed;
+        const isCompleted = transaction.status === Status.Completed;
         const key =
           isDepositTransactionHistory(transaction) ||
           isWithdrawTransactionHistory(transaction)
             ? transaction.transactionHashes.initialTransactionHash
             : index;
         const l2ChainId = getBridgeL2ChainId(transaction);
-        const isCrossTradeHistory =
-          transaction.action === CT_ACTION.PROVIDE ||
-          transaction.action === CT_ACTION.REQUEST;
         return (
           <Box
             key={`${transaction.action}-${key}`}
@@ -105,19 +93,9 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              isCrossTradeHistory ||
-              (!isThanosChain(l2ChainId) &&
-                transaction.action !== Action.Deposit) ? (
-                <LegacyComplete {...transaction} />
-              ) : (
-                <Complete {...transaction} />
-              )
-            ) : isCrossTradeHistory ||
-              (!isThanosChain(l2ChainId) &&
-                transaction.action !== Action.Deposit) ? (
-              <LegacyPending transaction={transaction} />
+              <LegacyComplete {...transaction} />
             ) : (
-              <Pending transaction={transaction} />
+              <LegacyPending transaction={transaction} />
             )}
           </Box>
         );
