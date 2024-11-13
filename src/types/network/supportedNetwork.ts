@@ -83,7 +83,7 @@ export const supportedChain: SupportedChainProperties[] = [
     chainName: "TITAN",
     networkImage: SYMBOL_LEGACY_TITAN,
     rpcAddress: "",
-    nativeToken: "TON",
+    nativeToken: "ETH",
     isTokamak: true,
     layer: "L2",
     isTOP: true,
@@ -106,6 +106,7 @@ export const supportedChain: SupportedChainProperties[] = [
     nativeToken: "ETH",
     layer: "L2",
     isTestnet: true,
+    isTOP: true
   },
 ];
 

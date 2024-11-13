@@ -8,13 +8,24 @@ import {
   Link,
   Flex,
 } from "@chakra-ui/react";
-import { useRecoilState } from "recoil";
-import { useState } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
 import useMediaView from "@/hooks/mediaView/useMediaView";
+import { actionMode, networkStatus } from "@/recoil/bridgeSwap/atom";
 
 export const LegacyTitanWarningModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { mobileView } = useMediaView();
+  const { mode } = useRecoilValue(actionMode);
+  const [network, setNetwork] = useRecoilState(networkStatus);
+  useEffect(() => {
+    setIsOpen(true);
+  }, [mode]);
+
+  const handleCloseModal = () => {
+    setIsOpen(false);
+    if (mode !== "Withdraw") setNetwork({ inNetwork: null, outNetwork: null });
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} isCentered>
@@ -63,7 +74,7 @@ export const LegacyTitanWarningModal = () => {
             bgColor={"#007AFF"}
             _hover={{}}
             _active={{}}
-            onClick={() => setIsOpen(false)}
+            onClick={handleCloseModal}
           >
             {mobileView ? (
               <Text fontWeight={600} fontSize={"14px"} lineHeight={"22px"}>

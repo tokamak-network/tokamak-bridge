@@ -191,9 +191,11 @@ export default function NetworkDropdown(props: {
   useEffect(() => {
     if (isConnected === false) {
       if (inNetwork && network?.inNetwork?.chainId) {
-        const connectedNetwork = supportedChainOnProd.filter((supportedChain) => {
-          return supportedChain.chainId === network?.inNetwork?.chainId;
-        })[0];
+        const connectedNetwork = supportedChainOnProd.filter(
+          (supportedChain) => {
+            return supportedChain.chainId === network?.inNetwork?.chainId;
+          }
+        )[0];
 
         setSelectedOption({
           ...connectedNetwork,
@@ -359,7 +361,6 @@ export default function NetworkDropdown(props: {
         label: chainInfo.chainName,
       };
     });
-
   return (
     <Box ref={wrapperRef}>
       <Select
