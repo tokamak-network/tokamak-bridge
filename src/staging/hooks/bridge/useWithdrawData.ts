@@ -37,6 +37,7 @@ import L2ThanosStandardBridgeAbi from "@/constant/abis/L2ThanosStandardBridge.js
 import L2TitanStandardBridgeAbi from "@/constant/abis/L2StandardBridge.json";
 import { useThanosSubgraph } from "../subgraph/useThanosSubgraph";
 import { useTitanSubgraph } from "../subgraph/useTitanSubgraph";
+import { isSupportedOnProd } from "@/utils/network/checkNetwork";
 
 
 
@@ -329,7 +330,7 @@ export const useWithdrawData = () => {
   }, [isConnectedToMainNetwork, setThanosWithdrawHistory, setTitanWithdrawHistory]);
   const getAllWithdrawData = useCallback(async () => {
     if (
-      titanWithdrawalHistory.history &&
+      titanWithdrawalHistory.history ||
       thanosSepWithdrawHistory.history
     ) {
 
@@ -351,6 +352,7 @@ export const useWithdrawData = () => {
 
   useEffect(() => {
     if (pendingTxHashes.length > 0 || isConnectedToMainNetwork) return;
+    if (!isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA)) return;
     fetchThanosData().catch((error) => {
       console.error("Error in fetching thanos withdraw data", error);
     });

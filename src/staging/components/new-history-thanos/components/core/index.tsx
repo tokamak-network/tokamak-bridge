@@ -15,9 +15,7 @@ import Complete from "@/staging/components/new-history-thanos/components/core/co
 import LegacyPending from "@/staging/components/new-history/components/core/pending";
 import LegacyComplete from "@/staging/components/new-history/components/core/complete";
 import { useRecoilState, useRecoilValue } from "recoil";
-import {
-  selectedTransactionCategory,
-} from "@/recoil/history/transaction";
+import { selectedTransactionCategory } from "@/recoil/history/transaction";
 import GradientSpinner from "@/components/ui/GradientSpinner";
 import Image from "next/image";
 import NoAcitivity from "@/assets/icons/accountHistory/noActivityIcon.svg";
@@ -56,12 +54,6 @@ export default function AccountHistoryNew() {
   const _selectedTransactionCategory = useRecoilValue(
     selectedTransactionCategory
   );
-  const isCrossTradyHistory = useMemo(() => {
-    return (
-      _selectedTransactionCategory === CT_ACTION.REQUEST ||
-      _selectedTransactionCategory === CT_ACTION.PROVIDE
-    );
-  }, [_selectedTransactionCategory]);
   const historyData = useMemo(() => {
     switch (_selectedTransactionCategory) {
       case Action.Deposit:
@@ -94,10 +86,13 @@ export default function AccountHistoryNew() {
           transaction.status === CT_PROVIDE.Completed;
         const key =
           isDepositTransactionHistory(transaction) ||
-            isWithdrawTransactionHistory(transaction)
+          isWithdrawTransactionHistory(transaction)
             ? transaction.transactionHashes.initialTransactionHash
             : index;
-        const l2ChainId = getBridgeL2ChainId(transaction)
+        const l2ChainId = getBridgeL2ChainId(transaction);
+        const isCrossTradyHistory =
+          transaction.action === CT_ACTION.PROVIDE ||
+          transaction.action === CT_ACTION.REQUEST;
         return (
           <Box
             key={`${transaction.action}-${key}`}
@@ -110,12 +105,16 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              isCrossTradyHistory || (!isThanosChain(l2ChainId) && transaction.action !== Action.Deposit) ? (
+              isCrossTradyHistory ||
+              (!isThanosChain(l2ChainId) &&
+                transaction.action !== Action.Deposit) ? (
                 <LegacyComplete {...transaction} />
               ) : (
                 <Complete {...transaction} />
               )
-            ) : isCrossTradyHistory || (!isThanosChain(l2ChainId) && transaction.action !== Action.Deposit) ? (
+            ) : isCrossTradyHistory ||
+              (!isThanosChain(l2ChainId) &&
+                transaction.action !== Action.Deposit) ? (
               <LegacyPending transaction={transaction} />
             ) : (
               <Pending transaction={transaction} />

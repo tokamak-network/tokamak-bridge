@@ -24,6 +24,8 @@ import {
   GET_withdrawalProvens_withdrawalFinalizeds,
 } from "@/graphql/data/queries";
 import { errorHandler, useGetApolloClient } from "./useApolloClient";
+import { isSupportedOnProd } from "@/utils/network/checkNetwork";
+import { SupportedChainId } from "@/types/network/supportedNetwork";
 
 export const useThanosSubgraph = () => {
   const { address } = useAccount();
@@ -36,6 +38,7 @@ export const useThanosSubgraph = () => {
   const L1StandardBridgeForThanos = SEPOLIA_CONTRACTS.L1Bridge_THANOS_SEPOLIA;
   const L1USDCBridgeForThanos = SEPOLIA_CONTRACTS.L1USDCBridge_THANOS_SEPOLIA;
   useEffect(() => {
+    if ( !isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA)) return;
     setPollCount(0);
     const refetchDepositHistory = async () => {
       if (isConnectedToMainNetwork) return;
@@ -71,7 +74,7 @@ export const useThanosSubgraph = () => {
       remoteToken: THANOS_SEPOLIA_CONTRACTS.TON_ADDRESS,
       blockNumber: thanosDipositHistory.latestRelayedBlockNumber,
     },
-    skip: isConnectedToMainNetwork,
+    skip: isConnectedToMainNetwork || !isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA),
     client: L1_CLIENT[1],
   });
 
@@ -93,7 +96,7 @@ export const useThanosSubgraph = () => {
       blockNumber: thanosDipositHistory.latestRelayedBlockNumber,
     },
     client: L1_CLIENT[1],
-    skip: !l1ThanosDepositTxHashes || isConnectedToMainNetwork,
+    skip: !l1ThanosDepositTxHashes || isConnectedToMainNetwork || !isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA),
   });
 
   const l1ThanosDepositMessageHashes = getThanosDepositMsgHashes(
@@ -112,7 +115,7 @@ export const useThanosSubgraph = () => {
     },
 
     client: L2_THANOS_CLIENT[0],
-    skip: !l1ThanosDepositMessageHashes || isConnectedToMainNetwork,
+    skip: !l1ThanosDepositMessageHashes || isConnectedToMainNetwork || !isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA),
   });
 
   const {
@@ -126,7 +129,7 @@ export const useThanosSubgraph = () => {
       L1StandardBridge: L1StandardBridgeForThanos,
       account: address,
     },
-    skip: isConnectedToMainNetwork,
+    skip: isConnectedToMainNetwork ||  !isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA),
     client: L2_THANOS_CLIENT[0],
   });
 
@@ -140,7 +143,7 @@ export const useThanosSubgraph = () => {
     refetch: refetchL1ThanosOptimismPortal
   } = useQuery(GET_withdrawalProvens_withdrawalFinalizeds, {
     variables: { withdrawalHashes: withdrawalHashes },
-    skip: isConnectedToMainNetwork,
+    skip: isConnectedToMainNetwork ||  !isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA),
     client: L1_CLIENT[1],
   });
 

@@ -23,6 +23,7 @@ import {
 } from "@/utils/history/getTransaction";
 import { updatedHistory } from "./useBridgeHistory";
 import { getSortedTxListByDate } from "@/staging/utils/history";
+import { isSupportedOnProd } from "@/utils/network/checkNetwork";
 
 export const useDepositData = () => {
   const [thanosDipositHistory, setThanosDipositHistory] =
@@ -301,7 +302,7 @@ export const useDepositData = () => {
 
   const getAllDepositeData = useCallback(async () => {
     if (
-      titanDipositHistory.history &&
+      titanDipositHistory.history ||
       thanosDipositHistory.history
     ) {
       const totalDepositResult = supportedChainOnProd.find((chain) => chain.chainId === SupportedChainId.THANOS_SEPOLIA) ? getSortedTxListByDate([
@@ -333,6 +334,7 @@ export const useDepositData = () => {
 
   useEffect(() => {
     if (isConnectedToMainNetwork) return;
+    if (!isSupportedOnProd(SupportedChainId.THANOS_SEPOLIA)) return;
     fetchThanosData().catch((error) => {
       console.error("Error in fetching thanos deposit data", error);
     });
