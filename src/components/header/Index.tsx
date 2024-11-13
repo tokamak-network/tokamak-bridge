@@ -51,10 +51,6 @@ const menuList = [
     title: "Bridge & Swap",
     link: "/",
   },
-  {
-    title: "Liquidity",
-    link: "/pools",
-  },
 ];
 
 const HeaderMenu = (props: {
