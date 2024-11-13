@@ -90,7 +90,7 @@ export default function AccountHistoryNew() {
             ? transaction.transactionHashes.initialTransactionHash
             : index;
         const l2ChainId = getBridgeL2ChainId(transaction);
-        const isCrossTradyHistory =
+        const isCrossTradeHistory =
           transaction.action === CT_ACTION.PROVIDE ||
           transaction.action === CT_ACTION.REQUEST;
         return (
@@ -105,14 +105,14 @@ export default function AccountHistoryNew() {
           >
             {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
             {isCompleted ? (
-              isCrossTradyHistory ||
+              isCrossTradeHistory ||
               (!isThanosChain(l2ChainId) &&
                 transaction.action !== Action.Deposit) ? (
                 <LegacyComplete {...transaction} />
               ) : (
                 <Complete {...transaction} />
               )
-            ) : isCrossTradyHistory ||
+            ) : isCrossTradeHistory ||
               (!isThanosChain(l2ChainId) &&
                 transaction.action !== Action.Deposit) ? (
               <LegacyPending transaction={transaction} />

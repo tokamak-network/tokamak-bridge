@@ -2,6 +2,7 @@ import { ImageFileType } from "../style/imageFileType";
 import NETWORK_ETHEREUM from "assets/icons/network/circle/Ethereum_circle.svg";
 import SYMBOL_TITAN from "assets/icons/network/circle/Titan_circle.svg";
 import SYMBOL_THANOS from "assets/icons/network/circle/Thanos_circle.svg";
+import SYMBOL_LEGACY_TITAN from "assets/icons/network/circle/Legacy_titan_circle.svg"
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
@@ -44,6 +45,7 @@ export const NetworkDisplayName: Partial<
   SEPOLIA: "Sepolia",
   THANOS_SEPOLIA: "Thanos Sepolia",
   TITAN_SEPOLIA: "Titan Sepolia",
+  LEGACY_TITAN_SEPOLIA: "Legacy Titan Sepolia",
 };
 
 export interface SupportedChainProperties {
@@ -79,7 +81,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.TITAN,
     chainName: "TITAN",
-    networkImage: SYMBOL_TITAN,
+    networkImage: SYMBOL_LEGACY_TITAN,
     rpcAddress: "",
     nativeToken: "TON",
     isTokamak: true,
@@ -99,7 +101,7 @@ export const supportedChain: SupportedChainProperties[] = [
   {
     chainId: SupportedChainId.TITAN_SEPOLIA,
     chainName: "TITAN_SEPOLIA",
-    networkImage: SYMBOL_TITAN,
+    networkImage: SYMBOL_LEGACY_TITAN,
     rpcAddress: "",
     nativeToken: "ETH",
     layer: "L2",
