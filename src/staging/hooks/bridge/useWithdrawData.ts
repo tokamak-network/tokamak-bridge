@@ -3,14 +3,16 @@ import {
   Action,
   HISTORY_SORT,
   StandardHistory,
+  Status,
   WithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import useConnectedNetwork from "@/hooks/network";
-import { SupportedChainId, supportedChainOnProd } from "@/types/network/supportedNetwork";
-import { Resolved, SentMessages } from "@/types/activity/history";
 import {
-  getCurretStatus,
-} from "@/utils/history/getCurrentStatus";
+  SupportedChainId,
+  supportedChainOnProd,
+} from "@/types/network/supportedNetwork";
+import { Resolved, SentMessages } from "@/types/activity/history";
+import { getCurretStatus } from "@/utils/history/getCurrentStatus";
 import { useProvier } from "@/hooks/provider/useProvider";
 import { ethers } from "ethers";
 import {
@@ -23,11 +25,9 @@ import { getDecodedStandardBridgeLog } from "@/utils/history/getDecodeBridgeHist
 import { useRecoilState } from "recoil";
 import {
   thanosWithdrawHistory,
-  titanWithdrawHistory
+  titanWithdrawHistory,
 } from "@/recoil/history/transaction";
-import {
-  getThanosMessageStatuaWithSubgraph,
-} from "@/staging/utils/getMessageStatus";
+import { getThanosMessageStatuaWithSubgraph } from "@/staging/utils/getMessageStatus";
 import {
   pendingTransactionHashes,
   thanosDepositWithdrawConfirmModalStatus,
@@ -39,15 +39,19 @@ import { useThanosSubgraph } from "../subgraph/useThanosSubgraph";
 import { useTitanSubgraph } from "../subgraph/useTitanSubgraph";
 import { isSupportedOnProd } from "@/utils/network/checkNetwork";
 
-
-
 export const useWithdrawData = () => {
-  const { l2ThanosData, l1ThanosOptimismPortal, l1ThanosData, pollCount: pollThanosCount } = useThanosSubgraph();
+  const {
+    l2ThanosData,
+    l1ThanosOptimismPortal,
+    l1ThanosData,
+    pollCount: pollThanosCount,
+  } = useThanosSubgraph();
   const { l2TitanData, pollCount: pollTitanCount } = useTitanSubgraph();
   const { isConnectedToMainNetwork } = useConnectedNetwork();
   const { L2Provider, ThanosProvider } = useProvier();
-  const [thanosSepWithdrawHistory, setThanosWithdrawHistory] =
-    useRecoilState(thanosWithdrawHistory);
+  const [thanosSepWithdrawHistory, setThanosWithdrawHistory] = useRecoilState(
+    thanosWithdrawHistory
+  );
   const [titanWithdrawalHistory, setTitanWithdrawHistory] =
     useRecoilState(titanWithdrawHistory);
   const [withdrawHistory, setWithdrawHistory] = useState<
@@ -86,9 +90,7 @@ export const useWithdrawData = () => {
           );
 
           //using the logs of the tx receipt, we can determine the l1 token address and the l2 token address of the withdraw tx
-          if (
-            !l2TxReceipt
-          ) {
+          if (!l2TxReceipt) {
             console.error(
               "Invalid transaction with l2TxReceipt.logs[3] or currentStatus"
             );
@@ -98,7 +100,9 @@ export const useWithdrawData = () => {
           const parsedLog = getDecodedStandardBridgeLog(
             l2TxReceipt.logs,
             new ethers.utils.Interface(L2TitanStandardBridgeAbi),
-            isConnectedToMainNetwork ? SupportedChainId.TITAN : SupportedChainId.TITAN_SEPOLIA
+            isConnectedToMainNetwork
+              ? SupportedChainId.TITAN
+              : SupportedChainId.TITAN_SEPOLIA
           );
 
           if (!parsedLog) {
@@ -160,7 +164,11 @@ export const useWithdrawData = () => {
       );
 
       const filteredResult = result.filter(
-        (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
+        (tx) =>
+          !(tx instanceof Error) &&
+          tx !== undefined &&
+          tx !== null &&
+          tx.status === Status.Finalize
       );
       const sortedResult = getSortedTxListByDate(
         filteredResult
@@ -281,25 +289,31 @@ export const useWithdrawData = () => {
       ) as WithdrawTransactionHistory[];
 
       // Only update modal if status has changed
-      if (thanosDepositWithdrawConfirmModal.isOpen && thanosDepositWithdrawConfirmModal.transaction) {
-        const currentTx = thanosDepositWithdrawConfirmModal.transaction as StandardHistory;
-        const updatedTx = sortedResult.find(tx =>
-          tx.transactionHashes.initialTransactionHash === currentTx.transactionHashes.initialTransactionHash
+      if (
+        thanosDepositWithdrawConfirmModal.isOpen &&
+        thanosDepositWithdrawConfirmModal.transaction
+      ) {
+        const currentTx =
+          thanosDepositWithdrawConfirmModal.transaction as StandardHistory;
+        const updatedTx = sortedResult.find(
+          (tx) =>
+            tx.transactionHashes.initialTransactionHash ===
+            currentTx.transactionHashes.initialTransactionHash
         );
 
         if (updatedTx && updatedTx.status !== currentTx.status) {
-          setThanosDepositWithdrawConfirmModal(prev => ({
+          setThanosDepositWithdrawConfirmModal((prev) => ({
             ...prev,
-            transaction: updatedTx
+            transaction: updatedTx,
           }));
         }
       }
 
       // Update history
       if (sortedResult) {
-        setThanosWithdrawHistory(prev => ({
+        setThanosWithdrawHistory((prev) => ({
           ...prev,
-          history: sortedResult
+          history: sortedResult,
         }));
       }
     }
@@ -310,7 +324,7 @@ export const useWithdrawData = () => {
     l1ThanosOptimismPortal,
     l1ThanosData,
     thanosDepositWithdrawConfirmModal.isOpen,
-    thanosDepositWithdrawConfirmModal.transaction
+    thanosDepositWithdrawConfirmModal.transaction,
   ]);
   useEffect(() => {
     if (isConnectedToMainNetwork) {
@@ -327,19 +341,21 @@ export const useWithdrawData = () => {
         };
       });
     }
-  }, [isConnectedToMainNetwork, setThanosWithdrawHistory, setTitanWithdrawHistory]);
+  }, [
+    isConnectedToMainNetwork,
+    setThanosWithdrawHistory,
+    setTitanWithdrawHistory,
+  ]);
   const getAllWithdrawData = useCallback(async () => {
-    if (
-      titanWithdrawalHistory.history ||
-      thanosSepWithdrawHistory.history
-    ) {
-
-      const totalWithdrawResult = supportedChainOnProd.find((chain) => chain.chainId === SupportedChainId.THANOS_SEPOLIA) ? getSortedTxListByDate([
-        ...(titanWithdrawalHistory.history ?? []),
-        ...(thanosSepWithdrawHistory.history ?? []),
-      ]) : getSortedTxListByDate([
-        ...(titanWithdrawalHistory.history ?? []),
-      ]);
+    if (titanWithdrawalHistory.history || thanosSepWithdrawHistory.history) {
+      const totalWithdrawResult = supportedChainOnProd.find(
+        (chain) => chain.chainId === SupportedChainId.THANOS_SEPOLIA
+      )
+        ? getSortedTxListByDate([
+            ...(titanWithdrawalHistory.history ?? []),
+            ...(thanosSepWithdrawHistory.history ?? []),
+          ])
+        : getSortedTxListByDate([...(titanWithdrawalHistory.history ?? [])]);
       setWithdrawHistory(totalWithdrawResult as WithdrawTransactionHistory[]);
     }
   }, [titanWithdrawalHistory, thanosSepWithdrawHistory]);

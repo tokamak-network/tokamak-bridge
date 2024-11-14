@@ -11,20 +11,36 @@ import {
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
 import useMediaView from "@/hooks/mediaView/useMediaView";
-import { actionMode, networkStatus } from "@/recoil/bridgeSwap/atom";
+import {
+  actionMode,
+  networkStatus,
+  selectedInTokenStatus,
+  selectedOutTokenStatus,
+} from "@/recoil/bridgeSwap/atom";
 
 export const LegacyTitanWarningModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { mobileView } = useMediaView();
   const { mode } = useRecoilValue(actionMode);
   const [network, setNetwork] = useRecoilState(networkStatus);
+  const [selectedInToken, setSelectedInToken] = useRecoilState(
+    selectedInTokenStatus
+  );
+
+  const [selectedOutToken, setSelectedOutToken] = useRecoilState(
+    selectedOutTokenStatus
+  );
   useEffect(() => {
-    setIsOpen(true);
+    if (mode !== null) setIsOpen(true);
   }, [mode]);
 
   const handleCloseModal = () => {
     setIsOpen(false);
-    if (mode !== "Withdraw") setNetwork({ inNetwork: null, outNetwork: null });
+    if (mode !== "Withdraw") {
+      setNetwork({ inNetwork: null, outNetwork: null });
+      setSelectedInToken(null);
+      setSelectedOutToken(null);
+    }
   };
 
   return (

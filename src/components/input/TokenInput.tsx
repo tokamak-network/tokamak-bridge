@@ -93,6 +93,10 @@ export default function TokenInput(props: {
   const { onCloseTokenModal, isInTokenOpen } = useTokenModal();
   const { onOpenInAmount, onOpenOutAmount } = useAmountModal();
 
+  useEffect(() => {
+    onMax();
+  }, [tokenData]);
+
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (isDisabled) return;
     const value: string = e.target.value === "." ? "0." : e.target.value;
@@ -143,7 +147,6 @@ export default function TokenInput(props: {
 
     //This token is inToken
     if (inToken && selectedInToken) {
-
       if (value === "") {
         return setSelectedInToken({
           ...selectedInToken,
@@ -151,7 +154,9 @@ export default function TokenInput(props: {
           parsedAmount: null,
         });
       }
-      const decimalPattern = new RegExp(`^\\d+(\\.\\d{0,${selectedInToken.decimals}})?$`);
+      const decimalPattern = new RegExp(
+        `^\\d+(\\.\\d{0,${selectedInToken.decimals}})?$`
+      );
       if (!decimalPattern.test(value)) return;
       const parsedAmount = ethers.utils.parseUnits(
         value,
@@ -387,10 +392,10 @@ export default function TokenInput(props: {
         ? String(selectedInToken?.parsedAmount)
         : trimAmount(selectedInToken?.parsedAmount, 8)
       : !inToken && selectedOutToken && selectedOutToken?.parsedAmount !== null
-        ? isFocused
-          ? String(selectedOutToken?.parsedAmount)
-          : trimAmount(selectedOutToken?.parsedAmount, 8)
-        : defaultValue || "";
+      ? isFocused
+        ? String(selectedOutToken?.parsedAmount)
+        : trimAmount(selectedOutToken?.parsedAmount, 8)
+      : defaultValue || "";
   }, [
     inToken,
     amountOut,
@@ -547,8 +552,8 @@ export default function TokenInput(props: {
                     mobileView && isBalanceOver
                       ? "#DD3A44"
                       : mobileView && !inToken
-                        ? "#A0A3AD !important"
-                        : "#FFFFFF"
+                      ? "#A0A3AD !important"
+                      : "#FFFFFF"
                   }
                   fontSize={{ base: 22, lg: 28 }}
                   fontWeight={{ base: 500, lg: 600 }}
@@ -556,7 +561,6 @@ export default function TokenInput(props: {
                   _disabled={{ color: "#A0A3AD" }}
                   value={valueProp}
                   ref={customRef ? customRef : inputRef}
-                  onChange={onChange}
                   onKeyDown={onKeyDown}
                   onFocus={handleFocus}
                   onBlur={handleBlur}
