@@ -19,6 +19,7 @@ import {
   convertNetworkName,
   formatNetworkName,
 } from "@/utils/network/convertNetworkName";
+import { isTitanChain } from "@/utils/network/checkNetwork";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
@@ -134,11 +135,12 @@ export default function Network() {
       const selectedWork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === value;
       })[0];
-      if (selectedWork.chainId !== connectedChainId) {
-        return isConnected
-          ? switchNetwork?.(selectedWork.chainId)
-          : setNetwork({ ...network, inNetwork: selectedWork });
+      if (isTitanChain(selectedWork.chainId)) {
+        setNetwork({ ...network, inNetwork: selectedWork });
+        return;
       }
+      setNetwork({ ...network, inNetwork: selectedWork });
+      switchNetwork?.(selectedWork.chainId);
     } finally {
       setIsOpen(false);
 
@@ -150,6 +152,9 @@ export default function Network() {
 
   //connected to the wallet
   useEffect(() => {
+    if (isTitanChain(network?.inNetwork?.chainId)) {
+      return;
+    }
     if (connectedChainId) {
       const connectedNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === connectedChainId;
@@ -168,18 +173,16 @@ export default function Network() {
 
   //not connected to the wallet
   useEffect(() => {
-    if (isConnected === false) {
-      if (network?.inNetwork?.chainId) {
-        const connectedNetwork = supportedChain.filter((supportedChain) => {
-          return supportedChain.chainId === network?.inNetwork?.chainId;
-        })[0];
+    if (network?.inNetwork?.chainId) {
+      const connectedNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === network?.inNetwork?.chainId;
+      })[0];
 
-        setSelectedOption({
-          ...connectedNetwork,
-          value: connectedNetwork.chainId,
-          label: connectedNetwork.chainName,
-        });
-      }
+      setSelectedOption({
+        ...connectedNetwork,
+        value: connectedNetwork.chainId,
+        label: connectedNetwork.chainName,
+      });
     }
   }, [isConnected, network]);
 

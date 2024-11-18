@@ -2,7 +2,7 @@ import { ImageFileType } from "../style/imageFileType";
 import NETWORK_ETHEREUM from "assets/icons/network/circle/Ethereum_circle.svg";
 import SYMBOL_TITAN from "assets/icons/network/circle/Titan_circle.svg";
 import SYMBOL_THANOS from "assets/icons/network/circle/Thanos_circle.svg";
-import SYMBOL_LEGACY_TITAN from "assets/icons/network/circle/Legacy_titan_circle.svg"
+import SYMBOL_LEGACY_TITAN from "assets/icons/network/circle/Legacy_titan_circle.svg";
 
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
@@ -20,20 +20,20 @@ export enum SupportedChainId {
   TITAN = 55004,
   SEPOLIA = 11155111,
   THANOS_SEPOLIA = 111551119090,
-  TITAN_SEPOLIA = 55007,
+  TITAN_SEPOLIA = 550071,
 }
 
 export enum SupportedL2ChainId {
   TITAN = 55004,
   THANOS_SEPOLIA = 111551119090,
-  TITAN_SEPOLIA = 55007,
+  TITAN_SEPOLIA = 550071,
 }
 
 export enum SupportedChainIdOnProd {
   MAINNET = 1,
   TITAN = 55004,
   SEPOLIA = 11155111,
-  TITAN_SEPOLIA = 55007,
+  TITAN_SEPOLIA = 550071,
   // THANOS_SEPOLIA = 111551119090,
 }
 
@@ -106,7 +106,7 @@ export const supportedChain: SupportedChainProperties[] = [
     nativeToken: "ETH",
     layer: "L2",
     isTestnet: true,
-    isTOP: true
+    isTOP: true,
   },
 ];
 

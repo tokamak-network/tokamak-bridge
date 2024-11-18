@@ -15,6 +15,7 @@ import CTFeeUpdateModal from "@/staging/components/cross-trade/components/core/u
 import { CTRefresh } from "@/staging/components/cross-trade/components/core/comfirm/CTRefresh";
 import { CTBetaWarning } from "@/staging/components/cross-trade/components/core/comfirm/CTBetaWarning";
 import ThanosDepositWithdrawConfirmModal from "@/staging/components/new-confirm/components/core/thanos";
+import { LegacyTitanConfirmModal } from "@/staging/components/legacy-titan/legacyTitanConfirmModal";
 
 export default function Modals() {
   const { mobileView } = useMediaView();
@@ -41,6 +42,7 @@ export default function Modals() {
       <DepositWithdrawConfirmModal />
       <ThanosDepositWithdrawConfirmModal />
       <SwapConfirmModal />
+      <LegacyTitanConfirmModal />
 
       {/* Cross Trade */}
       <CTOptionModal />

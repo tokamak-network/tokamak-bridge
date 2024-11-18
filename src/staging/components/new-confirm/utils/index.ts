@@ -13,6 +13,7 @@ import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 
 export const getBridgeActionButtonContent = (tx: TransactionHistory) => {
   const { action, status } = tx;
+  if (action === Action.Withdraw) return "Withdraw";
   if (status === Status.Initiate) return "Initiate";
   if (status === Status.Initiated && action === Action.Deposit) return null;
   if (status === Status.Initiated || status === Status.Prove) return "Prove";
@@ -96,8 +97,8 @@ export const getDepositWithdrawWaitMessage = (
         return isThanosChain(L2ChainId)
           ? "Wait 1~6 hours"
           : isTitanChain(L2ChainId)
-            ? "Wait 1 hour"
-            : "";
+          ? "Wait 1 hour"
+          : "";
       case Status.Prove:
         return L2ChainId === SupportedChainId.THANOS_SEPOLIA
           ? "Wait 7 days"
@@ -142,8 +143,7 @@ export const getEstimatedWithdrawalFeeConstant = (
           Finalize: { amount: 0.0005 },
         };
     }
-  }
-  else if (isTitanChain(chainId)) {
+  } else if (isTitanChain(chainId)) {
     switch (type) {
       case DepositWithdrawType.ETH:
         return {
@@ -165,9 +165,13 @@ export const getEstimatedWithdrawalFeeConstant = (
   return null;
 };
 
-export const getDepositWithdrawType = (chainId: SupportedChainId | null, tokenSymbol: string) => {
+export const getDepositWithdrawType = (
+  chainId: SupportedChainId | null,
+  tokenSymbol: string
+) => {
   if (tokenSymbol === "ETH") return DepositWithdrawType.ETH;
-  if (isThanosChain(chainId) && tokenSymbol === "TON") return DepositWithdrawType.NativeToken;
+  if (isThanosChain(chainId) && tokenSymbol === "TON")
+    return DepositWithdrawType.NativeToken;
   return DepositWithdrawType.ERC20;
 };
 

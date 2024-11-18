@@ -6,7 +6,10 @@ import {
 import { getRemainTime } from "@/staging/components/new-history-thanos/utils/getTimeDisplay";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
-import { getTransactionConstants, TRANSACTION_CONSTANTS } from "@/staging/constants/transactionTime";
+import {
+  getTransactionConstants,
+  TRANSACTION_CONSTANTS,
+} from "@/staging/constants/transactionTime";
 import { Tr } from "@chakra-ui/react";
 
 //getConfirmType.ts
@@ -76,7 +79,6 @@ const getType = (lineType: number, index: number) => {
   return typeMap[lineType] || undefined;
 };
 
-
 const getWaitMessage = (
   lineType: number,
   index: number,
@@ -86,14 +88,17 @@ const getWaitMessage = (
   const waitMessageMap: Record<number, string> = {
     0:
       index === 0
-        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}${txConstants.WITHDRAW.ROLLUP_HOURS} hours 20 mins`
+        ? `Wait ${isThanosChain(chainId) ? "1 ~ " : "up to "}${
+            txConstants.WITHDRAW.ROLLUP_HOURS
+          } hours 20 mins`
         : `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
     1: `Wait ${txConstants.WITHDRAW.ROLLUP_DAYS} days`,
-    100: `Wait ${chainId === SupportedChainId.TITAN ||
+    100: `Wait ${
+      chainId === SupportedChainId.TITAN ||
       chainId === SupportedChainId.TITAN_SEPOLIA
-      ? 5
-      : "1 ~ 2"
-      } mins`,
+        ? 5
+        : "1 ~ 2"
+    } mins`,
   };
   return waitMessageMap[lineType] || undefined;
 };

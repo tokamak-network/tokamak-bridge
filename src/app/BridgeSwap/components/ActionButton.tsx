@@ -83,7 +83,8 @@ export default function ActionButton() {
 
   const buttonAction = useCallback(() => {
     if (!isConnected) return connetAndDisconntWallet();
-    if (needToOpenWithdrawModal) return onOpenCTOptionModal();
+    if (needToOpenWithdrawModal)
+      return handleConfirm(Action.Withdraw, Status.Initiate);
     if (needToOpenDepositModal)
       return handleConfirm(Action.Deposit, Status.Initiate);
     if (needToOpenSwapModal) return onOpenSwapConfirmModal();
@@ -122,8 +123,6 @@ export default function ActionButton() {
           ? null
           : isConnected && mode === null
           ? "Select Network"
-          : mode === "Withdraw"
-          ? "Next"
           : isBalanceOver
           ? "Insufficient balance"
           : mode?.replaceAll("ETH-", "")}{" "}

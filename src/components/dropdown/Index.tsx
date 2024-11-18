@@ -20,6 +20,7 @@ import { Overlay_Index } from "@/types/style/overlayIndex";
 import { convertNetworkName } from "@/utils/network/convertNetworkName";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { isTitanChain } from "@/utils/network/checkNetwork";
 
 type SelectOption = SupportedChainProperties & {
   value: SupportedChainProperties["chainId"];
@@ -145,32 +146,33 @@ export default function NetworkDropdown(props: {
   const onChange = async (data: SupportedChainProperties) => {
     try {
       const value: SupportedChainProperties["chainId"] = Number(data.chainId);
-      const selectedWork = supportedChainOnProd.filter((supportedChain) => {
+      const selectedWork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === value;
       })[0];
-
       if (inNetwork === false) {
-        return setNetwork({ ...network, outNetwork: selectedWork });
+        setNetwork({ ...network, outNetwork: selectedWork });
+        return;
       }
-      if (selectedWork.chainId !== connectedChainId) {
-        const res = isConnected
-          ? await switchNetworkAsync?.(selectedWork.chainId)
-          : setNetwork({ ...network, inNetwork: selectedWork });
-        if (res && res.id === selectedWork.chainId && isPool && subMode.add) {
-          initializeTokenPair();
-        }
+      if (isTitanChain(selectedWork.chainId)) {
+        setNetwork({ ...network, inNetwork: selectedWork });
+        return;
       }
+      setNetwork({ ...network, inNetwork: selectedWork });
+      switchNetwork?.(selectedWork.chainId);
     } finally {
       setIsOpen(false);
+
       if (isError) {
         console.error(`Couldn't switch network`);
-        console.log(isError);
       }
     }
   };
 
   //connected to the wallet
   useEffect(() => {
+    if (isTitanChain(network?.inNetwork?.chainId)) {
+      return;
+    }
     if (connectedChainId) {
       const connectedNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === connectedChainId;
@@ -189,20 +191,16 @@ export default function NetworkDropdown(props: {
 
   //not connected to the wallet
   useEffect(() => {
-    if (isConnected === false) {
-      if (inNetwork && network?.inNetwork?.chainId) {
-        const connectedNetwork = supportedChainOnProd.filter(
-          (supportedChain) => {
-            return supportedChain.chainId === network?.inNetwork?.chainId;
-          }
-        )[0];
+    if (network?.inNetwork?.chainId) {
+      const connectedNetwork = supportedChain.filter((supportedChain) => {
+        return supportedChain.chainId === network?.inNetwork?.chainId;
+      })[0];
 
-        setSelectedOption({
-          ...connectedNetwork,
-          value: connectedNetwork.chainId,
-          label: connectedNetwork.chainName,
-        });
-      }
+      setSelectedOption({
+        ...connectedNetwork,
+        value: connectedNetwork.chainId,
+        label: connectedNetwork.chainName,
+      });
     }
   }, [isConnected, network]);
 

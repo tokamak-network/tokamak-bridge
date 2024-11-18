@@ -63,11 +63,7 @@ export default function ConfirmDetails(props: ConfirmDetailProps) {
     : transactionHistory.outToken.address;
 
   return (
-    <Flex
-      justifyContent={"space-between"}
-      alignItems={"center"}
-      mt={isInNetwork ? undefined : "16px"}
-    >
+    <Flex justifyContent={"space-between"} alignItems={"center"}>
       <Box>
         <Text
           fontWeight={500}

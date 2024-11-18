@@ -5,8 +5,7 @@ import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useInOutNetwork } from "@/hooks/network";
 
 export const useHandleConfirm = () => {
-  const { onOpenDepositWithdrawConfirmModal } =
-    useDepositWithdrawConfirmModal();
+  const { onOpenLegacyTitanConfirmModal } = useDepositWithdrawConfirmModal();
   const { inToken } = useInOutTokens();
   const { inNetwork, outNetwork } = useInOutNetwork();
 
@@ -40,7 +39,7 @@ export const useHandleConfirm = () => {
       inTransactionToken,
       outTransactionToken
     );
-    onOpenDepositWithdrawConfirmModal(transaction);
+    onOpenLegacyTitanConfirmModal(transaction);
   };
 
   return handleConfirm;

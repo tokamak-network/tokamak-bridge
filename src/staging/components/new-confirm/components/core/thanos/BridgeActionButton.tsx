@@ -1,4 +1,5 @@
 import {
+  Action,
   StandardHistory,
   Status,
   TransactionHistory,
@@ -25,8 +26,7 @@ const BridgeActionButtonComponent: React.FC<
 > = ({ isConfirmed, onClick, toolTip, tx, disabled }) => {
   const { chain } = useNetwork();
   const isWrongNetwork =
-    (tx.status === Status.Prove || tx.status === Status.Finalize) &&
-    chain?.id !== tx.outNetwork;
+    tx.action === Action.Withdraw && chain?.id !== tx.outNetwork;
   const buttonContent = isWrongNetwork
     ? "Wrong Network"
     : getBridgeActionButtonContent(tx);
@@ -44,7 +44,6 @@ const BridgeActionButtonComponent: React.FC<
           content={buttonContent}
           onClick={onClick}
           disabled={isDisabled || pendingStatus || disabled}
-          toolTip={isWrongNetwork ? undefined : toolTip}
           pendingStatus={pendingStatus}
         />
       ) : null}

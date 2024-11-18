@@ -138,6 +138,17 @@ export const depositWithdrawConfirmModalStatus = atom<{
   },
 });
 
+export const legacyTitanConfirmModalStatus = atom<{
+  isOpen: boolean;
+  transaction: StandardHistory | undefined;
+}>({
+  key: "legacyTitanConfirmModalStatus",
+  default: {
+    isOpen: false,
+    transaction: undefined,
+  },
+});
+
 export const thanosDepositWithdrawConfirmModalStatus = atom<{
   isOpen: boolean;
   transaction: TransactionHistory | undefined;

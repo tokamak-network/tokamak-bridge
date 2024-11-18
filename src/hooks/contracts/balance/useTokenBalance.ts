@@ -40,6 +40,18 @@ export default function useTokenBalance(
   });
 
   const tokenBalance = useMemo(() => {
+    // if (chainName === "TITAN" || chainName === "TITAN_SEPOLIA") {
+    //   return {
+    //     data: {
+    //       balanceBN: 1,
+    //       parsedBalance: "1",
+    //       parsedBalanceWithoutCommafied: "1",
+    //     },
+    //     error: null,
+    //     isLoading: false,
+    //     isSuccess: true,
+    //   };
+    // }
     if (data) {
       return {
         data: {

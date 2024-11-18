@@ -1,5 +1,6 @@
 import {
   depositWithdrawConfirmModalStatus,
+  legacyTitanConfirmModalStatus,
   thanosDepositWithdrawConfirmModalStatus,
 } from "@/recoil/modal/atom";
 import {
@@ -8,13 +9,17 @@ import {
   StandardHistory,
 } from "@/staging/types/transaction";
 import { useRecoilState } from "recoil";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import { isThanosChain } from "@/utils/network/checkNetwork";
 
 export default function useDepositWithdrawConfirm() {
   const [depositWithdrawConfirmModal, setDepositWithdrawConfirmModal] =
     useRecoilState(depositWithdrawConfirmModalStatus);
+
+  const [legacyTitanConfirmModal, setlegacyTitanConfirmModal] = useRecoilState(
+    legacyTitanConfirmModalStatus
+  );
 
   const [
     thanosDepositWithdrawConfirmModal,
@@ -53,11 +58,27 @@ export default function useDepositWithdrawConfirm() {
     }));
   }, []);
 
+  const onCloseLegacyTitanConfirmModal = useCallback(() => {
+    setlegacyTitanConfirmModal((prev) => ({
+      transaction: undefined,
+      isOpen: false,
+    }));
+  }, []);
+
+  const onOpenLegacyTitanConfirmModal = (transaction: StandardHistory) => {
+    setlegacyTitanConfirmModal({
+      isOpen: true,
+      transaction: transaction,
+    });
+  };
+
   return {
     depositWithdrawConfirmModal,
     thanosDepositWithdrawConfirmModal,
     onOpenDepositWithdrawConfirmModal,
     onCloseDepositWithdrawConfirmModal,
     onCloseThanosDepositWithdrawConfirmModal,
+    onCloseLegacyTitanConfirmModal,
+    onOpenLegacyTitanConfirmModal,
   };
 }

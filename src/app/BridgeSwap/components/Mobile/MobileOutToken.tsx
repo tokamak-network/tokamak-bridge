@@ -12,10 +12,8 @@ import { useGetMode } from "@/hooks/mode/useGetMode";
 import useConnectedNetwork from "@/hooks/network";
 import { useAccount, useSwitchNetwork } from "wagmi";
 
-import {
-  mobileTokenModalStatus
-} from "@/recoil/mobile/atom";
-import useMobileChainIds from "@/hooks/mobile/useMobileChainIds"
+import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
+import useMobileChainIds from "@/hooks/mobile/useMobileChainIds";
 import {
   SupportedChainProperties,
   supportedChain,
@@ -24,18 +22,22 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import { isTitanChain } from "@/utils/network/checkNetwork";
 
 const MobileInToken = () => {
   const { outNetwork } = useRecoilValue(networkStatus);
   const { mode, swapSection } = useGetMode();
   const [tokenModal, setTokenModal] = useRecoilState(tokenModalStatus);
   const { outToken } = useInOutTokens();
-  const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(mobileTokenModalStatus);
+  const [mobileTokenOpen, setMobileTokenOpen] = useRecoilState(
+    mobileTokenModalStatus
+  );
   const network = useConnectedNetwork();
   const { isConnected } = useAccount();
   const { ethChainId, titanChainId } = useMobileChainIds(network);
   const { switchNetworkAsync, isError } = useSwitchNetwork();
-  const [networkStatusValue, setNetworkStatusValue] = useRecoilState(networkStatus);
+  const [networkStatusValue, setNetworkStatusValue] =
+    useRecoilState(networkStatus);
   const [, setSelectedInToken] = useRecoilState(selectedInTokenStatus);
   const [, setSelectedOutToken] = useRecoilState(selectedOutTokenStatus);
 
@@ -67,10 +69,10 @@ const MobileInToken = () => {
   }, [outToken]);
 
   const selectTokenClick = async () => {
-    if(isConnected && !network.isSupportedChain){
+    if (isConnected && !network.isSupportedChain) {
       const inValue: SupportedChainProperties["chainId"] = Number(ethChainId); // 'from' 값을 숫자로 변환
       const outValue: SupportedChainProperties["chainId"] = Number(ethChainId); // 'to' 값을 숫자로 변환
-      
+
       const selectedInNetwork = supportedChain.filter((supportedChain) => {
         return supportedChain.chainId === inValue;
       })[0];
@@ -79,22 +81,21 @@ const MobileInToken = () => {
         return supportedChain.chainId === outValue;
       })[0];
 
-      await switchNetworkAsync?.(inValue)
-      
+      await switchNetworkAsync?.(inValue);
+
       // mode에 따라 다르게 한다.
       setNetworkStatusValue({
         inNetwork: selectedInNetwork,
         outNetwork: selectedOutNetwork,
-      })
+      });
 
       setSelectedInToken(null);
       setSelectedOutToken(null);
-      return
-
+      return;
     }
-    swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" })
-    setMobileTokenOpen(true)  
-  }
+    swapSection && setTokenModal({ ...tokenModal, isOpen: "OUTPUT" });
+    setMobileTokenOpen(true);
+  };
 
   return (
     <Flex flexDir={"column"} w={"148px"} rowGap={"28px"}>
@@ -103,21 +104,21 @@ const MobileInToken = () => {
         h={"184px"}
         cursor={"pointer"}
         onClick={() => {
-          selectTokenClick()
+          selectTokenClick();
         }}
       >
         {outToken?.tokenName ? (
           <>
-          <TokenCard
-            w={"100%"}
-            h={"100%"}
-            tokenInfo={outToken}
-            hasInput={true}
-            inNetwork={true}
-            symbolSize={{ w: 64, h: 64 }}
-            forBridge={true}
-            isPrice
-          />
+            <TokenCard
+              w={"100%"}
+              h={"100%"}
+              tokenInfo={outToken}
+              hasInput={true}
+              inNetwork={true}
+              symbolSize={{ w: 64, h: 64 }}
+              forBridge={true}
+              isPrice
+            />
           </>
         ) : (
           <Flex
@@ -162,11 +163,7 @@ const MobileInToken = () => {
             <Flex w={"28px"} h={"28px"} borderRadius={"0px 6px 0px 6px"}>
               <Image
                 alt="eth"
-                src={
-                  outNetwork?.chainId === 55004 || outNetwork?.chainId === 55007
-                    ? TitanIcon
-                    : ETHIcon
-                }
+                src={isTitanChain(outNetwork?.chainId) ? TitanIcon : ETHIcon}
               />
             </Flex>
           </Flex>

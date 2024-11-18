@@ -19,7 +19,7 @@ import MobileTokenBox from "@/components/mobile/input/MobileTokenBox";
 import ArrowImg from "assets/icons/arrow.svg";
 import arrow from "assets/icons/dark_arrowdown.svg";
 import SettingIcon from "assets/icons/setting.svg";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 
@@ -75,7 +75,6 @@ export default function Swap() {
     mode === "Unwrap" ||
     mode === "ETH-Unwrap" ||
     mode === "ETH-Wrap";
-
   return (
     <>
       {pcView ? (
