@@ -1,5 +1,8 @@
 import { networkStatus } from "@/recoil/bridgeSwap/atom";
-import { SupportedChainId, SupportedChainIdOnProd } from "@/types/network/supportedNetwork";
+import {
+  SupportedChainId,
+  SupportedChainIdOnProd,
+} from "@/types/network/supportedNetwork";
 import { supportedChain } from "@/types/network/supportedNetwork";
 import { getKeyByValue } from "@/utils/ts/getKeyByValue";
 import { useCallback, useMemo } from "react";
@@ -34,8 +37,10 @@ export default function useConnectedNetwork() {
 
       return {
         connectedChainId: chain.id,
-        isSupportedChain: Object.values(SupportedChainIdOnProd).includes(chain.id),
-        chainName,
+        isSupportedChain: Object.values(SupportedChainIdOnProd).includes(
+          chain.id
+        ),
+        chainName: inNetwork?.chainName ?? chainName,
         layer:
           supportedChain.filter((e) => e.chainId === chain.id)[0]?.layer ??
           null,

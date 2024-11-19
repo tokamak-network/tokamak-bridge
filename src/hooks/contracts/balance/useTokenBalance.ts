@@ -7,6 +7,8 @@ import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
+import { findTokenAmount } from "@/staging/components/legacy-titan/utils/l2TokenAssets";
+import { ZERO_ADDRESS } from "@/constant/misc";
 
 export default function useTokenBalance(
   tokenInfo: TokenInfo | null,
@@ -40,18 +42,37 @@ export default function useTokenBalance(
   });
 
   const tokenBalance = useMemo(() => {
-    // if (chainName === "TITAN" || chainName === "TITAN_SEPOLIA") {
-    //   return {
-    //     data: {
-    //       balanceBN: 1,
-    //       parsedBalance: "1",
-    //       parsedBalanceWithoutCommafied: "1",
-    //     },
-    //     error: null,
-    //     isLoading: false,
-    //     isSuccess: true,
-    //   };
-    // }
+    if (!tokenInfo) return null;
+    if (chainName === "TITAN_SEPOLIA") {
+      const amount = findTokenAmount(
+        tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
+        tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
+        accountAddress as string
+      );
+      return {
+        data: {
+          balanceBN: amount,
+          parsedBalance: commafy(
+            ethers.utils.formatUnits(
+              //@ts-ignore
+              BigInt(amount || "0"),
+              tokenInfo?.decimals as number
+            )
+          ),
+          parsedBalanceWithoutCommafied: commafy(
+            ethers.utils.formatUnits(
+              //@ts-ignore
+              BigInt(amount || "0"),
+              tokenInfo?.decimals as number
+            ),
+            tokenInfo?.decimals as number
+          ).replaceAll(",", ""),
+        },
+        error: null,
+        isLoading: false,
+        isSuccess: true,
+      };
+    }
     if (data) {
       return {
         data: {
@@ -78,7 +99,7 @@ export default function useTokenBalance(
       };
     }
     return null;
-  }, [accountAddress, data]);
+  }, [accountAddress, data, chainName]);
 
   return tokenBalance;
 }

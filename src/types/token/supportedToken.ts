@@ -45,7 +45,7 @@ export const supportedTokens: SupportedTokens_T = [
       TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
       SEPOLIA: "",
       THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
+      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
     },
     decimals: 18,
     isNativeCurrency: [
