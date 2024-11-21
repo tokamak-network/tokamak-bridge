@@ -44,14 +44,15 @@ export default function useTokenBalance(
   const tokenBalance = useMemo(() => {
     if (!tokenInfo) return null;
     if (chainName === "TITAN_SEPOLIA") {
-      const amount = findTokenAmount(
-        tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
-        tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
-        accountAddress as string
-      );
-      return {
+      // const amount = findTokenAmount(
+      //   tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
+      //   tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
+      //   accountAddress as string
+      // );
+      const amount = 0;
+      const data = {
         data: {
-          balanceBN: amount,
+          balanceBN: Number(amount),
           parsedBalance: commafy(
             ethers.utils.formatUnits(
               //@ts-ignore
@@ -72,6 +73,8 @@ export default function useTokenBalance(
         isLoading: false,
         isSuccess: true,
       };
+      console.log(data);
+      return data;
     }
     if (data) {
       return {

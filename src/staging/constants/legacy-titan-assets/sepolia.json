@@ -1,87 +1,46 @@
 [
+  {
+   "l1Token": "0x093144B5e482D664B1cCC1eA4913aC29000a0B90",
+   "l2Token": "0x72855Bd554170BcdB9e1e5d04831E767021DA9B9",
+   "tokenName": "MockUSDT",
+   "data": [
     {
-     "l1Token": "0x0000000000000000000000000000000000000000",
-     "l2Token": "0xdeaddeaddeaddeaddeaddeaddeaddeaddead0000",
-     "tokenName": "Ether",
-     "data": [
-      {
-       "claimer": "0x99802e96072F889D6D09E528dF118f67B08698E0",
-       "amount": "1000000000000000",
-       "hash": "0x954b627a3af77cbde166018a1b3937d5b90e3c00ee2b8957625b45d4ef57b8dc"
-      },
-      {
-       "claimer": "0xc4de383f501b301ef2379e14779b267510808c03",
-       "amount": "8899999999944818",
-       "hash": "0xc01bc2369557a5eaf3a32d34365391f557eedc8fc72d4fdd5b312332f16f5311"
-      }
-    ]
+     "claimer": "0x0000000000000000000000000000000000000000",
+     "amount": "0",
+     "hash": "0x59aa85ce953b13f476f8d3ba17354e606f8dbbb297aef9970f9a0fa7f6aeb8b9"
+    },
+    {
+     "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+     "amount": "112000000000000000000",
+     "hash": "0x847b159dc0a5d9926af150cbf50bddfee3a1071b8a6bd06734692f9d12411139"
+    },
+    {
+     "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
+     "amount": "90000000000000000000",
+     "hash": "0xb6aecd07781d1e1fdc17806f3cd614ea25d0539a6dc96b5092d449bbd7115123"
+    }
+   ]
   },
   {
-    "l1Token": "0xa30fe40285b8f5c0457dbc3b7c8a280373c40044",
-    "l2Token": "0x7c6b91d9be155a6db01f749217d76ff02a7227f2",
-    "tokenName": "Tokamak Network",
-    "data": [
-     {
-      "claimer": "0x0000000000000000000000000000000000000000",
-      "amount": "0",
-      "hash": "0x416fb0d0a8a46547a87bf8241cdc664296da0e00b566774029cd59fb136cdfc6"
-     },
-     {
-      "claimer": "0x99802e96072F889D6D09E528dF118f67B08698E0",
-      "amount": "2792470578437618",
-      "hash": "0x7b03695f6db92d6eae00f27b8b50f4776152a6a8b075599f8bade1b1eb46a089"
-     }
-    ]
-  },
-  {
-    "l1Token": "0xff3ef745d9878afe5934ff0b130868afddbc58e8",
-    "l2Token": "0xd08a2917653d4e460893203471f0000826fb4034",
-    "tokenName": "TONStarter",
-    "data": [
-     {
-      "claimer": "0x0000000000000000000000000000000000000000",
-      "amount": "0",
-      "hash": "0xb917153cbe8fe9c77781b9c12161dc9b6ca757e8145cb825c6d004e0b6a5e97f"
-     },
-     {
-      "claimer": "0x99802e96072F889D6D09E528dF118f67B08698E0",
-      "amount": "17526297915051051860",
-      "hash": "0xdfce332f25d792d73856d7bae57f68faeb6be323bdb73cbf3aa3c9b20ff0eaa0"
-     }
-    ]
-  },
-  {
-    "l1Token": "0x1c7D4B196Cb0C7B01d743Fbc6116a902379C7238",
-    "l2Token": "0xFF3Ef745D9878AfE5934Ff0b130868AFDDbc58e8",
-    "tokenName": "USD Coin",
-    "data": [
-     {
-      "claimer": "0x0000000000000000000000000000000000000000",
-      "amount": "0",
-      "hash": "0xea644fc8e98a51dd6c685d2d960e3552db83c2a3ea1de3f6c01783a76a65f996"
-     },
-     {
-      "claimer": "0x99802e96072F889D6D09E528dF118f67B08698E0",
-      "amount": "3410889",
-      "hash": "0xebef8fd410df48f199dbab4434b34767386df13189c7984c530f3b0527bffbbc"
-     }
-    ]
-  },
-  {
-    "l1Token": "0x42d3b260c761cD5da022dB56Fe2F89c4A909b04A",
-    "l2Token": "0x79E0d92670106c85E9067b56B8F674340dCa0Bbd",
-    "tokenName": "Tether USD",
-    "data": [
-     {
-      "claimer": "0x0000000000000000000000000000000000000000",
-      "amount": "0",
-      "hash": "0x1fb307d56c172c6c6aaac9ee821c60b22e9d5e56737a1ecd99059f011a803f28"
-     },
-     {
-      "claimer": "0x99802e96072F889D6D09E528dF118f67B08698E0",
-      "amount": "3388726",
-      "hash": "0x2c4897e01ad5ba1b72d91c2f5f8911e50589dda6f3546d9530c1b04ec6feca3e"
-     }
-    ]
+   "l1Token": "0x28Cb7d05153CA96AaB7B39150155cc4921CE83A3",
+   "l2Token": "0x65035dcC7C775E61650ae1A2f3E9D665eA139Fb3",
+   "tokenName": "MockUSDC",
+   "data": [
+    {
+     "claimer": "0x0000000000000000000000000000000000000000",
+     "amount": "0",
+     "hash": "0x693bad217b53b5ffc67b004de0fa33c8bf98ff340472bf64ecd2f21caf341404"
+    },
+    {
+     "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+     "amount": "114000000000000000000",
+     "hash": "0x37811a6e16f74091f1871ceb149aa8577ca5f812c6c97d7611830b202e55ac50"
+    },
+    {
+     "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
+     "amount": "11000000000000000000",
+     "hash": "0xefef39492c198ffef18de102bc202bb4a556f662dba7fb9585ebc90df093b31e"
+    }
+   ]
   }
-]
+ ]

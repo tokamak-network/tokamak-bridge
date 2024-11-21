@@ -13,7 +13,6 @@ export const findTokenAmount = (
       entry.l1Token.toLowerCase() === l1TokenLower &&
       entry.l2Token.toLowerCase() === l2TokenLower
   );
-  console.log(tokenEntry);
 
   if (!tokenEntry) {
     return "0";
