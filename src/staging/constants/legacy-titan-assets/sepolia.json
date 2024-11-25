@@ -4,11 +4,16 @@
     "l2Token": "0xDeadDeAddeAddEAddeadDEaDDEAdDeaDDeAD0000",
     "tokenName": "Ether",
     "data": [
-     {
-      "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-      "amount": 1003,
-      "hash": "0x5f6827e3f368382f7cff393cea8f4c54bb13b7d6d6b34df7d91bd1962465818e"
-     }
+      {
+        "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+        "amount": 1005,
+        "hash": "0x8a44fda388cb9c798bc480b68e3f96f8ca5419b47bf97af4ed927602577008ef"
+       },
+       {
+        "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
+        "amount": 1005,
+        "hash": "0x1e951d2f2d3569b1ed8456d77661ab7e95bc78d906a7e0dcc53595f1745867fe"
+       }
     ]
   },
   {
@@ -16,11 +21,16 @@
     "l2Token": "0x7c6b91D9Be155A6Db01f749217d76fF02A7227F2",
     "tokenName": "Tokamak Network",
     "data": [
-     {
-      "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-      "amount": "1103000030999999800000",
-      "hash": "0x070c5ee80d177d46388e84246e092aff7539fe45ef3e0427945f2263266fa9ca"
-     }
+      {
+       "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+       "amount": "1105000051000000000000",
+       "hash": "0x58c716f4fb1f10baccbac63b2df808e7bdda89ef2c9a4c4bb83a497c98e4e4bb"
+      },
+      {
+        "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
+        "amount": "1035000051000000000000",
+        "hash": "0x1ce82477e0e68335518aa4e8eb5345a0040bb7f73c4c248464c5c339de3b43b0"
+       }
     ]
   },
   {
@@ -40,11 +50,16 @@
     "l2Token": "0x2aCC8EFEd68f07DEAaD37f57A189677fB5655B46",
     "tokenName": "Tether USD",
     "data": [
-     {
-      "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-      "amount": "503103100",
-      "hash": "0x7ca99b4d26a482bd0b11be8f83b357d121cb9737e5f2742c042836701e621191"
-     }
+      {
+        "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+        "amount": "505105100",
+        "hash": "0x8ae4e5b80ad007ce885fce78c9fde54cfa334ea98a35e6fdd1f457c3502216aa"
+       },
+       {
+        "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
+        "amount": "227037100",
+        "hash": "0x4045038252888582657889b874a6a2058c56313c0844add14d03f2db5610d323"
+       }
     ]
   },
   {
@@ -52,11 +67,16 @@
     "l2Token": "0x46BbbC5f20093cB53952127c84F1Fbc9503bD6D9",
     "tokenName": "USD Coin",
     "data": [
-     {
-      "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-      "amount": "403003100",
-      "hash": "0x71db36d2d598ac95b5d0bf04d55b48a70c06639f9d239aec8ce8f67dc54d50d9"
-     }
+      {
+        "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+        "amount": "405005100",
+        "hash": "0x76121c7b1e177a9d49fd581504c5b7fff18a7c08536a383b342da20e4da1c882"
+       },
+       {
+        "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
+        "amount": "197007100",
+        "hash": "0x8af47fe95a0f13800a3a6c1887d32dd2f6ba3912b1e685f3a542bfcc6297e771"
+       }
     ]
   }
 ]

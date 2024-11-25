@@ -68,7 +68,7 @@ export default function useTokenBalance(
         tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
         accountAddress as string
       );
-      const withdrawalHash = tokenData?.data.hash;
+      const withdrawalHash = tokenData?.data?.hash;
       setLegacyWithdrawalHash(withdrawalHash || null);
       const amount = gb === ZERO_ADDRESS ? tokenData?.data.amount : 0;
 

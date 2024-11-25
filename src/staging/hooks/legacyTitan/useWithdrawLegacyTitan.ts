@@ -11,6 +11,7 @@ import { getWithdarwCalldata } from "@/utils/history/getWithdrawCalldata";
 import { WithdrawTransactionHistory } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import useDepositWithdrawConfirm from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
+import { ZERO_ADDRESS } from "@/constant/misc";
 
 export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
@@ -46,12 +47,11 @@ export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
       onCloseLegacyTitanConfirmModal();
       setIsOpen(true);
       setModalOpen("confirming");
-
       write({
         args: [
           forcePosition,
           legacyTitanHash,
-          outToken.address,
+          outToken.address || ZERO_ADDRESS,
           outToken.amount,
         ],
         gas: BigInt(750000),

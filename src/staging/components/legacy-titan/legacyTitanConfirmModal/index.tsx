@@ -42,6 +42,9 @@ export const LegacyTitanConfirmModal = () => {
     return false;
   }, [chain, transactionData]);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  useEffect(() => {
+    setIsConfirmed(false);
+  }, [transactionData]);
   const handleConfirmCheck = () => {
     setIsConfirmed((prev) => !prev);
   };

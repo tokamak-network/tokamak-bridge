@@ -129,34 +129,34 @@ export default function TokenInput(props: {
             inputRef?.current?.blur();
           }, 100);
         }
-        if (isETH(selectedInToken)) {
-          const buffer = Number(totalGasCost) * 2;
-          const parsedAmount =
-            Number(
-              tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
-            ) - buffer;
-          const isMinus = parsedAmount <= 0;
+        // if (isETH(selectedInToken)) {
+        //   const buffer = Number(totalGasCost) * 2;
+        //   const parsedAmount =
+        //     Number(
+        //       tokenData.data.parsedBalanceWithoutCommafied.replaceAll(",", "")
+        //     ) - buffer;
+        //   const isMinus = parsedAmount <= 0;
 
-          const amountBN = ethers.utils.parseUnits(
-            isMinus ? "0" : parsedAmount.toString(),
-            18
-          );
-          // if (switchable && selectedOutToken) {
-          //   setSelectedOutToken({
-          //     ...selectedOutToken,
-          //     amountBN: amountBN.toBigInt(),
-          //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
-          //   });
-          // }
+        //   const amountBN = ethers.utils.parseUnits(
+        //     isMinus ? "0" : parsedAmount.toString(),
+        //     18
+        //   );
+        //   // if (switchable && selectedOutToken) {
+        //   //   setSelectedOutToken({
+        //   //     ...selectedOutToken,
+        //   //     amountBN: amountBN.toBigInt(),
+        //   //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+        //   //   });
+        //   // }
 
-          return setSelectedInToken({
-            ...selectedInToken,
-            forcePosition: tokenData.data.forcePosition,
-            legacyTitanHash: tokenData.data.legacyTitanHash,
-            amountBN: amountBN.toBigInt(),
-            parsedAmount: isMinus ? "0" : parsedAmount.toString(),
-          });
-        }
+        //   return setSelectedInToken({
+        //     ...selectedInToken,
+        //     forcePosition: tokenData.data.forcePosition,
+        //     legacyTitanHash: tokenData.data.legacyTitanHash,
+        //     amountBN: amountBN.toBigInt(),
+        //     parsedAmount: isMinus ? "0" : parsedAmount.toString(),
+        //   });
+        // }
         return setSelectedInToken({
           ...selectedInToken,
           forcePosition: tokenData.data.forcePosition,
