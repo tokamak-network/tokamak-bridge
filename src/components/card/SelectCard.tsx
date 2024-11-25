@@ -214,6 +214,7 @@ export function SelectCardModal() {
   const handleBlur = useCallback(() => {
     if (!isTokenSearch) {
       onCloseTokenModal();
+
       if (mobileView && selectedInToken?.parsedAmount === null)
         setSelectedInToken(null);
     }
@@ -221,6 +222,7 @@ export function SelectCardModal() {
 
   const handleClose = useCallback(() => {
     onCloseTokenModal();
+
     if (mobileView && selectedInToken?.parsedAmount === null) {
       setSelectedInToken(null);
     }

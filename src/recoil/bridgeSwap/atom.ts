@@ -38,6 +38,8 @@ export type SelectedToken = TokenInfo & {
   amountBN: BigInt | null;
   parsedAmount: string | null;
   tokenAddress: string | null;
+  forcePosition?: string | null;
+  legacyTitanHash?: string | null;
 };
 
 export const selectedInTokenStatus = atom<SelectedToken | null>({

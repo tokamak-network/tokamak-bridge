@@ -95,124 +95,7 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     onMax();
-  }, [tokenData]);
-
-  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (isDisabled) return;
-    const value: string = e.target.value === "." ? "0." : e.target.value;
-
-    // if (isTokenSearch && connectedChainId) {
-    //   setSearchValue(value);
-    //   return setSearchToken({
-    //     nameOrAdd: value,
-    //     chainId: connectedChainId,
-    //   });
-    // }
-
-    //for wrap/unwrap switch
-    if (inToken && switchable) {
-      if (selectedInToken && selectedOutToken) {
-        if (value === "") {
-          setSelectedOutToken({
-            ...selectedOutToken,
-            amountBN: null,
-            parsedAmount: null,
-          });
-          return setSelectedInToken({
-            ...selectedInToken,
-            amountBN: null,
-            parsedAmount: null,
-          });
-        }
-        const parsedAmountOut = ethers.utils.parseUnits(
-          value,
-          selectedOutToken?.decimals
-        );
-        const parsedAmountIn = ethers.utils.parseUnits(
-          value,
-          selectedInToken?.decimals
-        );
-        setSelectedInToken({
-          ...selectedInToken,
-          amountBN: parsedAmountIn.toBigInt(),
-          parsedAmount: value,
-        });
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: parsedAmountOut.toBigInt(),
-          parsedAmount: value,
-        });
-      }
-    }
-
-    //This token is inToken
-    if (inToken && selectedInToken) {
-      if (value === "") {
-        return setSelectedInToken({
-          ...selectedInToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-      const decimalPattern = new RegExp(
-        `^\\d+(\\.\\d{0,${selectedInToken.decimals}})?$`
-      );
-      if (!decimalPattern.test(value)) return;
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedInToken.decimals
-      );
-
-      return setSelectedInToken({
-        ...selectedInToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: value,
-      });
-    }
-
-    //On Pools page
-    //This token is outToken
-    if (mode === "Pool" && !inToken && selectedOutToken) {
-      if (value === "" || value === null) {
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
-
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: value,
-      });
-    }
-
-    if (!inToken && selectedOutToken && amountOut) {
-      const value: string = amountOut;
-      if (value === "" || value === null) {
-        return setSelectedOutToken({
-          ...selectedOutToken,
-          amountBN: null,
-          parsedAmount: null,
-        });
-      }
-      const parsedAmount = ethers.utils.parseUnits(
-        value,
-        selectedOutToken.decimals
-      );
-
-      return setSelectedOutToken({
-        ...selectedOutToken,
-        amountBN: parsedAmount.toBigInt(),
-        parsedAmount: value,
-      });
-    }
-  };
+  }, [tokenData, inToken]);
 
   const onKeyDown = (e: any) => {
     if (e.key === "Enter" && mobileView) {
@@ -268,12 +151,16 @@ export default function TokenInput(props: {
 
           return setSelectedInToken({
             ...selectedInToken,
+            forcePosition: tokenData.data.forcePosition,
+            legacyTitanHash: tokenData.data.legacyTitanHash,
             amountBN: amountBN.toBigInt(),
             parsedAmount: isMinus ? "0" : parsedAmount.toString(),
           });
         }
         return setSelectedInToken({
           ...selectedInToken,
+          forcePosition: tokenData.data.forcePosition,
+          legacyTitanHash: tokenData.data.legacyTitanHash,
           amountBN: tokenData.data.balanceBN.value,
           parsedAmount: tokenData.data.parsedBalanceWithoutCommafied,
         });
@@ -560,6 +447,7 @@ export default function TokenInput(props: {
                   isDisabled={isDisabled}
                   _disabled={{ color: "#A0A3AD" }}
                   value={valueProp}
+                  onChange={(e) => {}}
                   ref={customRef ? customRef : inputRef}
                   onKeyDown={onKeyDown}
                   onFocus={handleFocus}

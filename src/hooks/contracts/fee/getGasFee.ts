@@ -103,60 +103,61 @@ export function useGasFee() {
           case "Wrap":
             return wrapUnwrapGasEstimate;
           case "Deposit":
-            const supportedOutToken = supportedTokens.filter(
-              (token) => token.address === inToken.address
-            )[0];
-            const outTokenAddress =
-              supportedOutToken.address[outNetwork.chainName];
-            // Set the gas limit as default value when can't fetch from contract function due to insufficient balance or non-approval
-            if (isBalanceOver || !isApproved) {
-              return 200000;
-            }
-            if (isETH) {
-              const estimatedGasUsage =
-                await _depositETH_contract.estimateGas.depositETH({
-                  //@ts-ignore
-                  account: address,
-                  args: [200000, "0x"],
-                  //need to put gasAmount with gasOrcale later
-                  value: parsedAmount as bigint,
-                });
+            // const supportedOutToken = supportedTokens.filter(
+            //   (token) => token.address === inToken.address
+            // )[0];
+            // const outTokenAddress =
+            //   supportedOutToken.address[outNetwork.chainName];
+            // // Set the gas limit as default value when can't fetch from contract function due to insufficient balance or non-approval
+            // if (isBalanceOver || !isApproved) {
+            //   return 200000;
+            // }
+            // if (isETH) {
+            //   const estimatedGasUsage =
+            //     await _depositETH_contract.estimateGas.depositETH({
+            //       //@ts-ignore
+            //       account: address,
+            //       args: [200000, "0x"],
+            //       //need to put gasAmount with gasOrcale later
+            //       value: parsedAmount as bigint,
+            //     });
 
-              return calculateGasMargin(
-                BigNumber.from(estimatedGasUsage)
-              ).toBigInt();
-            }
-            // deposite TON to thanos
-            if (isThanosChain(outNetwork.chainId) && isTONIn) {
-              const estimatedGasUsage =
-                await _depositNativeToken_contract.estimateGas.depositNativeToken(
-                  {
-                    //@ts-ignore
-                    account: address,
-                    args: [parsedAmount as bigint, 200000, "0x"],
-                  }
-                );
-              return calculateGasMargin(
-                BigNumber.from(estimatedGasUsage)
-              ).toBigInt();
-            }
+            //   return calculateGasMargin(
+            //     BigNumber.from(estimatedGasUsage)
+            //   ).toBigInt();
+            // }
+            // // deposite TON to thanos
+            // if (isThanosChain(outNetwork.chainId) && isTONIn) {
+            //   const estimatedGasUsage =
+            //     await _depositNativeToken_contract.estimateGas.depositNativeToken(
+            //       {
+            //         //@ts-ignore
+            //         account: address,
+            //         args: [parsedAmount as bigint, 200000, "0x"],
+            //       }
+            //     );
+            //   return calculateGasMargin(
+            //     BigNumber.from(estimatedGasUsage)
+            //   ).toBigInt();
+            // }
 
-            const estimatedGasUsage =
-              await _depositERC20_contract.estimateGas.depositERC20({
-                //@ts-ignore
-                account: address,
-                //@ts-ignore
-                args: [
-                  inToken.address[inNetwork.chainName],
-                  outTokenAddress,
-                  parsedAmount,
-                  200000,
-                  "0x",
-                ],
-              });
-            return calculateGasMargin(
-              BigNumber.from(estimatedGasUsage)
-            ).toBigInt();
+            // const estimatedGasUsage =
+            //   await _depositERC20_contract.estimateGas.depositERC20({
+            //     //@ts-ignore
+            //     account: address,
+            //     //@ts-ignore
+            //     args: [
+            //       inToken.address[inNetwork.chainName],
+            //       outTokenAddress,
+            //       parsedAmount,
+            //       200000,
+            //       "0x",
+            //     ],
+            //   });
+            // return calculateGasMargin(
+            //   BigNumber.from(estimatedGasUsage)
+            // ).toBigInt();
+            return 0;
           case "Withdraw":
             // Set the gas limit as default value when insufficient balance or non-approval
             if (isBalanceOver || !isApproved || !provider) {

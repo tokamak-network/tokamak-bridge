@@ -43,7 +43,9 @@ export function createWithdrawTransaction(
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
-  finalizedTransactionHash?: string
+  finalizedTransactionHash?: string,
+  forcePosition?: string,
+  legacyTitanHash?: string
 ): WithdrawTransactionHistory {
   return {
     action: Action.Withdraw,
@@ -67,6 +69,8 @@ export function createWithdrawTransaction(
     },
     resolved,
     blockNumber,
+    forcePosition,
+    legacyTitanHash,
   };
 }
 
@@ -115,7 +119,9 @@ export function createTransaction(
   rollupCompletedTimestamp?: number,
   finalizedCompletedTimestamp?: number,
   rollupTransactionHash?: string,
-  finalizedTransactionHash?: string
+  finalizedTransactionHash?: string,
+  forcePosition?: string,
+  legacyTitanHash?: string
 ): StandardHistory {
   if (action === Action.Withdraw) {
     return createWithdrawTransaction(
@@ -133,7 +139,9 @@ export function createTransaction(
       rollupCompletedTimestamp,
       finalizedCompletedTimestamp,
       rollupTransactionHash,
-      finalizedTransactionHash
+      finalizedTransactionHash,
+      forcePosition,
+      legacyTitanHash
     );
   } else {
     return createDepositTransaction(

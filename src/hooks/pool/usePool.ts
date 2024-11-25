@@ -30,7 +30,6 @@ export function usePoolData(poolAddress: string | undefined) {
           IUniswapV3PoolABI.abi,
           provider
         );
-
         const [liquidity, slot0] = await Promise.all([
           poolContract.liquidity(),
           poolContract.slot0(),

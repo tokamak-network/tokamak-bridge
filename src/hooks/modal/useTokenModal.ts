@@ -9,7 +9,7 @@ import {
   isOutputTokenAmount,
 } from "@/recoil/card/selectCard/searchToken";
 import { mobileTokenModalStatus } from "@/recoil/mobile/atom";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import useConnectedNetwork from "../network";
 import { TokenInfo } from "@/types/token/supportedToken";
@@ -107,7 +107,6 @@ export default function useTokenModal() {
             setSelectedInToken(null);
           }
         }
-
         isInTokenOpen && chainName
           ? setSelectedInToken({
               ...tokenData,

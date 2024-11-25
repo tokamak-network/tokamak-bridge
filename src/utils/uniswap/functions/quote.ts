@@ -85,7 +85,6 @@ async function getPoolConstants(): Promise<{
     IUniswapV3PoolABI.abi,
     provider
   );
-
   const [token0, token1, fee] = await Promise.all([
     poolContract.token0(),
     poolContract.token1(),

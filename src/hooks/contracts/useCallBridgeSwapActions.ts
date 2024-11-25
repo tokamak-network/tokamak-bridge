@@ -66,37 +66,38 @@ export default function useCallBridgeSwapAction() {
 
       switch (mode) {
         case "Deposit":
-          const supportedOutToken = supportedTokens.filter(
-            (token) => token.address === inToken.address
-          )[0];
-          const outTokenAddress =
-            supportedOutToken.address[outNetwork.chainName];
+          // const supportedOutToken = supportedTokens.filter(
+          //   (token) => token.address === inToken.address
+          // )[0];
+          // const outTokenAddress =
+          //   supportedOutToken.address[outNetwork.chainName];
 
-          if (isETH) {
-            return _depositETH({
-              args: [200000, "0x"],
-              //need to put gasAmount with gasOrcale later
-              value: parsedAmount as bigint,
-              gas: gasLimit,
-            });
-          }
-          // deposit TON to Thanos
-          if (isThanosChain(outNetwork.chainId) && isTONIn) {
-            return _depositNativeToken_contract({
-              //@ts-ignore
-              args: [parsedAmount as bigint, 200000, "0x"],
-            });
-          }
-          return _depositERC20({
-            args: [
-              inToken.address[inNetwork.chainName],
-              outTokenAddress,
-              parsedAmount,
-              200000,
-              "0x",
-            ],
-            // gas: gasLimit,
-          });
+          // if (isETH) {
+          //   return _depositETH({
+          //     args: [200000, "0x"],
+          //     //need to put gasAmount with gasOrcale later
+          //     value: parsedAmount as bigint,
+          //     gas: gasLimit,
+          //   });
+          // }
+          // // deposit TON to Thanos
+          // if (isThanosChain(outNetwork.chainId) && isTONIn) {
+          //   return _depositNativeToken_contract({
+          //     //@ts-ignore
+          //     args: [parsedAmount as bigint, 200000, "0x"],
+          //   });
+          // }
+          // return _depositERC20({
+          //   args: [
+          //     inToken.address[inNetwork.chainName],
+          //     outTokenAddress,
+          //     parsedAmount,
+          //     200000,
+          //     "0x",
+          //   ],
+          //   // gas: gasLimit,
+          // });
+          return;
         case "Withdraw":
           if (isETH) {
             const txData = [predeploys.OVM_ETH, parsedAmount, 1_300_000, "0x"];
