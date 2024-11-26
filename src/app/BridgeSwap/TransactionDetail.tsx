@@ -41,6 +41,9 @@ import { getTransactionConstants } from "@/staging/constants/transactionTime";
 import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 import { trimAmountForFormatter } from "@/utils/trim";
 import commafy from "@/utils/trim/commafy";
+import GreyGasIcon from "assets/icons/gasStationGrey.svg";
+import { convertNumber } from "@/utils/trim/convertNumber";
+import formatNumber from "@/staging/utils/formatNumbers";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -641,7 +644,6 @@ export default function TransactionDetail(props: {
   const { isOnConfirm, isMobile } = props;
   const { isOpen } = useConfirm();
 
-  // 해당 코드를 통해 모바일에서는 무조건 detail을 확장합니다.
   const { mobileView } = useMediaView();
   useEffect(() => {
     setIsExpended(isOpen || mobileView);
@@ -655,9 +657,8 @@ export default function TransactionDetail(props: {
   const { isInputZero } = useInputBalanceCheck();
   const { isConnected } = useAccount();
   const { isTONatPair } = useIsTon();
-  const { outNetwork } = useInOutNetwork();
 
-  const isDeposit = mode === "Deposit";
+  const { totalGasCost, gasCostUS } = useGasFee();
 
   const isWrapUnwrap =
     mode === "Wrap" ||
@@ -672,50 +673,37 @@ export default function TransactionDetail(props: {
     (mode === "Swap" && outToken === null) ||
     isInputZero ||
     !isConnected ||
-    (mode === "Swap" && isTONatPair) ||
-    mode === "Withdraw"
+    (mode === "Swap" && isTONatPair)
   ) {
     return null;
   }
 
   return (
-    <Flex
-      w={"100%"}
-      // h={isExpanded ? "310px" : "48px"}
-      minH={{ base: "40px", lg: "48px" }}
-      bg={isDeposit ? "#100E12" : "#1f2128"}
-      borderRadius={"8px"}
-      px={!isMobile ? { base: "16px", lg: "20px" } : ""}
-      flexDir={"column"}
-      pt={
-        !isMobile && !isDeposit
-          ? {
-              base: isExpanded ? "11px" : "11px",
-              lg: isExpanded ? "20px" : "14px",
-            }
-          : ""
-      }
-      pb={
-        !isDeposit
-          ? {
-              base: isExpanded ? "12px" : "",
-              lg: isExpanded ? "20px" : "",
-            }
-          : ""
-      }
-    >
-      {!isMobile && (
-        <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
-      )}
-      {(!mobileView ||
-        // isOnConfirm ||
-        (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
-        <Content
-          isExpanded={isExpanded}
-          isOnConfirm={isOnConfirm}
-          isMobile={isMobile}
-        ></Content>
-      )}
+    <Flex w={"100%"} flexDir={"column"} px={"12px"}>
+      <Flex flexDir={"column"} gap={"8px"}>
+        <Flex justifyContent={"space-between"}>
+          <Text fontWeight={400} lineHeight={"21px"} color={"#A0A3AD"}>
+            Time to Withdraw
+          </Text>
+          <Text fontWeight={600} lineHeight={"21px"}>
+            Immediate
+          </Text>
+        </Flex>
+        <Flex justifyContent={"space-between"}>
+          <Text fontWeight={400} lineHeight={"21px"} color={"#A0A3AD"}>
+            Network fee
+          </Text>
+          <Flex gap={"4px"} alignItems={"center"}>
+            <Image src={GreyGasIcon} alt={"gasStation"} />
+            <Text fontWeight={600} lineHeight={"21px"}>
+              {`${formatNumber(totalGasCost ?? "0")} ETH`}
+            </Text>
+            <Text fontSize={"14px"} fontWeight={400} color={"#A0A3AD"}>
+              {`($${gasCostUS ?? 0})`}
+            </Text>
+          </Flex>
+        </Flex>
+      </Flex>
     </Flex>
   );
 }

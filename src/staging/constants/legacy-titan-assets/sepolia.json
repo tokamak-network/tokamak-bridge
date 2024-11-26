@@ -6,8 +6,8 @@
     "data": [
       {
         "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-        "amount": 1005,
-        "hash": "0x8a44fda388cb9c798bc480b68e3f96f8ca5419b47bf97af4ed927602577008ef"
+        "amount": 1007,
+        "hash": "0x2bdf57bdf84d37fabc7c1610c9920631a0958cafa2f5e5593a9db68b9539db7c"
        },
        {
         "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
@@ -22,10 +22,10 @@
     "tokenName": "Tokamak Network",
     "data": [
       {
-       "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-       "amount": "1105000051000000000000",
-       "hash": "0x58c716f4fb1f10baccbac63b2df808e7bdda89ef2c9a4c4bb83a497c98e4e4bb"
-      },
+        "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
+        "amount": "1113000130999999800000",
+        "hash": "0x42d79748b0e470dc247f8302b1873b53ef888b8d48875ec4cc50a8c765208ad1"
+       },
       {
         "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
         "amount": "1035000051000000000000",
@@ -52,8 +52,8 @@
     "data": [
       {
         "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-        "amount": "505105100",
-        "hash": "0x8ae4e5b80ad007ce885fce78c9fde54cfa334ea98a35e6fdd1f457c3502216aa"
+        "amount": "514114100",
+        "hash": "0x10b55a5d11bd0c8fe99ae9dda20e9bc384b80e3b63f1b72e007ea60344ba6345"
        },
        {
         "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",
@@ -69,8 +69,8 @@
     "data": [
       {
         "claimer": "0xe6BDAB42d78C635502f5ef5707Ac1e4524C1E9A9",
-        "amount": "405005100",
-        "hash": "0x76121c7b1e177a9d49fd581504c5b7fff18a7c08536a383b342da20e4da1c882"
+        "amount": "411011100",
+        "hash": "0x9a1d934fcd1cec34a178623ca6bd2e51905b0b25995fa3fede3a98d043c28984"
        },
        {
         "claimer": "0x90F281ccEDD4366c8cCA81d2ba3D54A808Baa806",

@@ -37,7 +37,9 @@ const thanosSDK = require("@tokamak-network/thanos-sdk");
 import { getL1Provider } from "@/config/l1Provider";
 import { getProvider } from "@/config/getProvider";
 import useIsTon from "@/hooks/token/useIsTon";
-
+import { useRecoilState } from "recoil";
+import { legacyTitanConfirmModalStatus } from "@/recoil/modal/atom";
+import L1StandardBridgeAbi from "@/constant/abis/L1StandardBridge.json";
 export function useGasFee() {
   const { address } = useAccount();
   const [gasLimit, setGasLimit] = useState<bigint | undefined>(undefined);
@@ -61,6 +63,7 @@ export function useGasFee() {
   const { isBalanceOver } = useInputBalanceCheck();
   const { isApproved } = useApprove();
   const { L2BRIDGE_CONTRACT } = useContract();
+
   // const { estimatedGasUsageGwei } = useAmountOut();
 
   const swapGasUseEstimate = useMemo(() => {
@@ -86,6 +89,7 @@ export function useGasFee() {
     }
   }, [wrapUnwrapGasUsage, mode]);
   const { L1Provider } = useProvier();
+  const { L1BRIDGE_CONTRACT } = useContract();
   useEffect(() => {
     const fetchEstimatedGas = async () => {
       if (inToken && inToken.amountBN && inNetwork && outNetwork && address) {
@@ -159,39 +163,55 @@ export function useGasFee() {
             // ).toBigInt();
             return 0;
           case "Withdraw":
-            // Set the gas limit as default value when insufficient balance or non-approval
-            if (isBalanceOver || !isApproved || !provider) {
-              return 1400000;
-            }
-
+            const forcePosition = inToken.forcePosition;
+            const legacyTitanHash = inToken.legacyTitanHash;
+            const amount = inToken.amountBN;
+            const tokenAddress = inToken.address[outNetwork.chainName];
             const withdrawContract = new ethers.Contract(
-              TOKAMAK_CONTRACTS.L2Bridge,
-              L2TitanBridgeAbi,
+              L1BRIDGE_CONTRACT,
+              L1StandardBridgeAbi,
               provider
             );
-            const l2Provider = asL2Provider(provider);
-
-            if (isETH) {
-              const tx = await withdrawContract.populateTransaction.withdraw(
-                predeploys.OVM_ETH,
-                parsedAmount,
-                1_300_000,
-                "0x"
-              );
-              const estimateTotalGasCost =
-                await l2Provider.estimateTotalGasCost({ ...tx, from: address });
-              return estimateTotalGasCost;
+            try {
+              const estimatedGasUsage = BigInt(150000);
+              return estimatedGasUsage;
+            } catch (error) {
+              console.error("Error estimating gas:", error);
+              throw error;
             }
-            const tx = await withdrawContract.populateTransaction.withdraw(
-              inToken.address[inNetwork.chainName],
-              parsedAmount,
-              0,
-              "0x"
-            );
-            const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
-              { ...tx, from: address }
-            );
-            return estimateTotalGasCost;
+          // Set the gas limit as default value when insufficient balance or non-approval
+          // if (isBalanceOver || !isApproved || !provider) {
+          //   return 1400000;
+          // }
+
+          // const withdrawContract = new ethers.Contract(
+          //   TOKAMAK_CONTRACTS.L2Bridge,
+          //   L2TitanBridgeAbi,
+          //   provider
+          // );
+          // const l2Provider = asL2Provider(provider);
+
+          // if (isETH) {
+          //   const tx = await withdrawContract.populateTransaction.withdraw(
+          //     predeploys.OVM_ETH,
+          //     parsedAmount,
+          //     1_300_000,
+          //     "0x"
+          //   );
+          //   const estimateTotalGasCost =
+          //     await l2Provider.estimateTotalGasCost({ ...tx, from: address });
+          //   return estimateTotalGasCost;
+          // }
+          // const tx = await withdrawContract.populateTransaction.withdraw(
+          //   inToken.address[inNetwork.chainName],
+          //   parsedAmount,
+          //   0,
+          //   "0x"
+          // );
+          // const estimateTotalGasCost = await l2Provider?.estimateTotalGasCost(
+          //   { ...tx, from: address }
+          // );
+          // return estimateTotalGasCost;
           default:
             return;
         }
@@ -212,8 +232,9 @@ export function useGasFee() {
 
               return setTotalGasCost(parsedTotalGasCost);
             } else {
+              const totalGasCost = Number(gasPrice) * Number(estimatedGasUsage);
               const totalGas = ethers.utils.formatUnits(
-                estimatedGasUsage.toString(),
+                totalGasCost.toString(),
                 "ether"
               );
               return setTotalGasCost(totalGas);

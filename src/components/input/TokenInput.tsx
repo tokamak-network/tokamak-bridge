@@ -95,7 +95,7 @@ export default function TokenInput(props: {
 
   useEffect(() => {
     onMax();
-  }, [tokenData, inToken]);
+  }, [tokenData, inToken, selectedInToken?.amountBN]);
 
   const onKeyDown = (e: any) => {
     if (e.key === "Enter" && mobileView) {

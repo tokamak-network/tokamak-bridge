@@ -54,7 +54,7 @@ export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
           outToken.address || ZERO_ADDRESS,
           outToken.amount,
         ],
-        gas: BigInt(750000),
+        gas: BigInt(150000),
       });
 
       return setModalOpen("confirming");
