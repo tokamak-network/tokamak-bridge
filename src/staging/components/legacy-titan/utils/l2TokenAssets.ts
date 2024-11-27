@@ -3,9 +3,10 @@ import { LegacyTitanTokenData } from "@/staging/types/legacyTitan";
 export const findTokenAmount = (
   l1Token: string,
   l2Token: string,
-  claimer: string
+  claimer: string,
+  chainName: "mainnet" | "sepolia"
 ): LegacyTitanTokenData | null => {
-  const tokenData = require("./../../../constants/legacy-titan-assets/sepolia.json");
+  const tokenData = require(`./../../../constants/legacy-titan-assets/${chainName}.json`);
 
   const l1TokenLower = l1Token.toLowerCase();
   const l2TokenLower = l2Token.toLowerCase();

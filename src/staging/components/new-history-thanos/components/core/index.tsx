@@ -25,6 +25,8 @@ import { getBridgeL2ChainId } from "@/staging/components/new-confirm/utils";
 import { isThanosChain } from "@/utils/network/checkNetwork";
 import { useBridgeHistory } from "@/staging/hooks/bridge/useBridgeHistory";
 import { NoHistoryComponent } from "./NoHistoryComponent";
+import { TransactionHistoryBanner } from "./TransactionHistoryBanner";
+import NoHistoryIcon from "@/assets/icons/no_history_warning.svg";
 
 const NoAcitivityComponent = () => {
   return (
@@ -33,10 +35,10 @@ const NoAcitivityComponent = () => {
       rowGap={"24px"}
       alignItems={"center"}
       justifyContent={"center"}
-      h={"640px"}
+      h={"100%"}
     >
-      <Image src={NoAcitivity} alt={"noActivityIcon"}></Image>
-      <Text color={"#E3F3FF"}>No activity yet</Text>
+      <Image src={NoHistoryIcon} alt={"noActivityIcon"}></Image>
+      <Text color={"#E3F3FF"}>Text</Text>
     </Flex>
   );
 };
@@ -69,37 +71,40 @@ export default function AccountHistoryNew() {
     }
   }, [_selectedTransactionCategory, withdrawHistory]);
   return (
-    <Flex flexDirection="column" gap="2" h={"100%"}>
-      {historyData === undefined && <NoHistoryComponent />}
-      {historyData === null && <LoadingSpinner />}
-      {historyData?.length === 0 && <NoAcitivityComponent />}
-      {historyData?.map((transaction, index) => {
-        const isCompleted = transaction.status === Status.Completed;
-        const key =
-          isDepositTransactionHistory(transaction) ||
-          isWithdrawTransactionHistory(transaction)
-            ? transaction.transactionHashes.initialTransactionHash
-            : index;
-        const l2ChainId = getBridgeL2ChainId(transaction);
-        return (
-          <Box
-            key={`${transaction.action}-${key}`}
-            w={"336px"}
-            px={"12px"}
-            py={isCompleted ? "6px" : "8px"}
-            borderRadius={"8px"}
-            border={isCompleted ? "none" : "1px solid #313442"}
-            bg={"#15161D"}
-          >
-            {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
-            {isCompleted ? (
-              <LegacyComplete {...transaction} />
-            ) : (
-              <LegacyPending transaction={transaction} />
-            )}
-          </Box>
-        );
-      })}
+    <Flex flexDir={"column"} gap={"6px"} h={"100%"} width={"100%"}>
+      <TransactionHistoryBanner />
+      <Flex flexDirection="column" gap="2" h={"100%"}>
+        {historyData === undefined && <NoHistoryComponent />}
+        {historyData === null && <LoadingSpinner />}
+        {historyData?.length === 0 && <NoAcitivityComponent />}
+        {historyData?.map((transaction, index) => {
+          const isCompleted = transaction.status === Status.Completed;
+          const key =
+            isDepositTransactionHistory(transaction) ||
+            isWithdrawTransactionHistory(transaction)
+              ? transaction.transactionHashes.initialTransactionHash
+              : index;
+          const l2ChainId = getBridgeL2ChainId(transaction);
+          return (
+            <Box
+              key={`${transaction.action}-${key}`}
+              w={"336px"}
+              px={"12px"}
+              py={isCompleted ? "6px" : "8px"}
+              borderRadius={"8px"}
+              border={isCompleted ? "none" : "1px solid #313442"}
+              bg={"#15161D"}
+            >
+              {/** In the history, Pending shows the current incomplete screen, and Complete shows the completed screen. */}
+              {isCompleted ? (
+                <LegacyComplete {...transaction} />
+              ) : (
+                <LegacyPending transaction={transaction} />
+              )}
+            </Box>
+          );
+        })}
+      </Flex>
     </Flex>
   );
 }

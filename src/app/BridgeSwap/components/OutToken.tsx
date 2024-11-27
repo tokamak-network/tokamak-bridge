@@ -98,11 +98,10 @@ export default function OutToken() {
       rowGap={"28px"}
       opacity={isInTokenOpen && !isOutTokenOpen ? 0.05 : 1}
     >
-      <Flex justifyContent={"space-between"} alignItems={"center"}>
+      <Flex alignItems={"center"}>
         <Text fontSize={36} fontWeight={"semibold"} h={"54px"}>
           {!isConnected ? "" : mode === "Swap" ? "For" : "To"}
         </Text>
-        {isConnected && <Setting />}
       </Flex>
 
       <Flex className="card-wrapper" w={"224px"} h={"386px"}>

@@ -307,7 +307,7 @@ export default function StatusComponent(
                 : "#A0A3AD"
             }
             cursor={"pointer"}
-            onClick={label !== Status.Initiate ? openModal : undefined}
+            onClick={openModal}
           >
             {timeDisplay}
           </Text>

@@ -39,6 +39,7 @@ export default function useTokenBalance(
     staleTime: isLayer2 ? 2000 : 5000,
     enabled: requireCall && chainName !== "THANOS_SEPOLIA",
   });
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
 
   const [legacyWithdrawalHash, setLegacyWithdrawalHash] = useState<
     string | null
@@ -58,11 +59,16 @@ export default function useTokenBalance(
 
   const tokenBalance = useMemo(() => {
     if (!tokenInfo) return null;
-    if (chainName === "TITAN_SEPOLIA") {
+    if (chainName === "TITAN_SEPOLIA" || chainName === "TITAN") {
       const tokenData = findTokenAmount(
-        tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
-        tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
-        accountAddress as string
+        isConnectedToMainNetwork
+          ? tokenInfo?.address["MAINNET"] || ZERO_ADDRESS
+          : tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
+        isConnectedToMainNetwork
+          ? tokenInfo?.address["TITAN"] || ZERO_ADDRESS
+          : tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
+        accountAddress as string,
+        isConnectedToMainNetwork ? "mainnet" : "sepolia"
       );
       const withdrawalHash = tokenData?.data?.hash;
       setLegacyWithdrawalHash(withdrawalHash || null);
