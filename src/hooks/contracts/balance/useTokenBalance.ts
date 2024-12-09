@@ -3,7 +3,7 @@ import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
 import { TokenInfo } from "@/types/token/supportedToken";
 import { useEffect, useMemo, useState } from "react";
-import useConnectedNetwork from "@/hooks/network";
+import useConnectedNetwork, { useInOutNetwork } from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
@@ -32,15 +32,22 @@ export default function useTokenBalance(
   const isOnUI =
     inToken?.address === tokenAddress || outToken?.address === tokenAddress;
   const { isLayer2 } = useConnectedNetwork();
+  const { inNetwork } = useInOutNetwork();
+
+  const isLayer1 = useMemo(() => {
+    return (
+      inNetwork?.chainId === SupportedChainId.MAINNET ||
+      inNetwork?.chainId === SupportedChainId.SEPOLIA
+    );
+  }, [inNetwork?.chainId]);
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
     token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
     staleTime: isLayer2 ? 2000 : 5000,
-    enabled: requireCall && chainName !== "THANOS_SEPOLIA",
+    enabled: requireCall && chainName !== "THANOS_SEPOLIA" && isLayer1,
   });
   const { isConnectedToMainNetwork } = useConnectedNetwork();
-
   const [legacyWithdrawalHash, setLegacyWithdrawalHash] = useState<
     string | null
   >(null);
