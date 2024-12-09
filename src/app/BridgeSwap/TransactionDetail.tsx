@@ -653,6 +653,7 @@ export default function TransactionDetail(props: {
   const { isNotSupportForBridge, isNotSupportForSwap } = useBridgeSupport();
 
   const { mode, isReady } = useGetMode();
+  const isDeposit = mode === "Deposit";
   const { outToken } = useInOutTokens();
   const { isInputZero } = useInputBalanceCheck();
   const { isConnected } = useAccount();
@@ -678,7 +679,7 @@ export default function TransactionDetail(props: {
     return null;
   }
 
-  return (
+  return mode === "Withdraw" ? (
     <Flex w={"100%"} flexDir={"column"} px={"12px"}>
       <Flex flexDir={"column"} gap={"8px"}>
         <Flex justifyContent={"space-between"}>
@@ -704,6 +705,45 @@ export default function TransactionDetail(props: {
           </Flex>
         </Flex>
       </Flex>
+    </Flex>
+  ) : (
+    <Flex
+      w={"100%"}
+      // h={isExpanded ? "310px" : "48px"}
+      minH={{ base: "40px", lg: "48px" }}
+      bg={isDeposit ? "#100E12" : "#1f2128"}
+      borderRadius={"8px"}
+      px={!isMobile ? { base: "16px", lg: "20px" } : ""}
+      flexDir={"column"}
+      pt={
+        !isMobile && !isDeposit
+          ? {
+              base: isExpanded ? "11px" : "11px",
+              lg: isExpanded ? "20px" : "14px",
+            }
+          : ""
+      }
+      pb={
+        !isDeposit
+          ? {
+              base: isExpanded ? "12px" : "",
+              lg: isExpanded ? "20px" : "",
+            }
+          : ""
+      }
+    >
+      {!isMobile && (
+        <Title isExpanded={isExpanded} setIsExpended={setIsExpended} />
+      )}
+      {(!mobileView ||
+        // isOnConfirm ||
+        (mode !== "Deposit" && !(isWrapUnwrap && mobileView))) && (
+        <Content
+          isExpanded={isExpanded}
+          isOnConfirm={isOnConfirm}
+          isMobile={isMobile}
+        ></Content>
+      )}
     </Flex>
   );
 }

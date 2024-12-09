@@ -17,12 +17,18 @@ import {
   selectedInTokenStatus,
   selectedOutTokenStatus,
 } from "@/recoil/bridgeSwap/atom";
+import {
+  SupportedChainId,
+  SupportedChainIdOnProd,
+} from "@/types/network/supportedNetwork";
+import { useInOutNetwork } from "@/hooks/network";
 
 export const LegacyTitanWarningModal = () => {
   const [isOpen, setIsOpen] = useState<boolean>(true);
   const { mobileView } = useMediaView();
   const { mode } = useRecoilValue(actionMode);
   const [network, setNetwork] = useRecoilState(networkStatus);
+  const { inNetwork } = useInOutNetwork();
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -36,12 +42,17 @@ export const LegacyTitanWarningModal = () => {
 
   const handleCloseModal = () => {
     setIsOpen(false);
-    if (mode !== "Withdraw") {
-      setNetwork({ inNetwork: null, outNetwork: null });
+    if (mode === "Withdraw") return;
+    if (
+      (mode === "Swap" || mode === "Wrap" || mode === "Unwrap") &&
+      (inNetwork?.chainId === SupportedChainId.MAINNET ||
+        inNetwork?.chainId === SupportedChainId.SEPOLIA)
+    )
+      return;
+    setNetwork({ inNetwork: null, outNetwork: null });
 
-      setSelectedInToken(null);
-      setSelectedOutToken(null);
-    }
+    setSelectedInToken(null);
+    setSelectedOutToken(null);
   };
 
   return (
