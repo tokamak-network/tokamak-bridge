@@ -1,9 +1,12 @@
+import { LegacyTitanTokenData } from "@/staging/types/legacyTitan";
+
 export const findTokenAmount = (
   l1Token: string,
   l2Token: string,
-  claimer: string
-): string => {
-  const tokenData = require("./../../../constants/legacy-titan-assets/sepolia.json");
+  claimer: string,
+  chainName: "mainnet" | "sepolia"
+): LegacyTitanTokenData | null => {
+  const tokenData = require(`./../../../constants/legacy-titan-assets/${chainName}.json`);
 
   const l1TokenLower = l1Token.toLowerCase();
   const l2TokenLower = l2Token.toLowerCase();
@@ -13,15 +16,19 @@ export const findTokenAmount = (
       entry.l1Token.toLowerCase() === l1TokenLower &&
       entry.l2Token.toLowerCase() === l2TokenLower
   );
-  console.log(tokenEntry);
 
   if (!tokenEntry) {
-    return "0";
+    return null;
   }
 
   const claimerData = tokenEntry.data.find(
     (data: any) => data.claimer.toLowerCase() === claimerLower
   );
 
-  return claimerData ? claimerData.amount : "0";
+  return {
+    l1Token: claimerData?.l1Token,
+    l2Token: claimerData?.l2Token,
+    tokenName: claimerData?.tokenName,
+    data: claimerData,
+  };
 };

@@ -158,9 +158,9 @@ const ActionMethodItem = ({
     >
       {from && to && (
         <Flex columnGap={"6px"} align={"center"} mb={"8px"}>
-          <Image width={20} height={20} alt='from_network' src={fromIcon} />
-          {title !== "Pools" && <Image width={16} alt='arrow' src={Arrow} />}
-          <Image width={20} height={20} alt='to_network' src={toIcon} />
+          <Image width={20} height={20} alt="from_network" src={fromIcon} />
+          {title !== "Pools" && <Image width={16} alt="arrow" src={Arrow} />}
+          <Image width={20} height={20} alt="to_network" src={toIcon} />
         </Flex>
       )}
       <Text fontFamily={theme.fonts.body} fontSize={16} fontWeight={400}>
@@ -243,10 +243,10 @@ const ActionOptionModal = () => {
     >
       <ModalOverlay bg={"#0F0F12"} />
       <ModalContent
-        display='flex'
-        flexDirection='column'
-        justifyContent='space-between'
-        h='calc(100vh - 64px)'
+        display="flex"
+        flexDirection="column"
+        justifyContent="space-between"
+        h="calc(100vh - 64px)"
         bg={"transparent"}
         mb={0}
       >
@@ -267,7 +267,7 @@ const ActionOptionModal = () => {
           </Flex>
         </Flex>
         <Flex
-          direction='column'
+          direction="column"
           bg={"#1F2128"}
           px={4}
           pt={2}
@@ -281,13 +281,13 @@ const ActionOptionModal = () => {
             <ActionMethodItem
               from={ethChainId}
               to={titanChainId}
-              title='Deposit'
+              title="Deposit"
               handleClose={closeModal}
             />
             <ActionMethodItem
               from={titanChainId}
               to={ethChainId}
-              title='Withdraw'
+              title="Withdraw"
               handleClose={closeModal}
             />
           </Flex>
@@ -300,19 +300,19 @@ const ActionOptionModal = () => {
             <ActionMethodItem
               from={ethChainId}
               to={ethChainId}
-              title='Swap'
+              title="Swap"
               handleClose={closeModal}
             />
             <ActionMethodItem
               from={titanChainId}
               to={titanChainId}
-              title='Swap'
+              title="Swap"
               handleClose={closeModal}
             />
             <ActionMethodItem
               from={ethChainId}
               to={titanChainId}
-              title='Liquidity'
+              title="Liquidity"
               handleClose={closeModal}
             />
           </Flex>

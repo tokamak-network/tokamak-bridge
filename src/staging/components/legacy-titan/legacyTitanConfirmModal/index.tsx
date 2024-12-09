@@ -14,6 +14,7 @@ import {
   Action,
   StandardHistory,
   TransactionHistory,
+  WithdrawTransactionHistory,
 } from "@/staging/types/transaction";
 import { legacyTitanConfirmModalStatus } from "@/recoil/modal/atom";
 import { useRecoilState, useRecoilValue } from "recoil";
@@ -25,16 +26,15 @@ import useDepositWithdrawConfirm from "../../new-confirm/hooks/useDepositWithdra
 import TransactionInfo from "./TransactionInfo";
 import BridgeActionButtonComponent from "../../new-confirm/components/core/thanos/BridgeActionButton";
 import ConfirmCheckboxComponent from "../../new-confirm/components/core/thanos/ConfirmCheckbox";
+import { useWithdrawLegacyTitan } from "@/staging/hooks/legacyTitan/useWithdrawLegacyTitan";
 
 export const LegacyTitanConfirmModal = () => {
   const { onCloseLegacyTitanConfirmModal } = useDepositWithdrawConfirm();
   const [legacyConfirmModal, setLegacyConfirmModal] = useRecoilState(
     legacyTitanConfirmModalStatus
   );
-  useEffect(() => {
-    console.log(legacyConfirmModal);
-  }, [legacyConfirmModal]);
   const { chain } = useNetwork();
+
   const transactionData = legacyConfirmModal.transaction;
   const isDisbleForAction = useMemo(() => {
     if (!transactionData) return true;
@@ -42,10 +42,18 @@ export const LegacyTitanConfirmModal = () => {
     return false;
   }, [chain, transactionData]);
   const [isConfirmed, setIsConfirmed] = useState<boolean>(false);
+  useEffect(() => {
+    setIsConfirmed(false);
+  }, [transactionData]);
   const handleConfirmCheck = () => {
     setIsConfirmed((prev) => !prev);
   };
-  const handleActionClick = () => {};
+  const { callToWithdrawLegacyTitan } = useWithdrawLegacyTitan(
+    transactionData as WithdrawTransactionHistory
+  );
+  const handleActionClick = () => {
+    callToWithdrawLegacyTitan();
+  };
   const confirmMessage = "Text will be changed.";
   return (
     <Modal

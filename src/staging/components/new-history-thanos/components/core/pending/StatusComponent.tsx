@@ -157,11 +157,11 @@ export default function StatusComponent(
   }, [transactionData.status]);
   const initialTimeDisplay = shouldCountdown
     ? // Value needed for countdown
-    formatTimeDisplay(remainTime)
+      formatTimeDisplay(remainTime)
     : // If not active and status is Finalized, display empty value
     progressStatus === ProgressStatus.Todo
-      ? ""
-      : // Otherwise, display formatted date as all are completed
+    ? ""
+    : // Otherwise, display formatted date as all are completed
       formatDateToYMD(Number(blockTimestamp ?? 0));
 
   const { time, isCountDown } = useCountdown(
@@ -216,8 +216,9 @@ export default function StatusComponent(
         case CT_REQUEST.Request:
           return "Request";
         case CT_REQUEST.UpdateFee:
-          return `Update ${updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
-            }`;
+          return `Update ${
+            updateFeeCount && updateFeeCount > 1 ? ` x ${updateFeeCount}` : ""
+          }`;
         case CT_REQUEST.WaitForReceive:
           return "Waiting";
         default:
@@ -275,7 +276,11 @@ export default function StatusComponent(
         </Text>
       </Flex>
       {readyForStatus ? (
-        <ActionButtonComponent status={status} tx={transactionData} openModal={openModal} />
+        <ActionButtonComponent
+          status={status}
+          tx={transactionData}
+          openModal={openModal}
+        />
       ) : shouldCountdown ? (
         <Box onClick={openModal}>
           <CountDownComponent
@@ -295,11 +300,13 @@ export default function StatusComponent(
             isError
               ? "#DD3A44"
               : progressStatus === ProgressStatus.Doing || shouldCountdown
-                ? "#FFFFFF"
-                : "#A0A3AD"
+              ? "#FFFFFF"
+              : "#A0A3AD"
           }
           cursor={!isActive ? "pointer" : "default"}
-          onClick={!isActive ? openModal : undefined}
+          onClick={
+            !isActive && label !== Status.Initiate ? openModal : undefined
+          }
         >
           {timeDisplay}
         </Text>

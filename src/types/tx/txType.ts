@@ -10,7 +10,7 @@ type UniswapTxSort =
   | "Remove Liquidity"
   | "Swap"
   | "Collect Fee";
-type BridgeTxSort = "Deposit" | "Withdraw";
+type BridgeTxSort = "Deposit" | "Withdraw" | "LegacyTitanWithdraw";
 type SwapperTxSort = "Wrap" | "Unwrap";
 type ETHWrapTxSort = "ETH-Wrap" | "ETH-Unwrap";
 type EtcTxSort = "Approve" | "Revoke";

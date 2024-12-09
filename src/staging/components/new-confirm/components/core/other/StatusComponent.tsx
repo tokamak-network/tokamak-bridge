@@ -189,7 +189,7 @@ export default function StatusComponent(props: StatusComponentProps) {
           </Text>
         </Box>
       )}
-      {isTransaction && (
+      {isTransaction && label !== Status.Initiate && (
         <Link
           target="_blank"
           href={explorerUrl}

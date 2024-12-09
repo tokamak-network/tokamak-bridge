@@ -37,7 +37,17 @@ export const useHandleConfirm = () => {
       inNetwork.chainId,
       outNetwork.chainId,
       inTransactionToken,
-      outTransactionToken
+      outTransactionToken,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      inToken.forcePosition ?? "",
+      inToken.legacyTitanHash ?? ""
     );
     onOpenLegacyTitanConfirmModal(transaction);
   };

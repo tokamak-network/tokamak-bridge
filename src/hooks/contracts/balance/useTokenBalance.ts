@@ -2,13 +2,16 @@ import { useAccount, useBalance } from "wagmi";
 import { ethers } from "ethers";
 import commafy from "@/utils/trim/commafy";
 import { TokenInfo } from "@/types/token/supportedToken";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useConnectedNetwork from "@/hooks/network";
 import { SupportedChainId } from "@/types/network/supportedNetwork";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { findTokenAmount } from "@/staging/components/legacy-titan/utils/l2TokenAssets";
 import { ZERO_ADDRESS } from "@/constant/misc";
+import { FetchBalanceResult } from "wagmi/dist/actions";
+import { useGb } from "@/staging/hooks/legacyTitan/gb";
+import { useGetForcePosition } from "@/staging/hooks/legacyTitan/getForcePosition";
 
 export default function useTokenBalance(
   tokenInfo: TokenInfo | null,
@@ -31,27 +34,63 @@ export default function useTokenBalance(
   const { isLayer2 } = useConnectedNetwork();
   const { data, error, isLoading, isSuccess } = useBalance({
     address: accountAddress,
-    token:
-      (isETH && chainName !== "THANOS_SEPOLIA") ||
-      (chainName === "THANOS_SEPOLIA" && tokenInfo?.tokenSymbol === "TON")
-        ? undefined
-        : (tokenAddress as "0x${string}") ?? null,
+    token: isETH ? undefined : (tokenAddress as "0x${string}") ?? null,
     watch: isInTokenOpen || isOutTokenOpen ? true : watch,
     staleTime: isLayer2 ? 2000 : 5000,
-    // enabled: requireCall,
+    enabled: requireCall && chainName !== "THANOS_SEPOLIA",
   });
+  const { isConnectedToMainNetwork } = useConnectedNetwork();
+
+  const [legacyWithdrawalHash, setLegacyWithdrawalHash] = useState<
+    string | null
+  >(null);
+
+  const {
+    gb,
+    isLoading: gbIsLoading,
+    isError: gbIsError,
+  } = useGb(legacyWithdrawalHash);
+
+  const {
+    forcePosition,
+    isLoading: forcePositionIsLoading,
+    isError: forcePositionIsError,
+  } = useGetForcePosition(legacyWithdrawalHash || "");
 
   const tokenBalance = useMemo(() => {
     if (!tokenInfo) return null;
-    if (chainName === "TITAN_SEPOLIA") {
-      const amount = findTokenAmount(
-        tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
-        tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
-        accountAddress as string
+    if (chainName === "TITAN_SEPOLIA" || chainName === "TITAN") {
+      const tokenData = findTokenAmount(
+        isConnectedToMainNetwork
+          ? tokenInfo?.address["MAINNET"] || ZERO_ADDRESS
+          : tokenInfo?.address["SEPOLIA"] || ZERO_ADDRESS,
+        isConnectedToMainNetwork
+          ? tokenInfo?.address["TITAN"] || ZERO_ADDRESS
+          : tokenInfo?.address["TITAN_SEPOLIA"] || ZERO_ADDRESS,
+        accountAddress as string,
+        isConnectedToMainNetwork ? "mainnet" : "sepolia"
       );
-      return {
+      const withdrawalHash = tokenData?.data?.hash;
+      setLegacyWithdrawalHash(withdrawalHash || null);
+      const amount = gb === ZERO_ADDRESS ? tokenData?.data.amount : 0;
+
+      const tokenBalanceData: FetchBalanceResult = {
+        decimals: tokenInfo?.decimals as number,
+        formatted: commafy(
+          ethers.utils.formatUnits(
+            //@ts-ignore
+            BigInt(amount || "0"),
+            tokenInfo?.decimals as number
+          )
+        ),
+        symbol: tokenInfo?.tokenSymbol as string,
+        value: BigInt(amount || "0"),
+      };
+      const data = {
         data: {
-          balanceBN: amount,
+          forcePosition: forcePosition as string,
+          legacyTitanHash: withdrawalHash as string,
+          balanceBN: tokenBalanceData,
           parsedBalance: commafy(
             ethers.utils.formatUnits(
               //@ts-ignore
@@ -72,10 +111,13 @@ export default function useTokenBalance(
         isLoading: false,
         isSuccess: true,
       };
+      return data;
     }
     if (data) {
       return {
         data: {
+          forcePosition: "",
+          legacyTitanHash: "",
           balanceBN: data,
           parsedBalance: commafy(
             ethers.utils.formatUnits(
@@ -99,7 +141,7 @@ export default function useTokenBalance(
       };
     }
     return null;
-  }, [accountAddress, data, chainName]);
+  }, [accountAddress, data, chainName, tokenInfo?.address, gb, forcePosition]);
 
   return tokenBalance;
 }

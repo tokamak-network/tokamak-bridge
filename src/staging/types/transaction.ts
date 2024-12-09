@@ -122,6 +122,8 @@ export interface WithdrawTransactionHistory extends BaseTransactionHistory {
   resolved: Resolved;
   stateBatchAppended?: StateBatchAppended;
   blockNumber: number;
+  forcePosition?: string;
+  legacyTitanHash?: string;
 }
 
 export interface DepositTransactionHistory extends BaseTransactionHistory {

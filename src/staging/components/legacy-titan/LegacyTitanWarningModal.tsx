@@ -38,6 +38,7 @@ export const LegacyTitanWarningModal = () => {
     setIsOpen(false);
     if (mode !== "Withdraw") {
       setNetwork({ inNetwork: null, outNetwork: null });
+
       setSelectedInToken(null);
       setSelectedOutToken(null);
     }

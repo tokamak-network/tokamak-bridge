@@ -14,44 +14,49 @@ import {
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 
 export default function useCallDeposit(functionName: string) {
-  const { outNetwork } = useInOutNetwork();
-  const { inToken } = useInOutTokens();
-  const abi =
-    outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID
-      ? L1ThanosBridgeAbi
-      : L1TitanBridgeAbi;
-  const { L1BRIDGE_CONTRACT } = useContract();
-  const { data, write, isError } =
-    inToken?.tokenSymbol === "USDC"
-      ? useContractWrite({
-          address: L1BRIDGE_CONTRACT,
-          abi: L1ThanosUSDCBridgeAbi,
-          functionName,
-        })
-      : useContractWrite({
-          address: L1BRIDGE_CONTRACT,
-          abi: abi,
-          functionName,
-        });
-  const provider = usePublicClient();
-  const contract =
-    inToken?.tokenSymbol === "USDC"
-      ? getContract({
-          address: L1BRIDGE_CONTRACT,
-          abi: L1ThanosUSDCBridgeAbi,
-          publicClient: provider,
-        })
-      : getContract({
-          address: L1BRIDGE_CONTRACT,
-          abi: abi,
-          publicClient: provider,
-        });
-  const {} = useTx({
-    hash: data?.hash,
-    txSort: "Deposit",
-    L2Chain: outNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA,
-    inToken: inToken?.tokenSymbol,
-  });
+  // const { outNetwork } = useInOutNetwork();
+  // const { inToken } = useInOutTokens();
+  // const abi =
+  //   outNetwork?.chainId === THANOS_SEPOLIA_CHAIN_ID
+  //     ? L1ThanosBridgeAbi
+  //     : L1TitanBridgeAbi;
+  // const { L1BRIDGE_CONTRACT } = useContract();
+  // const { data, write, isError } =
+  //   inToken?.tokenSymbol === "USDC"
+  //     ? useContractWrite({
+  //         address: L1BRIDGE_CONTRACT,
+  //         abi: L1ThanosUSDCBridgeAbi,
+  //         functionName,
+  //       })
+  //     : useContractWrite({
+  //         address: L1BRIDGE_CONTRACT,
+  //         abi: abi,
+  //         functionName,
+  //       });
+  // const provider = usePublicClient();
+  // const contract =
+  //   inToken?.tokenSymbol === "USDC"
+  //     ? getContract({
+  //         address: L1BRIDGE_CONTRACT,
+  //         abi: L1ThanosUSDCBridgeAbi,
+  //         publicClient: provider,
+  //       })
+  //     : getContract({
+  //         address: L1BRIDGE_CONTRACT,
+  //         abi: abi,
+  //         publicClient: provider,
+  //       });
+  // const {} = useTx({
+  //   hash: data?.hash,
+  //   txSort: "Deposit",
+  //   L2Chain: outNetwork?.chainId ?? SupportedChainId.THANOS_SEPOLIA,
+  //   inToken: inToken?.tokenSymbol,
+  // });
 
-  return { write, contract, hash: data?.hash, isError };
+  return {
+    write: () => {},
+    contract: () => {},
+    hash: undefined,
+    isError: false,
+  };
 }
