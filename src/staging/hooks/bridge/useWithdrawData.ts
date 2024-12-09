@@ -164,11 +164,7 @@ export const useWithdrawData = () => {
       );
 
       const filteredResult = result.filter(
-        (tx) =>
-          !(tx instanceof Error) &&
-          tx !== undefined &&
-          tx !== null &&
-          tx.status === Status.Finalize
+        (tx) => !(tx instanceof Error) && tx !== undefined && tx !== null
       );
       const sortedResult = getSortedTxListByDate(
         filteredResult
