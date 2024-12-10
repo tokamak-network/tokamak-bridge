@@ -3,6 +3,8 @@ import Swap from "./Swap";
 import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
 import { SwitchToTestNetwork } from "@/staging/components/cross-trade/components/common/WrongNetwork";
+import { BANNER10 } from "@/staging/constants/banner";
+import { InitialBanner } from "@/staging/components/legacy-titan/InitialBanner";
 
 export default function BridgeSwap() {
   return (
@@ -23,6 +25,7 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
+        {BANNER10 && <InitialBanner />}
         {/* <SwitchToTestNetwork
           style={{ marginTop: "55px", marginBottom: "14px" }}
         /> */}
