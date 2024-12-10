@@ -21,7 +21,7 @@ export const InitialBanner = () => {
         bg={"#F9C03E"}
       >
         <Text fontSize={"14px"} color={"#0F0F12"} fontWeight={500}>
-          Titan to shutown in December, 2024
+          Titan to shutdown in December, 2024
         </Text>
         <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
           Read about it more{" "}
