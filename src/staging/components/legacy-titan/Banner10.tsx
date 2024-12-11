@@ -2,7 +2,7 @@ import { TitanSunSetGuideURL } from "@/constant/url";
 import { Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
-export const InitialBanner = () => {
+export const Banner10Component = () => {
   return (
     <Flex
       w={"493px"}

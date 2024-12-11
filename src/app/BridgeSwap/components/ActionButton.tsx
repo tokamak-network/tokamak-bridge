@@ -23,6 +23,8 @@ import useSwapConfirmModal from "@/staging/components/new-confirm/hooks/useSwapC
 
 // FW UI test @Robert
 import useCTOptionModal from "@/staging/components/cross-trade/hooks/useCTOptionModal";
+import { LegacyTitanBridgeVersionEnum } from "@/staging/types/legacyTitan";
+import { BRIDGE_VERSION } from "@/staging/constants/legacyTitan";
 
 export default function ActionButton() {
   const { isConnected } = useAccount();
@@ -47,6 +49,10 @@ export default function ActionButton() {
 
   const isDisabled = useMemo(() => {
     if (!isConnected) return false;
+    if (BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10) {
+      if (mode === "Deposit" || mode === "Withdraw") return true;
+      if (isL2) return true;
+    }
     if (mode === "Withdraw" && !isInputZero) return false;
     const disabled =
       !isReady ||

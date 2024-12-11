@@ -3,3 +3,9 @@ export const GoogleFormURL =
 
 export const TitanSunSetGuideURL =
   "https://medium.com/tokamak-network/tokamak-network-to-sunset-titan-b4471019c92";
+
+export const ClaimableListPlanURL =
+  "https://medium.com/tokamak-network/tokamak-network-to-sunset-titan-b4471019c92";
+
+export const WithdrawAssetsGuideURL =
+  "https://medium.com/tokamak-network/tokamak-network-to-sunset-titan-b4471019c92";
