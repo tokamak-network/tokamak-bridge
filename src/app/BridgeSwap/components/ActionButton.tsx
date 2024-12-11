@@ -53,6 +53,7 @@ export default function ActionButton() {
       if (mode === "Deposit" || mode === "Withdraw") return true;
       if (isL2) return true;
     }
+    if (mode === "Withdraw" && !isInputZero) return false;
     const disabled =
       !isReady ||
       isApproved === false ||
