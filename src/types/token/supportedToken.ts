@@ -41,10 +41,10 @@ export const supportedTokens: SupportedTokens_T = [
     tokenSymbol: "ETH",
     address: {
       MAINNET: "",
-      TITAN: TOKAMAK_CONTRACTS.WETH_ADDRESS,
+      TITAN: TOKAMAK_CONTRACTS.OVM_ETH,
       SEPOLIA: "",
       THANOS_SEPOLIA: THANOS_SEPOLIA_CONTRACTS.ETH_ADDRESS,
-      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.WETH_ADDRESS,
+      TITAN_SEPOLIA: TITAN_SEPOLIA_CONTRACTS.OVM_ETH,
     },
     decimals: 18,
     isNativeCurrency: [
