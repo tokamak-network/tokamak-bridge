@@ -20,6 +20,9 @@ import CustomTooltip, {
   CustomTooltipWithQuestion,
 } from "@/components/tooltip/CustomTooltip";
 import QuestionIcon from "assets/icons/question.svg";
+import { useInOutNetwork } from "@/hooks/network";
+import { BRIDGE_VERSION } from "@/staging/constants/legacyTitan";
+import { LegacyTitanBridgeVersionEnum } from "@/staging/types/legacyTitan";
 
 export default function ApproveToken() {
   const { inToken } = useInOutTokens();
@@ -27,12 +30,14 @@ export default function ApproveToken() {
   const { isNotSupportForBridge } = useBridgeSupport();
   const { isTONatPair } = useIsTon();
   const { mode } = useGetMode();
+  const { inNetwork, outNetwork } = useInOutNetwork();
   const { isConnected } = useAccount();
   const { isBalanceOver, isInputZero } = useInputBalanceCheck();
   const { confirmedApproveTransaction, confirmedRevokeTransaction } =
     useTransaction();
   const [, setIsDrawerOpen] = useRecoilState(accountDrawerStatus);
-
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
+  if (isL2 && BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10) return null;
   if (
     (isApproved ||
       isNotSupportForBridge ||
