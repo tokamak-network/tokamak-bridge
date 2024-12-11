@@ -2,9 +2,10 @@ import { Flex } from "@chakra-ui/layout";
 import Swap from "./Swap";
 import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
-import { SwitchToTestNetwork } from "@/staging/components/cross-trade/components/common/WrongNetwork";
-import { BANNER10 } from "@/staging/constants/banner";
-import { InitialBanner } from "@/staging/components/legacy-titan/InitialBanner";
+import { Banner10Component } from "@/staging/components/legacy-titan/Banner10";
+import { BRIDGE_VERSION } from "@/staging/constants/legacyTitan";
+import { LegacyTitanBridgeVersionEnum } from "@/staging/types/legacyTitan";
+import { Banner11Component } from "@/staging/components/legacy-titan/Banner11";
 
 export default function BridgeSwap() {
   return (
@@ -25,7 +26,12 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
-        {BANNER10 && <InitialBanner />}
+        {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V01 && (
+          <Banner10Component />
+        )}
+        {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10 && (
+          <Banner11Component />
+        )}
         {/* <SwitchToTestNetwork
           style={{ marginTop: "55px", marginBottom: "14px" }}
         /> */}
