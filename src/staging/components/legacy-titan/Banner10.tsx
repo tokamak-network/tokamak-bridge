@@ -21,7 +21,7 @@ export const Banner10Component = () => {
         bg={"#F9C03E"}
       >
         <Text fontSize={"14px"} color={"#0F0F12"} fontWeight={500}>
-          Titan to shutdown in December, 2024
+          Titan to shut down in December, 2024
         </Text>
         <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
           Read about it more{" "}
@@ -43,12 +43,12 @@ export const Banner10Component = () => {
         bg={"#F9C03E"}
       >
         <Text fontSize={"14px"} color={"#0F0F12"} fontWeight={500}>
-          Tokamak Bridge to shutdown in January, 2025
+          Tokamak Bridge to shut down in January, 2025
         </Text>
         <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
-          Pools and cross trade will shutdown in December, while other functions
-          will continue with limited support until their final shutdown in
-          January
+          Pools and cross trade will shut down in December, while other
+          functions will continue with limited support until their final
+          shutdown in January
         </Text>
       </Flex>
     </Flex>
