@@ -43,7 +43,6 @@ export const Banner11Component = () => {
             >
               here
             </a>
-            . The exact date will be announced soon.
           </Text>
         </Flex>
         <Flex>
@@ -77,7 +76,6 @@ export const Banner11Component = () => {
             >
               here
             </a>
-            . The exact date will be announced soon.
           </Text>
         </Flex>
         <Flex>

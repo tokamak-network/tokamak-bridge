@@ -37,6 +37,7 @@ export const Banner110Component: React.FC = () => {
       py={"10px"}
       borderRadius={"8px"}
       bg={"#DD3A44"}
+      mb={"48px"}
     >
       <Flex flexDir={"column"}>
         <Text fontSize={"14px"} color={"#FFF"} fontWeight={500}>

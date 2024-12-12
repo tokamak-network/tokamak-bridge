@@ -45,17 +45,27 @@ import WARNING_ICON from "assets/icons/pool/unsupportedNetworkWarning.svg";
 import { useGetMode } from "@/hooks/mode/useGetMode";
 import { accountDrawerStatus } from "@/recoil/modal/atom";
 import { useRecoilValue } from "recoil";
+import { BRIDGE_VERSION } from "@/staging/constants/legacyTitan";
+import { LegacyTitanBridgeVersionEnum } from "@/staging/types/legacyTitan";
 
-const menuList = [
-  {
-    title: "Bridge & Swap",
-    link: "/",
-  },
-  {
-    title: "Liquidity",
-    link: "/pools",
-  },
-];
+const menuList =
+  BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V01
+    ? [
+        {
+          title: "Bridge & Swap",
+          link: "/",
+        },
+        {
+          title: "Liquidity",
+          link: "/pools",
+        },
+      ]
+    : [
+        {
+          title: "Bridge & Swap",
+          link: "/",
+        },
+      ];
 
 const HeaderMenu = (props: {
   title: string;
