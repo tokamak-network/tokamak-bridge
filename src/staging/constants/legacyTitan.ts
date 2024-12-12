@@ -4,7 +4,7 @@ import {
 } from "../types/legacyTitan";
 
 export const BRIDGE_VERSION: LegacyTitanBridgeVersionEnum =
-  LegacyTitanBridgeVersionEnum.V01;
+  LegacyTitanBridgeVersionEnum.V10;
 export const LegacyTitanMaintenanceStatus: LegacyTitanMaintenanceEnum =
   LegacyTitanMaintenanceEnum.IN_PROGRESS;
 export const BridgeShutdownDate = new Date("2025-01-20");
