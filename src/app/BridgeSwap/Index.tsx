@@ -3,9 +3,16 @@ import Swap from "./Swap";
 import { Details } from "./Details";
 import MaintenanceBanner from "@/components/modal/MaintenanceBanner";
 import { Banner10Component } from "@/staging/components/legacy-titan/Banner10";
-import { BRIDGE_VERSION } from "@/staging/constants/legacyTitan";
-import { LegacyTitanBridgeVersionEnum } from "@/staging/types/legacyTitan";
+import {
+  BRIDGE_VERSION,
+  LegacyTitanMaintenanceStatus,
+} from "@/staging/constants/legacyTitan";
+import {
+  LegacyTitanBridgeVersionEnum,
+  LegacyTitanMaintenanceEnum,
+} from "@/staging/types/legacyTitan";
 import { Banner11Component } from "@/staging/components/legacy-titan/Banner11";
+import { Banner110Component } from "@/staging/components/legacy-titan/Banner110";
 
 export default function BridgeSwap() {
   return (
@@ -26,12 +33,17 @@ export default function BridgeSwap() {
       >
         {/* <ServiceSuspensionBanner/> */}
         <MaintenanceBanner />
+
         {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V01 && (
           <Banner10Component />
         )}
-        {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10 && (
-          <Banner11Component />
-        )}
+        {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10 &&
+          LegacyTitanMaintenanceStatus ===
+            LegacyTitanMaintenanceEnum.IN_PROGRESS && <Banner110Component />}
+        {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10 &&
+          LegacyTitanMaintenanceStatus === LegacyTitanMaintenanceEnum.DONE && (
+            <Banner11Component />
+          )}
         {/* <SwitchToTestNetwork
           style={{ marginTop: "55px", marginBottom: "14px" }}
         /> */}
