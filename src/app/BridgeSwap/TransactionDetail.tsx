@@ -32,6 +32,8 @@ import { useAccount } from "wagmi";
 import useMediaView from "@/hooks/mediaView/useMediaView";
 import useIsTon from "@/hooks/token/useIsTon";
 import { useGetMarketPrice } from "@/hooks/price/useGetMarketPrice";
+import { LegacyTitanBridgeVersionEnum } from "@/staging/types/legacyTitan";
+import { BRIDGE_VERSION } from "@/staging/constants/legacyTitan";
 
 const DivisionLine = () => {
   return <Box w={"100%"} h={"1px"} bgColor={"#2E313A"} my={"14px"}></Box>;
@@ -584,6 +586,8 @@ export default function TransactionDetail(props: {
   isOnConfirm?: boolean;
   isMobile?: boolean;
 }) {
+  const { inNetwork, outNetwork } = useInOutNetwork();
+  const isL2 = inNetwork?.layer === "L2" || outNetwork?.layer === "L2";
   const { isOnConfirm, isMobile } = props;
   const { isOpen } = useConfirm();
 
@@ -607,7 +611,7 @@ export default function TransactionDetail(props: {
     mode === "Unwrap" ||
     mode === "ETH-Wrap" ||
     mode === "ETH-Unwrap";
-
+  if (isL2 && BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10) return null;
   if (
     !isReady ||
     isNotSupportForSwap ||
