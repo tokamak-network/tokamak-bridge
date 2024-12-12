@@ -17,32 +17,43 @@ export const Banner11Component = () => {
       w={"493px"}
       flexDir={"column"}
       gap={"12px"}
-      justifyContent={"center"}
       alignItems={"center"}
       mb={"48px"}
+      justifyContent={"space-between"}
     >
       <Flex
         width={"100%"}
-        flexDir={"column"}
         px={"16px"}
         py={"10px"}
         borderRadius={"8px"}
+        alignItems={"center"}
+        justifyContent={"space-between"}
         bg={"#F9C03E"}
       >
-        <Text fontSize={"14px"} color={"#0F0F12"} fontWeight={500}>
-          Claimable list plan
-        </Text>
-        <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
-          Read about it more{" "}
-          <a
-            href={ClaimableListPlanURL}
-            target="_blank"
-            style={{ textDecoration: "underline" }}
-          >
-            here
-          </a>
-          . The exact date will be announced soon.
-        </Text>
+        <Flex flexDir={"column"}>
+          <Text fontSize={"14px"} color={"#0F0F12"} fontWeight={500}>
+            Claimable list of assets locked in Titan is released.
+          </Text>
+          <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
+            Read about it more{" "}
+            <a
+              href={ClaimableListPlanURL}
+              target="_blank"
+              style={{ textDecoration: "underline" }}
+            >
+              here
+            </a>
+            . The exact date will be announced soon.
+          </Text>
+        </Flex>
+        <Flex>
+          <Text fontSize={"16px"} color={"#0F0F12"}>
+            <Text as="span" fontSize={"18px"} fontWeight={600}>
+              {daysLeft}
+            </Text>{" "}
+            days Left
+          </Text>
+        </Flex>
       </Flex>
       <Flex
         w={"100%"}
@@ -55,19 +66,18 @@ export const Banner11Component = () => {
       >
         <Flex flexDir={"column"}>
           <Text fontSize={"14px"} color={"#FFF"} fontWeight={500}>
-            Tokamak Bridge to be shutdown
+            Tokamak Bridge to shut down in January 20th
           </Text>
           <Text w={"320px"} fontSize={"11px"} color={"#FFF"} fontWeight={400}>
-            Make sure to withdraw your assets using Tokamak Bridge by end of
-            January 2025. See this{" "}
+            Read about it more{" "}
             <a
-              href={WithdrawAssetsGuideURL}
+              href={TitanSunSetGuideURL}
               target="_blank"
               style={{ textDecoration: "underline" }}
             >
-              guide
-            </a>{" "}
-            .
+              here
+            </a>
+            . The exact date will be announced soon.
           </Text>
         </Flex>
         <Flex>
