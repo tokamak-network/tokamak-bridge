@@ -7,6 +7,8 @@ import {
   Button,
   Link,
   Flex,
+  ListItem,
+  UnorderedList,
 } from "@chakra-ui/react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { useEffect, useState } from "react";
@@ -37,11 +39,6 @@ export const LegacyTitanWarningModal = () => {
     selectedOutTokenStatus
   );
   useEffect(() => {
-    if (mode !== null) setIsOpen(true);
-  }, [mode]);
-
-  const handleCloseModal = () => {
-    setIsOpen(false);
     if (mode === "Withdraw") return;
     if (
       (mode === "Swap" || mode === "Wrap" || mode === "Unwrap") &&
@@ -53,13 +50,13 @@ export const LegacyTitanWarningModal = () => {
 
     setSelectedInToken(null);
     setSelectedOutToken(null);
-  };
+  }, [mode]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} isCentered>
       <ModalOverlay />
       <ModalContent
-        width={mobileView ? "320px" : "404px"}
+        width={"408px"}
         bg="#1F2128"
         p={"20px"}
         borderRadius={"16px"}
@@ -68,7 +65,6 @@ export const LegacyTitanWarningModal = () => {
           p={0}
           display={"flex"}
           flexDir={"column"}
-          alignItems={"center"}
           rowGap={"16px"}
           textAlign={"center"}
           color={"#fff"}
@@ -76,25 +72,20 @@ export const LegacyTitanWarningModal = () => {
           <Text fontSize={20} fontWeight={500} h={"30px"}>
             Warning
           </Text>
-          <Text
-            fontSize={mobileView ? "14px" : 16}
-            fontWeight={400}
-            lineHeight={mobileView ? "24px" : "26px"}
-            w={mobileView ? "100%" : "356px"}
-            textAlign={"left"}
-          >
-            {mobileView ? (
-              <Flex flexDir={"column"} rowGap={"16px"}>
-                <Text>Text will be changed</Text>
-                <Text>Text will be changed</Text>
-              </Flex>
-            ) : (
-              <Flex flexDir={"column"} rowGap={"16px"}>
-                <Text>Text will be changed</Text>
-                <Text>Text will be changed</Text>
-              </Flex>
-            )}
-          </Text>
+          <Flex flexDir={"column"} alignItems={"start"}>
+            <Text>Titan Network Shutdown Warning:</Text>
+            <UnorderedList pl={"5px"} textAlign={"left"} fontSize={"14px"}>
+              <ListItem>L1 Claim feature is opend</ListItem>
+              <ListItem>
+                Uniswap Pool and Cross Trade are Not Supported
+              </ListItem>
+              <ListItem>No L2 Transactions Possible</ListItem>
+              <ListItem>
+                No Bridge History support for Deposit or Cross Trade
+              </ListItem>
+              <ListItem>Full Withdrawal History Supported Only</ListItem>
+            </UnorderedList>
+          </Flex>
           <Button
             w={"100%"}
             borderRadius={"8px"}
@@ -102,15 +93,9 @@ export const LegacyTitanWarningModal = () => {
             bgColor={"#007AFF"}
             _hover={{}}
             _active={{}}
-            onClick={handleCloseModal}
+            onClick={() => setIsOpen(false)}
           >
-            {mobileView ? (
-              <Text fontWeight={600} fontSize={"14px"} lineHeight={"22px"}>
-                I understand the risk
-              </Text>
-            ) : (
-              "I understand the risk"
-            )}
+            I understand the risk
           </Button>
         </ModalBody>
       </ModalContent>
