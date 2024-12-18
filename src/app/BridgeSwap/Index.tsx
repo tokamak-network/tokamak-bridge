@@ -13,6 +13,7 @@ import {
 } from "@/staging/types/legacyTitan";
 import { Banner11Component } from "@/staging/components/legacy-titan/Banner11";
 import { Banner110Component } from "@/staging/components/legacy-titan/Banner110";
+import { TitanSunsetWarningModal10 } from "@/staging/components/legacy-titan/WarningModal10";
 
 export default function BridgeSwap() {
   return (
@@ -49,6 +50,9 @@ export default function BridgeSwap() {
         /> */}
         <Swap />
         <Details />
+        {BRIDGE_VERSION === LegacyTitanBridgeVersionEnum.V10 && (
+          <TitanSunsetWarningModal10 />
+        )}
       </Flex>
     </Flex>
   );
