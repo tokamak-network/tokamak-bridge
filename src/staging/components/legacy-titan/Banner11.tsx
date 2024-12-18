@@ -1,14 +1,17 @@
+import { ClaimableListPlanURL, TitanSunSetGuideURL } from "@/constant/url";
 import {
-  ClaimableListPlanURL,
-  WithdrawAssetsGuideURL,
-  TitanSunSetGuideURL,
-} from "@/constant/url";
-import { BridgeShutdownDate } from "@/staging/constants/legacyTitan";
-import { Button, Flex, Text } from "@chakra-ui/react";
+  BridgeShutdownDate,
+  ClaimFeatureOpenDate,
+} from "@/staging/constants/legacyTitan";
+import { Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
 export const Banner11Component = () => {
-  const daysLeft = Math.floor(
+  const claimFeatureOpenDaysLeft = Math.ceil(
+    (ClaimFeatureOpenDate.getTime() - new Date().getTime()) /
+      (1000 * 60 * 60 * 24)
+  );
+  const daysLeft = Math.ceil(
     (BridgeShutdownDate.getTime() - new Date().getTime()) /
       (1000 * 60 * 60 * 24)
   );
@@ -35,7 +38,7 @@ export const Banner11Component = () => {
             Claimable list of assets locked in Titan is released.
           </Text>
           <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
-            Read about it more{" "}
+            List can be checked{" "}
             <a
               href={ClaimableListPlanURL}
               target="_blank"
@@ -43,12 +46,21 @@ export const Banner11Component = () => {
             >
               here
             </a>
+            . Read about it more{" "}
+            <a
+              href={TitanSunSetGuideURL}
+              target="_blank"
+              style={{ textDecoration: "underline" }}
+            >
+              here
+            </a>
+            .
           </Text>
         </Flex>
         <Flex>
           <Text fontSize={"16px"} color={"#0F0F12"}>
             <Text as="span" fontSize={"18px"} fontWeight={600}>
-              {daysLeft}
+              {claimFeatureOpenDaysLeft}
             </Text>{" "}
             days Left
           </Text>
@@ -65,7 +77,7 @@ export const Banner11Component = () => {
       >
         <Flex flexDir={"column"}>
           <Text fontSize={"14px"} color={"#FFF"} fontWeight={500}>
-            Tokamak Bridge to shut down in January 20th
+            Tokamak Bridge to shut down in January 13th
           </Text>
           <Text w={"320px"} fontSize={"11px"} color={"#FFF"} fontWeight={400}>
             Read about it more{" "}
