@@ -1,1 +1,1 @@
-export const BridgeShutdownDate = new Date("2025-01-20");
+export const BridgeShutdownDate = new Date("2025-01-13");
