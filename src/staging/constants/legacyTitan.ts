@@ -4,9 +4,9 @@ import {
 } from "../types/legacyTitan";
 
 export const BRIDGE_VERSION: LegacyTitanBridgeVersionEnum =
-  LegacyTitanBridgeVersionEnum.V01;
+  LegacyTitanBridgeVersionEnum.V10;
 export const LegacyTitanMaintenanceStatus: LegacyTitanMaintenanceEnum =
-  LegacyTitanMaintenanceEnum.IN_PROGRESS;
+  LegacyTitanMaintenanceEnum.DONE;
 export const ClaimFeatureOpenDate = new Date("2025-01-06");
 export const BridgeShutdownDate = new Date("2025-01-13");
 export const TitanShutdownDate = new Date("2024-12-26");
