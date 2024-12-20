@@ -1,4 +1,4 @@
-import { ClaimableListPlanURL, TitanSunSetGuideURL } from "@/constant/url";
+import { ClaimableListAssetsURL, TitanSunSetGuideURL } from "@/constant/url";
 import {
   BridgeShutdownDate,
   ClaimFeatureOpenDate,
@@ -40,7 +40,7 @@ export const Banner11Component = () => {
           <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
             List can be checked{" "}
             <a
-              href={ClaimableListPlanURL}
+              href={ClaimableListAssetsURL}
               target="_blank"
               style={{ textDecoration: "underline" }}
             >
