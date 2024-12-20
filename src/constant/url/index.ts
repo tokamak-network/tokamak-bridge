@@ -5,7 +5,7 @@ export const TitanSunSetGuideURL =
   "https://medium.com/tokamak-network/tokamak-network-to-sunset-titan-b4471019c92";
 
 export const ClaimableListAssetsURL =
-  "https://github.com/tokamak-network/L2-Assets-Migration/blob/genStorage/titanLagacy/data/new-generate-assets.json";
+  "https://github.com/tokamak-network/tokamak-bridge/blob/victor/BK-157/legacy-titan-ui/src/staging/constants/legacy-titan-assets/sepolia.json";
 
 export const WithdrawAssetsGuideURL =
   "https://medium.com/tokamak-network/tokamak-network-to-sunset-titan-b4471019c92";
