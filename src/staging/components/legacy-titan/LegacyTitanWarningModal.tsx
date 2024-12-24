@@ -74,16 +74,16 @@ export const LegacyTitanWarningModal = () => {
           </Text>
           <Flex flexDir={"column"} alignItems={"start"}>
             <Text>Titan Network Shutdown Warning:</Text>
-            <UnorderedList pl={"5px"} textAlign={"left"} fontSize={"14px"}>
+            <UnorderedList pl={"11px"} textAlign={"left"} fontSize={"14px"}>
               <ListItem>L1 Claim feature is opend</ListItem>
               <ListItem>
-                Uniswap Pool and Cross Trade are Not Supported
+                Uniswap Pool and Cross Trade are not supported
               </ListItem>
-              <ListItem>No L2 Transactions Possible</ListItem>
+              <ListItem>No L2 transactions possible</ListItem>
               <ListItem>
-                No Bridge History support for Deposit or Cross Trade
+                No Bridge history support for Deposit or Cross Trade
               </ListItem>
-              <ListItem>Full Withdrawal History Supported Only</ListItem>
+              <ListItem>Full withdrawal history supported only</ListItem>
             </UnorderedList>
           </Flex>
           <Button

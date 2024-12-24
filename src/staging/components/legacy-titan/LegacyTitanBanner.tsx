@@ -4,7 +4,7 @@ import { Button, Flex, Text } from "@chakra-ui/react";
 import React from "react";
 
 export const LegacyTitanBanner = () => {
-  const daysLeft = Math.floor(
+  const daysLeft = Math.ceil(
     (BridgeShutdownDate.getTime() - new Date().getTime()) /
       (1000 * 60 * 60 * 24)
   );
