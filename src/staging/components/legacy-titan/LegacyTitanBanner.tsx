@@ -1,4 +1,4 @@
-import { ClaimableListPlanURL, TitanSunSetGuideURL } from "@/constant/url";
+import { TitanSunSetGuideURL } from "@/constant/url";
 import { BridgeShutdownDate } from "@/staging/constants/legacyTitan";
 import { Button, Flex, Text } from "@chakra-ui/react";
 import React from "react";
@@ -33,13 +33,13 @@ export const LegacyTitanBanner = () => {
           <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
             Read about it more{" "}
             <a
-              href={ClaimableListPlanURL}
+              href={TitanSunSetGuideURL}
               target="_blank"
               style={{ textDecoration: "underline" }}
             >
               here
             </a>
-            . Tokamak Bridge will be shutdown in January 2025.
+            .
           </Text>
         </Flex>
       </Flex>
@@ -54,17 +54,16 @@ export const LegacyTitanBanner = () => {
       >
         <Flex flexDir={"column"}>
           <Text fontSize={"14px"} color={"#FFF"} fontWeight={500}>
-            Tokamak Bridge to be shutdown
+            Tokamak Bridge to shut down in January 13th
           </Text>
           <Text w={"320px"} fontSize={"11px"} color={"#FFF"} fontWeight={400}>
-            Make sure to withdraw your assets using Tokamak Bridge by end of
-            January 2025. See this{" "}
+            Read about it more{" "}
             <a
               href={TitanSunSetGuideURL}
               target="_blank"
               style={{ textDecoration: "underline" }}
             >
-              guide.
+              here.
             </a>
           </Text>
         </Flex>
