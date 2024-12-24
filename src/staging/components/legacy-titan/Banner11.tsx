@@ -69,7 +69,7 @@ export const Banner11Component = () => {
             >
               here
             </a>
-            , Read more{" "}
+            . Read more{" "}
             <a
               href={TitanSunSetGuideURL}
               target="_blank"
