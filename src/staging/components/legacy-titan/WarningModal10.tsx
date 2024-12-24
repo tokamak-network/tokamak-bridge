@@ -38,7 +38,7 @@ export const TitanSunsetWarningModal10 = () => {
           </Text>
           <Flex flexDir={"column"} alignItems={"start"}>
             <Text>Titan Network Shutdown Warning:</Text>
-            <UnorderedList pl={"5px"} textAlign={"left"} fontSize={"14px"}>
+            <UnorderedList pl={"10px"} textAlign={"left"} fontSize={"14px"}>
               <ListItem>L2 deposits are not available</ListItem>
               <ListItem>L2 transactions suspended</ListItem>
               <ListItem>L2 balance can only be viewed through L2 RPC</ListItem>
