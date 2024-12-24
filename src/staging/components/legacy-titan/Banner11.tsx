@@ -1,4 +1,8 @@
-import { ClaimableListAssetsURL, TitanSunSetGuideURL } from "@/constant/url";
+import {
+  ClaimableAssetsListURL,
+  IssueReportGoogleFormURL,
+  TitanSunSetGuideURL,
+} from "@/constant/url";
 import {
   BridgeShutdownDate,
   ClaimFeatureOpenDate,
@@ -27,26 +31,45 @@ export const Banner11Component = () => {
       <Flex
         width={"100%"}
         px={"16px"}
-        py={"10px"}
+        py={"12px"}
         borderRadius={"8px"}
         alignItems={"center"}
         justifyContent={"space-between"}
         bg={"#F9C03E"}
+        gap={"14px"}
       >
         <Flex flexDir={"column"}>
-          <Text fontSize={"14px"} color={"#0F0F12"} fontWeight={500}>
+          <Text
+            fontSize={"14px"}
+            color={"#0F0F12"}
+            fontWeight={500}
+            lineHeight={"normal"}
+          >
             Claimable list of assets locked in Titan is released.
           </Text>
-          <Text fontSize={"11px"} color={"#0F0F12"} fontWeight={400}>
-            List can be checked{" "}
+          <Text
+            fontSize={"11px"}
+            color={"#0F0F12"}
+            fontWeight={400}
+            lineHeight={"normal"}
+          >
+            Check list{" "}
             <a
-              href={ClaimableListAssetsURL}
+              href={ClaimableAssetsListURL}
               target="_blank"
               style={{ textDecoration: "underline" }}
             >
               here
             </a>
-            . Read about it more{" "}
+            , and report any issues{" "}
+            <a
+              href={IssueReportGoogleFormURL}
+              target="_blank"
+              style={{ textDecoration: "underline" }}
+            >
+              here
+            </a>
+            , Read more{" "}
             <a
               href={TitanSunSetGuideURL}
               target="_blank"
