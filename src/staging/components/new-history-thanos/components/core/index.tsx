@@ -38,7 +38,7 @@ const NoAcitivityComponent = () => {
       h={"100%"}
     >
       <Image src={NoHistoryIcon} alt={"noActivityIcon"}></Image>
-      <Text color={"#E3F3FF"}>Text</Text>
+      <Text color={"#E3F3FF"}>History is not supported anymore.</Text>
     </Flex>
   );
 };
@@ -72,9 +72,7 @@ export default function AccountHistoryNew() {
   }, [_selectedTransactionCategory, withdrawHistory]);
   return (
     <Flex flexDir={"column"} gap={"6px"} h={"100%"} width={"100%"}>
-      {_selectedTransactionCategory === Action.Withdraw && (
-        <TransactionHistoryBanner />
-      )}
+      <TransactionHistoryBanner />
       <Flex flexDirection="column" gap="2" h={"100%"}>
         {historyData === undefined && <NoHistoryComponent />}
         {historyData === null && <LoadingSpinner />}

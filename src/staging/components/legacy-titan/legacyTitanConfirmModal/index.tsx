@@ -54,7 +54,8 @@ export const LegacyTitanConfirmModal = () => {
   const handleActionClick = () => {
     callToWithdrawLegacyTitan();
   };
-  const confirmMessage = "Text will be changed.";
+  const confirmMessage =
+    "This is an L1 claim feature that bypasses the standard L2→L1 withdrawal process. After submitting the transaction, you'll receive the asset immediately instead of waiting 7 days. No history UI will be supported for this feature.";
   return (
     <Modal
       isOpen={legacyConfirmModal.isOpen}

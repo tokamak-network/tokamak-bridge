@@ -15,7 +15,8 @@ export const TransactionHistoryBanner: React.FC = () => {
         fontWeight={400}
         lineHeight={"normal"}
       >
-        New Transactions are not reflected
+        Only finalize withdraw function and its history is supported here. L1
+        claim transaction history will not show here.
       </Text>
     </Flex>
   );

@@ -30,7 +30,7 @@ export const LegacyTitanWarningModal = () => {
   const { mobileView } = useMediaView();
   const { mode } = useRecoilValue(actionMode);
   const [network, setNetwork] = useRecoilState(networkStatus);
-  const { inNetwork } = useInOutNetwork();
+  const { inNetwork, outNetwork } = useInOutNetwork();
   const [selectedInToken, setSelectedInToken] = useRecoilState(
     selectedInTokenStatus
   );
@@ -40,17 +40,19 @@ export const LegacyTitanWarningModal = () => {
   );
   useEffect(() => {
     if (mode === "Withdraw") return;
+    if (!outNetwork) return;
     if (
-      (mode === "Swap" || mode === "Wrap" || mode === "Unwrap") &&
+      mode != "Deposit" &&
       (inNetwork?.chainId === SupportedChainId.MAINNET ||
         inNetwork?.chainId === SupportedChainId.SEPOLIA)
     )
       return;
+    setIsOpen(true);
     setNetwork({ inNetwork: null, outNetwork: null });
 
     setSelectedInToken(null);
     setSelectedOutToken(null);
-  }, [mode]);
+  }, [mode, inNetwork, outNetwork]);
 
   return (
     <Modal isOpen={isOpen} onClose={() => {}} isCentered>

@@ -20,7 +20,7 @@ export const NoHistoryComponent: React.FC = () => {
         fontSize={"16px"}
         lineHeight={"24px"}
       >
-        Text
+        History is not supported anymore.
       </Text>
     </Flex>
   );
