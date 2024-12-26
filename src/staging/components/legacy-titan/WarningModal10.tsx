@@ -43,7 +43,6 @@ export const TitanSunsetWarningModal10 = () => {
               <ListItem>L2 transactions suspended</ListItem>
               <ListItem>L2 balance can only be viewed through L2 RPC</ListItem>
               <ListItem>Only Finalize operations supported in history</ListItem>
-              <ListItem>Claimable list remains clickable</ListItem>
             </UnorderedList>
           </Flex>
           <Button
