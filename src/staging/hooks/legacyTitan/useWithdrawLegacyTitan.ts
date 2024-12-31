@@ -3,7 +3,7 @@ import { SupportedChainId } from "@/types/network/supportedNetwork";
 import L1Bridge_ABI from "@/constant/abis/L1StandardBridge.json";
 import useContract from "@/hooks/contracts/useContract";
 import { useCallback, useEffect } from "react";
-import { useContractWrite, useSwitchNetwork } from "wagmi";
+import { useAccount, useContractWrite, useSwitchNetwork } from "wagmi";
 import { useTx } from "@/hooks/tx/useTx";
 import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 import { useProvier } from "@/hooks/provider/useProvider";
@@ -15,6 +15,7 @@ import { ZERO_ADDRESS } from "@/constant/misc";
 
 export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
+  const { address } = useAccount();
   const { switchNetworkAsync } = useSwitchNetwork();
   const { L1BRIDGE_CONTRACT } = useContract();
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
@@ -53,6 +54,7 @@ export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
           legacyTitanHash,
           outToken.address || ZERO_ADDRESS,
           outToken.amount,
+          address,
         ],
         gas: BigInt(150000),
       });

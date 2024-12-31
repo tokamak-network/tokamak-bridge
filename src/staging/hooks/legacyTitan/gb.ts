@@ -8,7 +8,7 @@ export const useGb = (input: string | null) => {
   const { data, isError, isLoading } = useContractRead({
     address: L1BRIDGE_CONTRACT,
     abi: L1StandardBridge_ABI,
-    functionName: "gb",
+    functionName: "claimState",
     args: [input],
     enabled: !!input,
   });

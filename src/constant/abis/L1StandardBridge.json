@@ -1,29 +1,11 @@
 [
-  {
-    "inputs": [],
-    "name": "FW_FAIl_TRANSFER_ETH",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FW_INVALID_HASH",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FW_NOT_AVAILABLE_POSITION",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FW_NOT_SEARCH_POSITION",
-    "type": "error"
-  },
-  {
-    "inputs": [],
-    "name": "FW_ONLY_CLOSER",
-    "type": "error"
-  },
+  { "inputs": [], "name": "ER_SAME_STORAGE", "type": "error" },
+  { "inputs": [], "name": "FW_FAIl_TRANSFER_ETH", "type": "error" },
+  { "inputs": [], "name": "FW_INVALID_HASH", "type": "error" },
+  { "inputs": [], "name": "FW_NOT_AVAILABLE_POSITION", "type": "error" },
+  { "inputs": [], "name": "FW_NOT_SEARCH_POSITION", "type": "error" },
+  { "inputs": [], "name": "FW_ONLY_CLOSER", "type": "error" },
+  { "inputs": [], "name": "FW_ONLY_OWNER", "type": "error" },
   {
     "anonymous": false,
     "inputs": [
@@ -198,6 +180,12 @@
         "internalType": "address",
         "name": "_claimer",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "_requester",
+        "type": "address"
       }
     ],
     "name": "ForceWithdraw",
@@ -206,43 +194,31 @@
   {
     "inputs": [],
     "name": "active",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "name": "claimState",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "closer",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_l1Token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_l2Token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint32",
-        "name": "_l2Gas",
-        "type": "uint32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "_l1Token", "type": "address" },
+      { "internalType": "address", "name": "_l2Token", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "uint32", "name": "_l2Gas", "type": "uint32" },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
     ],
     "name": "depositERC20",
     "outputs": [],
@@ -251,36 +227,12 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_l1Token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_l2Token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint32",
-        "name": "_l2Gas",
-        "type": "uint32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "_l1Token", "type": "address" },
+      { "internalType": "address", "name": "_l2Token", "type": "address" },
+      { "internalType": "address", "name": "_to", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "uint32", "name": "_l2Gas", "type": "uint32" },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
     ],
     "name": "depositERC20To",
     "outputs": [],
@@ -289,16 +241,8 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "uint32",
-        "name": "_l2Gas",
-        "type": "uint32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
+      { "internalType": "uint32", "name": "_l2Gas", "type": "uint32" },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
     ],
     "name": "depositETH",
     "outputs": [],
@@ -307,21 +251,9 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint32",
-        "name": "_l2Gas",
-        "type": "uint32"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "_to", "type": "address" },
+      { "internalType": "uint32", "name": "_l2Gas", "type": "uint32" },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
     ],
     "name": "depositETHTo",
     "outputs": [],
@@ -330,25 +262,11 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "address", "name": "", "type": "address" }
     ],
     "name": "deposits",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -361,36 +279,12 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_l1Token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_l2Token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "_l1Token", "type": "address" },
+      { "internalType": "address", "name": "_l2Token", "type": "address" },
+      { "internalType": "address", "name": "_from", "type": "address" },
+      { "internalType": "address", "name": "_to", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
     ],
     "name": "finalizeERC20Withdrawal",
     "outputs": [],
@@ -399,26 +293,10 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_from",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_to",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bytes",
-        "name": "_data",
-        "type": "bytes"
-      }
+      { "internalType": "address", "name": "_from", "type": "address" },
+      { "internalType": "address", "name": "_to", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "bytes", "name": "_data", "type": "bytes" }
     ],
     "name": "finalizeETHWithdrawal",
     "outputs": [],
@@ -426,13 +304,7 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bool",
-        "name": "_state",
-        "type": "bool"
-      }
-    ],
+    "inputs": [{ "internalType": "bool", "name": "_state", "type": "bool" }],
     "name": "forceActive",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -442,18 +314,10 @@
     "inputs": [
       {
         "components": [
-          {
-            "internalType": "address",
-            "name": "position",
-            "type": "address"
-          },
-          {
-            "internalType": "bool",
-            "name": "state",
-            "type": "bool"
-          }
+          { "internalType": "address", "name": "position", "type": "address" },
+          { "internalType": "bool", "name": "state", "type": "bool" }
         ],
-        "internalType": "struct UpgradeL1Bridge.ForceRegistryParam[]",
+        "internalType": "struct UpgradeL1BridgeV1.ForceRegistryParam[]",
         "name": "_data",
         "type": "tuple[]"
       }
@@ -465,11 +329,7 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address[]",
-        "name": "_position",
-        "type": "address[]"
-      }
+      { "internalType": "address[]", "name": "_position", "type": "address[]" }
     ],
     "name": "forceRegistry",
     "outputs": [],
@@ -478,26 +338,11 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_position",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "_hash",
-        "type": "string"
-      },
-      {
-        "internalType": "address",
-        "name": "_token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_amount",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "_position", "type": "address" },
+      { "internalType": "string", "name": "_hash", "type": "string" },
+      { "internalType": "address", "name": "_token", "type": "address" },
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "address", "name": "_address", "type": "address" }
     ],
     "name": "forceWithdrawClaim",
     "outputs": [],
@@ -508,28 +353,13 @@
     "inputs": [
       {
         "components": [
-          {
-            "internalType": "address",
-            "name": "position",
-            "type": "address"
-          },
-          {
-            "internalType": "string",
-            "name": "hashed",
-            "type": "string"
-          },
-          {
-            "internalType": "address",
-            "name": "token",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          }
+          { "internalType": "address", "name": "position", "type": "address" },
+          { "internalType": "string", "name": "hashed", "type": "string" },
+          { "internalType": "address", "name": "token", "type": "address" },
+          { "internalType": "uint256", "name": "amount", "type": "uint256" },
+          { "internalType": "address", "name": "getAddress", "type": "address" }
         ],
-        "internalType": "struct UpgradeL1Bridge.ForceClaimParam[]",
+        "internalType": "struct UpgradeL1BridgeV1.ForceClaimParam[]",
         "name": "params",
         "type": "tuple[]"
       }
@@ -540,55 +370,37 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
+    "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "name": "gb",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "_key",
-        "type": "string"
-      }
-    ],
+    "inputs": [{ "internalType": "string", "name": "_hash", "type": "string" }],
     "name": "getForcePosition",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProxyImplementation",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getProxyOwner",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "_l1messenger",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "_l2TokenBridge",
-        "type": "address"
-      }
+      { "internalType": "address", "name": "_l1messenger", "type": "address" },
+      { "internalType": "address", "name": "_l2TokenBridge", "type": "address" }
     ],
     "name": "initialize",
     "outputs": [],
@@ -598,69 +410,60 @@
   {
     "inputs": [],
     "name": "l2TokenBridge",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [],
     "name": "messenger",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "inputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "name": "position",
-    "outputs": [
-      {
-        "internalType": "bool",
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "positions",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
+      { "internalType": "address", "name": "_closer", "type": "address" }
     ],
-    "name": "positions",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
+    "name": "setCloser",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "stateMutability": "payable",
-    "type": "receive"
-  }
+    "inputs": [
+      { "internalType": "address", "name": "_closer", "type": "address" },
+      { "internalType": "bool", "name": "_state", "type": "bool" }
+    ],
+    "name": "setCloserAndActive",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "source", "type": "string" }
+    ],
+    "name": "stringToBytes32",
+    "outputs": [
+      { "internalType": "bytes32", "name": "result", "type": "bytes32" }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  { "stateMutability": "payable", "type": "receive" }
 ]
