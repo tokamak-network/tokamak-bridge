@@ -79,7 +79,7 @@ export default function useTokenBalance(
       );
       const withdrawalHash = tokenData?.data?.hash;
       setLegacyWithdrawalHash(withdrawalHash || null);
-      const amount = !gb ? tokenData?.data.amount : 0;
+      const amount = gb === false ? tokenData?.data.amount : 0;
 
       const tokenBalanceData: FetchBalanceResult = {
         decimals: tokenInfo?.decimals as number,
