@@ -169,3 +169,8 @@ export const pendingTransactionHashes = atom<string[]>({
   key: "pendingTransactionHashes",
   default: [],
 });
+
+export const l1ForceClaimStatus = atom<boolean>({
+  key: "l1ForceClaimStatus",
+  default: false,
+});

@@ -4,12 +4,17 @@ import SearchToken from "@/components/search/SearchToken";
 import useTokenModal from "@/hooks/modal/useTokenModal";
 import { actionMode } from "@/recoil/bridgeSwap/atom";
 import { Box, Flex, Text } from "@chakra-ui/layout";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import TokenInput from "@/components/input/TokenInput";
 import { useEffect, useMemo } from "react";
 import { useInOutTokens } from "@/hooks/token/useInOutTokens";
 import { useAccount, useNetwork } from "wagmi";
 import SelectNetwork from "./SelectNetwork";
+import {
+  l1ForceClaimStatus,
+  transactionModalStatus,
+} from "@/recoil/modal/atom";
+import useTxConfirmModal from "@/hooks/modal/useTxConfirmModal";
 
 export default function InToken() {
   const { inToken } = useInOutTokens();

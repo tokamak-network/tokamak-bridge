@@ -11,6 +11,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { useProvier } from "../provider/useProvider";
 import { useGetMode } from "../mode/useGetMode";
 import { getWETHAddress, isETH } from "@/utils/token/isETH";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export function useInOutTokens() {
   const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
@@ -21,6 +22,7 @@ export function useInOutTokens() {
   );
   const { connectedChainId, chainName } = useConnectedNetwork();
   const { provider } = useProvier();
+  const [modalOpen] = useRecoilState(transactionModalStatus);
   const { mode } = useGetMode();
 
   const inToken = useMemo(() => {
@@ -46,7 +48,7 @@ export function useInOutTokens() {
             }
         : null;
     return tokenValue;
-  }, [inTokenRecoilValue, connectedChainId, chainName]);
+  }, [inTokenRecoilValue, connectedChainId, chainName, modalOpen]);
 
   const outToken = useMemo(() => {
     if (mode === "Deposit" || mode === "Withdraw") {

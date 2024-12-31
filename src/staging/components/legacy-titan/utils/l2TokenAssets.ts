@@ -8,9 +8,9 @@ export const findTokenAmount = (
 ): LegacyTitanTokenData | null => {
   const tokenData = require(`./../../../constants/legacy-titan-assets/${chainName}.json`);
 
-  const l1TokenLower = l1Token.toLowerCase();
-  const l2TokenLower = l2Token.toLowerCase();
-  const claimerLower = claimer.toLowerCase();
+  const l1TokenLower = l1Token?.toLowerCase();
+  const l2TokenLower = l2Token?.toLowerCase();
+  const claimerLower = claimer?.toLowerCase();
   const tokenEntry = tokenData.find(
     (entry: any) =>
       entry.l1Token.toLowerCase() === l1TokenLower &&

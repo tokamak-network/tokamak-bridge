@@ -228,6 +228,9 @@ export default function TokenCard(props: TokenCardProps) {
       });
     }
   }, [amountOut, mode]);
+  useEffect(() => {
+    console.log(tokenInfo);
+  }, [tokenInfo]);
   return (
     <Flex
       bg={

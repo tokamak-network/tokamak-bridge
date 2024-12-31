@@ -43,6 +43,7 @@ import { L2ChainID } from "@tokamak-network/titan-sdk";
 import { SupportedTokenSymbol } from "@/types/token/supportedToken";
 import InToken from "@/app/BridgeSwap/components/InToken";
 import { isThanosChain } from "@/utils/network/checkNetwork";
+import { selectedInTokenStatus } from "@/recoil/bridgeSwap/atom";
 
 const getInterface = () => {
   const l1TitanBridgeI = new ethers.utils.Interface(L1TitanBridgeAbi);
@@ -283,6 +284,9 @@ export function useTx(params: {
   }, [isLoading, connectedChainId, isError]);
 
   const { confirmedTransaction } = useTransaction();
+  const [inTokenRecoilValue, setInTokenRecoilValue] = useRecoilState(
+    selectedInTokenStatus
+  );
 
   useEffect(() => {
     //@ts-ignore
@@ -379,6 +383,7 @@ export function useTx(params: {
         CrossTradeProxyL2_I,
         l2ThanosStandardBridgeI,
       } = getInterface();
+      setInTokenRecoilValue(null);
       setModalOpen("confirmed");
 
       switch (txSort) {

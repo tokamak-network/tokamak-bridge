@@ -12,6 +12,8 @@ import { ZERO_ADDRESS } from "@/constant/misc";
 import { FetchBalanceResult } from "wagmi/dist/actions";
 import { useGb } from "@/staging/hooks/legacyTitan/gb";
 import { useGetForcePosition } from "@/staging/hooks/legacyTitan/getForcePosition";
+import { useRecoilState } from "recoil";
+import { transactionModalStatus } from "@/recoil/modal/atom";
 
 export default function useTokenBalance(
   tokenInfo: TokenInfo | null,
@@ -19,6 +21,7 @@ export default function useTokenBalance(
   watch?: boolean
 ) {
   const { chainName } = useConnectedNetwork();
+  const [modalOpen] = useRecoilState(transactionModalStatus);
 
   const isETH = tokenInfo?.isNativeCurrency?.includes(
     SupportedChainId.MAINNET ||
@@ -148,7 +151,15 @@ export default function useTokenBalance(
       };
     }
     return null;
-  }, [accountAddress, data, chainName, tokenInfo?.address, gb, forcePosition]);
+  }, [
+    accountAddress,
+    data,
+    chainName,
+    tokenInfo?.address,
+    gb,
+    forcePosition,
+    modalOpen,
+  ]);
 
   return tokenBalance;
 }

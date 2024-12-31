@@ -12,6 +12,7 @@ import { WithdrawTransactionHistory } from "@/staging/types/transaction";
 import useDepositWithdrawConfirmModal from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import useDepositWithdrawConfirm from "@/staging/components/new-confirm/hooks/useDepositWithdrawConfirmModal";
 import { ZERO_ADDRESS } from "@/constant/misc";
+import { useRecoilState } from "recoil";
 
 export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
   const { isConnectedToMainNetwork } = useConnectedNetwork();
@@ -21,6 +22,7 @@ export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
   const { setModalOpen, setIsOpen } = useTxConfirmModal();
   const { L1Provider, L2Provider } = useProvier();
   const { onCloseLegacyTitanConfirmModal } = useDepositWithdrawConfirm();
+
   const { data, write, isError } = useContractWrite({
     address: L1BRIDGE_CONTRACT,
     abi: L1Bridge_ABI,
@@ -48,6 +50,7 @@ export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
       onCloseLegacyTitanConfirmModal();
       setIsOpen(true);
       setModalOpen("confirming");
+
       write({
         args: [
           forcePosition,
@@ -59,7 +62,7 @@ export const useWithdrawLegacyTitan = (params?: WithdrawTransactionHistory) => {
         gas: BigInt(150000),
       });
 
-      return setModalOpen("confirming");
+      // return setModalOpen("confirming");
     } catch (error) {
       console.error("Error in callToFinalize", error);
       setModalOpen("error");
