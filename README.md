@@ -21,7 +21,7 @@ All repositories related to development for Tokamak Bridge is provided here. Ple
 | Swap & Uniswap Pool | Contract | [swap-router-contracts](https://github.com/Uniswap/swap-router-contracts) | ✔️ Completed |
 | Titan Sunset | Backend | [Legacy Titan pending withdrawal fetcher](https://github.com/tokamak-network/legacy-titan-pending-tx-fetcher) | ✔️ Completed |
 | Titan Sunset | Contract & Backend | [L2-Assets-Migration](https://github.com/tokamak-network/L2-Assets-Migration) | ✔️ Completed |
-| Tokamak Bridge | User guide |  | ⏳ Ongoing |
-| Wrap & Unrwap | Frontend | [TON-WTON-Swap](https://github.com/tokamak-network/TON-WTON-SWAP) | ⏳ Ongoing |
+| Tokamak Bridge | User guide |  [L2-Assets-Migration](https://github.com/tokamak-network/tokamak-bridge-user-guide) | ⏳ Ongoing |
+| Wrap & Unrwap | Frontend | [tokamak-bridge-user-guide](https://github.com/tokamak-network/TON-WTON-SWAP) | ⏳ Ongoing |
 # Local hosting
 You can host TON ↭ WTON in local environment. Please follow this guide. As this is more of a reference hosting, we do not recommend using this software for production. Please do your own research.
