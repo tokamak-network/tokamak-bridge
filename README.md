@@ -4,7 +4,7 @@ Tokamak Bridge is a unified dapp that supports both bridge and swap functionalit
 All repositories related to development for Tokamak Bridge is provided here. Please note that there are no official support for them. Use at your own risk.
 | Category | Type | Name | Status |
 |----------|------|------|--------|
-| Bridge | Frontend | [tokamak-bridge](https://github.com/tokamak-network/tokamak-bridge) | ✔️ Completed |
+| Bridge | Frontend | [tokamak-bridge](https://github.com/tokamak-network/tokamak-bridge-frontend) | ✔️ Completed |
 | Bridge | Frontend | [bridge landing page](https://github.com/tokamak-network/bridge-landing-page) | ✔️ Completed |
 | Bridge | Subgraph | [bridge subgraph](https://github.com/tokamak-network/tokamak-bridge-subgraph) | ✔️ Completed |
 | Cross Trade | Contract | [crossTrade](https://github.com/tokamak-network/crossTrade) | ✔️ Completed |
