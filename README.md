@@ -1,6 +1,9 @@
 # Tokamak Bridge
+
 Tokamak Bridge is a unified dapp that supports both bridge and swap functionality. With it’s fun card game-like interface, fast transaction speeds and reward-full ecosystem, Tokamak Bridge is an all-in-one solution for cryptocurrency enthusiasts. Please note that all official support and development from Tokamak Network is paused, but feel free to fork and reuse it. This repository is expected to be archived after January,2025.
+
 # Repository
+
 All repositories related to development for Tokamak Bridge is provided here. Please note that there are no official support for them. Use at your own risk.
 | Category | Type | Name | Status |
 |----------|------|------|--------|
@@ -21,7 +24,11 @@ All repositories related to development for Tokamak Bridge is provided here. Ple
 | Swap & Uniswap Pool | Contract | [swap-router-contracts](https://github.com/Uniswap/swap-router-contracts) | ✔️ Completed |
 | Titan Sunset | Backend | [Legacy Titan pending withdrawal fetcher](https://github.com/tokamak-network/legacy-titan-pending-tx-fetcher) | ✔️ Completed |
 | Titan Sunset | Contract & Backend | [L2-Assets-Migration](https://github.com/tokamak-network/L2-Assets-Migration) | ✔️ Completed |
-| Tokamak Bridge | User guide |  [tokamak-bridge-user-guide](https://github.com/tokamak-network/tokamak-bridge-user-guide) | ⏳ Ongoing |
-| Wrap & Unrwap | Frontend | [tokamak-network-unwrapper](https://github.com/tokamak-network/tokamak-network-unwrapper) | ⏳ Ongoing |
+| Tokamak Bridge | User guide | [tokamak-bridge-user-guide](https://github.com/tokamak-network/tokamak-bridge-user-guide) | ⏳ Ongoing |
+| Wrap & Unrwap | Frontend | [tokamak-network-unwrapper](https://github.com/tokamak-network/tokamak-network-unwrapper) | ✔️ Completed |
+
 # Local hosting
-You can host TON ↭ WTON in local environment. Please follow this guide. As this is more of a reference hosting, we do not recommend using this software for production. Please do your own research.
+
+You can host Tokamak Network Unwrapper where you can wrap Tokamak Network token to WTON and vice versa in local environment. Please follow this guide. As this is more of a reference hosting, we do not recommend using this software for production. Please do your own research.
+
+- [Tokamak Network Unwrapper](https://github.com/tokamak-network/tokamak-network-unwrapper)
